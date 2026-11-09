@@ -1,15 +1,12 @@
-import type { GrammarContext } from '../../context.ts';
-import type { Flag } from '../../utils.ts';
+import type { GrammarMap } from '../../map.ts';
+import type { Flag, Under } from '../../utils.ts';
 export namespace Declaration {
-	export interface Field<G extends GrammarContext<G>> {
+	export interface Field<G extends GrammarMap, K extends Under<'declaration.field'> = 'declaration.field'> {
+	}
+	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> {
 		readonly privateName?: Flag;
 		// t only
 	}
-	export interface Method<G extends GrammarContext<G>> {
-		readonly privateName?: Flag;
-		// t only
-	}
-	export interface Property<G extends GrammarContext<G>> {
-		readonly privateName?: Flag;
+	export interface Property<G extends GrammarMap, K extends Under<'declaration.property'> = 'declaration.property'> {
 	}
 }

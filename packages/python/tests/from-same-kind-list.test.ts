@@ -9,7 +9,7 @@ for (const nodeStorage of ['object', 'arena'] as const) {
 	const argumentsOf = (source: string) => {
 		const statement = py.parse(source).statements()[0]!;
 		if (!py.is.simpleStatements(statement)) throw new Error('not a simple statement');
-		const element = statement.elements()[0]!;
+		const element = statement.statements()[0]!;
 		if (!py.is.expressionStatement(element)) throw new Error('not an expression statement');
 		const call = element.content();
 		if (!py.is.call(call)) throw new Error('not a call');

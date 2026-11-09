@@ -1,8 +1,10 @@
-import type { GrammarContext } from './context.ts';
-import type { Flag, SubKindOf } from './utils.ts';
+import type { GrammarMap, Slot } from './map.ts';
+import type { SubKindOf, Under } from './utils.ts';
 import type * as V from './index.ts';
-export interface Expression<G extends GrammarContext<G>> {
-	readonly $kind: 'expression';
+import type * as gate from './utils.ts';
+import type * as features from './features/index.ts';
+export interface Expression<G extends GrammarMap, K extends Under<'expression'> = 'expression'> {
+	readonly $path: K;
 }
 
 export interface ExpressionSynonyms {
@@ -23,429 +25,493 @@ export interface ExpressionSynonyms {
 }
 
 export namespace Expression {
-	export interface Assignment<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
+	export interface Assignment<G extends GrammarMap, K extends Under<'expression.assignment'> = 'expression.assignment'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by prt
-		readonly $kind: 'expression.assignment';
-		readonly left: G['slots']['expression.assignment']['left'];
-		readonly right: G['slots']['expression.assignment']['right'];
+		readonly $path: K;
+		readonly left: Slot<
+			G,
+			K,
+			'left',
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+			| V.Statement.Any<G>
+			| string
+		>;
+		readonly right: Slot<
+			G,
+			K,
+			'right',
+			| V.Declaration.Any<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+			| V.Statement.Any<G>
+		>;
 	}
 	export namespace Assignment {
-		export interface Compound<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment<G>> {
+		export interface Compound<G extends GrammarMap, K extends Under<'expression.assignment.compound'> = 'expression.assignment.compound'> extends SubKindOf<V.Expression.Assignment<G, K>> {
 			// claimed by prt
-			readonly $kind: 'expression.assignment.compound';
-			readonly left: G['slots']['expression.assignment.compound']['left'];
-			readonly right: G['slots']['expression.assignment.compound']['right'];
+			readonly $path: K;
+			readonly left: Slot<
+				G,
+				K,
+				'left',
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+				| V.Pattern.Any<G>
+				| V.Statement.Any<G>
+				| string
+			>;
+			readonly right: Slot<
+				G,
+				K,
+				'right',
+				| V.Declaration.Any<G>
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+				| V.Pattern.Any<G>
+				| V.Statement.Any<G>
+			>;
 		}
 		export namespace Compound {
-			export interface Add<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.add';
+			export interface Add<G extends GrammarMap, K extends Under<'expression.assignment.compound.add'> = 'expression.assignment.compound.add'> extends SubKindOf<V.Expression.Assignment.Compound<G, K>> {
+				readonly $path: K;
 			}
-			export interface And<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.and';
+			export interface BitwiseAnd<G extends GrammarMap, K extends Under<'expression.assignment.compound.bitwise_and'> = 'expression.assignment.compound.bitwise_and'> extends SubKindOf<V.Expression.Assignment.Compound<G, K>> {
+				readonly $path: K;
 			}
-			export interface BitwiseAnd<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.bitwise_and';
+			export interface BitwiseOr<G extends GrammarMap, K extends Under<'expression.assignment.compound.bitwise_or'> = 'expression.assignment.compound.bitwise_or'> extends SubKindOf<V.Expression.Assignment.Compound<G, K>> {
+				readonly $path: K;
 			}
-			export interface BitwiseOr<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.bitwise_or';
+			export interface BitwiseXor<G extends GrammarMap, K extends Under<'expression.assignment.compound.bitwise_xor'> = 'expression.assignment.compound.bitwise_xor'> extends SubKindOf<V.Expression.Assignment.Compound<G, K>> {
+				readonly $path: K;
 			}
-			export interface BitwiseXor<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.bitwise_xor';
+			export interface Divide<G extends GrammarMap, K extends Under<'expression.assignment.compound.divide'> = 'expression.assignment.compound.divide'> extends SubKindOf<V.Expression.Assignment.Compound<G, K>> {
+				readonly $path: K;
 			}
-			export interface Coalesce<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.coalesce';
+			export interface Modulo<G extends GrammarMap, K extends Under<'expression.assignment.compound.modulo'> = 'expression.assignment.compound.modulo'> extends SubKindOf<V.Expression.Assignment.Compound<G, K>> {
+				readonly $path: K;
 			}
-			export interface Divide<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.divide';
+			export interface Multiply<G extends GrammarMap, K extends Under<'expression.assignment.compound.multiply'> = 'expression.assignment.compound.multiply'> extends SubKindOf<V.Expression.Assignment.Compound<G, K>> {
+				readonly $path: K;
 			}
-			export interface Exponent<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.exponent';
+			export interface ShiftLeft<G extends GrammarMap, K extends Under<'expression.assignment.compound.shift_left'> = 'expression.assignment.compound.shift_left'> extends SubKindOf<V.Expression.Assignment.Compound<G, K>> {
+				readonly $path: K;
 			}
-			export interface FloorDivide<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.floor_divide';
+			export interface ShiftRight<G extends GrammarMap, K extends Under<'expression.assignment.compound.shift_right'> = 'expression.assignment.compound.shift_right'> extends SubKindOf<V.Expression.Assignment.Compound<G, K>> {
+				readonly $path: K;
 			}
-			export interface MatrixMultiply<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.matrix_multiply';
-			}
-			export interface Modulo<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.modulo';
-			}
-			export interface Multiply<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.multiply';
-			}
-			export interface Or<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.or';
-			}
-			export interface ShiftLeft<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.shift_left';
-			}
-			export interface ShiftRight<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.shift_right';
-			}
-			export interface ShiftRightUnsigned<G extends GrammarContext<G>> extends SubKindOf<
-				V.Expression.Assignment.Compound<G>
-			> {
-				readonly $kind: 'expression.assignment.compound.shift_right_unsigned';
-			}
-			export interface Subtract<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.subtract';
+			export interface Subtract<G extends GrammarMap, K extends Under<'expression.assignment.compound.subtract'> = 'expression.assignment.compound.subtract'> extends SubKindOf<V.Expression.Assignment.Compound<G, K>> {
+				readonly $path: K;
 			}
 		}
 	}
-	export interface Binary<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
+	export interface Binary<G extends GrammarMap, K extends Under<'expression.binary'> = 'expression.binary'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by prt
-		readonly $kind: 'expression.binary';
-		readonly left?: G['slots']['expression.binary']['left'];
-		readonly operator?: G['slots']['expression.binary']['operator'];
-		readonly right?: G['slots']['expression.binary']['right'];
+		readonly $path: K;
+		readonly left?: Slot<
+			G,
+			K,
+			'left',
+			| V.Declaration.Module<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+			| V.Statement.Any<G>
+		>;
+		readonly operator?: Slot<G, K, 'operator', string>;
+		readonly right?: Slot<
+			G,
+			K,
+			'right',
+			| V.Declaration.Module<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+			| V.Statement.Any<G>
+		>;
 	}
 	export namespace Binary {
-		export interface Arithmetic<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-			readonly $kind: 'expression.binary.arithmetic';
+		export interface Arithmetic<G extends GrammarMap, K extends Under<'expression.binary.arithmetic'> = 'expression.binary.arithmetic'> extends SubKindOf<V.Expression.Binary<G, K>> {
+			readonly $path: K;
 		}
 		export namespace Arithmetic {
-			export interface Add<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.arithmetic.add';
+			export interface Add<G extends GrammarMap, K extends Under<'expression.binary.arithmetic.add'> = 'expression.binary.arithmetic.add'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '+';
 			}
-			export interface Divide<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.arithmetic.divide';
+			export interface Divide<G extends GrammarMap, K extends Under<'expression.binary.arithmetic.divide'> = 'expression.binary.arithmetic.divide'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '/';
 			}
-			export interface Exponent<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.arithmetic.exponent';
-				readonly operator: '**';
-			}
-			export interface FloorDivide<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.arithmetic.floor_divide';
-				readonly operator: '//';
-			}
-			export interface Modulo<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.arithmetic.modulo';
+			export interface Modulo<G extends GrammarMap, K extends Under<'expression.binary.arithmetic.modulo'> = 'expression.binary.arithmetic.modulo'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '%';
 			}
-			export interface Multiply<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.arithmetic.multiply';
+			export interface Multiply<G extends GrammarMap, K extends Under<'expression.binary.arithmetic.multiply'> = 'expression.binary.arithmetic.multiply'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '*';
 			}
-			export interface Subtract<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.arithmetic.subtract';
+			export interface Subtract<G extends GrammarMap, K extends Under<'expression.binary.arithmetic.subtract'> = 'expression.binary.arithmetic.subtract'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '-';
 			}
 		}
-		export interface Bitwise<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-			readonly $kind: 'expression.binary.bitwise';
+		export interface Bitwise<G extends GrammarMap, K extends Under<'expression.binary.bitwise'> = 'expression.binary.bitwise'> extends SubKindOf<V.Expression.Binary<G, K>> {
+			readonly $path: K;
 		}
 		export namespace Bitwise {
-			export interface And<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.bitwise.and';
+			export interface And<G extends GrammarMap, K extends Under<'expression.binary.bitwise.and'> = 'expression.binary.bitwise.and'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '&';
 			}
-			export interface Or<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.bitwise.or';
+			export interface Or<G extends GrammarMap, K extends Under<'expression.binary.bitwise.or'> = 'expression.binary.bitwise.or'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '|';
 			}
-			export interface Xor<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.bitwise.xor';
+			export interface Xor<G extends GrammarMap, K extends Under<'expression.binary.bitwise.xor'> = 'expression.binary.bitwise.xor'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '^';
 			}
 		}
-		export interface Coalesce<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-			readonly $kind: 'expression.binary.coalesce';
-			readonly operator: '??';
-		}
-		export interface Comparison<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-			readonly $kind: 'expression.binary.comparison';
+		export interface Comparison<G extends GrammarMap, K extends Under<'expression.binary.comparison'> = 'expression.binary.comparison'> extends SubKindOf<V.Expression.Binary<G, K>> {
+			readonly $path: K;
 		}
 		export namespace Comparison {
-			export interface Chain<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary.Comparison<G>> {
-				// claimed by p
-				readonly $kind: 'expression.binary.comparison.chain';
-				readonly comparators: (
-					| V.Element.Comparator<G>
-					| V.Element.Comparator.Comparison.Equal<G>
-					| V.Element.Comparator.Comparison.Greater<G>
-					| V.Element.Comparator.Comparison.GreaterEqual<G>
-					| V.Element.Comparator.Comparison.Less<G>
-					| V.Element.Comparator.Comparison.LessEqual<G>
-					| V.Element.Comparator.Comparison.NotEqual.Any<G>
-					| V.Element.Comparator.Identity.Is<G>
-					| V.Element.Comparator.Identity.IsNot<G>
-					| V.Element.Comparator.Membership.In<G>
-					| V.Element.Comparator.Membership.NotIn<G>
-				)[];
-			}
-			export interface Equal<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.comparison.equal';
+			export interface Equal<G extends GrammarMap, K extends Under<'expression.binary.comparison.equal'> = 'expression.binary.comparison.equal'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '==' | '===';
 			}
-			export interface Greater<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.comparison.greater';
+			export interface Greater<G extends GrammarMap, K extends Under<'expression.binary.comparison.greater'> = 'expression.binary.comparison.greater'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '>';
 			}
-			export interface GreaterEqual<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.comparison.greater_equal';
+			export interface GreaterEqual<G extends GrammarMap, K extends Under<'expression.binary.comparison.greater_equal'> = 'expression.binary.comparison.greater_equal'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '>=';
 			}
-			export interface Less<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.comparison.less';
+			export interface Less<G extends GrammarMap, K extends Under<'expression.binary.comparison.less'> = 'expression.binary.comparison.less'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '<';
 			}
-			export interface LessEqual<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.comparison.less_equal';
+			export interface LessEqual<G extends GrammarMap, K extends Under<'expression.binary.comparison.less_equal'> = 'expression.binary.comparison.less_equal'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '<=';
 			}
-			export interface NotEqual<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.comparison.not_equal';
+			export interface NotEqual<G extends GrammarMap, K extends Under<'expression.binary.comparison.not_equal'> = 'expression.binary.comparison.not_equal'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '!=' | '!==' | '<>';
 			}
-			export namespace NotEqual {
-				export interface Legacy<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary.Comparison.NotEqual<G>> {
-					// claimed by p
-					readonly $kind: 'expression.binary.comparison.not_equal.legacy';
-					readonly operator: '<>';
-				}
-			}
 		}
-		// @ts-expect-error expression.binary.identity: its operator fill is unknown, outside expression.binary's string.
-		export interface Identity<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-			readonly $kind: 'expression.binary.identity';
-			readonly left: G['slots']['expression.binary.identity']['left'];
-			// p only
-			readonly operator?: G['slots']['expression.binary.identity']['operator'];
-			// p only
-		}
-		export namespace Identity {
-			export interface Is<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary.Identity<G>> {
-				// claimed by p
-				readonly $kind: 'expression.binary.identity.is';
-				readonly left: G['slots']['expression.binary.identity.is']['left'];
-				readonly operator?: G['slots']['expression.binary.identity.is']['operator'];
-			}
-			export interface IsNot<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary.Identity<G>> {
-				// claimed by p
-				readonly $kind: 'expression.binary.identity.is_not';
-				readonly left: G['slots']['expression.binary.identity.is_not']['left'];
-				readonly operator?: G['slots']['expression.binary.identity.is_not']['operator'];
-			}
-		}
-		export interface Logical<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
+		export interface Logical<G extends GrammarMap, K extends Under<'expression.binary.logical'> = 'expression.binary.logical'> extends SubKindOf<V.Expression.Binary<G, K>> {
 			// claimed by p
-			readonly $kind: 'expression.binary.logical';
-			readonly left: G['slots']['expression.binary.logical']['left'];
+			readonly $path: K;
+			readonly left: Slot<
+				G,
+				K,
+				'left',
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+				| V.Pattern.Any<G>
+				| V.Declaration.Module<G>
+				| V.Statement.Any<G>
+			>;
 			// prt only
-			readonly operator: G['slots']['expression.binary.logical']['operator'];
+			readonly operator: Slot<G, K, 'operator', string>;
 			// prt only
-			readonly right: G['slots']['expression.binary.logical']['right'];
+			readonly right: Slot<
+				G,
+				K,
+				'right',
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+				| V.Pattern.Any<G>
+				| V.Declaration.Module<G>
+				| V.Statement.Any<G>
+			>;
 			// prt only
 		}
 		export namespace Logical {
-			export interface And<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary.Logical<G>> {
-				readonly $kind: 'expression.binary.logical.and';
+			export interface And<G extends GrammarMap, K extends Under<'expression.binary.logical.and'> = 'expression.binary.logical.and'> extends SubKindOf<V.Expression.Binary.Logical<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '&&' | 'and';
 			}
-			export interface Or<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary.Logical<G>> {
-				readonly $kind: 'expression.binary.logical.or';
+			export interface Or<G extends GrammarMap, K extends Under<'expression.binary.logical.or'> = 'expression.binary.logical.or'> extends SubKindOf<V.Expression.Binary.Logical<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: 'or' | '||';
 			}
 		}
-		export interface MatrixMultiply<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-			readonly $kind: 'expression.binary.matrix_multiply';
-			readonly operator: '@';
-		}
-		// @ts-expect-error expression.binary.membership: its operator fill is unknown, outside expression.binary's string.
-		export interface Membership<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-			readonly $kind: 'expression.binary.membership';
-			readonly left: G['slots']['expression.binary.membership']['left'];
-			// p only
-			readonly operator?: G['slots']['expression.binary.membership']['operator'];
-			// p only
-		}
-		export namespace Membership {
-			export interface In<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.membership.in';
-				readonly operator: 'in';
-			}
-			export interface Instanceof<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.membership.instanceof';
-				readonly operator: 'instanceof';
-			}
-			export interface NotIn<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary.Membership<G>> {
-				// claimed by p
-				readonly $kind: 'expression.binary.membership.not_in';
-				readonly left: G['slots']['expression.binary.membership.not_in']['left'];
-				readonly operator?: G['slots']['expression.binary.membership.not_in']['operator'];
-			}
-		}
-		export interface Shift<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-			readonly $kind: 'expression.binary.shift';
+		export interface Shift<G extends GrammarMap, K extends Under<'expression.binary.shift'> = 'expression.binary.shift'> extends SubKindOf<V.Expression.Binary<G, K>> {
+			readonly $path: K;
 		}
 		export namespace Shift {
-			export interface Left<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.shift.left';
+			export interface Left<G extends GrammarMap, K extends Under<'expression.binary.shift.left'> = 'expression.binary.shift.left'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '<<';
 			}
-			export interface Right<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.shift.right';
+			export interface Right<G extends GrammarMap, K extends Under<'expression.binary.shift.right'> = 'expression.binary.shift.right'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
+				readonly $path: K;
 				readonly operator: '>>';
 			}
-			export interface RightUnsigned<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.shift.right_unsigned';
-				readonly operator: '>>>';
-			}
 		}
 	}
-	export interface Block<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
-		readonly $kind: 'expression.block';
-		readonly body: V.Statement.Block<G>;
-		// r only
-	}
-	export interface Call<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
+	export interface Call<G extends GrammarMap, K extends Under<'expression.call'> = 'expression.call'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by prt
-		readonly $kind: 'expression.call';
-		readonly arguments?: G['slots']['expression.call']['arguments'] | G['slots']['expression.call']['arguments'][];
-		readonly function?: G['slots']['expression.call']['function'];
+		readonly $path: K;
+		readonly arguments?: Slot<
+			G,
+			K,
+			'arguments',
+			| V.Argument.Any<G>
+			| V.Declaration.Module<G>
+			| V.Element.Any<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+			| V.Statement.Any<G>
+		> | Slot<
+			G,
+			K,
+			'arguments',
+			| V.Argument.Any<G>
+			| V.Declaration.Module<G>
+			| V.Element.Any<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+			| V.Statement.Any<G>
+		>[];
+		readonly function?: Slot<
+			G,
+			K,
+			'function',
+			| V.Declaration.Module<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
+			| V.Statement.Any<G>
+			| string
+		>;
 	}
 	export namespace Call {
-		export interface Member<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Call<G>> {
+		export interface Member<G extends GrammarMap, K extends Under<'expression.call.member'> = 'expression.call.member'> extends SubKindOf<V.Expression.Call<G, K>> {
 			// claimed by prt
-			readonly $kind: 'expression.call.member';
+			readonly $path: K;
 			readonly arguments:
-				| G['slots']['expression.call.member']['arguments']
-				| G['slots']['expression.call.member']['arguments'][];
-			readonly function: G['slots']['expression.call.member']['function'];
-		}
-		export interface Qualified<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Call<G>> {
-			// claimed by r
-			readonly $kind: 'expression.call.qualified';
-			readonly arguments: G['slots']['expression.call.qualified']['arguments'][];
-			readonly function: G['slots']['expression.call.qualified']['function'];
+				Slot<
+				G,
+				K,
+				'arguments',
+				| V.Argument.Any<G>
+				| V.Declaration.Module<G>
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+				| V.Pattern.Any<G>
+				| V.Element.Spread.Any<G>
+				| V.Statement.Any<G>
+			> | Slot<
+				G,
+				K,
+				'arguments',
+				| V.Argument.Any<G>
+				| V.Declaration.Module<G>
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+				| V.Pattern.Any<G>
+				| V.Element.Spread.Any<G>
+				| V.Statement.Any<G>
+			>[];
+			readonly function: Slot<
+				G,
+				K,
+				'function',
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+				| V.Statement.Any<G>
+				| string
+				| V.Declaration.Module<G>
+				| V.Pattern.Rest<G>
+			>;
 		}
 	}
-	export interface Collection<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
-		readonly $kind: 'expression.collection';
+	export interface Collection<G extends GrammarMap, K extends Under<'expression.collection'> = 'expression.collection'> extends SubKindOf<V.Expression<G, K>> {
+		readonly $path: K;
 	}
 	export namespace Collection {
-		export interface List<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
+		export interface List<G extends GrammarMap, K extends Under<'expression.collection.list'> = 'expression.collection.list'> extends SubKindOf<V.Expression.Collection<G, K>> {
 			// claimed by prt
-			readonly $kind: 'expression.collection.list';
-			readonly elements?: G['slots']['expression.collection.list']['elements'][];
-		}
-		export namespace List {
-			export interface Repeat<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection.List<G>> {
-				// claimed by r
-				readonly $kind: 'expression.collection.list.repeat';
-				readonly element: G['slots']['expression.collection.list.repeat']['element'];
-				readonly length: G['slots']['expression.collection.list.repeat']['length'];
-			}
-		}
-		export interface Map<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
-			// claimed by p
-			readonly $kind: 'expression.collection.map';
-			readonly elements?: G['element'][];
-		}
-		export interface Object<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
-			// claimed by t
-			readonly $kind: 'expression.collection.object';
-			readonly properties?: G['slots']['expression.collection.object']['properties'][];
-		}
-		export interface Set<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
-			// claimed by p
-			readonly $kind: 'expression.collection.set';
-			readonly elements: G['slots']['expression.collection.set']['elements'][];
+			readonly $path: K;
+			readonly elements?: Slot<
+				G,
+				K,
+				'elements',
+				| V.Declaration.Module<G>
+				| V.Element.Attributed<G>
+				| V.Element.Spread<G>
+				| V.Element.Spread.Parenthesized<G>
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+				| V.Modifier.Any<G>
+				| V.Pattern.Any<G>
+				| V.Statement.Any<G>
+				| V.Type.Primitive<G>
+				| gate.In<G, features.Elisions, null>
+			>[];
 		}
 	}
-	export interface Function<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
-		// claimed by t
-		readonly $kind: 'expression.function';
-		readonly body: V.Statement.Block<G>;
-		readonly name?: G['identifier'];
-		readonly parameters: (
+	export interface Lambda<G extends GrammarMap, K extends Under<'expression.lambda'> = 'expression.lambda'> extends SubKindOf<V.Expression<G, K>> {
+		// claimed by prt
+		readonly $path: K;
+		readonly body: Slot<
+			G,
+			K,
+			'body',
+			| V.Declaration.Module<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Modifier.Any<G>
+			| V.Pattern.Any<G>
+			| V.Statement.Any<G>
+			| V.Type.Primitive<G>
+			| string
+		>;
+		readonly parameters?:
+			Slot<
+			G,
+			K,
+			'parameters',
+			| V.Identifier.Any<G>
+			| V.Pattern.Any<G>
 			| V.Declaration.Parameter<G>
+			| V.Declaration.Parameter.Default<G>
 			| V.Declaration.Parameter.Private<G>
 			| V.Declaration.Parameter.Protected<G>
 			| V.Declaration.Parameter.Public<G>
 			| V.Declaration.Parameter.Receiver<G>
-		)[];
+			| V.Declaration.Parameter.Typed<G>
+			| V.Declaration.Parameter.TypedDefault<G>
+		> | Slot<
+			G,
+			K,
+			'parameters',
+			| V.Identifier.Any<G>
+			| V.Pattern.Any<G>
+			| V.Declaration.Parameter<G>
+			| V.Declaration.Parameter.Default<G>
+			| V.Declaration.Parameter.Private<G>
+			| V.Declaration.Parameter.Protected<G>
+			| V.Declaration.Parameter.Public<G>
+			| V.Declaration.Parameter.Receiver<G>
+			| V.Declaration.Parameter.Typed<G>
+			| V.Declaration.Parameter.TypedDefault<G>
+		>[];
 	}
-	export interface Lambda<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
+	export interface Member<G extends GrammarMap, K extends Under<'expression.member'> = 'expression.member'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by prt
-		readonly $kind: 'expression.lambda';
-		readonly body: G['slots']['expression.lambda']['body'];
-		readonly parameters?:
-			| G['slots']['expression.lambda']['parameters']
-			| G['slots']['expression.lambda']['parameters'][];
-		readonly returnType?: G['slots']['expression.lambda']['returnType'];
-		// r only
+		readonly $path: K;
+		readonly object: Slot<
+			G,
+			K,
+			'object',
+			| V.Declaration.Module<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
+			| V.Statement.Any<G>
+		>;
+		readonly property: Slot<
+			G,
+			K,
+			'property',
+			| V.Identifier.Any<G>
+			| V.Literal.Number.Integer<G>
+			| V.Literal.Number.Integer.Binary<G>
+			| V.Literal.Number.Integer.Hex<G>
+			| V.Literal.Number.Integer.Octal<G>
+		>;
 	}
-	export interface Member<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
+	export interface Parenthesized<G extends GrammarMap, K extends Under<'expression.parenthesized'> = 'expression.parenthesized'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by prt
-		readonly $kind: 'expression.member';
-		readonly object: G['slots']['expression.member']['object'];
-		readonly property: G['slots']['expression.member']['property'];
+		readonly $path: K;
+		readonly expression: Slot<
+			G,
+			K,
+			'expression',
+			| V.Declaration.Module<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Modifier.Any<G>
+			| V.Pattern.Any<G>
+			| V.Statement.Any<G>
+			| V.Type.Primitive<G>
+		>;
 	}
-	export interface Meta<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
-		// claimed by t
-		readonly $kind: 'expression.meta';
-	}
-	export interface Parenthesized<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
+	export interface Subscript<G extends GrammarMap, K extends Under<'expression.subscript'> = 'expression.subscript'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by prt
-		readonly $kind: 'expression.parenthesized';
-		readonly expression: G['slots']['expression.parenthesized']['expression'];
-		readonly type?: G['slots']['expression.parenthesized']['type'];
-		// t only
+		readonly $path: K;
+		readonly index?: Slot<
+			G,
+			K,
+			'index',
+			| V.Declaration.Module<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Statement.Any<G>
+			| V.Pattern.Rest<G>
+		>;
+		readonly object: Slot<
+			G,
+			K,
+			'object',
+			| V.Declaration.Module<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
+			| V.Statement.Any<G>
+		>;
 	}
-	export interface Sequence<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
-		// claimed by t
-		readonly $kind: 'expression.sequence';
-		readonly expressions: G['slots']['expression.sequence']['expressions'][];
-	}
-	export interface Subscript<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
+	export interface Unary<G extends GrammarMap, K extends Under<'expression.unary'> = 'expression.unary'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by prt
-		readonly $kind: 'expression.subscript';
-		readonly index?: G['slots']['expression.subscript']['index'];
-		readonly object: G['slots']['expression.subscript']['object'];
-	}
-	export interface Unary<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
-		// claimed by prt
-		readonly $kind: 'expression.unary';
-		readonly argument: G['slots']['expression.unary']['argument'];
+		readonly $path: K;
+		readonly argument: Slot<
+			G,
+			K,
+			'argument',
+			| V.Declaration.Module<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
+			| V.Statement.Any<G>
+		>;
 	}
 	export namespace Unary {
-		export interface BitwiseNot<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Unary<G>> {
-			readonly $kind: 'expression.unary.bitwise_not';
+		export interface Negation<G extends GrammarMap, K extends Under<'expression.unary.negation'> = 'expression.unary.negation'> extends SubKindOf<V.Expression.Unary<G, K>> {
+			readonly $path: K;
 		}
-		export interface Delete<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Unary<G>> {
-			readonly $kind: 'expression.unary.delete';
-		}
-		export interface Negation<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Unary<G>> {
-			readonly $kind: 'expression.unary.negation';
-		}
-		export interface Not<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Unary<G>> {
-			readonly $kind: 'expression.unary.not';
-		}
-		export interface Plus<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Unary<G>> {
-			readonly $kind: 'expression.unary.plus';
-		}
-		export interface Typeof<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Unary<G>> {
-			readonly $kind: 'expression.unary.typeof';
-		}
-		export interface Void<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Unary<G>> {
-			readonly $kind: 'expression.unary.void';
-		}
-	}
-	export interface Update<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
-		// claimed by t
-		readonly $kind: 'expression.update';
-		readonly argument: G['slots']['expression.update']['argument'];
-		readonly prefix?: Flag;
-	}
-	export namespace Update {
-		export interface Decrement<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Update<G>> {
-			readonly $kind: 'expression.update.decrement';
-		}
-		export interface Increment<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Update<G>> {
-			readonly $kind: 'expression.update.increment';
+		export interface Not<G extends GrammarMap, K extends Under<'expression.unary.not'> = 'expression.unary.not'> extends SubKindOf<V.Expression.Unary<G, K>> {
+			readonly $path: K;
 		}
 	}
 }

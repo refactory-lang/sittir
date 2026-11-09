@@ -23,7 +23,7 @@ const py = await createEngine(python);
 
 type ReadString = { prefix(): string | undefined; readonly $with: { contents(...items: unknown[]): unknown } };
 const stringOf = (source: string): ReadString =>
-	(py.parse(`${source}\n`) as unknown as { statements(): readonly { elements(): readonly { content(): ReadString }[] }[] }).statements()[0]!.elements()[0]!.content();
+	(py.parse(`${source}\n`) as unknown as { statements(): readonly { statements(): readonly { content(): ReadString }[] }[] }).statements()[0]!.statements()[0]!.content();
 const claimsOf = (source: string): readonly string[] => stringPaths.filter((path) => guard(path)(stringOf(source)));
 
 describe('the string claims and the prefix enum agree', () => {
@@ -81,7 +81,7 @@ describe('the string claims and the prefix enum agree', () => {
 			const engine = await createEngine(python, { api: 'strict' });
 			const source = `${spelling}"y"\n`;
 			const tree = engine.parse(source);
-			const string = (tree as unknown as { statements(): readonly { elements(): readonly { content(): ReadString }[] }[] }).statements()[0]!.elements()[0]!.content();
+			const string = (tree as unknown as { statements(): readonly { statements(): readonly { content(): ReadString }[] }[] }).statements()[0]!.statements()[0]!.content();
 			expect(string.prefix()).toBeUndefined();
 			expect(String(engine.render(tree))).toBe(source);
 			expect(String(engine.render(string.$with.contents(engine.build.stringContent(engine.build.stringFragment('z'))) as never))).toBe(`${spelling}"z"`);

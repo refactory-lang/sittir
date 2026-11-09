@@ -1,8 +1,7 @@
-import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
-import type * as V from './index.ts';
-export interface Pattern<G extends GrammarContext<G>> {
-	readonly $kind: 'pattern';
+import type { GrammarMap } from './map.ts';
+import type { Under } from './utils.ts';
+export interface Pattern<G extends GrammarMap, K extends Under<'pattern'> = 'pattern'> {
+	readonly $path: K;
 }
 
 export interface PatternSynonyms {
@@ -12,10 +11,3 @@ export interface PatternSynonyms {
 	readonly struct: 'record';
 }
 
-export namespace Pattern {
-	export interface Mutable<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
-		// claimed by r
-		readonly $kind: 'pattern.mutable';
-		readonly pattern: G['slots']['pattern.mutable']['pattern'];
-	}
-}

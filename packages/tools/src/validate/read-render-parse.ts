@@ -1118,7 +1118,7 @@ export async function validateReadRenderParse(
 					if (shouldStop) break;
 					const inputSource = spans.slice(cand);
 					const indices = spans.toIndices(cand);
-					const node1ForAst = findSpanNode(tree1.rootNode, indices.start, indices.end, cand.displayKind);
+					const node1ForAst = findSpanNode(tree1.rootNode, indices.start, indices.end, cand.displayKind, canonicalKindNameFromId);
 					const tsVisibleKind = node1ForAst?.type;
 
 					// Materialize the wrapped node directly — it already IS its source

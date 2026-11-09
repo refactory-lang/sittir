@@ -6040,10 +6040,9 @@ const table: PortableTable = {
 				path: 'type.import',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [196], slots: { '355': 0 } } },
 					{
 						up: 0,
-						via: [{ slots: { '355': 1 } }, { slots: { '283': 0 }, anchor: 'only' }],
+						via: [{ slots: { '355': 0 } }, { slots: { '283': 0 }, anchor: 'only' }],
 						plan: { op: 'is', types: [423, 424], self: true }
 					}
 				]

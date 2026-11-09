@@ -1,18 +1,19 @@
-import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
+import type { GrammarMap, Slot } from './map.ts';
+import type { Under } from './utils.ts';
 import type * as V from './index.ts';
-export interface Attribute<G extends GrammarContext<G>> {
+export interface Attribute<G extends GrammarMap, K extends Under<'attribute'> = 'attribute'> {
 	// claimed by r
-	readonly $kind: 'attribute';
-	readonly content?: G['slots']['attribute']['content'];
+	readonly $path: K;
+	readonly content?: Slot<
+		G,
+		K,
+		'content',
+		| V.Expression.Any<G>
+		| V.Identifier.Any<G>
+		| V.Literal.Any<G>
+		| V.Pattern.Any<G>
+		| V.Attribute.Content.Any<G>
+	>;
 	// prt only
 }
 
-export namespace Attribute {
-	export interface Content<G extends GrammarContext<G>> extends SubKindOf<V.Attribute<G>> {
-		// claimed by r
-		readonly $kind: 'attribute.content';
-		readonly input?: G['slots']['attribute.content']['input'];
-		readonly path?: G['identifier'];
-	}
-}

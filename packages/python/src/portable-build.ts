@@ -146,7 +146,7 @@ export const build: PortableBuildTable = {
 		slice: 'config',
 		splatPatternDictionary: 'direct',
 		splatPatternList: 'direct',
-		splatType: 'forwarded',
+		splatType: 'direct',
 		string: 'config',
 		stringContent: 'spread',
 		stringFragment: 'text',
@@ -374,45 +374,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [156, 'body'],
-									kinds: [301]
-								},
-								{
-									at: [260, 'items'],
-									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
-									tokens: {
-										break: 149,
-										continue: 150,
-										pass: 148
-									},
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [139, 'content'],
-									kinds: [282, 283],
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										},
-										{
-											builder: 'printStatement',
-											key: 'content'
-										}
-									]
+									kinds: [299, 301]
 								},
 								{
 									at: [300, 'block'],
@@ -488,45 +450,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [160, 'body'],
-									kinds: [301]
-								},
-								{
-									at: [260, 'items'],
-									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
-									tokens: {
-										break: 149,
-										continue: 150,
-										pass: 148
-									},
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [139, 'content'],
-									kinds: [282, 283],
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										},
-										{
-											builder: 'printStatement',
-											key: 'content'
-										}
-									]
+									kinds: [299, 301]
 								},
 								{
 									at: [300, 'block'],
@@ -904,45 +828,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [153, 'body'],
-									kinds: [301]
-								},
-								{
-									at: [260, 'items'],
-									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
-									tokens: {
-										break: 149,
-										continue: 150,
-										pass: 148
-									},
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [139, 'content'],
-									kinds: [282, 283],
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										},
-										{
-											builder: 'printStatement',
-											key: 'content'
-										}
-									]
+									kinds: [299, 301]
 								},
 								{
 									at: [300, 'block'],
@@ -1013,45 +899,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [152, 'consequence'],
-									kinds: [301]
-								},
-								{
-									at: [260, 'items'],
-									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
-									tokens: {
-										break: 149,
-										continue: 150,
-										pass: 148
-									},
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [139, 'content'],
-									kinds: [282, 283],
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										},
-										{
-											builder: 'printStatement',
-											key: 'content'
-										}
-									]
+									kinds: [299, 301]
 								},
 								{
 									at: [300, 'block'],
@@ -1096,45 +944,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [161, 'body'],
-									kinds: [301]
-								},
-								{
-									at: [260, 'items'],
-									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
-									tokens: {
-										break: 149,
-										continue: 150,
-										pass: 148
-									},
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [139, 'content'],
-									kinds: [282, 283],
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										},
-										{
-											builder: 'printStatement',
-											key: 'content'
-										}
-									]
+									kinds: [299, 301]
 								},
 								{
 									at: [300, 'block'],
@@ -1628,45 +1438,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [174, 'body'],
-									kinds: [301]
-								},
-								{
-									at: [260, 'items'],
-									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
-									tokens: {
-										break: 149,
-										continue: 150,
-										pass: 148
-									},
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [139, 'content'],
-									kinds: [282, 283],
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										},
-										{
-											builder: 'printStatement',
-											key: 'content'
-										}
-									]
+									kinds: [299, 301]
 								},
 								{
 									at: [310, 'blockClassDeclaration'],
@@ -1729,7 +1501,7 @@ export const build: PortableBuildTable = {
 									many: true
 								},
 								{
-									key: 'elements',
+									key: 'statements',
 									builder: 'simpleStatementsElements'
 								},
 								{
@@ -2110,45 +1882,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [307, 'body'],
-									kinds: [301]
-								},
-								{
-									at: [260, 'items'],
-									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
-									tokens: {
-										break: 149,
-										continue: 150,
-										pass: 148
-									},
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [139, 'content'],
-									kinds: [282, 283],
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										},
-										{
-											builder: 'printStatement',
-											key: 'content'
-										}
-									]
+									kinds: [299, 301]
 								},
 								{
 									at: [300, 'block'],
@@ -2283,45 +2017,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [352, 'body'],
-									kinds: [301]
-								},
-								{
-									at: [260, 'items'],
-									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
-									tokens: {
-										break: 149,
-										continue: 150,
-										pass: 148
-									},
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [139, 'content'],
-									kinds: [282, 283],
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										},
-										{
-											builder: 'printStatement',
-											key: 'content'
-										}
-									]
+									kinds: [299, 301]
 								},
 								{
 									at: [300, 'block'],
@@ -2384,7 +2080,7 @@ export const build: PortableBuildTable = {
 									many: true
 								},
 								{
-									key: 'elements',
+									key: 'statements',
 									builder: 'simpleStatementsElements'
 								},
 								{
@@ -2556,45 +2252,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [165, 'body'],
-									kinds: [301]
-								},
-								{
-									at: [260, 'items'],
-									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
-									tokens: {
-										break: 149,
-										continue: 150,
-										pass: 148
-									},
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [139, 'content'],
-									kinds: [282, 283],
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										},
-										{
-											builder: 'printStatement',
-											key: 'content'
-										}
-									]
+									kinds: [299, 301]
 								},
 								{
 									at: [300, 'block'],
@@ -2657,7 +2315,7 @@ export const build: PortableBuildTable = {
 									many: true
 								},
 								{
-									key: 'elements',
+									key: 'statements',
 									builder: 'simpleStatementsElements'
 								},
 								{
@@ -2820,45 +2478,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [352, 'body'],
-									kinds: [301]
-								},
-								{
-									at: [260, 'items'],
-									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
-									tokens: {
-										break: 149,
-										continue: 150,
-										pass: 148
-									},
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [139, 'content'],
-									kinds: [282, 283],
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										},
-										{
-											builder: 'printStatement',
-											key: 'content'
-										}
-									]
+									kinds: [299, 301]
 								},
 								{
 									at: [300, 'block'],
@@ -2921,7 +2541,7 @@ export const build: PortableBuildTable = {
 									many: true
 								},
 								{
-									key: 'elements',
+									key: 'statements',
 									builder: 'simpleStatementsElements'
 								},
 								{
@@ -2973,8 +2593,55 @@ export const build: PortableBuildTable = {
 									kind: 67
 								}
 							]
+						},
+						privateName: {
+							presets: [],
+							template: {
+								member: 'name',
+								pattern: '__${string}',
+								holes: ['name'],
+								match: '^__(?<name>.*[^_]_?)$'
+							}
 						}
 					},
+					facts: [
+						{
+							name: 'static',
+							flag: 'static',
+							member: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: 'staticmethod'
+									}
+								}
+							]
+						},
+						{
+							name: 'override',
+							flag: 'override',
+							member: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: 'override'
+									}
+								},
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: {
+											$path: 'expression.member',
+											object: 'typing',
+											property: 'override'
+										}
+									}
+								}
+							]
+						}
+					],
 					when: [
 						{
 							absent: [],
@@ -3084,45 +2751,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [352, 'body'],
-									kinds: [301]
-								},
-								{
-									at: [260, 'items'],
-									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
-									tokens: {
-										break: 149,
-										continue: 150,
-										pass: 148
-									},
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [139, 'content'],
-									kinds: [282, 283],
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										},
-										{
-											builder: 'printStatement',
-											key: 'content'
-										}
-									]
+									kinds: [299, 301]
 								},
 								{
 									at: [300, 'block'],
@@ -3185,7 +2814,7 @@ export const build: PortableBuildTable = {
 									many: true
 								},
 								{
-									key: 'elements',
+									key: 'statements',
 									builder: 'simpleStatementsElements'
 								},
 								{
@@ -3242,8 +2871,47 @@ export const build: PortableBuildTable = {
 					template: {
 						member: 'name',
 						pattern: '__${string}__',
-						holes: ['stem']
+						holes: ['stem'],
+						match: '^__(?<stem>.*)__$'
 					},
+					facts: [
+						{
+							name: 'static',
+							flag: 'static',
+							member: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: 'staticmethod'
+									}
+								}
+							]
+						},
+						{
+							name: 'override',
+							flag: 'override',
+							member: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: 'override'
+									}
+								},
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: {
+											$path: 'expression.member',
+											object: 'typing',
+											property: 'override'
+										}
+									}
+								}
+							]
+						}
+					],
 					when: [
 						{
 							absent: [],
@@ -3455,6 +3123,540 @@ export const build: PortableBuildTable = {
 						{
 							absent: [],
 							required: ['default', 'name', 'type']
+						}
+					]
+				}
+			]
+		},
+		'declaration.property.getter': {
+			root: true,
+			arms: [
+				{
+					kind: 352,
+					builder: 'methodDeclaration',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [352, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [352, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [193, 'items'],
+									kinds: [1, 195, 197, 199, 200, 201, 202, 225, 258, 259],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'*': 259,
+										'/': 258
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'parameters',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'parametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'returnType',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [352, 'returnType'],
+									kinds: [226]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [352, 'body'],
+									kinds: [299, 301]
+								},
+								{
+									at: [300, 'block'],
+									kinds: [180],
+									within: [
+										{
+											builder: 'suiteBlock',
+											key: 'block'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									builder: 'typeParams',
+									optional: true
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [272, 'items'],
+									kinds: []
+								},
+								{
+									at: [273, 'items'],
+									kinds: [270, 304, 305, 306],
+									within: [
+										{
+											builder: 'typeParamsItems',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'doc',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteBlock'
+								},
+								{
+									key: 'block',
+									builder: 'block'
+								},
+								{
+									key: 'statements',
+									builder: 'simpleStatements',
+									optional: true,
+									many: true
+								},
+								{
+									key: 'statements',
+									builder: 'simpleStatementsElements'
+								},
+								{
+									key: 'items',
+									builder: 'expressionStatement',
+									many: true
+								},
+								{
+									key: 'content'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [142, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 201, 203, 205, 206, 207, 208, 209, 210,
+										213, 214, 216, 217, 220, 221, 222, 224, 233, 234, 235, 236, 238, 239, 240, 241, 242, 246, 247, 248,
+										255, 256, 257, 287, 293, 294, 295, 296
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							reads: [248]
+						}
+					],
+					empty: ['parameters'],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 4, 5]
+					],
+					presets: [],
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 67
+								}
+							]
+						}
+					},
+					facts: [
+						{
+							name: 'getter',
+							member: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: 'property'
+									}
+								}
+							]
+						},
+						{
+							name: 'override',
+							flag: 'override',
+							member: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: 'override'
+									}
+								},
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: {
+											$path: 'expression.member',
+											object: 'typing',
+											property: 'override'
+										}
+									}
+								}
+							]
+						}
+					],
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			]
+		},
+		'declaration.property.setter': {
+			root: true,
+			arms: [
+				{
+					kind: 352,
+					builder: 'methodDeclaration',
+					members: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [352, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [352, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [193, 'items'],
+									kinds: [1, 195, 197, 199, 200, 201, 202, 225, 258, 259],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'*': 259,
+										'/': 258
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'parameters',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'parametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'returnType',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [352, 'returnType'],
+									kinds: [226]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [352, 'body'],
+									kinds: [299, 301]
+								},
+								{
+									at: [300, 'block'],
+									kinds: [180],
+									within: [
+										{
+											builder: 'suiteBlock',
+											key: 'block'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									builder: 'typeParams',
+									optional: true
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [272, 'items'],
+									kinds: []
+								},
+								{
+									at: [273, 'items'],
+									kinds: [270, 304, 305, 306],
+									within: [
+										{
+											builder: 'typeParamsItems',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'doc',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteBlock'
+								},
+								{
+									key: 'block',
+									builder: 'block'
+								},
+								{
+									key: 'statements',
+									builder: 'simpleStatements',
+									optional: true,
+									many: true
+								},
+								{
+									key: 'statements',
+									builder: 'simpleStatementsElements'
+								},
+								{
+									key: 'items',
+									builder: 'expressionStatement',
+									many: true
+								},
+								{
+									key: 'content'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [142, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 201, 203, 205, 206, 207, 208, 209, 210,
+										213, 214, 216, 217, 220, 221, 222, 224, 233, 234, 235, 236, 238, 239, 240, 241, 242, 246, 247, 248,
+										255, 256, 257, 287, 293, 294, 295, 296
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							reads: [248]
+						}
+					],
+					empty: ['parameters'],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 4, 5]
+					],
+					presets: [],
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 67
+								}
+							]
+						}
+					},
+					facts: [
+						{
+							name: 'setter',
+							member: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: {
+											$path: 'expression.member',
+											property: 'setter'
+										}
+									},
+									holes: {
+										name: ['content', 'object']
+									}
+								}
+							]
+						},
+						{
+							name: 'override',
+							flag: 'override',
+							member: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: 'override'
+									}
+								},
+								{
+									item: {
+										$path: 'attribute.decorator',
+										content: {
+											$path: 'expression.member',
+											object: 'typing',
+											property: 'override'
+										}
+									}
+								}
+							]
+						}
+					],
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
 						}
 					]
 				}
@@ -9406,7 +9608,17 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						privateName: {
+							presets: [],
+							template: {
+								member: 'property',
+								pattern: '__${string}',
+								holes: ['property'],
+								match: '^__(?<property>.*[^_]_?)$'
+							}
+						}
+					},
 					when: [
 						{
 							absent: [],
@@ -9998,7 +10210,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'simpleStatements',
-											key: 'elements'
+											key: 'statements'
 										},
 										{
 											builder: 'simpleStatementsElements',
@@ -10013,7 +10225,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'simpleStatements',
-											key: 'elements'
+											key: 'statements'
 										},
 										{
 											builder: 'simpleStatementsElements',
@@ -13760,6 +13972,10 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
+							variant: '_suite',
+							value: 301
+						},
+						{
 							empty: ['statements']
 						}
 					],
@@ -13811,7 +14027,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'simpleStatements',
-											key: 'elements'
+											key: 'statements'
 										},
 										{
 											builder: 'simpleStatementsElements',
@@ -13826,7 +14042,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'simpleStatements',
-											key: 'elements'
+											key: 'statements'
 										},
 										{
 											builder: 'simpleStatementsElements',
@@ -13872,7 +14088,13 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							variant: '_suite',
+							value: 180,
+							default: true
+						}
+					],
 					holders: [[300, 'block']]
 				},
 				{
@@ -13906,7 +14128,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'simpleStatements',
-											key: 'elements'
+											key: 'statements'
 										},
 										{
 											builder: 'simpleStatementsElements',
@@ -13921,7 +14143,7 @@ export const build: PortableBuildTable = {
 									within: [
 										{
 											builder: 'simpleStatements',
-											key: 'elements'
+											key: 'statements'
 										},
 										{
 											builder: 'simpleStatementsElements',
@@ -13967,8 +14189,94 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: [],
+					when: [
+						{
+							variant: '_suite',
+							value: 309
+						}
+					],
 					holders: [[310, 'blockClassDeclaration']]
+				},
+				{
+					kind: 299,
+					builder: 'suiteInline',
+					members: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'statements'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [299, 'statements'],
+									kinds: []
+								},
+								{
+									at: [260, 'items'],
+									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
+									tokens: {
+										break: 149,
+										continue: 150,
+										pass: 148
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [139, 'content'],
+									kinds: [282, 283],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								}
+							]
+						}
+					],
+					empty: ['statements'],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							variant: '_suite',
+							value: 299
+						},
+						{
+							absent: [],
+							required: ['statements']
+						}
+					],
+					holders: [
+						[151, 'consequence'],
+						[152, 'consequence'],
+						[153, 'body'],
+						[156, 'body'],
+						[157, 'body'],
+						[158, 'body'],
+						[159, 'body'],
+						[160, 'body'],
+						[161, 'body'],
+						[162, 'body'],
+						[165, 'body'],
+						[174, 'body'],
+						[307, 'body'],
+						[352, 'body']
+					]
 				}
 			]
 		},
@@ -14254,45 +14562,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [151, 'consequence'],
-									kinds: [301]
-								},
-								{
-									at: [260, 'items'],
-									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
-									tokens: {
-										break: 149,
-										continue: 150,
-										pass: 148
-									},
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [139, 'content'],
-									kinds: [282, 283],
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										},
-										{
-											builder: 'printStatement',
-											key: 'content'
-										}
-									]
+									kinds: [299, 301]
 								},
 								{
 									at: [300, 'block'],
@@ -14600,45 +14870,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [157, 'body'],
-									kinds: [301]
-								},
-								{
-									at: [260, 'items'],
-									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
-									tokens: {
-										break: 149,
-										continue: 150,
-										pass: 148
-									},
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [139, 'content'],
-									kinds: [282, 283],
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										},
-										{
-											builder: 'printStatement',
-											key: 'content'
-										}
-									]
+									kinds: [299, 301]
 								},
 								{
 									at: [300, 'block'],
@@ -14740,45 +14972,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [158, 'body'],
-									kinds: [301]
-								},
-								{
-									at: [260, 'items'],
-									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
-									tokens: {
-										break: 149,
-										continue: 150,
-										pass: 148
-									},
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [139, 'content'],
-									kinds: [282, 283],
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										},
-										{
-											builder: 'printStatement',
-											key: 'content'
-										}
-									]
+									kinds: [299, 301]
 								},
 								{
 									at: [300, 'block'],
@@ -15144,45 +15338,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [162, 'body'],
-									kinds: [301]
-								},
-								{
-									at: [260, 'items'],
-									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
-									tokens: {
-										break: 149,
-										continue: 150,
-										pass: 148
-									},
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [139, 'content'],
-									kinds: [282, 283],
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										},
-										{
-											builder: 'printStatement',
-											key: 'content'
-										}
-									]
+									kinds: [299, 301]
 								},
 								{
 									at: [300, 'block'],
@@ -15350,45 +15506,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [159, 'body'],
-									kinds: [301]
-								},
-								{
-									at: [260, 'items'],
-									kinds: [131, 134, 135, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173],
-									tokens: {
-										break: 149,
-										continue: 150,
-										pass: 148
-									},
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [139, 'content'],
-									kinds: [282, 283],
-									within: [
-										{
-											builder: 'suiteInline',
-											key: 'elements'
-										},
-										{
-											builder: 'simpleStatementsElements',
-											key: 'items'
-										},
-										{
-											builder: 'printStatement',
-											key: 'content'
-										}
-									]
+									kinds: [299, 301]
 								},
 								{
 									at: [300, 'block'],
@@ -15635,6 +15753,75 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'type.nullable': {
+			root: true,
+			arms: [
+				{
+					kind: 228,
+					builder: 'genericType',
+					members: [
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'typeParameter',
+									builder: 'typeParameter'
+								},
+								{
+									key: 'types',
+									builder: 'types'
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [263, 'items'],
+									kinds: [226]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'typeParameter',
+									builder: 'typeParameter'
+								},
+								{
+									key: 'types',
+									builder: 'types'
+								},
+								{
+									key: 'items'
+								}
+							],
+							builder: 'type'
+						},
+						{
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							text: 'Optional',
+							builder: 'identifier'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['type']
+						}
+					]
+				}
+			]
+		},
 		'type.rest': {
 			root: true,
 			arms: [
@@ -15654,7 +15841,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [227, 'type'],
-									kinds: [1],
+									kinds: [1, 228],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -15864,5 +16051,96 @@ export const build: PortableBuildTable = {
 				reads: 120
 			}
 		}
-	}
+	},
+	features: [
+		'AccessorAnnotations',
+		'Accessors',
+		'Annotated',
+		'AnnotatedConstants',
+		'ArbitraryPrecisionIntegers',
+		'Arguments',
+		'Assertions',
+		'AsyncAwait',
+		'AsyncContexts',
+		'AsyncIteration',
+		'Asynchronous',
+		'BareTuples',
+		'BoundedQuantification',
+		'ByteStrings',
+		'CFamilyUnaryOperators',
+		'Classes',
+		'ComplexNumbers',
+		'Comprehensions',
+		'ConditionalExpressions',
+		'Constants',
+		'ConstrainedTypeParameters',
+		'Coroutines',
+		'Decorators',
+		'DefaultArguments',
+		'DefaultParameterForms',
+		'Destructuring',
+		'EllipsisLiteral',
+		'Encapsulation',
+		'Exceptions',
+		'ExecStatements',
+		'ExplicitOverrides',
+		'ExponentiationAndMembership',
+		'ForEachTargets',
+		'FormatStrings',
+		'FromImports',
+		'FunctionDecorators',
+		'Generators',
+		'Generic',
+		'GenericClasses',
+		'GenericConstructors',
+		'IdentityComparison',
+		'ImplicitConcatenation',
+		'ImportAliases',
+		'KeyValuePairs',
+		'LeadingPointFloats',
+		'LiteralFacets',
+		'MapLiterals',
+		'MappingPatterns',
+		'MatchExpressions',
+		'Methods',
+		'Modules',
+		'MultilineByteStrings',
+		'MultilineStrings',
+		'MultipleInheritance',
+		'NamedArguments',
+		'NullableTypes',
+		'ObjectOriented',
+		'OperatorOverloading',
+		'ParamSpecs',
+		'ParametricPolymorphism',
+		'PatternMatching',
+		'PrintStatements',
+		'PythonDeclarations',
+		'PythonDestructuring',
+		'PythonOperators',
+		'PythonStatements',
+		'PythonTypeForms',
+		'RawStringForms',
+		'RawStrings',
+		'ResourceManagement',
+		'ResourceStatements',
+		'RestPatterns',
+		'ScopeDeclarations',
+		'SetLiterals',
+		'SliceExpressions',
+		'SpecialMethods',
+		'Spreads',
+		'StringInterpolation',
+		'StructPatterns',
+		'TuplePatterns',
+		'Tuples',
+		'TypeAliases',
+		'TypeAnnotations',
+		'TypeExpressions',
+		'UnicodeStrings',
+		'UnionTypes',
+		'VariadicTypeParameters',
+		'WildcardImports',
+		'WildcardPatterns'
+	]
 };

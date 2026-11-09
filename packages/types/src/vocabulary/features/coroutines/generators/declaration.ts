@@ -1,12 +1,8 @@
-import type { GrammarContext } from '../../../context.ts';
-import type { Flag } from '../../../utils.ts';
+import type { GrammarMap } from '../../../map.ts';
+import type { Under } from '../../../utils.ts';
 export namespace Declaration {
-	export interface Function<G extends GrammarContext<G>> {
-		readonly generator?: Flag;
-		// t only
+	export interface Function<G extends GrammarMap, K extends Under<'declaration.function'> = 'declaration.function'> {
 	}
-	export interface Method<G extends GrammarContext<G>> {
-		readonly generator?: Flag;
-		// t only
+	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> {
 	}
 }

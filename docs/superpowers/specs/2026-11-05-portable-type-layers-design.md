@@ -89,9 +89,9 @@ These layers are hard to follow and to change. They also give the wrong answer a
    - unclaimed kinds as `V.Unmapped<'<grammar>:<kind>'>`;
    - raw-node arms where the reader returns the low-level node;
    - exact text literal unions;
-   - and on the input side, the grammar's input-only forms and requiredness.
+   - and on the input side, the grammar's input-only forms, such as bare text for a path it builds from text.
 
-   Where a path's build forms can't be expressed member by member (one of two members required, say), the path's input is overridden as a whole.
+   A path's build forms (which members a build states or leaves out, one of two members required, say, and which kinds a tested member holds) are a fact of the path. They're stated once, at the path, and both its read type and its input type take them, so a read value always fits its input.
 
 **Every override fits its default, checked at compile time against the vocabulary's own defaults.** A grammar map with an override wider than its default doesn't type-check. No check passes because a lookup fell through. An override narrows a member's type and never removes the member.
 
@@ -142,7 +142,7 @@ These layers are hard to follow and to change. They also give the wrong answer a
 - **The separately authored shared slot table.** Defaults live on the members.
 - **Roles as entries of a grammar context.**
 - **`Seated` and the unmapped table.** Unclaimed kinds sit in overrides.
-- **`gate.RequiredBy`.** Requiredness is part of the input overrides.
+- **`gate.RequiredBy`.** A path's forms are stated once at the path, and read and input both take them.
 - **The `OwnSlots` table and the `Fit` checks.** The override constraint replaces them.
 - **The phantom `V.Unmapped` shape.** It becomes the real low-level node type.
 
@@ -190,7 +190,7 @@ Workspace type-check is 25.9 s wall, and type tests are 2.8 s. The workspace typ
 - The runtime path set becomes per grammar, so language-feature paths read and build. This work doesn't have to convert today's unclaimed kinds; each stays Unmapped until a claim maps it.
 - A token reads as its text, never as a kind id, which applies the standing ruling to the reader.
 - Defaults admit `V.Unmapped`, so overrides that include unclaimed kinds fit them.
-- A path's input may be overridden as a whole where its build forms don't decompose per member.
+- A path's build forms are stated once at the path and narrow both its read and its input, where its builds don't decompose per member.
 - The census ratchet at 0 is the success measure for exactness.
 - The line between a vocabulary feature and a language feature: whether agnostic code would want the construct in a second language. When one does, the construct moves into the vocabulary.
 - A language feature can add members to vocabulary paths, as vocabulary features can.

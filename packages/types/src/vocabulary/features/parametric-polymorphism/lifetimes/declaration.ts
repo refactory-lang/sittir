@@ -1,20 +1,20 @@
-import type { GrammarContext } from '../../../context.ts';
-import type { SubKindOf } from '../../../utils.ts';
+import type { GrammarMap, Slot } from '../../../map.ts';
+import type { SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export namespace Parameter {
-		export interface Receiver<G extends GrammarContext<G>> {
-			readonly lifetime?: V.Identifier.Lifetime<G>;
+		export interface Receiver<G extends GrammarMap, K extends Under<'declaration.parameter.receiver'> = 'declaration.parameter.receiver'> {
+			readonly lifetime?: Slot<G, K, 'lifetime', V.Identifier.Lifetime<G>>;
 			// r only
 		}
 	}
 	export namespace TypeParameter {
-		export interface Lifetime<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.TypeParameter<G>> {
+		export interface Lifetime<G extends GrammarMap, K extends Under<'declaration.type_parameter.lifetime'> = 'declaration.type_parameter.lifetime'> extends SubKindOf<V.Declaration.TypeParameter<G, K>> {
 			// claimed by r
-			readonly $kind: 'declaration.type_parameter.lifetime';
+			readonly $path: K;
 			readonly const?: never;
 			readonly default?: never;
-			readonly name: V.Identifier.Lifetime<G>;
+			readonly name: Slot<G, K, 'name', V.Identifier.Lifetime<G>>;
 		}
 	}
 }

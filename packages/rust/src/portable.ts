@@ -260,6 +260,7 @@ export interface PortableIds {
 	'declaration.variable.public.parent': TSKindId.StaticItem;
 	'declaration.variable.public.restricted': TSKindId.StaticItem;
 	element:
+		| TSKindId.AttributedElement
 		| TSKindId.BaseFieldInitializer
 		| TSKindId.BlockKeyword
 		| TSKindId.DelimTokenTree
@@ -295,6 +296,7 @@ export interface PortableIds {
 		| TSKindId.TypeArgument
 		| TSKindId.TypeBinding
 		| TSKindId.VisKeyword;
+	'element.attributed': TSKindId.AttributedElement;
 	'element.macro':
 		| TSKindId.BlockKeyword
 		| TSKindId.DelimTokenTree
@@ -981,6 +983,7 @@ export interface PortableTexts {
 		| 'tt'
 		| 'ty'
 		| 'vis';
+	'element.attributed': never;
 	'element.macro':
 		| 'block'
 		| 'expr'
@@ -1674,11 +1677,13 @@ export interface PortableKindsAt {
 	'declaration.variable.public.restricted': { readonly $path: 'declaration.variable.public.restricted' };
 	element: {
 		readonly $path: 'element';
+		readonly attributed: PortableKindsAt['element.attributed'];
 		readonly macro: PortableKindsAt['element.macro'];
 		readonly struct: PortableKindsAt['element.struct'];
 		readonly type_argument: PortableKindsAt['element.type_argument'];
 		readonly type_binding: PortableKindsAt['element.type_binding'];
 	};
+	'element.attributed': { readonly $path: 'element.attributed' };
 	'element.macro': {
 		readonly $path: 'element.macro';
 		readonly fragment: PortableKindsAt['element.macro.fragment'];
@@ -3221,11 +3226,18 @@ export interface PortableIsAt {
 		PortableTexts['declaration.variable.public.restricted']
 	> & {};
 	element: PortableGuard<PortableIds['element'], RustNode, TSKindId, PortableTexts['element']> & {
+		readonly attributed: PortableIsAt['element.attributed'];
 		readonly macro: PortableIsAt['element.macro'];
 		readonly struct: PortableIsAt['element.struct'];
 		readonly type_argument: PortableIsAt['element.type_argument'];
 		readonly type_binding: PortableIsAt['element.type_binding'];
 	};
+	'element.attributed': PortableGuard<
+		PortableIds['element.attributed'],
+		RustNode,
+		TSKindId,
+		PortableTexts['element.attributed']
+	> & {};
 	'element.macro': PortableGuard<PortableIds['element.macro'], RustNode, TSKindId, PortableTexts['element.macro']> & {
 		readonly fragment: PortableIsAt['element.macro.fragment'];
 		readonly token_binding: PortableIsAt['element.macro.token_binding'];
@@ -4891,6 +4903,7 @@ const table: PortableTable = {
 		'declaration.variable.public.restricted': { ids: [TSKindId.StaticItem], exact: false },
 		element: {
 			ids: [
+				TSKindId.AttributedElement,
 				TSKindId.BaseFieldInitializer,
 				TSKindId.BlockKeyword,
 				TSKindId.DelimTokenTree,
@@ -4929,6 +4942,7 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
+		'element.attributed': { ids: [TSKindId.AttributedElement], exact: true },
 		'element.macro': {
 			ids: [
 				TSKindId.BlockKeyword,
@@ -5573,7 +5587,7 @@ const table: PortableTable = {
 			{
 				path: 'argument',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [190], slots: { '437': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [190], slots: { '431': 0 } } }]
 			}
 		],
 		[TSKindId.ArrayExpression]: [{ path: 'expression.collection.list', within: [], test: [] }],
@@ -5588,6 +5602,7 @@ const table: PortableTable = {
 		[TSKindId.AsyncBlock]: [{ path: 'expression.block.async', within: [], test: [] }],
 		[TSKindId.Attribute]: [{ path: 'attribute.content', within: [], test: [] }],
 		[TSKindId.AttributeItem]: [{ path: 'attribute', within: [], test: [] }],
+		[TSKindId.AttributedElement]: [{ path: 'element.attributed', within: [], test: [] }],
 		[TSKindId.AttributedOrderedField]: [
 			{
 				path: 'declaration.field.private',
@@ -7262,7 +7277,6 @@ const table: PortableTable = {
 			{ path: 'pattern.range', within: [], test: [] }
 		],
 		[TSKindId.RawStringLiteral]: [
-			{ path: 'literal.string.raw', within: [], test: [] },
 			{
 				path: 'literal.string.bytes.raw',
 				within: [],
@@ -7272,7 +7286,8 @@ const table: PortableTable = {
 				path: 'literal.string.c.raw',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^cr', slots: { '333': 0 } } }]
-			}
+			},
+			{ path: 'literal.string.raw', within: [], test: [] }
 		],
 		[TSKindId.RawStringLiteralContent]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.ReceiverParameterDeclaration]: [
@@ -7506,7 +7521,6 @@ const table: PortableTable = {
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '"', slots: { '332': 0 } } }]
 			},
-			{ path: 'literal.string', within: [], test: [] },
 			{
 				path: 'literal.string.bytes',
 				within: [],
@@ -7516,7 +7530,8 @@ const table: PortableTable = {
 				path: 'literal.string.c',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'c"', slots: { '332': 0 } } }]
-			}
+			},
+			{ path: 'literal.string', within: [], test: [] }
 		],
 		[TSKindId.StructExpression]: [{ path: 'expression.collection.struct', within: [], test: [] }],
 		[TSKindId.StructItem]: [{ path: 'declaration.struct', within: [], test: [] }],
@@ -8490,6 +8505,12 @@ export const queryFlags: QueryFlags = Object.freeze({
 		unsafe: { op: 'child', slots: { '208': 1 }, of: { op: 'eq', text: 'unsafe', slots: { '210': 0 } } },
 		default: { op: 'child', slots: { '208': 1 }, of: { op: 'eq', text: 'default', slots: { '210': 0 } } }
 	},
+	[TSKindId.FunctionSignatureItem]: {
+		async: { op: 'child', slots: { '209': 1 }, of: { op: 'eq', text: 'async', slots: { '210': 0 } } },
+		const: { op: 'child', slots: { '209': 1 }, of: { op: 'eq', text: 'const', slots: { '210': 0 } } },
+		unsafe: { op: 'child', slots: { '209': 1 }, of: { op: 'eq', text: 'unsafe', slots: { '210': 0 } } },
+		default: { op: 'child', slots: { '209': 1 }, of: { op: 'eq', text: 'default', slots: { '210': 0 } } }
+	},
 	[TSKindId.FunctionType]: {
 		unsafe: {
 			op: 'child',
@@ -8518,6 +8539,10 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ReferenceType]: { exclusive: { op: 'is', types: [57], slots: { '252': 1 } } },
 	[TSKindId.SelfParameter]: { mutable: { op: 'is', types: [57], slots: { '231': 2 } } },
 	[TSKindId.SignatureMethodDeclaration]: {
+		async: { op: 'child', slots: { '483': 1 }, of: { op: 'eq', text: 'async', slots: { '210': 0 } } },
+		const: { op: 'child', slots: { '483': 1 }, of: { op: 'eq', text: 'const', slots: { '210': 0 } } },
+		unsafe: { op: 'child', slots: { '483': 1 }, of: { op: 'eq', text: 'unsafe', slots: { '210': 0 } } },
+		default: { op: 'child', slots: { '483': 1 }, of: { op: 'eq', text: 'default', slots: { '210': 0 } } },
 		static: { op: 'child', slots: { '483': 4 }, of: { op: 'not', of: { op: 'is', types: [441], slots: { '230': 0 } } } }
 	},
 	[TSKindId.StaticItem]: {
@@ -8540,13 +8565,13 @@ export const rows: PortableRows = Object.freeze({ table, querySlots, flags: quer
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	176: {
 		statements: {
-			async: { types: [], kinds: [208] },
+			async: { types: [], kinds: [208, 209] },
 			byReference: { types: [], kinds: [206] },
-			const: { types: [], kinds: [208] },
-			default: { types: [], kinds: [208] },
+			const: { types: [], kinds: [208, 209] },
+			default: { types: [], kinds: [208, 209] },
 			mutable: { types: [], kinds: [206, 223] },
 			static: { types: [206], kinds: [] },
-			unsafe: { types: [], kinds: [208, 214, 377, 378, 395, 396] }
+			unsafe: { types: [], kinds: [208, 209, 214, 377, 378, 395, 396] }
 		}
 	},
 	179: { content: { move: { types: [], kinds: [310, 311] } } },
@@ -8558,13 +8583,13 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	},
 	195: {
 		declarations: {
-			async: { types: [], kinds: [208] },
+			async: { types: [], kinds: [208, 209] },
 			byReference: { types: [], kinds: [206] },
-			const: { types: [], kinds: [208] },
-			default: { types: [], kinds: [208] },
+			const: { types: [], kinds: [208, 209] },
+			default: { types: [], kinds: [208, 209] },
 			mutable: { types: [], kinds: [206, 223] },
 			static: { types: [206], kinds: [] },
-			unsafe: { types: [], kinds: [208, 214, 377, 378, 395, 396] }
+			unsafe: { types: [], kinds: [208, 209, 214, 377, 378, 395, 396] }
 		}
 	},
 	200: {
@@ -9120,13 +9145,13 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	},
 	313: {
 		statements: {
-			async: { types: [], kinds: [208] },
+			async: { types: [], kinds: [208, 209] },
 			byReference: { types: [], kinds: [206] },
-			const: { types: [], kinds: [208] },
-			default: { types: [], kinds: [208] },
+			const: { types: [], kinds: [208, 209] },
+			default: { types: [], kinds: [208, 209] },
 			mutable: { types: [], kinds: [206, 223] },
 			static: { types: [206], kinds: [] },
-			unsafe: { types: [], kinds: [208, 214, 377, 378, 395, 396] }
+			unsafe: { types: [], kinds: [208, 209, 214, 377, 378, 395, 396] }
 		},
 		trailingExpression: {
 			async: { types: [], kinds: [369, 370] },
@@ -9150,18 +9175,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			writable: { types: [389], kinds: [] }
 		}
 	},
-	355: {
-		items: {
-			async: { types: [], kinds: [369, 370] },
-			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
-			exclusive: { types: [373], kinds: [] },
-			move: { types: [], kinds: [310, 311, 369, 370] },
-			raw: { types: [371, 372], kinds: [] },
-			static: { types: [], kinds: [369, 370] },
-			writable: { types: [372], kinds: [] }
-		}
-	},
-	357: {
+	356: {
 		items: {
 			async: { types: [], kinds: [369, 370] },
 			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
@@ -9170,10 +9184,10 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			static: { types: [], kinds: [369, 370] }
 		}
 	},
-	358: { items: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } } },
-	359: { items: { byReference: { types: [], kinds: [414, 415] }, mutable: { types: [], kinds: [414, 415] } } },
-	366: {
-		element: {
+	357: { items: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } } },
+	358: { items: { byReference: { types: [], kinds: [414, 415] }, mutable: { types: [], kinds: [414, 415] } } },
+	363: {
+		expression: {
 			async: { types: [], kinds: [369, 370] },
 			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
 			exclusive: { types: [373], kinds: [] },
@@ -9181,8 +9195,21 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			raw: { types: [371, 372], kinds: [] },
 			static: { types: [], kinds: [369, 370] },
 			writable: { types: [372], kinds: [] }
-		},
-		length: {
+		}
+	},
+	364: {
+		items: {
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
+		}
+	},
+	365: {
+		items: {
 			async: { types: [], kinds: [369, 370] },
 			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
 			exclusive: { types: [373], kinds: [] },
@@ -9410,29 +9437,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		}
 	},
 	435: {
-		declarations: {
-			async: { types: [], kinds: [480] },
-			byReference: { types: [], kinds: [206] },
-			const: { types: [], kinds: [480] },
-			default: { types: [], kinds: [480] },
-			mutable: { types: [], kinds: [206, 223] },
-			static: { types: [206], kinds: [480, 483] },
-			unsafe: { types: [], kinds: [214, 377, 378, 395, 396, 480] }
-		}
-	},
-	436: {
-		declarations: {
-			async: { types: [], kinds: [480] },
-			byReference: { types: [], kinds: [206] },
-			const: { types: [], kinds: [480] },
-			default: { types: [], kinds: [480] },
-			mutable: { types: [], kinds: [206, 223] },
-			static: { types: [206], kinds: [480] },
-			unsafe: { types: [], kinds: [214, 377, 378, 395, 396, 480] }
-		}
-	},
-	437: {
-		expression: {
+		element: {
 			async: { types: [], kinds: [369, 370] },
 			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
 			exclusive: { types: [373], kinds: [] },
@@ -9440,6 +9445,37 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			raw: { types: [371, 372], kinds: [] },
 			static: { types: [], kinds: [369, 370] },
 			writable: { types: [372], kinds: [] }
+		},
+		length: {
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
+		}
+	},
+	437: {
+		declarations: {
+			async: { types: [], kinds: [480, 483] },
+			byReference: { types: [], kinds: [206] },
+			const: { types: [], kinds: [480, 483] },
+			default: { types: [], kinds: [480, 483] },
+			mutable: { types: [], kinds: [206, 223] },
+			static: { types: [206], kinds: [480, 483] },
+			unsafe: { types: [], kinds: [214, 377, 378, 395, 396, 480, 483] }
+		}
+	},
+	438: {
+		declarations: {
+			async: { types: [], kinds: [209, 480] },
+			byReference: { types: [], kinds: [206] },
+			const: { types: [], kinds: [209, 480] },
+			default: { types: [], kinds: [209, 480] },
+			mutable: { types: [], kinds: [206, 223] },
+			static: { types: [206], kinds: [480] },
+			unsafe: { types: [], kinds: [209, 214, 377, 378, 395, 396, 480] }
 		}
 	},
 	439: {
@@ -9511,6 +9547,9 @@ declare module './types.js' {
 	interface FunctionItem {
 		readonly __flags__?: 'async' | 'const' | 'unsafe' | 'default';
 	}
+	interface FunctionSignatureItem {
+		readonly __flags__?: 'async' | 'const' | 'unsafe' | 'default';
+	}
 	interface FunctionType {
 		readonly __flags__?: 'unsafe';
 	}
@@ -9557,7 +9596,7 @@ declare module './types.js' {
 		readonly __flags__?: 'mutable';
 	}
 	interface SignatureMethodDeclaration {
-		readonly __flags__?: 'static';
+		readonly __flags__?: 'async' | 'const' | 'unsafe' | 'default' | 'static';
 	}
 	interface StaticItem {
 		readonly __flags__?: 'mutable' | 'byReference' | 'static';
@@ -9837,11 +9876,6 @@ declare module './types.js' {
 	interface Types {
 		readonly __slotFlags__?: { readonly items: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
-	interface Expressions {
-		readonly __slotFlags__?: {
-			readonly items: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
-		};
-	}
 	interface TuplePatternElements {
 		readonly __slotFlags__?: { readonly items: 'async' | 'byte' | 'exclusive' | 'move' | 'static' };
 	}
@@ -9851,10 +9885,19 @@ declare module './types.js' {
 	interface StructPatternElements {
 		readonly __slotFlags__?: { readonly items: 'byReference' | 'mutable' };
 	}
-	interface ArrayExpressionSemi {
+	interface AttributedElement {
 		readonly __slotFlags__?: {
-			readonly element: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
-			readonly length: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+			readonly expression: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
+	}
+	interface ArrayExpressionListElements {
+		readonly __slotFlags__?: {
+			readonly items: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
+	}
+	interface TupleExpressionElements {
+		readonly __slotFlags__?: {
+			readonly items: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface AttributeInput {
@@ -9946,7 +9989,7 @@ declare module './types.js' {
 	interface AttributedParameter {
 		readonly __slotFlags__?: { readonly content: 'exclusive' | 'mutable' | 'unsafe' | 'unsigned' | 'writable' };
 	}
-	interface AttributedArgument {
+	interface Argument {
 		readonly __slotFlags__?: {
 			readonly expression: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
@@ -9957,6 +10000,12 @@ declare module './types.js' {
 	interface TypeArgument {
 		readonly __slotFlags__?: { readonly content: 'byte' | 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
+	interface ArrayExpressionSemi {
+		readonly __slotFlags__?: {
+			readonly element: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+			readonly length: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
+	}
 	interface TraitInterfaceDeclarationBody {
 		readonly __slotFlags__?: {
 			readonly declarations: 'async' | 'byReference' | 'const' | 'default' | 'mutable' | 'static' | 'unsafe';
@@ -9965,11 +10014,6 @@ declare module './types.js' {
 	interface ExtensionDeclarationBody {
 		readonly __slotFlags__?: {
 			readonly declarations: 'async' | 'byReference' | 'const' | 'default' | 'mutable' | 'static' | 'unsafe';
-		};
-	}
-	interface Argument {
-		readonly __slotFlags__?: {
-			readonly expression: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface ReceiverParameterDeclaration {

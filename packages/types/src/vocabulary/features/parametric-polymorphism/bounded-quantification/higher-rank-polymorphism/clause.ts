@@ -1,18 +1,29 @@
-import type { GrammarContext } from '../../../../context.ts';
-import type { SubKindOf } from '../../../../utils.ts';
+import type { GrammarMap, Slot } from '../../../../map.ts';
+import type { SubKindOf, Under } from '../../../../utils.ts';
 import type * as V from '../../../../index.ts';
 export namespace Clause {
 	export namespace Bounds {
-		export interface HigherRanked<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Bounds<G>> {
+		export interface HigherRanked<G extends GrammarMap, K extends Under<'clause.bounds.higher_ranked'> = 'clause.bounds.higher_ranked'> extends SubKindOf<V.Clause.Bounds<G, K>> {
 			// claimed by r
-			readonly $kind: 'clause.bounds.higher_ranked';
-			readonly type: G['slots']['clause.bounds.higher_ranked']['type'];
-			readonly typeParameters: (
+			readonly $path: K;
+			readonly type: Slot<
+				G,
+				K,
+				'type',
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| V.Identifier.Any<G>
+				| V.Type.Any<G>
+			>;
+			readonly typeParameters: Slot<
+				G,
+				K,
+				'typeParameters',
 				| V.Identifier.Metavariable<G>
 				| V.Declaration.TypeParameter<G>
 				| V.Declaration.TypeParameter.Lifetime<G>
 				| V.Declaration.TypeParameter.Value<G>
-			)[];
+			>[];
 		}
 	}
 }

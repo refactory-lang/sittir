@@ -12,7 +12,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "elements"
+			"name": "statements"
 		},
 		{
 			"kind": "tokenSeam",
@@ -378,7 +378,7 @@
 	"block": [
 		{
 			"kind": "seam",
-			"field": "block_before"
+			"field": "block_statement_before"
 		},
 		{
 			"kind": "slot",
@@ -392,7 +392,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "block_after"
+			"field": "block_statement_after"
 		}
 	],
 	"block_class_declaration": [
@@ -4299,11 +4299,11 @@
 	"suite_inline": [
 		{
 			"kind": "seam",
-			"field": "suite_inline_before"
+			"field": "block_statement_before"
 		},
 		{
 			"kind": "slot",
-			"name": "elements"
+			"name": "statements"
 		},
 		{
 			"kind": "tokenSeam",
@@ -4311,7 +4311,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "suite_inline_after"
+			"field": "block_statement_after"
 		}
 	],
 	"try_statement": [

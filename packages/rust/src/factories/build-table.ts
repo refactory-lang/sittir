@@ -365,7 +365,6 @@ export interface Routes<Table extends AnyTable> {
 	readonly typeArguments: Table['typeArguments$seated'];
 	readonly argumentsElements: Table['argumentsElements$seated'];
 	readonly arguments_: Table['arguments_$seated'];
-	readonly tupleExpression: Table['tupleExpression$seated'];
 	readonly lastMatchArm: Table['lastMatchArm$seated'];
 	readonly tupleStructPattern: Table['tupleStructPattern$seated'];
 	readonly structPattern: Table['structPattern$seated'];
@@ -400,8 +399,6 @@ export interface Routes<Table extends AnyTable> {
 		readonly regular: Routes<Table>['blockComment$regular'];
 	};
 	readonly parametersElements: Table['parametersElements$seated'];
-	readonly arrayExpressionListElements: Table['arrayExpressionListElements$seated'];
-	readonly arrayExpressionList: Table['arrayExpressionList$seated'];
 	readonly implItemBody$positiveClause: <
 		const V extends OmitEach<ArgsOf<Table['buildImplItemBody']>[0], 'traitClause'> & {
 			traitClause: ArgsOf<Table['buildImplItemPositiveClause']>[0];
@@ -623,9 +620,9 @@ export interface Routes<Table extends AnyTable> {
 		readonly mut: Table['buildReferenceExpressionMut'];
 		readonly bare: Table['buildReferenceExpressionBare'];
 	};
-	readonly arrayExpression: Routes<Table>['arrayExpressionList'] & {
+	readonly arrayExpression: Table['buildArrayExpressionList'] & {
 		readonly semi: Table['buildArrayExpressionSemi'];
-		readonly list: Routes<Table>['arrayExpressionList'];
+		readonly list: Table['buildArrayExpressionList'];
 	};
 	readonly matchArm: {
 		readonly withComma: Routes<Table>['matchArmWithComma'];
@@ -856,7 +853,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly callExpression: Table['buildCallExpression'];
 	readonly arguments: Routes<Table>['arguments_'];
 	readonly parenthesizedExpression: Table['buildParenthesizedExpression'];
-	readonly tupleExpression: Routes<Table>['tupleExpression'];
+	readonly tupleExpression: Table['buildTupleExpression'];
 	readonly structExpression: Table['buildStructExpression'];
 	readonly fieldInitializerList: Table['buildFieldInitializerList'];
 	readonly shorthandFieldInitializer: Table['buildShorthandFieldInitializer'];
@@ -913,11 +910,13 @@ export interface Ir<Table extends AnyTable> {
 	readonly useBoundsElements: Table['buildUseBoundsElements'];
 	readonly typeArgumentsElements: Routes<Table>['typeArgumentsElements'];
 	readonly argumentsElements: Routes<Table>['argumentsElements'];
-	readonly expressions: Table['buildExpressions'];
 	readonly fieldInitializerListElements: Table['buildFieldInitializerListElements'];
 	readonly tuplePatternElements: Table['buildTuplePatternElements'];
 	readonly patterns: Table['buildPatterns'];
 	readonly structPatternElements: Table['buildStructPatternElements'];
+	readonly attributedElement: Table['buildAttributedElement'];
+	readonly arrayExpressionListElements: Table['buildArrayExpressionListElements'];
+	readonly tupleExpressionElements: Table['buildTupleExpressionElements'];
 	readonly integerLiteralDecimal: Table['buildIntegerLiteralDecimal'];
 	readonly integerLiteralHex: Table['buildIntegerLiteralHex'];
 	readonly integerLiteralBinary: Table['buildIntegerLiteralBinary'];
@@ -927,8 +926,6 @@ export interface Ir<Table extends AnyTable> {
 	readonly charLiteralEscapedUnicodeFixed: Table['buildCharLiteralEscapedUnicodeFixed'];
 	readonly charLiteralEscapedUnicodeBraced: Table['buildCharLiteralEscapedUnicodeBraced'];
 	readonly charLiteralEscapedHex: Table['buildCharLiteralEscapedHex'];
-	readonly arrayExpressionSemi: Table['buildArrayExpressionSemi'];
-	readonly arrayExpressionList: Routes<Table>['arrayExpressionList'];
 	readonly closureExpressionBlock: Table['buildClosureExpressionBlock'];
 	readonly closureExpressionExpr: Table['buildClosureExpressionExpr'];
 	readonly referenceExpressionRawConst: Table['buildReferenceExpressionRawConst'];
@@ -970,9 +967,10 @@ export interface Ir<Table extends AnyTable> {
 	readonly structItemBrace: Table['buildStructItemBrace'];
 	readonly structItemTuple: Table['buildStructItemTuple'];
 	readonly structItemUnit: Table['buildStructItemUnit'];
+	readonly arrayExpressionSemi: Table['buildArrayExpressionSemi'];
+	readonly arrayExpressionList: Table['buildArrayExpressionList'];
 	readonly traitInterfaceDeclarationBody: Table['buildTraitInterfaceDeclarationBody'];
 	readonly extensionDeclarationBody: Table['buildExtensionDeclarationBody'];
-	readonly arrayExpressionListElements: Routes<Table>['arrayExpressionListElements'];
 	readonly receiverParameterDeclaration: Table['buildReceiverParameterDeclaration'];
 	readonly parametersElementsReceiver: Routes<Table>['parametersElementsReceiver'];
 	readonly methodDeclaration: Table['buildMethodDeclaration'];
@@ -1093,7 +1091,7 @@ export interface Ir<Table extends AnyTable> {
 		readonly await: Table['buildAwaitExpression'];
 		readonly field: Table['buildFieldExpression'];
 		readonly array: Routes<Table>['arrayExpression'];
-		readonly tuple: Routes<Table>['tupleExpression'];
+		readonly tuple: Table['buildTupleExpression'];
 		readonly macroInvocation: Table['buildMacroInvocation'];
 		readonly unit: typeof F.buildUnitExpression;
 		readonly break: Table['buildBreakExpression'];
@@ -1448,7 +1446,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	const typeArguments: Routes<Table>['typeArguments'] = $at('typeArguments$seated');
 	const argumentsElements: Routes<Table>['argumentsElements'] = $at('argumentsElements$seated');
 	const arguments_: Routes<Table>['arguments_'] = $at('arguments_$seated');
-	const tupleExpression: Routes<Table>['tupleExpression'] = $at('tupleExpression$seated');
 	const lastMatchArm: Routes<Table>['lastMatchArm'] = $at('lastMatchArm$seated');
 	const tupleStructPattern: Routes<Table>['tupleStructPattern'] = $at('tupleStructPattern$seated');
 	const structPattern: Routes<Table>['structPattern'] = $at('structPattern$seated');
@@ -1496,10 +1493,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const)
 	);
 	const parametersElements: Routes<Table>['parametersElements'] = $at('parametersElements$seated');
-	const arrayExpressionListElements: Routes<Table>['arrayExpressionListElements'] = $at(
-		'arrayExpressionListElements$seated'
-	);
-	const arrayExpressionList: Routes<Table>['arrayExpressionList'] = $at('arrayExpressionList$seated');
 	const implItemBody$positiveClause: Routes<Table>['implItemBody$positiveClause'] = K.implItemBody$positiveClause(
 		$at('buildImplItemBody'),
 		$at('buildImplItemPositiveClause')
@@ -1647,9 +1640,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		bare: $at('buildReferenceExpressionBare')
 	} as const);
 	const arrayExpression: Routes<Table>['arrayExpression'] = Object.freeze(
-		Object.assign(delegate(arrayExpressionList), {
+		Object.assign(delegate($at('buildArrayExpressionList')), {
 			semi: $at('buildArrayExpressionSemi'),
-			list: arrayExpressionList
+			list: $at('buildArrayExpressionList')
 		} as const)
 	);
 	const matchArm: Routes<Table>['matchArm'] = Object.freeze({
@@ -1899,7 +1892,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		callExpression: $at('buildCallExpression'),
 		arguments: arguments_,
 		parenthesizedExpression: $at('buildParenthesizedExpression'),
-		tupleExpression: tupleExpression,
+		tupleExpression: $at('buildTupleExpression'),
 		structExpression: $at('buildStructExpression'),
 		fieldInitializerList: $at('buildFieldInitializerList'),
 		shorthandFieldInitializer: $at('buildShorthandFieldInitializer'),
@@ -1956,11 +1949,13 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		useBoundsElements: $at('buildUseBoundsElements'),
 		typeArgumentsElements: typeArgumentsElements,
 		argumentsElements: argumentsElements,
-		expressions: $at('buildExpressions'),
 		fieldInitializerListElements: $at('buildFieldInitializerListElements'),
 		tuplePatternElements: $at('buildTuplePatternElements'),
 		patterns: $at('buildPatterns'),
 		structPatternElements: $at('buildStructPatternElements'),
+		attributedElement: $at('buildAttributedElement'),
+		arrayExpressionListElements: $at('buildArrayExpressionListElements'),
+		tupleExpressionElements: $at('buildTupleExpressionElements'),
 		integerLiteralDecimal: $at('buildIntegerLiteralDecimal'),
 		integerLiteralHex: $at('buildIntegerLiteralHex'),
 		integerLiteralBinary: $at('buildIntegerLiteralBinary'),
@@ -1970,8 +1965,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		charLiteralEscapedUnicodeFixed: $at('buildCharLiteralEscapedUnicodeFixed'),
 		charLiteralEscapedUnicodeBraced: $at('buildCharLiteralEscapedUnicodeBraced'),
 		charLiteralEscapedHex: $at('buildCharLiteralEscapedHex'),
-		arrayExpressionSemi: $at('buildArrayExpressionSemi'),
-		arrayExpressionList: arrayExpressionList,
 		closureExpressionBlock: $at('buildClosureExpressionBlock'),
 		closureExpressionExpr: $at('buildClosureExpressionExpr'),
 		referenceExpressionRawConst: $at('buildReferenceExpressionRawConst'),
@@ -2013,9 +2006,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		structItemBrace: $at('buildStructItemBrace'),
 		structItemTuple: $at('buildStructItemTuple'),
 		structItemUnit: $at('buildStructItemUnit'),
+		arrayExpressionSemi: $at('buildArrayExpressionSemi'),
+		arrayExpressionList: $at('buildArrayExpressionList'),
 		traitInterfaceDeclarationBody: $at('buildTraitInterfaceDeclarationBody'),
 		extensionDeclarationBody: $at('buildExtensionDeclarationBody'),
-		arrayExpressionListElements: arrayExpressionListElements,
 		receiverParameterDeclaration: $at('buildReceiverParameterDeclaration'),
 		parametersElementsReceiver: parametersElementsReceiver,
 		methodDeclaration: $at('buildMethodDeclaration'),
@@ -2136,7 +2130,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			await: $at('buildAwaitExpression'),
 			field: $at('buildFieldExpression'),
 			array: arrayExpression,
-			tuple: tupleExpression,
+			tuple: $at('buildTupleExpression'),
 			macroInvocation: $at('buildMacroInvocation'),
 			unit: F.buildUnitExpression,
 			break: $at('buildBreakExpression'),

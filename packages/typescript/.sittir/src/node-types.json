@@ -8433,19 +8433,7 @@
         "required": true,
         "types": [
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "import",
-            "named": true
-          },
-          {
-            "type": "type_query_member_expression",
-            "named": true
-          },
-          {
-            "type": "type_query_subscript_expression",
             "named": true
           }
         ]

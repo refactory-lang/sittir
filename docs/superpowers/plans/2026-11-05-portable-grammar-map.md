@@ -160,21 +160,21 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 - Produces (emitter): `emitGrammarMap(input: PortableTypedInput, exact: ExactSlots): string`. It writes `export interface <Grammar>Map extends GrammarMap`, with an override entry only where the exact set differs from the member's default, and ends with `type _fits = Assert<Fits<<Grammar>Map>>`.
 - Each member's default is the broad type written on it today through `G['slots']` or a role. For example, `function: Slot<G, 'expression.call', 'function', V.Expression<G>>`.
 
-- [ ] **Step 1: The failing type tests** in `grammar-map.test-d.ts`:
+- [x] **Step 1: The failing type tests** in `grammar-map.test-d.ts`:
   - a fixture map overriding `expression.call.function` with one expression path makes `V.Call<Fixture>['function']` exactly that path;
   - with no override, the member equals its default;
   - `// @ts-expect-error` on `Assert<Fits<Wider>>`, where `Wider` overrides with a kind outside the expression namespace;
   - `// @ts-expect-error` on an override keyed by a member the path doesn't declare.
-- [ ] **Step 2: Run** `pnpm run type-check:tests`. It fails: `Slot` and `Fits` don't exist.
-- [ ] **Step 3: Implement `map.ts`.** Rewrite each member's `G['slots'][…]` and sole-role type as `Slot<…, default>`, with the default taken from today's slot-table entry or role. Then delete `GrammarContext.slots` from `context.ts`.
-- [ ] **Step 4: Implement `emitGrammarMap` and regenerate** all three grammars. Unclaimed kinds go in as `V.Unmapped<'<grammar>:<kind>'>`, raw reads as raw-node arms, and texts as literal unions.
-- [ ] **Step 5: Run everything:**
+- [x] **Step 2: Run** `pnpm run type-check:tests`. It fails: `Slot` and `Fits` don't exist.
+- [x] **Step 3: Implement `map.ts`.** Rewrite each member's `G['slots'][…]` and sole-role type as `Slot<…, default>`, with the default taken from today's slot-table entry or role. Then delete `GrammarContext.slots` from `context.ts`.
+- [x] **Step 4: Implement `emitGrammarMap` and regenerate** all three grammars. Unclaimed kinds go in as `V.Unmapped<'<grammar>:<kind>'>`, raw reads as raw-node arms, and texts as literal unions.
+- [x] **Step 5: Run everything:**
   - `pnpm run type-check:tests`;
   - the typed modules, with the conformance diagnostics compared to base;
   - the census, which must now read 0 over-admitting members in all three grammars;
   - the workspace type-check.
-- [ ] **Step 6: Re-point the typed module** (`typed.ts`) at `<Grammar>Map`. Remove `OwnSlots`, `Fit`, `Seated`, the unmapped table and roles as `Ctx` entries. The per-claim reader mirrors stay, now checked against the map's instantiation.
-- [ ] **Step 7: Three-way verification, then commit** (`feat(types): members carry defaults; grammars override through a generated map`). Report the type-check times.
+- [x] **Step 6: Re-point the typed module** (`typed.ts`) at `<Grammar>Map`. Remove `OwnSlots`, `Fit`, `Seated`, the unmapped table and roles as `Ctx` entries. The per-claim reader mirrors stay, now checked against the map's instantiation.
+- [x] **Step 7: Three-way verification, then commit** (`feat(types): members carry defaults; grammars override through a generated map`). Report the type-check times.
 
 ### Task 4: Input interfaces derived from read; requiredness in input overrides
 
@@ -189,18 +189,18 @@ The admission census (`tool portable-admission`) owns both counts. It already re
   - bare `string` where the default is a leaf path built from text;
   - scalars where the default is a scalar.
 - Also produces `type ReadOf<G extends GrammarMap>`: the union of every path's read interface under `G`, discriminated by its `$path` literal. Task 6 types `read` with it.
-- Requiredness and the grammar's input-only forms come from `G['inputs'][P]`. Where a path's build forms don't decompose per member, `G['inputs'][P]` is the whole path's input, a union of forms.
+- A path's build forms are stated once, at `G['overrides'][P]['$forms']`, and read and input both take them by lookup (`V.Read<G, P>`, `InputOf`). `G['inputs'][P]` holds only input-only forms: bare text for a text-built path.
 - Consumes: Task 3's `Slot` and `GrammarMap`.
 
-- [ ] **Step 1: The failing tests:**
+- [x] **Step 1: The failing tests:**
   - for python `declaration.constant`, `{ name }` alone is a type error, and each of the value, type and both forms type-checks (today's three `RequiredBy` forms);
   - a text-built leaf member accepts `'x'`;
   - a token member accepts its text, and a kind id is a type error;
   - every read value of a path is assignable to its input.
-- [ ] **Step 2: Run** `pnpm run type-check:tests`. It fails.
-- [ ] **Step 3: Implement.** Implement `InputOf`, emit `inputs` from the build table's arm tests and `builder: 'text'` arms, and delete `gate.RequiredBy`.
-- [ ] **Step 4: Run** the type tests, the build-forms test-d files and the conformance lane.
-- [ ] **Step 5: Commit** (`feat(types): input interfaces derive from read; requiredness moves into input overrides`).
+- [x] **Step 2: Run** `pnpm run type-check:tests`. It fails.
+- [x] **Step 3: Implement.** Implement `InputOf`, emit `$forms` from the build table's arm tests and `inputs` from `builder: 'text'` arms, and delete `gate.RequiredBy`.
+- [x] **Step 4: Run** the type tests, the build-forms test-d files and the conformance lane.
+- [x] **Step 5: Commit** (`feat(types): input interfaces derive from read; requiredness moves into input overrides`).
 
 ### Task 5: Path gating by feature, sub-feature moves and the claims guard
 
@@ -215,15 +215,15 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 - Produces: `type Missing<F extends string>`, a branded type whose display names the absent feature. A path or member from a feature not in `G['features']` resolves to it.
 - Produces: `featureGuard(grammar): GuardRow[]`, where `GuardRow = { feature: string; path: string; member?: string; side: 'claimed-not-composed' | 'composed-not-claimed' }`. Its ceiling is 0, and features with no paths or members count as held.
 
-- [ ] **Step 1: The failing tests:**
+- [x] **Step 1: The failing tests:**
   - naming a Structs path under python's map is an error displaying `Missing<'Structs'>`, and the same structure built at runtime refuses naming Structs;
   - `featureGuard('python')` is empty after the moves;
   - a fixture grammar that claims a member of a feature it doesn't compose gets one row.
-- [ ] **Step 2: Run it.** It fails.
-- [ ] **Step 3: Gate paths in the merge generator** through `G['features']`.
-- [ ] **Step 4: Move content** into the approved sub-features. Reorder Structs over struct patterns, and update `compositions.ts`.
-- [ ] **Step 5: Write Python's convention claims** per the approved mapping, as `#match?` claims. A probe for each: read, then build, then render.
-- [ ] **Step 6: Three-way verification** across all grammars, plus the guard at 0, then commit.
+- [x] **Step 2: Run it.** It fails.
+- [x] **Step 3: Gate paths in the merge generator** through `G['features']`.
+- [x] **Step 4: Move content** into the approved sub-features. Reorder Structs over struct patterns, and update `compositions.ts`.
+- [x] **Step 5: Write Python's convention claims** per the approved mapping, as `#match?` claims. A probe for each: read, then build, then render.
+- [x] **Step 6: Three-way verification** across all grammars, plus the guard at 0, then commit.
 
 ### Task 6: The typed engine surface, honest raw reads and tokens as text
 
@@ -239,6 +239,7 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 - `API['portable']` gains `map: <Grammar>Map`.
 - Raw-node arms are the grammar's exact low-level parsed node type, and opaque under a contract.
 - Under single-grammar types, a value read from one engine isn't assignable to another grammar's input.
+- Honest reads owed here: typescript `identifier.qualified`'s exact members, which the census saw for the first time and which raised its raw ceilings (per kind 137 → 141, per value 5310 → 5312). They're `name` (`property_identifier` and `type_identifier`, text and unread) and `qualifier` (`type_query_call_expression` and its `_in_type_annotation`, preset and unread; `type_query_member_expression`, opaque and preset; and its `_in_type_annotation`, opaque). The ceilings go back to base before the PR.
 
 - [ ] **Step 1: The failing tests:**
   - **type test:** `read` of a python `function_definition` node has `$path: 'declaration.function'`;
@@ -260,8 +261,10 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 **Interfaces:**
 - Produces: `PortableEngine<C>`, the portable surface over `Contract<C>`. A grammar engine is assignable to `PortableEngine<C>` exactly when its features include `C`.
 - Outside the composition, a value reads as its nearest ancestor inside it (the `SubKindOf` rule), else as its namespace's opaque member.
+- The level unions (`V.X.Any`) gate here, where `C` is concrete: the generic vocabulary can't gate them, since a plain kind doesn't relate to a deferred feature conditional and parent and child interfaces stop fitting. A contract never reads content outside its composition as a lacked kind.
 
 - [ ] **Step 1: The failing tests:**
+  - under `Contract<PythonFeatures>`, `Declaration.Any` doesn't admit `Struct`, and a struct read from a grammar that has Structs reads as its nearest ancestor in the composition or as the namespace's opaque member;
   - the python engine is assignable to `PortableEngine` (the core);
   - the rust engine isn't assignable to a package containing a feature rust lacks;
   - under `PortableEngine<C>`, a python-only subkind reads as its nearest ancestor in `C`;

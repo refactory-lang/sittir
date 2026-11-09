@@ -1,20 +1,27 @@
-import type { GrammarContext } from '../../../context.ts';
-import type { Flag, SubKindOf } from '../../../utils.ts';
+import type { GrammarMap, Slot } from '../../../map.ts';
+import type { Flag, SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
-	export interface Ambient<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
+	export interface Ambient<G extends GrammarMap, K extends Under<'declaration.ambient'> = 'declaration.ambient'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by t
-		readonly $kind: 'declaration.ambient';
-		readonly content: G['slots']['declaration.ambient']['content'];
+		readonly $path: K;
+		readonly content: Slot<
+			G,
+			K,
+			'content',
+			| V.Declaration.Any<G>
+			| V.Statement.Block<G>
+			| V.Statement.Any<G>
+		>;
 	}
-	export interface Field<G extends GrammarContext<G>> {
+	export interface Field<G extends GrammarMap, K extends Under<'declaration.field'> = 'declaration.field'> {
 		readonly declare?: Flag;
 		// t only
 	}
-	export interface ModuleProperty<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
+	export interface ModuleProperty<G extends GrammarMap, K extends Under<'declaration.module_property'> = 'declaration.module_property'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by t
-		readonly $kind: 'declaration.module_property';
-		readonly name: V.Identifier<G>;
-		readonly type: G['slots']['declaration.module_property']['type'];
+		readonly $path: K;
+		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
+		readonly type: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 	}
 }

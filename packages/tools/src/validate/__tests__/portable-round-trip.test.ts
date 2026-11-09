@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { runPortableRoundTrip } from '../portable-round-trip.ts';
 
 const CARRIED_CEILING = {
-	python: 8,
-	rust: 11,
+	python: 7,
+	rust: 10,
 	typescript: 8
 };
 
@@ -11,12 +11,10 @@ const CARRIED_PAIRS: Record<keyof typeof CARRIED_CEILING, readonly string[]> = {
 	python: [
 		'float_point scalar',
 		'float_scientific scalar',
-		'if_statement unread',
 		'key_value_pattern unclaimed',
 		'string readOnly'
 	],
 	rust: [
-		'array_expression_list unread',
 		'char_literal_plain flags',
 		'float_literal scalar',
 		'impl_item_negative_clause unclaimed',
@@ -51,6 +49,17 @@ describe('the portable round trip', () => {
 			total: 1,
 			pass: 1,
 			carried: [{ entry: 'byte', carries: [{ reason: 'flags', flags: ['byte'] }] }]
+		});
+	});
+
+	it('counts a carry a parse error forces apart from the carried entries: it marks a fault of the input, not a gap of the bindings', async () => {
+		const result = await runPortableRoundTrip('typescript', [{ name: 'signed literal type', source: 'let x: 2 | +4;' }]);
+		expect(result).toMatchObject({
+			total: 1,
+			carried: [],
+			erred: [{ entry: 'signed literal type', carries: [{ kind: 'literal_type', reason: 'error' }] }],
+			armless: [],
+			errors: [{ entry: 'signed literal type', stage: 'reparse', rendered: 'let x: 2 | +4;\n' }]
 		});
 	});
 

@@ -31,6 +31,15 @@ export function readableEntries<E extends Placement>(entries: readonly E[]): rea
 export const textBuilt = (table: PortableBuildTable, arm: PortableBuildArm): boolean =>
 	arm.members.length === 0 && arm.builder !== undefined && table.builders[arm.builder] === 'text';
 
+export const nullaryBuilt = (table: PortableBuildTable, arm: PortableBuildArm): boolean =>
+	arm.members.length === 0 && arm.builder !== undefined && table.builders[arm.builder] === 'nullary';
+
+export const builtFlags = (arm: PortableBuildArm): readonly string[] => [
+	...Object.keys(arm.flags),
+	...arm.when.flatMap((test) => ('flag' in test ? [test.flag] : [])),
+	...(arm.facts ?? []).flatMap((fact) => fact.flag ?? [])
+];
+
 const tokenTexts = new WeakMap<PortableSeat, ReadonlyMap<number, string>>();
 
 export function tokenText(kind: number, seats: readonly PortableSeat[] | undefined): string | undefined {
@@ -50,3 +59,14 @@ export function tokenKind(text: string, seats: readonly PortableSeat[]): number 
 	}
 	return undefined;
 }
+
+const patterns = new WeakMap<NonNullable<PortableSeat['pattern']>, RegExp>();
+
+export const spells = (seat: PortableSeat, text: string): boolean => {
+	if (seat.pattern === undefined) return true;
+	const regex = patterns.get(seat.pattern) ?? patterns.set(seat.pattern, new RegExp(seat.pattern.source, seat.pattern.flags)).get(seat.pattern)!;
+	return regex.test(text);
+};
+
+export const leafSeatOf = (text: string, seats: readonly PortableSeat[]): PortableSeat | undefined =>
+	seats.find((seat) => seat.leaf !== undefined && spells(seat, text)) ?? seats.find((seat) => seat.leaf !== undefined);

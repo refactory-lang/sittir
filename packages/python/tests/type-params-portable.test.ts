@@ -31,13 +31,13 @@ describe('a python type parameter is a name with an optional bound, as CPython r
 
 	it('reads each declared parameter with its name and bound, and a starred one as variadic or parameters', () => {
 		expect(readOf('def f[T, U: int, V: (str, bytes), *Ts, **P](): pass\n')).toBe(
-			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","parameters":[],"body":"pass","typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]},{"$path":"declaration.type_parameter","name":"U","bounds":[{"$path":"type","content":"int"}]},{"$path":"declaration.type_parameter","name":"V","bounds":[{"$path":"type","content":{"$path":"expression.collection.tuple","elements":["str","bytes"]}}]},{"$path":"declaration.type_parameter.variadic","name":"Ts"},{"$path":"declaration.type_parameter.parameters","name":"P"}]}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","parameters":[],"body":{"$path":"statement.block","statements":["pass"]},"typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]},{"$path":"declaration.type_parameter","name":"U","bounds":[{"$path":"type","content":"int"}]},{"$path":"declaration.type_parameter","name":"V","bounds":[{"$path":"type","content":{"$path":"expression.collection.tuple","elements":["str","bytes"]}}]},{"$path":"declaration.type_parameter.variadic","name":"Ts"},{"$path":"declaration.type_parameter.parameters","name":"P"}]}]}'
 		);
 	});
 
 	it('reads a plain, a variadic and a parameters parameter in order', () => {
 		expect(readOf('def f[T, *Ts, **P](): pass\n')).toBe(
-			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","parameters":[],"body":"pass","typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]},{"$path":"declaration.type_parameter.variadic","name":"Ts"},{"$path":"declaration.type_parameter.parameters","name":"P"}]}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","parameters":[],"body":{"$path":"statement.block","statements":["pass"]},"typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]},{"$path":"declaration.type_parameter.variadic","name":"Ts"},{"$path":"declaration.type_parameter.parameters","name":"P"}]}]}'
 		);
 	});
 
@@ -46,19 +46,19 @@ describe('a python type parameter is a name with an optional bound, as CPython r
 			$path: 'declaration.function',
 			name: 'f',
 			parameters: [],
-			body: 'pass',
+			body: { $path: 'statement.block', statements: ['pass'] },
 			typeParameters: [
 				{ $path: 'declaration.type_parameter', name: 'T', bounds: [] },
 				{ $path: 'declaration.type_parameter.variadic', name: 'Ts' },
 				{ $path: 'declaration.type_parameter.parameters', name: 'P' }
 			]
 		} as never);
-		expect(String(runtime.engine.render(built as never))).toBe('def f[T, *Ts, **P](): pass\n');
+		expect(String(runtime.engine.render(built as never))).toBe('def f[T, *Ts, **P]():\n    pass\n');
 	});
 
 	it('reads a class\'s parameters', () => {
 		expect(readOf('class C[T]: pass\n')).toBe(
-			'{"$path":"file","statements":[{"$path":"declaration.class","name":"C","body":["pass"],"typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]}],"bases":[]}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.class","name":"C","body":{"$path":"statement.block","statements":["pass"]},"typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]}],"bases":[]}]}'
 		);
 	});
 
@@ -77,9 +77,9 @@ describe('a python type parameter is a name with an optional bound, as CPython r
 	});
 
 	it.each([
-		'def f[T, U: int, V: (str, bytes), *Ts, **P](): pass\n',
-		'def f[T, *Ts, **P](): pass\n',
-		'class C[T]: pass\n',
+		'def f[T, U: int, V: (str, bytes), *Ts, **P]():\n    pass\n',
+		'def f[T, *Ts, **P]():\n    pass\n',
+		'class C[T]:\n    pass\n',
 		'type X[T] = list[T]\n',
 		'type X = int\n',
 		'type X[T: int] = list[T]\n'

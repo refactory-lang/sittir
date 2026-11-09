@@ -103,7 +103,7 @@
                   190
                 ],
                 "slots": {
-                  "437": 0
+                  "431": 0
                 }
               }
             }
@@ -190,17 +190,6 @@
       ],
       "members": [
         {
-          "name": "attributes",
-          "route": "slot",
-          "slot": "attributes",
-          "path": [
-            {
-              "owner": "array_expression_list",
-              "slot": "attributes"
-            }
-          ]
-        },
-        {
           "name": "elements",
           "route": "slot",
           "slot": "elements",
@@ -211,13 +200,22 @@
             }
           ]
         }
-      ]
+      ],
+      "container": {
+        "slot": "elements",
+        "kinds": [
+          "array_expression_list_elements"
+        ],
+        "terminals": [],
+        "list": false
+      }
     },
     "array_expression_list_elements": {
       "container": {
         "slot": "item",
         "kinds": [
-          "attributed_argument"
+          "attributed_element",
+          "_expression"
         ],
         "terminals": [],
         "list": true
@@ -242,17 +240,6 @@
         }
       ],
       "members": [
-        {
-          "name": "attributes",
-          "route": "slot",
-          "slot": "attributes",
-          "path": [
-            {
-              "owner": "array_expression_semi",
-              "slot": "attributes"
-            }
-          ]
-        },
         {
           "name": "element",
           "route": "slot",
@@ -588,15 +575,41 @@
         "list": false
       }
     },
-    "attributed_argument": {
-      "container": {
-        "slot": "expression",
-        "kinds": [
-          "_expression"
-        ],
-        "terminals": [],
-        "list": false
-      }
+    "attributed_element": {
+      "vocab": "element.attributed",
+      "read": [
+        {
+          "vocab": "element.attributed",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "attributes",
+          "route": "slot",
+          "slot": "attributes",
+          "path": [
+            {
+              "owner": "attributed_element",
+              "slot": "attributes"
+            }
+          ]
+        },
+        {
+          "name": "value",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "attributed_element",
+              "slot": "expression"
+            }
+          ]
+        }
+      ]
     },
     "attributed_enum_variant": {
       "container": {
@@ -6345,16 +6358,6 @@
         "list": false
       }
     },
-    "expressions": {
-      "container": {
-        "slot": "item",
-        "kinds": [
-          "_expression"
-        ],
-        "terminals": [],
-        "list": true
-      }
-    },
     "extension_declaration_body": {
       "container": {
         "slot": "declarations",
@@ -9344,17 +9347,6 @@
       ],
       "members": [
         {
-          "name": "functionModifiers",
-          "route": "slot",
-          "slot": "function_modifiers",
-          "path": [
-            {
-              "owner": "function_signature_item",
-              "slot": "function_modifiers"
-            }
-          ]
-        },
-        {
           "name": "name",
           "route": "slot",
           "slot": "name",
@@ -9395,6 +9387,127 @@
             {
               "owner": "function_signature_item",
               "slot": "where_clause"
+            }
+          ]
+        },
+        {
+          "name": "async",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "async",
+          "path": [
+            {
+              "owner": "function_signature_item",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "const",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "const",
+          "path": [
+            {
+              "owner": "function_signature_item",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "unsafe",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "unsafe",
+          "path": [
+            {
+              "owner": "function_signature_item",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "default",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "default",
+          "path": [
+            {
+              "owner": "function_signature_item",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "extern",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "function_modifiers",
+          "slot": "modifier",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_signature_item",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
             }
           ]
         },
@@ -14637,13 +14750,6 @@
       "vocab": "literal.string.raw",
       "read": [
         {
-          "vocab": "literal.string.raw",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "literal.string.bytes.raw",
           "toplevel": true,
           "within": [],
@@ -14680,6 +14786,13 @@
               }
             }
           ]
+        },
+        {
+          "vocab": "literal.string.raw",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -15927,17 +16040,6 @@
       ],
       "members": [
         {
-          "name": "functionModifiers",
-          "route": "slot",
-          "slot": "function_modifiers",
-          "path": [
-            {
-              "owner": "signature_method_declaration",
-              "slot": "function_modifiers"
-            }
-          ]
-        },
-        {
           "name": "name",
           "route": "slot",
           "slot": "name",
@@ -15978,6 +16080,127 @@
             {
               "owner": "signature_method_declaration",
               "slot": "where_clause"
+            }
+          ]
+        },
+        {
+          "name": "async",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "async",
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "const",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "const",
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "unsafe",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "unsafe",
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "default",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "default",
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "extern",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "function_modifiers",
+          "slot": "modifier",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
             }
           ]
         },
@@ -16893,13 +17116,6 @@
           ]
         },
         {
-          "vocab": "literal.string",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "literal.string.bytes",
           "toplevel": true,
           "within": [],
@@ -16936,6 +17152,13 @@
               }
             }
           ]
+        },
+        {
+          "vocab": "literal.string",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -19924,17 +20147,6 @@
       ],
       "members": [
         {
-          "name": "attributes",
-          "route": "slot",
-          "slot": "attributes",
-          "path": [
-            {
-              "owner": "tuple_expression",
-              "slot": "attributes"
-            }
-          ]
-        },
-        {
           "name": "elements",
           "route": "slot",
           "slot": "elements",
@@ -19945,7 +20157,26 @@
             }
           ]
         }
-      ]
+      ],
+      "container": {
+        "slot": "elements",
+        "kinds": [
+          "tuple_expression_elements"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "tuple_expression_elements": {
+      "container": {
+        "slot": "item",
+        "kinds": [
+          "attributed_element",
+          "_expression"
+        ],
+        "terminals": [],
+        "list": true
+      }
     },
     "tuple_pattern": {
       "vocab": "pattern.tuple",
@@ -22958,8 +23189,8 @@
       },
       {
         "depth": 2,
-        "paths": 95,
-        "kinds": 144,
+        "paths": 96,
+        "kinds": 145,
         "refinements": 7
       },
       {

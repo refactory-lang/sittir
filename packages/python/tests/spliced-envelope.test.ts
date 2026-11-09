@@ -52,8 +52,8 @@ describe('a slot that splices a hidden rule admits that rule\'s envelope and sto
 		const parsed = py.parse('a; b\n').statements()[0]!;
 		if (!py.is.simpleStatements(parsed)) throw new Error('expected simple statements');
 		for (const envelope of [built, parsed]) {
-			for (const suite of [pyStrict.build.suiteInline(envelope), py.build.suiteInline(envelope), py.build.suiteInline({ elements: envelope })]) {
-				expect(py.is.simpleStatementsElements(suite.elements())).toBe(true);
+			for (const suite of [pyStrict.build.suiteInline(envelope), py.build.suiteInline(envelope), py.build.suiteInline({ statements: envelope })]) {
+				expect(py.is.simpleStatementsElements(suite.statements())).toBe(true);
 			}
 		}
 		expect(py.build.ifStatement({ condition: py.build.identifier('x'), consequence: py.build.suiteInline(built) }).$render()).toBe('if x: a; a\n');

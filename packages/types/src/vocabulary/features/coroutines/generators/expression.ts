@@ -1,15 +1,22 @@
-import type { GrammarContext } from '../../../context.ts';
-import type { Flag, SubKindOf } from '../../../utils.ts';
+import type { GrammarMap, Slot } from '../../../map.ts';
+import type { SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Expression {
-	export interface Function<G extends GrammarContext<G>> {
-		readonly generator?: Flag;
+	export interface Function<G extends GrammarMap, K extends Under<'expression.function'> = 'expression.function'> {
 	}
 	export namespace Yield {
-		export interface Delegate<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Yield<G>> {
+		export interface Delegate<G extends GrammarMap, K extends Under<'expression.yield.delegate'> = 'expression.yield.delegate'> extends SubKindOf<V.Expression.Yield<G, K>> {
 			// claimed by pt
-			readonly $kind: 'expression.yield.delegate';
-			readonly expression: G['slots']['expression.yield.delegate']['expression'];
+			readonly $path: K;
+			readonly expression: Slot<
+				G,
+				K,
+				'expression',
+				| V.Declaration.Module<G>
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+			>;
 		}
 	}
 }

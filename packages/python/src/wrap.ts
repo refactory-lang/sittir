@@ -166,19 +166,19 @@ function wrapModule$with$statements(this: Received<Held>, ...args: unknown[]): u
 	return wrapModule$with(receiverOf(this, '$with.statements'), 'statements', args);
 }
 
-function wrapSimpleStatements$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.elements(), 'items'), undefined);
+function wrapSimpleStatements$listRead(this: { readonly statements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.statements(), 'items'), undefined);
 }
 export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle): T.SimpleStatements.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._elements, '_item', (list) =>
+	const listView = ownerView(data._statements, '_item', (list) =>
 		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
 	);
 	const node = {
 		...data,
 		$type: TSKindId.SimpleStatements as const,
-		elements() {
-			return hydrateSlot<T.SimpleStatementsElements>(this, '_elements', tree);
+		statements() {
+			return hydrateSlot<T.SimpleStatementsElements>(this, '_statements', tree);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -227,7 +227,7 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { elements: wrapSimpleStatements$with$elements, [RECEIVER]: node };
+	node.$with = { statements: wrapSimpleStatements$with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdReadItems(
 		node,
@@ -240,7 +240,7 @@ function wrapSimpleStatements$with(node: Held, setter: string, args: readonly un
 	const data = node[INPUT] as T.SimpleStatements;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'elements':
+		case 'statements':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -250,9 +250,9 @@ function wrapSimpleStatements$with(node: Held, setter: string, args: readonly un
 							optional: false,
 							make: RAW.buildSimpleStatementsElements
 						},
-						(v: NonNullable<T.SimpleStatements['_elements']>) =>
+						(v: NonNullable<T.SimpleStatements['_statements']>) =>
 							wrapSimpleStatements(
-								{ ...$edited(data), _elements: admitSlot(handle, '_simple_statements', 'elements', v) },
+								{ ...$edited(data), _statements: admitSlot(handle, '_simple_statements', 'statements', v) },
 								tree
 							)
 					)
@@ -261,8 +261,8 @@ function wrapSimpleStatements$with(node: Held, setter: string, args: readonly un
 	}
 	throw new Error(`_simple_statements has no $with.${setter}`);
 }
-function wrapSimpleStatements$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSimpleStatements$with(receiverOf(this, '$with.elements'), 'elements', args);
+function wrapSimpleStatements$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSimpleStatements$with(receiverOf(this, '$with.statements'), 'statements', args);
 }
 
 function wrapImportStatement$listRead(this: { readonly names: () => unknown }): readonly unknown[] {
@@ -5803,7 +5803,7 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle): T.SplatType.
 		...data,
 		$type: TSKindId.SplatType as const,
 		type() {
-			return hydrateSlot<T.Identifier>(this, '_type', tree);
+			return hydrateSlot<T.Identifier | T.GenericType>(this, '_type', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -11441,19 +11441,19 @@ function wrapWithClauseParen$with$items(this: Received<Held>, ...args: unknown[]
 	return wrapWithClauseParen$with(receiverOf(this, '$with.items'), 'items', args);
 }
 
-function wrapSuiteInline$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.elements(), 'items'), undefined);
+function wrapSuiteInline$listRead(this: { readonly statements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.statements(), 'items'), undefined);
 }
 export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteInline.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._elements, '_item', (list) =>
+	const listView = ownerView(data._statements, '_item', (list) =>
 		isCoordinate(list) ? readNode(tree, list) : hydrate(list, tree)
 	);
 	const node = {
 		...data,
 		$type: TSKindId.SuiteInline as const,
-		elements() {
-			return hydrateSlot<T.SimpleStatementsElements>(this, '_elements', tree);
+		statements() {
+			return hydrateSlot<T.SimpleStatementsElements>(this, '_statements', tree);
 		},
 		$with: undefined as unknown as object,
 		length: listView.length,
@@ -11502,7 +11502,7 @@ export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteI
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { elements: wrapSuiteInline$with$elements, [RECEIVER]: node };
+	node.$with = { statements: wrapSuiteInline$with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdReadItems(
 		node,
@@ -11515,7 +11515,7 @@ function wrapSuiteInline$with(node: Held, setter: string, args: readonly unknown
 	const data = node[INPUT] as T.SuiteInline;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'elements':
+		case 'statements':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -11525,18 +11525,18 @@ function wrapSuiteInline$with(node: Held, setter: string, args: readonly unknown
 							optional: false,
 							make: RAW.buildSimpleStatementsElements
 						},
-						(v: NonNullable<T.SuiteInline['_elements']> | Admit<T.SimpleStatements>) =>
+						(v: NonNullable<T.SuiteInline['_statements']> | Admit<T.SimpleStatements>) =>
 							wrapSuiteInline(
 								{
 									...$edited(data),
-									_elements: admitSlot(
+									_statements: admitSlot(
 										handle,
 										'suite_inline',
-										'elements',
+										'statements',
 										admitSplicedEnvelope(
 											v,
-											[TSKindId.SimpleStatements, 'elements', 'simple_statements'],
-											'SuiteInline.elements'
+											[TSKindId.SimpleStatements, 'statements', 'simple_statements'],
+											'SuiteInline.statements'
 										)
 									)
 								},
@@ -11548,8 +11548,8 @@ function wrapSuiteInline$with(node: Held, setter: string, args: readonly unknown
 	}
 	throw new Error(`suite_inline has no $with.${setter}`);
 }
-function wrapSuiteInline$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSuiteInline$with(receiverOf(this, '$with.elements'), 'elements', args);
+function wrapSuiteInline$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSuiteInline$with(receiverOf(this, '$with.statements'), 'statements', args);
 }
 
 export function wrapSuiteBlock(data: T.SuiteBlock, tree: TreeHandle): T.SuiteBlock.Parsed {
@@ -12834,11 +12834,11 @@ function viewModule(data: RecordPosition, tree: TreeHandle): T.Module.Parsed {
 	return node as unknown as T.Module.Parsed;
 }
 
-function viewSimpleStatements$elements(this: RecordHandle) {
+function viewSimpleStatements$statements(this: RecordHandle) {
 	return viewSlot<T.SimpleStatementsElements>(this, 2, 3, 8, 3, 2);
 }
-function viewSimpleStatements$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.elements(), 'items'), undefined);
+function viewSimpleStatements$listRead(this: { readonly statements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.statements(), 'items'), undefined);
 }
 function viewSimpleStatements(data: RecordPosition, tree: TreeHandle): T.SimpleStatements.Parsed {
 	const node = {
@@ -12848,7 +12848,7 @@ function viewSimpleStatements(data: RecordPosition, tree: TreeHandle): T.SimpleS
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		elements: viewSimpleStatements$elements,
+		statements: viewSimpleStatements$statements,
 		length: 0,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -12891,7 +12891,7 @@ function viewSimpleStatements(data: RecordPosition, tree: TreeHandle): T.SimpleS
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { elements: $with$elements, [RECEIVER]: node };
+	node.$with = { statements: $with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
@@ -15976,7 +15976,7 @@ function viewType(data: RecordPosition, tree: TreeHandle): T.Type.Parsed {
 }
 
 function viewSplatType$type(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.Identifier | T.GenericType>(this, 2, 11, 9, 10, 2);
 }
 function viewSplatType(data: RecordPosition, tree: TreeHandle): T.SplatType.Parsed {
 	const node = {
@@ -19339,11 +19339,11 @@ function viewWithClauseParen(data: RecordPosition, tree: TreeHandle): T.WithClau
 	return node as unknown as T.WithClauseParen.Parsed;
 }
 
-function viewSuiteInline$elements(this: RecordHandle) {
+function viewSuiteInline$statements(this: RecordHandle) {
 	return viewSlot<T.SimpleStatementsElements>(this, 2, 3, 8, 3, 2);
 }
-function viewSuiteInline$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
-	return listItems(ownerElements(this.elements(), 'items'), undefined);
+function viewSuiteInline$listRead(this: { readonly statements: () => unknown }): readonly unknown[] {
+	return listItems(ownerElements(this.statements(), 'items'), undefined);
 }
 function viewSuiteInline(data: RecordPosition, tree: TreeHandle): T.SuiteInline.Parsed {
 	const node = {
@@ -19353,7 +19353,7 @@ function viewSuiteInline(data: RecordPosition, tree: TreeHandle): T.SuiteInline.
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		elements: viewSuiteInline$elements,
+		statements: viewSuiteInline$statements,
 		length: 0,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -19396,7 +19396,7 @@ function viewSuiteInline(data: RecordPosition, tree: TreeHandle): T.SuiteInline.
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { elements: $with$elements, [RECEIVER]: node };
+	node.$with = { statements: $with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;

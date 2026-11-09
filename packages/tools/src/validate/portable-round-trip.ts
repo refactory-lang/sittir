@@ -32,6 +32,7 @@ export interface PortableRoundTripResult {
 	readonly astMatchPass: number;
 	readonly spellingNormalized: number;
 	readonly carried: readonly PortableRoundTripCarried[];
+	readonly erred: readonly PortableRoundTripCarried[];
 	readonly armless: readonly PortableRoundTripArmless[];
 	readonly errors: readonly PortableRoundTripFailure[];
 	readonly astMismatches: readonly PortableRoundTripFailure[];
@@ -59,17 +60,20 @@ export async function runPortableRoundTrip(grammar: string, entries: readonly Co
 	const errors: PortableRoundTripFailure[] = [];
 	const astMismatches: PortableRoundTripFailure[] = [];
 	const carried: PortableRoundTripCarried[] = [];
+	const erred: PortableRoundTripCarried[] = [];
 	const armless: PortableRoundTripArmless[] = [];
 	for (const { name, source } of entries) {
 		const carries: PortableRoundTripCarry[] = [];
+		const faults: PortableRoundTripCarry[] = [];
 		const structure = runtime.read(engine.parse(source), (node, carry) => {
 			const kind = engine.trivia.kindName(node.$type);
 			if (kind === undefined) throw new Error(`portable round trip: ${name} carries a node of kind ${node.$type}, which has no name`);
-			carries.push({ kind, ...carry });
+			(carry.reason === 'error' ? faults : carries).push({ kind, ...carry });
 			const path = carry.reason === 'unclaimed' ? classify(node) : undefined;
 			if (path !== undefined) armless.push({ entry: name, kind, path });
 		});
 		if (carries.length > 0) carried.push({ entry: name, carries });
+		if (faults.length > 0) erred.push({ entry: name, carries: faults });
 		if (!isStructure(structure)) {
 			errors.push({ entry: name, stage: 'read', message: 'the root reads as no vocabulary path' });
 			continue;
@@ -101,5 +105,5 @@ export async function runPortableRoundTrip(grammar: string, entries: readonly Co
 			tree?.delete();
 		}
 	}
-	return { total: entries.length, pass, astMatchPass, spellingNormalized, carried, armless, errors, astMismatches };
+	return { total: entries.length, pass, astMatchPass, spellingNormalized, carried, erred, armless, errors, astMismatches };
 }

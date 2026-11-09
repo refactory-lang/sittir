@@ -314,9 +314,19 @@ export interface NativeParseResult {
  * an ERROR node (`'error'`), or a token the parser inserted (`'missing'`, an
  * empty span where the token belongs). Spans are UTF-8 byte offsets.
  */
-export interface ErrorRegion {
-	readonly kind: 'error' | 'missing';
+export type ErrorRegion =
+	| { readonly kind: 'error'; readonly span: { readonly start: number; readonly end: number } }
+	| {
+			readonly kind: 'missing';
+			readonly span: { readonly start: number; readonly end: number };
+			/** The node the token was inserted into. */
+			readonly holder: ErrorHolder;
+	  };
+
+/** The node a parser-inserted token sits in: its span and its kind id, the `$type` a read gives it. */
+export interface ErrorHolder {
 	readonly span: { readonly start: number; readonly end: number };
+	readonly kind: number;
 }
 
 // ---------------------------------------------------------------------------
