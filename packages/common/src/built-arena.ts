@@ -254,12 +254,15 @@ export class BuiltArena {
 	readonly #siteAlive = (holder: number): boolean => this.#words.has(chunkOf(holder, this.format)) && this.#linkHeld(holder);
 	#placedLast: { readonly node: object; readonly placed: readonly unknown[] } | undefined;
 	readonly #minted: number[] = [];
-	readonly #mintedWords: WritableWords[] = [];
+	readonly #mintedWords: (WritableWords | undefined)[] = [];
+	#mintedCount = 0;
 	readonly #parked: object[] = [];
 	readonly #commits: CommitMark[] = [];
 	#commitCount = 0;
 	readonly #moved: number[] = [];
-	readonly #undos: (() => void)[] = [];
+	#movedCount = 0;
+	readonly #undos: ((() => void) | undefined)[] = [];
+	#undosCount = 0;
 	readonly #deferred: (Map<number, () => void> | undefined)[] = [];
 	#deferredCount = 0;
 	#pruneAt = DEFERRED_PRUNE;
@@ -425,17 +428,19 @@ export class BuiltArena {
 
 	#mint(size: number): BuiltPlace {
 		const place = this.#place(size, this.format.countOwned | 1);
-		if (this.#scopes > 0 || this.#commits.length > 0) {
-			this.#minted.push(place.at);
-			this.#mintedWords.push(place.data);
-		}
+		if (this.#scopes > 0 || this.#commits.length > 0) this.#recordMinted(place.at, place.data);
 		return place;
 	}
 
+	#recordMinted(at: number, words: WritableWords): void {
+		this.#minted[this.#mintedCount] = at;
+		this.#mintedWords[this.#mintedCount++] = words;
+	}
+
 	scope<T>(build: () => T): T {
-		const minted = this.#minted.length;
-		const moved = this.#moved.length;
-		const undos = this.#undos.length;
+		const minted = this.#mintedCount;
+		const moved = this.#movedCount;
+		const undos = this.#undosCount;
 		this.#scopes++;
 		try {
 			return build();
@@ -445,29 +450,34 @@ export class BuiltArena {
 		} finally {
 			if (--this.#scopes === 0) {
 				if (this.#commits.length === 0) this.#forgetMinted(0);
-				this.#moved.length = 0;
-				this.#undos.length = 0;
+				this.#movedCount = 0;
+				this.#forgetUndos(0);
 			}
 		}
 	}
 
 	#abandon(minted: number, moved: number, undos: number): void {
-		for (let n = this.#undos.length - 1; n >= undos; n--) this.#undos[n]!();
-		for (let n = this.#moved.length - 1; n >= moved; n--) this.#giveBack(this.#moved[n]!);
-		for (let n = this.#minted.length - 1; n >= minted; n--) this.release(this.#minted[n]!);
-		this.#moved.length = moved;
-		this.#undos.length = undos;
+		for (let n = this.#undosCount - 1; n >= undos; n--) this.#undos[n]!();
+		for (let n = this.#movedCount - 1; n >= moved; n--) this.#giveBack(this.#moved[n]!);
+		for (let n = this.#mintedCount - 1; n >= minted; n--) this.release(this.#minted[n]!);
+		this.#movedCount = moved;
+		this.#forgetUndos(undos);
 		this.#forgetMinted(minted);
 	}
 
 	#forgetMinted(from: number): void {
-		this.#minted.length = from;
-		this.#mintedWords.length = from;
+		for (let n = from; n < this.#mintedCount; n++) this.#mintedWords[n] = undefined;
+		this.#mintedCount = from;
+	}
+
+	#forgetUndos(from: number): void {
+		for (let n = from; n < this.#undosCount; n++) this.#undos[n] = undefined;
+		this.#undosCount = from;
 	}
 
 	commit(): CommitScope {
 		if (this.#scopes > 0) throw new Error('engine.scope() called while a build is running: open the scope before the build');
-		const mark: CommitMark = { id: ++this.#commitCount, minted: this.#minted.length, parked: this.#parked.length, kept: new Set(), closed: false };
+		const mark: CommitMark = { id: ++this.#commitCount, minted: this.#mintedCount, parked: this.#parked.length, kept: new Set(), closed: false };
 		this.#commits.push(mark);
 		return {
 			keep: <N extends object>(node: N): N => this.#keep(mark, node),
@@ -519,7 +529,7 @@ export class BuiltArena {
 		mark.closed = true;
 		const keptAt: number[] = [];
 		const keptWords: WritableWords[] = [];
-		for (let n = mark.minted; n < this.#minted.length; n++) {
+		for (let n = mark.minted; n < this.#mintedCount; n++) {
 			const at = this.#minted[n]!;
 			const words = this.#mintedWords[n]!;
 			if (this.#words.chunks[chunkOf(at, this.format)] !== words) continue;
@@ -534,8 +544,7 @@ export class BuiltArena {
 		this.#forgetMinted(mark.minted);
 		this.#parked.length = mark.parked;
 		if (this.#commits.length === 0) return;
-		this.#minted.push(...keptAt);
-		this.#mintedWords.push(...keptWords);
+		for (let n = 0; n < keptAt.length; n++) this.#recordMinted(keptAt[n]!, keptWords[n]!);
 		this.#parked.push(...keptLeaves);
 	}
 
@@ -576,7 +585,7 @@ export class BuiltArena {
 		const { countOwned } = this.format;
 		if ((byte & countOwned) !== 0 && !this.#kept(at)) {
 			counts[index] = byte & ~countOwned;
-			if (this.#scopes > 0) this.#moved.push(at);
+			if (this.#scopes > 0) this.#moved[this.#movedCount++] = at;
 			return;
 		}
 		this.#countOneMore(at, counts, index);
@@ -661,11 +670,11 @@ export class BuiltArena {
 		if (this.#commits.length > 0) this.#parked.push(leaf);
 		this.#unpark(parked);
 		if (this.#scopes > 0) {
-			this.#undos.push(() => {
+			this.#undos[this.#undosCount++] = () => {
 				this.#unpark(next);
 				if (parked !== undefined) this.#park(leaf, parked);
 				setTriviaOf(leaf, own);
-			});
+			};
 		}
 		return next;
 	}
@@ -916,7 +925,7 @@ export class BuiltArena {
 		placeLeaf(leaf, holder, word, item, this.#siteAlive);
 		this.#writeLeafSites(leaf, [holder, word, item]);
 		this.#unpark(parked);
-		if (parked !== undefined && this.#scopes > 0) this.#undos.push(() => this.#park(leaf, parked));
+		if (parked !== undefined && this.#scopes > 0) this.#undos[this.#undosCount++] = () => this.#park(leaf, parked);
 	}
 
 	leafSites(leaf: object): readonly number[] | undefined {
