@@ -1,5 +1,6 @@
 import type { ChoiceRule, FieldRule, OptionalRule, SeqRule, StringRule, SymbolRule } from './rule.ts';
 import { IMMEDIATE_TOKEN, TOKEN } from './rule-types.ts'; // @rule-type-consts
+import { asLexed } from '../util/pattern-pieces.ts';
 
 export type RuntimeRule = { readonly type: string };
 
@@ -101,7 +102,8 @@ export const isRepeatType = (t: unknown): boolean => typeEq(t, 'REPEAT') || type
 export type CompiledPattern = { readonly regex: RegExp } | { readonly error: Error };
 
 export function compileAnchoredPattern(source: string, anchor: 'whole' | 'start' = 'whole'): CompiledPattern {
-	const anchored = anchor === 'whole' ? `^(?:${source})$` : `^(?:${source})`;
+	const lexed = asLexed(source);
+	const anchored = anchor === 'whole' ? `^(?:${lexed})$` : `^(?:${lexed})`;
 	try {
 		return { regex: new RegExp(anchored, 'u') };
 	} catch {

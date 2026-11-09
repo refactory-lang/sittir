@@ -70,17 +70,17 @@ export const _leafRe_buildIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Con
 export const _leafRe_buildTokenRepetitionPatternText = /^(?:(?:[^+*?]+))$/u;
 export const _leafRe_buildStringOpen = /^(?:(?:[bc]?"))$/u;
 export const _leafRe_buildCharLiteralEmpty = /^(?:(?:b)?'')$/u;
-export const _leafRe_buildLineCommentExtraSlashes = /^(?:(?:\/\/)(?:.*))$/u;
-export const _leafRe_buildLineCommentRegular = /^(?:(?:.*))$/u;
+export const _leafRe_buildLineCommentExtraSlashes = /^(?:(?:\/\/)(?:[^\x0A]*))$/u;
+export const _leafRe_buildLineCommentRegular = /^(?:(?:[^\x0A]*))$/u;
 export const _leafRe_buildBlockCommentRegular = /^(?:(?:[^]*))$/u;
 export const _leafRe_buildFloatLiteral =
 	/^(?:(?:[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u;
 export const _leafRe_buildStringContent = /^(?:(?:[^"\\]+))$/u;
-export const _leafRe_buildRawStringLiteralContent = /^(?:(?:[\s\S]*))$/u;
-export const _leafRe_buildDocComment = /^(?:(?:.*\n?))$/u;
+export const _leafRe_buildRawStringLiteralContent = /^(?:(?:[\x09-\x0D\x20\x00-\x08\x0E-\x1F\x21-\u{10FFFF}]*))$/u;
+export const _leafRe_buildDocComment = /^(?:(?:[^\x0A]*\n?))$/u;
 export const _leafRe_buildBlockCommentContent = _leafRe_buildBlockCommentRegular;
-export const _slotRe_buildShebang_content = /^(?:[\r\f\t\v ]*(?:[^[\n].*)?)$/u;
-export const _slotRe_buildMetavariable_name = /^(?:[a-zA-Z_]\w*)$/u;
+export const _slotRe_buildShebang_content = /^(?:[\r\f\t\v ]*(?:[^[\n][^\x0A]*)?)$/u;
+export const _slotRe_buildMetavariable_name = /^(?:[a-zA-Z_][0-9A-Z_a-z]*)$/u;
 export const _slotRe_buildIntegerLiteralDecimal_content = /^(?:(?:[0-9][0-9_]*))$/u;
 export const _slotRe_buildIntegerLiteralDecimal_suffix =
 	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;

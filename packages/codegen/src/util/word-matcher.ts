@@ -1,5 +1,6 @@
 import { CHOICE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule } from '../types/rule.ts';
+import { compileAnchoredPattern } from '../types/runtime-shapes.ts';
 
 export function compileWordMatcher(
 	word: string | null | undefined,
@@ -10,16 +11,8 @@ export function compileWordMatcher(
 	if (!wordRule) return undefined;
 	const src = ruleToRegexSource(wordRule);
 	if (src === null) return undefined;
-	const full = `^(?:${src})$`;
-	try {
-		return new RegExp(full, 'u');
-	} catch {
-		try {
-			return new RegExp(full);
-		} catch {
-			return undefined;
-		}
-	}
+	const compiled = compileAnchoredPattern(src);
+	return 'regex' in compiled ? compiled.regex : undefined;
 }
 
 export function matchesWordShape(value: string, wordMatcher: RegExp | undefined): boolean {

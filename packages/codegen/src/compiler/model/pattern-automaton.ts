@@ -1,3 +1,5 @@
+import { withLexerClasses } from '../../util/pattern-pieces.ts';
+
 export type CodeRange = readonly [number, number];
 
 const MAX_CODE_POINT = 0x10ffff;
@@ -69,13 +71,6 @@ export class CharSet {
 
 export const LINE_TERMINATORS = CharSet.chars('\n\r  ');
 
-const DIGIT = CharSet.of([[0x30, 0x39]]);
-const WORD = CharSet.of([
-	[0x30, 0x39],
-	[0x41, 0x5a],
-	[0x5f, 0x5f],
-	[0x61, 0x7a]
-]);
 const SPACE = CharSet.chars('\t\n\v\f\r       　﻿').union(CharSet.of([[0x2000, 0x200a]]));
 const DOT = LINE_TERMINATORS.complement();
 
@@ -241,18 +236,6 @@ class PatternParser {
 	private escape(inClass: boolean): CharSet {
 		const char = this.take();
 		switch (char) {
-			case 'd':
-				return DIGIT;
-			case 'D':
-				return DIGIT.complement();
-			case 'w':
-				return WORD;
-			case 'W':
-				return WORD.complement();
-			case 's':
-				return SPACE;
-			case 'S':
-				return SPACE.complement();
 			case 'n':
 				return CharSet.chars('\n');
 			case 'r':
@@ -388,7 +371,7 @@ export function patternDfa(pattern: string): PatternDfa | undefined {
 	if (dfaByPattern.has(pattern)) return dfaByPattern.get(pattern);
 	let dfa: PatternDfa | undefined;
 	try {
-		dfa = determinize(new PatternParser(pattern).parse());
+		dfa = determinize(new PatternParser(withLexerClasses(pattern)).parse());
 	} catch (error) {
 		if (!(error instanceof UnsupportedPattern)) throw error;
 		dfa = undefined;

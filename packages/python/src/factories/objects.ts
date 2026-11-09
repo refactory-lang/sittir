@@ -111,9 +111,9 @@ export const _leafRe_buildIntegerDecimalLong = /^(?:(?:(?:[0-9]+_?))+(?:[Ll]))$/
 export const _leafRe_buildIntegerDecimalImaginary = /^(?:(?:(?:[0-9]+_?))+(?:[jJ]))$/u;
 export const _leafRe_buildIntegerDecimalPlain = /^(?:(?:(?:[0-9]+_?))+)$/u;
 export const _leafRe_buildLineContinuationNewline = /^(?:\\(?:\r)?\n)$/u;
-export const _leafRe_buildStringFragment = /^(?:(?:[\s\S]+))$/u;
+export const _leafRe_buildStringFragment = /^(?:(?:[\x09-\x0D\x20\x00-\x08\x0E-\x1F\x21-\u{10FFFF}]+))$/u;
 export const _leafRe_buildEscapeInterpolation = /^(?:(?:\{\{|\}\}))$/u;
-export const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
+export const _slotRe_buildComment_content = /^(?:(?:[^\x0A]*))$/u;
 export const _slotRe_buildIntegerHex_radix_prefix = /^(?:0x|0X)$/u;
 export const _slotRe_buildIntegerHex_content = /^(?:(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$/u;
 export const _slotRe_buildIntegerOctal_radix_prefix = /^(?:0o|0O)$/u;
@@ -137,17 +137,17 @@ export const _slotRe_buildFloatScientific_marker = _slotRe_buildFloatPoint_marke
 export const _slotRe_buildFloatScientific_exponent_sign = _slotRe_buildFloatPoint_exponent_sign;
 export const _slotRe_buildFloatScientific_exponent = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatScientific_imaginary = _slotRe_buildFloatPoint_imaginary;
-export const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[a-fA-F\d]{4}))$/u;
-export const _slotRe_buildEscapeSequenceUnicodeWide_content = /^(?:(?:U[a-fA-F\d]{8}))$/u;
-export const _slotRe_buildEscapeSequenceHex_content = /^(?:(?:x[a-fA-F\d]{2}))$/u;
-export const _slotRe_buildEscapeSequenceOctal_content = /^(?:(?:\d{1,3}))$/u;
+export const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[a-fA-F0-9]{4}))$/u;
+export const _slotRe_buildEscapeSequenceUnicodeWide_content = /^(?:(?:U[a-fA-F0-9]{8}))$/u;
+export const _slotRe_buildEscapeSequenceHex_content = /^(?:(?:x[a-fA-F0-9]{2}))$/u;
+export const _slotRe_buildEscapeSequenceOctal_content = /^(?:(?:[0-9]{1,3}))$/u;
 export const _slotRe_buildEscapeSequenceLineBreak_content = /^(?:(?:\r?\n))$/u;
 export const _slotRe_buildEscapeSequenceSimple_content = /^(?:(?:['"abfrntv\\]))$/u;
 export const _slotRe_buildEscapeSequenceNamed_content = /^(?:(?:N\{[^}]+\}))$/u;
 export const _slotRe_buildStringStart_prefix =
 	/^(?:rb|rB|Rb|RB|br|bR|Br|BR|rf|rF|Rf|RF|fr|fR|Fr|FR|rt|rT|Rt|RT|tr|tR|Tr|TR|ur|uR|Ur|UR|r|R|b|B|f|F|t|T|u|U)$/u;
 export const _slotRe_buildStringStart_quote = /^(?:"""|'''|"|'|`)$/u;
-export const _slotRe_buildStringEnd_content = /^(?:(?:(?:\\[\s\S])*))$/u;
+export const _slotRe_buildStringEnd_content = /^(?:(?:(?:\\[\x09-\x0D\x20\x00-\x08\x0E-\x1F\x21-\u{10FFFF}])*))$/u;
 export const _slotRe_buildStringEnd_quote = _slotRe_buildStringStart_quote;
 
 export function buildModule(): T.EmptyModule;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { closingParen, pieceAt, pieces, sameUpToGroups, withoutCaptures } from '../pattern-pieces.ts';
+import { asLexed, closingParen, pieceAt, pieces, sameUpToGroups, withLexerClasses, withoutCaptures } from '../pattern-pieces.ts';
 
 const shape = (source: string) => [...pieces(source)].map((piece) => [piece.kind, piece.at, piece.text, 'group' in piece ? piece.group : undefined]);
 
@@ -88,5 +88,42 @@ describe('sameUpToGroups', () => {
 
 	it('tells a rewritten pattern from the one it replaces', () => {
 		expect(sameUpToGroups('[^*]*\\*+([^/*][^*]*\\*+)*', '([^*]|\\*+[^*\\/])*\\**')).toBe(false);
+	});
+});
+
+describe('withLexerClasses', () => {
+	const lexes = (source: string, text: string) => new RegExp(`^(?:${withLexerClasses(source)})$`, 'u').test(text);
+
+	it('spells the digit, space and word classes as the sets tree-sitter lexes them as', () => {
+		expect(withLexerClasses('\\d(_?\\d)*')).toBe('[0-9](_?[0-9])*');
+		expect(withLexerClasses('\\$(?<name>[a-zA-Z_]\\w*)')).toBe('\\$(?<name>[a-zA-Z_][0-9A-Z_a-z]*)');
+		expect(withLexerClasses('\\s+\\S\\D\\W')).toBe('[\\x09-\\x0D\\x20]+[^\\x09-\\x0D\\x20][^0-9][^0-9A-Z_a-z]');
+	});
+
+	it('spells a class inside a class as its members, and a negated one as the members of its complement', () => {
+		expect(withLexerClasses('[a-fA-F\\d]{2}')).toBe('[a-fA-F0-9]{2}');
+		expect(withLexerClasses('[^\\x00-\\x1F\\s\\p{Zs}.]')).toBe('[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}.]');
+		expect(withLexerClasses('[\\s\\S]')).toBe('[\\x09-\\x0D\\x20\\x00-\\x08\\x0E-\\x1F\\x21-\\u{10FFFF}]');
+		expect(withLexerClasses('[\\W]')).toBe('[\\x00-\\x2F\\x3A-\\x40\\x5B-\\x5E\\x60\\x7B-\\u{10FFFF}]');
+	});
+
+	it('leaves an escaped backslash and the letter after it, and every other piece, alone', () => {
+		expect(withLexerClasses('\\\\d[\\\\s]\\.a.b')).toBe('\\\\d[\\\\s]\\.a.b');
+	});
+
+	it('accepts what tree-sitter lexes where JavaScript would read the class otherwise', () => {
+		expect(lexes('[^\\s]+', '\u0085\u00a0')).toBe(true);
+		expect(lexes('[^\\s]+', 'a\u000bb')).toBe(false);
+		expect(lexes('\\s', '\u00a0')).toBe(false);
+		expect(lexes('[\\s\\S]', '\u{1F600}')).toBe(true);
+	});
+});
+
+describe('asLexed', () => {
+	it("spells a pattern's classes and its dot as tree-sitter lexes them, and only a dot outside a class", () => {
+		expect(asLexed('#.*')).toBe('#[^\\x0A]*');
+		expect(asLexed('\\d.[.]\\.')).toBe('[0-9][^\\x0A][.]\\.');
+		expect(new RegExp(`^(?:${asLexed('a.b')})$`, 'u').test('a\rb')).toBe(true);
+		expect(new RegExp(`^(?:${asLexed('a.b')})$`, 'su').test('a\nb')).toBe(false);
 	});
 });

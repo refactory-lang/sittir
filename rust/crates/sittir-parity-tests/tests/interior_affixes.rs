@@ -118,3 +118,23 @@ fn an_escape_sequence_its_scanner_lexes_is_read_verbatim_when_its_interior_refus
         assert_eq!(groups(Interior::new(escape.pattern()).captures(refused), names), None, "its pattern refuses {refused:?}");
     }
 }
+
+#[test]
+fn a_private_name_tree_sitter_lexes_with_a_character_unicode_counts_as_white_space_reads_by_its_interior() {
+    let source = "class A { #\u{85}; }\n";
+    let tree = parse(&sittir_typescript::language(), source);
+    assert!(!tree.root_node().has_error(), "tree-sitter lexes U+0085 inside a private name");
+    let mut found = None;
+    visit(&tree, |node| {
+        if node.kind() == "private_property_identifier" {
+            found = Some((interior::<sittir_typescript::render::AnyNode>(&node), sittir_core::types::Span::of(&node)));
+        }
+    });
+    let (read_by, span) = found.expect("a private name");
+    let (name, names) = read_by.expect("a private name is read by its interior");
+    let text = &source[span.range()];
+    assert_eq!(text, "#\u{85}");
+    let content = Some(vec![Some((1, 3, "\u{85}".to_owned()))]);
+    assert_eq!(groups(Interior::new(name.pattern()).captures(text), names), content, "its interior's pattern takes what the lexer took");
+    assert_eq!(groups(name.captures(text), names), content);
+}

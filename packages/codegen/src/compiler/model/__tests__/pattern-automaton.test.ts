@@ -100,6 +100,13 @@ describe('pattern automaton', () => {
 		expect(dfaAccepts(patternDfa('a[]')!, 'a]')).toBe(false);
 	});
 
+	it("reads a pattern's digit, space and word classes as tree-sitter lexes them", () => {
+		expect(dfaAccepts(patternDfa('\\s')!, '\u00a0')).toBe(false);
+		expect(dfaAccepts(patternDfa('[^\\s]')!, '\u00a0')).toBe(true);
+		expect(dfaAccepts(patternDfa('\\w')!, 'é')).toBe(false);
+		expect(dfaAccepts(patternDfa('[\\s\\S]')!, '\u{1F600}')).toBe(true);
+	});
+
 	it('refuses syntax outside the tree-sitter dialect', () => {
 		expect(patternDfa('a(?=b)')).toBeUndefined();
 		expect(patternDfa('(a)\\1')).toBeUndefined();

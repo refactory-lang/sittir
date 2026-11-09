@@ -17,17 +17,17 @@ export const TOKEN_INTERIORS = {
 			'^\\\\(?<content>(?:(?:[^xu0-7])|(?:[0-7]{1,3})|(?:x[0-9a-fA-F]{2})|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:[\\r?][\\n\\u2028\\u2029])))$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
-	hash_bang_line: { regex: '^#!(?<content>.*)$', slots: [{ name: 'content', propertyName: 'content' }] },
+	hash_bang_line: { regex: '^#!(?<content>[^\\x0A]*)$', slots: [{ name: 'content', propertyName: 'content' }] },
 	number_bigint_binary: {
 		regex: '^(?<content>(?:0b|0B)(?:[0-1](?:_?[0-1])*))n$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	number_bigint_decimal: {
-		regex: '^(?<content>(?:\\d(?:_?\\d)*))n$',
+		regex: '^(?<content>(?:[0-9](?:_?[0-9])*))n$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	number_bigint_hex: {
-		regex: '^(?<content>(?:0x|0X)(?:[\\da-fA-F](?:_?[\\da-fA-F])*))n$',
+		regex: '^(?<content>(?:0x|0X)(?:[0-9a-fA-F](?:_?[0-9a-fA-F])*))n$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	number_bigint_octal: {
@@ -43,7 +43,7 @@ export const TOKEN_INTERIORS = {
 	},
 	number_float_leading_point: {
 		regex:
-			'^\\.(?<fraction>(?:\\d(?:_?\\d)*))(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(?:_?\\d)*))?)?$',
+			'^\\.(?<fraction>(?:[0-9](?:_?[0-9])*))(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:[0-9](?:_?[0-9])*))?)?$',
 		slots: [
 			{ name: 'fraction', propertyName: 'fraction' },
 			{ name: 'marker', propertyName: 'marker' },
@@ -53,7 +53,7 @@ export const TOKEN_INTERIORS = {
 	},
 	number_float_point: {
 		regex:
-			'^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(?:_?\\d)*))?))\\.(?<fraction>(?:\\d(?:_?\\d)*))?(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(?:_?\\d)*))?)?$',
+			'^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:[0-9](?:_?[0-9])*))?))\\.(?<fraction>(?:[0-9](?:_?[0-9])*))?(?:(?<marker>e|E)?(?<exponent_sign>-|\\+)?(?<exponent>(?:[0-9](?:_?[0-9])*))?)?$',
 		slots: [
 			{ name: 'integer', propertyName: 'integer' },
 			{ name: 'fraction', propertyName: 'fraction' },
@@ -64,7 +64,7 @@ export const TOKEN_INTERIORS = {
 	},
 	number_float_scientific: {
 		regex:
-			'^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(?:_?\\d)*))?))(?<marker>e|E)(?<exponent_sign>-|\\+)?(?<exponent>(?:\\d(?:_?\\d)*))$',
+			'^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:[0-9](?:_?[0-9])*))?))(?<marker>e|E)(?<exponent_sign>-|\\+)?(?<exponent>(?:[0-9](?:_?[0-9])*))$',
 		slots: [
 			{ name: 'integer', propertyName: 'integer' },
 			{ name: 'marker', propertyName: 'marker' },
@@ -73,7 +73,7 @@ export const TOKEN_INTERIORS = {
 		]
 	},
 	number_hex: {
-		regex: '^(?<radix_prefix>0x|0X)(?<content>(?:[\\da-fA-F](?:_?[\\da-fA-F])*))$',
+		regex: '^(?<radix_prefix>0x|0X)(?<content>(?:[0-9a-fA-F](?:_?[0-9a-fA-F])*))$',
 		slots: [
 			{ name: 'radix_prefix', propertyName: 'radixPrefix' },
 			{ name: 'content', propertyName: 'content' }
@@ -88,7 +88,7 @@ export const TOKEN_INTERIORS = {
 	},
 	private_property_identifier: {
 		regex:
-			'^#(?<content>(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+			'^#(?<content>(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	}
 } as const satisfies { readonly [kind: string]: TokenInterior };

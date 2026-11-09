@@ -83,7 +83,7 @@ export const TOKEN_INTERIORS = {
 			{ name: 'suffix', propertyName: 'suffix' }
 		]
 	},
-	metavariable: { regex: '^\\$(?<name>[a-zA-Z_]\\w*)$', slots: [{ name: 'name', propertyName: 'name' }] },
+	metavariable: { regex: '^\\$(?<name>[a-zA-Z_][0-9A-Z_a-z]*)$', slots: [{ name: 'name', propertyName: 'name' }] },
 	raw_string_literal_end: { regex: '^"(?<hashes>(?:#*))$', slots: [{ name: 'hashes', propertyName: 'hashes' }] },
 	raw_string_literal_start: {
 		regex: '^(?<prefix>br|cr|r)(?<hashes>(?:#*))"$',
@@ -93,7 +93,7 @@ export const TOKEN_INTERIORS = {
 		]
 	},
 	shebang: {
-		regex: '^#!(?<content>[\\r\\f\\t\\v ]*(?:[^\\[\\n].*)?)\n$',
+		regex: '^#!(?<content>[\\r\\f\\t\\v ]*(?:[^\\[\\n][^\\x0A]*)?)\n$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	}
 } as const satisfies { readonly [kind: string]: TokenInterior };

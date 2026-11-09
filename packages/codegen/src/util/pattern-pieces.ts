@@ -87,3 +87,91 @@ function groupForm(source: string): string {
 export function sameUpToGroups(a: string, b: string): boolean {
 	return groupForm(a) === groupForm(b);
 }
+
+type CodeRanges = readonly (readonly [number, number])[];
+
+const LEXER_CLASSES = new Map<string, CodeRanges>([
+	['d', [[0x30, 0x39]]],
+	[
+		's',
+		[
+			[0x09, 0x0d],
+			[0x20, 0x20]
+		]
+	],
+	[
+		'w',
+		[
+			[0x30, 0x39],
+			[0x41, 0x5a],
+			[0x5f, 0x5f],
+			[0x61, 0x7a]
+		]
+	]
+]);
+const LINE_FEED: CodeRanges = [[0x0a, 0x0a]];
+const LAST_CODE_POINT = 0x10ffff;
+const PLAIN = /^[0-9A-Za-z_]$/;
+
+function codePoint(at: number): string {
+	const char = String.fromCodePoint(at);
+	if (PLAIN.test(char)) return char;
+	const hex = at.toString(16).toUpperCase();
+	return at <= 0xff ? `\\x${hex.padStart(2, '0')}` : `\\u{${hex}}`;
+}
+
+function spelled(ranges: CodeRanges): string {
+	return ranges.map(([lo, hi]) => (lo === hi ? codePoint(lo) : `${codePoint(lo)}-${codePoint(hi)}`)).join('');
+}
+
+function complement(ranges: CodeRanges): CodeRanges {
+	const out: [number, number][] = [];
+	let next = 0;
+	for (const [lo, hi] of ranges) {
+		if (lo > next) out.push([next, lo - 1]);
+		next = hi + 1;
+	}
+	if (next <= LAST_CODE_POINT) out.push([next, LAST_CODE_POINT]);
+	return out;
+}
+
+function lexerClass(escape: string): { readonly ranges: CodeRanges; readonly negated: boolean } | undefined {
+	const letter = escape.slice(1);
+	const ranges = LEXER_CLASSES.get(letter.toLowerCase());
+	return ranges === undefined ? undefined : { ranges, negated: letter !== letter.toLowerCase() };
+}
+
+function classWithLexerClasses(text: string): string {
+	let out = '';
+	for (let at = 0; at < text.length; at++) {
+		if (text[at] !== '\\') {
+			out += text[at];
+			continue;
+		}
+		const escape = text.slice(at, at + 2);
+		at += 1;
+		const lexer = lexerClass(escape);
+		out += lexer === undefined ? escape : spelled(lexer.negated ? complement(lexer.ranges) : lexer.ranges);
+	}
+	return out;
+}
+
+function lexerSpelling(source: string, dot: string): string {
+	let out = '';
+	for (const piece of pieces(source)) {
+		const lexer = piece.kind === 'escape' ? lexerClass(piece.text) : undefined;
+		if (piece.kind === 'class') out += classWithLexerClasses(piece.text);
+		else if (lexer !== undefined) out += `[${lexer.negated ? '^' : ''}${spelled(lexer.ranges)}]`;
+		else if (piece.kind === 'char' && piece.text === '.') out += dot;
+		else out += piece.text;
+	}
+	return out;
+}
+
+export function withLexerClasses(source: string): string {
+	return lexerSpelling(source, '.');
+}
+
+export function asLexed(source: string): string {
+	return lexerSpelling(source, `[^${spelled(LINE_FEED)}]`);
+}

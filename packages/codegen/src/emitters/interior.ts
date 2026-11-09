@@ -15,7 +15,7 @@ import {
 import type { NodeMap } from '../compiler/types.ts';
 import { lexedContentSlot, ownTextLeaf, slotLiteralValues, type LooseRefusal } from './shared.ts';
 import { anchoredLeafRegex, regexLiteral } from '../compiler/model/leaf-pattern.ts';
-import { withoutCaptures } from '../util/pattern-pieces.ts';
+import { asLexed, withoutCaptures } from '../util/pattern-pieces.ts';
 
 export type InteriorEntry =
 	| { readonly lit: string }
@@ -52,7 +52,7 @@ export function interiorEntryPattern(entry: InteriorEntry): string {
 	if ('enum' in entry) {
 		return `(?<${entry.enum}>${interiorEnumArms(entry.values)})${entry.optional ? '?' : ''}`;
 	}
-	return `(?<${entry.slot}>${withoutCaptures(entry.pattern)})${entry.optional === true ? '?' : ''}`;
+	return `(?<${entry.slot}>${withoutCaptures(asLexed(entry.pattern))})${entry.optional === true ? '?' : ''}`;
 }
 
 function interiorNodePattern(node: InteriorNode): string {

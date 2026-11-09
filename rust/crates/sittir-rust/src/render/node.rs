@@ -29842,7 +29842,7 @@ fn prepare_identifier<N: IdentifierPrepare + ?Sized>(node: &mut N, overlay: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SHEBANG, interior = "^#!(?<content>[\\r\\f\\t\\v ]*(?:[^\\[\\n].*)?)\n$", affixes = ("#!", "\n"), words = 6, built_words = 4, fields = ShebangFields, prepare = ShebangPrepare, view = ShebangNodeRecord, prepare_fn = prepare_shebang)]
+#[node(kind = kind::SHEBANG, interior = "^#!(?<content>[\\r\\f\\t\\v ]*(?:[^\\[\\n][^\\x0A]*)?)\n$", affixes = ("#!", "\n"), words = 6, built_words = 4, fields = ShebangFields, prepare = ShebangPrepare, view = ShebangNodeRecord, prepare_fn = prepare_shebang)]
 pub struct ShebangNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30075,7 +30075,7 @@ impl ::sittir_core::render::Render for CrateNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::METAVARIABLE, interior = "^\\$(?<name>[a-zA-Z_]\\w*)$", affixes = ("$", ""), words = 6, built_words = 4, fields = MetavariableFields, prepare = MetavariablePrepare, view = MetavariableNodeRecord, prepare_fn = prepare_metavariable)]
+#[node(kind = kind::METAVARIABLE, interior = "^\\$(?<name>[a-zA-Z_][0-9A-Z_a-z]*)$", affixes = ("$", ""), words = 6, built_words = 4, fields = MetavariableFields, prepare = MetavariablePrepare, view = MetavariableNodeRecord, prepare_fn = prepare_metavariable)]
 pub struct MetavariableNode {
     #[wire(key = "$_layout")]
     #[layout]

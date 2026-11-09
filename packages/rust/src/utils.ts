@@ -65,7 +65,7 @@ export const triviaFacts = Object.freeze({
 	]),
 	namedUnits: new Set<number>([57, 124, 125, 126, 163, 164, 178, 244, 254, 281, 321, 338, 339, 421, 426, 477, 481]),
 	whitespace: Object.freeze({
-		run: /^(?:(?:(?:\s))+)$/u,
+		run: /^(?:(?:(?:[\x09-\x0D\x20]))+)$/u,
 		kindIdByText: Object.freeze({ '': 168, ' ': 169, '\t': 170, '\n': 171, '\n\n': 172, '\n\n\n': 173 })
 	})
 } satisfies TriviaFacts<TSKindId>);
