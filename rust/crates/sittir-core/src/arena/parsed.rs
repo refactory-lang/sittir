@@ -7,7 +7,7 @@ use crate::tree_sitter;
 use super::{Address, Arena, ArenaRead, Cell, CellAt, HeldArenas, HydrateError, HydrateNode, RecordCells, RecordTrees, SideRecord, TreeArena};
 use crate::engine::{EngineGrammar, ParsedTree};
 use crate::nodes::{Nodes, RecordNodes, TreeNodes};
-use crate::options::ResolvedOptions;
+use crate::options::{ResolvedOptions, Side};
 use crate::prepare::RenderContext;
 use crate::read::Depth;
 use crate::record::HEADER_WORDS;
@@ -43,11 +43,14 @@ impl ::napi::bindgen_prelude::ToNapiValue for BackerParity {
 }
 
 /// Whether `records` and `nodes` answer the node at `index` alike: its
-/// facts, children and parent, whether it is `MISSING` and whether it holds
-/// an error.
+/// facts, children, children at each edge (the first and last it lists)
+/// and parent, whether it is `MISSING` and whether it holds an error.
 fn agree(records: &mut dyn Nodes<'_>, nodes: &mut dyn Nodes<'_>, index: NodeIndex) -> bool {
+    let kids = nodes.kids(index);
+    let edges = [(Side::Before, kids.first().copied()), (Side::After, kids.last().copied())];
     records.kid(index) == nodes.kid(index)
-        && *records.kids(index) == *nodes.kids(index)
+        && *records.kids(index) == *kids
+        && edges.into_iter().all(|(side, edge)| records.edge(index, side) == edge && nodes.edge(index, side) == edge)
         && records.parent(index) == nodes.parent(index)
         && records.missing(index) == nodes.missing(index)
         && records.holds_error(index) == nodes.holds_error(index)

@@ -11,14 +11,15 @@
 use sittir_core::arena::{HydrateNode, RecordCells, ROW_FIELD_BITS};
 use sittir_core::engine::{node_at_index, EngineGrammar};
 use sittir_core::layout::LayoutWorkCounter;
-use sittir_core::nodes::{Kid, Nodes, RecordNodes, Step, TreeNodes, Visit};
-use sittir_core::options::ResolvedOptions;
-use sittir_core::read::{descendant_count, Depth};
+use sittir_core::nodes::{for_each_edge_child, Kid, Nodes, RecordNodes, Step, TreeNodes, Visit};
+use sittir_core::options::{ResolvedOptions, Side};
+use sittir_core::read::{descendant_count, Depth, LentCursor};
 use sittir_core::tree_sitter;
 use sittir_core::trivia_table::DepthMembers;
 use sittir_core::types::NodeIndex;
 use sittir_parity_tests::{each_grammar, fixture_sources, parsed};
 use std::fmt::Write as _;
+use std::sync::Arc;
 
 /// A file with an `ERROR` node and a `MISSING` token, by grammar.
 fn with_errors(name: &str) -> &'static str {
@@ -175,6 +176,97 @@ fn rows_cover<G: EngineGrammar + Copy, N: HydrateNode + RecordCells>(name: &str,
 fn rows_cover_every_byte() {
     for (name, covered) in each_grammar_read!(rows_cover) {
         assert_ne!(covered, 0, "{name}: the leaves hold bytes");
+    }
+}
+
+/// Navigation answering through `inner`, counting the children it lists
+/// (`Nodes::kids`) and the edge children it finds (`Nodes::edge`).
+struct Counting<'n, 't> {
+    inner: &'n mut dyn Nodes<'t>,
+    listed: usize,
+    edges: usize,
+}
+
+impl<'t> Nodes<'t> for Counting<'_, 't> {
+    fn text(&self) -> &'t str {
+        self.inner.text()
+    }
+
+    fn kid(&mut self, index: NodeIndex) -> Kid {
+        self.inner.kid(index)
+    }
+
+    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
+        self.listed += 1;
+        self.inner.kids(index)
+    }
+
+    fn edge(&mut self, index: NodeIndex, side: Side) -> Option<Kid> {
+        self.edges += 1;
+        self.inner.edge(index, side)
+    }
+
+    fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
+        self.inner.parent(index)
+    }
+
+    fn missing(&mut self, index: NodeIndex) -> bool {
+        self.inner.missing(index)
+    }
+
+    fn holds_error(&mut self, index: NodeIndex) -> bool {
+        self.inner.holds_error(index)
+    }
+}
+
+/// The children at the edge on each side of each of the `count` nodes of
+/// `nodes`, level by level down, each level found with one `Nodes::edge`
+/// and no child listed.
+fn edge_paths(name: &str, source: &str, nodes: &mut dyn Nodes<'_>, count: u32) -> Vec<Vec<Kid>> {
+    let mut paths = Vec::new();
+    for index in 0..count {
+        let holder = nodes.kid(NodeIndex::new(index));
+        for side in [Side::Before, Side::After] {
+            let mut counting = Counting { inner: &mut *nodes, listed: 0, edges: 0 };
+            let mut path = Vec::new();
+            for_each_edge_child(&mut counting, &holder, side, &mut |kid| path.push(*kid));
+            assert_eq!(
+                (counting.listed, counting.edges),
+                (0, path.len() + 1),
+                "{name} {source:?}: the edge on side {side:?} below {index} lists no children and asks each level's child once"
+            );
+            paths.push(path);
+        }
+    }
+    paths
+}
+
+/// The edge children every fixture tree of `name` holds, found alike
+/// through its record backer, its tree backer and a lent cursor.
+fn edge_paths_agree<G: EngineGrammar + Copy, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> usize {
+    let mut levels = 0;
+    for source in fixtures(name) {
+        let tree = parsed(grammar, options(), &source);
+        tree.read_record::<N>(NodeIndex::ROOT, Depth::All).unwrap_or_else(|refusal| panic!("{name} {source:?}: a whole read: {refusal}"));
+        let arena = tree.tree_arena();
+        let mut records = RecordNodes::new(&arena, tree.source()).unwrap_or_else(|| panic!("{name} {source:?}: a row for every node"));
+        let work = LayoutWorkCounter::default();
+        let mut nodes = TreeNodes::new(tree.tree(), tree.source(), &work);
+        let count = descendant_count(&tree.tree().root_node());
+        let from_tree = edge_paths(name, &source, &mut nodes, count);
+        assert_eq!(edge_paths(name, &source, &mut records, count), from_tree, "{name} {source:?}: the backers find the same edge children");
+        let mut cursor = tree.tree().walk();
+        let mut lent = LentCursor::new(&mut cursor, tree.source());
+        assert_eq!(edge_paths(name, &source, &mut lent, count), from_tree, "{name} {source:?}: a lent cursor finds the same edge children");
+        levels += from_tree.iter().map(Vec::len).sum::<usize>();
+    }
+    levels
+}
+
+#[test]
+fn an_edge_level_lists_no_children() {
+    for (name, levels) in each_grammar_read!(edge_paths_agree) {
+        assert_ne!(levels, 0, "{name}: some node has a child at its edge");
     }
 }
 

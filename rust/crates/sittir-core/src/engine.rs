@@ -285,7 +285,7 @@ pub fn node_at_span(nodes: &mut dyn Nodes<'_>, span: Span, kind: KindId) -> Opti
         }
         let mut child = match nodes.child_past(node.index, span.start) {
             Some(child) => child,
-            None => *nodes.kids(node.index).last()?,
+            None => nodes.edge(node.index, crate::options::Side::After)?,
         };
         if span.start == span.end {
             while let Some(back) = nodes.previous(child.index).filter(|back| back.end >= span.start) {
@@ -1720,7 +1720,7 @@ impl<G: EngineGrammar> Lookups<'_, G> {
             }
             let mut child = match run.start.checked_sub(1) {
                 Some(before) => self.nodes.child_past(kid.index, before),
-                None => self.nodes.kids(kid.index).first().copied(),
+                None => self.nodes.edge(kid.index, crate::options::Side::Before),
             };
             while let Some(entered) = child.filter(|child| child.start <= run.end) {
                 stack.push((entered, depth + 1));
@@ -1891,8 +1891,7 @@ impl<G: EngineGrammar> Lookups<'_, G> {
     /// included (`SideLookup::end_children`).
     fn end_children(&mut self, index: NodeIndex) -> Option<[Kid; 2]> {
         self.kid(index)?;
-        let children = self.nodes.kids(index);
-        Some([*children.first()?, *children.last()?])
+        Some([self.nodes.edge(index, crate::options::Side::Before)?, self.nodes.edge(index, crate::options::Side::After)?])
     }
 
     /// The sides a coordinate of the node at `index` renders between, as
@@ -2004,11 +2003,9 @@ impl<G: EngineGrammar> Lookups<'_, G> {
             return;
         }
         let ctx = self.tree.read_ctx();
-        let mut holder = kid;
-        while let Some(child) = edge_child(&mut self.nodes, &holder, side) {
+        crate::nodes::for_each_edge_child(&mut self.nodes, &kid, side, &mut |child| {
             f(crate::render::EdgeLevel { stamp: ctx.stamped_kind(child.grammar, child.display), grammar: child.grammar, display: child.display, field: child.field });
-            holder = child;
-        }
+        });
     }
 
     /// The levels the node a coordinate of the tree names opens net of those
@@ -2461,21 +2458,6 @@ fn align(items: &[SourceItem], written: &[crate::baseline::Item], steps: &mut u6
         }
     }
     matched
-}
-
-/// The next level of the edge chain at the node `holder`'s edge on `side`
-/// (`SourceTable::for_each_edge_level`): its first child (before) or last
-/// (after), when that child starts or ends where the node does.
-fn edge_child(nodes: &mut dyn Nodes<'_>, holder: &Kid, side: crate::options::Side) -> Option<Kid> {
-    let children = nodes.kids(holder.index);
-    let child = match side {
-        crate::options::Side::Before => children.first(),
-        crate::options::Side::After => children.last(),
-    };
-    child.copied().filter(|child| match side {
-        crate::options::Side::Before => child.start == holder.start,
-        crate::options::Side::After => child.end == holder.end,
-    })
 }
 
 /// The live trees one call renders through, each tree a lookup hands out
