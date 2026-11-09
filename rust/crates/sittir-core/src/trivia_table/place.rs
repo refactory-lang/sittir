@@ -1160,6 +1160,37 @@ impl<'t> Placer<'t, '_, '_> {
                 }
             }
         }
+        let mut from = 0;
+        for &(node, side, end) in &sides {
+            let held = &entries[from..end as usize];
+            from = end as usize;
+            let spans = held.iter().filter_map(|entry| match *entry {
+                Assigned::Extra(at) | Assigned::Error(at) | Assigned::Member(at) => {
+                    let kid = self.kid(at);
+                    Some((kid.start, kid.end))
+                }
+                Assigned::Layout { .. } | Assigned::Depth(_) => None,
+            });
+            let reach = match side {
+                TriviaSide::Leading => spans.map(|(start, _)| start).min(),
+                TriviaSide::Trailing => spans.map(|(_, end)| end).max(),
+                TriviaSide::Inner => None,
+            };
+            let Some(reach) = reach else { continue };
+            let (mut child, mut at) = (node, self.parent(node));
+            while let Some(holder) = at.filter(|holder| members.contains(holder)) {
+                let kid = self.kid(holder);
+                let past = if side == TriviaSide::Leading { reach < kid.start } else { reach > kid.end };
+                if !past {
+                    break;
+                }
+                if !edges.iter().any(|&(list, edge, _)| list == holder && edge == side) {
+                    edges.push((holder, side, child));
+                }
+                child = holder;
+                at = self.parent(holder);
+            }
+        }
         edges.sort_unstable();
         let slot = if sides.is_empty() && edges.is_empty() {
             EMPTY
