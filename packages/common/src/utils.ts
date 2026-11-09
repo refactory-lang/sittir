@@ -11,6 +11,7 @@ import { undoIfFillFails } from './list-fills.ts';
 import { treeOf, treeOfToken, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
+import { spelledMember } from './spelled.ts';
 import { snapshotOf } from './snapshot.ts';
 import { chosenSeparatorOf, liveWords, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
 import { HANDLE, isRecordPosition, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
@@ -851,14 +852,14 @@ function cacheOf(node: RecordHandle): Record<number, unknown> {
 	return (node.$cache ??= {});
 }
 
-export function childSlot(node: RecordHandle, word: number, width: number, forms: number, inline: number, built: number, wrap?: WrapNode, aliasContent = false): unknown {
+export function childSlot(node: RecordHandle, word: number, width: number, forms: number, inline: number, built: number, wrap?: WrapNode, aliasContent = false, spellings?: Readonly<Record<string, string>>): unknown {
 	const cache = cacheOf(node);
 	if (word in cache) return cache[word];
 	const value = recordSlot(node, word, width, forms, inline, built);
 	const role = aliasContent ? contentRole(node, () => value) : 'node';
 	const child = wrap === undefined ? value : hydrateWith(value, node.$tree, wrap, undefined, role);
 	undoIfFillFails(cache, word, undefined);
-	return (cache[word] = child);
+	return (cache[word] = spelledMember(child, spellings));
 }
 
 export function childItems(node: RecordHandle, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number, wrap?: WrapNode): readonly unknown[] {

@@ -39,6 +39,7 @@ export interface BuiltPlace extends BuiltWords {
 export interface BuiltDraft extends BuiltPlace {
 	placed: unknown[] | undefined;
 	readonly copyOf: number | undefined;
+	readonly copyOfParsed: RecordPosition | undefined;
 	readonly kept: Readonly<Record<number, unknown>> | undefined;
 	patched: number[] | undefined;
 }
@@ -751,16 +752,17 @@ export class BuiltArena {
 		return this.draft(kind, this.#widthOf(kind));
 	}
 
-	draft(kind: number, words: number, copyOf?: number, kept?: Readonly<Record<number, unknown>>): BuiltDraft {
+	draft(kind: number, words: number, copyOf?: number, kept?: Readonly<Record<number, unknown>>, copyOfParsed?: RecordPosition): BuiltDraft {
 		const { data, base, at } = this.#mint(words);
 		data[base] = this.header(kind);
-		return { data, base, at, words, placed: undefined, copyOf, kept, patched: undefined };
+		return { data, base, at, words, placed: undefined, copyOf, copyOfParsed, kept, patched: undefined };
 	}
 
 	copy(source: object, kind: number, place?: number): BuiltDraft {
 		const at = builtRecordOf(source, this);
 		if (at === undefined) {
-			const draft = this.record(kind);
+			const parsed = isRecordPosition(source) && source.$tree.built === undefined ? source : undefined;
+			const draft = this.draft(kind, this.#widthOf(kind), undefined, (parsed as { readonly $cache?: Readonly<Record<number, unknown>> } | undefined)?.$cache, parsed);
 			if (place !== undefined) this.#carry(source, kind, draft, 0, place);
 			return draft;
 		}
@@ -783,21 +785,31 @@ export class BuiltArena {
 		return places;
 	}
 
+	keep(record: BuiltDraft, word: number): void {
+		const source = record.copyOfParsed;
+		if (source === undefined) return;
+		const kind = headerKind(record.data[record.base]!, this.format.kindBits);
+		const place = this.#placesOf(kind).find((row) => row.length === 6 && row[0] === word);
+		if (place === undefined) throw new Error(`a kind ${kind} record keeps no cell at word ${word}`);
+		this.#carryPlace(source, record, place);
+	}
+
 	#carry(source: object, kind: number, record: BuiltDraft, from: number, to: number): void {
 		if (!isRecordPosition(source) || source.$tree.built !== undefined) throw new Error(`a $with of one slot of kind ${kind} copies a record, not ${String(source)}`);
 		const places = this.#placesOf(kind);
-		const read = (value: unknown): unknown => (typeof value === 'object' && value !== null ? carryTree(source, value) : value);
-		for (let n = from; n < to; n++) {
-			const place = places[n]!;
-			if (place.length === 2) {
-				const [word, bit] = place;
-				if (recordFlag(source, word, bit)) storeFlag(record.data, record.base + word, 2 ** bit);
-				continue;
-			}
-			const [word, built, width, forms, inline, run] = place;
-			if (run === 0) storeCell(this, record, built, word, read(recordSlot(source, word, width, forms, inline, built)));
-			else storeList(this, record, built, word, recordSlots(source, word, width, run, forms, inline, built, read));
+		for (let n = from; n < to; n++) this.#carryPlace(source, record, places[n]!);
+	}
+
+	#carryPlace(source: RecordPosition, record: BuiltDraft, place: BuiltPlaceRow): void {
+		if (place.length === 2) {
+			const [word, bit] = place;
+			if (recordFlag(source, word, bit)) storeFlag(record.data, record.base + word, 2 ** bit);
+			return;
 		}
+		const [word, built, width, forms, inline, run] = place;
+		const read = (value: unknown): unknown => (typeof value === 'object' && value !== null ? carryTree(source, value) : value);
+		if (run === 0) storeCell(this, record, built, word, read(recordSlot(source, word, width, forms, inline, built)));
+		else storeList(this, record, built, word, recordSlots(source, word, width, run, forms, inline, built, read));
 	}
 
 	/** The words of a run of `length` one-word cells after its length word, which it holds. */
@@ -1375,14 +1387,14 @@ function patchedAt(arena: BuiltArena, record: BuiltDraft, cell: number, word: nu
 }
 
 export function patchCell(arena: BuiltArena, record: BuiltDraft, cell: number, word: number, value: unknown): void {
-	if (keptAt(record, word, value)) return;
+	if (keptAt(record, word, value)) return arena.keep(record, word);
 	patchedAt(arena, record, cell, word, false);
 	storeCell(arena, record, cell, word, value);
 }
 
 export function patchList(arena: BuiltArena, record: BuiltDraft, cell: number, word: number, items: readonly unknown[]): void {
 	const kept = record.kept?.[word];
-	if (Array.isArray(kept) && kept.length === items.length && items.every((item, n) => item === kept[n])) return;
+	if (Array.isArray(kept) && kept.length === items.length && items.every((item, n) => item === kept[n])) return arena.keep(record, word);
 	patchedAt(arena, record, cell, word, true);
 	storeList(arena, record, cell, word, items);
 }
