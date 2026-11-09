@@ -42,6 +42,7 @@ import {
 	unaffixed,
 	builtArenaOf,
 	builtInputs,
+	listSettingsOf,
 	patchesByCopy,
 	storeCell,
 	storeFlag,
@@ -142,13 +143,17 @@ function buildSourceFile$patch(source: object, config: Partial<T.SourceFile.Conf
 		return node as unknown as T.SourceFile.Bound;
 	});
 }
-function buildSourceFile$set(source: object, slot: string, config: Partial<T.SourceFile.Config>): T.SourceFile.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildSourceFile$patch(source, { ...(inputs.config as T.SourceFile.Config), ...config });
-	}
+function buildSourceFile$set(
+	source: object,
+	...[slot, input]: ['shebang', Partial<T.SourceFile.Config>] | ['statements', Partial<T.SourceFile.Config>]
+): T.SourceFile.Bound {
 	switch (slot) {
 		case 'shebang': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildSourceFile$patch(source, { ...(inputs.config as T.SourceFile.Config), ...input });
+			}
+			const config = input;
 			const _shebang = config.shebang;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'source_file', { shebang: _shebang });
@@ -162,6 +167,11 @@ function buildSourceFile$set(source: object, slot: string, config: Partial<T.Sou
 			});
 		}
 		case 'statements': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildSourceFile$patch(source, { ...(inputs.config as T.SourceFile.Config), ...input });
+			}
+			const config = input;
 			const _statements = listStorage<NonNullable<T.SourceFile['_statements']>>(config.statements ?? [], kindIdStorage);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'source_file', { statements: _statements });
@@ -175,7 +185,6 @@ function buildSourceFile$set(source: object, slot: string, config: Partial<T.Sou
 			});
 		}
 	}
-	throw new Error(`source_file writes no slot ${slot} alone`);
 }
 function withSourceFile(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -336,13 +345,17 @@ function buildMacroRule$patch(source: object, config: T.MacroRule.Config): T.Mac
 		return node as unknown as T.MacroRule.Bound;
 	});
 }
-function buildMacroRule$set(source: object, slot: string, config: Partial<T.MacroRule.Config>): T.MacroRule.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildMacroRule$patch(source, { ...(inputs.config as T.MacroRule.Config), ...config });
-	}
+function buildMacroRule$set(
+	source: object,
+	...[slot, input]: ['left', Partial<T.MacroRule.Config>] | ['right', Partial<T.MacroRule.Config>]
+): T.MacroRule.Bound {
 	switch (slot) {
 		case 'left': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMacroRule$patch(source, { ...(inputs.config as T.MacroRule.Config), ...input });
+			}
+			const config = input;
 			const _left = config.left;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'macro_rule', { left: _left });
@@ -356,6 +369,11 @@ function buildMacroRule$set(source: object, slot: string, config: Partial<T.Macr
 			});
 		}
 		case 'right': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMacroRule$patch(source, { ...(inputs.config as T.MacroRule.Config), ...input });
+			}
+			const config = input;
 			const _right = config.right;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'macro_rule', { right: _right });
@@ -369,7 +387,6 @@ function buildMacroRule$set(source: object, slot: string, config: Partial<T.Macr
 			});
 		}
 	}
-	throw new Error(`macro_rule writes no slot ${slot} alone`);
 }
 function withMacroRule(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -427,15 +444,17 @@ function buildTokenBindingPattern$patch(
 }
 function buildTokenBindingPattern$set(
 	source: object,
-	slot: string,
-	config: Partial<T.TokenBindingPattern.Config>
+	...[slot, input]:
+		| ['name', Partial<T.TokenBindingPattern.Config>]
+		| ['fragment', Partial<T.TokenBindingPattern.Config>]
 ): T.TokenBindingPattern.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildTokenBindingPattern$patch(source, { ...(inputs.config as T.TokenBindingPattern.Config), ...config });
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTokenBindingPattern$patch(source, { ...(inputs.config as T.TokenBindingPattern.Config), ...input });
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'token_binding_pattern', { name: _name });
@@ -449,6 +468,11 @@ function buildTokenBindingPattern$set(
 			});
 		}
 		case 'fragment': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTokenBindingPattern$patch(source, { ...(inputs.config as T.TokenBindingPattern.Config), ...input });
+			}
+			const config = input;
 			const _fragment = kindIdStorage<NonNullable<T.TokenBindingPattern['_fragment']>>(config.fragment);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'token_binding_pattern', { fragment: _fragment });
@@ -462,7 +486,6 @@ function buildTokenBindingPattern$set(
 			});
 		}
 	}
-	throw new Error(`token_binding_pattern writes no slot ${slot} alone`);
 }
 function withTokenBindingPattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -544,18 +567,21 @@ function buildTokenRepetitionPattern$patch(
 }
 function buildTokenRepetitionPattern$set(
 	source: object,
-	slot: string,
-	config: Partial<T.TokenRepetitionPattern.Config>
+	...[slot, input]:
+		| ['tokenPatterns', Partial<T.TokenRepetitionPattern.Config>]
+		| ['separator', Partial<T.TokenRepetitionPattern.Config>]
+		| ['operator', Partial<T.TokenRepetitionPattern.Config>]
 ): T.TokenRepetitionPattern.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildTokenRepetitionPattern$patch(source, {
-			...(inputs.config as T.TokenRepetitionPattern.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'tokenPatterns': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTokenRepetitionPattern$patch(source, {
+					...(inputs.config as T.TokenRepetitionPattern.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _token_patterns = listStorage<NonNullable<T.TokenRepetitionPattern['_token_patterns']>>(
 				config.tokenPatterns ?? []
 			);
@@ -571,6 +597,14 @@ function buildTokenRepetitionPattern$set(
 			});
 		}
 		case 'separator': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTokenRepetitionPattern$patch(source, {
+					...(inputs.config as T.TokenRepetitionPattern.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _separator = config.separator;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'token_repetition_pattern', { separator: _separator });
@@ -584,6 +618,14 @@ function buildTokenRepetitionPattern$set(
 			});
 		}
 		case 'operator': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTokenRepetitionPattern$patch(source, {
+					...(inputs.config as T.TokenRepetitionPattern.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _operator = kindIdStorage<NonNullable<T.TokenRepetitionPattern['_operator']>>(config.operator);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'token_repetition_pattern', { operator: _operator });
@@ -597,7 +639,6 @@ function buildTokenRepetitionPattern$set(
 			});
 		}
 	}
-	throw new Error(`token_repetition_pattern writes no slot ${slot} alone`);
 }
 function withTokenRepetitionPattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -681,15 +722,18 @@ function buildTokenRepetition$patch(source: object, config: T.TokenRepetition.Co
 }
 function buildTokenRepetition$set(
 	source: object,
-	slot: string,
-	config: Partial<T.TokenRepetition.Config>
+	...[slot, input]:
+		| ['tokens', Partial<T.TokenRepetition.Config>]
+		| ['separator', Partial<T.TokenRepetition.Config>]
+		| ['operator', Partial<T.TokenRepetition.Config>]
 ): T.TokenRepetition.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildTokenRepetition$patch(source, { ...(inputs.config as T.TokenRepetition.Config), ...config });
-	}
 	switch (slot) {
 		case 'tokens': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTokenRepetition$patch(source, { ...(inputs.config as T.TokenRepetition.Config), ...input });
+			}
+			const config = input;
 			const _tokens = listStorage<NonNullable<T.TokenRepetition['_tokens']>>(config.tokens ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'token_repetition', { tokens: _tokens });
@@ -703,6 +747,11 @@ function buildTokenRepetition$set(
 			});
 		}
 		case 'separator': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTokenRepetition$patch(source, { ...(inputs.config as T.TokenRepetition.Config), ...input });
+			}
+			const config = input;
 			const _separator = config.separator;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'token_repetition', { separator: _separator });
@@ -716,6 +765,11 @@ function buildTokenRepetition$set(
 			});
 		}
 		case 'operator': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTokenRepetition$patch(source, { ...(inputs.config as T.TokenRepetition.Config), ...input });
+			}
+			const config = input;
 			const _operator = kindIdStorage<NonNullable<T.TokenRepetition['_operator']>>(config.operator);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'token_repetition', { operator: _operator });
@@ -729,7 +783,6 @@ function buildTokenRepetition$set(
 			});
 		}
 	}
-	throw new Error(`token_repetition writes no slot ${slot} alone`);
 }
 function withTokenRepetition(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1474,13 +1527,17 @@ function buildAttribute$patch(source: object, config: T.Attribute.Config): T.Att
 		return node as unknown as T.Attribute.Bound;
 	});
 }
-function buildAttribute$set(source: object, slot: string, config: Partial<T.Attribute.Config>): T.Attribute.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildAttribute$patch(source, { ...(inputs.config as T.Attribute.Config), ...config });
-	}
+function buildAttribute$set(
+	source: object,
+	...[slot, input]: ['path', Partial<T.Attribute.Config>] | ['input', Partial<T.Attribute.Config>]
+): T.Attribute.Bound {
 	switch (slot) {
 		case 'path': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttribute$patch(source, { ...(inputs.config as T.Attribute.Config), ...input });
+			}
+			const config = input;
 			const _path = rejectKeywordText(
 				kindIdStorage<NonNullable<T.Attribute['_path']>>(config.path),
 				'Attribute.path',
@@ -1499,6 +1556,11 @@ function buildAttribute$set(source: object, slot: string, config: Partial<T.Attr
 			});
 		}
 		case 'input': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttribute$patch(source, { ...(inputs.config as T.Attribute.Config), ...input });
+			}
+			const config = input;
 			const _input = config.input;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'attribute', { input: _input });
@@ -1512,7 +1574,6 @@ function buildAttribute$set(source: object, slot: string, config: Partial<T.Attr
 			});
 		}
 	}
-	throw new Error(`attribute writes no slot ${slot} alone`);
 }
 function withAttribute(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1669,13 +1730,22 @@ function buildUnionItem$patch(source: object, config: T.UnionItem.Config): T.Uni
 		return node as unknown as T.UnionItem.Bound;
 	});
 }
-function buildUnionItem$set(source: object, slot: string, config: Partial<T.UnionItem.Config>): T.UnionItem.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildUnionItem$patch(source, { ...(inputs.config as T.UnionItem.Config), ...config });
-	}
+function buildUnionItem$set(
+	source: object,
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.UnionItem.Config>]
+		| ['name', Partial<T.UnionItem.Config>]
+		| ['typeParameters', Partial<T.UnionItem.Config>]
+		| ['whereClause', Partial<T.UnionItem.Config>]
+		| ['body', Partial<T.UnionItem.Config>]
+): T.UnionItem.Bound {
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildUnionItem$patch(source, { ...(inputs.config as T.UnionItem.Config), ...input });
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'union_item', { visibilityModifier: _visibility_modifier });
@@ -1689,6 +1759,11 @@ function buildUnionItem$set(source: object, slot: string, config: Partial<T.Unio
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildUnionItem$patch(source, { ...(inputs.config as T.UnionItem.Config), ...input });
+			}
+			const config = input;
 			const _name = admitAliasContent<NonNullable<T.UnionItem['_name']>>(config.name, [
 				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 			]);
@@ -1704,6 +1779,11 @@ function buildUnionItem$set(source: object, slot: string, config: Partial<T.Unio
 			});
 		}
 		case 'typeParameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildUnionItem$patch(source, { ...(inputs.config as T.UnionItem.Config), ...input });
+			}
+			const config = input;
 			const _type_parameters = config.typeParameters;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'union_item', { typeParameters: _type_parameters });
@@ -1717,6 +1797,11 @@ function buildUnionItem$set(source: object, slot: string, config: Partial<T.Unio
 			});
 		}
 		case 'whereClause': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildUnionItem$patch(source, { ...(inputs.config as T.UnionItem.Config), ...input });
+			}
+			const config = input;
 			const _where_clause = config.whereClause;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'union_item', { whereClause: _where_clause });
@@ -1730,6 +1815,11 @@ function buildUnionItem$set(source: object, slot: string, config: Partial<T.Unio
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildUnionItem$patch(source, { ...(inputs.config as T.UnionItem.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildFieldDeclarationList());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'union_item', { body: _body });
@@ -1743,7 +1833,6 @@ function buildUnionItem$set(source: object, slot: string, config: Partial<T.Unio
 			});
 		}
 	}
-	throw new Error(`union_item writes no slot ${slot} alone`);
 }
 function withUnionItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1893,13 +1982,22 @@ function buildEnumItem$patch(source: object, config: T.EnumItem.Config): T.EnumI
 		return node as unknown as T.EnumItem.Bound;
 	});
 }
-function buildEnumItem$set(source: object, slot: string, config: Partial<T.EnumItem.Config>): T.EnumItem.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildEnumItem$patch(source, { ...(inputs.config as T.EnumItem.Config), ...config });
-	}
+function buildEnumItem$set(
+	source: object,
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.EnumItem.Config>]
+		| ['name', Partial<T.EnumItem.Config>]
+		| ['typeParameters', Partial<T.EnumItem.Config>]
+		| ['whereClause', Partial<T.EnumItem.Config>]
+		| ['body', Partial<T.EnumItem.Config>]
+): T.EnumItem.Bound {
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildEnumItem$patch(source, { ...(inputs.config as T.EnumItem.Config), ...input });
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'enum_item', { visibilityModifier: _visibility_modifier });
@@ -1913,6 +2011,11 @@ function buildEnumItem$set(source: object, slot: string, config: Partial<T.EnumI
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildEnumItem$patch(source, { ...(inputs.config as T.EnumItem.Config), ...input });
+			}
+			const config = input;
 			const _name = admitAliasContent<NonNullable<T.EnumItem['_name']>>(config.name, [
 				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 			]);
@@ -1928,6 +2031,11 @@ function buildEnumItem$set(source: object, slot: string, config: Partial<T.EnumI
 			});
 		}
 		case 'typeParameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildEnumItem$patch(source, { ...(inputs.config as T.EnumItem.Config), ...input });
+			}
+			const config = input;
 			const _type_parameters = config.typeParameters;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'enum_item', { typeParameters: _type_parameters });
@@ -1941,6 +2049,11 @@ function buildEnumItem$set(source: object, slot: string, config: Partial<T.EnumI
 			});
 		}
 		case 'whereClause': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildEnumItem$patch(source, { ...(inputs.config as T.EnumItem.Config), ...input });
+			}
+			const config = input;
 			const _where_clause = config.whereClause;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'enum_item', { whereClause: _where_clause });
@@ -1954,6 +2067,11 @@ function buildEnumItem$set(source: object, slot: string, config: Partial<T.EnumI
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildEnumItem$patch(source, { ...(inputs.config as T.EnumItem.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildEnumVariantList());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'enum_item', { body: _body });
@@ -1967,7 +2085,6 @@ function buildEnumItem$set(source: object, slot: string, config: Partial<T.EnumI
 			});
 		}
 	}
-	throw new Error(`enum_item writes no slot ${slot} alone`);
 }
 function withEnumItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -2174,15 +2291,19 @@ function buildEnumVariant$patch(source: object, config: T.EnumVariant.Config): T
 }
 function buildEnumVariant$set(
 	source: object,
-	slot: string,
-	config: Partial<T.EnumVariant.Config>
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.EnumVariant.Config>]
+		| ['name', Partial<T.EnumVariant.Config>]
+		| ['body', Partial<T.EnumVariant.Config>]
+		| ['value', Partial<T.EnumVariant.Config>]
 ): T.EnumVariant.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildEnumVariant$patch(source, { ...(inputs.config as T.EnumVariant.Config), ...config });
-	}
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildEnumVariant$patch(source, { ...(inputs.config as T.EnumVariant.Config), ...input });
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'enum_variant', { visibilityModifier: _visibility_modifier });
@@ -2196,6 +2317,11 @@ function buildEnumVariant$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildEnumVariant$patch(source, { ...(inputs.config as T.EnumVariant.Config), ...input });
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'enum_variant', { name: _name });
@@ -2209,6 +2335,11 @@ function buildEnumVariant$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildEnumVariant$patch(source, { ...(inputs.config as T.EnumVariant.Config), ...input });
+			}
+			const config = input;
 			const _body = config.body;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'enum_variant', { body: _body });
@@ -2222,6 +2353,11 @@ function buildEnumVariant$set(
 			});
 		}
 		case 'value': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildEnumVariant$patch(source, { ...(inputs.config as T.EnumVariant.Config), ...input });
+			}
+			const config = input;
 			const _value = kindIdStorage<NonNullable<T.EnumVariant['_value']>>(config.value);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'enum_variant', { value: _value });
@@ -2235,7 +2371,6 @@ function buildEnumVariant$set(
 			});
 		}
 	}
-	throw new Error(`enum_variant writes no slot ${slot} alone`);
 }
 function withEnumVariant(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -2407,15 +2542,18 @@ function buildFieldDeclaration$patch(source: object, config: T.FieldDeclaration.
 }
 function buildFieldDeclaration$set(
 	source: object,
-	slot: string,
-	config: Partial<T.FieldDeclaration.Config>
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.FieldDeclaration.Config>]
+		| ['name', Partial<T.FieldDeclaration.Config>]
+		| ['type', Partial<T.FieldDeclaration.Config>]
 ): T.FieldDeclaration.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildFieldDeclaration$patch(source, { ...(inputs.config as T.FieldDeclaration.Config), ...config });
-	}
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldDeclaration$patch(source, { ...(inputs.config as T.FieldDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -2430,6 +2568,11 @@ function buildFieldDeclaration$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldDeclaration$patch(source, { ...(inputs.config as T.FieldDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _name = admitAliasContent<NonNullable<T.FieldDeclaration['_name']>>(config.name, [
 				[[1], (v: unknown) => buildFieldIdentifier(v as never)]
 			]);
@@ -2445,6 +2588,11 @@ function buildFieldDeclaration$set(
 			});
 		}
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldDeclaration$patch(source, { ...(inputs.config as T.FieldDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.FieldDeclaration['_type']>>(
 				kindIdStorage<NonNullable<T.FieldDeclaration['_type']>>(config.type),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -2461,7 +2609,6 @@ function buildFieldDeclaration$set(
 			});
 		}
 	}
-	throw new Error(`field_declaration writes no slot ${slot} alone`);
 }
 function withFieldDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -2635,18 +2782,21 @@ function buildExternCrateDeclaration$patch(
 }
 function buildExternCrateDeclaration$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ExternCrateDeclaration.Config>
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.ExternCrateDeclaration.Config>]
+		| ['name', Partial<T.ExternCrateDeclaration.Config>]
+		| ['alias', Partial<T.ExternCrateDeclaration.Config>]
 ): T.ExternCrateDeclaration.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildExternCrateDeclaration$patch(source, {
-			...(inputs.config as T.ExternCrateDeclaration.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildExternCrateDeclaration$patch(source, {
+					...(inputs.config as T.ExternCrateDeclaration.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -2661,6 +2811,14 @@ function buildExternCrateDeclaration$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildExternCrateDeclaration$patch(source, {
+					...(inputs.config as T.ExternCrateDeclaration.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'extern_crate_declaration', { name: _name });
@@ -2674,6 +2832,14 @@ function buildExternCrateDeclaration$set(
 			});
 		}
 		case 'alias': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildExternCrateDeclaration$patch(source, {
+					...(inputs.config as T.ExternCrateDeclaration.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _alias = config.alias;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'extern_crate_declaration', { alias: _alias });
@@ -2687,7 +2853,6 @@ function buildExternCrateDeclaration$set(
 			});
 		}
 	}
-	throw new Error(`extern_crate_declaration writes no slot ${slot} alone`);
 }
 function withExternCrateDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -2780,13 +2945,21 @@ function buildConstItem$patch(source: object, config: T.ConstItem.Config): T.Con
 		return node as unknown as T.ConstItem.Bound;
 	});
 }
-function buildConstItem$set(source: object, slot: string, config: Partial<T.ConstItem.Config>): T.ConstItem.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildConstItem$patch(source, { ...(inputs.config as T.ConstItem.Config), ...config });
-	}
+function buildConstItem$set(
+	source: object,
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.ConstItem.Config>]
+		| ['name', Partial<T.ConstItem.Config>]
+		| ['type', Partial<T.ConstItem.Config>]
+		| ['value', Partial<T.ConstItem.Config>]
+): T.ConstItem.Bound {
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildConstItem$patch(source, { ...(inputs.config as T.ConstItem.Config), ...input });
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'const_item', { visibilityModifier: _visibility_modifier });
@@ -2800,6 +2973,11 @@ function buildConstItem$set(source: object, slot: string, config: Partial<T.Cons
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildConstItem$patch(source, { ...(inputs.config as T.ConstItem.Config), ...input });
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'const_item', { name: _name });
@@ -2813,6 +2991,11 @@ function buildConstItem$set(source: object, slot: string, config: Partial<T.Cons
 			});
 		}
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildConstItem$patch(source, { ...(inputs.config as T.ConstItem.Config), ...input });
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.ConstItem['_type']>>(
 				kindIdStorage<NonNullable<T.ConstItem['_type']>>(config.type),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -2829,6 +3012,11 @@ function buildConstItem$set(source: object, slot: string, config: Partial<T.Cons
 			});
 		}
 		case 'value': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildConstItem$patch(source, { ...(inputs.config as T.ConstItem.Config), ...input });
+			}
+			const config = input;
 			const _value = kindIdStorage<NonNullable<T.ConstItem['_value']>>(config.value);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'const_item', { value: _value });
@@ -2842,7 +3030,6 @@ function buildConstItem$set(source: object, slot: string, config: Partial<T.Cons
 			});
 		}
 	}
-	throw new Error(`const_item writes no slot ${slot} alone`);
 }
 function withConstItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -2963,13 +3150,23 @@ function buildStaticItem$patch(source: object, config: T.StaticItem.Config): T.S
 		return node as unknown as T.StaticItem.Bound;
 	});
 }
-function buildStaticItem$set(source: object, slot: string, config: Partial<T.StaticItem.Config>): T.StaticItem.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildStaticItem$patch(source, { ...(inputs.config as T.StaticItem.Config), ...config });
-	}
+function buildStaticItem$set(
+	source: object,
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.StaticItem.Config>]
+		| ['byReference', Partial<T.StaticItem.Config>]
+		| ['mutable', Partial<T.StaticItem.Config>]
+		| ['name', Partial<T.StaticItem.Config>]
+		| ['type', Partial<T.StaticItem.Config>]
+		| ['value', Partial<T.StaticItem.Config>]
+): T.StaticItem.Bound {
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStaticItem$patch(source, { ...(inputs.config as T.StaticItem.Config), ...input });
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'static_item', { visibilityModifier: _visibility_modifier });
@@ -2983,6 +3180,11 @@ function buildStaticItem$set(source: object, slot: string, config: Partial<T.Sta
 			});
 		}
 		case 'byReference': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStaticItem$patch(source, { ...(inputs.config as T.StaticItem.Config), ...input });
+			}
+			const config = input;
 			const _by_reference = strictBooleanStorage(config.byReference);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'static_item', { byReference: _by_reference });
@@ -2996,6 +3198,11 @@ function buildStaticItem$set(source: object, slot: string, config: Partial<T.Sta
 			});
 		}
 		case 'mutable': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStaticItem$patch(source, { ...(inputs.config as T.StaticItem.Config), ...input });
+			}
+			const config = input;
 			const _mutable = strictBooleanStorage(config.mutable);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'static_item', { mutable: _mutable });
@@ -3009,6 +3216,11 @@ function buildStaticItem$set(source: object, slot: string, config: Partial<T.Sta
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStaticItem$patch(source, { ...(inputs.config as T.StaticItem.Config), ...input });
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'static_item', { name: _name });
@@ -3022,6 +3234,11 @@ function buildStaticItem$set(source: object, slot: string, config: Partial<T.Sta
 			});
 		}
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStaticItem$patch(source, { ...(inputs.config as T.StaticItem.Config), ...input });
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.StaticItem['_type']>>(
 				kindIdStorage<NonNullable<T.StaticItem['_type']>>(config.type),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -3038,6 +3255,11 @@ function buildStaticItem$set(source: object, slot: string, config: Partial<T.Sta
 			});
 		}
 		case 'value': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStaticItem$patch(source, { ...(inputs.config as T.StaticItem.Config), ...input });
+			}
+			const config = input;
 			const _value = kindIdStorage<NonNullable<T.StaticItem['_value']>>(config.value);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'static_item', { value: _value });
@@ -3051,7 +3273,6 @@ function buildStaticItem$set(source: object, slot: string, config: Partial<T.Sta
 			});
 		}
 	}
-	throw new Error(`static_item writes no slot ${slot} alone`);
 }
 function withStaticItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -3193,13 +3414,23 @@ function buildTypeItem$patch(source: object, config: T.TypeItem.Config): T.TypeI
 		return node as unknown as T.TypeItem.Bound;
 	});
 }
-function buildTypeItem$set(source: object, slot: string, config: Partial<T.TypeItem.Config>): T.TypeItem.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildTypeItem$patch(source, { ...(inputs.config as T.TypeItem.Config), ...config });
-	}
+function buildTypeItem$set(
+	source: object,
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.TypeItem.Config>]
+		| ['name', Partial<T.TypeItem.Config>]
+		| ['typeParameters', Partial<T.TypeItem.Config>]
+		| ['whereClause', Partial<T.TypeItem.Config>]
+		| ['value', Partial<T.TypeItem.Config>]
+		| ['trailingWhereClause', Partial<T.TypeItem.Config>]
+): T.TypeItem.Bound {
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTypeItem$patch(source, { ...(inputs.config as T.TypeItem.Config), ...input });
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'type_item', { visibilityModifier: _visibility_modifier });
@@ -3213,6 +3444,11 @@ function buildTypeItem$set(source: object, slot: string, config: Partial<T.TypeI
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTypeItem$patch(source, { ...(inputs.config as T.TypeItem.Config), ...input });
+			}
+			const config = input;
 			const _name = admitAliasContent<NonNullable<T.TypeItem['_name']>>(config.name, [
 				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 			]);
@@ -3228,6 +3464,11 @@ function buildTypeItem$set(source: object, slot: string, config: Partial<T.TypeI
 			});
 		}
 		case 'typeParameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTypeItem$patch(source, { ...(inputs.config as T.TypeItem.Config), ...input });
+			}
+			const config = input;
 			const _type_parameters = config.typeParameters;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'type_item', { typeParameters: _type_parameters });
@@ -3241,6 +3482,11 @@ function buildTypeItem$set(source: object, slot: string, config: Partial<T.TypeI
 			});
 		}
 		case 'whereClause': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTypeItem$patch(source, { ...(inputs.config as T.TypeItem.Config), ...input });
+			}
+			const config = input;
 			const _where_clause = config.whereClause;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'type_item', { whereClause: _where_clause });
@@ -3254,6 +3500,11 @@ function buildTypeItem$set(source: object, slot: string, config: Partial<T.TypeI
 			});
 		}
 		case 'value': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTypeItem$patch(source, { ...(inputs.config as T.TypeItem.Config), ...input });
+			}
+			const config = input;
 			const _value = admitAliasContent<NonNullable<T.TypeItem['_value']>>(
 				kindIdStorage<NonNullable<T.TypeItem['_value']>>(config.value),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -3270,6 +3521,11 @@ function buildTypeItem$set(source: object, slot: string, config: Partial<T.TypeI
 			});
 		}
 		case 'trailingWhereClause': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTypeItem$patch(source, { ...(inputs.config as T.TypeItem.Config), ...input });
+			}
+			const config = input;
 			const _trailing_where_clause = config.trailingWhereClause;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'type_item', { trailingWhereClause: _trailing_where_clause });
@@ -3283,7 +3539,6 @@ function buildTypeItem$set(source: object, slot: string, config: Partial<T.TypeI
 			});
 		}
 	}
-	throw new Error(`type_item writes no slot ${slot} alone`);
 }
 function withTypeItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -3467,15 +3722,23 @@ function buildFunctionItem$patch(source: object, config: T.FunctionItem.Config):
 }
 function buildFunctionItem$set(
 	source: object,
-	slot: string,
-	config: Partial<T.FunctionItem.Config>
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.FunctionItem.Config>]
+		| ['functionModifiers', Partial<T.FunctionItem.Config>]
+		| ['name', Partial<T.FunctionItem.Config>]
+		| ['typeParameters', Partial<T.FunctionItem.Config>]
+		| ['parameters', Partial<T.FunctionItem.Config>]
+		| ['returnType', Partial<T.FunctionItem.Config>]
+		| ['whereClause', Partial<T.FunctionItem.Config>]
+		| ['body', Partial<T.FunctionItem.Config>]
 ): T.FunctionItem.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildFunctionItem$patch(source, { ...(inputs.config as T.FunctionItem.Config), ...config });
-	}
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionItem$patch(source, { ...(inputs.config as T.FunctionItem.Config), ...input });
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'function_item', { visibilityModifier: _visibility_modifier });
@@ -3489,6 +3752,11 @@ function buildFunctionItem$set(
 			});
 		}
 		case 'functionModifiers': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionItem$patch(source, { ...(inputs.config as T.FunctionItem.Config), ...input });
+			}
+			const config = input;
 			const _function_modifiers = config.functionModifiers;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'function_item', { functionModifiers: _function_modifiers });
@@ -3502,6 +3770,11 @@ function buildFunctionItem$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionItem$patch(source, { ...(inputs.config as T.FunctionItem.Config), ...input });
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'function_item', { name: _name });
@@ -3515,6 +3788,11 @@ function buildFunctionItem$set(
 			});
 		}
 		case 'typeParameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionItem$patch(source, { ...(inputs.config as T.FunctionItem.Config), ...input });
+			}
+			const config = input;
 			const _type_parameters = config.typeParameters;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'function_item', { typeParameters: _type_parameters });
@@ -3528,6 +3806,11 @@ function buildFunctionItem$set(
 			});
 		}
 		case 'parameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionItem$patch(source, { ...(inputs.config as T.FunctionItem.Config), ...input });
+			}
+			const config = input;
 			const _parameters = orDefault(config.parameters, () => buildParameters());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'function_item', { parameters: _parameters });
@@ -3541,6 +3824,11 @@ function buildFunctionItem$set(
 			});
 		}
 		case 'returnType': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionItem$patch(source, { ...(inputs.config as T.FunctionItem.Config), ...input });
+			}
+			const config = input;
 			const _return_type = admitAliasContent<NonNullable<T.FunctionItem['_return_type']>>(
 				kindIdStorage<NonNullable<T.FunctionItem['_return_type']>>(config.returnType),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -3557,6 +3845,11 @@ function buildFunctionItem$set(
 			});
 		}
 		case 'whereClause': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionItem$patch(source, { ...(inputs.config as T.FunctionItem.Config), ...input });
+			}
+			const config = input;
 			const _where_clause = config.whereClause;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'function_item', { whereClause: _where_clause });
@@ -3570,6 +3863,11 @@ function buildFunctionItem$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionItem$patch(source, { ...(inputs.config as T.FunctionItem.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildBlock());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'function_item', { body: _body });
@@ -3583,7 +3881,6 @@ function buildFunctionItem$set(
 			});
 		}
 	}
-	throw new Error(`function_item writes no slot ${slot} alone`);
 }
 function withFunctionItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -3762,18 +4059,25 @@ function buildFunctionSignatureItem$patch(
 }
 function buildFunctionSignatureItem$set(
 	source: object,
-	slot: string,
-	config: Partial<T.FunctionSignatureItem.Config>
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.FunctionSignatureItem.Config>]
+		| ['functionModifiers', Partial<T.FunctionSignatureItem.Config>]
+		| ['name', Partial<T.FunctionSignatureItem.Config>]
+		| ['typeParameters', Partial<T.FunctionSignatureItem.Config>]
+		| ['parameters', Partial<T.FunctionSignatureItem.Config>]
+		| ['returnType', Partial<T.FunctionSignatureItem.Config>]
+		| ['whereClause', Partial<T.FunctionSignatureItem.Config>]
 ): T.FunctionSignatureItem.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildFunctionSignatureItem$patch(source, {
-			...(inputs.config as T.FunctionSignatureItem.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionSignatureItem$patch(source, {
+					...(inputs.config as T.FunctionSignatureItem.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -3788,6 +4092,14 @@ function buildFunctionSignatureItem$set(
 			});
 		}
 		case 'functionModifiers': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionSignatureItem$patch(source, {
+					...(inputs.config as T.FunctionSignatureItem.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _function_modifiers = config.functionModifiers;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -3802,6 +4114,14 @@ function buildFunctionSignatureItem$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionSignatureItem$patch(source, {
+					...(inputs.config as T.FunctionSignatureItem.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'function_signature_item', { name: _name });
@@ -3815,6 +4135,14 @@ function buildFunctionSignatureItem$set(
 			});
 		}
 		case 'typeParameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionSignatureItem$patch(source, {
+					...(inputs.config as T.FunctionSignatureItem.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _type_parameters = config.typeParameters;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'function_signature_item', { typeParameters: _type_parameters });
@@ -3828,6 +4156,14 @@ function buildFunctionSignatureItem$set(
 			});
 		}
 		case 'parameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionSignatureItem$patch(source, {
+					...(inputs.config as T.FunctionSignatureItem.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _parameters = orDefault(config.parameters, () => buildParameters());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'function_signature_item', { parameters: _parameters });
@@ -3841,6 +4177,14 @@ function buildFunctionSignatureItem$set(
 			});
 		}
 		case 'returnType': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionSignatureItem$patch(source, {
+					...(inputs.config as T.FunctionSignatureItem.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _return_type = admitAliasContent<NonNullable<T.FunctionSignatureItem['_return_type']>>(
 				kindIdStorage<NonNullable<T.FunctionSignatureItem['_return_type']>>(config.returnType),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -3857,6 +4201,14 @@ function buildFunctionSignatureItem$set(
 			});
 		}
 		case 'whereClause': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionSignatureItem$patch(source, {
+					...(inputs.config as T.FunctionSignatureItem.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _where_clause = config.whereClause;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'function_signature_item', { whereClause: _where_clause });
@@ -3870,7 +4222,6 @@ function buildFunctionSignatureItem$set(
 			});
 		}
 	}
-	throw new Error(`function_signature_item writes no slot ${slot} alone`);
 }
 function withFunctionSignatureItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -4131,15 +4482,15 @@ function buildWherePredicate$patch(source: object, config: T.WherePredicate.Conf
 }
 function buildWherePredicate$set(
 	source: object,
-	slot: string,
-	config: Partial<T.WherePredicate.Config>
+	...[slot, input]: ['left', Partial<T.WherePredicate.Config>] | ['bounds', Partial<T.WherePredicate.Config>]
 ): T.WherePredicate.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildWherePredicate$patch(source, { ...(inputs.config as T.WherePredicate.Config), ...config });
-	}
 	switch (slot) {
 		case 'left': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildWherePredicate$patch(source, { ...(inputs.config as T.WherePredicate.Config), ...input });
+			}
+			const config = input;
 			const _left = admitAliasContent<NonNullable<T.WherePredicate['_left']>>(
 				kindIdStorage<NonNullable<T.WherePredicate['_left']>>(config.left),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -4156,6 +4507,11 @@ function buildWherePredicate$set(
 			});
 		}
 		case 'bounds': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildWherePredicate$patch(source, { ...(inputs.config as T.WherePredicate.Config), ...input });
+			}
+			const config = input;
 			const _bounds = config.bounds;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'where_predicate', { bounds: _bounds });
@@ -4169,7 +4525,6 @@ function buildWherePredicate$set(
 			});
 		}
 	}
-	throw new Error(`where_predicate writes no slot ${slot} alone`);
 }
 function withWherePredicate(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -4297,13 +4652,24 @@ function buildTraitItem$patch(source: object, config: T.TraitItem.Config): T.Tra
 		return node as unknown as T.TraitItem.Bound;
 	});
 }
-function buildTraitItem$set(source: object, slot: string, config: Partial<T.TraitItem.Config>): T.TraitItem.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildTraitItem$patch(source, { ...(inputs.config as T.TraitItem.Config), ...config });
-	}
+function buildTraitItem$set(
+	source: object,
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.TraitItem.Config>]
+		| ['unsafe', Partial<T.TraitItem.Config>]
+		| ['name', Partial<T.TraitItem.Config>]
+		| ['typeParameters', Partial<T.TraitItem.Config>]
+		| ['bounds', Partial<T.TraitItem.Config>]
+		| ['whereClause', Partial<T.TraitItem.Config>]
+		| ['body', Partial<T.TraitItem.Config>]
+): T.TraitItem.Bound {
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTraitItem$patch(source, { ...(inputs.config as T.TraitItem.Config), ...input });
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'trait_item', { visibilityModifier: _visibility_modifier });
@@ -4317,6 +4683,11 @@ function buildTraitItem$set(source: object, slot: string, config: Partial<T.Trai
 			});
 		}
 		case 'unsafe': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTraitItem$patch(source, { ...(inputs.config as T.TraitItem.Config), ...input });
+			}
+			const config = input;
 			const _unsafe = strictBooleanStorage(config.unsafe);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'trait_item', { unsafe: _unsafe });
@@ -4330,6 +4701,11 @@ function buildTraitItem$set(source: object, slot: string, config: Partial<T.Trai
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTraitItem$patch(source, { ...(inputs.config as T.TraitItem.Config), ...input });
+			}
+			const config = input;
 			const _name = admitAliasContent<NonNullable<T.TraitItem['_name']>>(config.name, [
 				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 			]);
@@ -4345,6 +4721,11 @@ function buildTraitItem$set(source: object, slot: string, config: Partial<T.Trai
 			});
 		}
 		case 'typeParameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTraitItem$patch(source, { ...(inputs.config as T.TraitItem.Config), ...input });
+			}
+			const config = input;
 			const _type_parameters = config.typeParameters;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'trait_item', { typeParameters: _type_parameters });
@@ -4358,6 +4739,11 @@ function buildTraitItem$set(source: object, slot: string, config: Partial<T.Trai
 			});
 		}
 		case 'bounds': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTraitItem$patch(source, { ...(inputs.config as T.TraitItem.Config), ...input });
+			}
+			const config = input;
 			const _bounds = config.bounds;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'trait_item', { bounds: _bounds });
@@ -4371,6 +4757,11 @@ function buildTraitItem$set(source: object, slot: string, config: Partial<T.Trai
 			});
 		}
 		case 'whereClause': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTraitItem$patch(source, { ...(inputs.config as T.TraitItem.Config), ...input });
+			}
+			const config = input;
 			const _where_clause = config.whereClause;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'trait_item', { whereClause: _where_clause });
@@ -4384,6 +4775,11 @@ function buildTraitItem$set(source: object, slot: string, config: Partial<T.Trai
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTraitItem$patch(source, { ...(inputs.config as T.TraitItem.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildTraitInterfaceDeclarationBody());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'trait_item', { body: _body });
@@ -4397,7 +4793,6 @@ function buildTraitItem$set(source: object, slot: string, config: Partial<T.Trai
 			});
 		}
 	}
-	throw new Error(`trait_item writes no slot ${slot} alone`);
 }
 function withTraitItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -4521,15 +4916,19 @@ function buildAssociatedType$patch(source: object, config: T.AssociatedType.Conf
 }
 function buildAssociatedType$set(
 	source: object,
-	slot: string,
-	config: Partial<T.AssociatedType.Config>
+	...[slot, input]:
+		| ['name', Partial<T.AssociatedType.Config>]
+		| ['typeParameters', Partial<T.AssociatedType.Config>]
+		| ['bounds', Partial<T.AssociatedType.Config>]
+		| ['whereClause', Partial<T.AssociatedType.Config>]
 ): T.AssociatedType.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildAssociatedType$patch(source, { ...(inputs.config as T.AssociatedType.Config), ...config });
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAssociatedType$patch(source, { ...(inputs.config as T.AssociatedType.Config), ...input });
+			}
+			const config = input;
 			const _name = admitAliasContent<NonNullable<T.AssociatedType['_name']>>(config.name, [
 				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 			]);
@@ -4545,6 +4944,11 @@ function buildAssociatedType$set(
 			});
 		}
 		case 'typeParameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAssociatedType$patch(source, { ...(inputs.config as T.AssociatedType.Config), ...input });
+			}
+			const config = input;
 			const _type_parameters = config.typeParameters;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'associated_type', { typeParameters: _type_parameters });
@@ -4558,6 +4962,11 @@ function buildAssociatedType$set(
 			});
 		}
 		case 'bounds': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAssociatedType$patch(source, { ...(inputs.config as T.AssociatedType.Config), ...input });
+			}
+			const config = input;
 			const _bounds = config.bounds;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'associated_type', { bounds: _bounds });
@@ -4571,6 +4980,11 @@ function buildAssociatedType$set(
 			});
 		}
 		case 'whereClause': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAssociatedType$patch(source, { ...(inputs.config as T.AssociatedType.Config), ...input });
+			}
+			const config = input;
 			const _where_clause = config.whereClause;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'associated_type', { whereClause: _where_clause });
@@ -4584,7 +4998,6 @@ function buildAssociatedType$set(
 			});
 		}
 	}
-	throw new Error(`associated_type writes no slot ${slot} alone`);
 }
 function withAssociatedType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -4733,18 +5146,20 @@ function buildHigherRankedTraitBound$patch(
 }
 function buildHigherRankedTraitBound$set(
 	source: object,
-	slot: string,
-	config: Partial<T.HigherRankedTraitBound.Config>
+	...[slot, input]:
+		| ['typeParameters', Partial<T.HigherRankedTraitBound.Config>]
+		| ['type', Partial<T.HigherRankedTraitBound.Config>]
 ): T.HigherRankedTraitBound.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildHigherRankedTraitBound$patch(source, {
-			...(inputs.config as T.HigherRankedTraitBound.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'typeParameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildHigherRankedTraitBound$patch(source, {
+					...(inputs.config as T.HigherRankedTraitBound.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _type_parameters = config.typeParameters;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -4759,6 +5174,14 @@ function buildHigherRankedTraitBound$set(
 			});
 		}
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildHigherRankedTraitBound$patch(source, {
+					...(inputs.config as T.HigherRankedTraitBound.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.HigherRankedTraitBound['_type']>>(
 				kindIdStorage<NonNullable<T.HigherRankedTraitBound['_type']>>(config.type),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -4775,7 +5198,6 @@ function buildHigherRankedTraitBound$set(
 			});
 		}
 	}
-	throw new Error(`higher_ranked_trait_bound writes no slot ${slot} alone`);
 }
 function withHigherRankedTraitBound(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -4992,15 +5414,18 @@ function buildConstParameter$patch(source: object, config: T.ConstParameter.Conf
 }
 function buildConstParameter$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ConstParameter.Config>
+	...[slot, input]:
+		| ['name', Partial<T.ConstParameter.Config>]
+		| ['type', Partial<T.ConstParameter.Config>]
+		| ['default', Partial<T.ConstParameter.Config>]
 ): T.ConstParameter.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildConstParameter$patch(source, { ...(inputs.config as T.ConstParameter.Config), ...config });
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildConstParameter$patch(source, { ...(inputs.config as T.ConstParameter.Config), ...input });
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'const_parameter', { name: _name });
@@ -5014,6 +5439,11 @@ function buildConstParameter$set(
 			});
 		}
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildConstParameter$patch(source, { ...(inputs.config as T.ConstParameter.Config), ...input });
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.ConstParameter['_type']>>(
 				kindIdStorage<NonNullable<T.ConstParameter['_type']>>(config.type),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -5030,6 +5460,11 @@ function buildConstParameter$set(
 			});
 		}
 		case 'default': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildConstParameter$patch(source, { ...(inputs.config as T.ConstParameter.Config), ...input });
+			}
+			const config = input;
 			const _default = kindIdStorage<NonNullable<T.ConstParameter['_default']>>(config.default);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'const_parameter', { default: _default });
@@ -5043,7 +5478,6 @@ function buildConstParameter$set(
 			});
 		}
 	}
-	throw new Error(`const_parameter writes no slot ${slot} alone`);
 }
 function withConstParameter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -5122,15 +5556,18 @@ function buildTypeParameter$patch(source: object, config: T.TypeParameter.Config
 }
 function buildTypeParameter$set(
 	source: object,
-	slot: string,
-	config: Partial<T.TypeParameter.Config>
+	...[slot, input]:
+		| ['name', Partial<T.TypeParameter.Config>]
+		| ['bounds', Partial<T.TypeParameter.Config>]
+		| ['default', Partial<T.TypeParameter.Config>]
 ): T.TypeParameter.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildTypeParameter$patch(source, { ...(inputs.config as T.TypeParameter.Config), ...config });
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTypeParameter$patch(source, { ...(inputs.config as T.TypeParameter.Config), ...input });
+			}
+			const config = input;
 			const _name = admitAliasContent<NonNullable<T.TypeParameter['_name']>>(config.name, [
 				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 			]);
@@ -5146,6 +5583,11 @@ function buildTypeParameter$set(
 			});
 		}
 		case 'bounds': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTypeParameter$patch(source, { ...(inputs.config as T.TypeParameter.Config), ...input });
+			}
+			const config = input;
 			const _bounds = config.bounds;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'type_parameter', { bounds: _bounds });
@@ -5159,6 +5601,11 @@ function buildTypeParameter$set(
 			});
 		}
 		case 'default': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTypeParameter$patch(source, { ...(inputs.config as T.TypeParameter.Config), ...input });
+			}
+			const config = input;
 			const _default = admitAliasContent<NonNullable<T.TypeParameter['_default']>>(
 				kindIdStorage<NonNullable<T.TypeParameter['_default']>>(config.default),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -5175,7 +5622,6 @@ function buildTypeParameter$set(
 			});
 		}
 	}
-	throw new Error(`type_parameter writes no slot ${slot} alone`);
 }
 function withTypeParameter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -5237,15 +5683,15 @@ function buildLifetimeParameter$patch(source: object, config: T.LifetimeParamete
 }
 function buildLifetimeParameter$set(
 	source: object,
-	slot: string,
-	config: Partial<T.LifetimeParameter.Config>
+	...[slot, input]: ['name', Partial<T.LifetimeParameter.Config>] | ['bounds', Partial<T.LifetimeParameter.Config>]
 ): T.LifetimeParameter.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildLifetimeParameter$patch(source, { ...(inputs.config as T.LifetimeParameter.Config), ...config });
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLifetimeParameter$patch(source, { ...(inputs.config as T.LifetimeParameter.Config), ...input });
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'lifetime_parameter', { name: _name });
@@ -5259,6 +5705,11 @@ function buildLifetimeParameter$set(
 			});
 		}
 		case 'bounds': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLifetimeParameter$patch(source, { ...(inputs.config as T.LifetimeParameter.Config), ...input });
+			}
+			const config = input;
 			const _bounds = config.bounds;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'lifetime_parameter', { bounds: _bounds });
@@ -5272,7 +5723,6 @@ function buildLifetimeParameter$set(
 			});
 		}
 	}
-	throw new Error(`lifetime_parameter writes no slot ${slot} alone`);
 }
 function withLifetimeParameter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -5367,15 +5817,20 @@ function buildLetDeclaration$patch(source: object, config: T.LetDeclaration.Conf
 }
 function buildLetDeclaration$set(
 	source: object,
-	slot: string,
-	config: Partial<T.LetDeclaration.Config>
+	...[slot, input]:
+		| ['mutable', Partial<T.LetDeclaration.Config>]
+		| ['name', Partial<T.LetDeclaration.Config>]
+		| ['type', Partial<T.LetDeclaration.Config>]
+		| ['value', Partial<T.LetDeclaration.Config>]
+		| ['alternative', Partial<T.LetDeclaration.Config>]
 ): T.LetDeclaration.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildLetDeclaration$patch(source, { ...(inputs.config as T.LetDeclaration.Config), ...config });
-	}
 	switch (slot) {
 		case 'mutable': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLetDeclaration$patch(source, { ...(inputs.config as T.LetDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _mutable = strictBooleanStorage(config.mutable);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'let_declaration', { mutable: _mutable });
@@ -5389,6 +5844,11 @@ function buildLetDeclaration$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLetDeclaration$patch(source, { ...(inputs.config as T.LetDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _name = kindIdStorage<NonNullable<T.LetDeclaration['_name']>>(config.name);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'let_declaration', { name: _name });
@@ -5402,6 +5862,11 @@ function buildLetDeclaration$set(
 			});
 		}
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLetDeclaration$patch(source, { ...(inputs.config as T.LetDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.LetDeclaration['_type']>>(
 				kindIdStorage<NonNullable<T.LetDeclaration['_type']>>(config.type),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -5418,6 +5883,11 @@ function buildLetDeclaration$set(
 			});
 		}
 		case 'value': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLetDeclaration$patch(source, { ...(inputs.config as T.LetDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _value = kindIdStorage<NonNullable<T.LetDeclaration['_value']>>(config.value);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'let_declaration', { value: _value });
@@ -5431,6 +5901,11 @@ function buildLetDeclaration$set(
 			});
 		}
 		case 'alternative': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLetDeclaration$patch(source, { ...(inputs.config as T.LetDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _alternative = config.alternative;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'let_declaration', { alternative: _alternative });
@@ -5444,7 +5919,6 @@ function buildLetDeclaration$set(
 			});
 		}
 	}
-	throw new Error(`let_declaration writes no slot ${slot} alone`);
 }
 function withLetDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -5529,15 +6003,17 @@ function buildUseDeclaration$patch(source: object, config: T.UseDeclaration.Conf
 }
 function buildUseDeclaration$set(
 	source: object,
-	slot: string,
-	config: Partial<T.UseDeclaration.Config>
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.UseDeclaration.Config>]
+		| ['argument', Partial<T.UseDeclaration.Config>]
 ): T.UseDeclaration.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildUseDeclaration$patch(source, { ...(inputs.config as T.UseDeclaration.Config), ...config });
-	}
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildUseDeclaration$patch(source, { ...(inputs.config as T.UseDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'use_declaration', { visibilityModifier: _visibility_modifier });
@@ -5551,6 +6027,11 @@ function buildUseDeclaration$set(
 			});
 		}
 		case 'argument': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildUseDeclaration$patch(source, { ...(inputs.config as T.UseDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _argument = rejectKeywordText(
 				kindIdStorage<NonNullable<T.UseDeclaration['_argument']>>(config.argument),
 				'UseDeclaration.argument',
@@ -5569,7 +6050,6 @@ function buildUseDeclaration$set(
 			});
 		}
 	}
-	throw new Error(`use_declaration writes no slot ${slot} alone`);
 }
 function withUseDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -5635,15 +6115,15 @@ function buildScopedUseList$patch(source: object, config: Partial<T.ScopedUseLis
 }
 function buildScopedUseList$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ScopedUseList.Config>
+	...[slot, input]: ['path', Partial<T.ScopedUseList.Config>] | ['list', Partial<T.ScopedUseList.Config>]
 ): T.ScopedUseList.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildScopedUseList$patch(source, { ...(inputs.config as T.ScopedUseList.Config), ...config });
-	}
 	switch (slot) {
 		case 'path': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildScopedUseList$patch(source, { ...(inputs.config as T.ScopedUseList.Config), ...input });
+			}
+			const config = input;
 			const _path = rejectKeywordText(
 				kindIdStorage<NonNullable<T.ScopedUseList['_path']>>(config.path),
 				'ScopedUseList.path',
@@ -5662,6 +6142,11 @@ function buildScopedUseList$set(
 			});
 		}
 		case 'list': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildScopedUseList$patch(source, { ...(inputs.config as T.ScopedUseList.Config), ...input });
+			}
+			const config = input;
 			const _list = orDefault(config.list, () => buildUseList());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'scoped_use_list', { list: _list });
@@ -5675,7 +6160,6 @@ function buildScopedUseList$set(
 			});
 		}
 	}
-	throw new Error(`scoped_use_list writes no slot ${slot} alone`);
 }
 function withScopedUseList(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -5847,15 +6331,15 @@ function buildUseAsClause$patch(source: object, config: T.UseAsClause.Config): T
 }
 function buildUseAsClause$set(
 	source: object,
-	slot: string,
-	config: Partial<T.UseAsClause.Config>
+	...[slot, input]: ['name', Partial<T.UseAsClause.Config>] | ['alias', Partial<T.UseAsClause.Config>]
 ): T.UseAsClause.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildUseAsClause$patch(source, { ...(inputs.config as T.UseAsClause.Config), ...config });
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildUseAsClause$patch(source, { ...(inputs.config as T.UseAsClause.Config), ...input });
+			}
+			const config = input;
 			const _name = rejectKeywordText(
 				kindIdStorage<NonNullable<T.UseAsClause['_name']>>(config.name),
 				'UseAsClause.name',
@@ -5874,6 +6358,11 @@ function buildUseAsClause$set(
 			});
 		}
 		case 'alias': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildUseAsClause$patch(source, { ...(inputs.config as T.UseAsClause.Config), ...input });
+			}
+			const config = input;
 			const _alias = config.alias;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'use_as_clause', { alias: _alias });
@@ -5887,7 +6376,6 @@ function buildUseAsClause$set(
 			});
 		}
 	}
-	throw new Error(`use_as_clause writes no slot ${slot} alone`);
 }
 function withUseAsClause(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -6074,15 +6562,18 @@ function buildSelfParameter$patch(source: object, config: Partial<T.SelfParamete
 }
 function buildSelfParameter$set(
 	source: object,
-	slot: string,
-	config: Partial<T.SelfParameter.Config>
+	...[slot, input]:
+		| ['reference', Partial<T.SelfParameter.Config>]
+		| ['lifetime', Partial<T.SelfParameter.Config>]
+		| ['mutable', Partial<T.SelfParameter.Config>]
 ): T.SelfParameter.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildSelfParameter$patch(source, { ...(inputs.config as T.SelfParameter.Config), ...config });
-	}
 	switch (slot) {
 		case 'reference': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildSelfParameter$patch(source, { ...(inputs.config as T.SelfParameter.Config), ...input });
+			}
+			const config = input;
 			const _reference = strictBooleanStorage(config.reference);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'self_parameter', { reference: _reference });
@@ -6096,6 +6587,11 @@ function buildSelfParameter$set(
 			});
 		}
 		case 'lifetime': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildSelfParameter$patch(source, { ...(inputs.config as T.SelfParameter.Config), ...input });
+			}
+			const config = input;
 			const _lifetime = config.lifetime;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'self_parameter', { lifetime: _lifetime });
@@ -6109,6 +6605,11 @@ function buildSelfParameter$set(
 			});
 		}
 		case 'mutable': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildSelfParameter$patch(source, { ...(inputs.config as T.SelfParameter.Config), ...input });
+			}
+			const config = input;
 			const _mutable = strictBooleanStorage(config.mutable);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'self_parameter', { mutable: _mutable });
@@ -6122,7 +6623,6 @@ function buildSelfParameter$set(
 			});
 		}
 	}
-	throw new Error(`self_parameter writes no slot ${slot} alone`);
 }
 function withSelfParameter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -6184,15 +6684,15 @@ function buildVariadicParameter$patch(
 }
 function buildVariadicParameter$set(
 	source: object,
-	slot: string,
-	config: Partial<T.VariadicParameter.Config>
+	...[slot, input]: ['mutable', Partial<T.VariadicParameter.Config>] | ['pattern', Partial<T.VariadicParameter.Config>]
 ): T.VariadicParameter.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildVariadicParameter$patch(source, { ...(inputs.config as T.VariadicParameter.Config), ...config });
-	}
 	switch (slot) {
 		case 'mutable': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildVariadicParameter$patch(source, { ...(inputs.config as T.VariadicParameter.Config), ...input });
+			}
+			const config = input;
 			const _mutable = strictBooleanStorage(config.mutable);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'variadic_parameter', { mutable: _mutable });
@@ -6206,6 +6706,11 @@ function buildVariadicParameter$set(
 			});
 		}
 		case 'pattern': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildVariadicParameter$patch(source, { ...(inputs.config as T.VariadicParameter.Config), ...input });
+			}
+			const config = input;
 			const _pattern = kindIdStorage<NonNullable<T.VariadicParameter['_pattern']>>(config.pattern);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'variadic_parameter', { pattern: _pattern });
@@ -6219,7 +6724,6 @@ function buildVariadicParameter$set(
 			});
 		}
 	}
-	throw new Error(`variadic_parameter writes no slot ${slot} alone`);
 }
 function withVariadicParameter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -6283,13 +6787,20 @@ function buildParameter$patch(source: object, config: T.Parameter.Config): T.Par
 		return node as unknown as T.Parameter.Bound;
 	});
 }
-function buildParameter$set(source: object, slot: string, config: Partial<T.Parameter.Config>): T.Parameter.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildParameter$patch(source, { ...(inputs.config as T.Parameter.Config), ...config });
-	}
+function buildParameter$set(
+	source: object,
+	...[slot, input]:
+		| ['mutable', Partial<T.Parameter.Config>]
+		| ['name', Partial<T.Parameter.Config>]
+		| ['type', Partial<T.Parameter.Config>]
+): T.Parameter.Bound {
 	switch (slot) {
 		case 'mutable': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildParameter$patch(source, { ...(inputs.config as T.Parameter.Config), ...input });
+			}
+			const config = input;
 			const _mutable = strictBooleanStorage(config.mutable);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'parameter', { mutable: _mutable });
@@ -6303,6 +6814,11 @@ function buildParameter$set(source: object, slot: string, config: Partial<T.Para
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildParameter$patch(source, { ...(inputs.config as T.Parameter.Config), ...input });
+			}
+			const config = input;
 			const _name = kindIdStorage<NonNullable<T.Parameter['_name']>>(config.name);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'parameter', { name: _name });
@@ -6316,6 +6832,11 @@ function buildParameter$set(source: object, slot: string, config: Partial<T.Para
 			});
 		}
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildParameter$patch(source, { ...(inputs.config as T.Parameter.Config), ...input });
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.Parameter['_type']>>(
 				kindIdStorage<NonNullable<T.Parameter['_type']>>(config.type),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -6332,7 +6853,6 @@ function buildParameter$set(source: object, slot: string, config: Partial<T.Para
 			});
 		}
 	}
-	throw new Error(`parameter writes no slot ${slot} alone`);
 }
 function withParameter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -6566,15 +7086,15 @@ function buildQualifiedType$patch(source: object, config: T.QualifiedType.Config
 }
 function buildQualifiedType$set(
 	source: object,
-	slot: string,
-	config: Partial<T.QualifiedType.Config>
+	...[slot, input]: ['type', Partial<T.QualifiedType.Config>] | ['alias', Partial<T.QualifiedType.Config>]
 ): T.QualifiedType.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildQualifiedType$patch(source, { ...(inputs.config as T.QualifiedType.Config), ...config });
-	}
 	switch (slot) {
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildQualifiedType$patch(source, { ...(inputs.config as T.QualifiedType.Config), ...input });
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.QualifiedType['_type']>>(
 				kindIdStorage<NonNullable<T.QualifiedType['_type']>>(config.type),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -6591,6 +7111,11 @@ function buildQualifiedType$set(
 			});
 		}
 		case 'alias': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildQualifiedType$patch(source, { ...(inputs.config as T.QualifiedType.Config), ...input });
+			}
+			const config = input;
 			const _alias = admitAliasContent<NonNullable<T.QualifiedType['_alias']>>(
 				kindIdStorage<NonNullable<T.QualifiedType['_alias']>>(config.alias),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -6607,7 +7132,6 @@ function buildQualifiedType$set(
 			});
 		}
 	}
-	throw new Error(`qualified_type writes no slot ${slot} alone`);
 }
 function withQualifiedType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -6706,13 +7230,17 @@ function buildArrayType$patch(source: object, config: T.ArrayType.Config): T.Arr
 		return node as unknown as T.ArrayType.Bound;
 	});
 }
-function buildArrayType$set(source: object, slot: string, config: Partial<T.ArrayType.Config>): T.ArrayType.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildArrayType$patch(source, { ...(inputs.config as T.ArrayType.Config), ...config });
-	}
+function buildArrayType$set(
+	source: object,
+	...[slot, input]: ['element', Partial<T.ArrayType.Config>] | ['length', Partial<T.ArrayType.Config>]
+): T.ArrayType.Bound {
 	switch (slot) {
 		case 'element': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildArrayType$patch(source, { ...(inputs.config as T.ArrayType.Config), ...input });
+			}
+			const config = input;
 			const _element = admitAliasContent<NonNullable<T.ArrayType['_element']>>(
 				kindIdStorage<NonNullable<T.ArrayType['_element']>>(config.element),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -6729,6 +7257,11 @@ function buildArrayType$set(source: object, slot: string, config: Partial<T.Arra
 			});
 		}
 		case 'length': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildArrayType$patch(source, { ...(inputs.config as T.ArrayType.Config), ...input });
+			}
+			const config = input;
 			const _length = kindIdStorage<NonNullable<T.ArrayType['_length']>>(config.length);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'array_type', { length: _length });
@@ -6742,7 +7275,6 @@ function buildArrayType$set(source: object, slot: string, config: Partial<T.Arra
 			});
 		}
 	}
-	throw new Error(`array_type writes no slot ${slot} alone`);
 }
 function withArrayType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -6904,15 +7436,19 @@ function buildFunctionType$patch(source: object, config: T.FunctionType.Config):
 }
 function buildFunctionType$set(
 	source: object,
-	slot: string,
-	config: Partial<T.FunctionType.Config>
+	...[slot, input]:
+		| ['forLifetimes', Partial<T.FunctionType.Config>]
+		| ['content', Partial<T.FunctionType.Config>]
+		| ['parameters', Partial<T.FunctionType.Config>]
+		| ['returnType', Partial<T.FunctionType.Config>]
 ): T.FunctionType.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildFunctionType$patch(source, { ...(inputs.config as T.FunctionType.Config), ...config });
-	}
 	switch (slot) {
 		case 'forLifetimes': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionType$patch(source, { ...(inputs.config as T.FunctionType.Config), ...input });
+			}
+			const config = input;
 			const _for_lifetimes = config.forLifetimes;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'function_type', { forLifetimes: _for_lifetimes });
@@ -6926,6 +7462,11 @@ function buildFunctionType$set(
 			});
 		}
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionType$patch(source, { ...(inputs.config as T.FunctionType.Config), ...input });
+			}
+			const config = input;
 			const _content = config.content;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'function_type', { content: _content });
@@ -6939,6 +7480,11 @@ function buildFunctionType$set(
 			});
 		}
 		case 'parameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionType$patch(source, { ...(inputs.config as T.FunctionType.Config), ...input });
+			}
+			const config = input;
 			const _parameters = orDefault(config.parameters, () => buildParameters());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'function_type', { parameters: _parameters });
@@ -6952,6 +7498,11 @@ function buildFunctionType$set(
 			});
 		}
 		case 'returnType': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFunctionType$patch(source, { ...(inputs.config as T.FunctionType.Config), ...input });
+			}
+			const config = input;
 			const _return_type = admitAliasContent<NonNullable<T.FunctionType['_return_type']>>(
 				kindIdStorage<NonNullable<T.FunctionType['_return_type']>>(config.returnType),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -6968,7 +7519,6 @@ function buildFunctionType$set(
 			});
 		}
 	}
-	throw new Error(`function_type writes no slot ${slot} alone`);
 }
 function withFunctionType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -7115,15 +7665,17 @@ function buildGenericFunction$patch(source: object, config: T.GenericFunction.Co
 }
 function buildGenericFunction$set(
 	source: object,
-	slot: string,
-	config: Partial<T.GenericFunction.Config>
+	...[slot, input]:
+		| ['function', Partial<T.GenericFunction.Config>]
+		| ['typeArguments', Partial<T.GenericFunction.Config>]
 ): T.GenericFunction.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildGenericFunction$patch(source, { ...(inputs.config as T.GenericFunction.Config), ...config });
-	}
 	switch (slot) {
 		case 'function': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildGenericFunction$patch(source, { ...(inputs.config as T.GenericFunction.Config), ...input });
+			}
+			const config = input;
 			const _function = config.function;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'generic_function', { function: _function });
@@ -7137,6 +7689,11 @@ function buildGenericFunction$set(
 			});
 		}
 		case 'typeArguments': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildGenericFunction$patch(source, { ...(inputs.config as T.GenericFunction.Config), ...input });
+			}
+			const config = input;
 			const _type_arguments = config.typeArguments;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'generic_function', { typeArguments: _type_arguments });
@@ -7150,7 +7707,6 @@ function buildGenericFunction$set(
 			});
 		}
 	}
-	throw new Error(`generic_function writes no slot ${slot} alone`);
 }
 function withGenericFunction(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -7219,15 +7775,15 @@ function buildGenericType$patch(source: object, config: T.GenericType.Config): T
 }
 function buildGenericType$set(
 	source: object,
-	slot: string,
-	config: Partial<T.GenericType.Config>
+	...[slot, input]: ['type', Partial<T.GenericType.Config>] | ['typeArguments', Partial<T.GenericType.Config>]
 ): T.GenericType.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildGenericType$patch(source, { ...(inputs.config as T.GenericType.Config), ...config });
-	}
 	switch (slot) {
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildGenericType$patch(source, { ...(inputs.config as T.GenericType.Config), ...input });
+			}
+			const config = input;
 			const _type = config.type;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'generic_type', { type: _type });
@@ -7241,6 +7797,11 @@ function buildGenericType$set(
 			});
 		}
 		case 'typeArguments': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildGenericType$patch(source, { ...(inputs.config as T.GenericType.Config), ...input });
+			}
+			const config = input;
 			const _type_arguments = config.typeArguments;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'generic_type', { typeArguments: _type_arguments });
@@ -7254,7 +7815,6 @@ function buildGenericType$set(
 			});
 		}
 	}
-	throw new Error(`generic_type writes no slot ${slot} alone`);
 }
 function withGenericType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -7336,18 +7896,20 @@ function buildGenericTypeWithTurbofish$patch(
 }
 function buildGenericTypeWithTurbofish$set(
 	source: object,
-	slot: string,
-	config: Partial<T.GenericTypeWithTurbofish.Config>
+	...[slot, input]:
+		| ['type', Partial<T.GenericTypeWithTurbofish.Config>]
+		| ['typeArguments', Partial<T.GenericTypeWithTurbofish.Config>]
 ): T.GenericTypeWithTurbofish.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildGenericTypeWithTurbofish$patch(source, {
-			...(inputs.config as T.GenericTypeWithTurbofish.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildGenericTypeWithTurbofish$patch(source, {
+					...(inputs.config as T.GenericTypeWithTurbofish.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.GenericTypeWithTurbofish['_type']>>(config.type, [
 				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 			]);
@@ -7363,6 +7925,14 @@ function buildGenericTypeWithTurbofish$set(
 			});
 		}
 		case 'typeArguments': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildGenericTypeWithTurbofish$patch(source, {
+					...(inputs.config as T.GenericTypeWithTurbofish.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _type_arguments = config.typeArguments;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -7377,7 +7947,6 @@ function buildGenericTypeWithTurbofish$set(
 			});
 		}
 	}
-	throw new Error(`generic_type_with_turbofish writes no slot ${slot} alone`);
 }
 function withGenericTypeWithTurbofish(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -7457,15 +8026,15 @@ function buildBoundedType$patch(source: object, config: T.BoundedType.Config): T
 }
 function buildBoundedType$set(
 	source: object,
-	slot: string,
-	config: Partial<T.BoundedType.Config>
+	...[slot, input]: ['left', Partial<T.BoundedType.Config>] | ['right', Partial<T.BoundedType.Config>]
 ): T.BoundedType.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildBoundedType$patch(source, { ...(inputs.config as T.BoundedType.Config), ...config });
-	}
 	switch (slot) {
 		case 'left': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildBoundedType$patch(source, { ...(inputs.config as T.BoundedType.Config), ...input });
+			}
+			const config = input;
 			const _left = admitAliasContent<NonNullable<T.BoundedType['_left']>>(
 				kindIdStorage<NonNullable<T.BoundedType['_left']>>(config.left),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -7482,6 +8051,11 @@ function buildBoundedType$set(
 			});
 		}
 		case 'right': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildBoundedType$patch(source, { ...(inputs.config as T.BoundedType.Config), ...input });
+			}
+			const config = input;
 			const _right = admitAliasContent<NonNullable<T.BoundedType['_right']>>(
 				kindIdStorage<NonNullable<T.BoundedType['_right']>>(config.right),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -7498,7 +8072,6 @@ function buildBoundedType$set(
 			});
 		}
 	}
-	throw new Error(`bounded_type writes no slot ${slot} alone`);
 }
 function withBoundedType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -7733,15 +8306,18 @@ function buildTypeBinding$patch(source: object, config: T.TypeBinding.Config): T
 }
 function buildTypeBinding$set(
 	source: object,
-	slot: string,
-	config: Partial<T.TypeBinding.Config>
+	...[slot, input]:
+		| ['name', Partial<T.TypeBinding.Config>]
+		| ['typeArguments', Partial<T.TypeBinding.Config>]
+		| ['type', Partial<T.TypeBinding.Config>]
 ): T.TypeBinding.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildTypeBinding$patch(source, { ...(inputs.config as T.TypeBinding.Config), ...config });
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTypeBinding$patch(source, { ...(inputs.config as T.TypeBinding.Config), ...input });
+			}
+			const config = input;
 			const _name = admitAliasContent<NonNullable<T.TypeBinding['_name']>>(config.name, [
 				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 			]);
@@ -7757,6 +8333,11 @@ function buildTypeBinding$set(
 			});
 		}
 		case 'typeArguments': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTypeBinding$patch(source, { ...(inputs.config as T.TypeBinding.Config), ...input });
+			}
+			const config = input;
 			const _type_arguments = config.typeArguments;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'type_binding', { typeArguments: _type_arguments });
@@ -7770,6 +8351,11 @@ function buildTypeBinding$set(
 			});
 		}
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTypeBinding$patch(source, { ...(inputs.config as T.TypeBinding.Config), ...input });
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.TypeBinding['_type']>>(
 				kindIdStorage<NonNullable<T.TypeBinding['_type']>>(config.type),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -7786,7 +8372,6 @@ function buildTypeBinding$set(
 			});
 		}
 	}
-	throw new Error(`type_binding writes no slot ${slot} alone`);
 }
 function withTypeBinding(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -7869,15 +8454,18 @@ function buildReferenceType$patch(source: object, config: T.ReferenceType.Config
 }
 function buildReferenceType$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ReferenceType.Config>
+	...[slot, input]:
+		| ['lifetime', Partial<T.ReferenceType.Config>]
+		| ['exclusive', Partial<T.ReferenceType.Config>]
+		| ['type', Partial<T.ReferenceType.Config>]
 ): T.ReferenceType.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildReferenceType$patch(source, { ...(inputs.config as T.ReferenceType.Config), ...config });
-	}
 	switch (slot) {
 		case 'lifetime': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildReferenceType$patch(source, { ...(inputs.config as T.ReferenceType.Config), ...input });
+			}
+			const config = input;
 			const _lifetime = config.lifetime;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'reference_type', { lifetime: _lifetime });
@@ -7891,6 +8479,11 @@ function buildReferenceType$set(
 			});
 		}
 		case 'exclusive': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildReferenceType$patch(source, { ...(inputs.config as T.ReferenceType.Config), ...input });
+			}
+			const config = input;
 			const _exclusive = strictBooleanStorage(config.exclusive);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'reference_type', { exclusive: _exclusive });
@@ -7904,6 +8497,11 @@ function buildReferenceType$set(
 			});
 		}
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildReferenceType$patch(source, { ...(inputs.config as T.ReferenceType.Config), ...input });
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.ReferenceType['_type']>>(
 				kindIdStorage<NonNullable<T.ReferenceType['_type']>>(config.type),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -7920,7 +8518,6 @@ function buildReferenceType$set(
 			});
 		}
 	}
-	throw new Error(`reference_type writes no slot ${slot} alone`);
 }
 function withReferenceType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -7988,15 +8585,15 @@ function buildAbstractType$patch(source: object, config: T.AbstractType.Config):
 }
 function buildAbstractType$set(
 	source: object,
-	slot: string,
-	config: Partial<T.AbstractType.Config>
+	...[slot, input]: ['typeParameters', Partial<T.AbstractType.Config>] | ['trait', Partial<T.AbstractType.Config>]
 ): T.AbstractType.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildAbstractType$patch(source, { ...(inputs.config as T.AbstractType.Config), ...config });
-	}
 	switch (slot) {
 		case 'typeParameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAbstractType$patch(source, { ...(inputs.config as T.AbstractType.Config), ...input });
+			}
+			const config = input;
 			const _type_parameters = config.typeParameters;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'abstract_type', { typeParameters: _type_parameters });
@@ -8010,6 +8607,11 @@ function buildAbstractType$set(
 			});
 		}
 		case 'trait': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAbstractType$patch(source, { ...(inputs.config as T.AbstractType.Config), ...input });
+			}
+			const config = input;
 			const _trait = admitAliasContent<NonNullable<T.AbstractType['_trait']>>(config.trait, [
 				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 			]);
@@ -8025,7 +8627,6 @@ function buildAbstractType$set(
 			});
 		}
 	}
-	throw new Error(`abstract_type writes no slot ${slot} alone`);
 }
 function withAbstractType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -8202,15 +8803,15 @@ function buildMacroInvocation$patch(source: object, config: T.MacroInvocation.Co
 }
 function buildMacroInvocation$set(
 	source: object,
-	slot: string,
-	config: Partial<T.MacroInvocation.Config>
+	...[slot, input]: ['function', Partial<T.MacroInvocation.Config>] | ['arguments', Partial<T.MacroInvocation.Config>]
 ): T.MacroInvocation.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildMacroInvocation$patch(source, { ...(inputs.config as T.MacroInvocation.Config), ...config });
-	}
 	switch (slot) {
 		case 'function': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMacroInvocation$patch(source, { ...(inputs.config as T.MacroInvocation.Config), ...input });
+			}
+			const config = input;
 			const _function = config.function;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'macro_invocation', { function: _function });
@@ -8224,6 +8825,11 @@ function buildMacroInvocation$set(
 			});
 		}
 		case 'arguments': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMacroInvocation$patch(source, { ...(inputs.config as T.MacroInvocation.Config), ...input });
+			}
+			const config = input;
 			const _arguments = config.arguments;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'macro_invocation', { arguments: _arguments });
@@ -8237,7 +8843,6 @@ function buildMacroInvocation$set(
 			});
 		}
 	}
-	throw new Error(`macro_invocation writes no slot ${slot} alone`);
 }
 function withMacroInvocation(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -8315,15 +8920,15 @@ function buildScopedIdentifier$patch(source: object, config: T.ScopedIdentifier.
 }
 function buildScopedIdentifier$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ScopedIdentifier.Config>
+	...[slot, input]: ['qualifier', Partial<T.ScopedIdentifier.Config>] | ['name', Partial<T.ScopedIdentifier.Config>]
 ): T.ScopedIdentifier.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildScopedIdentifier$patch(source, { ...(inputs.config as T.ScopedIdentifier.Config), ...config });
-	}
 	switch (slot) {
 		case 'qualifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildScopedIdentifier$patch(source, { ...(inputs.config as T.ScopedIdentifier.Config), ...input });
+			}
+			const config = input;
 			const _qualifier = rejectKeywordText(
 				kindIdStorage<NonNullable<T.ScopedIdentifier['_qualifier']>>(config.qualifier),
 				'ScopedIdentifier.qualifier',
@@ -8342,6 +8947,11 @@ function buildScopedIdentifier$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildScopedIdentifier$patch(source, { ...(inputs.config as T.ScopedIdentifier.Config), ...input });
+			}
+			const config = input;
 			const _name = rejectKeywordText(
 				kindIdStorage<NonNullable<T.ScopedIdentifier['_name']>>(config.name),
 				'ScopedIdentifier.name',
@@ -8360,7 +8970,6 @@ function buildScopedIdentifier$set(
 			});
 		}
 	}
-	throw new Error(`scoped_identifier writes no slot ${slot} alone`);
 }
 function withScopedIdentifier(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -8442,18 +9051,20 @@ function buildScopedTypeIdentifierInExpressionPosition$patch(
 }
 function buildScopedTypeIdentifierInExpressionPosition$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ScopedTypeIdentifierInExpressionPosition.Config>
+	...[slot, input]:
+		| ['qualifier', Partial<T.ScopedTypeIdentifierInExpressionPosition.Config>]
+		| ['name', Partial<T.ScopedTypeIdentifierInExpressionPosition.Config>]
 ): T.ScopedTypeIdentifierInExpressionPosition.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildScopedTypeIdentifierInExpressionPosition$patch(source, {
-			...(inputs.config as T.ScopedTypeIdentifierInExpressionPosition.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'qualifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildScopedTypeIdentifierInExpressionPosition$patch(source, {
+					...(inputs.config as T.ScopedTypeIdentifierInExpressionPosition.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _qualifier = rejectKeywordText(
 				kindIdStorage<NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_qualifier']>>(config.qualifier),
 				'ScopedTypeIdentifierInExpressionPosition.qualifier',
@@ -8473,6 +9084,14 @@ function buildScopedTypeIdentifierInExpressionPosition$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildScopedTypeIdentifierInExpressionPosition$patch(source, {
+					...(inputs.config as T.ScopedTypeIdentifierInExpressionPosition.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _name = admitAliasContent<NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_name']>>(config.name, [
 				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 			]);
@@ -8488,7 +9107,6 @@ function buildScopedTypeIdentifierInExpressionPosition$set(
 			});
 		}
 	}
-	throw new Error(`scoped_type_identifier_in_expression_position writes no slot ${slot} alone`);
 }
 function withScopedTypeIdentifierInExpressionPosition(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -8567,15 +9185,20 @@ function buildScopedTypeIdentifier$patch(
 }
 function buildScopedTypeIdentifier$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ScopedTypeIdentifier.Config>
+	...[slot, input]:
+		| ['qualifier', Partial<T.ScopedTypeIdentifier.Config>]
+		| ['name', Partial<T.ScopedTypeIdentifier.Config>]
 ): T.ScopedTypeIdentifier.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildScopedTypeIdentifier$patch(source, { ...(inputs.config as T.ScopedTypeIdentifier.Config), ...config });
-	}
 	switch (slot) {
 		case 'qualifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildScopedTypeIdentifier$patch(source, {
+					...(inputs.config as T.ScopedTypeIdentifier.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _qualifier = rejectKeywordText(
 				kindIdStorage<NonNullable<T.ScopedTypeIdentifier['_qualifier']>>(config.qualifier),
 				'ScopedTypeIdentifier.qualifier',
@@ -8594,6 +9217,14 @@ function buildScopedTypeIdentifier$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildScopedTypeIdentifier$patch(source, {
+					...(inputs.config as T.ScopedTypeIdentifier.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _name = admitAliasContent<NonNullable<T.ScopedTypeIdentifier['_name']>>(config.name, [
 				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 			]);
@@ -8609,7 +9240,6 @@ function buildScopedTypeIdentifier$set(
 			});
 		}
 	}
-	throw new Error(`scoped_type_identifier writes no slot ${slot} alone`);
 }
 function withScopedTypeIdentifier(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -8664,15 +9294,15 @@ function buildUnaryExpression$patch(source: object, config: T.UnaryExpression.Co
 }
 function buildUnaryExpression$set(
 	source: object,
-	slot: string,
-	config: Partial<T.UnaryExpression.Config>
+	...[slot, input]: ['operator', Partial<T.UnaryExpression.Config>] | ['argument', Partial<T.UnaryExpression.Config>]
 ): T.UnaryExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildUnaryExpression$patch(source, { ...(inputs.config as T.UnaryExpression.Config), ...config });
-	}
 	switch (slot) {
 		case 'operator': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildUnaryExpression$patch(source, { ...(inputs.config as T.UnaryExpression.Config), ...input });
+			}
+			const config = input;
 			const _operator = kindIdStorage<NonNullable<T.UnaryExpression['_operator']>>(config.operator);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'unary_expression', { operator: _operator });
@@ -8686,6 +9316,11 @@ function buildUnaryExpression$set(
 			});
 		}
 		case 'argument': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildUnaryExpression$patch(source, { ...(inputs.config as T.UnaryExpression.Config), ...input });
+			}
+			const config = input;
 			const _argument = kindIdStorage<NonNullable<T.UnaryExpression['_argument']>>(config.argument);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'unary_expression', { argument: _argument });
@@ -8699,7 +9334,6 @@ function buildUnaryExpression$set(
 			});
 		}
 	}
-	throw new Error(`unary_expression writes no slot ${slot} alone`);
 }
 function withUnaryExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -8802,15 +9436,18 @@ function buildBinaryExpression$patch(source: object, config: T.BinaryExpression.
 }
 function buildBinaryExpression$set(
 	source: object,
-	slot: string,
-	config: Partial<T.BinaryExpression.Config>
+	...[slot, input]:
+		| ['left', Partial<T.BinaryExpression.Config>]
+		| ['operator', Partial<T.BinaryExpression.Config>]
+		| ['right', Partial<T.BinaryExpression.Config>]
 ): T.BinaryExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildBinaryExpression$patch(source, { ...(inputs.config as T.BinaryExpression.Config), ...config });
-	}
 	switch (slot) {
 		case 'left': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildBinaryExpression$patch(source, { ...(inputs.config as T.BinaryExpression.Config), ...input });
+			}
+			const config = input;
 			const _left = kindIdStorage<NonNullable<T.BinaryExpression['_left']>>(config.left);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'binary_expression', { left: _left });
@@ -8824,6 +9461,11 @@ function buildBinaryExpression$set(
 			});
 		}
 		case 'operator': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildBinaryExpression$patch(source, { ...(inputs.config as T.BinaryExpression.Config), ...input });
+			}
+			const config = input;
 			const _operator = kindIdStorage<NonNullable<T.BinaryExpression['_operator']>>(config.operator);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'binary_expression', { operator: _operator });
@@ -8837,6 +9479,11 @@ function buildBinaryExpression$set(
 			});
 		}
 		case 'right': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildBinaryExpression$patch(source, { ...(inputs.config as T.BinaryExpression.Config), ...input });
+			}
+			const config = input;
 			const _right = kindIdStorage<NonNullable<T.BinaryExpression['_right']>>(config.right);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'binary_expression', { right: _right });
@@ -8850,7 +9497,6 @@ function buildBinaryExpression$set(
 			});
 		}
 	}
-	throw new Error(`binary_expression writes no slot ${slot} alone`);
 }
 function withBinaryExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -8915,15 +9561,18 @@ function buildAssignmentExpression$patch(
 }
 function buildAssignmentExpression$set(
 	source: object,
-	slot: string,
-	config: Partial<T.AssignmentExpression.Config>
+	...[slot, input]: ['left', Partial<T.AssignmentExpression.Config>] | ['right', Partial<T.AssignmentExpression.Config>]
 ): T.AssignmentExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildAssignmentExpression$patch(source, { ...(inputs.config as T.AssignmentExpression.Config), ...config });
-	}
 	switch (slot) {
 		case 'left': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAssignmentExpression$patch(source, {
+					...(inputs.config as T.AssignmentExpression.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _left = kindIdStorage<NonNullable<T.AssignmentExpression['_left']>>(config.left);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'assignment_expression', { left: _left });
@@ -8937,6 +9586,14 @@ function buildAssignmentExpression$set(
 			});
 		}
 		case 'right': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAssignmentExpression$patch(source, {
+					...(inputs.config as T.AssignmentExpression.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _right = kindIdStorage<NonNullable<T.AssignmentExpression['_right']>>(config.right);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'assignment_expression', { right: _right });
@@ -8950,7 +9607,6 @@ function buildAssignmentExpression$set(
 			});
 		}
 	}
-	throw new Error(`assignment_expression writes no slot ${slot} alone`);
 }
 function withAssignmentExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -9017,18 +9673,21 @@ function buildCompoundAssignmentExpr$patch(
 }
 function buildCompoundAssignmentExpr$set(
 	source: object,
-	slot: string,
-	config: Partial<T.CompoundAssignmentExpr.Config>
+	...[slot, input]:
+		| ['left', Partial<T.CompoundAssignmentExpr.Config>]
+		| ['operator', Partial<T.CompoundAssignmentExpr.Config>]
+		| ['right', Partial<T.CompoundAssignmentExpr.Config>]
 ): T.CompoundAssignmentExpr.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildCompoundAssignmentExpr$patch(source, {
-			...(inputs.config as T.CompoundAssignmentExpr.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'left': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCompoundAssignmentExpr$patch(source, {
+					...(inputs.config as T.CompoundAssignmentExpr.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _left = kindIdStorage<NonNullable<T.CompoundAssignmentExpr['_left']>>(config.left);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'compound_assignment_expr', { left: _left });
@@ -9042,6 +9701,14 @@ function buildCompoundAssignmentExpr$set(
 			});
 		}
 		case 'operator': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCompoundAssignmentExpr$patch(source, {
+					...(inputs.config as T.CompoundAssignmentExpr.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _operator = kindIdStorage<NonNullable<T.CompoundAssignmentExpr['_operator']>>(config.operator);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'compound_assignment_expr', { operator: _operator });
@@ -9055,6 +9722,14 @@ function buildCompoundAssignmentExpr$set(
 			});
 		}
 		case 'right': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCompoundAssignmentExpr$patch(source, {
+					...(inputs.config as T.CompoundAssignmentExpr.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _right = kindIdStorage<NonNullable<T.CompoundAssignmentExpr['_right']>>(config.right);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'compound_assignment_expr', { right: _right });
@@ -9068,7 +9743,6 @@ function buildCompoundAssignmentExpr$set(
 			});
 		}
 	}
-	throw new Error(`compound_assignment_expr writes no slot ${slot} alone`);
 }
 function withCompoundAssignmentExpr(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -9139,15 +9813,17 @@ function buildTypeCastExpression$patch(
 }
 function buildTypeCastExpression$set(
 	source: object,
-	slot: string,
-	config: Partial<T.TypeCastExpression.Config>
+	...[slot, input]:
+		| ['expression', Partial<T.TypeCastExpression.Config>]
+		| ['type', Partial<T.TypeCastExpression.Config>]
 ): T.TypeCastExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildTypeCastExpression$patch(source, { ...(inputs.config as T.TypeCastExpression.Config), ...config });
-	}
 	switch (slot) {
 		case 'expression': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTypeCastExpression$patch(source, { ...(inputs.config as T.TypeCastExpression.Config), ...input });
+			}
+			const config = input;
 			const _expression = kindIdStorage<NonNullable<T.TypeCastExpression['_expression']>>(config.expression);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'type_cast_expression', { expression: _expression });
@@ -9161,6 +9837,11 @@ function buildTypeCastExpression$set(
 			});
 		}
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTypeCastExpression$patch(source, { ...(inputs.config as T.TypeCastExpression.Config), ...input });
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.TypeCastExpression['_type']>>(
 				kindIdStorage<NonNullable<T.TypeCastExpression['_type']>>(config.type),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -9177,7 +9858,6 @@ function buildTypeCastExpression$set(
 			});
 		}
 	}
-	throw new Error(`type_cast_expression writes no slot ${slot} alone`);
 }
 function withTypeCastExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -9327,15 +10007,15 @@ function buildCallExpression$patch(source: object, config: T.CallExpression.Conf
 }
 function buildCallExpression$set(
 	source: object,
-	slot: string,
-	config: Partial<T.CallExpression.Config>
+	...[slot, input]: ['function', Partial<T.CallExpression.Config>] | ['arguments', Partial<T.CallExpression.Config>]
 ): T.CallExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildCallExpression$patch(source, { ...(inputs.config as T.CallExpression.Config), ...config });
-	}
 	switch (slot) {
 		case 'function': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCallExpression$patch(source, { ...(inputs.config as T.CallExpression.Config), ...input });
+			}
+			const config = input;
 			const _function = rejectKeywordText(
 				kindIdStorage<NonNullable<T.CallExpression['_function']>>(config.function),
 				'CallExpression.function',
@@ -9354,6 +10034,11 @@ function buildCallExpression$set(
 			});
 		}
 		case 'arguments': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCallExpression$patch(source, { ...(inputs.config as T.CallExpression.Config), ...input });
+			}
+			const config = input;
 			const _arguments = orDefault(config.arguments, () => buildArguments());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'call_expression', { arguments: _arguments });
@@ -9367,7 +10052,6 @@ function buildCallExpression$set(
 			});
 		}
 	}
-	throw new Error(`call_expression writes no slot ${slot} alone`);
 }
 function withCallExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -9559,15 +10243,15 @@ function buildTupleExpression$patch(source: object, config: T.TupleExpression.Co
 }
 function buildTupleExpression$set(
 	source: object,
-	slot: string,
-	config: Partial<T.TupleExpression.Config>
+	...[slot, input]: ['attributes', Partial<T.TupleExpression.Config>] | ['elements', Partial<T.TupleExpression.Config>]
 ): T.TupleExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildTupleExpression$patch(source, { ...(inputs.config as T.TupleExpression.Config), ...config });
-	}
 	switch (slot) {
 		case 'attributes': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTupleExpression$patch(source, { ...(inputs.config as T.TupleExpression.Config), ...input });
+			}
+			const config = input;
 			const _attributes = listStorage<NonNullable<T.TupleExpression['_attributes']>>(config.attributes ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'tuple_expression', { attributes: _attributes });
@@ -9581,6 +10265,11 @@ function buildTupleExpression$set(
 			});
 		}
 		case 'elements': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTupleExpression$patch(source, { ...(inputs.config as T.TupleExpression.Config), ...input });
+			}
+			const config = input;
 			const _elements = config.elements;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'tuple_expression', { elements: _elements });
@@ -9594,7 +10283,6 @@ function buildTupleExpression$set(
 			});
 		}
 	}
-	throw new Error(`tuple_expression writes no slot ${slot} alone`);
 }
 function withTupleExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -9664,15 +10352,15 @@ function buildStructExpression$patch(source: object, config: T.StructExpression.
 }
 function buildStructExpression$set(
 	source: object,
-	slot: string,
-	config: Partial<T.StructExpression.Config>
+	...[slot, input]: ['name', Partial<T.StructExpression.Config>] | ['body', Partial<T.StructExpression.Config>]
 ): T.StructExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildStructExpression$patch(source, { ...(inputs.config as T.StructExpression.Config), ...config });
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructExpression$patch(source, { ...(inputs.config as T.StructExpression.Config), ...input });
+			}
+			const config = input;
 			const _name = admitAliasContent<NonNullable<T.StructExpression['_name']>>(config.name, [
 				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 			]);
@@ -9688,6 +10376,11 @@ function buildStructExpression$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructExpression$patch(source, { ...(inputs.config as T.StructExpression.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildFieldInitializerList());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'struct_expression', { body: _body });
@@ -9701,7 +10394,6 @@ function buildStructExpression$set(
 			});
 		}
 	}
-	throw new Error(`struct_expression writes no slot ${slot} alone`);
 }
 function withStructExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -9865,18 +10557,20 @@ function buildShorthandFieldInitializer$patch(
 }
 function buildShorthandFieldInitializer$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ShorthandFieldInitializer.Config>
+	...[slot, input]:
+		| ['attributes', Partial<T.ShorthandFieldInitializer.Config>]
+		| ['field', Partial<T.ShorthandFieldInitializer.Config>]
 ): T.ShorthandFieldInitializer.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildShorthandFieldInitializer$patch(source, {
-			...(inputs.config as T.ShorthandFieldInitializer.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'attributes': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildShorthandFieldInitializer$patch(source, {
+					...(inputs.config as T.ShorthandFieldInitializer.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _attributes = listStorage<NonNullable<T.ShorthandFieldInitializer['_attributes']>>(config.attributes ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'shorthand_field_initializer', { attributes: _attributes });
@@ -9890,6 +10584,14 @@ function buildShorthandFieldInitializer$set(
 			});
 		}
 		case 'field': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildShorthandFieldInitializer$patch(source, {
+					...(inputs.config as T.ShorthandFieldInitializer.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _field = config.field;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'shorthand_field_initializer', { field: _field });
@@ -9903,7 +10605,6 @@ function buildShorthandFieldInitializer$set(
 			});
 		}
 	}
-	throw new Error(`shorthand_field_initializer writes no slot ${slot} alone`);
 }
 function withShorthandFieldInitializer(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -9974,15 +10675,18 @@ function buildFieldInitializer$patch(source: object, config: T.FieldInitializer.
 }
 function buildFieldInitializer$set(
 	source: object,
-	slot: string,
-	config: Partial<T.FieldInitializer.Config>
+	...[slot, input]:
+		| ['attributes', Partial<T.FieldInitializer.Config>]
+		| ['field', Partial<T.FieldInitializer.Config>]
+		| ['value', Partial<T.FieldInitializer.Config>]
 ): T.FieldInitializer.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildFieldInitializer$patch(source, { ...(inputs.config as T.FieldInitializer.Config), ...config });
-	}
 	switch (slot) {
 		case 'attributes': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldInitializer$patch(source, { ...(inputs.config as T.FieldInitializer.Config), ...input });
+			}
+			const config = input;
 			const _attributes = listStorage<NonNullable<T.FieldInitializer['_attributes']>>(config.attributes ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'field_initializer', { attributes: _attributes });
@@ -9996,6 +10700,11 @@ function buildFieldInitializer$set(
 			});
 		}
 		case 'field': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldInitializer$patch(source, { ...(inputs.config as T.FieldInitializer.Config), ...input });
+			}
+			const config = input;
 			const _field = admitAliasContent<NonNullable<T.FieldInitializer['_field']>>(config.field, [
 				[[1], (v: unknown) => buildFieldIdentifier(v as never)]
 			]);
@@ -10011,6 +10720,11 @@ function buildFieldInitializer$set(
 			});
 		}
 		case 'value': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldInitializer$patch(source, { ...(inputs.config as T.FieldInitializer.Config), ...input });
+			}
+			const config = input;
 			const _value = kindIdStorage<NonNullable<T.FieldInitializer['_value']>>(config.value);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'field_initializer', { value: _value });
@@ -10024,7 +10738,6 @@ function buildFieldInitializer$set(
 			});
 		}
 	}
-	throw new Error(`field_initializer writes no slot ${slot} alone`);
 }
 function withFieldInitializer(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -10147,15 +10860,18 @@ function buildIfExpression$patch(source: object, config: T.IfExpression.Config):
 }
 function buildIfExpression$set(
 	source: object,
-	slot: string,
-	config: Partial<T.IfExpression.Config>
+	...[slot, input]:
+		| ['condition', Partial<T.IfExpression.Config>]
+		| ['consequence', Partial<T.IfExpression.Config>]
+		| ['alternative', Partial<T.IfExpression.Config>]
 ): T.IfExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildIfExpression$patch(source, { ...(inputs.config as T.IfExpression.Config), ...config });
-	}
 	switch (slot) {
 		case 'condition': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildIfExpression$patch(source, { ...(inputs.config as T.IfExpression.Config), ...input });
+			}
+			const config = input;
 			const _condition = kindIdStorage<NonNullable<T.IfExpression['_condition']>>(config.condition);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'if_expression', { condition: _condition });
@@ -10169,6 +10885,11 @@ function buildIfExpression$set(
 			});
 		}
 		case 'consequence': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildIfExpression$patch(source, { ...(inputs.config as T.IfExpression.Config), ...input });
+			}
+			const config = input;
 			const _consequence = orDefault(config.consequence, () => buildBlock());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'if_expression', { consequence: _consequence });
@@ -10182,6 +10903,11 @@ function buildIfExpression$set(
 			});
 		}
 		case 'alternative': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildIfExpression$patch(source, { ...(inputs.config as T.IfExpression.Config), ...input });
+			}
+			const config = input;
 			const _alternative = config.alternative;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'if_expression', { alternative: _alternative });
@@ -10195,7 +10921,6 @@ function buildIfExpression$set(
 			});
 		}
 	}
-	throw new Error(`if_expression writes no slot ${slot} alone`);
 }
 function withIfExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -10255,15 +10980,15 @@ function buildLetCondition$patch(source: object, config: T.LetCondition.Config):
 }
 function buildLetCondition$set(
 	source: object,
-	slot: string,
-	config: Partial<T.LetCondition.Config>
+	...[slot, input]: ['pattern', Partial<T.LetCondition.Config>] | ['value', Partial<T.LetCondition.Config>]
 ): T.LetCondition.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildLetCondition$patch(source, { ...(inputs.config as T.LetCondition.Config), ...config });
-	}
 	switch (slot) {
 		case 'pattern': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLetCondition$patch(source, { ...(inputs.config as T.LetCondition.Config), ...input });
+			}
+			const config = input;
 			const _pattern = kindIdStorage<NonNullable<T.LetCondition['_pattern']>>(config.pattern);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'let_condition', { pattern: _pattern });
@@ -10277,6 +11002,11 @@ function buildLetCondition$set(
 			});
 		}
 		case 'value': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLetCondition$patch(source, { ...(inputs.config as T.LetCondition.Config), ...input });
+			}
+			const config = input;
 			const _value = kindIdStorage<NonNullable<T.LetCondition['_value']>>(config.value);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'let_condition', { value: _value });
@@ -10290,7 +11020,6 @@ function buildLetCondition$set(
 			});
 		}
 	}
-	throw new Error(`let_condition writes no slot ${slot} alone`);
 }
 function withLetCondition(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -10344,13 +11073,17 @@ function buildLetChain$patch(source: object, config: T.LetChain.Config): T.LetCh
 		return node as unknown as T.LetChain.Bound;
 	});
 }
-function buildLetChain$set(source: object, slot: string, config: Partial<T.LetChain.Config>): T.LetChain.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildLetChain$patch(source, { ...(inputs.config as T.LetChain.Config), ...config });
-	}
+function buildLetChain$set(
+	source: object,
+	...[slot, input]: ['left', Partial<T.LetChain.Config>] | ['rights', Partial<T.LetChain.Config>]
+): T.LetChain.Bound {
 	switch (slot) {
 		case 'left': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLetChain$patch(source, { ...(inputs.config as T.LetChain.Config), ...input });
+			}
+			const config = input;
 			const _left = kindIdStorage<NonNullable<T.LetChain['_left']>>(config.left);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, '_let_chain', { left: _left });
@@ -10364,6 +11097,11 @@ function buildLetChain$set(source: object, slot: string, config: Partial<T.LetCh
 			});
 		}
 		case 'rights': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLetChain$patch(source, { ...(inputs.config as T.LetChain.Config), ...input });
+			}
+			const config = input;
 			const _right = listStorage<NonNullable<T.LetChain['_right']>>(config.rights ?? [], kindIdStorage);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, '_let_chain', { rights: _right });
@@ -10377,7 +11115,6 @@ function buildLetChain$set(source: object, slot: string, config: Partial<T.LetCh
 			});
 		}
 	}
-	throw new Error(`_let_chain writes no slot ${slot} alone`);
 }
 function withLetChain(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -10474,15 +11211,15 @@ function buildMatchExpression$patch(source: object, config: T.MatchExpression.Co
 }
 function buildMatchExpression$set(
 	source: object,
-	slot: string,
-	config: Partial<T.MatchExpression.Config>
+	...[slot, input]: ['subject', Partial<T.MatchExpression.Config>] | ['body', Partial<T.MatchExpression.Config>]
 ): T.MatchExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildMatchExpression$patch(source, { ...(inputs.config as T.MatchExpression.Config), ...config });
-	}
 	switch (slot) {
 		case 'subject': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMatchExpression$patch(source, { ...(inputs.config as T.MatchExpression.Config), ...input });
+			}
+			const config = input;
 			const _subject = kindIdStorage<NonNullable<T.MatchExpression['_subject']>>(config.subject);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'match_expression', { subject: _subject });
@@ -10496,6 +11233,11 @@ function buildMatchExpression$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMatchExpression$patch(source, { ...(inputs.config as T.MatchExpression.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildMatchBlock());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'match_expression', { body: _body });
@@ -10509,7 +11251,6 @@ function buildMatchExpression$set(
 			});
 		}
 	}
-	throw new Error(`match_expression writes no slot ${slot} alone`);
 }
 function withMatchExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -10662,19 +11403,23 @@ function buildLastMatchArm$patch(
 }
 function buildLastMatchArm$set(
 	source: object,
-	slot: string,
-	config: Partial<T.LastMatchArm.Config>
+	...[slot, input]:
+		| ['attributes', Partial<T.LastMatchArm.Config>]
+		| ['match', Partial<T.LastMatchArm.Config>]
+		| ['body', Partial<T.LastMatchArm.Config>]
+		| ['trailingComma', T.LastMatchArm.Options]
 ): T.LastMatchArm.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildLastMatchArm$patch(
-			source,
-			{ ...(inputs.config as T.LastMatchArm.Config), ...config },
-			inputs.options as T.LastMatchArm.Options
-		);
-	}
 	switch (slot) {
 		case 'attributes': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLastMatchArm$patch(
+					source,
+					{ ...(inputs.config as T.LastMatchArm.Config), ...input },
+					inputs.options as T.LastMatchArm.Options
+				);
+			}
+			const config = input;
 			const _attributes = listStorage<NonNullable<T.LastMatchArm['_attributes']>>(config.attributes ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'last_match_arm', { attributes: _attributes });
@@ -10688,6 +11433,15 @@ function buildLastMatchArm$set(
 			});
 		}
 		case 'match': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLastMatchArm$patch(
+					source,
+					{ ...(inputs.config as T.LastMatchArm.Config), ...input },
+					inputs.options as T.LastMatchArm.Options
+				);
+			}
+			const config = input;
 			const _match = config.match;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'last_match_arm', { match: _match });
@@ -10701,6 +11455,15 @@ function buildLastMatchArm$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLastMatchArm$patch(
+					source,
+					{ ...(inputs.config as T.LastMatchArm.Config), ...input },
+					inputs.options as T.LastMatchArm.Options
+				);
+			}
+			const config = input;
 			const _body = kindIdStorage<NonNullable<T.LastMatchArm['_body']>>(config.body);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'last_match_arm', { body: _body });
@@ -10713,8 +11476,31 @@ function buildLastMatchArm$set(
 				return node as unknown as T.LastMatchArm.Bound;
 			});
 		}
+		case 'trailingComma': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLastMatchArm$patch(source, inputs.config as T.LastMatchArm.Config, {
+					...(inputs.options as T.LastMatchArm.Options),
+					...input
+				});
+			}
+			const options = input;
+			const _trailing_comma = coerceKindEnumStorage<NonNullable<T.LastMatchArm['_trailing_comma']>>(
+				blankArmStored(options?.trailingComma),
+				[[',', TSKindId.Comma] as const]
+			);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'last_match_arm', { trailingComma: _trailing_comma });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.LastMatchArm as const, 3);
+				patchCell(arena, record, 5, 17, carriedSlot(source, 'trailingComma', _trailing_comma));
+				arena.carry(source, record, 3);
+				const node = arena.view(record);
+				return node as unknown as T.LastMatchArm.Bound;
+			});
+		}
 	}
-	throw new Error(`last_match_arm writes no slot ${slot} alone`);
 }
 function withLastMatchArm(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -10734,14 +11520,10 @@ function withLastMatchArm(node: object, setter: string, args: readonly unknown[]
 			return applySetter(args, (value: Admit<NonNullable<T.LastMatchArm.Config>['body']>) =>
 				rebuilt(node, handle, () => buildLastMatchArm$set(node, 'body', { body: value }))
 			);
-		case 'trailingComma': {
-			const inputs = builtInputs(node);
-			const config = inputs.config as T.LastMatchArm.Config;
-			const options = inputs.options as T.LastMatchArm.Options;
+		case 'trailingComma':
 			return applySetter(args, (spelling: TSKindId.Comma | null) =>
-				rebuilt(node, handle, () => buildLastMatchArm$patch(node, config, { ...options, trailingComma: spelling }))
+				rebuilt(node, handle, () => buildLastMatchArm$set(node, 'trailingComma', { trailingComma: spelling }))
 			);
-		}
 		case 'pattern':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -10827,15 +11609,15 @@ function buildMatchPattern$patch(source: object, config: T.MatchPattern.Config):
 }
 function buildMatchPattern$set(
 	source: object,
-	slot: string,
-	config: Partial<T.MatchPattern.Config>
+	...[slot, input]: ['pattern', Partial<T.MatchPattern.Config>] | ['condition', Partial<T.MatchPattern.Config>]
 ): T.MatchPattern.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildMatchPattern$patch(source, { ...(inputs.config as T.MatchPattern.Config), ...config });
-	}
 	switch (slot) {
 		case 'pattern': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMatchPattern$patch(source, { ...(inputs.config as T.MatchPattern.Config), ...input });
+			}
+			const config = input;
 			const _pattern = kindIdStorage<NonNullable<T.MatchPattern['_pattern']>>(config.pattern);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'match_pattern', { pattern: _pattern });
@@ -10849,6 +11631,11 @@ function buildMatchPattern$set(
 			});
 		}
 		case 'condition': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMatchPattern$patch(source, { ...(inputs.config as T.MatchPattern.Config), ...input });
+			}
+			const config = input;
 			const _condition = kindIdStorage<NonNullable<T.MatchPattern['_condition']>>(config.condition);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'match_pattern', { condition: _condition });
@@ -10862,7 +11649,6 @@ function buildMatchPattern$set(
 			});
 		}
 	}
-	throw new Error(`match_pattern writes no slot ${slot} alone`);
 }
 function withMatchPattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -10927,15 +11713,18 @@ function buildWhileExpression$patch(source: object, config: T.WhileExpression.Co
 }
 function buildWhileExpression$set(
 	source: object,
-	slot: string,
-	config: Partial<T.WhileExpression.Config>
+	...[slot, input]:
+		| ['label', Partial<T.WhileExpression.Config>]
+		| ['condition', Partial<T.WhileExpression.Config>]
+		| ['body', Partial<T.WhileExpression.Config>]
 ): T.WhileExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildWhileExpression$patch(source, { ...(inputs.config as T.WhileExpression.Config), ...config });
-	}
 	switch (slot) {
 		case 'label': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildWhileExpression$patch(source, { ...(inputs.config as T.WhileExpression.Config), ...input });
+			}
+			const config = input;
 			const _label = config.label;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'while_expression', { label: _label });
@@ -10949,6 +11738,11 @@ function buildWhileExpression$set(
 			});
 		}
 		case 'condition': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildWhileExpression$patch(source, { ...(inputs.config as T.WhileExpression.Config), ...input });
+			}
+			const config = input;
 			const _condition = kindIdStorage<NonNullable<T.WhileExpression['_condition']>>(config.condition);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'while_expression', { condition: _condition });
@@ -10962,6 +11756,11 @@ function buildWhileExpression$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildWhileExpression$patch(source, { ...(inputs.config as T.WhileExpression.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildBlock());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'while_expression', { body: _body });
@@ -10975,7 +11774,6 @@ function buildWhileExpression$set(
 			});
 		}
 	}
-	throw new Error(`while_expression writes no slot ${slot} alone`);
 }
 function withWhileExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -11040,15 +11838,15 @@ function buildLoopExpression$patch(
 }
 function buildLoopExpression$set(
 	source: object,
-	slot: string,
-	config: Partial<T.LoopExpression.Config>
+	...[slot, input]: ['label', Partial<T.LoopExpression.Config>] | ['body', Partial<T.LoopExpression.Config>]
 ): T.LoopExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildLoopExpression$patch(source, { ...(inputs.config as T.LoopExpression.Config), ...config });
-	}
 	switch (slot) {
 		case 'label': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLoopExpression$patch(source, { ...(inputs.config as T.LoopExpression.Config), ...input });
+			}
+			const config = input;
 			const _label = config.label;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'loop_expression', { label: _label });
@@ -11062,6 +11860,11 @@ function buildLoopExpression$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLoopExpression$patch(source, { ...(inputs.config as T.LoopExpression.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildBlock());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'loop_expression', { body: _body });
@@ -11075,7 +11878,6 @@ function buildLoopExpression$set(
 			});
 		}
 	}
-	throw new Error(`loop_expression writes no slot ${slot} alone`);
 }
 function withLoopExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -11145,15 +11947,19 @@ function buildForExpression$patch(source: object, config: T.ForExpression.Config
 }
 function buildForExpression$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ForExpression.Config>
+	...[slot, input]:
+		| ['label', Partial<T.ForExpression.Config>]
+		| ['left', Partial<T.ForExpression.Config>]
+		| ['right', Partial<T.ForExpression.Config>]
+		| ['body', Partial<T.ForExpression.Config>]
 ): T.ForExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildForExpression$patch(source, { ...(inputs.config as T.ForExpression.Config), ...config });
-	}
 	switch (slot) {
 		case 'label': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildForExpression$patch(source, { ...(inputs.config as T.ForExpression.Config), ...input });
+			}
+			const config = input;
 			const _label = config.label;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'for_expression', { label: _label });
@@ -11167,6 +11973,11 @@ function buildForExpression$set(
 			});
 		}
 		case 'left': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildForExpression$patch(source, { ...(inputs.config as T.ForExpression.Config), ...input });
+			}
+			const config = input;
 			const _left = kindIdStorage<NonNullable<T.ForExpression['_left']>>(config.left);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'for_expression', { left: _left });
@@ -11180,6 +11991,11 @@ function buildForExpression$set(
 			});
 		}
 		case 'right': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildForExpression$patch(source, { ...(inputs.config as T.ForExpression.Config), ...input });
+			}
+			const config = input;
 			const _right = kindIdStorage<NonNullable<T.ForExpression['_right']>>(config.right);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'for_expression', { right: _right });
@@ -11193,6 +12009,11 @@ function buildForExpression$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildForExpression$patch(source, { ...(inputs.config as T.ForExpression.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildBlock());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'for_expression', { body: _body });
@@ -11206,7 +12027,6 @@ function buildForExpression$set(
 			});
 		}
 	}
-	throw new Error(`for_expression writes no slot ${slot} alone`);
 }
 function withForExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -11446,15 +12266,15 @@ function buildBreakExpression$patch(
 }
 function buildBreakExpression$set(
 	source: object,
-	slot: string,
-	config: Partial<T.BreakExpression.Config>
+	...[slot, input]: ['label', Partial<T.BreakExpression.Config>] | ['expression', Partial<T.BreakExpression.Config>]
 ): T.BreakExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildBreakExpression$patch(source, { ...(inputs.config as T.BreakExpression.Config), ...config });
-	}
 	switch (slot) {
 		case 'label': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildBreakExpression$patch(source, { ...(inputs.config as T.BreakExpression.Config), ...input });
+			}
+			const config = input;
 			const _label = config.label;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'break_expression', { label: _label });
@@ -11468,6 +12288,11 @@ function buildBreakExpression$set(
 			});
 		}
 		case 'expression': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildBreakExpression$patch(source, { ...(inputs.config as T.BreakExpression.Config), ...input });
+			}
+			const config = input;
 			const _expression = kindIdStorage<NonNullable<T.BreakExpression['_expression']>>(config.expression);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'break_expression', { expression: _expression });
@@ -11481,7 +12306,6 @@ function buildBreakExpression$set(
 			});
 		}
 	}
-	throw new Error(`break_expression writes no slot ${slot} alone`);
 }
 function withBreakExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -11578,15 +12402,15 @@ function buildIndexExpression$patch(source: object, config: T.IndexExpression.Co
 }
 function buildIndexExpression$set(
 	source: object,
-	slot: string,
-	config: Partial<T.IndexExpression.Config>
+	...[slot, input]: ['object', Partial<T.IndexExpression.Config>] | ['index', Partial<T.IndexExpression.Config>]
 ): T.IndexExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildIndexExpression$patch(source, { ...(inputs.config as T.IndexExpression.Config), ...config });
-	}
 	switch (slot) {
 		case 'object': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildIndexExpression$patch(source, { ...(inputs.config as T.IndexExpression.Config), ...input });
+			}
+			const config = input;
 			const _object = kindIdStorage<NonNullable<T.IndexExpression['_object']>>(config.object);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'index_expression', { object: _object });
@@ -11600,6 +12424,11 @@ function buildIndexExpression$set(
 			});
 		}
 		case 'index': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildIndexExpression$patch(source, { ...(inputs.config as T.IndexExpression.Config), ...input });
+			}
+			const config = input;
 			const _index = kindIdStorage<NonNullable<T.IndexExpression['_index']>>(config.index);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'index_expression', { index: _index });
@@ -11613,7 +12442,6 @@ function buildIndexExpression$set(
 			});
 		}
 	}
-	throw new Error(`index_expression writes no slot ${slot} alone`);
 }
 function withIndexExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -11716,15 +12544,15 @@ function buildFieldExpression$patch(source: object, config: T.FieldExpression.Co
 }
 function buildFieldExpression$set(
 	source: object,
-	slot: string,
-	config: Partial<T.FieldExpression.Config>
+	...[slot, input]: ['object', Partial<T.FieldExpression.Config>] | ['property', Partial<T.FieldExpression.Config>]
 ): T.FieldExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildFieldExpression$patch(source, { ...(inputs.config as T.FieldExpression.Config), ...config });
-	}
 	switch (slot) {
 		case 'object': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldExpression$patch(source, { ...(inputs.config as T.FieldExpression.Config), ...input });
+			}
+			const config = input;
 			const _object = kindIdStorage<NonNullable<T.FieldExpression['_object']>>(config.object);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'field_expression', { object: _object });
@@ -11738,6 +12566,11 @@ function buildFieldExpression$set(
 			});
 		}
 		case 'property': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldExpression$patch(source, { ...(inputs.config as T.FieldExpression.Config), ...input });
+			}
+			const config = input;
 			const _property = admitAliasContent<NonNullable<T.FieldExpression['_property']>>(config.property, [
 				[[1], (v: unknown) => buildFieldIdentifier(v as never)]
 			]);
@@ -11753,7 +12586,6 @@ function buildFieldExpression$set(
 			});
 		}
 	}
-	throw new Error(`field_expression writes no slot ${slot} alone`);
 }
 function withFieldExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -11875,13 +12707,17 @@ function buildAsyncBlock$patch(source: object, config: Partial<T.AsyncBlock.Conf
 		return node as unknown as T.AsyncBlock.Bound;
 	});
 }
-function buildAsyncBlock$set(source: object, slot: string, config: Partial<T.AsyncBlock.Config>): T.AsyncBlock.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildAsyncBlock$patch(source, { ...(inputs.config as T.AsyncBlock.Config), ...config });
-	}
+function buildAsyncBlock$set(
+	source: object,
+	...[slot, input]: ['move', Partial<T.AsyncBlock.Config>] | ['body', Partial<T.AsyncBlock.Config>]
+): T.AsyncBlock.Bound {
 	switch (slot) {
 		case 'move': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAsyncBlock$patch(source, { ...(inputs.config as T.AsyncBlock.Config), ...input });
+			}
+			const config = input;
 			const _move = strictBooleanStorage(config.move);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'async_block', { move: _move });
@@ -11895,6 +12731,11 @@ function buildAsyncBlock$set(source: object, slot: string, config: Partial<T.Asy
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAsyncBlock$patch(source, { ...(inputs.config as T.AsyncBlock.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildBlock());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'async_block', { body: _body });
@@ -11908,7 +12749,6 @@ function buildAsyncBlock$set(source: object, slot: string, config: Partial<T.Asy
 			});
 		}
 	}
-	throw new Error(`async_block writes no slot ${slot} alone`);
 }
 function withAsyncBlock(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -11961,13 +12801,17 @@ function buildGenBlock$patch(source: object, config: Partial<T.GenBlock.Config> 
 		return node as unknown as T.GenBlock.Bound;
 	});
 }
-function buildGenBlock$set(source: object, slot: string, config: Partial<T.GenBlock.Config>): T.GenBlock.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildGenBlock$patch(source, { ...(inputs.config as T.GenBlock.Config), ...config });
-	}
+function buildGenBlock$set(
+	source: object,
+	...[slot, input]: ['move', Partial<T.GenBlock.Config>] | ['body', Partial<T.GenBlock.Config>]
+): T.GenBlock.Bound {
 	switch (slot) {
 		case 'move': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildGenBlock$patch(source, { ...(inputs.config as T.GenBlock.Config), ...input });
+			}
+			const config = input;
 			const _move = strictBooleanStorage(config.move);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'gen_block', { move: _move });
@@ -11981,6 +12825,11 @@ function buildGenBlock$set(source: object, slot: string, config: Partial<T.GenBl
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildGenBlock$patch(source, { ...(inputs.config as T.GenBlock.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildBlock());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'gen_block', { body: _body });
@@ -11994,7 +12843,6 @@ function buildGenBlock$set(source: object, slot: string, config: Partial<T.GenBl
 			});
 		}
 	}
-	throw new Error(`gen_block writes no slot ${slot} alone`);
 }
 function withGenBlock(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -12136,13 +12984,20 @@ function buildBlock$patch(source: object, config: Partial<T.Block.Config> = {}):
 		return node as unknown as T.Block.Bound;
 	});
 }
-function buildBlock$set(source: object, slot: string, config: Partial<T.Block.Config>): T.Block.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildBlock$patch(source, { ...(inputs.config as T.Block.Config), ...config });
-	}
+function buildBlock$set(
+	source: object,
+	...[slot, input]:
+		| ['label', Partial<T.Block.Config>]
+		| ['statements', Partial<T.Block.Config>]
+		| ['trailingExpression', Partial<T.Block.Config>]
+): T.Block.Bound {
 	switch (slot) {
 		case 'label': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildBlock$patch(source, { ...(inputs.config as T.Block.Config), ...input });
+			}
+			const config = input;
 			const _label = config.label;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'block', { label: _label });
@@ -12156,6 +13011,11 @@ function buildBlock$set(source: object, slot: string, config: Partial<T.Block.Co
 			});
 		}
 		case 'statements': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildBlock$patch(source, { ...(inputs.config as T.Block.Config), ...input });
+			}
+			const config = input;
 			const _statements = listStorage<NonNullable<T.Block['_statements']>>(config.statements ?? [], kindIdStorage);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'block', { statements: _statements });
@@ -12169,6 +13029,11 @@ function buildBlock$set(source: object, slot: string, config: Partial<T.Block.Co
 			});
 		}
 		case 'trailingExpression': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildBlock$patch(source, { ...(inputs.config as T.Block.Config), ...input });
+			}
+			const config = input;
 			const _trailing_expression = kindIdStorage<NonNullable<T.Block['_trailing_expression']>>(
 				config.trailingExpression
 			);
@@ -12184,7 +13049,6 @@ function buildBlock$set(source: object, slot: string, config: Partial<T.Block.Co
 			});
 		}
 	}
-	throw new Error(`block writes no slot ${slot} alone`);
 }
 function withBlock(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -12246,15 +13110,15 @@ function buildGenericPattern$patch(source: object, config: T.GenericPattern.Conf
 }
 function buildGenericPattern$set(
 	source: object,
-	slot: string,
-	config: Partial<T.GenericPattern.Config>
+	...[slot, input]: ['name', Partial<T.GenericPattern.Config>] | ['typeArguments', Partial<T.GenericPattern.Config>]
 ): T.GenericPattern.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildGenericPattern$patch(source, { ...(inputs.config as T.GenericPattern.Config), ...config });
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildGenericPattern$patch(source, { ...(inputs.config as T.GenericPattern.Config), ...input });
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'generic_pattern', { name: _name });
@@ -12268,6 +13132,11 @@ function buildGenericPattern$set(
 			});
 		}
 		case 'typeArguments': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildGenericPattern$patch(source, { ...(inputs.config as T.GenericPattern.Config), ...input });
+			}
+			const config = input;
 			const _type_arguments = config.typeArguments;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'generic_pattern', { typeArguments: _type_arguments });
@@ -12281,7 +13150,6 @@ function buildGenericPattern$set(
 			});
 		}
 	}
-	throw new Error(`generic_pattern writes no slot ${slot} alone`);
 }
 function withGenericPattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -12501,15 +13369,15 @@ function buildTupleStructPattern$patch(
 }
 function buildTupleStructPattern$set(
 	source: object,
-	slot: string,
-	config: Partial<T.TupleStructPattern.Config>
+	...[slot, input]: ['type', Partial<T.TupleStructPattern.Config>] | ['fields', Partial<T.TupleStructPattern.Config>]
 ): T.TupleStructPattern.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildTupleStructPattern$patch(source, { ...(inputs.config as T.TupleStructPattern.Config), ...config });
-	}
 	switch (slot) {
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTupleStructPattern$patch(source, { ...(inputs.config as T.TupleStructPattern.Config), ...input });
+			}
+			const config = input;
 			const _type = config.type;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'tuple_struct_pattern', { type: _type });
@@ -12523,6 +13391,11 @@ function buildTupleStructPattern$set(
 			});
 		}
 		case 'fields': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTupleStructPattern$patch(source, { ...(inputs.config as T.TupleStructPattern.Config), ...input });
+			}
+			const config = input;
 			const _fields = config.fields;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'tuple_struct_pattern', { fields: _fields });
@@ -12536,7 +13409,6 @@ function buildTupleStructPattern$set(
 			});
 		}
 	}
-	throw new Error(`tuple_struct_pattern writes no slot ${slot} alone`);
 }
 function withTupleStructPattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -12602,15 +13474,15 @@ function buildStructPattern$patch(source: object, config: T.StructPattern.Config
 }
 function buildStructPattern$set(
 	source: object,
-	slot: string,
-	config: Partial<T.StructPattern.Config>
+	...[slot, input]: ['type', Partial<T.StructPattern.Config>] | ['fields', Partial<T.StructPattern.Config>]
 ): T.StructPattern.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildStructPattern$patch(source, { ...(inputs.config as T.StructPattern.Config), ...config });
-	}
 	switch (slot) {
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructPattern$patch(source, { ...(inputs.config as T.StructPattern.Config), ...input });
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.StructPattern['_type']>>(config.type, [
 				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 			]);
@@ -12626,6 +13498,11 @@ function buildStructPattern$set(
 			});
 		}
 		case 'fields': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructPattern$patch(source, { ...(inputs.config as T.StructPattern.Config), ...input });
+			}
+			const config = input;
 			const _fields = config.fields;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'struct_pattern', { fields: _fields });
@@ -12639,7 +13516,6 @@ function buildStructPattern$set(
 			});
 		}
 	}
-	throw new Error(`struct_pattern writes no slot ${slot} alone`);
 }
 function withStructPattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -12781,15 +13657,15 @@ function buildCapturedPattern$patch(source: object, config: T.CapturedPattern.Co
 }
 function buildCapturedPattern$set(
 	source: object,
-	slot: string,
-	config: Partial<T.CapturedPattern.Config>
+	...[slot, input]: ['name', Partial<T.CapturedPattern.Config>] | ['pattern', Partial<T.CapturedPattern.Config>]
 ): T.CapturedPattern.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildCapturedPattern$patch(source, { ...(inputs.config as T.CapturedPattern.Config), ...config });
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCapturedPattern$patch(source, { ...(inputs.config as T.CapturedPattern.Config), ...input });
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'captured_pattern', { name: _name });
@@ -12803,6 +13679,11 @@ function buildCapturedPattern$set(
 			});
 		}
 		case 'pattern': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCapturedPattern$patch(source, { ...(inputs.config as T.CapturedPattern.Config), ...input });
+			}
+			const config = input;
 			const _pattern = kindIdStorage<NonNullable<T.CapturedPattern['_pattern']>>(config.pattern);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'captured_pattern', { pattern: _pattern });
@@ -12816,7 +13697,6 @@ function buildCapturedPattern$set(
 			});
 		}
 	}
-	throw new Error(`captured_pattern writes no slot ${slot} alone`);
 }
 function withCapturedPattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -12871,15 +13751,15 @@ function buildReferencePattern$patch(source: object, config: T.ReferencePattern.
 }
 function buildReferencePattern$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ReferencePattern.Config>
+	...[slot, input]: ['exclusive', Partial<T.ReferencePattern.Config>] | ['pattern', Partial<T.ReferencePattern.Config>]
 ): T.ReferencePattern.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildReferencePattern$patch(source, { ...(inputs.config as T.ReferencePattern.Config), ...config });
-	}
 	switch (slot) {
 		case 'exclusive': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildReferencePattern$patch(source, { ...(inputs.config as T.ReferencePattern.Config), ...input });
+			}
+			const config = input;
 			const _exclusive = strictBooleanStorage(config.exclusive);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'reference_pattern', { exclusive: _exclusive });
@@ -12893,6 +13773,11 @@ function buildReferencePattern$set(
 			});
 		}
 		case 'pattern': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildReferencePattern$patch(source, { ...(inputs.config as T.ReferencePattern.Config), ...input });
+			}
+			const config = input;
 			const _pattern = kindIdStorage<NonNullable<T.ReferencePattern['_pattern']>>(config.pattern);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'reference_pattern', { pattern: _pattern });
@@ -12906,7 +13791,6 @@ function buildReferencePattern$set(
 			});
 		}
 	}
-	throw new Error(`reference_pattern writes no slot ${slot} alone`);
 }
 function withReferencePattern(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -13008,15 +13892,15 @@ function buildStringLiteral$patch(source: object, config: T.StringLiteral.Config
 }
 function buildStringLiteral$set(
 	source: object,
-	slot: string,
-	config: Partial<T.StringLiteral.Config>
+	...[slot, input]: ['stringOpen', Partial<T.StringLiteral.Config>] | ['elements', Partial<T.StringLiteral.Config>]
 ): T.StringLiteral.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildStringLiteral$patch(source, { ...(inputs.config as T.StringLiteral.Config), ...config });
-	}
 	switch (slot) {
 		case 'stringOpen': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStringLiteral$patch(source, { ...(inputs.config as T.StringLiteral.Config), ...input });
+			}
+			const config = input;
 			const _string_open = config.stringOpen;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'string_literal', { stringOpen: _string_open });
@@ -13030,6 +13914,11 @@ function buildStringLiteral$set(
 			});
 		}
 		case 'elements': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStringLiteral$patch(source, { ...(inputs.config as T.StringLiteral.Config), ...input });
+			}
+			const config = input;
 			const _elements = listStorage<NonNullable<T.StringLiteral['_elements']>>(config.elements ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'string_literal', { elements: _elements });
@@ -13043,7 +13932,6 @@ function buildStringLiteral$set(
 			});
 		}
 	}
-	throw new Error(`string_literal writes no slot ${slot} alone`);
 }
 function withStringLiteral(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -13133,15 +14021,18 @@ function buildRawStringLiteral$patch(source: object, config: T.RawStringLiteral.
 }
 function buildRawStringLiteral$set(
 	source: object,
-	slot: string,
-	config: Partial<T.RawStringLiteral.Config>
+	...[slot, input]:
+		| ['rawStringLiteralStart', Partial<T.RawStringLiteral.Config>]
+		| ['stringContent', Partial<T.RawStringLiteral.Config>]
+		| ['rawStringLiteralEnd', Partial<T.RawStringLiteral.Config>]
 ): T.RawStringLiteral.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildRawStringLiteral$patch(source, { ...(inputs.config as T.RawStringLiteral.Config), ...config });
-	}
 	switch (slot) {
 		case 'rawStringLiteralStart': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildRawStringLiteral$patch(source, { ...(inputs.config as T.RawStringLiteral.Config), ...input });
+			}
+			const config = input;
 			const _raw_string_literal_start = config.rawStringLiteralStart;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -13156,6 +14047,11 @@ function buildRawStringLiteral$set(
 			});
 		}
 		case 'stringContent': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildRawStringLiteral$patch(source, { ...(inputs.config as T.RawStringLiteral.Config), ...input });
+			}
+			const config = input;
 			const _string_content = config.stringContent;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'raw_string_literal', { stringContent: _string_content });
@@ -13169,6 +14065,11 @@ function buildRawStringLiteral$set(
 			});
 		}
 		case 'rawStringLiteralEnd': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildRawStringLiteral$patch(source, { ...(inputs.config as T.RawStringLiteral.Config), ...input });
+			}
+			const config = input;
 			const _raw_string_literal_end = orDefault(config.rawStringLiteralEnd, () => buildRawStringLiteralEnd());
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -13183,7 +14084,6 @@ function buildRawStringLiteral$set(
 			});
 		}
 	}
-	throw new Error(`raw_string_literal writes no slot ${slot} alone`);
 }
 function withRawStringLiteral(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -13535,24 +14435,68 @@ function _buildMacroRules$patch(
 		return node as unknown as T.MacroRules.Bound;
 	});
 }
+function _buildMacroRules$set(
+	source: object,
+	...[slot, input]:
+		| ['items', NonEmptyArray<Admit<T.MacroRule>>]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.MacroRules.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildMacroRules$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _item = elements;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'macro_rules', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MacroRules as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.MacroRules.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildMacroRules$patch(source, inputs.elements as NonEmptyArray<Admit<T.MacroRule>>, {
+					...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }),
+					...input
+				});
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.MacroRules as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.MacroRules.Bound;
+			});
+		}
+	}
+}
 function withMacroRules(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.MacroRule>>) =>
-				rebuilt(node, handle, () => _buildMacroRules$patch(node, vs, options))
+				rebuilt(node, handle, () => _buildMacroRules$set(node, 'items', vs))
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<Admit<T.MacroRule>>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => _buildMacroRules$patch(node, elements, { ...options, delimiter: v }))
+				rebuilt(node, handle, () => _buildMacroRules$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`macro_rules has no $with.${setter}`);
 }
@@ -13635,31 +14579,84 @@ function _buildEnumVariantListElements$patch(
 		return node as unknown as T.EnumVariantListElements.Bound;
 	});
 }
+function _buildEnumVariantListElements$set(
+	source: object,
+	...[slot, input]:
+		| ['items', NonEmptyArray<Admit<T.AttributedEnumVariant | T.EnumVariant>>]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.EnumVariantListElements.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildEnumVariantListElements$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _mapped = elements.map(
+				(e): T.AttributedEnumVariant =>
+					(isNodeOfKind(e, TSKindId.AttributedEnumVariant)
+						? (e as unknown)
+						: buildAttributedEnumVariant({ enumVariant: e } as Parameters<
+								typeof buildAttributedEnumVariant
+							>[0])) as T.AttributedEnumVariant
+			);
+			const _item = _mapped;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'enum_variant_list_elements', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.EnumVariantListElements as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.EnumVariantListElements.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildEnumVariantListElements$patch(
+					source,
+					inputs.elements as NonEmptyArray<Admit<T.AttributedEnumVariant | T.EnumVariant>>,
+					{ ...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input }
+				);
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.EnumVariantListElements as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.EnumVariantListElements.Bound;
+			});
+		}
+	}
+}
 function withEnumVariantListElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
 						{ slot: 'items', keys: ['attributeItems', 'enumVariant'], make: buildAttributedEnumVariant },
 						(...vs: NonEmptyArray<Admit<T.AttributedEnumVariant | T.EnumVariant>>) =>
-							_buildEnumVariantListElements$patch(node, vs, options)
+							_buildEnumVariantListElements$set(node, 'items', vs)
 					)
 				)
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<Admit<T.AttributedEnumVariant | T.EnumVariant>>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => _buildEnumVariantListElements$patch(node, elements, { ...options, delimiter: v }))
+				rebuilt(node, handle, () => _buildEnumVariantListElements$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`enum_variant_list_elements has no $with.${setter}`);
 }
@@ -13747,33 +14744,84 @@ function _buildFieldDeclarationListElements$patch(
 		return node as unknown as T.FieldDeclarationListElements.Bound;
 	});
 }
+function _buildFieldDeclarationListElements$set(
+	source: object,
+	...[slot, input]:
+		| ['items', NonEmptyArray<Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>>]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.FieldDeclarationListElements.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildFieldDeclarationListElements$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _mapped = elements.map(
+				(e): T.AttributedFieldDeclaration =>
+					(isNodeOfKind(e, TSKindId.AttributedFieldDeclaration)
+						? (e as unknown)
+						: buildAttributedFieldDeclaration({ fieldDeclaration: e } as Parameters<
+								typeof buildAttributedFieldDeclaration
+							>[0])) as T.AttributedFieldDeclaration
+			);
+			const _item = _mapped;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_declaration_list_elements', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldDeclarationListElements as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.FieldDeclarationListElements.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildFieldDeclarationListElements$patch(
+					source,
+					inputs.elements as NonEmptyArray<Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>>,
+					{ ...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input }
+				);
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldDeclarationListElements as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.FieldDeclarationListElements.Bound;
+			});
+		}
+	}
+}
 function withFieldDeclarationListElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
 						{ slot: 'items', keys: ['attributeItems', 'fieldDeclaration'], make: buildAttributedFieldDeclaration },
 						(...vs: NonEmptyArray<Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>>) =>
-							_buildFieldDeclarationListElements$patch(node, vs, options)
+							_buildFieldDeclarationListElements$set(node, 'items', vs)
 					)
 				)
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () =>
-					_buildFieldDeclarationListElements$patch(node, elements, { ...options, delimiter: v })
-				)
+				rebuilt(node, handle, () => _buildFieldDeclarationListElements$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`field_declaration_list_elements has no $with.${setter}`);
 }
@@ -13861,12 +14909,70 @@ function _buildOrderedFieldDeclarationListElements$patch(
 		return node as unknown as T.OrderedFieldDeclarationListElements.Bound;
 	});
 }
+function _buildOrderedFieldDeclarationListElements$set(
+	source: object,
+	...[slot, input]:
+		| ['items', NonEmptyArray<Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>>]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.OrderedFieldDeclarationListElements.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildOrderedFieldDeclarationListElements$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _mapped = elements.map(
+				(e): T.AttributedOrderedField =>
+					(isNodeOfKind(e, TSKindId.AttributedOrderedField)
+						? (e as unknown)
+						: buildAttributedOrderedField({ type: e } as Parameters<
+								typeof buildAttributedOrderedField
+							>[0])) as T.AttributedOrderedField
+			);
+			const _item = _mapped;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'ordered_field_declaration_list_elements', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.OrderedFieldDeclarationListElements as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.OrderedFieldDeclarationListElements.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildOrderedFieldDeclarationListElements$patch(
+					source,
+					inputs.elements as NonEmptyArray<Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>>,
+					{ ...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input }
+				);
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.OrderedFieldDeclarationListElements as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.OrderedFieldDeclarationListElements.Bound;
+			});
+		}
+	}
+}
 function withOrderedFieldDeclarationListElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
@@ -13877,23 +14983,14 @@ function withOrderedFieldDeclarationListElements(node: object, setter: string, a
 							make: buildAttributedOrderedField
 						},
 						(...vs: NonEmptyArray<Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>>) =>
-							_buildOrderedFieldDeclarationListElements$patch(node, vs, options)
+							_buildOrderedFieldDeclarationListElements$set(node, 'items', vs)
 					)
 				)
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<
-				Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>
-			>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () =>
-					_buildOrderedFieldDeclarationListElements$patch(node, elements, { ...options, delimiter: v })
-				)
+				rebuilt(node, handle, () => _buildOrderedFieldDeclarationListElements$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`ordered_field_declaration_list_elements has no $with.${setter}`);
 }
@@ -13958,24 +15055,68 @@ function _buildWherePredicates$patch(
 		return node as unknown as T.WherePredicates.Bound;
 	});
 }
+function _buildWherePredicates$set(
+	source: object,
+	...[slot, input]:
+		| ['items', NonEmptyArray<Admit<T.WherePredicate>>]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.WherePredicates.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildWherePredicates$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _item = elements;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'where_predicates', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.WherePredicates as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.WherePredicates.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildWherePredicates$patch(source, inputs.elements as NonEmptyArray<Admit<T.WherePredicate>>, {
+					...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }),
+					...input
+				});
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.WherePredicates as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.WherePredicates.Bound;
+			});
+		}
+	}
+}
 function withWherePredicates(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.WherePredicate>>) =>
-				rebuilt(node, handle, () => _buildWherePredicates$patch(node, vs, options))
+				rebuilt(node, handle, () => _buildWherePredicates$set(node, 'items', vs))
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<Admit<T.WherePredicate>>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => _buildWherePredicates$patch(node, elements, { ...options, delimiter: v }))
+				rebuilt(node, handle, () => _buildWherePredicates$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`where_predicates has no $with.${setter}`);
 }
@@ -14071,12 +15212,77 @@ function _buildTypeParametersElements$patch(
 		return node as unknown as T.TypeParametersElements.Bound;
 	});
 }
+function _buildTypeParametersElements$set(
+	source: object,
+	...[slot, input]:
+		| [
+				'items',
+				NonEmptyArray<
+					Admit<T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>
+				>
+		  ]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.TypeParametersElements.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildTypeParametersElements$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _mapped = elements.map(
+				(e): T.AttributedTypeParameter =>
+					(isNodeOfKind(e, TSKindId.AttributedTypeParameter)
+						? (e as unknown)
+						: buildAttributedTypeParameter({ content: e } as Parameters<
+								typeof buildAttributedTypeParameter
+							>[0])) as T.AttributedTypeParameter
+			);
+			const _item = _mapped;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_parameters_elements', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeParametersElements as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.TypeParametersElements.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildTypeParametersElements$patch(
+					source,
+					inputs.elements as NonEmptyArray<
+						Admit<T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>
+					>,
+					{ ...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input }
+				);
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeParametersElements as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.TypeParametersElements.Bound;
+			});
+		}
+	}
+}
 function withTypeParametersElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
@@ -14088,21 +15294,14 @@ function withTypeParametersElements(node: object, setter: string, args: readonly
 									T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
 								>
 							>
-						) => _buildTypeParametersElements$patch(node, vs, options)
+						) => _buildTypeParametersElements$set(node, 'items', vs)
 					)
 				)
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<
-				Admit<T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>
-			>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => _buildTypeParametersElements$patch(node, elements, { ...options, delimiter: v }))
+				rebuilt(node, handle, () => _buildTypeParametersElements$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`type_parameters_elements has no $with.${setter}`);
 }
@@ -14248,12 +15447,91 @@ function _buildUseClauses$patch(
 		return node as unknown as T.UseClauses.Bound;
 	});
 }
+function _buildUseClauses$set(
+	source: object,
+	...[slot, input]:
+		| [
+				'items',
+				NonEmptyArray<
+					Admit<
+						| TSKindId.SelfModule
+						| T.Metavariable
+						| TSKindId.Super
+						| TSKindId.Crate
+						| T.Identifier
+						| T.ScopedIdentifier
+						| T.UseAsClause
+						| T.UseList
+						| T.ScopedUseList
+						| T.UseWildcard
+					>
+				>
+		  ]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.UseClauses.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildUseClauses$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _item = elements;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'use_clauses', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.UseClauses as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.UseClauses.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildUseClauses$patch(
+					source,
+					inputs.elements as NonEmptyArray<
+						Admit<
+							| TSKindId.SelfModule
+							| T.Metavariable
+							| TSKindId.Super
+							| TSKindId.Crate
+							| T.Identifier
+							| T.ScopedIdentifier
+							| T.UseAsClause
+							| T.UseList
+							| T.ScopedUseList
+							| T.UseWildcard
+						>
+					>,
+					{ ...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input }
+				);
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.UseClauses as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.UseClauses.Bound;
+			});
+		}
+	}
+}
 function withUseClauses(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(
 				args,
 				(
@@ -14271,30 +15549,12 @@ function withUseClauses(node: object, setter: string, args: readonly unknown[]):
 							| T.UseWildcard
 						>
 					>
-				) => rebuilt(node, handle, () => _buildUseClauses$patch(node, vs, options))
+				) => rebuilt(node, handle, () => _buildUseClauses$set(node, 'items', vs))
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<
-				Admit<
-					| TSKindId.SelfModule
-					| T.Metavariable
-					| TSKindId.Super
-					| TSKindId.Crate
-					| T.Identifier
-					| T.ScopedIdentifier
-					| T.UseAsClause
-					| T.UseList
-					| T.ScopedUseList
-					| T.UseWildcard
-				>
-			>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => _buildUseClauses$patch(node, elements, { ...options, delimiter: v }))
+				rebuilt(node, handle, () => _buildUseClauses$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`use_clauses has no $with.${setter}`);
 }
@@ -14407,12 +15667,91 @@ function _buildParametersElements$patch(
 		return node as unknown as T.ParametersElements.Bound;
 	});
 }
+function _buildParametersElements$set(
+	source: object,
+	...[slot, input]:
+		| [
+				'items',
+				NonEmptyArray<
+					Admit<
+						| T.AttributedParameter
+						| T.Parameter
+						| T.VariadicParameter
+						| TSKindId.Underscore
+						| T.Type
+						| T.TypeIdentifier.Types
+					>
+				>
+		  ]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.ParametersElements.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildParametersElements$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _mapped = elements.map(
+				(e): T.AttributedParameter =>
+					(isNodeOfKind(e, TSKindId.AttributedParameter)
+						? (e as unknown)
+						: buildAttributedParameter({ content: e } as Parameters<
+								typeof buildAttributedParameter
+							>[0])) as T.AttributedParameter
+			);
+			const _item = _mapped;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'parameters_elements', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ParametersElements as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.ParametersElements.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildParametersElements$patch(
+					source,
+					inputs.elements as NonEmptyArray<
+						Admit<
+							| T.AttributedParameter
+							| T.Parameter
+							| T.VariadicParameter
+							| TSKindId.Underscore
+							| T.Type
+							| T.TypeIdentifier.Types
+						>
+					>,
+					{ ...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input }
+				);
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ParametersElements as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.ParametersElements.Bound;
+			});
+		}
+	}
+}
 function withParametersElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
@@ -14429,28 +15768,14 @@ function withParametersElements(node: object, setter: string, args: readonly unk
 									| T.TypeIdentifier.Types
 								>
 							>
-						) => _buildParametersElements$patch(node, vs, options)
+						) => _buildParametersElements$set(node, 'items', vs)
 					)
 				)
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<
-				Admit<
-					| T.AttributedParameter
-					| T.Parameter
-					| T.VariadicParameter
-					| TSKindId.Underscore
-					| T.Type
-					| T.TypeIdentifier.Types
-				>
-			>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => _buildParametersElements$patch(node, elements, { ...options, delimiter: v }))
+				rebuilt(node, handle, () => _buildParametersElements$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`parameters_elements has no $with.${setter}`);
 }
@@ -14513,24 +15838,68 @@ function _buildLifetimes$patch(
 		return node as unknown as T.Lifetimes.Bound;
 	});
 }
+function _buildLifetimes$set(
+	source: object,
+	...[slot, input]:
+		| ['items', NonEmptyArray<Admit<T.Lifetime>>]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.Lifetimes.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildLifetimes$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _item = elements;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'lifetimes', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Lifetimes as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.Lifetimes.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildLifetimes$patch(source, inputs.elements as NonEmptyArray<Admit<T.Lifetime>>, {
+					...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }),
+					...input
+				});
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Lifetimes as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.Lifetimes.Bound;
+			});
+		}
+	}
+}
 function withLifetimes(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Lifetime>>) =>
-				rebuilt(node, handle, () => _buildLifetimes$patch(node, vs, options))
+				rebuilt(node, handle, () => _buildLifetimes$set(node, 'items', vs))
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<Admit<T.Lifetime>>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => _buildLifetimes$patch(node, elements, { ...options, delimiter: v }))
+				rebuilt(node, handle, () => _buildLifetimes$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`lifetimes has no $with.${setter}`);
 }
@@ -14601,24 +15970,66 @@ function _buildTypes$patch(
 		return node as unknown as T.Types.Bound;
 	});
 }
+function _buildTypes$set(
+	source: object,
+	...[slot, input]:
+		| ['items', NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.Types.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildTypes$patch(source, input, inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing });
+			}
+			const elements = input;
+			const _item = admitAliasContent<NonEmptyArray<T.Type>>(elements, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'types', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Types as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.Types.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildTypes$patch(source, inputs.elements as NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>, {
+					...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }),
+					...input
+				});
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Types as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.Types.Bound;
+			});
+		}
+	}
+}
 function withTypes(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>) =>
-				rebuilt(node, handle, () => _buildTypes$patch(node, vs, options))
+				rebuilt(node, handle, () => _buildTypes$set(node, 'items', vs))
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => _buildTypes$patch(node, elements, { ...options, delimiter: v }))
+				rebuilt(node, handle, () => _buildTypes$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`types has no $with.${setter}`);
 }
@@ -14694,24 +16105,71 @@ function _buildUseBoundsElements$patch(
 		return node as unknown as T.UseBoundsElements.Bound;
 	});
 }
+function _buildUseBoundsElements$set(
+	source: object,
+	...[slot, input]:
+		| ['items', NonEmptyArray<Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>>]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.UseBoundsElements.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildUseBoundsElements$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _item = admitAliasContent<NonEmptyArray<T.Lifetime | T.TypeIdentifier>>(elements, [
+				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+			]);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'use_bounds_elements', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.UseBoundsElements as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.UseBoundsElements.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildUseBoundsElements$patch(
+					source,
+					inputs.elements as NonEmptyArray<Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>>,
+					{ ...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input }
+				);
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.UseBoundsElements as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.UseBoundsElements.Bound;
+			});
+		}
+	}
+}
 function withUseBoundsElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>>) =>
-				rebuilt(node, handle, () => _buildUseBoundsElements$patch(node, vs, options))
+				rebuilt(node, handle, () => _buildUseBoundsElements$set(node, 'items', vs))
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => _buildUseBoundsElements$patch(node, elements, { ...options, delimiter: v }))
+				rebuilt(node, handle, () => _buildUseBoundsElements$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`use_bounds_elements has no $with.${setter}`);
 }
@@ -14803,12 +16261,75 @@ function _buildTypeArgumentsElements$patch(
 		return node as unknown as T.TypeArgumentsElements.Bound;
 	});
 }
+function _buildTypeArgumentsElements$set(
+	source: object,
+	...[slot, input]:
+		| [
+				'items',
+				NonEmptyArray<
+					Admit<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types>
+				>
+		  ]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.TypeArgumentsElements.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildTypeArgumentsElements$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _mapped = elements.map(
+				(e): T.TypeArgument =>
+					(isNodeOfKind(e, TSKindId.TypeArgument)
+						? (e as unknown)
+						: buildTypeArgument({ content: e } as Parameters<typeof buildTypeArgument>[0])) as T.TypeArgument
+			);
+			const _item = _mapped;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'type_arguments_elements', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeArgumentsElements as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.TypeArgumentsElements.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildTypeArgumentsElements$patch(
+					source,
+					inputs.elements as NonEmptyArray<
+						Admit<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types>
+					>,
+					{ ...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input }
+				);
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TypeArgumentsElements as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.TypeArgumentsElements.Bound;
+			});
+		}
+	}
+}
 function withTypeArgumentsElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
@@ -14820,21 +16341,14 @@ function withTypeArgumentsElements(node: object, setter: string, args: readonly 
 									T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
 								>
 							>
-						) => _buildTypeArgumentsElements$patch(node, vs, options)
+						) => _buildTypeArgumentsElements$set(node, 'items', vs)
 					)
 				)
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<
-				Admit<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types>
-			>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => _buildTypeArgumentsElements$patch(node, elements, { ...options, delimiter: v }))
+				rebuilt(node, handle, () => _buildTypeArgumentsElements$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`type_arguments_elements has no $with.${setter}`);
 }
@@ -14911,30 +16425,81 @@ function _buildArgumentsElements$patch(
 		return node as unknown as T.ArgumentsElements.Bound;
 	});
 }
+function _buildArgumentsElements$set(
+	source: object,
+	...[slot, input]:
+		| ['items', NonEmptyArray<Admit<T.Argument | T.Expression>>]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.ArgumentsElements.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildArgumentsElements$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _mapped = elements.map(
+				(e): T.Argument =>
+					(isNodeOfKind(e, TSKindId.Argument)
+						? (e as unknown)
+						: buildArgument({ expression: e } as Parameters<typeof buildArgument>[0])) as T.Argument
+			);
+			const _item = _mapped;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'arguments_elements', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ArgumentsElements as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.ArgumentsElements.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildArgumentsElements$patch(
+					source,
+					inputs.elements as NonEmptyArray<Admit<T.Argument | T.Expression>>,
+					{ ...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input }
+				);
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ArgumentsElements as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.ArgumentsElements.Bound;
+			});
+		}
+	}
+}
 function withArgumentsElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
 						{ slot: 'items', keys: ['attributeItems', 'expression'], make: buildArgument },
-						(...vs: NonEmptyArray<Admit<T.Argument | T.Expression>>) => _buildArgumentsElements$patch(node, vs, options)
+						(...vs: NonEmptyArray<Admit<T.Argument | T.Expression>>) => _buildArgumentsElements$set(node, 'items', vs)
 					)
 				)
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<Admit<T.Argument | T.Expression>>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => _buildArgumentsElements$patch(node, elements, { ...options, delimiter: v }))
+				rebuilt(node, handle, () => _buildArgumentsElements$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`arguments_elements has no $with.${setter}`);
 }
@@ -15098,30 +16663,73 @@ function _buildFieldInitializerListElements$patch(
 		return node as unknown as T.FieldInitializerListElements.Bound;
 	});
 }
+function _buildFieldInitializerListElements$set(
+	source: object,
+	...[slot, input]:
+		| ['items', NonEmptyArray<Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>>]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.FieldInitializerListElements.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildFieldInitializerListElements$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _item = elements;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'field_initializer_list_elements', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldInitializerListElements as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.FieldInitializerListElements.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildFieldInitializerListElements$patch(
+					source,
+					inputs.elements as NonEmptyArray<
+						Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
+					>,
+					{ ...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input }
+				);
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.FieldInitializerListElements as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.FieldInitializerListElements.Bound;
+			});
+		}
+	}
+}
 function withFieldInitializerListElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(
 				args,
 				(...vs: NonEmptyArray<Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>>) =>
-					rebuilt(node, handle, () => _buildFieldInitializerListElements$patch(node, vs, options))
+					rebuilt(node, handle, () => _buildFieldInitializerListElements$set(node, 'items', vs))
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<
-				Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
-			>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () =>
-					_buildFieldInitializerListElements$patch(node, elements, { ...options, delimiter: v })
-				)
+				rebuilt(node, handle, () => _buildFieldInitializerListElements$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`field_initializer_list_elements has no $with.${setter}`);
 }
@@ -15188,24 +16796,69 @@ function _buildTuplePatternElements$patch(
 		return node as unknown as T.TuplePatternElements.Bound;
 	});
 }
+function _buildTuplePatternElements$set(
+	source: object,
+	...[slot, input]:
+		| ['items', NonEmptyArray<Admit<T.Pattern | T.ClosureExpression>>]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.TuplePatternElements.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildTuplePatternElements$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _item = elements;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'tuple_pattern_elements', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TuplePatternElements as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.TuplePatternElements.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildTuplePatternElements$patch(
+					source,
+					inputs.elements as NonEmptyArray<Admit<T.Pattern | T.ClosureExpression>>,
+					{ ...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input }
+				);
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.TuplePatternElements as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.TuplePatternElements.Bound;
+			});
+		}
+	}
+}
 function withTuplePatternElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Pattern | T.ClosureExpression>>) =>
-				rebuilt(node, handle, () => _buildTuplePatternElements$patch(node, vs, options))
+				rebuilt(node, handle, () => _buildTuplePatternElements$set(node, 'items', vs))
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<Admit<T.Pattern | T.ClosureExpression>>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => _buildTuplePatternElements$patch(node, elements, { ...options, delimiter: v }))
+				rebuilt(node, handle, () => _buildTuplePatternElements$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`tuple_pattern_elements has no $with.${setter}`);
 }
@@ -15268,24 +16921,68 @@ function _buildPatterns$patch(
 		return node as unknown as T.Patterns.Bound;
 	});
 }
+function _buildPatterns$set(
+	source: object,
+	...[slot, input]:
+		| ['items', NonEmptyArray<Admit<T.Pattern>>]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.Patterns.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildPatterns$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _item = elements;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'patterns', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Patterns as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.Patterns.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildPatterns$patch(source, inputs.elements as NonEmptyArray<Admit<T.Pattern>>, {
+					...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }),
+					...input
+				});
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.Patterns as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.Patterns.Bound;
+			});
+		}
+	}
+}
 function withPatterns(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Pattern>>) =>
-				rebuilt(node, handle, () => _buildPatterns$patch(node, vs, options))
+				rebuilt(node, handle, () => _buildPatterns$set(node, 'items', vs))
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<Admit<T.Pattern>>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => _buildPatterns$patch(node, elements, { ...options, delimiter: v }))
+				rebuilt(node, handle, () => _buildPatterns$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`patterns has no $with.${setter}`);
 }
@@ -15357,24 +17054,69 @@ function _buildStructPatternElements$patch(
 		return node as unknown as T.StructPatternElements.Bound;
 	});
 }
+function _buildStructPatternElements$set(
+	source: object,
+	...[slot, input]:
+		| ['items', NonEmptyArray<Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>>]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.StructPatternElements.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildStructPatternElements$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _item = elements;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'struct_pattern_elements', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructPatternElements as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.StructPatternElements.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildStructPatternElements$patch(
+					source,
+					inputs.elements as NonEmptyArray<Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>>,
+					{ ...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input }
+				);
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.StructPatternElements as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.StructPatternElements.Bound;
+			});
+		}
+	}
+}
 function withStructPatternElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>>) =>
-				rebuilt(node, handle, () => _buildStructPatternElements$patch(node, vs, options))
+				rebuilt(node, handle, () => _buildStructPatternElements$set(node, 'items', vs))
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => _buildStructPatternElements$patch(node, elements, { ...options, delimiter: v }))
+				rebuilt(node, handle, () => _buildStructPatternElements$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`struct_pattern_elements has no $with.${setter}`);
 }
@@ -15579,18 +17321,20 @@ function buildIntegerLiteralDecimal$patch(
 }
 function buildIntegerLiteralDecimal$set(
 	source: object,
-	slot: string,
-	config: Partial<T.IntegerLiteralDecimal.Config>
+	...[slot, input]:
+		| ['content', Partial<T.IntegerLiteralDecimal.Config>]
+		| ['suffix', Partial<T.IntegerLiteralDecimal.Config>]
 ): T.IntegerLiteralDecimal.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildIntegerLiteralDecimal$patch(source, {
-			...(inputs.config as T.IntegerLiteralDecimal.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildIntegerLiteralDecimal$patch(source, {
+					...(inputs.config as T.IntegerLiteralDecimal.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _content = numberText(10, '', config.content);
 			if (typeof _content !== 'string')
 				throw new Error(`integer_literal_decimal.content: text must be a string: ${describeValue(_content)}`);
@@ -15608,6 +17352,14 @@ function buildIntegerLiteralDecimal$set(
 			});
 		}
 		case 'suffix': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildIntegerLiteralDecimal$patch(source, {
+					...(inputs.config as T.IntegerLiteralDecimal.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _suffix = config.suffix;
 			if (_suffix !== undefined && typeof _suffix !== 'string')
 				throw new Error(`integer_literal_decimal.suffix: text must be a string: ${describeValue(_suffix)}`);
@@ -15625,7 +17377,6 @@ function buildIntegerLiteralDecimal$set(
 			});
 		}
 	}
-	throw new Error(`integer_literal_decimal writes no slot ${slot} alone`);
 }
 function withIntegerLiteralDecimal(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -15729,15 +17480,15 @@ function buildIntegerLiteralHex$patch(
 }
 function buildIntegerLiteralHex$set(
 	source: object,
-	slot: string,
-	config: Partial<T.IntegerLiteralHex.Config>
+	...[slot, input]: ['content', Partial<T.IntegerLiteralHex.Config>] | ['suffix', Partial<T.IntegerLiteralHex.Config>]
 ): T.IntegerLiteralHex.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildIntegerLiteralHex$patch(source, { ...(inputs.config as T.IntegerLiteralHex.Config), ...config });
-	}
 	switch (slot) {
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildIntegerLiteralHex$patch(source, { ...(inputs.config as T.IntegerLiteralHex.Config), ...input });
+			}
+			const config = input;
 			const _content = numberText(16, '0x', config.content);
 			if (typeof _content !== 'string')
 				throw new Error(`integer_literal_hex.content: text must be a string: ${describeValue(_content)}`);
@@ -15755,6 +17506,11 @@ function buildIntegerLiteralHex$set(
 			});
 		}
 		case 'suffix': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildIntegerLiteralHex$patch(source, { ...(inputs.config as T.IntegerLiteralHex.Config), ...input });
+			}
+			const config = input;
 			const _suffix = config.suffix;
 			if (_suffix !== undefined && typeof _suffix !== 'string')
 				throw new Error(`integer_literal_hex.suffix: text must be a string: ${describeValue(_suffix)}`);
@@ -15772,7 +17528,6 @@ function buildIntegerLiteralHex$set(
 			});
 		}
 	}
-	throw new Error(`integer_literal_hex writes no slot ${slot} alone`);
 }
 function withIntegerLiteralHex(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -15876,15 +17631,20 @@ function buildIntegerLiteralBinary$patch(
 }
 function buildIntegerLiteralBinary$set(
 	source: object,
-	slot: string,
-	config: Partial<T.IntegerLiteralBinary.Config>
+	...[slot, input]:
+		| ['content', Partial<T.IntegerLiteralBinary.Config>]
+		| ['suffix', Partial<T.IntegerLiteralBinary.Config>]
 ): T.IntegerLiteralBinary.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildIntegerLiteralBinary$patch(source, { ...(inputs.config as T.IntegerLiteralBinary.Config), ...config });
-	}
 	switch (slot) {
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildIntegerLiteralBinary$patch(source, {
+					...(inputs.config as T.IntegerLiteralBinary.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _content = numberText(2, '0b', config.content);
 			if (typeof _content !== 'string')
 				throw new Error(`integer_literal_binary.content: text must be a string: ${describeValue(_content)}`);
@@ -15902,6 +17662,14 @@ function buildIntegerLiteralBinary$set(
 			});
 		}
 		case 'suffix': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildIntegerLiteralBinary$patch(source, {
+					...(inputs.config as T.IntegerLiteralBinary.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _suffix = config.suffix;
 			if (_suffix !== undefined && typeof _suffix !== 'string')
 				throw new Error(`integer_literal_binary.suffix: text must be a string: ${describeValue(_suffix)}`);
@@ -15919,7 +17687,6 @@ function buildIntegerLiteralBinary$set(
 			});
 		}
 	}
-	throw new Error(`integer_literal_binary writes no slot ${slot} alone`);
 }
 function withIntegerLiteralBinary(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -16023,15 +17790,17 @@ function buildIntegerLiteralOctal$patch(
 }
 function buildIntegerLiteralOctal$set(
 	source: object,
-	slot: string,
-	config: Partial<T.IntegerLiteralOctal.Config>
+	...[slot, input]:
+		| ['content', Partial<T.IntegerLiteralOctal.Config>]
+		| ['suffix', Partial<T.IntegerLiteralOctal.Config>]
 ): T.IntegerLiteralOctal.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildIntegerLiteralOctal$patch(source, { ...(inputs.config as T.IntegerLiteralOctal.Config), ...config });
-	}
 	switch (slot) {
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildIntegerLiteralOctal$patch(source, { ...(inputs.config as T.IntegerLiteralOctal.Config), ...input });
+			}
+			const config = input;
 			const _content = numberText(8, '0o', config.content);
 			if (typeof _content !== 'string')
 				throw new Error(`integer_literal_octal.content: text must be a string: ${describeValue(_content)}`);
@@ -16049,6 +17818,11 @@ function buildIntegerLiteralOctal$set(
 			});
 		}
 		case 'suffix': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildIntegerLiteralOctal$patch(source, { ...(inputs.config as T.IntegerLiteralOctal.Config), ...input });
+			}
+			const config = input;
 			const _suffix = config.suffix;
 			if (_suffix !== undefined && typeof _suffix !== 'string')
 				throw new Error(`integer_literal_octal.suffix: text must be a string: ${describeValue(_suffix)}`);
@@ -16066,7 +17840,6 @@ function buildIntegerLiteralOctal$set(
 			});
 		}
 	}
-	throw new Error(`integer_literal_octal writes no slot ${slot} alone`);
 }
 function withIntegerLiteralOctal(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -16147,15 +17920,15 @@ function buildCharLiteralPlain$patch(source: object, config: T.CharLiteralPlain.
 }
 function buildCharLiteralPlain$set(
 	source: object,
-	slot: string,
-	config: Partial<T.CharLiteralPlain.Config>
+	...[slot, input]: ['byte', Partial<T.CharLiteralPlain.Config>] | ['content', Partial<T.CharLiteralPlain.Config>]
 ): T.CharLiteralPlain.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildCharLiteralPlain$patch(source, { ...(inputs.config as T.CharLiteralPlain.Config), ...config });
-	}
 	switch (slot) {
 		case 'byte': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCharLiteralPlain$patch(source, { ...(inputs.config as T.CharLiteralPlain.Config), ...input });
+			}
+			const config = input;
 			const _byte = strictBooleanStorage(config.byte);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'char_literal_plain', { byte: _byte });
@@ -16169,6 +17942,11 @@ function buildCharLiteralPlain$set(
 			});
 		}
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCharLiteralPlain$patch(source, { ...(inputs.config as T.CharLiteralPlain.Config), ...input });
+			}
+			const config = input;
 			const _content = config.content;
 			if (typeof _content !== 'string')
 				throw new Error(`char_literal_plain.content: text must be a string: ${describeValue(_content)}`);
@@ -16186,7 +17964,6 @@ function buildCharLiteralPlain$set(
 			});
 		}
 	}
-	throw new Error(`char_literal_plain writes no slot ${slot} alone`);
 }
 function withCharLiteralPlain(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -16283,18 +18060,20 @@ function buildCharLiteralEscapedSimple$patch(
 }
 function buildCharLiteralEscapedSimple$set(
 	source: object,
-	slot: string,
-	config: Partial<T.CharLiteralEscapedSimple.Config>
+	...[slot, input]:
+		| ['byte', Partial<T.CharLiteralEscapedSimple.Config>]
+		| ['content', Partial<T.CharLiteralEscapedSimple.Config>]
 ): T.CharLiteralEscapedSimple.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildCharLiteralEscapedSimple$patch(source, {
-			...(inputs.config as T.CharLiteralEscapedSimple.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'byte': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCharLiteralEscapedSimple$patch(source, {
+					...(inputs.config as T.CharLiteralEscapedSimple.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _byte = strictBooleanStorage(config.byte);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'char_literal_escaped_simple', { byte: _byte });
@@ -16308,6 +18087,14 @@ function buildCharLiteralEscapedSimple$set(
 			});
 		}
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCharLiteralEscapedSimple$patch(source, {
+					...(inputs.config as T.CharLiteralEscapedSimple.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _content = config.content;
 			if (typeof _content !== 'string')
 				throw new Error(`char_literal_escaped_simple.content: text must be a string: ${describeValue(_content)}`);
@@ -16325,7 +18112,6 @@ function buildCharLiteralEscapedSimple$set(
 			});
 		}
 	}
-	throw new Error(`char_literal_escaped_simple writes no slot ${slot} alone`);
 }
 function withCharLiteralEscapedSimple(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -16401,18 +18187,20 @@ function buildCharLiteralEscapedUnicodeFixed$patch(
 }
 function buildCharLiteralEscapedUnicodeFixed$set(
 	source: object,
-	slot: string,
-	config: Partial<T.CharLiteralEscapedUnicodeFixed.Config>
+	...[slot, input]:
+		| ['byte', Partial<T.CharLiteralEscapedUnicodeFixed.Config>]
+		| ['content', Partial<T.CharLiteralEscapedUnicodeFixed.Config>]
 ): T.CharLiteralEscapedUnicodeFixed.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildCharLiteralEscapedUnicodeFixed$patch(source, {
-			...(inputs.config as T.CharLiteralEscapedUnicodeFixed.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'byte': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCharLiteralEscapedUnicodeFixed$patch(source, {
+					...(inputs.config as T.CharLiteralEscapedUnicodeFixed.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _byte = strictBooleanStorage(config.byte);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'char_literal_escaped_unicode_fixed', { byte: _byte });
@@ -16426,6 +18214,14 @@ function buildCharLiteralEscapedUnicodeFixed$set(
 			});
 		}
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCharLiteralEscapedUnicodeFixed$patch(source, {
+					...(inputs.config as T.CharLiteralEscapedUnicodeFixed.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _content = config.content;
 			if (typeof _content !== 'string')
 				throw new Error(
@@ -16447,7 +18243,6 @@ function buildCharLiteralEscapedUnicodeFixed$set(
 			});
 		}
 	}
-	throw new Error(`char_literal_escaped_unicode_fixed writes no slot ${slot} alone`);
 }
 function withCharLiteralEscapedUnicodeFixed(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -16523,18 +18318,20 @@ function buildCharLiteralEscapedUnicodeBraced$patch(
 }
 function buildCharLiteralEscapedUnicodeBraced$set(
 	source: object,
-	slot: string,
-	config: Partial<T.CharLiteralEscapedUnicodeBraced.Config>
+	...[slot, input]:
+		| ['byte', Partial<T.CharLiteralEscapedUnicodeBraced.Config>]
+		| ['content', Partial<T.CharLiteralEscapedUnicodeBraced.Config>]
 ): T.CharLiteralEscapedUnicodeBraced.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildCharLiteralEscapedUnicodeBraced$patch(source, {
-			...(inputs.config as T.CharLiteralEscapedUnicodeBraced.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'byte': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCharLiteralEscapedUnicodeBraced$patch(source, {
+					...(inputs.config as T.CharLiteralEscapedUnicodeBraced.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _byte = strictBooleanStorage(config.byte);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'char_literal_escaped_unicode_braced', { byte: _byte });
@@ -16548,6 +18345,14 @@ function buildCharLiteralEscapedUnicodeBraced$set(
 			});
 		}
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCharLiteralEscapedUnicodeBraced$patch(source, {
+					...(inputs.config as T.CharLiteralEscapedUnicodeBraced.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _content = config.content;
 			if (typeof _content !== 'string')
 				throw new Error(
@@ -16569,7 +18374,6 @@ function buildCharLiteralEscapedUnicodeBraced$set(
 			});
 		}
 	}
-	throw new Error(`char_literal_escaped_unicode_braced writes no slot ${slot} alone`);
 }
 function withCharLiteralEscapedUnicodeBraced(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -16635,18 +18439,20 @@ function buildCharLiteralEscapedHex$patch(
 }
 function buildCharLiteralEscapedHex$set(
 	source: object,
-	slot: string,
-	config: Partial<T.CharLiteralEscapedHex.Config>
+	...[slot, input]:
+		| ['byte', Partial<T.CharLiteralEscapedHex.Config>]
+		| ['content', Partial<T.CharLiteralEscapedHex.Config>]
 ): T.CharLiteralEscapedHex.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildCharLiteralEscapedHex$patch(source, {
-			...(inputs.config as T.CharLiteralEscapedHex.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'byte': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCharLiteralEscapedHex$patch(source, {
+					...(inputs.config as T.CharLiteralEscapedHex.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _byte = strictBooleanStorage(config.byte);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'char_literal_escaped_hex', { byte: _byte });
@@ -16660,6 +18466,14 @@ function buildCharLiteralEscapedHex$set(
 			});
 		}
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCharLiteralEscapedHex$patch(source, {
+					...(inputs.config as T.CharLiteralEscapedHex.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _content = config.content;
 			if (typeof _content !== 'string')
 				throw new Error(`char_literal_escaped_hex.content: text must be a string: ${describeValue(_content)}`);
@@ -16677,7 +18491,6 @@ function buildCharLiteralEscapedHex$set(
 			});
 		}
 	}
-	throw new Error(`char_literal_escaped_hex writes no slot ${slot} alone`);
 }
 function withCharLiteralEscapedHex(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -17009,15 +18822,18 @@ function buildArrayExpressionSemi$patch(
 }
 function buildArrayExpressionSemi$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ArrayExpressionSemi.Config>
+	...[slot, input]:
+		| ['attributes', Partial<T.ArrayExpressionSemi.Config>]
+		| ['element', Partial<T.ArrayExpressionSemi.Config>]
+		| ['length', Partial<T.ArrayExpressionSemi.Config>]
 ): T.ArrayExpressionSemi.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildArrayExpressionSemi$patch(source, { ...(inputs.config as T.ArrayExpressionSemi.Config), ...config });
-	}
 	switch (slot) {
 		case 'attributes': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildArrayExpressionSemi$patch(source, { ...(inputs.config as T.ArrayExpressionSemi.Config), ...input });
+			}
+			const config = input;
 			const _attributes = listStorage<NonNullable<T.ArrayExpressionSemi['_attributes']>>(config.attributes ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'array_expression_semi', { attributes: _attributes });
@@ -17031,6 +18847,11 @@ function buildArrayExpressionSemi$set(
 			});
 		}
 		case 'element': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildArrayExpressionSemi$patch(source, { ...(inputs.config as T.ArrayExpressionSemi.Config), ...input });
+			}
+			const config = input;
 			const _element = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_element']>>(config.element);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'array_expression_semi', { element: _element });
@@ -17044,6 +18865,11 @@ function buildArrayExpressionSemi$set(
 			});
 		}
 		case 'length': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildArrayExpressionSemi$patch(source, { ...(inputs.config as T.ArrayExpressionSemi.Config), ...input });
+			}
+			const config = input;
 			const _length = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_length']>>(config.length);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'array_expression_semi', { length: _length });
@@ -17057,7 +18883,6 @@ function buildArrayExpressionSemi$set(
 			});
 		}
 	}
-	throw new Error(`array_expression_semi writes no slot ${slot} alone`);
 }
 function withArrayExpressionSemi(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -17129,15 +18954,17 @@ function buildArrayExpressionList$patch(
 }
 function buildArrayExpressionList$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ArrayExpressionList.Config>
+	...[slot, input]:
+		| ['attributes', Partial<T.ArrayExpressionList.Config>]
+		| ['elements', Partial<T.ArrayExpressionList.Config>]
 ): T.ArrayExpressionList.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildArrayExpressionList$patch(source, { ...(inputs.config as T.ArrayExpressionList.Config), ...config });
-	}
 	switch (slot) {
 		case 'attributes': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildArrayExpressionList$patch(source, { ...(inputs.config as T.ArrayExpressionList.Config), ...input });
+			}
+			const config = input;
 			const _attributes = listStorage<NonNullable<T.ArrayExpressionList['_attributes']>>(config.attributes ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'array_expression_list', { attributes: _attributes });
@@ -17151,6 +18978,11 @@ function buildArrayExpressionList$set(
 			});
 		}
 		case 'elements': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildArrayExpressionList$patch(source, { ...(inputs.config as T.ArrayExpressionList.Config), ...input });
+			}
+			const config = input;
 			const _elements = config.elements;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'array_expression_list', { elements: _elements });
@@ -17164,7 +18996,6 @@ function buildArrayExpressionList$set(
 			});
 		}
 	}
-	throw new Error(`array_expression_list writes no slot ${slot} alone`);
 }
 function withArrayExpressionList(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -17239,15 +19070,15 @@ function buildAttributeInput$patch(
 }
 function buildAttributeInput$set(
 	source: object,
-	slot: string,
-	config: Partial<T.AttributeInput.Config>
+	...[slot, input]: ['value', Partial<T.AttributeInput.Config>] | ['arguments', Partial<T.AttributeInput.Config>]
 ): T.AttributeInput.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildAttributeInput$patch(source, { ...(inputs.config as T.AttributeInput.Config), ...config });
-	}
 	switch (slot) {
 		case 'value': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributeInput$patch(source, { ...(inputs.config as T.AttributeInput.Config), ...input });
+			}
+			const config = input;
 			const _value = kindIdStorage<NonNullable<T.AttributeInput['_value']>>(config.value);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'attribute_input', { value: _value });
@@ -17261,6 +19092,11 @@ function buildAttributeInput$set(
 			});
 		}
 		case 'arguments': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributeInput$patch(source, { ...(inputs.config as T.AttributeInput.Config), ...input });
+			}
+			const config = input;
 			const _arguments = config.arguments;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'attribute_input', { arguments: _arguments });
@@ -17274,7 +19110,6 @@ function buildAttributeInput$set(
 			});
 		}
 	}
-	throw new Error(`attribute_input writes no slot ${slot} alone`);
 }
 function withAttributeInput(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -17393,18 +19228,24 @@ function buildClosureExpressionBlock$patch(
 }
 function buildClosureExpressionBlock$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ClosureExpressionBlock.Config>
+	...[slot, input]:
+		| ['static', Partial<T.ClosureExpressionBlock.Config>]
+		| ['async', Partial<T.ClosureExpressionBlock.Config>]
+		| ['move', Partial<T.ClosureExpressionBlock.Config>]
+		| ['parameters', Partial<T.ClosureExpressionBlock.Config>]
+		| ['returnType', Partial<T.ClosureExpressionBlock.Config>]
+		| ['body', Partial<T.ClosureExpressionBlock.Config>]
 ): T.ClosureExpressionBlock.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildClosureExpressionBlock$patch(source, {
-			...(inputs.config as T.ClosureExpressionBlock.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'static': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildClosureExpressionBlock$patch(source, {
+					...(inputs.config as T.ClosureExpressionBlock.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _static = strictBooleanStorage(config.static);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'closure_expression_block', { static: _static });
@@ -17418,6 +19259,14 @@ function buildClosureExpressionBlock$set(
 			});
 		}
 		case 'async': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildClosureExpressionBlock$patch(source, {
+					...(inputs.config as T.ClosureExpressionBlock.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _async = strictBooleanStorage(config.async);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'closure_expression_block', { async: _async });
@@ -17431,6 +19280,14 @@ function buildClosureExpressionBlock$set(
 			});
 		}
 		case 'move': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildClosureExpressionBlock$patch(source, {
+					...(inputs.config as T.ClosureExpressionBlock.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _move = strictBooleanStorage(config.move);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'closure_expression_block', { move: _move });
@@ -17444,6 +19301,14 @@ function buildClosureExpressionBlock$set(
 			});
 		}
 		case 'parameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildClosureExpressionBlock$patch(source, {
+					...(inputs.config as T.ClosureExpressionBlock.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _parameters = orDefault(config.parameters, () => buildClosureParameters());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'closure_expression_block', { parameters: _parameters });
@@ -17457,6 +19322,14 @@ function buildClosureExpressionBlock$set(
 			});
 		}
 		case 'returnType': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildClosureExpressionBlock$patch(source, {
+					...(inputs.config as T.ClosureExpressionBlock.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _return_type = admitAliasContent<NonNullable<T.ClosureExpressionBlock['_return_type']>>(
 				kindIdStorage<NonNullable<T.ClosureExpressionBlock['_return_type']>>(config.returnType),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -17473,6 +19346,14 @@ function buildClosureExpressionBlock$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildClosureExpressionBlock$patch(source, {
+					...(inputs.config as T.ClosureExpressionBlock.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildBlock());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'closure_expression_block', { body: _body });
@@ -17486,7 +19367,6 @@ function buildClosureExpressionBlock$set(
 			});
 		}
 	}
-	throw new Error(`closure_expression_block writes no slot ${slot} alone`);
 }
 function withClosureExpressionBlock(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -17589,18 +19469,23 @@ function buildClosureExpressionExpr$patch(
 }
 function buildClosureExpressionExpr$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ClosureExpressionExpr.Config>
+	...[slot, input]:
+		| ['static', Partial<T.ClosureExpressionExpr.Config>]
+		| ['async', Partial<T.ClosureExpressionExpr.Config>]
+		| ['move', Partial<T.ClosureExpressionExpr.Config>]
+		| ['parameters', Partial<T.ClosureExpressionExpr.Config>]
+		| ['body', Partial<T.ClosureExpressionExpr.Config>]
 ): T.ClosureExpressionExpr.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildClosureExpressionExpr$patch(source, {
-			...(inputs.config as T.ClosureExpressionExpr.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'static': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildClosureExpressionExpr$patch(source, {
+					...(inputs.config as T.ClosureExpressionExpr.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _static = strictBooleanStorage(config.static);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'closure_expression_expr', { static: _static });
@@ -17614,6 +19499,14 @@ function buildClosureExpressionExpr$set(
 			});
 		}
 		case 'async': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildClosureExpressionExpr$patch(source, {
+					...(inputs.config as T.ClosureExpressionExpr.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _async = strictBooleanStorage(config.async);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'closure_expression_expr', { async: _async });
@@ -17627,6 +19520,14 @@ function buildClosureExpressionExpr$set(
 			});
 		}
 		case 'move': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildClosureExpressionExpr$patch(source, {
+					...(inputs.config as T.ClosureExpressionExpr.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _move = strictBooleanStorage(config.move);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'closure_expression_expr', { move: _move });
@@ -17640,6 +19541,14 @@ function buildClosureExpressionExpr$set(
 			});
 		}
 		case 'parameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildClosureExpressionExpr$patch(source, {
+					...(inputs.config as T.ClosureExpressionExpr.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _parameters = orDefault(config.parameters, () => buildClosureParameters());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'closure_expression_expr', { parameters: _parameters });
@@ -17653,6 +19562,14 @@ function buildClosureExpressionExpr$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildClosureExpressionExpr$patch(source, {
+					...(inputs.config as T.ClosureExpressionExpr.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _body = kindIdStorage<NonNullable<T.ClosureExpressionExpr['_body']>>(config.body);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'closure_expression_expr', { body: _body });
@@ -17666,7 +19583,6 @@ function buildClosureExpressionExpr$set(
 			});
 		}
 	}
-	throw new Error(`closure_expression_expr writes no slot ${slot} alone`);
 }
 function withClosureExpressionExpr(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -18077,15 +19993,21 @@ function buildImplItemBody$patch(source: object, config: T.ImplItemBody.Config):
 }
 function buildImplItemBody$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ImplItemBody.Config>
+	...[slot, input]:
+		| ['unsafe', Partial<T.ImplItemBody.Config>]
+		| ['typeParameters', Partial<T.ImplItemBody.Config>]
+		| ['traitClause', Partial<T.ImplItemBody.Config>]
+		| ['type', Partial<T.ImplItemBody.Config>]
+		| ['whereClause', Partial<T.ImplItemBody.Config>]
+		| ['body', Partial<T.ImplItemBody.Config>]
 ): T.ImplItemBody.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildImplItemBody$patch(source, { ...(inputs.config as T.ImplItemBody.Config), ...config });
-	}
 	switch (slot) {
 		case 'unsafe': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildImplItemBody$patch(source, { ...(inputs.config as T.ImplItemBody.Config), ...input });
+			}
+			const config = input;
 			const _unsafe = strictBooleanStorage(config.unsafe);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'impl_item_body', { unsafe: _unsafe });
@@ -18099,6 +20021,11 @@ function buildImplItemBody$set(
 			});
 		}
 		case 'typeParameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildImplItemBody$patch(source, { ...(inputs.config as T.ImplItemBody.Config), ...input });
+			}
+			const config = input;
 			const _type_parameters = config.typeParameters;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'impl_item_body', { typeParameters: _type_parameters });
@@ -18112,6 +20039,11 @@ function buildImplItemBody$set(
 			});
 		}
 		case 'traitClause': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildImplItemBody$patch(source, { ...(inputs.config as T.ImplItemBody.Config), ...input });
+			}
+			const config = input;
 			const _trait_clause = config.traitClause;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'impl_item_body', { traitClause: _trait_clause });
@@ -18125,6 +20057,11 @@ function buildImplItemBody$set(
 			});
 		}
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildImplItemBody$patch(source, { ...(inputs.config as T.ImplItemBody.Config), ...input });
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.ImplItemBody['_type']>>(
 				kindIdStorage<NonNullable<T.ImplItemBody['_type']>>(config.type),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -18141,6 +20078,11 @@ function buildImplItemBody$set(
 			});
 		}
 		case 'whereClause': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildImplItemBody$patch(source, { ...(inputs.config as T.ImplItemBody.Config), ...input });
+			}
+			const config = input;
 			const _where_clause = config.whereClause;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'impl_item_body', { whereClause: _where_clause });
@@ -18154,6 +20096,11 @@ function buildImplItemBody$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildImplItemBody$patch(source, { ...(inputs.config as T.ImplItemBody.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildExtensionDeclarationBody());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'impl_item_body', { body: _body });
@@ -18167,7 +20114,6 @@ function buildImplItemBody$set(
 			});
 		}
 	}
-	throw new Error(`impl_item_body writes no slot ${slot} alone`);
 }
 function withImplItemBody(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -18308,15 +20254,20 @@ function buildImplItemSemi$patch(source: object, config: T.ImplItemSemi.Config):
 }
 function buildImplItemSemi$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ImplItemSemi.Config>
+	...[slot, input]:
+		| ['unsafe', Partial<T.ImplItemSemi.Config>]
+		| ['typeParameters', Partial<T.ImplItemSemi.Config>]
+		| ['traitClause', Partial<T.ImplItemSemi.Config>]
+		| ['type', Partial<T.ImplItemSemi.Config>]
+		| ['whereClause', Partial<T.ImplItemSemi.Config>]
 ): T.ImplItemSemi.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildImplItemSemi$patch(source, { ...(inputs.config as T.ImplItemSemi.Config), ...config });
-	}
 	switch (slot) {
 		case 'unsafe': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildImplItemSemi$patch(source, { ...(inputs.config as T.ImplItemSemi.Config), ...input });
+			}
+			const config = input;
 			const _unsafe = strictBooleanStorage(config.unsafe);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'impl_item_semi', { unsafe: _unsafe });
@@ -18330,6 +20281,11 @@ function buildImplItemSemi$set(
 			});
 		}
 		case 'typeParameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildImplItemSemi$patch(source, { ...(inputs.config as T.ImplItemSemi.Config), ...input });
+			}
+			const config = input;
 			const _type_parameters = config.typeParameters;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'impl_item_semi', { typeParameters: _type_parameters });
@@ -18343,6 +20299,11 @@ function buildImplItemSemi$set(
 			});
 		}
 		case 'traitClause': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildImplItemSemi$patch(source, { ...(inputs.config as T.ImplItemSemi.Config), ...input });
+			}
+			const config = input;
 			const _trait_clause = config.traitClause;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'impl_item_semi', { traitClause: _trait_clause });
@@ -18356,6 +20317,11 @@ function buildImplItemSemi$set(
 			});
 		}
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildImplItemSemi$patch(source, { ...(inputs.config as T.ImplItemSemi.Config), ...input });
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.ImplItemSemi['_type']>>(
 				kindIdStorage<NonNullable<T.ImplItemSemi['_type']>>(config.type),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -18372,6 +20338,11 @@ function buildImplItemSemi$set(
 			});
 		}
 		case 'whereClause': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildImplItemSemi$patch(source, { ...(inputs.config as T.ImplItemSemi.Config), ...input });
+			}
+			const config = input;
 			const _where_clause = config.whereClause;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'impl_item_semi', { whereClause: _where_clause });
@@ -18385,7 +20356,6 @@ function buildImplItemSemi$set(
 			});
 		}
 	}
-	throw new Error(`impl_item_semi writes no slot ${slot} alone`);
 }
 function withImplItemSemi(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -18783,15 +20753,17 @@ function buildModItemExternal$patch(source: object, config: T.ModItemExternal.Co
 }
 function buildModItemExternal$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ModItemExternal.Config>
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.ModItemExternal.Config>]
+		| ['name', Partial<T.ModItemExternal.Config>]
 ): T.ModItemExternal.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildModItemExternal$patch(source, { ...(inputs.config as T.ModItemExternal.Config), ...config });
-	}
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildModItemExternal$patch(source, { ...(inputs.config as T.ModItemExternal.Config), ...input });
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -18806,6 +20778,11 @@ function buildModItemExternal$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildModItemExternal$patch(source, { ...(inputs.config as T.ModItemExternal.Config), ...input });
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'mod_item_external', { name: _name });
@@ -18819,7 +20796,6 @@ function buildModItemExternal$set(
 			});
 		}
 	}
-	throw new Error(`mod_item_external writes no slot ${slot} alone`);
 }
 function withModItemExternal(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -18887,15 +20863,18 @@ function buildModItemInline$patch(source: object, config: T.ModItemInline.Config
 }
 function buildModItemInline$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ModItemInline.Config>
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.ModItemInline.Config>]
+		| ['name', Partial<T.ModItemInline.Config>]
+		| ['body', Partial<T.ModItemInline.Config>]
 ): T.ModItemInline.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildModItemInline$patch(source, { ...(inputs.config as T.ModItemInline.Config), ...config });
-	}
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildModItemInline$patch(source, { ...(inputs.config as T.ModItemInline.Config), ...input });
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'mod_item_inline', { visibilityModifier: _visibility_modifier });
@@ -18909,6 +20888,11 @@ function buildModItemInline$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildModItemInline$patch(source, { ...(inputs.config as T.ModItemInline.Config), ...input });
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'mod_item_inline', { name: _name });
@@ -18922,6 +20906,11 @@ function buildModItemInline$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildModItemInline$patch(source, { ...(inputs.config as T.ModItemInline.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildDeclarationList());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'mod_item_inline', { body: _body });
@@ -18935,7 +20924,6 @@ function buildModItemInline$set(
 			});
 		}
 	}
-	throw new Error(`mod_item_inline writes no slot ${slot} alone`);
 }
 function withModItemInline(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -18995,15 +20983,15 @@ function buildOrPatternBinary$patch(source: object, config: T.OrPatternBinary.Co
 }
 function buildOrPatternBinary$set(
 	source: object,
-	slot: string,
-	config: Partial<T.OrPatternBinary.Config>
+	...[slot, input]: ['left', Partial<T.OrPatternBinary.Config>] | ['right', Partial<T.OrPatternBinary.Config>]
 ): T.OrPatternBinary.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildOrPatternBinary$patch(source, { ...(inputs.config as T.OrPatternBinary.Config), ...config });
-	}
 	switch (slot) {
 		case 'left': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildOrPatternBinary$patch(source, { ...(inputs.config as T.OrPatternBinary.Config), ...input });
+			}
+			const config = input;
 			const _left = kindIdStorage<NonNullable<T.OrPatternBinary['_left']>>(config.left);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'or_pattern_binary', { left: _left });
@@ -19017,6 +21005,11 @@ function buildOrPatternBinary$set(
 			});
 		}
 		case 'right': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildOrPatternBinary$patch(source, { ...(inputs.config as T.OrPatternBinary.Config), ...input });
+			}
+			const config = input;
 			const _right = kindIdStorage<NonNullable<T.OrPatternBinary['_right']>>(config.right);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'or_pattern_binary', { right: _right });
@@ -19030,7 +21023,6 @@ function buildOrPatternBinary$set(
 			});
 		}
 	}
-	throw new Error(`or_pattern_binary writes no slot ${slot} alone`);
 }
 function withOrPatternBinary(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -19238,18 +21230,21 @@ function buildRangeExpressionBinary$patch(
 }
 function buildRangeExpressionBinary$set(
 	source: object,
-	slot: string,
-	config: Partial<T.RangeExpressionBinary.Config>
+	...[slot, input]:
+		| ['start', Partial<T.RangeExpressionBinary.Config>]
+		| ['operator', Partial<T.RangeExpressionBinary.Config>]
+		| ['end', Partial<T.RangeExpressionBinary.Config>]
 ): T.RangeExpressionBinary.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildRangeExpressionBinary$patch(source, {
-			...(inputs.config as T.RangeExpressionBinary.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'start': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildRangeExpressionBinary$patch(source, {
+					...(inputs.config as T.RangeExpressionBinary.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _start = kindIdStorage<NonNullable<T.RangeExpressionBinary['_start']>>(config.start);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'range_expression_binary', { start: _start });
@@ -19263,6 +21258,14 @@ function buildRangeExpressionBinary$set(
 			});
 		}
 		case 'operator': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildRangeExpressionBinary$patch(source, {
+					...(inputs.config as T.RangeExpressionBinary.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _operator = kindIdStorage<NonNullable<T.RangeExpressionBinary['_operator']>>(config.operator);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'range_expression_binary', { operator: _operator });
@@ -19276,6 +21279,14 @@ function buildRangeExpressionBinary$set(
 			});
 		}
 		case 'end': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildRangeExpressionBinary$patch(source, {
+					...(inputs.config as T.RangeExpressionBinary.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _end = kindIdStorage<NonNullable<T.RangeExpressionBinary['_end']>>(config.end);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'range_expression_binary', { end: _end });
@@ -19289,7 +21300,6 @@ function buildRangeExpressionBinary$set(
 			});
 		}
 	}
-	throw new Error(`range_expression_binary writes no slot ${slot} alone`);
 }
 function withRangeExpressionBinary(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -19494,15 +21504,17 @@ function buildForeignModItemSemi$patch(
 }
 function buildForeignModItemSemi$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ForeignModItemSemi.Config>
+	...[slot, input]:
+		| ['unsafe', Partial<T.ForeignModItemSemi.Config>]
+		| ['externModifier', Partial<T.ForeignModItemSemi.Config>]
 ): T.ForeignModItemSemi.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildForeignModItemSemi$patch(source, { ...(inputs.config as T.ForeignModItemSemi.Config), ...config });
-	}
 	switch (slot) {
 		case 'unsafe': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildForeignModItemSemi$patch(source, { ...(inputs.config as T.ForeignModItemSemi.Config), ...input });
+			}
+			const config = input;
 			const _unsafe = strictBooleanStorage(config.unsafe);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'foreign_mod_item_semi', { unsafe: _unsafe });
@@ -19516,6 +21528,11 @@ function buildForeignModItemSemi$set(
 			});
 		}
 		case 'externModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildForeignModItemSemi$patch(source, { ...(inputs.config as T.ForeignModItemSemi.Config), ...input });
+			}
+			const config = input;
 			const _extern_modifier = orDefault(config.externModifier, () => buildExternModifier());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'foreign_mod_item_semi', { externModifier: _extern_modifier });
@@ -19529,7 +21546,6 @@ function buildForeignModItemSemi$set(
 			});
 		}
 	}
-	throw new Error(`foreign_mod_item_semi writes no slot ${slot} alone`);
 }
 function withForeignModItemSemi(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -19596,15 +21612,18 @@ function buildForeignModItemBody$patch(
 }
 function buildForeignModItemBody$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ForeignModItemBody.Config>
+	...[slot, input]:
+		| ['unsafe', Partial<T.ForeignModItemBody.Config>]
+		| ['externModifier', Partial<T.ForeignModItemBody.Config>]
+		| ['body', Partial<T.ForeignModItemBody.Config>]
 ): T.ForeignModItemBody.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildForeignModItemBody$patch(source, { ...(inputs.config as T.ForeignModItemBody.Config), ...config });
-	}
 	switch (slot) {
 		case 'unsafe': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildForeignModItemBody$patch(source, { ...(inputs.config as T.ForeignModItemBody.Config), ...input });
+			}
+			const config = input;
 			const _unsafe = strictBooleanStorage(config.unsafe);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'foreign_mod_item_body', { unsafe: _unsafe });
@@ -19618,6 +21637,11 @@ function buildForeignModItemBody$set(
 			});
 		}
 		case 'externModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildForeignModItemBody$patch(source, { ...(inputs.config as T.ForeignModItemBody.Config), ...input });
+			}
+			const config = input;
 			const _extern_modifier = orDefault(config.externModifier, () => buildExternModifier());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'foreign_mod_item_body', { externModifier: _extern_modifier });
@@ -19631,6 +21655,11 @@ function buildForeignModItemBody$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildForeignModItemBody$patch(source, { ...(inputs.config as T.ForeignModItemBody.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildDeclarationList());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'foreign_mod_item_body', { body: _body });
@@ -19644,7 +21673,6 @@ function buildForeignModItemBody$set(
 			});
 		}
 	}
-	throw new Error(`foreign_mod_item_body writes no slot ${slot} alone`);
 }
 function withForeignModItemBody(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -19713,15 +21741,18 @@ function buildMatchArmWithComma$patch(source: object, config: T.MatchArmWithComm
 }
 function buildMatchArmWithComma$set(
 	source: object,
-	slot: string,
-	config: Partial<T.MatchArmWithComma.Config>
+	...[slot, input]:
+		| ['attributes', Partial<T.MatchArmWithComma.Config>]
+		| ['match', Partial<T.MatchArmWithComma.Config>]
+		| ['body', Partial<T.MatchArmWithComma.Config>]
 ): T.MatchArmWithComma.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildMatchArmWithComma$patch(source, { ...(inputs.config as T.MatchArmWithComma.Config), ...config });
-	}
 	switch (slot) {
 		case 'attributes': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMatchArmWithComma$patch(source, { ...(inputs.config as T.MatchArmWithComma.Config), ...input });
+			}
+			const config = input;
 			const _attributes = listStorage<NonNullable<T.MatchArmWithComma['_attributes']>>(config.attributes ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'match_arm_with_comma', { attributes: _attributes });
@@ -19735,6 +21766,11 @@ function buildMatchArmWithComma$set(
 			});
 		}
 		case 'match': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMatchArmWithComma$patch(source, { ...(inputs.config as T.MatchArmWithComma.Config), ...input });
+			}
+			const config = input;
 			const _match = config.match;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'match_arm_with_comma', { match: _match });
@@ -19748,6 +21784,11 @@ function buildMatchArmWithComma$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMatchArmWithComma$patch(source, { ...(inputs.config as T.MatchArmWithComma.Config), ...input });
+			}
+			const config = input;
 			const _body = kindIdStorage<NonNullable<T.MatchArmWithComma['_body']>>(config.body);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'match_arm_with_comma', { body: _body });
@@ -19761,7 +21802,6 @@ function buildMatchArmWithComma$set(
 			});
 		}
 	}
-	throw new Error(`match_arm_with_comma writes no slot ${slot} alone`);
 }
 function withMatchArmWithComma(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -19876,15 +21916,18 @@ function buildMatchArmBlockEnding$patch(
 }
 function buildMatchArmBlockEnding$set(
 	source: object,
-	slot: string,
-	config: Partial<T.MatchArmBlockEnding.Config>
+	...[slot, input]:
+		| ['attributes', Partial<T.MatchArmBlockEnding.Config>]
+		| ['match', Partial<T.MatchArmBlockEnding.Config>]
+		| ['body', Partial<T.MatchArmBlockEnding.Config>]
 ): T.MatchArmBlockEnding.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildMatchArmBlockEnding$patch(source, { ...(inputs.config as T.MatchArmBlockEnding.Config), ...config });
-	}
 	switch (slot) {
 		case 'attributes': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMatchArmBlockEnding$patch(source, { ...(inputs.config as T.MatchArmBlockEnding.Config), ...input });
+			}
+			const config = input;
 			const _attributes = listStorage<NonNullable<T.MatchArmBlockEnding['_attributes']>>(config.attributes ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'match_arm_block_ending', { attributes: _attributes });
@@ -19898,6 +21941,11 @@ function buildMatchArmBlockEnding$set(
 			});
 		}
 		case 'match': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMatchArmBlockEnding$patch(source, { ...(inputs.config as T.MatchArmBlockEnding.Config), ...input });
+			}
+			const config = input;
 			const _match = config.match;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'match_arm_block_ending', { match: _match });
@@ -19911,6 +21959,11 @@ function buildMatchArmBlockEnding$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMatchArmBlockEnding$patch(source, { ...(inputs.config as T.MatchArmBlockEnding.Config), ...input });
+			}
+			const config = input;
 			const _body = config.body;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'match_arm_block_ending', { body: _body });
@@ -19924,7 +21977,6 @@ function buildMatchArmBlockEnding$set(
 			});
 		}
 	}
-	throw new Error(`match_arm_block_ending writes no slot ${slot} alone`);
 }
 function withMatchArmBlockEnding(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -20778,18 +22830,21 @@ function buildFieldPatternShorthand$patch(
 }
 function buildFieldPatternShorthand$set(
 	source: object,
-	slot: string,
-	config: Partial<T.FieldPatternShorthand.Config>
+	...[slot, input]:
+		| ['byReference', Partial<T.FieldPatternShorthand.Config>]
+		| ['mutable', Partial<T.FieldPatternShorthand.Config>]
+		| ['name', Partial<T.FieldPatternShorthand.Config>]
 ): T.FieldPatternShorthand.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildFieldPatternShorthand$patch(source, {
-			...(inputs.config as T.FieldPatternShorthand.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'byReference': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldPatternShorthand$patch(source, {
+					...(inputs.config as T.FieldPatternShorthand.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _by_reference = strictBooleanStorage(config.byReference);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'field_pattern_shorthand', { byReference: _by_reference });
@@ -20803,6 +22858,14 @@ function buildFieldPatternShorthand$set(
 			});
 		}
 		case 'mutable': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldPatternShorthand$patch(source, {
+					...(inputs.config as T.FieldPatternShorthand.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _mutable = strictBooleanStorage(config.mutable);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'field_pattern_shorthand', { mutable: _mutable });
@@ -20816,6 +22879,14 @@ function buildFieldPatternShorthand$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldPatternShorthand$patch(source, {
+					...(inputs.config as T.FieldPatternShorthand.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _name = admitAliasContent<NonNullable<T.FieldPatternShorthand['_name']>>(config.name, [
 				[[1], (v: unknown) => buildShorthandFieldIdentifier(v as never)]
 			]);
@@ -20831,7 +22902,6 @@ function buildFieldPatternShorthand$set(
 			});
 		}
 	}
-	throw new Error(`field_pattern_shorthand writes no slot ${slot} alone`);
 }
 function withFieldPatternShorthand(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -20917,15 +22987,19 @@ function buildFieldPatternNamed$patch(source: object, config: T.FieldPatternName
 }
 function buildFieldPatternNamed$set(
 	source: object,
-	slot: string,
-	config: Partial<T.FieldPatternNamed.Config>
+	...[slot, input]:
+		| ['byReference', Partial<T.FieldPatternNamed.Config>]
+		| ['mutable', Partial<T.FieldPatternNamed.Config>]
+		| ['name', Partial<T.FieldPatternNamed.Config>]
+		| ['pattern', Partial<T.FieldPatternNamed.Config>]
 ): T.FieldPatternNamed.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildFieldPatternNamed$patch(source, { ...(inputs.config as T.FieldPatternNamed.Config), ...config });
-	}
 	switch (slot) {
 		case 'byReference': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldPatternNamed$patch(source, { ...(inputs.config as T.FieldPatternNamed.Config), ...input });
+			}
+			const config = input;
 			const _by_reference = strictBooleanStorage(config.byReference);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'field_pattern_named', { byReference: _by_reference });
@@ -20939,6 +23013,11 @@ function buildFieldPatternNamed$set(
 			});
 		}
 		case 'mutable': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldPatternNamed$patch(source, { ...(inputs.config as T.FieldPatternNamed.Config), ...input });
+			}
+			const config = input;
 			const _mutable = strictBooleanStorage(config.mutable);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'field_pattern_named', { mutable: _mutable });
@@ -20952,6 +23031,11 @@ function buildFieldPatternNamed$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldPatternNamed$patch(source, { ...(inputs.config as T.FieldPatternNamed.Config), ...input });
+			}
+			const config = input;
 			const _name = admitAliasContent<NonNullable<T.FieldPatternNamed['_name']>>(config.name, [
 				[[1], (v: unknown) => buildFieldIdentifier(v as never)]
 			]);
@@ -20967,6 +23051,11 @@ function buildFieldPatternNamed$set(
 			});
 		}
 		case 'pattern': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldPatternNamed$patch(source, { ...(inputs.config as T.FieldPatternNamed.Config), ...input });
+			}
+			const config = input;
 			const _pattern = kindIdStorage<NonNullable<T.FieldPatternNamed['_pattern']>>(config.pattern);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'field_pattern_named', { pattern: _pattern });
@@ -20980,7 +23069,6 @@ function buildFieldPatternNamed$set(
 			});
 		}
 	}
-	throw new Error(`field_pattern_named writes no slot ${slot} alone`);
 }
 function withFieldPatternNamed(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -21049,15 +23137,20 @@ function buildMacroDefinitionParen$patch(
 }
 function buildMacroDefinitionParen$set(
 	source: object,
-	slot: string,
-	config: Partial<T.MacroDefinitionParen.Config>
+	...[slot, input]:
+		| ['name', Partial<T.MacroDefinitionParen.Config>]
+		| ['macroRules', Partial<T.MacroDefinitionParen.Config>]
 ): T.MacroDefinitionParen.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildMacroDefinitionParen$patch(source, { ...(inputs.config as T.MacroDefinitionParen.Config), ...config });
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMacroDefinitionParen$patch(source, {
+					...(inputs.config as T.MacroDefinitionParen.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'macro_definition_paren', { name: _name });
@@ -21071,6 +23164,14 @@ function buildMacroDefinitionParen$set(
 			});
 		}
 		case 'macroRules': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMacroDefinitionParen$patch(source, {
+					...(inputs.config as T.MacroDefinitionParen.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _macro_rules = config.macroRules;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'macro_definition_paren', { macroRules: _macro_rules });
@@ -21084,7 +23185,6 @@ function buildMacroDefinitionParen$set(
 			});
 		}
 	}
-	throw new Error(`macro_definition_paren writes no slot ${slot} alone`);
 }
 function withMacroDefinitionParen(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -21153,18 +23253,20 @@ function buildMacroDefinitionBracket$patch(
 }
 function buildMacroDefinitionBracket$set(
 	source: object,
-	slot: string,
-	config: Partial<T.MacroDefinitionBracket.Config>
+	...[slot, input]:
+		| ['name', Partial<T.MacroDefinitionBracket.Config>]
+		| ['macroRules', Partial<T.MacroDefinitionBracket.Config>]
 ): T.MacroDefinitionBracket.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildMacroDefinitionBracket$patch(source, {
-			...(inputs.config as T.MacroDefinitionBracket.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMacroDefinitionBracket$patch(source, {
+					...(inputs.config as T.MacroDefinitionBracket.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'macro_definition_bracket', { name: _name });
@@ -21178,6 +23280,14 @@ function buildMacroDefinitionBracket$set(
 			});
 		}
 		case 'macroRules': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMacroDefinitionBracket$patch(source, {
+					...(inputs.config as T.MacroDefinitionBracket.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _macro_rules = config.macroRules;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'macro_definition_bracket', { macroRules: _macro_rules });
@@ -21191,7 +23301,6 @@ function buildMacroDefinitionBracket$set(
 			});
 		}
 	}
-	throw new Error(`macro_definition_bracket writes no slot ${slot} alone`);
 }
 function withMacroDefinitionBracket(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -21258,15 +23367,20 @@ function buildMacroDefinitionBrace$patch(
 }
 function buildMacroDefinitionBrace$set(
 	source: object,
-	slot: string,
-	config: Partial<T.MacroDefinitionBrace.Config>
+	...[slot, input]:
+		| ['name', Partial<T.MacroDefinitionBrace.Config>]
+		| ['macroRules', Partial<T.MacroDefinitionBrace.Config>]
 ): T.MacroDefinitionBrace.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildMacroDefinitionBrace$patch(source, { ...(inputs.config as T.MacroDefinitionBrace.Config), ...config });
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMacroDefinitionBrace$patch(source, {
+					...(inputs.config as T.MacroDefinitionBrace.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'macro_definition_brace', { name: _name });
@@ -21280,6 +23394,14 @@ function buildMacroDefinitionBrace$set(
 			});
 		}
 		case 'macroRules': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMacroDefinitionBrace$patch(source, {
+					...(inputs.config as T.MacroDefinitionBrace.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _macro_rules = config.macroRules;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'macro_definition_brace', { macroRules: _macro_rules });
@@ -21293,7 +23415,6 @@ function buildMacroDefinitionBrace$set(
 			});
 		}
 	}
-	throw new Error(`macro_definition_brace writes no slot ${slot} alone`);
 }
 function withMacroDefinitionBrace(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -21367,15 +23488,15 @@ function buildRangePatternPrefix$patch(
 }
 function buildRangePatternPrefix$set(
 	source: object,
-	slot: string,
-	config: Partial<T.RangePatternPrefix.Config>
+	...[slot, input]: ['operator', Partial<T.RangePatternPrefix.Config>] | ['right', Partial<T.RangePatternPrefix.Config>]
 ): T.RangePatternPrefix.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildRangePatternPrefix$patch(source, { ...(inputs.config as T.RangePatternPrefix.Config), ...config });
-	}
 	switch (slot) {
 		case 'operator': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildRangePatternPrefix$patch(source, { ...(inputs.config as T.RangePatternPrefix.Config), ...input });
+			}
+			const config = input;
 			const _operator = kindIdStorage<NonNullable<T.RangePatternPrefix['_operator']>>(config.operator);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { operator: _operator });
@@ -21389,6 +23510,11 @@ function buildRangePatternPrefix$set(
 			});
 		}
 		case 'right': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildRangePatternPrefix$patch(source, { ...(inputs.config as T.RangePatternPrefix.Config), ...input });
+			}
+			const config = input;
 			const _right = rejectKeywordText(
 				kindIdStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right),
 				'RangePatternPrefix.right',
@@ -21407,7 +23533,6 @@ function buildRangePatternPrefix$set(
 			});
 		}
 	}
-	throw new Error(`range_pattern_prefix writes no slot ${slot} alone`);
 }
 function withRangePatternPrefix(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -21479,18 +23604,20 @@ function buildRangePatternWithLeftWithRight$patch(
 }
 function buildRangePatternWithLeftWithRight$set(
 	source: object,
-	slot: string,
-	config: Partial<T.RangePatternWithLeftWithRight.Config>
+	...[slot, input]:
+		| ['operator', Partial<T.RangePatternWithLeftWithRight.Config>]
+		| ['right', Partial<T.RangePatternWithLeftWithRight.Config>]
 ): T.RangePatternWithLeftWithRight.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildRangePatternWithLeftWithRight$patch(source, {
-			...(inputs.config as T.RangePatternWithLeftWithRight.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'operator': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildRangePatternWithLeftWithRight$patch(source, {
+					...(inputs.config as T.RangePatternWithLeftWithRight.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _operator = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_operator']>>(config.operator);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'range_pattern_with_left_with_right', { operator: _operator });
@@ -21504,6 +23631,14 @@ function buildRangePatternWithLeftWithRight$set(
 			});
 		}
 		case 'right': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildRangePatternWithLeftWithRight$patch(source, {
+					...(inputs.config as T.RangePatternWithLeftWithRight.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _right = rejectKeywordText(
 				kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right),
 				'RangePatternWithLeftWithRight.right',
@@ -21522,7 +23657,6 @@ function buildRangePatternWithLeftWithRight$set(
 			});
 		}
 	}
-	throw new Error(`range_pattern_with_left_with_right writes no slot ${slot} alone`);
 }
 function withRangePatternWithLeftWithRight(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -21595,15 +23729,20 @@ function buildRangePatternWithLeft$patch(
 }
 function buildRangePatternWithLeft$set(
 	source: object,
-	slot: string,
-	config: Partial<T.RangePatternWithLeft.Config>
+	...[slot, input]:
+		| ['left', Partial<T.RangePatternWithLeft.Config>]
+		| ['content', Partial<T.RangePatternWithLeft.Config>]
 ): T.RangePatternWithLeft.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildRangePatternWithLeft$patch(source, { ...(inputs.config as T.RangePatternWithLeft.Config), ...config });
-	}
 	switch (slot) {
 		case 'left': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildRangePatternWithLeft$patch(source, {
+					...(inputs.config as T.RangePatternWithLeft.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _left = rejectKeywordText(
 				kindIdStorage<NonNullable<T.RangePatternWithLeft['_left']>>(config.left),
 				'RangePatternWithLeft.left',
@@ -21622,6 +23761,14 @@ function buildRangePatternWithLeft$set(
 			});
 		}
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildRangePatternWithLeft$patch(source, {
+					...(inputs.config as T.RangePatternWithLeft.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _content = kindIdStorage<NonNullable<T.RangePatternWithLeft['_content']>>(config.content);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'range_pattern_with_left', { content: _content });
@@ -21635,7 +23782,6 @@ function buildRangePatternWithLeft$set(
 			});
 		}
 	}
-	throw new Error(`range_pattern_with_left writes no slot ${slot} alone`);
 }
 function withRangePatternWithLeft(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -21747,15 +23893,20 @@ function buildStructItemBrace$patch(source: object, config: T.StructItemBrace.Co
 }
 function buildStructItemBrace$set(
 	source: object,
-	slot: string,
-	config: Partial<T.StructItemBrace.Config>
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.StructItemBrace.Config>]
+		| ['name', Partial<T.StructItemBrace.Config>]
+		| ['typeParameters', Partial<T.StructItemBrace.Config>]
+		| ['whereClause', Partial<T.StructItemBrace.Config>]
+		| ['body', Partial<T.StructItemBrace.Config>]
 ): T.StructItemBrace.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildStructItemBrace$patch(source, { ...(inputs.config as T.StructItemBrace.Config), ...config });
-	}
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructItemBrace$patch(source, { ...(inputs.config as T.StructItemBrace.Config), ...input });
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -21770,6 +23921,11 @@ function buildStructItemBrace$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructItemBrace$patch(source, { ...(inputs.config as T.StructItemBrace.Config), ...input });
+			}
+			const config = input;
 			const _name = admitAliasContent<NonNullable<T.StructItemBrace['_name']>>(config.name, [
 				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 			]);
@@ -21785,6 +23941,11 @@ function buildStructItemBrace$set(
 			});
 		}
 		case 'typeParameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructItemBrace$patch(source, { ...(inputs.config as T.StructItemBrace.Config), ...input });
+			}
+			const config = input;
 			const _type_parameters = config.typeParameters;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'struct_item_brace', { typeParameters: _type_parameters });
@@ -21798,6 +23959,11 @@ function buildStructItemBrace$set(
 			});
 		}
 		case 'whereClause': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructItemBrace$patch(source, { ...(inputs.config as T.StructItemBrace.Config), ...input });
+			}
+			const config = input;
 			const _where_clause = config.whereClause;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'struct_item_brace', { whereClause: _where_clause });
@@ -21811,6 +23977,11 @@ function buildStructItemBrace$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructItemBrace$patch(source, { ...(inputs.config as T.StructItemBrace.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildFieldDeclarationList());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'struct_item_brace', { body: _body });
@@ -21824,7 +23995,6 @@ function buildStructItemBrace$set(
 			});
 		}
 	}
-	throw new Error(`struct_item_brace writes no slot ${slot} alone`);
 }
 function withStructItemBrace(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -21977,15 +24147,20 @@ function buildStructItemTuple$patch(source: object, config: T.StructItemTuple.Co
 }
 function buildStructItemTuple$set(
 	source: object,
-	slot: string,
-	config: Partial<T.StructItemTuple.Config>
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.StructItemTuple.Config>]
+		| ['name', Partial<T.StructItemTuple.Config>]
+		| ['typeParameters', Partial<T.StructItemTuple.Config>]
+		| ['body', Partial<T.StructItemTuple.Config>]
+		| ['whereClause', Partial<T.StructItemTuple.Config>]
 ): T.StructItemTuple.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildStructItemTuple$patch(source, { ...(inputs.config as T.StructItemTuple.Config), ...config });
-	}
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructItemTuple$patch(source, { ...(inputs.config as T.StructItemTuple.Config), ...input });
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -22000,6 +24175,11 @@ function buildStructItemTuple$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructItemTuple$patch(source, { ...(inputs.config as T.StructItemTuple.Config), ...input });
+			}
+			const config = input;
 			const _name = admitAliasContent<NonNullable<T.StructItemTuple['_name']>>(config.name, [
 				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 			]);
@@ -22015,6 +24195,11 @@ function buildStructItemTuple$set(
 			});
 		}
 		case 'typeParameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructItemTuple$patch(source, { ...(inputs.config as T.StructItemTuple.Config), ...input });
+			}
+			const config = input;
 			const _type_parameters = config.typeParameters;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'struct_item_tuple', { typeParameters: _type_parameters });
@@ -22028,6 +24213,11 @@ function buildStructItemTuple$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructItemTuple$patch(source, { ...(inputs.config as T.StructItemTuple.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildOrderedFieldDeclarationList());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'struct_item_tuple', { body: _body });
@@ -22041,6 +24231,11 @@ function buildStructItemTuple$set(
 			});
 		}
 		case 'whereClause': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructItemTuple$patch(source, { ...(inputs.config as T.StructItemTuple.Config), ...input });
+			}
+			const config = input;
 			const _where_clause = config.whereClause;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'struct_item_tuple', { whereClause: _where_clause });
@@ -22054,7 +24249,6 @@ function buildStructItemTuple$set(
 			});
 		}
 	}
-	throw new Error(`struct_item_tuple writes no slot ${slot} alone`);
 }
 function withStructItemTuple(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -22175,15 +24369,18 @@ function buildStructItemUnit$patch(source: object, config: T.StructItemUnit.Conf
 }
 function buildStructItemUnit$set(
 	source: object,
-	slot: string,
-	config: Partial<T.StructItemUnit.Config>
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.StructItemUnit.Config>]
+		| ['name', Partial<T.StructItemUnit.Config>]
+		| ['typeParameters', Partial<T.StructItemUnit.Config>]
 ): T.StructItemUnit.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildStructItemUnit$patch(source, { ...(inputs.config as T.StructItemUnit.Config), ...config });
-	}
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructItemUnit$patch(source, { ...(inputs.config as T.StructItemUnit.Config), ...input });
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'struct_item_unit', { visibilityModifier: _visibility_modifier });
@@ -22197,6 +24394,11 @@ function buildStructItemUnit$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructItemUnit$patch(source, { ...(inputs.config as T.StructItemUnit.Config), ...input });
+			}
+			const config = input;
 			const _name = admitAliasContent<NonNullable<T.StructItemUnit['_name']>>(config.name, [
 				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 			]);
@@ -22212,6 +24414,11 @@ function buildStructItemUnit$set(
 			});
 		}
 		case 'typeParameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildStructItemUnit$patch(source, { ...(inputs.config as T.StructItemUnit.Config), ...input });
+			}
+			const config = input;
 			const _type_parameters = config.typeParameters;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'struct_item_unit', { typeParameters: _type_parameters });
@@ -22225,7 +24432,6 @@ function buildStructItemUnit$set(
 			});
 		}
 	}
-	throw new Error(`struct_item_unit writes no slot ${slot} alone`);
 }
 function withStructItemUnit(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -22321,18 +24527,20 @@ function buildAttributedFieldDeclaration$patch(
 }
 function buildAttributedFieldDeclaration$set(
 	source: object,
-	slot: string,
-	config: Partial<T.AttributedFieldDeclaration.Config>
+	...[slot, input]:
+		| ['attributeItems', Partial<T.AttributedFieldDeclaration.Config>]
+		| ['fieldDeclaration', Partial<T.AttributedFieldDeclaration.Config>]
 ): T.AttributedFieldDeclaration.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildAttributedFieldDeclaration$patch(source, {
-			...(inputs.config as T.AttributedFieldDeclaration.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'attributeItems': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedFieldDeclaration$patch(source, {
+					...(inputs.config as T.AttributedFieldDeclaration.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _attribute_item = listStorage<NonNullable<T.AttributedFieldDeclaration['_attribute_item']>>(
 				config.attributeItems ?? []
 			);
@@ -22349,6 +24557,14 @@ function buildAttributedFieldDeclaration$set(
 			});
 		}
 		case 'fieldDeclaration': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedFieldDeclaration$patch(source, {
+					...(inputs.config as T.AttributedFieldDeclaration.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _field_declaration = config.fieldDeclaration;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -22363,7 +24579,6 @@ function buildAttributedFieldDeclaration$set(
 			});
 		}
 	}
-	throw new Error(`attributed_field_declaration writes no slot ${slot} alone`);
 }
 function withAttributedFieldDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -22439,18 +24654,20 @@ function buildAttributedEnumVariant$patch(
 }
 function buildAttributedEnumVariant$set(
 	source: object,
-	slot: string,
-	config: Partial<T.AttributedEnumVariant.Config>
+	...[slot, input]:
+		| ['attributeItems', Partial<T.AttributedEnumVariant.Config>]
+		| ['enumVariant', Partial<T.AttributedEnumVariant.Config>]
 ): T.AttributedEnumVariant.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildAttributedEnumVariant$patch(source, {
-			...(inputs.config as T.AttributedEnumVariant.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'attributeItems': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedEnumVariant$patch(source, {
+					...(inputs.config as T.AttributedEnumVariant.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _attribute_item = listStorage<NonNullable<T.AttributedEnumVariant['_attribute_item']>>(
 				config.attributeItems ?? []
 			);
@@ -22466,6 +24683,14 @@ function buildAttributedEnumVariant$set(
 			});
 		}
 		case 'enumVariant': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedEnumVariant$patch(source, {
+					...(inputs.config as T.AttributedEnumVariant.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _enum_variant = config.enumVariant;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'attributed_enum_variant', { enumVariant: _enum_variant });
@@ -22479,7 +24704,6 @@ function buildAttributedEnumVariant$set(
 			});
 		}
 	}
-	throw new Error(`attributed_enum_variant writes no slot ${slot} alone`);
 }
 function withAttributedEnumVariant(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -22552,15 +24776,17 @@ function buildAttributedParameter$patch(
 }
 function buildAttributedParameter$set(
 	source: object,
-	slot: string,
-	config: Partial<T.AttributedParameter.Config>
+	...[slot, input]:
+		| ['attributeItem', Partial<T.AttributedParameter.Config>]
+		| ['content', Partial<T.AttributedParameter.Config>]
 ): T.AttributedParameter.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildAttributedParameter$patch(source, { ...(inputs.config as T.AttributedParameter.Config), ...config });
-	}
 	switch (slot) {
 		case 'attributeItem': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedParameter$patch(source, { ...(inputs.config as T.AttributedParameter.Config), ...input });
+			}
+			const config = input;
 			const _attribute_item = config.attributeItem;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'attributed_parameter', { attributeItem: _attribute_item });
@@ -22574,6 +24800,11 @@ function buildAttributedParameter$set(
 			});
 		}
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedParameter$patch(source, { ...(inputs.config as T.AttributedParameter.Config), ...input });
+			}
+			const config = input;
 			const _content = admitAliasContent<NonNullable<T.AttributedParameter['_content']>>(
 				kindIdStorage<NonNullable<T.AttributedParameter['_content']>>(config.content),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -22590,7 +24821,6 @@ function buildAttributedParameter$set(
 			});
 		}
 	}
-	throw new Error(`attributed_parameter writes no slot ${slot} alone`);
 }
 function withAttributedParameter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -22659,18 +24889,20 @@ function buildAttributedTypeParameter$patch(
 }
 function buildAttributedTypeParameter$set(
 	source: object,
-	slot: string,
-	config: Partial<T.AttributedTypeParameter.Config>
+	...[slot, input]:
+		| ['attributeItems', Partial<T.AttributedTypeParameter.Config>]
+		| ['content', Partial<T.AttributedTypeParameter.Config>]
 ): T.AttributedTypeParameter.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildAttributedTypeParameter$patch(source, {
-			...(inputs.config as T.AttributedTypeParameter.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'attributeItems': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedTypeParameter$patch(source, {
+					...(inputs.config as T.AttributedTypeParameter.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _attribute_item = listStorage<NonNullable<T.AttributedTypeParameter['_attribute_item']>>(
 				config.attributeItems ?? []
 			);
@@ -22686,6 +24918,14 @@ function buildAttributedTypeParameter$set(
 			});
 		}
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedTypeParameter$patch(source, {
+					...(inputs.config as T.AttributedTypeParameter.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _content = config.content;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'attributed_type_parameter', { content: _content });
@@ -22699,7 +24939,6 @@ function buildAttributedTypeParameter$set(
 			});
 		}
 	}
-	throw new Error(`attributed_type_parameter writes no slot ${slot} alone`);
 }
 function withAttributedTypeParameter(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -22775,15 +25014,17 @@ function buildAttributedArgument$patch(
 }
 function buildAttributedArgument$set(
 	source: object,
-	slot: string,
-	config: Partial<T.AttributedArgument.Config>
+	...[slot, input]:
+		| ['attributeItems', Partial<T.AttributedArgument.Config>]
+		| ['expression', Partial<T.AttributedArgument.Config>]
 ): T.AttributedArgument.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildAttributedArgument$patch(source, { ...(inputs.config as T.AttributedArgument.Config), ...config });
-	}
 	switch (slot) {
 		case 'attributeItems': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedArgument$patch(source, { ...(inputs.config as T.AttributedArgument.Config), ...input });
+			}
+			const config = input;
 			const _attribute_item = listStorage<NonNullable<T.AttributedArgument['_attribute_item']>>(
 				config.attributeItems ?? []
 			);
@@ -22799,6 +25040,11 @@ function buildAttributedArgument$set(
 			});
 		}
 		case 'expression': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedArgument$patch(source, { ...(inputs.config as T.AttributedArgument.Config), ...input });
+			}
+			const config = input;
 			const _expression = kindIdStorage<NonNullable<T.AttributedArgument['_expression']>>(config.expression);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'attributed_argument', { expression: _expression });
@@ -22812,7 +25058,6 @@ function buildAttributedArgument$set(
 			});
 		}
 	}
-	throw new Error(`attributed_argument writes no slot ${slot} alone`);
 }
 function withAttributedArgument(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -22903,18 +25148,21 @@ function buildAttributedOrderedField$patch(
 }
 function buildAttributedOrderedField$set(
 	source: object,
-	slot: string,
-	config: Partial<T.AttributedOrderedField.Config>
+	...[slot, input]:
+		| ['attributeItems', Partial<T.AttributedOrderedField.Config>]
+		| ['visibilityModifier', Partial<T.AttributedOrderedField.Config>]
+		| ['type', Partial<T.AttributedOrderedField.Config>]
 ): T.AttributedOrderedField.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildAttributedOrderedField$patch(source, {
-			...(inputs.config as T.AttributedOrderedField.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'attributeItems': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedOrderedField$patch(source, {
+					...(inputs.config as T.AttributedOrderedField.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _attribute_item = listStorage<NonNullable<T.AttributedOrderedField['_attribute_item']>>(
 				config.attributeItems ?? []
 			);
@@ -22930,6 +25178,14 @@ function buildAttributedOrderedField$set(
 			});
 		}
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedOrderedField$patch(source, {
+					...(inputs.config as T.AttributedOrderedField.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -22944,6 +25200,14 @@ function buildAttributedOrderedField$set(
 			});
 		}
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedOrderedField$patch(source, {
+					...(inputs.config as T.AttributedOrderedField.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.AttributedOrderedField['_type']>>(
 				kindIdStorage<NonNullable<T.AttributedOrderedField['_type']>>(config.type),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -22960,7 +25224,6 @@ function buildAttributedOrderedField$set(
 			});
 		}
 	}
-	throw new Error(`attributed_ordered_field writes no slot ${slot} alone`);
 }
 function withAttributedOrderedField(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -23034,15 +25297,15 @@ function buildTypeArgument$patch(source: object, config: T.TypeArgument.Config):
 }
 function buildTypeArgument$set(
 	source: object,
-	slot: string,
-	config: Partial<T.TypeArgument.Config>
+	...[slot, input]: ['content', Partial<T.TypeArgument.Config>] | ['traitBounds', Partial<T.TypeArgument.Config>]
 ): T.TypeArgument.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildTypeArgument$patch(source, { ...(inputs.config as T.TypeArgument.Config), ...config });
-	}
 	switch (slot) {
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTypeArgument$patch(source, { ...(inputs.config as T.TypeArgument.Config), ...input });
+			}
+			const config = input;
 			const _content = admitAliasContent<NonNullable<T.TypeArgument['_content']>>(
 				kindIdStorage<NonNullable<T.TypeArgument['_content']>>(config.content),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -23059,6 +25322,11 @@ function buildTypeArgument$set(
 			});
 		}
 		case 'traitBounds': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTypeArgument$patch(source, { ...(inputs.config as T.TypeArgument.Config), ...input });
+			}
+			const config = input;
 			const _trait_bounds = config.traitBounds;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'type_argument', { traitBounds: _trait_bounds });
@@ -23072,7 +25340,6 @@ function buildTypeArgument$set(
 			});
 		}
 	}
-	throw new Error(`type_argument writes no slot ${slot} alone`);
 }
 function withTypeArgument(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -23288,24 +25555,71 @@ function buildRawStringLiteralStart$patch(
 		return node as unknown as T.RawStringLiteralStart.Bound;
 	});
 }
+function buildRawStringLiteralStart$set(
+	source: object,
+	...[slot, input]: ['prefix', Admit<'r' | 'br' | 'cr'>] | ['hashes', T.RawStringLiteralStart.Options]
+): T.RawStringLiteralStart.Bound {
+	switch (slot) {
+		case 'prefix': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildRawStringLiteralStart$patch(source, input, inputs.options as T.RawStringLiteralStart.Options);
+			}
+			const value = input;
+			const _prefix = value;
+			if (typeof _prefix !== 'string')
+				throw new Error(`raw_string_literal_start.prefix: text must be a string: ${describeValue(_prefix)}`);
+			if (!_slotRe_buildRawStringLiteralStart_prefix.test(_prefix))
+				throw new Error(`raw_string_literal_start.prefix: text does not match pattern: ${describeValue(_prefix)}`);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'raw_string_literal_start', { prefix: _prefix });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.RawStringLiteralStart as const, 0);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'prefix', _prefix));
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.RawStringLiteralStart.Bound;
+			});
+		}
+		case 'hashes': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildRawStringLiteralStart$patch(source, inputs.config['prefix'] as Admit<'r' | 'br' | 'cr'>, {
+					...(inputs.options as T.RawStringLiteralStart.Options),
+					...input
+				});
+			}
+			const options = input;
+			const _hashes = options?.hashes;
+			if (_hashes !== undefined && typeof _hashes !== 'string')
+				throw new Error(`raw_string_literal_start.hashes: text must be a string: ${describeValue(_hashes)}`);
+			if (_hashes !== undefined && !_slotRe_buildRawStringLiteralStart_hashes.test(_hashes))
+				throw new Error(`raw_string_literal_start.hashes: text does not match pattern: ${describeValue(_hashes)}`);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'raw_string_literal_start', { hashes: _hashes });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.RawStringLiteralStart as const, 1);
+				patchCell(arena, record, 3, 4, carriedSlot(source, 'hashes', _hashes));
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.RawStringLiteralStart.Bound;
+			});
+		}
+	}
+}
 function withRawStringLiteralStart(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'prefix': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as T.RawStringLiteralStart.Options;
+		case 'prefix':
 			return applySetter(args, (value: Admit<'r' | 'br' | 'cr'>) =>
-				rebuilt(node, handle, () => buildRawStringLiteralStart$patch(node, value, options))
+				rebuilt(node, handle, () => buildRawStringLiteralStart$set(node, 'prefix', value))
 			);
-		}
-		case 'hashes': {
-			const inputs = builtInputs(node);
-			const value = inputs.config['prefix'] as Admit<'r' | 'br' | 'cr'>;
-			const options = inputs.options as T.RawStringLiteralStart.Options;
+		case 'hashes':
 			return applySetter(args, (spelling: string) =>
-				rebuilt(node, handle, () => buildRawStringLiteralStart$patch(node, value, { ...options, hashes: spelling }))
+				rebuilt(node, handle, () => buildRawStringLiteralStart$set(node, 'hashes', { hashes: spelling }))
 			);
-		}
 	}
 	throw new Error(`raw_string_literal_start has no $with.${setter}`);
 }
@@ -23354,17 +25668,45 @@ function buildRawStringLiteralEnd$patch(
 		return node as unknown as T.RawStringLiteralEnd.Bound;
 	});
 }
+function buildRawStringLiteralEnd$set(
+	source: object,
+	...[slot, input]: ['hashes', T.RawStringLiteralEnd.Options]
+): T.RawStringLiteralEnd.Bound {
+	switch (slot) {
+		case 'hashes': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildRawStringLiteralEnd$patch(source, inputs.config as T.RawStringLiteralEnd.Config, {
+					...(inputs.options as T.RawStringLiteralEnd.Options),
+					...input
+				});
+			}
+			const options = input;
+			const _hashes = options?.hashes;
+			if (_hashes !== undefined && typeof _hashes !== 'string')
+				throw new Error(`raw_string_literal_end.hashes: text must be a string: ${describeValue(_hashes)}`);
+			if (_hashes !== undefined && !_slotRe_buildRawStringLiteralEnd_hashes.test(_hashes))
+				throw new Error(`raw_string_literal_end.hashes: text does not match pattern: ${describeValue(_hashes)}`);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'raw_string_literal_end', { hashes: _hashes });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.RawStringLiteralEnd as const, 0);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'hashes', _hashes));
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.RawStringLiteralEnd.Bound;
+			});
+		}
+	}
+}
 function withRawStringLiteralEnd(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'hashes': {
-			const inputs = builtInputs(node);
-			const config = inputs.config as T.RawStringLiteralEnd.Config;
-			const options = inputs.options as T.RawStringLiteralEnd.Options;
+		case 'hashes':
 			return applySetter(args, (spelling: string) =>
-				rebuilt(node, handle, () => buildRawStringLiteralEnd$patch(node, config, { ...options, hashes: spelling }))
+				rebuilt(node, handle, () => buildRawStringLiteralEnd$set(node, 'hashes', { hashes: spelling }))
 			);
-		}
 	}
 	throw new Error(`raw_string_literal_end has no $with.${setter}`);
 }
@@ -23577,13 +25919,17 @@ function buildArgument$patch(source: object, config: T.Argument.Config): T.Argum
 		return node as unknown as T.Argument.Bound;
 	});
 }
-function buildArgument$set(source: object, slot: string, config: Partial<T.Argument.Config>): T.Argument.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildArgument$patch(source, { ...(inputs.config as T.Argument.Config), ...config });
-	}
+function buildArgument$set(
+	source: object,
+	...[slot, input]: ['attributeItems', Partial<T.Argument.Config>] | ['expression', Partial<T.Argument.Config>]
+): T.Argument.Bound {
 	switch (slot) {
 		case 'attributeItems': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildArgument$patch(source, { ...(inputs.config as T.Argument.Config), ...input });
+			}
+			const config = input;
 			const _attribute_item = listStorage<NonNullable<T.Argument['_attribute_item']>>(config.attributeItems ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'argument', { attributeItems: _attribute_item });
@@ -23597,6 +25943,11 @@ function buildArgument$set(source: object, slot: string, config: Partial<T.Argum
 			});
 		}
 		case 'expression': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildArgument$patch(source, { ...(inputs.config as T.Argument.Config), ...input });
+			}
+			const config = input;
 			const _expression = kindIdStorage<NonNullable<T.Argument['_expression']>>(config.expression);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'argument', { expression: _expression });
@@ -23610,7 +25961,6 @@ function buildArgument$set(source: object, slot: string, config: Partial<T.Argum
 			});
 		}
 	}
-	throw new Error(`argument writes no slot ${slot} alone`);
 }
 function withArgument(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -23707,33 +26057,84 @@ function _buildArrayExpressionListElements$patch(
 		return node as unknown as T.ArrayExpressionListElements.Bound;
 	});
 }
+function _buildArrayExpressionListElements$set(
+	source: object,
+	...[slot, input]:
+		| ['items', NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.ArrayExpressionListElements.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildArrayExpressionListElements$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _mapped = elements.map(
+				(e): T.AttributedArgument =>
+					(isNodeOfKind(e, TSKindId.AttributedArgument)
+						? (e as unknown)
+						: buildAttributedArgument({ expression: e } as Parameters<
+								typeof buildAttributedArgument
+							>[0])) as T.AttributedArgument
+			);
+			const _item = _mapped;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'array_expression_list_elements', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ArrayExpressionListElements as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.ArrayExpressionListElements.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildArrayExpressionListElements$patch(
+					source,
+					inputs.elements as NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>,
+					{ ...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input }
+				);
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ArrayExpressionListElements as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.ArrayExpressionListElements.Bound;
+			});
+		}
+	}
+}
 function withArrayExpressionListElements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'items':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
 						{ slot: 'items', keys: ['attributeItems', 'expression'], make: buildAttributedArgument },
 						(...vs: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>) =>
-							_buildArrayExpressionListElements$patch(node, vs, options)
+							_buildArrayExpressionListElements$set(node, 'items', vs)
 					)
 				)
 			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () =>
-					_buildArrayExpressionListElements$patch(node, elements, { ...options, delimiter: v })
-				)
+				rebuilt(node, handle, () => _buildArrayExpressionListElements$set(node, 'delimiter', { delimiter: v }))
 			);
-		}
 	}
 	throw new Error(`array_expression_list_elements has no $with.${setter}`);
 }
@@ -23787,18 +26188,20 @@ function buildReceiverParameterDeclaration$patch(
 }
 function buildReceiverParameterDeclaration$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ReceiverParameterDeclaration.Config>
+	...[slot, input]:
+		| ['mutable', Partial<T.ReceiverParameterDeclaration.Config>]
+		| ['type', Partial<T.ReceiverParameterDeclaration.Config>]
 ): T.ReceiverParameterDeclaration.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildReceiverParameterDeclaration$patch(source, {
-			...(inputs.config as T.ReceiverParameterDeclaration.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'mutable': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildReceiverParameterDeclaration$patch(source, {
+					...(inputs.config as T.ReceiverParameterDeclaration.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _mutable = strictBooleanStorage(config.mutable);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'receiver_parameter_declaration', { mutable: _mutable });
@@ -23812,6 +26215,14 @@ function buildReceiverParameterDeclaration$set(
 			});
 		}
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildReceiverParameterDeclaration$patch(source, {
+					...(inputs.config as T.ReceiverParameterDeclaration.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _type = admitAliasContent<NonNullable<T.ReceiverParameterDeclaration['_type']>>(
 				kindIdStorage<NonNullable<T.ReceiverParameterDeclaration['_type']>>(config.type),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -23828,7 +26239,6 @@ function buildReceiverParameterDeclaration$set(
 			});
 		}
 	}
-	throw new Error(`receiver_parameter_declaration writes no slot ${slot} alone`);
 }
 function withReceiverParameterDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -23896,18 +26306,20 @@ function buildAttributedParameterReceiver$patch(
 }
 function buildAttributedParameterReceiver$set(
 	source: object,
-	slot: string,
-	config: Partial<T.AttributedParameterReceiver.Config>
+	...[slot, input]:
+		| ['attributeItem', Partial<T.AttributedParameterReceiver.Config>]
+		| ['content', Partial<T.AttributedParameterReceiver.Config>]
 ): T.AttributedParameterReceiver.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildAttributedParameterReceiver$patch(source, {
-			...(inputs.config as T.AttributedParameterReceiver.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'attributeItem': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedParameterReceiver$patch(source, {
+					...(inputs.config as T.AttributedParameterReceiver.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _attribute_item = config.attributeItem;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -23922,6 +26334,14 @@ function buildAttributedParameterReceiver$set(
 			});
 		}
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedParameterReceiver$patch(source, {
+					...(inputs.config as T.AttributedParameterReceiver.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _content = config.content;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'attributed_parameter_receiver', { content: _content });
@@ -23935,7 +26355,6 @@ function buildAttributedParameterReceiver$set(
 			});
 		}
 	}
-	throw new Error(`attributed_parameter_receiver writes no slot ${slot} alone`);
 }
 function withAttributedParameterReceiver(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -24023,18 +26442,20 @@ function buildParametersElementsReceiver$patch(
 }
 function buildParametersElementsReceiver$set(
 	source: object,
-	slot: string,
-	config: Partial<T.ParametersElementsReceiver.Config>
+	...[slot, input]:
+		| ['receiver', Partial<T.ParametersElementsReceiver.Config>]
+		| ['parametersElementsReceiverGroup', Partial<T.ParametersElementsReceiver.Config>]
 ): T.ParametersElementsReceiver.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildParametersElementsReceiver$patch(source, {
-			...(inputs.config as T.ParametersElementsReceiver.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'receiver': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildParametersElementsReceiver$patch(source, {
+					...(inputs.config as T.ParametersElementsReceiver.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _receiver = config.receiver;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'parameters_elements_receiver', { receiver: _receiver });
@@ -24048,6 +26469,14 @@ function buildParametersElementsReceiver$set(
 			});
 		}
 		case 'parametersElementsReceiverGroup': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildParametersElementsReceiver$patch(source, {
+					...(inputs.config as T.ParametersElementsReceiver.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _parameters_elements_receiver_group = config.parametersElementsReceiverGroup;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -24070,7 +26499,6 @@ function buildParametersElementsReceiver$set(
 			});
 		}
 	}
-	throw new Error(`parameters_elements_receiver writes no slot ${slot} alone`);
 }
 function withParametersElementsReceiver(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -24566,15 +26994,23 @@ function buildMethodDeclaration$patch(source: object, config: T.MethodDeclaratio
 }
 function buildMethodDeclaration$set(
 	source: object,
-	slot: string,
-	config: Partial<T.MethodDeclaration.Config>
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.MethodDeclaration.Config>]
+		| ['functionModifiers', Partial<T.MethodDeclaration.Config>]
+		| ['name', Partial<T.MethodDeclaration.Config>]
+		| ['typeParameters', Partial<T.MethodDeclaration.Config>]
+		| ['parameters', Partial<T.MethodDeclaration.Config>]
+		| ['returnType', Partial<T.MethodDeclaration.Config>]
+		| ['whereClause', Partial<T.MethodDeclaration.Config>]
+		| ['body', Partial<T.MethodDeclaration.Config>]
 ): T.MethodDeclaration.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildMethodDeclaration$patch(source, { ...(inputs.config as T.MethodDeclaration.Config), ...config });
-	}
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMethodDeclaration$patch(source, { ...(inputs.config as T.MethodDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -24589,6 +27025,11 @@ function buildMethodDeclaration$set(
 			});
 		}
 		case 'functionModifiers': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMethodDeclaration$patch(source, { ...(inputs.config as T.MethodDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _function_modifiers = config.functionModifiers;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'method_declaration', { functionModifiers: _function_modifiers });
@@ -24602,6 +27043,11 @@ function buildMethodDeclaration$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMethodDeclaration$patch(source, { ...(inputs.config as T.MethodDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'method_declaration', { name: _name });
@@ -24615,6 +27061,11 @@ function buildMethodDeclaration$set(
 			});
 		}
 		case 'typeParameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMethodDeclaration$patch(source, { ...(inputs.config as T.MethodDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _type_parameters = config.typeParameters;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'method_declaration', { typeParameters: _type_parameters });
@@ -24628,6 +27079,11 @@ function buildMethodDeclaration$set(
 			});
 		}
 		case 'parameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMethodDeclaration$patch(source, { ...(inputs.config as T.MethodDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _parameters = orDefault(config.parameters, () => buildParameters());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'method_declaration', { parameters: _parameters });
@@ -24641,6 +27097,11 @@ function buildMethodDeclaration$set(
 			});
 		}
 		case 'returnType': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMethodDeclaration$patch(source, { ...(inputs.config as T.MethodDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _return_type = admitAliasContent<NonNullable<T.MethodDeclaration['_return_type']>>(
 				kindIdStorage<NonNullable<T.MethodDeclaration['_return_type']>>(config.returnType),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -24657,6 +27118,11 @@ function buildMethodDeclaration$set(
 			});
 		}
 		case 'whereClause': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMethodDeclaration$patch(source, { ...(inputs.config as T.MethodDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _where_clause = config.whereClause;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'method_declaration', { whereClause: _where_clause });
@@ -24670,6 +27136,11 @@ function buildMethodDeclaration$set(
 			});
 		}
 		case 'body': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMethodDeclaration$patch(source, { ...(inputs.config as T.MethodDeclaration.Config), ...input });
+			}
+			const config = input;
 			const _body = orDefault(config.body, () => buildBlock());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'method_declaration', { body: _body });
@@ -24683,7 +27154,6 @@ function buildMethodDeclaration$set(
 			});
 		}
 	}
-	throw new Error(`method_declaration writes no slot ${slot} alone`);
 }
 function withMethodDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -24866,18 +27336,25 @@ function buildSignatureMethodDeclaration$patch(
 }
 function buildSignatureMethodDeclaration$set(
 	source: object,
-	slot: string,
-	config: Partial<T.SignatureMethodDeclaration.Config>
+	...[slot, input]:
+		| ['visibilityModifier', Partial<T.SignatureMethodDeclaration.Config>]
+		| ['functionModifiers', Partial<T.SignatureMethodDeclaration.Config>]
+		| ['name', Partial<T.SignatureMethodDeclaration.Config>]
+		| ['typeParameters', Partial<T.SignatureMethodDeclaration.Config>]
+		| ['parameters', Partial<T.SignatureMethodDeclaration.Config>]
+		| ['returnType', Partial<T.SignatureMethodDeclaration.Config>]
+		| ['whereClause', Partial<T.SignatureMethodDeclaration.Config>]
 ): T.SignatureMethodDeclaration.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildSignatureMethodDeclaration$patch(source, {
-			...(inputs.config as T.SignatureMethodDeclaration.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'visibilityModifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildSignatureMethodDeclaration$patch(source, {
+					...(inputs.config as T.SignatureMethodDeclaration.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _visibility_modifier = config.visibilityModifier;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -24892,6 +27369,14 @@ function buildSignatureMethodDeclaration$set(
 			});
 		}
 		case 'functionModifiers': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildSignatureMethodDeclaration$patch(source, {
+					...(inputs.config as T.SignatureMethodDeclaration.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _function_modifiers = config.functionModifiers;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -24906,6 +27391,14 @@ function buildSignatureMethodDeclaration$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildSignatureMethodDeclaration$patch(source, {
+					...(inputs.config as T.SignatureMethodDeclaration.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'signature_method_declaration', { name: _name });
@@ -24919,6 +27412,14 @@ function buildSignatureMethodDeclaration$set(
 			});
 		}
 		case 'typeParameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildSignatureMethodDeclaration$patch(source, {
+					...(inputs.config as T.SignatureMethodDeclaration.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _type_parameters = config.typeParameters;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -24933,6 +27434,14 @@ function buildSignatureMethodDeclaration$set(
 			});
 		}
 		case 'parameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildSignatureMethodDeclaration$patch(source, {
+					...(inputs.config as T.SignatureMethodDeclaration.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _parameters = orDefault(config.parameters, () => buildParameters());
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'signature_method_declaration', { parameters: _parameters });
@@ -24946,6 +27455,14 @@ function buildSignatureMethodDeclaration$set(
 			});
 		}
 		case 'returnType': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildSignatureMethodDeclaration$patch(source, {
+					...(inputs.config as T.SignatureMethodDeclaration.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _return_type = admitAliasContent<NonNullable<T.SignatureMethodDeclaration['_return_type']>>(
 				kindIdStorage<NonNullable<T.SignatureMethodDeclaration['_return_type']>>(config.returnType),
 				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -24962,6 +27479,14 @@ function buildSignatureMethodDeclaration$set(
 			});
 		}
 		case 'whereClause': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildSignatureMethodDeclaration$patch(source, {
+					...(inputs.config as T.SignatureMethodDeclaration.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _where_clause = config.whereClause;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'signature_method_declaration', { whereClause: _where_clause });
@@ -24975,7 +27500,6 @@ function buildSignatureMethodDeclaration$set(
 			});
 		}
 	}
-	throw new Error(`signature_method_declaration writes no slot ${slot} alone`);
 }
 function withSignatureMethodDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -26782,24 +29306,78 @@ export const builtViews: BuiltViews = Object.freeze({
 		],
 		337: [[2, 2, 6, 9, 5, 0]],
 		340: [[2, 2, 6, 9, 5, 0]],
-		342: [[2, 2, 1, 1, 0, 3]],
-		343: [[2, 2, 1, 1, 0, 3]],
-		344: [[2, 2, 1, 1, 0, 3]],
-		345: [[2, 2, 1, 1, 0, 3]],
-		346: [[2, 2, 1, 1, 0, 3]],
-		347: [[2, 2, 1, 1, 0, 3]],
-		348: [[2, 2, 1, 3, 0, 4]],
-		349: [[2, 2, 1, 1, 0, 3]],
-		350: [[2, 2, 1, 1, 0, 3]],
-		351: [[2, 2, 1, 3, 0, 4]],
-		352: [[2, 2, 1, 1, 0, 3]],
-		353: [[2, 2, 1, 1, 0, 3]],
-		354: [[2, 2, 1, 1, 0, 3]],
-		355: [[2, 2, 1, 3, 0, 4]],
-		356: [[2, 2, 1, 1, 0, 3]],
-		357: [[2, 2, 1, 3, 0, 4]],
-		358: [[2, 2, 1, 3, 0, 4]],
-		359: [[2, 2, 1, 3, 0, 4]],
+		342: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
+		],
+		343: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
+		],
+		344: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
+		],
+		345: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
+		],
+		346: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
+		],
+		347: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
+		],
+		348: [
+			[2, 2, 1, 3, 0, 4],
+			['side', true, false]
+		],
+		349: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
+		],
+		350: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
+		],
+		351: [
+			[2, 2, 1, 3, 0, 4],
+			['side', true, false]
+		],
+		352: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
+		],
+		353: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
+		],
+		354: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
+		],
+		355: [
+			[2, 2, 1, 3, 0, 4],
+			['side', true, false]
+		],
+		356: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
+		],
+		357: [
+			[2, 2, 1, 3, 0, 4],
+			['side', true, false]
+		],
+		358: [
+			[2, 2, 1, 3, 0, 4],
+			['side', true, false]
+		],
+		359: [
+			[2, 2, 1, 3, 0, 4],
+			['side', true, false]
+		],
 		360: [[2, 2, 4, 3, 0, 0]],
 		366: [
 			[2, 2, 1, 1, 0, 3],
@@ -27002,7 +29580,10 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 4, 3, 0, 0]
 		],
-		438: [[2, 2, 1, 1, 0, 3]],
+		438: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
+		],
 		439: [
 			[2, 0],
 			[3, 3, 4, 3, 0, 0]

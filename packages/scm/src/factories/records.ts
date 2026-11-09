@@ -551,13 +551,17 @@ function buildList$patch(source: object, config: T.List.Config): T.List.Bound {
 		return node as unknown as T.List.Bound;
 	});
 }
-function buildList$set(source: object, slot: string, config: Partial<T.List.Config>): T.List.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildList$patch(source, { ...(inputs.config as T.List.Config), ...config });
-	}
+function buildList$set(
+	source: object,
+	...[slot, input]: ['definitions', Partial<T.List.Config>] | ['elements', Partial<T.List.Config>]
+): T.List.Bound {
 	switch (slot) {
 		case 'definitions': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildList$patch(source, { ...(inputs.config as T.List.Config), ...input });
+			}
+			const config = input;
 			const _definitions = listStorage<NonNullable<T.List['_definitions']>>(config.definitions);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'list', { definitions: _definitions });
@@ -571,6 +575,11 @@ function buildList$set(source: object, slot: string, config: Partial<T.List.Conf
 			});
 		}
 		case 'elements': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildList$patch(source, { ...(inputs.config as T.List.Config), ...input });
+			}
+			const config = input;
 			const _elements = listStorage<NonNullable<T.List['_elements']>>(config.elements ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'list', { elements: _elements });
@@ -584,7 +593,6 @@ function buildList$set(source: object, slot: string, config: Partial<T.List.Conf
 			});
 		}
 	}
-	throw new Error(`list writes no slot ${slot} alone`);
 }
 function withList(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -642,13 +650,17 @@ function buildGrouping$patch(source: object, config: T.Grouping.Config): T.Group
 		return node as unknown as T.Grouping.Bound;
 	});
 }
-function buildGrouping$set(source: object, slot: string, config: Partial<T.Grouping.Config>): T.Grouping.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildGrouping$patch(source, { ...(inputs.config as T.Grouping.Config), ...config });
-	}
+function buildGrouping$set(
+	source: object,
+	...[slot, input]: ['groupingGroups', Partial<T.Grouping.Config>] | ['elements', Partial<T.Grouping.Config>]
+): T.Grouping.Bound {
 	switch (slot) {
 		case 'groupingGroups': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildGrouping$patch(source, { ...(inputs.config as T.Grouping.Config), ...input });
+			}
+			const config = input;
 			const _grouping_group = listStorage<NonNullable<T.Grouping['_grouping_group']>>(config.groupingGroups);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'grouping', { groupingGroups: _grouping_group });
@@ -662,6 +674,11 @@ function buildGrouping$set(source: object, slot: string, config: Partial<T.Group
 			});
 		}
 		case 'elements': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildGrouping$patch(source, { ...(inputs.config as T.Grouping.Config), ...input });
+			}
+			const config = input;
 			const _elements = listStorage<NonNullable<T.Grouping['_elements']>>(config.elements ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'grouping', { elements: _elements });
@@ -675,7 +692,6 @@ function buildGrouping$set(source: object, slot: string, config: Partial<T.Group
 			});
 		}
 	}
-	throw new Error(`grouping writes no slot ${slot} alone`);
 }
 function withGrouping(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -741,15 +757,15 @@ function buildMissingNode$patch(source: object, config: Partial<T.MissingNode.Co
 }
 function buildMissingNode$set(
 	source: object,
-	slot: string,
-	config: Partial<T.MissingNode.Config>
+	...[slot, input]: ['name', Partial<T.MissingNode.Config>] | ['elements', Partial<T.MissingNode.Config>]
 ): T.MissingNode.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildMissingNode$patch(source, { ...(inputs.config as T.MissingNode.Config), ...config });
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMissingNode$patch(source, { ...(inputs.config as T.MissingNode.Config), ...input });
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'missing_node', { name: _name });
@@ -763,6 +779,11 @@ function buildMissingNode$set(
 			});
 		}
 		case 'elements': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildMissingNode$patch(source, { ...(inputs.config as T.MissingNode.Config), ...input });
+			}
+			const config = input;
 			const _elements = listStorage<NonNullable<T.MissingNode['_elements']>>(config.elements ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'missing_node', { elements: _elements });
@@ -776,7 +797,6 @@ function buildMissingNode$set(
 			});
 		}
 	}
-	throw new Error(`missing_node writes no slot ${slot} alone`);
 }
 function withMissingNode(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -832,15 +852,15 @@ function buildAnonymousNode$patch(source: object, config: T.AnonymousNode.Config
 }
 function buildAnonymousNode$set(
 	source: object,
-	slot: string,
-	config: Partial<T.AnonymousNode.Config>
+	...[slot, input]: ['name', Partial<T.AnonymousNode.Config>] | ['elements', Partial<T.AnonymousNode.Config>]
 ): T.AnonymousNode.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildAnonymousNode$patch(source, { ...(inputs.config as T.AnonymousNode.Config), ...config });
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAnonymousNode$patch(source, { ...(inputs.config as T.AnonymousNode.Config), ...input });
+			}
+			const config = input;
 			const _name = kindIdStorage<NonNullable<T.AnonymousNode['_name']>>(config.name);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'anonymous_node', { name: _name });
@@ -854,6 +874,11 @@ function buildAnonymousNode$set(
 			});
 		}
 		case 'elements': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAnonymousNode$patch(source, { ...(inputs.config as T.AnonymousNode.Config), ...input });
+			}
+			const config = input;
 			const _elements = listStorage<NonNullable<T.AnonymousNode['_elements']>>(config.elements ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'anonymous_node', { elements: _elements });
@@ -867,7 +892,6 @@ function buildAnonymousNode$set(
 			});
 		}
 	}
-	throw new Error(`anonymous_node writes no slot ${slot} alone`);
 }
 function withAnonymousNode(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -927,15 +951,15 @@ function buildFieldDefinition$patch(source: object, config: T.FieldDefinition.Co
 }
 function buildFieldDefinition$set(
 	source: object,
-	slot: string,
-	config: Partial<T.FieldDefinition.Config>
+	...[slot, input]: ['name', Partial<T.FieldDefinition.Config>] | ['definition', Partial<T.FieldDefinition.Config>]
 ): T.FieldDefinition.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildFieldDefinition$patch(source, { ...(inputs.config as T.FieldDefinition.Config), ...config });
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldDefinition$patch(source, { ...(inputs.config as T.FieldDefinition.Config), ...input });
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'field_definition', { name: _name });
@@ -949,6 +973,11 @@ function buildFieldDefinition$set(
 			});
 		}
 		case 'definition': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildFieldDefinition$patch(source, { ...(inputs.config as T.FieldDefinition.Config), ...input });
+			}
+			const config = input;
 			const _definition = config.definition;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'field_definition', { definition: _definition });
@@ -962,7 +991,6 @@ function buildFieldDefinition$set(
 			});
 		}
 	}
-	throw new Error(`field_definition writes no slot ${slot} alone`);
 }
 function withFieldDefinition(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1065,13 +1093,21 @@ function buildPredicate$patch(source: object, config: T.Predicate.Config): T.Pre
 		return node as unknown as T.Predicate.Bound;
 	});
 }
-function buildPredicate$set(source: object, slot: string, config: Partial<T.Predicate.Config>): T.Predicate.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildPredicate$patch(source, { ...(inputs.config as T.Predicate.Config), ...config });
-	}
+function buildPredicate$set(
+	source: object,
+	...[slot, input]:
+		| ['prefix', Partial<T.Predicate.Config>]
+		| ['name', Partial<T.Predicate.Config>]
+		| ['type', Partial<T.Predicate.Config>]
+		| ['parameters', Partial<T.Predicate.Config>]
+): T.Predicate.Bound {
 	switch (slot) {
 		case 'prefix': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildPredicate$patch(source, { ...(inputs.config as T.Predicate.Config), ...input });
+			}
+			const config = input;
 			const _prefix = kindIdStorage<NonNullable<T.Predicate['_prefix']>>(config.prefix);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'predicate', { prefix: _prefix });
@@ -1085,6 +1121,11 @@ function buildPredicate$set(source: object, slot: string, config: Partial<T.Pred
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildPredicate$patch(source, { ...(inputs.config as T.Predicate.Config), ...input });
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'predicate', { name: _name });
@@ -1098,6 +1139,11 @@ function buildPredicate$set(source: object, slot: string, config: Partial<T.Pred
 			});
 		}
 		case 'type': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildPredicate$patch(source, { ...(inputs.config as T.Predicate.Config), ...input });
+			}
+			const config = input;
 			const _type = kindIdStorage<NonNullable<T.Predicate['_type']>>(config.type);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'predicate', { type: _type });
@@ -1111,6 +1157,11 @@ function buildPredicate$set(source: object, slot: string, config: Partial<T.Pred
 			});
 		}
 		case 'parameters': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildPredicate$patch(source, { ...(inputs.config as T.Predicate.Config), ...input });
+			}
+			const config = input;
 			const _parameters = config.parameters;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'predicate', { parameters: _parameters });
@@ -1124,7 +1175,6 @@ function buildPredicate$set(source: object, slot: string, config: Partial<T.Pred
 			});
 		}
 	}
-	throw new Error(`predicate writes no slot ${slot} alone`);
 }
 function withPredicate(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1239,15 +1289,15 @@ function buildGroupExpressionArm$patch(
 }
 function buildGroupExpressionArm$set(
 	source: object,
-	slot: string,
-	config: Partial<T.GroupExpressionArm.Config>
+	...[slot, input]: ['left', Partial<T.GroupExpressionArm.Config>] | ['right', Partial<T.GroupExpressionArm.Config>]
 ): T.GroupExpressionArm.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildGroupExpressionArm$patch(source, { ...(inputs.config as T.GroupExpressionArm.Config), ...config });
-	}
 	switch (slot) {
 		case 'left': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildGroupExpressionArm$patch(source, { ...(inputs.config as T.GroupExpressionArm.Config), ...input });
+			}
+			const config = input;
 			const _left = config.left;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'group_expression_arm', { left: _left });
@@ -1261,6 +1311,11 @@ function buildGroupExpressionArm$set(
 			});
 		}
 		case 'right': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildGroupExpressionArm$patch(source, { ...(inputs.config as T.GroupExpressionArm.Config), ...input });
+			}
+			const config = input;
 			const _right = config.right;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'group_expression_arm', { right: _right });
@@ -1274,7 +1329,6 @@ function buildGroupExpressionArm$set(
 			});
 		}
 	}
-	throw new Error(`group_expression_arm writes no slot ${slot} alone`);
 }
 function withGroupExpressionArm(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1335,18 +1389,20 @@ function buildNamedNodeExpressionArm$patch(
 }
 function buildNamedNodeExpressionArm$set(
 	source: object,
-	slot: string,
-	config: Partial<T.NamedNodeExpressionArm.Config>
+	...[slot, input]:
+		| ['left', Partial<T.NamedNodeExpressionArm.Config>]
+		| ['right', Partial<T.NamedNodeExpressionArm.Config>]
 ): T.NamedNodeExpressionArm.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildNamedNodeExpressionArm$patch(source, {
-			...(inputs.config as T.NamedNodeExpressionArm.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'left': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedNodeExpressionArm$patch(source, {
+					...(inputs.config as T.NamedNodeExpressionArm.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _left = config.left;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'named_node_expression_arm', { left: _left });
@@ -1360,6 +1416,14 @@ function buildNamedNodeExpressionArm$set(
 			});
 		}
 		case 'right': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedNodeExpressionArm$patch(source, {
+					...(inputs.config as T.NamedNodeExpressionArm.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _right = config.right;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'named_node_expression_arm', { right: _right });
@@ -1373,7 +1437,6 @@ function buildNamedNodeExpressionArm$set(
 			});
 		}
 	}
-	throw new Error(`named_node_expression_arm writes no slot ${slot} alone`);
 }
 function withNamedNodeExpressionArm(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1430,15 +1493,15 @@ function buildGroupingGroup$patch(source: object, config: T.GroupingGroup.Config
 }
 function buildGroupingGroup$set(
 	source: object,
-	slot: string,
-	config: Partial<T.GroupingGroup.Config>
+	...[slot, input]: ['groupExpression', Partial<T.GroupingGroup.Config>] | ['anchor', Partial<T.GroupingGroup.Config>]
 ): T.GroupingGroup.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildGroupingGroup$patch(source, { ...(inputs.config as T.GroupingGroup.Config), ...config });
-	}
 	switch (slot) {
 		case 'groupExpression': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildGroupingGroup$patch(source, { ...(inputs.config as T.GroupingGroup.Config), ...input });
+			}
+			const config = input;
 			const _group_expression = config.groupExpression;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'grouping_group', { groupExpression: _group_expression });
@@ -1452,6 +1515,11 @@ function buildGroupingGroup$set(
 			});
 		}
 		case 'anchor': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildGroupingGroup$patch(source, { ...(inputs.config as T.GroupingGroup.Config), ...input });
+			}
+			const config = input;
 			const _anchor = strictBooleanStorage(config.anchor);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'grouping_group', { anchor: _anchor });
@@ -1465,7 +1533,6 @@ function buildGroupingGroup$set(
 			});
 		}
 	}
-	throw new Error(`grouping_group writes no slot ${slot} alone`);
 }
 function withGroupingGroup(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1564,15 +1631,18 @@ function buildNamedNodePlain$patch(source: object, config: T.NamedNodePlain.Conf
 }
 function buildNamedNodePlain$set(
 	source: object,
-	slot: string,
-	config: Partial<T.NamedNodePlain.Config>
+	...[slot, input]:
+		| ['name', Partial<T.NamedNodePlain.Config>]
+		| ['namedNodeGroup', Partial<T.NamedNodePlain.Config>]
+		| ['elements', Partial<T.NamedNodePlain.Config>]
 ): T.NamedNodePlain.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildNamedNodePlain$patch(source, { ...(inputs.config as T.NamedNodePlain.Config), ...config });
-	}
 	switch (slot) {
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedNodePlain$patch(source, { ...(inputs.config as T.NamedNodePlain.Config), ...input });
+			}
+			const config = input;
 			const _name = kindIdStorage<NonNullable<T.NamedNodePlain['_name']>>(config.name);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'named_node_plain', { name: _name });
@@ -1586,6 +1656,11 @@ function buildNamedNodePlain$set(
 			});
 		}
 		case 'namedNodeGroup': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedNodePlain$patch(source, { ...(inputs.config as T.NamedNodePlain.Config), ...input });
+			}
+			const config = input;
 			const _named_node_group = config.namedNodeGroup;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'named_node_plain', { namedNodeGroup: _named_node_group });
@@ -1599,6 +1674,11 @@ function buildNamedNodePlain$set(
 			});
 		}
 		case 'elements': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedNodePlain$patch(source, { ...(inputs.config as T.NamedNodePlain.Config), ...input });
+			}
+			const config = input;
 			const _elements = listStorage<NonNullable<T.NamedNodePlain['_elements']>>(config.elements ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'named_node_plain', { elements: _elements });
@@ -1612,7 +1692,6 @@ function buildNamedNodePlain$set(
 			});
 		}
 	}
-	throw new Error(`named_node_plain writes no slot ${slot} alone`);
 }
 function withNamedNodePlain(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1704,15 +1783,19 @@ function buildNamedNodeSupertyped$patch(
 }
 function buildNamedNodeSupertyped$set(
 	source: object,
-	slot: string,
-	config: Partial<T.NamedNodeSupertyped.Config>
+	...[slot, input]:
+		| ['supertype', Partial<T.NamedNodeSupertyped.Config>]
+		| ['name', Partial<T.NamedNodeSupertyped.Config>]
+		| ['namedNodeGroup', Partial<T.NamedNodeSupertyped.Config>]
+		| ['elements', Partial<T.NamedNodeSupertyped.Config>]
 ): T.NamedNodeSupertyped.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildNamedNodeSupertyped$patch(source, { ...(inputs.config as T.NamedNodeSupertyped.Config), ...config });
-	}
 	switch (slot) {
 		case 'supertype': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedNodeSupertyped$patch(source, { ...(inputs.config as T.NamedNodeSupertyped.Config), ...input });
+			}
+			const config = input;
 			const _supertype = config.supertype;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'named_node_supertyped', { supertype: _supertype });
@@ -1726,6 +1809,11 @@ function buildNamedNodeSupertyped$set(
 			});
 		}
 		case 'name': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedNodeSupertyped$patch(source, { ...(inputs.config as T.NamedNodeSupertyped.Config), ...input });
+			}
+			const config = input;
 			const _name = config.name;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'named_node_supertyped', { name: _name });
@@ -1739,6 +1827,11 @@ function buildNamedNodeSupertyped$set(
 			});
 		}
 		case 'namedNodeGroup': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedNodeSupertyped$patch(source, { ...(inputs.config as T.NamedNodeSupertyped.Config), ...input });
+			}
+			const config = input;
 			const _named_node_group = config.namedNodeGroup;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'named_node_supertyped', { namedNodeGroup: _named_node_group });
@@ -1752,6 +1845,11 @@ function buildNamedNodeSupertyped$set(
 			});
 		}
 		case 'elements': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedNodeSupertyped$patch(source, { ...(inputs.config as T.NamedNodeSupertyped.Config), ...input });
+			}
+			const config = input;
 			const _elements = listStorage<NonNullable<T.NamedNodeSupertyped['_elements']>>(config.elements ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'named_node_supertyped', { elements: _elements });
@@ -1765,7 +1863,6 @@ function buildNamedNodeSupertyped$set(
 			});
 		}
 	}
-	throw new Error(`named_node_supertyped writes no slot ${slot} alone`);
 }
 function withNamedNodeSupertyped(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1847,18 +1944,20 @@ function buildNamedNodeGroupChildren$patch(
 }
 function buildNamedNodeGroupChildren$set(
 	source: object,
-	slot: string,
-	config: Partial<T.NamedNodeGroupChildren.Config>
+	...[slot, input]:
+		| ['anchor', Partial<T.NamedNodeGroupChildren.Config>]
+		| ['namedNodeExpressions', Partial<T.NamedNodeGroupChildren.Config>]
 ): T.NamedNodeGroupChildren.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildNamedNodeGroupChildren$patch(source, {
-			...(inputs.config as T.NamedNodeGroupChildren.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'anchor': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedNodeGroupChildren$patch(source, {
+					...(inputs.config as T.NamedNodeGroupChildren.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _anchor = strictBooleanStorage(config.anchor);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'named_node_group_children', { anchor: _anchor });
@@ -1872,6 +1971,14 @@ function buildNamedNodeGroupChildren$set(
 			});
 		}
 		case 'namedNodeExpressions': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedNodeGroupChildren$patch(source, {
+					...(inputs.config as T.NamedNodeGroupChildren.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _named_node_expressions = listStorage<NonNullable<T.NamedNodeGroupChildren['_named_node_expressions']>>(
 				config.namedNodeExpressions
 			);
@@ -1888,7 +1995,6 @@ function buildNamedNodeGroupChildren$set(
 			});
 		}
 	}
-	throw new Error(`named_node_group_children writes no slot ${slot} alone`);
 }
 function withNamedNodeGroupChildren(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1981,18 +2087,21 @@ function buildNamedNodeGroupAnchoredLast$patch(
 }
 function buildNamedNodeGroupAnchoredLast$set(
 	source: object,
-	slot: string,
-	config: Partial<T.NamedNodeGroupAnchoredLast.Config>
+	...[slot, input]:
+		| ['anchor', Partial<T.NamedNodeGroupAnchoredLast.Config>]
+		| ['namedNodeExpressions', Partial<T.NamedNodeGroupAnchoredLast.Config>]
+		| ['last', Partial<T.NamedNodeGroupAnchoredLast.Config>]
 ): T.NamedNodeGroupAnchoredLast.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildNamedNodeGroupAnchoredLast$patch(source, {
-			...(inputs.config as T.NamedNodeGroupAnchoredLast.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'anchor': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedNodeGroupAnchoredLast$patch(source, {
+					...(inputs.config as T.NamedNodeGroupAnchoredLast.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _anchor = strictBooleanStorage(config.anchor);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'named_node_group_anchored_last', { anchor: _anchor });
@@ -2006,6 +2115,14 @@ function buildNamedNodeGroupAnchoredLast$set(
 			});
 		}
 		case 'namedNodeExpressions': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedNodeGroupAnchoredLast$patch(source, {
+					...(inputs.config as T.NamedNodeGroupAnchoredLast.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _named_node_expressions = listStorage<NonNullable<T.NamedNodeGroupAnchoredLast['_named_node_expressions']>>(
 				config.namedNodeExpressions ?? []
 			);
@@ -2022,6 +2139,14 @@ function buildNamedNodeGroupAnchoredLast$set(
 			});
 		}
 		case 'last': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedNodeGroupAnchoredLast$patch(source, {
+					...(inputs.config as T.NamedNodeGroupAnchoredLast.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _last = config.last;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'named_node_group_anchored_last', { last: _last });
@@ -2035,7 +2160,6 @@ function buildNamedNodeGroupAnchoredLast$set(
 			});
 		}
 	}
-	throw new Error(`named_node_group_anchored_last writes no slot ${slot} alone`);
 }
 function withNamedNodeGroupAnchoredLast(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);

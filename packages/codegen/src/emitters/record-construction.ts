@@ -8,6 +8,7 @@ import { VERBATIM_FIELD, nodeRecordLayout } from './render-module.ts';
 export const RECORD_CONSTRUCTION_IMPORTS = [
 	'builtArenaOf',
 	'builtInputs',
+	'listSettingsOf',
 	'patchesByCopy',
 	'storeCell',
 	'storeFlag',
@@ -68,6 +69,7 @@ export interface RecordParts {
 	readonly tail: readonly string[];
 	readonly patchTail: readonly string[] | undefined;
 	readonly slotTail: (storageKey: string) => readonly string[];
+	readonly optionsTail: readonly string[] | undefined;
 	readonly after: readonly string[];
 }
 
@@ -93,7 +95,7 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 	const places = recordPlacesOf(spec.node, nodeMap);
 	const layout = nodeRecordLayout(spec.node, nodeMap);
 	if (places === undefined || layout === undefined) {
-		return { tail: recordRefusalLines(spec.node), patchTail: recordRefusalLines(spec.node), slotTail: () => recordRefusalLines(spec.node), after: [] };
+		return { tail: recordRefusalLines(spec.node), patchTail: recordRefusalLines(spec.node), slotTail: () => recordRefusalLines(spec.node), optionsTail: undefined, after: [] };
 	}
 	views.width(spec.node, layout);
 	const placed = spec.slots.map((slot): PlacedSlot => {
@@ -124,16 +126,22 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 		if (at < 0) throw new Error(`recordParts: ${spec.node.kind} stores no slot ${storageKey}`);
 		return tailOf(`arena.copy(source, ${spec.kind}, ${at})`, [placed[at]!], slotPatch, undefined, [`    arena.carry(source, record, ${at});`]);
 	};
+	const sided = options !== undefined && (options.delimiter || options.separator);
+	const optionsTail = sided
+		? tailOf(`arena.copy(source, ${spec.kind}, ${placed.length})`, [], slotPatch, undefined, [`    patchListOptions(${listOptions});`, `    arena.carry(source, record, ${placed.length});`])
+		: undefined;
 	if (spec.inputs === 'kind') {
 		views.requireWith(spec.node);
-		return { tail, patchTail, slotTail, after: [] };
+		return { tail, patchTail, slotTail, optionsTail, after: [] };
 	}
 	const setters = spec.setters ?? [];
+	const rows = [...placed.map(({ place }) => placeRow(place)), ...(sided ? [`['side', ${options.delimiter}, ${options.separator}]`] : [])];
 	return {
 		tail,
 		patchTail: setters.length === 0 ? undefined : patchTail,
 		slotTail,
-		after: views.with(spec.node, spec.inputs, spec.readers ?? [], setters, placed.map(({ place }) => place))
+		optionsTail,
+		after: views.with(spec.node, spec.inputs, spec.readers ?? [], setters, rows)
 	};
 }
 
@@ -193,12 +201,12 @@ export class BuiltViewTable {
 	readonly #cells = new Map<number, number>();
 	readonly #places = new Map<number, string>();
 
-	with(node: ViewKind, inputs: readonly HeldRead[], readers: readonly string[], setters: readonly SetterEntry[], places: readonly RecordPlace[]): string[] {
+	with(node: ViewKind, inputs: readonly HeldRead[], readers: readonly string[], setters: readonly SetterEntry[], places: readonly string[]): string[] {
 		const kindId = viewKindId(node);
 		if (this.#withs.has(kindId)) throw new Error(`record views: ${node.kind} has two record builders that each write its setters`);
 		const name = `with${node.typeName}`;
 		this.#withs.set(kindId, name);
-		this.#places.set(kindId, `[${places.map(placeRow).join(', ')}]`);
+		this.#places.set(kindId, `[${places.join(', ')}]`);
 		return builtWithLines(name, node.kind, inputs, readers, setters);
 	}
 

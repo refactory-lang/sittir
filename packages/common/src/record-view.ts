@@ -330,8 +330,13 @@ export function builtInputs(node: object): BuilderInputs {
 		const read = members[accessor];
 		return typeof read === 'function' ? listed((read as () => unknown).call(node)) : undefined;
 	});
+	const settings = listSettingsOf(node);
+	return settings === undefined ? inputs : { ...inputs, options: { ...inputs.options, ...settings } };
+}
+
+export function listSettingsOf(node: object): Readonly<Record<string, unknown>> | undefined {
 	const settings = Object.entries({ delimiter: chosenDelimiterOf(node), separator: chosenSeparatorOf(node) }).filter(([, value]) => value !== undefined);
-	return settings.length === 0 ? inputs : { ...inputs, options: { ...inputs.options, ...Object.fromEntries(settings) } };
+	return settings.length === 0 ? undefined : Object.fromEntries(settings);
 }
 
 function listed(value: unknown): unknown {

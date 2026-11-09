@@ -218,7 +218,10 @@ const OTHER_ENGINE_RECORD = "cannot write another engine's record into a side: a
 
 export type BuiltWith = (node: object, name: string, args: readonly unknown[]) => unknown;
 
-export type BuiltPlaceRow = readonly [word: number, bit: number] | readonly [word: number, built: number, width: number, forms: number, inline: number, run: number];
+export type BuiltPlaceRow =
+	| readonly [word: number, bit: number]
+	| readonly [side: 'side', delimiter: boolean, separator: boolean]
+	| readonly [word: number, built: number, width: number, forms: number, inline: number, run: number];
 
 export interface BuiltViews {
 	readonly withs: Readonly<Record<number, BuiltWith>>;
@@ -804,6 +807,11 @@ export class BuiltArena {
 		if (place.length === 2) {
 			const [word, bit] = place;
 			if (recordFlag(source, word, bit)) storeFlag(record.data, record.base + word, 2 ** bit);
+			return;
+		}
+		if (place.length === 3) {
+			const [, delimiter, separator] = place;
+			storeListOptions(this, record, delimiter ? recordDelimiter(source) : undefined, separator ? recordSeparator(source) : undefined);
 			return;
 		}
 		const [word, built, width, forms, inline, run] = place;

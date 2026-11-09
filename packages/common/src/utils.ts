@@ -934,6 +934,7 @@ export {
 	rowWith,
 	builtInputs,
 	chosenSeparatorOf,
+	listSettingsOf,
 	slotValuesOf,
 	storedSlotValues,
 	type RefusedSlot

@@ -287,15 +287,17 @@ function buildLookaheadAssertion$patch(
 }
 function buildLookaheadAssertion$set(
 	source: object,
-	slot: string,
-	config: Partial<T.LookaheadAssertion.Config>
+	...[slot, input]:
+		| ['operator', Partial<T.LookaheadAssertion.Config>]
+		| ['pattern', Partial<T.LookaheadAssertion.Config>]
 ): T.LookaheadAssertion.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildLookaheadAssertion$patch(source, { ...(inputs.config as T.LookaheadAssertion.Config), ...config });
-	}
 	switch (slot) {
 		case 'operator': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLookaheadAssertion$patch(source, { ...(inputs.config as T.LookaheadAssertion.Config), ...input });
+			}
+			const config = input;
 			const _operator = kindIdStorage<NonNullable<T.LookaheadAssertion['_operator']>>(config.operator);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'lookahead_assertion', { operator: _operator });
@@ -309,6 +311,11 @@ function buildLookaheadAssertion$set(
 			});
 		}
 		case 'pattern': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLookaheadAssertion$patch(source, { ...(inputs.config as T.LookaheadAssertion.Config), ...input });
+			}
+			const config = input;
 			const _pattern = config.pattern;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'lookahead_assertion', { pattern: _pattern });
@@ -322,7 +329,6 @@ function buildLookaheadAssertion$set(
 			});
 		}
 	}
-	throw new Error(`lookahead_assertion writes no slot ${slot} alone`);
 }
 function withLookaheadAssertion(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -380,15 +386,17 @@ function buildLookbehindAssertion$patch(
 }
 function buildLookbehindAssertion$set(
 	source: object,
-	slot: string,
-	config: Partial<T.LookbehindAssertion.Config>
+	...[slot, input]:
+		| ['operator', Partial<T.LookbehindAssertion.Config>]
+		| ['pattern', Partial<T.LookbehindAssertion.Config>]
 ): T.LookbehindAssertion.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildLookbehindAssertion$patch(source, { ...(inputs.config as T.LookbehindAssertion.Config), ...config });
-	}
 	switch (slot) {
 		case 'operator': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLookbehindAssertion$patch(source, { ...(inputs.config as T.LookbehindAssertion.Config), ...input });
+			}
+			const config = input;
 			const _operator = kindIdStorage<NonNullable<T.LookbehindAssertion['_operator']>>(config.operator);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'lookbehind_assertion', { operator: _operator });
@@ -402,6 +410,11 @@ function buildLookbehindAssertion$set(
 			});
 		}
 		case 'pattern': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildLookbehindAssertion$patch(source, { ...(inputs.config as T.LookbehindAssertion.Config), ...input });
+			}
+			const config = input;
 			const _pattern = config.pattern;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'lookbehind_assertion', { pattern: _pattern });
@@ -415,7 +428,6 @@ function buildLookbehindAssertion$set(
 			});
 		}
 	}
-	throw new Error(`lookbehind_assertion writes no slot ${slot} alone`);
 }
 function withLookbehindAssertion(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -523,15 +535,19 @@ function buildCharacterClass$patch(
 }
 function buildCharacterClass$set(
 	source: object,
-	slot: string,
-	config: Partial<T.CharacterClass.Config>
+	...[slot, input]:
+		| ['negation', Partial<T.CharacterClass.Config>]
+		| ['leading', Partial<T.CharacterClass.Config>]
+		| ['classAtoms', Partial<T.CharacterClass.Config>]
+		| ['trailing', Partial<T.CharacterClass.Config>]
 ): T.CharacterClass.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildCharacterClass$patch(source, { ...(inputs.config as T.CharacterClass.Config), ...config });
-	}
 	switch (slot) {
 		case 'negation': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCharacterClass$patch(source, { ...(inputs.config as T.CharacterClass.Config), ...input });
+			}
+			const config = input;
 			const _negation = strictBooleanStorage(config.negation);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'character_class', { negation: _negation });
@@ -545,6 +561,11 @@ function buildCharacterClass$set(
 			});
 		}
 		case 'leading': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCharacterClass$patch(source, { ...(inputs.config as T.CharacterClass.Config), ...input });
+			}
+			const config = input;
 			const _leading = strictBooleanStorage(config.leading);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'character_class', { leading: _leading });
@@ -558,6 +579,11 @@ function buildCharacterClass$set(
 			});
 		}
 		case 'classAtoms': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCharacterClass$patch(source, { ...(inputs.config as T.CharacterClass.Config), ...input });
+			}
+			const config = input;
 			const _class_atoms = listStorage<NonNullable<T.CharacterClass['_class_atoms']>>(config.classAtoms ?? []);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'character_class', { classAtoms: _class_atoms });
@@ -571,6 +597,11 @@ function buildCharacterClass$set(
 			});
 		}
 		case 'trailing': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCharacterClass$patch(source, { ...(inputs.config as T.CharacterClass.Config), ...input });
+			}
+			const config = input;
 			const _trailing = strictBooleanStorage(config.trailing);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'character_class', { trailing: _trailing });
@@ -584,7 +615,6 @@ function buildCharacterClass$set(
 			});
 		}
 	}
-	throw new Error(`character_class writes no slot ${slot} alone`);
 }
 function withCharacterClass(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -732,13 +762,17 @@ function buildClassRange$patch(source: object, config: T.ClassRange.Config): T.C
 		return node as unknown as T.ClassRange.Bound;
 	});
 }
-function buildClassRange$set(source: object, slot: string, config: Partial<T.ClassRange.Config>): T.ClassRange.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildClassRange$patch(source, { ...(inputs.config as T.ClassRange.Config), ...config });
-	}
+function buildClassRange$set(
+	source: object,
+	...[slot, input]: ['start', Partial<T.ClassRange.Config>] | ['end', Partial<T.ClassRange.Config>]
+): T.ClassRange.Bound {
 	switch (slot) {
 		case 'start': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildClassRange$patch(source, { ...(inputs.config as T.ClassRange.Config), ...input });
+			}
+			const config = input;
 			const _start = kindIdStorage<NonNullable<T.ClassRange['_start']>>(config.start);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'class_range', { start: _start });
@@ -752,6 +786,11 @@ function buildClassRange$set(source: object, slot: string, config: Partial<T.Cla
 			});
 		}
 		case 'end': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildClassRange$patch(source, { ...(inputs.config as T.ClassRange.Config), ...input });
+			}
+			const config = input;
 			const _end = kindIdStorage<NonNullable<T.ClassRange['_end']>>(config.end);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'class_range', { end: _end });
@@ -765,7 +804,6 @@ function buildClassRange$set(source: object, slot: string, config: Partial<T.Cla
 			});
 		}
 	}
-	throw new Error(`class_range writes no slot ${slot} alone`);
 }
 function withClassRange(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -920,15 +958,18 @@ function buildNamedCapturingGroup$patch(
 }
 function buildNamedCapturingGroup$set(
 	source: object,
-	slot: string,
-	config: Partial<T.NamedCapturingGroup.Config>
+	...[slot, input]:
+		| ['operator', Partial<T.NamedCapturingGroup.Config>]
+		| ['groupName', Partial<T.NamedCapturingGroup.Config>]
+		| ['pattern', Partial<T.NamedCapturingGroup.Config>]
 ): T.NamedCapturingGroup.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildNamedCapturingGroup$patch(source, { ...(inputs.config as T.NamedCapturingGroup.Config), ...config });
-	}
 	switch (slot) {
 		case 'operator': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedCapturingGroup$patch(source, { ...(inputs.config as T.NamedCapturingGroup.Config), ...input });
+			}
+			const config = input;
 			const _operator = kindIdStorage<NonNullable<T.NamedCapturingGroup['_operator']>>(config.operator);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'named_capturing_group', { operator: _operator });
@@ -942,6 +983,11 @@ function buildNamedCapturingGroup$set(
 			});
 		}
 		case 'groupName': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedCapturingGroup$patch(source, { ...(inputs.config as T.NamedCapturingGroup.Config), ...input });
+			}
+			const config = input;
 			const _group_name = config.groupName;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'named_capturing_group', { groupName: _group_name });
@@ -955,6 +1001,11 @@ function buildNamedCapturingGroup$set(
 			});
 		}
 		case 'pattern': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildNamedCapturingGroup$patch(source, { ...(inputs.config as T.NamedCapturingGroup.Config), ...input });
+			}
+			const config = input;
 			const _pattern = config.pattern;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'named_capturing_group', { pattern: _pattern });
@@ -968,7 +1019,6 @@ function buildNamedCapturingGroup$set(
 			});
 		}
 	}
-	throw new Error(`named_capturing_group writes no slot ${slot} alone`);
 }
 function withNamedCapturingGroup(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1105,13 +1155,17 @@ function buildZeroOrMore$patch(source: object, config: Partial<T.ZeroOrMore.Conf
 		return node as unknown as T.ZeroOrMore.Bound;
 	});
 }
-function buildZeroOrMore$set(source: object, slot: string, config: Partial<T.ZeroOrMore.Config>): T.ZeroOrMore.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildZeroOrMore$patch(source, { ...(inputs.config as T.ZeroOrMore.Config), ...config });
-	}
+function buildZeroOrMore$set(
+	source: object,
+	...[slot, input]: ['lazy', Partial<T.ZeroOrMore.Config>]
+): T.ZeroOrMore.Bound {
 	switch (slot) {
 		case 'lazy': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildZeroOrMore$patch(source, { ...(inputs.config as T.ZeroOrMore.Config), ...input });
+			}
+			const config = input;
 			const _lazy = strictBooleanStorage(config.lazy);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'zero_or_more', { lazy: _lazy });
@@ -1125,7 +1179,6 @@ function buildZeroOrMore$set(source: object, slot: string, config: Partial<T.Zer
 			});
 		}
 	}
-	throw new Error(`zero_or_more writes no slot ${slot} alone`);
 }
 function withZeroOrMore(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1167,13 +1220,17 @@ function buildOneOrMore$patch(source: object, config: Partial<T.OneOrMore.Config
 		return node as unknown as T.OneOrMore.Bound;
 	});
 }
-function buildOneOrMore$set(source: object, slot: string, config: Partial<T.OneOrMore.Config>): T.OneOrMore.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildOneOrMore$patch(source, { ...(inputs.config as T.OneOrMore.Config), ...config });
-	}
+function buildOneOrMore$set(
+	source: object,
+	...[slot, input]: ['lazy', Partial<T.OneOrMore.Config>]
+): T.OneOrMore.Bound {
 	switch (slot) {
 		case 'lazy': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildOneOrMore$patch(source, { ...(inputs.config as T.OneOrMore.Config), ...input });
+			}
+			const config = input;
 			const _lazy = strictBooleanStorage(config.lazy);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'one_or_more', { lazy: _lazy });
@@ -1187,7 +1244,6 @@ function buildOneOrMore$set(source: object, slot: string, config: Partial<T.OneO
 			});
 		}
 	}
-	throw new Error(`one_or_more writes no slot ${slot} alone`);
 }
 function withOneOrMore(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1229,13 +1285,14 @@ function buildOptional$patch(source: object, config: Partial<T.Optional.Config> 
 		return node as unknown as T.Optional.Bound;
 	});
 }
-function buildOptional$set(source: object, slot: string, config: Partial<T.Optional.Config>): T.Optional.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildOptional$patch(source, { ...(inputs.config as T.Optional.Config), ...config });
-	}
+function buildOptional$set(source: object, ...[slot, input]: ['lazy', Partial<T.Optional.Config>]): T.Optional.Bound {
 	switch (slot) {
 		case 'lazy': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildOptional$patch(source, { ...(inputs.config as T.Optional.Config), ...input });
+			}
+			const config = input;
 			const _lazy = strictBooleanStorage(config.lazy);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'optional', { lazy: _lazy });
@@ -1249,7 +1306,6 @@ function buildOptional$set(source: object, slot: string, config: Partial<T.Optio
 			});
 		}
 	}
-	throw new Error(`optional writes no slot ${slot} alone`);
 }
 function withOptional(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1300,15 +1356,15 @@ function buildCountQuantifier$patch(source: object, config: T.CountQuantifier.Co
 }
 function buildCountQuantifier$set(
 	source: object,
-	slot: string,
-	config: Partial<T.CountQuantifier.Config>
+	...[slot, input]: ['content', Partial<T.CountQuantifier.Config>] | ['lazy', Partial<T.CountQuantifier.Config>]
 ): T.CountQuantifier.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildCountQuantifier$patch(source, { ...(inputs.config as T.CountQuantifier.Config), ...config });
-	}
 	switch (slot) {
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCountQuantifier$patch(source, { ...(inputs.config as T.CountQuantifier.Config), ...input });
+			}
+			const config = input;
 			const _content = config.content;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'count_quantifier', { content: _content });
@@ -1322,6 +1378,11 @@ function buildCountQuantifier$set(
 			});
 		}
 		case 'lazy': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCountQuantifier$patch(source, { ...(inputs.config as T.CountQuantifier.Config), ...input });
+			}
+			const config = input;
 			const _lazy = strictBooleanStorage(config.lazy);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'count_quantifier', { lazy: _lazy });
@@ -1335,7 +1396,6 @@ function buildCountQuantifier$set(
 			});
 		}
 	}
-	throw new Error(`count_quantifier writes no slot ${slot} alone`);
 }
 function withCountQuantifier(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1617,18 +1677,20 @@ function buildUnicodePropertyValueExpression$patch(
 }
 function buildUnicodePropertyValueExpression$set(
 	source: object,
-	slot: string,
-	config: Partial<T.UnicodePropertyValueExpression.Config>
+	...[slot, input]:
+		| ['unicodePropertyValueExpressionGroup', Partial<T.UnicodePropertyValueExpression.Config>]
+		| ['unicodePropertyValue', Partial<T.UnicodePropertyValueExpression.Config>]
 ): T.UnicodePropertyValueExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildUnicodePropertyValueExpression$patch(source, {
-			...(inputs.config as T.UnicodePropertyValueExpression.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'unicodePropertyValueExpressionGroup': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildUnicodePropertyValueExpression$patch(source, {
+					...(inputs.config as T.UnicodePropertyValueExpression.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _unicode_property_value_expression_group = config.unicodePropertyValueExpressionGroup;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -1651,6 +1713,14 @@ function buildUnicodePropertyValueExpression$set(
 			});
 		}
 		case 'unicodePropertyValue': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildUnicodePropertyValueExpression$patch(source, {
+					...(inputs.config as T.UnicodePropertyValueExpression.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _unicode_property_value = config.unicodePropertyValue;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -1665,7 +1735,6 @@ function buildUnicodePropertyValueExpression$set(
 			});
 		}
 	}
-	throw new Error(`unicode_property_value_expression writes no slot ${slot} alone`);
 }
 function withUnicodePropertyValueExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -1937,13 +2006,17 @@ function buildTermGroup$patch(source: object, config: T.TermGroup.Config): T.Ter
 		return node as unknown as T.TermGroup.Bound;
 	});
 }
-function buildTermGroup$set(source: object, slot: string, config: Partial<T.TermGroup.Config>): T.TermGroup.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildTermGroup$patch(source, { ...(inputs.config as T.TermGroup.Config), ...config });
-	}
+function buildTermGroup$set(
+	source: object,
+	...[slot, input]: ['content', Partial<T.TermGroup.Config>] | ['quantifier', Partial<T.TermGroup.Config>]
+): T.TermGroup.Bound {
 	switch (slot) {
 		case 'content': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTermGroup$patch(source, { ...(inputs.config as T.TermGroup.Config), ...input });
+			}
+			const config = input;
 			const _content = kindIdStorage<NonNullable<T.TermGroup['_content']>>(config.content);
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'term_group', { content: _content });
@@ -1957,6 +2030,11 @@ function buildTermGroup$set(source: object, slot: string, config: Partial<T.Term
 			});
 		}
 		case 'quantifier': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildTermGroup$patch(source, { ...(inputs.config as T.TermGroup.Config), ...input });
+			}
+			const config = input;
 			const _quantifier = config.quantifier;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'term_group', { quantifier: _quantifier });
@@ -1970,7 +2048,6 @@ function buildTermGroup$set(source: object, slot: string, config: Partial<T.Term
 			});
 		}
 	}
-	throw new Error(`term_group writes no slot ${slot} alone`);
 }
 function withTermGroup(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -2083,15 +2160,17 @@ function buildCountQuantifierArm$patch(
 }
 function buildCountQuantifierArm$set(
 	source: object,
-	slot: string,
-	config: Partial<T.CountQuantifierArm.Config>
+	...[slot, input]:
+		| ['decimalDigits', Partial<T.CountQuantifierArm.Config>]
+		| ['countQuantifierGroup', Partial<T.CountQuantifierArm.Config>]
 ): T.CountQuantifierArm.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildCountQuantifierArm$patch(source, { ...(inputs.config as T.CountQuantifierArm.Config), ...config });
-	}
 	switch (slot) {
 		case 'decimalDigits': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCountQuantifierArm$patch(source, { ...(inputs.config as T.CountQuantifierArm.Config), ...input });
+			}
+			const config = input;
 			const _decimal_digits = config.decimalDigits;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'count_quantifier_arm', { decimalDigits: _decimal_digits });
@@ -2105,6 +2184,11 @@ function buildCountQuantifierArm$set(
 			});
 		}
 		case 'countQuantifierGroup': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCountQuantifierArm$patch(source, { ...(inputs.config as T.CountQuantifierArm.Config), ...input });
+			}
+			const config = input;
 			const _count_quantifier_group = config.countQuantifierGroup;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -2119,7 +2203,6 @@ function buildCountQuantifierArm$set(
 			});
 		}
 	}
-	throw new Error(`count_quantifier_arm writes no slot ${slot} alone`);
 }
 function withCountQuantifierArm(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -2210,18 +2293,20 @@ function buildCharacterClassEscapeArm$patch(
 }
 function buildCharacterClassEscapeArm$set(
 	source: object,
-	slot: string,
-	config: Partial<T.CharacterClassEscapeArm.Config>
+	...[slot, input]:
+		| ['characterClassEscapeText2', Partial<T.CharacterClassEscapeArm.Config>]
+		| ['unicodePropertyValueExpression', Partial<T.CharacterClassEscapeArm.Config>]
 ): T.CharacterClassEscapeArm.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildCharacterClassEscapeArm$patch(source, {
-			...(inputs.config as T.CharacterClassEscapeArm.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'characterClassEscapeText2': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCharacterClassEscapeArm$patch(source, {
+					...(inputs.config as T.CharacterClassEscapeArm.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _character_class_escape_text2 = config.characterClassEscapeText2;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -2238,6 +2323,14 @@ function buildCharacterClassEscapeArm$set(
 			});
 		}
 		case 'unicodePropertyValueExpression': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildCharacterClassEscapeArm$patch(source, {
+					...(inputs.config as T.CharacterClassEscapeArm.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _unicode_property_value_expression = config.unicodePropertyValueExpression;
 			const handle = currentHandle();
 			if (handle !== undefined)
@@ -2260,7 +2353,6 @@ function buildCharacterClassEscapeArm$set(
 			});
 		}
 	}
-	throw new Error(`character_class_escape_arm writes no slot ${slot} alone`);
 }
 function withCharacterClassEscapeArm(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -2439,18 +2531,20 @@ function buildInlineFlagsGroupEnable$patch(
 }
 function buildInlineFlagsGroupEnable$set(
 	source: object,
-	slot: string,
-	config: Partial<T.InlineFlagsGroupEnable.Config>
+	...[slot, input]:
+		| ['enabled', Partial<T.InlineFlagsGroupEnable.Config>]
+		| ['pattern', Partial<T.InlineFlagsGroupEnable.Config>]
 ): T.InlineFlagsGroupEnable.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildInlineFlagsGroupEnable$patch(source, {
-			...(inputs.config as T.InlineFlagsGroupEnable.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'enabled': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildInlineFlagsGroupEnable$patch(source, {
+					...(inputs.config as T.InlineFlagsGroupEnable.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _enabled = config.enabled;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'inline_flags_group_enable', { enabled: _enabled });
@@ -2464,6 +2558,14 @@ function buildInlineFlagsGroupEnable$set(
 			});
 		}
 		case 'pattern': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildInlineFlagsGroupEnable$patch(source, {
+					...(inputs.config as T.InlineFlagsGroupEnable.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _pattern = config.pattern;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'inline_flags_group_enable', { pattern: _pattern });
@@ -2477,7 +2579,6 @@ function buildInlineFlagsGroupEnable$set(
 			});
 		}
 	}
-	throw new Error(`inline_flags_group_enable writes no slot ${slot} alone`);
 }
 function withInlineFlagsGroupEnable(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -2548,18 +2649,21 @@ function buildInlineFlagsGroupToggle$patch(
 }
 function buildInlineFlagsGroupToggle$set(
 	source: object,
-	slot: string,
-	config: Partial<T.InlineFlagsGroupToggle.Config>
+	...[slot, input]:
+		| ['enabled', Partial<T.InlineFlagsGroupToggle.Config>]
+		| ['disabled', Partial<T.InlineFlagsGroupToggle.Config>]
+		| ['pattern', Partial<T.InlineFlagsGroupToggle.Config>]
 ): T.InlineFlagsGroupToggle.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildInlineFlagsGroupToggle$patch(source, {
-			...(inputs.config as T.InlineFlagsGroupToggle.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'enabled': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildInlineFlagsGroupToggle$patch(source, {
+					...(inputs.config as T.InlineFlagsGroupToggle.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _enabled = config.enabled;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'inline_flags_group_toggle', { enabled: _enabled });
@@ -2573,6 +2677,14 @@ function buildInlineFlagsGroupToggle$set(
 			});
 		}
 		case 'disabled': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildInlineFlagsGroupToggle$patch(source, {
+					...(inputs.config as T.InlineFlagsGroupToggle.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _disabled = config.disabled;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'inline_flags_group_toggle', { disabled: _disabled });
@@ -2586,6 +2698,14 @@ function buildInlineFlagsGroupToggle$set(
 			});
 		}
 		case 'pattern': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildInlineFlagsGroupToggle$patch(source, {
+					...(inputs.config as T.InlineFlagsGroupToggle.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _pattern = config.pattern;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'inline_flags_group_toggle', { pattern: _pattern });
@@ -2599,7 +2719,6 @@ function buildInlineFlagsGroupToggle$set(
 			});
 		}
 	}
-	throw new Error(`inline_flags_group_toggle writes no slot ${slot} alone`);
 }
 function withInlineFlagsGroupToggle(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
@@ -2668,18 +2787,20 @@ function buildInlineFlagsGroupDisable$patch(
 }
 function buildInlineFlagsGroupDisable$set(
 	source: object,
-	slot: string,
-	config: Partial<T.InlineFlagsGroupDisable.Config>
+	...[slot, input]:
+		| ['disabled', Partial<T.InlineFlagsGroupDisable.Config>]
+		| ['pattern', Partial<T.InlineFlagsGroupDisable.Config>]
 ): T.InlineFlagsGroupDisable.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		return buildInlineFlagsGroupDisable$patch(source, {
-			...(inputs.config as T.InlineFlagsGroupDisable.Config),
-			...config
-		});
-	}
 	switch (slot) {
 		case 'disabled': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildInlineFlagsGroupDisable$patch(source, {
+					...(inputs.config as T.InlineFlagsGroupDisable.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _disabled = config.disabled;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'inline_flags_group_disable', { disabled: _disabled });
@@ -2693,6 +2814,14 @@ function buildInlineFlagsGroupDisable$set(
 			});
 		}
 		case 'pattern': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildInlineFlagsGroupDisable$patch(source, {
+					...(inputs.config as T.InlineFlagsGroupDisable.Config),
+					...input
+				});
+			}
+			const config = input;
 			const _pattern = config.pattern;
 			const handle = currentHandle();
 			if (handle !== undefined) admitChildren(handle, 'inline_flags_group_disable', { pattern: _pattern });
@@ -2706,7 +2835,6 @@ function buildInlineFlagsGroupDisable$set(
 			});
 		}
 	}
-	throw new Error(`inline_flags_group_disable writes no slot ${slot} alone`);
 }
 function withInlineFlagsGroupDisable(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
