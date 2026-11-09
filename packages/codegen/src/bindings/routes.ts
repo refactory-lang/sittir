@@ -1089,12 +1089,13 @@ function admittedKinds(model: SlotModel, claim: ClaimFact): string[] {
 	const holder = claim.within[0];
 	if (holder === undefined || holder === WILDCARD)
 		throw new Error(`bindings: the wildcard claim @${claim.vocab} has no enclosing kind to read its kinds from`);
-	const node = modelNode(model, holder);
-	const slots = node?.slots ?? [];
-	const admitted =
-		claim.field === null
+	const admitted = heldForms(model, holder).flatMap((form) => {
+		const node = modelNode(model, form);
+		const slots = node?.slots ?? [];
+		return claim.field === null
 			? [...slots.filter(holdsNodes).flatMap((slot) => slot.kinds), ...(node?.elementKinds ?? [])]
 			: (slotByField(slots, claim.field)?.kinds ?? []);
+	});
 	return concreteKinds(model, admitted);
 }
 
