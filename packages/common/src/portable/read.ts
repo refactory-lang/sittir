@@ -4,7 +4,7 @@ import { isErrorNode } from '../utils.ts';
 import { treeOf } from '../tree-token.ts';
 import { spelledMember } from '../spelled.ts';
 import { hasKind, type HoldingFact, type PortableClassifier } from './classify.ts';
-import { builtFlags, textBuilt, tokenText } from './facts.ts';
+import { builtFlags, leafSeatOf, textBuilt, tokenText } from './facts.ts';
 import { slotItems } from '../query-holds.ts';
 
 type Node = { readonly $type: number };
@@ -233,10 +233,13 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		const kind = kindOfValue(held);
 		return kind !== undefined && kind !== preset.kind;
 	};
-	const rebuilds = (kind: number, seats: readonly PortableSeat[] | undefined): boolean =>
-		seats === undefined || tokenText(kind, seats) !== undefined || seats.some((seat) => (seat.leaf === undefined ? seat.text === true : (seat.texts ?? []).includes(kind)));
+	const rebuilds = (kind: number, text: string, seats: readonly PortableSeat[] | undefined): boolean => {
+		if (seats === undefined || tokenText(kind, seats) !== undefined) return true;
+		const leaf = leafSeatOf(text, seats);
+		return leaf === undefined ? seats.some((seat) => seat.text === true) : (leaf.texts ?? []).includes(kind);
+	};
 	const spelledAs = (kind: number, path: string | undefined, arms: readonly PortableBuildArm[], text: string, seats: readonly PortableSeat[] | undefined): unknown =>
-		rebuilds(kind, seats) ? text : path !== undefined && arms.length > 0 && arms.every((arm) => textBuilt(table, arm)) ? { $path: path, $value: text } : undefined;
+		rebuilds(kind, text, seats) ? text : path !== undefined && arms.length > 0 && arms.every((arm) => textBuilt(table, arm)) ? { $path: path, $value: text } : undefined;
 	const facetText = (token: object, facet: string): string | undefined => {
 		const held = accessed(token, facet);
 		return typeof held === 'string' ? held : textOf(held);
@@ -296,7 +299,8 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		if (path === undefined || claimed.length === 0) {
 			const content = typeof value === 'number' ? undefined : seats?.find((seat) => seat.contents?.[kind] !== undefined)?.contents?.[kind];
 			const spelled = content === undefined ? undefined : textOf(accessed(value as object, content));
-			const rebuilt = typeof value === 'number' || seats === undefined || !rebuilds(kind, seats) ? undefined : nodeText(value);
+			const own = typeof value === 'number' || seats === undefined ? undefined : nodeText(value);
+			const rebuilt = own !== undefined && rebuilds(kind, own, seats) ? own : undefined;
 			return tokenText(kind, seats) ?? spelled ?? rebuilt ?? (typeof value === 'number' ? value : kept(value as Node, { reason: 'unclaimed' }, carried));
 		}
 		const arms = typeof value === 'number' ? claimed : claimed.filter((arm) => !arm.presets.some((preset) => contradicts(value as Node, preset)));

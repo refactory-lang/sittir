@@ -20,7 +20,7 @@ import type {
 	PortableValueBuild
 } from '@sittir/types';
 import { hasKind } from './classify.ts';
-import { textBuilt, tokenKind, tokenText } from './facts.ts';
+import { leafSeatOf, spells, textBuilt, tokenKind, tokenText } from './facts.ts';
 import { vocabularyPathFeatures } from './vocabulary-paths.ts';
 
 export interface PortableBuildContext {
@@ -233,12 +233,6 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 		const keyed = into === undefined ? placed : { ...placed, key: into.key, ...(Object.keys(beside).length === 0 ? {} : { beside }) };
 		return head?.mounted === undefined ? keyed : { ...keyed, mount: head };
 	};
-	const patterns = new WeakMap<NonNullable<PortableSeat['pattern']>, RegExp>();
-	const spells = (seat: PortableSeat, text: string): boolean => {
-		if (seat.pattern === undefined) return true;
-		const regex = patterns.get(seat.pattern) ?? patterns.set(seat.pattern, new RegExp(seat.pattern.source, seat.pattern.flags)).get(seat.pattern)!;
-		return regex.test(text);
-	};
 
 	return (root: PortableStructure): unknown => {
 		const picks = new WeakMap<object, Map<readonly PortableSeat[] | undefined, Picked | undefined>>();
@@ -319,8 +313,6 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 			const stated = named.filter((name) => fitting.some((seat) => ownedBy(seat).has(name)));
 			return fitting.find((seat) => stated.every((name) => ownedBy(seat).has(name))) ?? fitting[0];
 		};
-		const leafSeatOf = (value: string, seats: readonly PortableSeat[]): PortableSeat | undefined =>
-			seats.find((seat) => seat.leaf !== undefined && spells(seat, value)) ?? seats.find((seat) => seat.leaf !== undefined);
 		const textOf = (value: string, seats: readonly PortableSeat[]): unknown => {
 			const leaf = leafSeatOf(value, seats)?.leaf;
 			return leaf === undefined ? value : leafOf(leaf, value);

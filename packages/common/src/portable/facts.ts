@@ -56,3 +56,14 @@ export function tokenKind(text: string, seats: readonly PortableSeat[]): number 
 	}
 	return undefined;
 }
+
+const patterns = new WeakMap<NonNullable<PortableSeat['pattern']>, RegExp>();
+
+export const spells = (seat: PortableSeat, text: string): boolean => {
+	if (seat.pattern === undefined) return true;
+	const regex = patterns.get(seat.pattern) ?? patterns.set(seat.pattern, new RegExp(seat.pattern.source, seat.pattern.flags)).get(seat.pattern)!;
+	return regex.test(text);
+};
+
+export const leafSeatOf = (text: string, seats: readonly PortableSeat[]): PortableSeat | undefined =>
+	seats.find((seat) => seat.leaf !== undefined && spells(seat, text)) ?? seats.find((seat) => seat.leaf !== undefined);

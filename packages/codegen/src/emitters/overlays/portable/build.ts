@@ -206,16 +206,28 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	const nodeOf = (kind: string): AssembledNode | undefined => nodeMap.nodes.get(modelNode(model, kind)?.kind ?? kind);
 	const slotOf = (owner: string, slot: string): AssembledNonterminal | undefined => nodeOf(owner)?.slots.find((s) => s.name === slot);
 	const storageName = (kind: string): string => modelNode(model, kind)?.kind ?? kind;
-	const flagOnly: ReadonlySet<string> = new Set(
-		[...routes.members.values()].flatMap((members) => members.flatMap((route) => (route.flag === true && route.route === 'kind' ? [storageName(route.kind)] : [])))
-	);
+	const flagSites = new Map<string, Set<string> | 'any'>();
+	for (const members of routes.members.values())
+		for (const route of members) {
+			if (route.flag !== true || route.route !== 'kind') continue;
+			const kind = storageName(route.kind);
+			const step = route.path?.at(-1);
+			const known = flagSites.get(kind);
+			if (step === undefined || known === 'any') flagSites.set(kind, 'any');
+			else (known ?? flagSites.set(kind, new Set()).get(kind) as Set<string>).add(`${storageName(step.owner)} ${step.slot}`);
+		}
+	const flagOnly: ReadonlySet<string> = new Set(flagSites.keys());
 	const flagContent = (kind: string): string | undefined => {
 		const node = nodeOf(kind);
 		return flagOnly.has(storageName(kind)) && node instanceof AssembledLexedPattern ? lexedContentSlot(node)?.propertyName : undefined;
 	};
-	const contentsOf = (kinds: ReadonlySet<string>): Readonly<Record<number, string>> | undefined => {
-		const entries = [...kinds].flatMap((kind) => {
-			const key = flagContent(kind);
+	const flaggedAt = (kind: string, seat: Seat): boolean => {
+		const sites = flagSites.get(storageName(kind));
+		return sites === 'any' || sites?.has(`${storageName(seat.holder.kind)} ${seat.slot.name}`) === true;
+	};
+	const contentsOf = (seat: Seat): Readonly<Record<number, string>> | undefined => {
+		const entries = [...seat.kinds].flatMap((kind) => {
+			const key = flaggedAt(kind, seat) ? flagContent(kind) : undefined;
 			const id = typeOf(kind);
 			return key === undefined || id === undefined ? [] : [[id, key] as const];
 		});
@@ -405,7 +417,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const tokens = tokensOf(seat);
 		const interior = interiorSlotGuards(seat.holder.kind, seat.holder).find(({ slot }) => slot === seat.slot.name);
 		const guard = leaf === undefined ? interior?.regex : leaf.pattern;
-		const contents = contentsOf(seat.kinds);
+		const contents = contentsOf(seat);
 		return {
 		at: [seat.holder.kindId!, seat.key],
 		kinds: sortedIds([...seat.kinds].flatMap((kind) => typeOf(kind) ?? [])),
