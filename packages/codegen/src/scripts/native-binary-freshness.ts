@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { basename, dirname, join, normalize, posix, relative, sep } from 'node:path';
-import { addonFileName, hostPlatform, platformSuffix } from '@sittir/common/engine';
+import { addonFileName, hostPlatform, platformSuffix } from '@sittir/common/native-binding';
 import { moduleClosure } from './module-closure.ts';
 import { sha256File } from '../util/content-hash.ts';
 import { writeFileAtomic } from '../util/write-file-atomic.ts';
