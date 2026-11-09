@@ -195,6 +195,18 @@ describe('the portable read', () => {
 			expect(roundTrip(source)).toBe(`${source}\n`);
 	});
 
+	it('carries a node a parse error sits beside, or a node whose read passes through one, so the error text survives the round trip', () => {
+		for (const [source, rendered] of [
+			['let x: 2 | +4;', 'let x: 2 | +4;\n'],
+			['export class A { set y(a: number, b: number) {} }', 'export class A {\n  set y(a: number, b: number) {}\n}\n']
+		] as const) {
+			const carried: unknown[] = [];
+			runtime.read(runtime.engine.parse(source), (_, carry) => carried.push(carry));
+			expect(carried, source).toEqual([{ reason: 'error' }]);
+			expect(roundTrip(source)).toBe(rendered);
+		}
+	});
+
 	it('carries a typeof operand typescript does not accept: a call, an optional chain', () => {
 		for (const source of ['let g: typeof a.b();', 'let h: typeof a?.b;']) {
 			const carried: unknown[] = [];

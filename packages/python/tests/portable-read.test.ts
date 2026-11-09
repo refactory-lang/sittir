@@ -226,6 +226,14 @@ describe('the portable read', () => {
 		expect(() => runtime.build({ $path: 'expression.member', object: 'self', property: '__x' })).toThrow(/reads as privateName/);
 	});
 
+	it('carries a node whose read passes through a parse error, so the error text survives the round trip', () => {
+		const source = 'x: tuple[int, **P]\n';
+		const carried: unknown[] = [];
+		runtime.read(runtime.engine.parse(source), (_, carry) => carried.push(carry));
+		expect(carried).toEqual([{ reason: 'error' }]);
+		expect(roundTrip(source)).toBe(source);
+	});
+
 	it('reads a print statement\'s destination and arguments, and its trailing comma as a flag', () => {
 		expect(firstOf('print a, b,')).toEqual({ $path: 'statement.print', arguments: ['a', 'b'], $flags: ['trailingComma'] });
 		expect(firstOf('print >> f')).toEqual({ $path: 'statement.print', destination: 'f', arguments: [] });

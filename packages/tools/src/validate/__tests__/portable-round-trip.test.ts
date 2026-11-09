@@ -53,6 +53,17 @@ describe('the portable round trip', () => {
 		});
 	});
 
+	it('counts a carry a parse error forces apart from the carried entries: it marks a fault of the input, not a gap of the bindings', async () => {
+		const result = await runPortableRoundTrip('typescript', [{ name: 'signed literal type', source: 'let x: 2 | +4;' }]);
+		expect(result).toMatchObject({
+			total: 1,
+			carried: [],
+			erred: [{ entry: 'signed literal type', carries: [{ kind: 'literal_type', reason: 'error' }] }],
+			armless: [],
+			errors: [{ entry: 'signed literal type', stage: 'reparse', rendered: 'let x: 2 | +4;\n' }]
+		});
+	});
+
 	it('runs only for a grammar whose bindings give it a portable surface', async () => {
 		expect(await runPortableRoundTrip('scm', [{ name: 'node', source: '(a)' }])).toBeUndefined();
 	});

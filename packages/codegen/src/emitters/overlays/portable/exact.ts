@@ -7,7 +7,7 @@ import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { findKindEntry, fixedTextKinds } from '../../kind-discriminant.ts';
 import type { PortableTypedInput } from './typed.ts';
 
-export type RawReason = Exclude<PortableCarry['reason'], 'unclaimed'>;
+export type RawReason = Exclude<PortableCarry['reason'], 'unclaimed' | 'error'>;
 
 export interface RawArm {
 	readonly kind: string;

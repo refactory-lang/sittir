@@ -1,5 +1,7 @@
 import type { PortableBuildArm, PortableBuildTable, PortableContainer, PortableDecimalParts, PortableMemberStep, PortablePreset, PortableSeat, PortableSlotStep } from '@sittir/types';
-import { nodeText } from '../node-data.ts';
+import { nodeText, sidesOf } from '../node-data.ts';
+import { isErrorNode } from '../utils.ts';
+import { treeOf } from '../tree-token.ts';
 import { spelledMember } from '../spelled.ts';
 import { hasKind, type HoldingFact, type PortableClassifier } from './classify.ts';
 import { builtFlags, textBuilt, tokenText } from './facts.ts';
@@ -9,6 +11,8 @@ type Node = { readonly $type: number };
 
 export type PortableCarry =
 	| { readonly reason: 'unclaimed' | 'scalar' | 'text' | 'preset' | 'opaque' | 'readOnly' }
+	/** A node a parse error sits on, or one whose read passes through such a node: carried whole, so the build keeps the source text the parse could not place. A fault of the input, not of the bindings. */
+	| { readonly reason: 'error' }
 	| { readonly reason: 'flags'; readonly flags: readonly string[] }
 	| { readonly reason: 'unread'; readonly slot: string };
 
@@ -30,6 +34,9 @@ export interface PortableReadContext {
 	readonly readSlots: (node: Node, path: string, flags: readonly string[]) => ReadonlySet<string>;
 	readonly otherTested: (node: Node, path: string) => ReadonlySet<string>;
 }
+
+const erred = (node: Node): boolean =>
+	isErrorNode(node) || (treeOf(node)?.errors?.length !== 0 && Object.values(sidesOf(node) ?? {}).some((entries) => entries.some(isErrorNode)));
 
 const opaque = (item: unknown): boolean => hasKind(item) && typeof (item as { readonly $verbatim?: unknown }).$verbatim === 'string';
 
@@ -244,6 +251,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 	const read = (value: unknown, carried: PortableCarried | undefined, seats?: readonly PortableSeat[]): unknown => {
 		if (Array.isArray(value)) return value.map((item) => read(item, carried, seats));
 		if (!hasKind(value)) return readValue(value, carried, seats);
+		if (erred(value)) return kept(value, { reason: 'error' }, carried);
 		frames.push(new Map());
 		try {
 			const result = readValue(value, carried, seats);
@@ -354,6 +362,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 	};
 	const unreadIn = (frame: ReadonlyMap<object, Read>): PortableCarry | undefined => {
 		for (const [node, { path, flags, extra }] of frame) {
+			if (erred(node as Node)) return { reason: 'error' };
 			if (extra !== undefined) return { reason: 'unread', slot: extra };
 			const keys = touched.get(node) ?? new Set<string>();
 			const tested = path === undefined ? new Set<string>() : readSlots(node as Node, path, flags ?? []);
