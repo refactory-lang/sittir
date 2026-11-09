@@ -533,3 +533,12 @@ fn an_extra_with_structure_is_held_and_a_node_no_cell_names_reads_from_its_row()
     let at = continued.row_coordinate(continuation).expect("a row");
     assert_eq!(continued.read_leaf::<Python>(continuation), Ok(Some(LeafRead::Leaf { kind: at.kind.expect("a stamped kind"), span: at.span })));
 }
+
+#[test]
+fn a_node_of_a_record_kind_no_written_record_names_is_no_leaf() {
+    type Ts = sittir_typescript::render::AnyNode;
+    let tree = parsed(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults(), "class A { constructor() {} }\n");
+    assert_eq!(tree.backer_parity::<Ts>().expect("a census").differing, 0, "the typed read takes a method name's envelope as a node with a slot");
+    let name = nth_of_kind(&tree, "property_identifier:0");
+    assert_eq!(tree.read_leaf::<Ts>(name), Ok(None), "a method name's envelope is no leaf before a read writes its record");
+}

@@ -250,9 +250,10 @@ impl<G: EngineGrammar> ParsedTree<G> {
 
     /// The named node at `index` that `N` reads (`ReadNode::admits`) and no
     /// `ERROR` holds, as its row stamps it once the tree's rows are
-    /// published: the unit `N` reads it as (`ReadNode::unit_id`), else, with
-    /// no named child, a leaf of its stamped kind and span
-    /// (`row_coordinate`); `None` for any other.
+    /// published: the unit `N` reads it as (`ReadNode::unit_id`), else, for a
+    /// text leaf, which `N` reads routing no slots (`ReadNode::router`), a
+    /// leaf of its stamped kind and span (`row_coordinate`); `None` for any
+    /// other, such as an envelope whose record no read has written yet.
     fn row_leaf<N: crate::read::ReadNode>(&self, index: NodeIndex) -> Option<LeafRead> {
         let crate::nodes::Navigation::Records(mut nodes) = self.nodes() else { return None };
         let kid = nodes.kid(index);
@@ -262,7 +263,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         if let Some(kind) = N::unit_id(&mut nodes, &kid) {
             return Some(LeafRead::Unit(kind));
         }
-        if nodes.kids(index).iter().any(|child| child.named) {
+        if N::router(kid.grammar, kid.display).is_some() {
             return None;
         }
         let at = self.row_coordinate(index)?;
@@ -315,13 +316,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
             let mut nodes = TreeNodes::new(self.tree(), self.source(), &work);
             (0..nodes.kid(NodeIndex::ROOT).count)
                 .map(NodeIndex)
-                .map(|index| (agree(&mut records, &mut nodes, index), records.kid(index).named))
+                .map(|index| (agree(&mut records, &mut nodes, index), records.kid(index)))
                 .collect::<Vec<_>>()
         };
         let mut parity = BackerParity::default();
-        for (index, (backers_agree, named)) in (0..).map(NodeIndex).zip(facts) {
+        for (index, (backers_agree, kid)) in (0..).map(NodeIndex).zip(facts) {
             parity.nodes += 1;
-            if !backers_agree || !self.reads_agree::<N>(index, named)? {
+            if !backers_agree || !self.reads_agree::<N>(index, &kid)? {
                 parity.differing += 1;
                 parity.first.get_or_insert(index.0);
             }
@@ -344,11 +345,12 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// Whether the records answer the node at `index` as a typed read of the
-    /// tree does: its unit sides, and, for a `named` node with no record that
-    /// no `ERROR` holds and the typed read reads, its leaf read
-    /// (`read_leaf`): a leaf of the kind and span the typed read's coordinate
-    /// names, or a unit.
-    fn reads_agree<N>(&self, index: NodeIndex, named: bool) -> Result<bool, String>
+    /// tree does: its unit sides, and, for a named node (`kid`) with no
+    /// record that no `ERROR` holds and the typed read reads, its leaf read
+    /// (`read_leaf`): a leaf the typed read routes no slots for
+    /// (`ReadNode::router`), of the kind and span its coordinate names, or a
+    /// unit; a node it declines is one the typed read routes slots for.
+    fn reads_agree<N>(&self, index: NodeIndex, kid: &crate::nodes::Kid) -> Result<bool, String>
     where
         N: HydrateNode + RecordCells + crate::prepare::Prepare + crate::read::HasLayout<Option<Box<crate::layout::NodeLayout<G::Trivia>>>>,
         G::Trivia: PartialEq,
@@ -357,12 +359,12 @@ impl<G: EngineGrammar> ParsedTree<G> {
             return Ok(false);
         }
         Ok(match self.read_leaf::<N>(index).map_err(|error| error.to_string())? {
-            Some(LeafRead::Leaf { kind, span }) => matches!(
+            Some(LeafRead::Leaf { kind, span }) => N::router(kid.grammar, kid.display).is_none() && matches!(
                 self.read_node::<N>(index, Depth::ONE),
                 Some(Ok(crate::engine::NodeRead::Node(node))) if node.source_coordinate().is_some_and(|at| at.kind == Some(kind) && at.span == span)
             ),
             Some(LeafRead::Unit(_)) => true,
-            None => !named || self.read_error(index).is_some() || self.written_record::<N>(index).is_some() || !matches!(self.read_node::<N>(index, Depth::ONE), Some(Ok(_))),
+            None => !kid.named || N::router(kid.grammar, kid.display).is_some() || self.read_error(index).is_some() || self.written_record::<N>(index).is_some() || !matches!(self.read_node::<N>(index, Depth::ONE), Some(Ok(_))),
         })
     }
 
