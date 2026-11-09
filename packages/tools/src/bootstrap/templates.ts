@@ -7,6 +7,7 @@ import {
 	GRAMMAR_TYPECHECK_SCRIPT,
 	NATIVE_LOADER,
 	NATIVE_TYPINGS,
+	PORTABLE_MAP_FILE,
 	PORTABLE_TS6_TYPE_TESTS,
 	PORTABLE_TYPE_TESTS,
 	nativePlatformPackage
@@ -96,7 +97,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 				},
 				references: [{ path: '../types/tsconfig.build.json' }, { path: '../common/tsconfig.build.json' }],
 				include: ['src'],
-				exclude: ['node_modules', 'dist', 'tests']
+				exclude: ['node_modules', 'dist', 'tests', `src/${PORTABLE_MAP_FILE}`]
 			})
 		},
 		{

@@ -1,13 +1,13 @@
 import { type ModelNode, type ModelSlot } from '../../../bindings/facts.ts';
 import { tsname } from '../../../bindings/names.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
-import { PORTABLE_TS6_TYPE_TESTS, PORTABLE_TYPE_TESTS } from '../../../grammars.ts';
+import { PORTABLE_MAP_FILE, PORTABLE_TS6_TYPE_TESTS, PORTABLE_TYPE_TESTS } from '../../../grammars.ts';
 import { concreteKinds, guaranteedBy, modelNode, readsList, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
 import type { PortableBuildTable, PortableCondition } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { hasCatalogEntry, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { exactReadsOf, exactSlotsOf, type ExactSlots } from './exact.ts';
-import { PORTABLE_MAP_FILE, emitGrammarMap, grammarMapName, unmappedKindsBlock, unmappedName, type UnformedTest } from './grammar-map.ts';
+import { emitGrammarMap, grammarMapName, unmappedKindsBlock, unmappedName, type UnformedTest } from './grammar-map.ts';
 
 export interface PortableTypedInput {
 	readonly routes: GrammarRoutes;

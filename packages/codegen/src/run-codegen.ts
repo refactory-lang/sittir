@@ -26,7 +26,7 @@ import { generateWithDerivedConflicts } from './transpile/conflict-driver.ts';
 import { assertGrammarRuntimeFloor } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { manifestPath, recordNativeBuild, recordedGeneration, sourceFingerprint, writeManifestForGrammar, type SourceFingerprint } from './scripts/generated-manifest.ts';
-import { GRAMMAR_ENTRY, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, workspaceNodeApiLevel, type GrammarPackage } from './grammars.ts';
+import { GRAMMAR_ENTRY, PORTABLE_MAP_FILE, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, workspaceNodeApiLevel, type GrammarPackage } from './grammars.ts';
 import { conflictResolutionsPath } from './transpile/conflict-resolutions-file.ts';
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
@@ -35,8 +35,6 @@ import { clearNapiTypedefs } from './scripts/napi-typedefs.ts';
 import { WORKSPACE_CHECK, runWorkspaceCheck } from './scripts/workspace-check.ts';
 import { compareOrdinal } from './emitters/shared.ts';
 import { PORTABLE_TYPED_FILE, PORTABLE_TYPE_TEST_LANES, portableTsconfigText, type PortableTypedOutput } from './emitters/overlays/portable/typed.ts';
-import { PORTABLE_MAP_FILE } from './emitters/overlays/portable/grammar-map.ts';
-
 export interface CodegenOptions {
 	grammar: string;
 	outputDir: string;

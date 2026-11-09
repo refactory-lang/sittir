@@ -1,9 +1,9 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import ts from 'typescript6';
-import { REPO_ROOT } from '@sittir/codegen/grammars';
+import { PORTABLE_MAP_FILE, REPO_ROOT } from '@sittir/codegen/grammars';
 import { bindingGrammars } from '@sittir/codegen/bindings';
-import { PORTABLE_MAP_FILE, grammarMapName, rawGroupOf, type ExactSet } from '@sittir/codegen';
+import { grammarMapName, rawGroupOf, type ExactSet } from '@sittir/codegen';
 import { portableTypedPath, writeTypedModule } from './conformance.ts';
 
 export interface AdmissionMember {

@@ -7,8 +7,6 @@ import type { NodeMap } from '../../../compiler/types.ts';
 import { exactReadsOf, type ExactReads, type ExactSet, type ExactSlots } from './exact.ts';
 import type { PortableTypedInput } from './typed.ts';
 
-export const PORTABLE_MAP_FILE = 'portable-map.ts';
-
 export const VOCABULARY_MODULE = '@sittir/types/vocabulary';
 
 export const grammarMapName = (grammar: string): string => `${grammarDisplayName(grammar as GrammarName)}Map`;
