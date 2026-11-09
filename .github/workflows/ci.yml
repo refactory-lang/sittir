@@ -19,13 +19,11 @@ env:
   CARGO_HTTP_MULTIPLEXING: "false"
 
 jobs:
-  CI:
-    name: CI
+  # Builds the packages and native addons once, hands the build to the test
+  # shards, then runs the checks that need only the build while the shards run.
+  build:
+    name: build (24.x)
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [24.x]
 
     steps:
       - uses: actions/checkout@v6
@@ -33,10 +31,10 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 24.x
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 24.x
           cache: "pnpm"
 
       - name: Install dependencies
@@ -56,6 +54,20 @@ jobs:
 
       - name: Build
         run: pnpm run build
+
+      - name: Upload the build for the test shards
+        uses: actions/upload-artifact@v4
+        with:
+          name: workspace-build
+          path: |
+            packages/*/dist
+            packages/types/build
+            packages/*/tsconfig.build.tsbuildinfo
+            packages/*/native/*.node
+            packages/*/native/*.so
+            node_modules/.cache/sittir/native-build/
+          include-hidden-files: true
+          if-no-files-found: error
 
       # Compiling a grammar reads its generated layer's hash through the
       # pinned build, and the required-slot census compiles every grammar.
@@ -83,14 +95,6 @@ jobs:
         run: pnpm run format:check
         continue-on-error: true
 
-      - name: Test
-        # `-- --coverage` instruments this same whole-suite run instead of
-        # running it a second time — test-and-record.ts treats --coverage
-        # as compatible with recording (see its own doc comment). This used
-        # to be two separate steps (`pnpm run test` then `pnpm run
-        # test:coverage`), each running all ~208 test files.
-        run: pnpm run test -- --coverage
-
       - name: Benchmark reporting tests
         # The benchmark workflows run these with `node --test` before any
         # build, so they stay outside vitest.
@@ -99,6 +103,110 @@ jobs:
       - name: Security Audit
         run: pnpm audit --audit-level moderate
         continue-on-error: true
+
+  # The whole suite split across parallel runners. Each shard writes a blob
+  # report with its coverage; `CI (24.x)` merges them into the one run that
+  # is recorded.
+  test:
+    name: test (shard ${{ matrix.shard }}/${{ strategy.job-total }})
+    needs: build
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download the build
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace-build
+          path: .
+
+      # The artifact keeps the build job's file times, which predate this
+      # checkout, so every project reads as older than its sources.
+      - name: Date the downloaded build after the checkout
+        run: |
+          now=$(date +%s)
+          find packages node_modules/.cache/sittir \( -path '*/dist/*' -o -path 'packages/types/build/*' -o -name '*.tsbuildinfo' -o -name '*.node' -o -name '*.so' -o -path '*/native-build/*' \) -type f -exec touch -d "@$now" {} +
+
+      - name: Install the pinned Rust toolchain
+        uses: ./.github/actions/rust-toolchain
+
+      - name: Bootstrap the pinned build
+        uses: ./.github/actions/bootstrap
+
+      # Tests that build a parser each install the wasm toolchain when it is
+      # missing, and concurrent installs corrupt one another.
+      - name: Install the wasm toolchain once
+        run: npx tsx -e "import { ensureWasmToolchain } from './packages/codegen/src/transpile/tree-sitter-cli.ts'; ensureWasmToolchain();"
+
+      - name: Test
+        run: pnpm exec vitest run --coverage --shard=${{ matrix.shard }}/${{ strategy.job-total }} --reporter=default --reporter=blob
+
+      - name: Upload the blob report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitest-blob-${{ matrix.shard }}
+          path: .vitest-reports/
+          include-hidden-files: true
+          if-no-files-found: error
+
+  # The required check. It passes only when the build job and every shard
+  # passed, then merges the shards' reports into the one whole-suite run that
+  # `test-and-record` records and covers.
+  CI:
+    name: CI (24.x)
+    needs: [build, test]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Every upstream job passed
+        if: ${{ needs.build.result != 'success' || needs.test.result != 'success' }}
+        run: |
+          echo "build: ${{ needs.build.result }}, test shards: ${{ needs.test.result }}"
+          exit 1
+
+      - uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download the blob reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: vitest-blob-*
+          merge-multiple: true
+          path: .vitest-reports
+
+      - name: Merge the shards' reports, record and cover
+        run: pnpm run test -- --merge-reports --coverage
 
   # Spec 016 T009 (follow-up) — regression-checker (native mode).
   #
@@ -278,8 +386,8 @@ jobs:
           find packages -path "*/native/*.node" -print
       - name: Install the pinned Rust toolchain
         uses: ./.github/actions/rust-toolchain
-      - name: Build the packages
-        run: pnpm run build
+      - name: Build the packages (the addons are the napi build's)
+        run: pnpm -r --filter './packages/*' --workspace-concurrency=4 run build
       - name: Pack, install outside the workspace, type-check @sittir/types, createEngine + parse + render
         run: pnpm run check:published
 
@@ -333,7 +441,7 @@ jobs:
           if-no-files-found: warn
 
   # Rust workspace compile and lint checks. They need no other job's output, so the job
-  # starts immediately; `napi-build` and `scope-boundaries` wait on it.
+  # starts immediately; `scope-boundaries` waits on it.
   rust:
     name: cargo check --workspace
     runs-on: ubuntu-22.04
@@ -418,43 +526,52 @@ jobs:
             exit 1
           fi
 
-  # Spec 012 Phase 4 — platform matrix for napi `.node` artifact builds
-  # (T053 macOS arm64, T054 Linux x64 glibc/musl, T055 Linux arm64
-  # glibc/musl, T056 Windows x64). Each matrix job runs the parity
-  # suite as well (T061 — SC-006 requires platform coverage be parity-
-  # gated, not just compile-gated).
-  #
-  # Cross-compile setup uses `napi-rs/setup-node-and-napi@v3` for the
-  # musl + arm64 targets that need a sysroot; native targets use the
-  # repo's `.github/actions/rust-toolchain`, which installs the pinned version.
+  # The napi-build legs, as rows of the release target table
+  # (packages/tools/src/native-targets.ts). A tag run builds every target.
+  # Every other run builds x86_64-unknown-linux-gnu alone: its binaries are
+  # what regression-checker-native and perf-regression-checker download, and
+  # nothing in this workflow reads another leg's. release.yml's native job
+  # builds all six, and its publish job checks them, before anything
+  # publishes, so the other five legs would only repeat that on every pull
+  # request.
+  native-targets:
+    name: native targets
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Plan the legs
+        id: plan
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then targets=(); else targets=(x86_64-unknown-linux-gnu); fi
+          matrix=$(npx tsx packages/tools/src/scripts/native-targets.ts "${targets[@]}")
+          echo "$matrix"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  # Each leg builds every grammar's release addon for its target and, on a
+  # runner that can run what it builds, the workspace tests, the stack
+  # ceilings and the parity suite.
   napi-build:
     name: napi build (${{ matrix.target }})
-    needs: rust
+    needs: native-targets
     runs-on: ${{ matrix.host }}
     # A tag run's platform legs report without failing the run; on every
-    # other run the single linux leg gates: its build, the workspace
-    # tests, the stack ceilings and the parity suite.
+    # other run the single linux leg gates.
     continue-on-error: ${{ startsWith(github.ref, 'refs/tags/v') }}
     strategy:
       fail-fast: false
-      # Only x86_64-unknown-linux-gnu builds on every push/PR — it's the
-      # sole artifact regression-checker-native + perf-regression-checker
-      # (below) actually consume; nothing else in ci.yml touches the
-      # other 5 legs' output. Those 5 are pure "does it compile on
-      # platform X" checks with no per-PR consumer: release.yml's
-      # napi-publish job already builds (and verifies) all 6 targets
-      # independently on tag push before publishing, so building them
-      # again here on every PR was pure duplicated CI time, and a tag
-      # run's legs do not gate (continue-on-error above). Gated to tag
-      # pushes so a platform-specific break
-      # still surfaces (at release time) without paying the cost per PR.
-      #
-      # `matrix.*` isn't available in job-level `if:` (GitHub Actions
-      # evaluates job `if:` before matrix expansion), so the matrix
-      # itself has to be conditional — computed via fromJSON rather than
-      # a plain `include:` list.
       matrix:
-        include: ${{ startsWith(github.ref, 'refs/tags/v') && fromJSON('[{"target":"aarch64-apple-darwin","host":"macos-14","cross":false,"buildFlag":""},{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false,"buildFlag":""},{"target":"x86_64-unknown-linux-musl","host":"ubuntu-22.04","cross":true,"buildFlag":"--cross-compile"},{"target":"aarch64-unknown-linux-gnu","host":"ubuntu-22.04","cross":true,"buildFlag":"--use-napi-cross"},{"target":"aarch64-unknown-linux-musl","host":"ubuntu-22.04","cross":true,"buildFlag":"--cross-compile"},{"target":"x86_64-pc-windows-msvc","host":"windows-2022","cross":false,"buildFlag":""}]') || fromJSON('[{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false,"buildFlag":""}]') }}
+        include: ${{ fromJSON(needs.native-targets.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v6
       - name: Install pnpm
@@ -470,24 +587,10 @@ jobs:
         uses: ./.github/actions/rust-toolchain
         with:
           targets: ${{ matrix.target }}
-      # `napi-rs/setup-node-and-napi@v3` was removed upstream (repo no
-      # longer resolves), which failed EVERY matrix leg — GitHub Actions
-      # fails job setup if any referenced action can't be resolved, even
-      # one gated behind `if:`. Replaced with the current napi-rs CLI's
-      # own cross-compile flags (see `buildFlag` above): musl targets
-      # cross-compile via cargo-zigbuild (needs zig + cargo-zigbuild on
-      # PATH), the gnu arm64 target uses napi's bundled cross-toolchain
-      # (`--use-napi-cross`, no extra setup needed).
-      - name: Setup zig (musl cross-compile)
-        if: contains(matrix.target, 'musl')
-        uses: mlugg/setup-zig@v2
+      - name: Cross toolchain (${{ matrix.target }})
+        uses: ./.github/actions/native-cross
         with:
-          version: 0.14.1
-      - name: Install cargo-zigbuild (musl cross-compile)
-        if: contains(matrix.target, 'musl')
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-zigbuild
+          target: ${{ matrix.target }}
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
         with:
@@ -500,7 +603,7 @@ jobs:
         run: |
           grammars=$(npx tsx packages/tools/src/scripts/list-grammars.ts stable)
           for crate in $grammars; do
-            npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
+            npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" $NATIVE_BUILD_FLAGS
           done
       # Each release addon just built, read from the unstripped copy its
       # build keeps: the limit's count of its grammar's costliest whole-encode
@@ -547,7 +650,9 @@ jobs:
       # specifically — without the artifact, they fail outright (or, when
       # blocked on the full 7-target matrix pre-#167, could never even
       # start). Upload regardless of test outcome; the binary itself is
-      # still a valid build artifact independent of test pass/fail.
+      # still a valid build artifact independent of test pass/fail. Each
+      # `.node` loads the engine and std libraries shipped beside it, so
+      # they travel with it.
       - name: Upload `.node` artifact
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -555,6 +660,9 @@ jobs:
           name: bindings-${{ matrix.target }}
           path: |
             packages/*/native/*.node
+            packages/*/native/*.dylib
+            packages/*/native/*.so
+            packages/*/native/*.dll
             node_modules/.cache/sittir/native-build/
           include-hidden-files: true
           if-no-files-found: ignore

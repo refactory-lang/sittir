@@ -9,6 +9,7 @@
 //! fact lives here: each one reaches the reader through a generated
 //! attribute.
 
+use crate::tree_sitter;
 use crate::heap::HeapBytes;
 use crate::layout::NodeLayout;
 use crate::slot::{ChangedEdges, NodeCoordinate, SlotValue};
@@ -17,8 +18,10 @@ use crate::trivia_table::TriviaSide;
 use crate::types::{FieldId, ItemIndex, KindId, NodeIndex, Span};
 use std::num::NonZeroU32;
 use std::sync::OnceLock;
-use tree_sitter::{Language, Node, TreeCursor};
+use crate::tree_sitter::{Language, Node, TreeCursor};
 
+pub use crate::nodes::Kid;
+pub use crate::nodes::Nodes;
 pub use regex::Captures;
 
 /// Opt-in parser/model drift diagnostics after typed slot routing.
@@ -181,7 +184,7 @@ pub struct ReadCtx<'s> {
     /// The child a hydration walk last met among its holder's children: the
     /// walk of that child takes its ids, row and span from here rather than
     /// asking the tree again (`ReadCtx::current`).
-    pub at: Option<Child>,
+    pub at: Option<Kid>,
 }
 
 impl std::fmt::Debug for ReadCtx<'_> {
@@ -245,7 +248,7 @@ pub trait SideLookup {
     /// The first and last child of the node at `index` as a survey finds
     /// them, extras and `ERROR`s included; none for a node with no children
     /// or a lookup that measures none.
-    fn end_children(&self, index: NodeIndex) -> Option<[Child; 2]> {
+    fn end_children(&self, index: NodeIndex) -> Option<[Kid; 2]> {
         let _ = index;
         None
     }
@@ -389,12 +392,12 @@ impl<'s> ReadCtx<'s> {
     }
 
     /// The child the cursor is on: the one its holder's walk met (`at`) when
-    /// that is the cursor's node, else read from the cursor (`Child::at`).
+    /// that is the cursor's node, else read from the cursor (`Kid::at`).
     #[must_use]
-    pub fn current(&self, cursor: &TreeCursor<'_>) -> Child {
+    pub fn current(&self, cursor: &TreeCursor<'_>) -> Kid {
         match self.at {
             Some(at) if at.index == index_of(cursor) => at,
-            _ => Child::at(cursor),
+            _ => Kid::at(cursor),
         }
     }
 
@@ -508,8 +511,8 @@ impl<'s> ReadCtx<'s> {
             return crate::layout_kinds::Flanks::default();
         }
         let Some([first, last]) = lookup.end_children(index) else { return crate::layout_kinds::Flanks::default() };
-        let span = |child: Child| snapshot.span_of(Span { start: child.start, end: child.end });
-        let last = if last.trivia { crate::points::PointSpan::at(span(last).end) } else { span(last) };
+        let span = |child: Kid| snapshot.span_of(Span { start: child.start, end: child.end });
+        let last = if last.entry() { crate::points::PointSpan::at(span(last).end) } else { span(last) };
         crate::layout_kinds::Flanks {
             before: crate::classify::geometry_gap(&crate::points::PointSpan::at(own.start), &span(first)).kind(),
             after: crate::classify::geometry_gap(&last, &crate::points::PointSpan::at(own.end)).kind(),
@@ -578,16 +581,20 @@ impl<'s> ReadCtx<'s> {
     /// over: no other child's leading side can begin before its holder.
     fn first_child_leading(&self, cursor: &TreeCursor<'_>) -> Option<u32> {
         let lookup = self.sides?;
+        let holder = index_of(cursor);
         let mut child = cursor.node().walk();
         if !child.goto_first_child() {
             return None;
         }
-        while child.node().is_extra() || child.node().is_error() {
+        loop {
+            let kid = Kid::of(&child.node(), holder + offset_of(&child), field_id(&child));
+            if !kid.entry() {
+                return lookup.leading_start(kid.index);
+            }
             if !child.goto_next_sibling() {
                 return None;
             }
         }
-        lookup.leading_start(index_of(cursor) + offset_of(&child))
     }
 
     /// The first byte a snapshot read measured before the holder it was
@@ -631,34 +638,40 @@ impl<'s> ReadCtx<'s> {
     /// its span from this context's holder.
     #[must_use]
     pub fn origin(&self, node: &Node<'_>, index: NodeIndex) -> Origin {
-        let at = self.coordinate(node, index);
+        self.origin_of(self.coordinate(node, index))
+    }
+
+    /// Where the node a coordinate `at` of this context's tree names came
+    /// from (`origin`).
+    #[must_use]
+    pub fn origin_of(&self, at: NodeCoordinate) -> Origin {
         match &self.snapshot {
             None => Origin::Tree(at),
             Some(snapshot) => Origin::Snapshot(snapshot.span_of(at.span)),
         }
     }
 
-    /// The coordinate of a surveyed child: its tree and index, its span and its
-    /// stamped kind (`ReadCtx::stamped_kind`).
+    /// The coordinate of the node `kid` (`coordinate_at`).
     #[must_use]
-    pub fn coordinate_of(&self, child: &Child) -> NodeCoordinate {
-        NodeCoordinate {
-            kind: Some(self.stamped_kind(child.grammar, child.display)),
-            ..NodeCoordinate::new(self.tree_id, child.index, child.index + child.descendants, Span { start: child.start, end: child.end })
-        }
+    pub fn coordinate_of(&self, kid: &Kid) -> NodeCoordinate {
+        self.coordinate_at(kid.index, kid.count, kid.span(), kid.grammar, kid.display)
     }
 
-    /// The coordinate of the node at `index`. The root (index 0) spans the
+    /// The coordinate of the node at `index` (`coordinate_at`).
+    #[must_use]
+    pub fn coordinate(&self, node: &Node<'_>, index: NodeIndex) -> NodeCoordinate {
+        self.coordinate_at(index, descendant_count(node), Span::of(node), grammar_id(node), display_id(node))
+    }
+
+    /// The coordinate of the node at `index`, with `count` nodes in its
+    /// subtree, spanning `span`, with these ids: its tree and rows, its span
+    /// and its stamped kind (`stamped_kind`). The root (index 0) spans the
     /// whole source: tree-sitter's root starts at the first token, and the
     /// root stands for the file, whose leading and trailing bytes its
     /// coordinate render must keep.
-    #[must_use]
-    pub fn coordinate(&self, node: &Node<'_>, index: NodeIndex) -> NodeCoordinate {
-        let span = if index == NodeIndex::ROOT { Span::whole(self.source) } else { Span::of(node) };
-        NodeCoordinate {
-            kind: Some(self.node_kind(node)),
-            ..NodeCoordinate::new(self.tree_id, index, index + descendant_count(node), span)
-        }
+    fn coordinate_at(&self, index: NodeIndex, count: u32, span: Span, grammar: KindId, display: KindId) -> NodeCoordinate {
+        let span = if index == NodeIndex::ROOT { Span::whole(self.source) } else { span };
+        NodeCoordinate { kind: Some(self.stamped_kind(grammar, display)), ..NodeCoordinate::new(self.tree_id, index, index + count, span) }
     }
 
     /// The source text a node spans.
@@ -703,76 +716,71 @@ pub fn goto(cursor: &mut TreeCursor<'_>, index: NodeIndex) -> u32 {
 /// Moves a cursor created at the node at descendant `from` to the node at
 /// `index`, which lies in that node's subtree: each is numbered from the
 /// node the cursor was created at. From where the cursor is, the move climbs
-/// to the nearest node holding `index` and descends from there, so it costs
+/// a level when the node lies before the one it stands on or no sibling
+/// follows; otherwise it steps to the next sibling, and when that doesn't
+/// hold the node either, it finds the lowest node holding it on a copy of
+/// the cursor and steps along that node's children from the one on its
+/// path, so it never steps across the children of a node that doesn't hold
+/// the target. It descends from the first node holding `index`, so it costs
 /// the path between the two nodes, not the path from the root. Answers the
 /// levels it climbed: over a run of moves, a cursor descends as many levels
-/// as it climbs, plus the depth it ends at. The one call of
+/// as it climbs, plus the depth it ends at.
+pub fn goto_from(cursor: &mut TreeCursor<'_>, from: NodeIndex, index: NodeIndex) -> u32 {
+    goto_from_noting_top(cursor, from, index).climbed
+}
+
+/// What a cursor's move did before it descended (`goto_from_noting_top`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Moved {
+    /// The levels it climbed.
+    pub climbed: u32,
+    /// The siblings it stepped across.
+    pub stepped: u32,
+    /// Whether it descends from the node the cursor was created at.
+    pub top: bool,
+}
+
+/// `goto_from`, answering too the siblings it stepped across and whether it
+/// descends from the node the cursor was created at. The one call of
 /// `TreeCursor::goto_descendant`; it never asks the cursor its depth, which
 /// counts the levels above it.
 #[allow(clippy::disallowed_methods, reason = "wraps `TreeCursor::goto_descendant`, which clippy.toml disallows outside this module")]
-pub fn goto_from(cursor: &mut TreeCursor<'_>, from: NodeIndex, index: NodeIndex) -> u32 {
+pub fn goto_from_noting_top(cursor: &mut TreeCursor<'_>, from: NodeIndex, index: NodeIndex) -> Moved {
     let goal = index.index() - from.index();
     let holds = |cursor: &TreeCursor<'_>| {
         let at = offset_of(cursor) as usize;
         (at..at + descendant_count(&cursor.node()) as usize).contains(&goal)
     };
-    let mut climbed = 0;
-    while !holds(cursor) && cursor.goto_parent() {
-        climbed += 1;
-    }
-    cursor.goto_descendant(goal);
-    climbed
-}
-
-/// What the first pass learns about one child.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Child {
-    pub index: NodeIndex,
-    pub grammar: KindId,
-    pub display: KindId,
-    pub field: Option<FieldId>,
-    pub named: bool,
-    /// An extra, or an `ERROR` wherever the parser left it: trivia.
-    pub trivia: bool,
-    pub start: u32,
-    pub end: u32,
-    /// The child's descendant count: its subtree is the indexes
-    /// `[index, index + descendants)`.
-    pub descendants: u32,
-}
-
-impl HeapBytes for Child {
-    fn heap_bytes(&self) -> usize {
-        let Self { index: _, grammar: _, display: _, field: _, named: _, trivia: _, start: _, end: _, descendants: _ } = self;
-        0
-    }
-}
-
-impl Child {
-    /// The child the cursor is on, its index numbered from the cursor's
-    /// root.
-    #[must_use]
-    pub fn at(cursor: &TreeCursor<'_>) -> Child {
-        let node = cursor.node();
-        Child {
-            index: index_of(cursor),
-            grammar: grammar_id(&node),
-            display: display_id(&node),
-            field: field_id(cursor),
-            named: node.is_named(),
-            trivia: node.is_extra() || node.is_error(),
-            descendants: descendant_count(&node),
-            start: Span::of(&node).start,
-            end: Span::of(&node).end,
+    let mut moved = Moved { climbed: 0, stepped: 0, top: false };
+    while !holds(cursor) {
+        if goal < offset_of(cursor) as usize || !cursor.goto_next_sibling() {
+            if !cursor.goto_parent() {
+                break;
+            }
+            moved.climbed += 1;
+            continue;
         }
+        moved.stepped += 1;
+        if holds(cursor) {
+            break;
+        }
+        let mut probe = cursor.clone();
+        let mut levels = 0_u32;
+        while !holds(&probe) && probe.goto_parent() {
+            levels += 1;
+        }
+        for _ in 1..levels {
+            cursor.goto_parent();
+        }
+        moved.climbed += levels.saturating_sub(1);
+        while !holds(cursor) && cursor.goto_next_sibling() {
+            moved.stepped += 1;
+        }
+        break;
     }
-}
-
-impl Child {
-    #[must_use]
-    pub fn width(&self) -> u32 {
-        self.end - self.start
-    }
+    moved.top = offset_of(cursor) == 0;
+    cursor.goto_descendant(goal);
+    moved
 }
 
 /// Whether a node's children tile its span `start..end`: none at all, or
@@ -780,10 +788,10 @@ impl Child {
 /// node's start to its end. A text leaf whose children tile it reads the text
 /// it spans.
 #[must_use]
-pub fn tiles(children: &[Child], span: Span) -> bool {
+pub fn tiles(children: &[Kid], span: Span) -> bool {
     let mut at = span.start;
     for child in children {
-        if child.trivia || child.start != at {
+        if child.entry() || child.start != at {
             return false;
         }
         at = child.end;
@@ -797,20 +805,20 @@ pub fn tiles(children: &[Child], span: Span) -> bool {
 /// is an alias over its tokens, so each token displays the member's id, and
 /// a node whose tokens display different ids spells none of them.
 #[must_use]
-pub fn spelled_id(children: &[Child]) -> Option<KindId> {
-    let mut tokens = children.iter().filter(|child| !child.trivia);
+pub fn spelled_id(children: &[Kid]) -> Option<KindId> {
+    let mut tokens = children.iter().filter(|child| !child.entry());
     let first = tokens.next()?;
-    let spells = |child: &Child| !child.named && child.field.is_none() && child.display == first.display;
+    let spells = |child: &Kid| !child.named && child.field.is_none() && child.display == first.display;
     (spells(first) && tokens.all(spells)).then_some(first.display)
 }
 
 /// Survey the children of the node the cursor is on. The cursor ends where
 /// it started.
-pub fn survey(cursor: &mut TreeCursor<'_>) -> Vec<Child> {
+pub fn survey(cursor: &mut TreeCursor<'_>) -> Vec<Kid> {
     let mut children = Vec::new();
     if cursor.goto_first_child() {
         loop {
-            children.push(Child::at(cursor));
+            children.push(Kid::at(cursor));
             if !cursor.goto_next_sibling() {
                 break;
             }
@@ -818,6 +826,79 @@ pub fn survey(cursor: &mut TreeCursor<'_>) -> Vec<Child> {
         cursor.goto_parent();
     }
     children
+}
+
+/// Navigation over the tree a reader's cursor walks, the cursor, created at
+/// the tree's root, lent for one question: each answer moves it from where
+/// it stands to the node asked about and back (`goto_from`), so it ends
+/// where it started. The nodes' text is the reader's source.
+pub struct LentCursor<'c, 'n, 's> {
+    cursor: &'c mut TreeCursor<'n>,
+    text: &'s str,
+}
+
+impl<'c, 'n, 's> LentCursor<'c, 'n, 's> {
+    /// Navigation over `cursor`'s tree, parsed from `text`.
+    pub fn new(cursor: &'c mut TreeCursor<'n>, text: &'s str) -> Self {
+        Self { cursor, text }
+    }
+
+    /// The node the cursor stands on.
+    #[must_use]
+    pub fn here(&self) -> Kid {
+        Kid::at(self.cursor)
+    }
+
+    fn at<R>(&mut self, index: NodeIndex, answer: impl FnOnce(&mut TreeCursor<'n>) -> R) -> R {
+        let here = index_of(self.cursor);
+        goto_from(self.cursor, NodeIndex::ROOT, index);
+        let answered = answer(self.cursor);
+        goto_from(self.cursor, NodeIndex::ROOT, here);
+        answered
+    }
+}
+
+impl<'s> Nodes<'s> for LentCursor<'_, '_, 's> {
+    fn text(&self) -> &'s str {
+        self.text
+    }
+
+    fn kid(&mut self, index: NodeIndex) -> Kid {
+        self.at(index, |cursor| Kid::at(cursor))
+    }
+
+    fn kids(&mut self, index: NodeIndex) -> std::sync::Arc<[Kid]> {
+        self.at(index, |cursor| survey(cursor).into())
+    }
+
+    fn edge(&mut self, index: NodeIndex, side: crate::options::Side) -> Option<Kid> {
+        self.at(index, |cursor| {
+            let moved = match side {
+                crate::options::Side::Before => cursor.goto_first_child(),
+                crate::options::Side::After => cursor.goto_last_child(),
+            };
+            moved.then(|| {
+                let kid = Kid::at(cursor);
+                cursor.goto_parent();
+                kid
+            })
+        })
+    }
+
+    fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
+        self.at(index, |cursor| cursor.goto_parent().then(|| index_of(cursor)))
+    }
+
+    fn missing(&mut self, index: NodeIndex) -> bool {
+        self.at(index, |cursor| cursor.node().is_missing())
+    }
+
+    fn holds_error(&mut self, index: NodeIndex) -> bool {
+        self.at(index, |cursor| {
+            let node = cursor.node();
+            node.has_error() || crate::nodes::shown_as_error(display_id(&node))
+        })
+    }
 }
 
 /// Where an expansion sends a child.
@@ -902,12 +983,10 @@ pub struct SlotSite {
     pub index: NodeIndex,
 }
 
-/// The node at descendant `index` of `tree` read one level into `T`: its own
-/// slots, each child past them a coordinate.
-pub fn read_coordinate<T: ReadNode>(tree: &tree_sitter::Tree, ctx: &mut ReadCtx<'_>, index: NodeIndex) -> Result<T, ReadError> {
-    let mut cursor = tree.walk();
-    goto(&mut cursor, index);
-    T::read(&mut cursor, ctx, Depth::ONE)
+/// The node the cursor is on read one level into `T`: its own slots, each
+/// child past them a coordinate. The cursor was created at the tree's root.
+pub fn read_coordinate<T: ReadNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>) -> Result<T, ReadError> {
+    T::read(cursor, ctx, Depth::ONE)
 }
 
 /// A native node a node is read into: a kind's struct, a choice over kinds, or
@@ -946,12 +1025,11 @@ pub trait ReadNode: Sized {
     fn read_boxed(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Depth) -> Result<Box<Self>, ReadError> {
         Self::read(cursor, ctx, depth).map(Box::new)
     }
-    /// The children of the node the cursor is on as its read routes them
-    /// (`Routed`); `None` for a node this native node reads without routing
-    /// its children, or one it does not admit. The cursor ends where it
-    /// started.
-    fn routes(cursor: &mut TreeCursor<'_>) -> Option<Routed> {
-        let _ = cursor;
+    /// The children of the node `at`, found through `nodes`, as its read
+    /// routes them (`Routed`); `None` for a node this native node reads
+    /// without routing its children, or one it does not admit.
+    fn routes(nodes: &mut dyn Nodes<'_>, at: &Kid) -> Option<Routed> {
+        let _ = (nodes, at);
         None
     }
     /// How a node with these ids finds its slots (`Router`); `None` for a
@@ -961,35 +1039,34 @@ pub trait ReadNode: Sized {
         let _ = (grammar, display);
         None
     }
-    /// The delimiter flags the read stamps on the list the cursor is on
-    /// (`delimiter`); `None` for a node that is no list with an optional
-    /// flank, or one this native node does not admit. The cursor ends where
-    /// it started.
-    fn delimiter(cursor: &mut TreeCursor<'_>) -> Option<crate::types::Delimiter> {
-        let _ = cursor;
+    /// The delimiter flags the read stamps on the list `at`, found through
+    /// `nodes` (`delimiter`); `None` for a node that is no list with an
+    /// optional flank, or one this native node does not admit.
+    fn delimiter(nodes: &mut dyn Nodes<'_>, at: &Kid) -> Option<crate::types::Delimiter> {
+        let _ = (nodes, at);
         None
     }
-    /// The id the read stores for the node the cursor is on when it stores
-    /// the node as a unit (an enum kind's member, a choice's unit variant),
-    /// resolved as the read resolves it; `None` for a node it stores as a
-    /// node, or one it does not admit. The cursor ends where it
-    /// started.
-    fn unit_id(cursor: &mut TreeCursor<'_>) -> Option<KindId> {
-        let _ = cursor;
+    /// The id the read stores for the node `at`, found through `nodes`, when
+    /// it stores the node as a unit (an enum kind's member, a choice's unit
+    /// variant), resolved as the read resolves it; `None` for a node it
+    /// stores as a node, or one it does not admit.
+    fn unit_id(nodes: &mut dyn Nodes<'_>, at: &Kid) -> Option<KindId> {
+        let _ = (nodes, at);
         None
     }
 }
 
 /// The route a kind's read gives one child (`Route`), or the refusal of a
 /// child it has no route for.
-pub type ChildRoute = fn(&Child) -> Result<Route, ReadError>;
+pub type ChildRoute = fn(&Kid) -> Result<Route, ReadError>;
 
-/// The id a slot's read stores for the child the cursor is on, when it
-/// stores the child as a unit (`ReadSlot::unit_id`), by the slot's number.
-pub type SlotUnit = fn(crate::types::SlotId, &mut TreeCursor<'_>) -> Option<KindId>;
+/// The id a slot's read stores for a child, found through a navigation,
+/// when it stores the child as a unit (`ReadSlot::unit_id`), by the slot's
+/// number.
+pub type SlotUnit = fn(crate::types::SlotId, &mut dyn Nodes<'_>, &Kid) -> Option<KindId>;
 
 /// [`ReadNode::unit_id`] of one node.
-pub type UnitId = fn(&mut TreeCursor<'_>) -> Option<KindId>;
+pub type UnitId = fn(&mut dyn Nodes<'_>, &Kid) -> Option<KindId>;
 
 /// How a kind finds its slots on a node, each slot by its number: the
 /// position of its field among the node's slot fields.
@@ -1012,7 +1089,7 @@ pub enum Router {
 /// route it takes (`Route`), and the wire key of each slot by its number.
 #[derive(Debug, Clone)]
 pub struct Routed {
-    pub children: Vec<Child>,
+    pub children: Vec<Kid>,
     pub routes: Vec<Route>,
     pub keys: &'static [&'static str],
 }
@@ -1040,14 +1117,14 @@ impl<T: ReadNode> ReadNode for Box<T> {
     fn read(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Depth) -> Result<Self, ReadError> {
         T::read_boxed(cursor, ctx, depth)
     }
-    fn routes(cursor: &mut TreeCursor<'_>) -> Option<Routed> {
-        T::routes(cursor)
+    fn routes(nodes: &mut dyn Nodes<'_>, at: &Kid) -> Option<Routed> {
+        T::routes(nodes, at)
     }
     fn router(grammar: KindId, display: KindId) -> Option<Router> {
         T::router(grammar, display)
     }
-    fn unit_id(cursor: &mut TreeCursor<'_>) -> Option<KindId> {
-        T::unit_id(cursor)
+    fn unit_id(nodes: &mut dyn Nodes<'_>, at: &Kid) -> Option<KindId> {
+        T::unit_id(nodes, at)
     }
 }
 
@@ -1151,11 +1228,10 @@ pub trait ReadSlot: Sized {
     fn admits(grammar: KindId, display: KindId) -> bool;
     fn takes_tagged(grammar: KindId, display: KindId, named: bool) -> bool;
     fn scalar(grammar: KindId, display: KindId) -> bool;
-    /// The id the slot stores for the child the cursor is on when it stores
-    /// the child as a unit (`ReadNode::unit_id`). The cursor ends where
-    /// it started.
-    fn unit_id(cursor: &mut TreeCursor<'_>) -> Option<KindId> {
-        let _ = cursor;
+    /// The id the slot stores for the child `at`, found through `nodes`,
+    /// when it stores the child as a unit (`ReadNode::unit_id`).
+    fn unit_id(nodes: &mut dyn Nodes<'_>, at: &Kid) -> Option<KindId> {
+        let _ = (nodes, at);
         None
     }
     fn take(
@@ -1207,8 +1283,8 @@ macro_rules! slot_value_kinds {
         fn scalar(grammar: KindId, display: KindId) -> bool {
             T::scalar(grammar, display)
         }
-        fn unit_id(cursor: &mut TreeCursor<'_>) -> Option<KindId> {
-            T::unit_id(cursor)
+        fn unit_id(nodes: &mut dyn Nodes<'_>, at: &Kid) -> Option<KindId> {
+            T::unit_id(nodes, at)
         }
     };
 }
@@ -1524,9 +1600,9 @@ pub fn capture_span(captures: &Captures<'_>, name: &str, base: u32) -> Option<Sp
 /// more anonymous unfielded tokens than the separators between its items and
 /// the mandatory flank tokens account for.
 #[must_use]
-pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: crate::types::SlotId, leading: Option<u16>, trailing: Option<u16>) -> crate::types::Delimiter {
+pub fn delimiter(list: Span, children: &[Kid], routes: &[Route], items: crate::types::SlotId, leading: Option<u16>, trailing: Option<u16>) -> crate::types::Delimiter {
     use crate::types::Delimiter;
-    let item_children: Vec<(&Child, bool)> = children
+    let item_children: Vec<(&Kid, bool)> = children
         .iter()
         .zip(routes)
         .filter_map(|(child, route)| match *route {
@@ -1539,11 +1615,11 @@ pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: c
         .zip(routes)
         .filter(|(child, route)| !child.named && child.field.is_none() && !matches!(route, Route::Trivia | Route::Slot { .. }))
         .count();
-    let flank = |anchor: Option<&(&Child, bool)>, mandatory: u16, past: &dyn Fn(&Child) -> bool| match anchor {
+    let flank = |anchor: Option<&(&Kid, bool)>, mandatory: u16, past: &dyn Fn(&Kid) -> bool| match anchor {
         Some((child, false)) => past(child),
         _ => others > item_children.len().saturating_sub(1) + mandatory as usize,
     };
-    let Span { start, end } = Span::of(list);
+    let Span { start, end } = list;
     let mut flags = Delimiter::NONE;
     if leading.is_some_and(|mandatory| flank(item_children.first(), mandatory, &|child| start < child.start)) {
         flags = flags.with(Delimiter::LEADING);
@@ -1786,8 +1862,8 @@ mod tests {
 
     type Plain = Probe<false>;
 
-    fn token(start: u32, end: u32, trivia: bool) -> Child {
-        Child { index: NodeIndex::ROOT, grammar: KindId(9), display: KindId(9), field: None, named: false, trivia, start, end, descendants: 1 }
+    fn token(start: u32, end: u32, extra: bool) -> Kid {
+        Kid { index: NodeIndex::ROOT, start, end, count: 1, grammar: KindId(9), display: KindId(9), field: None, named: false, extra }
     }
 
     #[test]
@@ -1801,12 +1877,12 @@ mod tests {
 
     #[test]
     fn a_node_is_spelled_by_the_one_id_all_its_tokens_display() {
-        let shown = |display: u16| Child { display: KindId(display), ..token(0, 1, false) };
+        let shown = |display: u16| Kid { display: KindId(display), ..token(0, 1, false) };
         assert_eq!(spelled_id(&[shown(143), shown(143)]), Some(KindId(143)));
         assert_eq!(spelled_id(&[shown(143), token(1, 2, true), shown(143)]), Some(KindId(143)));
         assert_eq!(spelled_id(&[shown(61), shown(51)]), None);
-        assert_eq!(spelled_id(&[Child { named: true, ..shown(143) }]), None);
-        assert_eq!(spelled_id(&[Child { field: Some(FieldId(1)), ..shown(143) }]), None);
+        assert_eq!(spelled_id(&[Kid { named: true, ..shown(143) }]), None);
+        assert_eq!(spelled_id(&[Kid { field: Some(FieldId(1)), ..shown(143) }]), None);
         assert_eq!(spelled_id(&[token(0, 1, true)]), None);
         assert_eq!(spelled_id(&[]), None);
     }

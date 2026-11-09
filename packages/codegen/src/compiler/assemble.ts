@@ -1,3 +1,4 @@
+import { emitShapeFailure, type EmitShapeFailure } from './diagnostics/emit-diagnostics.ts';
 import type { VariantChild } from './variant-structural.ts';
 import { isHiddenPunctuationLeaf } from './model/node-map.ts';
 import { irKeyOfTypeName, lowerCamelCase } from './model/casing.ts';
@@ -385,7 +386,14 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 function stampExternalRoles(nodeMap: NodeMap, ctx: AssembleCtx): void {
 	for (const [kind, { role }] of ctx.grammar.externalRoles ?? []) {
 		const node = nodeMap.nodes.get(kind);
-		if (node === undefined) throw new Error(`assemble: external '${kind}' declares the ${role} role but has no node`);
+		if (node === undefined) {
+			throw emitShapeFailure({
+				code: 'external-role-without-node',
+				ownerKind: kind,
+				message: `assemble: external '${kind}' declares the ${role} role but has no node`,
+				details: { kind, role }
+			});
+		}
 		node.externalRole = role;
 	}
 }
@@ -501,9 +509,12 @@ function stampFactoryInline(
 }
 
 export class FactoryInlineUnnestableError extends Error {
+	readonly failure: EmitShapeFailure;
+
 	constructor(kind: string, reason: string) {
 		super(`assemble: factoryInline kind '${kind}' has nowhere to nest: ${reason}.`);
 		this.name = 'FactoryInlineUnnestableError';
+		this.failure = { code: 'factory-inline-unnestable', ownerKind: kind, message: this.message, details: { kind, reason } };
 	}
 }
 
@@ -817,7 +828,14 @@ function stampWhitespaceBuilders(nodes: Map<string, AssembledNode>): void {
 	if (!declaresWhitespace({ nodes })) return;
 	for (const kind of layoutSymbolsOf({ nodes }).values()) {
 		const node = nodes.get(kind);
-		if (!(node instanceof AssembledPunctuation)) throw new Error(`assemble: whitespace arm '${kind}' is not a literal kind`);
+		if (!(node instanceof AssembledPunctuation)) {
+			throw emitShapeFailure({
+				code: 'whitespace-arm-not-literal',
+				ownerKind: kind,
+				message: `assemble: whitespace arm '${kind}' is not a literal kind`,
+				details: { kind }
+			});
+		}
 		node.factoryName ??= nameNode(node.kind).factoryName;
 	}
 }

@@ -191,6 +191,22 @@ object reconstruction may produce equivalent ASTs with different whitespace.
 Candidate identities include entry name, source digest, kind and byte span.
 A matching aggregate pass count cannot hide a changed candidate or output.
 
+With `--baseline <tree>`, a second built checkout (its own dependencies,
+`dist` and native bindings) is measured in the same rounds. Each round runs
+both trees' validation workers, each tree's own worker in a fresh process, then
+a memory worker per tree that loads the round's grammar alone and then every
+stable grammar, creating an engine and parsing and rendering a sample for
+each, and reads RSS after a full collection. The tree order and the storage
+order both turn each round. The report adds `baseline` (its commit, harness
+digest, samples and summary, in the same schema) and `library` (the memory
+samples, and the unpacked bytes `npm pack` reports for what a consumer on this
+host installs of each grammar, from each tree: the grammar package, and its
+platform package where the tree ships one). `arena-benchmark-report.mjs`
+checks each tree's population as it checks one, refuses a baseline that
+measured another corpus or other counts, and reports branch/baseline ratios.
+The Arena benchmarks workflow measures against the merge-base with master
+unless it is dispatched with another `baseline`, or with `none`.
+
 | Timer | Included | Excluded from this phase |
 | --- | --- | --- |
 | `validator` | The complete existing bucket run, including preparation, candidate enumeration, checks and profiling overhead | Explicit GC, worker startup/imports and warmup runs |

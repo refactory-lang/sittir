@@ -112,11 +112,12 @@ pub fn majority<T: Copy + PartialEq>(values: &[T], preferred: Option<T>) -> Opti
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::read::Child;
+    use crate::read::Kid;
     use crate::types::{KindId, RunId};
 
-    fn child(index: u32, start: u32, end: u32) -> Child {
-        Child { index: crate::types::NodeIndex(index), grammar: KindId(u16::try_from(index).unwrap()), display: KindId(u16::try_from(index).unwrap()), field: None, named: true, trivia: false, start, end, descendants: 1 }
+    fn child(index: u32, start: u32, end: u32) -> Kid {
+        let kind = KindId(u16::try_from(index).unwrap());
+        Kid { index: crate::types::NodeIndex(index), start, end, count: 1, grammar: kind, display: kind, field: None, named: true, extra: false }
     }
 
     #[test]

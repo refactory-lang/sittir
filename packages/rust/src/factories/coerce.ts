@@ -29,6 +29,7 @@ import {
 	isNodeOfKind,
 	isNodeValue,
 	listStorage,
+	numberRefusal,
 	withEmptyForm,
 	withOptions
 } from '@sittir/common/utils';
@@ -357,10 +358,18 @@ function _resolveScalar(v: boolean | number | bigint): AnyUntypedNode | number |
 	if (typeof v === 'boolean') return v ? TSKindId.TrueKeyword : TSKindId.FalseKeyword;
 	if (typeof v === 'number' || typeof v === 'bigint') {
 		const text = String(v);
-		for (const kind of ['integer_literal_decimal', 'float_literal']) {
+		for (const [kind, integer, signed] of [
+			['integer_literal_decimal', true, false],
+			['float_literal', false, false]
+		] as const) {
 			const e = _leafRegistry[kind];
-			if (e?.pattern?.test(text)) return e.factory(text);
+			if (!e?.pattern?.test(text)) continue;
+			const refused = numberRefusal(v, integer, signed);
+			if (refused !== undefined) throw new RangeError(refused);
+			return e.factory(text);
 		}
+		const refused = numberRefusal(v, false, false);
+		if (refused !== undefined) throw new RangeError(refused);
 	}
 	return undefined;
 }
@@ -860,7 +869,7 @@ function _resolveOne<T>(
 			);
 		}
 	}
-	if (typeof v === 'object') {
+	if (typeof v === 'object' || typeof v === 'number' || typeof v === 'bigint' || typeof v === 'boolean') {
 		throw new Error(
 			`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(', ')}]: ${describeValue(v)}`
 		);
@@ -922,7 +931,7 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
 	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as Admit<T>;
 	const tagged = _splitTag(v);
 	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;
-	if (typeof v === 'object') {
+	if (typeof v === 'object' || typeof v === 'number' || typeof v === 'bigint' || typeof v === 'boolean') {
 		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${describeValue(v)}`);
 	}
 	return v as Admit<T>;
@@ -1497,7 +1506,7 @@ function _resolveOneBranch<T>(
 		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;
 		if (_isFromKind(kind)) return _resolveByKind(kind, v) as Admit<T>;
 	}
-	if (typeof v === 'object') {
+	if (typeof v === 'object' || typeof v === 'number' || typeof v === 'bigint' || typeof v === 'boolean') {
 		throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${describeValue(v)}`);
 	}
 	return v as Admit<T>;

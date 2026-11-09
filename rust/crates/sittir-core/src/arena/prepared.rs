@@ -18,6 +18,8 @@ use crate::layout::UnitSides;
 use crate::options::Edges;
 use crate::slot::CoordinateEdges;
 use crate::trivia::NodeTrivia;
+use crate::read::Depth;
+use super::rows::NodeRows;
 use crate::trivia_store::{Place, Site};
 
 /// Where the overlay keeps a node's facts: the place the store keeps its
@@ -57,7 +59,7 @@ impl From<Place> for PrepPlace {
         Self::Stored(place)
     }
 }
-use crate::types::{Delimiter, KindId};
+use crate::types::{Delimiter, KindId, NodeIndex, TreeId};
 
 /// What prepare fills for one node, beside what its record stores. A stored
 /// value always wins over a filled one.
@@ -135,9 +137,38 @@ impl<T> PreparedNode<T> {
     }
 }
 
+/// The parsed nodes a recording render of a parsed record renders from
+/// their templates, as a read `depth` levels down from the node at `root` of
+/// `tree` reads them into nodes (`read::read_value`): each fewer than
+/// `depth` levels below `root`. A parsed node past them renders as its
+/// source, as a read keeps it a coordinate.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Templates {
+    pub tree: TreeId,
+    pub root: NodeIndex,
+    pub depth: Depth,
+}
+
+impl Templates {
+    /// Whether the node at `row` of `tree`, whose rows are `rows`, renders
+    /// from its template. A render of `root`'s record reaches only nodes
+    /// under it, so at every depth each does.
+    #[must_use]
+    pub fn reach(self, tree: TreeId, rows: &NodeRows, row: NodeIndex) -> bool {
+        tree == self.tree
+            && match self.depth {
+                Depth::All => true,
+                Depth::Levels(levels) => rows.levels_below(self.root, row, levels.get()).is_some(),
+            }
+    }
+}
+
 /// One render's prepared overlay.
 #[derive(Debug, Clone)]
 pub struct Prepared<T> {
+    /// What a recording render renders from its templates; none for any
+    /// other render.
+    templates: Option<Templates>,
     nodes: SmallMap<PrepPlace, PreparedNode<T>>,
     sites: SmallMap<Site<PrepPlace>, Edges>,
     /// The seams of the kind an untouched parsed child names, by its site:
@@ -155,7 +186,7 @@ pub struct Prepared<T> {
 
 impl<T> Default for Prepared<T> {
     fn default() -> Self {
-        Self { nodes: SmallMap::new(), sites: SmallMap::new(), coordinates: SmallMap::new(), units: SmallMap::new(), facets: SmallMap::new() }
+        Self { templates: None, nodes: SmallMap::new(), sites: SmallMap::new(), coordinates: SmallMap::new(), units: SmallMap::new(), facets: SmallMap::new() }
     }
 }
 
@@ -163,6 +194,19 @@ impl<T> Prepared<T> {
     #[must_use]
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// This overlay, for a render that renders `templates` from their
+    /// templates.
+    #[must_use]
+    pub fn with_templates(self, templates: Option<Templates>) -> Self {
+        Self { templates, ..self }
+    }
+
+    /// What the render renders from its templates (`Templates`).
+    #[must_use]
+    pub fn templates(&self) -> Option<Templates> {
+        self.templates
     }
 
     /// What prepare filled for the node at `place`, when it filled anything.

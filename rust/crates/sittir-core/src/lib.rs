@@ -28,6 +28,7 @@ pub mod points;
 pub mod trivia_table;
 pub mod prepare;
 pub mod query;
+pub mod nodes;
 pub mod non_empty;
 pub use non_empty::NonEmptyVec;
 pub mod read;
@@ -50,6 +51,10 @@ pub mod view;
 pub use types::KindId;
 // The derive that expands a node declaration into its typed reader.
 pub use sittir_node_macros::Node;
+// The one tree-sitter crate, held by the shared engine library. Every crate
+// above the engine, and the code the derive and the generators write, reaches
+// tree-sitter here, so no addon links a second copy of the runtime.
+pub use sittir_engine::tree_sitter;
 
 #[cfg(feature = "napi-bindings")]
 #[doc(hidden)]
@@ -74,23 +79,24 @@ macro_rules! napi_codec {
     ($($item:item)*) => {};
 }
 
-/// The items of a derived node's record writer (`arena::WriteCell`), kept
-/// only when this crate is built with the arena, so a crate that derives
-/// `Node` needs no feature of its own.
+/// The items of a derived node's record writer (`arena::WriteCell`), and
+/// the associated items of a grammar's impls that read records, kept only
+/// when this crate is built with the arena, so a crate that derives `Node`
+/// needs no feature of its own.
 #[cfg(feature = "arena")]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! records_codec {
-    ($($item:item)*) => { $($item)* };
+    ($($items:tt)*) => { $($items)* };
 }
 
-/// The items of a derived node's record writer, dropped: this crate is
-/// built without the arena.
+/// The items of a derived node's record writer, and a grammar's associated
+/// items that read records, dropped: this crate is built without the arena.
 #[cfg(not(feature = "arena"))]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! records_codec {
-    ($($item:item)*) => {};
+    ($($items:tt)*) => {};
 }
 
 pub use verbatim::VerbatimNode;

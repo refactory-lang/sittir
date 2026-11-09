@@ -1,6 +1,7 @@
 import type { AnyUntypedNode, EmptyForm, GrammarTypeMap } from '@sittir/types';
 import { isNode as isAnyNode, nodeText } from './utils.ts';
 import { sidesOf } from './node-data.ts';
+import { checkedKindId } from './kind-id.ts';
 
 type NamespacePart<M extends GrammarTypeMap, K, P extends 'Node' | 'Loose'> = K extends keyof M['namespaces']
 	? M['namespaces'][K] extends { readonly [Q in P]: infer X }
@@ -98,6 +99,7 @@ export function admitHoles<T>(items: T, where: string): T {
 }
 
 export function kindIdStorage<T = unknown>(value: unknown): T {
+	if (typeof value === 'number' || typeof value === 'bigint') checkedKindId(value);
 	return (value === null ? undefined : value) as T;
 }
 

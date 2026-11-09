@@ -134,7 +134,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 variant_fns.push(quote! {
                     #[inline(never)]
                     fn #read_fn(
-                        _cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                        _cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                         _ctx: &mut __rt::ReadCtx<'_>,
                         _depth: __rt::Depth,
                     ) -> ::core::result::Result<#ident, __rt::ReadError> {
@@ -142,7 +142,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     }
                     #[inline(never)]
                     fn #boxed_fn(
-                        _cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                        _cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                         _ctx: &mut __rt::ReadCtx<'_>,
                         _depth: __rt::Depth,
                     ) -> ::core::result::Result<::std::boxed::Box<#ident>, __rt::ReadError> {
@@ -154,7 +154,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 if let Some(first) = &first {
                     let unit_fn = format_ident!("__unit_{}", i);
                     variant_fns.push(quote! {
-                        fn #unit_fn(_cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
+                        fn #unit_fn(_nodes: &mut dyn __rt::Nodes<'_>, _at: &__rt::Kid) -> ::core::option::Option<__Kind> {
                             ::core::option::Option::Some(#first)
                         }
                     });
@@ -169,7 +169,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 variant_fns.push(quote! {
                     #[inline(never)]
                     fn #read_fn(
-                        cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                        cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                         ctx: &mut __rt::ReadCtx<'_>,
                         depth: __rt::Depth,
                     ) -> ::core::result::Result<#ident, __rt::ReadError> {
@@ -177,7 +177,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     }
                     #[inline(never)]
                     fn #boxed_fn(
-                        cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                        cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                         ctx: &mut __rt::ReadCtx<'_>,
                         depth: __rt::Depth,
                     ) -> ::core::result::Result<::std::boxed::Box<#ident>, __rt::ReadError> {
@@ -280,32 +280,32 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
         const _: () = {
             use ::sittir_core::read as __rt;
             use ::sittir_core::types::KindId as __Kind;
-            type __Read<T> = fn(&mut ::tree_sitter::TreeCursor<'_>, &mut __rt::ReadCtx<'_>, __rt::Depth) -> ::core::result::Result<T, __rt::ReadError>;
+            type __Read<T> = fn(&mut ::sittir_core::tree_sitter::TreeCursor<'_>, &mut __rt::ReadCtx<'_>, __rt::Depth) -> ::core::result::Result<T, __rt::ReadError>;
             fn __unadmitted<T>(
-                cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                 _ctx: &mut __rt::ReadCtx<'_>,
                 _depth: __rt::Depth,
             ) -> ::core::result::Result<T, __rt::ReadError> {
                 ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: __rt::index_of(cursor) })
             }
-            fn __no_routes(_cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed> {
+            fn __no_routes(_nodes: &mut dyn __rt::Nodes<'_>, _at: &__rt::Kid) -> ::core::option::Option<__rt::Routed> {
                 ::core::option::Option::None
             }
             fn __no_router(_grammar: __Kind, _display: __Kind) -> ::core::option::Option<__rt::Router> {
                 ::core::option::Option::None
             }
-            fn __no_unit(_cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
+            fn __no_unit(_nodes: &mut dyn __rt::Nodes<'_>, _at: &__rt::Kid) -> ::core::option::Option<__Kind> {
                 ::core::option::Option::None
             }
-            fn __no_delimiter(_cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter> {
+            fn __no_delimiter(_nodes: &mut dyn __rt::Nodes<'_>, _at: &__rt::Kid) -> ::core::option::Option<::sittir_core::types::Delimiter> {
                 ::core::option::Option::None
             }
             #(#variant_fns)*
             const __READS: &[__Read<#ident>] = &[#(#read_table),*];
-            const __ROUTES: &[fn(&mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed>] = &[#(#routes_table),*];
+            const __ROUTES: &[fn(&mut dyn __rt::Nodes<'_>, &__rt::Kid) -> ::core::option::Option<__rt::Routed>] = &[#(#routes_table),*];
             const __ROUTERS: &[fn(__Kind, __Kind) -> ::core::option::Option<__rt::Router>] = &[#(#routers_table),*];
             const __UNITS: &[__rt::UnitId] = &[#(#units_table),*];
-            const __DELIMITERS: &[fn(&mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter>] = &[#(#delimiters_table),*];
+            const __DELIMITERS: &[fn(&mut dyn __rt::Nodes<'_>, &__rt::Kid) -> ::core::option::Option<::sittir_core::types::Delimiter>] = &[#(#delimiters_table),*];
             const __READS_BOXED: &[__Read<::std::boxed::Box<#ident>>] = &[#(#boxed_table),*];
             #own_stamp
             #[allow(dead_code)]
@@ -337,7 +337,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 #blank
                 #[allow(unused_variables)]
                 fn read(
-                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                     ctx: &mut __rt::ReadCtx<'_>,
                     depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
@@ -350,7 +350,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 }
                 #[allow(unused_variables)]
                 fn read_boxed(
-                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                     ctx: &mut __rt::ReadCtx<'_>,
                     depth: __rt::Depth,
                 ) -> ::core::result::Result<::std::boxed::Box<Self>, __rt::ReadError> {
@@ -361,20 +361,17 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                         ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, index: __rt::index_of(cursor) }),
                     }
                 }
-                fn routes(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed> {
-                    let node = cursor.node();
-                    __variant(::sittir_core::read::grammar_id(&node), __rt::display_id(&node)).and_then(|i| __ROUTES[i as usize](cursor))
+                fn routes(nodes: &mut dyn __rt::Nodes<'_>, at: &__rt::Kid) -> ::core::option::Option<__rt::Routed> {
+                    __variant(at.grammar, at.display).and_then(|i| __ROUTES[i as usize](nodes, at))
                 }
                 fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
                     __variant(grammar, display).and_then(|i| __ROUTERS[i as usize](grammar, display))
                 }
-                fn unit_id(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
-                    let node = cursor.node();
-                    __variant(::sittir_core::read::grammar_id(&node), __rt::display_id(&node)).and_then(|i| __UNITS[i as usize](cursor))
+                fn unit_id(nodes: &mut dyn __rt::Nodes<'_>, at: &__rt::Kid) -> ::core::option::Option<__Kind> {
+                    __variant(at.grammar, at.display).and_then(|i| __UNITS[i as usize](nodes, at))
                 }
-                fn delimiter(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter> {
-                    let node = cursor.node();
-                    __variant(::sittir_core::read::grammar_id(&node), __rt::display_id(&node)).and_then(|i| __DELIMITERS[i as usize](cursor))
+                fn delimiter(nodes: &mut dyn __rt::Nodes<'_>, at: &__rt::Kid) -> ::core::option::Option<::sittir_core::types::Delimiter> {
+                    __variant(at.grammar, at.display).and_then(|i| __DELIMITERS[i as usize](nodes, at))
                 }
             }
             #has_layout
@@ -406,7 +403,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
         firsts.push((name, first));
         by_kind.push(quote!(if [#(#ids),*].contains(&grammar) || [#(#folded),*].contains(&grammar) || [#(#shown),*].contains(&display) { return ::core::option::Option::Some(#ident::#name); }));
     }
-    let spelled = attrs.spelled.then(|| quote!(.or_else(|| __rt::spelled_id(&__rt::survey(cursor)).and_then(|id| __member(id, id)))));
+    let spelled = attrs.spelled.then(|| quote!(.or_else(|| __rt::spelled_id(&nodes.kids(at.index)).and_then(|id| __member(id, id)))));
     let ids = firsts.iter().map(|(name, first)| quote!(#ident::#name => #first,));
     let codec = codec::members(ident);
     let writer = crate::write::members(ident);
@@ -421,9 +418,9 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                 #(#by_kind)*
                 ::core::option::Option::None
             }
-            fn __resolve(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<#ident> {
-                let node = cursor.node();
-                __member(::sittir_core::read::grammar_id(&node), __rt::display_id(&node))#spelled
+            #[allow(unused_variables)]
+            fn __resolve(nodes: &mut dyn __rt::Nodes<'_>, at: &__rt::Kid) -> ::core::option::Option<#ident> {
+                __member(at.grammar, at.display)#spelled
             }
             fn __id(member: &#ident) -> __Kind {
                 match member {
@@ -441,14 +438,16 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                     <Self as __rt::ReadNode>::admits(grammar, display)
                 }
                 fn read(
-                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
-                    _ctx: &mut __rt::ReadCtx<'_>,
+                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
+                    ctx: &mut __rt::ReadCtx<'_>,
                     _depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
-                    __resolve(cursor).ok_or_else(|| __rt::ReadError::Unspelled { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: __rt::index_of(cursor) })
+                    let mut nodes = __rt::LentCursor::new(cursor, ctx.source);
+                    let at = nodes.here();
+                    __resolve(&mut nodes, &at).ok_or(__rt::ReadError::Unspelled { kind: at.grammar, index: at.index })
                 }
-                fn unit_id(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
-                    __resolve(cursor).map(|member| __id(&member))
+                fn unit_id(nodes: &mut dyn __rt::Nodes<'_>, at: &__rt::Kid) -> ::core::option::Option<__Kind> {
+                    __resolve(nodes, at).map(|member| __id(&member))
                 }
             }
             impl<__L: ::core::default::Default> __rt::HasLayout<__L> for #ident {
@@ -618,7 +617,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         (None, false) => return Err(syn::Error::new_spanned(ident, "a struct with `displays` holds the id it shows in a `#[wire(key = \"$type\")]` field")),
         _ => {}
     }
-    let displays = &attrs.displays;
+    let displays = attrs.displays.iter().chain(&attrs.shown_as);
     let folded = &attrs.folded;
     let admits = if attrs.display { quote!(display == #kind) } else { quote!(grammar == #kind #(|| grammar == #folded)*) };
     let layout: Vec<&Path> = attrs.layout.iter().flatten().collect();
@@ -672,7 +671,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
     let writer = crate::write::structure(ident, attrs, &fields)?;
     let hydrate = crate::hydrate::structure(ident, attrs, &fields)?;
     let view = crate::views::structure(ident, attrs, &fields)?;
-    let stored_kind = if kind_field.is_some() {
+    let stored_kind = if !attrs.displays.is_empty() || !attrs.shown_as.is_empty() {
         quote! {
             let __shown = __rt::display_id(node);
             if __DISPLAYS.contains(&__shown) { __shown } else { __KIND }
@@ -695,7 +694,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
             #[allow(dead_code)]
             const __LAYOUT: &[__Kind] = &[#(#layout),*];
             #[allow(dead_code, unused_variables)]
-            fn __stored_kind(node: &::tree_sitter::Node<'_>) -> __Kind {
+            fn __stored_kind(node: &::sittir_core::tree_sitter::Node<'_>) -> __Kind {
                 #stored_kind
             }
             #items
@@ -708,7 +707,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
                 }
                 #[allow(unused_mut, unused_variables)]
                 fn read(
-                    cursor: &mut ::tree_sitter::TreeCursor<'_>,
+                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                     ctx: &mut __rt::ReadCtx<'_>,
                     depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
@@ -753,8 +752,8 @@ fn pass(min_depth: u32) -> TokenStream {
 /// whose children are its spelling.
 fn spelling_router() -> TokenStream {
     quote! {
-        fn __route(child: &__rt::Child) -> ::core::result::Result<__rt::Route, __rt::ReadError> {
-            ::core::result::Result::Ok(if child.trivia { __rt::Route::Trivia } else { __rt::Route::Layout })
+        fn __route(child: &__rt::Kid) -> ::core::result::Result<__rt::Route, __rt::ReadError> {
+            ::core::result::Result::Ok(if child.entry() { __rt::Route::Trivia } else { __rt::Route::Layout })
         }
     }
 }
@@ -902,7 +901,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], height:
         let name = other.ident;
         match other.role {
             Role::Layout => quote!(#name: layout,),
-            _ if other.ident == content => quote!(#name: ::sittir_core::SlotValue::Node(content),),
+            _ if other.ident == content => if attrs.content_list { quote!(#name: content,) } else { quote!(#name: ::sittir_core::SlotValue::Node(content),) },
             _ => quote!(#name: ::core::default::Default::default(),),
         }
     });
@@ -911,7 +910,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], height:
         (
             quote! {
                 let own = __rt::index_of(cursor);
-                let wrapped = __rt::survey(cursor).into_iter().find(|child| !child.trivia).ok_or(
+                let wrapped = __rt::survey(cursor).into_iter().find(|child| !child.entry()).ok_or(
                     __rt::ReadError::Unadmitted { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: own },
                 )?;
                 __rt::goto(cursor, wrapped.index);
@@ -920,6 +919,27 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], height:
         )
     } else {
         (quote!(), quote!())
+    };
+    let field_ty = field.ty;
+    let (read_content, take_layout) = if attrs.content_list {
+        (
+            quote!(let content: ::core::result::Result<#field_ty, __rt::ReadError> = __rt::read_value(cursor, ctx, depth);),
+            quote! {
+                let mut content = content?;
+                let __taken = match &mut content {
+                    ::sittir_core::SlotValue::Node(node) => <#inner as __rt::HasLayout<#layout_ty>>::take_layout(node),
+                    ::sittir_core::SlotValue::Coord(_) => ::core::option::Option::None,
+                };
+            },
+        )
+    } else {
+        (
+            quote!(let content = <#inner as __rt::ReadNode>::read(cursor, ctx, depth);),
+            quote! {
+                let mut content = content?;
+                let __taken = <#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content);
+            },
+        )
     };
     let wraps_hidden = attrs.wraps_hidden;
     Ok(Body {
@@ -933,11 +953,15 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], height:
             let __at = ctx.at_of(cursor);
             let __index = __rt::index_of(cursor);
             #hidden
-            let __unit = <#inner as __rt::ReadNode>::unit_id(cursor).map(|_| ::sittir_core::layout::UnitRow { slot: #key, item: ::sittir_core::types::ItemIndex(0), row: __rt::index_of(cursor) });
-            let mut content = <#inner as __rt::ReadNode>::read(cursor, ctx, depth);
+            let __unit = {
+                let mut __nodes = __rt::LentCursor::new(cursor, ctx.source);
+                let __content = __nodes.here();
+                <#inner as __rt::ReadNode>::unit_id(&mut __nodes, &__content).map(|_| ::sittir_core::layout::UnitRow { slot: #key, item: ::sittir_core::types::ItemIndex(0), row: __content.index })
+            };
+            #read_content
             #restore
-            let mut content = content?;
-            let layout: #layout_ty = Some(__rt::envelope_layout(<#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content), __index, __at, __unit, ctx));
+            #take_layout
+            let layout: #layout_ty = Some(__rt::envelope_layout(__taken, __index, __at, __unit, ctx));
             ::core::result::Result::Ok(#built)
         },
     })
@@ -1063,23 +1087,24 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
     inits.extend(list_inits(attrs, fields, &slots)?);
     let delimiter = flank_delimiter(attrs, fields, &slots)?.map(|call| {
         quote! {
-            fn delimiter(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<::sittir_core::types::Delimiter> {
-                let __rt::Routed { children, routes, .. } = <Self as __rt::ReadNode>::routes(cursor)?;
+            fn delimiter(nodes: &mut dyn __rt::Nodes<'_>, at: &__rt::Kid) -> ::core::option::Option<::sittir_core::types::Delimiter> {
+                let __rt::Routed { children, routes, .. } = <Self as __rt::ReadNode>::routes(nodes, at)?;
+                let __list = at.span();
                 ::core::option::Option::Some(#call)
             }
         }
     });
     let pass = pass(attrs.min_depth.unwrap_or(0));
+    let list_span = fields.iter().any(|field| matches!(field.role, Role::Flank(_))).then(|| quote!(let __list = ::sittir_core::types::Span::of(&cursor.node());));
     let built = built(&quote!(#(#inits)*), height);
 
     Ok(Body {
         routes: quote! {
-            fn routes(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed> {
-                let __node = cursor.node();
-                if !<Self as __rt::ReadNode>::admits(::sittir_core::read::grammar_id(&__node), __rt::display_id(&__node)) {
+            fn routes(nodes: &mut dyn __rt::Nodes<'_>, at: &__rt::Kid) -> ::core::option::Option<__rt::Routed> {
+                if !<Self as __rt::ReadNode>::admits(at.grammar, at.display) {
                     return ::core::option::Option::None;
                 }
-                let children = __rt::survey(cursor);
+                let children = nodes.kids(at.index).to_vec();
                 let routes = children.iter().map(__route).collect::<::core::result::Result<::std::vec::Vec<__rt::Route>, __rt::ReadError>>().ok()?;
                 ::core::option::Option::Some(__rt::Routed { children, routes, keys: &[#(#keys),*] })
             }
@@ -1090,14 +1115,14 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
         },
         items: quote! {
             #[allow(unused_variables)]
-            fn __unit(slot: ::sittir_core::types::SlotId, cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
+            fn __unit(slot: ::sittir_core::types::SlotId, nodes: &mut dyn __rt::Nodes<'_>, at: &__rt::Kid) -> ::core::option::Option<__Kind> {
                 match slot {
-                    #(#idxs => <#tys as __rt::ReadSlot>::unit_id(cursor),)*
+                    #(#idxs => <#tys as __rt::ReadSlot>::unit_id(nodes, at),)*
                     _ => ::core::option::Option::None,
                 }
             }
-            fn __route(child: &__rt::Child) -> ::core::result::Result<__rt::Route, __rt::ReadError> {
-                if child.trivia {
+            fn __route(child: &__rt::Kid) -> ::core::result::Result<__rt::Route, __rt::ReadError> {
+                if child.entry() {
                     return ::core::result::Result::Ok(__rt::Route::Trivia);
                 }
                 match child.field {
@@ -1135,6 +1160,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
             };
             quote! {
             #pass
+            #list_span
             #(let mut #accs = <#tys as __rt::ReadSlot>::start();)*
             let mut __units = ::std::vec::Vec::new();
             #unit_slots
@@ -1215,7 +1241,7 @@ fn delimiter_call(attrs: &KindAttrs, slots: &[(u16, &Field<'_>, &SlotAttrs)], na
         .map(|&(i, ..)| slot_id(i))
         .ok_or_else(|| syn::Error::new_spanned(item, "`item` names one of the list's slots"))?;
     let (leading, trailing) = (option(flank.leading), option(flank.trailing));
-    Ok(quote!(__rt::delimiter(&cursor.node(), &children, &routes, #slot, #leading, #trailing)))
+    Ok(quote!(__rt::delimiter(__list, &children, &routes, #slot, #leading, #trailing)))
 }
 
 /// A slot position as the `SlotId` a route names it by.
@@ -1267,6 +1293,60 @@ mod tests {
             &out,
             "::core::option::Option::Some(__field) if (__field == field::KEY) && <SlotValue<ValueNode> as __rt::ReadSlot>::takes_tagged(child.grammar, child.display, child.named) => {"
         ));
+    }
+
+    fn envelope(list: bool) -> syn::DeriveInput {
+        let extra = if list { ", content_list" } else { "" };
+        syn::parse_str(&format!(
+            "#[node(kind = kind::ELEMENT_BINDING_EXPRESSION, display, content = content, words = 5, built_words = 3{extra})]
+            pub struct ElementBindingExpressionNode {{
+                #[wire(key = \"$_layout\")]
+                #[layout]
+                pub layout: Option<Box<NodeLayout>>,
+                #[height]
+                height: u16,
+                #[wire(key = \"_content\")]
+                #[slot(word = 2, width = 3, forms = 1, built = 2)]
+                pub content: SlotValue<ArgumentsNode>,
+            }}"
+        ))
+        .expect("an envelope")
+    }
+
+    #[test]
+    fn an_envelope_over_a_list_reads_its_content_through_a_slot_hop() {
+        let charged = expand(&envelope(true));
+        assert!(has(&charged, "let content: ::core::result::Result<SlotValue<ArgumentsNode>, __rt::ReadError> = __rt::read_value(cursor, ctx, depth);"));
+        assert!(has(&charged, "::sittir_core::SlotValue::Coord(_) => ::core::option::Option::None,"));
+        assert!(has(&charged, "content: content,"));
+        let plain = expand(&envelope(false));
+        assert!(has(&plain, "let content = <ArgumentsNode as __rt::ReadNode>::read(cursor, ctx, depth);"));
+        assert!(has(&plain, "content: ::sittir_core::SlotValue::Node(content),"));
+    }
+
+    #[test]
+    fn an_envelope_over_a_list_hydrates_as_the_lists_record_under_its_own_kind() {
+        let charged = expand(&envelope(true));
+        assert!(has(&charged, "<ArgumentsNode as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, depth.and_then(__rt::Depth::below), records, inline)?"));
+        assert!(has(&charged, "::sittir_core::arena::Hydrated::Record { kind: __stored_kind(&__node), at }"));
+        assert!(has(&charged, "embedded @ ::sittir_core::arena::Hydrated::Embedded => ::core::result::Result::Ok(embedded),"));
+        assert!(has(&charged, "::sittir_core::arena::Hydrated::Unit { .. } | ::sittir_core::arena::Hydrated::Text { .. } => ::core::result::Result::Err(::sittir_core::arena::ArenaError::Unwritable("));
+        assert!(!has(&charged, "other => "));
+        assert!(!has(&charged, "an envelope's content read from its own row is no node with a record"));
+        let plain = expand(&envelope(false));
+        assert!(!has(&plain, "compile_error!"));
+        assert!(has(&plain, "an envelope's content read from its own row is no node with a record"));
+    }
+
+    #[test]
+    fn an_envelope_over_a_list_still_needs_its_content_to_be_a_slot() {
+        let mut input = envelope(true);
+        let syn::Data::Struct(data) = &mut input.data else { panic!("a struct") };
+        let syn::Fields::Named(fields) = &mut data.fields else { panic!("named fields") };
+        let content = fields.named.iter_mut().find(|field| field.ident.as_ref().is_some_and(|name| name == "content")).expect("content");
+        content.attrs.retain(|attr| !attr.path().is_ident("slot"));
+        let error = super::derive(&input).expect_err("a content that is no slot");
+        assert!(error.to_string().contains("content"), "{error}");
     }
 
     #[test]

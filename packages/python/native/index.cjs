@@ -92,12 +92,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('sittir-python-android-arm64')
-        const bindingPackageVersion = require('sittir-python-android-arm64/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('sittir-python-android-arm64')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -108,12 +103,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('sittir-python-android-arm-eabi')
-        const bindingPackageVersion = require('sittir-python-android-arm-eabi/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('sittir-python-android-arm-eabi')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -129,12 +119,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('sittir-python-win32-x64-gnu')
-          const bindingPackageVersion = require('sittir-python-win32-x64-gnu/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('sittir-python-win32-x64-gnu')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -145,12 +130,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('sittir-python-win32-x64-msvc')
-          const bindingPackageVersion = require('sittir-python-win32-x64-msvc/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('sittir-python-win32-x64-msvc')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -162,12 +142,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('sittir-python-win32-ia32-msvc')
-        const bindingPackageVersion = require('sittir-python-win32-ia32-msvc/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('sittir-python-win32-ia32-msvc')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -178,12 +153,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('sittir-python-win32-arm64-msvc')
-        const bindingPackageVersion = require('sittir-python-win32-arm64-msvc/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('sittir-python-win32-arm64-msvc')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -197,12 +167,7 @@ function requireNative() {
       loadErrors.push(e)
     }
     try {
-      const binding = require('sittir-python-darwin-universal')
-      const bindingPackageVersion = require('sittir-python-darwin-universal/package.json').version
-      if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-        throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-      }
-      return binding
+      return require('sittir-python-darwin-universal')
     } catch (e) {
       loadErrors.push(e)
     }
@@ -213,12 +178,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('sittir-python-darwin-x64')
-        const bindingPackageVersion = require('sittir-python-darwin-x64/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('sittir-python-darwin-x64')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -229,12 +189,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('sittir-python-darwin-arm64')
-        const bindingPackageVersion = require('sittir-python-darwin-arm64/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('sittir-python-darwin-arm64')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -249,12 +204,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('sittir-python-freebsd-x64')
-        const bindingPackageVersion = require('sittir-python-freebsd-x64/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('sittir-python-freebsd-x64')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -265,12 +215,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('sittir-python-freebsd-arm64')
-        const bindingPackageVersion = require('sittir-python-freebsd-arm64/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('sittir-python-freebsd-arm64')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -281,12 +226,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('sittir-python-freebsd-ppc64')
-        const bindingPackageVersion = require('sittir-python-freebsd-ppc64/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('sittir-python-freebsd-ppc64')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -302,12 +242,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('sittir-python-linux-x64-musl')
-          const bindingPackageVersion = require('sittir-python-linux-x64-musl/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('sittir-python-linux-x64-musl')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -318,12 +253,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('sittir-python-linux-x64-gnu')
-          const bindingPackageVersion = require('sittir-python-linux-x64-gnu/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('sittir-python-linux-x64-gnu')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -336,12 +266,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('sittir-python-linux-arm64-musl')
-          const bindingPackageVersion = require('sittir-python-linux-arm64-musl/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('sittir-python-linux-arm64-musl')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -352,12 +277,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('sittir-python-linux-arm64-gnu')
-          const bindingPackageVersion = require('sittir-python-linux-arm64-gnu/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('sittir-python-linux-arm64-gnu')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -370,12 +290,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('sittir-python-linux-arm-musleabihf')
-          const bindingPackageVersion = require('sittir-python-linux-arm-musleabihf/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('sittir-python-linux-arm-musleabihf')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -386,12 +301,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('sittir-python-linux-arm-gnueabihf')
-          const bindingPackageVersion = require('sittir-python-linux-arm-gnueabihf/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('sittir-python-linux-arm-gnueabihf')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -404,12 +314,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('sittir-python-linux-loong64-musl')
-          const bindingPackageVersion = require('sittir-python-linux-loong64-musl/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('sittir-python-linux-loong64-musl')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -420,12 +325,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('sittir-python-linux-loong64-gnu')
-          const bindingPackageVersion = require('sittir-python-linux-loong64-gnu/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('sittir-python-linux-loong64-gnu')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -438,12 +338,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('sittir-python-linux-riscv64-musl')
-          const bindingPackageVersion = require('sittir-python-linux-riscv64-musl/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('sittir-python-linux-riscv64-musl')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -454,12 +349,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('sittir-python-linux-riscv64-gnu')
-          const bindingPackageVersion = require('sittir-python-linux-riscv64-gnu/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('sittir-python-linux-riscv64-gnu')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -471,12 +361,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('sittir-python-linux-ppc64-gnu')
-        const bindingPackageVersion = require('sittir-python-linux-ppc64-gnu/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('sittir-python-linux-ppc64-gnu')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -487,12 +372,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('sittir-python-linux-s390x-gnu')
-        const bindingPackageVersion = require('sittir-python-linux-s390x-gnu/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('sittir-python-linux-s390x-gnu')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -507,12 +387,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('sittir-python-openharmony-arm64')
-        const bindingPackageVersion = require('sittir-python-openharmony-arm64/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('sittir-python-openharmony-arm64')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -523,12 +398,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('sittir-python-openharmony-x64')
-        const bindingPackageVersion = require('sittir-python-openharmony-x64/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('sittir-python-openharmony-x64')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -539,12 +409,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('sittir-python-openharmony-arm')
-        const bindingPackageVersion = require('sittir-python-openharmony-arm/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('sittir-python-openharmony-arm')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -681,12 +546,6 @@ if (!nativeBinding || forceWasi) {
       candidateError = __napiWasiResolveCandidate('sittir-python-wasm32-wasi', true, undefined)
       candidateFailed = candidateError !== null
       if (!candidateFailed) {
-        if (process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          const bindingPackageVersion = require('sittir-python-wasm32-wasi/package.json').version
-          if (bindingPackageVersion !== '0.1.0') {
-            throw new Error(`WASI binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-        }
         wasiBinding = require('sittir-python-wasm32-wasi')
         nativeBinding = wasiBinding
         __napiLoadedBindingTarget = 'wasm32-wasi'
@@ -837,6 +696,7 @@ module.exports.__napiBindingTarget = __napiStampBindingTarget(nativeBinding, __n
 module.exports = nativeBinding
 module.exports.SittirEngine = nativeBinding.SittirEngine
 module.exports.ARENA_CHUNK_SHIFT = nativeBinding.ARENA_CHUNK_SHIFT
+module.exports.backerParity = nativeBinding.backerParity
 module.exports.builtBump = nativeBinding.builtBump
 module.exports.builtBytes = nativeBinding.builtBytes
 module.exports.builtLeafSide = nativeBinding.builtLeafSide
@@ -864,6 +724,7 @@ module.exports.COUNT_SATURATED = nativeBinding.COUNT_SATURATED
 module.exports.descendants = nativeBinding.descendants
 module.exports.disposeTree = nativeBinding.disposeTree
 module.exports.editedWithin = nativeBinding.editedWithin
+module.exports.engineStamp = nativeBinding.engineStamp
 module.exports.externalBuffers = nativeBinding.externalBuffers
 module.exports.framedSpan = nativeBinding.framedSpan
 module.exports.HELD_RECORD = nativeBinding.HELD_RECORD

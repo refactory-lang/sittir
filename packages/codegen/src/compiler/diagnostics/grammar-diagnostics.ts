@@ -5,7 +5,8 @@ import { writeFileSync } from 'node:fs';
 import { assemble, AssembleCtx, type AssembledNodeMap } from '../assemble.ts';
 import { collapseRenamedRules, link } from '../link.ts';
 import { normalizeGrammar, NormalizeCtx } from '../normalize.ts';
-import { DiagnosticSink } from '../../types/diagnostics.ts';
+import { DiagnosticSink, EmitHaltedError } from '../../types/diagnostics.ts';
+import { emitShapeFailure, type EmitShapeFailure } from './emit-diagnostics.ts';
 import { buildInlinableKinds } from '../inline-sets.ts';
 import type { ParseKindCollisionDiagnostic } from '../../types/parsekind-collisions.ts';
 import { isTerminalNode, optionalFlankSlots, type AssembleWarning, type NamingEvent } from '../model/node-map.ts';
@@ -465,6 +466,7 @@ const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'literal-split-not-keyword',
 	'eof-not-last',
 	'eof-in-token',
+	'compile-phase-failed',
 	...Object.keys(ENRICH_SHAPES)
 ]);
 
@@ -504,6 +506,51 @@ export function renderAsEntryMissingDiagnostics(grammar: string, kinds: readonly
 	);
 }
 
+export class CompilePhaseFailed extends Error {
+	readonly records: readonly GrammarDiagnostic[];
+	readonly carried: readonly GrammarDiagnostic[];
+
+	constructor(records: readonly GrammarDiagnostic[], carried: readonly GrammarDiagnostic[] = []) {
+		super(records.map((record) => record.message).join('; '));
+		this.name = 'CompilePhaseFailed';
+		this.records = records;
+		this.carried = carried;
+	}
+}
+
+type CompilePhase = 'link' | 'normalize' | 'assemble';
+
+function thrownAt(error: Error): string | undefined {
+	return error.stack?.split('\n').find((line) => /\/compiler\//.test(line))?.replace(/^\s*at\s+/, '').replace(/\(?(?:file:\/\/)?.*\/(packages\/[^)]*)\)?$/, '$1');
+}
+
+function guardPhase<T>(phase: CompilePhase, grammar: string, carry: () => readonly GrammarDiagnostic[], run: () => T): T {
+	try {
+		return run();
+	} catch (error) {
+		if (error instanceof CompilePhaseFailed || !(error instanceof Error)) throw error;
+		const named = 'failure' in error ? emitShapeFailure(error.failure as EmitShapeFailure) : error;
+		if (named instanceof EmitHaltedError) {
+			throw new CompilePhaseFailed(
+				(named.blocking as readonly GrammarDiagnostic[]).map((record) => (record.grammar === '' ? { ...record, grammar } : record)),
+				carry()
+			);
+		}
+		const at = thrownAt(error);
+		throw new CompilePhaseFailed([
+			{
+				scope: 'grammar',
+				code: 'compile-phase-failed',
+				severity: 'error',
+				grammar,
+				message: `${phase}: ${error.message}`,
+				canProceed: false,
+				details: { phase, error: error.name, ...(at === undefined ? {} : { at }) }
+			}
+		], carry());
+	}
+}
+
 export function collectGrammarDiagnosticsForGrammar(input: {
 	rawGrammar: RawGrammar;
 	generatedIdTables: GeneratedIdTables;
@@ -518,24 +565,35 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 } {
 	const compilerDiagnostics = new DiagnosticSink();
 	const slotGroupingCollector = makeSlotGroupingCollector();
-	const linked = link(input.rawGrammar, {
-		generatedIdTables: input.generatedIdTables,
-		diagnostics: compilerDiagnostics
-	});
+	const carried = (): readonly GrammarDiagnostic[] => [
+		...collectGrammarDiagnostics({ grammar: input.rawGrammar.name, parseKindCollisions: [], slotGroupingDiagnostics: slotGroupingCollector.all }).diagnostics,
+		...compilerDiagnostics
+			.all()
+			.filter((d) => SURFACED_COMPILER_CODES.has(d.code))
+			.map((d) => ({ ...d, scope: 'grammar' as const, grammar: input.rawGrammar.name }))
+	];
+	const linked = guardPhase('link', input.rawGrammar.name, carried, () =>
+		link(input.rawGrammar, {
+			generatedIdTables: input.generatedIdTables,
+			diagnostics: compilerDiagnostics
+		})
+	);
 	const kindEntries = collectGeneratedKindEntries(linked.generatedIdTables);
 	const rawGrammar = collapseRenamedRules(input.rawGrammar, { kindEntries });
 	const inlineKinds = buildInlinableKinds(new Set(rawGrammar.inline), linked);
 	for (const rec of diagnoseRepeatedSeqGrouping(linked.rules, inlineKinds)) slotGroupingCollector.record(rec);
-	const normalized = normalizeGrammar(
-		linked,
-		new NormalizeCtx({
-			grammar: linked,
-			inlineKinds,
-			diagnostics: compilerDiagnostics,
-			slotGroupingCollector
-		})
+	const normalized = guardPhase('normalize', rawGrammar.name, carried, () =>
+		normalizeGrammar(
+			linked,
+			new NormalizeCtx({
+				grammar: linked,
+				inlineKinds,
+				diagnostics: compilerDiagnostics,
+				slotGroupingCollector
+			})
+		)
 	);
-	const nodeMap = assemble(AssembleCtx.from(normalized, compilerDiagnostics));
+	const nodeMap = guardPhase('assemble', rawGrammar.name, carried, () => assemble(AssembleCtx.from(normalized, compilerDiagnostics)));
 	const slotGroupingDiagnostics = slotGroupingCollector.all;
 	const contentAliasDiagnostics = diagnoseContentAliasInjectivity({
 		grammar: rawGrammar.name,
@@ -658,8 +716,13 @@ export function evaluateRecords(raw: RawGrammar): GrammarDiagnostic[] {
 export function diagnoseStage(raw: RawGrammar): { diagnostics: GrammarDiagnostic[]; ruleCatalog?: RuleCatalog } {
 	const records = evaluateRecords(raw);
 	if (predictionFailed(raw)) return { diagnostics: records };
-	const { diagnostics, raw: collapsed } = collectGrammarDiagnosticsForGrammar({ rawGrammar: raw, generatedIdTables: predictedIdTablesOf(raw) });
-	return { diagnostics: [...records, ...diagnostics], ruleCatalog: collapsed.ruleCatalog };
+	try {
+		const { diagnostics, raw: collapsed } = collectGrammarDiagnosticsForGrammar({ rawGrammar: raw, generatedIdTables: predictedIdTablesOf(raw) });
+		return { diagnostics: [...records, ...diagnostics], ruleCatalog: collapsed.ruleCatalog };
+	} catch (error) {
+		if (error instanceof CompilePhaseFailed) return { diagnostics: [...records, ...error.carried, ...error.records] };
+		throw error;
+	}
 }
 
 function withoutOrphanedGroups(raw: Pick<RawGrammar, 'orphanedSyntheticGroups'>, records: GrammarDiagnostic[]): GrammarDiagnostic[] {

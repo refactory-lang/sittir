@@ -32,10 +32,11 @@
 //! (`ParsedTree::deviation`, `list_slots`).
 
 use crate::heap::HeapBytes;
+use crate::nodes::{Kid, Nodes, Step, Visit};
 use crate::types::{KindId, NodeIndex, RunId, Span};
 
 mod place;
-pub use place::{Lookup, Placement, Source, Table};
+pub use place::{Placement, Source, Table};
 
 /// A side of a node that holds trivia: before its first token, after its
 /// last, or, for a node with no named child, between its own tokens.
@@ -156,33 +157,45 @@ pub struct DepthMembers {
 }
 
 impl DepthMembers {
-    /// The depth members of `tree`, found by one walk over every node, the
-    /// interiors of extras and `ERROR`s included; none where `kinds` has no
-    /// depth member.
+    /// The depth members of the tree `nodes` navigates, found by one walk
+    /// over every node, the interiors of extras and `ERROR`s included; none
+    /// where `kinds` has no depth member.
     #[must_use]
-    pub fn of(tree: &tree_sitter::Tree, kinds: SurfaceKinds) -> Self {
+    pub fn of(nodes: &mut dyn Nodes<'_>, kinds: SurfaceKinds) -> Self {
         let mut members = Self::default();
         if !kinds.has_depth_members() {
             return members;
         }
-        let mut cursor = tree.walk();
-        let mut net = 0;
-        loop {
-            members.walked += 1;
-            let kind = crate::read::grammar_id(&cursor.node());
-            if kinds.is_depth_member(kind) {
-                net += i32::from(kind == kinds.indent) - i32::from(kind == kinds.dedent);
-                members.at.push(crate::read::index_of(&cursor));
-                members.net.push(net);
+        nodes.walk(NodeIndex::ROOT, &mut |step, kid| {
+            if step == Step::Meet {
+                members.walked += 1;
+                members.meet(kid, kinds);
             }
-            if cursor.goto_first_child() {
-                continue;
+            Visit::Enter
+        });
+        members
+    }
+
+    /// The depth members among `kids`, every node of a tree in preorder,
+    /// found by a scan of them with no walk; none where `kinds` has no
+    /// depth member.
+    #[must_use]
+    pub fn scanned(kids: impl IntoIterator<Item = Kid>, kinds: SurfaceKinds) -> Self {
+        let mut members = Self::default();
+        if kinds.has_depth_members() {
+            for kid in kids {
+                members.meet(&kid, kinds);
             }
-            while !cursor.goto_next_sibling() {
-                if !cursor.goto_parent() {
-                    return members;
-                }
-            }
+        }
+        members
+    }
+
+    /// Counts `kid`, the next node in preorder, when it is a depth member.
+    fn meet(&mut self, kid: &Kid, kinds: SurfaceKinds) {
+        if kinds.is_depth_member(kid.grammar) {
+            let net = self.net.last().copied().unwrap_or(0) + i32::from(kid.grammar == kinds.indent) - i32::from(kid.grammar == kinds.dedent);
+            self.at.push(kid.index);
+            self.net.push(net);
         }
     }
 
@@ -246,39 +259,25 @@ impl Walk {
     }
 }
 
-fn is_entry(node: &tree_sitter::Node<'_>) -> bool {
-    node.is_extra() || node.is_error()
+/// Whether the node at `index` is empty: no child of it holds sides
+/// (`Kid::holder`), so the assignment gives it the trivia between its own
+/// tokens as `inner`.
+#[must_use]
+pub fn is_empty(nodes: &mut dyn Nodes<'_>, index: NodeIndex) -> bool {
+    !nodes.kids(index).iter().any(Kid::holder)
 }
 
-/// Whether `node` holds trivia sides: a child holds sides when it is named,
-/// not an extra or `ERROR`, and has width. Width is read from the tree here;
-/// a built node's child has the width of its rendered text, so a stored
-/// automatic semicolon, which renders `"\n"`, has width there.
+/// The walk under the node at descendant `index` of the tree `nodes`
+/// navigates. The walk's start has no edge tokens of its own: they would lie
+/// at its bounds.
 #[must_use]
-pub fn holds_sides(node: &tree_sitter::Node<'_>) -> bool {
-    let span = Span::of(node);
-    node.is_named() && !is_entry(node) && span.end > span.start
-}
-
-/// Whether `node` is empty: no child of it holds sides (`holds_sides`), so
-/// the assignment gives it the trivia between its own tokens as `inner`.
-#[must_use]
-pub fn is_empty(node: &tree_sitter::Node<'_>) -> bool {
-    let mut cursor = node.walk();
-    let holds = node.children(&mut cursor).any(|child| holds_sides(&child));
-    !holds
-}
-
-/// The walk under `node`, the node at descendant `index` of its tree. The
-/// walk's start has no edge tokens of its own: they would lie at its bounds.
-#[must_use]
-pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk {
+pub fn walk(nodes: &mut dyn Nodes<'_>, index: NodeIndex, source: &str) -> Walk {
     struct Frame {
         at_index: u32,
         at: u32,
         bounds: Bounds,
     }
-    let mut spans = vec![(0, 0); crate::read::descendant_count(&node) as usize];
+    let mut spans = vec![(0, 0); nodes.kid(index).count as usize];
     let mut tokens: Vec<Span> = Vec::new();
     let mut entries: Vec<NodeIndex> = Vec::new();
     let mut frames: Vec<Frame> = Vec::new();
@@ -298,38 +297,10 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
         }
         tokens.push(token);
     };
-    let mut cursor = node.walk();
-    loop {
-        let node = cursor.node();
-        let local = crate::read::offset_of(&cursor);
-        let Span { start, end } = Span::of(&node);
-        spans[local as usize] = (start, end);
-        if let Some(frame) = frames.last_mut() {
-            if let Some(token) = hidden(frame.at, start) {
-                push(&mut tokens, Some(&mut frame.bounds), &mut folds, token);
-            }
-        }
-        if is_entry(&node) {
-            entries.push(index + local);
-        } else if node.child_count() == 0 {
-            push(&mut tokens, frames.last_mut().map(|frame| &mut frame.bounds), &mut folds, Span { start, end });
-        } else {
-            frames.push(Frame { at_index: local, at: start, bounds: Bounds::default() });
-            cursor.goto_first_child();
-            continue;
-        }
-        if let Some(frame) = frames.last_mut() {
-            frame.at = end;
-        }
-        loop {
-            if !frames.is_empty() && cursor.goto_next_sibling() {
-                break;
-            }
-            let Some(mut frame) = frames.pop() else {
-                tokens.sort_by_key(|token| (token.start, token.end));
-                return Walk { tokens, entries, folds, spans, base: index };
-            };
-            cursor.goto_parent();
+    nodes.walk(index, &mut |step, kid| {
+        let local = kid.index.offset_from(index);
+        if step == Step::Leave {
+            let Some(mut frame) = frames.pop() else { return Visit::Pass };
             let (start, end) = spans[frame.at_index as usize];
             if let Some(token) = hidden(frame.at, end) {
                 push(&mut tokens, Some(&mut frame.bounds), &mut folds, token);
@@ -350,8 +321,30 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
                     parent.bounds.widen(first, last, &mut folds);
                 }
             }
+            return Visit::Pass;
         }
-    }
+        let Kid { start, end, .. } = *kid;
+        spans[local as usize] = (start, end);
+        if let Some(frame) = frames.last_mut() {
+            if let Some(token) = hidden(frame.at, start) {
+                push(&mut tokens, Some(&mut frame.bounds), &mut folds, token);
+            }
+        }
+        if kid.entry() {
+            entries.push(kid.index);
+        } else if kid.leaf() {
+            push(&mut tokens, frames.last_mut().map(|frame| &mut frame.bounds), &mut folds, Span { start, end });
+        } else {
+            frames.push(Frame { at_index: local, at: start, bounds: Bounds::default() });
+            return Visit::Enter;
+        }
+        if let Some(frame) = frames.last_mut() {
+            frame.at = end;
+        }
+        Visit::Pass
+    });
+    tokens.sort_by_key(|token| (token.start, token.end));
+    Walk { tokens, entries, folds, spans, base: index }
 }
 
 /// Where the assignment puts an entry of a gap.

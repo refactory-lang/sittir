@@ -47,6 +47,19 @@ export interface LayoutWork {
    */
   cursorClimbs: number
   /**
+   * The siblings the lookup cursors of the tree's calls stepped across to
+   * reach the nodes they looked up (`read::goto_from`): with
+   * `cursor_climbs`, the cost of their moves before they descend.
+   */
+  siblingSteps: number
+  /**
+   * The moves trivia placement made down from the node its cursor was
+   * created at, the tree's root or the node of a reader's cursor it moves,
+   * to a node below that node's children (`nodes::TreeNodes::root_descents`):
+   * the lookups whose descent `cursor_climbs` does not bound.
+   */
+  rootDescents: number
+  /**
    * The nodes the depth moves of the tree's slices walked, its depth
    * members found once for every move (`DepthMembers::of`).
    */
@@ -66,6 +79,11 @@ export interface LayoutWork {
    * (`Lookups::aligned`), and one for each gap measured from them.
    */
   gapItems: number
+  /**
+   * The times a call was handed the tree's tree-sitter tree
+   * (`ParsedTree::tree`): to navigate it, read it or hydrate from it.
+   */
+  treeReads: number
 }
 
 /**
@@ -118,6 +136,15 @@ export declare class SittirEngine {
  * r" chunk (`arena::CHUNK_SHIFT`).
  */
 export declare const ARENA_CHUNK_SHIFT: number
+
+/**
+ * r" Whether the record backer answers every node of the live tree
+ * r" `treeId`, read whole, as the tree backer does
+ * r" (`ParsedTree::backer_parity`): `{ nodes, differing, first? }`.
+ * r" A diagnostic. Refuses a tree that is not live and a read the
+ * r" model refuses.
+ */
+export declare function backerParity(treeId: TreeId): { nodes: number; differing: number; first?: number }
 
 /**
  * r" Takes one more count of the built entry at `address`, whose
@@ -295,6 +322,18 @@ export interface EngineOptions {
    * engine's table — the engine's own table never changes.
    */
   options?: object
+}
+
+/** The engine image this process mapped (`sittir_engine::loaded`). */
+export declare function engineStamp(): EngineStamp
+
+/**
+ * The engine image this process mapped: its stamp and the file it
+ * was loaded from.
+ */
+export interface EngineStamp {
+  stamp: string
+  path?: string
 }
 
 /**

@@ -47,9 +47,10 @@ fn rendered(source: &str, depth: Depth, write: Write) -> String {
         }
         Write::EveryNode => indices.for_each(|index| edit_in_place(&mut tree, index)),
     }
-    let root: AnyNode = read_at(&mut tree.tree().walk(), &mut tree.seating_ctx(), NodeIndex::ROOT, depth).expect("a root");
+    let seating = tree.seating();
+    let root: AnyNode = read_at(&mut seating.cursor(NodeIndex::ROOT), &mut seating.ctx(), NodeIndex::ROOT, depth).expect("a root");
     let options = engine.options().clone();
-    let ctx = RenderContext { options: &options, sources: &tree };
+    let ctx = RenderContext::new(&options, &seating);
     render_node_parts(sittir_core::SlotValue::Node(root), &ctx, None).expect("a render").1
 }
 

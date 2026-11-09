@@ -1,4 +1,4 @@
-import { NATIVE_LOADER, nativeBinaryName } from '../grammars.ts';
+import { NATIVE_LOADER, nativeBinaryName, nativePlatformPackage } from '../grammars.ts';
 import { NATIVE_RENDER_NODE_ABI } from './native-crate.ts';
 
 export interface EmitGrammarRuntimeConfig {
@@ -22,7 +22,7 @@ export function emitBackend({ grammar }: EmitGrammarRuntimeConfig): string {
 import { createRequire } from 'node:module';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { nativeLoadFailure } from '@sittir/common/engine';
+import { nativeLoadFailure, recordLoadedEngine } from '@sittir/common/engine';
 import type {
 	JsBackendStatusLike,
 	NativeBackendStatusLike,
@@ -120,11 +120,17 @@ function tryLoadNative(): NativeModule | { reason: string } {
 	try {
 		const req = createRequire(import.meta.url);
 		const mod = req(NATIVE_MODULE_PATH) as NativeModule;
+		recordLoadedEngine(mod);
 		return mod;
 	} catch (err) {
 		return {
 			reason: nativeLoadFailure(
-				{ packageName: '@sittir/${grammar}', binaryName: '${nativeBinaryName(grammar)}', dir: dirname(NATIVE_MODULE_PATH) },
+				{
+					packageName: '@sittir/${grammar}',
+					binaryName: '${nativeBinaryName(grammar)}',
+					platformPackage: '${nativePlatformPackage(grammar)}',
+					dir: dirname(NATIVE_MODULE_PATH)
+				},
 				err
 			)
 		};

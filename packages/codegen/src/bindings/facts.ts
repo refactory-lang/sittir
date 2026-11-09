@@ -6,7 +6,7 @@ import { bindMatch, type LeadMatch } from '../dsl/verbs/effects.ts';
 import type { LiteralSplit, SitedName } from '../dsl/bind.ts';
 import { isParserHiddenName } from '../dsl/rule-patterns.ts';
 import { boundKindName } from './names.ts';
-import { allGrammars, grammarPackageDir, PACKAGES_DIR, type GrammarName } from '../grammars.ts';
+import { grammarPackageDir, PACKAGES_DIR, stableGrammars, type GrammarName } from '../grammars.ts';
 
 export const WILDCARD = '_';
 
@@ -252,7 +252,7 @@ export interface BindingsRoundTrip {
 	readonly rendered: string;
 }
 
-export const bindingGrammars = (): readonly GrammarName[] => allGrammars().filter((grammar) => existsSync(bindingsPath(grammar)));
+export const bindingGrammars = (): readonly GrammarName[] => stableGrammars().filter((grammar) => existsSync(bindingsPath(grammar)));
 
 export const VOCABULARY_DIR = join(PACKAGES_DIR, 'types', 'src', 'vocabulary');
 

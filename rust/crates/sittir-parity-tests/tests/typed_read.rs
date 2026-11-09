@@ -1,3 +1,4 @@
+use sittir_core::tree_sitter;
 use sittir_core::read::{Depth, ReadCtx, ReadError, ReadNode, SideEntry, SideLookup, DEBUG_READ_CHECKS};
 use sittir_core::types::KindId;
 
@@ -272,7 +273,9 @@ fn a_child_no_route_takes_is_refused_only_with_debug_checks() {
     let result = read_nth::<FunctionWithoutBody>(&tree, source, kind::FUNCTION_ITEM, 0, Depth::All);
     let mut cursor = tree.walk();
     assert!(cursor.goto_first_child());
-    let routes = FunctionWithoutBody::routes(&mut cursor);
+    let mut nodes = sittir_core::read::LentCursor::new(&mut cursor, source);
+    let at = nodes.here();
+    let routes = FunctionWithoutBody::routes(&mut nodes, &at);
     if DEBUG_READ_CHECKS {
         let refused = result.unwrap_err();
         let ReadError::Unrouted { kind: parent, child, index } = refused else { panic!("{refused:?}") };
@@ -499,7 +502,9 @@ fn a_spelled_member_reports_as_its_unit_the_id_its_read_stores() {
         let tree = parse(&sittir_typescript::language(), source);
         let mut cursor = find(&tree, ts::PREDEFINED_TYPE, 0);
         let at = sittir_core::read::index_of(&cursor);
-        assert_eq!(Predefined::unit_id(&mut cursor), Some(stored), "{source}");
+        let mut nodes = sittir_core::read::LentCursor::new(&mut cursor, source);
+        let here = nodes.here();
+        assert_eq!(Predefined::unit_id(&mut nodes, &here), Some(stored), "{source}");
         assert_eq!(sittir_core::read::index_of(&cursor), at, "the cursor ends where it started");
     }
 }
@@ -902,9 +907,9 @@ fn a_coordinate_reads_one_level_into_its_generated_node() {
     use sittir_rust::render::node::FunctionItemNode;
     let source = "fn f() { g(); }\n";
     let tree = parse_rust(source);
-    let index = sittir_core::read::index_of(&find(&tree, kind::FUNCTION_ITEM, 0));
+    let mut cursor = find(&tree, kind::FUNCTION_ITEM, 0);
     let mut ctx = ReadCtx::new(source, sittir_core::types::TreeId(7), <FunctionItemNode as ReadNode>::shows);
-    let read = FunctionItemNode::read_coordinate(&tree, &mut ctx, index).expect("a generated node reads a coordinate").unwrap();
+    let read = FunctionItemNode::read_coordinate(&mut cursor, &mut ctx).expect("a generated node reads a coordinate").unwrap();
     let direct = read_nth::<FunctionItemNode>(&tree, source, kind::FUNCTION_ITEM, 0, Depth::ONE).unwrap();
     assert_eq!(read, direct);
 }

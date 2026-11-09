@@ -52,13 +52,13 @@ pub use built_write::BuiltWriter;
 pub use cell::{flag, header_of, kind_field, parsed_tag, with_kind, Cell, CellWord, ListCell, LINK_WORDS};
 pub use hydrate::{hydrate_at, parsed_side, row_of as hydrated_row, Draft, Embed, HydrateError, HydrateNode, HydrateSlot, Hydrated, Hydration, Walk};
 pub use memory::{ChunkMem, ChunkUnit};
-pub use parsed::RecordGrammar;
-pub use reach::{deepen, reach, read_cell};
-pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
-pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens};
+pub use parsed::{render_record_read, BackerParity, RecordGrammar, RecordRead, Recording};
+pub use reach::{deepen, reach, read_cell, written};
+pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, ReadArenas, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
+pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens, Templates};
 pub use view::{built_leaf_place, linked_leaf_place, held_changed, leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
 pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, captured_cell, coordinate_cell, leaf_cell, write_list, write_record, write_slot};
-pub use rows::TreeArena;
+pub use rows::{NodeRows, TreeArena, ROW_FIELD_BITS};
 pub use side::{Row, SideRecord, SideSlot, Sides};
 
 /// A native node type's view over its records: a struct's is its
@@ -220,6 +220,9 @@ pub enum ArenaError {
     /// A `repeat1` slot of `owner`, by its wire key, whose list holds no
     /// item.
     EmptyList { owner: &'static str, key: &'static str },
+    /// A render over arenas lent read-only met the node at `index`, of kind
+    /// `kind`, whose record only a write could give it.
+    ReadOnly { index: crate::types::NodeIndex, kind: crate::types::KindId },
 }
 
 /// A record entry whose arena, or the store that holds its sides, is gone.
@@ -242,6 +245,7 @@ impl fmt::Display for ArenaError {
             ArenaError::Released(at) => write!(f, "the node at {} was released: the chunk its record was in is freed", at.0),
             ArenaError::MissingField(key) => write!(f, "Missing field `{key}`"),
             ArenaError::EmptyList { owner, key } => write!(f, "{} on {owner}.{key}", crate::non_empty::EmptyList),
+            ArenaError::ReadOnly { index, kind } => write!(f, "a render over arenas lent read-only met node {} of kind {}, which has no record to read", index.0, kind.0),
         }
     }
 }

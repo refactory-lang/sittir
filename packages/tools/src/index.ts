@@ -42,6 +42,13 @@ export {
 	type TriviaPlacementCensus
 } from './validate/trivia-placement.ts';
 export {
+	run as backerParity,
+	computeBackerParity,
+	type BackerParityOptions,
+	type BackerParityFile,
+	type BackerParityCensus
+} from './validate/backer-parity.ts';
+export {
 	run as gapCensus,
 	computeGapCensus,
 	type GapCensusOptions,
@@ -59,6 +66,7 @@ export { run as propose14, type Propose14Options } from './validate/propose-14.t
 export { run as glossaryKeys, type GlossaryKeysOptions } from './validate/glossary-keys.ts';
 export { run as checkPerf, type CheckPerfOptions } from './validate/perf.ts';
 export { run as encodeStack, type EncodeStackOptions } from './validate/encode-stack.ts';
+export { run as nativeImages, type NativeImagesOptions } from './native-images.ts';
 export { run as classify, type ClassifyOptions } from './discover/classify.ts';
 export { run as phantomKinds, type PhantomKindsOptions } from './discover/phantom.ts';
 export { run as fieldProvenance, type FieldProvenanceOptions } from './discover/provenance.ts';

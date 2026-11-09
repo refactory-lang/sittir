@@ -2,7 +2,7 @@
 	"$schema": "https://unpkg.com/@changesets/config@3.0.3/schema.json",
 	"changelog": ["@changesets/changelog-github", { "repo": "refactory-lang/sittir" }],
 	"commit": false,
-	"fixed": [],
+	"fixed": [["@sittir/python", "@sittir/regex", "@sittir/rust", "@sittir/scm", "@sittir/typescript"]],
 	"linked": [],
 	"access": "public",
 	"baseBranch": "master",

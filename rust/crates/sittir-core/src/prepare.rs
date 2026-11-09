@@ -4,15 +4,38 @@
 //! field from the resolved options. The context is an argument at every level;
 //! nothing ambient carries the trees or the table.
 
+use crate::tree_sitter;
 use crate::options::{EdgeArm, Edges, ResolvedOptions, Side};
 use crate::types::{KindId, SiteId};
-use crate::render::{CoordinateError, RenderError, SourceTable};
+use crate::render::{CoordinateError, Lent, RenderError, SourceTable};
 use crate::slot::{CoordinateEdges, NodeCoordinate, SeamArm, SlotValue};
 
 /// Everything a render reads that is not the node itself.
 pub struct RenderContext<'a> {
     pub options: &'a ResolvedOptions,
     pub sources: &'a dyn SourceTable,
+    /// The arenas the render holds, lent to each lookup it makes through
+    /// `sources` that measures (`Lent`).
+    pub lent: Lent<'a>,
+}
+
+impl<'a> RenderContext<'a> {
+    /// The context of a render under `options` through `sources` that holds
+    /// no arena.
+    #[must_use]
+    pub fn new(options: &'a ResolvedOptions, sources: &'a dyn SourceTable) -> Self {
+        Self { options, sources, lent: Lent::NONE }
+    }
+
+    /// This context, lending `arenas`, which the render holds.
+    #[cfg(feature = "arena")]
+    #[must_use]
+    pub fn lending<'b>(&self, arenas: &'b dyn crate::arena::RecordArenas) -> RenderContext<'b>
+    where
+        'a: 'b,
+    {
+        RenderContext { options: self.options, sources: self.sources, lent: Lent::of(arenas) }
+    }
 }
 
 mod target;
@@ -496,15 +519,15 @@ pub trait Prepare {
         None
     }
 
-    /// The node at descendant `index` of `tree` read one level into this
-    /// type (`read::read_coordinate`), when the type reads; `None` for a
-    /// value no read produces.
+    /// The node the cursor is on read one level into this type
+    /// (`read::read_coordinate`), when the type reads; `None` for a value no
+    /// read produces.
     #[must_use]
-    fn read_coordinate(tree: &tree_sitter::Tree, ctx: &mut crate::read::ReadCtx<'_>, index: crate::types::NodeIndex) -> Option<Result<Self, crate::read::ReadError>>
+    fn read_coordinate(cursor: &mut tree_sitter::TreeCursor<'_>, ctx: &mut crate::read::ReadCtx<'_>) -> Option<Result<Self, crate::read::ReadError>>
     where
         Self: Sized,
     {
-        let _ = (tree, ctx, index);
+        let _ = (cursor, ctx);
         None
     }
 }
@@ -560,7 +583,7 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
         match self {
             SlotValue::Node(t) => t.source_separator(ctx),
             SlotValue::Coord(coord) if coord.writes.as_ref().is_some_and(|writes| writes.changed.leading) => None,
-            SlotValue::Coord(coord) => ctx.sources.separator_before(coord),
+            SlotValue::Coord(coord) => ctx.sources.separator_before(coord, ctx.lent),
         }
     }
 }
@@ -613,13 +636,12 @@ pub(crate) fn read_edited<T: Prepare>(coord: &NodeCoordinate, ctx: &RenderContex
     if !ctx.sources.edited_within(coord) {
         return Ok(None);
     }
-    let Some((tree, read)) = ctx.sources.read_ctx(coord.tree) else { return Ok(None) };
-    let mut read = read.with_changed(coord.index, coord.changed());
-    match T::read_coordinate(tree, &mut read, coord.index) {
-        None => Ok(None),
-        Some(Ok(node)) => Ok(Some(node)),
-        Some(Err(error)) => Err(unread(coord, &error)),
-    }
+    let mut node = None;
+    ctx.sources.read_node(coord.tree, coord.index, &mut |cursor, read| {
+        read.changed = Some((coord.index, coord.changed()));
+        node = T::read_coordinate(cursor, read);
+    });
+    node.transpose().map_err(|error| unread(coord, &error))
 }
 
 /// The refusal of a render whose edited coordinate `coord` its read refused.
@@ -675,8 +697,8 @@ impl<T: Prepare> Prepare for Box<T> {
         (**self).prepare(ctx)
     }
 
-    fn read_coordinate(tree: &tree_sitter::Tree, ctx: &mut crate::read::ReadCtx<'_>, index: crate::types::NodeIndex) -> Option<Result<Self, crate::read::ReadError>> {
-        T::read_coordinate(tree, ctx, index).map(|read| read.map(Box::new))
+    fn read_coordinate(cursor: &mut tree_sitter::TreeCursor<'_>, ctx: &mut crate::read::ReadCtx<'_>) -> Option<Result<Self, crate::read::ReadError>> {
+        T::read_coordinate(cursor, ctx).map(|read| read.map(Box::new))
     }
 
     fn snapshot_edge(&self) -> Option<SnapshotEdge> {
@@ -748,7 +770,7 @@ mod tests {
     fn before_flank(first: &NodeCoordinate, source: &str) -> Option<KindId> {
         let sources = Sources(HashMap::from([(crate::types::TreeId(3), Arc::from(source))]));
         let options = ResolvedOptions::default();
-        let ctx = RenderContext { options: &options, sources: &sources };
+        let ctx = RenderContext::new(&options, &sources);
         root_flanks(Some(super::EdgeItem::Coord(std::borrow::Cow::Borrowed(first))), None, crate::layout_kinds::Flanks::default(), &[TIGHT, NEWLINE], &[TIGHT, NEWLINE], &TABLE, &ctx)
             .before
             .map(|edge| edge.arm)
@@ -777,7 +799,7 @@ mod tests {
     fn trailing(last: Option<KindId>, rebuilt: bool, default: u8) -> u8 {
         let sources = ListTrees(last);
         let options = ResolvedOptions::default();
-        let ctx = RenderContext { options: &options, sources: &sources };
+        let ctx = RenderContext::new(&options, &sources);
         let source = rebuilt.then(|| coordinate(2, 7));
         super::source_trailing_delimiter(source.as_ref(), crate::types::KindId(1), &[COMMA], crate::types::Delimiter(default), &ctx).get()
     }

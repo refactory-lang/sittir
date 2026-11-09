@@ -214,12 +214,27 @@ impl<'a, T> RecordCtx<'a, T> {
     /// The parsed node `cell` names, whatever cell names it: the row of a
     /// coordinate, a parsed leaf or a parsed unit of this arena's tree, or
     /// the row of a parsed record, in this arena or in the tree a link names,
-    /// with the edges a child cell marks changed; `None` for a built value.
+    /// with the edges a child cell marks changed; `None` for a built value,
+    /// and for a parsed record, leaf or unit a recording render renders from
+    /// its template (`Templates`), which it takes as a value, as a read takes
+    /// a node within its depth: a record or a leaf with its own sides seated
+    /// from its row, a unit with the sides its holder seats for it. A
+    /// coordinate names no record.
     ///
     /// # Errors
     ///
     /// What reading a child's record or reaching a linked arena refuses.
     pub fn parsed_row(self, cell: Cell) -> Result<Option<ParsedRow>, ArenaError> {
+        let row = self.cell_row(cell)?;
+        let templated = |row: &ParsedRow| {
+            matches!(cell, Cell::Child { .. } | Cell::ParsedLeaf { .. } | Cell::Unit { .. })
+                && self.prepared.templates().is_some_and(|templates| self.arenas.tree(row.tree).and_then(TreeArena::node_rows).is_some_and(|rows| templates.reach(row.tree, rows, row.row)))
+        };
+        Ok(row.filter(|row| !templated(row)))
+    }
+
+    /// The parsed node `cell` names (`parsed_row`), whatever renders it.
+    fn cell_row(self, cell: Cell) -> Result<Option<ParsedRow>, ArenaError> {
         let here = |row, kind| self.tree.map(|tree| ParsedRow { tree, row, kind, changed: ChangedEdges::default() });
         Ok(match cell {
             Cell::Coordinate { kind, index, .. } => here(index, kind),
@@ -246,7 +261,7 @@ impl<'a, T> RecordCtx<'a, T> {
     /// `ArenaError::Malformed` for a parsed record whose side record names no
     /// row.
     pub fn stamped_row(self, cell: Cell) -> Result<Option<ParsedRow>, ArenaError> {
-        let Cell::Child { kind, at, link, changed } = cell else { return self.parsed_row(cell) };
+        let Cell::Child { kind, at, link, changed } = cell else { return self.cell_row(cell) };
         let Some((ctx, side)) = self.child_side(at, kind, link)? else { return Ok(None) };
         let row = side.at.ok_or(malformed("parsed record row", at.0))?.index;
         Ok(ctx.tree.map(|tree| ParsedRow { tree, row, kind, changed }))
@@ -279,15 +294,15 @@ impl<'a, T> RecordCtx<'a, T> {
     }
 
     /// The coordinate of the node at `row` of `tree` a read of it names
-    /// (`engine::row_coordinate`): a read node's own `at`.
+    /// (`ReadCtx::coordinate_of`): a read node's own `at`.
     ///
     /// # Errors
     ///
     /// `ArenaError::Malformed` when the render holds no tree `tree`, or the
     /// tree has no node at `row`.
     pub fn row_node(self, tree: TreeId, row: NodeIndex) -> Result<NodeCoordinate, ArenaError> {
-        let (live, read) = self.sources.read_ctx(tree).ok_or(malformed("record tree", tree.0))?;
-        crate::engine::row_coordinate(live, &read, row).ok_or(malformed("record row", row.0))
+        self.sources.source_of(tree).ok_or(malformed("record tree", tree.0))?;
+        self.sources.row_coordinate(tree, row).ok_or(malformed("record row", row.0))
     }
 }
 
@@ -433,6 +448,14 @@ pub trait RecordView<'a, T>: Sized {
     /// Whether a cell of `kind` is one this view's type is written as: its
     /// own kind, a variant's, a member's, or blank text for verbatim text.
     fn claims(kind: KindId) -> bool;
+
+    /// Whether a cell of `kind` is a record this view reads: `claims`, and
+    /// the envelope kinds the record is written under where a list is shown
+    /// as them. A choice dispatches by `claims`, never by this.
+    #[must_use]
+    fn accepts(kind: KindId) -> bool {
+        Self::claims(kind)
+    }
 
     /// The view of the value `cell` names, at `site` in its holder; a root
     /// has none.
@@ -611,6 +634,13 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
     #[must_use]
     pub fn of_shape(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, words: &[u32], at: Address, shape: CellShape) -> Self {
         Self::of_cell(ctx, site, shape.key, ctx.slot_cell(words, at, shape))
+    }
+
+    /// The slot at `site` that holds `cell`, a record the holder's own cell
+    /// names: an envelope over a list has no cell of its own for its content.
+    #[must_use]
+    pub fn of_record_cell(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, key: &'static str, cell: Cell) -> Self {
+        Self::of_cell(ctx, site, key, Ok(cell))
     }
 
     /// The slot at `site` whose cell decoded as `decoded`. An unset single
@@ -850,6 +880,33 @@ mod tests {
     }
 
     type WordSlot<'a> = RecordSlot<'a, TriviaText, Word<'a>>;
+
+    const SHOWN: KindId = KindId(8);
+
+    struct Shown;
+
+    impl<'a, T> RecordView<'a, T> for Shown {
+        fn claims(kind: KindId) -> bool {
+            kind == WORD
+        }
+
+        fn accepts(kind: KindId) -> bool {
+            kind == WORD || kind == SHOWN
+        }
+
+        fn from_cell(_: RecordCtx<'a, T>, _: Cell, _: Option<Site<PrepPlace>>) -> Result<Self, ArenaError> {
+            Ok(Self)
+        }
+    }
+
+    #[test]
+    fn a_view_accepts_what_it_claims_unless_it_widens_the_envelopes_it_is_shown_as() {
+        assert!(<Word<'_> as RecordView<'_, TriviaText>>::accepts(WORD));
+        assert!(!<Word<'_> as RecordView<'_, TriviaText>>::accepts(SHOWN));
+        assert!(<Shown as RecordView<'_, TriviaText>>::accepts(SHOWN));
+        assert!(!<Shown as RecordView<'_, TriviaText>>::claims(SHOWN));
+        assert!(<Shown as RecordView<'_, TriviaText>>::claims(WORD));
+    }
 
     #[test]
     fn a_layout_keeps_prepared_defaults_below_stored_settings() {

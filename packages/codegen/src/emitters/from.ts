@@ -4,7 +4,7 @@ import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { builtFromText } from './built-from-text.ts';
 import { hasOptionalElements, isBuilderTextLeaf } from '../compiler/model/node-map.ts';
-import { bareInteriorText, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, numericInputRefusal, numericLeafKinds, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
+import { bareInteriorText, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, looseRefusal, numericInputRefusal, numericLeafFacts, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	collectKindEntries,
@@ -158,7 +158,7 @@ function emitNamespaceImports(lines: string[]): void {
 	lines.push(`import { KIND_NAMES } from '../types.js';`);
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
-	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, currentHandle, describeValue, isNodeOfKind, isNodeValue, listStorage, withEmptyForm, withOptions } from '@sittir/common/utils';");
+	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, currentHandle, describeValue, isNodeOfKind, isNodeValue, listStorage, numberRefusal, withEmptyForm, withOptions } from '@sittir/common/utils';");
 	lines.push('');
 	lines.push('const F = RawBuilders as PlainBuilders<typeof RawBuilders>;');
 	lines.push('');
@@ -422,6 +422,7 @@ function emitBranchFrom(
 	const spelledType = fullForm === undefined || spelled.length === 0 ? undefined : spelledReturnType(returnType, fullForm, spelled);
 	const bareShape = bareInteriorText(node.kind, node)?.number ?? (soleField === undefined ? undefined : numericSlotShape(soleField));
 	const numericRefusal = numericInputRefusal(node, bareShape);
+	const loose = looseRefusal(nodeMap);
 	const refused = (...parts: readonly (string | undefined)[]): string => ['I', ...parts.filter((part) => part !== undefined)].join(' & ');
 	const signature =
 		spelledType !== undefined
@@ -430,13 +431,13 @@ function emitBranchFrom(
 				? `export function ${fn}<const I extends ${inputType}>(input${opt}: ${refused(refusal, numericRefusal)}${optionsParam}): ${returnType} {`
 				: `export function ${fn}(input${opt}: ${inputType}${optionsParam}): ${returnType} {`;
 	const inputParams = (input: string, options: string): string =>
-		opt === '?' ? `...input: [input?: ${input}${options}] & ${refuseUndeclared('I', inputType)}` : `input: ${input} & ${refuseUndeclared('I', inputType)}${options}`;
+		opt === '?' ? `...input: [input?: ${input}${options}] & ${refuseUndeclared('I', inputType, loose)}` : `input: ${input} & ${refuseUndeclared('I', inputType, loose)}${options}`;
 	const publicOverloads =
 		spelledType !== undefined
 			? [`export function ${fn}<const I extends ${inputType}, const O extends T.${typeName}.Options = {}>(${inputParams(refused(numericRefusal), ', options?: O')}): ${spelledType};`]
 			: [`export function ${fn}<const I extends ${inputType}>(${inputParams(refused(refusal, numericRefusal), optionsParam)}): ${returnType};`];
 	const spreadTarget = canDirectFactoryCall ? listSpreadTarget(node, nodeMap, kindEntries) : null;
-	const config = spelledType === undefined && refusal === undefined && numericRefusal === undefined && optionsParam === '' ? refusingParam('input', inputType, { optional: opt === '?', loose: true }) : undefined;
+	const config = spelledType === undefined && refusal === undefined && numericRefusal === undefined && optionsParam === '' ? refusingParam('input', inputType, { optional: opt === '?', loose }) : undefined;
 	const head = `export function ${fn}`;
 	let declare = (body: readonly string[]): string[] =>
 		config === undefined
@@ -451,7 +452,7 @@ function emitBranchFrom(
 			});
 		}
 		const spreadNode = nodeMap.nodes.get(spreadTarget)!;
-		const row = refusingParam('input', `T.${spreadNode.typeName}.LooseArgs`, { rest: true, loose: true });
+		const row = refusingParam('input', `T.${spreadNode.typeName}.LooseArgs`, { rest: true, loose });
 		const prelude = [
 			`  if (args.length > 1) return ${factory}(${spreadNode.fromFunctionName!}(...(args as Parameters<typeof ${spreadNode.fromFunctionName!}>)));`,
 			`  const input = args[0] as ${inputType}${inputOptional ? ' | undefined' : ''};`
@@ -622,7 +623,7 @@ function emitRestParamFromResolver(
 	const returnType = factoryReturnTypeExpr(factory);
 	const inputType = `${tName}.LooseArgs`;
 	const freshVar = unwrapConfigKey === undefined ? source : '_elems';
-	const refusing = refusingParam('input', inputType, { rest: true, loose: true });
+	const refusing = refusingParam('input', inputType, { rest: true, loose: looseRefusal(nodeMap) });
 	const seat = (body: readonly string[]): string =>
 		seatDeclaration(nodeMap, kind, fn, functionTypeOf(refusing, returnType), { params: `...input: ${inputType}`, returnType, body });
 	if (!hasNumericDiscriminant || holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)) {
@@ -704,7 +705,7 @@ function emitSingularChildrenFrom(
 }
 
 function optionalConfigCoercer(nodeMap: NodeMap, kind: string, fn: string, input: string, returnType: string, body: readonly string[]): string {
-	return seatDeclaration(nodeMap, kind, fn, functionTypeOf(refusingParam('input', input, { optional: true, loose: true }), returnType), {
+	return seatDeclaration(nodeMap, kind, fn, functionTypeOf(refusingParam('input', input, { optional: true, loose: looseRefusal(nodeMap) }), returnType), {
 		params: `input?: ${input}`,
 		returnType,
 		body
@@ -835,7 +836,7 @@ function emitStringLikeFrom(node: LeafFromNode, shape: NumberShape | undefined, 
 	const factory = `F.${node.rawFactoryName!}`;
 	const returnType = factoryReturnTypeExpr(factory);
 	const input = `T.${node.typeName}.Loose`;
-	return seatDeclaration(nodeMap, node.kind, node.fromFunctionName!, functionTypeOf(refusingParam('input', input, { loose: true }), returnType), {
+	return seatDeclaration(nodeMap, node.kind, node.fromFunctionName!, functionTypeOf(refusingParam('input', input, { loose: looseRefusal(nodeMap) }), returnType), {
 		params: `input: ${input}`,
 		returnType,
 		body: [
@@ -1167,13 +1168,13 @@ function emitResolveByKindHelper(lines: string[]): void {
 interface ScalarResolution {
 	readonly trueMember: string | undefined;
 	readonly falseMember: string | undefined;
-	readonly numeric: readonly string[];
+	readonly numeric: readonly (readonly [kind: string, integer: boolean, signed: boolean])[];
 	readonly resolves: boolean;
 }
 
 function scalarResolutionOf(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): ScalarResolution {
 	const scalars = scalarLeafKinds(nodeMap);
-	const numeric = numericLeafKinds(nodeMap);
+	const numeric = numericLeafFacts(nodeMap);
 	const booleanMember = (kind: string): string | undefined =>
 		findKindEntry(kindEntries, kind)?.member;
 	const trueMember = scalars.boolean === undefined ? undefined : booleanMember(scalars.boolean.trueKind);
@@ -1284,6 +1285,8 @@ function emitBareRoutingTables(
 	lines.push('};');
 }
 
+const UNRESOLVED_VALUE = 'typeof v === "object" || typeof v === "number" || typeof v === "bigint" || typeof v === "boolean"';
+
 function emitScalarFallthrough(lines: string[]): void {
 	lines.push('  if (typeof v === "boolean" || typeof v === "number" || typeof v === "bigint") {');
 	lines.push('    const scalar = _resolveScalar(v);');
@@ -1373,7 +1376,7 @@ function emitResolveOneHelper(lines: string[], resolvesScalars: boolean): void {
 	);
 	lines.push('    }');
 	lines.push('  }');
-	lines.push('  if (typeof v === "object") {');
+	lines.push(`  if (${UNRESOLVED_VALUE}) {`);
 	lines.push(
 		'    throw new Error(`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(", ")}]: ${describeValue(v)}`);'
 	);
@@ -1636,10 +1639,15 @@ function emitResolverHelpers(
 		if (scalar.numeric.length > 0) {
 			lines.push('  if (typeof v === "number" || typeof v === "bigint") {');
 			lines.push('    const text = String(v);');
-			lines.push(`    for (const kind of ${JSON.stringify(scalar.numeric)}) {`);
+			lines.push(`    for (const [kind, integer, signed] of ${JSON.stringify(scalar.numeric)} as const) {`);
 			lines.push('      const e = _leafRegistry[kind];');
-			lines.push('      if (e?.pattern?.test(text)) return e.factory(text);');
+			lines.push('      if (!e?.pattern?.test(text)) continue;');
+			lines.push('      const refused = numberRefusal(v, integer, signed);');
+			lines.push('      if (refused !== undefined) throw new RangeError(refused);');
+			lines.push('      return e.factory(text);');
 			lines.push('    }');
+			lines.push('    const refused = numberRefusal(v, false, false);');
+			lines.push('    if (refused !== undefined) throw new RangeError(refused);');
 			lines.push('  }');
 		}
 		lines.push('  return undefined;');
@@ -1738,7 +1746,7 @@ function emitResolverHelpers(
 	lines.push('  if (typeof v === "string" && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as Admit<T>;');
 	lines.push('  const tagged = _splitTag(v);');
 	lines.push('  if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;');
-	lines.push('  if (typeof v === "object") {');
+	lines.push(`  if (${UNRESOLVED_VALUE}) {`);
 	lines.push(
 		"    throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${describeValue(v)}`);"
 	);
@@ -1786,7 +1794,7 @@ function emitResolverHelpers(
 	lines.push('    if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;');
 	lines.push('    if (_isFromKind(kind)) return _resolveByKind(kind, v) as Admit<T>;');
 	lines.push('  }');
-	lines.push('  if (typeof v === "object") {');
+	lines.push(`  if (${UNRESOLVED_VALUE}) {`);
 	lines.push(
 		"    throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${describeValue(v)}`);"
 	);
@@ -1938,6 +1946,6 @@ export class FromEmitter implements CodegenEmitter<string> {
 			}
 			return [l];
 		});
-		return pruneUnusedImports(pruned, ['Delimiter', 'describeValue', 'listStorage', 'withEmptyForm', 'withOptions', ...TYPES_IMPORT_OPTIONAL]).join('\n');
+		return pruneUnusedImports(pruned, ['Delimiter', 'describeValue', 'listStorage', 'numberRefusal', 'withEmptyForm', 'withOptions', ...TYPES_IMPORT_OPTIONAL]).join('\n');
 	}
 }

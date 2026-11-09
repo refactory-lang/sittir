@@ -1430,8 +1430,13 @@ export function quoteKey(key: string): string {
 	return isIdentifierKey(key) ? key : JSON.stringify(key);
 }
 
-export function refuseUndeclared(typeParam: string, declared?: string): string {
-	return declared === undefined ? `RefuseUndeclared<${typeParam}>` : `RefuseUndeclared<${typeParam}, ${declared}>`;
+export interface LooseRefusal {
+	readonly signed: boolean;
+}
+
+export function refuseUndeclared(typeParam: string, declared?: string, loose?: LooseRefusal): string {
+	if (declared === undefined) return `RefuseUndeclared<${typeParam}>`;
+	return `RefuseUndeclared<${typeParam}, ${declared}${loose?.signed ? ', true' : ''}>`;
 }
 
 export type SeatGeneric = 'Seat' | 'ConfigSeat' | 'OptionalConfigSeat';
@@ -1439,7 +1444,7 @@ export type SeatGeneric = 'Seat' | 'ConfigSeat' | 'OptionalConfigSeat';
 export interface RefusingParams {
 	readonly typeParams: string;
 	readonly params: string;
-	readonly seat?: { readonly generic: SeatGeneric; readonly declared: string };
+	readonly seat?: { readonly generic: SeatGeneric; readonly declared: string; readonly signed: boolean };
 }
 
 export function plainParams(params: string): RefusingParams {
@@ -1449,24 +1454,24 @@ export function plainParams(params: string): RefusingParams {
 export function refusingParam(
 	label: string,
 	type: string,
-	shape: { readonly optional?: boolean; readonly rest?: boolean; readonly loose?: boolean } = {}
+	shape: { readonly optional?: boolean; readonly rest?: boolean; readonly loose?: LooseRefusal } = {}
 ): RefusingParams {
 	const typeParam = shape.rest ? 'A' : 'V';
-	const refusal = refuseUndeclared(typeParam, shape.loose ? type : undefined);
+	const refusal = refuseUndeclared(typeParam, shape.loose === undefined ? undefined : type, shape.loose);
 	const generic: SeatGeneric = shape.rest ? 'Seat' : shape.optional ? 'OptionalConfigSeat' : 'ConfigSeat';
 	return {
-		typeParams: `<${shape.loose ? 'const ' : ''}${typeParam} extends ${type}>`,
+		typeParams: `<${shape.loose === undefined ? '' : 'const '}${typeParam} extends ${type}>`,
 		params: shape.rest
 			? `...${label}: ${typeParam} & ${refusal}`
 			: shape.optional
 				? `...${label}: [${label}?: ${typeParam}] & ${refusal}`
 				: `${label}: ${typeParam} & ${refusal}`,
-		...(shape.loose ? { seat: { generic, declared: type } } : {})
+		...(shape.loose === undefined ? {} : { seat: { generic, declared: type, signed: shape.loose.signed } })
 	};
 }
 
 const OPTIONAL_REFUSING = /^\.\.\.(\w+): \[(.*)\] & (RefuseUndeclared<\w+(?:, .+)?>)$/;
-const REQUIRED_REFUSING = /^(\w+): (\w+) & (RefuseUndeclared<\w+(?:, [^,]+)?>)((?:, .*)?)$/;
+const REQUIRED_REFUSING = /^(\w+): (\w+) & (RefuseUndeclared<\w+(?:, [^,]+(?:, true)?)?>)((?:, .*)?)$/;
 
 export function withTrailingParam(refusing: RefusingParams, trailing: string): RefusingParams {
 	const optional = OPTIONAL_REFUSING.exec(refusing.params);
@@ -1495,7 +1500,7 @@ export function declaredOverload(head: string, refusing: RefusingParams, returnT
 export function functionTypeOf(refusing: RefusingParams, returnType: string): string {
 	return refusing.seat === undefined
 		? `${refusing.typeParams}(${refusing.params}) => ${returnType}`
-		: `${refusing.seat.generic}<${refusing.seat.declared}, ${returnType}>`;
+		: `${refusing.seat.generic}<${refusing.seat.declared}, ${returnType}${refusing.seat.signed ? ', true' : ''}>`;
 }
 
 export function withEmptyOverload(

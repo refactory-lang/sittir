@@ -4,6 +4,7 @@
 //! have a method, and the writer behind the sink decides what reaches the
 //! output.
 
+use crate::tree_sitter;
 use std::fmt;
 use std::sync::Arc;
 
@@ -118,6 +119,49 @@ pub struct EdgeLevel {
     pub field: Option<crate::types::FieldId>,
 }
 
+/// The parsed trees' arenas a caller holds, lent read-only to a lookup it
+/// makes: a render's held arenas, or the arena a call outside a render
+/// locked for it. A tree read whole measures its baselines from the records
+/// in them (`Lookups::recorded`); a caller that holds none lends none.
+#[derive(Clone, Copy)]
+pub struct Lent<'a> {
+    #[cfg(feature = "arena")]
+    arenas: Option<&'a dyn crate::arena::RecordArenas>,
+    #[cfg(not(feature = "arena"))]
+    arenas: std::marker::PhantomData<&'a ()>,
+}
+
+impl Lent<'_> {
+    /// No arena lent.
+    pub const NONE: Self = Self {
+        #[cfg(feature = "arena")]
+        arenas: None,
+        #[cfg(not(feature = "arena"))]
+        arenas: std::marker::PhantomData,
+    };
+}
+
+#[cfg(feature = "arena")]
+impl<'a> Lent<'a> {
+    /// `arenas`, lent.
+    #[must_use]
+    pub fn of(arenas: &'a dyn crate::arena::RecordArenas) -> Self {
+        Self { arenas: Some(arenas) }
+    }
+
+    /// The arena of `tree`, when one is lent.
+    #[must_use]
+    pub fn tree(self, tree: crate::types::TreeId) -> Option<&'a crate::arena::TreeArena> {
+        self.arenas?.tree(tree)
+    }
+
+    /// The arenas lent.
+    #[must_use]
+    pub fn arenas(self) -> Option<&'a dyn crate::arena::RecordArenas> {
+        self.arenas
+    }
+}
+
 /// The live trees a render may slice, keyed by the tag a handle carries.
 pub trait SourceTable {
     fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>>;
@@ -181,7 +225,8 @@ pub trait SourceTable {
     /// The levels the node a coordinate names opens net of those it closes:
     /// its tree's depth members (`SurfaceKinds::indent`, `dedent`) counted
     /// over its subtree. A slice moves the writer's depth by it, as the
-    /// node's template would. A coordinate whose handle names a node other
+    /// node's template would; a tree root's slice once something after it
+    /// reads the depth, so a render that reads none never asks. A coordinate whose handle names a node other
     /// than its own span, and a table of bare sources, answer none.
     fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {
         let _ = coord;
@@ -190,33 +235,35 @@ pub trait SourceTable {
 
     /// The sides of the node a coordinate names, as its tree's trivia table
     /// and writes give them (`ParsedTree::trivia_side`), or `None` when it has
-    /// none. A table of bare sources knows no sides.
-    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
-        let _ = coord;
+    /// none, the layout measured over the arenas the caller lends (`Lent`).
+    /// A table of bare sources knows no sides.
+    fn sides(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        let _ = (coord, lent);
         None
     }
 
     /// The sides a coordinate's bytes render between: its node's own
     /// (`sides`), then those of each node inside its bytes that holds trivia
-    /// at its edges for it (`ParsedTree::frame_levels`). A table of bare
-    /// sources knows no sides.
-    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> crate::trivia::Frames {
-        crate::trivia::Frames { own: self.sides(coord), items: Vec::new() }
+    /// at its edges for it (`ParsedTree::frame_levels`), measured over the
+    /// arenas the caller lends. A table of bare sources knows no sides.
+    fn frames(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> crate::trivia::Frames {
+        crate::trivia::Frames { own: self.sides(coord, lent), items: Vec::new() }
     }
 
     /// The stored layout of each list slot of the node a coordinate names
-    /// (`layout::SlotLayout`), as its tree measures it; none for a table of
-    /// bare sources.
-    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate) -> Vec<crate::layout::SlotLayout> {
-        let _ = coord;
+    /// (`layout::SlotLayout`), as its tree measures it over the arenas the
+    /// caller lends; none for a table of bare sources.
+    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Vec<crate::layout::SlotLayout> {
+        let _ = (coord, lent);
         Vec::new()
     }
 
     /// The separator before the node a coordinate names as an item of its
     /// parent's list slot, where it is not the one the slot renders
-    /// (`ParsedTree::separator_before`); none for a table of bare sources.
-    fn separator_before(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
-        let _ = coord;
+    /// (`ParsedTree::separator_before`), measured over the arenas the caller
+    /// lends; none for a table of bare sources.
+    fn separator_before(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Option<KindId> {
+        let _ = (coord, lent);
         None
     }
 
@@ -254,11 +301,22 @@ pub trait SourceTable {
         None
     }
 
-    /// The live tree `tree` and the context its reads share. A table of bare
-    /// sources holds no trees.
-    fn read_ctx(&self, tree: crate::types::TreeId) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
-        let _ = tree;
-        None
+    /// The coordinate a read of the live tree `tree` names the node at
+    /// `index` by (`ReadCtx::coordinate_of`), as the read of a cursor on it
+    /// (`read_node`) names it; `None` where the table holds no such node.
+    fn row_coordinate(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex) -> Option<crate::slot::NodeCoordinate> {
+        let mut at = None;
+        self.read_node(tree, index, &mut |cursor, read| at = Some(read.coordinate_of(&crate::nodes::Kid::at(cursor))));
+        at
+    }
+
+    /// Hands `read` a cursor on the node at `index` of the live tree `tree`,
+    /// created at the tree's root, and the context the tree's reads share;
+    /// false, `read` not called, where the table holds no such node. A table
+    /// of bare sources holds no trees.
+    fn read_node(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex, read: &mut dyn FnMut(&mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
+        let _ = (tree, index, read);
+        false
     }
 
     /// Renders the built record `record`, which the store `held` answered,
@@ -528,7 +586,7 @@ pub trait RenderSink {
     }
     /// Whether the output stands right after an indent that nothing has been
     /// written under yet: the start of a block body.
-    fn at_body_start(&self) -> bool {
+    fn at_body_start(&mut self) -> bool {
         false
     }
     /// The node just written ends its line, so a line break follows it: at

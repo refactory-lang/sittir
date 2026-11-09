@@ -34,7 +34,7 @@ export async function nativeBackendOf(grammar: string): Promise<NativeModuleLike
 }
 
 /** A function parsing a source with `grammar`'s native engine and handing its tree id to `use`, disposing the tree after. */
-async function withTreeOf(grammar: string): Promise<<T>(source: string, use: (engine: NativeEngineLike, treeId: number) => T) => T> {
+export async function withTreeOf(grammar: string): Promise<<T>(source: string, use: (engine: NativeEngineLike, treeId: number) => T) => T> {
 	const native = await nativeBackendOf(grammar);
 	const engine = nativeEngineOf(native);
 	return (source, use) => {

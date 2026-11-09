@@ -9,6 +9,7 @@
 //! side.
 
 use sittir_core::engine::EngineGrammar;
+use sittir_core::tree_sitter;
 use sittir_core::trivia_table::{Assigned, TriviaSide};
 use sittir_core::types::{NodeIndex, Span};
 use sittir_parity_tests::PlacedTrivia;
@@ -71,13 +72,14 @@ macro_rules! standalone_mismatches {
         for source in $sources {
             let tree = sittir_parity_tests::parsed($grammar, $krate::render::options::defaults(), &source);
             let options = $krate::render::options::defaults();
-            let ctx = tree.seating_ctx();
+            let seating = tree.seating();
+            let ctx = seating.ctx();
             let mut cursor = tree.tree().walk();
             for (at, span, outside) in outside_entries(&$grammar, tree.tree(), &source) {
                 checked += 1;
                 sittir_core::read::goto(&mut cursor, at);
                 let coord = ctx.coordinate(&cursor.node(), at);
-                let rctx = sittir_core::prepare::RenderContext { options: &options, sources: &tree };
+                let rctx = sittir_core::prepare::RenderContext::new(&options, &seating);
                 let rendered = $krate::render::render_node_parts(sittir_core::SlotValue::Coord(coord), &rctx, None).expect("a render").1;
                 let text = |at: &Span| &source[at.start as usize..at.end as usize];
                 let before = outside.iter().filter(|entry| entry.end <= span.start).map(text);

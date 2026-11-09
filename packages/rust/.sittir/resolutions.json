@@ -1,5 +1,5 @@
 {
-	"grammarHash": "a726e6cc54aaf8a15a65469dce5da00c3d45613801dabbc61ae786a2b96d4bf5",
+	"grammarHash": "458f19f0e27b0448b9add6e3de73d87391a580b50d2882ce68500b2733ceed5d",
 	"resolutions": [
 		{"resolution":{"kind":"AddConflict","symbols":["_pattern","_primitive_type"]},"step":"upstream-declared","sourceChains":[["_pattern"],["_primitive_type","_type"]],"conflict":{"symbolSequence":["'fn'","identifier","'('","'('","'u8'"],"lookahead":"')'","interpretations":["_pattern","_primitive_type"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["_type","_attributed_type_parameter"]},"step":"default","sourceChains":[["_type"],["_attributed_type_parameter"]],"conflict":{"symbolSequence":["'impl'","'<'","metavariable"],"lookahead":"'>'","interpretations":["_type","_attributed_type_parameter"]}},
@@ -11,7 +11,7 @@
 		{"resolution":{"kind":"AddConflict","symbols":["visibility_modifier_pub"]},"step":"upstream-declared","sourceChains":[["visibility_modifier_pub","visibility_modifier"]],"conflict":{"symbolSequence":["'struct'","identifier","'('","'pub'"],"lookahead":"'('","interpretations":["visibility_modifier_pub","visibility_modifier_pub"]}}
 	],
 	"bound": {
-		"grammarHash": "87c1d2541331d79455c8bc079276888221a8c389c05884ae10b45192c650cb21",
+		"grammarHash": "27e08355b25338e71ff1cca40992151a24118b07e4410f745dcd52085e1c6d3e",
 		"resolutions": []
 	}
 }

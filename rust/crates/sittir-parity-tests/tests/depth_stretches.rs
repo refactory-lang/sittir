@@ -19,7 +19,7 @@ fn stretches_nest<G: EngineGrammar + Copy>(name: &str, grammar: G, options: fn()
         let tree = parsed(grammar, options(), source);
         let lines = LineTable::new(source);
         let mut open: Vec<(u32, u32)> = Vec::new();
-        for (start, end) in Placement::new(grammar.surface_kinds(), 4).depth_stretches(Source { tree: tree.tree(), source, lines: &lines }) {
+        for (start, end) in Placement::new(grammar.surface_kinds(), 4).depth_stretches(Source { nodes: &mut tree.nodes(), lines: &lines }) {
             while open.last().is_some_and(|&(_, close)| close <= start) {
                 open.pop();
             }

@@ -9,11 +9,37 @@ on:
         type: choice
         default: all
         options: [all, corpus]
+      baseline:
+        description: A commit to measure beside this one in the same rounds. Empty takes the merge-base with master; none measures this one alone.
+        type: string
+        default: ''
 
 permissions:
   contents: read
 
 jobs:
+  baseline:
+    name: Resolve the baseline
+    runs-on: ubuntu-24.04
+    outputs:
+      commit: ${{ steps.resolve.outputs.commit }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Resolve the baseline
+        id: resolve
+        env:
+          BASELINE: ${{ inputs.baseline }}
+        run: |
+          case "$BASELINE" in
+            none) commit= ;;
+            '') commit=$(git merge-base origin/master HEAD) ;;
+            *) commit=$(git rev-parse --verify "$BASELINE^{commit}") ;;
+          esac
+          if [ "$commit" = "$(git rev-parse HEAD)" ]; then commit=; fi
+          echo "baseline: ${commit:-none}"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
   prepare:
     uses: ./.github/workflows/benchmark-build.yml
   native:
@@ -26,10 +52,33 @@ jobs:
     with:
       grammar: ${{ matrix.grammar }}
       prefix: ${{ needs.prepare.outputs.prefix }}
+  baseline-prepare:
+    needs: baseline
+    if: needs.baseline.outputs.commit != ''
+    uses: ./.github/workflows/benchmark-build.yml
+    with:
+      ref: ${{ needs.baseline.outputs.commit }}
+      label: baseline
+  baseline-native:
+    needs: [baseline, baseline-prepare]
+    strategy:
+      fail-fast: false
+      matrix:
+        grammar: ${{ fromJSON(needs.baseline-prepare.outputs.grammars) }}
+    uses: ./.github/workflows/benchmark-native.yml
+    with:
+      grammar: ${{ matrix.grammar }}
+      prefix: ${{ needs.baseline-prepare.outputs.prefix }}
+      ref: ${{ needs.baseline.outputs.commit }}
   corpus:
-    needs: [prepare, native]
-    if: inputs.benchmark == 'all' || inputs.benchmark == 'corpus'
+    needs: [prepare, native, baseline, baseline-prepare, baseline-native]
+    if: >-
+      !cancelled() && needs.native.result == 'success'
+      && (needs.baseline.outputs.commit == '' || needs.baseline-native.result == 'success')
+      && (inputs.benchmark == 'all' || inputs.benchmark == 'corpus')
     uses: ./.github/workflows/benchmark-corpus.yml
     with:
       runtime-prefix: ${{ needs.prepare.outputs.prefix }}
       grammars: ${{ needs.prepare.outputs.grammars }}
+      baseline: ${{ needs.baseline.outputs.commit }}
+      baseline-prefix: ${{ needs.baseline-prepare.outputs.prefix }}

@@ -88,16 +88,26 @@ export interface StoredLayout {
 	readonly separators: number;
 }
 
+/** Whether a tree's record backer answers its nodes as its tree backer does (`NativeEngineLike.backerParity`). */
+export interface BackerParity {
+	readonly nodes: number;
+	readonly differing: number;
+	readonly first?: number;
+}
+
 /** The work a tree's layout reads have done so far (`NativeEngineLike.layoutWork`), each count as the addon's `LayoutWork` names it. */
 export interface LayoutWork {
 	readonly regionNodes: number;
 	readonly siblingItems: number;
 	readonly regionFallbacks: number;
 	readonly cursorClimbs: number;
+	readonly siblingSteps: number;
+	readonly rootDescents: number;
 	readonly depthNodes: number;
 	readonly recordNodes: number;
 	readonly recordsRendered: number;
 	readonly gapItems: number;
+	readonly treeReads: number;
 }
 
 export interface BaselineRun {
@@ -275,6 +285,13 @@ export interface NativeEngineLike<TNode = unknown> {
 	 * @throws when the tree is not live.
 	 */
 	layoutWork(treeId: number): LayoutWork;
+	/**
+	 * Reads tree `treeId` whole, then compares each node as arena storage's record backer and the tree backer
+	 * answer it: the nodes compared, how many differ, and the first that does. A diagnostic.
+	 *
+	 * @throws when the tree is not live or its read is refused.
+	 */
+	backerParity(treeId: number): BackerParity;
 	descendants(
 		from: string,
 		kinds: number[] | undefined | null,
@@ -324,6 +341,7 @@ const TREE_FUNCTIONS = [
 	'layoutBaseline',
 	'storedLayout',
 	'layoutWork',
+	'backerParity',
 	'descendants',
 	'planHolds',
 	'externalBuffers'
@@ -361,6 +379,8 @@ export type NativeModuleLike<TNode = unknown, TEngine extends NativeEngineInstan
 	liveTreeCount(): number;
 	/** What this language's live trees hold natively and what their reports have told V8, in bytes. Diagnostics only. */
 	treeMemory(): { readonly trees: number; readonly counted: number; readonly reported: number };
+	/** The engine image this process mapped: its stamp and the file it was loaded from. Diagnostics only. */
+	engineStamp(): { readonly stamp: string; readonly path?: string | null };
 } & Pick<NativeEngineLike<TNode>, TreeFunction> & { readonly [F in EngineFunction]?: OnHandle<NonNullable<NativeEngineLike<TNode>[F]>> };
 
 /**

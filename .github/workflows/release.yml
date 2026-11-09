@@ -1,32 +1,44 @@
-# Release Workflow with Changesets
+# Release: version, build every platform's binaries, check, publish.
 #
-# Uses Changesets to automate versioning and publishing to npm.
-# Supports npm Trusted Publishers (OIDC) for secure, token-free publishing.
+# One ordered flow:
+# 1. `version`: Changesets opens or updates the "Version Packages" PR while
+#    changesets are pending. Otherwise, when a public package's version is
+#    not on npm yet, the run goes on to publish.
+# 2. `native`: each target in NATIVE_TARGETS builds its release binaries on
+#    its row of the target table (packages/tools/src/native-targets.ts),
+#    with the engine and std copies they link.
+# 3. `publish`: napi makes each grammar's platform packages
+#    (`sittir-<grammar>-<platform>`) and declares them as optional
+#    dependencies of `@sittir/<grammar>`; `check:published --release` checks
+#    every pack; the platform packages publish; then the `@sittir/*` packages.
+#    A platform package is never later than the grammar package that needs it.
+#    A rerun skips every version npm already has.
 #
-# How it works:
-# 1. On push to master, Changesets creates a "Version Packages" PR
-# 2. When that PR is merged, packages are automatically published to npm
-# 3. GitHub releases are created automatically
+# A `dry-run` dispatch runs every step with `npm publish --dry-run` (and
+# `pnpm publish --dry-run`) in place of each publish, and opens no version PR.
 #
-# Setup — npm Trusted Publishers (OIDC):
-# 1. Enable "Trusted Publishers" on your npm package settings page
-# 2. Add GitHub Actions as trusted publisher (repo + workflow: release.yml)
-# 3. No NPM_TOKEN needed!
-#
-# Fallback: set NPM_TOKEN in repository secrets for token-based auth.
+# Setup — npm Trusted Publishers (OIDC): add GitHub Actions as a trusted
+# publisher (repo + workflow: release.yml) for every published package.
+# Fallback: set NPM_TOKEN in the repository secrets.
 
 name: Release
 
-# DISABLED (temporary): no npm Trusted Publisher / NPM_TOKEN is configured
-# yet, so this failed `ENEEDAUTH` on every push to master. Gated to manual
-# dispatch until publishing credentials are set up per the Setup notes
-# above — flip back to `push: branches: [master]` once that's done.
+# Gated to manual dispatch until npm publishing credentials are set up
+# (no Trusted Publisher or NPM_TOKEN is configured yet, so a push run
+# failed `ENEEDAUTH`). Add `push: branches: [master]` once they are.
 on:
   workflow_dispatch:
+    inputs:
+      dry-run:
+        description: Run every step, with a dry-run publish in place of each publish
+        type: boolean
+        default: true
 
+# A release runs to the end: cancelling one between the platform packages
+# and the grammar packages would leave a version half published.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 # Crate-download resilience for the release napi builds (see ci.yml for rationale):
 # disable HTTP/2 multiplexing to sidestep `[16] Error in the HTTP2 framing layer`,
@@ -36,55 +48,35 @@ env:
   CARGO_HTTP_MULTIPLEXING: "false"
 
 jobs:
-  release:
-    name: Release
+  version:
+    name: Version, or plan the publish
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Create releases and tags
-      pull-requests: write # Create version PRs
-      id-token: write # Required for OIDC trusted publishers
-
+      contents: write
+      pull-requests: write
+    outputs:
+      publish: ${{ steps.plan.outputs.publish }}
+      targets: ${{ steps.targets.outputs.matrix }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22.x
-          cache: "pnpm"
-
-      - name: Install npm v11 (OIDC fix)
-        run: npm install -g npm@11
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Install the pinned Rust toolchain
-        uses: ./.github/actions/rust-toolchain
-
-      - name: Build
-        run: pnpm build
-
-      - name: Create Release Pull Request or Publish
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Open or update the version PR
         id: changesets
+        if: ${{ !inputs.dry-run }}
         uses: changesets/action@v1
         with:
           version: pnpm changeset:version
-          publish: pnpm changeset:publish
           commit: "chore: version packages"
           title: "chore: version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
-
       - name: Enable auto-merge on version PR
         if: steps.changesets.outputs.hasChangesets == 'true'
         uses: actions/github-script@v8
@@ -107,146 +99,136 @@ jobs:
               }
             `, { id: pr.node_id });
             console.log(`Auto-merge enabled on PR #${pr.number}`);
+      - name: Plan the publish
+        id: plan
+        env:
+          DRY_RUN: ${{ inputs.dry-run }}
+          PENDING: ${{ steps.changesets.outputs.hasChangesets }}
+        run: |
+          unpublished=$(npx tsx packages/tools/src/scripts/unpublished-packages.ts)
+          echo "Not on npm yet:"; echo "${unpublished:-  (none)}"
+          if [ "$DRY_RUN" = "true" ] || { [ "$PENDING" != "true" ] && [ -n "$unpublished" ]; }; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Plan the native legs
+        id: targets
+        run: |
+          matrix=$(npx tsx packages/tools/src/scripts/native-targets.ts)
+          echo "$matrix"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
 
-  # Spec 012 T057 — platform-subpackage publication for the napi
-  # `.node` artifacts produced by the `napi-build` matrix in `ci.yml`.
-  # Triggered on git tags matching `v*` (separately from the
-  # changesets-driven npm release above; the changesets path publishes
-  # the JS-side `@sittir/{rust,typescript,python}` packages, this path
-  # publishes the platform-suffixed `*-native-<target>` siblings).
-  #
-  # Flow per napi-rs's reference release.yml:
-  # 1. Build the napi `.node` artifacts on each matrix host.
-  # 2. Download all artifacts to a single host.
-  # 3. `napi artifacts` repacks them into per-target subpackages
-  #    (`@sittir/rust-native-darwin-arm64`, etc.).
-  # 4. `npm publish` each subpackage with provenance.
-  napi-publish:
-    name: napi publish (${{ matrix.target }})
-    if: startsWith(github.ref, 'refs/tags/v')
+  native:
+    name: native (${{ matrix.target }})
+    needs: version
+    if: needs.version.outputs.publish == 'true'
     runs-on: ${{ matrix.host }}
+    # Every leg runs to the end, so one run shows every target's failure;
+    # the publish job needs them all.
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - target: aarch64-apple-darwin
-            host: macos-14
-            cross: false
-            buildFlag: ""
-          - target: x86_64-unknown-linux-gnu
-            host: ubuntu-22.04
-            cross: false
-            buildFlag: ""
-          - target: x86_64-unknown-linux-musl
-            host: ubuntu-22.04
-            cross: true
-            buildFlag: "--cross-compile"
-          - target: aarch64-unknown-linux-gnu
-            host: ubuntu-22.04
-            cross: true
-            buildFlag: "--use-napi-cross"
-          - target: aarch64-unknown-linux-musl
-            host: ubuntu-22.04
-            cross: true
-            buildFlag: "--cross-compile"
-          - target: x86_64-pc-windows-msvc
-            host: windows-2022
-            cross: false
-            buildFlag: ""
+        include: ${{ fromJSON(needs.version.outputs.targets) }}
     steps:
       - uses: actions/checkout@v6
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-      - name: Install Node.js
-        uses: actions/setup-node@v6
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22.x
           cache: pnpm
-          registry-url: "https://registry.npmjs.org"
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile
       - name: Install Rust toolchain (pinned, ${{ matrix.target }})
         uses: ./.github/actions/rust-toolchain
         with:
           targets: ${{ matrix.target }}
-      # See ci.yml's `napi-build` job for why `napi-rs/setup-node-and-napi@v3`
-      # was replaced with these flag-driven cross-compile steps.
-      - name: Setup zig (musl cross-compile)
-        if: contains(matrix.target, 'musl')
-        uses: mlugg/setup-zig@v2
+      - name: Cross toolchain (${{ matrix.target }})
+        uses: ./.github/actions/native-cross
         with:
-          version: 0.14.1
-      - name: Install cargo-zigbuild (musl cross-compile)
-        if: contains(matrix.target, 'musl')
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-zigbuild
+          target: ${{ matrix.target }}
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
         with:
           key: release-${{ matrix.target }}
-      # `shell: bash` is required here: this `for` loop is bash syntax, but
-      # windows-latest runners default `run:` steps to PowerShell, which
-      # can't parse it ("Missing opening '(' after keyword 'for'").
-      # build-native owns a binding's build, as in CI: the record codec in,
-      # stripped after the build.
-      - name: napi build (release) — grammar-owned native packages
+      # `shell: bash`: windows runners default `run:` steps to PowerShell,
+      # which can't parse this `for` loop.
+      - name: Build the release binaries
         shell: bash
         run: |
           grammars=$(npx tsx packages/tools/src/scripts/list-grammars.ts stable)
           for crate in $grammars; do
-            npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
+            npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" $NATIVE_BUILD_FLAGS
           done
-      - name: Upload artifact
+      # Every addon holds the stamp of the engine it was built against, and
+      # build-native refused an engine copy that holds another, so a release
+      # build that missed the commit would ship a `local` stamp.
+      - name: Every addon is stamped with this commit
+        shell: bash
+        run: |
+          npx tsx packages/cli/src/cli.ts tool native-images --stamp packages/*/native/*.node \
+            | node -e 'let s = ""; process.stdin.on("data", (d) => (s += d)).on("end", () => { const want = `@${process.env.GITHUB_SHA}`; let ok = true; for (const { image, stamp } of JSON.parse(s)) { if (stamp.endsWith(want)) console.log(`${image}: ${stamp}`); else { console.log(`::error::${image} holds ${stamp}, not a stamp of ${process.env.GITHUB_SHA}`); ok = false; } } process.exitCode = ok ? 0 : 1; });'
+      # Each `.node` loads the engine and std copies built beside it.
+      - name: Upload the binaries
         uses: actions/upload-artifact@v4
         with:
-          name: bindings-${{ matrix.target }}
+          name: release-bindings-${{ matrix.target }}
           path: |
             packages/*/native/*.node
+            packages/*/native/*.dylib
+            packages/*/native/*.so
+            packages/*/native/*.dll
           if-no-files-found: error
 
-  napi-artifacts-publish:
-    name: aggregate + publish platform subpackages
-    if: startsWith(github.ref, 'refs/tags/v')
-    needs: napi-publish
+  publish:
+    name: Check and publish
+    needs: [version, native]
+    if: needs.version.outputs.publish == 'true'
     runs-on: ubuntu-22.04
     permissions:
       contents: write
+      pull-requests: write
       id-token: write
     steps:
       - uses: actions/checkout@v6
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-      - name: Install Node.js
-        uses: actions/setup-node@v6
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22.x
           cache: pnpm
           registry-url: "https://registry.npmjs.org"
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: Download all bindings artifacts
+      - name: Install npm v11 (OIDC trusted publishing)
+        run: npm install -g npm@11
+      - run: pnpm install --frozen-lockfile
+      - name: Build the packages
+        run: pnpm run build:packages
+      - name: Download the binaries
         uses: actions/download-artifact@v4
         with:
-          path: artifacts
-          pattern: bindings-*
-          merge-multiple: false
-      # `napi artifacts` writes each binding into its platform package and
-      # creates no directory, so the packages are created first.
-      - name: napi artifacts — repack into platform subpackages
-        run: |
-          grammars=$(npx tsx packages/tools/src/scripts/list-grammars.ts stable)
-          for crate in $grammars; do
-            (cd "rust/crates/sittir-${crate}" && pnpm exec napi create-npm-dirs && pnpm exec napi artifacts --output-dir ../../../artifacts)
-          done
-      - name: Publish platform subpackages to npm
-        run: |
-          grammars=$(npx tsx packages/tools/src/scripts/list-grammars.ts stable)
-          for crate in $grammars; do
-            (cd "rust/crates/sittir-${crate}" && pnpm exec napi pre-publish)
-          done
+          path: release-bindings
+          pattern: release-bindings-*
+      - name: Make and fill the platform packages, and declare them on the grammar packages
+        run: npx tsx packages/tools/src/scripts/native-packages.ts assemble release-bindings
+      - name: Check every pack, and install and run the packages outside the workspace
+        run: pnpm run check:published --release
+      - name: Publish the platform packages
+        run: npx tsx packages/tools/src/scripts/native-packages.ts publish ${{ inputs.dry-run && '--dry-run' || '' }}
         env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+      - name: Publish the @sittir packages (dry run)
+        if: ${{ inputs.dry-run }}
+        run: pnpm -r --filter "./packages/*" publish --dry-run --no-git-checks
+        env:
+          NPM_CONFIG_PROVENANCE: true
+      - name: Publish the @sittir packages
+        if: ${{ !inputs.dry-run }}
+        uses: changesets/action@v1
+        with:
+          publish: pnpm changeset:publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           NPM_CONFIG_PROVENANCE: true

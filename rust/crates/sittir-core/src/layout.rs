@@ -173,6 +173,15 @@ pub struct LayoutWork {
     /// the nodes they looked up (`read::goto_from`), which bound the levels
     /// they descended.
     pub cursor_climbs: u32,
+    /// The siblings the lookup cursors of the tree's calls stepped across to
+    /// reach the nodes they looked up (`read::goto_from`): with
+    /// `cursor_climbs`, the cost of their moves before they descend.
+    pub sibling_steps: u32,
+    /// The moves trivia placement made down from the node its cursor was
+    /// created at, the tree's root or the node of a reader's cursor it moves,
+    /// to a node below that node's children (`nodes::TreeNodes::root_descents`):
+    /// the lookups whose descent `cursor_climbs` does not bound.
+    pub root_descents: u32,
     /// The nodes the depth moves of the tree's slices walked, its depth
     /// members found once for every move (`DepthMembers::of`).
     pub depth_nodes: u32,
@@ -187,6 +196,9 @@ pub struct LayoutWork {
     /// items and aligning them to what the frame wrote, once a frame
     /// (`Lookups::aligned`), and one for each gap measured from them.
     pub gap_items: u32,
+    /// The times a call was handed the tree's tree-sitter tree
+    /// (`ParsedTree::tree`): to navigate it, read it or hydrate from it.
+    pub tree_reads: u32,
 }
 
 /// The running counts behind [`LayoutWork`], kept on the tree.
@@ -196,9 +208,12 @@ pub struct LayoutWorkCounter {
     sibling_items: std::sync::atomic::AtomicU64,
     region_fallbacks: std::sync::atomic::AtomicU64,
     cursor_climbs: std::sync::atomic::AtomicU64,
+    sibling_steps: std::sync::atomic::AtomicU64,
+    root_descents: std::sync::atomic::AtomicU64,
     depth_nodes: std::sync::atomic::AtomicU64,
     record_nodes: std::sync::atomic::AtomicU64,
     gap_items: std::sync::atomic::AtomicU64,
+    tree_reads: std::sync::atomic::AtomicU64,
 }
 
 impl LayoutWorkCounter {
@@ -218,6 +233,14 @@ impl LayoutWorkCounter {
         self.cursor_climbs.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
     }
 
+    pub fn sibling_steps(&self, n: u32) {
+        self.sibling_steps.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
+    }
+
+    pub fn root_descents(&self, n: u32) {
+        self.root_descents.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
+    }
+
     pub fn depth_nodes(&self, n: u32) {
         self.depth_nodes.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
     }
@@ -230,10 +253,14 @@ impl LayoutWorkCounter {
         self.gap_items.fetch_add(n, std::sync::atomic::Ordering::Relaxed);
     }
 
+    pub fn tree_reads(&self, n: u32) {
+        self.tree_reads.fetch_add(u64::from(n), std::sync::atomic::Ordering::Relaxed);
+    }
+
     /// The counts so far, with the tree's `records_rendered`.
     pub fn counts(&self, records_rendered: u32) -> LayoutWork {
         let read = |count: &std::sync::atomic::AtomicU64| u32::try_from(count.load(std::sync::atomic::Ordering::Relaxed)).unwrap_or(u32::MAX);
-        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items), region_fallbacks: read(&self.region_fallbacks), cursor_climbs: read(&self.cursor_climbs), depth_nodes: read(&self.depth_nodes), record_nodes: read(&self.record_nodes), records_rendered, gap_items: read(&self.gap_items) }
+        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items), region_fallbacks: read(&self.region_fallbacks), cursor_climbs: read(&self.cursor_climbs), sibling_steps: read(&self.sibling_steps), root_descents: read(&self.root_descents), depth_nodes: read(&self.depth_nodes), record_nodes: read(&self.record_nodes), records_rendered, gap_items: read(&self.gap_items), tree_reads: read(&self.tree_reads) }
     }
 }
 
@@ -272,7 +299,7 @@ pub fn source_separator<T>(layout: Option<&NodeLayout<T>>, ctx: &RenderContext<'
         if layout.changed.leading {
             return None;
         }
-        ctx.sources.separator_before(layout.at.as_ref().or(layout.sides.as_ref())?)
+        ctx.sources.separator_before(layout.at.as_ref().or(layout.sides.as_ref())?, ctx.lent)
     })
 }
 
@@ -645,10 +672,10 @@ pub fn render_framed<F: Framing + ?Sized>(
 }
 
 /// Gives `own` each side it holds none of from the sides `from`'s tree gives
-/// it, `from` being the node a built node was rebuilt from
-/// (`NodeLayout::sides`).
-pub fn merge_source_sides<T: 'static>(own: &mut Option<NodeTrivia<T>>, from: Option<&NodeCoordinate>, sources: &dyn crate::render::SourceTable) {
-    let Some(source) = from.and_then(|coord| sources.sides(coord)) else { return };
+/// it over the arenas `lent`, `from` being the node a built node was
+/// rebuilt from (`NodeLayout::sides`).
+pub fn merge_source_sides<T: 'static>(own: &mut Option<NodeTrivia<T>>, from: Option<&NodeCoordinate>, sources: &dyn crate::render::SourceTable, lent: crate::render::Lent<'_>) {
+    let Some(source) = from.and_then(|coord| sources.sides(coord, lent)) else { return };
     let Ok(source) = source.into_any().downcast::<NodeTrivia<T>>() else { return };
     let own = own.get_or_insert_with(Default::default);
     own.leading = own.leading.take().or(source.leading);
@@ -657,19 +684,20 @@ pub fn merge_source_sides<T: 'static>(own: &mut Option<NodeTrivia<T>>, from: Opt
 }
 
 /// A node's list slot layouts: the ones it stores, else, when it stores
-/// none, those of the node `from` it was rebuilt from.
+/// none, those of the node `from` it was rebuilt from, measured over the
+/// arenas `lent`.
 #[must_use]
-pub fn slots_or_source(own: Vec<SlotLayout>, from: Option<&NodeCoordinate>, sources: &dyn crate::render::SourceTable) -> Vec<SlotLayout> {
+pub fn slots_or_source(own: Vec<SlotLayout>, from: Option<&NodeCoordinate>, sources: &dyn crate::render::SourceTable, lent: crate::render::Lent<'_>) -> Vec<SlotLayout> {
     match from {
-        Some(coord) if own.is_empty() => sources.slot_layouts(coord),
+        Some(coord) if own.is_empty() => sources.slot_layouts(coord, lent),
         _ => own,
     }
 }
 
 impl<T: Prepare + TriviaSeam + 'static> Prepare for NodeLayout<T> {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
-        merge_source_sides(&mut self.trivia, self.sides.as_ref(), ctx.sources);
-        self.slots = slots_or_source(std::mem::take(&mut self.slots), self.sides.as_ref(), ctx.sources);
+        merge_source_sides(&mut self.trivia, self.sides.as_ref(), ctx.sources, ctx.lent);
+        self.slots = slots_or_source(std::mem::take(&mut self.slots), self.sides.as_ref(), ctx.sources, ctx.lent);
         let changed = std::mem::take(&mut self.changed);
         if let Some(trivia) = self.trivia.as_mut() {
             trivia.trim_changed(changed);
@@ -965,7 +993,7 @@ mod tests {
             fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&std::sync::Arc<str>> {
                 (tree_id == crate::types::TreeId(1)).then_some(&self.0)
             }
-            fn sides(&self, _: &crate::slot::NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+            fn sides(&self, _: &crate::slot::NodeCoordinate, _: crate::render::Lent<'_>) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
                 Some(Box::new(NodeTrivia { leading: Some(leading(&["// top"])), trailing: Some(trailing(&["// bottom"], false)), inner: None }))
             }
         }

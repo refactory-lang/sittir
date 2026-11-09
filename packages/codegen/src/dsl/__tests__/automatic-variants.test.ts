@@ -118,6 +118,54 @@ describe('automatic variants', () => {
 		expect(labels).toEqual(['a', 'b', 'c', 'd'].map((name) => ({ variant: name, variantOf: 'ranked' })));
 	});
 
+	const seqAround = (inner: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: SEQ, members: [{ type: STRING, value: '(' }, inner, { type: STRING, value: ')' }] });
+	const apples: Rule<'evaluate'> = { type: CHOICE, members: [{ type: SYMBOL, name: 'apple' }, { type: SYMBOL, name: 'banana' }] };
+	const spliceInto = (host: string, target: string): Rule<'evaluate'> => ({ type: SEQ, members: [{ type: STRING, value: host }, { type: SYMBOL, name: target }] });
+
+	it('labels the arms of a seq-bodied hidden rule spliced into one host as the host\'s variants', () => {
+		const base = enriched({ host: spliceInto('go', '_target'), _target: seqAround(apples), ...leaves });
+		expect(choiceOf(base.grammar.rules._target).members.map((arm) => variantLabel(labelOf(arm)))).toEqual([
+			{ variant: 'apple', variantOf: 'host' },
+			{ variant: 'banana', variantOf: 'host' }
+		]);
+	});
+
+	it('labels the arms of a hoisted group spliced into one host as the host\'s variants', () => {
+		const group: Rule<'evaluate'> = {
+			type: SEQ,
+			annotations: { hoisted: true },
+			members: [{ type: CHOICE, members: [{ type: SYMBOL, name: 'prefix' }, { type: 'BLANK' } as Rule<'evaluate'>] }, apples]
+		};
+		const base = enriched({ host: spliceInto('go', '_target'), _target: group, prefix: { type: STRING, value: '#' }, ...leaves });
+		expect(choiceOf(base.grammar.rules._target).members.map((arm) => variantLabel(labelOf(arm)))).toEqual([
+			{ variant: 'apple', variantOf: 'host' },
+			{ variant: 'banana', variantOf: 'host' }
+		]);
+	});
+
+	it('keeps the arms of a choice-bodied hidden rule spliced into one host as its own', () => {
+		const arms: Rule<'evaluate'> = {
+			type: CHOICE,
+			members: [
+				{ type: SEQ, members: [{ type: STRING, value: 'a' }, { type: SYMBOL, name: 'apple' }] },
+				{ type: SEQ, members: [{ type: STRING, value: 'b' }, { type: SYMBOL, name: 'banana' }] }
+			]
+		};
+		const base = enriched({ host: spliceInto('go', '_target'), _target: arms, ...leaves });
+		expect((base.grammar.rules._target as unknown as Members).members.map((arm) => variantLabel(labelOf(arm)))).toEqual([
+			{ variantOf: '_target' },
+			{ variantOf: '_target' }
+		]);
+	});
+
+	it('keeps the arms of a hidden rule spliced into several hosts as its own', () => {
+		const base = enriched({ first: spliceInto('first', '_target'), second: spliceInto('second', '_target'), _target: seqAround(apples), ...leaves });
+		expect(choiceOf(base.grammar.rules._target).members.map((arm) => variantLabel(labelOf(arm)))).toEqual([
+			{ variant: 'apple', variantOf: '_target' },
+			{ variant: 'banana', variantOf: '_target' }
+		]);
+	});
+
 	it('names the members of a hidden supertype by the supertype member rule', () => {
 		const rules = {
 			_expression: { type: CHOICE, members: [{ type: SYMBOL, name: 'binary_expression' }, { type: SYMBOL, name: 'unary_expression' }] },

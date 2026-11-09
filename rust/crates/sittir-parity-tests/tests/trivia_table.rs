@@ -5,7 +5,7 @@ use sittir_core::trivia_table::{is_empty, Assigned, SurfaceKinds, TriviaSide};
 use sittir_core::read::goto;
 use sittir_core::types::NodeIndex;
 use sittir_parity_tests::PlacedTrivia;
-use tree_sitter::{Language, Node, Parser, Tree};
+use sittir_core::tree_sitter::{Language, Node, Parser, Tree};
 
 fn parse(language: &Language, source: &str) -> Tree {
     let mut parser = Parser::new();
@@ -113,13 +113,13 @@ fn a_source_of_comments_only_is_the_roots_inner() {
 #[test]
 fn a_comment_before_a_separator_trails_the_item_before_it() {
     let case = Case::new(rust(), "fn f() { [a /* x */, b]; }\n");
-    case.holds("attributed_argument", "a", Trailing, "block_comment", "/* x */");
+    case.holds("identifier", "a", Trailing, "block_comment", "/* x */");
 }
 
 #[test]
 fn a_comment_after_a_separator_leads_the_item_after_it() {
     let case = Case::new(rust(), "fn f() { [a, /* y */ b]; }\n");
-    case.holds("attributed_argument", "b", Leading, "block_comment", "/* y */");
+    case.holds("identifier", "b", Leading, "block_comment", "/* y */");
 }
 
 #[test]
@@ -259,9 +259,9 @@ fn a_zero_width_child_holds_no_side() {
 fn a_node_is_empty_when_no_child_has_width() {
     for (source, block, empty) in [("function f() {\n}\n", "{\n}", true), ("function f() {\n  ;\n}\n", "{\n  ;\n}", false)] {
         let case = Case::new(typescript(), source);
-        let mut cursor = case.tree.walk();
-        goto(&mut cursor, case.at("statement_block", block));
-        assert_eq!(is_empty(&cursor.node()), empty, "{source:?}");
+        let work = sittir_core::layout::LayoutWorkCounter::default();
+        let mut nodes = sittir_core::nodes::TreeNodes::new(&case.tree, case.source, &work);
+        assert_eq!(is_empty(&mut nodes, case.at("statement_block", block)), empty, "{source:?}");
     }
 }
 
@@ -378,8 +378,10 @@ fn a_list_items_siblings_are_the_items_of_its_own_list() {
     let tree = parse(&language, source);
     let decorator = sittir_core::read::kind_named(&language, "decorator", true);
     let sibling = |start, end| Some(sittir_core::engine::Sibling { start, end, kind: decorator });
-    let first = sittir_core::engine::siblings(&tree, index_of(&tree, source, "decorator", "@a"));
-    let last = sittir_core::engine::siblings(&tree, index_of(&tree, source, "decorator", "@b"));
+    let work = sittir_core::layout::LayoutWorkCounter::default();
+    let mut nodes = sittir_core::nodes::TreeNodes::new(&tree, source, &work);
+    let first = sittir_core::engine::siblings(&mut nodes, index_of(&tree, source, "decorator", "@a"));
+    let last = sittir_core::engine::siblings(&mut nodes, index_of(&tree, source, "decorator", "@b"));
     assert_eq!((first.previous, first.next), (None, sibling(3, 5)));
     assert_eq!((last.previous, last.next), (sibling(0, 2), None), "the definition after the decorators is another slot's");
 }

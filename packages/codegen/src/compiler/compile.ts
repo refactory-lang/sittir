@@ -6,7 +6,7 @@ import { stampIrSurface } from './model/ir-surface.ts';
 import { hydrateSlotRefs, type AssembledNodeMap } from './assemble.ts';
 import { conflictRecords } from './diagnostics/conflicts.ts';
 import { dynamicPrecedenceRecords } from './diagnostics/dynamic-precedence.ts';
-import { blockedRecords, expectationsInEitherSpelling, collectGrammarDiagnosticsForGrammar, evaluateRecords, GrammarDiagnosticError, SURFACED_COMPILER_CODES } from './diagnostics/grammar-diagnostics.ts';
+import { blockedRecords, CompilePhaseFailed, expectationsInEitherSpelling, collectGrammarDiagnosticsForGrammar, evaluateRecords, GrammarDiagnosticError, SURFACED_COMPILER_CODES } from './diagnostics/grammar-diagnostics.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar } from './types.ts';
@@ -127,10 +127,16 @@ export function diagnoseGrammar(cfg: DiagnoseGrammarConfig): GrammarDiagnosis {
 	const evaluateBlocked = blockedRecords(evaluateDiagnostics, expectations, allowDiagnostics);
 	if (evaluateBlocked.length > 0) return { passed: false, stages, grammarDiagnostics: evaluateDiagnostics, blocked: evaluateBlocked };
 
-	const collected = collectGrammarDiagnosticsForGrammar({
-		rawGrammar: evaluated,
-		generatedIdTables: cfg.generatedIdTables
-	});
+	let collected: ReturnType<typeof collectGrammarDiagnosticsForGrammar>;
+	try {
+		collected = collectGrammarDiagnosticsForGrammar({
+			rawGrammar: evaluated,
+			generatedIdTables: cfg.generatedIdTables
+		});
+	} catch (error) {
+		if (!(error instanceof CompilePhaseFailed)) throw error;
+		return { passed: false, stages, grammarDiagnostics: [...evaluateDiagnostics, ...error.carried, ...error.records], blocked: error.records };
+	}
 	const diagnosticRecords =
 		stages === undefined
 			? []

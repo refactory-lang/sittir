@@ -18,7 +18,8 @@
 	},
 	"files": [
 		"dist",
-		"native"
+		"native/index.cjs",
+		"native/index.d.ts"
 	],
 	"type": "module",
 	"main": "./dist/index.js",
@@ -53,7 +54,7 @@
 	"engines": {
 		"node": "^22.14.0 || >=23.6.0"
 	},
-	"//native": "Native artifacts are grammar-local implementation details for @sittir/python, shipped in native/ and built from rust/crates/sittir-python.",
+	"//native": "Native artifacts are grammar-local implementation details for @sittir/python, built from rust/crates/sittir-python: native/ holds the loader and its typings, and each platform's binary ships in its own sittir-python-<platform> package with the engine and std it links.",
 	"sittir": {
 		"stable": true
 	}

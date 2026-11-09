@@ -34,7 +34,8 @@ fn agree<G: EngineGrammar, T: ReadNode + PartialEq + std::fmt::Debug>(name: &str
                 continue;
             };
             let tree = parse(&source);
-            let mut ctx = tree.seating_ctx().snapshot(SnapshotCtx::new(tree.lines(), Some(0), index));
+            let seating = tree.seating();
+            let mut ctx = seating.ctx().snapshot(SnapshotCtx::new(tree.lines(), Some(0), index));
             let alone = read_at::<T>(&mut tree.tree().walk(), &mut ctx, index, Depth::All).expect("the node reads with its sides seated alone");
             assert_eq!(snapped, alone, "{name} {source:?} at {index:?}");
             agreed += 1;
@@ -89,7 +90,8 @@ fn a_snapshot_whose_record_refuses_measures_each_run_in_its_region() {
     };
     let alone = |index: NodeIndex| {
         let tree = parse();
-        let mut ctx = tree.seating_ctx().snapshot(SnapshotCtx::new(tree.lines(), Some(0), index));
+        let seating = tree.seating();
+            let mut ctx = seating.ctx().snapshot(SnapshotCtx::new(tree.lines(), Some(0), index));
         let read = read_at::<AnyNode>(&mut tree.tree().walk(), &mut ctx, index, Depth::All);
         read
     };
