@@ -1,0 +1,24 @@
+import { readFileSync } from 'node:fs';
+import { relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { afterAll, expect } from 'vitest';
+import { liveEngineCount } from './packages/common/src/engine-census.ts';
+
+const ROOT = fileURLToPath(new URL('.', import.meta.url));
+const allowlist = new Set(
+	readFileSync(new URL('./vitest.engine-allowlist.txt', import.meta.url), 'utf8')
+		.split('\n')
+		.filter((line) => line !== '' && !line.startsWith('#'))
+);
+
+afterAll(() => {
+	const file = relative(ROOT, expect.getState().testPath ?? '');
+	const live = liveEngineCount();
+	const listed = allowlist.has(file);
+	if (live > 0 && !listed) {
+		throw new Error(`${file}: ${live} engine(s) never disposed; use \`using engine = await createEngine(...)\` in a test, or sharedEngine from @sittir/common/testing for a shared one`);
+	}
+	if (live === 0 && listed) {
+		throw new Error(`${file}: no engine left undisposed; remove it from vitest.engine-allowlist.txt`);
+	}
+});
