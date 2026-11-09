@@ -40,7 +40,10 @@ describe('numberShape: whether a leaf guard spells a sign', () => {
 	it.each([
 		['a signed decimal run', '-?[0-9]+'],
 		['a signed hex literal', '[+-]?0x[0-9a-fA-F]+'],
-		['a signed float', '-?\\d+\\.\\d+']
+		['a signed float', '-?\\d+\\.\\d+'],
+		['a float whose scientific form alone takes a sign', '\\d+\\.\\d+|-?\\d+[eE][+-]?\\d+'],
+		['a decimal run beside a signed float', '[0-9]+|-?[0-9]+\\.[0-9]+'],
+		['a hex literal beside a signed decimal run', '0x[0-9a-f]+|-?[0-9]+']
 	])('%s spells one', (_label, source) => {
 		expect(numberShape(anchored(source))?.signed).toBe(true);
 	});

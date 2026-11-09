@@ -214,12 +214,18 @@ const INTEGER_BASES: readonly { readonly base: 2 | 8 | 10 | 16; readonly accepts
 	{ base: 2, accepts: '11', rejects: '2', prefixes: ['0b', '0B', ''] }
 ];
 
+const SIGN_PROBES = [...INTEGER_BASES.flatMap(({ accepts, prefixes }) => prefixes.map((prefix) => `${prefix}${accepts}`)), ...FLOAT_PROBES];
+
+function spellsSign(pattern: RegExp): boolean {
+	return SIGN_PROBES.some((text) => pattern.test(text) && pattern.test(`-${text}`));
+}
+
 export function numberShape(pattern: RegExp): NumberShape | undefined {
 	if (pattern.test('')) return undefined;
 	for (const { base, accepts, rejects, prefixes } of INTEGER_BASES) {
 		for (const prefix of prefixes) {
 			if (pattern.test(`${prefix}${accepts}`) && !pattern.test(`${prefix}${rejects}`)) {
-				return { base, prefix: prefix.toLowerCase(), signed: pattern.test(`-${prefix}${accepts}`) };
+				return { base, prefix: prefix.toLowerCase(), signed: spellsSign(pattern) };
 			}
 		}
 	}
@@ -229,7 +235,7 @@ export function numberShape(pattern: RegExp): NumberShape | undefined {
 		base: 'float',
 		whole: FLOAT_WHOLE_SPELLINGS.find((spelling) => pattern.test(`1${spelling}`)) ?? '',
 		complete: pattern.test(FLOAT_EVERY_PART),
-		signed: pattern.test(`-${accepted}`)
+		signed: spellsSign(pattern)
 	};
 }
 
