@@ -47,6 +47,12 @@ repository = "https://github.com/refactory-lang/sittir"
 # `"symbols"`) and the explicit `--target` that `napi build --platform` passes
 # comes out with a "mis-aligned LINKEDIT string pool" on current macOS, and
 # dyld refuses to load it. So cargo strips nothing here and
+# Dev and test builds carry no debug info: a panic still reports its file and
+# line, and a backtrace names functions only. For line numbers in one build,
+# set CARGO_PROFILE_DEV_DEBUG=line-tables-only.
+[profile.dev]
+debug = false
+
 # `scripts/build-native.mts` strips a release binding after the build, on
 # every target: on macOS with `strip -x` and an ad-hoc re-sign, elsewhere with
 # the pinned toolchain's `llvm-strip`. The unstripped build is kept beside the
