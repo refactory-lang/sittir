@@ -199,6 +199,7 @@ Measure native workflows or paired backend validation buckets
 - `--validation` — Profile deep read, factory and IR render/parse validators under both paired backends
 - `--baseline <tree>` — With --validation, also measure another built checkout's own validation workers in the same rounds, the order turning each round, with the memory of loading one grammar and every grammar, and the bytes a host install of each grammar costs, for both
 - `--idle-gate <path>` — Run a shell idle gate before each worker, passing the worker's checkout
+- `--hold-peers` — While it runs, keep the work of other Claude sessions and the sccache server on the efficiency cores (macOS background class), giving it back at the end
 - `--output <path>` — Write the complete JSON report to this file
 
 **Example**
