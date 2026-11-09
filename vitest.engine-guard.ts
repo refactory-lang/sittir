@@ -1,16 +1,21 @@
 import { readFileSync } from 'node:fs';
-import { relative } from 'node:path';
+import { relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterAll, expect } from 'vitest';
 import type { RunnerTask } from 'vitest';
 import { liveEngineCount } from './packages/common/src/engine-census.ts';
 
 const ROOT = fileURLToPath(new URL('.', import.meta.url));
-const allowlist = new Set(
-	readFileSync(new URL('./vitest.engine-allowlist.txt', import.meta.url), 'utf8')
-		.split('\n')
-		.filter((line) => line !== '' && !line.startsWith('#'))
-);
+const ALLOWLIST = Symbol.for('sittir.engineAllowlist');
+
+function loadAllowlist(): ReadonlySet<string> {
+	const cache = globalThis as Record<symbol, ReadonlySet<string> | undefined>;
+	return (cache[ALLOWLIST] ??= new Set(
+		readFileSync(new URL('./vitest.engine-allowlist.txt', import.meta.url), 'utf8')
+			.split(/\r?\n/)
+			.filter((line) => line !== '' && !line.startsWith('#'))
+	));
+}
 
 function ranWhole(tasks: readonly RunnerTask[]): boolean {
 	return tasks.every((task) => (task.type === 'suite' ? ranWhole(task.tasks) : task.mode === 'run' && task.result?.state !== 'skip'));
@@ -18,9 +23,9 @@ function ranWhole(tasks: readonly RunnerTask[]): boolean {
 
 // oxlint-disable-next-line no-empty-pattern
 afterAll(({}, suite) => {
-	const file = relative(ROOT, expect.getState().testPath ?? '');
+	const file = relative(ROOT, expect.getState().testPath ?? '').split(sep).join('/');
 	const live = liveEngineCount();
-	const listed = allowlist.has(file);
+	const listed = loadAllowlist().has(file);
 	if (live > 0 && !listed) {
 		throw new Error(`${file}: ${live} engine(s) never disposed; use \`using engine = await createEngine(...)\` in a test, or sharedEngine from @sittir/common/testing for a shared one`);
 	}

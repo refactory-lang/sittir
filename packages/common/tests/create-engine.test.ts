@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { createEngine } from '../src/create-engine.ts';
 import { portable, portableGuardsOf } from '../src/portable/index.ts';
 import { createRenderHandle } from '../src/engine.ts';
+import { liveEngineCount } from '../src/engine-census.ts';
 
 interface FakeRenderOptions {
 	readonly indent?: string;
@@ -165,6 +166,20 @@ describe('createEngine', () => {
 		expect(f.natives.map((n) => n.disposed)).toEqual([false]);
 		e.dispose();
 		expect(f.natives.map((n) => n.disposed)).toEqual([true]);
+	});
+
+	it('counts the engine closed even when its native dispose throws', async () => {
+		const f = fakeLanguage();
+		const before = liveEngineCount();
+		const e = await engineOf(undefined, f);
+		expect(liveEngineCount()).toBe(before + 1);
+		(f.natives[0] as { dispose: () => void }).dispose = () => {
+			throw new Error('native dispose failed');
+		};
+		expect(() => e.dispose()).toThrow('native dispose failed');
+		expect(liveEngineCount()).toBe(before);
+		expect(() => e.dispose()).toThrow('native dispose failed');
+		expect(liveEngineCount()).toBe(before);
 	});
 
 	it.each([false, true])('disposes its native engine when a using scope exits (throws: %s)', async (throws) => {

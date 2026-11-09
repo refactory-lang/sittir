@@ -1,6 +1,6 @@
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { startVitest } from 'vitest/node';
 
@@ -11,8 +11,8 @@ function fixture(disposes: boolean): string {
 	const open = disposes ? "using engine = await createEngine(await languageByName('regex'), { nodeStorage: 'object' });" : "const engine = await createEngine(await languageByName('regex'), { nodeStorage: 'object' });";
 	return [
 		"import { it } from 'vitest';",
-		`import { createEngine } from '${join(ROOT, 'packages/common/src/index.ts')}';`,
-		`import { languageByName } from '${join(ROOT, 'packages/tools/src/languages.ts')}';`,
+		`import { createEngine } from '${pathToFileURL(join(ROOT, 'packages/common/src/index.ts')).href}';`,
+		`import { languageByName } from '${pathToFileURL(join(ROOT, 'packages/tools/src/languages.ts')).href}';`,
 		`it('creates an engine', async () => { ${open} void engine; });`,
 		''
 	].join('\n');

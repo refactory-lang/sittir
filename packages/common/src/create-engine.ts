@@ -364,11 +364,11 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		},
 		dispose() {
 			handle.current = identity;
-			native.dispose();
 			if (open) {
 				open = false;
 				engineClosed();
 			}
+			native.dispose();
 		},
 		[Symbol.dispose]() {
 			engine.dispose();
