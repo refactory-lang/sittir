@@ -6,6 +6,7 @@ import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
 import { BLANK_KIND_ID } from './blank-arm.ts';
+import { checkedKindId } from './kind-id.ts';
 import { addressOf, chunkOf, headerKind, kindField, withKind, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
 import { builtRefOf, handleArenaOf, leafSitesOf, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { freedRecord, leafData, recordDelimiter, recordOf, recordSeparator, recordStub } from './record-view.ts';
@@ -1177,7 +1178,7 @@ export function builtCell(at: number, changed = 0): number {
 
 /** The built cell of a unit of `kind`: an address in chunk 0, whose word is the kind; the blank arm's is the reserved offset. */
 export function unitCell(kind: number, format: CellFormat): number {
-	if (kind === BLANK_KIND_ID) return format.blankUnit * 4;
+	if (checkedKindId(kind) === BLANK_KIND_ID) return format.blankUnit * 4;
 	if (kind >= format.blankUnit) throw new Error(`a unit cell holds kinds below ${format.blankUnit}, not ${kind}`);
 	return kind * 4;
 }

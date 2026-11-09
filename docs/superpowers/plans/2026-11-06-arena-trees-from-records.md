@@ -182,9 +182,10 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 **Interfaces:**
 - Consumes: Task 4's `RecordNodes`; Task 5's `LayoutWork::tree_reads`.
 - Produces:
-  - `ParsedTree::holder_cell(&self, index: NodeIndex) -> Option<(Address, u32, u32)>`, which gives the holder, word and item for a parsed leaf or a unit, since both cells name their row. Over napi it's `holderCell(treeId, index)`, returning `[holder, word, item]` or `null`;
-  - `Routed::slot_items()`, yielding `(child, slot, item)`. It's the reader's list accumulators (arrival and position per list kind, with segments and holes) exposed once. The list read and the units walk both go through it;
-  - `read::units_of(nodes, at, routed, sides) -> Vec<UnitSides<T>>`, over `Nodes` for both storages. It replaces `EngineGrammar::read_units` and its generated bodies;
+  - `ParsedTree::read_leaf::<N>(&self, index: NodeIndex)`, returning the leaf's stamped kind and span, or `None`. The native walk decodes the holder's cell through `written::<N>`. A unit's span is its row's, because a unit cell holds no span. Over napi it's `readLeaf(treeId, index)`, returning `[kind, start, end]` or `null`. JS `RecordReader.leaf(index)` builds the leaf with record-view's `leafData`, and `readAt` tries the stub, then the leaf, then the native read;
+  - `read::slot_items(routes, elided)` and `Routed::slot_items()`, yielding `(child, slot, item)`. They expose the list-item numbering once. `Routed` carries `elided`, from a `ReadSlot::ELIDED` const that replaces the per-type arrival and position overrides;
+  - `read::units_of(routed, ctx)`, over `Nodes` for both storages, with sides taken from the seating's `unit_sides`. It replaces `EngineGrammar::read_units` and its generated bodies;
+  - `backer_parity` also checks each node's unit sides and leaf read against the stamped coordinate, so `sittir tool backer-parity` covers the corpora;
   - the no-tree count is the existing `LayoutWork::tree_reads`, because every path to the tree passes `ParsedTree::tree()`.
 
 - [ ] **Step 1: Failing tests:**
@@ -205,6 +206,7 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 - Modify: `packages/common/src/snapshot.ts`. A parsed node's snapshot is the node-surface walk (`copyStep`) that built nodes already take, in both storages.
 - Modify: `engine.rs` (`SnapshotCtx::span_of`) and `napi_engine.rs`. One native call measures, over `Nodes`, each node's span in a subtree from its holder, with today's `unmeasured` refusal. The walk attaches those spans. A side entry's text and span come through `Nodes`.
 - Remove: the typed read inside `ParsedTree::snapshot_node` and `snapshot_in`.
+- Modify: the generated `$handleQuery` and `$handleSnapshot` both read a record view's row through `rowOf` → `readObjectAt`, which is a typed read over the cursor. Both move off it in this task, so `$query()` on an arena record view also makes 0 tree reads.
 - If the object node surface can't feed the walk a field the native snapshot emits, the PR names the field and stops for review. It never keeps a second snapshot rule.
 - Test: `packages/common/tests/snapshot.test.ts` and the snapshot census.
 
@@ -213,9 +215,10 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 - Produces: `ParsedTree::snapshot_spans(&self, root: NodeIndex, holder: Option<u32>) -> Result<Vec<Span>, ReadError>`, in the walk's order.
 
 - [ ] **Step 1: Failing tests:**
-  - `a_parsed_snapshot_takes_no_tree`: an arena snapshot makes 0 tree reads;
+  - `a_parsed_snapshot_takes_no_tree`: an arena snapshot makes 0 tree reads, and so does `$query()` on an arena record view;
   - snapshots equal master's, for every node of the fixtures and both corpora, in both storages and all three grammars;
-  - a snapshot of a node holding an ERROR side or a MISSING token equals master's, and an unmeasurable holder is still refused as `unmeasured`.
+  - a snapshot of a node holding an ERROR side or a MISSING token equals master's, and an unmeasurable holder is still refused as `unmeasured`;
+  - `an_alias_content_snapshots_as_itself`: a parsed alias content's snapshot carries the content's own `$type` and text, not its envelope's, though the two share a row. A snapshot is the node as read, detached. This is the one place output differs from master's, and the PR lists it.
 - [ ] **Step 2:** Run them. They fail.
 - [ ] **Step 3: Implement.**
 - [ ] **Step 4: Run the three-way verification** in both storages. Object storage's snapshot speed is not a gate. Its output is.

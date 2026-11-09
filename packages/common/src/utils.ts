@@ -877,7 +877,7 @@ export function hydrateStoredSlots(node: object, key: string): readonly unknown[
 	return hydrateSlotsBy(node, key, hydrateStored);
 }
 
-export { numberText, type NumberBase } from './number.ts';
+export { numberRefusal, numberText, type NumberBase } from './number.ts';
 export {
 	decodeIndex,
 	decodeTree,

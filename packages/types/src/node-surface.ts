@@ -138,7 +138,7 @@ type TakesFirst<Lists, Value> = Lists extends unknown ? ([Value] extends Lists ?
  * @typeParam Value - the value the setter must admit.
  * @example `FormsHolding<CallExpression.Parsed, 'arguments', Arguments.Parsed>` is the call and member forms.
  */
-export type FormsHolding<Union, Slot extends string, Value> = [Refusals<Value, never>] extends [never]
+export type FormsHolding<Union, Slot extends string, Value> = [Refusals<Value, never, false>] extends [never]
 	? Union extends {
 			readonly $with: { readonly [K in Slot]: infer Setter };
 		}
@@ -173,36 +173,48 @@ type NodeMarker = HoldsSource | HoldsTree;
 
 type IsOneOf<V, U> = true extends (U extends unknown ? IsExactly<V, U> : never) ? true : false;
 
-type Refusals<V, Declared, Depth extends readonly 0[] = [], Path extends string = ''> = 0 extends 1 & V
+type Refusals<V, Declared, Signed extends boolean, Depth extends readonly 0[] = [], Path extends string = ''> = 0 extends 1 & V
 	? never
 	: IsExactly<V, Declared> extends true
 		? never
 		: V extends unknown
-			? MemberRefusals<V, Declared, Depth, Path>
+			? MemberRefusals<V, Declared, Signed, Depth, Path>
 			: never;
 
-type MemberRefusals<V, Declared, Depth extends readonly 0[], Path extends string> = V extends {
+type MemberRefusals<V, Declared, Signed extends boolean, Depth extends readonly 0[], Path extends string> = V extends {
 	readonly $type: infer Id;
 }
 	? `${number}` extends `${Id & number}`
 		? 'an untyped node has no language'
 		: V extends NodeMarker
 			? never
-			: OpenedRefusals<V, Declared, Depth, Path>
+			: OpenedRefusals<V, Declared, Signed, Depth, Path>
 	: V extends object
 		? [keyof V] extends [never]
 			? never
-			: OpenedRefusals<V, Declared, Depth, Path>
-		: never;
+			: OpenedRefusals<V, Declared, Signed, Depth, Path>
+		: NegativeRefusals<V, Declared, Signed, Path>;
 
-type OpenedRefusals<V, Declared, Depth extends readonly 0[], Path extends string> =
+type NegativeRefusals<V, Declared, Signed extends boolean, Path extends string> = [Declared] extends [never]
+	? never
+	: Signed extends true
+		? never
+		: V extends number | bigint
+			? `${V}` extends `-${string}`
+				? Path extends ''
+					? 'a negative number is a unary minus applied to a positive literal'
+					: `a negative number is a unary minus applied to a positive literal: ${Path}`
+				: never
+			: never;
+
+type OpenedRefusals<V, Declared, Signed extends boolean, Depth extends readonly 0[], Path extends string> =
 	IsOneOf<V, Declared> extends true
 		? never
 		: Depth['length'] extends WalkDepth
 			? `an input nested too deep to check: ${Path}`
 			: [ListOf<V>] extends [never]
-				? KeyRefusals<V, ConfigShapes<V, Declared>, Path> | FieldRefusals<V, ConfigShapes<V, Declared>, [...Depth, 0], Path>
-				: ItemRefusals<ListOf<V>, Declared, [...Depth, 0], Path>;
+				? KeyRefusals<V, ConfigShapes<V, Declared>, Path> | FieldRefusals<V, ConfigShapes<V, Declared>, Signed, [...Depth, 0], Path>
+				: ItemRefusals<ListOf<V>, Declared, Signed, [...Depth, 0], Path>;
 
 type ListOf<V> = V extends readonly unknown[]
 	? number extends keyof V
@@ -232,16 +244,16 @@ type KeyRefusals<V, Shapes, Path extends string> = [Shapes] extends [never]
 
 type KeyText<K> = K extends string | number ? `${K}` : '[symbol]';
 
-type FieldRefusals<V, Shapes, Depth extends readonly 0[], Path extends string> = {
-	[K in keyof V]-?: K extends '$type' ? never : Refusals<V[K], FieldOf<Shapes, K>, Depth, Step<Path, KeyText<K>>>;
+type FieldRefusals<V, Shapes, Signed extends boolean, Depth extends readonly 0[], Path extends string> = {
+	[K in keyof V]-?: K extends '$type' ? never : Refusals<V[K], FieldOf<Shapes, K>, Signed, Depth, Step<Path, KeyText<K>>>;
 }[keyof V];
 
 type FieldOf<C, K> = C extends unknown ? (K extends keyof C ? Exclude<C[K], undefined> : never) : never;
 
-type ItemRefusals<V extends readonly unknown[], Declared, Depth extends readonly 0[], Path extends string> =
+type ItemRefusals<V extends readonly unknown[], Declared, Signed extends boolean, Depth extends readonly 0[], Path extends string> =
 	number extends V['length']
-		? Refusals<V[number], ItemOf<Declared, number>, Depth, Path>
-		: { [I in keyof V]-?: Refusals<V[I], ItemOf<Declared, I>, Depth, Step<Path, I & string>> }[number];
+		? Refusals<V[number], ItemOf<Declared, number>, Signed, Depth, Path>
+		: { [I in keyof V]-?: Refusals<V[I], ItemOf<Declared, I>, Signed, Depth, Step<Path, I & string>> }[number];
 
 type ItemOf<D, I> = D extends readonly unknown[] ? (I extends keyof D ? D[I] : D[number]) : never;
 
@@ -251,45 +263,57 @@ type ItemOf<D, I> = D extends readonly unknown[] ? (I extends keyof D ? D[I] : D
  * function that admits a node is generic over the value and takes `value: V & RefuseUndeclared<V>`. A node of the slot's
  * language keeps its kind, and a node of another language is refused by its own enum. Given the parameter's declared
  * input, a key that no declared config at that place names is refused too, at any depth: TypeScript's own
- * excess-property check does not reach a generic parameter. A value nested deeper than the check reads is refused as
- * too deep to check rather than admitted unread. A value typed `any` proves nothing, so it is admitted.
+ * excess-property check does not reach a generic parameter. Given a declared input, a negative number or bigint literal
+ * is refused too, at any depth, unless `Signed`: a numeric literal a builder writes carries no sign. A value nested
+ * deeper than the check reads is refused as too deep to check rather than admitted unread. A value typed `any` proves
+ * nothing, so it is admitted.
  *
  * @typeParam V - the admitted value as inferred: a node, a list of them, or a config holding them.
  * @typeParam Declared - the parameter's declared input, whose shape the value's keys are checked against; omitted,
  *   only untyped nodes are refused.
- * @returns `unknown` when `V` holds no untyped node and no unknown key, otherwise `{ readonly refused: … }`, which no
- *   argument carries, naming each refusal: `an untyped node has no language`, `an unknown key: <path>`, or
+ * @typeParam Signed - `true` when one of the grammar's numeric literals spells its own sign, so a negative number can
+ *   build one.
+ * @returns `unknown` when `V` holds nothing refused, otherwise `{ readonly refused: … }`, which no argument carries,
+ *   naming each refusal: `an untyped node has no language`, `an unknown key: <path>`,
+ *   `a negative number is a unary minus applied to a positive literal: <path>`, or
  *   `an input nested too deep to check: <path>`.
  */
-export type RefuseUndeclared<V, Declared = never> = [Refusals<V, Declared>] extends [never]
+export type RefuseUndeclared<V, Declared = never, Signed extends boolean = false> = [Refusals<V, Declared, Signed>] extends [never]
 	? unknown
-	: { readonly refused: Refusals<V, Declared> };
+	: { readonly refused: Refusals<V, Declared, Signed> };
 
 /**
  * A builder's row call: it takes its kind's row, an argument list that may hold a seated group's config in place of
- * the group, and refuses an untyped node and a key the row does not declare.
+ * the group, and refuses what {@link RefuseUndeclared} refuses against the row.
  *
  * @typeParam Args - the kind's row: `BuildArgs` in the strict table, `LooseArgs` in the default engine's.
  * @typeParam R - the node the builder returns.
+ * @typeParam Signed - whether a negative number can build one of the grammar's numeric literals.
  */
-export type Seat<Args extends readonly unknown[], R> = <const A extends Args>(...args: A & RefuseUndeclared<A, Args>) => R;
+export type Seat<Args extends readonly unknown[], R, Signed extends boolean = false> = <const A extends Args>(
+	...args: A & RefuseUndeclared<A, Args, Signed>
+) => R;
 
 /**
- * A loose builder's config call: it takes one value of its kind's loose input, and refuses an untyped node and a key
- * the input does not declare.
+ * A loose builder's config call: it takes one value of its kind's loose input, and refuses what
+ * {@link RefuseUndeclared} refuses against that input.
  *
  * @typeParam Loose - the kind's loose input.
  * @typeParam R - the node the builder returns.
+ * @typeParam Signed - whether a negative number can build one of the grammar's numeric literals.
  */
-export type ConfigSeat<Loose, R> = <const I extends Loose>(input: I & RefuseUndeclared<I, Loose>) => R;
+export type ConfigSeat<Loose, R, Signed extends boolean = false> = <const I extends Loose>(input: I & RefuseUndeclared<I, Loose, Signed>) => R;
 
 /**
  * A {@link ConfigSeat} whose value may be left out.
  *
  * @typeParam Loose - the kind's loose input.
  * @typeParam R - the node the builder returns.
+ * @typeParam Signed - whether a negative number can build one of the grammar's numeric literals.
  */
-export type OptionalConfigSeat<Loose, R> = <const I extends Loose>(...input: [input?: I] & RefuseUndeclared<I, Loose>) => R;
+export type OptionalConfigSeat<Loose, R, Signed extends boolean = false> = <const I extends Loose>(
+	...input: [input?: I] & RefuseUndeclared<I, Loose, Signed>
+) => R;
 
 /**
  * A builder that also takes no argument and returns its kind's empty form.

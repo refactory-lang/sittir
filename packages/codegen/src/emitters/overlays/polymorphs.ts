@@ -15,8 +15,10 @@ import {
 	refusingParam,
 	seatDeclaration,
 	withTrailingParam,
+	type LooseRefusal,
 	type RefusingParams
 } from '../shared.ts';
+import { looseRefusal } from '../interior.ts';
 import {
 	constructorTargetKind,
 	listHasOptions,
@@ -407,7 +409,7 @@ function composeSeats(
 	}
 	const name = seatedKeyOf(wireSet.parentKey);
 	const seated = (argsType: string, returnType: string, expr: string): string =>
-		seatDeclaration(nodeMap, wireSet.node.kind, name, functionTypeOf(refusingParam('args', argsType, { rest: true, loose: true }), returnType), expr);
+		seatDeclaration(nodeMap, wireSet.node.kind, name, functionTypeOf(refusingParam('args', argsType, { rest: true, loose: looseRefusal(nodeMap) }), returnType), expr);
 	out.seated.strict.push(seated(`T.${wireSet.node.typeName}.BuildArgs`, `ReturnType<${p.strict.type}>`, strictExpr));
 	out.seated.loose.push(seated(`T.${wireSet.node.typeName}.LooseArgs`, `ReturnType<${p.coerce.type}>`, coerceExpr));
 	const ref = tableRef(name);
@@ -533,8 +535,8 @@ export const ERASED_HELPERS = [
 
 const optionsOf = (parentRef: string): string => `options?: OptionsArg<${parentRef}>`;
 
-const refusingConfig = (type: string, parentRef: string, optional = false): RefusingParams =>
-	withTrailingParam(refusingParam('config', type, { optional, loose: true }), optionsOf(parentRef));
+const refusingConfig = (type: string, parentRef: string, loose: LooseRefusal, optional = false): RefusingParams =>
+	withTrailingParam(refusingParam('config', type, { optional, loose }), optionsOf(parentRef));
 
 interface WireShape {
 	readonly method: readonly string[];
@@ -547,7 +549,8 @@ function shape(
 	positional: boolean,
 	mergeKeys: readonly string[] | undefined,
 	m: string,
-	call: PortableMountCall
+	call: PortableMountCall,
+	loose: LooseRefusal
 ): WireShape {
 	const registered = sub.slot.registeredOption !== undefined;
 	if (sub.arm.via === 'value') {
@@ -576,7 +579,7 @@ function shape(
 					`export const ${m} = <${PFV}>(parent: PF, value: unknown) =>`,
 					`	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)(arg as never, _m(options, { ${k}: value }) as never);`
 				],
-				paramFor: (p) => withTrailingParam(refusingParam('arg', `ArgsOf<${p}>[0]`, { loose: true }), optionsOf(p))
+				paramFor: (p) => withTrailingParam(refusingParam('arg', `ArgsOf<${p}>[0]`, { loose }), optionsOf(p))
 			};
 		}
 		return {
@@ -586,7 +589,7 @@ function shape(
 					? `	(config: OmitEach<ArgsOf<PF>[0], '${k}'>, options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)(config as never, _m(options, { ${k}: value }) as never);`
 					: `	(config: OmitEach<ArgsOf<PF>[0], '${k}'>, options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)({ ...config, ${k}: value } as never, options as never);`
 			],
-			paramFor: (p) => refusingConfig(`OmitEach<ArgsOf<${p}>[0], '${k}'>`, p)
+			paramFor: (p) => refusingConfig(`OmitEach<ArgsOf<${p}>[0], '${k}'>`, p, loose)
 		};
 	}
 	if (call === 'child') {
@@ -600,7 +603,7 @@ function shape(
 						`export const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
 						`	(...args: ArgsOf<CF>): ReturnType<PF> => ${CALL_P}({ ${k}: ${CALL_C}(...args) });`
 					],
-			paramFor: (_p, c) => refusingParam('args', `ArgsOf<${c}>`, { rest: true, loose: true })
+			paramFor: (_p, c) => refusingParam('args', `ArgsOf<${c}>`, { rest: true, loose })
 		};
 	}
 	if (call === 'merge' && mergeKeys !== undefined) {
@@ -611,7 +614,7 @@ function shape(
 					`	(config: OmitEach<ArgsOf<PF>[0], '${k}'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>`,
 					`		_s<ReturnType<PF>>(parent)(_m(config, { ${k}: ${CALL_C}({}) }) as never, options as never);`
 				],
-				paramFor: (p, c) => refusingConfig(`OmitEach<ArgsOf<${p}>[0], '${k}'> & ArgsOf<${c}>[0]`, p)
+				paramFor: (p, c) => refusingConfig(`OmitEach<ArgsOf<${p}>[0], '${k}'> & ArgsOf<${c}>[0]`, p, loose)
 			};
 		}
 		const keyTests = mergeKeys.map((key) => `key === ${JSON.stringify(key)}`).join(' || ');
@@ -628,7 +631,7 @@ function shape(
 				`		return _s<ReturnType<PF>>(parent)({ ...rest, ${k}: ${CALL_C}(inner) } as never, options as never);`,
 				`	};`
 			],
-			paramFor: (p, c) => refusingConfig(`OmitEach<ArgsOf<${p}>[0], '${k}'> & ArgsOf<${c}>[0]`, p)
+			paramFor: (p, c) => refusingConfig(`OmitEach<ArgsOf<${p}>[0], '${k}'> & ArgsOf<${c}>[0]`, p, loose)
 		};
 	}
 	if (call === 'holder') {
@@ -638,7 +641,7 @@ function shape(
 				`export const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
 				`	(${config}: OmitEach<ArgsOf<PF>[0], '${k}'>, options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)({ ...config, ${k}: ${CALL_C}() } as never, options as never);`
 			],
-			paramFor: (p) => refusingConfig(`OmitEach<ArgsOf<${p}>[0], '${k}'>`, p, config === 'config?')
+			paramFor: (p) => refusingConfig(`OmitEach<ArgsOf<${p}>[0], '${k}'>`, p, loose, config === 'config?')
 		};
 	}
 	if (call === 'keyed') {
@@ -650,7 +653,7 @@ function shape(
 				`		return _s<ReturnType<PF>>(parent)({ ...rest, ${k}: ${CALL_C}(seated) } as never, options as never);`,
 				`	};`
 			],
-			paramFor: (p, c) => refusingConfig(`OmitEach<ArgsOf<${p}>[0], '${k}'> & { ${k}: ArgsOf<${c}>[0] }`, p)
+			paramFor: (p, c) => refusingConfig(`OmitEach<ArgsOf<${p}>[0], '${k}'> & { ${k}: ArgsOf<${c}>[0] }`, p, loose)
 		};
 	}
 	return {
@@ -661,7 +664,7 @@ function shape(
 			`		return _s<ReturnType<PF>>(parent)({ ...rest, ${k}: ${CALL_C}(...seated) } as never, options as never);`,
 			`	};`
 		],
-		paramFor: (p, c) => refusingConfig(`OmitEach<ArgsOf<${p}>[0], '${k}'> & { ${k}: ArgsOf<${c}> }`, p)
+		paramFor: (p, c) => refusingConfig(`OmitEach<ArgsOf<${p}>[0], '${k}'> & { ${k}: ArgsOf<${c}> }`, p, loose)
 	};
 }
 
@@ -920,7 +923,7 @@ function emitSub(
 
 	if (sub.arm.via === 'value') {
 		const val = valueStorageExpr(sub.arm.storage, resolveFieldStorageInfo(sub.slot, nodeMap), wires.kindEntries);
-		const s = shape(sub, k, positional, undefined, m, mountCallOf(sub, nodeMap));
+		const s = shape(sub, k, positional, undefined, m, mountCallOf(sub, nodeMap), looseRefusal(nodeMap));
 		const parent = p.coerce ?? p.strict;
 		const type = functionTypeOf(s.paramFor(parent.type, undefined), `ReturnType<${parent.type}>`);
 		return { name: m, method: s.method, apply: `K.${m}(${parent.value}, ${val})`, type, coercible: p.coerce !== undefined };
@@ -932,7 +935,7 @@ function emitSub(
 		sub.arm.path.length === 0 && sub.residual.length > 0 && sub.merges
 			? armConfigKeys(sub, nodeMap, { isEmitted: wires.isEmitted })
 			: undefined;
-	const s = shape(sub, k, positional, mergeKeys, m, mountCallOf(sub, nodeMap));
+	const s = shape(sub, k, positional, mergeKeys, m, mountCallOf(sub, nodeMap), looseRefusal(nodeMap));
 	const wrap: FlavorRefs = positional ? { strict: p.strict, coerce: p.coerce && p.strict } : p;
 	const coercible = wrap.coerce !== undefined && c.coerce !== undefined;
 	const parentRef = coercible ? wrap.coerce! : wrap.strict;
