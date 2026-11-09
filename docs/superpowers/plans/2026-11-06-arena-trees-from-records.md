@@ -33,6 +33,7 @@
 - **No napi or V8 call runs off the JavaScript thread, or on a grown stack segment.** Render stays a recursive descent.
 - **A tree's bytes and strings stay native.** No source copy on the JavaScript heap, and no bulk source crossing.
 - **Object storage keeps its representation.** Only its tree backer's cursor movement changes.
+- **After parse, an arena tree's records, rows and source are its AST** (the maintainer, 2026-11-08: "we never needed to re-parse, because we have the ast"). The typed reader runs once, at hydration. Every later read consumes what it stamped. Nothing re-parses, and no reader runs again over rows. A fact a later read needs and hydration didn't stamp is stamped at hydration or read through `Nodes`, never by a second copy of the reader's logic.
 - **Output:** renders stay byte-identical and records word-identical, in both storages, after every task.
 - **Three-way verification** before every commit that can change what the pipeline reads, renders, parses or validates: targeted probes of the wrap and render layers, `validate:history` compared with numbers, and the full suite. Also `cargo test --workspace` in plain and arena builds, and clippy in the four CI configurations.
 - **Ratchets only tighten.**
@@ -167,6 +168,59 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
 - [ ] **Step 4: Run the three-way verification** in both storages, then a byte-identical render over all of matter.js and next.js in arena storage, through the validators' corpus mode.
 - [ ] **Step 5: Commit:** `feat(arena): render, queries and edits read records, not the tree`.
 
+### Task 5b: Leaf, ERROR and unit reads take no tree
+
+Task 5 planned these reads on records, but its no-tree test covered render, queries and edits only. Three arena calls still run the typed reader over a tree cursor: `$snapshot()` (Task 5c), the unit sides edits carry, and the object read of a node with no record (a parsed leaf, or ERROR).
+
+**Files:**
+- Modify: `engine.rs` (`ParsedTree::read_node`). The ERROR check runs before any cursor is made. `error_at` already answers from rows and the source.
+- Modify: `engine.rs` and `napi_engine.rs`. A leaf asked by index (a query item) is answered from its holder's record. The rows' parent gives the holder, and one native call returns the cell naming the leaf's row. Modify `packages/common/src/engine.ts` (`readObjectAt`) to decode that cell with the decoder record views already use. Nothing new is stamped. Number-part interiors already have records, with `ParsedText` captures.
+- Modify: `read.rs`. A list item's number (holes counted) becomes one function over `Routed`, called by the list read and the units walk.
+- Modify: the units walk runs over `Nodes` in both storages. It takes `slot_routes`' `Route::Slot { slot, scalar }` children, and the sides come from the seating. The Rust emitter stops emitting each grammar's `read_units`, then regenerate.
+- Test: `rust/crates/sittir-parity-tests/tests/arena_from_records.rs`.
+
+**Interfaces:**
+- Consumes: Task 4's `RecordNodes`; Task 5's `LayoutWork::tree_reads`.
+- Produces:
+  - `ParsedTree::holder_cell(&self, index: NodeIndex) -> Option<(Address, u32, u32)>`, which gives the holder, word and item for a parsed leaf or a unit, since both cells name their row. Over napi it's `holderCell(treeId, index)`, returning `[holder, word, item]` or `null`;
+  - `Routed::slot_items()`, yielding `(child, slot, item)`. It's the reader's list accumulators (arrival and position per list kind, with segments and holes) exposed once. The list read and the units walk both go through it;
+  - `read::units_of(nodes, at, routed, sides) -> Vec<UnitSides<T>>`, over `Nodes` for both storages. It replaces `EngineGrammar::read_units` and its generated bodies;
+  - the no-tree count is the existing `LayoutWork::tree_reads`, because every path to the tree passes `ParsedTree::tree()`.
+
+- [ ] **Step 1: Failing tests:**
+  - `leaf_error_and_unit_reads_take_no_tree`: after a full hydration in arena storage, these make 0 tree reads:
+    - `readNode` on an ERROR;
+    - `readObjectAt` on an identifier query item and a number literal with parts;
+    - the unit sides of a codemod edit;
+  - parity, over every node of the fixtures and both corpora in all three grammars: arena leaf reads and unit sides equal object storage's;
+  - `a_list_item_is_numbered_once`: a list with a hole gives each unit the same item number from the list read and the units walk.
+- [ ] **Step 2:** Run them. They fail.
+- [ ] **Step 3: Implement.**
+- [ ] **Step 4: Run the three-way verification** in both storages. Records stay word-identical.
+- [ ] **Step 5: Commit:** `feat(arena): leaf, ERROR and unit reads consume records, not the tree`.
+
+### Task 5c: One snapshot rule for every storage
+
+**Files:**
+- Modify: `packages/common/src/snapshot.ts`. A parsed node's snapshot is the node-surface walk (`copyStep`) that built nodes already take, in both storages.
+- Modify: `engine.rs` (`SnapshotCtx::span_of`) and `napi_engine.rs`. One native call measures, over `Nodes`, each node's span in a subtree from its holder, with today's `unmeasured` refusal. The walk attaches those spans. A side entry's text and span come through `Nodes`.
+- Remove: the typed read inside `ParsedTree::snapshot_node` and `snapshot_in`.
+- If the object node surface can't feed the walk a field the native snapshot emits, the PR names the field and stops for review. It never keeps a second snapshot rule.
+- Test: `packages/common/tests/snapshot.test.ts` and the snapshot census.
+
+**Interfaces:**
+- Consumes: Task 5b's `holder_cell`, for leaves inside a snapshot.
+- Produces: `ParsedTree::snapshot_spans(&self, root: NodeIndex, holder: Option<u32>) -> Result<Vec<Span>, ReadError>`, in the walk's order.
+
+- [ ] **Step 1: Failing tests:**
+  - `a_parsed_snapshot_takes_no_tree`: an arena snapshot makes 0 tree reads;
+  - snapshots equal master's, for every node of the fixtures and both corpora, in both storages and all three grammars;
+  - a snapshot of a node holding an ERROR side or a MISSING token equals master's, and an unmeasurable holder is still refused as `unmeasured`.
+- [ ] **Step 2:** Run them. They fail.
+- [ ] **Step 3: Implement.**
+- [ ] **Step 4: Run the three-way verification** in both storages. Object storage's snapshot speed is not a gate. Its output is.
+- [ ] **Step 5: Commit:** `feat(snapshot): one snapshot rule for built and parsed nodes in both storages`.
+
 ### Task 6: Hydrate at parse, drop the tree, and hold each parse in a counted slot
 
 **Files:**
@@ -178,7 +232,7 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
 - Test: `rust/crates/sittir-core/tests/arena_held_parses.rs` and `packages/common/tests/arena-held-parses.test.ts`.
 
 **Interfaces:**
-- Consumes: Task 5. Arena parses leave the live-tree table here.
+- Consumes: Tasks 5, 5b and 5c. The tree drop lands after both 5b and 5c. HeldParses, the LINK slot word and link counting don't need them. Arena parses leave the live-tree table here.
 - Produces:
   - `pub struct HeldParse`, owning its `TreeArena`, token spans, rows, source (`Box<str>`) and placed sides as direct fields, none wrapped in `Arc`, `Rc`, `Mutex`, `RwLock` or an atomic. What those values hold inside becomes plain in Tasks 11 and 12.
   - `HeldParses`, a field of the engine, reached only through the engine's borrow. Counts are plain `u32`s.
