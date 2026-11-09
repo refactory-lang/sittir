@@ -63,3 +63,18 @@ export function unionArgumentsAreJudgedMemberByMember(): void {
 	// @ts-expect-error a bare number beside a negative config is refused
 	ir.number.hex(mixed);
 }
+
+export function aSlotWidenedToANumberRefusesANegativeLiteral(): void {
+	ir.binaryExpression({ left: 1, operator: '+', right: 2 });
+	ir.binaryExpression({ left: 1.5, operator: '+', right: 2n });
+	const widened = Math.random();
+	ir.binaryExpression({ left: widened, operator: '+', right: -widened });
+
+	// @ts-expect-error a negative literal is refused in a slot a number reaches by widening
+	ir.binaryExpression({ left: -1, operator: '+', right: 2 });
+	// @ts-expect-error a negative fraction is refused there too
+	ir.binaryExpression({ left: 1, operator: '+', right: -1.5 });
+	const negativeBigint = { left: -1n, operator: '+', right: 2 } as const;
+	// @ts-expect-error and a negative bigint
+	ir.binaryExpression(negativeBigint);
+}

@@ -17,23 +17,25 @@ export function numberText<V extends string | number | bigint | undefined>(
 	value: V
 ): V extends number | bigint ? string : V {
 	if (typeof value !== 'number' && typeof value !== 'bigint') return value as never;
-	if (typeof value === 'number' && !Number.isFinite(value)) throw new RangeError(`numberText: ${value} has no literal spelling`);
-	const negativeZero = Object.is(value, -0);
-	if (value < 0 || negativeZero) {
-		throw new RangeError(
-			`numberText: ${negativeZero ? '-0' : value}: a negative number is a unary minus applied to a positive literal; build the literal from its absolute value`
-		);
-	}
+	const refused = numberRefusal(value, base !== 'float');
+	if (refused !== undefined) throw new RangeError(`numberText: ${refused}`);
 	if (base === 'float') {
 		if (typeof value === 'bigint') throw new TypeError(`numberText: a bigint (${value}n) cannot spell a float literal; pass a number`);
 		const text = String(value);
 		return (Number.isInteger(value) && !text.includes('e') ? `${text}${affix}` : text) as never;
 	}
-	if (typeof value === 'number') {
-		if (!Number.isInteger(value)) return String(value) as never;
-		if (!Number.isSafeInteger(value)) {
-			throw new RangeError(`numberText: ${value} is past Number.MAX_SAFE_INTEGER and has lost precision; pass it as a bigint`);
-		}
-	}
+	if (typeof value === 'number' && !Number.isInteger(value)) return String(value) as never;
 	return `${affix}${value.toString(base)}` as never;
+}
+
+export function numberRefusal(value: number | bigint, integer: boolean): string | undefined {
+	if (typeof value === 'number' && !Number.isFinite(value)) return `${value} has no literal spelling`;
+	const negativeZero = Object.is(value, -0);
+	if (value < 0 || negativeZero) {
+		return `${negativeZero ? '-0' : value}: a negative number is a unary minus applied to a positive literal; build the literal from its absolute value`;
+	}
+	if (integer && typeof value === 'number' && Number.isInteger(value) && !Number.isSafeInteger(value)) {
+		return `${value} is past Number.MAX_SAFE_INTEGER and has lost precision; pass it as a bigint`;
+	}
+	return undefined;
 }

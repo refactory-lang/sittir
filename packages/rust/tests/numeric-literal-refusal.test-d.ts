@@ -45,3 +45,14 @@ export function unionArgumentsAreJudgedMemberByMember(): void {
 	// @ts-expect-error a bare number beside a negative config is refused
 	ir.integerLiteral(mixed);
 }
+
+export function aSlotWidenedToANumberRefusesANegativeLiteral(): void {
+	ir.binaryExpression({ left: 1, operator: '+', right: 2.5 });
+	const widened = Math.random();
+	ir.binaryExpression({ left: widened, operator: '+', right: -widened });
+
+	// @ts-expect-error a negative literal is refused in a slot a number reaches by widening
+	ir.binaryExpression({ left: -1, operator: '+', right: 2 });
+	// @ts-expect-error a negative fraction is refused there too
+	ir.binaryExpression({ left: 1, operator: '+', right: -2.5 });
+}

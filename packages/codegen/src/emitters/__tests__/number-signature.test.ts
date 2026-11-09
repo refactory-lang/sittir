@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { numberSignature } from '../interior.ts';
+import { numberShape, numberSignature } from '../interior.ts';
 
 const anchored = (source: string): RegExp => new RegExp(`^(?:${source})$`, 'u');
 
@@ -24,5 +24,24 @@ describe('numberSignature: the shape of a leaf guard pattern', () => {
 		['a pattern that matches the empty string', '\\d*']
 	])('%s has no numeric signature', (_label, source) => {
 		expect(numberSignature(anchored(source))).toBeUndefined();
+	});
+});
+
+describe('numberShape: whether a leaf guard spells a sign', () => {
+	it.each([
+		['a decimal run', '[0-9][0-9_]*'],
+		['a hex literal with its prefix', '0x[0-9a-fA-F_]+'],
+		['a float with a point', '\\d+\\.\\d*(?:[eE][+-]?\\d+)?'],
+		['a float with a leading point', '\\.\\d+']
+	])('%s rejects a leading sign', (_label, source) => {
+		expect(numberShape(anchored(source))?.signed).toBe(false);
+	});
+
+	it.each([
+		['a signed decimal run', '-?[0-9]+'],
+		['a signed hex literal', '[+-]?0x[0-9a-fA-F]+'],
+		['a signed float', '-?\\d+\\.\\d+']
+	])('%s spells one', (_label, source) => {
+		expect(numberShape(anchored(source))?.signed).toBe(true);
 	});
 });

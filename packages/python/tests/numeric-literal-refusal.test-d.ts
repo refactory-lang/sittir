@@ -41,3 +41,14 @@ export function unionArgumentsAreJudgedMemberByMember(): void {
 	// @ts-expect-error a union member with a negative slot is refused
 	ir.float.point(dirty);
 }
+
+export function aSlotWidenedToANumberRefusesANegativeLiteral(): void {
+	ir.binaryOperator({ left: 1, operator: '+', right: 2.5 });
+	const widened = Math.random();
+	ir.binaryOperator({ left: widened, operator: '+', right: -widened });
+
+	// @ts-expect-error a negative literal is refused in a slot a number reaches by widening
+	ir.binaryOperator({ left: -1, operator: '+', right: 2 });
+	// @ts-expect-error a negative fraction is refused there too
+	ir.binaryOperator({ left: 1, operator: '+', right: -2.5 });
+}

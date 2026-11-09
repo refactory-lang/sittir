@@ -8,7 +8,9 @@ import { KIND_NAMES } from '../types.js';
 import type {
 	AnyUntypedNode,
 	Admit,
+	NumericInput,
 	PlainBuilders,
+	RefuseUndeclared,
 	Seat,
 	ConfigSeat,
 	OptionalConfigSeat,
@@ -22,6 +24,7 @@ import {
 	describeValue,
 	isNodeOfKind,
 	isNodeValue,
+	numberRefusal,
 	withEmptyForm
 } from '@sittir/common/utils';
 
@@ -220,10 +223,15 @@ function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
 function _resolveScalar(v: boolean | number | bigint): AnyUntypedNode | number | undefined {
 	if (typeof v === 'number' || typeof v === 'bigint') {
 		const text = String(v);
-		for (const kind of ['decimal_digits']) {
+		for (const [kind, integer] of [['decimal_digits', true]] as const) {
 			const e = _leafRegistry[kind];
-			if (e?.pattern?.test(text)) return e.factory(text);
+			if (!e?.pattern?.test(text)) continue;
+			const refused = numberRefusal(v, integer);
+			if (refused !== undefined) throw new RangeError(refused);
+			return e.factory(text);
 		}
+		const refused = numberRefusal(v, false);
+		if (refused !== undefined) throw new RangeError(refused);
 	}
 	return undefined;
 }
@@ -335,7 +343,7 @@ function _resolveOne<T>(
 			);
 		}
 	}
-	if (typeof v === 'object') {
+	if (typeof v === 'object' || typeof v === 'number' || typeof v === 'bigint' || typeof v === 'boolean') {
 		throw new Error(
 			`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(', ')}]: ${describeValue(v)}`
 		);
@@ -397,7 +405,7 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
 	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as Admit<T>;
 	const tagged = _splitTag(v);
 	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;
-	if (typeof v === 'object') {
+	if (typeof v === 'object' || typeof v === 'number' || typeof v === 'bigint' || typeof v === 'boolean') {
 		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${describeValue(v)}`);
 	}
 	return v as Admit<T>;
@@ -520,7 +528,7 @@ function _resolveOneBranch<T>(
 		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;
 		if (_isFromKind(kind)) return _resolveByKind(kind, v) as Admit<T>;
 	}
-	if (typeof v === 'object') {
+	if (typeof v === 'object' || typeof v === 'number' || typeof v === 'bigint' || typeof v === 'boolean') {
 		throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${describeValue(v)}`);
 	}
 	return v as Admit<T>;
@@ -1023,9 +1031,10 @@ export function resolveCountQuantifier_lazy(
 	return _resolveBooleanKeyword(value);
 }
 
-export const coerceToCountQuantifier: ConfigSeat<T.CountQuantifier.Loose, ReturnType<typeof F.buildCountQuantifier>> = (
-	input: T.CountQuantifier.Loose
-): ReturnType<typeof F.buildCountQuantifier> => {
+export function coerceToCountQuantifier<const I extends T.CountQuantifier.Loose>(
+	input: I & NumericInput<I, undefined, { content: true }> & RefuseUndeclared<I, T.CountQuantifier.Loose>
+): ReturnType<typeof F.buildCountQuantifier>;
+export function coerceToCountQuantifier(input: T.CountQuantifier.Loose): ReturnType<typeof F.buildCountQuantifier> {
 	if (!_isLooseConfig<T.CountQuantifier.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCountQuantifier>;
 	currentHandle()?.admit(TSKindId.CountQuantifier, [input]);
@@ -1033,7 +1042,7 @@ export const coerceToCountQuantifier: ConfigSeat<T.CountQuantifier.Loose, Return
 		content: resolveCountQuantifier_content(input.content),
 		lazy: resolveCountQuantifier_lazy(input.lazy)
 	});
-};
+}
 
 export function resolveBackreferenceEscape_groupName(
 	value: T.BackreferenceEscape.LooseConfig['groupName']
@@ -1292,10 +1301,14 @@ export function resolveCountQuantifierGroup_decimalDigits(
 	return _resolveOneLeaf<T.DecimalDigits>(value, 'decimal_digits');
 }
 
-export const coerceToCountQuantifierGroup: OptionalConfigSeat<
-	T.CountQuantifierGroup.Loose,
-	ReturnType<typeof F.buildCountQuantifierGroup>
-> = (input?: T.CountQuantifierGroup.Loose): ReturnType<typeof F.buildCountQuantifierGroup> => {
+export function coerceToCountQuantifierGroup<const I extends T.CountQuantifierGroup.Loose>(
+	...input: [input?: I] &
+		[input?: NumericInput<I, undefined, { decimalDigits: true }>] &
+		RefuseUndeclared<I, T.CountQuantifierGroup.Loose>
+): ReturnType<typeof F.buildCountQuantifierGroup>;
+export function coerceToCountQuantifierGroup(
+	input?: T.CountQuantifierGroup.Loose
+): ReturnType<typeof F.buildCountQuantifierGroup> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.CountQuantifierGroup))
 		return input as unknown as ReturnType<typeof F.buildCountQuantifierGroup>;
 	return F.buildCountQuantifierGroup(
@@ -1309,7 +1322,7 @@ export const coerceToCountQuantifierGroup: OptionalConfigSeat<
 			'decimal_digits'
 		)
 	);
-};
+}
 
 export function resolveCountQuantifierArm_decimalDigits(
 	value: T.CountQuantifierArm.LooseConfig['decimalDigits']
@@ -1323,10 +1336,12 @@ export function resolveCountQuantifierArm_countQuantifierGroup(
 	return _resolveOneBranch<T.CountQuantifierGroup>(value, 'count_quantifier_group', undefined, true);
 }
 
-export const coerceToCountQuantifierArm: ConfigSeat<
-	T.CountQuantifierArm.Loose,
-	ReturnType<typeof F.buildCountQuantifierArm>
-> = (input: T.CountQuantifierArm.Loose): ReturnType<typeof F.buildCountQuantifierArm> => {
+export function coerceToCountQuantifierArm<const I extends T.CountQuantifierArm.Loose>(
+	input: I & NumericInput<I, undefined, { decimalDigits: true }> & RefuseUndeclared<I, T.CountQuantifierArm.Loose>
+): ReturnType<typeof F.buildCountQuantifierArm>;
+export function coerceToCountQuantifierArm(
+	input: T.CountQuantifierArm.Loose
+): ReturnType<typeof F.buildCountQuantifierArm> {
 	if (!_isLooseConfig<T.CountQuantifierArm.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCountQuantifierArm>;
 	currentHandle()?.admit(TSKindId.CountQuantifierArm, [input]);
@@ -1334,7 +1349,7 @@ export const coerceToCountQuantifierArm: ConfigSeat<
 		decimalDigits: resolveCountQuantifierArm_decimalDigits(input.decimalDigits),
 		countQuantifierGroup: resolveCountQuantifierArm_countQuantifierGroup(input.countQuantifierGroup)
 	});
-};
+}
 
 export function resolveCharacterClassEscapeArm_characterClassEscapeText2(
 	value: T.CharacterClassEscapeArm.LooseConfig['characterClassEscapeText2']
