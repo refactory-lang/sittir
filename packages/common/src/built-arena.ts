@@ -3,14 +3,14 @@ import { bindTree, engineOf, isLive, sameLanguage, treeBuiltArena, type TreeEngi
 import { wrapRegistered, type Role } from './identity.ts';
 import { type ChangedEdges, coordinateOf, holdReadCoordinate, holdReadTree, isRead, type KindView, listEdges, type ReadOutput, setTriviaOf, triviaOf } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
-import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
+import { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
 import { BLANK_KIND_ID } from './blank-arm.ts';
 import { checkedKindId } from './kind-id.ts';
 import { addressOf, chunkOf, headerKind, kindField, withKind, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
 import { builtRefOf, handleArenaOf, leafSitesOf, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
-import { freedRecord, leafData, recordDelimiter, recordOf, recordSeparator, recordStub } from './record-view.ts';
-import type { LeafMaker, RecordHandle, RecordPosition } from './handle.ts';
+import { freedRecord, leafData, recordDelimiter, recordFlag, recordOf, recordSeparator, recordSlot, recordSlots, recordStub } from './record-view.ts';
+import { isRecordPosition, type LeafMaker, type RecordHandle, type RecordPosition } from './handle.ts';
 import { keepExemplar } from './exemplars.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
 import { Source } from './source.ts';
@@ -217,10 +217,13 @@ const OTHER_ENGINE_RECORD = "cannot write another engine's record into a side: a
 
 export type BuiltWith = (node: object, name: string, args: readonly unknown[]) => unknown;
 
+export type BuiltPlaceRow = readonly [word: number, bit: number] | readonly [word: number, built: number, width: number, forms: number, inline: number, run: number];
+
 export interface BuiltViews {
 	readonly withs: Readonly<Record<number, BuiltWith>>;
 	readonly words: Readonly<Record<number, number>>;
 	readonly cells: Readonly<Record<number, number>>;
+	readonly places: Readonly<Record<number, readonly BuiltPlaceRow[]>>;
 	readonly leaves: Readonly<Record<number, LeafMaker>>;
 }
 
@@ -754,14 +757,47 @@ export class BuiltArena {
 		return { data, base, at, words, placed: undefined, copyOf, kept, patched: undefined };
 	}
 
-	copy(source: object, kind: number): BuiltDraft {
+	copy(source: object, kind: number, place?: number): BuiltDraft {
 		const at = builtRecordOf(source, this);
-		if (at === undefined) return this.record(kind);
+		if (at === undefined) {
+			const draft = this.record(kind);
+			if (place !== undefined) this.#carry(source, kind, draft, 0, place);
+			return draft;
+		}
 		const found = this.kindAt(at);
 		if (found !== kind) throw new Error(`a $with of a kind ${kind} record was handed a record of kind ${found}`);
 		const draft = this.draft(kind, this.#widthOf(kind), at, (source as { readonly $cache?: Readonly<Record<number, unknown>> }).$cache ?? {});
 		this.#copyCells(at, kind, draft, true);
 		return draft;
+	}
+
+	carry(source: object, record: BuiltDraft, place: number): void {
+		if (record.copyOf !== undefined) return;
+		const kind = headerKind(record.data[record.base]!, this.format.kindBits);
+		this.#carry(source, kind, record, place + 1, this.#placesOf(kind).length);
+	}
+
+	#placesOf(kind: number): readonly BuiltPlaceRow[] {
+		const places = this.#views.places[kind];
+		if (places === undefined) throw new Error(`no builder writes records of kind ${kind} slot by slot, so the arena has no places for one`);
+		return places;
+	}
+
+	#carry(source: object, kind: number, record: BuiltDraft, from: number, to: number): void {
+		if (!isRecordPosition(source) || source.$tree.built !== undefined) throw new Error(`a $with of one slot of kind ${kind} copies a record, not ${String(source)}`);
+		const places = this.#placesOf(kind);
+		const read = (value: unknown): unknown => (typeof value === 'object' && value !== null ? carryTree(source, value) : value);
+		for (let n = from; n < to; n++) {
+			const place = places[n]!;
+			if (place.length === 2) {
+				const [word, bit] = place;
+				if (recordFlag(source, word, bit)) storeFlag(record.data, record.base + word, 2 ** bit);
+				continue;
+			}
+			const [word, built, width, forms, inline, run] = place;
+			if (run === 0) storeCell(this, record, built, word, read(recordSlot(source, word, width, forms, inline, built)));
+			else storeList(this, record, built, word, recordSlots(source, word, width, run, forms, inline, built, read));
+		}
 	}
 
 	/** The words of a run of `length` one-word cells after its length word, which it holds. */

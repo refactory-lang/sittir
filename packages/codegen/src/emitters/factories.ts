@@ -2254,7 +2254,7 @@ function setTwinLines({ fn, kind, configType, builtName, optionsType, slots, hea
 	const options = optionsType === undefined ? '' : `, inputs.options as ${optionsType}`;
 	return [
 		`function ${fn}$set(source: object, slot: string, config: Partial<${configType}>): ${builtName} {`,
-		'  if (!editsInPlace(source)) {',
+		'  if (!patchesByCopy(source)) {',
 		'    const inputs = builtInputs(source);',
 		`    return ${fn}$patch(source, { ...(inputs.config as ${configType}), ...config }${options});`,
 		'  }',

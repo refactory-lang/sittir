@@ -22,7 +22,7 @@ const NO_SIDES: SideStore = {
 };
 type Views = ConstructorParameters<typeof BuiltArena>[3];
 type WriteLeafSites = ConstructorParameters<typeof BuiltArena>[4];
-const NO_VIEWS: Views = { withs: {}, words: {}, cells: {}, leaves: {} };
+const NO_VIEWS: Views = { withs: {}, words: {}, cells: {}, places: {}, leaves: {} };
 
 const metaBytes = (words: number): number => {
 	const blocks = Math.ceil(words / 64);

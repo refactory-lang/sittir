@@ -8,7 +8,7 @@ import { VERBATIM_FIELD, nodeRecordLayout } from './render-module.ts';
 export const RECORD_CONSTRUCTION_IMPORTS = [
 	'builtArenaOf',
 	'builtInputs',
-	'editsInPlace',
+	'patchesByCopy',
 	'storeCell',
 	'storeFlag',
 	'storeList',
@@ -103,12 +103,13 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 	});
 	const options = spec.listOptions;
 	const listOptions = options === undefined ? undefined : `arena, record, ${options.delimiter ? '_delimiter' : 'undefined'}, ${options.separator ? '_separator' : 'undefined'}`;
-	const tailOf = (record: string, slots: readonly PlacedSlot[], store: (slot: PlacedSlot) => string, storeOptions: string | undefined): string[] => [
+	const tailOf = (record: string, slots: readonly PlacedSlot[], store: (slot: PlacedSlot) => string, storeOptions: string | undefined, carried: readonly string[] = []): string[] => [
 		'  const arena = builtArenaOf(handle);',
 		...(storeOptions === undefined ? [] : [`  handle?.verifyStored?.(${spec.kind}, { ${spec.slots.map((slot) => slot.storageKey).join(', ')} });`]),
 		'  return arena.scope(() => {',
 		`    const record = ${record};`,
 		...slots.map((slot) => `  ${store(slot)}`),
+		...carried,
 		...(listOptions === undefined || storeOptions === undefined ? [] : [`    ${storeOptions}(${listOptions});`]),
 		'    const node = arena.view(record);',
 		...(spec.check === undefined || storeOptions === undefined ? [] : [`    ${spec.check};`]),
@@ -119,16 +120,21 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 	const patchTail = tailOf(`arena.copy(source, ${spec.kind})`, placed, slotPatch, 'patchListOptions');
 	const slotTail = (storageKey: string): string[] => {
 		if (spec.check !== undefined) throw new Error(`recordParts: ${spec.node.kind} checks its slots together, so no one slot is written alone`);
-		const slot = placed.find((candidate) => candidate.local === storageKey);
-		if (slot === undefined) throw new Error(`recordParts: ${spec.node.kind} stores no slot ${storageKey}`);
-		return tailOf(`arena.copy(source, ${spec.kind})`, [slot], slotPatch, undefined);
+		const at = placed.findIndex((candidate) => candidate.local === storageKey);
+		if (at < 0) throw new Error(`recordParts: ${spec.node.kind} stores no slot ${storageKey}`);
+		return tailOf(`arena.copy(source, ${spec.kind}, ${at})`, [placed[at]!], slotPatch, undefined, [`    arena.carry(source, record, ${at});`]);
 	};
 	if (spec.inputs === 'kind') {
 		views.requireWith(spec.node);
 		return { tail, patchTail, slotTail, after: [] };
 	}
 	const setters = spec.setters ?? [];
-	return { tail, patchTail: setters.length === 0 ? undefined : patchTail, slotTail, after: views.with(spec.node, spec.inputs, spec.readers ?? [], setters) };
+	return {
+		tail,
+		patchTail: setters.length === 0 ? undefined : patchTail,
+		slotTail,
+		after: views.with(spec.node, spec.inputs, spec.readers ?? [], setters, placed.map(({ place }) => place))
+	};
 }
 
 export function patchTwinLines(head: readonly string[], impl: string, twin: string, patchTail: readonly string[]): string[] {
@@ -185,12 +191,14 @@ export class BuiltViewTable {
 	readonly #required = new Map<number, string>();
 	readonly #widths = new Map<number, number>();
 	readonly #cells = new Map<number, number>();
+	readonly #places = new Map<number, string>();
 
-	with(node: ViewKind, inputs: readonly HeldRead[], readers: readonly string[], setters: readonly SetterEntry[]): string[] {
+	with(node: ViewKind, inputs: readonly HeldRead[], readers: readonly string[], setters: readonly SetterEntry[], places: readonly RecordPlace[]): string[] {
 		const kindId = viewKindId(node);
 		if (this.#withs.has(kindId)) throw new Error(`record views: ${node.kind} has two record builders that each write its setters`);
 		const name = `with${node.typeName}`;
 		this.#withs.set(kindId, name);
+		this.#places.set(kindId, `[${places.map(placeRow).join(', ')}]`);
 		return builtWithLines(name, node.kind, inputs, readers, setters);
 	}
 
@@ -230,10 +238,15 @@ export class BuiltViewTable {
 			`  withs: Object.freeze({${entries(this.#withs)} }),`,
 			`  words: Object.freeze({${entries(this.#widths)} }),`,
 			`  cells: Object.freeze({${entries(this.#cells)} }),`,
+			`  places: Object.freeze({${entries(this.#places)} } as const),`,
 			`  leaves: Object.freeze({${entries(new Map([...this.#leaves].map(([kindId, { name }]) => [kindId, name])))} })`,
 			'});'
 		];
 	}
+}
+
+function placeRow(place: RecordPlace): string {
+	return 'bit' in place ? `[${place.word}, ${place.bit}]` : `[${place.word}, ${place.built}, ${place.width}, ${place.forms}, ${place.inline ?? 0}, ${place.run ?? 0}]`;
 }
 
 function viewKindId(node: ViewKind): number {

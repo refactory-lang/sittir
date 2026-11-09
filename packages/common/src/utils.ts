@@ -13,7 +13,7 @@ import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
 import { chosenSeparatorOf, liveWords, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
-import { HANDLE, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
+import { HANDLE, isRecordPosition, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
 import { builtRecordOf, holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
@@ -331,10 +331,11 @@ function carryRebuiltSlots(read: Record<string, unknown>, result: Record<string,
 	}
 }
 
-export function editsInPlace(source: object): boolean {
+export function patchesByCopy(source: object): boolean {
 	const handle = currentHandle();
 	if (handle === undefined || handle.verifyStored !== undefined || handle.builtArena === undefined) return false;
-	return builtRecordOf(source, handle.builtArena) !== undefined;
+	if (builtRecordOf(source, handle.builtArena) !== undefined) return true;
+	return isRecordPosition(source) && source.$tree.built === undefined && source.$tree.records !== undefined;
 }
 
 export function carriedSlot(source: object, accessor: string, value: unknown): unknown {
