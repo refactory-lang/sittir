@@ -720,19 +720,11 @@ function printStatements(
 				const unit = printer.unitSlot?.(node.name);
 				const field = printer.field(node.name);
 				const arms = printer.armSeams?.(node.name) ?? [];
-				const written = [...armSeamLines(field, arms, 'before'), `${field}.render(w)?;`, ...armSeamLines(field, arms, 'after')];
-				if (unit === undefined) {
-					lines.push(...written.map((line) => `${pad}${line}`));
-				} else if (written.length === 1) {
-					lines.push(`${pad}::sittir_core::layout::BodyLayout::render_unit(node.layout(), ${JSON.stringify(unit)}, ::sittir_core::types::ItemIndex(0), w, |w| ${field}.render(w))?;`);
-				} else {
-					lines.push(
-						`${pad}::sittir_core::layout::BodyLayout::render_unit(node.layout(), ${JSON.stringify(unit)}, ::sittir_core::types::ItemIndex(0), w, |w| {`,
-						...written.map((line) => `${pad}    ${line}`),
-						`${pad}    Ok(())`,
-						`${pad}})?;`
-					);
-				}
+				const render =
+					unit === undefined
+						? `${field}.render(w)?;`
+						: `::sittir_core::layout::BodyLayout::render_unit(node.layout(), ${JSON.stringify(unit)}, ::sittir_core::types::ItemIndex(0), w, |w| ${field}.render(w))?;`;
+				lines.push(...[...armSeamLines(field, arms, 'before'), render, ...armSeamLines(field, arms, 'after')].map((line) => `${pad}${line}`));
 				break;
 			}
 			case 'seam': {

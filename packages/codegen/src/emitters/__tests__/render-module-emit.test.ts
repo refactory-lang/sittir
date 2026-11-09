@@ -382,7 +382,7 @@ describe('render options on nodes', () => {
 		const enumSrc = src.slice(src.indexOf(`pub enum ${choice} {`));
 		expect(enumSrc.slice(0, enumSrc.indexOf('\n}\n'))).toMatch(/^    Semi,$/m);
 		expect(extractFnBody(src, 'render_lexical_declaration')).toMatch(
-			/render_unit\(node\.layout\(\), "_terminator", ::sittir_core::types::ItemIndex\(0\), w, \|w\| \{\s*if terminator\.kind_in\(&\*w, &\[::sittir_core::types::KindId\(\d+\)\]\) \{ w\.site_at\(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE\); \}\s*terminator\.render\(w\)\?;/
+			/if terminator\.kind_in\(&\*w, &\[::sittir_core::types::KindId\(\d+\)\]\) \{ w\.site_at\(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE\); \}\s*::sittir_core::layout::BodyLayout::render_unit\(node\.layout\(\), "_terminator", ::sittir_core::types::ItemIndex\(0\), w, \|w\| terminator\.render\(w\)\)\?;/
 		);
 		const render = src.slice(src.indexOf(`impl ::sittir_core::render::Render for ${choice} {`));
 		const arms = render.slice(0, render.indexOf('\n}\n'));

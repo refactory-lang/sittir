@@ -5245,11 +5245,8 @@ fn render_anonymous_node<N: AnonymousNodeFields + ?Sized>(node: &N, w: &mut dyn 
     };
     let name = node.name();
     w.edge(::sittir_core::types::KindId(47), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| {
-        name.render(w)?;
-        if name.kind_in(&*w, &[::sittir_core::types::KindId(7)]) { w.site_at(options::SITE_ANONYMOUS_NODE_UNDERSCORE_AFTER); }
-        Ok(())
-    })?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    if name.kind_in(&*w, &[::sittir_core::types::KindId(7)]) { w.site_at(options::SITE_ANONYMOUS_NODE_UNDERSCORE_AFTER); }
     elements.render(w)?;
     w.edge(::sittir_core::types::KindId(47), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -5372,12 +5369,9 @@ fn render_named_node_plain<N: NamedNodePlainFields + ?Sized>(node: &N, w: &mut d
     w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_NAMED_NODE_PLAIN_LPAREN_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| {
-        if name.kind_in(&*w, &[::sittir_core::types::KindId(7)]) { w.site_at(options::SITE_NAMED_NODE_PLAIN_UNDERSCORE_BEFORE); }
-        name.render(w)?;
-        if name.kind_in(&*w, &[::sittir_core::types::KindId(7)]) { w.site_at(options::SITE_NAMED_NODE_PLAIN_UNDERSCORE_AFTER); }
-        Ok(())
-    })?;
+    if name.kind_in(&*w, &[::sittir_core::types::KindId(7)]) { w.site_at(options::SITE_NAMED_NODE_PLAIN_UNDERSCORE_BEFORE); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    if name.kind_in(&*w, &[::sittir_core::types::KindId(7)]) { w.site_at(options::SITE_NAMED_NODE_PLAIN_UNDERSCORE_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_named_node_group", ::sittir_core::types::ItemIndex(0), w, |w| named_node_group.render(w))?;
     w.site_at(options::SITE_NAMED_NODE_PLAIN_RPAREN_BEFORE);
     w.text(")")?;
@@ -5410,11 +5404,8 @@ fn render_named_node_supertyped<N: NamedNodeSupertypedFields + ?Sized>(node: &N,
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_supertype", ::sittir_core::types::ItemIndex(0), w, |w| supertype.render(w))?;
     w.text("/")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| {
-        if name.kind_in(&*w, &[::sittir_core::types::KindId(41)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
-        name.render(w)?;
-        Ok(())
-    })?;
+    if name.kind_in(&*w, &[::sittir_core::types::KindId(41)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_named_node_group", ::sittir_core::types::ItemIndex(0), w, |w| named_node_group.render(w))?;
     w.site_at(options::SITE_NAMED_NODE_SUPERTYPED_RPAREN_BEFORE);
     w.text(")")?;

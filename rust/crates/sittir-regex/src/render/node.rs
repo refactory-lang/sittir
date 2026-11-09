@@ -6147,14 +6147,11 @@ fn render_lookahead_assertion<N: LookaheadAssertionFields + ?Sized>(node: &N, w:
     w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(?")?;
     w.site_at(options::SITE_LOOKAHEAD_ASSERTION_LPAREN_QMARK_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| {
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_LOOKAHEAD_ASSERTION_EQ_BEFORE); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_LOOKAHEAD_ASSERTION_BANG_BEFORE); }
-        operator.render(w)?;
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_LOOKAHEAD_ASSERTION_EQ_AFTER); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_LOOKAHEAD_ASSERTION_BANG_AFTER); }
-        Ok(())
-    })?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_LOOKAHEAD_ASSERTION_EQ_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_LOOKAHEAD_ASSERTION_BANG_BEFORE); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_LOOKAHEAD_ASSERTION_EQ_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_LOOKAHEAD_ASSERTION_BANG_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.site_at(options::SITE_LOOKAHEAD_ASSERTION_RPAREN_BEFORE);
     w.text(")")?;
@@ -6168,14 +6165,11 @@ fn render_lookbehind_assertion<N: LookbehindAssertionFields + ?Sized>(node: &N, 
     w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(?<")?;
     w.site_at(options::SITE_LOOKBEHIND_ASSERTION_LPAREN_QMARK_LT_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| {
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_LOOKBEHIND_ASSERTION_EQ_BEFORE); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_LOOKBEHIND_ASSERTION_BANG_BEFORE); }
-        operator.render(w)?;
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_LOOKBEHIND_ASSERTION_EQ_AFTER); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_LOOKBEHIND_ASSERTION_BANG_AFTER); }
-        Ok(())
-    })?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_LOOKBEHIND_ASSERTION_EQ_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_LOOKBEHIND_ASSERTION_BANG_BEFORE); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_LOOKBEHIND_ASSERTION_EQ_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_LOOKBEHIND_ASSERTION_BANG_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.site_at(options::SITE_LOOKBEHIND_ASSERTION_RPAREN_BEFORE);
     w.text(")")?;
@@ -6242,21 +6236,15 @@ fn render_class_range<N: ClassRangeFields + ?Sized>(node: &N, w: &mut dyn ::sitt
     let end = node.end();
     let start = node.start();
     w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_start", ::sittir_core::types::ItemIndex(0), w, |w| {
-        if start.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE); }
-        start.render(w)?;
-        if start.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_CLASS_RANGE_DASH_AFTER); }
-        Ok(())
-    })?;
+    if start.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_start", ::sittir_core::types::ItemIndex(0), w, |w| start.render(w))?;
+    if start.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_CLASS_RANGE_DASH_AFTER); }
     w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE);
     w.text("-")?;
     w.site_at(options::SITE_CLASS_RANGE_DASH_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_end", ::sittir_core::types::ItemIndex(0), w, |w| {
-        if end.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE); }
-        end.render(w)?;
-        if end.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_CLASS_RANGE_DASH_AFTER); }
-        Ok(())
-    })?;
+    if end.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_end", ::sittir_core::types::ItemIndex(0), w, |w| end.render(w))?;
+    if end.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_CLASS_RANGE_DASH_AFTER); }
     w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -6283,14 +6271,11 @@ fn render_named_capturing_group<N: NamedCapturingGroupFields + ?Sized>(node: &N,
     let operator = node.operator();
     let pattern = node.pattern();
     w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| {
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(11)]) { w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_BEFORE); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_BEFORE); }
-        operator.render(w)?;
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(11)]) { w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER); }
-        Ok(())
-    })?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(11)]) { w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_BEFORE); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(11)]) { w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_group_name", ::sittir_core::types::ItemIndex(0), w, |w| group_name.render(w))?;
     w.site_at(options::SITE_NAMED_CAPTURING_GROUP_GT_BEFORE);
     w.text(">")?;
@@ -6458,15 +6443,12 @@ fn render_term_group<N: TermGroupFields + ?Sized>(node: &N, w: &mut dyn ::sittir
     let content = node.content();
     let quantifier = View::new(node.quantifier(), "{}");
     w.edge(::sittir_core::types::KindId(78), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| {
-        content.render(w)?;
-        if content.kind_in(&*w, &[::sittir_core::types::KindId(3), ::sittir_core::types::KindId(54)]) { w.site_at(options::SITE_TERM_GROUP_CARET_AFTER); }
-        if content.kind_in(&*w, &[::sittir_core::types::KindId(4)]) { w.site_at(options::SITE_TERM_GROUP_END_ASSERTION_AFTER); }
-        if content.kind_in(&*w, &[::sittir_core::types::KindId(5)]) { w.site_at(options::SITE_TERM_GROUP_BOUNDARY_ASSERTION_AFTER); }
-        if content.kind_in(&*w, &[::sittir_core::types::KindId(6)]) { w.site_at(options::SITE_TERM_GROUP_NON_BOUNDARY_ASSERTION_AFTER); }
-        if content.kind_in(&*w, &[::sittir_core::types::KindId(2)]) { w.site_at(options::SITE_TERM_GROUP_ANY_CHARACTER_AFTER); }
-        Ok(())
-    })?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(3), ::sittir_core::types::KindId(54)]) { w.site_at(options::SITE_TERM_GROUP_CARET_AFTER); }
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(4)]) { w.site_at(options::SITE_TERM_GROUP_END_ASSERTION_AFTER); }
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(5)]) { w.site_at(options::SITE_TERM_GROUP_BOUNDARY_ASSERTION_AFTER); }
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(6)]) { w.site_at(options::SITE_TERM_GROUP_NON_BOUNDARY_ASSERTION_AFTER); }
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(2)]) { w.site_at(options::SITE_TERM_GROUP_ANY_CHARACTER_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_quantifier", ::sittir_core::types::ItemIndex(0), w, |w| quantifier.render(w))?;
     w.edge(::sittir_core::types::KindId(78), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())

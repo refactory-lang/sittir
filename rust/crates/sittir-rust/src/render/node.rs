@@ -47167,13 +47167,10 @@ fn render_token_repetition_pattern<N: TokenRepetitionPatternFields + ?Sized>(nod
     w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_RPAREN_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_separator", ::sittir_core::types::ItemIndex(0), w, |w| separator.render(w))?;
     w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_OPERATOR_BEFORE);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| {
-        operator.render(w)?;
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_PLUS_AFTER); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_STAR_AFTER); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(10)]) { w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_QMARK_AFTER); }
-        Ok(())
-    })?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_PLUS_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_STAR_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(10)]) { w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_QMARK_AFTER); }
     w.edge(::sittir_core::types::KindId(185), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -47210,13 +47207,10 @@ fn render_token_repetition<N: TokenRepetitionFields + ?Sized>(node: &N, w: &mut 
     w.site_at(options::SITE_TOKEN_REPETITION_RPAREN_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_separator", ::sittir_core::types::ItemIndex(0), w, |w| separator.render(w))?;
     w.site_at(options::SITE_TOKEN_REPETITION_OPERATOR_BEFORE);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| {
-        operator.render(w)?;
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_TOKEN_REPETITION_PLUS_AFTER); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_TOKEN_REPETITION_STAR_AFTER); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(10)]) { w.site_at(options::SITE_TOKEN_REPETITION_QMARK_AFTER); }
-        Ok(())
-    })?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_TOKEN_REPETITION_PLUS_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_TOKEN_REPETITION_STAR_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(10)]) { w.site_at(options::SITE_TOKEN_REPETITION_QMARK_AFTER); }
     w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -48257,13 +48251,10 @@ fn render_unary_expression<N: UnaryExpressionFields + ?Sized>(node: &N, w: &mut 
     let argument = node.argument();
     let operator = node.operator();
     w.edge(::sittir_core::types::KindId(267), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| {
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(75)]) { w.site_at(options::SITE_UNARY_EXPRESSION_DASH_BEFORE); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_UNARY_EXPRESSION_STAR_BEFORE); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(29)]) { w.site_at(options::SITE_UNARY_EXPRESSION_BANG_BEFORE); }
-        operator.render(w)?;
-        Ok(())
-    })?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(75)]) { w.site_at(options::SITE_UNARY_EXPRESSION_DASH_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_UNARY_EXPRESSION_STAR_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(29)]) { w.site_at(options::SITE_UNARY_EXPRESSION_BANG_BEFORE); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_argument", ::sittir_core::types::ItemIndex(0), w, |w| argument.render(w))?;
     w.edge(::sittir_core::types::KindId(267), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -48610,11 +48601,8 @@ fn render_last_match_arm<N: LastMatchArmFields + ?Sized>(node: &N, w: &mut dyn :
     w.text("=>")?;
     w.site_at(options::SITE_LAST_MATCH_ARM_EQ_GT_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_trailing_comma", ::sittir_core::types::ItemIndex(0), w, |w| {
-        if trailing_comma.kind_in(&*w, &[::sittir_core::types::KindId(130)]) { w.site_at(options::SITE_LAST_MATCH_ARM_COMMA_BEFORE); }
-        trailing_comma.render(w)?;
-        Ok(())
-    })?;
+    if trailing_comma.kind_in(&*w, &[::sittir_core::types::KindId(130)]) { w.site_at(options::SITE_LAST_MATCH_ARM_COMMA_BEFORE); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_trailing_comma", ::sittir_core::types::ItemIndex(0), w, |w| trailing_comma.render(w))?;
     w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -49063,12 +49051,9 @@ fn render_line_comment<N: LineCommentFields + ?Sized>(node: &N, w: &mut dyn ::si
     let content = node.content();
     w.edge(::sittir_core::types::KindId(337), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("//")?;
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| {
-        if content.kind_in(&*w, &[::sittir_core::types::KindId(400)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
-        if content.kind_in(&*w, &[::sittir_core::types::KindId(401)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
-        content.render(w)?;
-        Ok(())
-    })?;
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(400)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(401)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     w.edge(::sittir_core::types::KindId(337), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -49077,12 +49062,9 @@ fn render_block_comment<N: BlockCommentFields + ?Sized>(node: &N, w: &mut dyn ::
     let content = View::new(node.content(), "{}");
     w.edge(::sittir_core::types::KindId(340), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("/*")?;
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| {
-        if content.kind_in(&*w, &[::sittir_core::types::KindId(402)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
-        if content.kind_in(&*w, &[::sittir_core::types::KindId(403)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
-        content.render(w)?;
-        Ok(())
-    })?;
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(402)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(403)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     w.text("*/")?;
     w.edge(::sittir_core::types::KindId(340), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -49781,11 +49763,8 @@ fn render_closure_expression_expr<N: ClosureExpressionExprFields + ?Sized>(node:
         w.site_at(options::SITE_CLOSURE_EXPRESSION_EXPR_MOVE_AFTER);
     }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_parameters", ::sittir_core::types::ItemIndex(0), w, |w| parameters.render(w))?;
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| {
-        if body.kind_in(&*w, &[::sittir_core::types::KindId(136)]) { w.site_at(options::SITE_CLOSURE_EXPRESSION_EXPR_UNDERSCORE_BEFORE); }
-        body.render(w)?;
-        Ok(())
-    })?;
+    if body.kind_in(&*w, &[::sittir_core::types::KindId(136)]) { w.site_at(options::SITE_CLOSURE_EXPRESSION_EXPR_UNDERSCORE_BEFORE); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
     w.edge(::sittir_core::types::KindId(370), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -50549,14 +50528,11 @@ fn render_range_pattern_prefix<N: RangePatternPrefixFields + ?Sized>(node: &N, w
     let operator = node.operator();
     let right = node.right();
     w.edge(::sittir_core::types::KindId(419), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| {
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(137)]) { w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_EQ_BEFORE); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(100)]) { w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_BEFORE); }
-        operator.render(w)?;
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(137)]) { w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_EQ_AFTER); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(100)]) { w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_AFTER); }
-        Ok(())
-    })?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(137)]) { w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_EQ_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(100)]) { w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_BEFORE); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(137)]) { w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_EQ_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(100)]) { w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
     w.edge(::sittir_core::types::KindId(419), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -50566,16 +50542,13 @@ fn render_range_pattern_with_left_with_right<N: RangePatternWithLeftWithRightFie
     let operator = node.operator();
     let right = node.right();
     w.edge(::sittir_core::types::KindId(420), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| {
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(48)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_DOT_BEFORE); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(137)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_EQ_BEFORE); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(100)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_BEFORE); }
-        operator.render(w)?;
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(48)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_DOT_AFTER); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(137)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_EQ_AFTER); }
-        if operator.kind_in(&*w, &[::sittir_core::types::KindId(100)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_AFTER); }
-        Ok(())
-    })?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(48)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_DOT_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(137)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_EQ_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(100)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_BEFORE); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(48)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_DOT_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(137)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_EQ_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(100)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
     w.edge(::sittir_core::types::KindId(420), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -50586,11 +50559,8 @@ fn render_range_pattern_with_left<N: RangePatternWithLeftFields + ?Sized>(node: 
     let left = node.left();
     w.edge(::sittir_core::types::KindId(422), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| {
-        if content.kind_in(&*w, &[::sittir_core::types::KindId(100), ::sittir_core::types::KindId(421)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_DOT_DOT_BEFORE); }
-        content.render(w)?;
-        Ok(())
-    })?;
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(100), ::sittir_core::types::KindId(421)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_DOT_DOT_BEFORE); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     w.edge(::sittir_core::types::KindId(422), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -50701,11 +50671,8 @@ fn render_attributed_parameter<N: AttributedParameterFields + ?Sized>(node: &N, 
     let content = node.content();
     w.edge(::sittir_core::types::KindId(429), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_attribute_item", ::sittir_core::types::ItemIndex(0), w, |w| attribute_item.render(w))?;
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| {
-        if content.kind_in(&*w, &[::sittir_core::types::KindId(136)]) { w.site_at(options::SITE_ATTRIBUTED_PARAMETER_UNDERSCORE_BEFORE); }
-        content.render(w)?;
-        Ok(())
-    })?;
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(136)]) { w.site_at(options::SITE_ATTRIBUTED_PARAMETER_UNDERSCORE_BEFORE); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     w.edge(::sittir_core::types::KindId(429), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
