@@ -501,6 +501,14 @@ pub static SEAT_WRAPPERS: &[Option<SeatPath>] = &[
 pub static SEPARATOR_SITES: &[Option<SiteId>] = &[
 ];
 
+/// Per kind id of a token whose render writes no text, the seam it writes in its place.
+pub static TOKEN_SEAMS: &[Option<::sittir_core::layout_kinds::LayoutKinds>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(::sittir_core::layout_kinds::LayoutKinds::TIGHT),
+    Some(::sittir_core::layout_kinds::LayoutKinds::NEWLINE), Some(::sittir_core::layout_kinds::LayoutKinds::BLANKLINE), Some(::sittir_core::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE),
+];
+
 #[must_use]
 pub fn defaults() -> ResolvedOptions {
     ResolvedOptions {
@@ -511,6 +519,7 @@ pub fn defaults() -> ResolvedOptions {
         kind_flags: KIND_FLAGS,
         seat_wrappers: SEAT_WRAPPERS,
         separator_sites: SEPARATOR_SITES,
+        token_seams: TOKEN_SEAMS,
         sites: SITE_SPECS,
         newline: "\n".to_string(),
         ..ResolvedOptions::default()

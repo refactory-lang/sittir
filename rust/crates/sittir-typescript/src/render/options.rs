@@ -6326,6 +6326,22 @@ pub static SEPARATOR_SITES: &[Option<SiteId>] = &[
     Some(SiteId(903)),
 ];
 
+/// Per kind id of a token whose render writes no text, the seam it writes in its place.
+pub static TOKEN_SEAMS: &[Option<::sittir_core::layout_kinds::LayoutKinds>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(::sittir_core::layout_kinds::LayoutKinds::NEWLINE), None,
+    None, None, None, Some(::sittir_core::layout_kinds::LayoutKinds::NEWLINE), None, Some(::sittir_core::layout_kinds::LayoutKinds::TIGHT), Some(::sittir_core::layout_kinds::LayoutKinds::SPACE), Some(::sittir_core::layout_kinds::LayoutKinds::TAB), Some(::sittir_core::layout_kinds::LayoutKinds::NEWLINE), Some(::sittir_core::layout_kinds::LayoutKinds::BLANKLINE), Some(::sittir_core::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE), Some(::sittir_core::layout_kinds::LayoutKinds::from_bits(120)), Some(::sittir_core::layout_kinds::LayoutKinds::NEWLINE),
+];
+
 #[must_use]
 pub fn defaults() -> ResolvedOptions {
     ResolvedOptions {
@@ -6336,6 +6352,7 @@ pub fn defaults() -> ResolvedOptions {
         kind_flags: KIND_FLAGS,
         seat_wrappers: SEAT_WRAPPERS,
         separator_sites: SEPARATOR_SITES,
+        token_seams: TOKEN_SEAMS,
         sites: SITE_SPECS,
         newline: "\n".to_string(),
         indent: "  ".to_string(),

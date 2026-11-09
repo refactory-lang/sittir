@@ -99,8 +99,8 @@ let _rustTemplatesRs: string | undefined;
 let _typescriptNodeRs: string | undefined;
 /** The rust kind entries the cached emit was produced from. */
 let _rustKindEntries: ReturnType<typeof collectKindEntries> | undefined;
-/** The rust `options.rs` the cached emit produced beside its nodes. */
-let _rustOptionsRs: string | undefined;
+/** The `options.rs` each cached emit produced beside its nodes, by grammar. */
+const _optionsRs = new Map<string, string>();
 
 const _models = new Map<string, ReturnType<typeof buildModel>>();
 
@@ -128,13 +128,18 @@ async function getNodeRsForGrammar(grammar: 'rust' | 'typescript' | 'scm' | 'pyt
 		generatedIdTables,
 		{ ...grammarRenderInputs(grammar, { renderRules, renderAs: raw.renderAs, options: raw.options }), envelopePins: undefined }
 	);
-	if (grammar === 'rust') _rustOptionsRs = emit.optionsRs.contents;
+	_optionsRs.set(grammar, emit.optionsRs.contents);
 	return emit.nodeRs.contents;
 }
 
 async function getRustOptionsRs(): Promise<string> {
 	await getRustTemplatesRs();
-	return _rustOptionsRs!;
+	return _optionsRs.get('rust')!;
+}
+
+async function getTypescriptOptionsRs(): Promise<string> {
+	await getTypescriptNodeRs();
+	return _optionsRs.get('typescript')!;
 }
 
 async function getRustTemplatesRs(): Promise<string> {
@@ -1032,6 +1037,19 @@ describe('list storage', () => {
 		expect(rust).not.toMatch(/Option<Vec</);
 		expect(rust).toContain('pub decorator: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DecoratorNode>>');
 	}, 120_000);
+});
+
+describe('a token that writes a seam in place of text', () => {
+	it('stamps, by its kind id, the seam its render writes, for a source coordinate to write', async () => {
+		const { kindEntries } = await modelFor('typescript');
+		const seam = extractFnBody(await getTypescriptNodeRs(), 'render_automatic_semicolon').match(/w\.seam\(([^)]+)\)/)?.[1];
+		expect(seam).toBeDefined();
+		const options = await getTypescriptOptionsRs();
+		const table = options.slice(options.indexOf('pub static TOKEN_SEAMS: &[Option<::sittir_core::layout_kinds::LayoutKinds>] = &['));
+		const cells = table.slice(table.indexOf('= &[') + 4, table.indexOf('];')).split(',').map((cell) => cell.trim()).filter((cell) => cell !== '');
+		expect(cells[findKindEntry(kindEntries, 'automatic_semicolon')!.id]).toBe(`Some(${seam})`);
+		expect(options).toContain('token_seams: TOKEN_SEAMS,');
+	});
 });
 
 describe('closeUsedSupertypes', () => {

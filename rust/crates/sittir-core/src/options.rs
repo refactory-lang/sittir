@@ -87,11 +87,15 @@ pub struct ResolvedOptions {
     /// Per kind id of a list, the site its items' separator reads; none for
     /// any other kind.
     pub separator_sites: &'static [Option<SiteId>],
+    /// Per kind id of a token whose render writes no text (a zero-width
+    /// token, such as an automatic semicolon), the seam it writes in its
+    /// place; none for any other kind.
+    pub token_seams: &'static [Option<crate::layout_kinds::LayoutKinds>],
 }
 
 impl HeapBytes for ResolvedOptions {
     fn heap_bytes(&self) -> usize {
-        let Self { spacing, delimiter, indent, newline, edges, edge_rows, sites, kind_flags, seat_wrappers, separator_sites } = self;
+        let Self { spacing, delimiter, indent, newline, edges, edge_rows, sites, kind_flags, seat_wrappers, separator_sites, token_seams } = self;
         spacing.heap_bytes()
             + delimiter.heap_bytes()
             + indent.heap_bytes()
@@ -102,6 +106,7 @@ impl HeapBytes for ResolvedOptions {
             + kind_flags.heap_bytes()
             + seat_wrappers.heap_bytes()
             + separator_sites.heap_bytes()
+            + token_seams.heap_bytes()
     }
 }
 
@@ -228,6 +233,7 @@ impl Default for ResolvedOptions {
             kind_flags: &[],
             seat_wrappers: &[],
             separator_sites: &[],
+            token_seams: &[],
         }
     }
 }
@@ -248,6 +254,13 @@ impl ResolvedOptions {
             before: row.before.map(|site| self.edge_seam(site, None)),
             after: row.after.map(|site| self.edge_seam(site, None)),
         })
+    }
+
+    /// The seam a token of `kind` writes in place of text, when its render
+    /// writes none.
+    #[must_use]
+    pub fn token_seam(&self, kind: KindId) -> Option<crate::layout_kinds::LayoutKinds> {
+        self.token_seams.get(kind.index()).copied().flatten()
     }
 
     /// The separator kind the options write between the items of a list of
