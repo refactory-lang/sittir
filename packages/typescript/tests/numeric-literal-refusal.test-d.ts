@@ -8,6 +8,7 @@
 
 import { ir } from '../src/ir.ts';
 import { ir as strictIr } from '../src/ir-strict.ts';
+import { TSKindId } from '../src/kinds.ts';
 
 export function numericLeafEntriesRefuseUnbuildableLiterals(): void {
 	ir.number.decimal(3);
@@ -77,4 +78,36 @@ export function aSlotWidenedToANumberRefusesANegativeLiteral(): void {
 	const negativeBigint = { left: -1n, operator: '+', right: 2 } as const;
 	// @ts-expect-error and a negative bigint
 	ir.binaryExpression(negativeBigint);
+}
+
+export function everyCallingConventionRefusesANegativeLiteral(): void {
+	ir.expressionStatement(1);
+	ir.returnStatement({ expression: 1 });
+	ir.arguments(1, 2);
+	ir.array(1);
+	ir.array([1, 2]);
+	ir.array({ elements: [1, 2] });
+
+	// @ts-expect-error a bare negative literal is refused
+	ir.expressionStatement(-1);
+	// @ts-expect-error a negative literal is refused in a config's slot
+	ir.returnStatement({ expression: -1 });
+	// @ts-expect-error a negative item is refused in a list's rest form
+	ir.arguments(1, -1);
+	// @ts-expect-error a bare negative item is refused
+	ir.array(-1);
+	// @ts-expect-error a negative item is refused in a list's array form
+	ir.array([1, -1]);
+	// @ts-expect-error a negative item is refused in a list's config form
+	ir.array({ elements: [-1] });
+}
+
+export function aNegativeLiteralIsRefusedAtAnyDepth(): void {
+	ir.returnStatement({ expression: { $type: TSKindId.BinaryExpression, left: 1, operator: '+', right: 2 } });
+	ir.array([{ $type: TSKindId.BinaryExpression, left: 1, operator: '+', right: 2 }]);
+
+	// @ts-expect-error a negative literal is refused in a config nested in another
+	ir.returnStatement({ expression: { $type: TSKindId.BinaryExpression, left: -1, operator: '+', right: 2 } });
+	// @ts-expect-error a negative literal is refused in a config nested in a list item
+	ir.array([{ $type: TSKindId.BinaryExpression, left: 1, operator: '+', right: -2 }]);
 }

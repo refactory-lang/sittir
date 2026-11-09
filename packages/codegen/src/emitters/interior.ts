@@ -13,7 +13,7 @@ import {
 	type AssembledNode
 } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { expandAndDedupeContentTypes, lexedContentSlot, slotKindNames, slotLiteralValues } from './shared.ts';
+import { lexedContentSlot, slotLiteralValues, type LooseRefusal } from './shared.ts';
 import { anchoredLeafRegex, regexLiteral } from '../compiler/model/leaf-pattern.ts';
 
 export type InteriorEntry =
@@ -321,24 +321,16 @@ export function numericLiteralSignature(fn: string, shape: NumberShape, param: s
 	return `export function ${fn}<const N extends string | ${numberInputType(shape)}>(${param}: N & NumericLiteral<N, ${float ? 'false' : 'true'}>): ${returns};`;
 }
 
-export function numericConfigSlots(node: AssembledNode, widenedIn?: NodeMap): string | undefined {
+export function numericConfigSlots(node: AssembledNode): string | undefined {
 	const slots = node.slots.flatMap((slot) => {
 		const shape = numericSlotShape(slot);
-		const integer = shape !== undefined ? shape.base !== 'float' : widenedIn === undefined ? undefined : widenedSlotInteger(slot, widenedIn);
-		return integer === undefined ? [] : [`${JSON.stringify(slot.propertyName)}: ${integer}`];
+		return shape === undefined ? [] : [`${JSON.stringify(slot.propertyName)}: ${shape.base === 'float' ? 'false' : 'true'}`];
 	});
 	return slots.length === 0 ? undefined : `{ ${slots.join('; ')} }`;
 }
 
-function widenedSlotInteger(slot: AssembledNonterminal, nodeMap: NodeMap): boolean | undefined {
-	const leaves = numericLeafShapes(nodeMap);
-	const shapes = expandAndDedupeContentTypes(slotKindNames(slot), nodeMap).flatMap((kind) => leaves.get(kind) ?? []);
-	if (shapes.length === 0 || shapes.some((shape) => shape.signed)) return undefined;
-	return shapes.every((shape) => shape.base !== 'float');
-}
-
-export function numericInputRefusal(node: AssembledNode, bare: NumberShape | undefined, nodeMap: NodeMap): string | undefined {
-	const slots = numericConfigSlots(node, nodeMap);
+export function numericInputRefusal(node: AssembledNode, bare: NumberShape | undefined): string | undefined {
+	const slots = numericConfigSlots(node);
 	if (bare === undefined && slots === undefined) return undefined;
 	return `NumericInput<I, ${bare === undefined ? 'undefined' : bare.base === 'float' ? 'false' : 'true'}${slots === undefined ? '' : `, ${slots}`}>`;
 }
@@ -366,6 +358,10 @@ function numericLeafShapes(nodeMap: NodeMap): ReadonlyMap<string, NumberShape> {
 
 export function numericLeafFacts(nodeMap: NodeMap): readonly (readonly [kind: string, integer: boolean, signed: boolean])[] {
 	return [...numericLeafShapes(nodeMap)].map(([kind, shape]) => [kind, shape.base !== 'float', shape.signed] as const);
+}
+
+export function looseRefusal(nodeMap: NodeMap): LooseRefusal {
+	return { signed: [...numericLeafShapes(nodeMap).values()].some((shape) => shape.signed) };
 }
 
 export function numericLeafInputTypes(nodeMap: NodeMap): ReadonlyMap<string, string> {

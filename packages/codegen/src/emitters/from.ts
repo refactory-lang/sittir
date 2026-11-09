@@ -4,7 +4,7 @@ import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { builtFromText } from './built-from-text.ts';
 import { hasOptionalElements, isBuilderTextLeaf } from '../compiler/model/node-map.ts';
-import { bareInteriorText, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, numericInputRefusal, numericLeafFacts, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
+import { bareInteriorText, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, looseRefusal, numericInputRefusal, numericLeafFacts, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	collectKindEntries,
@@ -421,7 +421,8 @@ function emitBranchFrom(
 	}
 	const spelledType = fullForm === undefined || spelled.length === 0 ? undefined : spelledReturnType(returnType, fullForm, spelled);
 	const bareShape = bareInteriorText(node.kind, node)?.number ?? (soleField === undefined ? undefined : numericSlotShape(soleField));
-	const numericRefusal = numericInputRefusal(node, bareShape, nodeMap);
+	const numericRefusal = numericInputRefusal(node, bareShape);
+	const loose = looseRefusal(nodeMap);
 	const refused = (...parts: readonly (string | undefined)[]): string => ['I', ...parts.filter((part) => part !== undefined)].join(' & ');
 	const signature =
 		spelledType !== undefined
@@ -429,19 +430,14 @@ function emitBranchFrom(
 			: refusal !== undefined
 				? `export function ${fn}<const I extends ${inputType}>(input${opt}: ${refused(refusal, numericRefusal)}${optionsParam}): ${returnType} {`
 				: `export function ${fn}(input${opt}: ${inputType}${optionsParam}): ${returnType} {`;
-	const inputParams = (parts: readonly (string | undefined)[], options: string): string => {
-		const refusals = parts.filter((part) => part !== undefined);
-		const undeclared = refuseUndeclared('I', inputType);
-		if (opt !== '?') return `input: ${['I', ...refusals, undeclared].join(' & ')}${options}`;
-		const refusing = refusals.length === 0 ? '' : ` & [input?: ${refusals.join(' & ')}${options}]`;
-		return `...input: [input?: I${options}]${refusing} & ${undeclared}`;
-	};
+	const inputParams = (input: string, options: string): string =>
+		opt === '?' ? `...input: [input?: ${input}${options}] & ${refuseUndeclared('I', inputType, loose)}` : `input: ${input} & ${refuseUndeclared('I', inputType, loose)}${options}`;
 	const publicOverloads =
 		spelledType !== undefined
-			? [`export function ${fn}<const I extends ${inputType}, const O extends T.${typeName}.Options = {}>(${inputParams([numericRefusal], ', options?: O')}): ${spelledType};`]
-			: [`export function ${fn}<const I extends ${inputType}>(${inputParams([refusal, numericRefusal], optionsParam)}): ${returnType};`];
+			? [`export function ${fn}<const I extends ${inputType}, const O extends T.${typeName}.Options = {}>(${inputParams(refused(numericRefusal), ', options?: O')}): ${spelledType};`]
+			: [`export function ${fn}<const I extends ${inputType}>(${inputParams(refused(refusal, numericRefusal), optionsParam)}): ${returnType};`];
 	const spreadTarget = canDirectFactoryCall ? listSpreadTarget(node, nodeMap, kindEntries) : null;
-	const config = spelledType === undefined && refusal === undefined && numericRefusal === undefined && optionsParam === '' ? refusingParam('input', inputType, { optional: opt === '?', loose: true }) : undefined;
+	const config = spelledType === undefined && refusal === undefined && numericRefusal === undefined && optionsParam === '' ? refusingParam('input', inputType, { optional: opt === '?', loose }) : undefined;
 	const head = `export function ${fn}`;
 	let declare = (body: readonly string[]): string[] =>
 		config === undefined
@@ -456,7 +452,7 @@ function emitBranchFrom(
 			});
 		}
 		const spreadNode = nodeMap.nodes.get(spreadTarget)!;
-		const row = refusingParam('input', `T.${spreadNode.typeName}.LooseArgs`, { rest: true, loose: true });
+		const row = refusingParam('input', `T.${spreadNode.typeName}.LooseArgs`, { rest: true, loose });
 		const prelude = [
 			`  if (args.length > 1) return ${factory}(${spreadNode.fromFunctionName!}(...(args as Parameters<typeof ${spreadNode.fromFunctionName!}>)));`,
 			`  const input = args[0] as ${inputType}${inputOptional ? ' | undefined' : ''};`
@@ -627,7 +623,7 @@ function emitRestParamFromResolver(
 	const returnType = factoryReturnTypeExpr(factory);
 	const inputType = `${tName}.LooseArgs`;
 	const freshVar = unwrapConfigKey === undefined ? source : '_elems';
-	const refusing = refusingParam('input', inputType, { rest: true, loose: true });
+	const refusing = refusingParam('input', inputType, { rest: true, loose: looseRefusal(nodeMap) });
 	const seat = (body: readonly string[]): string =>
 		seatDeclaration(nodeMap, kind, fn, functionTypeOf(refusing, returnType), { params: `...input: ${inputType}`, returnType, body });
 	if (!hasNumericDiscriminant || holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)) {
@@ -709,7 +705,7 @@ function emitSingularChildrenFrom(
 }
 
 function optionalConfigCoercer(nodeMap: NodeMap, kind: string, fn: string, input: string, returnType: string, body: readonly string[]): string {
-	return seatDeclaration(nodeMap, kind, fn, functionTypeOf(refusingParam('input', input, { optional: true, loose: true }), returnType), {
+	return seatDeclaration(nodeMap, kind, fn, functionTypeOf(refusingParam('input', input, { optional: true, loose: looseRefusal(nodeMap) }), returnType), {
 		params: `input?: ${input}`,
 		returnType,
 		body
@@ -840,7 +836,7 @@ function emitStringLikeFrom(node: LeafFromNode, shape: NumberShape | undefined, 
 	const factory = `F.${node.rawFactoryName!}`;
 	const returnType = factoryReturnTypeExpr(factory);
 	const input = `T.${node.typeName}.Loose`;
-	return seatDeclaration(nodeMap, node.kind, node.fromFunctionName!, functionTypeOf(refusingParam('input', input, { loose: true }), returnType), {
+	return seatDeclaration(nodeMap, node.kind, node.fromFunctionName!, functionTypeOf(refusingParam('input', input, { loose: looseRefusal(nodeMap) }), returnType), {
 		params: `input: ${input}`,
 		returnType,
 		body: [

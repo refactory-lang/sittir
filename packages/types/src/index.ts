@@ -1286,11 +1286,7 @@ export type {
 	Types
 } from './engine-api.ts';
 
-type RefusedValue<V, Integer extends boolean> = V extends readonly unknown[]
-	? { [I in keyof V]: RefusedValue<V[I], Integer> }
-	: V extends number | bigint
-		? NumericLiteral<V, Integer>
-		: V;
+type RefusedValue<V, Integer extends boolean> = V extends number | bigint ? NumericLiteral<V, Integer> : V;
 
 type SlotRefusal<C, K, Integer extends boolean> = C extends unknown
 	? K extends keyof C
@@ -1301,15 +1297,9 @@ type SlotRefusal<C, K, Integer extends boolean> = C extends unknown
 /**
  * The refusal an object-form builder applies to its config: `C & NumericConfig<C, W>` is `C` unless a numeric slot of `W` (each mapped to whether it is an integer) holds a literal `NumericLiteral` refuses. A union `C` is judged slot by slot across all its members. A key the builder does not declare is refused by `RefuseUndeclared`.
  */
-export type NumericConfig<C, W extends Readonly<Record<string, boolean>>> = [RefusedSlots<C, W>] extends [never]
-	? unknown
-	: { readonly [K in RefusedSlots<C, W>]?: SlotRefusal<C, K, W[K & keyof W]> };
-
-type SlotValues<C, K> = C extends unknown ? (K extends keyof C ? C[K] : never) : never;
-
-type RefusedSlots<C, W extends Readonly<Record<string, boolean>>> = {
-	[K in KeysOfUnion<C> & keyof W]-?: [SlotValues<C, K>] extends [SlotRefusal<C, K, W[K]>] ? never : K;
-}[KeysOfUnion<C> & keyof W];
+export type NumericConfig<C, W extends Readonly<Record<string, boolean>>> = {
+	readonly [K in KeysOfUnion<C> & keyof W]?: SlotRefusal<C, K, W[K]>;
+};
 
 /**
  * The refusal a loose entry applies to its input `I`: a bare number or bigint literal is judged as `NumericLiteral` judges it (`Bare` says whether the bare value is an integer; `undefined` when the kind takes none), and a config literal as `NumericConfig` does.

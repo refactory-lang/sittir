@@ -52,3 +52,16 @@ export function aSlotWidenedToANumberRefusesANegativeLiteral(): void {
 	// @ts-expect-error a negative fraction is refused there too
 	ir.binaryOperator({ left: 1, operator: '+', right: -2.5 });
 }
+
+export function everyCallingConventionRefusesANegativeLiteral(): void {
+	ir.argumentList(1, 2);
+	ir.list(1, 2);
+	ir.list([1, 2]);
+
+	// @ts-expect-error a negative item is refused in a rest form a branch forwards to its list
+	ir.argumentList(1, -1);
+	// @ts-expect-error a negative item is refused in a list's rest form
+	ir.list(1, -1);
+	// @ts-expect-error a negative item is refused in a list's array form
+	ir.list([1, -1]);
+}
