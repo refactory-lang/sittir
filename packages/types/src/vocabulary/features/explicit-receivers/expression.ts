@@ -1,7 +1,6 @@
-import type { GrammarContext } from '../../context.ts';
-import type * as V from '../../index.ts';
+import type { GrammarMap } from '../../map.ts';
+import type { Under } from '../../utils.ts';
 export namespace Expression {
-	export interface Function<G extends GrammarContext<G>> {
-		readonly receiver?: V.Declaration.Parameter.Receiver<G>;
+	export interface Function<G extends GrammarMap, K extends Under<'expression.function'> = 'expression.function'> {
 	}
 }

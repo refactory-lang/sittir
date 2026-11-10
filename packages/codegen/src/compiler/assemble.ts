@@ -39,6 +39,7 @@ import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import { supertypeKindsOf } from './normalize.ts';
 import type { RuleId } from '../types/rule.ts';
+import { RuleWalker } from '../dsl/rule-walker.ts';
 import { linkAliasStorages } from './alias-envelopes.ts';
 import { collectGeneratedKindEntries, findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, type GeneratedIdTables, type GeneratedKindEntry, isSurfaceHiddenKind, seatedOf, supertypeArmsOf } from '../dsl/symbol-table.ts';
 import type {
@@ -300,7 +301,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	stampWhitespaceBuilders(nodes);
 	stampDelimiterTokens(nodes);
 	stampFullForms(nodes, wordMatcherRegex);
-	stampDelimited(nodes, wordMatcherRegex);
+	stampDelimited(nodes, wordMatcherRegex, normalized.lineEndings.breaks.chars);
 	recordUnguardedDelimiters(nodes, ctx);
 	resolveCollidingNames(nodes, ctx);
 	resolveIrKeys(nodes);
@@ -367,6 +368,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		externals: normalized.externals,
 		extras: normalized.extras,
 		nodelessExtrasRun: normalized.nodelessExtrasRun,
+		lineEndings: normalized.lineEndings,
 		refineForms: normalized.refineForms,
 		parseKindCollisions: assembleDiagnostics.parseKindCollisions.all,
 		assembleWarnings: assembleDiagnostics.assembleWarnings.all,
@@ -376,6 +378,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	assertWhitespaceAdmitted(assembled);
 	computeFieldStorageInfo(assembled);
 	stampExternalRoles(assembled, ctx);
+	stampFixedWordFolds(assembled);
 	stampTriviaInterior(assembled);
 	stampGrammarRoot(assembled);
 	return assembled;
@@ -393,6 +396,16 @@ function stampExternalRoles(nodeMap: NodeMap, ctx: AssembleCtx): void {
 			});
 		}
 		node.externalRole = role;
+	}
+}
+
+const foldWalker = new RuleWalker<RenderRule>();
+
+function stampFixedWordFolds(nodeMap: NodeMap): void {
+	const layout = supertypeArmsOf([LAYOUT_SUPERTYPE], nodeMap.normalizedRules ?? {});
+	const isFixedWord = (rule: RenderRule): boolean => rule.type === SYMBOL && rule.nonterminal === false && rule.fieldName !== undefined && !layout.has(rule.name);
+	for (const node of nodeMap.nodes.values()) {
+		if (node instanceof AbstractAssembledCompound) node.foldsFixedWord = foldWalker.fold(node.renderRule, false, (found, rule) => found || isFixedWord(rule));
 	}
 }
 

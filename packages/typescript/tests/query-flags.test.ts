@@ -7,7 +7,7 @@ import { slotItems } from '../../common/src/query-holds.ts';
 /** Every kind-id leaf the reader gives a slot of a node the walk reaches: the stamped id an enum kind's member is read as. */
 const leavesRead = (nodes: Iterable<{ readonly $type: number }>): number[] =>
 	[...nodes].flatMap((node) => (hooks.querySlots[node.$type] ?? []).flatMap(([accessor]) => slotItems(node, accessor).filter((item): item is number => typeof item === 'number')));
-import { queryFlags } from '../src/portable.ts';
+import { queryFlags } from '../src/portable/index.ts';
 import { TSKindId } from '../src/types.ts';
 
 const ts = await createEngine(typescript);

@@ -1,5 +1,5 @@
 {
-	"extends": "./tsconfig.json",
+	"extends": ["./tsconfig.json", "../../tsconfig.publish.json"],
 	"compilerOptions": {
 		"noEmit": false,
 		"composite": true,
@@ -13,5 +13,5 @@
 	},
 	"references": [{ "path": "../types/tsconfig.build.json" }, { "path": "../common/tsconfig.build.json" }],
 	"include": ["src"],
-	"exclude": ["node_modules", "dist", "tests"]
+	"exclude": ["node_modules", "dist", "tests", "src/portable/map.ts"]
 }

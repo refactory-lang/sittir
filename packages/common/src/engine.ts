@@ -19,7 +19,7 @@ import { mintTreeToken, registerTree } from './tree-token.ts';
 import type { RecordPosition } from './handle.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
-import { readStub, recordOf } from './record-view.ts';
+import { leafData, readStub, recordOf } from './record-view.ts';
 import { readOwnEntries, readOwnUnits, type BuiltRecords, type WritableWords } from './built-arena.ts';
 import { builtRefOf, handleArenaOf } from './built-ref.ts';
 import { nodeStorageOf } from './engine-scope.ts';
@@ -214,6 +214,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	/** The address of the record of the node at `index`, read `depth` levels down, `null` for a node with none. Present when the addon carries the record codec. */
 	readRecord?(treeId: number, index: number, depth?: number): number | null;
 	readRecordStub?(treeId: number, index: number, depth?: number): number[] | null;
+	readLeaf?(treeId: number, index: number): number[] | null;
 	/** Materializes parsed records to `depth` (default one, Infinity for all), including children of cached parents. Returns only an address; chunk copies are requested separately. Present when the addon carries the record codec. */
 	hydrateRecord?(treeId: number, index: number, depth?: number): number | null;
 	/** Chunk `n` of the tree's arena over its native memory, every word of it, with no copy; disposing the tree detaches it. Present when the addon carries the record codec. */
@@ -333,6 +334,7 @@ const TREE_FUNCTIONS = [
 	'text',
 	'readRecord',
 	'readRecordStub',
+	'readLeaf',
 	'hydrateRecord',
 	'chunk',
 	'readCell',
@@ -517,8 +519,8 @@ const treeDisposalRegistry = new FinalizationRegistry<{
 }>(({ release, treeId }) => release(treeId));
 
 function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, format: CellFormat, readObjectAt: (index: number, depth: number) => TNode): RecordReader {
-	const { readRecord, readRecordStub, readCell, chunk, renderRecord, coordinate } = engine;
-	if (readRecord === undefined || readRecordStub === undefined || readCell === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
+	const { readRecord, readRecordStub, readLeaf, readCell, chunk, renderRecord, coordinate } = engine;
+	if (readRecord === undefined || readRecordStub === undefined || readLeaf === undefined || readCell === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
 		throw new Error(ARENA_FEATURE_REFUSED);
 	}
 	const chunks: ChunkWords[] = [];
@@ -527,6 +529,12 @@ function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, fo
 		format,
 		record: (at, depth) => readRecord.call(engine, treeId, at, depth) ?? undefined,
 		stub: (index, depth) => readRecordStub.call(engine, treeId, index, depth) ?? undefined,
+		leaf(index) {
+			const leaf = readLeaf.call(engine, treeId, index);
+			if (leaf === null) return undefined;
+			if (leaf.length === 1) return { form: 'unit', kind: leaf[0]!, row: index };
+			return { form: 'parsedLeaf', kind: leaf[0]!, span: { start: leaf[1]!, end: leaf[2]! }, row: index };
+		},
 		exported: (address) => chunks[chunkOf(address, format)],
 		cell: (holder, word, item, depth) => readCell.call(engine, treeId, holder, word, item, depth),
 		hydrate(index, depth) {
@@ -620,12 +628,20 @@ export function createNativeEngine<
 					? readObjectAt
 					: (index: number, depth: number): TNode => {
 							const facts = records.stub(index, depth);
-							if (facts === undefined) return readObjectAt(index, depth);
-							const stub = readStub(tree, facts);
-							holdReadTree(stub, liveToken);
-							return stub as TNode;
+							if (facts !== undefined) {
+								const stub = readStub(tree, facts);
+								holdReadTree(stub, liveToken);
+								return stub as TNode;
+							}
+							const leaf = records.leaf(index);
+							if (leaf === undefined) return readObjectAt(index, depth);
+							if (leaf.form === 'unit') return leaf.kind as TNode;
+							const node = leafData(tree, leaf.kind, leaf.span, leaf.row);
+							holdReadTree(node, liveToken);
+							return node as TNode;
 						};
 			const roots = new Map<number, unknown>();
+			const errors = Object.freeze(parsed.errors);
 			const tree: TreeHandle = {
 				id: parsed.treeId,
 				token: liveToken,
@@ -635,14 +651,13 @@ export function createNativeEngine<
 					if (index !== 0) return readAt(index, depth);
 					let cached = roots.get(depth);
 					if (cached === undefined) {
-						cached = Object.assign(readObject(readAt(0, depth), 'the root'), {
-							$errors: Object.freeze(parsed.errors)
-						});
+						cached = Object.assign(readObject(readAt(0, depth), 'the root'), { $errors: errors });
 						roots.set(depth, cached);
 					}
 					return cached;
 				},
 				options: parsed.options,
+				errors,
 				snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
 				triviaSide: (index, side) => readOwnEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
 				writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),

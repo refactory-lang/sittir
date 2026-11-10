@@ -10313,84 +10313,66 @@ function withTypeQuerySubscriptExpression(node: object, setter: string, args: re
 	throw new Error(`type_query_subscript_expression has no $with.${setter}`);
 }
 
-export function buildTypeQueryCallExpression<
-	FunctionSlot extends T.TypeQueryCallExpression.Config['function'],
-	ArgumentsSlot extends T.TypeQueryCallExpression.Config['arguments']
->(
-	config: RefusingConfig<T.TypeQueryCallExpression.Config, { function: FunctionSlot; arguments: ArgumentsSlot }>
-): T.TypeQueryCallExpression.Bound;
-export function buildTypeQueryCallExpression(
-	config: T.TypeQueryCallExpression.Config
-): T.TypeQueryCallExpression.Bound {
-	currentHandle()?.admit(TSKindId.TypeQueryCallExpression, [config]);
-	const _function = rejectReservedText(
-		rejectKeywordText(
-			kindIdStorage<NonNullable<T.TypeQueryCallExpression['_function']>>(config.function),
-			'TypeQueryCallExpression.function',
-			TSKindId.Identifier,
-			['import']
-		),
-		'TypeQueryCallExpression.function',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _arguments = orDefault(config.arguments, () => buildArguments());
+export function buildTypeQueryCallExpression<V extends Admit<T.Arguments>>(
+	value: V & RefuseUndeclared<V>
+): ReturnType<typeof _buildTypeQueryCallExpression>;
+export function buildTypeQueryCallExpression<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
+	...children: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildTypeQueryCallExpression>;
+export function buildTypeQueryCallExpression(...args: unknown[]) {
+	if (args.length === 0) {
+		return _buildTypeQueryCallExpression(buildArguments() as Parameters<typeof _buildTypeQueryCallExpression>[0]);
+	}
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+		return _buildTypeQueryCallExpression(args[0] as Parameters<typeof _buildTypeQueryCallExpression>[0]);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Arguments as const);
+	return prebuilt
+		? _buildTypeQueryCallExpression(args[0] as Parameters<typeof _buildTypeQueryCallExpression>[0])
+		: _buildTypeQueryCallExpression(
+				(buildArguments as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTypeQueryCallExpression>[0]
+			);
+}
+function _buildTypeQueryCallExpression(value: Admit<T.Arguments>): T.TypeQueryCallExpression.Bound {
+	const _arguments = value;
 	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'type_query_call_expression', { function: _function, arguments: _arguments });
+	if (handle !== undefined) admitChildren(handle, 'type_query_call_expression', { arguments: _arguments });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.TypeQueryCallExpression as const, { _function, _arguments });
+	handle?.verifyStored?.(TSKindId.TypeQueryCallExpression as const, { _arguments });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.TypeQueryCallExpression as const);
-		storeCell(arena, record, 2, 2, _function);
-		storeCell(arena, record, 3, 6, _arguments);
+		storeCell(arena, record, 2, 2, _arguments);
 		const node = arena.view(record);
 		return node as unknown as T.TypeQueryCallExpression.Bound;
 	});
 }
 
-function buildTypeQueryCallExpression$patch(
+function _buildTypeQueryCallExpression$patch(
 	source: object,
-	config: T.TypeQueryCallExpression.Config
+	value: Admit<T.Arguments>
 ): T.TypeQueryCallExpression.Bound {
-	currentHandle()?.admit(TSKindId.TypeQueryCallExpression, [config]);
-	const _function = rejectReservedText(
-		rejectKeywordText(
-			kindIdStorage<NonNullable<T.TypeQueryCallExpression['_function']>>(config.function),
-			'TypeQueryCallExpression.function',
-			TSKindId.Identifier,
-			['import']
-		),
-		'TypeQueryCallExpression.function',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _arguments = orDefault(config.arguments, () => buildArguments());
+	const _arguments = value;
 	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'type_query_call_expression', { function: _function, arguments: _arguments });
+	if (handle !== undefined) admitChildren(handle, 'type_query_call_expression', { arguments: _arguments });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.TypeQueryCallExpression as const, { _function, _arguments });
+	handle?.verifyStored?.(TSKindId.TypeQueryCallExpression as const, { _arguments });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.TypeQueryCallExpression as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'function', _function));
-		patchCell(arena, record, 3, 6, carriedSlot(source, 'arguments', _arguments));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'arguments', _arguments));
 		const node = arena.view(record);
 		return node as unknown as T.TypeQueryCallExpression.Bound;
 	});
 }
 function withTypeQueryCallExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.TypeQueryCallExpression.Config;
 	switch (setter) {
-		case 'function':
-			return applySetter(args, (value: Admit<NonNullable<T.TypeQueryCallExpression.Config>['function']>) =>
-				rebuilt(node, handle, () => buildTypeQueryCallExpression$patch(node, { ...config, function: value }))
-			);
 		case 'arguments':
 			return applySetter(args, (value: Admit<T.Arguments>) =>
-				rebuilt(node, handle, () => buildTypeQueryCallExpression$patch(node, { ...config, arguments: value }))
+				rebuilt(node, handle, () => _buildTypeQueryCallExpression$patch(node, value))
 			);
 	}
 	throw new Error(`type_query_call_expression has no $with.${setter}`);
@@ -21780,7 +21762,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		352: 3,
 		353: 5,
 		354: 5,
-		355: 4,
+		355: 3,
 		356: 4,
 		357: 3,
 		358: 3,

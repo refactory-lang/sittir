@@ -32,7 +32,7 @@ function aliasEntry(id: number, name: string): GeneratedIdEntry {
 }
 const idTables: GeneratedIdTables = { fieldIds: new Map(), folds: new Map(),
 	kindIds: { for: anonEntry(5, 'for'), while: anonEntry(6, 'while'), property_name: aliasEntry(7, 'property_name'), statement_name: aliasEntry(8, 'statement_name') },
-	sourceArtifact: 'test'
+	sourceArtifact: 'test', parser: null
 };
 
 const alias = (value: string, content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'ALIAS', named: true, value, content }) as Rule<'evaluate'>;

@@ -1,30 +1,13 @@
-import type { GrammarContext } from '../../context.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { GrammarMap } from '../../map.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Literal {
 	export namespace Number {
 		export namespace Integer {
-			export interface Big<G extends GrammarContext<G>> extends SubKindOf<V.Literal.Number.Integer<G>> {
+			export interface Big<G extends GrammarMap, K extends Under<'literal.number.integer.big'> = 'literal.number.integer.big'> extends SubKindOf<V.Literal.Number.Integer<G, K>> {
 				// claimed by pt
-				readonly $kind: 'literal.number.integer.big';
+				readonly $path: K;
 				readonly $value: bigint;
-			}
-			export namespace Big {
-				export interface Binary<G extends GrammarContext<G>> extends SubKindOf<V.Literal.Number.Integer.Big<G>> {
-					// claimed by t
-					readonly $kind: 'literal.number.integer.big.binary';
-					readonly content: G['slots']['literal.number.integer.big.binary']['content'];
-				}
-				export interface Hex<G extends GrammarContext<G>> extends SubKindOf<V.Literal.Number.Integer.Big<G>> {
-					// claimed by t
-					readonly $kind: 'literal.number.integer.big.hex';
-					readonly content: G['slots']['literal.number.integer.big.hex']['content'];
-				}
-				export interface Octal<G extends GrammarContext<G>> extends SubKindOf<V.Literal.Number.Integer.Big<G>> {
-					// claimed by t
-					readonly $kind: 'literal.number.integer.big.octal';
-					readonly content: G['slots']['literal.number.integer.big.octal']['content'];
-				}
 			}
 		}
 	}

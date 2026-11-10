@@ -1,31 +1,33 @@
-import type { GrammarContext } from '../../context.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
-	export namespace Field {
-		export interface Signature<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Field<G>> {
-			// claimed by t
-			readonly $kind: 'declaration.field.signature';
-			readonly name: G['slots']['declaration.field.signature']['name'];
-		}
-	}
-	export interface Interface<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
+	export interface Interface<G extends GrammarMap, K extends Under<'declaration.interface'> = 'declaration.interface'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by t
-		readonly $kind: 'declaration.interface';
-		readonly body: G['slots']['declaration.interface']['body'][];
+		readonly $path: K;
+		readonly body: Slot<
+			G,
+			K,
+			'body',
+			| V.Attribute.Any<G>
+			| V.Declaration.Any<G>
+			| V.Expression.Call.Macro<G>
+			| V.Statement.Any<G>
+		>[];
 		// rt only
-		readonly extends?: (G['slots']['clause.extends.type']['types'] | G['slots']['clause.bounds']['bounds'])[];
+		readonly extends?: Slot<
+			G,
+			K,
+			'extends',
+			| V.Identifier<G>
+			| V.Type.Any<G>
+			| V.Expression.Call.Macro<G>
+			| V.Identifier.Any<G>
+			| V.Clause.Bounds.HigherRanked<G>
+			| V.Clause.Bounds.Removed<G>
+		>[];
 		// rt only
-		readonly name: V.Identifier<G>;
+		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		// rt only
-	}
-	export namespace Interface {
-		export interface Trait<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Interface<G>> {
-			// claimed by r
-			readonly $kind: 'declaration.interface.trait';
-			readonly body: G['slots']['declaration.interface.trait']['body'][];
-			readonly extends?: G['slots']['clause.bounds']['bounds'][];
-			readonly name: V.Identifier<G>;
-		}
 	}
 }

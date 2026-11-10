@@ -2811,18 +2811,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('type_query_call_expression', () => {
 		it('factory produces correct type', () => {
-			const node = ir.typeQueryCallExpression({
-				function: TSKindId.Import as never,
-				arguments: { $type: TSKindId.Arguments, elements: [] } as never
-			});
+			const node = ir.typeQueryCallExpression({ $type: TSKindId.Arguments, elements: [] } as never);
 			expect(node.$type).toBe(TSKindId.TypeQueryCallExpression);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.typeQueryCallExpression({
-				function: TSKindId.Import as never,
-				arguments: { $type: TSKindId.Arguments, elements: [] } as never
-			});
+			const node = ir.typeQueryCallExpression({ $type: TSKindId.Arguments, elements: [] } as never);
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});

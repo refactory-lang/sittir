@@ -1,30 +1,16 @@
-import type { GrammarContext } from '../../context.ts';
-import type { SubKindOf } from '../../utils.ts';
-import type * as V from '../../index.ts';
+import type { GrammarMap } from '../../map.ts';
+import type { Under } from '../../utils.ts';
 export namespace Expression {
-	export interface Call<G extends GrammarContext<G>> {
-		readonly typeArguments?: G['slots']['expression.call']['typeArguments'][];
-		// t only
+	export interface Call<G extends GrammarMap, K extends Under<'expression.call'> = 'expression.call'> {
 	}
 	export namespace Call {
-		export interface Construct<G extends GrammarContext<G>> {
-			readonly typeArguments?: G['slots']['expression.call.construct']['typeArguments'][];
+		export interface Construct<G extends GrammarMap, K extends Under<'expression.call.construct'> = 'expression.call.construct'> {
 		}
-		export interface Member<G extends GrammarContext<G>> {
-			readonly typeArguments?: G['slots']['expression.call.member']['typeArguments'][];
-			// t only
+		export interface Member<G extends GrammarMap, K extends Under<'expression.call.member'> = 'expression.call.member'> {
 		}
 	}
-	export interface Class<G extends GrammarContext<G>> {
-		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+	export interface Class<G extends GrammarMap, K extends Under<'expression.class'> = 'expression.class'> {
 	}
-	export interface Function<G extends GrammarContext<G>> {
-		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
-	}
-	export interface Instantiation<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
-		// claimed by rt
-		readonly $kind: 'expression.instantiation';
-		readonly function: G['slots']['expression.instantiation']['function'];
-		readonly typeArguments: G['slots']['expression.instantiation']['typeArguments'][];
+	export interface Function<G extends GrammarMap, K extends Under<'expression.function'> = 'expression.function'> {
 	}
 }

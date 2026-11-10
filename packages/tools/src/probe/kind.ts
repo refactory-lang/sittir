@@ -78,7 +78,8 @@ import {
 	loadLanguageForGrammar,
 	loadKindNameFromId,
 	loadStorageKindNameFromId,
-	loadWebTreeSitter,
+	languageAt,
+	treeParser,
 	loadNativeEngine,
 	parseNativeTree,
 	detachedHoldingTree,
@@ -95,7 +96,8 @@ import {
 	wrapForReparse,
 	upstreamWasmPath,
 	type TSNode,
-	type TSTree,
+	type TreeParser,
+	type ParserLanguage,
 	type AccessorThrowRecord,
 	loadNodeModel
 } from '../validate/common.ts';
@@ -106,8 +108,9 @@ import {
 	astStructuralDiff,
 	findReparsedNodeAtOffset
 } from '../validate/read-render-parse.ts';
+import { join } from 'node:path';
+import { sittirDirOf } from '@sittir/codegen/grammars';
 import { load } from '../codegen-surface.ts';
-import type * as TS from 'web-tree-sitter';
 import type { AnyUntypedNode, NodeCoordinate } from '@sittir/types';
 import { sourceSpans, type ByteSpan, type SourceSpans } from '@sittir/common';
 import { coordinateOf, spanOf, readNode as readUntyped, PLAIN_KINDS, toNodeData, type TreeHandle } from '@sittir/common/utils';
@@ -340,7 +343,7 @@ export interface ProbeWrapDiag {
  */
 async function computeValidatorWrapDiag(
 	grammar: string,
-	parser: { parse(text: string): TSTree | null },
+	parser: TreeParser,
 	targetNode: TSNode,
 	untypedNode: unknown,
 	rendered: string
@@ -367,14 +370,14 @@ async function computeValidatorWrapDiag(
 		return { renderedKind, targetKind, wrapped, triviaOffsetAdjust: 0, node2Found: false, astDiff: null };
 	}
 
-	const tree2 = parser.parse(wrapped.text) as TSTree;
-	if (tree2.rootNode.hasError) {
+	using tree2 = parser.parse(wrapped.text);
+	if (tree2.root.hasError) {
 		return {
 			renderedKind,
 			targetKind,
 			wrapped,
 			reparseHasError: true,
-			parseDefect: firstParseDefect(tree2.rootNode),
+			parseDefect: firstParseDefect(tree2.root),
 			triviaOffsetAdjust: 0,
 			node2Found: false,
 			astDiff: null
@@ -390,8 +393,8 @@ async function computeValidatorWrapDiag(
 	// those cases only.
 	const triviaOffsetAdjust = 0;
 	const node2 =
-		findReparsedNodeAtOffset(tree2, targetKind, wrapped, triviaOffsetAdjust) ??
-		(renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2, renderedKind, wrapped, triviaOffsetAdjust) : null);
+		findReparsedNodeAtOffset(tree2.root, targetKind, wrapped, triviaOffsetAdjust) ??
+		(renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2.root, renderedKind, wrapped, triviaOffsetAdjust) : null);
 	if (!node2) {
 		return {
 			renderedKind,
@@ -510,33 +513,19 @@ export async function probe(
 		engine?: 'js' | 'native';
 	} = {}
 ): Promise<ProbeReport> {
-	const { Parser, lang } =
-		opts.baselineDir && opts.useBaselineParser
-			? await loadLanguageFromPath(resolveBaselinePath(opts.baselineDir, '.sittir/parser.wasm'))
-			: await loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
-	if (opts.logParse) {
-		parser.setLogger((message, isLex) => {
-			process.stderr.write(`tree-sitter: ${isLex ? 'lex' : 'parse'} ${message}\n`);
-		});
-	}
-	const tree = parser.parse(source);
-	if (!tree) throw new Error('probe-kind: parse returned null');
+	using parser = treeParser(await probeLanguage(grammar, opts), opts.logParse ? logParse : undefined);
+	using tree = parser.parse(source);
 
 	// Resolve probe target: root node, or a specific sub-tree.
-	// `tree.rootNode` is a getter that returns a fresh wrapper each
-	// call, so identity comparison with subsequent getter accesses
-	// is unreliable — track "is this root?" with a flag.
-	let targetNode: any = tree.rootNode;
+	let targetNode: any = tree.root;
 	let isRoot = true;
 	let probeRange: ProbeReport['probeRange'] | undefined;
 	if (opts.range) {
-		targetNode = findNodeCoveringSpan(tree.rootNode, sourceSpans(source), opts.range);
+		targetNode = findNodeCoveringSpan(tree.root, sourceSpans(source), opts.range);
 		if (!targetNode) throw new Error(`probe-kind: no node covers range ${opts.range.start}–${opts.range.end}`);
 		isRoot = false;
 	} else if (opts.kind) {
-		targetNode = findFirstByKind(tree.rootNode, opts.kind);
+		targetNode = findFirstByKind(tree.root, opts.kind);
 		if (!targetNode) throw new Error(`probe-kind: no node of kind '${opts.kind}' found`);
 		isRoot = false;
 	}
@@ -591,21 +580,19 @@ export async function probe(
 		const originalText = probeRange ? probeRange.text : source;
 		sameText = rendered === originalText;
 		if (opts.reparse) {
-			const tree2 = parser.parse(rendered);
-			if (tree2) {
-				// Re-parse root is a whole program; drill down to the
-				// same-kind node for comparison when we probed a
-				// sub-tree.
-				const root2 = isRoot ? tree2.rootNode : (findFirstByKind(tree2.rootNode, targetNode.type) ?? tree2.rootNode);
-				reparsedCst = dumpCst(root2, null);
-				const origShape = shapeString(cst);
-				const reparsedShape = shapeString(reparsedCst);
-				astDiff = {
-					childCountMatch: origShape === reparsedShape,
-					originalShape: origShape,
-					reparsedShape: reparsedShape
-				};
-			}
+			using tree2 = parser.parse(rendered);
+			// Re-parse root is a whole program; drill down to the
+			// same-kind node for comparison when we probed a
+			// sub-tree.
+			const root2 = isRoot ? tree2.root : (findFirstByKind(tree2.root, targetNode.type) ?? tree2.root);
+			reparsedCst = dumpCst(root2, null);
+			const origShape = shapeString(cst);
+			const reparsedShape = shapeString(reparsedCst);
+			astDiff = {
+				childCountMatch: origShape === reparsedShape,
+				originalShape: origShape,
+				reparsedShape: reparsedShape
+			};
 		}
 		if (opts.validatorReparse) {
 			wrapDiag = await computeValidatorWrapDiag(grammar, parser, targetNode as TSNode, untypedNode, rendered);
@@ -647,18 +634,15 @@ async function probeShipped(
 ): Promise<ProbeShippedReport | undefined> {
 	const wasmPath = upstreamWasmPath(grammar);
 	if (wasmPath === undefined) return undefined;
-	const { Parser, lang } = await loadLanguageFromPath(wasmPath);
-	const parser = new Parser();
-	parser.setLanguage(lang);
-	const tree = parser.parse(source);
-	if (!tree) return undefined;
-	let node = tree.rootNode;
+	using parser = treeParser(await languageAt(wasmPath));
+	using tree = parser.parse(source);
+	let node = tree.root;
 	if (target.range) {
-		node = findNodeCoveringSpan(tree.rootNode, sourceSpans(source), target.range) ?? tree.rootNode;
+		node = findNodeCoveringSpan(tree.root, sourceSpans(source), target.range) ?? tree.root;
 	} else if (target.kind) {
-		node = findFirstByKind(tree.rootNode, target.kind) ?? tree.rootNode;
+		node = findFirstByKind(tree.root, target.kind) ?? tree.root;
 	}
-	return { cst: dumpCst(node, null), sexp: node.toString(), hasError: tree.rootNode.hasError };
+	return { cst: dumpCst(node, null), sexp: node.toString(), hasError: tree.root.hasError };
 }
 
 export async function probeTrace(
@@ -675,35 +659,18 @@ export async function probeTrace(
 		logParse?: boolean;
 	} = {}
 ): Promise<ProbeTraceReport> {
-	const { Parser, lang } =
-		opts.baselineDir && opts.useBaselineParser
-			? await loadLanguageFromPath(resolveBaselinePath(opts.baselineDir, '.sittir/parser.wasm'))
-			: await loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	if (opts.logParse) {
-		parser.setLogger((message, isLex) => {
-			process.stderr.write(`tree-sitter: ${isLex ? 'lex' : 'parse'} ${message}\n`);
-		});
-	}
-	parser.setLanguage(lang);
-	const tree = parser.parse(source);
+	using parser = treeParser(await probeLanguage(grammar, opts), opts.logParse ? logParse : undefined);
+	using tree = parser.parse(source);
 
-	// `tree.rootNode` is a getter that returns a fresh wrapper each
-	// call, so identity comparison with subsequent getter accesses
-	// is unreliable — track "is this root?" with a flag. Don't trust
-	// the caller to not accidentally compare against a different wrapper
-
-	if (!tree) throw new Error('probe-kind: parse returned null');
-
-	let targetNode: TSNode = tree.rootNode;
+	let targetNode: TSNode = tree.root;
 	let isRoot = true;
 	let probeRange: ProbeTraceReport['probeRange'] | undefined;
 	if (opts.range) {
-		targetNode = findNodeCoveringSpan(tree.rootNode, sourceSpans(source), opts.range);
+		targetNode = findNodeCoveringSpan(tree.root, sourceSpans(source), opts.range);
 		if (!targetNode) throw new Error(`probe-kind: no node covers range ${opts.range.start}–${opts.range.end}`);
 		isRoot = false;
 	} else if (opts.kind) {
-		targetNode = findFirstByKind(tree.rootNode, opts.kind);
+		targetNode = findFirstByKind(tree.root, opts.kind);
 		if (!targetNode) throw new Error(`probe-kind: no node of kind '${opts.kind}' found`);
 		isRoot = false;
 	}
@@ -993,12 +960,14 @@ async function readNodeOfPath(
 	}
 }
 
-/** @internal — load a tree-sitter Language from an explicit wasm path
- *  (used by --baseline-parser mode). */
-async function loadLanguageFromPath(wasmPath: string): Promise<{ Parser: typeof TS.Parser; lang: TS.Language }> {
-	const { Parser, Language } = await loadWebTreeSitter();
-	const lang = await Language.load(wasmPath);
-	return { Parser, lang };
+function probeLanguage(grammar: string, opts: { readonly baselineDir?: string; readonly useBaselineParser?: boolean }): Promise<ParserLanguage> {
+	return opts.baselineDir && opts.useBaselineParser
+		? languageAt(join(sittirDirOf({ dir: resolveBaselinePath(opts.baselineDir, '.') }), 'parser.wasm'))
+		: loadLanguageForGrammar(grammar);
+}
+
+function logParse(message: string, isLex: boolean): void {
+	process.stderr.write(`tree-sitter: ${isLex ? 'lex' : 'parse'} ${message}\n`);
 }
 
 /** @internal — resolve a baseline-relative path to an absolute path.

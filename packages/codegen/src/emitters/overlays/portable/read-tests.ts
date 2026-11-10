@@ -1,4 +1,4 @@
-import type { PortableCondition, PortableStep, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
+import type { PortableCondition, PortableFact, PortableStep, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
 import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
 import { WILDCARD, type CaptureSite, type PredicateFact, type SlotModel } from '../../../bindings/facts.ts';
 import { Delimiter } from '@sittir/common/delimiter';
@@ -140,14 +140,77 @@ function separatedTestOf(entry: ReadEntry, model: SlotModel, subjectOf: SlotSubj
 	return { up: 0, via: [], plan: { op: 'or', of: [{ op: 'count', min: 2, ...subject }, { op: 'delimiter', delimiter: Delimiter.Trailing }] } };
 }
 
+export const loweredPlan = (via: readonly PortableStep[], plan: QueryPlan<QuerySubject>): QueryPlan<QuerySubject> =>
+	via.reduceRight<QueryPlan<QuerySubject>>((of, step) => ({ op: 'child', slots: step.slots, ...(step.anchor === undefined ? {} : { anchor: step.anchor }), of }), plan);
+
+const comparesCaptures = (entry: ReadEntry, predicate: PredicateFact): boolean =>
+	entry.claim.within.length > 0 && predicate.arguments.some((argument) => 'capture' in argument);
+
 export function readTestOf(entry: ReadEntry, model: SlotModel, subjectOf: SlotSubjectOf, presenceOf: PresenceKeywordOf, typeOf: TypeOf): PortableCondition[] {
 	const pins = entry.pins.map((pin) => slotConditionOf(entry, model, subjectOf, pin.slot, (holder, slot) => keywordTestOf(holder, slot, pin.text, subjectOf, presenceOf)));
 	const absent = entry.absent.map((field) => slotConditionOf(entry, model, subjectOf, field, (holder, slot) => absenceTestOf(holder, slot, subjectOf)));
-	const predicates = entry.decided === true ? [] : [...entry.claim.predicates.filter((p) => entry.spelled !== true || !comparesOwnText(p)), ...entry.children.map(childPredicate)];
+	const predicates =
+		entry.decided === true
+			? []
+			: [...entry.claim.predicates.filter((p) => (entry.spelled !== true || !comparesOwnText(p)) && !comparesCaptures(entry, p)), ...entry.children.map(childPredicate)];
 	const separated = entry.separated === true ? [separatedTestOf(entry, model, subjectOf)] : [];
 	const conditions = [...pins, ...absent, ...separated, ...predicates.map((p) => (typeof p === 'string' ? p : conditionOf(entry, p, model, subjectOf, typeOf)))];
 	const refused = conditions.filter((c) => typeof c === 'string');
 	if (refused.length > 0) throw emitShapeFailure({ code: 'portable-read-untestable', ownerKind: entry.kind, message: `cannot test ${entry.kind} as ${entry.vocab}: ${refused.join('; ')}`, details: { vocab: entry.vocab } });
 	const unique = new Map((conditions as PortableCondition[]).map((condition) => [JSON.stringify(condition), condition]));
 	return [...unique.values()];
+}
+
+export type PortableFactRecord = Omit<PortableFact, 'container'> & { readonly container: string };
+
+const sameJson = (values: readonly unknown[]): boolean => values.every((value) => JSON.stringify(value) === JSON.stringify(values[0]));
+
+function enteredSlot(condition: PortableCondition): SlotSubject | undefined {
+	const step = condition.via[1];
+	if (step !== undefined) return { slots: step.slots };
+	return 'slots' in condition.plan && condition.via.length === 1 ? { slots: (condition.plan as SlotSubject).slots } : undefined;
+}
+
+export function portableFactOf(
+	entry: ReadEntry,
+	test: readonly PortableCondition[],
+	model: SlotModel,
+	subjectOf: SlotSubjectOf,
+	memberAt: (container: string, slot: string) => string | undefined
+): PortableFactRecord | undefined {
+	const placed = test.filter((condition) => condition.up > 0);
+	if (placed.length === 0) return undefined;
+	const refuse = (why: string): never => {
+		throw emitShapeFailure({ code: 'portable-read-untestable', ownerKind: entry.kind, message: `${entry.kind} as ${entry.vocab} is a fact its container spells, but ${why}`, details: { vocab: entry.vocab } });
+	};
+	const [container] = entry.claim.within;
+	if (container === undefined || container === WILDCARD) return refuse('its claim names no container');
+	if (placed.some((condition) => condition.up !== 1) || placed.length !== test.length) return refuse('its tests reach past its container or test the node itself');
+	if (!sameJson(placed.map((condition) => condition.via[0]))) return refuse('its tests reach more than one slot of its container');
+	const site = entry.claim.predicates.find((predicate) => predicate.subject?.up === 1)?.subject?.down[0];
+	const held = site === undefined ? undefined : heldSteps(model, container, site);
+	const member = held === undefined ? undefined : memberAt(container, held[0]!.slot.name);
+	if (member === undefined) return refuse(`no member of ${container} holds the items it tests`);
+	const plans = placed.map((condition) => loweredPlan(condition.via.slice(1), condition.plan));
+	const entered = placed.map(enteredSlot);
+	const compared = entry.claim.predicates.filter((predicate) => comparesCaptures(entry, predicate));
+	if (compared.length > 1) return refuse('it compares more than one pair of captures');
+	const same = compared.map((predicate) => {
+		const argument = predicate.arguments.find((a) => 'capture' in a);
+		const item = predicate.subject === null ? undefined : stepsOf(entry, predicate.subject, model, subjectOf);
+		const node = argument === undefined || !('capture' in argument) || argument.site == null ? undefined : stepsOf(entry, argument.site, model, subjectOf);
+		if (predicate.operator !== 'eq' || item === undefined || typeof item === 'string' || node === undefined || typeof node === 'string' || predicate.subject?.up !== 1 || argument === undefined || !('capture' in argument) || argument.site?.up !== 0)
+			return refuse('a capture it compares is not one of its container\'s items beside one of the node\'s own');
+		return { item: item.steps.slice(1), node: node.steps };
+	})[0];
+	return {
+		name: entry.claim.flag ?? entry.vocab.slice(entry.vocab.lastIndexOf('.') + 1),
+		...(entry.claim.flag === undefined ? { path: entry.vocab } : { flag: entry.claim.flag }),
+		container,
+		member,
+		items: { slots: placed[0]!.via[0]!.slots },
+		test: plans.length === 1 ? plans[0]! : { op: 'and', of: plans },
+		...(entered.every((slot) => slot !== undefined) && sameJson(entered) ? { spelled: entered[0]! } : {}),
+		...(same === undefined ? {} : { same })
+	};
 }

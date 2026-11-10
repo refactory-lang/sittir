@@ -74,7 +74,7 @@ const FunctionItemAsDeclarationFunction = (n: T.FunctionItem.Parsed, set = 0): V
 - **A refinement** (a claim with field literals beside the grammar kind's plain claim) reads like its parent. The literal it fixes is its kind, and no member returns it.
 - **Leaf text:** a leaf whose text varies carries a `$value` closure; a fixed-literal leaf is its const string, with no `$value`.
 - **The low-level node** `n` is captured by the closures and never exposed.
-- **`$kind` is type-only:** the literal's type carries it, selecting its interface, and the literal holds no `$kind` value; a role, a refinement and a flag are tested at run time with `is`.
+- **`$path` is type-only:** the literal's type carries it, selecting its interface, and the literal holds no `$path` value; a role, a refinement and a flag are tested at run time with `is`.
 
 ### 2.3 The read dispatch
 
@@ -88,7 +88,7 @@ Nothing queries the tree at read time. A portable node costs one small object, a
 
 ### 2.4 Build entries
 
-The portable engine's `build` is typed per kind from the vocabulary. A structure's kind, named by `$kind` where the slot it fills admits more than one kind, selects the build entry, and each member is handed to its slot's strict-builder parameter. The pick and the routes decide every kind, and a member given text takes its slot's default leaf builder, so no second kind decision is made:
+The portable engine's `build` is typed per kind from the vocabulary. A structure's kind, named by `$path` where the slot it fills admits more than one kind, selects the build entry, and each member is handed to its slot's strict-builder parameter. The pick and the routes decide every kind, and a member given text takes its slot's default leaf builder, so no second kind decision is made:
 
 - **Refinement builders and flag steps are the only form** a refinement or a flag takes in a build (bindings spec §3.3): a builder per refinement path, `build.<path>`, and on each builder of a kind a step per flag the kind has, the steps in any order, each setting its bit. A step's type leaves out the steps an exclusion group excludes, and a refinement's builder those its value excludes, read from the `exclusionGroups` stamps of the grammar kind the path builds, where every atom of the group is a flag or a refinement the path names ([builder exclusions](2026-10-19-builder-exclusions-design.md)). A build from a structure reaches the grammar's builder, whose `excludedBy` check refuses a broken group with its label (bindings spec §3.3, §8). No member and no parameter states a refinement or a flag.
 - A flag or a nested member routed through an intermediate kind builds that kind's input; through a forwarded envelope that is its spread form (`functionModifiers(TSKindId.AsyncKeyword, …)`). Loose builders never guess a keyword from text.
@@ -158,7 +158,7 @@ The generated module is type-checked against the vocabulary, and the target is z
 | text leaf | a text leaf read as a plain string where the member admits only kinds | A leaf whose text varies is a node carrying `$value`, and a fixed literal is its const string; the members admit both. |
 | unmapped | an unmapped marker on one side where the other is a mapped kind: the member type is a marker where the read gives a mapped kind, or the read gives a marker where the member wants a node | The unmapped ratchet: it falls as claims complete, onto an existing kind or one a feature adds. |
 | untyped reader | a low-level reader typed `unknown` or as a bare number (`token_repetition.operator`), or a node whose `$type` is every kind id, which reads as no kind in particular | Type those readers, and those nodes' `$type`, in the typed surface. |
-| refinement | a refinement where its parent is admitted (`$kind` is a single literal) | A level's `$kind` admits every path beneath it, so a refinement is assignable where its parent is. |
+| refinement | a refinement where its parent is admitted (`$path` is a single literal) | A level's `$path` admits every path beneath it, so a refinement is assignable where its parent is. |
 | absent | a member that can be absent where the interface requires it (an optional element inside a required container) | Requiredness carries through containers. |
 | extra member | a member the bindings route that the interface does not declare | A feature adds the member, or the binding drops it. |
 | missing member | a member the interface requires that the read entry has no route for | The bindings route the member, or the vocabulary makes it optional. |

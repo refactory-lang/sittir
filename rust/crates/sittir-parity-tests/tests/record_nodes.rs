@@ -10,10 +10,11 @@
 
 use sittir_core::arena::{HydrateNode, RecordCells, ROW_FIELD_BITS};
 use sittir_core::engine::{node_at_index, EngineGrammar};
-use sittir_core::layout::LayoutWorkCounter;
+use sittir_core::layout::{LayoutWorkCounter, NodeLayout};
 use sittir_core::nodes::{for_each_edge_child, Kid, Nodes, RecordNodes, Step, TreeNodes, Visit};
 use sittir_core::options::{ResolvedOptions, Side};
-use sittir_core::read::{descendant_count, Depth, LentCursor};
+use sittir_core::prepare::Prepare;
+use sittir_core::read::{descendant_count, Depth, HasLayout, LentCursor};
 use sittir_core::tree_sitter;
 use sittir_core::trivia_table::DepthMembers;
 use sittir_core::types::NodeIndex;
@@ -80,7 +81,10 @@ struct Held {
 /// holds-an-error as the tree's own `is_error` and `has_error` give them,
 /// an `ERROR` itself included; and what its nodes held, counted into
 /// `held`.
-fn backers_agree<G: EngineGrammar, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: ResolvedOptions, source: &str, held: &mut Held) {
+fn backers_agree<G: EngineGrammar, N: HydrateNode + RecordCells + Prepare + HasLayout<Option<Box<NodeLayout<G::Trivia>>>>>(name: &str, grammar: G, options: ResolvedOptions, source: &str, held: &mut Held)
+where
+    G::Trivia: PartialEq,
+{
     let tree = parsed(grammar, options, source);
     let parity = tree.backer_parity::<N>().unwrap_or_else(|refusal| panic!("{name} {source:?}: a whole read: {refusal}"));
     assert_eq!((parity.differing, parity.first), (0, None), "{name} {source:?}: the backers differ: {parity:?}");
@@ -102,7 +106,10 @@ fn backers_agree<G: EngineGrammar, N: HydrateNode + RecordCells>(name: &str, gra
 }
 
 /// What every fixture tree of `name` held, each checked by `backers_agree`.
-fn grammar_agrees<G: EngineGrammar + Copy, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> Held {
+fn grammar_agrees<G: EngineGrammar + Copy, N: HydrateNode + RecordCells + Prepare + HasLayout<Option<Box<NodeLayout<G::Trivia>>>>>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> Held
+where
+    G::Trivia: PartialEq,
+{
     let mut held = Held::default();
     for source in fixtures(name) {
         backers_agree::<G, N>(name, grammar, options(), &source, &mut held);

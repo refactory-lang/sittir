@@ -6,6 +6,8 @@ import type {
 	PortableContainer,
 	PortableDecimalParts,
 	PortableFlagStep,
+	PortableSpelledFact,
+	PortableSpelling,
 	PortableKeyedMount,
 	PortableMemberStep,
 	PortableMount,
@@ -14,10 +16,12 @@ import type {
 	PortableSeat,
 	PortableSlotStep,
 	PortableStructure,
+	PortableTemplate,
 	PortableValueBuild
 } from '@sittir/types';
 import { hasKind } from './classify.ts';
-import { textBuilt, tokenKind, tokenText } from './facts.ts';
+import { leafSeatOf, spells, textBuilt, tokenKind, tokenText } from './facts.ts';
+import { vocabularyPathFeatures } from './vocabulary-paths.ts';
 
 export interface PortableBuildContext {
 	readonly language: string;
@@ -25,6 +29,7 @@ export interface PortableBuildContext {
 	readonly builders: object;
 	readonly kindName: (kind: number) => string | undefined;
 	readonly readsAs: (path: string, node: { readonly $type: number }) => boolean;
+	readonly spellingOf: (kind: number, fact: string, item: unknown) => string | undefined;
 }
 
 type Builder = (...input: readonly unknown[]) => unknown;
@@ -149,7 +154,7 @@ const integral = (value: number | bigint): boolean => typeof value === 'bigint' 
 const spelledValue = (value: PortableStructure['$value']): string =>
 	typeof value === 'string' ? `"${value}"` : typeof value === 'bigint' ? `${value}n` : Object.is(value, -0) ? '-0' : String(value);
 
-export function portableBuilder({ language, table, builders, kindName, readsAs }: PortableBuildContext): (structure: PortableStructure) => unknown {
+export function portableBuilder({ language, table, builders, kindName, readsAs, spellingOf }: PortableBuildContext): (structure: PortableStructure) => unknown {
 	const nameOf = (kind: number): string => kindName(kind) ?? `kind ${kind}`;
 	const builderAt = (key: string): Builder => {
 		const builder = key.split('.').reduce<unknown>((at, segment) => (at as Record<string, unknown> | undefined)?.[segment], builders);
@@ -228,12 +233,6 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 		const keyed = into === undefined ? placed : { ...placed, key: into.key, ...(Object.keys(beside).length === 0 ? {} : { beside }) };
 		return head?.mounted === undefined ? keyed : { ...keyed, mount: head };
 	};
-	const patterns = new WeakMap<NonNullable<PortableSeat['pattern']>, RegExp>();
-	const spells = (seat: PortableSeat, text: string): boolean => {
-		if (seat.pattern === undefined) return true;
-		const regex = patterns.get(seat.pattern) ?? patterns.set(seat.pattern, new RegExp(seat.pattern.source, seat.pattern.flags)).get(seat.pattern)!;
-		return regex.test(text);
-	};
 
 	return (root: PortableStructure): unknown => {
 		const picks = new WeakMap<object, Map<readonly PortableSeat[] | undefined, Picked | undefined>>();
@@ -266,10 +265,43 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const build = valueBuildOf(structure);
 			if (build !== undefined && structure.$value !== undefined)
 				throw new Error(`portable build: ${structure.$path} builds only ${Object.keys(build).join(' and ')} values in ${language}, not ${spelledValue(structure.$value)}`);
+			const feature = Object.hasOwn(vocabularyPathFeatures, structure.$path) ? vocabularyPathFeatures[structure.$path] : undefined;
+			if (feature !== undefined && !(table.features ?? []).includes(feature))
+				throw new Error(`portable build: ${structure.$path} is a path of ${feature}, which ${language} lacks`);
 			throw new Error(`portable build: ${structure.$path} is not a path ${language} builds`);
 		};
 		const slotsOf = (seats: readonly PortableSeat[]): string => [...new Set(seats.map(({ at: [holder, key] }) => `${nameOf(holder)}.${key}`))].sort().join(', ');
 		const ownedBy = (seat: PortableSeat): ReadonlySet<string> => new Set(within(seat).flatMap((container) => (container.members ?? []).map((member) => member.name)));
+		const factsSet = (arm: PortableBuildArm, structure: PortableStructure): readonly PortableSpelledFact[] =>
+			(arm.facts ?? []).filter((fact) => fact.flag === undefined || (structure.$flags ?? []).includes(fact.flag));
+		const spelledIn = new WeakMap<object, readonly { readonly member: string; readonly index: number | undefined; readonly item: PortableStructure }[]>();
+		const spellingTexts = new WeakMap<PortableSpelling, string | undefined>();
+		const memberAt = (seat: PortableSeat, name: string): PortableMemberStep | undefined =>
+			within(seat)
+				.flatMap((container) => container.members ?? [])
+				.find((member) => member.name === name);
+		const spellingText = (fact: PortableSpelledFact, spelling: PortableSpelling, kind: number, seat: PortableSeat): string | undefined => {
+			if (spelling.holes !== undefined) return undefined;
+			if (!spellingTexts.has(spelling)) spellingTexts.set(spelling, spellingOf(kind, fact.name, build(spelling.item, memberAt(seat, fact.member)?.seats).value));
+			return spellingTexts.get(spelling);
+		};
+		const filledAt = (item: PortableStructure, [key, ...rest]: readonly string[], text: string): PortableStructure =>
+			({ ...item, [key!]: rest.length === 0 ? text : filledAt((item[key!] ?? {}) as PortableStructure, rest, text) }) as PortableStructure;
+		const spelledItem = (fact: PortableSpelledFact, structure: PortableStructure, kind: number, seat: PortableSeat): PortableStructure => {
+			const spelling = structure.$at?.[fact.name]?.spelling;
+			const chosen = spelling === undefined ? fact.spellings[0]! : fact.spellings.find((candidate) => spellingText(fact, candidate, kind, seat) === spelling);
+			if (chosen === undefined) throw new Error(`portable build: ${structure.$path}'s ${fact.name} has no ${language} spelling ${JSON.stringify(spelling)}`);
+			return Object.entries(chosen.holes ?? {}).reduce((item, [hole, keys]) => {
+				const text = structure[hole];
+				if (typeof text !== 'string') throw new Error(`portable build: ${structure.$path} spells its ${fact.name} from ${hole}, which is missing`);
+				return filledAt(item, keys, text);
+			}, chosen.item);
+		};
+		const withSpelled = (held: unknown, spelled: readonly { readonly index: number | undefined; readonly item: PortableStructure }[]): unknown[] => {
+			const items = held === undefined ? [] : [...listOf(held)];
+			for (const { index, item } of spelled.filter((at) => at.index !== undefined).sort((a, b) => a.index! - b.index!)) items.splice(Math.min(index!, items.length), 0, item);
+			return [...spelled.flatMap(({ index, item }) => (index === undefined ? [item] : [])), ...items];
+		};
 		const seatOf = (arm: PortableBuildArm, seats: readonly PortableSeat[], structure?: PortableStructure): PortableSeat | undefined => {
 			const fitting = seats.filter(
 				(seat) =>
@@ -277,11 +309,10 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 					seat.kinds.includes(arm.kind)
 			);
 			if (structure === undefined || fitting.length < 2) return fitting[0];
-			const stated = memberKeys(structure).filter((name) => structure[name] !== undefined && fitting.some((seat) => ownedBy(seat).has(name)));
+			const named = [...memberKeys(structure).filter((name) => structure[name] !== undefined), ...factsSet(arm, structure).map((fact) => fact.member)];
+			const stated = named.filter((name) => fitting.some((seat) => ownedBy(seat).has(name)));
 			return fitting.find((seat) => stated.every((name) => ownedBy(seat).has(name))) ?? fitting[0];
 		};
-		const leafSeatOf = (value: string, seats: readonly PortableSeat[]): PortableSeat | undefined =>
-			seats.find((seat) => seat.leaf !== undefined && spells(seat, value)) ?? seats.find((seat) => seat.leaf !== undefined);
 		const textOf = (value: string, seats: readonly PortableSeat[]): unknown => {
 			const leaf = leafSeatOf(value, seats)?.leaf;
 			return leaf === undefined ? value : leafOf(leaf, value);
@@ -476,7 +507,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				const fill = (container: PortableContainer): Readonly<Record<string, unknown>> =>
 					Object.fromEntries(
 						(container.members ?? []).flatMap((owned) => {
-							const held = value[owned.name];
+							const spelled = (spelledIn.get(value) ?? []).filter((at) => at.member === owned.name);
+							const held = spelled.length === 0 ? value[owned.name] : withSpelled(value[owned.name], spelled);
 							if (held === undefined) return [];
 							if (owned.steps.length !== 1) throw new Error(`portable build: ${value.$path}'s ${owned.name} sits ${owned.steps.length} steps into ${container.builder}`);
 							if (!admits(owned, held)) refuseValue(value.$path, owned.name, held, [owned]);
@@ -645,16 +677,16 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				const texts = listOf(structure[name]).filter((item) => typeof item === 'string');
 				return texts.length === 0 || routesOf(arm, name).some((route) => texts.every((text) => seats(route, text)));
 			});
-		const templated = (arm: PortableBuildArm, structure: PortableStructure): string | undefined => {
-			const template = arm.template;
-			if (template === undefined || structure[template.member] !== undefined) return undefined;
+		const spell = (template: PortableTemplate, structure: PortableStructure): string => {
 			let at = 0;
-			return template.pattern.replaceAll('${string}', () => {
+			const text = template.pattern.replaceAll('${string}', () => {
 				const hole = template.holes[at++]!;
 				const filled = structure[hole];
 				if (typeof filled !== 'string') throw new Error(`portable build: ${structure.$path} spells ${template.member} from ${hole}, which is missing`);
 				return filled;
 			});
+			if (!new RegExp(template.match, 'u').test(text)) throw new Error(`portable build: ${structure.$path} spells ${template.member} ${JSON.stringify(text)}, which ${template.match} does not match`);
+			return text;
 		};
 
 		const build = (structure: PortableStructure, seats: readonly PortableSeat[] | undefined, host?: Frame): Built => {
@@ -666,9 +698,19 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const frame = arm.mounted === undefined ? top : enter(top, arm.builder!, arm.mounted, true)?.frame;
 			if (frame === undefined) throw new Error(`portable build: ${structure.$path} builds through ${arm.builder}, which seats ${nameOf(arm.kind)} in a holder it has none of`);
 			for (const step of arm.presets) preset(frame, step, structure.$path);
+			const facts = factsSet(arm, structure);
+			const unset = Object.keys(structure.$at ?? {}).filter((name) => !facts.some((fact) => fact.name === name));
+			if (unset.length > 0) throw new Error(`portable build: ${structure.$path}: $at names ${unset.join(', ')}, which it does not set`);
+			if (facts.length > 0) {
+				const unheld = facts.find((fact) => seat === undefined || !ownedBy(seat).has(fact.member));
+				if (unheld !== undefined)
+					throw new Error(`portable build: ${structure.$path}'s ${unheld.name} is spelled in its container's ${unheld.member}, which ${seat === undefined ? 'a structure built on its own' : 'its seat'} has none of`);
+				spelledIn.set(structure, facts.map((fact) => ({ member: fact.member, index: structure.$at?.[fact.name]?.index, item: spelledItem(fact, structure, arm.kind, seat!) })));
+			}
 			const listed: (readonly [string, PortableFlagStep])[] = [];
 			for (const flag of structure.$flags ?? []) {
 				const steps = arm.flags[flag];
+				if (steps === undefined && facts.some((fact) => fact.flag === flag)) continue;
 				if (steps === undefined && !arm.when.some((test) => 'flag' in test && test.flag === flag && test.set))
 					throw new Error(`portable build: ${structure.$path}: ${flag} is not a flag of ${nameOf(arm.kind)}`);
 				for (const step of steps?.presets ?? []) preset(frame, step, structure.$path);
@@ -677,17 +719,23 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			}
 			const sole = arm.sole === undefined ? undefined : structure[arm.sole.member];
 			if (arm.sole !== undefined && Array.isArray(sole) && sole.length === 1) frame.delimiter = (frame.delimiter ?? 0) | arm.sole.delimiter;
-			for (const [flag, steps] of Object.entries(arm.flags))
-				if (!(structure.$flags ?? []).includes(flag)) for (const step of steps.unset ?? []) preset(frame, step, structure.$path);
-			const holes = new Set(arm.template?.holes ?? []);
+			for (const [flag, steps] of Object.entries(arm.flags)) {
+				if ((structure.$flags ?? []).includes(flag)) continue;
+				for (const step of steps.unset ?? []) preset(frame, step, structure.$path);
+				const text = steps.template === undefined ? undefined : structure[steps.template.member];
+				if (typeof text === 'string' && new RegExp(steps.template!.match, 'u').test(text))
+					throw new Error(`portable build: ${structure.$path}: ${steps.template!.member} ${JSON.stringify(text)} reads as ${flag}; set ${flag} and state ${steps.template!.holes.join(', ')}`);
+			}
+			const spelledFlags = (structure.$flags ?? []).flatMap((flag) => arm.flags[flag]?.template ?? []);
+			const holes = new Set([...(arm.template?.holes ?? []), ...spelledFlags.flatMap((template) => template.holes)]);
 			const owned = seat === undefined ? new Set<string>() : ownedBy(seat);
 			const emptied = new Set(arm.when.flatMap((test) => ('empty' in test ? test.empty : [])));
 			const values = new Map<string, unknown>(
 				memberKeys(structure).flatMap((name) => (holes.has(name) || owned.has(name) || emptied.has(name) || structure[name] === undefined ? [] : [[name, structure[name]] as const]))
 			);
 			for (const name of arm.empty ?? []) if (!values.has(name) && !holes.has(name) && !owned.has(name)) values.set(name, []);
-			const spelled = templated(arm, structure);
-			if (spelled !== undefined) values.set(arm.template!.member, spelled);
+			if (arm.template !== undefined && structure[arm.template.member] === undefined) values.set(arm.template.member, spell(arm.template, structure));
+			for (const template of spelledFlags) values.set(template.member, spell(template, structure));
 			const scalar = scalarOf(structure);
 			if (arm.scalar !== undefined && scalar !== undefined) {
 				if (typeof scalar === 'number' && !Number.isFinite(scalar)) throw new Error(`portable build: ${structure.$path}: no ${language} literal spells ${spelledValue(scalar)}`);

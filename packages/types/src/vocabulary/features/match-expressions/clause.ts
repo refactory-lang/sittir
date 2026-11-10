@@ -1,28 +1,43 @@
-import type { GrammarContext } from '../../context.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Clause {
 	export namespace Case {
-		export interface Match<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Case<G>> {
+		export interface Match<G extends GrammarMap, K extends Under<'clause.case.match'> = 'clause.case.match'> extends SubKindOf<V.Clause.Case<G, K>> {
 			// claimed by pr
-			readonly $kind: 'clause.case.match';
-			readonly body: G['slots']['clause.case.match']['body'];
-			readonly guard?: G['slots']['clause.case.match']['guard'];
-			readonly pattern: G['pattern'];
-		}
-	}
-	export interface Let<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
-		// claimed by r
-		readonly $kind: 'clause.let';
-		readonly pattern?: G['slots']['clause.let']['pattern'];
-		readonly value?: G['slots']['clause.let']['value'];
-	}
-	export namespace Let {
-		export interface Chain<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Let<G>> {
-			// claimed by r
-			readonly $kind: 'clause.let.chain';
-			readonly left: G['slots']['clause.let.chain']['left'];
-			readonly rights?: G['slots']['clause.let.chain']['rights'][];
+			readonly $path: K;
+			readonly body: Slot<
+				G,
+				K,
+				'body',
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+				| V.Statement.Any<G>
+				| V.Declaration.TypeAlias<G>
+				| V.Type.Primitive<G>
+			>;
+			readonly guard?: Slot<
+				G,
+				K,
+				'guard',
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+				| V.Clause.Let.Any<G>
+				| V.Pattern.Rest<G>
+				| V.Statement.Any<G>
+			>;
+			readonly pattern: Slot<
+				G,
+				K,
+				'pattern',
+				| V.Pattern.Any<G>
+				| V.Expression.Block.Const<G>
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+			>;
 		}
 	}
 }

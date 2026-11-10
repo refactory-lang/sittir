@@ -1,9 +1,8 @@
-import type { GrammarContext } from './context.ts';
-export interface Type<G extends GrammarContext<G>> {
+import type { GrammarMap } from './map.ts';
+import type { Under } from './utils.ts';
+export interface Type<G extends GrammarMap, K extends Under<'type'> = 'type'> {
 	// claimed by p
-	readonly $kind: 'type';
-	readonly content?: G['slots']['type']['content'];
-	// prt only
+	readonly $path: K;
 }
 
 export interface TypeSynonyms {

@@ -14,9 +14,15 @@
 (class_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
 (class_definition body: (suite_block (block (function_definition) @declaration.method)))
 (class_definition body: (suite_block (block (decorated_definition definition: (function_definition) @declaration.method))))
+((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration return_type: (_) @type) @declaration.property.getter) (#eq? @_fact "property"))
+((decorated_definition_class_declaration (decorator (attribute object: (identifier) @_object attribute: (identifier) @_fact)) definition: (method_declaration name: (identifier) @name return_type: (_) @returnType) @declaration.property.setter) (#eq? @_object @name) (#eq? @_fact "setter"))
+((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration) @declaration.method.static) (#eq? @_fact "staticmethod"))
+((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration) @declaration.method.override) (#eq? @_fact "override"))
+((decorated_definition_class_declaration (decorator (attribute object: (identifier) @_module attribute: (identifier) @_fact)) definition: (method_declaration) @declaration.method.override) (#eq? @_module "typing") (#eq? @_fact "override"))
 ((method_declaration name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
 (constructor_declaration) @declaration.constructor
 ((method_declaration name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))
+((method_declaration name: (identifier) @name) @declaration.method.privateName (#match? @name "^__(?<name>.*[^_]_?)$"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)
 (typed_parameter) @declaration.parameter.typed
 (default_parameter value: (_)? @default) @declaration.parameter.default
@@ -36,6 +42,8 @@
 
 ; ── statement ──────────────────────────────────────────────────────────────────
 (block) @statement.block
+(suite_inline) @statement.block
+(suite_inline elements: (_) @statements)
 (if_statement) @statement.if
 (for_statement) @statement.loop.for_each
 (while_statement) @statement.loop.while
@@ -175,6 +183,7 @@
 (named_expression name: (_) @left value: (_) @right) @expression.assignment
 (conditional_expression body: (_)? @consequence) @expression.conditional
 (attribute attribute: (_) @property) @expression.attribute
+((attribute attribute: (identifier) @property) @expression.attribute.privateName (#match? @property "^__(?<property>.*[^_]_?)$"))
 (subscript value: (_) @object (subscripts) @index) @expression.subscript
 (subscripts ",") @expression.collection.tuple.bare
 (subscripts subscript: (_) @elements)
@@ -238,12 +247,13 @@
 (type) @type
 (generic_type) @type.generic
 (generic_type (type_parameter (_) @typeArguments))
+((generic_type (identifier) @_n (type_parameter (types . (type) @type .))) @type.nullable (#eq? @_n "Optional"))
 (union_type) @type.union
 (constrained_type) @type.constrained
 (member_type) @identifier.qualified
 (member_type base_type: (_) @qualifier)
 (splat_type) @type.splat
-(splat_type name: (_) @type)
+(splat_type type: (_) @type)
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string [(interpolation) (string_content)]* @elements) @literal.string

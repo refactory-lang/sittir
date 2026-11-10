@@ -165,10 +165,6 @@
 			"field": "lbrack_after"
 		},
 		{
-			"kind": "slot",
-			"name": "attributes"
-		},
-		{
 			"kind": "if",
 			"arms": [
 				{
@@ -221,10 +217,6 @@
 		{
 			"kind": "seam",
 			"field": "lbrack_after"
-		},
-		{
-			"kind": "slot",
-			"name": "attributes"
 		},
 		{
 			"kind": "slot",
@@ -589,14 +581,14 @@
 			"field": "attribute_item_after"
 		}
 	],
-	"attributed_argument": [
+	"attributed_element": [
 		{
 			"kind": "seam",
-			"field": "attributed_argument_before"
+			"field": "attributed_element_before"
 		},
 		{
 			"kind": "slot",
-			"name": "attribute_item"
+			"name": "attributes"
 		},
 		{
 			"kind": "slot",
@@ -604,7 +596,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "attributed_argument_after"
+			"field": "attributed_element_after"
 		}
 	],
 	"attributed_enum_variant": [
@@ -2216,20 +2208,6 @@
 		{
 			"kind": "seam",
 			"field": "expression_statement_with_semi_after"
-		}
-	],
-	"expressions": [
-		{
-			"kind": "seam",
-			"field": "expressions_before"
-		},
-		{
-			"kind": "slot",
-			"name": "item"
-		},
-		{
-			"kind": "seam",
-			"field": "expressions_after"
 		}
 	],
 	"extension_declaration_body": [
@@ -7612,10 +7590,6 @@
 		},
 		{
 			"kind": "slot",
-			"name": "attributes"
-		},
-		{
-			"kind": "slot",
 			"name": "elements"
 		},
 		{
@@ -7629,6 +7603,20 @@
 		{
 			"kind": "seam",
 			"field": "tuple_expression_after"
+		}
+	],
+	"tuple_expression_elements": [
+		{
+			"kind": "seam",
+			"field": "tuple_expression_elements_before"
+		},
+		{
+			"kind": "slot",
+			"name": "item"
+		},
+		{
+			"kind": "seam",
+			"field": "tuple_expression_elements_after"
 		}
 	],
 	"tuple_pattern": [

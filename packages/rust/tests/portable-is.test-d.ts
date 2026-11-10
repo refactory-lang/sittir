@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import rust from '../src/index.ts';
-import type { PortableIds, PortableIs } from '../src/portable.ts';
+import type { PortableIds, PortableIs } from '../src/portable/index.ts';
 import type * as T from '../src/types.ts';
 import { TSKindId } from '../src/types.ts';
 

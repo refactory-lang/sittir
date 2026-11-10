@@ -1,11 +1,11 @@
-import type { GrammarContext } from '../../context.ts';
-import type { Flag, SubKindOf } from '../../utils.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
+import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Literal {
-	export interface Character<G extends GrammarContext<G>> extends SubKindOf<V.Literal<G>> {
+	export interface Character<G extends GrammarMap, K extends Under<'literal.character'> = 'literal.character'> extends SubKindOf<V.Literal<G, K>> {
 		// claimed by r
-		readonly $kind: 'literal.character';
+		readonly $path: K;
 		readonly byte?: Flag;
-		readonly content?: G['slots']['literal.character']['content'];
+		readonly content?: Slot<G, K, 'content', string>;
 	}
 }

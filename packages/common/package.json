@@ -33,6 +33,11 @@
 			"import": "./dist/engine-boundary.js",
 			"default": "./dist/engine-boundary.js"
 		},
+		"./native-binding": {
+			"types": "./dist/native-binding.d.ts",
+			"import": "./dist/native-binding.js",
+			"default": "./dist/native-binding.js"
+		},
 		"./blank-arm": {
 			"types": "./src/blank-arm.ts",
 			"import": "./src/blank-arm.ts",

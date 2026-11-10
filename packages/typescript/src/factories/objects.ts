@@ -107,23 +107,24 @@ export const _reservedWords_buildIdentifier: ReadonlySet<string> = new Set<strin
 export const _reservedWordset_properties: ReadonlySet<string> = new Set<string>([]);
 export const _leafRe_buildUnescapedDoubleStringFragment = /^(?:(?:[^"\\\r\n]+))$/u;
 export const _leafRe_buildUnescapedSingleStringFragment = /^(?:(?:[^'\\\r\n]+))$/u;
-export const _leafRe_buildRegexPattern = /^(?:(?:(?:\[(?:(?:\\(?:.)|(?:[^\]\n\\])))*\]|\\(?:.)|(?:[^/\\[\n])))+)$/u;
+export const _leafRe_buildRegexPattern =
+	/^(?:(?:(?:\[(?:(?:\\(?:[^\x0A])|(?:[^\]\n\\])))*\]|\\(?:[^\x0A])|(?:[^/\\[\n])))+)$/u;
 export const _leafRe_buildRegexFlags = /^(?:(?:[a-z]+))$/u;
 export const _leafRe_buildIdentifier =
-	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
-export const _leafRe_buildNumberDecimal = /^(?:(?:\d(_?\d)*))$/u;
-export const _leafRe_buildHtmlComment = /^(?:(?:<!--[\s\S]*?-->))$/u;
+	/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
+export const _leafRe_buildNumberDecimal = /^(?:(?:[0-9](_?[0-9])*))$/u;
+export const _leafRe_buildHtmlComment = /^(?:(?:<!--[\x09-\x0D\x20\x00-\x08\x0E-\x1F\x21-\u{10FFFF}]*?-->))$/u;
 export const _leafRe_buildJsxText = /^(?:(?:[^{}<>]+))$/u;
 export const _leafRe_buildTemplateChars = /^(?:(?:[^`\\$]+))$/u;
-export const _slotRe_buildHashBangLine_content = /^(?:.*)$/u;
+export const _slotRe_buildHashBangLine_content = /^(?:[^\x0A]*)$/u;
 export const _slotRe_buildEscapeSequence_content =
 	/^(?:(?:(?:[^xu0-7])|(?:[0-7]{1,3})|(?:x[0-9a-fA-F]{2})|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:[\r?][\n\u2028\u2029])))$/u;
 export const _slotRe_buildPrivatePropertyIdentifier_content = _leafRe_buildIdentifier;
 export const _slotRe_buildCommentLine_content = /^(?:(?:[^\r\n\u2028\u2029]*))$/u;
 export const _slotRe_buildCommentBlock_content = /^(?:(?:([^*]|\*+[^*/])*\**))$/u;
 export const _slotRe_buildNumberHex_radix_prefix = /^(?:0x|0X)$/u;
-export const _slotRe_buildNumberHex_content = /^(?:(?:[\da-fA-F](_?[\da-fA-F])*))$/u;
-export const _slotRe_buildNumberFloatPoint_integer = /^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?))$/u;
+export const _slotRe_buildNumberHex_content = /^(?:(?:[0-9a-fA-F](_?[0-9a-fA-F])*))$/u;
+export const _slotRe_buildNumberFloatPoint_integer = /^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:[0-9](_?[0-9])*))?))$/u;
 export const _slotRe_buildNumberFloatPoint_fraction = _leafRe_buildNumberDecimal;
 export const _slotRe_buildNumberFloatPoint_marker = /^(?:e|E)$/u;
 export const _slotRe_buildNumberFloatPoint_exponent_sign = /^(?:-|\+)$/u;
@@ -140,14 +141,14 @@ export const _slotRe_buildNumberBinary_radix_prefix = /^(?:0b|0B)$/u;
 export const _slotRe_buildNumberBinary_content = /^(?:(?:[0-1](_?[0-1])*))$/u;
 export const _slotRe_buildNumberOctal_radix_prefix = /^(?:0o|0O)$/u;
 export const _slotRe_buildNumberOctal_content = /^(?:(?:[0-7](_?[0-7])*))$/u;
-export const _slotRe_buildNumberBigintHex_content = /^(?:(?:0x|0X)(?:[\da-fA-F](_?[\da-fA-F])*))$/u;
+export const _slotRe_buildNumberBigintHex_content = /^(?:(?:0x|0X)(?:[0-9a-fA-F](_?[0-9a-fA-F])*))$/u;
 export const _slotRe_buildNumberBigintBinary_content = /^(?:(?:0b|0B)(?:[0-1](_?[0-1])*))$/u;
 export const _slotRe_buildNumberBigintOctal_content = /^(?:(?:0o|0O)(?:[0-7](_?[0-7])*))$/u;
 export const _slotRe_buildNumberBigintDecimal_content = _leafRe_buildNumberDecimal;
 export const _delimited_buildCommentBlock: DelimitedSpec = {
 	kind: 'comment_block',
 	id: TSKindId.CommentBlock as const,
-	excluded: /[\u{a}\u{d}\u{2a}\u{2028}-\u{2029}]/u,
+	excluded: /[\u{a}\u{d}\u{2a}]/u,
 	open: '/*',
 	close: '*/',
 	host: '$r',
@@ -9630,38 +9631,39 @@ function buildTypeQuerySubscriptExpression$with$index(this: Received<Held>, ...a
 	return buildTypeQuerySubscriptExpression$with(receiverOf(this, '$with.index'), 'index', args);
 }
 
-export function buildTypeQueryCallExpression<
-	FunctionSlot extends T.TypeQueryCallExpression.Config['function'],
-	ArgumentsSlot extends T.TypeQueryCallExpression.Config['arguments']
->(
-	config: RefusingConfig<T.TypeQueryCallExpression.Config, { function: FunctionSlot; arguments: ArgumentsSlot }>
-): T.TypeQueryCallExpression.Bound;
-export function buildTypeQueryCallExpression(
-	config: T.TypeQueryCallExpression.Config
-): T.TypeQueryCallExpression.Bound {
-	currentHandle()?.admit(TSKindId.TypeQueryCallExpression, [config]);
-	const _function = rejectReservedText(
-		rejectKeywordText(
-			kindIdStorage<NonNullable<T.TypeQueryCallExpression['_function']>>(config.function),
-			'TypeQueryCallExpression.function',
-			TSKindId.Identifier,
-			['import']
-		),
-		'TypeQueryCallExpression.function',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _arguments = orDefault(config.arguments, () => buildArguments());
+export function buildTypeQueryCallExpression<V extends Admit<T.Arguments>>(
+	value: V & RefuseUndeclared<V>
+): ReturnType<typeof _buildTypeQueryCallExpression>;
+export function buildTypeQueryCallExpression<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
+	...children: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildTypeQueryCallExpression>;
+export function buildTypeQueryCallExpression(...args: unknown[]) {
+	if (args.length === 0) {
+		return _buildTypeQueryCallExpression(buildArguments() as Parameters<typeof _buildTypeQueryCallExpression>[0]);
+	}
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+		return _buildTypeQueryCallExpression(args[0] as Parameters<typeof _buildTypeQueryCallExpression>[0]);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Arguments as const);
+	return prebuilt
+		? _buildTypeQueryCallExpression(args[0] as Parameters<typeof _buildTypeQueryCallExpression>[0])
+		: _buildTypeQueryCallExpression(
+				(buildArguments as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTypeQueryCallExpression>[0]
+			);
+}
+function _buildTypeQueryCallExpression(value: Admit<T.Arguments>): T.TypeQueryCallExpression.Bound {
+	const _arguments = value;
 	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'type_query_call_expression', { function: _function, arguments: _arguments });
+	if (handle !== undefined) admitChildren(handle, 'type_query_call_expression', { arguments: _arguments });
 	const node = {
 		$type: TSKindId.TypeQueryCallExpression as const,
-		_function,
 		_arguments,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		function: () => hydrateStoredSlot(node, '_function'),
 		arguments: () => hydrateStoredSlot(node, '_arguments'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -9670,35 +9672,22 @@ export function buildTypeQueryCallExpression(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		function: buildTypeQueryCallExpression$with$function,
-		arguments: buildTypeQueryCallExpression$with$arguments,
-		[RECEIVER]: node
-	};
+	node.$with = { arguments: buildTypeQueryCallExpression$with$arguments, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypeQueryCallExpression.Bound;
 }
 
 function buildTypeQueryCallExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const config = node[INPUT] as T.TypeQueryCallExpression.Config;
 	switch (setter) {
-		case 'function':
-			return applySetter(args, (value: Admit<NonNullable<T.TypeQueryCallExpression.Config>['function']>) =>
-				rebuilt(node, handle, () => buildTypeQueryCallExpression({ ...config, function: value }))
-			);
 		case 'arguments':
 			return applySetter(args, (value: Admit<T.Arguments>) =>
-				rebuilt(node, handle, () => buildTypeQueryCallExpression({ ...config, arguments: value }))
+				rebuilt(node, handle, () => _buildTypeQueryCallExpression(value))
 			);
 	}
 	throw new Error(`type_query_call_expression has no $with.${setter}`);
-}
-function buildTypeQueryCallExpression$with$function(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildTypeQueryCallExpression$with(receiverOf(this, '$with.function'), 'function', args);
 }
 function buildTypeQueryCallExpression$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildTypeQueryCallExpression$with(receiverOf(this, '$with.arguments'), 'arguments', args);

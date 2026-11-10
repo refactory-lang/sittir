@@ -629,10 +629,9 @@ export const records = {
 		index: { word: 7, width: 15, inline: 14, forms: 11, built: 4 }
 	},
 	TypeQueryCallExpressionNode: {
-		words: 9,
-		builtWords: 4,
-		function: { word: 2, width: 4, forms: 3, built: 2 },
-		arguments: { word: 6, width: 3, inline: 3, forms: 8, built: 3 }
+		words: 5,
+		builtWords: 3,
+		arguments: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
 	},
 	TypeQueryInstantiationExpressionNode: {
 		words: 11,

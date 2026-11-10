@@ -432,21 +432,6 @@ export const arguments_$items = <PF extends (...args: never[]) => unknown, CF ex
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 
-export const tupleExpression$elements = <
-	PF extends (config: never) => unknown,
-	CF extends (...args: never[]) => unknown
->(
-	parent: PF,
-	child: CF
-) => {
-	return (config?: unknown, options?: unknown): ReturnType<PF> => {
-		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
-		const seat = _o(config)['elements'];
-		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
-		return _fwd<ReturnType<PF>>(parent, { ..._o(config), elements: _c(child)(...seat) }, options);
-	};
-};
-
 export const lastMatchArm$flatten$match =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config?: unknown, options?: unknown): ReturnType<PF> => {
@@ -530,33 +515,6 @@ export const parametersElements$items = <
 	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'content']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
-};
-
-export const arrayExpressionListElements$items = <
-	PF extends (...args: never[]) => unknown,
-	CF extends (...args: never[]) => unknown
->(
-	parent: PF,
-	child: CF
-) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'expression']);
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
-};
-
-export const arrayExpressionList$elements = <
-	PF extends (config: never) => unknown,
-	CF extends (...args: never[]) => unknown
->(
-	parent: PF,
-	child: CF
-) => {
-	return (config?: unknown, options?: unknown): ReturnType<PF> => {
-		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
-		const seat = _o(config)['elements'];
-		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
-		return _fwd<ReturnType<PF>>(parent, { ..._o(config), elements: _c(child)(...seat) }, options);
-	};
 };
 
 export const implItemBody$positiveClause =

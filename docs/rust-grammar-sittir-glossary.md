@@ -162,7 +162,7 @@ slot stays permanently empty.
 
 Two positions are covered entirely by this mechanism and therefore have no
 `edits:` entry of their own: call arguments (synthesized as the visible
-`attributed_argument` kind, mirroring `attributed_parameter`) and
+`argument` kind, mirroring `attributed_parameter`) and
 `type_parameters` (via `attributed_type_parameter`, whose `metavariable`
 overlap with `_type` is a derived conflict).
 
@@ -203,22 +203,22 @@ overlap with `_type` is a derived conflict).
 				// comma-separated position.
 ```
 
-### `attributed_argument` (`packages/rust/grammar.sittir.ts:283`)
+### `argument` (`packages/rust/grammar.sittir.ts`)
 
-```text
-				// arguments: each call arg is seq(repeat(attribute_item), _expression).
-				// Synthesize a visible `attributed_argument` kind (mirrors
-				// attributed_parameter / attributed_type_parameter) so the arg list
-				// renders `attributed_argument` items. Replaces the transforms:
-				// field('attributes') collision-patch, which named the attribute but
-				// left `_expression` (the actual args) as an empty `$children` slot.
-				// NOTE: the same `seq(repeat(attribute_item), _expression)` pattern
-				// also appears in array_expression's element list — the body-pattern
-				// replacement aliases BOTH sites to `attributed_argument` (call args
-				// and array elements share the same structural unit). The array_expression
-				// transform `{ '2/(_expression)': field('elements') }` is removed so the
-				// elements stay in the bare seq form that this pattern can match.
-```
+A `groups:` entry: each call argument is `seq(repeat(attribute_item),
+_expression)`, and the group makes that pair one visible `argument` node, as
+`attributed_parameter` does for parameters. Call arguments are its only
+site. The bindings read an argument with attributes as `argument`, and one
+without as its expression.
+
+### `attributed_element` (`packages/rust/grammar.sittir.ts`)
+
+An array or tuple element with outer attributes: `seq(repeat1(attribute_item),
+field('expression', _expression))`. An element list's item is
+`choice(attributed_element, _expression)`, so the node exists only when an
+element has attributes, and a plain element is its expression. The bindings
+read it as `element.attributed`. Its body needs at least one attribute, so the
+`argument` group, whose body takes none, doesn't absorb it.
 
 ### `attributed_ordered_field` (`packages/rust/grammar.sittir.ts:297`)
 
@@ -335,20 +335,22 @@ overlap with `_type` is a derived conflict).
 				// only with this entry).
 ```
 
-### `array_expression` (`packages/rust/grammar.sittir.ts:413`)
+### `array_expression` (`packages/rust/grammar.sittir.ts`)
 
-```text
-				// array_expression polymorph splits '2/0' (semi) / '2/1' (list).
-				// Only the outer `repeat($.attribute_item)` at pos 1 needs a field
-				// label (the header attributes). The per-element label is no longer
-				// needed — the `attributed_array_element` visible group (see groups:
-				// above) now carries each element's attribute_item(s) + _expression
-				// pair as a self-contained unit, exactly as `attributed_argument`
-				// does for call arguments.
-				// `list` is `arm.default`: a bare list is what most callers mean
-				// by "an array expression", so the flattened `array_expression`
-				// route object is directly callable as that variant.
-```
+Reauthored with `accepts-invalid-syntax`:
+upstream puts a repeat of `attribute_item` after `[`, ahead of both forms,
+so it accepts `[#[a]]` and `[#[a] 1; 3]`. Rust allows an outer attribute
+only before an element of the comma form. rustc rejects `[#[a]]`, and
+`[#[a] 1; 3]` fails the stable feature gate on expression attributes,
+because the repeated operand isn't an attribute position. The rule drops
+that repeat and writes the comma form's list in enrich's form as
+`_array_expression_list_elements`, shown as `array_expression_list_elements`,
+whose item is `choice(attributed_element, _expression)`: an element carries
+its own attributes.
+
+The `edits:` entry splits the choice at `1` into the variants `semi`
+(`1/0`, its operand fielded `element`) and `list` (`1/1`, `arm.default`:
+a bare list is what most callers mean by an array expression).
 
 ### `attribute` (`packages/rust/grammar.sittir.ts:426`)
 
@@ -668,17 +670,16 @@ is an anonymous token not routed to any field.
 Upstream writes the element list inline, with a separator required after the
 first element: `seq(_expression, ','), repeat(seq(_expression, ',')),
 optional(_expression)`. That separator is what makes `(1,)` a tuple and `(1)` a
-parenthesized expression. Enrich reads the run as a `terminated` separated
-list and hoists it as its own kind, and link lifts it to one repeat whose
-single element keeps its separator; nothing about the list is authored.
+parenthesized expression.
 
-The names are the ones enrich derives: the list kind is `expressions`, the
-plural of the element's name, which no other rust list proposes; its item field
-is `item`, as in every list kind, and the owner's slot is `expressions`.
-
-One `edits:` entry is authored: `tuple_expression: { 1: field('attributes') }`
-fields the attribute repeat, which the
-`tuple_expression/attributes:/separator` option site names.
+Reauthored with `rejects-valid-syntax`: upstream gives the tuple one
+repeat of `attribute_item` after `(` and none on its elements, so it
+rejects `(1, #[a] 2)`, which Rust accepts. Rust allows an outer attribute
+before any tuple element. The rule writes the list in enrich's form as
+`_tuple_expression_elements`, shown as `tuple_expression_elements`. Its
+`item` is `choice(attributed_element, _expression)`, as in an array, and the
+tuple's field is `elements`. The separator after the first element is kept, so
+`(1,)` is still a tuple and `(1)` a parenthesized expression.
 
 ### `tuple_type` (`packages/rust/grammar.sittir.ts`)
 

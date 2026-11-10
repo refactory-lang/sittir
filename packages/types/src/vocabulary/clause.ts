@@ -1,8 +1,8 @@
-import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
+import type { GrammarMap, Slot } from './map.ts';
+import type { SubKindOf, Under } from './utils.ts';
 import type * as V from './index.ts';
-export interface Clause<G extends GrammarContext<G>> {
-	readonly $kind: 'clause';
+export interface Clause<G extends GrammarMap, K extends Under<'clause'> = 'clause'> {
+	readonly $path: K;
 }
 
 export interface ClauseSynonyms {
@@ -16,18 +16,12 @@ export interface ClauseSynonyms {
 }
 
 export namespace Clause {
-	export interface Case<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
-		readonly $kind: 'clause.case';
+	export interface Case<G extends GrammarMap, K extends Under<'clause.case'> = 'clause.case'> extends SubKindOf<V.Clause<G, K>> {
+		readonly $path: K;
 	}
-	export interface Else<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
+	export interface Else<G extends GrammarMap, K extends Under<'clause.else'> = 'clause.else'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by prt
-		readonly $kind: 'clause.else';
-		readonly body: G['slots']['clause.else']['body'];
-	}
-	export interface ElseIf<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
-		// claimed by p
-		readonly $kind: 'clause.else_if';
-		readonly condition: G['slots']['clause.else_if']['condition'];
-		readonly consequence: G['slots']['clause.else_if']['consequence'];
+		readonly $path: K;
+		readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>>;
 	}
 }

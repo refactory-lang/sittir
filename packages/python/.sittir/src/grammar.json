@@ -52,7 +52,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "elements",
+          "name": "statements",
           "content": {
             "type": "SYMBOL",
             "name": "simple_statements_elements",
@@ -61,7 +61,7 @@
             }
           },
           "metadata": {
-            "fieldSource": "enriched"
+            "fieldSource": "override"
           }
         },
         {
@@ -2144,12 +2144,17 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "suite_inline",
-          "annotations": {
-            "variant": "inline",
-            "variantOf": "_suite"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "suite_inline",
+            "annotations": {
+              "variant": "inline",
+              "variantOf": "_suite"
+            }
+          },
+          "named": true,
+          "value": "block_statement"
         },
         {
           "type": "SYMBOL",
@@ -4988,8 +4993,17 @@
             "type": "FIELD",
             "name": "type",
             "content": {
-              "type": "SYMBOL",
-              "name": "identifier"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "generic_type"
+                }
+              ]
             },
             "metadata": {
               "fieldSource": "override"
@@ -9264,8 +9278,13 @@
           "value": "indent"
         },
         {
-          "type": "SYMBOL",
-          "name": "block"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "block"
+          },
+          "named": true,
+          "value": "block_statement"
         }
       ],
       "annotations": {
@@ -9801,12 +9820,17 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "suite_inline",
-          "annotations": {
-            "variant": "inline",
-            "variantOf": "_suite"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "suite_inline",
+            "annotations": {
+              "variant": "inline",
+              "variantOf": "_suite"
+            }
+          },
+          "named": true,
+          "value": "block_statement"
         },
         {
           "type": "ALIAS",

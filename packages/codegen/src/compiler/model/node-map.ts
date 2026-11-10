@@ -1,6 +1,5 @@
 import type { VariantChild } from '../variant-structural.ts';
 import type { ExternalRole } from '../../types/ir.ts';
-import { opensLineEnd } from './pattern-automaton.ts';
 import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AnyRule,
@@ -27,12 +26,12 @@ import {
 	transitiveParseKinds
 } from '../../types/rule.ts';
 import { isStringType, realizesEmpty, type EmptinessCtx } from '../../types/runtime-shapes.ts';
-import { DEDENT_TEXT, isDepthText } from '../../dsl/primitives/spacing.ts';
+import { isDepthText } from '../../dsl/primitives/spacing.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import { aliasStorageOf, GLOBAL_WORDSET, reservedWordsetsOf } from '../../dsl/rule-metadata.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import type { KindProvenance } from '../types.ts';
-import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAliasedHiddenStorage, seatedOf, surfaceHiddenOf } from '../../dsl/symbol-table.ts';
+import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAliasedHiddenStorage, parseKindIdOf, seatedOf, surfaceHiddenOf } from '../../dsl/symbol-table.ts';
 import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
 import { armNameOf, undisplayedKindAddress } from '../../dsl/arm-names.ts';
 import { tokenToName } from '../normalize.ts';
@@ -50,16 +49,10 @@ import { wordCharAsciiTable } from '../../util/word-matcher.ts';
 const renderRuleWalker = new RuleWalker<RenderRule>();
 const anyRuleWalker = new RuleWalker<AnyRule>();
 
-export type LineEnd = 'open' | 'closed' | 'dedent' | 'empty' | { readonly symbol: string };
-
 export type EdgeTerminal = { readonly literal: string } | { readonly pattern: string } | 'empty' | { readonly symbol: string };
 
 interface EdgeCtx {
 	readonly edge: 'start' | 'end';
-}
-
-interface LineEndCtx {
-	readonly kind: string;
 }
 
 function ruleEdgeTerminals(rule: AnyRule, ctx: EdgeCtx): EdgeTerminal[] {
@@ -88,20 +81,6 @@ function seqEdgeTerminals(fromEdge: readonly AnyRule[], ctx: EdgeCtx): EdgeTermi
 	const terminals = ruleEdgeTerminals(outer, ctx);
 	if (!terminals.includes('empty')) return terminals;
 	return [...terminals.filter((terminal) => terminal !== 'empty'), ...seqEdgeTerminals(fromEdge.slice(1), ctx)];
-}
-
-function ruleLineEnds(rule: AnyRule, ctx: LineEndCtx): LineEnd[] {
-	return ruleEdgeTerminals(rule, { edge: 'end' }).map((terminal) => {
-		if (terminal === 'empty' || 'symbol' in terminal) return terminal;
-		if ('literal' in terminal) return terminal.literal === DEDENT_TEXT ? 'dedent' : 'closed';
-		const opens = opensLineEnd(terminal.pattern);
-		if (opens === undefined) {
-			throw new Error(
-				`model: kind '${ctx.kind}' pattern ${JSON.stringify(terminal.pattern)} uses regex syntax the pattern automaton does not read.`
-			);
-		}
-		return opens ? 'open' : 'closed';
-	});
 }
 
 function parseKindCollisionKey(diagnostic: ParseKindCollisionDiagnostic): string {
@@ -853,7 +832,7 @@ export function deriveValuesForRule(
 							resolvedKind: rule.name,
 							resolvedKindId: rule.kindId,
 							parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
-							parseKindId: rule.aliasedToId ?? rule.kindId,
+							parseKindId: parseKindIdOf(rule),
 							...armFacts,
 							multiplicity
 						}
@@ -880,7 +859,7 @@ export function deriveValuesForRule(
 						node: { kind: 'unresolved-ref', name: rule.name },
 						storageKindId: rule.kindId,
 						parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
-						parseKindId: rule.aliasedToId ?? rule.kindId,
+						parseKindId: parseKindIdOf(rule),
 						...armFacts,
 						...(rule.copyOf === undefined ? {} : { copyOf: rule.copyOf }),
 						multiplicity
@@ -913,7 +892,7 @@ export function deriveValuesForRule(
 						node: { kind: 'unresolved-ref' as const, name },
 						storageKindId: subRef.kindId,
 						parseKind: { kind: 'unresolved-ref' as const, name: subRef.aliasedTo ?? name },
-						parseKindId: subRef.aliasedToId ?? subRef.kindId,
+						parseKindId: parseKindIdOf(subRef),
 						...armFacts,
 						multiplicity
 					};
@@ -1137,8 +1116,8 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		return this.kindEntry?.id;
 	}
 
-	get lineEnds(): readonly LineEnd[] {
-		return ruleLineEnds(this.rule, { kind: this.kind });
+	get endTerminals(): readonly EdgeTerminal[] {
+		return ruleEdgeTerminals(this.rule, { edge: 'end' });
 	}
 
 	get leadingTerminals(): readonly EdgeTerminal[] {
@@ -1184,6 +1163,8 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	factoryInline: boolean = false;
 
 	triviaInterior: boolean = false;
+
+	foldsFixedWord: boolean = false;
 
 	externalRole?: ExternalRole['role'];
 
@@ -1691,6 +1672,35 @@ export function isLexicalToken(node: AssembledNode | undefined): node is Extract
 
 export function isPatternLeaf(node: AssembledNode): node is AssembledPattern {
 	return node instanceof AssembledPattern;
+}
+
+export function literalLeafText(rule: RenderRule): string | undefined {
+	if (rule.type === STRING) return rule.multiplicity === 'optional' || typeof rule.value !== 'string' ? undefined : rule.value;
+	if (rule.type === SYMBOL) return rule.literal;
+	return undefined;
+}
+
+export interface WrittenWordCtx {
+	readonly nodes: ReadonlyMap<string, AssembledNode>;
+	readonly field: string;
+}
+
+export function writtenWordOf(kind: string, ctx: WrittenWordCtx): string | null | undefined {
+	const { nodes, field } = ctx;
+	const node = nodes.get(kind);
+	if (!(node instanceof AbstractAssembledCompound)) return undefined;
+	const members = renderRuleWalker.fold(node.renderRule, [] as RenderRule[], (found, rule) => (rule.fieldName === field ? [...found, rule] : found));
+	if (members.length === 0) return undefined;
+	const words = new Set<string>();
+	const written = (rule: RenderRule): boolean => {
+		if (rule.type === CHOICE) return rule.members.length > 0 && rule.members.every(written);
+		const target = rule.type === SYMBOL ? nodes.get(rule.name) : undefined;
+		const text = literalLeafText(rule) ?? (target !== undefined && isFixedTextLeaf(target) ? target.text : undefined);
+		if (text === undefined) return false;
+		if (text.trim() !== '') words.add(text);
+		return true;
+	};
+	return members.every(written) && words.size === 1 ? [...words][0]! : null;
 }
 
 export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {

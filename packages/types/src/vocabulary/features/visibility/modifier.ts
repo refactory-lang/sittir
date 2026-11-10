@@ -1,37 +1,19 @@
-import type { GrammarContext } from '../../context.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { GrammarMap } from '../../map.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Modifier {
-	export interface Visibility<G extends GrammarContext<G>> extends SubKindOf<V.Modifier<G>> {
+	export interface Visibility<G extends GrammarMap, K extends Under<'modifier.visibility'> = 'modifier.visibility'> extends SubKindOf<V.Modifier<G, K>> {
 		// claimed by t
-		readonly $kind: 'modifier.visibility';
+		readonly $path: K;
 	}
 	export namespace Visibility {
-		export interface Private<G extends GrammarContext<G>> extends SubKindOf<V.Modifier.Visibility<G>> {
+		export interface Private<G extends GrammarMap, K extends Under<'modifier.visibility.private'> = 'modifier.visibility.private'> extends SubKindOf<V.Modifier.Visibility<G, K>> {
 			// claimed by rt
-			readonly $kind: 'modifier.visibility.private';
+			readonly $path: K;
 		}
-		export interface Protected<G extends GrammarContext<G>> extends SubKindOf<V.Modifier.Visibility<G>> {
-			// claimed by t
-			readonly $kind: 'modifier.visibility.protected';
-		}
-		export interface Public<G extends GrammarContext<G>> extends SubKindOf<V.Modifier.Visibility<G>> {
+		export interface Public<G extends GrammarMap, K extends Under<'modifier.visibility.public'> = 'modifier.visibility.public'> extends SubKindOf<V.Modifier.Visibility<G, K>> {
 			// claimed by rt
-			readonly $kind: 'modifier.visibility.public';
-		}
-		export namespace Public {
-			export interface Internal<G extends GrammarContext<G>> extends SubKindOf<V.Modifier.Visibility.Public<G>> {
-				// claimed by r
-				readonly $kind: 'modifier.visibility.public.internal';
-			}
-			export interface Parent<G extends GrammarContext<G>> extends SubKindOf<V.Modifier.Visibility.Public<G>> {
-				// claimed by r
-				readonly $kind: 'modifier.visibility.public.parent';
-			}
-			export interface Restricted<G extends GrammarContext<G>> extends SubKindOf<V.Modifier.Visibility.Public<G>> {
-				// claimed by r
-				readonly $kind: 'modifier.visibility.public.restricted';
-			}
+			readonly $path: K;
 		}
 	}
 }

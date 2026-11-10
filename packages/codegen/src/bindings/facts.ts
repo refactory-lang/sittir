@@ -30,7 +30,7 @@ export interface Sibling {
 	readonly bare: boolean;
 }
 
-export type PredicateArgument = { readonly capture: string } | { readonly text: string };
+export type PredicateArgument = { readonly capture: string; readonly site?: CaptureSite | null } | { readonly text: string };
 
 export interface CaptureSite {
 	readonly up: number;
@@ -66,6 +66,7 @@ export interface ClaimFact {
 	readonly tokens: readonly string[];
 	readonly children: readonly ChildFact[];
 	readonly flag?: string;
+	readonly template?: TemplateFact;
 	readonly match?: LeadMatch;
 	readonly value?: boolean;
 	readonly token?: string;
@@ -135,6 +136,7 @@ export interface TemplateFact {
 	readonly target: string;
 	readonly template: string;
 	readonly holes: readonly string[];
+	readonly match: string;
 }
 
 export type PatternReference = { readonly kind: 'node'; readonly name: string; readonly at: number } | { readonly kind: 'field' | 'token'; readonly name: string };
@@ -200,6 +202,7 @@ export interface ModelNode {
 	readonly splitFrom: string | null;
 	readonly aliasStorage: string | null;
 	readonly interiorPart: string | null;
+	readonly textLeavesThrough: readonly string[];
 	readonly shownAs: readonly string[];
 	readonly list?: ModelList;
 }

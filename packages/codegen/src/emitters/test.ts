@@ -1,6 +1,6 @@
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { samplePattern } from '../types/runtime-shapes.ts';
+import { compileAnchoredPattern, samplePattern } from '../types/runtime-shapes.ts';
 import { SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { patternDfa, shortestAccepted } from '../compiler/model/pattern-automaton.ts';
 import { isDelimiterToken, isFixedTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
@@ -686,18 +686,10 @@ function pickSampleForPattern(pattern: string | undefined): string | null {
 		'\n',
 		' '
 	];
-	let re: RegExp | null = null;
-	try {
-		re = new RegExp(`^(?:${pattern})$`, 'u');
-	} catch {
-		try {
-			re = new RegExp(`^(?:${pattern})$`);
-		} catch {
-			return null;
-		}
-	}
+	const compiled = compileAnchoredPattern(pattern);
+	if (!('regex' in compiled)) return null;
 	for (const c of candidates) {
-		if (re.test(c)) return c;
+		if (compiled.regex.test(c)) return c;
 	}
 	return samplePattern(pattern);
 }

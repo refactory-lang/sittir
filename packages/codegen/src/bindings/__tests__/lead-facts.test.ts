@@ -32,6 +32,7 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<Mod
 	splitFrom: null,
 	aliasStorage: null,
 	interiorPart: null,
+	textLeavesThrough: [],
 	shownAs: [],
 	...extra
 });

@@ -1,18 +1,18 @@
-import type { GrammarContext } from '../../context.ts';
-import type { Flag, SubKindOf } from '../../utils.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
+import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Pattern {
-	export interface Reference<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
+	export interface Reference<G extends GrammarMap, K extends Under<'pattern.reference'> = 'pattern.reference'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by r
-		readonly $kind: 'pattern.reference';
-		readonly pattern: G['slots']['pattern.reference']['pattern'];
+		readonly $path: K;
+		readonly pattern: Slot<G, K, 'pattern', unknown>;
 	}
 	export namespace Reference {
-		export interface Value<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Reference<G>> {
+		export interface Value<G extends GrammarMap, K extends Under<'pattern.reference.value'> = 'pattern.reference.value'> extends SubKindOf<V.Pattern.Reference<G, K>> {
 			// claimed by r
-			readonly $kind: 'pattern.reference.value';
+			readonly $path: K;
 			readonly exclusive?: Flag;
-			readonly pattern: G['slots']['pattern.reference.value']['pattern'];
+			readonly pattern: Slot<G, K, 'pattern', unknown>;
 		}
 	}
 }

@@ -1,39 +1,40 @@
-import type { GrammarContext } from '../../context.ts';
-import type { Flag, SubKindOf } from '../../utils.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
+import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
-	export interface Function<G extends GrammarContext<G>> {
-		readonly default?: Flag;
-		// r only
+	export interface Function<G extends GrammarMap, K extends Under<'declaration.function'> = 'declaration.function'> {
 	}
-	export interface Method<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
+	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by prt
-		readonly $kind: 'declaration.method';
-		readonly body?: G['slots']['declaration.method']['body'];
+		readonly $path: K;
+		readonly body?: Slot<G, K, 'body', V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
 		readonly default?: Flag;
 		// rt only
-		readonly doc?: V.Literal.String<G>;
+		readonly doc?: Slot<G, K, 'doc', V.Literal.String.Any<G>>;
 		// pt only
-		readonly name: G['slots']['declaration.method']['name'];
-		readonly parameters: G['slots']['declaration.method']['parameters'][];
+		readonly name: Slot<
+			G,
+			K,
+			'name',
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| string
+			| V.Declaration.Module<G>
+		>;
+		readonly parameters: Slot<
+			G,
+			K,
+			'parameters',
+			| V.Clause.Bounds.Removed<G>
+			| V.Expression.Call.Macro<G>
+			| V.Identifier.Any<G>
+			| V.Pattern.Any<G>
+			| V.Declaration.Parameter.Any<G>
+			| string
+			| V.Type.Any<G>
+		>[];
 		readonly static?: Flag;
-		// t only
-	}
-	export namespace Method {
-		export interface Signature<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method<G>> {
-			// claimed by rt
-			readonly $kind: 'declaration.method.signature';
-			readonly functionModifiers?: G['slots']['declaration.method.signature']['functionModifiers'][];
-			// r only
-			readonly name: G['slots']['declaration.method.signature']['name'];
-			readonly parameters: G['slots']['declaration.method.signature']['parameters'][];
-			readonly static?: Flag;
-			// t only
-		}
-		export interface Special<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method<G>> {
-			readonly $kind: 'declaration.method.special';
-			readonly name: `__${string}__`;
-			readonly stem: string;
-		}
+		// pt only
 	}
 }

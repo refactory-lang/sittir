@@ -1,6 +1,4 @@
 export type * from './declaration.ts';
-export type * from './expression.ts';
-export type * from './statement.ts';
 
 import type { Methods } from '../index.ts';
 

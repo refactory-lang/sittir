@@ -3,7 +3,7 @@ import { createEngine } from '@sittir/common';
 import { portable, vocabularyPaths } from '@sittir/common/portable';
 import scm from '../../scm/src/index.ts';
 import rust from '../src/index.ts';
-import { rows } from '../src/portable.ts';
+import { rows } from '../src/portable/index.ts';
 
 type Guard = (node: unknown) => boolean;
 const guard = (path: string): Guard =>

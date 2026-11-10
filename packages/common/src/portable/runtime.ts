@@ -1,7 +1,7 @@
 import type { Engine, LanguageAPI, PortableStructure, TriviaFacts } from '@sittir/types';
 import { inLanguage } from '../language.ts';
 import { portableBuilder } from './build.ts';
-import { builtReadsAs, classifierOf, flagHolds, otherTested, portableTextOf, readSlots, readsAs, slotsOf } from './classify.ts';
+import { builtReadsAs, classifierOf, factsOf, flagHolds, otherTested, spellingOf, portableTextOf, readSlots, readsAs, slotsOf } from './classify.ts';
 import { languageGuardOf, type PortableLanguage } from './language-guard.ts';
 import { portableReader, type PortableCarried } from './read.ts';
 import { portableTrees, type LanguageGuard, type PortableGuardTree } from './tree.ts';
@@ -44,11 +44,13 @@ export async function portableRuntime<API extends LanguageAPI>(engine: Engine<AP
 		table,
 		builders: engine.build,
 		kindName: (kind) => trivia.kindName(kind),
-		readsAs: (path, node) => builtReadsAs(rows, path, node)
+		readsAs: (path, node) => builtReadsAs(rows, path, node),
+		spellingOf: (kind, fact, item) => spellingOf(rows, kind, fact, item)
 	});
 	const read = portableReader({
 		table,
 		classify: classifierOf(rows),
+		factsOf: (node, container) => factsOf(rows, node, container),
 		flagHolds: (value, flag) => flagHolds(rows, value, flag),
 		flagsOf: (kind) => Object.keys(rows.flags[kind] ?? {}),
 		textOf: (value) => portableTextOf(rows, value),

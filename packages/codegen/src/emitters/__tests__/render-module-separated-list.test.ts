@@ -115,7 +115,7 @@ const GENERATED_ID_TABLES: GeneratedIdTables = { folds: new Map(),
 		}
 	},
 	fieldIds: { items: 1 },
-	sourceArtifact: 'test'
+	sourceArtifact: 'test', parser: null
 };
 
 describe('renderNodeDataStruct — separatedList sibling fields', () => {

@@ -13,7 +13,7 @@
  * cross-commit DRIFT DETECTOR, same spirit as the generated-manifest guard
  * (`project_manifest_committed`): does the structural derivation, computed
  * LIVE from the current pipeline, still equal what's COMMITTED in
- * `packages/<lang>/src/node-model.json5`'s `polymorphVariants` section?
+ * `packages/<lang>/.sittir/node-model.json5`'s `polymorphVariants` section?
  *
  * A mismatch here means either (a) a grammar/override edit changed which
  * kinds structurally adopt variant children WITHOUT regenerating
