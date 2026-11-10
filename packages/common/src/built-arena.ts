@@ -1404,7 +1404,10 @@ export function patchCell(arena: BuiltArena, record: BuiltDraft, cell: number, w
 
 export function patchList(arena: BuiltArena, record: BuiltDraft, cell: number, word: number, items: readonly unknown[]): void {
 	const kept = record.kept?.[word];
-	if (Array.isArray(kept) && kept.length === items.length && items.every((item, n) => item === kept[n])) return arena.keep(record, word);
+	if (Array.isArray(kept) && kept.length === items.length && items.every((item, n) => item === kept[n])) {
+		if (record.copyOfParsed !== undefined) storeList(arena, record, cell, word, items);
+		return;
+	}
 	patchedAt(arena, record, cell, word, true);
 	storeList(arena, record, cell, word, items);
 }
