@@ -5,7 +5,7 @@ import { createEngine } from '@sittir/common';
 import { isFactoryNode } from '@sittir/common/utils';
 import { emitFactorySourceText } from '../emit/factory-source.ts';
 import { languageByName } from '../languages.ts';
-import { loadLanguageForGrammar } from '../validate/common.ts';
+import { loadLanguageForGrammar, treeParser } from '../validate/common.ts';
 
 const TOOLS_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 const REPO_ROOT = join(TOOLS_ROOT, '..', '..');
@@ -205,17 +205,10 @@ const ATTRIBUTION_ARMS: readonly GapClass[] = ['tight', 'space', 'newline', 'bla
 const ARM_KIND: Readonly<Record<GapClass, string>> = { tight: 'Tight', space: 'Space', newline: 'Newline', blankline: 'Blankline', double_blankline: 'DoubleBlankline' };
 
 export async function defaultDiff(grammar: string, source: string, options: DefaultDiffOptions = {}): Promise<DefaultDiffReport> {
-	const { Parser, lang } = await loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
+	using parser = treeParser(await loadLanguageForGrammar(grammar));
 	const tokensOfText = (text: string): Token[] => {
-		const tree = parser.parse(text);
-		if (!tree) throw new Error(`default-diff: the ${grammar} parse failed`);
-		try {
-			return tokensOf(tree.rootNode);
-		} finally {
-			tree.delete();
-		}
+		using tree = parser.parse(text);
+		return tokensOf(tree.root);
 	};
 	const sourceTokens = tokensOfText(source);
 	const moduleDir = join(TOOLS_ROOT, '.default-diff');

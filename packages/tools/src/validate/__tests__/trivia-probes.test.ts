@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../../languages.ts';
-import { loadLanguageForGrammar } from '../common.ts';
+import { loadLanguageForGrammar, treeParser } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 import { ORPHANS, PROBES } from './helpers/trivia-sources.ts';
 
@@ -28,10 +28,9 @@ describe('trivia probes', () => {
 			it(`${grammar}: ${JSON.stringify(source)} keeps a comment beside a scalar-stored leaf, framing the leaf by its sides`, async () => {
 				const rendered = (await detachedRenderer(grammar))(source);
 				expect(rendered).toBe(detached);
-				const { Parser, lang } = await loadLanguageForGrammar(grammar);
-				const parser = new Parser();
-				parser.setLanguage(lang);
-				expect(parser.parse(rendered)!.rootNode.hasError).toBe(false);
+				using parser = treeParser(await loadLanguageForGrammar(grammar));
+				using tree = parser.parse(rendered);
+				expect(tree.root.hasError).toBe(false);
 			});
 		}
 	}

@@ -5,7 +5,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../src/languages.ts';
-import { loadCorpusEntries, loadLanguageForGrammar } from '../src/validate/common.ts';
+import { loadCorpusEntries, loadLanguageForGrammar, treeParser } from '../src/validate/common.ts';
 
 const LONE_BREAK = /(?<!\r)\n|\r(?!\n)/;
 const toCrlf = (text: string): string => text.replace(/\r?\n/g, '\r\n');
@@ -233,10 +233,9 @@ describe.each([
 		return accepted.flat();
 	})();
 	const tree = async (text: string): Promise<string> => {
-		const { Parser, lang } = await loadLanguageForGrammar(name);
-		const parser = new Parser();
-		parser.setLanguage(lang);
-		return parser.parse(text)!.rootNode.toString();
+		using parser = treeParser(await loadLanguageForGrammar(name));
+		using parsed = parser.parse(text);
+		return parsed.root.toString();
 	};
 
 	it('are the arms its parser reads as a line break', async () => {

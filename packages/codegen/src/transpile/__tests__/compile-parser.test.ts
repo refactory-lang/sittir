@@ -3,11 +3,11 @@ import { join, posix, win32 } from 'node:path';
 import { tmpdir } from 'node:os';
 import { appendFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { Language, Parser } from 'web-tree-sitter';
 import { buildParserWasm, buildUpstreamWasm, builtParserWasm, ensureParserWasm, parserSourceKey, readUpstreamRecord, upstreamKeyOf, withUpstreamGrammar, writeUpstreamRecord } from '../compile-parser.ts';
 import { treeSitterToolchain } from '../tree-sitter-cli.ts';
 import { sittirDirOf } from '../../grammars.ts';
 import { sha256 } from '../../util/content-hash.ts';
+import { languageAt, treeParser } from '../../engine-loader.ts';
 
 const realPythonDir = join(__dirname, '../../../../', 'python');
 const realPythonSittir = join(realPythonDir, '.sittir');
@@ -43,11 +43,10 @@ describe('ensureParserWasm', () => {
 	it('builds the upstream parser from the grammar the package exports, the same parser its published wasm is', async () => {
 		const built = buildUpstreamWasm(realPythonDir, join(tmpRoot, 'upstream.wasm'));
 		const published = createRequire(join(realPythonDir, 'package.json')).resolve('tree-sitter-python/tree-sitter-python.wasm');
-		await Parser.init();
 		const treeOf = async (wasm: string, source: string): Promise<string> => {
-			const parser = new Parser();
-			parser.setLanguage(await Language.load(wasm));
-			return parser.parse(source)!.rootNode.toString();
+			using parser = treeParser(await languageAt(wasm));
+			using tree = parser.parse(source);
+			return tree.root.toString();
 		};
 		for (const source of ['x = 1\n', 'def f(a, /, b, *, c=1, d):\n    return a\n', 'match p:\n    case [x, *_]: pass\n', 'f"{x!r:>{w}}"\n'])
 			expect(await treeOf(built, source)).toBe(await treeOf(published, source));
