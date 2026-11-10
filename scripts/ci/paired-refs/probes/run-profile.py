@@ -42,4 +42,4 @@ for index in range(ROUNDS):
             run(f'trajectory {label}', ['node', '--expose-gc', str(here / 'trajectory.mjs'), str(tree), grammar, storage, str(out / f'trajectory-{label}.json')], tree)
             prof = out / 'prof' / label
             prof.mkdir(parents=True, exist_ok=True)
-            run(f'profile {label}', ['node', '--cpu-prof', f'--cpu-prof-dir={prof}', str(here.parent / 'corpus-worker.mjs'), str(tree), grammar, str(out / f'worker-{label}.json'), storage], tree)
+            run(f'profile {label}', ['node', '--expose-gc', '--cpu-prof', f'--cpu-prof-dir={prof}', str(here.parent / 'corpus-worker.mjs'), str(tree), grammar, str(out / f'worker-{label}.json'), storage], tree)

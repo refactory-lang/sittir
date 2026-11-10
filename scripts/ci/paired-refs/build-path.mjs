@@ -10,7 +10,7 @@ const MODULE_CLOSURE = 'packages/codegen/src/scripts/module-closure.ts';
 const STAMPS = 'node_modules/.cache/sittir/native-build';
 const DIFF = ['--no-color', '--no-ext-diff', '--no-renames'];
 
-const git = (cwd, args, input) => execFileSync('git', args, { cwd, encoding: 'utf8', input, maxBuffer: 2 ** 30 });
+const git = (cwd, args, input) => execFileSync('git', args, { cwd, encoding: 'utf8', input, maxBuffer: 2 ** 30, stdio: ['pipe', 'pipe', 'pipe'] });
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const writeJson = (path, value) => writeFileSync(path, JSON.stringify(value, null, 2) + '\n');
 const short = (commit) => commit.slice(0, 9);
