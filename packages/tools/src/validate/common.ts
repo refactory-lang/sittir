@@ -27,6 +27,8 @@ import { scopeBuilders } from '@sittir/common/engine';
 import {
 	carryRead,
 	carryPlace,
+	detachCoordinate,
+	holdsSlots,
 	SOURCE,
 	Source,
 	sourceOf,
@@ -51,6 +53,7 @@ import {
 	mapTriviaEntries,
 	projectInterior,
 	isDataKey,
+	isStorageKey,
 	type TokenInterior
 } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
@@ -902,7 +905,8 @@ export function materializeDetached(
 	accessorOf: SlotAccessorOf,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
-	return holdingTreeOf(root, detachCoordinates(materialize(root, accessorOf, onAccessorThrow)));
+	const token = root !== null && typeof root === 'object' ? treeTokenOf(root) : undefined;
+	return materializeValue(root, accessorOf, onAccessorThrow, undefined, token, true) as AnyUntypedNode;
 }
 
 export function materializeShallow(
@@ -911,13 +915,14 @@ export function materializeShallow(
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
 	const ownRow = typeof root === 'object' && root !== null ? coordinateOf(root)?.$treeHandle : undefined;
+	const token = typeof root === 'object' && root !== null ? treeTokenOf(root) : undefined;
 	const asCoordinate = (value: unknown): unknown => {
 		if (Array.isArray(value)) return value.map(asCoordinate);
 		if (!hasNumericType(value)) return value;
 		const at = coordinateOf(value);
-		return at !== undefined && at.$treeHandle !== ownRow ? holdingTreeOf(value, at) : materializeValue(value, accessorOf, onAccessorThrow);
+		return at !== undefined && at.$treeHandle !== ownRow ? holdingTreeOf(value, at) : materializeValue(value, accessorOf, onAccessorThrow, undefined, token);
 	};
-	return holdingTreeOf(root, materializeValue(root, accessorOf, onAccessorThrow, asCoordinate) as AnyUntypedNode);
+	return materializeValue(root, accessorOf, onAccessorThrow, asCoordinate, token) as AnyUntypedNode;
 }
 
 /**
@@ -961,11 +966,12 @@ function materializeValue(
 	value: unknown,
 	accessorOf: SlotAccessorOf,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void,
-	slotValue: (value: unknown) => unknown = (inner) => materializeValue(inner, accessorOf, onAccessorThrow, undefined, token),
-	token?: TreeToken
+	slotValue: (value: unknown) => unknown = (inner) => materializeValue(inner, accessorOf, onAccessorThrow, undefined, token, detached),
+	token?: TreeToken,
+	detached = false
 ): unknown {
 	if (Array.isArray(value)) {
-		return value.map((entry) => materializeValue(entry, accessorOf, onAccessorThrow, slotValue, token));
+		return value.map((entry) => materializeValue(entry, accessorOf, onAccessorThrow, slotValue, token, detached));
 	}
 	if (!hasNumericType(value)) return value;
 	const { accessors } = accessorOf(value.$type);
@@ -992,7 +998,7 @@ function materializeValue(
 			continue;
 		}
 		if (key.startsWith('_') && accessors[key] !== undefined) continue;
-		materialized[key] = materializeValue(raw, accessorOf, onAccessorThrow, undefined, token);
+		materialized[key] = materializeValue(raw, accessorOf, onAccessorThrow, undefined, token, detached && isStorageKey(key));
 	}
 	for (const [storageKey, resolved] of slotValuesOf(value, accessorOf, onAccessorThrow)) {
 		if (resolved !== undefined) materialized[storageKey] = slotValue(resolved);
@@ -1000,6 +1006,7 @@ function materializeValue(
 	carryPlace(value, materialized);
 	const source = sourceOf(value);
 	if (source !== undefined) (materialized as { [SOURCE]?: Source })[SOURCE] = source;
+	if (detached && holdsSlots(materialized)) detachCoordinate(materialized);
 	if (token !== undefined) holdTreeOn(materialized, token);
 	return carryRead(value, materialized);
 }
