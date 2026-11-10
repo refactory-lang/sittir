@@ -3,7 +3,7 @@ import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
 import { carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
-import { admitChildren, builtArenaOf as handleBuiltArena, currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle } from './engine-scope.ts';
+import { admitSlot, builtArenaOf as handleBuiltArena, currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { registered, wrapRegistered, type Role } from './identity.ts';
@@ -342,16 +342,15 @@ export function patchesByCopy(source: object): boolean {
 
 export function setSlot(source: object, kind: number, kindName: string, at: number, accessor: string, value: unknown): object {
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, kindName, { [accessor]: value });
+	admitSlot(handle, kindName, accessor, value);
 	const arena = handleBuiltArena(handle);
 	return arena.scope(() => {
 		const record = arena.copy(source, kind, at);
 		const place = arena.placeAt(kind, at);
 		if (place.length === 2) patchFlag(record, place[0], 2 ** place[1], value);
 		else if (place.length === 6) {
-			const [word, built, , , , run] = place;
-			if (run === 0) patchCell(arena, record, built, word, carriedSlot(source, accessor, value));
-			else patchList(arena, record, built, word, value as readonly unknown[]);
+			if (place[5] === 0) patchCell(arena, record, place[1], place[0], carriedSlot(source, accessor, value));
+			else patchList(arena, record, place[1], place[0], value as readonly unknown[]);
 		}
 		arena.carry(source, record, at);
 		return arena.view(record);
