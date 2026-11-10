@@ -4,11 +4,14 @@ import { findReparsedNodeAtOffset, hostlessReason, loadRenderReparseContext, typ
 import { loadLanguageForGrammar, loadNativeRender, treeParser, wrapForReparse } from '../src/validate/common.ts';
 
 async function contextFor(grammar: 'python' | 'regex' | 'rust' | 'typescript'): Promise<RenderReparseContext & Disposable> {
-	using owned = new DisposableStack();
-	const parser = owned.use(treeParser(await loadLanguageForGrammar(grammar)));
-	const ctx = await loadRenderReparseContext(grammar, parser, await loadNativeRender(grammar));
-	const held = owned.move();
-	return { ...ctx, [Symbol.dispose]: () => held.dispose() };
+	const parser = treeParser(await loadLanguageForGrammar(grammar));
+	try {
+		const ctx = await loadRenderReparseContext(grammar, parser, await loadNativeRender(grammar));
+		return { ...ctx, [Symbol.dispose]: () => parser[Symbol.dispose]() };
+	} catch (error) {
+		parser[Symbol.dispose]();
+		throw error;
+	}
 }
 
 const hostFor = (grammar: string, kind: string, ctx: Awaited<ReturnType<typeof contextFor>>) =>

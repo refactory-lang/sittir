@@ -525,6 +525,12 @@ jobs:
             echo "  pnpm exec tsx packages/cli/src/cli.ts gen --grammar <name> --all --output packages/<name>/src"
             exit 1
           fi
+      # This job's Node is the oldest the engines fields name, so a published
+      # dist that holds syntax or a global it lacks fails here.
+      - name: Build the published packages
+        run: pnpm run build:packages
+      - name: Every published entry point loads on this Node
+        run: node scripts/ci/import-published.mjs
 
   # The napi-build legs, as rows of the release target table
   # (packages/tools/src/native-targets.ts). A tag run builds every target.
