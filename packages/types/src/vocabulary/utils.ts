@@ -38,4 +38,16 @@ declare const flag: unique symbol;
 
 export type Flag = typeof flag;
 
-export interface FlagSynonyms {}
+export interface FlagFeatures {}
+
+type Has<C, F, N> = C extends F ? N : never;
+
+type FlagsAt<G extends GrammarMap, P> = P extends keyof FlagFeatures
+	? { readonly [N in keyof FlagFeatures[P]]-?: Has<G['features'], FlagFeatures[P][N], N> }[keyof FlagFeatures[P]] & string
+	: never;
+
+type Dropped<T, N> = { readonly [M in keyof T as M extends N ? never : M]: T[M] };
+
+type Named<T, N extends string> = [N] extends [never] ? T : Dropped<T & { readonly $flags?: readonly N[] }, N>;
+
+export type NamedFlags<G extends GrammarMap, T> = T extends { readonly $path: infer P } ? Named<T, FlagsAt<G, P>> : T;

@@ -57,8 +57,8 @@ describe('portable conformance causes', () => {
 	it('counts a required member the literal lacks as a missing member', () => {
 		expect(
 			causeOf(
-				`${MODULE}(10,2): error TS2322: Type '{ $type: TSKindId; [low]: T.BinaryExpression.Parsed; [flags]: number; }' is not assignable to type 'ViewForm<Binary<Ctx>>'.`,
-				"  Property 'operator' is missing in type '{ $type: TSKindId; [low]: T.BinaryExpression.Parsed; [flags]: number; }' but required in type '{ readonly operator: () => string; }'."
+				`${MODULE}(10,2): error TS2322: Type '{ $type: TSKindId; [low]: T.BinaryExpression.Parsed; [flags]: readonly string[]; }' is not assignable to type 'ViewForm<Binary<Ctx>>'.`,
+				"  Property 'operator' is missing in type '{ $type: TSKindId; [low]: T.BinaryExpression.Parsed; [flags]: readonly string[]; }' but required in type '{ readonly operator: () => string; }'."
 			)
 		).toBe('missing member');
 	});

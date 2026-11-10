@@ -19,6 +19,7 @@ export interface Plan {
 	readonly features: ReadonlyMap<string, Feature>;
 	readonly kinds: ReadonlyMap<string, Kind>;
 	readonly owned: ReadonlyMap<string, ReadonlyMap<string, Owned>>;
+	readonly flags: ReadonlyMap<string, ReadonlyMap<string, Feature | undefined>>;
 	readonly levels: ReadonlyMap<string, readonly string[]>;
 	readonly issues: readonly string[];
 	readonly notes: readonly string[];
@@ -139,8 +140,9 @@ export function plan(source: VocabularySource): Plan {
 	}
 
 	const levelArms = levels([...kinds.values()]);
+	const flags = new Map([...kinds.keys()].map((path) => [path, flagsOf(path, lines, declarations, owned)] as const));
 
-	return { features, kinds, owned, levels: levelArms, issues, notes };
+	return { features, kinds, owned, flags, levels: levelArms, issues, notes };
 }
 
 const topSegment = (path: string): string => path.replace(/\..*$/, '');
@@ -211,6 +213,24 @@ function ownership(
 		}
 	}
 	return owned;
+}
+
+function flagsOf(
+	path: string,
+	lines: ReadonlyMap<string, readonly string[]>,
+	declarations: ReadonlyMap<string, ReadonlyMap<string, readonly Declaration[]>>,
+	owned: ReadonlyMap<string, ReadonlyMap<string, Owned>>
+): Map<string, Feature | undefined> {
+	const seen = new Set<string>();
+	const flags = new Map<string, Feature | undefined>();
+	for (const line of lines.get(path) ?? []) {
+		for (const [name, list] of declarations.get(line) ?? []) {
+			if (seen.has(name)) continue;
+			seen.add(name);
+			if (list.some((d) => d.member.flag)) flags.set(name, owned.get(line)?.get(name)?.feature);
+		}
+	}
+	return flags;
 }
 
 function flagLookup(

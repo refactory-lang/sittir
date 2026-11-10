@@ -57,7 +57,7 @@ These go into the grammar package's types module, beside `ParsedByKindId` and `B
 There is one factory per read entry, meaning a grammar kind and one vocabulary kind it can be. It returns that kind's entry in `VocabViews`, an object literal whose one public data member is `$type`:
 
 ```ts
-const FunctionItemAsDeclarationFunction = (n: T.FunctionItem.Parsed, set = 0): VocabViews['declaration.function'] => ({
+const FunctionItemAsDeclarationFunction = (n: T.FunctionItem.Parsed, set: readonly string[] = []): VocabViews['declaration.function'] => ({
 	$type: n.$type,
 	[flags]: () => [...set, ...(n.functionModifiers()?.modifiers().includes(TSKindId.AsyncKeyword) ? ['async'] : []), …],
 	name: () => read(n.name()),

@@ -1,3 +1,5 @@
+import type { NamedFlags } from './utils.ts';
+
 export interface GrammarMap {
 	readonly features: object;
 	readonly overrides: { readonly [path: string]: { readonly [member: string]: unknown } };
@@ -70,7 +72,7 @@ export type Formed<G extends GrammarMap, R> = R extends { readonly $path: infer 
 		: R
 	: R;
 
-export type Read<G extends GrammarMap, P extends keyof Paths<G>> = Formed<G, Paths<G>[P]>;
+export type Read<G extends GrammarMap, P extends keyof Paths<G>> = NamedFlags<G, Formed<G, Paths<G>[P]>>;
 
 type Defaults<G extends GrammarMap> = Paths<Contract<G['features']>>;
 

@@ -60,7 +60,7 @@ const PRELUDE = [
 	'interface PortableHandle {',
 	'\treadonly $type: TSKindId;',
 	'\treadonly [low]: unknown;',
-	'\treadonly [flags]: number;',
+	'\treadonly [flags]: readonly string[];',
 	'}',
 	'',
 	'interface PortableLeaf {',
@@ -394,7 +394,7 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 			for (const [member, facts] of declared) if (!facts.flag && facts.optional && !written.has(member)) fields.push(`${member}: none`);
 			if (varies(kind) && (claimersOf.get(entry.vocab) ?? []).every(varies)) fields.push('$value: value');
 			emit(
-				`function ${name}(n: ${held}, set = 0): VocabViews[${q(entry.vocab)}] {`,
+				`function ${name}(n: ${held}, set: readonly string[] = []): VocabViews[${q(entry.vocab)}] {`,
 				`\treturn { $type: kindOf(n)${fields.map((f) => `, ${f}`).join('')}, [low]: n, [flags]: set };`,
 				'}',
 				''
