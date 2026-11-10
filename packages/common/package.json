@@ -63,6 +63,11 @@
 			"import": "./dist/portable/index.js",
 			"default": "./dist/portable/index.js"
 		},
+		"./portable/utils": {
+			"types": "./dist/portable/utils.d.ts",
+			"import": "./dist/portable/utils.js",
+			"default": "./dist/portable/utils.js"
+		},
 		"./utils": {
 			"types": "./dist/utils.d.ts",
 			"import": "./dist/utils.js",

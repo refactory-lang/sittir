@@ -27,6 +27,7 @@ import { concreteKinds, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reac
 import type { PortableFactRecord } from './read-tests.ts';
 import { portableSpelledFactOf } from './spelled-facts.ts';
 import type { ModelMount, ModelSlot, SlotModel, TemplateFact } from '../../../bindings/facts.ts';
+import type { VocabularyScalar } from '../../../bindings/vocabulary.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { forwardedTargetKind } from '../../shared.ts';
 import { SEQ, STRING } from '../../../types/rule-types.ts'; // @rule-type-consts
@@ -52,7 +53,7 @@ import {
 } from '../../../compiler/model/node-map.ts';
 import { buildFactoryMap } from '../../factory-map.ts';
 import { slotResolverKinds, transparentEnvelopeTextLeaves } from '../../from.ts';
-import { interiorSlotGuards, numberShapes, numericSlotKeys } from '../../interior.ts';
+import { interiorSlotGuards, kindNumberShape, numericSlotShape, readsEveryInteger, slotPattern, spellsItsBase, wholeTextPattern, wholeTextShape, type NumberShape } from '../../interior.ts';
 import { leafReDeclaration } from '../../factories.ts';
 import { findKindEntry, fixedTextKinds, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { membershipKindsOf } from '../../membership.ts';
@@ -65,9 +66,18 @@ export type PickDiagnosticCode =
 	| 'portable-owner-undecided'
 	| 'portable-token-ambiguous'
 	| 'portable-claim-unplaced'
-	| 'portable-kind-armless';
+	| 'portable-kind-armless'
+	| 'portable-value-unshaped'
+	| 'portable-integer-partial';
 
 const FORM_PRODUCT_LIMIT = 8;
+
+type ArmScalar = NonNullable<PortableBuildArm['scalar']>;
+
+const ARM_SCALARS = ['integer', 'float', 'bigint'] as const satisfies readonly ArmScalar[];
+
+const armScalar = (shape: NumberShape | undefined, value: VocabularyScalar | undefined): ArmScalar | undefined =>
+	shape === undefined || value === undefined ? undefined : value === 'bigint' ? 'bigint' : shape.base === 'float' ? 'float' : 'integer';
 
 const DECIMAL_PARTS = ['integer', 'fraction', 'exponent', 'marker', 'exponentSign'] as const satisfies readonly (keyof PortableDecimalParts)[];
 
@@ -90,12 +100,14 @@ export interface PortableBuildInput {
 	readonly features: readonly string[];
 	readonly factOf: (entry: ReadEntry) => PortableFactRecord | undefined;
 	readonly declaresFlag: (path: string, flag: string) => boolean;
+	readonly valueScalarOf: (path: string) => VocabularyScalar | undefined;
 }
 
 export interface PortableBuildOutput {
 	readonly table: PortableBuildTable;
 	readonly diagnostics: readonly PickDiagnostic[];
 	readonly presetCarried: ReadonlySet<number>;
+	readonly totalIntegerReads: ReadonlySet<number>;
 }
 
 interface RoutedFill {
@@ -113,7 +125,7 @@ interface Arm {
 	readonly tested: ReadonlySet<string>;
 	readonly text: string | undefined;
 	readonly value: boolean | undefined;
-	readonly scalar: 'integer' | 'float' | undefined;
+	readonly scalar: ArmScalar | undefined;
 	readonly complete: boolean;
 	readonly builds: string;
 	readonly chosen: boolean;
@@ -196,11 +208,10 @@ const sortedIds = (ids: Iterable<number>): readonly number[] => [...new Set(ids)
 const disjoint = (sets: readonly ReadonlySet<number>[]): boolean =>
 	sets.every((a, i) => sets.every((b, j) => i === j || [...a].every((id) => !b.has(id))));
 
-export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPlans, features, factOf, declaresFlag }: PortableBuildInput): PortableBuildOutput {
+export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPlans, features, factOf, declaresFlag, valueScalarOf }: PortableBuildInput): PortableBuildOutput {
 	const typeOf = (kind: string): number | undefined => findKindEntry(kindEntries, kind)?.id;
 	const shapes = buildFactoryMap(nodeMap, kindEntries).factoryShapes;
 	const fixedText = new Map(fixedTextKinds(nodeMap, kindEntries));
-	const numeric = numberShapes(nodeMap);
 	const builders = new Map<string, PortableCallShape>();
 	const optionKeys = new Map<string, readonly string[]>();
 	const nodeOf = (kind: string): AssembledNode | undefined => nodeMap.nodes.get(modelNode(model, kind)?.kind ?? kind);
@@ -236,6 +247,11 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	const literals = valueTokensOf(routes, fixedText);
 	const declaredValues = new Map<string, boolean>();
 	for (const [kind, entries] of routes.readEntries) for (const { claim } of entries) if (claim.value !== undefined) declaredValues.set(kind, claim.value);
+	const kindValueScalars = new Map<string, VocabularyScalar>();
+	for (const [kind, entries] of routes.readEntries) {
+		const scalars = entries.flatMap((entry) => valueScalarOf(entry.vocab) ?? []);
+		if (scalars.length > 0) kindValueScalars.set(kind, scalars.includes('bigint') ? 'bigint' : 'number');
+	}
 	const register = (key: string, shape: PortableCallShape): string => {
 		const known = builders.get(key);
 		if (known !== undefined && known !== shape) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${key} takes both ${known} and ${shape} input` });
@@ -445,7 +461,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const reached = [...leafKinds, ...branchKinds].filter((kind) => nodeOf(kind)?.kindId === undefined || admitted.has(kind));
 		const leaves = [...new Set(reached.flatMap(textLeavesOf))].filter((kind) => {
 			const node = nodeOf(kind);
-			return node instanceof AssembledPattern && !numeric.has(kind) && !fixedText.has(kind);
+			return node instanceof AssembledPattern && kindNumberShape(kind, node) === undefined && !fixedText.has(kind);
 		});
 		const plain = leaves.length > 1 ? leaves.filter((kind) => nodeOf(kind)?.variantOf === undefined) : leaves;
 		const leaf = plain.length === 1 ? builderOf(plain[0]!) : undefined;
@@ -649,6 +665,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	};
 	const product = <T,>(lists: readonly (readonly T[])[]): T[][] => lists.reduce<T[][]>((acc, list) => acc.flatMap((head) => list.map((item) => [...head, item])), [[]]);
 	const formDiagnostics: PickDiagnostic[] = [];
+	const totalIntegerReads = new Set<number>();
+	const partialIntegerReads = new Set<number>();
 	const unfilledBy = new Map<string, Set<string>>();
 
 	interface RefinedForm {
@@ -819,7 +837,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const builds = storageName(kind);
 		const builtId = id;
 		const seated = builder === undefined && !fixedText.has(node.kind) ? shapes[node.kind] : undefined;
-		const shape = numeric.get(kind);
+		const shape = kindNumberShape(node.kind, node);
 		const combos = product(bareFormSlotsOf(kind, claimed).map(({ slot, forms, bare }) => [...bare, null].map((choice) => ({ slot, forms, bare, choice }))));
 		if (combos.length > FORM_PRODUCT_LIMIT) formDiagnostics.push({ code: 'portable-form-product', path: entry.vocab, kinds: [kind], arms: combos.length });
 		const spelledHere = [...(routes.readEntries.get(kind) ?? [])]
@@ -941,16 +959,42 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			]);
 			const memberKinds = new Map<string, ReadonlySet<number>>();
 			for (const { member, seats } of completed) if (!memberKinds.has(member.name)) memberKinds.set(member.name, valueIds(seats));
-			const numericKeys = shape !== undefined && builder !== undefined && builders.get(builder) === 'config' ? numericSlotKeys(node) : [];
-			const memberAt = (key: string): string | undefined => completed.find(({ member }) => member.steps.length === 1 && member.steps[0]!.key === key)?.member.name;
-			const whole = numericKeys.length === 1 ? memberAt(numericKeys[0]!) : undefined;
-			if (numericKeys.length === 1 && whole === undefined) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${kind} takes its number at ${numericKeys[0]}, which no member of ${entry.vocab} reaches` });
+			const valueScalar = valueScalarOf(entry.vocab);
+			const scalar = armScalar(shape, valueScalar === undefined ? undefined : (kindValueScalars.get(kind) ?? valueScalar));
+			if (valueScalar !== undefined && shape === undefined) formDiagnostics.push({ code: 'portable-value-unshaped', path: entry.vocab, kinds: [kind] });
+			const contentSlot = lexedContentSlot(node);
+			const spellsAlone = (slot: AssembledNonterminal): boolean => {
+				const slotShape = numericSlotShape(slot);
+				return slotShape !== undefined && spellsItsBase(slotShape);
+			};
+			const numericSlots =
+				scalar === undefined || builder === undefined
+					? []
+					: builders.get(builder) === 'config'
+						? node.slots.filter(spellsAlone)
+						: contentSlot !== undefined && spellsAlone(contentSlot)
+							? [contentSlot]
+							: [];
+			const numericKeys = numericSlots.map((slot) => slot.propertyName);
 			const partless = numericKeys.length > 1 ? numericKeys.filter((key) => !DECIMAL_PARTS.some((part) => part === key)) : [];
 			if (partless.length > 0) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${kind}'s numeric slots ${partless.join(', ')} are no part of a decimal spelling` });
-			const parts: PortableDecimalParts = Object.fromEntries(DECIMAL_PARTS.flatMap((part) => (memberAt(part) === undefined ? [] : [[part, memberAt(part)!]])));
-			const numeric: PortableBuildArm['numeric'] = numericKeys.length === 0 ? undefined : (whole ?? parts);
+			const partSlots = numericKeys.length > 1 ? DECIMAL_PARTS.flatMap((part) => node.slots.find((slot) => slot.propertyName === part) ?? []) : [];
+			const numeric: PortableBuildArm['numeric'] =
+				numericKeys.length === 0 ? undefined : numericKeys.length === 1 ? numericKeys[0] : Object.fromEntries(partSlots.map((slot) => [slot.propertyName, slot.propertyName]));
+			const numericRequired = partSlots.filter((slot) => isRequired(slot)).map((slot) => slot.propertyName);
+			const read =
+				numericKeys.length === 0 ? { shape: wholeTextShape(kind, node), pattern: wholeTextPattern(node) } : numericKeys.length === 1 ? { shape: numericSlotShape(numericSlots[0]!), pattern: slotPattern(numericSlots[0]!) } : undefined;
+			const readShape = scalar === 'integer' || scalar === 'bigint' ? read?.shape : undefined;
+			const digits = readShape === undefined || readShape.base === 'float' ? undefined : { base: readShape.base, affix: readShape.prefix };
+			if (scalar === 'integer' || scalar === 'bigint') {
+				if (readShape !== undefined && readsEveryInteger(read?.pattern, readShape)) totalIntegerReads.add(builtId);
+				else if (!partialIntegerReads.has(builtId)) {
+					partialIntegerReads.add(builtId);
+					formDiagnostics.push({ code: 'portable-integer-partial', path: entry.vocab, kinds: [kind] });
+				}
+			}
 			const armMembers = completed.map(({ member }) => member);
-			const content = node instanceof AssembledLexedPattern && armMembers.length === 0 && shape === undefined && builder !== undefined && builders.get(builder) === 'direct' ? lexedContentSlot(node)?.propertyName : undefined;
+			const content = node instanceof AssembledLexedPattern && armMembers.length === 0 && shape === undefined && builder !== undefined && builders.get(builder) === 'direct' ? contentSlot?.propertyName : undefined;
 			const owners = ownersOf(armMembers);
 			for (const [i, a] of owners.entries())
 				for (const b of owners.slice(i + 1)) {
@@ -968,7 +1012,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					chosen: deepest.some((preset) => !claimedPresets.has(preset)),
 					text: fixedText.get(kind),
 					value: declaredValues.get(kind),
-					scalar: shape === undefined ? undefined : shape.base === 'float' ? 'float' : 'integer',
+					scalar,
 					complete: shape?.base !== 'float' || shape.complete,
 					arm: {
 						kind: builtId,
@@ -976,6 +1020,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						...(mount === undefined ? {} : { mounted: mount.mounted }),
 						...(seated === undefined ? {} : { seated }),
 						...(numeric === undefined ? {} : { numeric }),
+						...(numericRequired.length === 0 ? {} : { numericRequired }),
+						...(digits === undefined ? {} : { digits }),
 						...(literals.has(kind) ? { literal: declaredValues.has(kind) ? { value: declaredValues.get(kind)! } : {} } : {}),
 						members: armMembers,
 						...emptiedOf(armMembers),
@@ -1221,8 +1267,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const emptyOf = (arm: Arm): string[] => (arm.text === undefined && arm.entry.empty === true ? missingOf(arm).filter((name) => listed.has(name)) : []);
 		const decidedOrder = decide(arms);
 		const ordered = [...decidedOrder.filter((arm) => emptyOf(arm).length > 0), ...decidedOrder.filter((arm) => emptyOf(arm).length === 0)];
-		const scalarArms = new Map<Arm, 'integer' | 'float'>();
-		for (const scalar of ['integer', 'float'] as const) {
+		const scalarArms = new Map<Arm, ArmScalar>();
+		for (const scalar of ARM_SCALARS) {
 			const pool = ordered.filter((arm) => arm.scalar === scalar);
 			if (pool.length === 0) continue;
 			const complete = pool.filter((arm) => arm.complete);
@@ -1233,9 +1279,9 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			else scalarArms.set(chosen, scalar);
 		}
 		const kindOf = (arm: Arm | undefined): string | undefined => (arm === undefined ? undefined : storageOf(arm));
-		const takes = (scalar: 'integer' | 'float'): string | undefined => kindOf([...scalarArms].find(([, taken]) => taken === scalar)?.[0]);
+		const takes = (scalar: ArmScalar): string | undefined => kindOf([...scalarArms].find(([, taken]) => taken === scalar)?.[0]);
 		decided.set(path, {
-			integer: takes('integer'),
+			integer: takes('integer') ?? takes('bigint'),
 			float: takes('float'),
 			true: kindOf(arms.find((arm) => arm.value === true)),
 			false: kindOf(arms.find((arm) => arm.value === false))
@@ -1316,7 +1362,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			features
 		},
 		diagnostics,
-		presetCarried
+		presetCarried,
+		totalIntegerReads
 	};
 }
 
@@ -1363,8 +1410,8 @@ function valueBuilds(
 	);
 }
 
-export function emitPortableBuild(input: PortableBuildInput): { readonly source: string; readonly diagnostics: readonly PickDiagnostic[]; readonly table: PortableBuildTable; readonly presetCarried: ReadonlySet<number> } {
-	const { table, diagnostics, presetCarried } = portableBuildTable(input);
+export function emitPortableBuild(input: PortableBuildInput): PortableBuildOutput & { readonly source: string } {
+	const { table, diagnostics, presetCarried, totalIntegerReads } = portableBuildTable(input);
 	return {
 		source: [
 			'// Auto-generated by @sittir/codegen — do not edit',
@@ -1376,6 +1423,7 @@ export function emitPortableBuild(input: PortableBuildInput): { readonly source:
 		].join('\n'),
 		diagnostics,
 		table,
-		presetCarried
+		presetCarried,
+		totalIntegerReads
 	};
 }

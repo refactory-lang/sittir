@@ -413,5 +413,29 @@
       "shape": "choice[5]",
       "ruleId": "rule:_let_chain:root"
     }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-integer-partial",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.hex: integer_literal_hex's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-integer-partial",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.binary: integer_literal_binary's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-integer-partial",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.octal: integer_literal_octal's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
   }
 ]

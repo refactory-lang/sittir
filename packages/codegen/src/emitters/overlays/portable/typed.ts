@@ -17,6 +17,7 @@ export interface PortableTypedInput {
 	readonly readTest: (entry: ReadEntry) => readonly PortableCondition[];
 	readonly table: PortableBuildTable;
 	readonly presetCarried: ReadonlySet<number>;
+	readonly totalIntegerReads: ReadonlySet<number>;
 	readonly flags: ReadonlyMap<string, readonly string[]>;
 }
 
@@ -138,6 +139,7 @@ const PRELUDE = [
 	'',
 	'declare function floatOf(node: unknown): number;',
 	'declare function integerOf(node: unknown): number | bigint;',
+	'declare function bigintOf(node: unknown): bigint;',
 	'',
 	'function trueValue(): true {',
 	'\treturn true;',
@@ -153,10 +155,14 @@ const PRELUDE = [
 	'',
 	'function integerValue(this: Held<unknown>): number | bigint {',
 	'\treturn integerOf(this[low]);',
+	'}',
+	'',
+	'function bigintValue(this: Held<unknown>): bigint {',
+	'\treturn bigintOf(this[low]);',
 	'}'
 ];
 
-const VALUE_READERS: Readonly<Record<ValueRead, string>> = { text: 'value', true: 'trueValue', false: 'falseValue', float: 'floatValue', integer: 'integerValue' };
+const VALUE_READERS: Readonly<Record<ValueRead, string>> = { text: 'value', true: 'trueValue', false: 'falseValue', float: 'floatValue', integer: 'integerValue', bigint: 'bigintValue' };
 
 export function emitPortableTyped(typedInput: PortableTypedInput): PortableTypedOutput {
 	const { routes, input, nodeMap, kindEntries } = typedInput;

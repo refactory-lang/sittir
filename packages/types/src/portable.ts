@@ -240,7 +240,7 @@ export type PortablePickTest =
 	| { readonly boolean: boolean }
 	| { readonly variant: string; readonly value: number; readonly default?: true };
 
-/** The member a config builder takes each part of a number's decimal spelling through: its digits before and after the point, its exponent's digits, the exponent marker and the exponent's sign. */
+/** The slot a config builder takes each part of a number's decimal spelling through: its digits before and after the point, its exponent's digits, the exponent marker and the exponent's sign. */
 export interface PortableDecimalParts {
 	readonly integer?: string;
 	readonly fraction?: string;
@@ -252,9 +252,10 @@ export interface PortableDecimalParts {
 /**
  * One way a vocabulary path builds: the kind and its builder, the tests that pick it, the holder slots it is picked in, and what it builds from the
  * structure. A fixed literal has no builder and builds as its kind id; a kind its holder's builder builds has none either, and says by `seated`
- * whether the holder takes its config or its sole value. `scalar` marks the one arm at the path that builds a number of that type; it takes the
- * number as its builder's input, or, where its builder takes a config, through `numeric`: the member that takes the number whole, or the member
- * that takes each part of its decimal spelling. A structure stating one of those members beside its `$value` refuses. A `template`
+ * whether the holder takes its config or its sole value. `scalar` marks the one arm at the path that builds a number of that type (`bigint` where the path's `$value` is a bigint, read and built as one); it takes the
+ * number as its builder's input, or, where its builder takes a config, through `numeric`: the slot of its kind that takes the number whole, or the slot
+ * that takes each part of its decimal spelling, of which `numericRequired` names the ones the kind always spells. An integer arm reads its number in the
+ * `digits` base after the `digits` affix. Its other members read and build beside the `$value`. A `template`
  * spells its member from the named holes. A `mounted` arm's builder is a mount that builds its holder, the kind
  * `mounted.holder`, with the arm's kind seated at `mounted.key`. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
  * holds) are the path's read tests, which a built node must pass. Where the arm's routes run through different forms of one slot, `owners`
@@ -271,8 +272,10 @@ export interface PortableBuildArm {
 	readonly builder?: string;
 	readonly mounted?: PortableMount & { readonly holder: number };
 	readonly seated?: PortableCallShape;
-	readonly scalar?: 'integer' | 'float';
+	readonly scalar?: 'integer' | 'float' | 'bigint';
 	readonly numeric?: string | PortableDecimalParts;
+	readonly numericRequired?: readonly string[];
+	readonly digits?: { readonly base: 2 | 8 | 10 | 16; readonly affix: string };
 	readonly literal?: { readonly value?: boolean };
 	readonly when: readonly PortablePickTest[];
 	readonly holders?: readonly (readonly [holder: number, key: string])[];

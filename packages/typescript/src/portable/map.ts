@@ -629,13 +629,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.SequenceExpression.Parsed
@@ -1649,13 +1645,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly value:
@@ -1780,13 +1772,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -1911,13 +1899,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly optionality: '!' | '?';
@@ -2096,13 +2080,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -2227,13 +2207,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly optionality: '!' | '?';
@@ -2412,13 +2388,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -2543,13 +2515,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly optionality: '!' | '?';
@@ -2728,13 +2696,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -2859,13 +2823,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly optionality: '!' | '?';
@@ -3044,13 +3004,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -3175,13 +3131,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly optionality: '!' | '?';
@@ -3454,13 +3406,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly optionality: '!' | '?';
@@ -3733,13 +3681,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly optionality: '!' | '?';
@@ -4012,13 +3956,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly optionality: '!' | '?';
@@ -4500,13 +4440,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -4691,13 +4627,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -4882,13 +4814,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -5073,13 +5001,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -5264,13 +5188,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -5455,13 +5375,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -5646,13 +5562,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -5837,13 +5749,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -6028,13 +5936,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -6219,13 +6123,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -6410,13 +6310,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -6601,13 +6497,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -6899,13 +6791,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -7112,13 +7000,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -7325,13 +7209,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -7538,13 +7418,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -7751,13 +7627,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -7934,13 +7806,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -8118,13 +7986,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -8250,13 +8114,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -8529,13 +8389,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -8808,13 +8664,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -9087,13 +8939,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -9365,13 +9213,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -9549,13 +9393,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -9680,13 +9520,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -9864,13 +9700,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -9995,13 +9827,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -10179,13 +10007,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -10311,13 +10135,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -10584,13 +10404,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -10857,13 +10673,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -11130,13 +10942,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -11402,13 +11210,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -11586,13 +11390,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -11717,13 +11517,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -11995,13 +11791,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -12273,13 +12065,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -12551,13 +12339,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -12829,13 +12613,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -13101,13 +12881,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -13373,13 +13149,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -13645,13 +13417,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -13917,13 +13685,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -14195,13 +13959,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -14473,13 +14233,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -14751,13 +14507,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly type:
@@ -15029,13 +14781,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -15301,13 +15049,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -15573,13 +15317,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -15845,13 +15585,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly parameters:
@@ -16695,13 +16431,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -17065,13 +16797,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -17521,13 +17249,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly value:
@@ -17652,13 +17376,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -17796,13 +17516,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -18122,13 +17838,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -18281,13 +17993,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -18439,13 +18147,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -18598,13 +18302,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -18757,13 +18457,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -18916,13 +18612,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -19075,13 +18767,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -19234,13 +18922,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -19393,13 +19077,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -19552,13 +19232,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -19711,13 +19387,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -19870,13 +19542,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -20029,13 +19697,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -20188,13 +19852,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -20347,13 +20007,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -20506,13 +20162,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -20665,13 +20317,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -20809,13 +20457,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -20953,13 +20597,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -21094,13 +20734,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -21237,13 +20873,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -21378,13 +21010,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -21521,13 +21149,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -21662,13 +21286,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -21805,13 +21425,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -21946,13 +21562,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -22089,13 +21701,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -22230,13 +21838,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -22373,13 +21977,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -22514,13 +22114,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -22657,13 +22253,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -22798,13 +22390,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -22941,13 +22529,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -23082,13 +22666,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -23225,13 +22805,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -23366,13 +22942,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -23509,13 +23081,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -23650,13 +23218,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -23793,13 +23357,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -23934,13 +23494,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -24077,13 +23633,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -24218,13 +23770,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -24361,13 +23909,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -24502,13 +24046,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -24645,13 +24185,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -24786,13 +24322,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -24929,13 +24461,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -25070,13 +24598,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -25213,13 +24737,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -25354,13 +24874,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -25497,13 +25013,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -25638,13 +25150,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -25781,13 +25289,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -25922,13 +25426,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -26065,13 +25565,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -26206,13 +25702,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -26349,13 +25841,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -26490,13 +25978,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -26633,13 +26117,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -26774,13 +26254,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -26917,13 +26393,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -27058,13 +26530,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -27202,13 +26670,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -27343,13 +26807,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -27486,13 +26946,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -27627,13 +27083,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -27770,13 +27222,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -27911,13 +27359,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -28054,13 +27498,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -28195,13 +27635,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -28449,13 +27885,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -28683,13 +28115,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.CallExpressionTemplateCall.Parsed
 				| T.MemberExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed
@@ -28801,13 +28229,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.CallExpressionTemplateCall.Parsed
 				| T.MemberExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed
@@ -29098,13 +28522,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -29227,13 +28647,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed
@@ -29405,13 +28821,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -29606,13 +29018,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -29803,13 +29211,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -29947,13 +29351,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -30271,13 +29671,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.SpreadElement.Parsed
@@ -30443,13 +29839,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -30584,13 +29976,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -30725,13 +30113,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -30951,13 +30335,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -31150,13 +30530,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.SequenceExpression.Parsed
@@ -31296,13 +30672,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -31510,13 +30882,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -31665,13 +31033,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.SequenceExpression.Parsed
@@ -31865,13 +31229,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 								| T.MemberExpression.Parsed
 								| T.NewExpression.Parsed
 								| T.NonNullExpression.Parsed
-								| T.NumberBinary.Parsed
-								| T.NumberDecimal.Parsed
 								| T.NumberFloatLeadingPoint.Parsed
 								| T.NumberFloatPoint.Parsed
 								| T.NumberFloatScientific.Parsed
-								| T.NumberHex.Parsed
-								| T.NumberOctal.Parsed
 								| T.ParenthesizedExpressionTyped.Parsed
 								| T.SatisfiesExpression.Parsed
 								| T.StringDouble.Parsed
@@ -32010,13 +31370,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -32155,13 +31511,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.SequenceExpression.Parsed
@@ -32297,13 +31649,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -32441,13 +31789,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -32584,13 +31928,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -32728,13 +32068,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -32872,13 +32208,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -33016,13 +32348,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -33160,13 +32488,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -33304,13 +32628,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -33448,13 +32768,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -33592,13 +32908,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -33735,13 +33047,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -33879,13 +33187,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -34023,13 +33327,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -34166,13 +33466,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -34390,12 +33686,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'literal.number': {
 			readonly $forms:
+				| V.Form<'content', 'exponent' | 'exponentSign' | 'fraction' | 'integer' | 'marker' | 'radixPrefix'>
 				| V.Form<never, 'content' | 'exponent' | 'exponentSign' | 'fraction' | 'integer' | 'marker' | 'radixPrefix'>
 				| V.Form<'content' | 'radixPrefix', 'exponent' | 'exponentSign' | 'fraction' | 'integer' | 'marker'>
 				| V.Form<'fraction', 'content' | 'integer' | 'radixPrefix'>
 				| V.Form<'integer', 'content' | 'radixPrefix'>
-				| V.Form<'exponent' | 'integer' | 'marker', 'content' | 'fraction' | 'radixPrefix'>
-				| V.Form<'content', 'exponent' | 'exponentSign' | 'fraction' | 'integer' | 'marker' | 'radixPrefix'>;
+				| V.Form<'exponent' | 'integer' | 'marker', 'content' | 'fraction' | 'radixPrefix'>;
 		};
 		readonly 'literal.number.float': {
 			readonly exponent: string;
@@ -34464,13 +33760,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'literal.number.integer.binary'>
 				| V.Read<TypeScriptMap, 'literal.number.integer.hex'>
 				| V.Read<TypeScriptMap, 'literal.number.integer.octal'>
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
-				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed;
+				| T.NumberFloatScientific.Parsed;
 			readonly $forms: V.Form<'value'>;
 		};
 		readonly 'literal.regex': {
@@ -34662,13 +33954,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -34857,13 +34145,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -34987,13 +34271,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly properties:
@@ -35486,13 +34766,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -35924,13 +35200,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
@@ -36068,13 +35340,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.SequenceExpression.Parsed
@@ -36596,13 +35864,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.SequenceExpression.Parsed
@@ -36739,13 +36003,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.SequenceExpression.Parsed
@@ -36889,13 +36149,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.SequenceExpression.Parsed
@@ -37381,13 +36637,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.SequenceExpression.Parsed
@@ -37645,13 +36897,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.SequenceExpression.Parsed
@@ -38320,13 +37568,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MemberExpression.Parsed
 				| T.NewExpression.Parsed
 				| T.NonNullExpression.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SatisfiesExpression.Parsed
 				| T.SpreadElement.Parsed
@@ -38477,13 +37721,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 								| T.MemberExpression.Parsed
 								| T.NewExpression.Parsed
 								| T.NonNullExpression.Parsed
-								| T.NumberBinary.Parsed
-								| T.NumberDecimal.Parsed
 								| T.NumberFloatLeadingPoint.Parsed
 								| T.NumberFloatPoint.Parsed
 								| T.NumberFloatScientific.Parsed
-								| T.NumberHex.Parsed
-								| T.NumberOctal.Parsed
 								| T.ParenthesizedExpressionTyped.Parsed
 								| T.SatisfiesExpression.Parsed
 								| T.SpreadElement.Parsed
@@ -38740,13 +37980,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'literal.number.negative'>
 				| V.Read<TypeScriptMap, 'literal.string'>
 				| T.LiteralTypeNegativeNumber.Parsed
-				| T.NumberBinary.Parsed
-				| T.NumberDecimal.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
-				| T.NumberHex.Parsed
-				| T.NumberOctal.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly $forms: V.Form<'content'>;

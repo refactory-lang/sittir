@@ -31102,8 +31102,186 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
+					kind: 165,
+					builder: 'numberBigintDecimal',
+					numeric: 'content',
+					digits: {
+						base: 10,
+						affix: ''
+					},
+					members: [
+						{
+							name: 'content',
+							steps: [
+								{
+									key: 'content'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [165, 'content'],
+									kinds: [],
+									text: true,
+									pattern: {
+										source: '^(?:(?:\\d(_?\\d)*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					scalar: 'bigint',
+					when: [
+						{
+							variant: 'number_bigint',
+							value: 165,
+							default: true
+						},
+						{
+							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
+							required: ['content']
+						}
+					]
+				},
+				{
+					kind: 163,
+					builder: 'numberBigintBinary',
+					numeric: 'content',
+					digits: {
+						base: 2,
+						affix: '0b'
+					},
+					members: [
+						{
+							name: 'content',
+							steps: [
+								{
+									key: 'content'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [163, 'content'],
+									kinds: [],
+									text: true,
+									pattern: {
+										source: '^(?:(?:0b|0B)(?:[0-1](_?[0-1])*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							variant: 'number_bigint',
+							value: 163
+						},
+						{
+							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
+							required: ['content']
+						}
+					]
+				},
+				{
+					kind: 162,
+					builder: 'numberBigintHex',
+					numeric: 'content',
+					digits: {
+						base: 16,
+						affix: '0x'
+					},
+					members: [
+						{
+							name: 'content',
+							steps: [
+								{
+									key: 'content'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [162, 'content'],
+									kinds: [],
+									text: true,
+									pattern: {
+										source: '^(?:(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							variant: 'number_bigint',
+							value: 162
+						},
+						{
+							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
+							required: ['content']
+						}
+					]
+				},
+				{
+					kind: 164,
+					builder: 'numberBigintOctal',
+					numeric: 'content',
+					digits: {
+						base: 8,
+						affix: '0o'
+					},
+					members: [
+						{
+							name: 'content',
+							steps: [
+								{
+									key: 'content'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [164, 'content'],
+									kinds: [],
+									text: true,
+									pattern: {
+										source: '^(?:(?:0o|0O)(?:[0-7](_?[0-7])*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							variant: 'number_bigint',
+							value: 164
+						},
+						{
+							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
+							required: ['content']
+						}
+					]
+				},
+				{
 					kind: 159,
 					builder: 'number.decimal',
+					digits: {
+						base: 10,
+						affix: ''
+					},
 					members: [],
 					presets: [],
 					flags: {},
@@ -31123,6 +31301,10 @@ export const build: PortableBuildTable = {
 				{
 					kind: 160,
 					builder: 'numberBinary',
+					digits: {
+						base: 2,
+						affix: '0b'
+					},
 					members: [
 						{
 							name: 'radixPrefix',
@@ -31181,6 +31363,10 @@ export const build: PortableBuildTable = {
 				{
 					kind: 155,
 					builder: 'numberHex',
+					digits: {
+						base: 16,
+						affix: '0x'
+					},
 					members: [
 						{
 							name: 'radixPrefix',
@@ -31239,6 +31425,10 @@ export const build: PortableBuildTable = {
 				{
 					kind: 161,
 					builder: 'numberOctal',
+					digits: {
+						base: 8,
+						affix: '0o'
+					},
 					members: [
 						{
 							name: 'radixPrefix',
@@ -31303,6 +31493,7 @@ export const build: PortableBuildTable = {
 						marker: 'marker',
 						exponentSign: 'exponentSign'
 					},
+					numericRequired: ['fraction'],
 					members: [
 						{
 							name: 'fraction',
@@ -31407,6 +31598,7 @@ export const build: PortableBuildTable = {
 						marker: 'marker',
 						exponentSign: 'exponentSign'
 					},
+					numericRequired: ['integer'],
 					members: [
 						{
 							name: 'integer',
@@ -31532,6 +31724,7 @@ export const build: PortableBuildTable = {
 						marker: 'marker',
 						exponentSign: 'exponentSign'
 					},
+					numericRequired: ['integer', 'exponent', 'marker'],
 					members: [
 						{
 							name: 'integer',
@@ -31623,159 +31816,6 @@ export const build: PortableBuildTable = {
 							required: ['exponent', 'integer', 'marker']
 						}
 					]
-				},
-				{
-					kind: 165,
-					builder: 'numberBigintDecimal',
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [165, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:\\d(_?\\d)*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							variant: 'number_bigint',
-							value: 165,
-							default: true
-						},
-						{
-							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
-							required: ['content']
-						}
-					]
-				},
-				{
-					kind: 163,
-					builder: 'numberBigintBinary',
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [163, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:0b|0B)(?:[0-1](_?[0-1])*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							variant: 'number_bigint',
-							value: 163
-						},
-						{
-							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
-							required: ['content']
-						}
-					]
-				},
-				{
-					kind: 162,
-					builder: 'numberBigintHex',
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [162, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							variant: 'number_bigint',
-							value: 162
-						},
-						{
-							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
-							required: ['content']
-						}
-					]
-				},
-				{
-					kind: 164,
-					builder: 'numberBigintOctal',
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [164, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:0o|0O)(?:[0-7](_?[0-7])*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							variant: 'number_bigint',
-							value: 164
-						},
-						{
-							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
-							required: ['content']
-						}
-					]
 				}
 			]
 		},
@@ -31792,6 +31832,7 @@ export const build: PortableBuildTable = {
 						marker: 'marker',
 						exponentSign: 'exponentSign'
 					},
+					numericRequired: ['integer'],
 					members: [
 						{
 							name: 'integer',
@@ -31927,6 +31968,7 @@ export const build: PortableBuildTable = {
 						marker: 'marker',
 						exponentSign: 'exponentSign'
 					},
+					numericRequired: ['fraction'],
 					members: [
 						{
 							name: 'fraction',
@@ -32040,6 +32082,7 @@ export const build: PortableBuildTable = {
 						marker: 'marker',
 						exponentSign: 'exponentSign'
 					},
+					numericRequired: ['integer', 'exponent', 'marker'],
 					members: [
 						{
 							name: 'integer',
@@ -32145,6 +32188,10 @@ export const build: PortableBuildTable = {
 				{
 					kind: 159,
 					builder: 'number.decimal',
+					digits: {
+						base: 10,
+						affix: ''
+					},
 					members: [],
 					presets: [],
 					flags: {},
@@ -32159,6 +32206,11 @@ export const build: PortableBuildTable = {
 				{
 					kind: 165,
 					builder: 'numberBigintDecimal',
+					numeric: 'content',
+					digits: {
+						base: 10,
+						affix: ''
+					},
 					members: [
 						{
 							name: 'content',
@@ -32184,6 +32236,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'bigint',
 					when: [
 						{
 							absent: [],
@@ -32199,6 +32252,11 @@ export const build: PortableBuildTable = {
 				{
 					kind: 163,
 					builder: 'numberBigintBinary',
+					numeric: 'content',
+					digits: {
+						base: 2,
+						affix: '0b'
+					},
 					members: [
 						{
 							name: 'content',
@@ -32224,6 +32282,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'bigint',
 					when: [
 						{
 							absent: [],
@@ -32239,6 +32298,11 @@ export const build: PortableBuildTable = {
 				{
 					kind: 162,
 					builder: 'numberBigintHex',
+					numeric: 'content',
+					digits: {
+						base: 16,
+						affix: '0x'
+					},
 					members: [
 						{
 							name: 'content',
@@ -32264,6 +32328,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'bigint',
 					when: [
 						{
 							absent: [],
@@ -32279,6 +32344,11 @@ export const build: PortableBuildTable = {
 				{
 					kind: 164,
 					builder: 'numberBigintOctal',
+					numeric: 'content',
+					digits: {
+						base: 8,
+						affix: '0o'
+					},
 					members: [
 						{
 							name: 'content',
@@ -32304,6 +32374,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'bigint',
 					when: [
 						{
 							absent: [],
@@ -32319,6 +32390,10 @@ export const build: PortableBuildTable = {
 				{
 					kind: 160,
 					builder: 'numberBinary',
+					digits: {
+						base: 2,
+						affix: '0b'
+					},
 					members: [
 						{
 							name: 'radixPrefix',
@@ -32381,6 +32456,10 @@ export const build: PortableBuildTable = {
 				{
 					kind: 155,
 					builder: 'numberHex',
+					digits: {
+						base: 16,
+						affix: '0x'
+					},
 					members: [
 						{
 							name: 'radixPrefix',
@@ -32443,6 +32522,10 @@ export const build: PortableBuildTable = {
 				{
 					kind: 161,
 					builder: 'numberOctal',
+					digits: {
+						base: 8,
+						affix: '0o'
+					},
 					members: [
 						{
 							name: 'radixPrefix',
