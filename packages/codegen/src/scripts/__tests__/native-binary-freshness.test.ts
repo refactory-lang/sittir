@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, posix, relative, win32 } from 'node:path';
@@ -285,6 +286,19 @@ describe('a stripped release binary', () => {
 		expect(unstrippedReleaseBinary(root, 'rust', BINARY)).toBe(copy);
 		write(relative(root, map), 'another map');
 		expect(() => unstrippedReleaseBinary(root, 'rust', BINARY)).toThrow(`${BINARY}.map is not the linker map its build kept`);
+	});
+
+	it.runIf(process.platform === 'darwin')('finds the llvm tool the developer tools carry when the Rust toolchain has none', () => {
+		const bin = join(outer, 'bin');
+		mkdirSync(bin);
+		writeFileSync(join(bin, 'rustc'), '#!/bin/sh\ncase "$1" in --print) echo /nonexistent;; -vV) echo "host: aarch64-apple-darwin";; esac\n', { mode: 0o755 });
+		vi.stubEnv('PATH', `${bin}:${process.env.PATH}`);
+		vi.stubEnv('LLVM_NM', '');
+		try {
+			expect(llvmTool('llvm-nm', root)).toBe(execFileSync('xcrun', ['--find', 'llvm-nm'], { encoding: 'utf8' }).trim());
+		} finally {
+			vi.unstubAllEnvs();
+		}
 	});
 
 	it('strips with the llvm tool its variable names, when one is named', () => {

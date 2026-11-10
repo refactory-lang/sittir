@@ -28,8 +28,15 @@ export function buildParserWasm(grammarDir: string): string {
 	const sittirDir = join(grammarDir, '.sittir');
 	syncExternalScanner(grammarDir, sittirDir);
 	runTreeSitterCli(['build', '--wasm', '-o', PARSER_WASM], sittirDir, 'pipe');
-	writeFileSync(join(sittirDir, PARSER_RECORD), `${JSON.stringify({ source: parserSourceKey(sittirDir) }, null, '\t')}\n`);
-	return join(sittirDir, PARSER_WASM);
+	const wasmPath = join(sittirDir, PARSER_WASM);
+	const record: ParserRecord = { source: parserSourceKey(sittirDir), wasm: digestOf(readFileSync(wasmPath)) };
+	writeFileSync(join(sittirDir, PARSER_RECORD), `${JSON.stringify(record, null, '\t')}\n`);
+	return wasmPath;
+}
+
+interface ParserRecord {
+	readonly source: string;
+	readonly wasm: string;
 }
 
 export function ensureParserWasm(grammarDir: string): { readonly wasmPath: string; readonly built: boolean } {
@@ -38,7 +45,10 @@ export function ensureParserWasm(grammarDir: string): { readonly wasmPath: strin
 	return { wasmPath: buildParserWasm(grammarDir), built: true };
 }
 
-export type ParserWasm = { readonly wasmPath: string } & ({ readonly fresh: true } | { readonly fresh: false; readonly reason: string });
+export type ParserWasm = { readonly wasmPath: string } & (
+	| { readonly fresh: true; readonly bytes: Uint8Array }
+	| { readonly fresh: false; readonly reason: string }
+);
 
 export function builtParserWasm(grammarDir: string): ParserWasm {
 	const sittirDir = join(grammarDir, '.sittir');
@@ -46,16 +56,39 @@ export function builtParserWasm(grammarDir: string): ParserWasm {
 	const recordPath = join(sittirDir, PARSER_RECORD);
 	if (!existsSync(wasmPath)) return { wasmPath, fresh: false, reason: 'it does not exist' };
 	if (!existsSync(recordPath)) return { wasmPath, fresh: false, reason: `no ${PARSER_RECORD} records what it was built from` };
-	const recorded = (JSON.parse(readFileSync(recordPath, 'utf8')) as { readonly source?: string }).source;
-	if (recorded !== parserSourceKey(sittirDir)) return { wasmPath, fresh: false, reason: 'it was built from other sources than .sittir/src holds now' };
-	return { wasmPath, fresh: true };
+	const recorded = JSON.parse(readFileSync(recordPath, 'utf8')) as Partial<ParserRecord>;
+	if (recorded.source !== parserSourceKey(sittirDir)) return { wasmPath, fresh: false, reason: 'it was built from other sources than it reads now' };
+	const bytes = new Uint8Array(readFileSync(wasmPath));
+	if (recorded.wasm !== digestOf(bytes)) return { wasmPath, fresh: false, reason: `its bytes are not the ones ${PARSER_RECORD} records` };
+	return { wasmPath, fresh: true, bytes };
 }
 
 function parserSourceKey(sittirDir: string): string {
-	const src = join(sittirDir, 'src');
 	const hash = createHash('sha256');
-	for (const file of filesUnder(src)) hash.update(relative(src, file)).update('\0').update(readFileSync(file));
+	for (const file of compiledFiles(join(sittirDir, 'src'))) hash.update(relative(sittirDir, file)).update('\0').update(readFileSync(file));
 	return hash.digest('hex');
+}
+
+function digestOf(bytes: Uint8Array): string {
+	return createHash('sha256').update(bytes).digest('hex');
+}
+
+function compiledFiles(src: string): string[] {
+	const files = new Set(filesUnder(src));
+	for (const file of files) {
+		if (!C_SOURCE.test(file)) continue;
+		for (const included of relativeIncludesOf(readFileSync(file, 'utf8'))) {
+			const path = resolve(dirname(file), included);
+			if (existsSync(path)) files.add(path);
+		}
+	}
+	return [...files].sort();
+}
+
+const C_SOURCE = /\.(?:c|cc|h)$/;
+
+function relativeIncludesOf(source: string): string[] {
+	return [...source.matchAll(/#include\s+"([^"]+)"/g)].map((match) => match[1]!);
 }
 
 function filesUnder(dir: string): string[] {
@@ -137,10 +170,7 @@ function syncExternalScanner(grammarDir: string, targetDir: string): readonly st
 }
 
 export function copyRelativeScannerIncludes(baseScanner: string, sittirScanner: string, copied: string[] = []): readonly string[] {
-	const src = readFileSync(baseScanner, 'utf8');
-	const includeRe = /#include\s+"([^"]+)"/g;
-	for (const match of src.matchAll(includeRe)) {
-		const incPath = match[1]!;
+	for (const incPath of relativeIncludesOf(readFileSync(baseScanner, 'utf8'))) {
 		if (!incPath.includes('/') || incPath.startsWith('tree_sitter/')) continue;
 		const baseInc = resolve(dirname(baseScanner), incPath);
 		if (!existsSync(baseInc)) continue;

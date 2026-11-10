@@ -80,7 +80,19 @@ export function llvmTool(name: LlvmTool, repoRoot: string = REPO_ROOT): string {
 	const sysroot = execFileSync('rustc', ['--print', 'sysroot'], { cwd: repoRoot, encoding: 'utf8' }).trim();
 	const tool = join(sysroot, 'lib', 'rustlib', rustHost(repoRoot), 'bin', process.platform === 'win32' ? `${name}.exe` : name);
 	if (existsSync(tool)) return tool;
-	throw new Error(`${name} is not in the Rust toolchain: add its llvm-tools component (rustup component add llvm-tools), or name one in ${variable}`);
+	const developer = process.platform === 'darwin' ? developerTool(name) : undefined;
+	if (developer !== undefined) return developer;
+	throw new Error(
+		`${name} is not in the Rust toolchain${process.platform === 'darwin' ? ' or the developer tools xcrun finds' : ''}: add its llvm-tools component (rustup component add llvm-tools), or name one in ${variable}`
+	);
+}
+
+function developerTool(name: LlvmTool): string | undefined {
+	try {
+		return execFileSync('xcrun', ['--find', name], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+	} catch {
+		return undefined;
+	}
 }
 
 function walk(path: string, out: string[]): void {

@@ -457,7 +457,7 @@ Check each built release addon's whole-encode stack, RECURSION_LIMIT levels and 
 **Options**
 
 - `--addon <paths...>` — Unstripped addon files to check instead of the copy each release build keeps (sittir-<grammar>.<platform>.node)
-- `--objdump <path>` — llvm-objdump to disassemble with (default: $LLVM_OBJDUMP, then the pinned Rust toolchain's llvm-tools)
+- `--objdump <path>` — llvm-objdump to disassemble with (default: $LLVM_OBJDUMP, then the pinned Rust toolchain's llvm-tools, then xcrun on macOS)
 - `--paths` — Print every costliest path, not only those over budget
 - `--json` — Print the measurements as JSON
 

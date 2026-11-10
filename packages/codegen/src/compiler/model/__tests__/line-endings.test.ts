@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ALIAS, CHOICE, PATTERN, STRING, SYMBOL } from '../../../types/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, PATTERN, REPEAT, SEQ, STRING, SYMBOL, TOKEN } from '../../../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule } from '../../../types/rule.ts';
 import type { RuleListEntry } from '../../../dsl/rule-patterns.ts';
 import { admittedLineEndings, type LineGrammar } from '../line-endings.ts';
@@ -16,6 +16,9 @@ const layout = (...members: string[]): AnyRule =>
 	}) as AnyRule;
 const pattern = (value: string): AnyRule => ({ type: PATTERN, value }) as AnyRule;
 const text = (value: string): AnyRule => ({ type: STRING, value }) as AnyRule;
+const seq = (...members: AnyRule[]): AnyRule => ({ type: SEQ, members }) as AnyRule;
+const repeat = (content: AnyRule): AnyRule => ({ type: REPEAT, content }) as AnyRule;
+const token = (content: AnyRule): AnyRule => ({ type: TOKEN, content }) as AnyRule;
 const extras = (...patterns: string[]): RuleListEntry[] =>
 	patterns.map((value) => ({ type: PATTERN, value }) as RuleListEntry);
 
@@ -44,6 +47,13 @@ describe('admittedLineEndings', () => {
 		);
 		expect(endings.arms).toEqual(['\n', '\r\n']);
 		expect(endings.breaks.chars.has(0x0d)).toBe(true);
+	});
+
+	it('reads a token as the one pattern the lexer reads, not as its pieces', () => {
+		const comment = token(seq(text(';'), pattern('[^\\n ]*'), repeat(seq(text(' '), pattern('[^\\n ]*')))));
+		expect(
+			admittedLineEndings(grammar({ comment, identifier: pattern('[a-z]+') }, extras('\\s')), null).arms
+		).toEqual(['\n', '\r\n']);
 	});
 
 	it('keeps an arm a run passes through when the run crosses every line', () => {

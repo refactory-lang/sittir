@@ -564,11 +564,18 @@ export function lineBreaksOf(arms: readonly string[], unwritten: CharSet): LineB
 }
 
 export function absorbsRestOfLine(dfa: PatternDfa, rest: CharSet): boolean {
-	const reached = reachableFrom(dfa, [0], () => true);
-	return [...reached].some((at) => {
-		const state = dfa.states[at]!;
-		return state.accepting && state.edges.some((edge) => edge.to === at && edge.set.covers(rest));
-	});
+	const closed = new Set(dfa.states.flatMap((state, i) => (state.accepting ? [i] : [])));
+	for (let shrank = true; shrank; ) {
+		shrank = false;
+		for (const at of closed) {
+			const kept = dfa.states[at]!.edges.reduce((set, edge) => (closed.has(edge.to) ? set.union(edge.set) : set), CharSet.EMPTY);
+			if (!kept.covers(rest)) {
+				closed.delete(at);
+				shrank = true;
+			}
+		}
+	}
+	return [...reachableFrom(dfa, [0], () => true)].some((at) => closed.has(at));
 }
 
 export function armsThrough(dfa: PatternDfa, breaks: LineBreaks): string[] {

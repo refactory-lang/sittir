@@ -1,7 +1,7 @@
 import { ALIAS, CHOICE, PATTERN, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule } from '../../types/rule.ts';
 import type { NodeMap } from '../types.ts';
-import { RuleWalker } from '../../dsl/rule-walker.ts';
+import { SyntacticRuleWalker, isLexedBoundary } from '../../dsl/rule-walker.ts';
 import { nodelessExtrasRun, nodelessExtrasSource, type RuleListEntry } from '../../dsl/rule-patterns.ts';
 import { LAYOUT_SUPERTYPE } from '../../dsl/primitives/spacing.ts';
 import {
@@ -37,7 +37,7 @@ export interface LineEndings {
 	readonly breaks: LineBreaks;
 }
 
-const walker = new RuleWalker<AnyRule>();
+const syntactic = new SyntacticRuleWalker<AnyRule>();
 const PREFERRED = canonicalText(NEWLINE_MEMBER);
 
 export function lineEndingsOf(nodeMap: NodeMap): LineEndings {
@@ -59,7 +59,7 @@ export function admittedLineEndings(grammar: LineGrammar, parser: TreeShape | nu
 		layout.has(NEWLINE_MEMBER) ? NEWLINE_ARMS.filter((arm) => admitsWhitespaceMember(run, NEWLINE_MEMBER, arm)) : [],
 		unwritten
 	);
-	const swallowed = new Set(patternsOf(grammar).flatMap((pattern) => armsSwallowedBy(grammar, pattern, declared)));
+	const swallowed = new Set(lexedPatternsOf(grammar).flatMap((pattern) => armsSwallowedBy(grammar, pattern, declared)));
 	const sample = parser === null ? undefined : wordSample(grammar);
 	const arms = declared.arms.filter(
 		(arm) =>
@@ -86,14 +86,24 @@ function extrasChars(grammar: LineGrammar): CharSet {
 	return edgeChars(readable(grammar, source, 'extras'));
 }
 
-function patternsOf(grammar: LineGrammar): string[] {
+function lexedPatternsOf(grammar: LineGrammar): string[] {
 	return [
 		...new Set(
 			Object.values(grammar.rules).flatMap((rule) =>
-				walker.fold(rule, [] as string[], (found, inner) => (inner.type === PATTERN ? [...found, inner.value] : found))
+				syntactic.fold(rule, [] as string[], (found, inner) =>
+					inner.type === PATTERN || isLexedBoundary(inner) ? [...found, lexedSource(grammar, inner)] : found
+				)
 			)
 		)
 	];
+}
+
+function lexedSource(grammar: LineGrammar, token: AnyRule): string {
+	const source = ruleToRegexSource(token);
+	if (source === null) {
+		throw new Error(`line endings: ${grammar.name} has a token the lexer reads from rules that are not lexical: ${JSON.stringify(token)}`);
+	}
+	return source;
 }
 
 function armsSwallowedBy(grammar: LineGrammar, pattern: string, declared: LineBreaks): readonly string[] {

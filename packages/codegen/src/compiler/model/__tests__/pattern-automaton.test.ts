@@ -96,6 +96,7 @@ describe('pattern automaton', () => {
 		expect(opensLineEnd('[^\\r\\n\\u2028\\u2029]*', every)).toBe(true);
 		expect(opensLineEnd('#!(?<content>.*)', kept)).toBe(true);
 		expect(opensLineEnd('.*\\n?', kept)).toBe(true);
+		expect(opensLineEnd(';[^\\n\\r ]*(?: [^\\n\\r ]*)*', kept)).toBe(true);
 		expect(opensLineEnd('[^"\\\\\\r\\n]+', kept)).toBe(false);
 		expect(opensLineEnd('a.*b', kept)).toBe(false);
 		expect(opensLineEnd('[\\s\\S]*', kept)).toBe(false);

@@ -39,7 +39,7 @@ async function loadTreeShape(pkg: GrammarPackage): Promise<TreeShape> {
 	}
 	const { Parser, Language } = await loadWebTreeSitter();
 	const parser = new Parser();
-	parser.setLanguage(await Language.load(wasm.wasmPath));
+	parser.setLanguage(await Language.load(wasm.bytes));
 	return (source) => parser.parse(source)!.rootNode.toString();
 }
 
