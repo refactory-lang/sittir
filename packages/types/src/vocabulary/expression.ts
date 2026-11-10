@@ -145,23 +145,23 @@ export namespace Expression {
 		export namespace Arithmetic {
 			export interface Add<G extends GrammarMap, K extends Under<'expression.binary.arithmetic.add'> = 'expression.binary.arithmetic.add'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '+';
+				readonly operator?: never;
 			}
 			export interface Divide<G extends GrammarMap, K extends Under<'expression.binary.arithmetic.divide'> = 'expression.binary.arithmetic.divide'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '/';
+				readonly operator?: never;
 			}
 			export interface Modulo<G extends GrammarMap, K extends Under<'expression.binary.arithmetic.modulo'> = 'expression.binary.arithmetic.modulo'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '%';
+				readonly operator?: never;
 			}
 			export interface Multiply<G extends GrammarMap, K extends Under<'expression.binary.arithmetic.multiply'> = 'expression.binary.arithmetic.multiply'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '*';
+				readonly operator?: never;
 			}
 			export interface Subtract<G extends GrammarMap, K extends Under<'expression.binary.arithmetic.subtract'> = 'expression.binary.arithmetic.subtract'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '-';
+				readonly operator?: never;
 			}
 		}
 		export interface Bitwise<G extends GrammarMap, K extends Under<'expression.binary.bitwise'> = 'expression.binary.bitwise'> extends SubKindOf<V.Expression.Binary<G, K>> {
@@ -170,15 +170,15 @@ export namespace Expression {
 		export namespace Bitwise {
 			export interface And<G extends GrammarMap, K extends Under<'expression.binary.bitwise.and'> = 'expression.binary.bitwise.and'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '&';
+				readonly operator?: never;
 			}
 			export interface Or<G extends GrammarMap, K extends Under<'expression.binary.bitwise.or'> = 'expression.binary.bitwise.or'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '|';
+				readonly operator?: never;
 			}
 			export interface Xor<G extends GrammarMap, K extends Under<'expression.binary.bitwise.xor'> = 'expression.binary.bitwise.xor'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '^';
+				readonly operator?: never;
 			}
 		}
 		export interface Comparison<G extends GrammarMap, K extends Under<'expression.binary.comparison'> = 'expression.binary.comparison'> extends SubKindOf<V.Expression.Binary<G, K>> {
@@ -187,27 +187,27 @@ export namespace Expression {
 		export namespace Comparison {
 			export interface Equal<G extends GrammarMap, K extends Under<'expression.binary.comparison.equal'> = 'expression.binary.comparison.equal'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '==' | '===';
+				readonly operator?: never;
 			}
 			export interface Greater<G extends GrammarMap, K extends Under<'expression.binary.comparison.greater'> = 'expression.binary.comparison.greater'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '>';
+				readonly operator?: never;
 			}
 			export interface GreaterEqual<G extends GrammarMap, K extends Under<'expression.binary.comparison.greater_equal'> = 'expression.binary.comparison.greater_equal'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '>=';
+				readonly operator?: never;
 			}
 			export interface Less<G extends GrammarMap, K extends Under<'expression.binary.comparison.less'> = 'expression.binary.comparison.less'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '<';
+				readonly operator?: never;
 			}
 			export interface LessEqual<G extends GrammarMap, K extends Under<'expression.binary.comparison.less_equal'> = 'expression.binary.comparison.less_equal'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '<=';
+				readonly operator?: never;
 			}
 			export interface NotEqual<G extends GrammarMap, K extends Under<'expression.binary.comparison.not_equal'> = 'expression.binary.comparison.not_equal'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '!=' | '!==' | '<>';
+				readonly operator?: never;
 			}
 		}
 		export interface Logical<G extends GrammarMap, K extends Under<'expression.binary.logical'> = 'expression.binary.logical'> extends SubKindOf<V.Expression.Binary<G, K>> {
@@ -243,11 +243,11 @@ export namespace Expression {
 		export namespace Logical {
 			export interface And<G extends GrammarMap, K extends Under<'expression.binary.logical.and'> = 'expression.binary.logical.and'> extends SubKindOf<V.Expression.Binary.Logical<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '&&' | 'and';
+				readonly operator?: never;
 			}
 			export interface Or<G extends GrammarMap, K extends Under<'expression.binary.logical.or'> = 'expression.binary.logical.or'> extends SubKindOf<V.Expression.Binary.Logical<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: 'or' | '||';
+				readonly operator?: never;
 			}
 		}
 		export interface Shift<G extends GrammarMap, K extends Under<'expression.binary.shift'> = 'expression.binary.shift'> extends SubKindOf<V.Expression.Binary<G, K>> {
@@ -256,11 +256,11 @@ export namespace Expression {
 		export namespace Shift {
 			export interface Left<G extends GrammarMap, K extends Under<'expression.binary.shift.left'> = 'expression.binary.shift.left'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '<<';
+				readonly operator?: never;
 			}
 			export interface Right<G extends GrammarMap, K extends Under<'expression.binary.shift.right'> = 'expression.binary.shift.right'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '>>';
+				readonly operator?: never;
 			}
 		}
 	}
