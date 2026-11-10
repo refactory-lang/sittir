@@ -1,4 +1,4 @@
-import type { PortableCondition, PortablePath, PortableReadEntry, PortableRows, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
+import type { PortableCondition, PortableFact, PortablePath, PortableReadEntry, PortableRows, PortableStep, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
 import { engineOf, isLive } from '../engine-scope.ts';
 import { anchored, holds, slotItems, type PlanSubjects } from '../query-holds.ts';
 import { treeOf } from '../tree-token.ts';
@@ -48,8 +48,17 @@ const readsItself = (plan: QueryPlan<QuerySubject>): boolean => {
 const decidesKindId = (entry: PortableReadEntry): boolean =>
 	entry.test.every((condition) => condition.via.length === 0 && readsItself(condition.plan));
 
+/** A fact a node's container spells that holds for the node: the fact, the index of its item among the container's items, and the item's spelling as read. */
+export interface HoldingFact {
+	readonly fact: PortableFact;
+	readonly index: number;
+	readonly spelling?: string;
+}
+
 interface RowsReader {
 	readonly classify: PortableClassifier;
+	readonly factsOf: (node: Node, container: Node) => readonly HoldingFact[];
+	readonly spellingOf: (kind: number, fact: string, item: unknown) => string | undefined;
 	readonly slotsOf: (node: Node) => readonly (readonly [accessor: string, items: readonly unknown[]])[];
 	readonly readSlots: (node: Node, path: string, flags: readonly string[]) => ReadonlySet<string>;
 	readonly otherTested: (node: Node, path: string) => ReadonlySet<string>;
@@ -96,6 +105,19 @@ export function classifierOf(rows: PortableRows): PortableClassifier {
  */
 export function flagHolds(rows: PortableRows, value: Node | number, flag: string): boolean {
 	return readerOf(rows).flagHolds(value, flag);
+}
+
+/**
+ * The facts `container` spells for `node`, in the order the grammar's bindings declare them: each the first of the container's items its
+ * test holds on that no earlier fact took, and one per fact name.
+ */
+export function factsOf(rows: PortableRows, node: Node, container: Node): readonly HoldingFact[] {
+	return readerOf(rows).factsOf(node, container);
+}
+
+/** The spelling of a fact a kind's container spells, read from an item of that container: the text of the item's slot the fact spells. */
+export function spellingOf(rows: PortableRows, kind: number, fact: string, item: unknown): string | undefined {
+	return readerOf(rows).spellingOf(kind, fact, item);
 }
 
 export function slotsOf(rows: PortableRows, node: Node): readonly (readonly [accessor: string, items: readonly unknown[]])[] {
@@ -179,6 +201,37 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		);
 		return holding.find((entry) => !holding.some((other) => other.path !== entry.path && portablePathHasFacts(entry.path, other.path)))?.path;
 	};
+	const textsAt = (node: Node, steps: readonly PortableStep[]): readonly string[] =>
+		steps
+			.reduce<readonly unknown[]>((reached, step) => reached.filter(hasKind).flatMap((n) => anchored(itemsIn(n, step), step.anchor)), [node])
+			.flatMap((item) => textOf(item) ?? []);
+	const sameText = (a: readonly string[], b: readonly string[]): boolean => a.length === 1 && b.length === 1 && a[0] === b[0];
+	const factsOf = (node: Node, container: Node): readonly HoldingFact[] => {
+		const facts = (table.facts?.[node.$type] ?? []).filter((fact) => fact.container === container.$type);
+		const holding: HoldingFact[] = [];
+		const taken = new Set<number>();
+		for (const fact of facts) {
+			if (holding.some((held) => held.fact.name === fact.name)) continue;
+			const items = itemsIn(container, fact.items);
+			const index = items.findIndex(
+				(item, i) =>
+					!taken.has(i) &&
+					hasKind(item) &&
+					holds(fact.test, subjectsOf([item])) &&
+					(fact.same === undefined || sameText(textsAt(item, fact.same.item), textsAt(node, fact.same.node)))
+			);
+			if (index < 0) continue;
+			taken.add(index);
+			const spelled = fact.spelled === undefined || fact.same !== undefined ? undefined : textsAt(items[index] as Node, [fact.spelled]);
+			holding.push({ fact, index, ...(spelled?.length === 1 ? { spelling: spelled[0]! } : {}) });
+		}
+		return holding;
+	};
+	const spellingOf = (kind: number, name: string, item: unknown): string | undefined => {
+		const spelled = (table.facts?.[kind] ?? []).find((fact) => fact.name === name && fact.spelled !== undefined)?.spelled;
+		const texts = spelled === undefined || !hasKind(item) ? [] : textsAt(item, [spelled]);
+		return texts.length === 1 ? texts[0] : undefined;
+	};
 	const flagHolds = (value: Node | number, flag: string): boolean => {
 		const plan = flags[typeof value === 'number' ? value : value.$type]?.[flag];
 		return plan !== undefined && plan !== null && holds(plan, subjectsOf([value]));
@@ -229,5 +282,5 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		if (entries.length === 0 || !entries.every(unplaced)) return true;
 		return entries.some((entry) => entry.test.every((condition) => conditionHolds(condition, node)));
 	};
-	return { classify, slotsOf, readSlots, otherTested, flagHolds, builtReadsAs, textOf };
+	return { classify, factsOf, spellingOf, slotsOf, readSlots, otherTested, flagHolds, builtReadsAs, textOf };
 }

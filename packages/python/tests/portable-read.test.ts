@@ -69,8 +69,8 @@ describe('the portable read', () => {
 	it('reads a member through its deepest route that seats a value, as the build places it', () => {
 		const items = { $path: 'clause.resource.item', value: 'a', name: 'b' };
 		expect(firstOf('with a as b: pass')).toMatchObject({ withClause: { items: [items] } });
-		expect(roundTrip('with a as b: pass')).toBe('with a as b: pass\n');
-		expect(roundTrip('with a: pass')).toBe('with a: pass\n');
+		expect(roundTrip('with a as b:\n    pass\n')).toBe('with a as b:\n    pass\n');
+		expect(roundTrip('with a:\n    pass\n')).toBe('with a:\n    pass\n');
 	});
 
 	it('reads the legacy not-equal under its meaning, so `<>` builds back as `<>` and `!=` as `!=`', () => {
@@ -103,7 +103,7 @@ describe('the portable read', () => {
 		expect(tuple('x = 1, 2')).not.toHaveProperty('$flags');
 		expect(tuple('x = 1,')).not.toHaveProperty('$flags');
 		expect(((firstOf('a, b, = c') as Read).content as Read).name).toMatchObject({ $path: 'pattern.tuple.bare', $flags: ['trailingComma'] });
-		for (const source of ['x = 1, 2,\n', 'x = 1, 2\n', 'x = 1,\n', 'a, b, = c\n', 'for a, b, in c: pass\n', 'match x:\n    case a, b,:\n        pass\n']) expect(roundTrip(source)).toBe(source);
+		for (const source of ['x = 1, 2,\n', 'x = 1, 2\n', 'x = 1,\n', 'a, b, = c\n', 'for a, b, in c:\n    pass\n', 'match x:\n    case a, b,:\n        pass\n']) expect(roundTrip(source)).toBe(source);
 		const built = (flags: readonly string[]) =>
 			String(
 				runtime.engine.render(
@@ -160,8 +160,16 @@ describe('the portable read', () => {
 		expect(runtime.read(runtime.build(subscript as never) as never)).toEqual(subscript);
 	});
 
-	it('builds a single statement as the one item of an inline suite', () => {
-		for (const source of ['def f(): return 1\n', 'def f(): pass\n', 'class A: x = 1\n']) expect(roundTrip(source)).toBe(source);
+	it('reads a one-line body as the block of all its statements, and builds it in the default block form', () => {
+		expect(firstOf('def f(): pass')).toMatchObject({ body: { $path: 'statement.block', statements: ['pass'] } });
+		for (const [source, block] of [
+			['def f(): return 1\n', 'def f():\n    return 1\n'],
+			['class A: x = 1\n', 'class A:\n    x = 1\n'],
+			['if x: a; b\n', 'if x:\n    a\n    b\n']
+		] as const) {
+			expect(roundTrip(source)).toBe(block);
+			expect(roundTrip(block)).toBe(block);
+		}
 	});
 
 	it('reads a slice step whose group holds no expression as absent', () => {
@@ -185,6 +193,74 @@ describe('the portable read', () => {
 		expect(statement.$path).toBe('statement.print');
 		expect(roundTrip(source)).toBe(`${source}\n`);
 		expect(read(`${source}\n`).statements).toEqual([statement]);
+	});
+
+	it('reads Optional[X] as a nullable type of X, spells Optional back, and keeps another generic a generic', () => {
+		const typeOf = (source: string) => ((firstOf(source) as Read).content as Read).type;
+		expect(typeOf('x: Optional[int] = 1')).toEqual({ $path: 'type', content: { $path: 'type.nullable', type: { $path: 'type', content: 'int' } } });
+		expect(roundTrip('x: Optional[int] = 1')).toBe('x: Optional[int] = 1\n');
+		expect(String(runtime.engine.render(runtime.build({ $path: 'type.nullable', type: { $path: 'type', content: 'int' } }) as never))).toBe('Optional[int]');
+		expect(typeOf('x: List[int] = 1')).toEqual({ $path: 'type', content: { $path: 'type.generic', name: 'List', typeArguments: [{ $path: 'type', content: 'int' }] } });
+	});
+
+	it('reads an unpacked generic type argument as the rest type of the generic, and an unpacked name as the rest type of the name', () => {
+		const typeOf = (source: string) => ((firstOf(source) as Read).content as Read).type;
+		const unpacked = (type: unknown) => ({ $path: 'type', content: { $path: 'type.rest', type } });
+		expect(typeOf('x: tuple[int, *tuple[str, ...]]')).toEqual({
+			$path: 'type',
+			content: {
+				$path: 'type.generic',
+				name: 'tuple',
+				typeArguments: [
+					{ $path: 'type', content: 'int' },
+					unpacked({ $path: 'type.generic', name: 'tuple', typeArguments: [{ $path: 'type', content: 'str' }, { $path: 'type', content: { $path: 'literal.ellipsis' } }] })
+				]
+			}
+		});
+		expect(typeOf('x: tuple[str, *Ts]')).toEqual({ $path: 'type', content: { $path: 'type.generic', name: 'tuple', typeArguments: [{ $path: 'type', content: 'str' }, unpacked('Ts')] } });
+		const parameter = (((firstOf('def f(*args: *tuple[int, ...]):\n    pass\n') as Read).parameters as readonly Read[])[0] as Read).type;
+		expect(parameter).toEqual(unpacked({ $path: 'type.generic', name: 'tuple', typeArguments: [{ $path: 'type', content: 'int' }, { $path: 'type', content: { $path: 'literal.ellipsis' } }] }));
+		for (const source of ['x: tuple[int, *tuple[str, ...]]\n', 'x: tuple[str, *Ts]\n', 'def f(*args: *tuple[int, ...]):\n    pass\n', 'def f(*args: *Ts):\n    pass\n'])
+			expect(roundTrip(source)).toBe(source);
+	});
+
+	it.each([
+		['__x', 'x'],
+		['__x_', 'x_'],
+		['___x', '_x']
+	])('reads the mangled name %s as privateName with its stem as the name, and spells __ back', (name, stem) => {
+		const method = `class C:\n    def ${name}(self):\n        pass\n`;
+		const member = `self.${name}\n`;
+		expect((((firstOf(method) as Read).body as Read).statements as readonly Read[])[0]).toMatchObject({ $path: 'declaration.method', $flags: ['privateName'], name: stem });
+		expect((firstOf(member) as Read).content).toEqual({ $path: 'expression.member', $flags: ['privateName'], object: 'self', property: stem });
+		for (const source of [method, member]) expect(roundTrip(source)).toBe(source);
+		expect(String(runtime.engine.render(runtime.build({ $path: 'expression.member', $flags: ['privateName'], object: 'self', property: stem }) as never))).toBe(`self.${name}`);
+	});
+
+	it.each(['__eq__', '__'])('reads %s as no private name', (name) => {
+		const statement = (read(`self.${name}\n`).statements as readonly Read[])[0]!;
+		expect(statement.content).toEqual({ $path: 'expression.member', object: 'self', property: name });
+	});
+
+	it('refuses a private name whose stem spells no mangled name, and a plain name that reads as private', () => {
+		expect(() => runtime.build({ $path: 'expression.member', $flags: ['privateName'], object: 'self', property: 'x__' })).toThrow(/does not match/);
+		expect(() => runtime.build({ $path: 'expression.member', object: 'self', property: '__x' })).toThrow(/reads as privateName/);
+	});
+
+	it('carries a node whose read passes through a parse error, so the error text survives the round trip', () => {
+		const source = 'x: tuple[int, **P]\n';
+		const carried: unknown[] = [];
+		runtime.read(runtime.engine.parse(source), (_, carry) => carried.push(carry));
+		expect(carried).toEqual([{ reason: 'error' }]);
+		expect(roundTrip(source)).toBe(source);
+	});
+
+	it('carries the node a parser-inserted token sits in, so its rebuild writes no token the source lacks', () => {
+		const source = 'def f(:\n    pass\n';
+		const carried: unknown[] = [];
+		runtime.read(runtime.engine.parse(source), (_, carry) => carried.push(carry));
+		expect(carried).toEqual([{ reason: 'error' }]);
+		expect(roundTrip(source)).toBe(source);
 	});
 
 	it('reads a print statement\'s destination and arguments, and its trailing comma as a flag', () => {

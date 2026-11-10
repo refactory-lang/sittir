@@ -195,11 +195,50 @@ describe('the portable read', () => {
 			expect(roundTrip(source)).toBe(`${source}\n`);
 	});
 
-	it('carries a typeof operand typescript does not accept: a call, an optional chain', () => {
-		for (const source of ['let g: typeof a.b();', 'let h: typeof a?.b;']) {
+	it('carries a node a parse error sits beside, or a node whose read passes through one, so the error text survives the round trip', () => {
+		for (const [source, rendered] of [
+			['let x: 2 | +4;', 'let x: 2 | +4;\n'],
+			['export class A { set y(a: number, b: number) {} }', 'export class A {\n  set y(a: number, b: number) {}\n}\n']
+		] as const) {
+			const carried: unknown[] = [];
+			runtime.read(runtime.engine.parse(source), (_, carry) => carried.push(carry));
+			expect(carried, source).toEqual([{ reason: 'error' }]);
+			expect(roundTrip(source)).toBe(rendered);
+		}
+	});
+
+	it('keeps a private name whole where no flag of its holder writes its #, and reads it as the flag where one does', () => {
+		for (const source of ['class C {\n  #x = 1;\n  f(o) {\n    return #x in o;\n  }\n}\n', 'class C {\n  #x = 1;\n  f() {\n    let y: typeof this.#x;\n  }\n}\n']) {
 			const carried: unknown[] = [];
 			runtime.read(runtime.engine.parse(source), (_, carry) => carried.push(carry));
 			expect(carried, source).toEqual([{ reason: 'unclaimed' }]);
+			expect(roundTrip(source)).toBe(source);
+		}
+		expect(firstOf('let y = this.#x;')).toMatchObject({ declarators: [{ value: { $path: 'expression.member', $flags: ['privateName'], object: 'this', property: 'x' } }] });
+		expect(roundTrip('let y = this.#x;')).toBe('let y = this.#x;\n');
+	});
+
+	it('carries the node a parser-inserted token sits in, so its rebuild writes no token the source lacks', () => {
+		for (const [source, rendered] of [
+			["let x: import('a')();", "let x: import('a')();\n"],
+			['export class A { set y() {} }\n', 'export class A {\n  set y() {}\n}\n'],
+			['export class A { set y(a = 1) {} }\n', 'export class A {\n  set y(a = 1) {}\n}\n']
+		] as const) {
+			const carried: unknown[] = [];
+			runtime.read(runtime.engine.parse(source), (_, carry) => carried.push(carry));
+			expect(carried, source).toEqual([{ reason: 'error' }]);
+			expect(roundTrip(source)).toBe(rendered);
+		}
+	});
+
+	it('carries a typeof operand typescript does not accept: an optional chain no claim reads, a call the grammar rejects', () => {
+		for (const [source, carry] of [
+			['let h: typeof a?.b;', 'unclaimed'],
+			['let g: typeof a.b();', 'error']
+		] as const) {
+			const carried: unknown[] = [];
+			runtime.read(runtime.engine.parse(source), (_, held) => carried.push(held));
+			expect(carried, source).toEqual([{ reason: carry }]);
 			expect(roundTrip(source)).toBe(`${source}\n`);
 		}
 	});

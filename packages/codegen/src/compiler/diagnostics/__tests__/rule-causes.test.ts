@@ -26,6 +26,8 @@ function diagnose(input: {
 	renderAs?: readonly string[];
 	enriched: StageDiagnosis;
 	upstreamRules?: Record<string, unknown>;
+	supertypes?: readonly string[];
+	inline?: readonly string[];
 	authoredRules?: Record<string, unknown>;
 }): GrammarDiagnostic[] {
 	return diagnoseRuleCauses({
@@ -39,7 +41,10 @@ function diagnose(input: {
 					: Object.fromEntries(input.renderAs.map((n) => [n, { type: 'BLANK' } as never]))
 		},
 		enriched: input.enriched,
-		upstreamRules: input.upstreamRules as never,
+		upstream:
+			input.upstreamRules === undefined
+				? undefined
+				: { rules: input.upstreamRules as never, supertypes: input.supertypes, inline: input.inline },
 		authoredRules: input.authoredRules as never
 	});
 }
@@ -90,7 +95,7 @@ describe('semantic-gap reauthoring witnesses', () => {
 
 describe('a witnessed cause given an empty witness array', () => {
 	const upstreamRules = { tuple: { type: 'SEQ', members: [{ type: 'STRING', value: '(' }, { type: 'STRING', value: ')' }] } };
-	it.each(['accepts-other-kind', 'semantic-gap', 'rejects-valid-syntax', 'accepts-invalid-syntax'] as const)(
+	it.each(['accepts-other-kind', 'semantic-gap', 'rejects-valid-syntax', 'misreads-valid-syntax', 'accepts-invalid-syntax'] as const)(
 		'%s is a mismatch',
 		(cause) => {
 			const ds = diagnose({
@@ -280,6 +285,48 @@ describe('a rule reauthored because upstream accepts a form that is always anoth
 	});
 });
 
+describe('a rule reauthored because upstream reads valid syntax as another rule', () => {
+	const str = (value: string) => ({ type: 'STRING', value });
+	const sym = (name: string) => ({ type: 'SYMBOL', name });
+	const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
+	const upstreamRules = {
+		splat_type: seq(str('*'), sym('identifier')),
+		subscript: seq(sym('expression'), str('['), sym('expression'), str(']')),
+		generic_type: seq(sym('identifier'), str('['), sym('expression'), str(']'))
+	};
+	const ruleNames = new Set(Object.keys(upstreamRules));
+	const form = ['*', { symbol: 'generic_type' }];
+	const declared = (witness: { form: readonly (string | { symbol: string })[]; read?: string }): Record<string, RuleCauseDeclaration> => ({
+		splat_type: {
+			kind: 'reauthored',
+			causes: [{ cause: 'misreads-valid-syntax', witnesses: [{ text: 'x: tuple[*tuple[int]]', kind: 'splat_type', ...witness } as never] }]
+		}
+	});
+	const check = (witness: Parameters<typeof declared>[0]) => diagnose({ ruleCauses: declared(witness), enriched: enriched({ ruleNames }), upstreamRules });
+
+	it('is silent when the upstream rule does not derive the form and the witness names the upstream rule it is read as', () => {
+		expect(check({ form, read: 'subscript' })).toEqual([]);
+	});
+
+	it('is a mismatch when the upstream rule already derives the form', () => {
+		const ds = check({ form: ['*', { symbol: 'identifier' }], read: 'subscript' });
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:splat_type']);
+		expect(ds[0]!.message).toContain("upstream 'splat_type' already derives the witness form");
+	});
+
+	it('is a mismatch when the witness names no read, its own kind, or a rule upstream does not declare', () => {
+		for (const [read, message] of [
+			[undefined, 'names no kind upstream reads it as'],
+			['splat_type', "names 'splat_type', the witness kind"],
+			['absent', "upstream declares no rule 'absent'"]
+		] as const) {
+			const ds = check(read === undefined ? { form } : { form, read });
+			expect(codesOf(ds)).toEqual(['rule-cause-mismatch:splat_type']);
+			expect(ds[0]!.message).toContain(message);
+		}
+	});
+});
+
 describe('a rule reauthored because upstream accepts a form the language excludes', () => {
 	const str = (value: string) => ({ type: 'STRING', value });
 	const sym = (name: string) => ({ type: 'SYMBOL', name });
@@ -374,6 +421,50 @@ describe('a rule reauthored because upstream accepts a form the language exclude
 
 	it('is a witness-verified cause', () => {
 		expect(isWitnessVerified({ kind: 'reauthored', causes: [{ cause: 'accepts-invalid-syntax' }] })).toBe(true);
+	});
+});
+
+describe('a witness form derived through a rule that shows as no node', () => {
+	const str = (value: string) => ({ type: 'STRING', value });
+	const sym = (name: string) => ({ type: 'SYMBOL', name });
+	const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
+	const choice = (...members: unknown[]) => ({ type: 'CHOICE', members });
+	const upstreamRules = {
+		call: seq(sym('callee'), str('('), str(')')),
+		callee: choice(sym('identifier'), sym('cast')),
+		identifier: { type: 'PATTERN', value: '[a-z]+' },
+		cast: seq(sym('identifier'), str('as'), sym('identifier'))
+	};
+	const authoredRules = { ...upstreamRules, call: seq(sym('identifier'), str('('), str(')')) };
+	const witness = {
+		text: 'x as F()',
+		form: [{ symbol: 'cast' }, '(', ')'],
+		kind: 'call',
+		production: 'a callee is a left-hand-side expression'
+	};
+	const check = (lists: { supertypes?: readonly string[]; inline?: readonly string[] }, authored: Record<string, unknown> = authoredRules) =>
+		diagnose({
+			ruleCauses: { call: { kind: 'reauthored', causes: [{ cause: 'accepts-invalid-syntax', witnesses: [witness] }] } },
+			enriched: enriched({ ruleNames: new Set(Object.keys(upstreamRules)) }),
+			upstreamRules,
+			...lists,
+			authoredRules: authored
+		});
+
+	it.each([{ supertypes: ['callee'] }, { inline: ['callee'] }])('derives upstream through a visible rule the grammar lists in %o', (lists) => {
+		expect(check(lists)).toEqual([]);
+	});
+
+	it('does not derive upstream through a visible rule that is neither a supertype nor inline', () => {
+		const ds = check({});
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:call']);
+		expect(ds[0]!.message).toContain("upstream 'call' does not derive the witness form");
+	});
+
+	it('derives the authored rule through an upstream supertype it still references', () => {
+		const ds = check({ supertypes: ['callee'] }, upstreamRules);
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:call']);
+		expect(ds[0]!.message).toContain('the authored rule still derives');
 	});
 });
 

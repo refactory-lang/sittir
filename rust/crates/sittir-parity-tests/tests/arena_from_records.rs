@@ -250,7 +250,7 @@ fn nested_render<G: RecordGrammar, N: ReadNode + Clone + WriteCell<G::Trivia> + 
 fn a_nested_record_renders_from_records() {
     for (name, (text, reads, through_tree)) in [
         ("rust", nested_render(&rust(), "block:0")),
-        ("python", nested_render(&python(), "block:0")),
+        ("python", nested_render(&python(), "block_statement:0")),
         ("typescript", nested_render(&typescript(), "statement_block:0")),
     ] {
         assert_eq!(reads, 0, "{name}: tree reads of a nested record's render");

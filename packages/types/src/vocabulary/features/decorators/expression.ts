@@ -1,7 +1,6 @@
-import type { GrammarContext } from '../../context.ts';
-import type * as V from '../../index.ts';
+import type { GrammarMap } from '../../map.ts';
+import type { Under } from '../../utils.ts';
 export namespace Expression {
-	export interface Class<G extends GrammarContext<G>> {
-		readonly decorators?: V.Attribute.Decorator<G>[];
+	export interface Class<G extends GrammarMap, K extends Under<'expression.class'> = 'expression.class'> {
 	}
 }

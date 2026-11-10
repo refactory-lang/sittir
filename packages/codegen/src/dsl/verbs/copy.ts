@@ -3,7 +3,7 @@ import type { Rule } from '../../types/rule.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { undisplayedKindAddress } from '../arm-names.ts';
 import type { EnrichRuleOrigin } from '../enrich-ctx.ts';
-import { isParserHiddenName, isRecord, listedNames, listEntryName, rulesEqual, supertypesOf, type GrammarRecord } from '../rule-patterns.ts';
+import { isRecord, listEntryName, nodelessNamesOf, rulesEqual, supertypesOf, type GrammarRecord } from '../rule-patterns.ts';
 import type { CopyOrigin, Effect, NarrowingOrigin } from './effects.ts';
 
 export type VerbRefusalCode = 'edit-site-missing' | 'edit-entry-invalid' | 'narrow-invalid' | 'rename-invalid' | 'edit-site-conflict' | 'rule-name-taken';
@@ -63,14 +63,13 @@ export interface VerbLog {
 
 export function verbCtxOf(grammar: GrammarRecord, log: VerbLog = { effects: [], diagnostics: [] }, rules: GrammarRecord = { ...(isRecord(grammar.rules) ? grammar.rules : {}) }): VerbCtx {
 	const supertypes = supertypesOf(grammar);
-	const inlined = listedNames(grammar.inline);
 	return {
 		name: typeof grammar.name === 'string' ? grammar.name : '',
 		grammar,
 		rules,
 		lists: mintLists(grammar),
 		supertypes,
-		transparent: (name) => isParserHiddenName(name) || supertypes.has(name) || inlined.has(name),
+		transparent: nodelessNamesOf(grammar),
 		effects: log.effects,
 		created: [],
 		reached: new Map(),

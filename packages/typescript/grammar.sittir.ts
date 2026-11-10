@@ -66,6 +66,14 @@ const METHOD_SIGNATURE_WITNESSES = [
 const ABSTRACT_METHOD_SIGNATURE_WITNESSES = [
 	{ text: 'export abstract class A { abstract set x(a, b); }\n', form: ['abstract', 'set', { symbol: 'identifier' }, { symbol: 'formal_parameters' }], kind: 'abstract_method_signature', production: 'ECMAScript 15.4 PropertySetParameterList: FormalParameter, in an abstract signature' }
 ] as const;
+const TYPE_QUERY_CALL = 'TypeScript TypeQuery: `typeof` takes an entity name or an import call, never another call (tsc TS1005)';
+const TYPE_QUERY_CALL_WITNESSES = [
+	{ text: 'export type A = typeof f();\n', form: ['typeof', { symbol: 'identifier' }, { symbol: 'arguments' }], kind: 'type_query', production: TYPE_QUERY_CALL },
+	{ text: 'export type A = typeof a.b();\n', form: ['typeof', { symbol: '_type_query_member_expression' }, { symbol: 'arguments' }], kind: 'type_query', production: TYPE_QUERY_CALL },
+	{ text: 'export type A = typeof f().g;\n', form: ['typeof', { symbol: 'identifier' }, { symbol: 'arguments' }, '.', { symbol: 'identifier' }], kind: 'type_query', production: TYPE_QUERY_CALL },
+	{ text: 'export type A = typeof f()["a"];\n', form: ['typeof', { symbol: 'identifier' }, { symbol: 'arguments' }], kind: 'type_query', production: TYPE_QUERY_CALL },
+	{ text: 'export let y: typeof f()\nexport let z = 1;\n', form: ['typeof', { symbol: 'identifier' }, { symbol: 'arguments' }], kind: 'type_query', production: TYPE_QUERY_CALL }
+] as const;
 
 interface AccessorPositions {
 	readonly override: number;
@@ -219,6 +227,7 @@ export default grammar(enrich(base), wire({
 		formal_parameters_elements_receiver_group: { '","/after': preference('space') },
 		yield_expression_delegate: { before: preference('tight'), '"*"/after': preference('space') },
 		receiver_parameter_declaration: { 'name:/after': preference('tight') },
+		type_query_call_expression: { 'function:/after': preference('tight') },
 		decorator: { '"@"/after': preference('tight') },
 		generator_function: { '"*"/before': preference('tight') },
 		lexical_declaration: { after: preference('space') },
@@ -650,6 +659,7 @@ export default grammar(enrich(base), wire({
 		method_signature: reauthored('accepts-invalid-syntax', METHOD_SIGNATURE_WITNESSES, ($, original) =>
 			accessorArms($, original, { override: 2, dropped: [3, 4], kind: 5, optional: 7, signature: 8 })
 		),
+		_type_query_call_expression: reauthored('accepts-invalid-syntax', TYPE_QUERY_CALL_WITNESSES, ($) => seq(field('function', $.import), field('arguments', $.arguments))),
 		abstract_method_signature: reauthored('accepts-invalid-syntax', ABSTRACT_METHOD_SIGNATURE_WITNESSES, ($, original) =>
 			accessorArms($, original, { override: 2, dropped: [], kind: 3, optional: 5, signature: 6 })
 		),

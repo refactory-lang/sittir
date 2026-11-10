@@ -1,7 +1,7 @@
-import type { GrammarContext } from '../../context.ts';
-import type { Flag } from '../../utils.ts';
+import type { GrammarMap } from '../../map.ts';
+import type { Flag, Under } from '../../utils.ts';
 export namespace Type {
-	export interface Function<G extends GrammarContext<G>> {
+	export interface Function<G extends GrammarMap, K extends Under<'type.function'> = 'type.function'> {
 		readonly unsafe?: Flag;
 		// r only
 	}

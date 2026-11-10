@@ -9027,13 +9027,6 @@ export function wrapTypeQueryCallExpression(
 	const node = {
 		...data,
 		$type: TSKindId.TypeQueryCallExpression as const,
-		function() {
-			return hydrateSlot<TSKindId.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
-				this,
-				'_function',
-				tree
-			);
-		},
 		arguments() {
 			return hydrateSlot<T.Arguments>(this, '_arguments', tree);
 		},
@@ -9052,11 +9045,7 @@ export function wrapTypeQueryCallExpression(
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		function: wrapTypeQueryCallExpression$with$function,
-		arguments: wrapTypeQueryCallExpression$with$arguments,
-		[RECEIVER]: node
-	};
+	node.$with = { arguments: wrapTypeQueryCallExpression$with$arguments, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TypeQueryCallExpression.Parsed;
 }
@@ -9065,15 +9054,6 @@ function wrapTypeQueryCallExpression$with(node: Held, setter: string, args: read
 	const data = node[INPUT] as T.TypeQueryCallExpression;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'function':
-			return applySetter(args, (v: NonNullable<T.TypeQueryCallExpression['_function']>) =>
-				rebuilt(node, handle, () =>
-					wrapTypeQueryCallExpression(
-						{ ...$edited(data), _function: admitSlot(handle, 'type_query_call_expression', 'function', v) },
-						tree
-					)
-				)
-			);
 		case 'arguments':
 			return applySetter(args, (v: NonNullable<T.TypeQueryCallExpression['_arguments']>) =>
 				rebuilt(node, handle, () =>
@@ -9085,9 +9065,6 @@ function wrapTypeQueryCallExpression$with(node: Held, setter: string, args: read
 			);
 	}
 	throw new Error(`type_query_call_expression has no $with.${setter}`);
-}
-function wrapTypeQueryCallExpression$with$function(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapTypeQueryCallExpression$with(receiverOf(this, '$with.function'), 'function', args);
 }
 function wrapTypeQueryCallExpression$with$arguments(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapTypeQueryCallExpression$with(receiverOf(this, '$with.arguments'), 'arguments', args);
@@ -22904,18 +22881,8 @@ function viewTypeQuerySubscriptExpression(
 	return node as unknown as T.TypeQuerySubscriptExpression.Parsed;
 }
 
-function viewTypeQueryCallExpression$function(this: RecordHandle) {
-	return viewSlot<TSKindId.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
-		this,
-		2,
-		4,
-		3,
-		0,
-		2
-	);
-}
 function viewTypeQueryCallExpression$arguments(this: RecordHandle) {
-	return viewSlot<T.Arguments>(this, 6, 3, 8, 3, 3);
+	return viewSlot<T.Arguments>(this, 2, 3, 8, 3, 2);
 }
 function viewTypeQueryCallExpression(data: RecordPosition, tree: TreeHandle): T.TypeQueryCallExpression.Parsed {
 	const node = {
@@ -22925,7 +22892,6 @@ function viewTypeQueryCallExpression(data: RecordPosition, tree: TreeHandle): T.
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		function: viewTypeQueryCallExpression$function,
 		arguments: viewTypeQueryCallExpression$arguments,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -22937,7 +22903,7 @@ function viewTypeQueryCallExpression(data: RecordPosition, tree: TreeHandle): T.
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { function: $with$function, arguments: $with$arguments, [RECEIVER]: node };
+	node.$with = { arguments: $with$arguments, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.TypeQueryCallExpression.Parsed;
 }

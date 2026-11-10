@@ -202,3 +202,12 @@ From the user, via brainstorm:
 4. The line is the spec's own line: author grammar productions; early errors are the stated bound; no context cloning. TypeScript tuple element order is a deliberate exception, and is authored.
 5. Under-acceptance and mis-parse rows are later stages of the same plan, each dropped when upstream releases it.
 6. Fixes in upstream external scanners (rust#316, ts#373, the line break before `=>`) wait for an upstream release: no scanner patches, no fork pins.
+7. A call whose callee is an `as` or `satisfies` expression stays accepted (see below).
+
+## Left accepted
+
+- **`x as F()` and `x satisfies F()`** (TypeScript). The operand of `as` and `satisfies` is a type, and no type production derives `F()`. Upstream excludes the callee only through precedence, and the call's callee is the whole `expression` supertype.
+  - Narrowing it means a hidden callee rule holding the supertype's members minus `as_expression` and `satisfies_expression`, copies of the four precedence lists that name `$expression`, and three added conflicts.
+  - With that narrowing, all four must-error probes error, and the seven must-stay-valid forms keep their trees. But a valid corpus tree moves: `f<T>(x)` ending a line with no semicolon reads its callee as an `instantiation_expression`.
+  - A narrowing that changes a valid parse is out of bounds: excluding this form means restructuring upstream's precedence, not authoring a rule. It stays accepted. The tree diff and the probes are in `results/typescript-callee-narrowing.txt`.
+  - `0 as typeof f()` and `x satisfies typeof f()` are a separate case. They are excluded by narrowing a type query's callee, not the call's.

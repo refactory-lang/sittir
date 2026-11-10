@@ -1,5 +1,6 @@
 import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD, isFixedText } from './facts.ts';
 import { camel, snake } from './names.ts';
+import type { Vocabulary } from './vocabulary.ts';
 import { type GrammarInput, type GrammarRoutes, concreteKinds, containerCaptureSlot, containerMembers, declaredContainerKinds, formsOf, guaranteedBy, holdsContainer, isLayout, modelNode, readsList, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
 
 interface Resolution {
@@ -185,6 +186,13 @@ export function inclusionCycles(inclusion: ReadonlyMap<string, ReadonlySet<strin
 	return cycles.sort();
 }
 
+const addsMembers = (vocabulary: Vocabulary, path: string): boolean => {
+	const kind = vocabulary.kinds.get(path);
+	if (kind === undefined) return false;
+	const inherited = kind.parent === undefined ? new Map<string, unknown>() : vocabulary.members(kind.parent);
+	return [...kind.own].some(([name, member]) => !member.flag && !inherited.has(name));
+};
+
 export function derive(inputs: readonly GrammarInput[]): Derivation {
 	const allvocab = new Set<string>();
 	const contentDerived = new Map<string, Set<string>>();
@@ -346,7 +354,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 				(claimers.get(vocab) ?? claimers.set(vocab, new Set<string>()).get(vocab))?.add(input.grammar);
 				if (entry.claim.kind === WILDCARD || entry.claim.predicates.length > 0) continue;
 				if (entry.claimed !== gk && vocabOf(input.grammar).get(gk) !== vocab) continue;
-				if (entry.pins.length > 0) {
+				if (entry.pins.length > 0 && !addsMembers(input.vocabulary, vocab)) {
 					const parent = vocabOf(input.grammar).get(gk);
 					if (parent !== undefined && parent !== vocab) {
 						const refinement =

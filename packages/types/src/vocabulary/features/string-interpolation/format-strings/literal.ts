@@ -1,0 +1,23 @@
+import type { GrammarMap } from '../../../map.ts';
+import type { SubKindOf, Under } from '../../../utils.ts';
+import type * as V from '../../../index.ts';
+export namespace Literal {
+	export namespace String {
+		export namespace Interpolated {
+			export interface Deferred<G extends GrammarMap, K extends Under<'literal.string.interpolated.deferred'> = 'literal.string.interpolated.deferred'> extends SubKindOf<V.Literal.String.Interpolated<G, K>> {
+				// claimed by p
+				readonly $path: K;
+			}
+			export namespace Deferred {
+				export interface Multiline<G extends GrammarMap, K extends Under<'literal.string.interpolated.deferred.multiline'> = 'literal.string.interpolated.deferred.multiline'> extends SubKindOf<V.Literal.String.Interpolated.Deferred<G, K>> {
+					// claimed by p
+					readonly $path: K;
+				}
+			}
+			export interface Multiline<G extends GrammarMap, K extends Under<'literal.string.interpolated.multiline'> = 'literal.string.interpolated.multiline'> extends SubKindOf<V.Literal.String.Interpolated<G, K>> {
+				// claimed by p
+				readonly $path: K;
+			}
+		}
+	}
+}

@@ -157,7 +157,6 @@ export {
 	buildUseBoundsElements,
 	buildTypeArgumentsElements,
 	buildArgumentsElements,
-	buildExpressions,
 	buildFieldInitializerListElements,
 	buildTuplePatternElements,
 	buildPatterns,
@@ -165,6 +164,9 @@ export {
 	buildUseWildcardGroup,
 	buildTokenRepetitionPatternText,
 	buildStringOpen,
+	buildAttributedElement,
+	buildArrayExpressionListElements,
+	buildTupleExpressionElements,
 	buildIntegerLiteralDecimal,
 	buildIntegerLiteralHex,
 	buildIntegerLiteralBinary,
@@ -179,8 +181,6 @@ export {
 	buildEscapeSequenceUnicodeFixed,
 	buildEscapeSequenceUnicodeBraced,
 	buildEscapeSequenceHex,
-	buildArrayExpressionSemi,
-	buildArrayExpressionList,
 	buildAttributeInput,
 	buildClosureExpressionBlock,
 	buildClosureExpressionExpr,
@@ -245,10 +245,12 @@ export {
 	buildAttributedEnumVariant,
 	buildAttributedParameter,
 	buildAttributedTypeParameter,
-	buildAttributedArgument,
+	buildArgument,
 	buildAttributedOrderedField,
 	buildTypeArgument,
 	buildMatchBlockArms,
+	buildArrayExpressionSemi,
+	buildArrayExpressionList,
 	buildFloatLiteral,
 	buildStringContent,
 	buildRawStringLiteralContent,
@@ -266,8 +268,6 @@ export {
 	buildDedent,
 	buildTraitInterfaceDeclarationBody,
 	buildExtensionDeclarationBody,
-	buildArgument,
-	buildArrayExpressionListElements,
 	buildReceiverParameterDeclaration,
 	buildAttributedParameterReceiver,
 	buildParametersElementsReceiver,
@@ -360,11 +360,6 @@ export const arguments_$seated: EmptyForm<
 	Seat<T.Arguments.BuildArgs, ReturnType<typeof F.buildArguments>>
 > = withEmptyForm(K.arguments_$items(F.buildArguments, F.buildArgument));
 
-export const tupleExpression$seated: Seat<
-	T.TupleExpression.BuildArgs,
-	ReturnType<typeof F.buildTupleExpression>
-> = K.tupleExpression$elements(F.buildTupleExpression, F.buildExpressions);
-
 export const lastMatchArm$seated: Seat<
 	T.LastMatchArm.BuildArgs,
 	ReturnType<typeof F.buildLastMatchArm>
@@ -384,16 +379,6 @@ export const parametersElements$seated: Seat<
 	T.ParametersElements.BuildArgs,
 	ReturnType<typeof F.buildParametersElements>
 > = K.parametersElements$items(F.buildParametersElements, F.buildAttributedParameter);
-
-export const arrayExpressionListElements$seated: Seat<
-	T.ArrayExpressionListElements.BuildArgs,
-	ReturnType<typeof F.buildArrayExpressionListElements>
-> = K.arrayExpressionListElements$items(F.buildArrayExpressionListElements, F.buildAttributedArgument);
-
-export const arrayExpressionList$seated: EmptyForm<
-	T.EmptyArrayExpressionList,
-	Seat<T.ArrayExpressionList.BuildArgs, ReturnType<typeof F.buildArrayExpressionList>>
-> = withEmptyForm(K.arrayExpressionList$elements(F.buildArrayExpressionList, arrayExpressionListElements$seated));
 
 export const matchArmWithComma$seated: Seat<
 	T.MatchArmWithComma.BuildArgs,

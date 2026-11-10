@@ -1,7 +1,9 @@
-import type { GrammarContext } from './context.ts';
+import type { GrammarMap } from './map.ts';
 
-export type SubKindOf<T extends { readonly $kind: string }> = {
-	readonly [K in keyof T]: K extends '$kind' ? `${T['$kind']}.${string}` : T[K];
+export type Under<P extends string> = P | `${P}.${string}`;
+
+export type SubKindOf<T extends { readonly $path: string }, Restated extends keyof T = never> = {
+	readonly [K in keyof T as K extends Restated ? never : K]: T[K];
 };
 
 /**
@@ -11,27 +13,26 @@ export type SubKindOf<T extends { readonly $kind: string }> = {
 export type Flagged<T, F extends string> = [F] extends [never] ? T : T;
 
 /**
- * An owner refined by one value of an axis many owners share: the owner's members, with a `$kind` beneath the owner's,
+ * An owner refined by one value of an axis many owners share: the owner's members, with a `$path` beneath the owner's,
  * and the members the value's kind adds.
  */
-export type RefinedBy<Owner extends { readonly $kind: string }, Value extends { readonly $kind: string }> = SubKindOf<Owner> &
-	Omit<Value, '$kind'>;
+export type RefinedBy<Owner extends { readonly $path: string }, Value extends { readonly $path: string }> = SubKindOf<Owner> &
+	Omit<Value, '$path'>;
+
+type Composing<C, F, T> = C extends F ? T : Missing<F>;
 
 /**
- * `T` where the context `G` has the feature `F`, else `never`: a member the context's features lack is absent, so a
- * language without the feature refuses it, and a node from such a language conforms wherever the member is present.
- * Over a union of contexts it is the union of each context's, so a union of contexts is a supertype of each of them,
- * member by member.
+ * `T` where the grammar map `G` has the feature `F`, else `Missing<F>`: a path or member the map's features lack
+ * holds no value, so a language without the feature refuses it by naming the feature. Over a union of maps it is the
+ * union of each map's, so a union of maps is a supertype of each of them, member by member.
  */
-export type In<G extends GrammarContext<G>, F, T> = G extends F ? T : never;
+export type In<G extends GrammarMap, F, T> = Composing<G['features'], F, T>;
 
-/**
- * `T` as one form a build accepts: the members `R` given, and the members `A` left out. A path whose forms differ by
- * what they need is the union of its forms, so a build the types admit is one the runtime picks a form for.
- */
-export type RequiredBy<T, R extends PropertyKey, A extends PropertyKey = never> = Omit<T, (R | A) & keyof T> & {
-	readonly [P in R & keyof T]-?: Exclude<T[P], undefined>;
-} & { readonly [P in A & keyof T]?: never };
+/** What a path or member of the feature `F` is under a grammar map without `F`: a type no value has. */
+export interface Missing<F> {
+	readonly $missing: F;
+	readonly $absent: never;
+}
 
 declare const flag: unique symbol;
 

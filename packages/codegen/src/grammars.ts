@@ -23,6 +23,8 @@ export const BASE_ENTRY = 'base.ts';
 export const BOOTSTRAP_INDENT_UNIT = '    ';
 export const GRAMMAR_TSCONFIG = 'tsconfig.grammar-sittir.json';
 export const PORTABLE_TYPE_TESTS = 'tests/*.portable.test-d.ts';
+export const PORTABLE_TS6_TYPE_TESTS = 'tests/*.portable.ts6.test-d.ts';
+export const PORTABLE_MAP_FILE = 'portable-map.ts';
 export const GRAMMAR_TYPECHECK_SCRIPT = 'type-check:grammar';
 export const GRAMMAR_TYPECHECK_CEILING = 'grammar-typecheck-ceiling.json';
 

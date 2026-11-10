@@ -9040,8 +9040,12 @@
 			"field": "type_query_call_expression_before"
 		},
 		{
-			"kind": "slot",
-			"name": "function"
+			"kind": "text",
+			"text": "import"
+		},
+		{
+			"kind": "seam",
+			"field": "function_after"
 		},
 		{
 			"kind": "slot",

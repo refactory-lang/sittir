@@ -14399,23 +14399,10 @@
           "test": [
             {
               "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  196
-                ],
-                "slots": {
-                  "355": 0
-                }
-              }
-            },
-            {
-              "up": 0,
               "via": [
                 {
                   "slots": {
-                    "355": 1
+                    "355": 0
                   }
                 },
                 {
@@ -14464,7 +14451,15 @@
             }
           ]
         }
-      ]
+      ],
+      "container": {
+        "slot": "arguments",
+        "kinds": [
+          "arguments"
+        ],
+        "terminals": [],
+        "list": false
+      }
     },
     "type_query_call_expression_in_type_annotation": {
       "vocab": "type",

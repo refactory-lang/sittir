@@ -31,6 +31,7 @@ const emit = async (scm: string) =>
 			entry.pins.length === 0
 				? []
 				: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { 1: 0 } } }],
+		factOf: () => undefined,
 		kindIdOf: (kind) => `TSKindId.${kind[0]!.toUpperCase()}${kind.slice(1)}`,
 		fixedText: [['TSKindId.Plus', '+']],
 		literals: [],
@@ -93,7 +94,7 @@ describe('emitPortableSurface', () => {
 			textTokens: new Set(),
 			layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 		});
-		const text = emitPortableSurface({ nodeType: 'TestNode', routes, readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], literals: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
+		const text = emitPortableSurface({ nodeType: 'TestNode', routes, readTest: () => [], factOf: () => undefined, kindIdOf: () => 'TSKindId.Call', fixedText: [], literals: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
 		expect(text).toContain('\t"expression.call": TSKindId.Call;');
 		expect(text).toContain('\t\t"expression.call": { ids: [TSKindId.Call], exact: true },');
 		expect(text.match(/\[TSKindId\.Call\]: \[/g)).toHaveLength(1);
@@ -125,6 +126,7 @@ describe('emitPortableSurface', () => {
 			nodeType: 'TestNode',
 			routes,
 			readTest: () => [],
+			factOf: () => undefined,
 			kindIdOf: (kind) => `TSKindId.${kind[0]!.toUpperCase()}${kind.slice(1)}`,
 			fixedText: [['TSKindId.Call', 'go']],
 			literals: [],
@@ -162,11 +164,33 @@ describe('emitPortableSurface', () => {
 		expect(text).toContain('\t\t"expression.assignment.add": { ids: [TSKindId.Assign], exact: true },');
 	});
 
+	it('states a claim its container spells once, as a fact, and never also as a read entry', async () => {
+		const text = emitPortableSurface({
+			nodeType: 'TestNode',
+			routes: resolveRoutes(await input(['(assign) @expression.assignment.add', '(assign) @expression.assignment'].join('\n'))),
+			readTest: () => [],
+			factOf: (entry) =>
+				entry.vocab === 'expression.assignment.add'
+					? { name: 'add', path: entry.vocab, container: 'block', member: 'statements', items: { slots: { 1: 0 } }, test: { op: 'eq', text: '+', slots: { 1: 0 } } }
+					: undefined,
+			kindIdOf: (kind) => `TSKindId.${kind[0]!.toUpperCase()}${kind.slice(1)}`,
+			fixedText: [],
+			literals: [],
+			flags: [],
+			flagTypes: [],
+			slotFlags: [],
+			slotFlagTypes: []
+		});
+		expect(text).toContain('\t\t[TSKindId.Assign]: [{ path: "expression.assignment", within: [], test: [] }],');
+		expect(text).toContain('\tfacts: {\n\t\t[TSKindId.Assign]: [{"container":TSKindId.Block,"name":"add","path":"expression.assignment.add"');
+	});
+
 	it('declares each kind\'s flags on its node interface, so a where condition\'s is takes only them', async () => {
 		const text = emitPortableSurface({
 			nodeType: 'TestNode',
 			routes: resolveRoutes(await input(SCM)),
 			readTest: () => [],
+			factOf: () => undefined,
 			kindIdOf: () => 'TSKindId.Call',
 			fixedText: [],
 			literals: [],
@@ -176,7 +200,7 @@ describe('emitPortableSurface', () => {
 			slotFlagTypes: []
 		});
 		expect(text).toContain(["declare module './types.js' {", '\tinterface PortableReads extends PortableIds {}', '\tinterface Call {', '\t\treadonly __flags__?: "async" | "static";', '\t}', '}'].join('\n'));
-		const none = emitPortableSurface({ nodeType: 'TestNode', routes: resolveRoutes(await input(SCM)), readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], literals: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
+		const none = emitPortableSurface({ nodeType: 'TestNode', routes: resolveRoutes(await input(SCM)), readTest: () => [], factOf: () => undefined, kindIdOf: () => 'TSKindId.Call', fixedText: [], literals: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
 		expect(none).not.toContain('__flags__');
 	});
 

@@ -7,7 +7,7 @@ export const RECORD_HEADER_WORDS = 2;
 
 export const records = {
 	ModuleNode: { words: 3, builtWords: 3, statements: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
-	SimpleStatementsNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	SimpleStatementsNode: { words: 5, builtWords: 3, statements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
 	ImportStatementNode: { words: 5, builtWords: 3, names: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
 	ImportPrefixNode: { words: 2, builtWords: 2 },
 	RelativeImportNode: {
@@ -322,7 +322,7 @@ export const records = {
 		type_: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	TypeNode: { words: 6, builtWords: 3, content: { word: 2, width: 4, forms: 3, built: 2 } },
-	SplatTypeNode: { words: 5, builtWords: 3, type_: { word: 2, width: 3, forms: 1, built: 2 } },
+	SplatTypeNode: { words: 13, builtWords: 3, type_: { word: 2, width: 11, inline: 10, forms: 9, built: 2 } },
 	GenericTypeNode: {
 		words: 10,
 		builtWords: 4,
@@ -609,7 +609,7 @@ export const records = {
 	},
 	WithClauseBareNode: { words: 3, builtWords: 3, items: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	WithClauseParenNode: { words: 5, builtWords: 3, items: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
-	SuiteInlineNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	SuiteInlineNode: { words: 5, builtWords: 3, statements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
 	SuiteBlockNode: { words: 5, builtWords: 3, block: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
 	SuiteEmptyNode: { words: 3, builtWords: 3, newline: { word: 2, width: 1, forms: 2, built: 2 } },
 	ComparisonOperatorComparatorNode: {

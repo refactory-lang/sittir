@@ -1,12 +1,39 @@
-import type { GrammarContext } from '../../context.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
-	export interface Conditional<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
+	export interface Conditional<G extends GrammarMap, K extends Under<'expression.conditional'> = 'expression.conditional'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by pt
-		readonly $kind: 'expression.conditional';
-		readonly alternative: G['slots']['expression.conditional']['alternative'];
-		readonly condition: G['slots']['expression.conditional']['condition'];
-		readonly consequence: G['slots']['expression.conditional']['consequence'];
+		readonly $path: K;
+		readonly alternative: Slot<
+			G,
+			K,
+			'alternative',
+			| V.Declaration.Module<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+		>;
+		readonly condition: Slot<
+			G,
+			K,
+			'condition',
+			| V.Declaration.Module<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+		>;
+		readonly consequence: Slot<
+			G,
+			K,
+			'consequence',
+			| V.Declaration.Module<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+		>;
 	}
 }

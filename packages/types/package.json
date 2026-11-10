@@ -26,6 +26,10 @@
 		".": {
 			"types": "./src/index.ts",
 			"import": "./src/index.ts"
+		},
+		"./vocabulary": {
+			"types": "./src/vocabulary/index.ts",
+			"import": "./src/vocabulary/index.ts"
 		}
 	},
 	"publishConfig": {

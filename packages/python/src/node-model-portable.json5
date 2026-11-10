@@ -39,7 +39,7 @@
     },
     "_simple_statements": {
       "container": {
-        "slot": "elements",
+        "slot": "statements",
         "kinds": [
           "simple_statements_elements"
         ],
@@ -368,6 +368,32 @@
     "attribute": {
       "vocab": "expression.member",
       "read": [
+        {
+          "vocab": "expression.member",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^__(?<property>.*[^_]_?)$",
+                "slots": {
+                  "221": 1
+                }
+              }
+            }
+          ],
+          "template": {
+            "target": "property",
+            "template": "__${string}",
+            "holes": [
+              "property"
+            ]
+          }
+        },
         {
           "vocab": "expression.member",
           "toplevel": true,
@@ -1165,6 +1191,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "statement.block",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -1738,7 +1771,7 @@
             },
             {
               "owner": "_simple_statements",
-              "slot": "elements"
+              "slot": "statements"
             },
             {
               "owner": "simple_statements_elements",
@@ -4490,7 +4523,7 @@
             },
             {
               "owner": "_simple_statements",
-              "slot": "elements"
+              "slot": "statements"
             },
             {
               "owner": "simple_statements_elements",
@@ -4579,6 +4612,53 @@
       "vocab": "type.generic",
       "read": [
         {
+          "vocab": "type.nullable",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "Optional",
+                "slots": {
+                  "228": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "228": 1
+                  }
+                },
+                {
+                  "slots": {
+                    "175": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "263": 0
+                  },
+                  "anchor": "only"
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  226
+                ],
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.generic",
           "toplevel": true,
           "within": [],
@@ -4620,6 +4700,42 @@
             {
               "owner": "type_parameter",
               "slot": "types"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "types",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "type_parameter",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "types",
+          "slot": "item",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "generic_type",
+              "slot": "type_parameter"
+            },
+            {
+              "owner": "type_parameter",
+              "slot": "types"
+            },
+            {
+              "owner": "types",
+              "slot": "item",
+              "anchor": "only"
             }
           ]
         }
@@ -5489,17 +5605,196 @@
       "read": [
         {
           "vocab": "declaration.method",
-          "toplevel": true,
-          "within": [],
+          "toplevel": false,
+          "within": [
+            "decorated_definition_class_declaration"
+          ],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 1,
+              "via": [
+                {
+                  "slots": {
+                    "311": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "179": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "typing",
+                "slots": {
+                  "221": 0
+                }
+              }
+            },
+            {
+              "up": 1,
+              "via": [
+                {
+                  "slots": {
+                    "311": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "179": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "override",
+                "slots": {
+                  "221": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method",
+          "toplevel": false,
+          "within": [
+            "decorated_definition_class_declaration"
+          ],
+          "pins": [],
+          "test": [
+            {
+              "up": 1,
+              "via": [
+                {
+                  "slots": {
+                    "311": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "staticmethod",
+                "slots": {
+                  "179": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method",
+          "toplevel": false,
+          "within": [
+            "decorated_definition_class_declaration"
+          ],
+          "pins": [],
+          "test": [
+            {
+              "up": 1,
+              "via": [
+                {
+                  "slots": {
+                    "311": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "override",
+                "slots": {
+                  "179": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.setter",
+          "toplevel": false,
+          "within": [
+            "decorated_definition_class_declaration"
+          ],
+          "pins": [],
+          "test": [
+            {
+              "up": 1,
+              "via": [
+                {
+                  "slots": {
+                    "311": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "179": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "setter",
+                "slots": {
+                  "221": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.getter",
+          "toplevel": false,
+          "within": [
+            "decorated_definition_class_declaration"
+          ],
+          "pins": [],
+          "test": [
+            {
+              "up": 1,
+              "via": [
+                {
+                  "slots": {
+                    "311": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "property",
+                "slots": {
+                  "179": 0
+                }
+              }
+            }
+          ]
         },
         {
           "vocab": "declaration.method",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^__(?<name>.*[^_]_?)$",
+                "slots": {
+                  "352": 1
+                }
+              }
+            }
+          ],
+          "template": {
+            "target": "name",
+            "template": "__${string}",
+            "holes": [
+              "name"
+            ]
+          }
         },
         {
           "vocab": "declaration.constructor",
@@ -5545,9 +5840,35 @@
               "stem"
             ]
           }
+        },
+        {
+          "vocab": "declaration.method",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.method",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
+        {
+          "name": "async",
+          "route": "slot",
+          "slot": "async",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "async"
+            }
+          ],
+          "flag": true
+        },
         {
           "name": "async",
           "route": "slot",
@@ -5594,6 +5915,17 @@
           ]
         },
         {
+          "name": "type",
+          "route": "slot",
+          "slot": "return_type",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "return_type"
+            }
+          ]
+        },
+        {
           "name": "returnType",
           "route": "slot",
           "slot": "return_type",
@@ -5612,6 +5944,31 @@
             {
               "owner": "method_declaration",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "type_parameters",
+              "kind": "type_params",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "type_params",
+          "slot": "items",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "type_parameters"
+            },
+            {
+              "owner": "type_params",
+              "slot": "items"
             }
           ]
         },
@@ -5694,7 +6051,7 @@
             },
             {
               "owner": "_simple_statements",
-              "slot": "elements"
+              "slot": "statements"
             },
             {
               "owner": "simple_statements_elements",
@@ -5761,7 +6118,7 @@
             },
             {
               "owner": "_simple_statements",
-              "slot": "elements"
+              "slot": "statements"
             },
             {
               "owner": "simple_statements_elements",
@@ -6610,15 +6967,7 @@
             }
           ]
         }
-      ],
-      "container": {
-        "slot": "type",
-        "kinds": [
-          "identifier"
-        ],
-        "terminals": [],
-        "list": false
-      }
+      ]
     },
     "string": {
       "vocab": "literal.string",
@@ -7313,13 +7662,43 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "statement.block",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": []
     },
     "suite_inline": {
+      "vocab": "statement.block",
+      "read": [
+        {
+          "vocab": "statement.block",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "statements",
+          "route": "slot",
+          "slot": "statements",
+          "path": [
+            {
+              "owner": "suite_inline",
+              "slot": "statements"
+            }
+          ]
+        }
+      ],
       "container": {
-        "slot": "elements",
+        "slot": "statements",
         "kinds": [
           "simple_statements_elements"
         ],
@@ -8382,13 +8761,13 @@
       },
       {
         "depth": 2,
-        "paths": 76,
-        "kinds": 81,
-        "refinements": 5
+        "paths": 78,
+        "kinds": 82,
+        "refinements": 6
       },
       {
         "depth": 3,
-        "paths": 65,
+        "paths": 67,
         "kinds": 59,
         "refinements": 43
       },

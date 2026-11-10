@@ -186,16 +186,16 @@ export function buildSimpleStatements(...args: unknown[]) {
 			);
 }
 function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.SimpleStatements.Bound {
-	const _elements = hydrateStored(value);
-	const listView = ownerView(_elements, '_item');
-	if (listView.length === undefined) refuseReadStub('_elements');
+	const _statements = hydrateStored(value);
+	const listView = ownerView(_statements, '_item');
+	if (listView.length === undefined) refuseReadStub('_statements');
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, '_simple_statements', { elements: _elements });
+	if (handle !== undefined) admitChildren(handle, '_simple_statements', { statements: _statements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.SimpleStatements as const, { _elements });
+	handle?.verifyStored?.(TSKindId.SimpleStatements as const, { _statements });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.SimpleStatements as const);
-		storeCell(arena, record, 2, 2, _elements);
+		storeCell(arena, record, 2, 2, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.SimpleStatements.Bound;
 	});
@@ -205,16 +205,16 @@ function _buildSimpleStatements$patch(
 	source: object,
 	value: Admit<T.SimpleStatementsElements>
 ): T.SimpleStatements.Bound {
-	const _elements = hydrateStored(value);
-	const listView = ownerView(_elements, '_item');
-	if (listView.length === undefined) refuseReadStub('_elements');
+	const _statements = hydrateStored(value);
+	const listView = ownerView(_statements, '_item');
+	if (listView.length === undefined) refuseReadStub('_statements');
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, '_simple_statements', { elements: _elements });
+	if (handle !== undefined) admitChildren(handle, '_simple_statements', { statements: _statements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.SimpleStatements as const, { _elements });
+	handle?.verifyStored?.(TSKindId.SimpleStatements as const, { _statements });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.SimpleStatements as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'elements', _elements));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'statements', _statements));
 		const node = arena.view(record);
 		return node as unknown as T.SimpleStatements.Bound;
 	});
@@ -222,7 +222,7 @@ function _buildSimpleStatements$patch(
 function withSimpleStatements(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'elements':
+		case 'statements':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -7686,8 +7686,10 @@ function withType(node: object, setter: string, args: readonly unknown[]): unkno
 	throw new Error(`type has no $with.${setter}`);
 }
 
-export function buildSplatType<V extends Admit<T.Identifier>>(value: V & RefuseUndeclared<V>): T.SplatType.Bound;
-export function buildSplatType(value: Admit<T.Identifier>): T.SplatType.Bound {
+export function buildSplatType<V extends Admit<T.Identifier | T.GenericType>>(
+	value: V & RefuseUndeclared<V>
+): T.SplatType.Bound;
+export function buildSplatType(value: Admit<T.Identifier | T.GenericType>): T.SplatType.Bound {
 	const _type = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'splat_type', { type: _type });
@@ -7701,7 +7703,7 @@ export function buildSplatType(value: Admit<T.Identifier>): T.SplatType.Bound {
 	});
 }
 
-function buildSplatType$patch(source: object, value: Admit<T.Identifier>): T.SplatType.Bound {
+function buildSplatType$patch(source: object, value: Admit<T.Identifier | T.GenericType>): T.SplatType.Bound {
 	const _type = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'splat_type', { type: _type });
@@ -7718,7 +7720,7 @@ function withSplatType(node: object, setter: string, args: readonly unknown[]): 
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'type':
-			return applySetter(args, (value: Admit<T.Identifier>) =>
+			return applySetter(args, (value: Admit<T.Identifier | T.GenericType>) =>
 				rebuilt(node, handle, () => buildSplatType$patch(node, value))
 			);
 	}
@@ -15583,18 +15585,22 @@ export function buildSuiteInline(...args: unknown[]) {
 			);
 }
 function _buildSuiteInline(value: Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>): T.SuiteInline.Bound {
-	const _elements = hydrateStored(
-		admitSplicedEnvelope(value, [TSKindId.SimpleStatements, 'elements', 'simple_statements'], 'SuiteInline.elements')
+	const _statements = hydrateStored(
+		admitSplicedEnvelope(
+			value,
+			[TSKindId.SimpleStatements, 'statements', 'simple_statements'],
+			'SuiteInline.statements'
+		)
 	);
-	const listView = ownerView(_elements, '_item');
-	if (listView.length === undefined) refuseReadStub('_elements');
+	const listView = ownerView(_statements, '_item');
+	if (listView.length === undefined) refuseReadStub('_statements');
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'suite_inline', { elements: _elements });
+	if (handle !== undefined) admitChildren(handle, 'suite_inline', { statements: _statements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.SuiteInline as const, { _elements });
+	handle?.verifyStored?.(TSKindId.SuiteInline as const, { _statements });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.SuiteInline as const);
-		storeCell(arena, record, 2, 2, _elements);
+		storeCell(arena, record, 2, 2, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.SuiteInline.Bound;
 	});
@@ -15604,18 +15610,22 @@ function _buildSuiteInline$patch(
 	source: object,
 	value: Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>
 ): T.SuiteInline.Bound {
-	const _elements = hydrateStored(
-		admitSplicedEnvelope(value, [TSKindId.SimpleStatements, 'elements', 'simple_statements'], 'SuiteInline.elements')
+	const _statements = hydrateStored(
+		admitSplicedEnvelope(
+			value,
+			[TSKindId.SimpleStatements, 'statements', 'simple_statements'],
+			'SuiteInline.statements'
+		)
 	);
-	const listView = ownerView(_elements, '_item');
-	if (listView.length === undefined) refuseReadStub('_elements');
+	const listView = ownerView(_statements, '_item');
+	if (listView.length === undefined) refuseReadStub('_statements');
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'suite_inline', { elements: _elements });
+	if (handle !== undefined) admitChildren(handle, 'suite_inline', { statements: _statements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.SuiteInline as const, { _elements });
+	handle?.verifyStored?.(TSKindId.SuiteInline as const, { _statements });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.SuiteInline as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'elements', _elements));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'statements', _statements));
 		const node = arena.view(record);
 		return node as unknown as T.SuiteInline.Bound;
 	});
@@ -15623,7 +15633,7 @@ function _buildSuiteInline$patch(
 function withSuiteInline(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'elements':
+		case 'statements':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -18779,7 +18789,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[5, 3, 3, 1, 0, 0]
 		],
 		226: [[2, 2, 4, 3, 0, 0]],
-		227: [[2, 2, 3, 1, 0, 0]],
+		227: [[2, 2, 11, 9, 10, 0]],
 		228: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 5, 8, 5, 0]

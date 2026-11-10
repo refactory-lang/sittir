@@ -1,0 +1,123 @@
+# A call's callee narrowed to exclude as/satisfies: tree diff, sittir's TypeScript parser before vs after
+# Narrowing: call_expression_call's function reads a hidden rule holding the expression supertype's members minus as_expression and satisfies_expression,
+# with copies of the four precedence lists that name $expression and three added conflicts:
+#   await_expression,binary_expression,instantiation_expression
+#   assignment_expression
+#   expression, _call_function
+# Inputs: the 120 corpus entries of packages/codegen/fixtures/typescript, then the probes below.
+# Must stay valid (unchanged trees):
+#   (x as F)();
+#   (x satisfies F)();
+#   f() as T;
+#   f<T>();
+#   a?.();
+#   new (x as C)();
+#   let v = x as T
+#   let w = 1;
+# Must error:
+#   x as F();
+#   x satisfies F();
+#   0 as typeof f();
+#   x satisfies typeof f();
+# Hunks, in order:
+#   1668: corpus input 0046, `f<T>(x)` ending a line with no semicolon: a valid tree moves (the call's callee becomes an instantiation_expression)
+#   1751-1763: corpus input 0049, an input that already errors (MISSING "/"): it recovers into a different tree
+#   3209: corpus input 0086, an input that already errors: same status, timing only
+#   4765-4811: the four must-error probes, each now an ERROR
+#
+1668,1671c1668,1672
+<       function: (identifier)
+<       type_arguments: (type_arguments
+<         (types
+<           item: (type_identifier)))
+---
+>       function: (instantiation_expression
+>         function: (identifier)
+>         type_arguments: (type_arguments
+>           (types
+>             item: (type_identifier))))
+1751,1755c1752,1753
+<             left: (identifier)
+<             right: (binary_expression
+<               left: (regex
+<                 pattern: (regex_pattern))
+<               right: (binary_expression
+---
+>             left: (binary_expression
+>               left: (binary_expression
+1757c1755,1758
+<                 right: (identifier)))))
+---
+>                 right: (regex
+>                   pattern: (regex_pattern)))
+>               right: (identifier))
+>             right: (identifier)))
+1763c1764
+< /private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/dbbb684a-b11f-4eff-a2e3-5901a471fa67/scratchpad/callee/inputs/0049.ts	Parse:    0.40 ms	   146 bytes/ms	(MISSING "/")
+---
+> /private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/dbbb684a-b11f-4eff-a2e3-5901a471fa67/scratchpad/callee/inputs/0049.ts	Parse:    0.41 ms	   143 bytes/ms	(MISSING "/")
+3209c3210
+< /private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/dbbb684a-b11f-4eff-a2e3-5901a471fa67/scratchpad/callee/inputs/0086.ts	Parse:    0.49 ms	   119 bytes/ms	(ERROR)
+---
+> /private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/dbbb684a-b11f-4eff-a2e3-5901a471fa67/scratchpad/callee/inputs/0086.ts	Parse:    0.51 ms	   115 bytes/ms	(ERROR)
+4765,4770c4766,4772
+<   statements: (expression_statement
+<     expression: (call_expression_call
+<       function: (as_expression
+<         expression: (identifier)
+<         type: (type_identifier))
+<       arguments: (arguments))))
+---
+>   (ERROR
+>     (as_expression
+>       expression: (identifier)
+>       type: (type_identifier))
+>     (formal_parameters))
+>   statements: (empty_statement))
+> /private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/dbbb684a-b11f-4eff-a2e3-5901a471fa67/scratchpad/callee/probes/bad0.ts	Parse:    0.34 ms	    29 bytes/ms	(ERROR)
+4779,4783c4781,4787
+<     expression: (call_expression_call
+<       function: (satisfies_expression
+<         expression: (identifier)
+<         type: (type_identifier))
+<       arguments: (arguments))))
+---
+>     expression: (satisfies_expression
+>       expression: (identifier)
+>       type: (type_identifier)))
+>   (ERROR
+>     (formal_parameters))
+>   statements: (empty_statement))
+> /private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/dbbb684a-b11f-4eff-a2e3-5901a471fa67/scratchpad/callee/probes/bad1.ts	Parse:    0.39 ms	    43 bytes/ms	(MISSING ";")
+4792,4797c4796,4803
+<     expression: (call_expression_call
+<       function: (as_expression
+<         expression: (number_decimal)
+<         type: (type_query
+<           expression: (identifier)))
+<       arguments: (arguments))))
+---
+>     expression: (as_expression
+>       expression: (number_decimal)
+>       type: (type_query
+>         expression: (identifier))))
+>   (ERROR
+>     (formal_parameters))
+>   statements: (empty_statement))
+> /private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/dbbb684a-b11f-4eff-a2e3-5901a471fa67/scratchpad/callee/probes/bad2.ts	Parse:    0.32 ms	    52 bytes/ms	(MISSING ";")
+4806,4811c4812,4819
+<     expression: (call_expression_call
+<       function: (satisfies_expression
+<         expression: (identifier)
+<         type: (type_query
+<           expression: (identifier)))
+<       arguments: (arguments))))
+---
+>     expression: (satisfies_expression
+>       expression: (identifier)
+>       type: (type_query
+>         expression: (identifier))))
+>   (ERROR
+>     (formal_parameters))
+>   statements: (empty_statement))
+> /private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/dbbb684a-b11f-4eff-a2e3-5901a471fa67/scratchpad/callee/probes/bad3.ts	Parse:    0.36 ms	    65 bytes/ms	(MISSING ";")

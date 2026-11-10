@@ -401,12 +401,7 @@ export const records = {
 	},
 	ArgumentsNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
 	ParenthesizedExpressionNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
-	TupleExpressionNode: {
-		words: 6,
-		builtWords: 4,
-		attributes: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		elements: { word: 3, width: 3, inline: 3, forms: 8, built: 3 }
-	},
+	TupleExpressionNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
 	StructExpressionNode: {
 		words: 10,
 		builtWords: 4,
@@ -622,7 +617,6 @@ export const records = {
 	UseBoundsElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	TypeArgumentsElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	ArgumentsElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
-	ExpressionsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
 	FieldInitializerListElementsNode: {
 		words: 3,
 		builtWords: 3,
@@ -634,6 +628,14 @@ export const records = {
 	UseWildcardGroupNode: { words: 6, builtWords: 3, path: { word: 2, width: 4, forms: 3, built: 2 } },
 	TokenRepetitionPatternTextNode: { words: 2, builtWords: 2 },
 	StringOpenNode: { words: 2, builtWords: 2 },
+	AttributedElementNode: {
+		words: 7,
+		builtWords: 4,
+		attributes: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
+		expression: { word: 3, width: 4, forms: 3, built: 3 }
+	},
+	ArrayExpressionListElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
+	TupleExpressionElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
 	IntegerLiteralDecimalNode: {
 		words: 8,
 		builtWords: 5,
@@ -721,19 +723,6 @@ export const records = {
 		builtWords: 4,
 		content: { word: 2, width: 2, forms: 4, built: 2 },
 		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
-	},
-	ArrayExpressionSemiNode: {
-		words: 11,
-		builtWords: 5,
-		attributes: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		element: { word: 3, width: 4, forms: 3, built: 3 },
-		length: { word: 7, width: 4, forms: 3, built: 4 }
-	},
-	ArrayExpressionListNode: {
-		words: 6,
-		builtWords: 4,
-		attributes: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		elements: { word: 3, width: 3, inline: 3, forms: 8, built: 3 }
 	},
 	AttributeInputNode: {
 		words: 9,
@@ -994,7 +983,7 @@ export const records = {
 		attribute_item: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
 		content: { word: 3, width: 14, inline: 14, forms: 8, built: 3 }
 	},
-	AttributedArgumentNode: {
+	ArgumentNode: {
 		words: 7,
 		builtWords: 4,
 		attribute_item: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
@@ -1014,6 +1003,13 @@ export const records = {
 		trait_bounds: { word: 6, width: 3, inline: 3, forms: 8, built: 3 }
 	},
 	MatchBlockArmsNode: { words: 3, builtWords: 3, arms: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	ArrayExpressionSemiNode: {
+		words: 10,
+		builtWords: 4,
+		element: { word: 2, width: 4, forms: 3, built: 2 },
+		length: { word: 6, width: 4, forms: 3, built: 3 }
+	},
+	ArrayExpressionListNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
 	FloatLiteralNode: { words: 2, builtWords: 2 },
 	StringContentNode: { words: 2, builtWords: 2 },
 	RawStringLiteralContentNode: { words: 2, builtWords: 2 },
@@ -1042,13 +1038,6 @@ export const records = {
 		builtWords: 3,
 		declarations: { word: 2, width: 1, run: 4, forms: 3, built: 2 }
 	},
-	ArgumentNode: {
-		words: 7,
-		builtWords: 4,
-		attribute_item: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		expression: { word: 3, width: 4, forms: 3, built: 3 }
-	},
-	ArrayExpressionListElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	ReceiverParameterDeclarationNode: {
 		words: 7,
 		builtWords: 4,

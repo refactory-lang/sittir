@@ -158,7 +158,6 @@ export {
 	coerceToUseBoundsElements as buildUseBoundsElements,
 	coerceToTypeArgumentsElements as buildTypeArgumentsElements,
 	coerceToArgumentsElements as buildArgumentsElements,
-	coerceToExpressions as buildExpressions,
 	coerceToFieldInitializerListElements as buildFieldInitializerListElements,
 	coerceToTuplePatternElements as buildTuplePatternElements,
 	coerceToPatterns as buildPatterns,
@@ -166,6 +165,9 @@ export {
 	coerceToUseWildcardGroup as buildUseWildcardGroup,
 	coerceToTokenRepetitionPatternText as buildTokenRepetitionPatternText,
 	coerceToStringOpen as buildStringOpen,
+	coerceToAttributedElement as buildAttributedElement,
+	coerceToArrayExpressionListElements as buildArrayExpressionListElements,
+	coerceToTupleExpressionElements as buildTupleExpressionElements,
 	coerceToIntegerLiteralDecimal as buildIntegerLiteralDecimal,
 	coerceToIntegerLiteralHex as buildIntegerLiteralHex,
 	coerceToIntegerLiteralBinary as buildIntegerLiteralBinary,
@@ -180,8 +182,6 @@ export {
 	coerceToEscapeSequenceUnicodeFixed as buildEscapeSequenceUnicodeFixed,
 	coerceToEscapeSequenceUnicodeBraced as buildEscapeSequenceUnicodeBraced,
 	coerceToEscapeSequenceHex as buildEscapeSequenceHex,
-	coerceToArrayExpressionSemi as buildArrayExpressionSemi,
-	coerceToArrayExpressionList as buildArrayExpressionList,
 	coerceToAttributeInput as buildAttributeInput,
 	coerceToClosureExpressionBlock as buildClosureExpressionBlock,
 	coerceToClosureExpressionExpr as buildClosureExpressionExpr,
@@ -246,10 +246,12 @@ export {
 	coerceToAttributedEnumVariant as buildAttributedEnumVariant,
 	coerceToAttributedParameter as buildAttributedParameter,
 	coerceToAttributedTypeParameter as buildAttributedTypeParameter,
-	coerceToAttributedArgument as buildAttributedArgument,
+	coerceToArgument as buildArgument,
 	coerceToAttributedOrderedField as buildAttributedOrderedField,
 	coerceToTypeArgument as buildTypeArgument,
 	coerceToMatchBlockArms as buildMatchBlockArms,
+	coerceToArrayExpressionSemi as buildArrayExpressionSemi,
+	coerceToArrayExpressionList as buildArrayExpressionList,
 	coerceToFloatLiteral as buildFloatLiteral,
 	coerceToStringContent as buildStringContent,
 	coerceToRawStringLiteralContent as buildRawStringLiteralContent,
@@ -267,8 +269,6 @@ export {
 	coerceToDedent as buildDedent,
 	coerceToTraitInterfaceDeclarationBody as buildTraitInterfaceDeclarationBody,
 	coerceToExtensionDeclarationBody as buildExtensionDeclarationBody,
-	coerceToArgument as buildArgument,
-	coerceToArrayExpressionListElements as buildArrayExpressionListElements,
 	coerceToReceiverParameterDeclaration as buildReceiverParameterDeclaration,
 	coerceToAttributedParameterReceiver as buildAttributedParameterReceiver,
 	coerceToParametersElementsReceiver as buildParametersElementsReceiver,
@@ -361,11 +361,6 @@ export const arguments_$seated: EmptyForm<
 	Seat<T.Arguments.LooseArgs, ReturnType<typeof C.coerceToArguments>>
 > = withEmptyForm(K.arguments_$items(C.coerceToArguments, C.coerceToArgument));
 
-export const tupleExpression$seated: Seat<
-	T.TupleExpression.LooseArgs,
-	ReturnType<typeof C.coerceToTupleExpression>
-> = K.tupleExpression$elements(C.coerceToTupleExpression, C.coerceToExpressions);
-
 export const lastMatchArm$seated: Seat<
 	T.LastMatchArm.LooseArgs,
 	ReturnType<typeof C.coerceToLastMatchArm>
@@ -385,16 +380,6 @@ export const parametersElements$seated: Seat<
 	T.ParametersElements.LooseArgs,
 	ReturnType<typeof C.coerceToParametersElements>
 > = K.parametersElements$items(C.coerceToParametersElements, C.coerceToAttributedParameter);
-
-export const arrayExpressionListElements$seated: Seat<
-	T.ArrayExpressionListElements.LooseArgs,
-	ReturnType<typeof C.coerceToArrayExpressionListElements>
-> = K.arrayExpressionListElements$items(C.coerceToArrayExpressionListElements, C.coerceToAttributedArgument);
-
-export const arrayExpressionList$seated: EmptyForm<
-	T.EmptyArrayExpressionList,
-	Seat<T.ArrayExpressionList.LooseArgs, ReturnType<typeof C.coerceToArrayExpressionList>>
-> = withEmptyForm(K.arrayExpressionList$elements(C.coerceToArrayExpressionList, arrayExpressionListElements$seated));
 
 export const matchArmWithComma$seated: Seat<
 	T.MatchArmWithComma.LooseArgs,

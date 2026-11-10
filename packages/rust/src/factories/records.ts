@@ -10202,104 +10202,74 @@ function withParenthesizedExpression(node: object, setter: string, args: readonl
 	throw new Error(`parenthesized_expression has no $with.${setter}`);
 }
 
-export function buildTupleExpression<
-	AttributesSlot extends T.TupleExpression.Config['attributes'],
-	ElementsSlot extends T.TupleExpression.Config['elements']
->(
-	config: RefusingConfig<T.TupleExpression.Config, { attributes: AttributesSlot; elements: ElementsSlot }>
-): T.TupleExpression.Bound;
-export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleExpression.Bound {
-	currentHandle()?.admit(TSKindId.TupleExpression, [config]);
-	const _attributes = listStorage<NonNullable<T.TupleExpression['_attributes']>>(config.attributes ?? []);
-	const _elements = config.elements;
+export function buildTupleExpression<V extends Admit<T.TupleExpressionElements>>(
+	value: V & RefuseUndeclared<V>
+): ReturnType<typeof _buildTupleExpression>;
+export function buildTupleExpression<A extends NonEmptyArray<Admit<T.AttributedElement | T.Expression>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildTupleExpression>;
+export function buildTupleExpression<A extends NonEmptyArray<Admit<T.AttributedElement | T.Expression>>>(
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildTupleExpression>;
+export function buildTupleExpression(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+		return _buildTupleExpression(args[0] as Parameters<typeof _buildTupleExpression>[0]);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TupleExpressionElements as const);
+	return prebuilt
+		? _buildTupleExpression(args[0] as Parameters<typeof _buildTupleExpression>[0])
+		: _buildTupleExpression(
+				(buildTupleExpressionElements as (...a: unknown[]) => unknown)(...args) as Parameters<
+					typeof _buildTupleExpression
+				>[0]
+			);
+}
+function _buildTupleExpression(value: Admit<T.TupleExpressionElements>): T.TupleExpression.Bound {
+	const _elements = hydrateStored(value);
+	const listView = ownerView(_elements, '_item');
+	if (listView.length === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'tuple_expression', { attributes: _attributes, elements: _elements });
+	if (handle !== undefined) admitChildren(handle, 'tuple_expression', { elements: _elements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.TupleExpression as const, { _attributes, _elements });
+	handle?.verifyStored?.(TSKindId.TupleExpression as const, { _elements });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.TupleExpression as const);
-		storeList(arena, record, 2, 2, _attributes);
-		storeCell(arena, record, 3, 3, _elements);
+		storeCell(arena, record, 2, 2, _elements);
 		const node = arena.view(record);
 		return node as unknown as T.TupleExpression.Bound;
 	});
 }
 
-function buildTupleExpression$patch(source: object, config: T.TupleExpression.Config): T.TupleExpression.Bound {
-	currentHandle()?.admit(TSKindId.TupleExpression, [config]);
-	const _attributes = listStorage<NonNullable<T.TupleExpression['_attributes']>>(config.attributes ?? []);
-	const _elements = config.elements;
+function _buildTupleExpression$patch(source: object, value: Admit<T.TupleExpressionElements>): T.TupleExpression.Bound {
+	const _elements = hydrateStored(value);
+	const listView = ownerView(_elements, '_item');
+	if (listView.length === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'tuple_expression', { attributes: _attributes, elements: _elements });
+	if (handle !== undefined) admitChildren(handle, 'tuple_expression', { elements: _elements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.TupleExpression as const, { _attributes, _elements });
+	handle?.verifyStored?.(TSKindId.TupleExpression as const, { _elements });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.TupleExpression as const);
-		patchList(arena, record, 2, 2, _attributes);
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'elements', _elements));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'elements', _elements));
 		const node = arena.view(record);
 		return node as unknown as T.TupleExpression.Bound;
 	});
 }
-function buildTupleExpression$set(
-	source: object,
-	...[slot, input]: ['attributes', Partial<T.TupleExpression.Config>] | ['elements', Partial<T.TupleExpression.Config>]
-): T.TupleExpression.Bound {
-	switch (slot) {
-		case 'attributes': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildTupleExpression$patch(source, { ...(inputs.config as T.TupleExpression.Config), ...input });
-			}
-			const config = input;
-			const _attributes = listStorage<NonNullable<T.TupleExpression['_attributes']>>(config.attributes ?? []);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'tuple_expression', { attributes: _attributes });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.TupleExpression as const, 0);
-				patchList(arena, record, 2, 2, _attributes);
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.TupleExpression.Bound;
-			});
-		}
-		case 'elements': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildTupleExpression$patch(source, { ...(inputs.config as T.TupleExpression.Config), ...input });
-			}
-			const config = input;
-			const _elements = config.elements;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'tuple_expression', { elements: _elements });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.TupleExpression as const, 1);
-				patchCell(arena, record, 3, 3, carriedSlot(source, 'elements', _elements));
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.TupleExpression.Bound;
-			});
-		}
-	}
-}
 function withTupleExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'attributes':
-			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
-				rebuilt(node, handle, () =>
-					buildTupleExpression$set(node, 'attributes', { attributes: restItems('attributes', values) })
-				)
-			);
 		case 'elements':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.Expressions as const, optional: false, make: buildExpressions },
-						(value: Admit<T.Expressions>) => buildTupleExpression$set(node, 'elements', { elements: value })
+						{ kind: TSKindId.TupleExpressionElements as const, optional: false, make: buildTupleExpressionElements },
+						(value: Admit<T.TupleExpressionElements>) => _buildTupleExpression$patch(node, value)
 					)
 				)
 			);
@@ -16504,98 +16474,6 @@ function withArgumentsElements(node: object, setter: string, args: readonly unkn
 	throw new Error(`arguments_elements has no $with.${setter}`);
 }
 
-export function buildExpressions<A extends NonEmptyArray<Admit<T.Expression>>>(
-	...elements: A & RefuseUndeclared<A>
-): ReturnType<typeof _buildExpressions>;
-export function buildExpressions<A extends NonEmptyArray<Admit<T.Expression>>>(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUndeclared<A>
-): ReturnType<typeof _buildExpressions>;
-export function buildExpressions(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Expression>)[]
-) {
-	const _optsFirst =
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		!Array.isArray(args[0]) &&
-		!('$type' in (args[0] as object)) &&
-		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.Expression>>;
-	return _buildExpressions(elements, options);
-}
-function _buildExpressions(
-	elements: NonEmptyArray<Admit<T.Expression>>,
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.Expressions.Bound {
-	currentHandle()?.admit(TSKindId.Expressions, elements);
-	const _item = elements;
-	const _delimiter = options.delimiter;
-	if (elements.length === 1 && _delimiter === Delimiter.None)
-		throw new Error('expressions: one element always spells its trailing separator, so its delimiter is never None');
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'expressions', { items: _item });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.Expressions as const, { _item });
-	return arena.scope(() => {
-		const record = arena.record(TSKindId.Expressions as const);
-		storeList(arena, record, 2, 2, _item);
-		storeListOptions(arena, record, _delimiter, undefined);
-		const node = arena.view(record);
-		return node as unknown as T.Expressions.Bound;
-	});
-}
-
-function _buildExpressions$patch(
-	source: object,
-	elements: NonEmptyArray<Admit<T.Expression>>,
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.Expressions.Bound {
-	currentHandle()?.admit(TSKindId.Expressions, elements);
-	const _item = elements;
-	const _delimiter = options.delimiter;
-	if (elements.length === 1 && _delimiter === Delimiter.None)
-		throw new Error('expressions: one element always spells its trailing separator, so its delimiter is never None');
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'expressions', { items: _item });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.Expressions as const, { _item });
-	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.Expressions as const);
-		patchList(arena, record, 2, 2, _item);
-		patchListOptions(arena, record, _delimiter, undefined);
-		const node = arena.view(record);
-		return node as unknown as T.Expressions.Bound;
-	});
-}
-function withExpressions(node: object, setter: string, args: readonly unknown[]): unknown {
-	const handle = handleOf(node as RecordHandle);
-	switch (setter) {
-		case 'items': {
-			const inputs = builtInputs(node);
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
-			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Expression>>) =>
-				rebuilt(node, handle, () =>
-					_buildExpressions$patch(
-						node,
-						vs,
-						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options
-					)
-				)
-			);
-		}
-		case 'delimiter': {
-			const inputs = builtInputs(node);
-			const elements = inputs.elements as NonEmptyArray<Admit<T.Expression>>;
-			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
-			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => _buildExpressions$patch(node, elements, { ...options, delimiter: v }))
-			);
-		}
-	}
-	throw new Error(`expressions has no $with.${setter}`);
-}
-
 export function buildFieldInitializerListElements<
 	A extends NonEmptyArray<Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>>
 >(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildFieldInitializerListElements>;
@@ -17250,6 +17128,336 @@ function leafStringOpen(tree: TreeHandle, entry: BuiltText, site: LeafSite | und
 	};
 	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
 	return node;
+}
+
+export function buildAttributedElement<
+	AttributesSlot extends T.AttributedElement.Config['attributes'],
+	ExpressionSlot extends T.AttributedElement.Config['expression']
+>(
+	config: RefusingConfig<T.AttributedElement.Config, { attributes: AttributesSlot; expression: ExpressionSlot }>
+): T.AttributedElement.Bound;
+export function buildAttributedElement(config: T.AttributedElement.Config): T.AttributedElement.Bound {
+	currentHandle()?.admit(TSKindId.AttributedElement, [config]);
+	const _attributes = listStorage<NonNullable<T.AttributedElement['_attributes']>>(config.attributes);
+	const _expression = kindIdStorage<NonNullable<T.AttributedElement['_expression']>>(config.expression);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'attributed_element', { attributes: _attributes, expression: _expression });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.AttributedElement as const, { _attributes, _expression });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.AttributedElement as const);
+		storeList(arena, record, 2, 2, _attributes);
+		storeCell(arena, record, 3, 3, _expression);
+		const node = arena.view(record);
+		return node as unknown as T.AttributedElement.Bound;
+	});
+}
+
+function buildAttributedElement$patch(source: object, config: T.AttributedElement.Config): T.AttributedElement.Bound {
+	currentHandle()?.admit(TSKindId.AttributedElement, [config]);
+	const _attributes = listStorage<NonNullable<T.AttributedElement['_attributes']>>(config.attributes);
+	const _expression = kindIdStorage<NonNullable<T.AttributedElement['_expression']>>(config.expression);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'attributed_element', { attributes: _attributes, expression: _expression });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.AttributedElement as const, { _attributes, _expression });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.AttributedElement as const);
+		patchList(arena, record, 2, 2, _attributes);
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'expression', _expression));
+		const node = arena.view(record);
+		return node as unknown as T.AttributedElement.Bound;
+	});
+}
+function buildAttributedElement$set(
+	source: object,
+	...[slot, input]:
+		| ['attributes', Partial<T.AttributedElement.Config>]
+		| ['expression', Partial<T.AttributedElement.Config>]
+): T.AttributedElement.Bound {
+	switch (slot) {
+		case 'attributes': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedElement$patch(source, { ...(inputs.config as T.AttributedElement.Config), ...input });
+			}
+			const config = input;
+			const _attributes = listStorage<NonNullable<T.AttributedElement['_attributes']>>(config.attributes);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attributed_element', { attributes: _attributes });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedElement as const, 0);
+				patchList(arena, record, 2, 2, _attributes);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.AttributedElement.Bound;
+			});
+		}
+		case 'expression': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildAttributedElement$patch(source, { ...(inputs.config as T.AttributedElement.Config), ...input });
+			}
+			const config = input;
+			const _expression = kindIdStorage<NonNullable<T.AttributedElement['_expression']>>(config.expression);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'attributed_element', { expression: _expression });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.AttributedElement as const, 1);
+				patchCell(arena, record, 3, 3, carriedSlot(source, 'expression', _expression));
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.AttributedElement.Bound;
+			});
+		}
+	}
+}
+function withAttributedElement(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'attributes':
+			return applySetter(args, (...values: Admit<NonEmptyArray<T.AttributeItem>>) =>
+				rebuilt(node, handle, () =>
+					buildAttributedElement$set(node, 'attributes', { attributes: restItems('attributes', values) })
+				)
+			);
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<T.AttributedElement.Config>['expression']>) =>
+				rebuilt(node, handle, () => buildAttributedElement$set(node, 'expression', { expression: value }))
+			);
+	}
+	throw new Error(`attributed_element has no $with.${setter}`);
+}
+
+export function buildArrayExpressionListElements<A extends NonEmptyArray<Admit<T.AttributedElement | T.Expression>>>(
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildArrayExpressionListElements>;
+export function buildArrayExpressionListElements<A extends NonEmptyArray<Admit<T.AttributedElement | T.Expression>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildArrayExpressionListElements>;
+export function buildArrayExpressionListElements(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.AttributedElement | T.Expression>)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		Admit<T.AttributedElement | T.Expression>
+	>;
+	return _buildArrayExpressionListElements(elements, options);
+}
+function _buildArrayExpressionListElements(
+	elements: NonEmptyArray<Admit<T.AttributedElement | T.Expression>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.ArrayExpressionListElements.Bound {
+	currentHandle()?.admit(TSKindId.ArrayExpressionListElements, elements);
+	const _item = elements;
+	const _delimiter = options.delimiter;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'array_expression_list_elements', { items: _item });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ArrayExpressionListElements as const, { _item });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ArrayExpressionListElements as const);
+		storeList(arena, record, 2, 2, _item);
+		storeListOptions(arena, record, _delimiter, undefined);
+		const node = arena.view(record);
+		return node as unknown as T.ArrayExpressionListElements.Bound;
+	});
+}
+
+function _buildArrayExpressionListElements$patch(
+	source: object,
+	elements: NonEmptyArray<Admit<T.AttributedElement | T.Expression>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.ArrayExpressionListElements.Bound {
+	currentHandle()?.admit(TSKindId.ArrayExpressionListElements, elements);
+	const _item = elements;
+	const _delimiter = options.delimiter;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'array_expression_list_elements', { items: _item });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ArrayExpressionListElements as const, { _item });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ArrayExpressionListElements as const);
+		patchList(arena, record, 2, 2, _item);
+		patchListOptions(arena, record, _delimiter, undefined);
+		const node = arena.view(record);
+		return node as unknown as T.ArrayExpressionListElements.Bound;
+	});
+}
+function _buildArrayExpressionListElements$set(
+	source: object,
+	...[slot, input]:
+		| ['items', NonEmptyArray<Admit<T.AttributedElement | T.Expression>>]
+		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
+): T.ArrayExpressionListElements.Bound {
+	switch (slot) {
+		case 'items': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildArrayExpressionListElements$patch(
+					source,
+					input,
+					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
+				);
+			}
+			const elements = input;
+			const _item = elements;
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'array_expression_list_elements', { items: _item });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ArrayExpressionListElements as const, 0);
+				patchList(arena, record, 2, 2, _item);
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.ArrayExpressionListElements.Bound;
+			});
+		}
+		case 'delimiter': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return _buildArrayExpressionListElements$patch(
+					source,
+					inputs.elements as NonEmptyArray<Admit<T.AttributedElement | T.Expression>>,
+					{ ...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input }
+				);
+			}
+			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
+			const _delimiter = options.delimiter;
+			const handle = currentHandle();
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ArrayExpressionListElements as const, 1);
+				patchListOptions(arena, record, _delimiter, undefined);
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.ArrayExpressionListElements.Bound;
+			});
+		}
+	}
+}
+function withArrayExpressionListElements(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'items':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.AttributedElement | T.Expression>>) =>
+				rebuilt(node, handle, () => _buildArrayExpressionListElements$set(node, 'items', vs))
+			);
+		case 'delimiter':
+			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => _buildArrayExpressionListElements$set(node, 'delimiter', { delimiter: v }))
+			);
+	}
+	throw new Error(`array_expression_list_elements has no $with.${setter}`);
+}
+
+export function buildTupleExpressionElements<A extends NonEmptyArray<Admit<T.AttributedElement | T.Expression>>>(
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildTupleExpressionElements>;
+export function buildTupleExpressionElements<A extends NonEmptyArray<Admit<T.AttributedElement | T.Expression>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildTupleExpressionElements>;
+export function buildTupleExpressionElements(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.AttributedElement | T.Expression>)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		Admit<T.AttributedElement | T.Expression>
+	>;
+	return _buildTupleExpressionElements(elements, options);
+}
+function _buildTupleExpressionElements(
+	elements: NonEmptyArray<Admit<T.AttributedElement | T.Expression>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.TupleExpressionElements.Bound {
+	currentHandle()?.admit(TSKindId.TupleExpressionElements, elements);
+	const _item = elements;
+	const _delimiter = options.delimiter;
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error(
+			'tuple_expression_elements: one element always spells its trailing separator, so its delimiter is never None'
+		);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'tuple_expression_elements', { items: _item });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.TupleExpressionElements as const, { _item });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.TupleExpressionElements as const);
+		storeList(arena, record, 2, 2, _item);
+		storeListOptions(arena, record, _delimiter, undefined);
+		const node = arena.view(record);
+		return node as unknown as T.TupleExpressionElements.Bound;
+	});
+}
+
+function _buildTupleExpressionElements$patch(
+	source: object,
+	elements: NonEmptyArray<Admit<T.AttributedElement | T.Expression>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.TupleExpressionElements.Bound {
+	currentHandle()?.admit(TSKindId.TupleExpressionElements, elements);
+	const _item = elements;
+	const _delimiter = options.delimiter;
+	if (elements.length === 1 && _delimiter === Delimiter.None)
+		throw new Error(
+			'tuple_expression_elements: one element always spells its trailing separator, so its delimiter is never None'
+		);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'tuple_expression_elements', { items: _item });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.TupleExpressionElements as const, { _item });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.TupleExpressionElements as const);
+		patchList(arena, record, 2, 2, _item);
+		patchListOptions(arena, record, _delimiter, undefined);
+		const node = arena.view(record);
+		return node as unknown as T.TupleExpressionElements.Bound;
+	});
+}
+function withTupleExpressionElements(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'items': {
+			const inputs = builtInputs(node);
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.AttributedElement | T.Expression>>) =>
+				rebuilt(node, handle, () =>
+					_buildTupleExpressionElements$patch(
+						node,
+						vs,
+						vs.length === 1 && options.delimiter === Delimiter.None ? { ...options, delimiter: undefined } : options
+					)
+				)
+			);
+		}
+		case 'delimiter': {
+			const inputs = builtInputs(node);
+			const elements = inputs.elements as NonEmptyArray<Admit<T.AttributedElement | T.Expression>>;
+			const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => _buildTupleExpressionElements$patch(node, elements, { ...options, delimiter: v }))
+			);
+		}
+	}
+	throw new Error(`tuple_expression_elements has no $with.${setter}`);
 }
 
 export function buildIntegerLiteralDecimal<
@@ -18766,264 +18974,6 @@ function withEscapeSequenceHex(node: object, setter: string, args: readonly unkn
 			);
 	}
 	throw new Error(`escape_sequence_hex has no $with.${setter}`);
-}
-
-export function buildArrayExpressionSemi<
-	AttributesSlot extends T.ArrayExpressionSemi.Config['attributes'],
-	ElementSlot extends T.ArrayExpressionSemi.Config['element'],
-	LengthSlot extends T.ArrayExpressionSemi.Config['length']
->(
-	config: RefusingConfig<
-		T.ArrayExpressionSemi.Config,
-		{ attributes: AttributesSlot; element: ElementSlot; length: LengthSlot }
-	>
-): T.ArrayExpressionSemi.Bound;
-export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config): T.ArrayExpressionSemi.Bound {
-	currentHandle()?.admit(TSKindId.ArrayExpressionSemi, [config]);
-	const _attributes = listStorage<NonNullable<T.ArrayExpressionSemi['_attributes']>>(config.attributes ?? []);
-	const _element = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_element']>>(config.element);
-	const _length = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_length']>>(config.length);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'array_expression_semi', { attributes: _attributes, element: _element, length: _length });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ArrayExpressionSemi as const, { _attributes, _element, _length });
-	return arena.scope(() => {
-		const record = arena.record(TSKindId.ArrayExpressionSemi as const);
-		storeList(arena, record, 2, 2, _attributes);
-		storeCell(arena, record, 3, 3, _element);
-		storeCell(arena, record, 4, 7, _length);
-		const node = arena.view(record);
-		return node as unknown as T.ArrayExpressionSemi.Bound;
-	});
-}
-
-function buildArrayExpressionSemi$patch(
-	source: object,
-	config: T.ArrayExpressionSemi.Config
-): T.ArrayExpressionSemi.Bound {
-	currentHandle()?.admit(TSKindId.ArrayExpressionSemi, [config]);
-	const _attributes = listStorage<NonNullable<T.ArrayExpressionSemi['_attributes']>>(config.attributes ?? []);
-	const _element = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_element']>>(config.element);
-	const _length = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_length']>>(config.length);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'array_expression_semi', { attributes: _attributes, element: _element, length: _length });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ArrayExpressionSemi as const, { _attributes, _element, _length });
-	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.ArrayExpressionSemi as const);
-		patchList(arena, record, 2, 2, _attributes);
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'element', _element));
-		patchCell(arena, record, 4, 7, carriedSlot(source, 'length', _length));
-		const node = arena.view(record);
-		return node as unknown as T.ArrayExpressionSemi.Bound;
-	});
-}
-function buildArrayExpressionSemi$set(
-	source: object,
-	...[slot, input]:
-		| ['attributes', Partial<T.ArrayExpressionSemi.Config>]
-		| ['element', Partial<T.ArrayExpressionSemi.Config>]
-		| ['length', Partial<T.ArrayExpressionSemi.Config>]
-): T.ArrayExpressionSemi.Bound {
-	switch (slot) {
-		case 'attributes': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildArrayExpressionSemi$patch(source, { ...(inputs.config as T.ArrayExpressionSemi.Config), ...input });
-			}
-			const config = input;
-			const _attributes = listStorage<NonNullable<T.ArrayExpressionSemi['_attributes']>>(config.attributes ?? []);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'array_expression_semi', { attributes: _attributes });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.ArrayExpressionSemi as const, 0);
-				patchList(arena, record, 2, 2, _attributes);
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.ArrayExpressionSemi.Bound;
-			});
-		}
-		case 'element': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildArrayExpressionSemi$patch(source, { ...(inputs.config as T.ArrayExpressionSemi.Config), ...input });
-			}
-			const config = input;
-			const _element = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_element']>>(config.element);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'array_expression_semi', { element: _element });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.ArrayExpressionSemi as const, 1);
-				patchCell(arena, record, 3, 3, carriedSlot(source, 'element', _element));
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.ArrayExpressionSemi.Bound;
-			});
-		}
-		case 'length': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildArrayExpressionSemi$patch(source, { ...(inputs.config as T.ArrayExpressionSemi.Config), ...input });
-			}
-			const config = input;
-			const _length = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_length']>>(config.length);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'array_expression_semi', { length: _length });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.ArrayExpressionSemi as const, 2);
-				patchCell(arena, record, 4, 7, carriedSlot(source, 'length', _length));
-				arena.carry(source, record, 2);
-				const node = arena.view(record);
-				return node as unknown as T.ArrayExpressionSemi.Bound;
-			});
-		}
-	}
-}
-function withArrayExpressionSemi(node: object, setter: string, args: readonly unknown[]): unknown {
-	const handle = handleOf(node as RecordHandle);
-	switch (setter) {
-		case 'attributes':
-			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
-				rebuilt(node, handle, () =>
-					buildArrayExpressionSemi$set(node, 'attributes', { attributes: restItems('attributes', values) })
-				)
-			);
-		case 'element':
-			return applySetter(args, (value: Admit<NonNullable<T.ArrayExpressionSemi.Config>['element']>) =>
-				rebuilt(node, handle, () => buildArrayExpressionSemi$set(node, 'element', { element: value }))
-			);
-		case 'length':
-			return applySetter(args, (value: Admit<NonNullable<T.ArrayExpressionSemi.Config>['length']>) =>
-				rebuilt(node, handle, () => buildArrayExpressionSemi$set(node, 'length', { length: value }))
-			);
-	}
-	throw new Error(`array_expression_semi has no $with.${setter}`);
-}
-
-export function buildArrayExpressionList(): T.EmptyArrayExpressionList;
-export function buildArrayExpressionList<
-	AttributesSlot extends T.ArrayExpressionList.Config['attributes'],
-	ElementsSlot extends T.ArrayExpressionList.Config['elements']
->(
-	config?: RefusingConfig<Partial<T.ArrayExpressionList.Config>, { attributes: AttributesSlot; elements: ElementsSlot }>
-): T.ArrayExpressionList.Bound;
-export function buildArrayExpressionList(
-	config: Partial<T.ArrayExpressionList.Config> = {}
-): T.ArrayExpressionList.Bound {
-	currentHandle()?.admit(TSKindId.ArrayExpressionList, [config]);
-	const _attributes = listStorage<NonNullable<T.ArrayExpressionList['_attributes']>>(config.attributes ?? []);
-	const _elements = config.elements;
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'array_expression_list', { attributes: _attributes, elements: _elements });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ArrayExpressionList as const, { _attributes, _elements });
-	return arena.scope(() => {
-		const record = arena.record(TSKindId.ArrayExpressionList as const);
-		storeList(arena, record, 2, 2, _attributes);
-		storeCell(arena, record, 3, 3, _elements);
-		const node = arena.view(record);
-		return node as unknown as T.ArrayExpressionList.Bound;
-	});
-}
-
-function buildArrayExpressionList$patch(
-	source: object,
-	config: Partial<T.ArrayExpressionList.Config> = {}
-): T.ArrayExpressionList.Bound {
-	currentHandle()?.admit(TSKindId.ArrayExpressionList, [config]);
-	const _attributes = listStorage<NonNullable<T.ArrayExpressionList['_attributes']>>(config.attributes ?? []);
-	const _elements = config.elements;
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'array_expression_list', { attributes: _attributes, elements: _elements });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ArrayExpressionList as const, { _attributes, _elements });
-	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.ArrayExpressionList as const);
-		patchList(arena, record, 2, 2, _attributes);
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'elements', _elements));
-		const node = arena.view(record);
-		return node as unknown as T.ArrayExpressionList.Bound;
-	});
-}
-function buildArrayExpressionList$set(
-	source: object,
-	...[slot, input]:
-		| ['attributes', Partial<T.ArrayExpressionList.Config>]
-		| ['elements', Partial<T.ArrayExpressionList.Config>]
-): T.ArrayExpressionList.Bound {
-	switch (slot) {
-		case 'attributes': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildArrayExpressionList$patch(source, { ...(inputs.config as T.ArrayExpressionList.Config), ...input });
-			}
-			const config = input;
-			const _attributes = listStorage<NonNullable<T.ArrayExpressionList['_attributes']>>(config.attributes ?? []);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'array_expression_list', { attributes: _attributes });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.ArrayExpressionList as const, 0);
-				patchList(arena, record, 2, 2, _attributes);
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.ArrayExpressionList.Bound;
-			});
-		}
-		case 'elements': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildArrayExpressionList$patch(source, { ...(inputs.config as T.ArrayExpressionList.Config), ...input });
-			}
-			const config = input;
-			const _elements = config.elements;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'array_expression_list', { elements: _elements });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.ArrayExpressionList as const, 1);
-				patchCell(arena, record, 3, 3, carriedSlot(source, 'elements', _elements));
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.ArrayExpressionList.Bound;
-			});
-		}
-	}
-}
-function withArrayExpressionList(node: object, setter: string, args: readonly unknown[]): unknown {
-	const handle = handleOf(node as RecordHandle);
-	switch (setter) {
-		case 'attributes':
-			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
-				rebuilt(node, handle, () =>
-					buildArrayExpressionList$set(node, 'attributes', { attributes: restItems('attributes', values) })
-				)
-			);
-		case 'elements':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.ArrayExpressionListElements as const,
-							optional: true,
-							make: buildArrayExpressionListElements,
-							element: { keys: ['attributeItems', 'expression'], make: buildAttributedArgument }
-						},
-						(value?: Admit<T.ArrayExpressionListElements>) =>
-							buildArrayExpressionList$set(node, 'elements', { elements: value })
-					)
-				)
-			);
-	}
-	throw new Error(`array_expression_list has no $with.${setter}`);
 }
 
 export function buildAttributeInput<
@@ -24961,119 +24911,105 @@ function withAttributedTypeParameter(node: object, setter: string, args: readonl
 	throw new Error(`attributed_type_parameter has no $with.${setter}`);
 }
 
-export function buildAttributedArgument<
-	AttributeItemsSlot extends T.AttributedArgument.Config['attributeItems'],
-	ExpressionSlot extends T.AttributedArgument.Config['expression']
+export function buildArgument<
+	AttributeItemsSlot extends T.Argument.Config['attributeItems'],
+	ExpressionSlot extends T.Argument.Config['expression']
 >(
-	config: RefusingConfig<
-		T.AttributedArgument.Config,
-		{ attributeItems: AttributeItemsSlot; expression: ExpressionSlot }
-	>
-): T.AttributedArgument.Bound;
-export function buildAttributedArgument(config: T.AttributedArgument.Config): T.AttributedArgument.Bound {
-	currentHandle()?.admit(TSKindId.AttributedArgument, [config]);
-	const _attribute_item = listStorage<NonNullable<T.AttributedArgument['_attribute_item']>>(
-		config.attributeItems ?? []
-	);
-	const _expression = kindIdStorage<NonNullable<T.AttributedArgument['_expression']>>(config.expression);
+	config: RefusingConfig<T.Argument.Config, { attributeItems: AttributeItemsSlot; expression: ExpressionSlot }>
+): T.Argument.Bound;
+export function buildArgument(config: T.Argument.Config): T.Argument.Bound {
+	currentHandle()?.admit(TSKindId.Argument, [config]);
+	const _attribute_item = listStorage<NonNullable<T.Argument['_attribute_item']>>(config.attributeItems ?? []);
+	const _expression = kindIdStorage<NonNullable<T.Argument['_expression']>>(config.expression);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'attributed_argument', { attributeItems: _attribute_item, expression: _expression });
+		admitChildren(handle, 'argument', { attributeItems: _attribute_item, expression: _expression });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.AttributedArgument as const, { _attribute_item, _expression });
+	handle?.verifyStored?.(TSKindId.Argument as const, { _attribute_item, _expression });
 	return arena.scope(() => {
-		const record = arena.record(TSKindId.AttributedArgument as const);
+		const record = arena.record(TSKindId.Argument as const);
 		storeList(arena, record, 2, 2, _attribute_item);
 		storeCell(arena, record, 3, 3, _expression);
 		const node = arena.view(record);
-		return node as unknown as T.AttributedArgument.Bound;
+		return node as unknown as T.Argument.Bound;
 	});
 }
 
-function buildAttributedArgument$patch(
-	source: object,
-	config: T.AttributedArgument.Config
-): T.AttributedArgument.Bound {
-	currentHandle()?.admit(TSKindId.AttributedArgument, [config]);
-	const _attribute_item = listStorage<NonNullable<T.AttributedArgument['_attribute_item']>>(
-		config.attributeItems ?? []
-	);
-	const _expression = kindIdStorage<NonNullable<T.AttributedArgument['_expression']>>(config.expression);
+function buildArgument$patch(source: object, config: T.Argument.Config): T.Argument.Bound {
+	currentHandle()?.admit(TSKindId.Argument, [config]);
+	const _attribute_item = listStorage<NonNullable<T.Argument['_attribute_item']>>(config.attributeItems ?? []);
+	const _expression = kindIdStorage<NonNullable<T.Argument['_expression']>>(config.expression);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'attributed_argument', { attributeItems: _attribute_item, expression: _expression });
+		admitChildren(handle, 'argument', { attributeItems: _attribute_item, expression: _expression });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.AttributedArgument as const, { _attribute_item, _expression });
+	handle?.verifyStored?.(TSKindId.Argument as const, { _attribute_item, _expression });
 	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.AttributedArgument as const);
+		const record = arena.copy(source, TSKindId.Argument as const);
 		patchList(arena, record, 2, 2, _attribute_item);
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'expression', _expression));
 		const node = arena.view(record);
-		return node as unknown as T.AttributedArgument.Bound;
+		return node as unknown as T.Argument.Bound;
 	});
 }
-function buildAttributedArgument$set(
+function buildArgument$set(
 	source: object,
-	...[slot, input]:
-		| ['attributeItems', Partial<T.AttributedArgument.Config>]
-		| ['expression', Partial<T.AttributedArgument.Config>]
-): T.AttributedArgument.Bound {
+	...[slot, input]: ['attributeItems', Partial<T.Argument.Config>] | ['expression', Partial<T.Argument.Config>]
+): T.Argument.Bound {
 	switch (slot) {
 		case 'attributeItems': {
 			if (!patchesByCopy(source)) {
 				const inputs = builtInputs(source);
-				return buildAttributedArgument$patch(source, { ...(inputs.config as T.AttributedArgument.Config), ...input });
+				return buildArgument$patch(source, { ...(inputs.config as T.Argument.Config), ...input });
 			}
 			const config = input;
-			const _attribute_item = listStorage<NonNullable<T.AttributedArgument['_attribute_item']>>(
-				config.attributeItems ?? []
-			);
+			const _attribute_item = listStorage<NonNullable<T.Argument['_attribute_item']>>(config.attributeItems ?? []);
 			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'attributed_argument', { attributeItems: _attribute_item });
+			if (handle !== undefined) admitChildren(handle, 'argument', { attributeItems: _attribute_item });
 			const arena = builtArenaOf(handle);
 			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.AttributedArgument as const, 0);
+				const record = arena.copy(source, TSKindId.Argument as const, 0);
 				patchList(arena, record, 2, 2, _attribute_item);
 				arena.carry(source, record, 0);
 				const node = arena.view(record);
-				return node as unknown as T.AttributedArgument.Bound;
+				return node as unknown as T.Argument.Bound;
 			});
 		}
 		case 'expression': {
 			if (!patchesByCopy(source)) {
 				const inputs = builtInputs(source);
-				return buildAttributedArgument$patch(source, { ...(inputs.config as T.AttributedArgument.Config), ...input });
+				return buildArgument$patch(source, { ...(inputs.config as T.Argument.Config), ...input });
 			}
 			const config = input;
-			const _expression = kindIdStorage<NonNullable<T.AttributedArgument['_expression']>>(config.expression);
+			const _expression = kindIdStorage<NonNullable<T.Argument['_expression']>>(config.expression);
 			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'attributed_argument', { expression: _expression });
+			if (handle !== undefined) admitChildren(handle, 'argument', { expression: _expression });
 			const arena = builtArenaOf(handle);
 			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.AttributedArgument as const, 1);
+				const record = arena.copy(source, TSKindId.Argument as const, 1);
 				patchCell(arena, record, 3, 3, carriedSlot(source, 'expression', _expression));
 				arena.carry(source, record, 1);
 				const node = arena.view(record);
-				return node as unknown as T.AttributedArgument.Bound;
+				return node as unknown as T.Argument.Bound;
 			});
 		}
 	}
 }
-function withAttributedArgument(node: object, setter: string, args: readonly unknown[]): unknown {
+function withArgument(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'attributeItems':
 			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildAttributedArgument$set(node, 'attributeItems', { attributeItems: restItems('attributeItems', values) })
+					buildArgument$set(node, 'attributeItems', { attributeItems: restItems('attributeItems', values) })
 				)
 			);
 		case 'expression':
-			return applySetter(args, (value: Admit<NonNullable<T.AttributedArgument.Config>['expression']>) =>
-				rebuilt(node, handle, () => buildAttributedArgument$set(node, 'expression', { expression: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.Argument.Config>['expression']>) =>
+				rebuilt(node, handle, () => buildArgument$set(node, 'expression', { expression: value }))
 			);
 	}
-	throw new Error(`attributed_argument has no $with.${setter}`);
+	throw new Error(`argument has no $with.${setter}`);
 }
 
 export function buildAttributedOrderedField<
@@ -25400,6 +25336,191 @@ function withMatchBlockArms(node: object, setter: string, args: readonly unknown
 			);
 	}
 	throw new Error(`match_block_arms has no $with.${setter}`);
+}
+
+export function buildArrayExpressionSemi<
+	ElementSlot extends T.ArrayExpressionSemi.Config['element'],
+	LengthSlot extends T.ArrayExpressionSemi.Config['length']
+>(
+	config: RefusingConfig<T.ArrayExpressionSemi.Config, { element: ElementSlot; length: LengthSlot }>
+): T.ArrayExpressionSemi.Bound;
+export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config): T.ArrayExpressionSemi.Bound {
+	currentHandle()?.admit(TSKindId.ArrayExpressionSemi, [config]);
+	const _element = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_element']>>(config.element);
+	const _length = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_length']>>(config.length);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'array_expression_semi', { element: _element, length: _length });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ArrayExpressionSemi as const, { _element, _length });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ArrayExpressionSemi as const);
+		storeCell(arena, record, 2, 2, _element);
+		storeCell(arena, record, 3, 6, _length);
+		const node = arena.view(record);
+		return node as unknown as T.ArrayExpressionSemi.Bound;
+	});
+}
+
+function buildArrayExpressionSemi$patch(
+	source: object,
+	config: T.ArrayExpressionSemi.Config
+): T.ArrayExpressionSemi.Bound {
+	currentHandle()?.admit(TSKindId.ArrayExpressionSemi, [config]);
+	const _element = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_element']>>(config.element);
+	const _length = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_length']>>(config.length);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'array_expression_semi', { element: _element, length: _length });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ArrayExpressionSemi as const, { _element, _length });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ArrayExpressionSemi as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'element', _element));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'length', _length));
+		const node = arena.view(record);
+		return node as unknown as T.ArrayExpressionSemi.Bound;
+	});
+}
+function buildArrayExpressionSemi$set(
+	source: object,
+	...[slot, input]:
+		| ['element', Partial<T.ArrayExpressionSemi.Config>]
+		| ['length', Partial<T.ArrayExpressionSemi.Config>]
+): T.ArrayExpressionSemi.Bound {
+	switch (slot) {
+		case 'element': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildArrayExpressionSemi$patch(source, { ...(inputs.config as T.ArrayExpressionSemi.Config), ...input });
+			}
+			const config = input;
+			const _element = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_element']>>(config.element);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'array_expression_semi', { element: _element });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ArrayExpressionSemi as const, 0);
+				patchCell(arena, record, 2, 2, carriedSlot(source, 'element', _element));
+				arena.carry(source, record, 0);
+				const node = arena.view(record);
+				return node as unknown as T.ArrayExpressionSemi.Bound;
+			});
+		}
+		case 'length': {
+			if (!patchesByCopy(source)) {
+				const inputs = builtInputs(source);
+				return buildArrayExpressionSemi$patch(source, { ...(inputs.config as T.ArrayExpressionSemi.Config), ...input });
+			}
+			const config = input;
+			const _length = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_length']>>(config.length);
+			const handle = currentHandle();
+			if (handle !== undefined) admitChildren(handle, 'array_expression_semi', { length: _length });
+			const arena = builtArenaOf(handle);
+			return arena.scope(() => {
+				const record = arena.copy(source, TSKindId.ArrayExpressionSemi as const, 1);
+				patchCell(arena, record, 3, 6, carriedSlot(source, 'length', _length));
+				arena.carry(source, record, 1);
+				const node = arena.view(record);
+				return node as unknown as T.ArrayExpressionSemi.Bound;
+			});
+		}
+	}
+}
+function withArrayExpressionSemi(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'element':
+			return applySetter(args, (value: Admit<NonNullable<T.ArrayExpressionSemi.Config>['element']>) =>
+				rebuilt(node, handle, () => buildArrayExpressionSemi$set(node, 'element', { element: value }))
+			);
+		case 'length':
+			return applySetter(args, (value: Admit<NonNullable<T.ArrayExpressionSemi.Config>['length']>) =>
+				rebuilt(node, handle, () => buildArrayExpressionSemi$set(node, 'length', { length: value }))
+			);
+	}
+	throw new Error(`array_expression_semi has no $with.${setter}`);
+}
+
+export function buildArrayExpressionList(): T.EmptyArrayExpressionList;
+export function buildArrayExpressionList<V extends Admit<T.ArrayExpressionListElements>>(
+	...value: [value?: V] & RefuseUndeclared<V>
+): ReturnType<typeof _buildArrayExpressionList>;
+export function buildArrayExpressionList<A extends NonEmptyArray<Admit<T.AttributedElement | T.Expression>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildArrayExpressionList>;
+export function buildArrayExpressionList<A extends NonEmptyArray<Admit<T.AttributedElement | T.Expression>>>(
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildArrayExpressionList>;
+export function buildArrayExpressionList(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+		return _buildArrayExpressionList(args[0] as Parameters<typeof _buildArrayExpressionList>[0]);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ArrayExpressionListElements as const);
+	return prebuilt
+		? _buildArrayExpressionList(args[0] as Parameters<typeof _buildArrayExpressionList>[0])
+		: _buildArrayExpressionList(
+				(buildArrayExpressionListElements as (...a: unknown[]) => unknown)(...args) as Parameters<
+					typeof _buildArrayExpressionList
+				>[0]
+			);
+}
+function _buildArrayExpressionList(value?: Admit<T.ArrayExpressionListElements>): T.ArrayExpressionList.Bound {
+	const _elements = hydrateStored(value);
+	const listView = ownerView(_elements, '_item');
+	if (listView.length === undefined) refuseReadStub('_elements');
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'array_expression_list', { elements: _elements });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ArrayExpressionList as const, { _elements });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ArrayExpressionList as const);
+		storeCell(arena, record, 2, 2, _elements);
+		const node = arena.view(record);
+		return node as unknown as T.ArrayExpressionList.Bound;
+	});
+}
+
+function _buildArrayExpressionList$patch(
+	source: object,
+	value?: Admit<T.ArrayExpressionListElements>
+): T.ArrayExpressionList.Bound {
+	const _elements = hydrateStored(value);
+	const listView = ownerView(_elements, '_item');
+	if (listView.length === undefined) refuseReadStub('_elements');
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'array_expression_list', { elements: _elements });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ArrayExpressionList as const, { _elements });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ArrayExpressionList as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'elements', _elements));
+		const node = arena.view(record);
+		return node as unknown as T.ArrayExpressionList.Bound;
+	});
+}
+function withArrayExpressionList(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'elements':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.ArrayExpressionListElements as const,
+							optional: true,
+							make: buildArrayExpressionListElements
+						},
+						(value?: Admit<T.ArrayExpressionListElements>) => _buildArrayExpressionList$patch(node, value)
+					)
+				)
+			);
+	}
+	throw new Error(`array_expression_list has no $with.${setter}`);
 }
 
 export function buildFloatLiteral<const N extends string | number>(
@@ -25876,267 +25997,6 @@ function withExtensionDeclarationBody(node: object, setter: string, args: readon
 			);
 	}
 	throw new Error(`extension_declaration_body has no $with.${setter}`);
-}
-
-export function buildArgument<
-	AttributeItemsSlot extends T.Argument.Config['attributeItems'],
-	ExpressionSlot extends T.Argument.Config['expression']
->(
-	config: RefusingConfig<T.Argument.Config, { attributeItems: AttributeItemsSlot; expression: ExpressionSlot }>
-): T.Argument.Bound;
-export function buildArgument(config: T.Argument.Config): T.Argument.Bound {
-	currentHandle()?.admit(TSKindId.Argument, [config]);
-	const _attribute_item = listStorage<NonNullable<T.Argument['_attribute_item']>>(config.attributeItems ?? []);
-	const _expression = kindIdStorage<NonNullable<T.Argument['_expression']>>(config.expression);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'argument', { attributeItems: _attribute_item, expression: _expression });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.Argument as const, { _attribute_item, _expression });
-	return arena.scope(() => {
-		const record = arena.record(TSKindId.Argument as const);
-		storeList(arena, record, 2, 2, _attribute_item);
-		storeCell(arena, record, 3, 3, _expression);
-		const node = arena.view(record);
-		return node as unknown as T.Argument.Bound;
-	});
-}
-
-function buildArgument$patch(source: object, config: T.Argument.Config): T.Argument.Bound {
-	currentHandle()?.admit(TSKindId.Argument, [config]);
-	const _attribute_item = listStorage<NonNullable<T.Argument['_attribute_item']>>(config.attributeItems ?? []);
-	const _expression = kindIdStorage<NonNullable<T.Argument['_expression']>>(config.expression);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'argument', { attributeItems: _attribute_item, expression: _expression });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.Argument as const, { _attribute_item, _expression });
-	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.Argument as const);
-		patchList(arena, record, 2, 2, _attribute_item);
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'expression', _expression));
-		const node = arena.view(record);
-		return node as unknown as T.Argument.Bound;
-	});
-}
-function buildArgument$set(
-	source: object,
-	...[slot, input]: ['attributeItems', Partial<T.Argument.Config>] | ['expression', Partial<T.Argument.Config>]
-): T.Argument.Bound {
-	switch (slot) {
-		case 'attributeItems': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildArgument$patch(source, { ...(inputs.config as T.Argument.Config), ...input });
-			}
-			const config = input;
-			const _attribute_item = listStorage<NonNullable<T.Argument['_attribute_item']>>(config.attributeItems ?? []);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'argument', { attributeItems: _attribute_item });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.Argument as const, 0);
-				patchList(arena, record, 2, 2, _attribute_item);
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.Argument.Bound;
-			});
-		}
-		case 'expression': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildArgument$patch(source, { ...(inputs.config as T.Argument.Config), ...input });
-			}
-			const config = input;
-			const _expression = kindIdStorage<NonNullable<T.Argument['_expression']>>(config.expression);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'argument', { expression: _expression });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.Argument as const, 1);
-				patchCell(arena, record, 3, 3, carriedSlot(source, 'expression', _expression));
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.Argument.Bound;
-			});
-		}
-	}
-}
-function withArgument(node: object, setter: string, args: readonly unknown[]): unknown {
-	const handle = handleOf(node as RecordHandle);
-	switch (setter) {
-		case 'attributeItems':
-			return applySetter(args, (...values: Admit<T.AttributeItem[]>) =>
-				rebuilt(node, handle, () =>
-					buildArgument$set(node, 'attributeItems', { attributeItems: restItems('attributeItems', values) })
-				)
-			);
-		case 'expression':
-			return applySetter(args, (value: Admit<NonNullable<T.Argument.Config>['expression']>) =>
-				rebuilt(node, handle, () => buildArgument$set(node, 'expression', { expression: value }))
-			);
-	}
-	throw new Error(`argument has no $with.${setter}`);
-}
-
-export function buildArrayExpressionListElements<A extends NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>>(
-	...elements: A & RefuseUndeclared<A>
-): ReturnType<typeof _buildArrayExpressionListElements>;
-export function buildArrayExpressionListElements<A extends NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>>(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUndeclared<A>
-): ReturnType<typeof _buildArrayExpressionListElements>;
-export function buildArrayExpressionListElements(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.AttributedArgument | T.Expression>)[]
-) {
-	const _optsFirst =
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		!Array.isArray(args[0]) &&
-		!('$type' in (args[0] as object)) &&
-		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		Admit<T.AttributedArgument | T.Expression>
-	>;
-	return _buildArrayExpressionListElements(elements, options);
-}
-function _buildArrayExpressionListElements(
-	elements: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>,
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.ArrayExpressionListElements.Bound {
-	currentHandle()?.admit(TSKindId.ArrayExpressionListElements, elements);
-	const _mapped = elements.map(
-		(e): T.AttributedArgument =>
-			(isNodeOfKind(e, TSKindId.AttributedArgument)
-				? (e as unknown)
-				: buildAttributedArgument({ expression: e } as Parameters<
-						typeof buildAttributedArgument
-					>[0])) as T.AttributedArgument
-	);
-	const _item = _mapped;
-	const _delimiter = options.delimiter;
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'array_expression_list_elements', { items: _item });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ArrayExpressionListElements as const, { _item });
-	return arena.scope(() => {
-		const record = arena.record(TSKindId.ArrayExpressionListElements as const);
-		storeList(arena, record, 2, 2, _item);
-		storeListOptions(arena, record, _delimiter, undefined);
-		const node = arena.view(record);
-		return node as unknown as T.ArrayExpressionListElements.Bound;
-	});
-}
-
-function _buildArrayExpressionListElements$patch(
-	source: object,
-	elements: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>,
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.ArrayExpressionListElements.Bound {
-	currentHandle()?.admit(TSKindId.ArrayExpressionListElements, elements);
-	const _mapped = elements.map(
-		(e): T.AttributedArgument =>
-			(isNodeOfKind(e, TSKindId.AttributedArgument)
-				? (e as unknown)
-				: buildAttributedArgument({ expression: e } as Parameters<
-						typeof buildAttributedArgument
-					>[0])) as T.AttributedArgument
-	);
-	const _item = _mapped;
-	const _delimiter = options.delimiter;
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'array_expression_list_elements', { items: _item });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ArrayExpressionListElements as const, { _item });
-	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.ArrayExpressionListElements as const);
-		patchList(arena, record, 2, 2, _item);
-		patchListOptions(arena, record, _delimiter, undefined);
-		const node = arena.view(record);
-		return node as unknown as T.ArrayExpressionListElements.Bound;
-	});
-}
-function _buildArrayExpressionListElements$set(
-	source: object,
-	...[slot, input]:
-		| ['items', NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>]
-		| ['delimiter', { delimiter?: Delimiter.None | Delimiter.Trailing }]
-): T.ArrayExpressionListElements.Bound {
-	switch (slot) {
-		case 'items': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return _buildArrayExpressionListElements$patch(
-					source,
-					input,
-					inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }
-				);
-			}
-			const elements = input;
-			const _mapped = elements.map(
-				(e): T.AttributedArgument =>
-					(isNodeOfKind(e, TSKindId.AttributedArgument)
-						? (e as unknown)
-						: buildAttributedArgument({ expression: e } as Parameters<
-								typeof buildAttributedArgument
-							>[0])) as T.AttributedArgument
-			);
-			const _item = _mapped;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'array_expression_list_elements', { items: _item });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.ArrayExpressionListElements as const, 0);
-				patchList(arena, record, 2, 2, _item);
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.ArrayExpressionListElements.Bound;
-			});
-		}
-		case 'delimiter': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return _buildArrayExpressionListElements$patch(
-					source,
-					inputs.elements as NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>,
-					{ ...(inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input }
-				);
-			}
-			const options = { ...(listSettingsOf(source) as { delimiter?: Delimiter.None | Delimiter.Trailing }), ...input };
-			const _delimiter = options.delimiter;
-			const handle = currentHandle();
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.ArrayExpressionListElements as const, 1);
-				patchListOptions(arena, record, _delimiter, undefined);
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.ArrayExpressionListElements.Bound;
-			});
-		}
-	}
-}
-function withArrayExpressionListElements(node: object, setter: string, args: readonly unknown[]): unknown {
-	const handle = handleOf(node as RecordHandle);
-	switch (setter) {
-		case 'items':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					elementsWith(
-						args,
-						{ slot: 'items', keys: ['attributeItems', 'expression'], make: buildAttributedArgument },
-						(...vs: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>) =>
-							_buildArrayExpressionListElements$set(node, 'items', vs)
-					)
-				)
-			);
-		case 'delimiter':
-			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => _buildArrayExpressionListElements$set(node, 'delimiter', { delimiter: v }))
-			);
-	}
-	throw new Error(`array_expression_list_elements has no $with.${setter}`);
 }
 
 export function buildReceiverParameterDeclaration<TypeSlot extends T.ReceiverParameterDeclaration.Config['type']>(
@@ -27711,7 +27571,6 @@ export type FluentKindMap = {
 	use_bounds_elements: T.UseBoundsElements.Bound;
 	type_arguments_elements: T.TypeArgumentsElements.Bound;
 	arguments_elements: T.ArgumentsElements.Bound;
-	expressions: T.Expressions.Bound;
 	field_initializer_list_elements: T.FieldInitializerListElements.Bound;
 	tuple_pattern_elements: T.TuplePatternElements.Bound;
 	patterns: T.Patterns.Bound;
@@ -27719,6 +27578,9 @@ export type FluentKindMap = {
 	use_wildcard_group: T.UseWildcardGroup.Bound;
 	token_repetition_pattern_text: T.TokenRepetitionPatternText;
 	string_open: T.StringOpen;
+	attributed_element: T.AttributedElement.Bound;
+	array_expression_list_elements: T.ArrayExpressionListElements.Bound;
+	tuple_expression_elements: T.TupleExpressionElements.Bound;
 	integer_literal_decimal: T.IntegerLiteralDecimal.Bound;
 	integer_literal_hex: T.IntegerLiteralHex.Bound;
 	integer_literal_binary: T.IntegerLiteralBinary.Bound;
@@ -27733,8 +27595,6 @@ export type FluentKindMap = {
 	escape_sequence_unicode_fixed: T.EscapeSequenceUnicodeFixed.Bound;
 	escape_sequence_unicode_braced: T.EscapeSequenceUnicodeBraced.Bound;
 	escape_sequence_hex: T.EscapeSequenceHex.Bound;
-	array_expression_semi: T.ArrayExpressionSemi.Bound;
-	array_expression_list: T.ArrayExpressionList.Bound;
 	attribute_input: T.AttributeInput.Bound;
 	closure_expression_block: T.ClosureExpressionBlock.Bound;
 	closure_expression_expr: T.ClosureExpressionExpr.Bound;
@@ -27799,10 +27659,12 @@ export type FluentKindMap = {
 	attributed_enum_variant: T.AttributedEnumVariant.Bound;
 	attributed_parameter: T.AttributedParameter.Bound;
 	attributed_type_parameter: T.AttributedTypeParameter.Bound;
-	attributed_argument: T.AttributedArgument.Bound;
+	argument: T.Argument.Bound;
 	attributed_ordered_field: T.AttributedOrderedField.Bound;
 	type_argument: T.TypeArgument.Bound;
 	match_block_arms: T.MatchBlockArms.Bound;
+	array_expression_semi: T.ArrayExpressionSemi.Bound;
+	array_expression_list: T.ArrayExpressionList.Bound;
 	float_literal: T.FloatLiteral;
 	string_content: T.StringContent;
 	raw_string_literal_content: T.RawStringLiteralContent;
@@ -27822,8 +27684,6 @@ export type FluentKindMap = {
 	_dedent: T.Dedent;
 	trait_interface_declaration_body: T.TraitInterfaceDeclarationBody.Bound;
 	extension_declaration_body: T.ExtensionDeclarationBody.Bound;
-	argument: T.Argument.Bound;
-	array_expression_list_elements: T.ArrayExpressionListElements.Bound;
 	receiver_parameter_declaration: T.ReceiverParameterDeclaration.Bound;
 	attributed_parameter_receiver: T.AttributedParameterReceiver.Bound;
 	parameters_elements_receiver: T.ParametersElementsReceiver.Bound;
@@ -27991,7 +27851,6 @@ export const _factoryMap = {
 	use_bounds_elements: buildUseBoundsElements,
 	type_arguments_elements: buildTypeArgumentsElements,
 	arguments_elements: buildArgumentsElements,
-	expressions: buildExpressions,
 	field_initializer_list_elements: buildFieldInitializerListElements,
 	tuple_pattern_elements: buildTuplePatternElements,
 	patterns: buildPatterns,
@@ -27999,6 +27858,9 @@ export const _factoryMap = {
 	use_wildcard_group: buildUseWildcardGroup,
 	token_repetition_pattern_text: buildTokenRepetitionPatternText,
 	string_open: buildStringOpen,
+	attributed_element: buildAttributedElement,
+	array_expression_list_elements: buildArrayExpressionListElements,
+	tuple_expression_elements: buildTupleExpressionElements,
 	integer_literal_decimal: buildIntegerLiteralDecimal,
 	integer_literal_hex: buildIntegerLiteralHex,
 	integer_literal_binary: buildIntegerLiteralBinary,
@@ -28013,8 +27875,6 @@ export const _factoryMap = {
 	escape_sequence_unicode_fixed: buildEscapeSequenceUnicodeFixed,
 	escape_sequence_unicode_braced: buildEscapeSequenceUnicodeBraced,
 	escape_sequence_hex: buildEscapeSequenceHex,
-	array_expression_semi: buildArrayExpressionSemi,
-	array_expression_list: buildArrayExpressionList,
 	attribute_input: buildAttributeInput,
 	closure_expression_block: buildClosureExpressionBlock,
 	closure_expression_expr: buildClosureExpressionExpr,
@@ -28079,10 +27939,12 @@ export const _factoryMap = {
 	attributed_enum_variant: buildAttributedEnumVariant,
 	attributed_parameter: buildAttributedParameter,
 	attributed_type_parameter: buildAttributedTypeParameter,
-	attributed_argument: buildAttributedArgument,
+	argument: buildArgument,
 	attributed_ordered_field: buildAttributedOrderedField,
 	type_argument: buildTypeArgument,
 	match_block_arms: buildMatchBlockArms,
+	array_expression_semi: buildArrayExpressionSemi,
+	array_expression_list: buildArrayExpressionList,
 	float_literal: buildFloatLiteral,
 	string_content: buildStringContent,
 	raw_string_literal_content: buildRawStringLiteralContent,
@@ -28102,8 +27964,6 @@ export const _factoryMap = {
 	_dedent: buildDedent,
 	trait_interface_declaration_body: buildTraitInterfaceDeclarationBody,
 	extension_declaration_body: buildExtensionDeclarationBody,
-	argument: buildArgument,
-	array_expression_list_elements: buildArrayExpressionListElements,
 	receiver_parameter_declaration: buildReceiverParameterDeclaration,
 	attributed_parameter_receiver: buildAttributedParameterReceiver,
 	parameters_elements_receiver: buildParametersElementsReceiver,
@@ -28276,14 +28136,14 @@ export const builtViews: BuiltViews = Object.freeze({
 		352: withUseBoundsElements,
 		353: withTypeArgumentsElements,
 		354: withArgumentsElements,
-		355: withExpressions,
-		356: withFieldInitializerListElements,
-		357: withTuplePatternElements,
-		358: withPatterns,
-		359: withStructPatternElements,
-		360: withUseWildcardGroup,
-		366: withArrayExpressionSemi,
-		367: withArrayExpressionList,
+		355: withFieldInitializerListElements,
+		356: withTuplePatternElements,
+		357: withPatterns,
+		358: withStructPatternElements,
+		359: withUseWildcardGroup,
+		363: withAttributedElement,
+		364: withArrayExpressionListElements,
+		365: withTupleExpressionElements,
 		368: withAttributeInput,
 		369: withClosureExpressionBlock,
 		370: withClosureExpressionExpr,
@@ -28343,14 +28203,14 @@ export const builtViews: BuiltViews = Object.freeze({
 		428: withAttributedEnumVariant,
 		429: withAttributedParameter,
 		430: withAttributedTypeParameter,
-		431: withAttributedArgument,
+		431: withArgument,
 		432: withAttributedOrderedField,
 		433: withTypeArgument,
 		434: withMatchBlockArms,
-		435: withTraitInterfaceDeclarationBody,
-		436: withExtensionDeclarationBody,
-		437: withArgument,
-		438: withArrayExpressionListElements,
+		435: withArrayExpressionSemi,
+		436: withArrayExpressionList,
+		437: withTraitInterfaceDeclarationBody,
+		438: withExtensionDeclarationBody,
 		439: withReceiverParameterDeclaration,
 		440: withAttributedParameterReceiver,
 		441: withParametersElementsReceiver,
@@ -28460,7 +28320,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		276: 4,
 		277: 3,
 		279: 3,
-		280: 4,
+		280: 3,
 		282: 4,
 		283: 3,
 		284: 4,
@@ -28522,9 +28382,9 @@ export const builtViews: BuiltViews = Object.freeze({
 		357: 3,
 		358: 3,
 		359: 3,
-		360: 3,
-		366: 5,
-		367: 4,
+		363: 4,
+		364: 3,
+		365: 3,
 		368: 4,
 		369: 6,
 		370: 5,
@@ -28588,9 +28448,9 @@ export const builtViews: BuiltViews = Object.freeze({
 		432: 5,
 		433: 4,
 		434: 3,
-		435: 3,
+		435: 4,
 		436: 3,
-		437: 4,
+		437: 3,
 		438: 3,
 		439: 4,
 		440: 4,
@@ -28763,9 +28623,9 @@ export const builtViews: BuiltViews = Object.freeze({
 		357: 2,
 		358: 2,
 		359: 2,
-		360: 2,
-		366: 2,
-		367: 2,
+		363: 2,
+		364: 2,
+		365: 2,
 		368: 2,
 		369: 3,
 		370: 3,
@@ -29175,10 +29035,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		],
 		277: [[2, 2, 3, 8, 3, 0]],
 		279: [[2, 2, 4, 3, 0, 0]],
-		280: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 3, 8, 3, 0]
-		],
+		280: [[2, 2, 3, 8, 3, 0]],
 		282: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 5, 8, 5, 0]
@@ -29359,11 +29216,11 @@ export const builtViews: BuiltViews = Object.freeze({
 			['side', true, false]
 		],
 		355: [
-			[2, 2, 1, 3, 0, 4],
+			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
 		356: [
-			[2, 2, 1, 1, 0, 3],
+			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
 		357: [
@@ -29374,19 +29231,18 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
-		359: [
+		359: [[2, 2, 4, 3, 0, 0]],
+		363: [
+			[2, 2, 1, 1, 0, 3],
+			[3, 3, 4, 3, 0, 0]
+		],
+		364: [
 			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
-		360: [[2, 2, 4, 3, 0, 0]],
-		366: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 4, 3, 0, 0],
-			[7, 4, 4, 3, 0, 0]
-		],
-		367: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 3, 8, 3, 0]
+		365: [
+			[2, 2, 1, 3, 0, 4],
+			['side', true, false]
 		],
 		368: [
 			[2, 2, 4, 3, 0, 0],
@@ -29574,16 +29430,13 @@ export const builtViews: BuiltViews = Object.freeze({
 			[6, 3, 3, 8, 3, 0]
 		],
 		434: [[2, 2, 1, 1, 0, 3]],
-		435: [[2, 2, 1, 3, 0, 4]],
-		436: [[2, 2, 1, 3, 0, 4]],
-		437: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 4, 3, 0, 0]
+		435: [
+			[2, 2, 4, 3, 0, 0],
+			[6, 3, 4, 3, 0, 0]
 		],
-		438: [
-			[2, 2, 1, 1, 0, 3],
-			['side', true, false]
-		],
+		436: [[2, 2, 3, 8, 3, 0]],
+		437: [[2, 2, 1, 3, 0, 4]],
+		438: [[2, 2, 1, 3, 0, 4]],
 		439: [
 			[2, 0],
 			[3, 3, 4, 3, 0, 0]

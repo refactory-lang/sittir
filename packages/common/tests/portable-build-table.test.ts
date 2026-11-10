@@ -145,6 +145,13 @@ describe('the portable build table', () => {
 		expect(armOf('rust', 'declaration.macro', rust.kinds.MacroDefinitionParen).when).toContainEqual({ variant: 'macro_definition', value: rust.kinds.MacroDefinitionParen, default: true });
 	});
 
+	it('counts an arm that is the whole content of a forwarding variant envelope as that variant, so the declared default leads after the empty-list pick', () => {
+		const block = armsOf('python', 'statement.block');
+		expect(block.slice(0, 2).map((arm) => arm.kind)).toEqual([python.kinds.SuiteEmpty, python.kinds.Block]);
+		expect(block[1]!.when).toContainEqual({ variant: '_suite', value: python.kinds.Block, default: true });
+		expect(armOf('python', 'statement.block', python.kinds.SuiteInline).when).toContainEqual({ variant: '_suite', value: python.kinds.SuiteInline });
+	});
+
 	it('tells forms apart by the kinds a member holds, where the member reaches them through the containers its slot holds', () => {
 		expect(armOf('rust', 'pattern.struct', rust.kinds.StructPattern).when).toEqual([
 			{ member: 'type', kinds: [rust.kinds.ScopedTypeIdentifier, rust.kinds.TypeIdentifier] },
@@ -275,7 +282,7 @@ describe('the portable build table', () => {
 
 	it("writes the text a claim's predicate fixes, and spells a templated member from its holes", () => {
 		expect(armOf('python', 'declaration.constructor', python.kinds.MethodDeclaration).presets).toContainEqual({ steps: [{ key: 'name' }], text: '__init__', builder: 'identifier' });
-		expect(armOf('python', 'declaration.method.special', python.kinds.MethodDeclaration).template).toEqual({ member: 'name', pattern: '__${string}__', holes: ['stem'] });
+		expect(armOf('python', 'declaration.method.special', python.kinds.MethodDeclaration).template).toEqual({ member: 'name', pattern: '__${string}__', holes: ['stem'], match: '^__(?<stem>.*)__$' });
 	});
 
 	it("writes the other token where a flag's slot must hold one of two, when the flag is unset", () => {
@@ -316,7 +323,8 @@ describe('the portable build table', () => {
 				table: { ...tables.python.table, paths: Object.fromEntries(Object.entries(tables.python.table.paths).map(([path, at]) => [path, { ...at, arms: at.arms.map(withSign(sign)) }])) },
 				builders: engine.build,
 				kindName: () => undefined,
-				readsAs: () => true
+				readsAs: () => true,
+				spellingOf: () => undefined
 			});
 		expect(String(engine.render(builderWith('signOfExponent')({ $path: 'literal.number.float', $value: 1e-7 }) as never))).toBe('1.0e-7');
 		expect(() => builderWith(undefined)({ $path: 'literal.number.float', $value: 1e-7 })).toThrow(/literal\.number\.float builds a kind \d+ in python, which cannot spell 1e-7/);
@@ -368,7 +376,8 @@ describe('the portable build of a registered option', () => {
 			table: table(options),
 			builders: { holder: (...args: unknown[]) => (calls.push(args), { $type: 1 }) },
 			kindName: () => undefined,
-			readsAs: () => true
+			readsAs: () => true,
+			spellingOf: () => undefined
 		});
 		builder({ $path: 'statement.held', ...structure });
 		return calls;
@@ -415,7 +424,8 @@ describe("the portable build of a flag that is a member's list's trailing separa
 				items: (...args: unknown[]) => (calls.push(['items', args]), { $type: 2 })
 			},
 			kindName: () => undefined,
-			readsAs: () => true
+			readsAs: () => true,
+			spellingOf: () => undefined
 		});
 		builder({ $path: 'statement.held', ...structure } as never);
 		return calls;
@@ -474,7 +484,8 @@ describe('the portable build of an arm whose routes run through two forms of one
 				formB: (input: unknown) => (calls.push(['formB', input]), { $type: 3 })
 			},
 			kindName: () => undefined,
-			readsAs: () => true
+			readsAs: () => true,
+			spellingOf: () => undefined
 		});
 		builder({ $path: 'statement.held', ...structure } as never);
 		return calls;
@@ -535,7 +546,8 @@ describe('the portable build of a list whose last element takes a form of its ow
 				last: (input: unknown) => (calls.push(['last', input]), { $type: 3 })
 			},
 			kindName: (kind: number) => ({ 2: 'arm', 3: 'last_arm' })[kind],
-			readsAs: () => true
+			readsAs: () => true,
+			spellingOf: () => undefined
 		});
 		builder({ $path: 'statement.held', body } as never);
 		return calls;

@@ -12,8 +12,8 @@ type StringStart = { prefix(): string | undefined; $with: { quote(quote: string)
 type ReadString = { stringStart(): StringStart };
 
 function stringStartOf(py: typeof object, source: string): StringStart {
-	const statement = (py.parse(`${source}\n`) as unknown as { statements(): readonly { elements(): readonly { content(): ReadString }[] }[] }).statements()[0]!;
-	return statement.elements()[0]!.content().stringStart();
+	const line = (py.parse(`${source}\n`) as unknown as { statements(): readonly { statements(): readonly { content(): ReadString }[] }[] }).statements()[0]!;
+	return line.statements()[0]!.content().stringStart();
 }
 
 describe.each(Object.entries({ object, ...arenas }))('a $with of a string start keeps the spelling of the prefix it leaves alone (%s)', (_, py) => {

@@ -26,7 +26,7 @@ import { generateWithDerivedConflicts } from './transpile/conflict-driver.ts';
 import { assertGrammarRuntimeFloor } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { manifestPath, recordNativeBuild, recordedGeneration, sourceFingerprint, writeManifestForGrammar, type SourceFingerprint } from './scripts/generated-manifest.ts';
-import { GRAMMAR_ENTRY, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, workspaceNodeApiLevel, type GrammarPackage } from './grammars.ts';
+import { GRAMMAR_ENTRY, PORTABLE_MAP_FILE, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, workspaceNodeApiLevel, type GrammarPackage } from './grammars.ts';
 import { conflictResolutionsPath } from './transpile/conflict-resolutions-file.ts';
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
@@ -34,8 +34,7 @@ import { formatEmitDiff } from './scripts/emit-diff.ts';
 import { clearNapiTypedefs } from './scripts/napi-typedefs.ts';
 import { WORKSPACE_CHECK, runWorkspaceCheck } from './scripts/workspace-check.ts';
 import { compareOrdinal } from './emitters/shared.ts';
-import { PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, PORTABLE_TYPED_TSCONFIG_TEXT } from './emitters/overlays/portable/typed.ts';
-
+import { PORTABLE_TYPED_FILE, PORTABLE_TYPE_TEST_LANES, portableTsconfigText, type PortableTypedOutput } from './emitters/overlays/portable/typed.ts';
 export interface CodegenOptions {
 	grammar: string;
 	outputDir: string;
@@ -72,13 +71,15 @@ export async function writeFile(path: string, content: string): Promise<void> {
 	writeFileSync(path, finalContent, 'utf8');
 }
 
-export async function writePortableTyped(sittirDir: string, source: string | undefined): Promise<void> {
+export async function writePortableTyped(sittirDir: string, typed: PortableTypedOutput | undefined): Promise<void> {
 	const module = join(sittirDir, PORTABLE_TYPED_FILE);
-	const tsconfig = join(sittirDir, PORTABLE_TYPED_TSCONFIG);
-	if (source === undefined) for (const path of [module, tsconfig]) rmSync(path, { force: true });
+	const tsconfigs = Object.entries(PORTABLE_TYPE_TEST_LANES).map(([name, tests]) => [join(sittirDir, name), portableTsconfigText(tests)] as const);
+	const map = join(dirname(sittirDir), 'src', PORTABLE_MAP_FILE);
+	if (typed === undefined) for (const path of [module, ...tsconfigs.map(([path]) => path), map]) rmSync(path, { force: true });
 	else {
-		await writeFile(module, source);
-		await writeFile(tsconfig, PORTABLE_TYPED_TSCONFIG_TEXT);
+		await writeFile(module, typed.source);
+		for (const [path, text] of tsconfigs) await writeFile(path, text);
+		await writeFile(map, typed.map);
 	}
 }
 
@@ -371,7 +372,7 @@ async function runCodegenInternal(opts: CodegenOptions, nodeApiLevel: number | u
 	else await writeFile(join(outDir, 'portable.ts'), result.portable);
 	if (result.portableBuild === undefined) rmSync(join(outDir, 'portable-build.ts'), { force: true });
 	else await writeFile(join(outDir, 'portable-build.ts'), result.portableBuild);
-	await writePortableTyped(join(dirname(outDir), '.sittir'), result.portableTyped?.source);
+	await writePortableTyped(join(dirname(outDir), '.sittir'), result.portableTyped);
 
 	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
 	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);

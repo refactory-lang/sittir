@@ -229,18 +229,28 @@ pub struct Sibling {
 }
 
 /// What kind of region of a source did not parse: an ERROR node error
-/// recovery wrapped source in, or a MISSING node it inserted.
+/// recovery wrapped source in, or a MISSING node it inserted, with the node it
+/// was inserted into.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
-#[serde(rename_all = "lowercase")]
+#[serde(tag = "kind", rename_all = "lowercase")]
 pub enum ErrorRegionKind {
     Error,
-    Missing,
+    Missing { holder: ErrorHolder },
+}
+
+/// The node a MISSING token was inserted into: its span and the kind the
+/// grammar parsed it as (`read::grammar_id`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
+pub struct ErrorHolder {
+    pub span: Span,
+    pub kind: KindId,
 }
 
 /// One region of a source that did not parse, with its byte span. A MISSING
 /// region is empty: it marks where the parser inserted a token.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
 pub struct ErrorRegion {
+    #[serde(flatten)]
     pub kind: ErrorRegionKind,
     pub span: Span,
 }
@@ -252,14 +262,16 @@ pub struct ErrorRegion {
 #[must_use]
 pub fn error_regions(nodes: &mut dyn Nodes<'_>) -> Vec<ErrorRegion> {
     let mut regions = Vec::new();
-    let mut pending = vec![nodes.kid(NodeIndex::ROOT)];
-    while let Some(kid) = pending.pop() {
+    let mut pending: Vec<(Kid, Option<Kid>)> = vec![(nodes.kid(NodeIndex::ROOT), None)];
+    while let Some((kid, parent)) = pending.pop() {
         if kid.error() {
             regions.push(ErrorRegion { kind: ErrorRegionKind::Error, span: kid.span() });
         } else if nodes.missing(kid.index) {
-            regions.push(ErrorRegion { kind: ErrorRegionKind::Missing, span: kid.span() });
+            if let Some(parent) = parent {
+                regions.push(ErrorRegion { kind: ErrorRegionKind::Missing { holder: ErrorHolder { span: parent.span(), kind: parent.grammar } }, span: kid.span() });
+            }
         } else if nodes.holds_error(kid.index) {
-            pending.extend(nodes.kids(kid.index).iter().rev().copied());
+            pending.extend(nodes.kids(kid.index).iter().rev().map(|&child| (child, Some(kid))));
         }
     }
     regions

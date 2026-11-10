@@ -74,6 +74,7 @@ const node = (kind: string, extra: Partial<ModelNode> = {}): ModelNode => ({
 	splitFrom: null,
 	aliasStorage: null,
 	interiorPart: null,
+	textLeavesThrough: [],
 	shownAs: [],
 	...extra
 });
@@ -164,6 +165,18 @@ describe('deriveGrammarBindings', () => {
 		expect(bindings.patches).toEqual(new Map([['let_item', [[{ path: '1', edit: { field: 'name' } }]]]]));
 	});
 
+	it("patches no field for a claim's capture that another claim on its kind neither inherits nor declares, and patches it once that claim declares the member", () => {
+		const facts: BindingFacts = {
+			...FACTS,
+			claims: [...FACTS.claims, claim('declaration.constant', 'let_item')],
+			members: [{ route: 'rename', owner: 'let_item', name: 'name', field: 'left', kind: null, after: null, anchor: null, claims: [0] }]
+		};
+		const patches = (constant: ReadonlySet<string>) =>
+			bind({ file: FILE, facts, base, vocabMembers: new Map([...VOCABULARY, ['declaration.constant', constant]]), routes: ROUTES, model: NO_MODEL }).bindings.patches;
+		expect(patches(new Set())).toEqual(new Map());
+		expect(patches(new Set(['name']))).toEqual(new Map([['let_item', [[{ path: '1', edit: { field: 'name' } }]]]]));
+	});
+
 	it('patches no field for a member an anchor ties to its neighbour: its slot is a position, not a field', () => {
 		const left = { route: 'rename', owner: 'let_item', name: 'name', field: 'left', kind: null, after: null, anchor: null } as const;
 		const facts = { ...FACTS, members: [{ ...left, adjacent: { previous: { field: null, kind: 'identifier', after: null, anchor: null } } }] };
@@ -219,6 +232,7 @@ describe('deriveGrammarBindings', () => {
 			splitFrom: null,
 			aliasStorage: null,
 			interiorPart: null,
+			textLeavesThrough: [],
 			shownAs: [],
 			...extra
 		});
@@ -257,6 +271,7 @@ describe('deriveGrammarBindings', () => {
 			splitFrom: null,
 			aliasStorage: null,
 			interiorPart: null,
+			textLeavesThrough: [],
 			shownAs: [],
 			...extra
 		});
@@ -407,6 +422,27 @@ describe('deriveGrammarBindings', () => {
 				path: [body, { field: null, kind: 'deco_x', as: 'deco_x_class_x' }, { field: 'definition', kind: 'fn_x', as: null }],
 				as: 'method_declaration'
 			}
+		]);
+	});
+
+	it('names a step through a kind a merge shows under its path by the name the merge shows it as, keeping the clone named by the kind', () => {
+		const symbol = (name: string) => ({ type: 'SYMBOL', name });
+		const rules = {
+			...base.rules,
+			trait_x: { type: 'SEQ', members: [{ type: 'STRING', value: 'trait' }, { type: 'FIELD', name: 'body', content: symbol('list_x') }] },
+			list_x: { type: 'REPEAT', content: symbol('fn_x') },
+			inline_x: { type: 'SEQ', members: [{ type: 'STRING', value: ':' }, symbol('fn_x')] },
+			fn_x: { type: 'SEQ', members: [{ type: 'STRING', value: 'fn' }, symbol('identifier')] }
+		};
+		const facts: BindingFacts = {
+			...FACTS,
+			claims: [claim('statement.block', 'list_x'), claim('statement.block', 'inline_x'), claim('declaration.method', 'fn_x', { toplevel: false, within: ['list_x', 'trait_x'] })],
+			members: []
+		};
+		const { bindings, report } = bind({ file: FILE, facts, base: { ...base, rules }, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+		expect(report.aliases).toEqual({ list_x: 'block_statement', inline_x: 'block_statement' });
+		expect(bindings.splits).toEqual([
+			{ owner: 'trait_x', path: [{ field: 'body', kind: 'block_statement', as: 'trait_x_body' }, { field: null, kind: 'fn_x', as: null }], as: 'method_declaration' }
 		]);
 	});
 
@@ -847,6 +883,7 @@ describe('a child that shares a union slot', () => {
 					splitFrom: null,
 					aliasStorage: null,
 					interiorPart: null,
+					textLeavesThrough: [],
 					shownAs: []
 				} as ModelNode
 			]
@@ -926,6 +963,7 @@ describe('a claim on a supertype owner', () => {
 		splitFrom: null,
 		aliasStorage: null,
 		interiorPart: null,
+		textLeavesThrough: [],
 		shownAs: [],
 		...extra
 	});
