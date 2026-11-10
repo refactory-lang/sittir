@@ -1,6 +1,6 @@
 import type * as V from '../../types/src/vocabulary/index.ts';
 import type { Flag } from '../../types/src/vocabulary/utils.ts';
-import type { RustMap } from '../src/portable-map.ts';
+import type { RustMap } from '../src/portable/map.ts';
 
 type Path = keyof V.Paths<RustMap>;
 type At<P extends Path> = V.Read<RustMap, P>;

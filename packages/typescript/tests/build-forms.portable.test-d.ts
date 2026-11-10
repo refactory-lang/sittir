@@ -1,5 +1,5 @@
 import type * as V from '../../types/src/vocabulary/index.ts';
-import type { TypeScriptMap } from '../src/portable-map.ts';
+import type { TypeScriptMap } from '../src/portable/map.ts';
 
 type Path = keyof V.Paths<TypeScriptMap>;
 export type At<P extends Path> = V.Read<TypeScriptMap, P>;

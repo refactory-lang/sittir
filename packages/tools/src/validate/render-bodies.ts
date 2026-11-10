@@ -1,14 +1,13 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
+import { grammarPackageDir, sittirDirOf } from '@sittir/codegen/grammars';
 import type { TemplateRule } from '@sittir/types';
 import { load, type RenderBody } from '../codegen-surface.ts';
 
 const { INDENT_TEXT, DEDENT_TEXT } = await load('spacing');
 
 export function renderBodiesPath(grammar: string): string {
-	const packagesDir = resolve(fileURLToPath(new URL('../../..', import.meta.url)));
-	return resolve(packagesDir, grammar, '.sittir', 'render-bodies.json');
+	return join(sittirDirOf({ dir: grammarPackageDir(grammar) }), 'render-bodies.json');
 }
 
 export function loadRenderBodies(grammar: string): Map<string, RenderBody> {

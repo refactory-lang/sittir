@@ -106,6 +106,8 @@ import {
 	astStructuralDiff,
 	findReparsedNodeAtOffset
 } from '../validate/read-render-parse.ts';
+import { join } from 'node:path';
+import { sittirDirOf } from '@sittir/codegen/grammars';
 import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyUntypedNode, NodeCoordinate } from '@sittir/types';
@@ -512,7 +514,7 @@ export async function probe(
 ): Promise<ProbeReport> {
 	const { Parser, lang } =
 		opts.baselineDir && opts.useBaselineParser
-			? await loadLanguageFromPath(resolveBaselinePath(opts.baselineDir, '.sittir/parser.wasm'))
+			? await loadLanguageFromPath(join(sittirDirOf({ dir: resolveBaselinePath(opts.baselineDir, '.') }), 'parser.wasm'))
 			: await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
@@ -677,7 +679,7 @@ export async function probeTrace(
 ): Promise<ProbeTraceReport> {
 	const { Parser, lang } =
 		opts.baselineDir && opts.useBaselineParser
-			? await loadLanguageFromPath(resolveBaselinePath(opts.baselineDir, '.sittir/parser.wasm'))
+			? await loadLanguageFromPath(join(sittirDirOf({ dir: resolveBaselinePath(opts.baselineDir, '.') }), 'parser.wasm'))
 			: await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	if (opts.logParse) {

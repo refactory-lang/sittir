@@ -20,6 +20,7 @@ import {
 	allGrammars,
 	grammarPackageDir,
 	nativeBindingRelDir,
+	sittirDirOf,
 	nativeCrateRelDir,
 	stableGrammars,
 	upstreamPackage,
@@ -424,7 +425,7 @@ export interface ToolchainMove {
 
 function toolchainMove(grammar: GrammarName, src: ManifestSource): ToolchainMove | undefined {
 	if (!wasmToolchainInstalled()) return undefined;
-	const sittirDir = join(src.root, relative(REPO_ROOT, grammarPackageDir(grammar)), '.sittir');
+	const sittirDir = sittirDirOf({ dir: join(src.root, relative(REPO_ROOT, grammarPackageDir(grammar))) });
 	const committed = readUpstreamRecord(sittirDir)?.toolchain ?? [];
 	const current = treeSitterToolchain();
 	const same = committed.length === current.length && committed.every((entry, i) => entry === current[i]);

@@ -1,8 +1,7 @@
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { bindingGrammars } from '@sittir/codegen/bindings';
-import { grammarPackageDir } from '@sittir/codegen/grammars';
+import { PORTABLE_NODE_MODEL_FILE, nodeModelPath } from '@sittir/codegen/grammars';
 
 const CEILING: Readonly<Record<string, readonly string[]>> = {
 	python: [],
@@ -15,7 +14,7 @@ interface PortableModel {
 }
 
 const unbuildable = (grammar: string): string[] => {
-	const model = JSON.parse(readFileSync(join(grammarPackageDir(grammar), 'src', 'node-model-portable.json5'), 'utf8')) as PortableModel;
+	const model = JSON.parse(readFileSync(nodeModelPath(grammar, PORTABLE_NODE_MODEL_FILE), 'utf8')) as PortableModel;
 	return Object.entries(model.kinds)
 		.flatMap(([kind, { members = [] }]) => members.filter((m) => m.path === null && m.spelled !== true && m.route !== 'delimiter').map((m) => `${kind}.${m.name}`))
 		.sort();

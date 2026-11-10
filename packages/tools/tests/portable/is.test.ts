@@ -2,11 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import type { PortableRows } from '@sittir/types';
 import python from '../../../python/src/index.ts';
-import { rows as pythonRows } from '../../../python/src/portable.ts';
+import { rows as pythonRows } from '../../../python/src/portable/index.ts';
 import rust from '../../../rust/src/index.ts';
-import { rows as rustRows } from '../../../rust/src/portable.ts';
+import { rows as rustRows } from '../../../rust/src/portable/index.ts';
 import typescript from '../../../typescript/src/index.ts';
-import { rows as typescriptRows } from '../../../typescript/src/portable.ts';
+import { rows as typescriptRows } from '../../../typescript/src/portable/index.ts';
 
 type Node = { readonly $type: number; readonly $text?: () => string; readonly $render?: () => string };
 type Item = Node | number;
