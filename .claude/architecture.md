@@ -29,9 +29,10 @@ Each generated package (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) 
 - `ir.ts` — the default engine's short-name namespace, `buildTable` over the loose table
 - `consts.ts` — discoverable arrays/maps of kinds, keywords, operators
 - `engine.ts` / `backend.ts` / `hash.ts` — native-only `createEngine()`, backend selection, baked render-module hash
-- `node-model.json5` — debug snapshot of the assembled model
+- `portable/index.ts`, `portable/build.ts`, `portable/map.ts` — a bound grammar's portable surface, build table and grammar map (the map is not built into `dist`)
 - `index.ts` — barrel exports
 - `../.sittir/render-bodies.json` — one render body per renderable kind (the validators' catalog; the same bodies are compiled into the native crate)
+- `../.sittir/node-model.json5`, `../.sittir/node-model-portable.json5` — debug snapshot of the assembled model, and a bound grammar's portable routes
 
 ## Current UntypedNode shape
 

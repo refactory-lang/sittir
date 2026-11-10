@@ -1,9 +1,10 @@
 import { readFileSync } from 'node:fs';
+import { NODE_MODEL_FILE, nodeModelPath } from '../../codegen/src/grammars.ts';
 import { describe, expect, expectTypeOf, it } from 'vitest';
 import type { Admit } from '@sittir/types';
 import type { DocComment, Identifier, LineComment, LineCommentDocOuter, VisibilityModifierPubScope, VisibilityModifierPubScopeInPath } from '../src/types.ts';
 
-const model = JSON.parse(readFileSync(new URL('../src/node-model.json5', import.meta.url), 'utf8')) as {
+const model = JSON.parse(readFileSync(nodeModelPath('rust', NODE_MODEL_FILE), 'utf8')) as {
 	nodes: { kind: string; bareAccepts?: string[] }[];
 };
 const accepts = (kind: string): string[] => model.nodes.find((n) => n.kind === kind)?.bareAccepts ?? [];

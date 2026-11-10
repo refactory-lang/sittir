@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { NODE_MODEL_FILE, nodeModelPath } from '../../codegen/src/grammars.ts';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { portableRuntime } from '@sittir/common/engine';
@@ -8,7 +9,7 @@ import python from '../src/index.ts';
 type Spelling = { readonly value: string; readonly canonical?: string; readonly readOnly?: true };
 type ModelNode = { readonly kind: string; readonly slots?: readonly { readonly name: string; readonly values?: readonly Spelling[] }[] };
 
-const model = JSON.parse(readFileSync(new URL('../src/node-model.json5', import.meta.url), 'utf8')) as { readonly nodes: readonly ModelNode[] };
+const model = JSON.parse(readFileSync(nodeModelPath('python', NODE_MODEL_FILE), 'utf8')) as { readonly nodes: readonly ModelNode[] };
 const spellingsOf = (slot: string): readonly Spelling[] =>
 	model.nodes.find((node) => node.kind === 'string_start')!.slots!.find((s) => s.name === slot)!.values!;
 const prefixes = spellingsOf('prefix');

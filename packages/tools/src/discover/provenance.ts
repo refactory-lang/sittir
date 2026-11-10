@@ -18,7 +18,8 @@
  */
 
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { join } from 'node:path';
+import { grammarPackageDir, sittirDirOf } from '@sittir/codegen/grammars';
 import { load, type CodegenSurface } from '../codegen-surface.ts';
 
 export interface FieldProvenanceOptions {
@@ -98,10 +99,7 @@ function walkRule(
 }
 
 export async function run(opts: FieldProvenanceOptions): Promise<number> {
-	const gjPath = resolve(
-		new URL('../../../..', import.meta.url).pathname,
-		`packages/${opts.grammar}/.sittir/src/grammar.json`
-	);
+	const gjPath = join(sittirDirOf({ dir: grammarPackageDir(opts.grammar) }), 'src', 'grammar.json');
 	const gj = JSON.parse(readFileSync(gjPath, 'utf-8')) as GrammarJson;
 	const { readRuleMetadata } = await load('ruleMetadata');
 

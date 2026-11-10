@@ -4,7 +4,7 @@ import { classifierOf } from '@sittir/common/portable';
 import { nodeAddressOf, treeOf } from '@sittir/common/utils';
 import type { PortableCondition, PortableRows, QueryPlan, StepAnchor } from '@sittir/types';
 import typescript from '../src/index.ts';
-import { rows } from '../src/portable.ts';
+import { rows } from '../src/portable/index.ts';
 import { TSKindId } from '../src/types.ts';
 import { querySlots } from '../src/utils.ts';
 

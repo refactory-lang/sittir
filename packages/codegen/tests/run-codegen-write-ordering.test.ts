@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { mkdtempSync, mkdirSync, rmSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { NODE_MODEL_FILE } from '../src/grammars.ts';
 
 vi.mock('node:child_process', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('node:child_process')>();
@@ -44,7 +45,7 @@ describe('runCodegen write ordering', () => {
 
 			for (const derived of [
 				join(outDir, 'src', 'types.ts'),
-				join(outDir, 'src', 'node-model.json5'),
+				join(outDir, '.sittir', NODE_MODEL_FILE),
 				join(outDir, 'tests', 'nodes.test.ts'),
 				join(outDir, 'vitest.config.ts')
 			]) {
