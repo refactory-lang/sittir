@@ -132,6 +132,7 @@ mod tests {
                 Route::Slot { slot: crate::types::SlotId(0), scalar: false },
             ],
             keys: &["_item"],
+            elided: &[false],
         };
         let runs = [(1, 2), (3, 4), (5, 5), (6, 6)];
         let run_at = |start, end| runs.iter().position(|&run| run == (start, end)).map(|at| RunId(crate::types::narrow(at)));
@@ -147,6 +148,7 @@ mod tests {
             children: vec![child(1, 0, 1), child(2, 2, 3)],
             routes: vec![Route::Slot { slot: crate::types::SlotId(0), scalar: false }, Route::Slot { slot: crate::types::SlotId(0), scalar: false }],
             keys: &["_statements"],
+            elided: &[false],
         };
         let [slot] = slot_gaps(&routed, |_, _| Some(RunId(0))).try_into().unwrap();
         assert!(slot.gaps.is_empty(), "{:?}", slot.gaps);
@@ -164,6 +166,7 @@ mod tests {
                 Route::Slot { slot: crate::types::SlotId(0), scalar: false },
             ],
             keys: &["_item", "_other"],
+            elided: &[false, false],
         };
         let [slot] = slot_gaps(&routed, |_, _| Some(RunId(0))).try_into().unwrap();
         assert!(slot.gaps.is_empty(), "{:?}", slot.gaps);

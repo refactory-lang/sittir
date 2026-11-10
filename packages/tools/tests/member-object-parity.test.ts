@@ -20,18 +20,6 @@ import { languageByName } from '../src/languages.ts';
 const STORAGES = ['object', 'arena'] as const;
 const MEMBER_OBJECTS = ['$with', '$trivia'] as const;
 
-// Entries neither storage can read whole: regex mints its escapes' text pieces
-// as visible nodes under a leaf kind, and the typed read refuses them.
-const UNREAD: Readonly<Record<string, readonly string[]>> = {
-	regex: [
-		'Hexadecimal digits escape sequence',
-		'Unicode escape',
-		'Unicode escaped characters as atoms in character classes',
-		'\\u without hex codes treated as identity escape',
-		'atom escapes - control escapes'
-	]
-};
-
 type Members = Record<PropertyKey, unknown>;
 type Node = { readonly $type: number } & Members;
 
@@ -139,7 +127,7 @@ describe.each(['rust', 'typescript', 'python', 'regex', 'scm'])('%s: $with and $
 		'have the same own keys, only members under Object.keys, and copies that behave as the member object',
 		async () => {
 			const { object, arena, unread } = await censuses(grammar);
-			expect([...unread].sort(), 'corpus entries that either storage cannot read whole').toEqual([...(UNREAD[grammar] ?? [])].sort());
+			expect(unread, 'corpus entries that either storage cannot read whole').toEqual([]);
 			expect([...arena.keys()].sort()).toEqual([...object.keys()].sort());
 			expect([...object.keys()].some((key) => key.startsWith('built '))).toBe(true);
 			const differences: Record<string, unknown> = {};

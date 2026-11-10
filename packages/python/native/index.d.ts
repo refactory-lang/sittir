@@ -456,6 +456,17 @@ export declare function read(treeId: TreeId, index: NodeIndex, depth?: number | 
 export declare function readCell(treeId: TreeId, holder: number, word: number, item: number, depth?: number | undefined | null): number
 
 /**
+ * r" The node at `index` of the live tree `treeId` that has no
+ * r" record, read from its holder's cell or its row
+ * r" (`ParsedTree::read_leaf`): `[kind, start, end]` for a leaf,
+ * r" `[kind]` for a unit, the kind it reads as. Null for a node with
+ * r" a record of its own, a node neither answers, and a tree no
+ * r" whole read hydrated. Refuses as `read` does, and records it
+ * r" cannot read.
+ */
+export declare function readLeaf(treeId: TreeId, index: NodeIndex): Array<number> | null
+
+/**
  * r" The nodes at `indexes` of the live tree `treeId`, in order:
  * r" each read as `read` reads it when `wire` is `object`, and,
  * r" when it is `record`, each record's address as `readRecord`

@@ -15,7 +15,12 @@ describe('interiorEntryPattern', () => {
 	});
 
 	it('makes an optional pattern slot an optional group', () => {
-		expect(interiorEntryPattern({ slot: 'fraction', pattern: '\\d+', optional: true })).toBe('(?<fraction>\\d+)?');
+		expect(interiorEntryPattern({ slot: 'fraction', pattern: '\\d+', optional: true })).toBe('(?<fraction>[0-9]+)?');
+	});
+
+	it("captures only its slot: the groups of the slot's own pattern capture nothing", () => {
+		expect(interiorEntryPattern({ slot: 'content', pattern: '\\d(_?\\d)*' })).toBe('(?<content>[0-9](?:_?[0-9])*)');
+		expect(interiorEntryPattern({ slot: 'content', pattern: '(?<inner>a)[(]\\(' })).toBe('(?<content>(?:a)[(]\\()');
 	});
 });
 

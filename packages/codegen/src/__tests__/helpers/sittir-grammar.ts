@@ -33,7 +33,7 @@ export function writeSittirGrammarPackage(
 	if (bindings !== undefined)
 		writeFileSync(
 			join(dir, BINDINGS_MODULE),
-			`import sittir from './${GRAMMAR_ENTRY}';\nimport { enrich, wire, edit, replace, copy, field, alias, variant, refine, lead, match } from ${DSL};\nexport const renames = ${JSON.stringify(renames)};\nexport default grammar(enrich(sittir), wire({ ${bindings} }));\n`
+			`import sittir from './${GRAMMAR_ENTRY}';\nimport { enrich, wire, edit, replace, copy, field, alias, variant, refine, lead, match, regex } from ${DSL};\nexport const renames = ${JSON.stringify(renames)};\nexport default grammar(enrich(sittir), wire({ ${bindings} }));\n`
 		);
 }
 

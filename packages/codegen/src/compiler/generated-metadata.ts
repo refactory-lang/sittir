@@ -4,7 +4,9 @@ import { createRequire } from 'node:module';
 import { loadWebTreeSitter } from '../engine-loader.ts';
 import { grammarPackage, REPO_ROOT, sittirDirOf, type GrammarPackage } from '../grammars.ts';
 import type * as TS from 'web-tree-sitter';
-import { fromMissingParserTables, GrammarDiagnosticError } from './diagnostics/grammar-diagnostics.ts';
+import { fromMissingParserTables, fromStaleParser, GrammarDiagnosticError } from './diagnostics/grammar-diagnostics.ts';
+import { builtParserWasm } from '../transpile/compile-parser.ts';
+import { sha256 } from '../util/content-hash.ts';
 import {
 	deriveFieldRuntimeName,
 	joinIdNames,
@@ -14,7 +16,8 @@ import {
 	type ParserSymbolFacts,
 	type GeneratedIdTables,
 	type JoinedIds,
-	type ParserSymbolTable
+	type ParserSymbolTable,
+	type TreeShape
 } from '../dsl/symbol-table.ts';
 
 export async function loadPackageIdTables(pkg: GrammarPackage): Promise<GeneratedIdTables> {
@@ -25,7 +28,55 @@ export async function loadPackageIdTables(pkg: GrammarPackage): Promise<Generate
 	}
 	const grammarJsonPath = join(dirname(parserCPath), 'grammar.json');
 	const grammarJson = existsSync(grammarJsonPath) ? JSON.parse(readFileSync(grammarJsonPath, 'utf8')) : undefined;
-	return deriveGeneratedIdTablesFromParserCSource(readFileSync(parserCPath, 'utf8'), relative(REPO_ROOT, parserCPath), grammarJson);
+	const tables = await deriveGeneratedIdTablesFromParserCSource(readFileSync(parserCPath, 'utf8'), relative(REPO_ROOT, parserCPath), grammarJson);
+	return { ...tables, parser: await loadTreeShape(pkg) };
+}
+
+async function loadTreeShape(pkg: GrammarPackage): Promise<TreeShape> {
+	const wasm = builtParserWasm(pkg.dir);
+	if (!wasm.fresh) {
+		const stale = fromStaleParser(pkg.name, relative(REPO_ROOT, wasm.wasmPath), wasm.reason);
+		throw new GrammarDiagnosticError([stale], [stale]);
+	}
+	const language = await languageOf(wasm.digest, wasm.bytes);
+	return (source) => parsing(language, (parse) => parse(source, (root) => root.toString()));
+}
+
+type ReadTree = <T>(source: string, read: (root: TS.Node) => T) => T;
+
+interface ParserLanguage {
+	readonly Parser: typeof TS.Parser;
+	readonly language: TS.Language;
+}
+
+const languages = new Map<string, Promise<TS.Language>>();
+
+async function languageOf(digest: string, wasm: Uint8Array): Promise<ParserLanguage> {
+	const { Parser, Language } = await loadWebTreeSitter();
+	let language = languages.get(digest);
+	if (language === undefined) {
+		language = Language.load(wasm);
+		languages.set(digest, language);
+	}
+	return { Parser, language: await language };
+}
+
+function parsing<T>({ Parser, language }: ParserLanguage, use: (parse: ReadTree) => T): T {
+	const parser = new Parser();
+	try {
+		parser.setLanguage(language);
+		return use((source, read) => {
+			const tree = parser.parse(source);
+			if (tree === null) throw new Error('generated-metadata: web-tree-sitter returned no tree for a parse with its language set');
+			try {
+				return read(tree.rootNode);
+			} finally {
+				tree.delete();
+			}
+		});
+	} finally {
+		parser.delete();
+	}
 }
 
 export function foldedSymbols(parserC: string): ReadonlyMap<string, string> {
@@ -46,21 +97,19 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 	source: string,
 	sourceArtifact: string,
 	grammarJson?: unknown
-): Promise<GeneratedIdTables> {
-	const parser = await loadCParser();
-	const symbolIds = collectEnumIds(parser, source, SYMBOL_ENUM_MARKER);
-	const fieldIds = collectEnumIds(parser, source, 'enum ts_field_identifiers');
-	const symbolNames = collectNameTable(parser, source, 'static const char * const ts_symbol_names[]');
-	const fieldNames = collectNameTable(parser, source, 'static const char * const ts_field_names[]');
-	const table: ParserSymbolTable = {
-		symbols: symbolIds,
-		names: symbolNames,
+): Promise<Omit<GeneratedIdTables, 'parser'>> {
+	const { symbolIds, fieldIds, symbolNames, fieldNames, facts } = parsing(await cLanguage(), (parse) => ({
+		symbolIds: collectEnumIds(parse, source, SYMBOL_ENUM_MARKER),
+		fieldIds: collectEnumIds(parse, source, 'enum ts_field_identifiers'),
+		symbolNames: collectNameTable(parse, source, 'static const char * const ts_symbol_names[]'),
+		fieldNames: collectNameTable(parse, source, 'static const char * const ts_field_names[]'),
 		facts: {
-			aliasedNonTerminals: collectAliasedNonTerminals(parser, source),
-			tokenCount: collectTokenCount(parser, source),
-			...collectSymbolFlags(parser, source)
+			aliasedNonTerminals: collectAliasedNonTerminals(parse, source),
+			tokenCount: collectTokenCount(parse, source),
+			...collectSymbolFlags(parse, source)
 		}
-	};
+	}));
+	const table: ParserSymbolTable = { symbols: symbolIds, names: symbolNames, facts };
 
 	const folds = new Map<number, number[]>();
 	for (const [raw, publicSymbol] of foldedSymbols(source)) {
@@ -88,15 +137,11 @@ function collisionFreeIds({ ids, collisions }: JoinedIds, sourceArtifact: string
 
 const SYMBOL_ENUM_MARKER = 'enum ts_symbol_identifiers';
 
-type CParser = TS.Parser;
 type CNode = TS.Node;
 
-async function loadCParser(): Promise<CParser> {
-	const { Parser, Language } = await loadWebTreeSitter();
-	const parser = new Parser();
-	const language = (await Language.load(resolveTreeSitterCWasmPath())) as TS.Language;
-	parser.setLanguage(language);
-	return parser;
+async function cLanguage(): Promise<ParserLanguage> {
+	const wasm = new Uint8Array(readFileSync(resolveTreeSitterCWasmPath()));
+	return languageOf(sha256(wasm), wasm);
 }
 
 function resolveTreeSitterCWasmPath(): string {
@@ -119,41 +164,39 @@ function findPnpmPackageFile(packageName: string, fileName: string): string {
 	throw new Error(`Could not locate ${packageName}/${fileName}`);
 }
 
-function collectEnumIds(parser: CParser, source: string, marker: string): Map<string, CEnumEntry> {
+function collectEnumIds(parse: ReadTree, source: string, marker: string): Map<string, CEnumEntry> {
 	const block = sliceCBlock(source, marker);
-	if (!block) return new Map();
-	const tree = parser.parse(block);
-	if (!tree) return new Map();
 	const result = new Map<string, CEnumEntry>();
-
-	walkCNodes(tree.rootNode, (node) => {
-		if (node.type !== 'enumerator') return;
-		const cName = node.childForFieldName('name')?.text;
-		const value = node.childForFieldName('value')?.text;
-		if (!cName || !value) return;
-		const id = Number.parseInt(value, 10);
-		if (Number.isNaN(id)) return;
-		result.set(cName, { cName, id });
-	});
-
+	if (!block) return result;
+	parse(block, (root) =>
+		walkCNodes(root, (node) => {
+			if (node.type !== 'enumerator') return;
+			const cName = node.childForFieldName('name')?.text;
+			const value = node.childForFieldName('value')?.text;
+			if (!cName || !value) return;
+			const id = Number.parseInt(value, 10);
+			if (Number.isNaN(id)) return;
+			result.set(cName, { cName, id });
+		})
+	);
 	return result;
 }
 
-function collectTokenCount(parser: CParser, source: string): number | undefined {
+function collectTokenCount(parse: ReadTree, source: string): number | undefined {
 	const end = source.indexOf(SYMBOL_ENUM_MARKER);
-	const tree = parser.parse(end < 0 ? source : source.slice(0, end));
-	if (!tree) return undefined;
 	let count: number | undefined;
-	walkCNodes(tree.rootNode, (node) => {
-		if (node.type !== 'preproc_def' || node.childForFieldName('name')?.text !== 'TOKEN_COUNT') return;
-		const value = Number.parseInt(node.childForFieldName('value')?.text ?? '', 10);
-		if (!Number.isNaN(value)) count = value;
-	});
+	parse(end < 0 ? source : source.slice(0, end), (root) =>
+		walkCNodes(root, (node) => {
+			if (node.type !== 'preproc_def' || node.childForFieldName('name')?.text !== 'TOKEN_COUNT') return;
+			const value = Number.parseInt(node.childForFieldName('value')?.text ?? '', 10);
+			if (!Number.isNaN(value)) count = value;
+		})
+	);
 	return count;
 }
 
 function collectSymbolFlags(
-	parser: CParser,
+	parse: ReadTree,
 	source: string
 ): Pick<ParserSymbolFacts, 'visible' | 'named' | 'supertypes'> {
 	const visible = new Map<string, boolean>();
@@ -161,9 +204,7 @@ function collectSymbolFlags(
 	const supertypes = new Set<string>();
 	const block = sliceCBlock(source, 'static const TSSymbolMetadata ts_symbol_metadata[]');
 	if (!block) return { visible, named, supertypes };
-	const tree = parser.parse(block);
-	if (!tree) return { visible, named, supertypes };
-	walkCNodes(tree.rootNode, (node) => {
+	parse(block, (root) => walkCNodes(root, (node) => {
 		if (node.type !== 'initializer_pair') return;
 		const designator = node.childForFieldName('designator');
 		const value = node.childForFieldName('value');
@@ -181,20 +222,20 @@ function collectSymbolFlags(
 		});
 		visible.set(cName, isVisible);
 		named.set(cName, isNamed);
-	});
+	}));
 	return { visible, named, supertypes };
 }
 
-function collectAliasedNonTerminals(parser: CParser, source: string): Set<string> {
+function collectAliasedNonTerminals(parse: ReadTree, source: string): Set<string> {
 	const block = sliceCBlock(source, 'static const uint16_t ts_non_terminal_alias_map[]');
 	if (!block) return new Set();
-	const tree = parser.parse(block);
-	if (!tree) return new Set();
 	const values: string[] = [];
-	walkCNodes(tree.rootNode, (node) => {
-		if (node.parent?.type === 'initializer_list' && (node.type === 'identifier' || node.type === 'number_literal'))
-			values.push(node.text);
-	});
+	parse(block, (root) =>
+		walkCNodes(root, (node) => {
+			if (node.parent?.type === 'initializer_list' && (node.type === 'identifier' || node.type === 'number_literal'))
+				values.push(node.text);
+		})
+	);
 	const result = new Set<string>();
 	for (let i = 0; i + 1 < values.length; ) {
 		const symbol = values[i]!;
@@ -206,22 +247,20 @@ function collectAliasedNonTerminals(parser: CParser, source: string): Set<string
 	return result;
 }
 
-function collectNameTable(parser: CParser, source: string, marker: string): Map<string, string> {
+function collectNameTable(parse: ReadTree, source: string, marker: string): Map<string, string> {
 	const block = sliceCBlock(source, marker);
-	if (!block) return new Map();
-	const tree = parser.parse(block);
-	if (!tree) return new Map();
 	const result = new Map<string, string>();
-
-	walkCNodes(tree.rootNode, (node) => {
-		if (node.type !== 'initializer_pair') return;
-		const designator = node.childForFieldName('designator');
-		const value = node.childForFieldName('value');
-		const cName = designator ? firstChildText(designator, 'identifier') : undefined;
-		if (!cName || !value || value.type !== 'string_literal') return;
-		result.set(cName, decodeCStringLiteral(value.text));
-	});
-
+	if (!block) return result;
+	parse(block, (root) =>
+		walkCNodes(root, (node) => {
+			if (node.type !== 'initializer_pair') return;
+			const designator = node.childForFieldName('designator');
+			const value = node.childForFieldName('value');
+			const cName = designator ? firstChildText(designator, 'identifier') : undefined;
+			if (!cName || !value || value.type !== 'string_literal') return;
+			result.set(cName, decodeCStringLiteral(value.text));
+		})
+	);
 	return result;
 }
 

@@ -742,6 +742,7 @@ module.exports.liveTreeCount = nativeBinding.liveTreeCount
 module.exports.planHolds = nativeBinding.planHolds
 module.exports.read = nativeBinding.read
 module.exports.readCell = nativeBinding.readCell
+module.exports.readLeaf = nativeBinding.readLeaf
 module.exports.readMany = nativeBinding.readMany
 module.exports.readRecord = nativeBinding.readRecord
 module.exports.readRecordStub = nativeBinding.readRecordStub

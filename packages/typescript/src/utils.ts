@@ -52,7 +52,7 @@ export const triviaFacts = Object.freeze({
 		54, 129, 174, 179, 196, 226, 254, 278, 279, 280, 281, 282, 326, 363, 394, 407, 415, 439, 440, 446, 503
 	]),
 	whitespace: Object.freeze({
-		run: /^(?:(?:(?:[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
+		run: /^(?:(?:(?:[\x09-\x0D\x20\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
 		kindIdByText: Object.freeze({ '': 181, ' ': 182, '\t': 183, '\n': 184, '\n\n': 185, '\n\n\n': 186 })
 	})
 } satisfies TriviaFacts<TSKindId>);
