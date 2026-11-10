@@ -2039,65 +2039,13 @@ Runs the conformance check for each grammar and prints each report. A grammar wi
 
 Runs the admission check over the given grammars, all binding grammars by default. It types each grammar's portable module, reads every view's yields, and compares the kinds each read site admits with the kinds its reads give. It returns the resulting `AdmissionReport`.
 
-### `packages/tools/src/portable/admission.ts::AdmissionOwnSlot`
-
-An own slot that holds a kind its reads never give: its grammar, the member it sits on, and the excess kinds.
-
-### `packages/tools/src/portable/admission.ts::AdmissionOwnSlot::excess`
-
-The kinds the own slot holds that its reads never give.
-
-### `packages/tools/src/portable/admission.ts::AdmissionOwnSlot::grammar`
-
-The grammar whose typed module the own slot was read from.
-
-### `packages/tools/src/portable/admission.ts::AdmissionOwnSlot::member`
-
-The member the own slot sits on, as `path.slot`.
-
 ### `packages/tools/src/portable/admission.ts::AdmissionReport`
 
 The result of the admission check: the read sites counted, how many are role-armed, which admit an unknown kind, which admit a kind no read gives, and which own slots hold such a kind.
 
-### `packages/tools/src/portable/admission.ts::AdmissionReport::overAdmitting`
-
-The read sites that admit a kind no read gives.
-
-### `packages/tools/src/portable/admission.ts::AdmissionReport::ownSlots`
-
-The own slots that hold a kind their reads never give.
-
-### `packages/tools/src/portable/admission.ts::AdmissionReport::roleArmed`
-
-The number of read sites whose type includes a role arm.
-
-### `packages/tools/src/portable/admission.ts::AdmissionReport::sites`
-
-The number of read sites checked.
-
 ### `packages/tools/src/portable/admission.ts::AdmissionReport::untyped`
 
 The read sites whose type admits an unknown kind, by site.
-
-### `packages/tools/src/portable/admission.ts::AdmissionSite`
-
-One read site that admits a kind no read gives: its declaration site, the grammars whose reads reach it, the member paths that share it, and the excess kinds.
-
-### `packages/tools/src/portable/admission.ts::AdmissionSite::excess`
-
-The kinds the site admits that no read of it gives.
-
-### `packages/tools/src/portable/admission.ts::AdmissionSite::grammars`
-
-The grammars whose reads reach the site.
-
-### `packages/tools/src/portable/admission.ts::AdmissionSite::members`
-
-The `path.member` pairs that share the site.
-
-### `packages/tools/src/portable/admission.ts::AdmissionSite::site`
-
-The site's declaration, as `file:line`.
 
 ### `packages/tools/src/portable/admission.ts::formatAdmission`
 

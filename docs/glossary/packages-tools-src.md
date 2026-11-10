@@ -28,10 +28,6 @@ Imports a generated module through its `pathToFileURL` URL, which ESM accepts ac
 
 The required-artifact form of `importGrammarModule`. Missing artifacts throw an error naming the grammar and generated filename, so validators record a load failure instead of treating an empty map as a successful run. It shares path resolution and importing with the optional loader.
 
-### `packages/tools/src/grammar-internals.ts::GrammarModules::portable-build.ts`
-
-The grammar's portable build module, loaded from its `portable-build.ts` file.
-
 ### `packages/tools/src/codegen-surface.ts::evaluateGrammar`
 
 Evaluates a grammar package by name through codegen's `evaluatePackage`, so every probe and diagnostic tool builds its model with the package's real file types and entry choice; `base` selects the upstream `grammar.js` where a tool offers to show it before overrides. `buildSimplifiedGrammar`, the refs, stages and grammar-diagnostics tools start here, and none resolves an entry path or passes file types itself. Full node-map loaders use the canonical compiler instead of rebuilding its phases.

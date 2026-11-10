@@ -4954,10 +4954,6 @@ Whether the set has no code points.
 
 The number of code points in the set.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::LINE_TERMINATORS`
-
-The characters that end a line under the JavaScript `u`-flag reading of `.`: `\n`, `\r`, U+2028 and U+2029. `.` is their complement (`DOT`), and the line facts (`crossesLine`, `absorbsRestOfLine`) read "a line" through it.
-
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::DIGIT`
 
 `\d`: ASCII `0`–`9`, as JavaScript reads it under the `u` flag.
@@ -4966,13 +4962,9 @@ The characters that end a line under the JavaScript `u`-flag reading of `.`: `\n
 
 `\w`: ASCII letters, digits and `_`, as JavaScript reads it under the `u` flag.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::SPACE`
-
-`\s`: the JavaScript whitespace and line-terminator set, including U+2000–U+200A, U+3000 and U+FEFF.
-
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::DOT`
 
-`.`: every code point except `LINE_TERMINATORS`.
+`.`: every code point except the JavaScript line terminators (`\n`, `\r`, U+2028, U+2029).
 
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::propertySets`
 
@@ -5050,17 +5042,13 @@ The states reachable from the seeds along edges whose set the `keep` predicate a
 
 The states from which some accepting state can be reached: the only states on a path to an accepted text.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::crossesLine`
-
-Whether the pattern accepts some text with a line terminator followed later by a character that is not one. A trailing terminator, as in `.*\n?`, does not cross a line; a text continuing past a line break does.
-
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::absorbsRestOfLine`
 
-Whether some reachable accepting state loops on itself over every character that is not a line terminator, so a match can take in the rest of any line.
+Whether some reachable accepting state loops on itself over every character of `rest`, the grammar's characters that do not end a line, so a match can take in the rest of any line.
 
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::opensLineEnd`
 
-Whether a pattern ends its line: it absorbs the rest of a line (`absorbsRestOfLine`) and never crosses one (`crossesLine`). `.*`, `[^\r\n\u2028\u2029]*`, `#!(?<content>.*)` and `.*\n?` open a line end; `[^"\\\r\n]+`, `a.*b` and `[\s\S]*` do not. `undefined` when the pattern is unsupported. `ruleLineEnds` reads it for every pattern end terminal.
+Whether a pattern ends its line: it absorbs the rest of a line (`absorbsRestOfLine`) and never continues past a line break (`armsThrough`). `.*`, `[^\r\n\u2028\u2029]*`, `#!(?<content>.*)` and `.*\n?` open a line end; `[^"\\\r\n]+`, `a.*b` and `[\s\S]*` do not. `undefined` when the pattern is unsupported. `ruleLineEnds` reads it for every pattern end terminal.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::seamNeedsSpace`
 
@@ -5222,11 +5210,11 @@ The slots inside each kind's inner gap, keyed by kind id: the `slots` of its `in
 
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::endsWithLineBreak`
 
-Whether every text the pattern accepts ends with a line terminator: the start state does not accept and every edge into an accepting state is a line terminator. An accepting state may have edges out (`(?:x\n)+`): it is only entered by a line terminator, so every accepted text still ends in one.
+Whether every text the pattern accepts ends with a line terminator: the start state does not accept and every edge into an accepting state is in `breaks`, the grammar's line-break characters. An accepting state may have edges out (`(?:x\n)+`): it is only entered by a line terminator, so every accepted text still ends in one.
 
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::requiresNonSpace`
 
-Whether every text the pattern accepts holds a character that is not whitespace: no accepting state is reachable along whitespace edges alone.
+Whether every text the pattern accepts holds a character that is not whitespace: no accepting state is reachable along edges in `whitespace`, the grammar's whitespace characters, alone.
 
 ### `packages/codegen/src/compiler/model/delimited.ts::stampDelimited`
 
@@ -5308,6 +5296,22 @@ Whether this character set shares a character with another.
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::includesNonEmpty`
 
 Whether the inner pattern admits some non-empty text that the outer pattern also admits.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::LineBreaks`
+
+The grammar's line breaks as three character sets: `arms` are the newline spellings that end a line, `chars` the characters they are written with, and `rest` every other character a line can hold, the complement of `chars` and the unwritten characters.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::lineBreaksOf`
+
+Builds the `LineBreaks` of a list of newline spellings: `chars` is the characters of those spellings, and `rest` is the complement of `chars` and the unwritten characters.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::armsThrough`
+
+The line-break arms a pattern can match and then continue past: an arm whose characters lead to a state from which the pattern still accepts through a live edge that is not a line break. A pattern that stops at a break does not arm through it.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::edgeChars`
+
+The characters that label some edge of the automaton, as one set.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::isFlatLeafOrKeyword`
 
@@ -6393,3 +6397,15 @@ Stamps each compound of the node map with its delimiter facets, free-text facet 
 ### `packages/codegen/src/compiler/model/delimiter-facets.ts::stampDelimiterTokens`
 
 Marks each delimiter token with the compound it is the body of (`delimiterOf`).
+
+### `packages/codegen/src/compiler/model/line-endings.ts::LineEndings`
+
+A grammar's admitted line endings: `arms` are the newline spellings its lexer does not swallow and its parser reads back as the preferred newline, `breaks` their `LineBreaks`, and `whitespace` the characters of the grammar's extras.
+
+### `packages/codegen/src/compiler/model/line-endings.ts::lineEndingsOf`
+
+Returns the `LineEndings` a node map carries. It throws when the node map carries none, so a consumer that reads line endings without them fails loudly.
+
+### `packages/codegen/src/compiler/model/line-endings.ts::admittedLineEndings`
+
+Derives a grammar's admitted line endings from its layout, its whitespace and its extras. A declared newline arm is admitted when no lexed pattern swallows it and, when a parser probe is given, the parser reads it back the same as the preferred newline; with no admitted arm the preferred newline stands in. A `null` parser skips the probe.

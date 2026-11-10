@@ -344,7 +344,7 @@ A builder's own public overloads are generic, and a generic parameter gives no c
 
 ### `packages/types/src/vocabulary/utils.ts::Flag`
 
-The marker a vocabulary interface declares a yes/no fact with: `readonly static?: Flag`. A flag is a bit in the node's one bitflag, tested by `is` and set by a builder step or a structure's `$flags`, never a member, so no value satisfies the marker and a structure can only leave it out. A `boolean` member is data, as a python complex pattern's `sign` is. The inventory reads the marker to write the flag's bit in `Flags`, and the generator to emit its guard and step.
+The marker a vocabulary interface declares a yes/no fact with: `readonly static?: Flag`. `Flag` is a unique symbol, so no value satisfies the marker and a structure can only leave it out. A flag is a name carried in the node's `$flags`, tested by `is` and set by a builder step or a structure's `$flags`, never a member. A `boolean` member is data, as a python complex pattern's `sign` is. The inventory reads the marker, and the generator emits its guard and step.
 
 ### `packages/common/src/portable/flags.ts::Flags`
 
