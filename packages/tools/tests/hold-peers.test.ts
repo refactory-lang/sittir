@@ -1,10 +1,12 @@
 import { execFileSync, spawn, type ChildProcess } from 'node:child_process';
-import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { createInterface } from 'node:readline';
+import type { Readable } from 'node:stream';
 import { fileURLToPath } from 'node:url';
-import { afterEach, expect, it } from 'vitest';
-import { giveBack, holdPeers, parseProcessTable, peerWork, processTable, sessionOf, stillHeld, type Mark } from '../src/profile/hold-peers.ts';
+import { afterEach, expect, it, vi } from 'vitest';
+import { claim, giveBack, holdPeers, parseProcessTable, peerWork, processTable, sessionOf, stillHeld, type Mark } from '../src/profile/hold-peers.ts';
 
 const darwin = process.platform === 'darwin';
 const cleanups: (() => void)[] = [];
@@ -19,9 +21,24 @@ const priorities = (pids: readonly number[]) =>
 		.split(/\s+/)
 		.map(Number);
 const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-async function until(check: () => boolean, ms: number): Promise<boolean> {
-	for (const end = Date.now() + ms; Date.now() < end; await pause(100)) if (check()) return true;
-	return check();
+async function eventually(check: () => boolean): Promise<void> {
+	while (!check()) await pause(50);
+}
+
+function pidLines(stream: Readable): (label: string, count?: number) => Promise<number[]> {
+	const lines: string[] = [];
+	let next = () => {};
+	createInterface({ input: stream }).on('line', (line) => {
+		lines.push(line);
+		next();
+	});
+	return async (label, count = 1) => {
+		for (;;) {
+			const pids = lines.filter((line) => line.startsWith(`${label} `)).map((line) => Number(line.slice(label.length + 1)));
+			if (pids.length >= count) return pids.slice(0, count);
+			await new Promise<void>((resolve) => (next = resolve));
+		}
+	};
 }
 
 function scratch(): string {
@@ -30,23 +47,29 @@ function scratch(): string {
 	return dir;
 }
 
-async function fakeSession(dir: string, work = ['sleep 60', 'sleep 60']): Promise<{ root: number; work: number[] }> {
+interface FakeSession {
+	readonly root: number;
+	readonly work: number[];
+	readonly session: ChildProcess;
+	readonly read: (label: string, count?: number) => Promise<number[]>;
+}
+
+async function fakeSession(dir: string, work = ['sleep 60', 'sleep 60']): Promise<FakeSession> {
 	const shell = join(dir, 'claude');
 	copyFileSync('/bin/bash', shell);
 	execFileSync('codesign', ['-s', '-', '-f', shell], { stdio: 'ignore' });
-	const session = spawn(shell, ['-c', `${work.map((command) => `${command} &`).join(' ')} wait`], { stdio: 'ignore', detached: true });
+	const session = spawn(shell, ['-c', `${work.map((command) => `${command} & echo "work $!";`).join(' ')} wait`], {
+		stdio: ['ignore', 'pipe', 'ignore'],
+		detached: true
+	});
 	cleanups.push(() => {
 		try {
 			execFileSync('pkill', ['-P', String(session.pid)]);
 		} catch {}
 		session.kill('SIGKILL');
 	});
-	const children = () =>
-		processTable()
-			.filter((row) => row.ppid === session.pid)
-			.map((row) => row.pid);
-	expect(await until(() => children().length === work.length, 5000)).toBe(true);
-	return { root: session.pid!, work: children() };
+	const read = pidLines(session.stdout!);
+	return { root: session.pid!, work: await read('work', work.length), session, read };
 }
 
 function holderProcess(root: number, state: string, env: NodeJS.ProcessEnv = process.env): Promise<ChildProcess> {
@@ -119,7 +142,7 @@ it('gives back what it held that still runs under the same start, and what start
 		[23, 'Mon Nov 9 09:10:03 2026', 20],
 		[30, 'Mon Nov 9 08:30:00 2026', 30]
 	];
-	expect(stillHeld(later, { held, kept: [] })).toEqual([22, 24, 25]);
+	expect(stillHeld(later, { held, kept: [], bystanders: [] })).toEqual([22, 24, 25]);
 });
 
 it('gives back nothing under a process kept in the background class unless a held process is nearer', () => {
@@ -138,7 +161,7 @@ it('gives back nothing under a process kept in the background class unless a hel
 		[23, 'Mon Nov 9 09:10:03 2026', 20]
 	];
 	const kept: Mark[] = [[21, 'Mon Nov 9 09:10:01 2026', 20]];
-	expect(stillHeld(rows, { held, kept })).toEqual([20, 23, 24]);
+	expect(stillHeld(rows, { held, kept, bystanders: [] })).toEqual([20, 23, 24]);
 });
 
 it('gives back what inherited the hold from a held process that has since exited, by the process group they shared', () => {
@@ -156,16 +179,57 @@ it('gives back what inherited the hold from a held process that has since exited
 		[41, 'Mon Nov 9 09:10:00 2026', 40]
 	];
 	const kept: Mark[] = [[42, 'Mon Nov 9 09:10:01 2026', 40]];
-	expect(stillHeld(rows, { held, kept })).toEqual([26]);
+	expect(stillHeld(rows, { held, kept, bystanders: [] })).toEqual([26]);
+});
+
+it('never gives back a process that shared a held group before the hold and was not taken', () => {
+	const before = parseProcessTable(
+		[
+			'    1     0     1   31 Mon Nov  9 08:00:00 2026 /sbin/launchd',
+			'   60     1    60    4 Mon Nov  9 09:00:00 2026 claude',
+			'   61    60    60   31 Mon Nov  9 09:00:01 2026 /bin/zsh',
+			'   62     1    60   31 Mon Nov  9 09:00:02 2026 node'
+		].join('\n')
+	);
+	const found = claim(before, undefined, undefined, { held: [], kept: [], bystanders: [] });
+	expect([pids(found.taken), pids(found.kept), pids(found.bystanders)]).toEqual([[61], [60], [62]]);
+	const mark = (row: { pid: number; started: string; group: number }): Mark => [row.pid, row.started, row.group];
+	const holding = { held: found.taken.map(mark), kept: found.kept.map(mark), bystanders: found.bystanders.map(mark) };
+	const after = parseProcessTable(
+		[
+			'    1     0     1   31 Mon Nov  9 08:00:00 2026 /sbin/launchd',
+			'   60     1    60    4 Mon Nov  9 09:00:00 2026 claude',
+			'   61    60    60    4 Mon Nov  9 09:00:01 2026 /bin/zsh',
+			'   62     1    60    4 Mon Nov  9 09:00:02 2026 node'
+		].join('\n')
+	);
+	expect(stillHeld(after, holding)).toEqual([61]);
+});
+
+it('gives back by process group only what was orphaned inside the held group', () => {
+	const rows = parseProcessTable(
+		[
+			'    1     0     1   31 Mon Nov  9 08:00:00 2026 /sbin/launchd',
+			'   70     1    70   31 Mon Nov  9 08:10:00 2026 /System/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal',
+			'  100    70   100    4 Mon Nov  9 09:40:00 2026 /bin/zsh',
+			'  101   100   100    4 Mon Nov  9 09:40:01 2026 node',
+			'  102     1   100    4 Mon Nov  9 09:40:02 2026 node',
+			'  103   102   100    4 Mon Nov  9 09:40:03 2026 node'
+		].join('\n')
+	);
+	const held: Mark[] = [[200, 'Mon Nov 9 09:10:00 2026', 100]];
+	expect(stillHeld(rows, { held, kept: [], bystanders: [] })).toEqual([102, 103]);
 });
 
 it.runIf(darwin)('gives back what it held when its process is killed outright', async () => {
 	const dir = scratch();
+	const state = join(dir, 'hold.json');
 	const { root, work } = await fakeSession(dir);
-	const holder = await holderProcess(root, join(dir, 'hold.json'));
+	const holder = await holderProcess(root, state);
 	expect(work.map(priority)).toEqual([4, 4]);
 	holder.kill('SIGKILL');
-	expect(await until(() => work.every((pid) => priority(pid) === 31), 5000)).toBe(true);
+	await eventually(() => !existsSync(state));
+	expect(work.map(priority)).toEqual([31, 31]);
 }, 20_000);
 
 it.runIf(darwin)('waits for another hold to end before it holds anything', async () => {
@@ -173,12 +237,20 @@ it.runIf(darwin)('waits for another hold to end before it holds anything', async
 	const state = join(dir, 'hold.json');
 	const { root, work } = await fakeSession(dir);
 	const first = await holdPeers({ within: root, state, intervalMs: 200 });
+	const write = process.stderr.write.bind(process.stderr);
+	const waiting = new Promise<void>((resolve) => {
+		const spy = vi.spyOn(process.stderr, 'write').mockImplementation((chunk: string | Uint8Array, encoding?: BufferEncoding, done?: (error?: Error | null) => void) => {
+			if (String(chunk).includes(`waiting for the hold of pid ${process.pid}`)) resolve();
+			return write(chunk, encoding, done);
+		});
+		cleanups.push(() => spy.mockRestore());
+	});
 	let secondHeld = false;
 	const second = holdPeers({ within: root, state, intervalMs: 200 }).then((hold) => {
 		secondHeld = true;
 		return hold;
 	});
-	await pause(1500);
+	await waiting;
 	expect(secondHeld).toBe(false);
 	first.release();
 	const hold = await second;
@@ -197,7 +269,7 @@ it.runIf(darwin)('gives back what a hold whose owner died left held before it ho
 	for (const pid of work) execFileSync('taskpolicy', ['-b', '-p', String(pid)]);
 	const gone = spawn('true');
 	await new Promise((resolve) => gone.on('exit', resolve));
-	writeFileSync(state, JSON.stringify({ owner: { pid: gone.pid, started: 'Thu Jan 1 00:00:00 1970' }, held: work.map((pid) => [pid, started(pid), group(pid)]), kept: [] }));
+	writeFileSync(state, JSON.stringify({ owner: { pid: gone.pid, started: 'Thu Jan 1 00:00:00 1970' }, held: work.map((pid) => [pid, started(pid), group(pid)]), kept: [], bystanders: [] }));
 	expect(work.map(priority)).toEqual([4, 4]);
 	const { root: elsewhere } = await fakeSession(scratch());
 	const hold = await holdPeers({ within: elsewhere, state, intervalMs: 200 });
@@ -225,7 +297,8 @@ it('leaves nothing held that a held process starts while it is being given back'
 				[20, 'Mon Nov 9 09:00:00 2026', 20],
 				[21, 'Mon Nov 9 09:00:01 2026', 20]
 			],
-			kept: []
+			kept: [],
+			bystanders: []
 		},
 		control
 	);
@@ -248,48 +321,50 @@ it.runIf(darwin)('neither holds nor gives back a process already in the backgrou
 
 it.runIf(darwin)('leaves a process already in the background class there when a held process runs it and the holder is killed outright', async () => {
 	const dir = scratch();
-	const { root, work } = await fakeSession(dir, ["bash -c 'sleep 60 & wait'"]);
+	const state = join(dir, 'hold.json');
+	const { root, work, read } = await fakeSession(dir, [`bash -c 'sleep 60 & echo "inner $!"; wait'`]);
 	const [shell] = work;
-	const under = () => processTable().filter((row) => row.ppid === shell);
-	expect(await until(() => under().length === 1, 5000)).toBe(true);
-	const [deliberate] = under().map((row) => row.pid);
+	const [deliberate] = await read('inner');
 	demote(deliberate!);
 	expect([priority(shell!), priority(deliberate!)]).toEqual([31, 4]);
-	const holder = await holderProcess(root, join(dir, 'hold.json'));
+	const holder = await holderProcess(root, state);
 	expect(priority(shell!)).toBe(4);
 	holder.kill('SIGKILL');
-	expect(await until(() => priority(shell!) === 31, 5000)).toBe(true);
-	await pause(1000);
-	expect(priority(deliberate!)).toBe(4);
+	await eventually(() => !existsSync(state));
+	expect([priority(shell!), priority(deliberate!)]).toEqual([31, 4]);
 }, 20_000);
 
 it.runIf(darwin)('gives back what a held process started and left behind before the next look', async () => {
 	const dir = scratch();
-	const marker = join(dir, 'left');
-	const { root } = await fakeSession(dir, [`bash -c 'sleep 1; (sleep 60 & echo $! > ${marker}); exit'`]);
+	const go = join(dir, 'go');
+	execFileSync('mkfifo', [go]);
+	const { root, work, session, read } = await fakeSession(dir, [`bash -c 'read _ < ${go}; sleep 60 & taskpolicy -b -p $!; echo "left $!"; exit'`]);
+	const [shell] = work;
 	const hold = await holdPeers({ within: root, state: join(dir, 'hold.json'), intervalMs: 60_000 });
-	expect(await until(() => existsSync(marker) && readFileSync(marker, 'utf8').trim() !== '', 30_000)).toBe(true);
-	const left = Number(readFileSync(marker, 'utf8'));
+	expect(priority(shell!)).toBe(4);
+	execFileSync('taskpolicy', ['-B', '-p', String(shell)]);
+	const ended = new Promise((resolve) => session.once('exit', resolve));
+	writeFileSync(go, '\n');
+	const [left] = await read('left');
 	cleanups.push(() => {
 		try {
-			process.kill(left, 'SIGKILL');
+			process.kill(left!, 'SIGKILL');
 		} catch {}
 	});
-	expect(await until(() => processTable().find((row) => row.pid === left)?.ppid === 1, 30_000)).toBe(true);
-	expect(priority(left)).toBe(4);
+	await ended;
+	expect(processTable().find((row) => row.pid === left)).toMatchObject({ ppid: 1, group: root, background: true });
 	hold.release();
-	expect(priority(left)).toBe(31);
-}, 90_000);
+	expect(priority(left!)).toBe(31);
+}, 20_000);
 
 it.runIf(darwin)('holds after a holder that died while it wrote its state', async () => {
 	const dir = scratch();
 	const state = join(dir, 'hold.json');
 	writeFileSync(state, '');
 	const { root, work } = await fakeSession(dir);
-	const hold = await Promise.race([holdPeers({ within: root, state, intervalMs: 100 }), pause(3000).then(() => undefined)]);
-	expect(hold).toBeDefined();
+	const hold = await holdPeers({ within: root, state, intervalMs: 100 });
 	expect(work.map(priority)).toEqual([4, 4]);
-	hold!.release();
+	hold.release();
 	expect(work.map(priority)).toEqual([31, 31]);
 }, 20_000);
 

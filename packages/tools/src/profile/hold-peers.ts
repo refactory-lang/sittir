@@ -36,6 +36,13 @@ export type Mark = readonly [pid: number, started: string, group: number];
 export interface Holding {
 	readonly held: readonly Mark[];
 	readonly kept: readonly Mark[];
+	readonly bystanders: readonly Mark[];
+}
+
+export interface Claim {
+	readonly taken: readonly ProcessRow[];
+	readonly kept: readonly ProcessRow[];
+	readonly bystanders: readonly ProcessRow[];
 }
 
 interface HoldState extends Holding {
@@ -49,6 +56,7 @@ const O_EXLOCK = 0x20;
 const LOCK = constants.O_RDWR | constants.O_CREAT | constants.O_NONBLOCK | O_EXLOCK;
 const SIGNALS = ['SIGINT', 'SIGTERM', 'SIGHUP'] as const;
 const MAX_DEPTH = 64;
+const LAUNCHD = 1;
 const GIVE_BACK_PASSES = 5;
 const WATCH = '--watch';
 const DEFAULT_STATE = join(homedir(), 'Library', 'Caches', 'sittir', 'hold-peers.json');
@@ -104,21 +112,38 @@ export function peerWork(rows: readonly ProcessRow[], self: number | undefined):
 	});
 }
 
-export function stillHeld(rows: readonly ProcessRow[], { held, kept }: Holding): number[] {
+export function stillHeld(rows: readonly ProcessRow[], { held, kept, bystanders }: Holding): number[] {
 	const byPid = index(rows);
 	const live = (marks: readonly Mark[]) => new Set(marks.filter(([pid, started]) => byPid.get(pid)?.started === started).map(([pid]) => pid));
 	const taken = live(held);
-	const left = live(kept);
+	const left = live([...kept, ...bystanders]);
 	const owned = new Set(held.map(([, , group]) => group));
 	for (const [, , group] of kept) owned.delete(group);
 	const inherits = (row: ProcessRow) => {
-		const nearest = [row, ...ancestors(byPid, row)].find((up) => taken.has(up.pid) || left.has(up.pid));
-		return nearest === undefined ? row.background && owned.has(row.group) : taken.has(nearest.pid);
+		const line = [row, ...ancestors(byPid, row)];
+		const nearest = line.find((up) => taken.has(up.pid) || left.has(up.pid));
+		if (nearest !== undefined) return taken.has(nearest.pid);
+		const orphaned = line.find((up) => up.ppid === LAUNCHD);
+		return row.background && orphaned?.group === row.group && owned.has(row.group);
 	};
 	return rows
 		.filter(inherits)
 		.map((row) => row.pid)
 		.sort((a, b) => a - b);
+}
+
+export function claim(table: readonly ProcessRow[], self: number | undefined, root: number | undefined, holding: Holding): Claim {
+	const scope = within(table, root);
+	const inherited = new Set(stillHeld(scope, holding));
+	const marked = new Set([...holding.held, ...holding.kept, ...holding.bystanders].map(([pid, started]) => `${pid} ${started}`));
+	const unmarked = (row: ProcessRow) => !marked.has(`${row.pid} ${row.started}`);
+	const fresh = peerWork(scope, self).filter(unmarked);
+	const taken = fresh.filter((row) => !row.background || inherited.has(row.pid));
+	const passed = fresh.filter((row) => !taken.includes(row));
+	const owned = new Set(holding.held.map(([, , group]) => group));
+	const claimed = new Set(taken.map((row) => row.group).filter((group) => !owned.has(group)));
+	const others = table.filter((row) => claimed.has(row.group) && unmarked(row) && !fresh.includes(row));
+	return { taken, kept: [...passed, ...others.filter((row) => row.background)], bystanders: others.filter((row) => !row.background) };
 }
 
 export function within(rows: readonly ProcessRow[], root: number | undefined): ProcessRow[] {
@@ -216,7 +241,8 @@ export async function holdPeers(options: HoldOptions = {}): Promise<PeerHold> {
 	if (left !== undefined) giveBack(left);
 	const held = new Map<number, Mark>();
 	const kept = new Map<number, Mark>();
-	const holding = (): Holding => ({ held: [...held.values()], kept: [...kept.values()] });
+	const bystanders = new Map<number, Mark>();
+	const holding = (): Holding => ({ held: [...held.values()], kept: [...kept.values()], bystanders: [...bystanders.values()] });
 	const record = () => writeState(path, { owner, ...holding() });
 	record();
 	const watchdog = spawn(process.execPath, [fileURLToPath(import.meta.url), WATCH, path, String(owner.pid), owner.started, String(Math.min(intervalMs, 500))], {
@@ -229,14 +255,18 @@ export async function holdPeers(options: HoldOptions = {}): Promise<PeerHold> {
 	let sweeping = false;
 	let timer: NodeJS.Timeout | undefined;
 	const sweep = async () => {
-		const current = within(parseProcessTable((await execute('ps', TABLE, { maxBuffer: 16 << 20 })).stdout), options.within);
+		const table = parseProcessTable((await execute('ps', TABLE, { maxBuffer: 16 << 20 })).stdout);
 		if (released) return;
-		const inherited = new Set(stillHeld(current, holding()));
-		const fresh = peerWork(current, self).filter((row) => held.get(row.pid)?.[1] !== row.started && kept.get(row.pid)?.[1] !== row.started);
-		if (fresh.length === 0) return;
-		const taken = fresh.filter((row) => !row.background || inherited.has(row.pid));
-		for (const row of fresh) (taken.includes(row) ? held : kept).set(row.pid, [row.pid, row.started, row.group]);
+		const found = claim(table, self, options.within, holding());
+		if (found.taken.length + found.kept.length + found.bystanders.length === 0) return;
+		for (const [marks, rows] of [
+			[held, found.taken],
+			[kept, found.kept],
+			[bystanders, found.bystanders]
+		] as const)
+			for (const row of rows) marks.set(row.pid, [row.pid, row.started, row.group]);
 		record();
+		const { taken } = found;
 		const refused = taken.filter((row) => !setClass(row.pid, true));
 		for (const row of refused) held.delete(row.pid);
 		if (refused.length > 0) record();
