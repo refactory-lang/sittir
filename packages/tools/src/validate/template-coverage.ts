@@ -28,8 +28,7 @@
 
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { NODE_MODEL_FILE, nodeModelPath } from '@sittir/codegen/grammars';
-import { fileURLToPath } from 'node:url';
+import { NODE_MODEL_FILE, grammarPackageDir, nodeModelPath, sittirDirOf } from '@sittir/codegen/grammars';
 import { load } from '../codegen-surface.ts';
 import { sharedDisplayEntries, type DisplayFamilies } from './display-families.ts';
 import type { RawNodeEntry, PolymorphVariantMap } from '../codegen-surface.ts';
@@ -807,8 +806,6 @@ function isNamedReferenceGrammar(node: unknown): boolean {
 // after the cluster D workaround retired on the simplify-hoist landing).
 // ---------------------------------------------------------------------------
 
-const packagesDir = fileURLToPath(new URL('../../../', import.meta.url));
-
 interface GrammarJson {
 	rules: Record<string, unknown>;
 }
@@ -846,7 +843,7 @@ function isAlias(n: unknown): n is AliasNode {
  * as "no transitive-coverage data; fall back to strict checking".
  */
 function loadGrammarJson(grammar: string): GrammarJson | null {
-	const path = join(packagesDir, grammar, '.sittir', 'src', 'grammar.json');
+	const path = join(sittirDirOf({ dir: grammarPackageDir(grammar) }), 'src', 'grammar.json');
 	if (!existsSync(path)) return null;
 	return JSON.parse(readFileSync(path, 'utf8')) as GrammarJson;
 }
@@ -916,7 +913,7 @@ interface UnionSlotRoutedDiagnostic {
  */
 function loadUnionSlotRoutedFields(grammar: string): Map<string, { unionSlot: string; fields: Set<string> }> {
 	const out = new Map<string, { unionSlot: string; fields: Set<string> }>();
-	const path = join(packagesDir, grammar, '.sittir', 'grammar-diagnostics.json');
+	const path = join(sittirDirOf({ dir: grammarPackageDir(grammar) }), 'grammar-diagnostics.json');
 	if (!existsSync(path)) return out;
 	const diagnostics = JSON.parse(readFileSync(path, 'utf8')) as UnionSlotRoutedDiagnostic[];
 	for (const d of diagnostics) {

@@ -293,7 +293,7 @@ async function runCodegenInternal(opts: CodegenOptions, nodeApiLevel: number | u
 	}
 
 	const outDir = outputDir;
-	const sittirDir = join(dirname(outDir), '.sittir');
+	const sittirDir = sittirDirOf({ dir: dirname(outDir) });
 
 	await writeFile(join(outDir, 'render-engine.ts'), result.renderEngine);
 	await writeFile(join(outDir, 'api.ts'), result.api);

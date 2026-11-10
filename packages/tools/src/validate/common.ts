@@ -65,7 +65,7 @@ import {
 	type FactoryEntry,
 	type Hydrate
 } from '../grammar-internals.ts';
-import { NODE_MODEL_FILE, PORTABLE_BUILD_FILE, UPSTREAM_WASM, grammarPackageDir, grammarRequire, isGrammar, nodeModelPath, upstreamPackage } from '@sittir/codegen/grammars';
+import { NODE_MODEL_FILE, PORTABLE_BUILD_FILE, UPSTREAM_WASM, grammarPackageDir, grammarRequire, isGrammar, nodeModelPath, sittirDirOf, upstreamPackage } from '@sittir/codegen/grammars';
 import { CORPUS_ROOT, localCorpusPath, upstreamCorpusDir } from '../corpus/layout.ts';
 import type {
 	CodegenSurface,
@@ -434,7 +434,7 @@ export function wrapForReparse(
 
 export function upstreamWasmPath(grammar: string): string | undefined {
 	if (!isGrammar(grammar)) return undefined;
-	const built = join(grammarPackageDir(grammar), '.sittir', UPSTREAM_WASM);
+	const built = join(sittirDirOf({ dir: grammarPackageDir(grammar) }), UPSTREAM_WASM);
 	if (existsSync(built)) return built;
 	const upstream = upstreamPackage(grammar);
 	try {
@@ -1129,7 +1129,7 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 	if (isGrammar(grammar)) assertGeneratedManifestsClean([grammar]);
 	const { Parser, Language } = await loadWebTreeSitter();
 
-	const overrideWasm = join(grammarPackageDir(grammar), '.sittir', 'parser.wasm');
+	const overrideWasm = join(sittirDirOf({ dir: grammarPackageDir(grammar) }), 'parser.wasm');
 	if (existsSync(overrideWasm)) {
 		const lang = await Language.load(overrideWasm);
 		return { Parser, Language, lang, isOverride: true };
