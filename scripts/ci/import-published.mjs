@@ -1,8 +1,9 @@
-// Imports every entry point of every published workspace package with the
-// Node that runs this script. An import catches the syntax that Node lacks
-// and the globals a module reads while it loads, here rather than in a
-// consumer's install; a global used only inside a function (`DisposableStack`,
-// say) fails only when that function is called.
+// Imports every entry point of every published workspace package, as its
+// published manifest names them (`publishConfig` overrides the fields it
+// holds), with the Node that runs this script. An import catches the syntax
+// that Node lacks and the globals a module reads while it loads, here rather
+// than in a consumer's install; a global used only inside a function
+// (`DisposableStack`, say) fails only when that function is called.
 import { readdirSync, readFileSync } from 'node:fs';
 
 const packages = new URL('../../packages/', import.meta.url);
@@ -17,8 +18,9 @@ for (const dir of readdirSync(packages, { withFileTypes: true })) {
 		continue;
 	}
 	if (manifest.private) continue;
+	const published = { ...manifest, ...manifest.publishConfig };
 	const entries = new Set();
-	for (const target of Object.values(manifest.exports ?? { '.': manifest.main })) {
+	for (const target of Object.values(published.exports ?? { '.': published.main })) {
 		const file = typeof target === 'string' ? target : (target.import ?? target.default);
 		if (typeof file === 'string' && !file.includes('*') && !file.endsWith('.json')) entries.add(file);
 	}

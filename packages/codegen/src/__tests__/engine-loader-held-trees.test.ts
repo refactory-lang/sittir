@@ -23,4 +23,47 @@ describe('heldTrees', () => {
 		expect(first[Symbol.dispose]).toHaveBeenCalledTimes(1);
 		expect(second[Symbol.dispose]).toHaveBeenCalledTimes(1);
 	});
+
+	it('deletes every held tree when one delete throws, and throws what failed', async () => {
+		using parser = treeParser(await languageAt(wasm));
+		const failing = (tree: ParsedTree, error: Error): ParsedTree => ({
+			root: tree.root,
+			[Symbol.dispose]: vi.fn(() => {
+				tree[Symbol.dispose]();
+				throw error;
+			})
+		});
+		const one = new Error('first delete failed');
+		const other = new Error('third delete failed');
+		const first = failing(parser.parse('fn a() {}'), one);
+		const tree = parser.parse('fn b() {}');
+		const second: ParsedTree = { root: tree.root, [Symbol.dispose]: vi.fn(() => tree[Symbol.dispose]()) };
+		const third = failing(parser.parse('fn c() {}'), other);
+		const held = heldTrees();
+		for (const each of [first, second, third]) held.hold(each);
+		let thrown: unknown;
+		try {
+			held[Symbol.dispose]();
+		} catch (error) {
+			thrown = error;
+		}
+		for (const each of [first, second, third]) expect(each[Symbol.dispose]).toHaveBeenCalledTimes(1);
+		expect(thrown).toBeInstanceOf(AggregateError);
+		expect((thrown as AggregateError).errors).toEqual([one, other]);
+	});
+
+	it('throws a lone failed delete as it was thrown', async () => {
+		using parser = treeParser(await languageAt(wasm));
+		const tree = parser.parse('fn a() {}');
+		const error = new Error('delete failed');
+		const held = heldTrees();
+		held.hold({
+			root: tree.root,
+			[Symbol.dispose]: () => {
+				tree[Symbol.dispose]();
+				throw error;
+			}
+		});
+		expect(() => held[Symbol.dispose]()).toThrow(error);
+	});
 });

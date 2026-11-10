@@ -50,7 +50,16 @@ export function heldTrees(): HeldTrees {
 			return tree.root;
 		},
 		[Symbol.dispose]: () => {
-			for (const tree of trees.splice(0)) tree[Symbol.dispose]();
+			const failures: unknown[] = [];
+			for (const tree of trees.splice(0)) {
+				try {
+					tree[Symbol.dispose]();
+				} catch (error) {
+					failures.push(error);
+				}
+			}
+			if (failures.length === 1) throw failures[0];
+			if (failures.length > 1) throw new AggregateError(failures, 'web-tree-sitter: deleting held trees failed');
 		}
 	};
 }
