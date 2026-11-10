@@ -1,11 +1,13 @@
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, mkdtempSync, copyFileSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, copyFileSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, relative, resolve, dirname } from 'node:path';
+import { join, resolve, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ensureWasmToolchain, runTreeSitterCli, treeSitterToolchain } from './tree-sitter-cli.ts';
 import { BASE_ENTRY, UPSTREAM_GENERATION_CONFLICTS, UPSTREAM_WASM, sittirDirOf, upstreamPackage, type GrammarName } from '../grammars.ts';
 import { sha256 } from '../util/content-hash.ts';
+import { namedFrom, type PathFlavor } from '../util/files.ts';
+import { parserSourceFiles, quotedIncludesOf } from './parser-sources.ts';
 
 const UPSTREAM_RECORD = 'upstream.json';
 const PARSER_RECORD = 'parser.json';
@@ -65,34 +67,10 @@ export function builtParserWasm(grammarDir: string): ParserWasm {
 	return { wasmPath, fresh: true, bytes, digest };
 }
 
-function parserSourceKey(sittirDir: string): string {
+export function parserSourceKey(sittirDir: string, flavor?: PathFlavor): string {
 	const hash = createHash('sha256');
-	for (const file of compiledFiles(join(sittirDir, 'src'))) hash.update(relative(sittirDir, file)).update('\0').update(readFileSync(file));
+	for (const { name, file } of namedFrom(sittirDir, parserSourceFiles(join(sittirDir, 'src')), flavor)) hash.update(name).update('\0').update(readFileSync(file));
 	return hash.digest('hex');
-}
-
-function compiledFiles(src: string): string[] {
-	const files = new Set(filesUnder(src));
-	for (const file of files) {
-		if (!C_SOURCE.test(file)) continue;
-		for (const included of relativeIncludesOf(readFileSync(file, 'utf8'))) {
-			const path = resolve(dirname(file), included);
-			if (existsSync(path)) files.add(path);
-		}
-	}
-	return [...files].sort();
-}
-
-const C_SOURCE = /\.(?:c|cc|h)$/;
-
-function relativeIncludesOf(source: string): string[] {
-	return [...source.matchAll(/#include\s+"([^"]+)"/g)].map((match) => match[1]!);
-}
-
-function filesUnder(dir: string): string[] {
-	return readdirSync(dir, { withFileTypes: true })
-		.flatMap((entry) => (entry.isDirectory() ? filesUnder(join(dir, entry.name)) : [join(dir, entry.name)]))
-		.sort();
 }
 
 export function withUpstreamGrammar<T>(grammarDir: string, use: (dir: string, scannerFiles: readonly string[]) => T): T {
@@ -119,7 +97,7 @@ function upstreamEntryOf(grammarDir: string): string {
 export function upstreamKeyOf(dir: string, scannerFiles: readonly string[], toolchain: readonly string[] = treeSitterToolchain()): string {
 	runTreeSitterCli(['generate', '--no-parser'], dir, 'pipe');
 	const hash = createHash('sha256').update(toolchain.join('\0')).update(readFileSync(join(dir, 'src', 'grammar.json')));
-	for (const file of [...scannerFiles].sort()) hash.update(relative(dir, file)).update(readFileSync(file));
+	for (const { name, file } of namedFrom(dir, scannerFiles)) hash.update(name).update(readFileSync(file));
 	return hash.digest('hex');
 }
 
@@ -168,7 +146,7 @@ function syncExternalScanner(grammarDir: string, targetDir: string): readonly st
 }
 
 export function copyRelativeScannerIncludes(baseScanner: string, sittirScanner: string, copied: string[] = []): readonly string[] {
-	for (const incPath of relativeIncludesOf(readFileSync(baseScanner, 'utf8'))) {
+	for (const incPath of quotedIncludesOf(readFileSync(baseScanner, 'utf8'))) {
 		if (!incPath.includes('/') || incPath.startsWith('tree_sitter/')) continue;
 		const baseInc = resolve(dirname(baseScanner), incPath);
 		if (!existsSync(baseInc)) continue;

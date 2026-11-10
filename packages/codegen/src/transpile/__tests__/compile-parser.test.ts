@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
-import { join } from 'node:path';
+import { join, posix, win32 } from 'node:path';
 import { tmpdir } from 'node:os';
 import { appendFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { Language, Parser } from 'web-tree-sitter';
-import { buildParserWasm, buildUpstreamWasm, builtParserWasm, ensureParserWasm, readUpstreamRecord, upstreamKeyOf, withUpstreamGrammar, writeUpstreamRecord } from '../compile-parser.ts';
+import { buildParserWasm, buildUpstreamWasm, builtParserWasm, ensureParserWasm, parserSourceKey, readUpstreamRecord, upstreamKeyOf, withUpstreamGrammar, writeUpstreamRecord } from '../compile-parser.ts';
 import { treeSitterToolchain } from '../tree-sitter-cli.ts';
 import { sittirDirOf } from '../../grammars.ts';
 
@@ -119,6 +119,16 @@ describe('ensureParserWasm', () => {
 		expect(ensureParserWasm(dir)).toEqual({ wasmPath: join(sittir, 'parser.wasm'), built: true });
 		expect(builtParserWasm(dir)).toMatchObject({ fresh: true });
 	}, 120_000);
+});
+
+describe('parserSourceKey', () => {
+	it('keys the sources by the same names whatever separator the OS writes', () => {
+		const { dir, sittir } = copyOfPython('separators');
+		mkdirSync(join(dir, 'common'));
+		writeFileSync(join(dir, 'common', 'shared.h'), '#define SHARED 1\n');
+		appendFileSync(join(sittir, 'src', 'scanner.c'), '\n#include "../../common/shared.h"\n');
+		expect(parserSourceKey(sittir, win32)).toBe(parserSourceKey(sittir, posix));
+	});
 });
 
 describe('builtParserWasm', () => {

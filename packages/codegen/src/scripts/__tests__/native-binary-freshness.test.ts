@@ -6,7 +6,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	type BuildSetting,
 	assertNativeBinaryFresh,
-	checkoutPath,
 	hostBinaryFreshnessFor,
 	hostBinaryName,
 	linkerMapOf,
@@ -18,6 +17,7 @@ import {
 	unstrippedReleaseBinary,
 	writeNativeBuildStamp
 } from '../native-binary-freshness.ts';
+import { posixRelative } from '../../util/files.ts';
 
 const TOOLCHAIN = 'rustc 1.90.0 (host: aarch64-apple-darwin)';
 const BINARY = hostBinaryName('rust');
@@ -237,8 +237,8 @@ describe('a binary built elsewhere', () => {
 
 describe('a path a stamp records from the checkout', () => {
 	it('is written with forward slashes on every host', () => {
-		expect(checkoutPath('C:\\repo', 'C:\\repo\\node_modules\\.cache\\sittir\\native-build\\rust\\x.node', win32)).toBe('node_modules/.cache/sittir/native-build/rust/x.node');
-		expect(checkoutPath('/repo', '/repo/node_modules/.cache/sittir/native-build/rust/x.node', posix)).toBe('node_modules/.cache/sittir/native-build/rust/x.node');
+		expect(posixRelative('C:\\repo', 'C:\\repo\\node_modules\\.cache\\sittir\\native-build\\rust\\x.node', win32)).toBe('node_modules/.cache/sittir/native-build/rust/x.node');
+		expect(posixRelative('/repo', '/repo/node_modules/.cache/sittir/native-build/rust/x.node', posix)).toBe('node_modules/.cache/sittir/native-build/rust/x.node');
 	});
 });
 
