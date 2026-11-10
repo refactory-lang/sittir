@@ -226,7 +226,7 @@ export function nativeBuildEnv(target: string, env: NodeJS.ProcessEnv, driverFla
 	return { ...env, RUSTFLAGS: [...NATIVE_RUSTFLAGS[target], ...(inherited ? [inherited] : []), ...driverFlags].join(' ') };
 }
 
-export const NODE_ENGINES = '>=24';
+export const NODE_ENGINES = '>=24.12.0';
 
 export const NODE_API_NODE_RANGES: Readonly<Partial<Record<number, string>>> = {
 	9: '^18.17.0 || ^20.3.0 || >=21.1.0',
