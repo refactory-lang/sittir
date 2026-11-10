@@ -782,6 +782,10 @@ export class BuiltArena {
 		this.#carry(source, kind, record, place + 1, this.#placesOf(kind).length);
 	}
 
+	placeAt(kind: number, at: number): BuiltPlaceRow {
+		return this.#placesOf(kind)[at]!;
+	}
+
 	#placesOf(kind: number): readonly BuiltPlaceRow[] {
 		const places = this.#views.places[kind];
 		if (places === undefined) throw new Error(`no builder writes records of kind ${kind} slot by slot, so the arena has no places for one`);
