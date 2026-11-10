@@ -156,22 +156,14 @@ function classWithLexerClasses(text: string): string {
 	return out;
 }
 
-function lexerSpelling(source: string, dot: string): string {
+export function asLexed(source: string): string {
 	let out = '';
 	for (const piece of pieces(source)) {
 		const lexer = piece.kind === 'escape' ? lexerClass(piece.text) : undefined;
 		if (piece.kind === 'class') out += classWithLexerClasses(piece.text);
 		else if (lexer !== undefined) out += `[${lexer.negated ? '^' : ''}${spelled(lexer.ranges)}]`;
-		else if (piece.kind === 'char' && piece.text === '.') out += dot;
+		else if (piece.kind === 'char' && piece.text === '.') out += `[^${spelled(LINE_FEED)}]`;
 		else out += piece.text;
 	}
 	return out;
-}
-
-export function withLexerClasses(source: string): string {
-	return lexerSpelling(source, '.');
-}
-
-export function asLexed(source: string): string {
-	return lexerSpelling(source, `[^${spelled(LINE_FEED)}]`);
 }

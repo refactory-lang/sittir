@@ -66,6 +66,7 @@ import { stampSpellings, structureTokenInterior } from './token-interior.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { dfaAccepts, patternDfa } from './model/pattern-automaton.ts';
+import { admittedLineEndings } from './model/line-endings.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
 import { polymorphVisibleName } from '../dsl/arm-names.ts';
 import { mappedName } from '../dsl/bind.ts';
@@ -304,6 +305,7 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 		externals: raw.externals,
 		extras: raw.extras,
 		nodelessExtrasRun: nodelessExtrasRun(raw.extras, raw.rules),
+		lineEndings: admittedLineEndings(raw, generatedIdTables.parser),
 		word: raw.word,
 		wordMatcher: wordMatcherRegex,
 		reserved: raw.reserved,

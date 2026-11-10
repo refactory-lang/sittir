@@ -7393,7 +7393,7 @@ impl ::sittir_core::options::OptionSites for Sites {
         indent: INDENT_KIND,
         dedent: DEDENT_KIND,
         indent_chars: " \t",
-        newline_arms: &["\n", "\r\n", "\r"],
+        newline_arms: &["\n", "\r\n"],
     };
 }
 

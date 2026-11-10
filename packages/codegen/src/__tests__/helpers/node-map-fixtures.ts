@@ -26,6 +26,9 @@ import { ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import type { GeneratedIdEntry, GeneratedIdTables, GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { flatten } from '../../compiler/flatten.ts';
 import { queryRoutesOf } from '../../emitters/client-utils.ts';
+import { admittedLineEndings } from '../../compiler/model/line-endings.ts';
+
+export const FIXTURE_LINE_ENDINGS = admittedLineEndings({ name: 'fixture', rules: {} }, null);
 
 export function makeNodeMapWith(nodes: Map<string, AssembledNode>): NodeMap {
 	const nodeMap: NodeMap = {
@@ -37,7 +40,8 @@ export function makeNodeMapWith(nodes: Map<string, AssembledNode>): NodeMap {
 		slotByRuleId: new Map(),
 		signatures: { signatures: new Map() },
 		externals: [],
-		word: undefined
+		word: undefined,
+		lineEndings: FIXTURE_LINE_ENDINGS
 	};
 	return nodeMap;
 }
@@ -122,7 +126,7 @@ export function kindIdTablesOf(
 		])
 	);
 	kindIds.set(ERROR_KIND_NAME, ERROR_KIND_ROW);
-	return { kindIds, fieldIds: new Map(), folds: new Map(), sourceArtifact: 'fixture' };
+	return { kindIds, fieldIds: new Map(), folds: new Map(), sourceArtifact: 'fixture', parser: null };
 }
 
 export function withGeneratedIdTables(
@@ -171,7 +175,7 @@ function generatedIdTablesOf(nodeMap: NodeMap, tokens: Readonly<Record<string, s
 			for (const name of queryRoutesOf(slot, nodeMap).fields) if (!fields.has(name)) fields.set(name, { id: fields.size + 1 });
 		}
 	}
-	return { kindIds: rows, fieldIds: fields, folds: new Map(), sourceArtifact: 'fixture' };
+	return { kindIds: rows, fieldIds: fields, folds: new Map(), sourceArtifact: 'fixture', parser: null };
 }
 
 function nodeParserRow(node: AssembledNode): KindParserMetadata {

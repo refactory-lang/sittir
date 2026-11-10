@@ -5,7 +5,7 @@ import { allGrammars, grammarPackage, sittirDirOf } from '../../../grammars.ts';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { anchoredLeafRegex } from '../leaf-pattern.ts';
-import { admitsInside, dfaAccepts, endsWithLineBreak, includesNonEmpty, leadingChars, opensLineEnd, patternDfa, requiresNonSpace, shortestAccepted, type PatternDfa } from '../pattern-automaton.ts';
+import { admitsInside, armsThrough, CharSet, dfaAccepts, endsWithLineBreak, includesNonEmpty, leadingChars, lineBreaksOf, opensLineEnd, patternDfa, requiresNonSpace, shortestAccepted, type PatternDfa } from '../pattern-automaton.ts';
 import { lineTerminated, lineTerminatedKinds, triviaKinds } from '../trivia.ts';
 
 type NodeMap = Awaited<ReturnType<typeof compileGrammar>>['nodeMap'];
@@ -87,17 +87,37 @@ describe('pattern automaton', () => {
 		}, 120_000);
 	}
 
-	it('opens a line end only for a run that absorbs every character but a line terminator and never crosses a line', () => {
-		expect(opensLineEnd('.*')).toBe(true);
-		expect(opensLineEnd('[^\\r\\n\\u2028\\u2029]*')).toBe(true);
-		expect(opensLineEnd('#!(?<content>.*)')).toBe(true);
-		expect(opensLineEnd('.*\\n?')).toBe(true);
-		expect(opensLineEnd('[^"\\\\\\r\\n]+')).toBe(false);
-		expect(opensLineEnd('a.*b')).toBe(false);
-		expect(opensLineEnd('[\\s\\S]*')).toBe(false);
-		expect(opensLineEnd('[^]*')).toBe(false);
+	const SEPARATORS = CharSet.chars('\u2028\u2029');
+	const every = lineBreaksOf(['\n', '\r\n', '\r'], SEPARATORS);
+	const kept = lineBreaksOf(['\n', '\r\n'], SEPARATORS);
+
+	it('opens a line end for a run that absorbs the rest of a line and ends at every arm', () => {
+		expect(opensLineEnd('.*', kept)).toBe(true);
+		expect(opensLineEnd('[^\\r\\n\\u2028\\u2029]*', every)).toBe(true);
+		expect(opensLineEnd('#!(?<content>.*)', kept)).toBe(true);
+		expect(opensLineEnd('.*\\n?', kept)).toBe(true);
+		expect(opensLineEnd('[^"\\\\\\r\\n]+', kept)).toBe(false);
+		expect(opensLineEnd('a.*b', kept)).toBe(false);
+		expect(opensLineEnd('[\\s\\S]*', kept)).toBe(false);
+		expect(opensLineEnd('[^]*', kept)).toBe(false);
 		expect(dfaAccepts(patternDfa('[^]')!, '\n')).toBe(true);
 		expect(dfaAccepts(patternDfa('a[]')!, 'a]')).toBe(false);
+	});
+
+	it('reads the rest of a line as every character a render can write on it', () => {
+		const ascii = lineBreaksOf(['\n', '\r\n'], CharSet.chars('\v\f'));
+		expect(opensLineEnd('[^\\s]+', ascii)).toBe(false);
+		expect(opensLineEnd('[^\\n\\r\\v\\f]*', ascii)).toBe(true);
+		expect(opensLineEnd('[^\\n\\r\\t]*', ascii)).toBe(false);
+	});
+
+	it("passes an arm through a run whose characters take it, as tree-sitter's dot takes a carriage return", () => {
+		expect(armsThrough(patternDfa('.*')!, every)).toEqual(['\r']);
+		expect(armsThrough(patternDfa('#!(?<content>.*)')!, every)).toEqual(['\r']);
+		expect(armsThrough(patternDfa('.*\\n?')!, every)).toEqual(['\r']);
+		expect(armsThrough(patternDfa('[^\\r\\n\\u2028\\u2029]*')!, every)).toEqual([]);
+		expect(armsThrough(patternDfa('[\\s\\S]*')!, every)).toEqual(['\n', '\r\n', '\r']);
+		expect(opensLineEnd('.*', every)).toBe(false);
 	});
 
 	it("reads a pattern's digit, space and word classes as tree-sitter lexes them", () => {
@@ -110,7 +130,7 @@ describe('pattern automaton', () => {
 	it('refuses syntax outside the tree-sitter dialect', () => {
 		expect(patternDfa('a(?=b)')).toBeUndefined();
 		expect(patternDfa('(a)\\1')).toBeUndefined();
-		expect(opensLineEnd('\\bword')).toBeUndefined();
+		expect(opensLineEnd('\\bword', kept)).toBeUndefined();
 	});
 
 	it('marks the kinds whose token absorbs the rest of the line, and no string fragment', async () => {
@@ -151,12 +171,14 @@ describe('endsWithLineBreak and requiresNonSpace', () => {
 	const dfa = (pattern: string) => patternDfa(pattern)!;
 
 	it('finds a pattern whose every text ends at a line break', () => {
-		expect(endsWithLineBreak(dfa('\\\\(?:\\r)?\\n'))).toBe(true);
-		expect(endsWithLineBreak(dfa('#.*'))).toBe(false);
-		expect(endsWithLineBreak(dfa('\\n'))).toBe(true);
-		expect(endsWithLineBreak(dfa('a\\nb'))).toBe(false);
-		expect(endsWithLineBreak(dfa('(?:x\\n)+'))).toBe(true);
-		expect(endsWithLineBreak(dfa('(?:x\\n)+x?'))).toBe(false);
+		const breaks = CharSet.chars('\r\n');
+		expect(endsWithLineBreak(dfa('\\\\(?:\\r)?\\n'), breaks)).toBe(true);
+		expect(endsWithLineBreak(dfa('#.*'), breaks)).toBe(false);
+		expect(endsWithLineBreak(dfa('\\n'), breaks)).toBe(true);
+		expect(endsWithLineBreak(dfa('a\\nb'), breaks)).toBe(false);
+		expect(endsWithLineBreak(dfa('(?:x\\n)+'), breaks)).toBe(true);
+		expect(endsWithLineBreak(dfa('(?:x\\n)+x?'), breaks)).toBe(false);
+		expect(endsWithLineBreak(dfa('[\\r?][\\n\\u2028\\u2029]'), breaks)).toBe(false);
 	});
 
 	it('tells a pattern that needs a visible character from one that can be all space', () => {

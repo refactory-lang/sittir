@@ -105,7 +105,7 @@ export const _slotRe_buildRawStringLiteralEnd_hashes = _slotRe_buildRawStringLit
 export const _delimited_buildBlockComment: DelimitedSpec = {
 	kind: 'block_comment',
 	id: TSKindId.BlockComment as const,
-	excluded: /[\u{a}\u{d}\u{21}\u{2a}\u{2028}-\u{2029}]/u,
+	excluded: /[\u{a}\u{d}\u{21}\u{2a}]/u,
 	open: '/*',
 	close: '*/',
 	host: '$r',

@@ -1,7 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import { ERROR_KIND_ROW } from '../../dsl/symbol-table.ts';
-import { deriveGeneratedIdTablesFromParserCSource } from '../generated-metadata.ts';
+import { cpSync, mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { grammarPackage, sittirDirOf } from '../../grammars.ts';
+import { deriveGeneratedIdTablesFromParserCSource, loadPackageIdTables } from '../generated-metadata.ts';
 import { collectGeneratedKindEntries, findEntryForLiteralText, reservedWordset } from '../../dsl/symbol-table.ts';
 
 describe('generated metadata', () => {
@@ -620,5 +624,23 @@ static const char * const ts_field_names[] = {
 			nonLiteral: ['PATTERN']
 		});
 		expect(reservedWordset(reserved, 'properties', entries)).toEqual({ words: [], nonLiteral: [] });
+	});
+});
+
+describe('loadPackageIdTables', () => {
+	it('refuses a parser it cannot tell was built from the grammar, naming the command that builds it', async () => {
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-stale-parser-'));
+		try {
+			cpSync(sittirDirOf(grammarPackage('scm')), join(dir, '.sittir'), { recursive: true });
+			rmSync(join(dir, '.sittir', 'parser.json'), { force: true });
+			await expect(loadPackageIdTables(grammarPackage('scm', dir))).rejects.toThrow(/stale-parser[\s\S]*parser\.json[\s\S]*--compile-parser/);
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	});
+
+	it("loads the grammar's own parser beside its tables", async () => {
+		const { parser } = await loadPackageIdTables(grammarPackage('scm'));
+		expect(parser!('(a)')).toBe('(program definitions: (named_node_plain name: (identifier)))');
 	});
 });

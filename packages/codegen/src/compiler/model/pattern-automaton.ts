@@ -1,4 +1,4 @@
-import { withLexerClasses } from '../../util/pattern-pieces.ts';
+import { asLexed } from '../../util/pattern-pieces.ts';
 
 export type CodeRange = readonly [number, number];
 
@@ -69,10 +69,8 @@ export class CharSet {
 	}
 }
 
-export const LINE_TERMINATORS = CharSet.chars('\n\r  ');
 
 const SPACE = CharSet.chars('\t\n\v\f\r       　﻿').union(CharSet.of([[0x2000, 0x200a]]));
-const DOT = LINE_TERMINATORS.complement();
 
 const propertySets = new Map<string, CharSet>();
 
@@ -191,8 +189,6 @@ class PatternParser {
 			}
 			case '[':
 				return { type: 'set', set: this.charClass() };
-			case '.':
-				return { type: 'set', set: DOT };
 			case '\\':
 				return { type: 'set', set: this.escape(false) };
 			case '^':
@@ -371,7 +367,7 @@ export function patternDfa(pattern: string): PatternDfa | undefined {
 	if (dfaByPattern.has(pattern)) return dfaByPattern.get(pattern);
 	let dfa: PatternDfa | undefined;
 	try {
-		dfa = determinize(new PatternParser(withLexerClasses(pattern)).parse());
+		dfa = determinize(new PatternParser(asLexed(pattern)).parse());
 	} catch (error) {
 		if (!(error instanceof UnsupportedPattern)) throw error;
 		dfa = undefined;
@@ -500,28 +496,15 @@ function coaccessible(dfa: PatternDfa): Set<number> {
 	return live;
 }
 
-export function crossesLine(dfa: PatternDfa): boolean {
-	const live = coaccessible(dfa);
-	const reached = reachableFrom(dfa, [0], () => true);
-	const afterBreak = reachableFrom(
-		dfa,
-		[...reached].flatMap((at) => dfa.states[at]!.edges.filter((edge) => edge.set.meets(LINE_TERMINATORS)).map((edge) => edge.to)),
-		() => true
-	);
-	return [...afterBreak].some((at) =>
-		dfa.states[at]!.edges.some((edge) => live.has(edge.to) && !edge.set.minus(LINE_TERMINATORS).isEmpty())
-	);
-}
-
 export function requiresNonSpace(dfa: PatternDfa): boolean {
 	const spaceOnly = reachableFrom(dfa, [0], (set) => set.meets(SPACE));
 	return ![...spaceOnly].some((at) => dfa.states[at]!.accepting);
 }
 
-export function endsWithLineBreak(dfa: PatternDfa): boolean {
+export function endsWithLineBreak(dfa: PatternDfa, breaks: CharSet): boolean {
 	if (dfa.states[0]!.accepting) return false;
 	const into = dfa.states.flatMap((state) => state.edges.filter((edge) => dfa.states[edge.to]!.accepting));
-	return into.length > 0 && into.every((edge) => LINE_TERMINATORS.covers(edge.set));
+	return into.length > 0 && into.every((edge) => breaks.covers(edge.set));
 }
 
 export function admitsInside(dfa: PatternDfa, literal: string): boolean {
@@ -535,6 +518,10 @@ export function admitsInside(dfa: PatternDfa, literal: string): boolean {
 		}
 		return dfa.states[at]!.edges.some((edge) => live.has(edge.to));
 	});
+}
+
+export function edgeChars(dfa: PatternDfa): CharSet {
+	return CharSet.of(dfa.states.flatMap((state) => state.edges.flatMap((edge) => edge.set.ranges)));
 }
 
 export function leadingChars(dfa: PatternDfa): CharSet {
@@ -565,17 +552,47 @@ export function shortestAccepted(dfa: PatternDfa): string | undefined {
 	return undefined;
 }
 
-export function absorbsRestOfLine(dfa: PatternDfa): boolean {
+export interface LineBreaks {
+	readonly arms: readonly string[];
+	readonly chars: CharSet;
+	readonly rest: CharSet;
+}
+
+export function lineBreaksOf(arms: readonly string[], unwritten: CharSet): LineBreaks {
+	const chars = CharSet.chars(arms.join(''));
+	return { arms, chars, rest: chars.union(unwritten).complement() };
+}
+
+export function absorbsRestOfLine(dfa: PatternDfa, rest: CharSet): boolean {
 	const reached = reachableFrom(dfa, [0], () => true);
-	const rest = LINE_TERMINATORS.complement();
 	return [...reached].some((at) => {
 		const state = dfa.states[at]!;
 		return state.accepting && state.edges.some((edge) => edge.to === at && edge.set.covers(rest));
 	});
 }
 
-export function opensLineEnd(pattern: string): boolean | undefined {
+export function armsThrough(dfa: PatternDfa, breaks: LineBreaks): string[] {
+	const live = coaccessible(dfa);
+	const reached = [...reachableFrom(dfa, [0], () => true)];
+	const continues = (from: number): boolean =>
+		[...reachableFrom(dfa, [from], () => true)].some((at) =>
+			dfa.states[at]!.edges.some((edge) => live.has(edge.to) && !edge.set.minus(breaks.chars).isEmpty())
+		);
+	return breaks.arms.filter((arm) =>
+		reached.some((start) => {
+			let at = start;
+			for (const char of arm) {
+				const edge = dfa.states[at]!.edges.find(({ set }) => set.has(char.codePointAt(0)!));
+				if (edge === undefined || !live.has(edge.to)) return false;
+				at = edge.to;
+			}
+			return continues(at);
+		})
+	);
+}
+
+export function opensLineEnd(pattern: string, breaks: LineBreaks): boolean | undefined {
 	const dfa = patternDfa(pattern);
 	if (dfa === undefined) return undefined;
-	return absorbsRestOfLine(dfa) && !crossesLine(dfa);
+	return absorbsRestOfLine(dfa, breaks.rest) && armsThrough(dfa, breaks).length === 0;
 }

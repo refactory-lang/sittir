@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { appendFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { Language, Parser } from 'web-tree-sitter';
-import { buildUpstreamWasm, ensureParserWasm, readUpstreamRecord, upstreamKeyOf, withUpstreamGrammar, writeUpstreamRecord } from '../compile-parser.ts';
+import { buildUpstreamWasm, builtParserWasm, ensureParserWasm, readUpstreamRecord, upstreamKeyOf, withUpstreamGrammar, writeUpstreamRecord } from '../compile-parser.ts';
 import { treeSitterToolchain } from '../tree-sitter-cli.ts';
 
 const realPythonDir = join(__dirname, '../../../../', 'python');
@@ -103,5 +103,25 @@ describe('ensureParserWasm', () => {
 		const before = statSync(wasmPath).mtimeMs;
 		expect(ensureParserWasm(pythonDir)).toEqual({ wasmPath, built: false });
 		expect(statSync(wasmPath).mtimeMs).toBe(before);
+	});
+});
+
+describe('builtParserWasm', () => {
+	it('reads the parser a build wrote from the sources .sittir/src holds as fresh, and stale once a source changes', () => {
+		const dir = join(tmpRoot, 'fresh');
+		cpSync(join(pythonDir, '.sittir'), join(dir, '.sittir'), { recursive: true });
+		const wasmPath = join(dir, '.sittir', 'parser.wasm');
+		expect(builtParserWasm(dir)).toEqual({ wasmPath, fresh: true });
+		appendFileSync(join(dir, '.sittir', 'src', 'parser.c'), '\n');
+		expect(builtParserWasm(dir)).toEqual({ wasmPath, fresh: false, reason: 'it was built from other sources than .sittir/src holds now' });
+	});
+
+	it('reads a missing parser, and one no record names the sources of, as stale', () => {
+		const dir = join(tmpRoot, 'unrecorded');
+		cpSync(join(pythonDir, '.sittir'), join(dir, '.sittir'), { recursive: true });
+		rmSync(join(dir, '.sittir', 'parser.json'));
+		expect(builtParserWasm(dir)).toMatchObject({ fresh: false, reason: 'no parser.json records what it was built from' });
+		rmSync(join(dir, '.sittir', 'parser.wasm'));
+		expect(builtParserWasm(dir)).toMatchObject({ fresh: false, reason: 'it does not exist' });
 	});
 });

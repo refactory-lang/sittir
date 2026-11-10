@@ -34,6 +34,8 @@ Thumbs.db
 #   - parser.wasm and src/ (the generated parser: parser.c, scanner.c, the
 #     tree_sitter headers, grammar.json, node-types.json), which the native
 #     crate's build.rs compiles — CI builds from these, it never regenerates
+#   - parser.json (the key of the src/ parser.wasm was built from; codegen
+#     refuses a parser.wasm whose key differs from its src/)
 #   - upstream.wasm and upstream.json (the upstream judge: the unmodified grammar
 #     sittir builds on, built by the same CLI, and the key it was built at)
 # To track a new .sittir artifact, add a `!` negation below (must ignore the
@@ -46,6 +48,7 @@ packages/*/.sittir/*
 !packages/*/.sittir/render-bodies.json
 !packages/*/.sittir/resolutions.json
 !packages/*/.sittir/parser.wasm
+!packages/*/.sittir/parser.json
 !packages/*/.sittir/upstream.wasm
 !packages/*/.sittir/upstream.json
 !packages/*/.sittir/src/

@@ -1,4 +1,5 @@
 import { kindIdTablesOf } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { admittedLineEndings } from '../model/line-endings.ts';
 import {
 	CHOICE,
 	FIELD,
@@ -41,6 +42,7 @@ function makeLinked(rules: Record<string, Rule<'link'>>, overrides?: Partial<Lin
 		references: [],
 		splicedNames: new Set(),
 		generatedIdTables: kindIdTablesOf([]),
+		lineEndings: admittedLineEndings({ name: 'test', rules }, null),
 		...overrides
 	};
 }

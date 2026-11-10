@@ -12,12 +12,13 @@ import {
 	storageKindOfRef
 } from './node-map.ts';
 import { leadingRegex } from './leaf-pattern.ts';
-import { endsWithLineBreak, patternDfa, requiresNonSpace } from './pattern-automaton.ts';
+import { endsWithLineBreak, opensLineEnd, patternDfa, requiresNonSpace } from './pattern-automaton.ts';
+import { lineEndingsOf } from './line-endings.ts';
 import { declaresWhitespace, depthMembersOf, layoutSymbolsOf } from './layout-kinds.ts';
 import { escapeRegexLiteral } from '../../util/word-matcher.ts';
 import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { extrasClosure } from '../../dsl/extras.ts';
-import { isDepthText } from '../../dsl/primitives/spacing.ts';
+import { DEDENT_TEXT, isDepthText } from '../../dsl/primitives/spacing.ts';
 import { admitsWhitespaceMember } from '../../dsl/whitespace.ts';
 import { ruleListParts } from '../../dsl/rule-patterns.ts';
 import { RuleWalker } from '../../dsl/rule-walker.ts';
@@ -182,7 +183,7 @@ function continuesLine(nodeMap: NodeMap, kind: string): boolean {
 	const node = nodeMap.nodes.get(kind);
 	if (!(node instanceof AssembledPattern) || node.textPattern === undefined) return false;
 	const dfa = patternDfa(node.textPattern);
-	return dfa !== undefined && requiresNonSpace(dfa) && endsWithLineBreak(dfa);
+	return dfa !== undefined && requiresNonSpace(dfa) && endsWithLineBreak(dfa, lineEndingsOf(nodeMap).breaks.chars);
 }
 
 export function layoutTriviaKinds(nodeMap: NodeMap): string[] {
@@ -230,11 +231,26 @@ export function lineTerminated(nodeMap: NodeMap, kind: string): boolean | undefi
 
 type ResolvedLineEnd = 'open' | 'closed' | 'empty' | 'unknown';
 
+export type LineEnd = 'open' | 'closed' | 'dedent' | 'empty' | { readonly symbol: string };
+
+export function lineEndsOf(nodeMap: NodeMap, node: AssembledNode): readonly LineEnd[] {
+	const { breaks } = lineEndingsOf(nodeMap);
+	return node.endTerminals.map((terminal) => {
+		if (terminal === 'empty' || 'symbol' in terminal) return terminal;
+		if ('literal' in terminal) return terminal.literal === DEDENT_TEXT ? 'dedent' : 'closed';
+		const opens = opensLineEnd(terminal.pattern, breaks);
+		if (opens === undefined) {
+			throw new Error(`model: kind '${node.kind}' pattern ${JSON.stringify(terminal.pattern)} uses regex syntax the pattern automaton does not read.`);
+		}
+		return opens ? 'open' : 'closed';
+	});
+}
+
 function resolvedLineEnds(nodeMap: NodeMap, kind: string, seen: ReadonlySet<string>): ResolvedLineEnd[] {
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined || seen.has(kind)) return ['unknown'];
 	const within = new Set([...seen, kind]);
-	return node.lineEnds.flatMap((end) => (end === 'dedent' ? ['closed'] : typeof end === 'string' ? [end] : resolvedLineEnds(nodeMap, end.symbol, within)));
+	return lineEndsOf(nodeMap, node).flatMap((end) => (end === 'dedent' ? ['closed'] : typeof end === 'string' ? [end] : resolvedLineEnds(nodeMap, end.symbol, within)));
 }
 
 function verdict(ends: readonly ResolvedLineEnd[]): boolean | undefined {
@@ -330,7 +346,7 @@ function endsInLineBreak(nodeMap: NodeMap, kind: string, seen: ReadonlySet<strin
 	if (node === undefined || seen.has(kind)) return false;
 	if (node.externalRole === 'newline' || node.externalRole === 'dedent') return true;
 	const within = new Set([...seen, kind]);
-	const ends = node.lineEnds;
+	const ends = lineEndsOf(nodeMap, node);
 	return ends.length > 0 && ends.every((end) => end === 'dedent' || (typeof end !== 'string' && endsInLineBreak(nodeMap, end.symbol, within)));
 }
 
@@ -348,7 +364,8 @@ function outermostEnds(nodeMap: NodeMap, holds: (kind: string) => boolean): Read
 	const holding = [...nodeMap.nodes.keys()].filter(holds);
 	const ending = new Set<string>();
 	const visit = (kind: string): void => {
-		for (const end of nodeMap.nodes.get(kind)?.lineEnds ?? []) {
+		const node = nodeMap.nodes.get(kind);
+		for (const end of node === undefined ? [] : lineEndsOf(nodeMap, node)) {
 			if (typeof end === 'string' || ending.has(end.symbol)) continue;
 			ending.add(end.symbol);
 			visit(end.symbol);

@@ -148,7 +148,7 @@ export const _slotRe_buildNumberBigintDecimal_content = _leafRe_buildNumberDecim
 export const _delimited_buildCommentBlock: DelimitedSpec = {
 	kind: 'comment_block',
 	id: TSKindId.CommentBlock as const,
-	excluded: /[\u{a}\u{d}\u{2a}\u{2028}-\u{2029}]/u,
+	excluded: /[\u{a}\u{d}\u{2a}]/u,
 	open: '/*',
 	close: '*/',
 	host: '$r',

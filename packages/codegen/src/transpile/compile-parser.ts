@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, mkdtempSync, copyFileSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, copyFileSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative, resolve, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -7,6 +7,8 @@ import { ensureWasmToolchain, runTreeSitterCli, treeSitterToolchain } from './tr
 import { BASE_ENTRY, UPSTREAM_GENERATION_CONFLICTS, UPSTREAM_WASM, upstreamPackage, type GrammarName } from '../grammars.ts';
 
 const UPSTREAM_RECORD = 'upstream.json';
+const PARSER_RECORD = 'parser.json';
+const PARSER_WASM = 'parser.wasm';
 
 export interface UpstreamRecord {
 	readonly key: string;
@@ -25,14 +27,41 @@ export function writeUpstreamRecord(sittirDir: string, record: UpstreamRecord): 
 export function buildParserWasm(grammarDir: string): string {
 	const sittirDir = join(grammarDir, '.sittir');
 	syncExternalScanner(grammarDir, sittirDir);
-	runTreeSitterCli(['build', '--wasm', '-o', 'parser.wasm'], sittirDir, 'pipe');
-	return join(sittirDir, 'parser.wasm');
+	runTreeSitterCli(['build', '--wasm', '-o', PARSER_WASM], sittirDir, 'pipe');
+	writeFileSync(join(sittirDir, PARSER_RECORD), `${JSON.stringify({ source: parserSourceKey(sittirDir) }, null, '\t')}\n`);
+	return join(sittirDir, PARSER_WASM);
 }
 
 export function ensureParserWasm(grammarDir: string): { readonly wasmPath: string; readonly built: boolean } {
-	const wasmPath = join(grammarDir, '.sittir', 'parser.wasm');
+	const wasmPath = join(grammarDir, '.sittir', PARSER_WASM);
 	if (existsSync(wasmPath)) return { wasmPath, built: false };
 	return { wasmPath: buildParserWasm(grammarDir), built: true };
+}
+
+export type ParserWasm = { readonly wasmPath: string } & ({ readonly fresh: true } | { readonly fresh: false; readonly reason: string });
+
+export function builtParserWasm(grammarDir: string): ParserWasm {
+	const sittirDir = join(grammarDir, '.sittir');
+	const wasmPath = join(sittirDir, PARSER_WASM);
+	const recordPath = join(sittirDir, PARSER_RECORD);
+	if (!existsSync(wasmPath)) return { wasmPath, fresh: false, reason: 'it does not exist' };
+	if (!existsSync(recordPath)) return { wasmPath, fresh: false, reason: `no ${PARSER_RECORD} records what it was built from` };
+	const recorded = (JSON.parse(readFileSync(recordPath, 'utf8')) as { readonly source?: string }).source;
+	if (recorded !== parserSourceKey(sittirDir)) return { wasmPath, fresh: false, reason: 'it was built from other sources than .sittir/src holds now' };
+	return { wasmPath, fresh: true };
+}
+
+function parserSourceKey(sittirDir: string): string {
+	const src = join(sittirDir, 'src');
+	const hash = createHash('sha256');
+	for (const file of filesUnder(src)) hash.update(relative(src, file)).update('\0').update(readFileSync(file));
+	return hash.digest('hex');
+}
+
+function filesUnder(dir: string): string[] {
+	return readdirSync(dir, { withFileTypes: true })
+		.flatMap((entry) => (entry.isDirectory() ? filesUnder(join(dir, entry.name)) : [join(dir, entry.name)]))
+		.sort();
 }
 
 export function withUpstreamGrammar<T>(grammarDir: string, use: (dir: string, scannerFiles: readonly string[]) => T): T {

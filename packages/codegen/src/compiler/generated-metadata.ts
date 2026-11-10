@@ -4,7 +4,8 @@ import { createRequire } from 'node:module';
 import { loadWebTreeSitter } from '../engine-loader.ts';
 import { grammarPackage, REPO_ROOT, sittirDirOf, type GrammarPackage } from '../grammars.ts';
 import type * as TS from 'web-tree-sitter';
-import { fromMissingParserTables, GrammarDiagnosticError } from './diagnostics/grammar-diagnostics.ts';
+import { fromMissingParserTables, fromStaleParser, GrammarDiagnosticError } from './diagnostics/grammar-diagnostics.ts';
+import { builtParserWasm } from '../transpile/compile-parser.ts';
 import {
 	deriveFieldRuntimeName,
 	joinIdNames,
@@ -14,7 +15,8 @@ import {
 	type ParserSymbolFacts,
 	type GeneratedIdTables,
 	type JoinedIds,
-	type ParserSymbolTable
+	type ParserSymbolTable,
+	type TreeShape
 } from '../dsl/symbol-table.ts';
 
 export async function loadPackageIdTables(pkg: GrammarPackage): Promise<GeneratedIdTables> {
@@ -25,7 +27,20 @@ export async function loadPackageIdTables(pkg: GrammarPackage): Promise<Generate
 	}
 	const grammarJsonPath = join(dirname(parserCPath), 'grammar.json');
 	const grammarJson = existsSync(grammarJsonPath) ? JSON.parse(readFileSync(grammarJsonPath, 'utf8')) : undefined;
-	return deriveGeneratedIdTablesFromParserCSource(readFileSync(parserCPath, 'utf8'), relative(REPO_ROOT, parserCPath), grammarJson);
+	const tables = await deriveGeneratedIdTablesFromParserCSource(readFileSync(parserCPath, 'utf8'), relative(REPO_ROOT, parserCPath), grammarJson);
+	return { ...tables, parser: await loadTreeShape(pkg) };
+}
+
+async function loadTreeShape(pkg: GrammarPackage): Promise<TreeShape> {
+	const wasm = builtParserWasm(pkg.dir);
+	if (!wasm.fresh) {
+		const stale = fromStaleParser(pkg.name, relative(REPO_ROOT, wasm.wasmPath), wasm.reason);
+		throw new GrammarDiagnosticError([stale], [stale]);
+	}
+	const { Parser, Language } = await loadWebTreeSitter();
+	const parser = new Parser();
+	parser.setLanguage(await Language.load(wasm.wasmPath));
+	return (source) => parser.parse(source)!.rootNode.toString();
 }
 
 export function foldedSymbols(parserC: string): ReadonlyMap<string, string> {
@@ -46,7 +61,7 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 	source: string,
 	sourceArtifact: string,
 	grammarJson?: unknown
-): Promise<GeneratedIdTables> {
+): Promise<Omit<GeneratedIdTables, 'parser'>> {
 	const parser = await loadCParser();
 	const symbolIds = collectEnumIds(parser, source, SYMBOL_ENUM_MARKER);
 	const fieldIds = collectEnumIds(parser, source, 'enum ts_field_identifiers');
