@@ -13,7 +13,7 @@ type TableLoader = () => Promise<object>;
 function fakeLanguage(name = 'fake', loaders: { readonly default?: TableLoader; readonly strict?: TableLoader } = {}) {
 	let loads = 0;
 	const created: (FakeRenderOptions | undefined)[] = [];
-	const natives: { readonly disposed: boolean }[] = [];
+	const natives: { readonly disposed: boolean; dispose: () => void }[] = [];
 	const loose = {
 		leaf: (text: string) => ({ $type: 1, text }),
 		number: { bigint: (v: bigint) => ({ $type: 2, text: String(v) }) }
@@ -173,7 +173,7 @@ describe('createEngine', () => {
 		const before = liveEngineCount();
 		const e = await engineOf(undefined, f);
 		expect(liveEngineCount()).toBe(before + 1);
-		(f.natives[0] as { dispose: () => void }).dispose = () => {
+		f.natives[0]!.dispose = () => {
 			throw new Error('native dispose failed');
 		};
 		expect(() => e.dispose()).toThrow('native dispose failed');
