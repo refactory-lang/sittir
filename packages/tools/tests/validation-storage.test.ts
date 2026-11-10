@@ -88,6 +88,31 @@ it('refuses mismatched or duplicated worker rounds', () => {
 	).toThrow('unpaired');
 });
 
+it.each([
+	{ which: 'the first', at: 0 },
+	{ which: 'a later', at: 3 }
+])('refuses $which sample whose timings miss a phase its profile measured', ({ at }) => {
+	const rows = [sample('object'), sample('arena'), sample('arena', 1), sample('object', 1)];
+	delete (rows[at]!.buckets[0]!.timings as Partial<ValidationBucketSample['timings']>).render;
+	expect(() => summarizeValidationStorage(rows)).toThrow('but its profile measured');
+});
+
+it('refuses a sample that times a phase its profile did not measure', () => {
+	const rows = [sample('object'), sample('arena')];
+	(rows[1]!.buckets[2]!.timings as Record<string, number[]>).extra = [1];
+	expect(() => summarizeValidationStorage(rows)).toThrow('but its profile measured');
+});
+
+it('summarizes a harness that measures no copy phase', () => {
+	const rows = [sample('object'), sample('arena')];
+	for (const row of rows)
+		for (const bucket of row.buckets) {
+			delete (bucket.phases as Partial<typeof bucket.phases>).copy;
+			delete (bucket.timings as Partial<ValidationBucketSample['timings']>).copy;
+		}
+	expect(summarizeValidationStorage(rows)[0]!.timings.map((row) => row.phase)).toEqual(['validator', 'read', 'build', 'render', 'parse']);
+});
+
 it('requires all three canonical buckets even if both storages omit the same one', () => {
 	const object = sample('object'),
 		arena = sample('arena');

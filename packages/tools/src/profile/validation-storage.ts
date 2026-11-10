@@ -62,35 +62,43 @@ export function summarizeValidationStorage(samples: readonly (ValidationStorageR
 			new Set(rounds('object')).size !== byMode('object').length
 		)
 			throw new Error(`unpaired validation rounds for ${grammar}`);
-		return first.buckets.map((bucket, index) => ({
-			grammar,
-			bucket: bucket.bucket,
-			corpus: first.corpus,
-			counts: bucket.counts,
-			work: bucket.work,
-			render: {
-				object: byMode('object')[0]!.buckets[index]!.render,
-				arena: byMode('arena')[0]!.buckets[index]!.render
-			},
-			resultSha256: bucket.resultSha256,
-			timings: Object.keys(bucket.timings).map((phase) => {
-				const values = (storage: NodeStorage) =>
-					byMode(storage).map((row) => median(phaseOf(row.buckets[index]!.timings, phase)));
-				const object = values('object'),
-					arena = values('arena');
-				const objectMs = median(object),
-					arenaMs = median(arena);
-				return {
-					phase,
-					calls: phase === 'validator' ? 1 : phaseOf(bucket.phases, phase).calls,
-					throws: phase === 'validator' ? 0 : phaseOf(bucket.phases, phase).throws,
-					objectMs,
-					arenaMs,
-					arenaOverObject: objectMs ? arenaMs / objectMs : null,
-					objectRange: [Math.min(...object), Math.max(...object)],
-					arenaRange: [Math.min(...arena), Math.max(...arena)]
-				};
-			})
-		}));
+		return first.buckets.map((bucket, index) => {
+			const phases = ['validator', ...Object.keys(bucket.phases)];
+			for (const row of rows) {
+				const timed = Object.keys(row.buckets[index]!.timings);
+				if (JSON.stringify(timed) !== JSON.stringify(phases))
+					throw new Error(`a ${grammar} ${bucket.bucket} sample times ${timed.join(', ')} but its profile measured ${phases.join(', ')}`);
+			}
+			return {
+				grammar,
+				bucket: bucket.bucket,
+				corpus: first.corpus,
+				counts: bucket.counts,
+				work: bucket.work,
+				render: {
+					object: byMode('object')[0]!.buckets[index]!.render,
+					arena: byMode('arena')[0]!.buckets[index]!.render
+				},
+				resultSha256: bucket.resultSha256,
+				timings: phases.map((phase) => {
+					const values = (storage: NodeStorage) =>
+						byMode(storage).map((row) => median(phaseOf(row.buckets[index]!.timings, phase)));
+					const object = values('object'),
+						arena = values('arena');
+					const objectMs = median(object),
+						arenaMs = median(arena);
+					return {
+						phase,
+						calls: phase === 'validator' ? 1 : phaseOf(bucket.phases, phase).calls,
+						throws: phase === 'validator' ? 0 : phaseOf(bucket.phases, phase).throws,
+						objectMs,
+						arenaMs,
+						arenaOverObject: objectMs ? arenaMs / objectMs : null,
+						objectRange: [Math.min(...object), Math.max(...object)],
+						arenaRange: [Math.min(...arena), Math.max(...arena)]
+					};
+				})
+			};
+		});
 	});
 }
