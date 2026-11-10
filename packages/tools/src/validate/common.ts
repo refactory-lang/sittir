@@ -873,7 +873,7 @@ export function walkWrappedTree(
 }
 
 export function materialize(root: unknown, accessorOf: SlotAccessorOf, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyUntypedNode {
-	return materializeValue(root, { accessorOf, onAccessorThrow }) as AnyUntypedNode;
+	return materializeValue(root, accessorOf, onAccessorThrow) as AnyUntypedNode;
 }
 
 export function materializeHoldingTree(
@@ -882,7 +882,7 @@ export function materializeHoldingTree(
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
 	const token = root !== null && typeof root === 'object' ? treeTokenOf(root) : undefined;
-	return materializeValue(root, { accessorOf, onAccessorThrow, token }) as AnyUntypedNode;
+	return materializeValue(root, accessorOf, onAccessorThrow, undefined, token) as AnyUntypedNode;
 }
 
 export function materializeBuildInput(
@@ -911,14 +911,13 @@ export function materializeShallow(
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
 	const ownRow = typeof root === 'object' && root !== null ? coordinateOf(root)?.$treeHandle : undefined;
-	const materializing: Materializing = { accessorOf, onAccessorThrow };
 	const asCoordinate = (value: unknown): unknown => {
 		if (Array.isArray(value)) return value.map(asCoordinate);
 		if (!hasNumericType(value)) return value;
 		const at = coordinateOf(value);
-		return at !== undefined && at.$treeHandle !== ownRow ? holdingTreeOf(value, at) : materializeValue(value, materializing);
+		return at !== undefined && at.$treeHandle !== ownRow ? holdingTreeOf(value, at) : materializeValue(value, accessorOf, onAccessorThrow);
 	};
-	return holdingTreeOf(root, materializeValue(root, materializing, asCoordinate) as AnyUntypedNode);
+	return holdingTreeOf(root, materializeValue(root, accessorOf, onAccessorThrow, asCoordinate) as AnyUntypedNode);
 }
 
 /**
@@ -958,22 +957,17 @@ export interface ValidatorSkip {
 	readonly input?: string;
 }
 
-interface Materializing {
-	readonly accessorOf: SlotAccessorOf;
-	readonly onAccessorThrow?: (rec: AccessorThrowRecord) => void;
-	readonly token?: TreeToken;
-}
-
 function materializeValue(
 	value: unknown,
-	materializing: Materializing,
-	slotValue: (value: unknown) => unknown = (inner) => materializeValue(inner, materializing)
+	accessorOf: SlotAccessorOf,
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void,
+	slotValue: (value: unknown) => unknown = (inner) => materializeValue(inner, accessorOf, onAccessorThrow, undefined, token),
+	token?: TreeToken
 ): unknown {
 	if (Array.isArray(value)) {
-		return value.map((entry) => materializeValue(entry, materializing, slotValue));
+		return value.map((entry) => materializeValue(entry, accessorOf, onAccessorThrow, slotValue, token));
 	}
 	if (!hasNumericType(value)) return value;
-	const { accessorOf, onAccessorThrow, token } = materializing;
 	const { accessors } = accessorOf(value.$type);
 	const materialized: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
@@ -992,13 +986,13 @@ function materializeValue(
 					: {
 							...layout,
 							trivia: mapTriviaEntries(layout.trivia as TriviaSides<unknown>, (entries) =>
-								entries.map((entry) => materializeValue(hydrateTriviaEntry(entry), materializing))
+								entries.map((entry) => materializeValue(hydrateTriviaEntry(entry), accessorOf, onAccessorThrow, undefined, token))
 							)
 						};
 			continue;
 		}
 		if (key.startsWith('_') && accessors[key] !== undefined) continue;
-		materialized[key] = materializeValue(raw, materializing);
+		materialized[key] = materializeValue(raw, accessorOf, onAccessorThrow, undefined, token);
 	}
 	for (const [storageKey, resolved] of slotValuesOf(value, accessorOf, onAccessorThrow)) {
 		if (resolved !== undefined) materialized[storageKey] = slotValue(resolved);
