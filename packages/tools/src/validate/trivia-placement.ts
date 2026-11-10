@@ -1,6 +1,6 @@
 import { assertGrammar, stableGrammars } from '@sittir/codegen/grammars';
 import { isCoordinate, type TreeHandle } from '@sittir/common/utils';
-import { loadCorpusEntries, loadLanguageForGrammar, loadNativeEngine, parseNativeTree, type TSNode, type TSTree } from './common.ts';
+import { loadCorpusEntries, loadLanguageForGrammar, loadNativeEngine, parseNativeTree, treeParser, type ParsedTree, type TSNode } from './common.ts';
 
 export type TriviaPosition = 'leading' | 'trailing' | 'inner' | 'lost';
 
@@ -33,10 +33,10 @@ interface Placement {
 	readonly position: Exclude<TriviaPosition, 'lost'>;
 }
 
-type PlaceSource = (entry: string, source: string, parsed: TSTree) => TriviaPlacementRow[];
+type PlaceSource = (entry: string, source: string, root: TSNode) => TriviaPlacementRow[];
 
-interface PlacementReader {
-	readonly parse: (source: string) => TSTree;
+interface PlacementReader extends Disposable {
+	readonly parse: (source: string) => ParsedTree;
 	readonly place: PlaceSource;
 }
 
@@ -80,14 +80,12 @@ function parsedExtras(node: TSNode): TSNode[] {
 
 async function placementReader(grammar: string): Promise<PlacementReader> {
 	const engine = await loadNativeEngine(grammar);
-	const { Parser, lang } = await loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
+	const parser = treeParser(await loadLanguageForGrammar(grammar));
 	return {
-		parse: (source) => parser.parse(source) as TSTree,
-		place: (entry, source, parsed) => {
-			const { bySpan, byText } = tablePlacements(parseNativeTree(engine, source), descendants(parsed.rootNode));
-			return parsedExtras(parsed.rootNode).map((extra) => {
+		parse: (source) => parser.parse(source),
+		place: (entry, source, root) => {
+			const { bySpan, byText } = tablePlacements(parseNativeTree(engine, source), descendants(root));
+			return parsedExtras(root).map((extra) => {
 				const placement = bySpan.get(`${extra.startIndex}:${extra.endIndex}`) ?? byText.get(extra.text)?.shift();
 				return {
 					entry,
@@ -98,7 +96,8 @@ async function placementReader(grammar: string): Promise<PlacementReader> {
 					position: placement?.position ?? 'lost'
 				};
 			});
-		}
+		},
+		[Symbol.dispose]: () => parser[Symbol.dispose]()
 	};
 }
 
@@ -108,17 +107,18 @@ export interface TriviaPlacementSourceOptions {
 }
 
 export async function runTriviaPlacement(opts: TriviaPlacementSourceOptions): Promise<TriviaPlacementRow[]> {
-	const { parse, place } = await placementReader(assertGrammar(opts.grammar));
-	return place('<source>', opts.source, parse(opts.source));
+	using reader = await placementReader(assertGrammar(opts.grammar));
+	using parsed = reader.parse(opts.source);
+	return reader.place('<source>', opts.source, parsed.root);
 }
 
 export async function computeTriviaPlacementCensus(grammar: string): Promise<TriviaPlacementCensus> {
-	const { parse, place } = await placementReader(assertGrammar(grammar));
+	using reader = await placementReader(assertGrammar(grammar));
 	const entries = loadCorpusEntries(grammar);
 	const rows: TriviaPlacementRow[] = [];
 	for (const entry of entries) {
-		const parsed = parse(entry.source);
-		if (!parsed.rootNode.hasError) rows.push(...place(entry.name, entry.source, parsed));
+		using parsed = reader.parse(entry.source);
+		if (!parsed.root.hasError) rows.push(...reader.place(entry.name, entry.source, parsed.root));
 	}
 	const count = (position: TriviaPosition): number => rows.filter((row) => row.position === position).length;
 	return {

@@ -21,6 +21,7 @@ import {
 	separatedListFactoryOptions,
 	loadCorpusEntries,
 	loadLanguageForGrammar,
+	treeParser,
 	loadKindIdFromName,
 	loadKindNameFromId,
 	buildReadHandle,
@@ -41,7 +42,6 @@ import {
 	loadScopedFactoryMap,
 	type FactoryEntry,
 	type TSNode,
-	type TSTree,
 	type ValidatorSkip,
 	type CorpusEntry,
 	FAILED_RUN
@@ -150,9 +150,7 @@ export function kindIdDiffs(fromResult: unknown, factoryResult: unknown): string
 }
 
 export async function validateFrom(grammar: string): Promise<FromValidationResult> {
-	const { Parser, lang } = await loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
+	using parser = treeParser(await loadLanguageForGrammar(grammar));
 
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
 	const tokenInteriors = (await requireGrammarModule(grammar, 'consts.ts')).TOKEN_INTERIORS;
@@ -457,13 +455,13 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	};
 
 	for (const entry of entries) {
-		const tree1 = parser.parse(entry.source) as TSTree;
-		if (tree1.rootNode.hasError) {
+		using tree1 = parser.parse(entry.source);
+		if (tree1.root.hasError) {
 			excluded.push({ entry: entry.name, reason: 'parse-error', input: entry.source });
 			continue;
 		}
 
-		for (const kind of collectKinds(tree1.rootNode, occurrenceKind)) {
+		for (const kind of collectKinds(tree1.root, occurrenceKind)) {
 			if (delimiterTokens.has(kind)) continue;
 			if (!(kind in fromMap) || !(kind in factoryMap)) {
 				if (!excludedKinds.has(kind)) {
@@ -479,7 +477,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 			if (cases.has(kind)) continue;
 			cases.add(kind);
 
-			const node1 = findFirst(tree1.rootNode, kind, occurrenceKind);
+			const node1 = findFirst(tree1.root, kind, occurrenceKind);
 			if (!node1) {
 				errors.push({ kind, severity: 'error', message: `no node of kind '${kind}' found in entry '${entry.name}'` });
 				continue;
@@ -498,8 +496,8 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	for (const [kind, entry] of unreadKinds) {
 		if (cases.has(kind)) continue;
 		cases.add(kind);
-		const tree = parser.parse(entry.source) as TSTree;
-		let ancestor = findFirst(tree.rootNode, kind, occurrenceKind)?.parent ?? null;
+		using tree = parser.parse(entry.source);
+		let ancestor = findFirst(tree.root, kind, occurrenceKind)?.parent ?? null;
 		while (ancestor !== null) {
 			const type = occurrenceKind(ancestor);
 			if (type in fromMap && type in factoryMap && (await validateAt(entry, ancestor, type, kind)) === undefined) break;

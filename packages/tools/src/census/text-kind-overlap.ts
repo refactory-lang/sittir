@@ -1,5 +1,5 @@
 import { buildNodeMap, invoke, load } from '../codegen-surface.ts';
-import { loadCorpusEntries, loadLanguageForGrammar, type TSNode, type TSTree } from '../validate/common.ts';
+import { loadCorpusEntries, loadLanguageForGrammar, treeParser, type TSNode } from '../validate/common.ts';
 
 export interface TextKindOverlap {
 	readonly winner: string;
@@ -15,9 +15,7 @@ export interface TextKindOverlapCensus {
 }
 
 async function corpusTextsByKind(grammar: string): Promise<Map<string, Set<string>>> {
-	const { Parser, lang } = await loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
+	using parser = treeParser(await loadLanguageForGrammar(grammar));
 	const texts = new Map<string, Set<string>>();
 	const walk = (node: TSNode): void => {
 		if (node.childCount === 0 || node.isNamed) {
@@ -28,8 +26,8 @@ async function corpusTextsByKind(grammar: string): Promise<Map<string, Set<strin
 		for (const child of node.children) walk(child);
 	};
 	for (const entry of loadCorpusEntries(grammar)) {
-		const tree = parser.parse(entry.source) as TSTree;
-		if (!tree.rootNode.hasError) walk(tree.rootNode);
+		using tree = parser.parse(entry.source);
+		if (!tree.root.hasError) walk(tree.root);
 	}
 	return texts;
 }
