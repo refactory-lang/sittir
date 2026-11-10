@@ -7,6 +7,7 @@ import { Language, Parser } from 'web-tree-sitter';
 import { buildParserWasm, buildUpstreamWasm, builtParserWasm, ensureParserWasm, parserSourceKey, readUpstreamRecord, upstreamKeyOf, withUpstreamGrammar, writeUpstreamRecord } from '../compile-parser.ts';
 import { treeSitterToolchain } from '../tree-sitter-cli.ts';
 import { sittirDirOf } from '../../grammars.ts';
+import { sha256 } from '../../util/content-hash.ts';
 
 const realPythonDir = join(__dirname, '../../../../', 'python');
 const realPythonSittir = join(realPythonDir, '.sittir');
@@ -135,7 +136,9 @@ describe('builtParserWasm', () => {
 	it('reads the parser a build wrote from the sources .sittir/src holds as fresh, and stale once a source changes', () => {
 		const { dir, sittir } = copyOfPython('fresh');
 		const wasmPath = join(sittir, 'parser.wasm');
-		expect(builtParserWasm(dir)).toMatchObject({ wasmPath, fresh: true, bytes: new Uint8Array(readFileSync(wasmPath)) });
+		const parser = builtParserWasm(dir);
+		expect(parser).toMatchObject({ wasmPath, fresh: true, digest: sha256(readFileSync(wasmPath)) });
+		expect(parser.fresh && Buffer.from(parser.bytes).equals(readFileSync(wasmPath))).toBe(true);
 		appendFileSync(join(sittir, 'src', 'parser.c'), '\n');
 		expect(builtParserWasm(dir)).toEqual({ wasmPath, fresh: false, reason: 'it was built from other sources than it reads now' });
 	});
