@@ -186,13 +186,14 @@ export function mergeCorpusShards(shards, grammars) {
 export function analyzeCorpus(data) {
 	if (data.shards) {
 		mergeCorpusShards(data.shards, data.options.grammars);
-		const result = { workers: 0, aggregates: {}, phases: [], memoryMiB: {} };
+		const result = { workers: 0, aggregates: {}, phases: [], omitted: [], memoryMiB: {} };
 		const revisions = [];
 		for (const { report } of data.shards) {
 			const part = analyzeCorpus(report);
 			if (part.revision) revisions.push(part.revision);
 			result.workers += part.workers;
 			result.phases.push(...part.phases);
+			result.omitted.push(...part.omitted);
 			Object.assign(result.memoryMiB, part.memoryMiB);
 			if (part.builtArena) Object.assign((result.builtArena ??= {}), part.builtArena);
 			for (const [bucket, times] of Object.entries(part.aggregates)) {
@@ -216,7 +217,7 @@ export function analyzeCorpus(data) {
 	const grammars = [...new Set(workers.map((worker) => worker.grammar))].sort();
 	assert.deepEqual(grammars, [...data.options.grammars].sort());
 	checkWorkers(workers, data.options.rounds, (worker) => worker.storage);
-	const result = { workers: workers.length, aggregates: {}, phases: [], memoryMiB: {} };
+	const result = { workers: workers.length, aggregates: {}, phases: [], omitted: [], memoryMiB: {} };
 	const memoryWorkers = workers.filter((worker) => worker.memory !== undefined);
 	if (memoryWorkers.length) {
 		assert.equal(memoryWorkers.length, workers.length, 'incomplete worker memory');
@@ -263,6 +264,13 @@ export function analyzeCorpus(data) {
 		grammars.length * 3,
 		'incomplete bucket coverage'
 	);
+	const phaseNames = data.validationSummary[0].timings.map((timing) => timing.phase);
+	for (const summary of data.validationSummary)
+		assert.deepEqual(
+			summary.timings.map((timing) => timing.phase),
+			phaseNames,
+			'every bucket times the same phases'
+		);
 	for (const summary of data.validationSummary) {
 		const observations = workers
 			.filter((worker) => worker.grammar === summary.grammar)
@@ -276,7 +284,12 @@ export function analyzeCorpus(data) {
 		if (summary.bucket !== 'read-render-parse') assert.deepEqual(summary.render.object, summary.render.arena);
 		const totals = (result.aggregates[summary.bucket] ??= { objectMs: 0, arenaMs: 0 });
 		for (const timing of summary.timings) {
-			const row = { grammar: summary.grammar, bucket: summary.bucket, phase: timing.phase };
+			const row = { grammar: summary.grammar, bucket: summary.bucket, phase: timing.phase, calls: timing.calls };
+			if (timing.phase !== 'validator' && timing.calls === 0) {
+				for (const observation of observations) assert.equal(observation.bucket.phases[timing.phase].calls, 0);
+				result.omitted.push({ ...row, reason: 'no calls: the validator does no work under this phase' });
+				continue;
+			}
 			for (const mode of ['object', 'arena']) {
 				const values = observations
 					.filter((observation) => observation.storage === mode)
@@ -304,7 +317,7 @@ export function analyzeCorpus(data) {
 			result.phases.push(row);
 		}
 	}
-	assert.equal(result.phases.length, grammars.length * 3 * 5);
+	assert.equal(result.phases.length + result.omitted.length, grammars.length * 3 * phaseNames.length);
 	for (const value of Object.values(result.aggregates)) value.ratio = value.arenaMs / value.objectMs;
 	if (data.baseline) result.revision = compareRevisions(data, result);
 	return result;
@@ -330,24 +343,27 @@ function compareRevisions(data, branch) {
 			'baseline measured another workload'
 		);
 	}
-	const phases = branch.phases.map((row) => {
+	const phases = [];
+	const incomparable = [];
+	for (const row of branch.phases) {
 		const base = baseline.phases.find((other) => other.grammar === row.grammar && other.bucket === row.bucket && other.phase === row.phase);
-		assert(base, 'baseline lacks a phase row');
-		return {
-			grammar: row.grammar,
-			bucket: row.bucket,
-			phase: row.phase,
-			object: sides(row.object.median, base.object.median),
-			arena: sides(row.arena.median, base.arena.median)
-		};
-	});
+		const reason =
+			base === undefined
+				? 'the baseline does not time this phase'
+				: base.calls !== row.calls
+					? 'the revisions make different numbers of calls under it'
+					: undefined;
+		const named = { grammar: row.grammar, bucket: row.bucket, phase: row.phase };
+		if (reason !== undefined) incomparable.push({ ...named, reason });
+		else phases.push({ ...named, object: sides(row.object.median, base.object.median), arena: sides(row.arena.median, base.arena.median) });
+	}
 	const aggregates = Object.fromEntries(
 		Object.entries(branch.aggregates).map(([bucket, value]) => [
 			bucket,
 			{ object: sides(value.objectMs, baseline.aggregates[bucket].objectMs), arena: sides(value.arenaMs, baseline.aggregates[bucket].arenaMs) }
 		])
 	);
-	return { commit: data.baseline.commit, phases, aggregates, ...analyzeLibrary(data) };
+	return { commit: data.baseline.commit, phases, incomparable, aggregates, ...analyzeLibrary(data) };
 }
 
 function analyzeLibrary(data) {
@@ -393,6 +409,7 @@ function combineRevisions(parts) {
 	return {
 		commit: parts[0].commit,
 		phases: parts.flatMap((part) => part.phases),
+		incomparable: parts.flatMap((part) => part.incomparable),
 		aggregates,
 		memoryMiB: {
 			one: Object.assign({}, ...parts.map((part) => part.memoryMiB.one)),
@@ -420,9 +437,17 @@ function revisionLines(revision) {
 		'| Grammar | Read-render-parse phase | Object branch/baseline | Arena branch/baseline |',
 		'| --- | --- | ---: | ---: |',
 		...revision.phases
-			.filter((value) => value.bucket === 'read-render-parse' && ['parse', 'read', 'render'].includes(value.phase))
+			.filter((value) => value.bucket === 'read-render-parse' && ['parse', 'read', 'copy', 'render'].includes(value.phase))
 			.map((value) => `| ${value.grammar} | ${value.phase} | ${fixed(value.object.ratio)} | ${fixed(value.arena.ratio)} |`),
 		'',
+		...(revision.incomparable.length
+			? [
+					'Not compared with the baseline, because the two revisions time different work under these phases:',
+					'',
+					...revision.incomparable.map((value) => `- ${value.grammar} ${value.bucket} ${value.phase}: ${value.reason}`),
+					''
+				]
+			: []),
 		'| RSS after loading | Branch MiB | Baseline MiB | Branch - baseline |',
 		'| --- | ---: | ---: | ---: |',
 		...Object.entries(revision.memoryMiB.one).map(([grammar, value]) => row(`${grammar} alone`, value)),
@@ -458,6 +483,14 @@ export function summarize(data) {
 		'',
 		"Each row times its bucket's whole validator round trip: producing the nodes, rendering, reparsing and comparing. The factory and IR rows are therefore not construction measurements.",
 		'',
+		"The copy phase times the validators' copy of each read candidate into the plain data the factories and the render-from-content check take. It is validator tooling, not product work, and nothing is gated on it. The read phase times product reads only: read-render-parse's deep read of each tree.",
+		'',
+		...(analysis.omitted.length
+			? [
+					`A phase a validator does no work under has no row: ${[...new Set(analysis.omitted.map((value) => `${value.bucket} ${value.phase}`))].map((name) => `no row for ${name}`).join(', ')}.`,
+					''
+				]
+			: []),
 		'Factory and IR buckets build records on the arena arm and objects on the object arm.',
 		''
 	];

@@ -52,6 +52,22 @@ it.each(['read', 'factory', 'ir'] as const)(
 	30_000
 );
 
+it.each(['factory', 'ir'] as const)('the %s validator times its copy of each candidate as copy, and reads no tree under read', async (bucket) => {
+	const profile = new RoundtripProfile();
+	await validateFactoryStorage('scm', 'native', { surface: bucket === 'ir' ? 'ir' : 'raw', profile });
+	const sample = profile.finish();
+	expect(sample.phases.read.calls).toBe(0);
+	expect(sample.phases.copy.calls).toBe(sample.work.cases);
+}, 30_000);
+
+it('read-render-parse times its deep reads as read and its copies of each candidate as copy', async () => {
+	const profile = new RoundtripProfile();
+	const result = await validateReadRenderParse('scm', { recursive: true, profile });
+	const sample = profile.finish();
+	expect(sample.phases.read.calls).toBe(result.pass);
+	expect(sample.phases.copy.calls).toBe(sample.work.cases);
+}, 30_000);
+
 it('fingerprints ordered candidates and rendered output independently of timings', () => {
 	const record = (source: string) => {
 		const profile = new RoundtripProfile();

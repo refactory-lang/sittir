@@ -1140,7 +1140,7 @@ export async function validateReadRenderParse(
 					let data: AnyUntypedNode;
 					try {
 						const at = (cand.node as AnyUntypedNode).$_layout?.at;
-						data = measureRoundtrip(options.profile, 'read', () =>
+						data = measureRoundtrip(options.profile, 'copy', () =>
 							recursive !== true && at !== undefined
 								? materializeShallow(cand.node, accessorOf, onAccessorThrow)
 								: (materializeDetached(cand.node, accessorOf, onAccessorThrow) as AnyUntypedNode)

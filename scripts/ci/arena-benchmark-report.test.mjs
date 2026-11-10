@@ -26,7 +26,9 @@ test('describes sampled allocator state without claiming an unreleased node popu
 test('recomputes all corpus phase rows and known aggregate ratios', () => {
 	const measured = analyzeCorpus(corpus());
 	assert.equal(measured.workers, 50);
-	assert.equal(measured.phases.length, 75);
+	assert.equal(measured.phases.length, 70);
+	assert.deepEqual(new Set(measured.omitted.map((row) => `${row.bucket} ${row.phase}`)), new Set(['read-render-parse build']));
+	assert.equal(measured.phases.length + measured.omitted.length, 75);
 	assert(Math.abs(measured.aggregates['read-render-parse'].ratio - 0.7610036878105529) < 1e-12);
 });
 
@@ -138,7 +140,9 @@ test('independent grammar runners preserve complete coverage, paired statistics 
 	const combined = mergeCorpusShards(shards, data.options.grammars);
 	const measured = analyzeCorpus(combined);
 	assert.equal(measured.workers, 50);
-	assert.equal(measured.phases.length, 75);
+	assert.equal(measured.phases.length, 70);
+	assert.deepEqual(new Set(measured.omitted.map((row) => `${row.bucket} ${row.phase}`)), new Set(['read-render-parse build']));
+	assert.equal(measured.phases.length + measured.omitted.length, 75);
 	assert.deepEqual(measured.aggregates, analyzeCorpus(data).aggregates);
 	assert.match(summarize(combined).markdown, /separate runners/);
 	assert.throws(() => mergeCorpusShards(shards.slice(1), data.options.grammars), /grammar shard coverage/);
@@ -264,4 +268,74 @@ test('grammar runners each compare against the same baseline, and their comparis
 	other[1].baselineBefore = identity('elsewhere');
 	other[1].baselineAfter = identity('elsewhere');
 	assert.throws(() => mergeCorpusShards(other, data.options.grammars), /baseline report and identity name other commits/);
+});
+
+function withCopyPhase(data) {
+	const kept = (bucket) => (bucket === 'read-render-parse' ? 0.5 : 0);
+	const readCalls = (bucket) => (kept(bucket) === 0 ? 0 : 1);
+	const scaled = (timing, by, phase, calls, throws) => ({
+		...timing,
+		phase,
+		calls,
+		throws,
+		objectMs: timing.objectMs * by,
+		arenaMs: timing.arenaMs * by,
+		objectRange: timing.objectRange.map((ms) => ms * by),
+		arenaRange: timing.arenaRange.map((ms) => ms * by),
+		arenaOverObject: by === 0 ? null : timing.arenaOverObject
+	});
+	for (const summary of data.validationSummary) {
+		const at = summary.timings.findIndex((timing) => timing.phase === 'read');
+		const read = summary.timings[at];
+		const keep = kept(summary.bucket);
+		const calls = readCalls(summary.bucket);
+		summary.timings.splice(at, 1, scaled(read, keep, 'read', calls, 0), scaled(read, 1 - keep, 'copy', read.calls - calls, read.throws));
+	}
+	for (const worker of data.validationSamples)
+		for (const bucket of worker.buckets) {
+			const keep = kept(bucket.bucket);
+			const calls = readCalls(bucket.bucket);
+			const { read } = bucket.phases;
+			bucket.phases = {
+				...bucket.phases,
+				read: { milliseconds: read.milliseconds * keep, calls, throws: 0 },
+				copy: { milliseconds: read.milliseconds * (1 - keep), calls: read.calls - calls, throws: read.throws }
+			};
+			bucket.timings = { ...bucket.timings, read: bucket.timings.read.map((ms) => ms * keep), copy: bucket.timings.read.map((ms) => ms * (1 - keep)) };
+		}
+	return data;
+}
+
+test('a phase a validator makes no calls under has no row, and the analysis says why', () => {
+	const data = withCopyPhase(corpus());
+	const { analysis, markdown } = summarize(data);
+	const grammars = data.options.grammars.length;
+	assert.equal(analysis.phases.length, grammars * 15);
+	assert.equal(analysis.omitted.length, grammars * 3);
+	assert.deepEqual(
+		new Set(analysis.omitted.map((row) => `${row.bucket} ${row.phase}`)),
+		new Set(['factory-render-parse read', 'ir-render-parse read', 'read-render-parse build'])
+	);
+	for (const row of analysis.omitted) assert.match(row.reason, /no calls/);
+	for (const row of analysis.phases) assert(row.ratio === null || Number.isFinite(row.ratio));
+	assert(analysis.phases.every((row) => !(row.bucket !== 'read-render-parse' && row.phase === 'read')));
+	assert.match(markdown, /copy phase times the validators' copy/);
+	assert.match(markdown, /validator tooling, not product work, and nothing is gated on it/);
+	assert.match(markdown, /no row for factory-render-parse read/);
+});
+
+test('a phase is compared with the baseline only where both time the same calls under it', () => {
+	const data = withBaseline(corpus(), 2);
+	withCopyPhase(data);
+	const { analysis, markdown } = summarize(data);
+	const grammars = data.options.grammars.length;
+	const { revision } = analysis;
+	assert.equal(revision.phases.length, grammars * 11);
+	assert(revision.phases.every((row) => row.phase !== 'copy' && !(row.bucket === 'read-render-parse' && row.phase === 'read')));
+	assert.equal(revision.incomparable.length, grammars * 4);
+	assert.equal(revision.incomparable.filter((row) => row.phase === 'copy' && /baseline does not time/.test(row.reason)).length, grammars * 3);
+	assert.equal(revision.incomparable.filter((row) => row.phase === 'read' && /different numbers of calls/.test(row.reason)).length, grammars);
+	assert(Math.abs(revision.aggregates['read-render-parse'].arena.ratio - 0.5) < 1e-12);
+	assert.match(markdown, /Not compared with the baseline/);
+	assert.match(markdown, /read-render-parse read: the revisions make different numbers of calls under it/);
 });

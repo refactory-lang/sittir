@@ -31,6 +31,7 @@ it(
 			expect(row.timings.map((phase: { phase: string }) => phase.phase)).toEqual([
 				'validator',
 				'read',
+				'copy',
 				'build',
 				'render',
 				'parse'
