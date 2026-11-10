@@ -26,7 +26,7 @@ import { generateWithDerivedConflicts } from './transpile/conflict-driver.ts';
 import { assertGrammarRuntimeFloor } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { manifestPath, recordNativeBuild, recordedGeneration, sourceFingerprint, writeManifestForGrammar, type SourceFingerprint } from './scripts/generated-manifest.ts';
-import { GRAMMAR_ENTRY, NODE_MODEL_FILE, PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE, PORTABLE_NODE_MODEL_FILE, PORTABLE_SURFACE_FILE, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, workspaceNodeApiLevel, type GrammarPackage } from './grammars.ts';
+import { GRAMMAR_ENTRY, NODE_MODEL_FILE, PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE, PORTABLE_NODE_MODEL_FILE, PORTABLE_SURFACE_FILE, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, type GrammarPackage } from './grammars.ts';
 import { conflictResolutionsPath } from './transpile/conflict-resolutions-file.ts';
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
@@ -49,7 +49,6 @@ export interface CodegenOptions {
 	workspaceCheck?: boolean;
 	noEmitDiff?: boolean;
 	allowDiagnostics?: string[];
-	nodeApiLevel?: number;
 }
 
 export async function formatSource(path: string, content: string): Promise<string> {
@@ -235,13 +234,8 @@ async function withInternalCodegenRun<T>(fn: () => Promise<T>): Promise<T> {
 	}
 }
 
-function runNodeApiLevel({ all, nodeApiLevel }: CodegenOptions): number | undefined {
-	return all === true ? (nodeApiLevel ?? workspaceNodeApiLevel()) : undefined;
-}
-
 export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
-	const nodeApiLevel = runNodeApiLevel(opts);
-	return withInternalCodegenRun(() => runCodegenInternal(opts, nodeApiLevel));
+	return withInternalCodegenRun(() => runCodegenInternal(opts));
 }
 
 function refuseUnlessAllowed(diagnostics: readonly GrammarDiagnostic[], allowDiagnostics: ReadonlySet<string>): void {
@@ -251,7 +245,7 @@ function refuseUnlessAllowed(diagnostics: readonly GrammarDiagnostic[], allowDia
 	if (blocked.length > 0) throw new GrammarDiagnosticError(blocked, diagnostics);
 }
 
-async function runCodegenInternal(opts: CodegenOptions, nodeApiLevel: number | undefined, read: SourceFingerprint = sourceFingerprint(opts.grammar)): Promise<NodeMap> {
+async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint = sourceFingerprint(opts.grammar)): Promise<NodeMap> {
 	const { grammar, outputDir, all, testsDir, noEmitDiff, buildNative, nativeDebug, workspaceCheck } = opts;
 
 	if (!outputDir) {
@@ -380,7 +374,7 @@ async function runCodegenInternal(opts: CodegenOptions, nodeApiLevel: number | u
 
 	await writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 
-	const shouldEmitRustRender = nodeApiLevel !== undefined && isGrammar(grammar);
+	const shouldEmitRustRender = all === true && isGrammar(grammar);
 
 	if (shouldEmitRustRender) {
 		const crateDir = nativeCrateDir(grammar);
@@ -494,11 +488,10 @@ export async function runNativeOnly(opts: CodegenOptions): Promise<void> {
 }
 
 export async function runFullRegen(opts: CodegenOptions): Promise<NodeMap> {
-	const nodeApiLevel = runNodeApiLevel(opts);
-	return withInternalCodegenRun(() => runFullRegenInternal(opts, nodeApiLevel));
+	return withInternalCodegenRun(() => runFullRegenInternal(opts));
 }
 
-async function runFullRegenInternal(opts: CodegenOptions, nodeApiLevel: number | undefined): Promise<NodeMap> {
+async function runFullRegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	const { grammar, skipTsChain, transpile, tsGenerate } = opts;
 	const read = sourceFingerprint(grammar);
 
@@ -511,5 +504,5 @@ async function runFullRegenInternal(opts: CodegenOptions, nodeApiLevel: number |
 		await compileParsers(grammar, pkg);
 	}
 
-	return runCodegenInternal(opts, nodeApiLevel, read);
+	return runCodegenInternal(opts, read);
 }
