@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config';
+import { engineGuard } from '../../vitest.engine-guard.config.ts';
 import { sourceAliases } from '../codegen/src/grammars.ts';
 
 export default defineConfig({
@@ -6,6 +7,7 @@ export default defineConfig({
 		alias: sourceAliases()
 	},
 	test: {
+		...engineGuard,
 		// Include src-level guards too (corpus-validation, render-pipeline, etc.)
 		// relocated here from codegen by R9 — codegen's vitest discovered them via
 		// src/**; tools must as well or these regression guards go unrun. They are

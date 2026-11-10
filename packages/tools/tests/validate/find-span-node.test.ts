@@ -1,6 +1,8 @@
-import { describe, expect, it } from 'vitest';
-import { findSpanNode, loadLanguageForGrammar, loadStorageKindNameFromId, treeParser } from '../../src/validate/common.ts';
+import { afterAll, describe, expect, it } from 'vitest';
+import { disposeNativeEngines, findSpanNode, loadLanguageForGrammar, loadStorageKindNameFromId, treeParser } from '../../src/validate/common.ts';
 import { validateReadRenderParse } from '../../src/validate/read-render-parse.ts';
+
+afterAll(disposeNativeEngines);
 
 describe('findSpanNode', () => {
 	it('picks a folded display node by its storage kind, not the parent that spans the same text', async () => {

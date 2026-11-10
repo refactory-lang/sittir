@@ -1,7 +1,7 @@
-import { describe, expect, it, vi, type MockInstance } from 'vitest';
+import { afterAll, describe, expect, it, vi, type MockInstance } from 'vitest';
 import { load } from '../../src/codegen-surface.ts';
 import { textKindOverlapCensus } from '../../src/census/text-kind-overlap.ts';
-import { loadCorpusEntries } from '../../src/validate/common.ts';
+import { disposeNativeEngines, loadCorpusEntries } from '../../src/validate/common.ts';
 import { computeCorpusCoverageCensus } from '../../src/validate/corpus-coverage-census.ts';
 import { validateFactoryStorage } from '../../src/validate/factory-storage.ts';
 import { validateFrom } from '../../src/validate/from.ts';
@@ -54,6 +54,8 @@ async function liveAfter(run: () => Promise<unknown>): Promise<{ parses: number;
 		freed.mockRestore();
 	}
 }
+
+afterAll(disposeNativeEngines);
 
 describe('a validator deletes every web-tree-sitter parser and tree it makes before it returns', () => {
 	it.each(Object.keys(validators))('%s', async (name) => {
