@@ -736,6 +736,12 @@ export function supertypesOf(grammar: GrammarRecord): ReadonlySet<string> {
 	return listedNames(grammar.supertypes);
 }
 
+export function nodelessNamesOf(grammar: { readonly supertypes?: unknown; readonly inline?: unknown }): (name: string) => boolean {
+	const supertypes = listedNames(grammar.supertypes);
+	const inlined = listedNames(grammar.inline);
+	return (name) => isParserHiddenName(name) || supertypes.has(name) || inlined.has(name);
+}
+
 function ownSymbolNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
 	if (Array.isArray(rule)) for (const r of rule) ownSymbolNames(r, out);
 	else if (isRecord(rule) && !(rule.type === 'ALIAS' && rule.named === true)) {

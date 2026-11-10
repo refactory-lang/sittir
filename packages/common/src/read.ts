@@ -1,6 +1,6 @@
 import type { BuiltArena } from './built-arena.ts';
 import type { CellFormat, RecordCell } from './record-cell.ts';
-import type { ByteSpan, NodeCoordinate } from '@sittir/types';
+import type { ByteSpan, ErrorRegion, NodeCoordinate } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
 import type { TreeToken } from './tree-token.ts';
 
@@ -17,6 +17,8 @@ export interface TreeHandle {
 	read?(index: number, depth?: number): unknown;
 	/** The tree's layer of the render options (`NativeParseResult.options`). */
 	options?: Readonly<Record<string, unknown>>;
+	/** The parse's ERROR and MISSING regions (`NativeParseResult.errors`); absent for a tree no parse produced. */
+	errors?: readonly ErrorRegion[];
 	query?: TreeQuery;
 	/** A snapshot of the node at descendant `index`, measured from the byte `holderByte`, or from where it or its leading side begins (`snapshotOf`). */
 	snapshot?(index: number, holderByte?: number): unknown;

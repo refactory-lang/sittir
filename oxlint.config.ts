@@ -51,12 +51,12 @@ export default defineConfig({
 			}
 		},
 		{
-			// The vocabulary declares `G extends GrammarContext<G>` on every
-			// namespace-level interface for API uniformity, including the ones
-			// whose own members do not read it.
+			// Every vocabulary kind interface declares the grammar map `G` and
+			// its path `K`, and declaration merging needs the same parameters
+			// on every declaration of a kind, including ones that read neither.
 			files: ['packages/types/src/vocabulary/**'],
 			rules: {
-				'no-unused-vars': ['error', { varsIgnorePattern: '^G$' }]
+				'no-unused-vars': ['error', { varsIgnorePattern: '^(G|K)$' }]
 			}
 		}
 	],

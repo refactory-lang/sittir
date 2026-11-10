@@ -34,7 +34,7 @@ describe('bindFacts', () => {
 				pattern: { line: 1, source: '(impl_item)' }
 			}
 		],
-		templates: [{ vocabs: ['declaration.function'], target: 'function_item', template: '', holes: [] }],
+		templates: [{ vocabs: ['declaration.function'], target: 'function_item', template: '', holes: [], match: '^$' }],
 		unclaimed: [{ kind: 'line_comment', reason: null }]
 	};
 	const bound = bindFacts(facts, (kind) => `bound_${kind}`);

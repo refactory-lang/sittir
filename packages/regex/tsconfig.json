@@ -4,5 +4,5 @@
 		"types": ["node"]
 	},
 	"include": ["src", "tests"],
-	"exclude": ["node_modules", "dist", "tests/*.portable.test-d.ts"]
+	"exclude": ["node_modules", "dist", "tests/*.portable.test-d.ts", "tests/*.portable.ts6.test-d.ts"]
 }

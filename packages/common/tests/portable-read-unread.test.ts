@@ -13,6 +13,7 @@ const readerOf = (built: PortableBuildTable) =>
 	portableReader({
 		table: built,
 		classify: classifierOf(rows),
+		factsOf: () => [],
 		flagHolds: (value, flag) => flagHolds(rows, value, flag),
 		flagsOf: (kind) => Object.keys(rows.flags[kind] ?? {}),
 		textOf: (value) => portableTextOf(rows, value),

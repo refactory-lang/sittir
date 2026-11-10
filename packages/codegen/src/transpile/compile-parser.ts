@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join, relative, resolve, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ensureWasmToolchain, runTreeSitterCli, treeSitterToolchain } from './tree-sitter-cli.ts';
-import { BASE_ENTRY, UPSTREAM_GENERATION_CONFLICTS, UPSTREAM_WASM, upstreamPackage, type GrammarName } from '../grammars.ts';
+import { BASE_ENTRY, UPSTREAM_GENERATION_CONFLICTS, UPSTREAM_WASM, sittirDirOf, upstreamPackage, type GrammarName } from '../grammars.ts';
 
 const UPSTREAM_RECORD = 'upstream.json';
 const PARSER_RECORD = 'parser.json';
@@ -25,7 +25,7 @@ export function writeUpstreamRecord(sittirDir: string, record: UpstreamRecord): 
 }
 
 export function buildParserWasm(grammarDir: string): string {
-	const sittirDir = join(grammarDir, '.sittir');
+	const sittirDir = sittirDirOf({ dir: grammarDir });
 	syncExternalScanner(grammarDir, sittirDir);
 	runTreeSitterCli(['build', '--wasm', '-o', PARSER_WASM], sittirDir, 'pipe');
 	const wasmPath = join(sittirDir, PARSER_WASM);
@@ -40,7 +40,7 @@ interface ParserRecord {
 }
 
 export function ensureParserWasm(grammarDir: string): { readonly wasmPath: string; readonly built: boolean } {
-	const wasmPath = join(grammarDir, '.sittir', PARSER_WASM);
+	const wasmPath = join(sittirDirOf({ dir: grammarDir }), PARSER_WASM);
 	if (existsSync(wasmPath)) return { wasmPath, built: false };
 	return { wasmPath: buildParserWasm(grammarDir), built: true };
 }
@@ -51,7 +51,7 @@ export type ParserWasm = { readonly wasmPath: string } & (
 );
 
 export function builtParserWasm(grammarDir: string): ParserWasm {
-	const sittirDir = join(grammarDir, '.sittir');
+	const sittirDir = sittirDirOf({ dir: grammarDir });
 	const wasmPath = join(sittirDir, PARSER_WASM);
 	const recordPath = join(sittirDir, PARSER_RECORD);
 	if (!existsSync(wasmPath)) return { wasmPath, fresh: false, reason: 'it does not exist' };
@@ -103,7 +103,7 @@ export function withUpstreamGrammar<T>(grammarDir: string, use: (dir: string, sc
 		const dir = join(work, 'upstream', 'grammar');
 		mkdirSync(dir, { recursive: true });
 		writeFileSync(join(dir, 'grammar.js'), upstreamEntryOf(grammarDir));
-		for (const file of ['package.json', 'tree-sitter.json']) copyFileSync(join(grammarDir, '.sittir', file), join(dir, file));
+		for (const file of ['package.json', 'tree-sitter.json']) copyFileSync(join(sittirDirOf({ dir: grammarDir }), file), join(dir, file));
 		return use(dir, syncExternalScanner(grammarDir, dir));
 	} finally {
 		rmSync(work, { recursive: true, force: true });
@@ -135,7 +135,7 @@ export function buildUpstreamWasm(grammarDir: string, out: string): string {
 }
 
 export function ensureUpstreamWasm(grammarDir: string): { readonly wasmPath: string; readonly built: boolean } {
-	const sittirDir = join(grammarDir, '.sittir');
+	const sittirDir = sittirDirOf({ dir: grammarDir });
 	const wasmPath = join(sittirDir, UPSTREAM_WASM);
 	const recorded = readUpstreamRecord(sittirDir)?.key;
 	ensureWasmToolchain();

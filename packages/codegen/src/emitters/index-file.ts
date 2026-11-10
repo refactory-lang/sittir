@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { languageApiName } from '../grammars.ts';
+import { PORTABLE_SURFACE_FILE, languageApiName, moduleSpecifier } from '../grammars.ts';
 
 export interface EmitIndexConfig {
 	grammar: string;
@@ -22,7 +22,7 @@ export function emitDescriptor(config: EmitIndexConfig): string {
 		...(config.portable === true
 			? [
 					"import { portable, portableGuardsOf } from '@sittir/common/portable';",
-					"import type { PortableIs, PortableKinds } from './portable.js';"
+					`import type { PortableIs, PortableKinds } from '${moduleSpecifier('descriptor.ts', PORTABLE_SURFACE_FILE)}';`
 				]
 			: []),
 		'',

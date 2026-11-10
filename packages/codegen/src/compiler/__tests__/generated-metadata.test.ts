@@ -631,9 +631,10 @@ describe('loadPackageIdTables', () => {
 	it('refuses a parser it cannot tell was built from the grammar, naming the command that builds it', async () => {
 		const dir = mkdtempSync(join(tmpdir(), 'sittir-stale-parser-'));
 		try {
-			cpSync(sittirDirOf(grammarPackage('scm')), join(dir, '.sittir'), { recursive: true });
-			rmSync(join(dir, '.sittir', 'parser.json'), { force: true });
-			await expect(loadPackageIdTables(grammarPackage('scm', dir))).rejects.toThrow(/stale-parser[\s\S]*parser\.json[\s\S]*--compile-parser/);
+			const copy = grammarPackage('scm', dir);
+			cpSync(sittirDirOf(grammarPackage('scm')), sittirDirOf(copy), { recursive: true });
+			rmSync(join(sittirDirOf(copy), 'parser.json'), { force: true });
+			await expect(loadPackageIdTables(copy)).rejects.toThrow(/stale-parser[\s\S]*parser\.json[\s\S]*--compile-parser/);
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
 		}

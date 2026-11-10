@@ -10,10 +10,11 @@ import type {
 	LookupType,
 	PropertySignature,
 	TypeAliasDeclaration,
+	TypeParameter,
 	UnionType
 } from '@sittir/typescript';
 import { isNode, parsedTypescript, type Kinds, type Span, type Statement, type TypescriptSource } from './pinned-typescript.ts';
-import { type Declared, type FeatureIndex, FLAG, FLAGGED, type Member, type MemberArity, REFINED_BY, TEXTS } from './vocabulary.ts';
+import { type Declared, type FeatureIndex, FLAG, FLAGGED, type Member, type MemberArity, REFINED_BY, SLOT, TEXT } from './vocabulary.ts';
 
 interface Source extends Omit<TypescriptSource, 'spelled'> {
 	readonly text: (item: object | number) => string;
@@ -108,7 +109,9 @@ type AliasType =
 	| ReturnType<LookupType.Parsed['indexType']>
 	| ReturnType<TypeAliasDeclaration.Parsed['value']>
 	| ReturnType<NonNullable<ReturnType<GenericType.Parsed['typeArguments']>>['types']>[number]
-	| ReturnType<UnionType.Parsed['right']>;
+	| ReturnType<UnionType.Parsed['right']>
+	| ReturnType<NonNullable<ReturnType<TypeParameter.Parsed['default']>>['type']>
+	| Annotation;
 
 function stringIndex(index: AliasType | undefined, source: Source): string | undefined {
 	const { K, text } = source;
@@ -118,11 +121,9 @@ function stringIndex(index: AliasType | undefined, source: Source): string | und
 }
 
 function textsPath(type: AliasType | undefined, source: Source): string | undefined {
-	const { K } = source;
-	if (!isNode(type) || type.$type !== K.LookupType) return undefined;
-	const table = type.type();
-	if (!isNode(table) || table.$type !== K.LookupType || stringIndex(table.indexType(), source) !== TEXTS) return undefined;
-	return stringIndex(type.indexType(), source);
+	const { K, text } = source;
+	if (!isNode(type) || type.$type !== K.GenericType || text(type.name()) !== TEXT) return undefined;
+	return stringIndex(type.typeArguments()?.types()[1], source);
 }
 
 function flagNames(type: AliasType | undefined, source: Source): string[] {
@@ -161,9 +162,8 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 		const name = identifier(member.name(), [K.PropertyIdentifier], source);
 		const typed = member.type();
 		const annotation = typed?.type();
-		if (name === '$kind') {
-			const literal = isNode(annotation) && annotation.$type === K.LiteralType ? annotation.content() : undefined;
-			if (isNode(literal) && (literal.$type === K.StringSingle || literal.$type === K.StringDouble)) path = text(literal).slice(1, -1);
+		if (name === '$path') {
+			path = kindPath(declaration, annotation, source);
 			continue;
 		}
 		members.push({
@@ -173,6 +173,7 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 			...arityOf(annotation, source),
 			flag: isNode(annotation) && annotation.$type === K.TypeIdentifier && text(annotation) === FLAG,
 			references: typed === undefined ? [] : references(typed, source),
+			...(typed !== undefined && slotted(typed, source) ? { slotted: true as const } : {}),
 			literals: annotation === undefined ? [] : (stringLiterals(annotation, source) ?? []),
 			...(isNode(annotation) && annotation.$type === K.ObjectType ? { keys: (annotation.members() ?? []).flatMap((key) => (key.$type === K.PropertySignature ? [propertyName(key, source)] : [])) } : {})
 		});
@@ -188,6 +189,19 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 		heritage: heritageNames(heritage, source),
 		members
 	});
+}
+
+function kindPath(declaration: InterfaceDeclaration.Parsed, annotation: Annotation | undefined, source: Source): string | undefined {
+	const { K, text } = source;
+	if (!isNode(annotation)) return undefined;
+	const name = text(declaration.name());
+	if (annotation.$type === K.LiteralType && stringIndex(annotation, source) !== undefined) throw new Error(`vocabulary: ${name} spells its $path; declare it as a type parameter whose default is its path`);
+	if (annotation.$type !== K.TypeIdentifier) return undefined;
+	const parameter = text(annotation);
+	const declared = (declaration.typeParameters()?.elements().items() ?? []).find((at) => text(at.name()) === parameter);
+	const path = stringIndex(declared?.default()?.type(), source);
+	if (path === undefined) throw new Error(`vocabulary: ${name} declares $path as ${parameter}, which is no type parameter whose default is its path`);
+	return path;
 }
 
 function propertyName(member: PropertySignature.Parsed, source: Source): string {
@@ -276,6 +290,11 @@ function exportedFrom(statement: ExportStatementDefaultFrom.Parsed, source: Sour
 	const { K, text } = source;
 	const star = statement.content();
 	return isNode(star) && star.$type === K.ExportStatementDefaultFromStarFrom ? text(star.source()).slice(1, -1) : undefined;
+}
+
+function slotted(typed: PropertySignatureType, source: Source): boolean {
+	const { K, engine, text } = source;
+	return [...engine.query(typed).$descendants.ofType(K.GenericType)].some((generic) => text(generic.name()) === SLOT);
 }
 
 function references(typed: PropertySignatureType, source: Source): string[] {

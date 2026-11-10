@@ -410,7 +410,7 @@
 (type_query) @type.query
 ((type_query_call_expression_in_type_annotation function: (import) arguments: (arguments . (string) .)) @type.import)
 (type_query_call_expression_in_type_annotation arguments: (arguments . (_) @source .))
-((type_query_call_expression function: (import) arguments: (arguments . (string) .)) @type.import)
+((type_query_call_expression arguments: (arguments . (string) .)) @type.import)
 (type_query_call_expression arguments: (arguments . (_) @source .))
 (type_query_member_expression ".") @identifier.qualified
 (type_query_member_expression object: (_) @qualifier property: (_) @name)

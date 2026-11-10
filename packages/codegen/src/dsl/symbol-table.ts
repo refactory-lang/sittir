@@ -548,6 +548,10 @@ export function collectGeneratedKindEntries(tables: Omit<GeneratedIdTables, 'par
 		}));
 }
 
+export function parseKindIdOf(ref: { readonly aliasedToId?: number; readonly kindId?: number }): number | undefined {
+	return ref.aliasedToId ?? ref.kindId;
+}
+
 export function generatedFieldIds(
 	tables: GeneratedIdTables
 ): readonly { readonly name: string; readonly id: number }[] {

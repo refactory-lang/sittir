@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { NODE_MODEL_FILE, nodeModelPath } from '../../codegen/src/grammars.ts';
 import { describe, expect, it } from 'vitest';
 import { Delimiter } from '@sittir/common/utils';
 import type { GenericType } from '../src/types.ts';
@@ -66,7 +67,7 @@ describe('a list slot takes its elements bare, one or many', () => {
 	});
 
 	it('records a transparent wrapper content as accepted bare by the list and its envelope', () => {
-		const model = JSON.parse(readFileSync(new URL('../src/node-model.json5', import.meta.url), 'utf8')) as {
+		const model = JSON.parse(readFileSync(nodeModelPath('rust', NODE_MODEL_FILE), 'utf8')) as {
 			nodes: { kind: string; bareAccepts?: string[] }[];
 		};
 		const accepts = (kind: string): string[] => model.nodes.find((n) => n.kind === kind)?.bareAccepts ?? [];

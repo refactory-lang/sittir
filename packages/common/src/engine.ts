@@ -641,6 +641,7 @@ export function createNativeEngine<
 							return node as TNode;
 						};
 			const roots = new Map<number, unknown>();
+			const errors = Object.freeze(parsed.errors);
 			const tree: TreeHandle = {
 				id: parsed.treeId,
 				token: liveToken,
@@ -650,14 +651,13 @@ export function createNativeEngine<
 					if (index !== 0) return readAt(index, depth);
 					let cached = roots.get(depth);
 					if (cached === undefined) {
-						cached = Object.assign(readObject(readAt(0, depth), 'the root'), {
-							$errors: Object.freeze(parsed.errors)
-						});
+						cached = Object.assign(readObject(readAt(0, depth), 'the root'), { $errors: errors });
 						roots.set(depth, cached);
 					}
 					return cached;
 				},
 				options: parsed.options,
+				errors,
 				snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
 				triviaSide: (index, side) => readOwnEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
 				writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),

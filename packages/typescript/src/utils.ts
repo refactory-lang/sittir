@@ -527,10 +527,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['optionalChain', 1, '?.', '_optional_chain', 415],
 		['index', 2, undefined, '_index']
 	],
-	355: [
-		['function', 0, undefined, '_function'],
-		['arguments', 1, undefined, '_arguments']
-	],
+	355: [['arguments', 0, undefined, '_arguments']],
 	356: [
 		['function', 0, undefined, '_function'],
 		['typeArguments', 1, undefined, '_type_arguments']
@@ -2643,19 +2640,9 @@ export const structure: StructureTable = Object.freeze({
 	},
 	355: {
 		kind: 'type_query_call_expression',
-		required: [
-			['_function', 'function'],
-			['_arguments', 'arguments']
-		],
-		single: [
-			['_function', 'TypeQueryCallExpression.function'],
-			['_arguments', 'TypeQueryCallExpression.arguments']
-		],
-		nodeOnly: [
-			['_function', 'TypeQueryCallExpression.function', 'buildIdentifier(…)'],
-			['_arguments', 'TypeQueryCallExpression.arguments', 'a built Arguments', [283]]
-		],
-		config: ['function', 'arguments']
+		required: [['_arguments', 'arguments']],
+		single: [['_arguments', 'TypeQueryCallExpression.arguments']],
+		nodeOnly: [['_arguments', 'TypeQueryCallExpression.arguments', 'a built Arguments', [283]]]
 	},
 	356: {
 		kind: 'type_query_instantiation_expression',

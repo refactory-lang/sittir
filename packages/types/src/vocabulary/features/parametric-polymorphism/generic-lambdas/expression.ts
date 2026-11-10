@@ -1,7 +1,8 @@
-import type { GrammarContext } from '../../../context.ts';
+import type { GrammarMap, Slot } from '../../../map.ts';
+import type { Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Expression {
-	export interface Lambda<G extends GrammarContext<G>> {
-		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+	export interface Lambda<G extends GrammarMap, K extends Under<'expression.lambda'> = 'expression.lambda'> {
+		readonly typeParameters?: Slot<G, K, 'typeParameters', V.Declaration.TypeParameter<G>>[];
 	}
 }

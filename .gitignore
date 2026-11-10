@@ -31,6 +31,8 @@ Thumbs.db
 #   - tree-sitter.json (tree-sitter metadata)
 #   - render-bodies.json (one render body per emitted kind — the validators' catalog)
 #   - resolutions.json (the derived conflict resolutions; each grammar.sittir.ts imports it)
+#   - node-model.json5 and node-model-portable.json5 (the assembled model and a
+#     bound grammar's portable routes, which tools, validators and tests read)
 #   - parser.wasm and src/ (the generated parser: parser.c, scanner.c, the
 #     tree_sitter headers, grammar.json, node-types.json), which the native
 #     crate's build.rs compiles — CI builds from these, it never regenerates
@@ -47,6 +49,8 @@ packages/*/.sittir/*
 !packages/*/.sittir/grammar-diagnostics.json
 !packages/*/.sittir/render-bodies.json
 !packages/*/.sittir/resolutions.json
+!packages/*/.sittir/node-model.json5
+!packages/*/.sittir/node-model-portable.json5
 !packages/*/.sittir/parser.wasm
 !packages/*/.sittir/parser.json
 !packages/*/.sittir/upstream.wasm

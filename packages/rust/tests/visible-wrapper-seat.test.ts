@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { NODE_MODEL_FILE, nodeModelPath } from '../../codegen/src/grammars.ts';
 import { describe, expect, it } from 'vitest';
 import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
@@ -40,7 +41,7 @@ describe('a visible wrapper seated on its parent', () => {
 	});
 
 	it('records the seat on every parent in the node model', () => {
-		const model = JSON.parse(readFileSync(new URL('../src/node-model.json5', import.meta.url), 'utf8')) as {
+		const model = JSON.parse(readFileSync(nodeModelPath('rust', NODE_MODEL_FILE), 'utf8')) as {
 			nodes: { kind: string; slots?: { name: string; values: { seat?: { kind: string; shape: string } }[] }[] }[];
 		};
 		const seated = model.nodes

@@ -1,26 +1,26 @@
-import type { GrammarContext } from '../../context.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Pattern {
-	export interface Range<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
+	export interface Range<G extends GrammarMap, K extends Under<'pattern.range'> = 'pattern.range'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by r
-		readonly $kind: 'pattern.range';
-		readonly left?: G['slots']['pattern.range']['left'];
-		readonly right?: G['slots']['pattern.range']['right'];
+		readonly $path: K;
+		readonly left?: Slot<G, K, 'left', V.Identifier.Any<G> | V.Literal.Any<G> | string>;
+		readonly right?: Slot<G, K, 'right', V.Identifier.Any<G> | V.Literal.Any<G> | string>;
 	}
 	export namespace Range {
-		export interface Exclusive<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Range<G>> {
+		export interface Exclusive<G extends GrammarMap, K extends Under<'pattern.range.exclusive'> = 'pattern.range.exclusive'> extends SubKindOf<V.Pattern.Range<G, K>> {
 			// claimed by r
-			readonly $kind: 'pattern.range.exclusive';
+			readonly $path: K;
 		}
-		export interface Inclusive<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Range<G>> {
+		export interface Inclusive<G extends GrammarMap, K extends Under<'pattern.range.inclusive'> = 'pattern.range.inclusive'> extends SubKindOf<V.Pattern.Range<G, K>> {
 			// claimed by r
-			readonly $kind: 'pattern.range.inclusive';
+			readonly $path: K;
 		}
 		export namespace Inclusive {
-			export interface Legacy<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Range.Inclusive<G>> {
+			export interface Legacy<G extends GrammarMap, K extends Under<'pattern.range.inclusive.legacy'> = 'pattern.range.inclusive.legacy'> extends SubKindOf<V.Pattern.Range.Inclusive<G, K>> {
 				// claimed by r
-				readonly $kind: 'pattern.range.inclusive.legacy';
+				readonly $path: K;
 			}
 		}
 	}

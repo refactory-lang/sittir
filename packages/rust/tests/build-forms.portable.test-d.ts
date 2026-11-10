@@ -1,40 +1,48 @@
+import type * as V from '../../types/src/vocabulary/index.ts';
 import type { Flag } from '../../types/src/vocabulary/utils.ts';
-import type { Ctx } from '../.sittir/portable.typed.ts';
+import type { RustMap } from '../src/portable/map.ts';
 
-declare const name: Ctx['identifier'];
-declare const value: Ctx['expression'];
-declare const type: Ctx['type'];
-declare const attribute: Ctx['attribute'];
+type Path = keyof V.Paths<RustMap>;
+type At<P extends Path> = V.Read<RustMap, P>;
+type In<P extends Path> = V.InputOf<V.Paths<RustMap>[P], RustMap>;
+type Unfit = { [P in Path]: [At<P>] extends [In<P>] ? never : P }[Path];
 
-export const attributed: Ctx['argument'] = { $kind: 'argument', attributes: [attribute], value };
+export const readsFitInputs: [Unfit] extends [never] ? true : Unfit = true;
+
+declare const name: At<'declaration.constant'>['name'];
+declare const value: NonNullable<At<'expression.range.inclusive'>['start']>;
+declare const type: NonNullable<At<'declaration.constant'>['type']>;
+declare const attribute: NonNullable<At<'argument'>['attributes']>[number];
+
+export const attributed: In<'argument'> = { $path: 'argument', attributes: [attribute], value };
 // @ts-expect-error the portable argument is the attributed one, so it needs its attributes
-export const bare: Ctx['argument'] = { $kind: 'argument', value };
+export const bare: In<'argument'> = { $path: 'argument', value };
 
-export const closed: Ctx['expression'] = { $kind: 'expression.range.inclusive', start: value, end: value };
+export const closed: In<'expression.range.inclusive'> = { $path: 'expression.range.inclusive', start: value, end: value };
 // @ts-expect-error an inclusive range needs its end
-export const unclosed: Ctx['expression'] = { $kind: 'expression.range.inclusive', start: value };
-export const open: Ctx['expression'] = { $kind: 'expression.range', start: value };
+export const unclosed: In<'expression.range.inclusive'> = { $path: 'expression.range.inclusive', start: value };
+export const open: In<'expression.range'> = { $path: 'expression.range', start: value };
 
-export const typed: Ctx['declaration'] = { $kind: 'declaration.constant', name, type, value };
+export const typed: In<'declaration.constant'> = { $path: 'declaration.constant', name, type, value };
 // @ts-expect-error a rust constant states its type
-export const untyped: Ctx['declaration'] = { $kind: 'declaration.constant', name, value };
+export const untyped: In<'declaration.constant'> = { $path: 'declaration.constant', name, value };
 
-declare const fn: Extract<Ctx['declaration'], { readonly $kind: 'declaration.function' }>;
+declare const fn: At<'declaration.function'>;
 declare const extern: NonNullable<typeof fn.extern>;
-export const externed: Ctx['declaration'] = { ...fn, extern };
+export const externed: In<'declaration.function'> = { ...fn, extern };
 // @ts-expect-error a function states one extern
-export const twice: Ctx['declaration'] = { ...fn, extern: [extern, extern] };
+export const twice: In<'declaration.function'> = { ...fn, extern: [extern, extern] };
 
 declare const flag: Flag;
-declare const lifetime: Extract<Ctx['declaration'], { readonly $kind: 'declaration.type_parameter.lifetime' }>['name'];
-export const bounded: Ctx['declaration'] = { $kind: 'declaration.type_parameter.lifetime', name: lifetime, bounds: [lifetime] };
+declare const lifetime: At<'declaration.type_parameter.lifetime'>['name'];
+export const bounded: In<'declaration.type_parameter.lifetime'> = { $path: 'declaration.type_parameter.lifetime', name: lifetime, bounds: [lifetime] };
 // @ts-expect-error a lifetime parameter takes no default
-export const defaulted: Ctx['declaration'] = { $kind: 'declaration.type_parameter.lifetime', name: lifetime, default: type };
+export const defaulted: In<'declaration.type_parameter.lifetime'> = { $path: 'declaration.type_parameter.lifetime', name: lifetime, default: type };
 // @ts-expect-error a lifetime parameter is never const
-export const constLifetime: Ctx['declaration'] = { $kind: 'declaration.type_parameter.lifetime', name: lifetime, const: flag };
-declare const fallback: Ctx['slots']['declaration.type_parameter.value']['default'];
-export const constant: Ctx['declaration'] = { $kind: 'declaration.type_parameter.value', name, type, default: fallback };
+export const constLifetime: In<'declaration.type_parameter.lifetime'> = { $path: 'declaration.type_parameter.lifetime', name: lifetime, const: flag };
+declare const fallback: NonNullable<At<'declaration.type_parameter.value'>['default']>;
+export const constant: In<'declaration.type_parameter.value'> = { $path: 'declaration.type_parameter.value', name, type, default: fallback };
 // @ts-expect-error a const generic takes no bounds
-export const boundedConstant: Ctx['declaration'] = { $kind: 'declaration.type_parameter.value', name, type, bounds: [type] };
+export const boundedConstant: In<'declaration.type_parameter.value'> = { $path: 'declaration.type_parameter.value', name, type, bounds: [type] };
 // @ts-expect-error a const generic's const is its refinement, not a flag
-export const flaggedConstant: Ctx['declaration'] = { $kind: 'declaration.type_parameter.value', name, type, const: flag };
+export const flaggedConstant: In<'declaration.type_parameter.value'> = { $path: 'declaration.type_parameter.value', name, type, const: flag };

@@ -7,7 +7,7 @@ import { layerPath, sittirDirOf, type GrammarLayer, type GrammarPackage } from '
 export function withScratchEntry<T>(pkg: GrammarPackage, layer: GrammarLayer, run: (parserDir: string) => T): T {
 	const temporary = mkdtempSync(join(tmpdir(), 'sittir-scratch-entry-'));
 	try {
-		const parserDir = join(temporary, pkg.name, '.sittir');
+		const parserDir = sittirDirOf({ dir: join(temporary, pkg.name) });
 		mkdirSync(parserDir, { recursive: true });
 		const metadata = join(sittirDirOf(pkg), 'tree-sitter.json');
 		if (existsSync(metadata)) cpSync(metadata, join(parserDir, 'tree-sitter.json'));

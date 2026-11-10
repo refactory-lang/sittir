@@ -40,40 +40,6 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "rust",
-    "message": "conflict between _attributed_argument on ']' resolved by AddConflict (default)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "_attributed_argument"
-        ]
-      },
-      "step": "default",
-      "sourceChains": [
-        [
-          "_attributed_argument"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'['",
-          "tuple_expression_repeat1",
-          "_expression"
-        ],
-        "lookahead": "']'",
-        "interpretations": [
-          "_attributed_argument",
-          "_attributed_argument"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "rust",
     "message": "conflict between _pattern, _primitive_type on ')' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {

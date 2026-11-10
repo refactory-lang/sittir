@@ -1,4 +1,4 @@
-import { grammarNodeTypeName, grammarTypePrefix, languageApiName } from '../grammars.ts';
+import { PORTABLE_BUILD_FILE, PORTABLE_SURFACE_FILE, grammarNodeTypeName, grammarTypePrefix, languageApiName, moduleSpecifier } from '../grammars.ts';
 import { spelledTriviaTable } from '../compiler/model/trivia.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { ownTextLeaf } from './shared.ts';
@@ -136,7 +136,7 @@ import type { IndentOption, KindTypes, LanguageAPI, LanguageHooks } from '@sitti
 import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 ${BUILDER_TABLES.map(({ surface, alias }) => `import type { ir as ${alias} } from './${irModuleOf(surface)}.js';\n`).join('')}import { isMember, membersOf, type is } from './is.js';
-${config.portable === true ? "import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from './portable.js';\n" : ''}import type { TSKindId } from './kinds.js';
+${config.portable === true ? `import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from '${moduleSpecifier('api.ts', PORTABLE_SURFACE_FILE)}';\n` : ''}import type { TSKindId } from './kinds.js';
 import type { FixedTextKindId, TypeKeyOf, NamespaceMap, ${grammarNodeTypeName(grammar)}, ${grammarTypeMapName(grammar)} } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { querySlots, structure, triviaFacts } from './utils.js';
@@ -172,7 +172,7 @@ ${BUILDER_TABLES.map(({ mode, surface }) => `\t\t${mode}: () => import('./${irMo
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<${api}, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ${rootTypeName}Root & ParsedRoot, tree as TreeHandle),
-	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)${config.portable === true ? ",\n\tportable: rows,\n\tportableBuild: () => import('./portable-build.js').then((m) => m.build),\n\tqueryFlags,\n\tquerySlotFlags" : ''}
+	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)${config.portable === true ? `,\n\tportable: rows,\n\tportableBuild: () => import('${moduleSpecifier('api.ts', PORTABLE_BUILD_FILE)}').then((m) => m.build),\n\tqueryFlags,\n\tquerySlotFlags` : ''}
 });
 `;
 }

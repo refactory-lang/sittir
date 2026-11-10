@@ -1,21 +1,38 @@
-import type { GrammarContext } from '../../context.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Statement {
-	export interface Throw<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
+	export interface Throw<G extends GrammarMap, K extends Under<'statement.throw'> = 'statement.throw'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by pt
-		readonly $kind: 'statement.throw';
-		readonly cause?: G['slots']['statement.throw']['cause'];
+		readonly $path: K;
+		readonly cause?: Slot<
+			G,
+			K,
+			'cause',
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+		>;
 		// p only
-		readonly expression?: G['slots']['statement.throw']['expression'];
+		readonly expression?: Slot<
+			G,
+			K,
+			'expression',
+			| V.Declaration.Module<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+		>;
 	}
-	export interface Try<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
+	export interface Try<G extends GrammarMap, K extends Under<'statement.try'> = 'statement.try'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by pt
-		readonly $kind: 'statement.try';
-		readonly alternative?: V.Clause.Else<G>;
+		readonly $path: K;
+		readonly alternative?: Slot<G, K, 'alternative', V.Clause.Else<G>>;
 		// p only
-		readonly body: G['slots']['statement.try']['body'];
-		readonly finalizer?: V.Clause.Finally<G>;
-		readonly handlers?: G['clause'][];
+		readonly body: Slot<G, K, 'body', V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
+		readonly finalizer?: Slot<G, K, 'finalizer', V.Clause.Finally<G>>;
+		readonly handlers?: Slot<G, K, 'handlers', V.Clause.Any<G>>[];
 	}
 }

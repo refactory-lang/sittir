@@ -1,9 +1,9 @@
-import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
+import type { GrammarMap, Slot } from './map.ts';
+import type { SubKindOf, Under } from './utils.ts';
 import type * as V from './index.ts';
-export interface Identifier<G extends GrammarContext<G>> {
+export interface Identifier<G extends GrammarMap, K extends Under<'identifier'> = 'identifier'> {
 	// claimed by prt
-	readonly $kind: 'identifier';
+	readonly $path: K;
 }
 
 export interface IdentifierSynonyms {
@@ -13,12 +13,10 @@ export interface IdentifierSynonyms {
 }
 
 export namespace Identifier {
-	export interface Qualified<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
+	export interface Qualified<G extends GrammarMap, K extends Under<'identifier.qualified'> = 'identifier.qualified'> extends SubKindOf<V.Identifier<G, K>> {
 		// claimed by prt
-		readonly $kind: 'identifier.qualified';
-		readonly name: G['identifier'];
-		readonly qualifier?: G['slots']['identifier.qualified']['qualifier'];
+		readonly $path: K;
+		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
+		readonly qualifier?: Slot<G, K, 'qualifier', V.Identifier.Any<G> | string | V.Type.Any<G>>;
 	}
-	// claimed by t
-	export type Super<G extends GrammarContext<G>> = G['texts']['identifier.super'];
 }

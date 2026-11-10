@@ -1,15 +1,24 @@
-import type { GrammarContext } from '../../context.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
+import type { Under } from '../../utils.ts';
+import type * as V from '../../index.ts';
 export namespace Declaration {
-	export interface Parameter<G extends GrammarContext<G>> {
-		readonly default?: G['slots']['declaration.parameter']['default'];
+	export interface Parameter<G extends GrammarMap, K extends Under<'declaration.parameter'> = 'declaration.parameter'> {
+		readonly default?: Slot<
+			G,
+			K,
+			'default',
+			| V.Declaration.Module<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+		>;
 		// pt only
 	}
 	export namespace Parameter {
-		export interface Default<G extends GrammarContext<G>> {
-			readonly default: G['slots']['declaration.parameter.default']['default'];
+		export interface Default<G extends GrammarMap, K extends Under<'declaration.parameter.default'> = 'declaration.parameter.default'> {
 		}
-		export interface TypedDefault<G extends GrammarContext<G>> {
-			readonly default: G['slots']['declaration.parameter.typed_default']['default'];
+		export interface TypedDefault<G extends GrammarMap, K extends Under<'declaration.parameter.typed_default'> = 'declaration.parameter.typed_default'> {
 		}
 	}
 }

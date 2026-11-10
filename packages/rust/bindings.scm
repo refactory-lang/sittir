@@ -20,6 +20,11 @@
 (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (super))))) @declaration.function.public.parent
 (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (visibility_modifier_pub_scope_in_path (_) @scope))))) @declaration.function.public.restricted
 (function_signature_item) @declaration.function.signature
+(function_signature_item (function_modifiers "async" @async))
+(function_signature_item (function_modifiers "const" @const))
+(function_signature_item (function_modifiers "unsafe" @unsafe))
+(function_signature_item (function_modifiers "default" @default))
+(function_signature_item (function_modifiers (extern_modifier) @extern))
 (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self_module))))) @declaration.function.signature.private
 (function_signature_item (visibility_modifier (visibility_modifier_pub))) @declaration.function.signature.public
 (function_signature_item (visibility_modifier (crate_visibility_modifier))) @declaration.function.signature.public.crate
@@ -254,11 +259,13 @@
 (for_lifetimes) @clause.lifetimes
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────
-((arguments (arguments_elements (attributed_argument (attribute_item) (_) @value) @argument)) (#set! claim argument))
-(attributed_argument (attribute_item)* @attributes)
-((attributed_argument (attribute_item)* @dropped (_) @element) (#set! reason "a call argument with attributes reads as argument; one without, or an array element, reads as its expression"))
+((argument (attribute_item) (_) @value) @argument (#set! claim argument))
+(argument (attribute_item)* @attributes)
+((argument (attribute_item)* @dropped (_) @element) (#set! reason "a call argument with attributes reads as argument; one without reads as its expression"))
 
 ; ── element (pieces of a composite expression that are not expressions) ────────
+((attributed_element (attribute_item) (_) @value) @element.attributed)
+(attributed_element (attribute_item)* @attributes)
 (field_initializer) @element.struct.field
 (field_initializer (attribute_item)* @attributes)
 (shorthand_field_initializer) @element.struct.field
@@ -343,7 +350,7 @@
 (type_cast_expression) @expression.cast.conversion
 (type_cast_expression value: (_) @expression)
 (parenthesized_expression) @expression.parenthesized
-(tuple_expression (expressions) @elements) @expression.collection.tuple
+(tuple_expression) @expression.collection.tuple
 (array_expression) @expression.collection.array
 (array_expression_semi) @expression.collection.array.repeat
 (struct_expression) @expression.collection.struct

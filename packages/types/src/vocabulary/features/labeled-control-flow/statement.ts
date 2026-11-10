@@ -1,36 +1,23 @@
-import type { GrammarContext } from '../../context.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
+import type { Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Statement {
-	export interface Block<G extends GrammarContext<G>> {
-		readonly label?: V.Identifier.Label<G>;
-		// r only
+	export interface Block<G extends GrammarMap, K extends Under<'statement.block'> = 'statement.block'> {
 	}
-	export interface Break<G extends GrammarContext<G>> {
-		readonly label?: V.Identifier.Label<G>;
+	export interface Break<G extends GrammarMap, K extends Under<'statement.break'> = 'statement.break'> {
+		readonly label?: Slot<G, K, 'label', V.Identifier.Label<G>>;
 		// rt only
 	}
-	export interface Continue<G extends GrammarContext<G>> {
-		readonly label?: V.Identifier.Label<G>;
+	export interface Continue<G extends GrammarMap, K extends Under<'statement.continue'> = 'statement.continue'> {
+		readonly label?: Slot<G, K, 'label', V.Identifier.Label<G>>;
 		// rt only
 	}
-	export interface Labeled<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
-		// claimed by t
-		readonly $kind: 'statement.labeled';
-		readonly body: G['slots']['statement.labeled']['body'];
-		readonly label: G['slots']['statement.labeled']['label'];
-	}
-	export interface Loop<G extends GrammarContext<G>> {
-		readonly label?: V.Identifier.Label<G>;
+	export interface Loop<G extends GrammarMap, K extends Under<'statement.loop'> = 'statement.loop'> {
 	}
 	export namespace Loop {
-		export interface ForEach<G extends GrammarContext<G>> {
-			readonly label?: V.Identifier.Label<G>;
-			// r only
+		export interface ForEach<G extends GrammarMap, K extends Under<'statement.loop.for_each'> = 'statement.loop.for_each'> {
 		}
-		export interface While<G extends GrammarContext<G>> {
-			readonly label?: V.Identifier.Label<G>;
-			// r only
+		export interface While<G extends GrammarMap, K extends Under<'statement.loop.while'> = 'statement.loop.while'> {
 		}
 	}
 }
