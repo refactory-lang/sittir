@@ -10,6 +10,7 @@ export const RECORD_CONSTRUCTION_IMPORTS = [
 	'builtInputs',
 	'listSettingsOf',
 	'patchesByCopy',
+	'setSlot',
 	'storeCell',
 	'storeFlag',
 	'storeList',
@@ -124,7 +125,7 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 		if (spec.check !== undefined) throw new Error(`recordParts: ${spec.node.kind} checks its slots together, so no one slot is written alone`);
 		const at = placed.findIndex((candidate) => candidate.local === storageKey);
 		if (at < 0) throw new Error(`recordParts: ${spec.node.kind} stores no slot ${storageKey}`);
-		return tailOf(`arena.copy(source, ${spec.kind}, ${at})`, [placed[at]!], slotPatch, undefined, [`    arena.carry(source, record, ${at});`]);
+		return [`  return setSlot(source, ${spec.kind}, ${JSON.stringify(spec.node.kind)}, ${at}, ${JSON.stringify(placed[at]!.accessor)}, ${storageKey}) as unknown as ${spec.result};`];
 	};
 	const sided = options !== undefined && (options.delimiter || options.separator);
 	const optionsTail = sided

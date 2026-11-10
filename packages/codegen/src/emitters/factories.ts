@@ -2123,7 +2123,7 @@ function fieldCarryingFactoryText(
 			const cases = copied.map(({ slot, ...set }): SetCase => {
 				const head = slotHeads.get(slot.storageKey);
 				if (head === undefined) throw new Error(`setTwinLines: ${node.kind}.${slot.name} has no builder lines`);
-				return { ...set, slots: [slot.propertyName], lines: [...head, ...builderHandleLines(node.kind, [[slot.propertyName, slot.storageKey]]), ...parts.slotTail(slot.storageKey)] };
+				return { ...set, slots: [slot.propertyName], lines: [...head, ...parts.slotTail(slot.storageKey)] };
 			});
 			after.push(...setTwinLines({ fn: setFn, builtName, held, params: patchParams, cases }));
 		}
@@ -2306,15 +2306,22 @@ function setTwinLines({ fn, builtName, held, params, cases }: SetTwin): string[]
 		return param.rest === true ? `...(${value})` : value;
 	};
 	const inputs = cases.flatMap((set) => set.slots.map((slot) => `[${JSON.stringify(slot)}, ${set.input}]`));
+	const fallbacks = new Map<string, string[]>();
+	for (const set of cases) {
+		const call = `${fn}$patch(source, ${params.map((param) => arg(param, set)).join(', ')})`;
+		fallbacks.set(call, [...(fallbacks.get(call) ?? []), ...set.slots]);
+	}
 	return [
 		`function ${fn}$set(source: object, ...[slot, input]: ${inputs.join(' | ')}): ${builtName} {`,
+		'  if (!patchesByCopy(source)) {',
+		'    const inputs = builtInputs(source);',
+		'    switch (slot) {',
+		...[...fallbacks].flatMap(([call, slots]) => [...slots.map((slot) => `      case ${JSON.stringify(slot)}:`), `        return ${call};`]),
+		'    }',
+		'  }',
 		'  switch (slot) {',
 		...cases.flatMap((set) => [
 			...set.slots.map((slot, n) => `    case ${JSON.stringify(slot)}:${n === set.slots.length - 1 ? ' {' : ''}`),
-			'      if (!patchesByCopy(source)) {',
-			'        const inputs = builtInputs(source);',
-			`        return ${fn}$patch(source, ${params.map((param) => arg(param, set)).join(', ')});`,
-			'      }',
 			`      const ${set.local} = ${set.bound ?? 'input'};`,
 			...set.lines.map((line) => `    ${line}`),
 			'    }'
@@ -3104,7 +3111,7 @@ function emitSeparatedListFactory(
 						local: 'elements',
 						input: elementsType,
 						partial: false,
-						lines: [...contentHead, ...builderHandleLines(node.kind, [[contentAccessorName, contentStorageKey]]), ...parts.slotTail(contentStorageKey)]
+						lines: [...contentHead, ...parts.slotTail(contentStorageKey)]
 					},
 					{
 						slots: [...(hasSeparatorKindOption ? ['separator'] : []), ...(hasDelimiterOption ? ['delimiter'] : [])],

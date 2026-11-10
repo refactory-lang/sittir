@@ -3,7 +3,7 @@ import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
 import { carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
-import { currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle } from './engine-scope.ts';
+import { admitChildren, builtArenaOf as handleBuiltArena, currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { registered, wrapRegistered, type Role } from './identity.ts';
@@ -16,7 +16,7 @@ import { snapshotOf } from './snapshot.ts';
 import { cacheOf, chosenSeparatorOf, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
 import { HANDLE, isRecordPosition, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
-import { builtRecordOf, holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
+import { builtRecordOf, holdSideEntries, isBuiltNode, patchCell, patchFlag, patchList, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { BLANK_KIND_ID, blankArmRead, blankArmStored } from './blank-arm.ts';
@@ -338,6 +338,24 @@ export function patchesByCopy(source: object): boolean {
 	if (handle === undefined || handle.verifyStored !== undefined || handle.builtArena === undefined) return false;
 	if (builtRecordOf(source, handle.builtArena) !== undefined) return true;
 	return isRecordPosition(source) && source.$tree.built === undefined && source.$tree.records !== undefined;
+}
+
+export function setSlot(source: object, kind: number, kindName: string, at: number, accessor: string, value: unknown): object {
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, kindName, { [accessor]: value });
+	const arena = handleBuiltArena(handle);
+	return arena.scope(() => {
+		const record = arena.copy(source, kind, at);
+		const place = arena.placeAt(kind, at);
+		if (place.length === 2) patchFlag(record, place[0], 2 ** place[1], value);
+		else if (place.length === 6) {
+			const [word, built, , , , run] = place;
+			if (run === 0) patchCell(arena, record, built, word, carriedSlot(source, accessor, value));
+			else patchList(arena, record, built, word, value as readonly unknown[]);
+		}
+		arena.carry(source, record, at);
+		return arena.view(record);
+	});
 }
 
 export function carriedSlot(source: object, accessor: string, value: unknown): unknown {

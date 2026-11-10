@@ -22,6 +22,7 @@ import {
 	builtArenaOf,
 	builtInputs,
 	patchesByCopy,
+	setSlot,
 	storeCell,
 	storeFlag,
 	storeList,
@@ -291,42 +292,38 @@ function buildLookaheadAssertion$set(
 		| ['operator', Partial<T.LookaheadAssertion.Config>]
 		| ['pattern', Partial<T.LookaheadAssertion.Config>]
 ): T.LookaheadAssertion.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'operator':
+			case 'pattern':
+				return buildLookaheadAssertion$patch(source, { ...(inputs.config as T.LookaheadAssertion.Config), ...input });
+		}
+	}
 	switch (slot) {
 		case 'operator': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildLookaheadAssertion$patch(source, { ...(inputs.config as T.LookaheadAssertion.Config), ...input });
-			}
 			const config = input;
 			const _operator = kindIdStorage<NonNullable<T.LookaheadAssertion['_operator']>>(config.operator);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'lookahead_assertion', { operator: _operator });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.LookaheadAssertion as const, 0);
-				patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.LookaheadAssertion.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.LookaheadAssertion as const,
+				'lookahead_assertion',
+				0,
+				'operator',
+				_operator
+			) as unknown as T.LookaheadAssertion.Bound;
 		}
 		case 'pattern': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildLookaheadAssertion$patch(source, { ...(inputs.config as T.LookaheadAssertion.Config), ...input });
-			}
 			const config = input;
 			const _pattern = config.pattern;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'lookahead_assertion', { pattern: _pattern });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.LookaheadAssertion as const, 1);
-				patchCell(arena, record, 3, 3, carriedSlot(source, 'pattern', _pattern));
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.LookaheadAssertion.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.LookaheadAssertion as const,
+				'lookahead_assertion',
+				1,
+				'pattern',
+				_pattern
+			) as unknown as T.LookaheadAssertion.Bound;
 		}
 	}
 }
@@ -390,42 +387,38 @@ function buildLookbehindAssertion$set(
 		| ['operator', Partial<T.LookbehindAssertion.Config>]
 		| ['pattern', Partial<T.LookbehindAssertion.Config>]
 ): T.LookbehindAssertion.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'operator':
+			case 'pattern':
+				return buildLookbehindAssertion$patch(source, { ...(inputs.config as T.LookbehindAssertion.Config), ...input });
+		}
+	}
 	switch (slot) {
 		case 'operator': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildLookbehindAssertion$patch(source, { ...(inputs.config as T.LookbehindAssertion.Config), ...input });
-			}
 			const config = input;
 			const _operator = kindIdStorage<NonNullable<T.LookbehindAssertion['_operator']>>(config.operator);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'lookbehind_assertion', { operator: _operator });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.LookbehindAssertion as const, 0);
-				patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.LookbehindAssertion.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.LookbehindAssertion as const,
+				'lookbehind_assertion',
+				0,
+				'operator',
+				_operator
+			) as unknown as T.LookbehindAssertion.Bound;
 		}
 		case 'pattern': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildLookbehindAssertion$patch(source, { ...(inputs.config as T.LookbehindAssertion.Config), ...input });
-			}
 			const config = input;
 			const _pattern = config.pattern;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'lookbehind_assertion', { pattern: _pattern });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.LookbehindAssertion as const, 1);
-				patchCell(arena, record, 3, 3, carriedSlot(source, 'pattern', _pattern));
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.LookbehindAssertion.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.LookbehindAssertion as const,
+				'lookbehind_assertion',
+				1,
+				'pattern',
+				_pattern
+			) as unknown as T.LookbehindAssertion.Bound;
 		}
 	}
 }
@@ -541,78 +534,64 @@ function buildCharacterClass$set(
 		| ['classAtoms', Partial<T.CharacterClass.Config>]
 		| ['trailing', Partial<T.CharacterClass.Config>]
 ): T.CharacterClass.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'negation':
+			case 'leading':
+			case 'classAtoms':
+			case 'trailing':
+				return buildCharacterClass$patch(source, { ...(inputs.config as T.CharacterClass.Config), ...input });
+		}
+	}
 	switch (slot) {
 		case 'negation': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildCharacterClass$patch(source, { ...(inputs.config as T.CharacterClass.Config), ...input });
-			}
 			const config = input;
 			const _negation = strictBooleanStorage(config.negation);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'character_class', { negation: _negation });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.CharacterClass as const, 0);
-				patchFlag(record, 2, 1, _negation);
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.CharacterClass.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.CharacterClass as const,
+				'character_class',
+				0,
+				'negation',
+				_negation
+			) as unknown as T.CharacterClass.Bound;
 		}
 		case 'leading': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildCharacterClass$patch(source, { ...(inputs.config as T.CharacterClass.Config), ...input });
-			}
 			const config = input;
 			const _leading = strictBooleanStorage(config.leading);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'character_class', { leading: _leading });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.CharacterClass as const, 1);
-				patchFlag(record, 2, 2, _leading);
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.CharacterClass.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.CharacterClass as const,
+				'character_class',
+				1,
+				'leading',
+				_leading
+			) as unknown as T.CharacterClass.Bound;
 		}
 		case 'classAtoms': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildCharacterClass$patch(source, { ...(inputs.config as T.CharacterClass.Config), ...input });
-			}
 			const config = input;
 			const _class_atoms = listStorage<NonNullable<T.CharacterClass['_class_atoms']>>(config.classAtoms ?? []);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'character_class', { classAtoms: _class_atoms });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.CharacterClass as const, 2);
-				patchList(arena, record, 3, 3, _class_atoms);
-				arena.carry(source, record, 2);
-				const node = arena.view(record);
-				return node as unknown as T.CharacterClass.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.CharacterClass as const,
+				'character_class',
+				2,
+				'classAtoms',
+				_class_atoms
+			) as unknown as T.CharacterClass.Bound;
 		}
 		case 'trailing': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildCharacterClass$patch(source, { ...(inputs.config as T.CharacterClass.Config), ...input });
-			}
 			const config = input;
 			const _trailing = strictBooleanStorage(config.trailing);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'character_class', { trailing: _trailing });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.CharacterClass as const, 3);
-				patchFlag(record, 2, 4, _trailing);
-				arena.carry(source, record, 3);
-				const node = arena.view(record);
-				return node as unknown as T.CharacterClass.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.CharacterClass as const,
+				'character_class',
+				3,
+				'trailing',
+				_trailing
+			) as unknown as T.CharacterClass.Bound;
 		}
 	}
 }
@@ -766,42 +745,38 @@ function buildClassRange$set(
 	source: object,
 	...[slot, input]: ['start', Partial<T.ClassRange.Config>] | ['end', Partial<T.ClassRange.Config>]
 ): T.ClassRange.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'start':
+			case 'end':
+				return buildClassRange$patch(source, { ...(inputs.config as T.ClassRange.Config), ...input });
+		}
+	}
 	switch (slot) {
 		case 'start': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildClassRange$patch(source, { ...(inputs.config as T.ClassRange.Config), ...input });
-			}
 			const config = input;
 			const _start = kindIdStorage<NonNullable<T.ClassRange['_start']>>(config.start);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'class_range', { start: _start });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.ClassRange as const, 0);
-				patchCell(arena, record, 2, 2, carriedSlot(source, 'start', _start));
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.ClassRange.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.ClassRange as const,
+				'class_range',
+				0,
+				'start',
+				_start
+			) as unknown as T.ClassRange.Bound;
 		}
 		case 'end': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildClassRange$patch(source, { ...(inputs.config as T.ClassRange.Config), ...input });
-			}
 			const config = input;
 			const _end = kindIdStorage<NonNullable<T.ClassRange['_end']>>(config.end);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'class_range', { end: _end });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.ClassRange as const, 1);
-				patchCell(arena, record, 3, 21, carriedSlot(source, 'end', _end));
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.ClassRange.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.ClassRange as const,
+				'class_range',
+				1,
+				'end',
+				_end
+			) as unknown as T.ClassRange.Bound;
 		}
 	}
 }
@@ -963,60 +938,51 @@ function buildNamedCapturingGroup$set(
 		| ['groupName', Partial<T.NamedCapturingGroup.Config>]
 		| ['pattern', Partial<T.NamedCapturingGroup.Config>]
 ): T.NamedCapturingGroup.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'operator':
+			case 'groupName':
+			case 'pattern':
+				return buildNamedCapturingGroup$patch(source, { ...(inputs.config as T.NamedCapturingGroup.Config), ...input });
+		}
+	}
 	switch (slot) {
 		case 'operator': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildNamedCapturingGroup$patch(source, { ...(inputs.config as T.NamedCapturingGroup.Config), ...input });
-			}
 			const config = input;
 			const _operator = kindIdStorage<NonNullable<T.NamedCapturingGroup['_operator']>>(config.operator);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'named_capturing_group', { operator: _operator });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.NamedCapturingGroup as const, 0);
-				patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.NamedCapturingGroup.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.NamedCapturingGroup as const,
+				'named_capturing_group',
+				0,
+				'operator',
+				_operator
+			) as unknown as T.NamedCapturingGroup.Bound;
 		}
 		case 'groupName': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildNamedCapturingGroup$patch(source, { ...(inputs.config as T.NamedCapturingGroup.Config), ...input });
-			}
 			const config = input;
 			const _group_name = config.groupName;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'named_capturing_group', { groupName: _group_name });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.NamedCapturingGroup as const, 1);
-				patchCell(arena, record, 3, 3, carriedSlot(source, 'groupName', _group_name));
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.NamedCapturingGroup.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.NamedCapturingGroup as const,
+				'named_capturing_group',
+				1,
+				'groupName',
+				_group_name
+			) as unknown as T.NamedCapturingGroup.Bound;
 		}
 		case 'pattern': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildNamedCapturingGroup$patch(source, { ...(inputs.config as T.NamedCapturingGroup.Config), ...input });
-			}
 			const config = input;
 			const _pattern = config.pattern;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'named_capturing_group', { pattern: _pattern });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.NamedCapturingGroup as const, 2);
-				patchCell(arena, record, 4, 6, carriedSlot(source, 'pattern', _pattern));
-				arena.carry(source, record, 2);
-				const node = arena.view(record);
-				return node as unknown as T.NamedCapturingGroup.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.NamedCapturingGroup as const,
+				'named_capturing_group',
+				2,
+				'pattern',
+				_pattern
+			) as unknown as T.NamedCapturingGroup.Bound;
 		}
 	}
 }
@@ -1159,24 +1125,25 @@ function buildZeroOrMore$set(
 	source: object,
 	...[slot, input]: ['lazy', Partial<T.ZeroOrMore.Config>]
 ): T.ZeroOrMore.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'lazy':
+				return buildZeroOrMore$patch(source, { ...(inputs.config as T.ZeroOrMore.Config), ...input });
+		}
+	}
 	switch (slot) {
 		case 'lazy': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildZeroOrMore$patch(source, { ...(inputs.config as T.ZeroOrMore.Config), ...input });
-			}
 			const config = input;
 			const _lazy = strictBooleanStorage(config.lazy);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'zero_or_more', { lazy: _lazy });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.ZeroOrMore as const, 0);
-				patchFlag(record, 2, 1, _lazy);
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.ZeroOrMore.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.ZeroOrMore as const,
+				'zero_or_more',
+				0,
+				'lazy',
+				_lazy
+			) as unknown as T.ZeroOrMore.Bound;
 		}
 	}
 }
@@ -1224,24 +1191,25 @@ function buildOneOrMore$set(
 	source: object,
 	...[slot, input]: ['lazy', Partial<T.OneOrMore.Config>]
 ): T.OneOrMore.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'lazy':
+				return buildOneOrMore$patch(source, { ...(inputs.config as T.OneOrMore.Config), ...input });
+		}
+	}
 	switch (slot) {
 		case 'lazy': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildOneOrMore$patch(source, { ...(inputs.config as T.OneOrMore.Config), ...input });
-			}
 			const config = input;
 			const _lazy = strictBooleanStorage(config.lazy);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'one_or_more', { lazy: _lazy });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.OneOrMore as const, 0);
-				patchFlag(record, 2, 1, _lazy);
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.OneOrMore.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.OneOrMore as const,
+				'one_or_more',
+				0,
+				'lazy',
+				_lazy
+			) as unknown as T.OneOrMore.Bound;
 		}
 	}
 }
@@ -1286,24 +1254,18 @@ function buildOptional$patch(source: object, config: Partial<T.Optional.Config> 
 	});
 }
 function buildOptional$set(source: object, ...[slot, input]: ['lazy', Partial<T.Optional.Config>]): T.Optional.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'lazy':
+				return buildOptional$patch(source, { ...(inputs.config as T.Optional.Config), ...input });
+		}
+	}
 	switch (slot) {
 		case 'lazy': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildOptional$patch(source, { ...(inputs.config as T.Optional.Config), ...input });
-			}
 			const config = input;
 			const _lazy = strictBooleanStorage(config.lazy);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'optional', { lazy: _lazy });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.Optional as const, 0);
-				patchFlag(record, 2, 1, _lazy);
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.Optional.Bound;
-			});
+			return setSlot(source, TSKindId.Optional as const, 'optional', 0, 'lazy', _lazy) as unknown as T.Optional.Bound;
 		}
 	}
 }
@@ -1358,42 +1320,38 @@ function buildCountQuantifier$set(
 	source: object,
 	...[slot, input]: ['content', Partial<T.CountQuantifier.Config>] | ['lazy', Partial<T.CountQuantifier.Config>]
 ): T.CountQuantifier.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'content':
+			case 'lazy':
+				return buildCountQuantifier$patch(source, { ...(inputs.config as T.CountQuantifier.Config), ...input });
+		}
+	}
 	switch (slot) {
 		case 'content': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildCountQuantifier$patch(source, { ...(inputs.config as T.CountQuantifier.Config), ...input });
-			}
 			const config = input;
 			const _content = config.content;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'count_quantifier', { content: _content });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.CountQuantifier as const, 0);
-				patchCell(arena, record, 3, 3, carriedSlot(source, 'content', _content));
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.CountQuantifier.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.CountQuantifier as const,
+				'count_quantifier',
+				0,
+				'content',
+				_content
+			) as unknown as T.CountQuantifier.Bound;
 		}
 		case 'lazy': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildCountQuantifier$patch(source, { ...(inputs.config as T.CountQuantifier.Config), ...input });
-			}
 			const config = input;
 			const _lazy = strictBooleanStorage(config.lazy);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'count_quantifier', { lazy: _lazy });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.CountQuantifier as const, 1);
-				patchFlag(record, 2, 1, _lazy);
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.CountQuantifier.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.CountQuantifier as const,
+				'count_quantifier',
+				1,
+				'lazy',
+				_lazy
+			) as unknown as T.CountQuantifier.Bound;
 		}
 	}
 }
@@ -1681,58 +1639,41 @@ function buildUnicodePropertyValueExpression$set(
 		| ['unicodePropertyValueExpressionGroup', Partial<T.UnicodePropertyValueExpression.Config>]
 		| ['unicodePropertyValue', Partial<T.UnicodePropertyValueExpression.Config>]
 ): T.UnicodePropertyValueExpression.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'unicodePropertyValueExpressionGroup':
+			case 'unicodePropertyValue':
+				return buildUnicodePropertyValueExpression$patch(source, {
+					...(inputs.config as T.UnicodePropertyValueExpression.Config),
+					...input
+				});
+		}
+	}
 	switch (slot) {
 		case 'unicodePropertyValueExpressionGroup': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildUnicodePropertyValueExpression$patch(source, {
-					...(inputs.config as T.UnicodePropertyValueExpression.Config),
-					...input
-				});
-			}
 			const config = input;
 			const _unicode_property_value_expression_group = config.unicodePropertyValueExpressionGroup;
-			const handle = currentHandle();
-			if (handle !== undefined)
-				admitChildren(handle, 'unicode_property_value_expression', {
-					unicodePropertyValueExpressionGroup: _unicode_property_value_expression_group
-				});
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.UnicodePropertyValueExpression as const, 0);
-				patchCell(
-					arena,
-					record,
-					2,
-					2,
-					carriedSlot(source, 'unicodePropertyValueExpressionGroup', _unicode_property_value_expression_group)
-				);
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.UnicodePropertyValueExpression.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.UnicodePropertyValueExpression as const,
+				'unicode_property_value_expression',
+				0,
+				'unicodePropertyValueExpressionGroup',
+				_unicode_property_value_expression_group
+			) as unknown as T.UnicodePropertyValueExpression.Bound;
 		}
 		case 'unicodePropertyValue': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildUnicodePropertyValueExpression$patch(source, {
-					...(inputs.config as T.UnicodePropertyValueExpression.Config),
-					...input
-				});
-			}
 			const config = input;
 			const _unicode_property_value = config.unicodePropertyValue;
-			const handle = currentHandle();
-			if (handle !== undefined)
-				admitChildren(handle, 'unicode_property_value_expression', { unicodePropertyValue: _unicode_property_value });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.UnicodePropertyValueExpression as const, 1);
-				patchCell(arena, record, 3, 7, carriedSlot(source, 'unicodePropertyValue', _unicode_property_value));
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.UnicodePropertyValueExpression.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.UnicodePropertyValueExpression as const,
+				'unicode_property_value_expression',
+				1,
+				'unicodePropertyValue',
+				_unicode_property_value
+			) as unknown as T.UnicodePropertyValueExpression.Bound;
 		}
 	}
 }
@@ -2010,42 +1951,38 @@ function buildTermGroup$set(
 	source: object,
 	...[slot, input]: ['content', Partial<T.TermGroup.Config>] | ['quantifier', Partial<T.TermGroup.Config>]
 ): T.TermGroup.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'content':
+			case 'quantifier':
+				return buildTermGroup$patch(source, { ...(inputs.config as T.TermGroup.Config), ...input });
+		}
+	}
 	switch (slot) {
 		case 'content': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildTermGroup$patch(source, { ...(inputs.config as T.TermGroup.Config), ...input });
-			}
 			const config = input;
 			const _content = kindIdStorage<NonNullable<T.TermGroup['_content']>>(config.content);
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'term_group', { content: _content });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.TermGroup as const, 0);
-				patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.TermGroup.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.TermGroup as const,
+				'term_group',
+				0,
+				'content',
+				_content
+			) as unknown as T.TermGroup.Bound;
 		}
 		case 'quantifier': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildTermGroup$patch(source, { ...(inputs.config as T.TermGroup.Config), ...input });
-			}
 			const config = input;
 			const _quantifier = config.quantifier;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'term_group', { quantifier: _quantifier });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.TermGroup as const, 1);
-				patchCell(arena, record, 3, 21, carriedSlot(source, 'quantifier', _quantifier));
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.TermGroup.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.TermGroup as const,
+				'term_group',
+				1,
+				'quantifier',
+				_quantifier
+			) as unknown as T.TermGroup.Bound;
 		}
 	}
 }
@@ -2164,43 +2101,38 @@ function buildCountQuantifierArm$set(
 		| ['decimalDigits', Partial<T.CountQuantifierArm.Config>]
 		| ['countQuantifierGroup', Partial<T.CountQuantifierArm.Config>]
 ): T.CountQuantifierArm.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'decimalDigits':
+			case 'countQuantifierGroup':
+				return buildCountQuantifierArm$patch(source, { ...(inputs.config as T.CountQuantifierArm.Config), ...input });
+		}
+	}
 	switch (slot) {
 		case 'decimalDigits': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildCountQuantifierArm$patch(source, { ...(inputs.config as T.CountQuantifierArm.Config), ...input });
-			}
 			const config = input;
 			const _decimal_digits = config.decimalDigits;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'count_quantifier_arm', { decimalDigits: _decimal_digits });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.CountQuantifierArm as const, 0);
-				patchCell(arena, record, 2, 2, carriedSlot(source, 'decimalDigits', _decimal_digits));
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.CountQuantifierArm.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.CountQuantifierArm as const,
+				'count_quantifier_arm',
+				0,
+				'decimalDigits',
+				_decimal_digits
+			) as unknown as T.CountQuantifierArm.Bound;
 		}
 		case 'countQuantifierGroup': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildCountQuantifierArm$patch(source, { ...(inputs.config as T.CountQuantifierArm.Config), ...input });
-			}
 			const config = input;
 			const _count_quantifier_group = config.countQuantifierGroup;
-			const handle = currentHandle();
-			if (handle !== undefined)
-				admitChildren(handle, 'count_quantifier_arm', { countQuantifierGroup: _count_quantifier_group });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.CountQuantifierArm as const, 1);
-				patchCell(arena, record, 3, 5, carriedSlot(source, 'countQuantifierGroup', _count_quantifier_group));
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.CountQuantifierArm.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.CountQuantifierArm as const,
+				'count_quantifier_arm',
+				1,
+				'countQuantifierGroup',
+				_count_quantifier_group
+			) as unknown as T.CountQuantifierArm.Bound;
 		}
 	}
 }
@@ -2297,60 +2229,41 @@ function buildCharacterClassEscapeArm$set(
 		| ['characterClassEscapeText2', Partial<T.CharacterClassEscapeArm.Config>]
 		| ['unicodePropertyValueExpression', Partial<T.CharacterClassEscapeArm.Config>]
 ): T.CharacterClassEscapeArm.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'characterClassEscapeText2':
+			case 'unicodePropertyValueExpression':
+				return buildCharacterClassEscapeArm$patch(source, {
+					...(inputs.config as T.CharacterClassEscapeArm.Config),
+					...input
+				});
+		}
+	}
 	switch (slot) {
 		case 'characterClassEscapeText2': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildCharacterClassEscapeArm$patch(source, {
-					...(inputs.config as T.CharacterClassEscapeArm.Config),
-					...input
-				});
-			}
 			const config = input;
 			const _character_class_escape_text2 = config.characterClassEscapeText2;
-			const handle = currentHandle();
-			if (handle !== undefined)
-				admitChildren(handle, 'character_class_escape_arm', {
-					characterClassEscapeText2: _character_class_escape_text2
-				});
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.CharacterClassEscapeArm as const, 0);
-				patchCell(arena, record, 2, 2, carriedSlot(source, 'characterClassEscapeText2', _character_class_escape_text2));
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.CharacterClassEscapeArm.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.CharacterClassEscapeArm as const,
+				'character_class_escape_arm',
+				0,
+				'characterClassEscapeText2',
+				_character_class_escape_text2
+			) as unknown as T.CharacterClassEscapeArm.Bound;
 		}
 		case 'unicodePropertyValueExpression': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildCharacterClassEscapeArm$patch(source, {
-					...(inputs.config as T.CharacterClassEscapeArm.Config),
-					...input
-				});
-			}
 			const config = input;
 			const _unicode_property_value_expression = config.unicodePropertyValueExpression;
-			const handle = currentHandle();
-			if (handle !== undefined)
-				admitChildren(handle, 'character_class_escape_arm', {
-					unicodePropertyValueExpression: _unicode_property_value_expression
-				});
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.CharacterClassEscapeArm as const, 1);
-				patchCell(
-					arena,
-					record,
-					3,
-					5,
-					carriedSlot(source, 'unicodePropertyValueExpression', _unicode_property_value_expression)
-				);
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.CharacterClassEscapeArm.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.CharacterClassEscapeArm as const,
+				'character_class_escape_arm',
+				1,
+				'unicodePropertyValueExpression',
+				_unicode_property_value_expression
+			) as unknown as T.CharacterClassEscapeArm.Bound;
 		}
 	}
 }
@@ -2535,48 +2448,41 @@ function buildInlineFlagsGroupEnable$set(
 		| ['enabled', Partial<T.InlineFlagsGroupEnable.Config>]
 		| ['pattern', Partial<T.InlineFlagsGroupEnable.Config>]
 ): T.InlineFlagsGroupEnable.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'enabled':
+			case 'pattern':
+				return buildInlineFlagsGroupEnable$patch(source, {
+					...(inputs.config as T.InlineFlagsGroupEnable.Config),
+					...input
+				});
+		}
+	}
 	switch (slot) {
 		case 'enabled': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildInlineFlagsGroupEnable$patch(source, {
-					...(inputs.config as T.InlineFlagsGroupEnable.Config),
-					...input
-				});
-			}
 			const config = input;
 			const _enabled = config.enabled;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'inline_flags_group_enable', { enabled: _enabled });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.InlineFlagsGroupEnable as const, 0);
-				patchCell(arena, record, 2, 2, carriedSlot(source, 'enabled', _enabled));
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.InlineFlagsGroupEnable.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.InlineFlagsGroupEnable as const,
+				'inline_flags_group_enable',
+				0,
+				'enabled',
+				_enabled
+			) as unknown as T.InlineFlagsGroupEnable.Bound;
 		}
 		case 'pattern': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildInlineFlagsGroupEnable$patch(source, {
-					...(inputs.config as T.InlineFlagsGroupEnable.Config),
-					...input
-				});
-			}
 			const config = input;
 			const _pattern = config.pattern;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'inline_flags_group_enable', { pattern: _pattern });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.InlineFlagsGroupEnable as const, 1);
-				patchCell(arena, record, 3, 5, carriedSlot(source, 'pattern', _pattern));
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.InlineFlagsGroupEnable.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.InlineFlagsGroupEnable as const,
+				'inline_flags_group_enable',
+				1,
+				'pattern',
+				_pattern
+			) as unknown as T.InlineFlagsGroupEnable.Bound;
 		}
 	}
 }
@@ -2654,69 +2560,54 @@ function buildInlineFlagsGroupToggle$set(
 		| ['disabled', Partial<T.InlineFlagsGroupToggle.Config>]
 		| ['pattern', Partial<T.InlineFlagsGroupToggle.Config>]
 ): T.InlineFlagsGroupToggle.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'enabled':
+			case 'disabled':
+			case 'pattern':
+				return buildInlineFlagsGroupToggle$patch(source, {
+					...(inputs.config as T.InlineFlagsGroupToggle.Config),
+					...input
+				});
+		}
+	}
 	switch (slot) {
 		case 'enabled': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildInlineFlagsGroupToggle$patch(source, {
-					...(inputs.config as T.InlineFlagsGroupToggle.Config),
-					...input
-				});
-			}
 			const config = input;
 			const _enabled = config.enabled;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'inline_flags_group_toggle', { enabled: _enabled });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.InlineFlagsGroupToggle as const, 0);
-				patchCell(arena, record, 2, 2, carriedSlot(source, 'enabled', _enabled));
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.InlineFlagsGroupToggle.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.InlineFlagsGroupToggle as const,
+				'inline_flags_group_toggle',
+				0,
+				'enabled',
+				_enabled
+			) as unknown as T.InlineFlagsGroupToggle.Bound;
 		}
 		case 'disabled': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildInlineFlagsGroupToggle$patch(source, {
-					...(inputs.config as T.InlineFlagsGroupToggle.Config),
-					...input
-				});
-			}
 			const config = input;
 			const _disabled = config.disabled;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'inline_flags_group_toggle', { disabled: _disabled });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.InlineFlagsGroupToggle as const, 1);
-				patchCell(arena, record, 3, 5, carriedSlot(source, 'disabled', _disabled));
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.InlineFlagsGroupToggle.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.InlineFlagsGroupToggle as const,
+				'inline_flags_group_toggle',
+				1,
+				'disabled',
+				_disabled
+			) as unknown as T.InlineFlagsGroupToggle.Bound;
 		}
 		case 'pattern': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildInlineFlagsGroupToggle$patch(source, {
-					...(inputs.config as T.InlineFlagsGroupToggle.Config),
-					...input
-				});
-			}
 			const config = input;
 			const _pattern = config.pattern;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'inline_flags_group_toggle', { pattern: _pattern });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.InlineFlagsGroupToggle as const, 2);
-				patchCell(arena, record, 4, 8, carriedSlot(source, 'pattern', _pattern));
-				arena.carry(source, record, 2);
-				const node = arena.view(record);
-				return node as unknown as T.InlineFlagsGroupToggle.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.InlineFlagsGroupToggle as const,
+				'inline_flags_group_toggle',
+				2,
+				'pattern',
+				_pattern
+			) as unknown as T.InlineFlagsGroupToggle.Bound;
 		}
 	}
 }
@@ -2791,48 +2682,41 @@ function buildInlineFlagsGroupDisable$set(
 		| ['disabled', Partial<T.InlineFlagsGroupDisable.Config>]
 		| ['pattern', Partial<T.InlineFlagsGroupDisable.Config>]
 ): T.InlineFlagsGroupDisable.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'disabled':
+			case 'pattern':
+				return buildInlineFlagsGroupDisable$patch(source, {
+					...(inputs.config as T.InlineFlagsGroupDisable.Config),
+					...input
+				});
+		}
+	}
 	switch (slot) {
 		case 'disabled': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildInlineFlagsGroupDisable$patch(source, {
-					...(inputs.config as T.InlineFlagsGroupDisable.Config),
-					...input
-				});
-			}
 			const config = input;
 			const _disabled = config.disabled;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'inline_flags_group_disable', { disabled: _disabled });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.InlineFlagsGroupDisable as const, 0);
-				patchCell(arena, record, 2, 2, carriedSlot(source, 'disabled', _disabled));
-				arena.carry(source, record, 0);
-				const node = arena.view(record);
-				return node as unknown as T.InlineFlagsGroupDisable.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.InlineFlagsGroupDisable as const,
+				'inline_flags_group_disable',
+				0,
+				'disabled',
+				_disabled
+			) as unknown as T.InlineFlagsGroupDisable.Bound;
 		}
 		case 'pattern': {
-			if (!patchesByCopy(source)) {
-				const inputs = builtInputs(source);
-				return buildInlineFlagsGroupDisable$patch(source, {
-					...(inputs.config as T.InlineFlagsGroupDisable.Config),
-					...input
-				});
-			}
 			const config = input;
 			const _pattern = config.pattern;
-			const handle = currentHandle();
-			if (handle !== undefined) admitChildren(handle, 'inline_flags_group_disable', { pattern: _pattern });
-			const arena = builtArenaOf(handle);
-			return arena.scope(() => {
-				const record = arena.copy(source, TSKindId.InlineFlagsGroupDisable as const, 1);
-				patchCell(arena, record, 3, 5, carriedSlot(source, 'pattern', _pattern));
-				arena.carry(source, record, 1);
-				const node = arena.view(record);
-				return node as unknown as T.InlineFlagsGroupDisable.Bound;
-			});
+			return setSlot(
+				source,
+				TSKindId.InlineFlagsGroupDisable as const,
+				'inline_flags_group_disable',
+				1,
+				'pattern',
+				_pattern
+			) as unknown as T.InlineFlagsGroupDisable.Bound;
 		}
 	}
 }
