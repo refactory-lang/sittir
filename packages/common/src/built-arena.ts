@@ -940,8 +940,8 @@ export class BuiltArena {
 		return { words: cut(this.#words), bytes: cut(this.#bytes) };
 	}
 
-	#view(at: number): object {
-		const position: RecordPosition = { $type: this.kindAt(at), $tree: this.tree, $at: at, $_layout: undefined };
+	#view(at: number, kind: number, words?: WritableWords): object {
+		const position: RecordPosition & Pick<RecordHandle, '$words'> = { $type: kind, $tree: this.tree, $at: at, $_layout: undefined, $words: words };
 		return keepExemplar(this.#exemplars, this.#wrap(position, this.tree) as object);
 	}
 
@@ -950,7 +950,7 @@ export class BuiltArena {
 		const placed = record.placed;
 		for (let n = 0; placed !== undefined && n < placed.length; n += 3) this.#site(placed[n] as object, record.at, placed[n + 1] as number, placed[n + 2] as number);
 		if (record.copyOf !== undefined) this.#copySites(record.copyOf, record.at, record.patched ?? []);
-		const node = this.#view(record.at);
+		const node = this.#view(record.at, headerKind(record.data[record.base]!, this.format.kindBits), record.data);
 		this.#placedLast = placed === undefined ? undefined : { node, placed };
 		return node;
 	}
@@ -1014,7 +1014,7 @@ export class BuiltArena {
 
 	/** The handle of the compound record at `at`. */
 	node(at: number): object {
-		return this.#view(at);
+		return this.#view(at, this.kindAt(at));
 	}
 
 	withOf(kind: number): BuiltWith | undefined {
@@ -1063,7 +1063,7 @@ export class BuiltArena {
 			this.#copySites(at, record.at, []);
 			const last = this.#placedLast;
 			if (own && last?.node === node) for (let n = 0; n < last.placed.length; n += 3) moveLeafSite(last.placed[n] as object, at, record.at, last.placed[n + 1] as number, last.placed[n + 2] as number);
-			return this.#view(record.at);
+			return this.#view(record.at, kind, record.data);
 		});
 	}
 

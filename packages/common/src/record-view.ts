@@ -21,6 +21,8 @@ import { aliasContentOf, asReadOutput, carryReadTree, coordinateOf, isStorageKey
 import { isRecordPosition, type RecordHandle, type RecordPosition } from './handle.ts';
 
 export function positionWords(position: RecordPosition): ChunkWords | undefined {
+	const own = (position as Partial<RecordHandle>).$words;
+	if (own !== undefined) return own;
 	const parsed = position.$tree.records;
 	if (parsed === undefined) return recordsOf(position.$tree).words(position.$at, 2);
 	const words = parsed.exported(position.$at);
