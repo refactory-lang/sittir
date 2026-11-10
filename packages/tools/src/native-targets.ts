@@ -6,7 +6,7 @@ export interface NativeTargetHosts {
 	readonly container?: string;
 }
 
-const ALPINE = 'node:22-alpine';
+const ALPINE = 'node:24-alpine';
 
 export const NATIVE_TARGET_HOSTS: Readonly<Record<NativeTarget, NativeTargetHosts>> = {
 	'aarch64-apple-darwin': { build: 'macos-15', run: 'macos-15' },
