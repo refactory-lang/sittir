@@ -188,6 +188,7 @@
 (parameter (mutable_specifier) @mutable)
 (self_parameter) @declaration.parameter.self
 (parameter name: (self)) @declaration.parameter.self
+(self_parameter reference: _ @reference)
 (self_parameter (mutable_specifier) @mutable)
 (variadic_parameter) @declaration.parameter.variadic
 (closure_parameter (_) @name) @declaration.parameter

@@ -123,7 +123,7 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it("places a receiver at the key its holder takes flattened, and the parameters after it in the group the holder takes as arguments", () => {
-		const receiver = { $path: 'declaration.parameter.receiver', reference: true };
+		const receiver = { $path: 'declaration.parameter.receiver', $flags: ['reference'] };
 		expect(render(runtime.build({ $path: 'declaration.method', name: 'f', receiver, parameters: [parameter('u8')], body: fn.body }))).toBe('fn f(&self, x: u8) {}');
 	});
 

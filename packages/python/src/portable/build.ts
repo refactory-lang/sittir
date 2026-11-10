@@ -12768,26 +12768,6 @@ export const build: PortableBuildTable = {
 					builder: 'complexPattern',
 					members: [
 						{
-							name: 'sign',
-							steps: [
-								{
-									key: 'sign',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [192, 'sign'],
-									kinds: [49],
-									tokens: {
-										'-': 49
-									}
-								}
-							]
-						},
-						{
 							name: 'real',
 							steps: [
 								{
@@ -12830,7 +12810,21 @@ export const build: PortableBuildTable = {
 							kind: 48
 						}
 					],
-					flags: {},
+					flags: {
+						sign: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'sign',
+											optional: true
+										}
+									],
+									kind: 49
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],
@@ -12847,26 +12841,6 @@ export const build: PortableBuildTable = {
 					kind: 192,
 					builder: 'complexPattern',
 					members: [
-						{
-							name: 'sign',
-							steps: [
-								{
-									key: 'sign',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [192, 'sign'],
-									kinds: [49],
-									tokens: {
-										'-': 49
-									}
-								}
-							]
-						},
 						{
 							name: 'real',
 							steps: [
@@ -12910,7 +12884,21 @@ export const build: PortableBuildTable = {
 							kind: 49
 						}
 					],
-					flags: {},
+					flags: {
+						sign: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'sign',
+											optional: true
+										}
+									],
+									kind: 49
+								}
+							]
+						}
+					},
 					when: [
 						{
 							absent: [],

@@ -16,7 +16,6 @@ export type VocabularyPath = (typeof vocabularyPaths)[number];
 export type PortableQueryIds<Ids> = { readonly [P in VocabularyPath]: P extends keyof Ids ? Ids[P] : never };
 
 export { classifierOf, hasKind, type PortableClassifier } from './classify.ts';
-export { Flags } from './flags.ts';
 export { registerPortableRows, type PortableLanguage } from './language-guard.ts';
 export { portablePathHasFacts } from './facts.ts';
 export { portableTrees, type LanguageGuard, type PortableGuard, type PortableGuardTree, type PortableKindTree } from './tree.ts';

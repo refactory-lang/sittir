@@ -59,7 +59,7 @@ There is one factory per read entry, meaning a grammar kind and one vocabulary k
 ```ts
 const FunctionItemAsDeclarationFunction = (n: T.FunctionItem.Parsed, set = 0): VocabViews['declaration.function'] => ({
 	$type: n.$type,
-	[flags]: () => set | (n.functionModifiers()?.modifiers().includes(TSKindId.AsyncKeyword) ? Flags.Async : 0) | …,
+	[flags]: () => [...set, ...(n.functionModifiers()?.modifiers().includes(TSKindId.AsyncKeyword) ? ['async'] : []), …],
 	name: () => read(n.name()),
 	parameters: () => read(n.parameters()),
 	…
@@ -69,7 +69,7 @@ const FunctionItemAsDeclarationFunction = (n: T.FunctionItem.Parsed, set = 0): V
 - **Members** come from the route resolution (§3.2). Every non-layout slot of the claimed kind is captured: a member or a fact is named by its capture, and a slot that is neither is `@dropped`; the inventory fails on a slot that is none of them (bindings spec §2.1). A deep member through one arm of a slot takes that arm, and the slot keeps its others.
 - **Every interface member has a closure,** inherited members included, read from the vocabulary itself. A member with no route returns `undefined`, so a required member with no route is a compile error.
 - **Closures by member type:** a nested member reads along its route; a slot member returns the reader's result read as a portable value.
-- **Flags** are one bitflag behind a module-private symbol, which only `is` reads: each flag tests its token, or the kind in its slot, along its route, and `set` carries the facts the envelope that made the node decides (§2.3).
+- **Flags** are a set of names behind a module-private symbol, which only `is` reads: each flag tests its token, or the kind in its slot, along its route, and `set` carries the flags the envelope that made the node decides (§2.3).
 - **The return type is the conformance check.** A member the portable node form rejects, and a member the interface does not declare, are compile errors in the generated module; an object literal's excess properties are refused.
 - **A refinement** (a claim with field literals beside the grammar kind's plain claim) reads like its parent. The literal it fixes is its kind, and no member returns it.
 - **Leaf text:** a leaf whose text varies carries a `$value` closure; a fixed-literal leaf is its const string, with no `$value`.
@@ -131,7 +131,7 @@ The input is runtime data (a structure can arrive as JSON), so the build side ca
 Whether a fact is a refinement or a flag is the vocabulary's declaration, made by its authors and informed by the grammars: the vocabulary declares each axis, with its values as kinds, and each flag (bindings spec §3.3, §3.4). The bindings map grammar sites onto those facts and name each by its path, whatever its form (bindings spec §2.1). The generator joins the two:
 
 - **Each name resolves against the declarations.** A claimed path resolves segment by segment: the namespace path to a kind, then each further segment to a value of one of the kind's axes or to one of its flags. A single-segment capture resolves to a member, to a flag, or to an axis whose value the captured node's claim gives.
-- **It emits by the declared form.** An axis value is a refinement kind: an entry in `VocabViews`, a read entry, a builder and a guard. A flag is a bit: its route, read into the node's bitflag, a step on each builder of its kind, and a guard under each path of its kind. A member is a closure and a build parameter.
+- **It emits by the declared form.** An axis value is a refinement kind: an entry in `VocabViews`, a read entry, a builder and a guard. A flag is a name: its route, read into the node's flags, a step on each builder of its kind, and a guard under each path of its kind. A member is a closure and a build parameter.
 - **It never infers a fact's form from the grammar.** A choice, a keyword or a slot's arity decides nothing: `accessor_kind: "get"` is a refinement because the vocabulary declares the accessor kind an axis, and `"async"` sets a flag because the vocabulary declares `async` one.
 - **A claim that maps onto no declared fact is reported,** with the inventory's other diagnostics, and gets no entry.
 - **The spelling outlives a reclassification.** A flag's guard and step are spelled as a refinement's are (bindings spec §3.3). When the vocabulary moves a fact from one form to the other, the bindings and the generated guards and steps keep their names, and only the types change.
