@@ -11,6 +11,10 @@ describe('emitConfig', () => {
 		expect(emitConfig({ grammar: 'rust', stable: true })).not.toContain('passWithNoTests');
 	});
 
+	it('runs every grammar package under the engine guard', () => {
+		expect(emitConfig({ grammar: 'rust', stable: true })).toContain('...engineGuard');
+	});
+
 	it('reads stability from the grammar package manifest', () => {
 		expect(['rust', 'python', 'typescript', 'regex', 'scm'].every(isStableGrammar)).toBe(true);
 		expect(isStableGrammar('no-such-grammar')).toBe(false);
