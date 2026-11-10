@@ -10,6 +10,12 @@ const MEMORY_FIELDS = ['heapUsed', 'heapTotal', 'external', 'arrayBuffers', 'rss
 const IDLE = 'docs/superpowers/probes/2026-10-01-shared-arena/timing/idle.sh';
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 const command = (name, args) => execFileSync(name, args, { encoding: 'utf8' }).trim();
+const cacheSizes = () => {
+	if (process.platform !== 'linux') return undefined;
+	const lines = command('lscpu', []).split('\n');
+	const field = (label) => lines.find((line) => line.startsWith(label))?.split(':')[1]?.replace(/\s*\(.*\)\s*$/, '').trim();
+	return { modelName: field('Model name'), l1d: field('L1d cache'), l1i: field('L1i cache'), l2: field('L2 cache'), l3: field('L3 cache') };
+};
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const median = (values) => {
 	assert(values.length > 0, 'empty sample population');
@@ -92,7 +98,8 @@ export function capture() {
 			release: os.release(),
 			cpu: os.cpus()[0]?.model,
 			cores: os.cpus().length,
-			memory: os.totalmem()
+			memory: os.totalmem(),
+				caches: cacheSizes()
 		},
 		runner: {
 			os: process.env.RUNNER_OS,
