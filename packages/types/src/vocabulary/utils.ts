@@ -38,6 +38,8 @@ declare const flag: unique symbol;
 
 export type Flag = typeof flag;
 
+export interface FlagSynonyms {}
+
 export interface FlagFeatures {}
 
 type Has<C, F, N> = C extends F ? N : never;
