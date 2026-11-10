@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { dirname, join } from 'node:path';
+import { dirname, join, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export type GrammarName = string;
@@ -24,7 +24,12 @@ export const BOOTSTRAP_INDENT_UNIT = '    ';
 export const GRAMMAR_TSCONFIG = 'tsconfig.grammar-sittir.json';
 export const PORTABLE_TYPE_TESTS = 'tests/*.portable.test-d.ts';
 export const PORTABLE_TS6_TYPE_TESTS = 'tests/*.portable.ts6.test-d.ts';
-export const PORTABLE_MAP_FILE = 'portable-map.ts';
+export const PORTABLE_SURFACE_FILE = 'portable/index.ts';
+export const PORTABLE_BUILD_FILE = 'portable/build.ts';
+export const PORTABLE_MAP_FILE = 'portable/map.ts';
+export const NODE_MODEL_FILE = 'node-model.json5';
+export const PORTABLE_NODE_MODEL_FILE = 'node-model-portable.json5';
+export type NodeModelFile = typeof NODE_MODEL_FILE | typeof PORTABLE_NODE_MODEL_FILE;
 export const GRAMMAR_TYPECHECK_SCRIPT = 'type-check:grammar';
 export const GRAMMAR_TYPECHECK_CEILING = 'grammar-typecheck-ceiling.json';
 
@@ -77,6 +82,15 @@ export function grammarPackage(name: GrammarName, dir: string = grammarPackageDi
 
 export function sittirDirOf(pkg: Pick<GrammarPackage, 'dir'>): string {
 	return join(pkg.dir, '.sittir');
+}
+
+export function nodeModelPath(grammar: GrammarName, file: NodeModelFile): string {
+	return join(sittirDirOf({ dir: grammarPackageDir(grammar) }), file);
+}
+
+export function moduleSpecifier(from: string, to: string): string {
+	const path = posix.relative(posix.dirname(from), to).replace(/\.ts$/, '.js');
+	return path.startsWith('.') ? path : `./${path}`;
 }
 
 export interface UpstreamGrammarEntry {

@@ -60,13 +60,12 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { invoke, load } from '../codegen-surface.ts';
 import { languageByName } from '../languages.ts';
 import {
-	grammarModulePath,
 	importGrammarModule,
 	requireGrammarModule,
 	type FactoryEntry,
 	type Hydrate
 } from '../grammar-internals.ts';
-import { UPSTREAM_WASM, grammarPackageDir, grammarRequire, isGrammar, upstreamPackage } from '@sittir/codegen/grammars';
+import { NODE_MODEL_FILE, PORTABLE_BUILD_FILE, UPSTREAM_WASM, grammarPackageDir, grammarRequire, isGrammar, nodeModelPath, upstreamPackage } from '@sittir/codegen/grammars';
 import { CORPUS_ROOT, localCorpusPath, upstreamCorpusDir } from '../corpus/layout.ts';
 import type {
 	CodegenSurface,
@@ -638,10 +637,8 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 };
 
 export function readNodeModelFile(grammar: string): string | undefined {
-	const p = grammarModulePath(grammar, 'node-model.json5');
-	if (!p) return undefined;
 	try {
-		return readFileSync(p, 'utf-8');
+		return readFileSync(nodeModelPath(grammar, NODE_MODEL_FILE), 'utf-8');
 	} catch {
 		return undefined;
 	}
@@ -666,7 +663,7 @@ export interface DelimiterSpelling {
 export async function loadDelimiterSpellings(grammar: string): Promise<Readonly<Record<string, DelimiterSpelling>>> {
 	const { delimiterFacets } = await loadNodeModel(grammar);
 	const interiors = (await requireGrammarModule(grammar, 'consts.ts')).TOKEN_INTERIORS as Readonly<Record<string, TokenInterior>>;
-	const table = (await importGrammarModule(grammar, 'portable-build.ts'))?.build;
+	const table = (await importGrammarModule(grammar, PORTABLE_BUILD_FILE))?.build;
 	const kindIdFromName = await loadKindIdFromName(grammar);
 	const spelled = (kind: string, facets: Readonly<Record<string, DelimiterFacet>>): Readonly<Record<string, DelimiterFacet>> => {
 		const token = table?.delimiters?.[kindIdFromName(kind)];

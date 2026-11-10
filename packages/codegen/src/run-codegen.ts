@@ -26,7 +26,7 @@ import { generateWithDerivedConflicts } from './transpile/conflict-driver.ts';
 import { assertGrammarRuntimeFloor } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { manifestPath, recordNativeBuild, recordedGeneration, sourceFingerprint, writeManifestForGrammar, type SourceFingerprint } from './scripts/generated-manifest.ts';
-import { GRAMMAR_ENTRY, PORTABLE_MAP_FILE, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, workspaceNodeApiLevel, type GrammarPackage } from './grammars.ts';
+import { GRAMMAR_ENTRY, NODE_MODEL_FILE, PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE, PORTABLE_NODE_MODEL_FILE, PORTABLE_SURFACE_FILE, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, workspaceNodeApiLevel, type GrammarPackage } from './grammars.ts';
 import { conflictResolutionsPath } from './transpile/conflict-resolutions-file.ts';
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
@@ -293,6 +293,7 @@ async function runCodegenInternal(opts: CodegenOptions, nodeApiLevel: number | u
 	}
 
 	const outDir = outputDir;
+	const sittirDir = join(dirname(outDir), '.sittir');
 
 	await writeFile(join(outDir, 'render-engine.ts'), result.renderEngine);
 	await writeFile(join(outDir, 'api.ts'), result.api);
@@ -322,7 +323,7 @@ async function runCodegenInternal(opts: CodegenOptions, nodeApiLevel: number | u
 	await writeFile(join(outDir, 'index.ts'), result.index);
 
 	writeFileSync(
-		join(dirname(outDir), '.sittir', 'render-bodies.json'),
+		join(sittirDir, 'render-bodies.json'),
 		JSON.stringify(
 			Object.fromEntries([...result.templates.bodies].sort(([a], [b]) => compareOrdinal(a, b))),
 			null,
@@ -343,7 +344,7 @@ async function runCodegenInternal(opts: CodegenOptions, nodeApiLevel: number | u
 				`origin: ${census.preferenceOrigin} preference, ${census.literalDefaultOrigin} literal-default, ${census.wordDefaultOrigin} word-default, ${census.cascadeOrigin} cascade, ${census.fallbackOrigin} fallback`
 		);
 		writeFileSync(
-			join(dirname(outDir), '.sittir', 'seam-census.json'),
+			join(sittirDir, 'seam-census.json'),
 			JSON.stringify(
 				{
 					total,
@@ -365,14 +366,14 @@ async function runCodegenInternal(opts: CodegenOptions, nodeApiLevel: number | u
 		);
 	}
 
-	await writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
-	if (result.portableNodeModel === undefined) rmSync(join(outDir, 'node-model-portable.json5'), { force: true });
-	else await writeFile(join(outDir, 'node-model-portable.json5'), result.portableNodeModel);
-	if (result.portable === undefined) rmSync(join(outDir, 'portable.ts'), { force: true });
-	else await writeFile(join(outDir, 'portable.ts'), result.portable);
-	if (result.portableBuild === undefined) rmSync(join(outDir, 'portable-build.ts'), { force: true });
-	else await writeFile(join(outDir, 'portable-build.ts'), result.portableBuild);
-	await writePortableTyped(join(dirname(outDir), '.sittir'), result.portableTyped);
+	await writeFile(join(sittirDir, NODE_MODEL_FILE), result.nodeModel);
+	if (result.portableNodeModel === undefined) rmSync(join(sittirDir, PORTABLE_NODE_MODEL_FILE), { force: true });
+	else await writeFile(join(sittirDir, PORTABLE_NODE_MODEL_FILE), result.portableNodeModel);
+	if (result.portable === undefined) rmSync(join(outDir, PORTABLE_SURFACE_FILE), { force: true });
+	else await writeFile(join(outDir, PORTABLE_SURFACE_FILE), result.portable);
+	if (result.portableBuild === undefined) rmSync(join(outDir, PORTABLE_BUILD_FILE), { force: true });
+	else await writeFile(join(outDir, PORTABLE_BUILD_FILE), result.portableBuild);
+	await writePortableTyped(sittirDir, result.portableTyped);
 
 	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
 	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);

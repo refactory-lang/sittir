@@ -119,7 +119,7 @@ describe('ofType keeps exactly what the language guard holds for', () => {
 
 	it.each(CORPUS)('%s: every path the language reads, over every descendant', async (_, language, file) => {
 		const engine = await createEngine(language as typeof rust);
-		const rows = (language as unknown as { hooks?: unknown }) && (await import(`../../${_}/src/portable.ts`)).rows as { table: { paths: Record<string, unknown> } };
+		const rows = (language as unknown as { hooks?: unknown }) && (await import(`../../${_}/src/portable/index.ts`)).rows as { table: { paths: Record<string, unknown> } };
 		const guards = (language as unknown as { is: { portable: unknown } }).is.portable;
 		const guardAt = (path: string): Guard => path.split('.').reduce<unknown>((at, segment) => (at as Record<string, unknown>)[segment], guards) as Guard;
 		const view = descendants(engine, source(file));

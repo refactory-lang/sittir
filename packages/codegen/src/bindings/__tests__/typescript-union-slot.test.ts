@@ -1,14 +1,14 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { grammarPackage } from '../../grammars.ts';
+import { PORTABLE_NODE_MODEL_FILE, grammarPackage, nodeModelPath } from '../../grammars.ts';
 
 const dir = grammarPackage('typescript').dir;
 const read = (...parts: string[]): string => readFileSync(join(dir, ...parts), 'utf8');
 
 type Member = { readonly name: string; readonly route: string; readonly slot?: string; readonly except?: readonly string[]; readonly path?: unknown };
 const members = (): readonly Member[] => {
-	const model = JSON.parse(read('src', 'node-model-portable.json5')) as { kinds: Record<string, { members?: readonly Member[] }> };
+	const model = JSON.parse(readFileSync(nodeModelPath('typescript', PORTABLE_NODE_MODEL_FILE), 'utf8')) as { kinds: Record<string, { members?: readonly Member[] }> };
 	return model.kinds.export_statement_default_declaration?.members ?? [];
 };
 

@@ -117,7 +117,7 @@ describe('emitPortableSurface', () => {
 			'\t"expression.call": PortableGuard<PortableIds["expression.call"], TestNode, TSKindId, PortableTexts["expression.call"]> & { readonly "nested": PortableIsAt["expression.call.nested"] };'
 		);
 		expect(text).toContain('export interface PortableIs { readonly "expression": PortableIsAt["expression"] }');
-		expect(text).toContain("import type { TestNode } from './types.js';");
+		expect(text).toContain("import type { TestNode } from '../types.js';");
 	});
 
 	it('types a path by the fixed texts of the kinds read at or under it', async () => {
@@ -199,13 +199,13 @@ describe('emitPortableSurface', () => {
 			slotFlags: [],
 			slotFlagTypes: []
 		});
-		expect(text).toContain(["declare module './types.js' {", '\tinterface PortableReads extends PortableIds {}', '\tinterface Call {', '\t\treadonly __flags__?: "async" | "static";', '\t}', '}'].join('\n'));
+		expect(text).toContain(["declare module '../types.js' {", '\tinterface PortableReads extends PortableIds {}', '\tinterface Call {', '\t\treadonly __flags__?: "async" | "static";', '\t}', '}'].join('\n'));
 		const none = emitPortableSurface({ nodeType: 'TestNode', routes: resolveRoutes(await input(SCM)), readTest: () => [], factOf: () => undefined, kindIdOf: () => 'TSKindId.Call', fixedText: [], literals: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
 		expect(none).not.toContain('__flags__');
 	});
 
 	it('fills the grammar\'s portable reads in its types, so a query narrows a portable kind by the paths it reads', async () => {
 		const text = await emit(SCM);
-		expect(text).toContain(["declare module './types.js' {", '\tinterface PortableReads extends PortableIds {}', '}'].join('\n'));
+		expect(text).toContain(["declare module '../types.js' {", '\tinterface PortableReads extends PortableIds {}', '}'].join('\n'));
 	});
 });

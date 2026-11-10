@@ -7,7 +7,7 @@ import * as python from './descriptor.js';
 import { TSKindId } from './kinds.js';
 import { guardsWith } from './is.js';
 import { portable, portableGuardsOf } from '@sittir/common/portable';
-import type { PortableIs, PortableKinds } from './portable.js';
+import type { PortableIs, PortableKinds } from './portable/index.js';
 
 export type * from './types.js';
 export type * from './options.js';

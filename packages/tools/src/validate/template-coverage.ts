@@ -28,6 +28,7 @@
 
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { NODE_MODEL_FILE, nodeModelPath } from '@sittir/codegen/grammars';
 import { fileURLToPath } from 'node:url';
 import { load } from '../codegen-surface.ts';
 import { sharedDisplayEntries, type DisplayFamilies } from './display-families.ts';
@@ -883,7 +884,7 @@ const EMPTY_NODE_MODEL_FACTS: NodeModelFacts = {
  * checkouts.
  */
 function loadNodeModelFacts(grammar: string): NodeModelFacts {
-	const path = join(packagesDir, grammar, 'src', 'node-model.json5');
+	const path = nodeModelPath(grammar, NODE_MODEL_FILE);
 	if (!existsSync(path)) return EMPTY_NODE_MODEL_FACTS;
 	const { factorySlots, displayUnions, polymorphVariants, fieldAliasMap, modelTypes, unitKinds, slotNames } = parseNodeModel(readFileSync(path, 'utf8'));
 	const modelFieldsByKind = new Map(Object.entries(slotNames).map(([kind, names]) => [kind.replace(/^_+/, ''), new Set(names)]));

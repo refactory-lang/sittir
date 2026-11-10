@@ -13,5 +13,5 @@
 	},
 	"references": [{ "path": "../types/tsconfig.build.json" }, { "path": "../common/tsconfig.build.json" }],
 	"include": ["src"],
-	"exclude": ["node_modules", "dist", "tests", "src/portable-map.ts"]
+	"exclude": ["node_modules", "dist", "tests", "src/portable/map.ts"]
 }

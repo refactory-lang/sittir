@@ -4,7 +4,7 @@ import { nodeAddressOf, treeOf } from '@sittir/common/utils';
 import type { QueryPlan } from '@sittir/types';
 import python from '../src/index.ts';
 import { hooks } from '../src/api.ts';
-import { queryFlags } from '../src/portable.ts';
+import { queryFlags } from '../src/portable/index.ts';
 import { TSKindId } from '../src/types.ts';
 import { querySlots } from '../src/utils.ts';
 
