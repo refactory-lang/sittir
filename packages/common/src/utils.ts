@@ -13,7 +13,7 @@ import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { spelledMember } from './spelled.ts';
 import { snapshotOf } from './snapshot.ts';
-import { chosenSeparatorOf, liveWords, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
+import { cacheOf, chosenSeparatorOf, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
 import { HANDLE, isRecordPosition, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
 import { builtRecordOf, holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
@@ -853,11 +853,6 @@ function hydrateSlotsBy(node: object, key: string, hydrateOne: HydrateOne): read
 /** The value of slot `key` of a wrapped node, hydrated by `hydrateWith` in `role` and written back into the slot. */
 export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wrap: WrapNode, role: Role = 'node'): unknown {
 	return hydrateSlotBy(node, key, (value) => hydrateWith(value, tree, wrap, undefined, role));
-}
-
-function cacheOf(node: RecordHandle): Record<number, unknown> {
-	liveWords(node);
-	return (node.$cache ??= {});
 }
 
 export function childSlot(node: RecordHandle, word: number, width: number, forms: number, inline: number, built: number, wrap?: WrapNode, aliasContent = false, spellings?: Readonly<Record<string, string>>): unknown {

@@ -68,6 +68,11 @@ export function liveWords(holder: RecordPosition): ChunkWords | undefined {
 	throw new Error(freedRecord(holder.$at));
 }
 
+export function cacheOf(node: RecordHandle): Record<number, unknown> {
+	liveWords(node);
+	return (node.$cache ??= {});
+}
+
 function holderWords(holder: RecordPosition, length: number): { readonly words: ChunkWords; readonly start: number; readonly records: RecordWords } {
 	const records = recordsOf(holder.$tree);
 	return { words: liveWords(holder) ?? records.words(holder.$at, length), start: wordOf(holder.$at, records.format), records };

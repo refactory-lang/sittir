@@ -9,7 +9,7 @@ import { BLANK_KIND_ID } from './blank-arm.ts';
 import { checkedKindId } from './kind-id.ts';
 import { addressOf, chunkOf, headerKind, kindField, withKind, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
 import { builtRefOf, handleArenaOf, leafSitesOf, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
-import { freedRecord, leafData, recordDelimiter, recordFlag, recordOf, recordSeparator, recordSlot, recordSlots, recordStub } from './record-view.ts';
+import { cacheOf, freedRecord, leafData, recordDelimiter, recordFlag, recordOf, recordSeparator, recordSlot, recordSlots, recordStub } from './record-view.ts';
 import { isRecordPosition, type LeafMaker, type RecordHandle, type RecordPosition } from './handle.ts';
 import { keepExemplar } from './exemplars.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
@@ -765,13 +765,13 @@ export class BuiltArena {
 		const at = builtRecordOf(source, this);
 		if (at === undefined) {
 			const parsed = isRecordPosition(source) && source.$tree.built === undefined ? source : undefined;
-			const draft = this.draft(kind, this.#widthOf(kind), undefined, (parsed as { readonly $cache?: Readonly<Record<number, unknown>> } | undefined)?.$cache, parsed);
+			const draft = this.draft(kind, this.#widthOf(kind), undefined, parsed === undefined ? undefined : cacheOf(parsed as RecordHandle), parsed);
 			if (place !== undefined) this.#carry(source, kind, draft, 0, place);
 			return draft;
 		}
 		const found = this.kindAt(at);
 		if (found !== kind) throw new Error(`a $with of a kind ${kind} record was handed a record of kind ${found}`);
-		const draft = this.draft(kind, this.#widthOf(kind), at, (source as { readonly $cache?: Readonly<Record<number, unknown>> }).$cache ?? {});
+		const draft = this.draft(kind, this.#widthOf(kind), at, cacheOf(source as RecordHandle));
 		this.#copyCells(at, kind, draft, true);
 		return draft;
 	}
