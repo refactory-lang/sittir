@@ -32,6 +32,7 @@ export type {
 	JsBackendStatusLike,
 	NativeBackendStatusLike,
 	EngineHandle,
+	NativeEngineArgs,
 	NativeEngineInstance,
 	NativeEngineLike,
 	NativeModuleLike,

@@ -3,7 +3,7 @@ import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
 import { carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
-import { currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle } from './engine-scope.ts';
+import { currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle, type LiveEngine } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { registered, wrapRegistered, type Role } from './identity.ts';
@@ -12,7 +12,7 @@ import { treeOf, treeOfToken, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
-import { chosenSeparatorOf, liveWords, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
+import { chosenSeparatorOf, liveWords, recordOf, recordSlot, recordSlots, rowOf, rowTrivia, storedSlotValues } from './record-view.ts';
 import { HANDLE, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
 import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
@@ -57,8 +57,12 @@ export function renderText(handle: EngineHandle | undefined, node: object): stri
 }
 
 export function queryOf(handle: EngineHandle, node: object): object {
+	return liveQuerier(handle).query(node);
+}
+
+function liveQuerier(handle: EngineHandle): LiveEngine {
 	if (!isLive(handle.current)) throw new Error('query: engine disposed; parse the source again with a live engine');
-	return handle.current.query(node);
+	return handle.current;
 }
 
 type Positioned = { readonly $tree: TreeHandle };
@@ -67,10 +71,11 @@ export function handleOf(node: Positioned): EngineHandle | undefined {
 	return treeEngineHandle(node.$tree);
 }
 
-export function handleQuery(node: Positioned, row: object): object {
+export function handleQuery(node: RecordPosition, wrap: (data: object, tree: TreeHandle) => unknown): object {
 	const handle = handleOf(node);
 	if (handle === undefined) throw new Error(NO_ENGINE);
-	return queryOf(handle, row);
+	const engine = liveQuerier(handle);
+	return engine.query(rowOf(node, wrap));
 }
 
 export function handleRender(this: Positioned): string {

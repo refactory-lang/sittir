@@ -4,10 +4,10 @@
 
 use std::hash::BuildHasher;
 
-use super::{admit, Address, ArenaError, ArenaRead, Cell, CellAt, CellWord, HeldArenas, RecordGrammar};
+use super::{admit, Address, ArenaError, ArenaRead, BuiltChunks, Cell, CellAt, CellWord, Held, HeldArenas, HeldParse, HeldParses, RecordGrammar};
 use crate::engine::{encode_handle, Engine, EngineGrammar, ReadTrees};
 use crate::prepare::RenderContext;
-use crate::render::{CoordinateError, RenderError, RenderResult, RenderSink};
+use crate::render::{CoordinateError, Lent, RenderError, RenderResult, RenderSink};
 use crate::slot::ChangedEdges;
 use crate::trivia::{BuiltEntry, NodeTrivia, TriviaEntry};
 use crate::trivia_store::{Place, Site, TriviaStore};
@@ -120,24 +120,27 @@ impl<G: RecordGrammar> Engine<G> {
     /// The built record at `at`, of the built arena `arena`, rendered as a
     /// render root whose `changed` edges have no neighbour, under `ctx`, its
     /// line endings unspelled. The records it reaches are admitted first;
-    /// each parsed tree a cell links is held from `trees` for the render,
-    /// and every tree's source and every trivia entry's record are read
-    /// through `ctx`'s table.
+    /// each parse a record names is found by its slot in `parses`, the
+    /// table of the arena that holds the record, and its tree held from
+    /// `trees` for the render, and every tree's source and every trivia
+    /// entry's record are read through `ctx`'s table.
     ///
     /// # Errors
     ///
-    /// `RenderError::Record` for an address naming no record and for words
-    /// `admit` refuses, `RenderError::Coordinate` for a linked tree `trees`
-    /// does not hold, else what the record's render refuses.
+    /// `RenderError::Record` for an address naming no record, for words
+    /// `admit` refuses and for a slot `parses` holds no parse in,
+    /// `RenderError::Coordinate` for a parse whose tree `trees` does not
+    /// hold, else what the record's render refuses.
     pub fn render_built<H: BuildHasher>(
         &self,
         arena: &dyn ArenaRead,
+        parses: &HeldParses<HeldParse>,
         at: Address,
         changed: ChangedEdges,
         trees: &ReadTrees<'_, G, H>,
         ctx: &RenderContext<'_>,
     ) -> Result<String, RenderError> {
-        let (root, mut held) = admitted_root::<G, H>(arena, at, changed, trees)?;
+        let (root, mut held) = admitted_root::<G, H>(arena, at, changed, trees, parses, Lent::NONE)?;
         G::render_record(self.grammar(), root, &mut held, arena, self.written(), ctx, None)
     }
 
@@ -182,45 +185,62 @@ fn admitted_leaf<G: RecordGrammar>(arena: &dyn ArenaRead, kind: KindId, entry: A
     }
 }
 
-/// The built record `record` of `arena` written into `w` as a trivia entry
-/// in the side that holds it, under `ctx`: admitted, the parsed trees it
-/// links held from `trees`, and rendered as the record its grammar renders
+/// The built record `record` of the arena `built` written into `w` as a
+/// trivia entry in the side that holds it, under `ctx`: admitted, each
+/// parse it names found by its slot in `built`'s own held-parse table and
+/// its arena read from what the render of the side lends (`ctx.lent`),
+/// else held from `trees`, and rendered as the record its grammar renders
 /// as an entry (`RecordGrammar::render_entry`), its sides from `store`.
 ///
 /// # Errors
 ///
-/// `RenderError::Record` for a record whose header names a kind other than
-/// its entry's and for words `admit` refuses, else what the render refuses.
+/// `RenderError::Record` for an arena already released, for a record whose
+/// header names a kind other than its entry's and for words `admit`
+/// refuses, else what the render refuses.
 pub fn render_record_entry<G: RecordGrammar, H: BuildHasher>(
     grammar: G,
-    arena: &dyn ArenaRead,
+    built: &BuiltChunks,
     record: BuiltEntry,
     store: &TriviaStore<G::Trivia>,
     trees: &ReadTrees<'_, G, H>,
     ctx: &RenderContext<'_>,
     w: &mut dyn RenderSink,
 ) -> RenderResult {
+    let arena = built.readable().map_err(RenderError::Record)?;
     if arena.header_kind(record.at, G::KIND_BITS).map_err(RenderError::Record)? != record.kind {
         return Err(RenderError::Record(ArenaError::Malformed { what: "trivia entry kind", word: u32::from(record.kind.0) }));
     }
-    let (root, mut held) = admitted_root::<G, H>(arena, record.at, ChangedEdges::default(), trees)?;
+    let (root, mut held) = admitted_root::<G, H>(arena, record.at, ChangedEdges::default(), trees, built.held(), ctx.lent)?;
     G::render_entry(grammar, root, &mut held, arena, store, ctx, w)
 }
 
-fn admitted_root<'t, G: RecordGrammar, H: BuildHasher>(
+/// The built record at `at` admitted as a render root, and the arena of
+/// each parse it names, found by its slot in `parses`: read only from
+/// `lent` when a render that holds it lends it, else held from `trees`.
+///
+/// # Errors
+///
+/// What `admit` refuses, `RenderError::Record` for a slot `parses` holds no
+/// parse in, and `RenderError::Coordinate` for a parse whose tree `trees`
+/// does not hold.
+fn admitted_root<'a, 't: 'a, G: RecordGrammar, H: BuildHasher>(
     arena: &dyn ArenaRead,
     at: Address,
     changed: ChangedEdges,
     trees: &ReadTrees<'t, G, H>,
-) -> Result<(CellAt, HeldArenas<'t>), RenderError> {
+    parses: &HeldParses<HeldParse>,
+    lent: Lent<'a>,
+) -> Result<(CellAt, HeldArenas<'a>), RenderError> {
     let kind = arena.header_kind(at, G::KIND_BITS).map_err(RenderError::Record)?;
-    let linked = admit(arena, at, G::shape, G::KIND_BITS).map_err(RenderError::Record)?;
-    let held = linked
-        .into_iter()
-        .map(|tree| {
+    let mut held = HeldArenas::of([]);
+    for slot in admit(arena, at, G::shape, G::KIND_BITS).map_err(RenderError::Record)? {
+        let tree = parses.get(slot).map(Held::id).ok_or(RenderError::Record(ArenaError::Malformed { what: "parse slot", word: slot.0 }))?;
+        if let Some(lent) = lent.tree(tree) {
+            held.lend(slot, tree, lent);
+        } else {
             let parsed = trees.get(tree).ok_or(CoordinateError::UnknownTree { handle: encode_handle(tree, NodeIndex::ROOT), tree_id: tree })?;
-            Ok((tree, parsed.tree_arena()))
-        })
-        .collect::<Result<Vec<_>, CoordinateError>>()?;
-    Ok((CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree: None, site: None }, HeldArenas::of(held)))
+            held.hold(slot, tree, parsed.tree_arena());
+        }
+    }
+    Ok((CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree: None, site: None }, held))
 }

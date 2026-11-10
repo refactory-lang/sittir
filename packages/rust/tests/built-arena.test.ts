@@ -5,6 +5,7 @@ import type { BuiltText, LeafSite, TreeHandle } from '@sittir/common/utils';
 import { sideEntryOf } from '../../common/src/built-arena.ts';
 import { leafSitesOf, placeLeaf } from '../../common/src/built-ref.ts';
 import { PLAIN_KINDS, setTriviaOf } from '../../common/src/node-data.ts';
+import { bindTree, treeEngineHandle } from '../../common/src/engine-scope.ts';
 import { getActiveBackend } from '../src/backend.ts';
 
 const backend = getActiveBackend();
@@ -37,14 +38,20 @@ function chunksOf() {
 	};
 }
 
-const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = NO_VIEWS, leafSites: WriteLeafSites = () => undefined): BuiltArena =>
+const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = NO_VIEWS, leafSites: WriteLeafSites = () => undefined, parses: Partial<Pick<Records, 'holdParse' | 'releaseParse'>> = {}): BuiltArena =>
 	new BuiltArena(
-		{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunksOf(), bump: () => undefined, release: () => [], trivia },
+		{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunksOf(), bump: () => undefined, release: () => [], holdParse: () => undefined, releaseParse: () => [], ...parses, trivia },
 		(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
 		{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 		views,
 		leafSites
 	);
+
+const parsedOf = (arena: BuiltArena, id: number, slot: number): TreeHandle => {
+	const tree = { id, slot };
+	bindTree(tree, Object.assign(treeEngineHandle(arena.tree)!, { builtArena: arena }));
+	return tree;
+};
 
 const leafOf =
 	(kind: number) =>
@@ -153,7 +160,7 @@ describe('a built arena', () => {
 		let next = 0;
 		const words = (length: number) => ({ chunk: 1, data: new Uint32Array(length), meta: new Uint8Array(metaBytes(length)), freed: next++ === 0 ? [] : [1] });
 		const arena = new BuiltArena(
-			{ format: format!, owner: {}, kinds: PLAIN_KINDS, words, bytes: chunksOf().bytes, bump: () => undefined, release: (at: number) => (released.push(at), []), trivia: NO_SIDES },
+			{ format: format!, owner: {}, kinds: PLAIN_KINDS, words, bytes: chunksOf().bytes, bump: () => undefined, release: (at: number) => (released.push(at), []), holdParse: () => undefined, releaseParse: () => [], trivia: NO_SIDES },
 			(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
 			{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 			NO_VIEWS,
@@ -318,10 +325,12 @@ describe('a built arena', () => {
 	it('copies a record rebuilt from a parsed node, naming that node beside its list settings, and copies its sites natively', () => {
 		const copied: [number, number, readonly number[]][] = [];
 		const leafSided: number[][] = [];
+		const held: number[][] = [];
 		const arena = arenaOf(
 			{ ...NO_SIDES, copySites: (from, to, skip) => void copied.push([from, to, [...skip]]), writeLeafSide: (sites) => void leafSided.push([...sites]) },
 			{ ...NO_VIEWS, words: { 9: 13 } },
-			writeLeafSites
+			writeLeafSites,
+			{ holdParse: (slot, treeId) => void held.push([slot, treeId]) }
 		);
 		const leaf = arena.leaf(leafOf(4), 'a');
 		setTriviaOf(leaf, { leading: [3] });
@@ -330,19 +339,28 @@ describe('a built arena', () => {
 		storeListOptions(arena, record, 3, 6);
 		const node = arena.view(record);
 		const at = builtRecordOf(node, arena)!;
-		const copy = arena.rebuiltFrom(node, { id: 7 } as never, {} as never, 21, 25, { start: 40, end: 52 }, false);
+		const copy = arena.rebuiltFrom(node, parsedOf(arena, 7, 5) as never, {} as never, 21, 25, { start: 40, end: 52 }, false);
 		const copiedAt = builtRecordOf(copy, arena)!;
 		expect(copiedAt).not.toBe(at);
 		const [kind, side, ...cells] = placed(arena, copy, 13);
 		expect([kind, ...cells]).toEqual([9, ...placed(arena, node, 13).slice(2)]);
 		expect(Array.from(arena.words(side!, 8).subarray(wordOf(side!, format!), wordOf(side!, format!) + 8))).toEqual([
 			format!.sideSides.bit | format!.sideDelimiter | format!.sideSeparatorKind,
-			7, 21, 25, 40, 52,
+			5, 21, 25, 40, 52,
 			3, 6
 		]);
+		expect(held).toEqual([[5, 7]]);
 		expect(leafSitesOf(leaf)).toEqual([at, 11, 0]);
 		expect(leafSided).toEqual([[at, 11, 0]]);
 		expect(copied).toEqual([[at, copiedAt, []]]);
+	});
+
+	it('refuses to rebuild a record from a node another engine parsed, and holds nothing of its parse', () => {
+		const held: number[][] = [];
+		const arena = arenaOf(NO_SIDES, { ...NO_VIEWS, words: { 4: 2 } }, () => undefined, { holdParse: (slot, treeId) => void held.push([slot, treeId]) });
+		const node = arena.view(arena.draft(4, 2));
+		expect(() => arena.rebuiltFrom(node, parsedOf(arenaOf(), 7, 5) as never, {} as never, 0, 1, { start: 0, end: 1 }, false)).toThrow(/another engine/);
+		expect(held).toEqual([]);
 	});
 
 	it('answers the handle of a record by its address', () => {

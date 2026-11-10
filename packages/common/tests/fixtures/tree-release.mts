@@ -1,6 +1,7 @@
 // Run with `node --expose-gc --import tsx`: prints one JSON line reporting
-// which trees the rust addon still holds after collections. A child process,
-// because a collection can only be forced under `--expose-gc`.
+// which trees the rust addon still holds after collections, in object
+// storage, where collection releases a tree. A child process, because a
+// collection can only be forced under `--expose-gc`.
 import { createEngine } from '../../src/index.ts';
 import { getActiveBackend } from '../../../rust/src/backend.ts';
 import rust from '../../../rust/src/index.ts';
@@ -21,7 +22,7 @@ async function settle(target: number): Promise<void> {
 }
 
 type Named = { name(): unknown };
-const engine = await createEngine(rust);
+const engine = await createEngine(rust, { nodeStorage: 'object' });
 const base = native.liveTreeCount();
 const report: Record<string, unknown> = {};
 
@@ -64,7 +65,7 @@ report.droppedCount = native.liveTreeCount() - base;
 // A tree outlives a disposed engine, and is released once its node is gone.
 const holder: { orphan?: unknown } = {};
 await (async () => {
-	const short = await createEngine(rust);
+	const short = await createEngine(rust, { nodeStorage: 'object' });
 	holder.orphan = short.parse('fn orphan() {}\n').statements()[0];
 	short.dispose();
 })();

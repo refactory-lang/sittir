@@ -44,14 +44,14 @@ use std::collections::HashMap;
 use std::fmt;
 use std::sync::Arc;
 
-use crate::types::{KindId, TreeId};
+use crate::types::{KindId, ParseSlot, TreeId};
 
 pub use admit::{admit, CellShape, RecordCells, RecordShape};
 pub use borrowed::{ArenaRead, BorrowedArena};
 pub use built::render_record_entry;
 pub use built_write::BuiltWriter;
 pub use cell::{flag, header_of, kind_field, parsed_tag, with_kind, Cell, CellWord, ListCell, LINK_WORDS};
-pub use held::{Held, HeldParses, ParseReleased};
+pub use held::{Held, HeldParse, HeldParses, ParseReleased};
 pub use hydrate::{hydrate_at, parsed_side, row_of as hydrated_row, Draft, Embed, HydrateError, HydrateNode, HydrateSlot, Hydrated, Hydration, Walk};
 pub use memory::{ChunkMem, ChunkUnit};
 pub use parsed::{render_record_read, BackerParity, LeafRead, RecordGrammar, RecordRead, Recording};
@@ -573,7 +573,12 @@ pub struct BuiltChunks {
     open: [Option<u32>; 2],
     free: std::collections::VecDeque<u32>,
     freed: Vec<u32>,
-    trees: Vec<TreeId>,
+    /// The parses the engine holds for arena storage, each counted by its
+    /// root and by each record of this arena that names it.
+    held: HeldParses<HeldParse>,
+    /// The parses releases freed since the last `take_freed_parses`, each
+    /// with the slot it was held in.
+    freed_parses: Vec<(ParseSlot, HeldParse)>,
     overflow: HashMap<u32, u32, crate::heap::IndexState>,
 }
 
@@ -582,7 +587,7 @@ impl BuiltChunks {
     /// shapes are `shape`'s: the grammar's stamps.
     #[must_use]
     pub fn new(kind_bits: u32, shape: ShapeOf) -> Self {
-        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), trees: Vec::new(), overflow: HashMap::default() }
+        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), held: HeldParses::default(), freed_parses: Vec::new(), overflow: HashMap::default() }
     }
 
     /// A new words chunk of `len` words, zeroed: its number, its memory and
@@ -652,10 +657,41 @@ impl BuiltChunks {
         std::mem::take(&mut self.freed)
     }
 
-    /// The tree of each link record and side record released since the
-    /// last call, once per record.
-    pub fn take_trees(&mut self) -> Vec<TreeId> {
-        std::mem::take(&mut self.trees)
+    /// The parses the engine holds for arena storage: each a record of this
+    /// arena names resolves against this table, the one that minted its
+    /// slot.
+    #[must_use]
+    pub fn held(&self) -> &HeldParses<HeldParse> {
+        &self.held
+    }
+
+    /// The parses the engine holds for arena storage, to hold, count or
+    /// release one.
+    pub fn held_mut(&mut self) -> &mut HeldParses<HeldParse> {
+        &mut self.held
+    }
+
+    /// Drops the count a released record of this arena held of the parse in
+    /// `slot`, noting the parse when it was the last count.
+    fn release_parse(&mut self, slot: ParseSlot) {
+        if let Some(parse) = self.held.release(slot) {
+            self.freed_parses.push((slot, parse));
+        }
+    }
+
+    /// The parses freed since the last call, each with the slot it was
+    /// held in: by a release of this arena's records, or of a root.
+    pub fn take_freed_parses(&mut self) -> Vec<(ParseSlot, HeldParse)> {
+        std::mem::take(&mut self.freed_parses)
+    }
+
+    /// Drops the count the root of the parse `parse` holds of `slot`; a slot
+    /// that no longer holds that parse is left as it is, so a root releases
+    /// only its own parse.
+    pub fn release_root(&mut self, slot: ParseSlot, parse: TreeId) {
+        if self.held.borrowed(slot, parse).is_ok() {
+            self.release_parse(slot);
+        }
     }
 
     /// Lets go of every chunk, and answers the bytes they took: a record of

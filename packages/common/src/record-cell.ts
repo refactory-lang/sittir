@@ -124,7 +124,7 @@ export type RecordCell =
 			readonly form: 'linkedLeaf';
 			readonly kind: number;
 			readonly at: number;
-			readonly tree: number;
+			readonly slot: number;
 			readonly row: number;
 			readonly end: number;
 			readonly span: ByteSpan;

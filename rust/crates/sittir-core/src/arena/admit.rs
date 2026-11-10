@@ -10,7 +10,7 @@ use super::small::{SmallMap, SmallStack};
 
 use super::{Address, ArenaError, ArenaRead, Cell, CellWord, ListCell, SideRecord};
 use crate::record::HEADER_WORDS;
-use crate::types::{KindId, TreeId};
+use crate::types::{KindId, ParseSlot};
 
 /// Where a record of one kind keeps its cells: its width in words, parsed
 /// and built, and each slot's cell, by the stamps its node type carries.
@@ -100,16 +100,16 @@ enum Step {
 /// shapes by `shape`: each is read once, its header naming a kind `shape`
 /// knows and its cell's, its side record and every cell decoding, and no
 /// cell naming a record the walk has entered and not left, so no chain of
-/// cells cycles. A cell linking a parsed node is left to its tree's arena,
-/// which only a native writer writes; the trees those cells link are
-/// answered, each once, in order: the parsed arenas a render of the root
-/// reaches. Kind fields take `bits` bits.
+/// cells cycles. A cell linking a parsed node is left to its parse's arena,
+/// which only a native writer writes; the parse slots those cells and the
+/// side records naming a parse hold are answered, each once, in order: the
+/// parses a render of the root reaches. Kind fields take `bits` bits.
 ///
 /// # Errors
 ///
 /// The first word that breaks one of these: `ArenaError::OutOfBounds` for
 /// words the arena never wrote, `ArenaError::Malformed` for any other.
-pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<RecordShape>, bits: u32) -> Result<Vec<TreeId>, ArenaError> {
+pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<RecordShape>, bits: u32) -> Result<Vec<ParseSlot>, ArenaError> {
     let mut walked = SmallMap::<Address, Walked>::new();
     let mut pending = SmallStack::new();
     let mut linked = Vec::new();
@@ -137,11 +137,13 @@ pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<R
         *walk = Walked::Entered;
         pending.push(Step::Leave(at, kind));
         let words = arena.words(at, record.built_words.max(HEADER_WORDS))?;
-        SideRecord::read(arena, Address(words[1]))?;
+        if let Some(sides) = SideRecord::read(arena, Address(words[1]))?.sides {
+            linked.push(sides.slot);
+        }
         for_each_built_cell(arena, at, record, bits, |cell| {
             match cell {
                 Cell::Child { kind, at: child, link: None, .. } => pending.push(Step::Enter(child, kind)),
-                Cell::Child { link: Some(tree), .. } | Cell::LinkedLeaf { tree, .. } => linked.push(tree),
+                Cell::Child { link: Some(slot), .. } | Cell::LinkedLeaf { slot, .. } => linked.push(slot),
                 Cell::BuiltLeaf { kind, text, .. } => {
                     shape(kind).ok_or(malformed("built leaf kind", u32::from(kind.0)))?;
                     arena.text(text)?;
@@ -229,14 +231,14 @@ mod tests {
     }
 
     #[test]
-    fn the_trees_its_cells_link_are_answered_once_each_in_order() {
+    fn the_parse_slots_its_cells_link_are_answered_once_each_in_order() {
         let mut image = BuiltImage::new(BITS);
-        let linked = |image: &mut BuiltImage, tree| cell(image.link(PAIR, TreeId(tree), NodeIndex(1), NodeIndex(2), Address(6), Span { start: 0, end: 1 }));
+        let linked = |image: &mut BuiltImage, slot| cell(image.link(PAIR, ParseSlot(slot), NodeIndex(1), NodeIndex(2), Address(6), Span { start: 0, end: 1 }));
         let (four, two) = (linked(&mut image, 4), linked(&mut image, 2));
         let inner = image.record(FORK, 4, &[(2, four), (3, two)]);
         let again = linked(&mut image, 4);
         let outer = image.record(FORK, 4, &[(2, cell(inner)), (3, again)]);
-        assert_eq!(admit(&image, outer, shape, BITS), Ok(vec![TreeId(2), TreeId(4)]));
+        assert_eq!(admit(&image, outer, shape, BITS), Ok(vec![ParseSlot(2), ParseSlot(4)]));
     }
 
     #[test]

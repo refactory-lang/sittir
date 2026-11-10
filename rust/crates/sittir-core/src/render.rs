@@ -321,16 +321,17 @@ pub trait SourceTable {
 
     /// Renders the built record `record`, which the store `held` answered,
     /// into `w` as a trivia entry in the side that holds it, from the arena
-    /// that wrote it, under `options`. A table that reaches no arena
-    /// refuses.
+    /// that wrote it, under `options`, reading each parsed arena the render
+    /// of the side holds from what it lends (`lent`). A table that reaches
+    /// no arena refuses.
     ///
     /// # Errors
     ///
     /// What the record's render refuses, and `RenderError::Record` when no
     /// arena is reachable from here.
     #[cfg(feature = "arena")]
-    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, w: &mut dyn RenderSink) -> RenderResult {
-        let _ = (record, held, options, w);
+    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, lent: Lent<'_>, w: &mut dyn RenderSink) -> RenderResult {
+        let _ = (record, held, options, lent, w);
         Err(RenderError::Record(NO_ARENA))
     }
 }

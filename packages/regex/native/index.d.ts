@@ -115,18 +115,21 @@ export declare class SittirEngine {
   get buildProfile(): string
   findAndRead(source: string, pattern: string): string
   /**
-   * Parse `source` and keep its tree. As JSON `{ treeId, options,
-   * errors }`: the id `read` and `disposeTree` take, the tree's
-   * layer of the render options (`ParsedTree::inferred_options`),
-   * and its error regions.
+   * Parse `source` and keep its tree. As JSON `{ treeId, slot,
+   * options, errors }`: the id `read` and `disposeTree` take; in
+   * arena storage the slot of the engine arena's held-parse table
+   * that holds the parse, counted by its root, else `null`; the
+   * tree's layer of the render options
+   * (`ParsedTree::inferred_options`); and its error regions.
    */
   parse(source: string): string
   /**
    * Release the engine: it frees its built arena's chunks and
    * detaches every buffer over them (`builtWords`, `builtBytes`),
-   * so a record they hold no longer renders as a trivia entry. The
-   * trees it parsed stay in the addon's table, since they belong to
-   * whoever still names them.
+   * so a record they hold no longer renders as a trivia entry. In
+   * arena storage it drops every parse it holds, however counted,
+   * its tree with it; an object tree stays in the addon's table
+   * for its finalizer.
    */
   dispose(): void
 }
@@ -322,6 +325,13 @@ export interface EngineOptions {
    * engine's table — the engine's own table never changes.
    */
   options?: object
+  /**
+   * How the engine's nodes are stored: `'arena'` holds each parse
+   * in the engine arena's held-parse table, counted by its root
+   * and by each built record that names it; `'object'`, or none,
+   * leaves each tree to the boundary's finalizer.
+   */
+  nodeStorage?: 'arena' | 'object'
 }
 
 /** The engine image this process mapped (`sittir_engine::loaded`). */
@@ -361,6 +371,14 @@ export declare const HELD_RUN: number
 export declare const HELD_SIDE: number
 
 export declare const HELD_TEXT: number
+
+/**
+ * r" Counts the parse `treeId` once more in slot `slot` of this
+ * r" engine's held-parse table, for a built record that names it.
+ * r" Refuses a slot that holds no parse of that id: one released,
+ * r" or one another engine parsed.
+ */
+export declare function holdParse(engine: object, slot: ParseSlot, treeId: TreeId): void
 
 /**
  * r" Materializes the node at `index` in the live tree `treeId`
@@ -424,6 +442,9 @@ export declare function liveTreeCount(): number
 
 /** A node index as JavaScript holds it: a whole number. */
 export type NodeIndex = number
+
+/** A held-parse slot as JavaScript holds it: a whole number. */
+export type ParseSlot = number
 
 /**
  * Whether each node `addresses` names (a JSON array of
@@ -511,12 +532,22 @@ export declare const RECORD_HEADER_WORDS: number
  * r" the count its builder's handle holds, a no-op when it holds
  * r" none. An entry whose count reaches zero releases what it
  * r" holds, and a chunk left holding nothing live is freed and
- * r" its buffers detached. Answers the tree of each link record
- * r" and side record released since the last call. Refuses a
- * r" count below zero, an address no entry starts at, and an
- * r" engine already disposed.
+ * r" its buffers detached. A link record or side record drops its
+ * r" count of the parse it names, and a parse no holder counts
+ * r" any more is dropped with its tree. Answers the slot of each
+ * r" parse dropped. Refuses a count below zero, an address no
+ * r" entry starts at, and an engine already disposed.
  */
 export declare function releaseBuilt(engine: object, address: number, held: number, owned: boolean): Array<number>
+
+/**
+ * r" Drops the root's count of the parse `treeId` in slot `slot` of
+ * r" this engine's held-parse table; a slot that no longer holds
+ * r" that parse is left as it is. A parse no holder counts any
+ * r" more is dropped with its tree. Answers the slot of each
+ * r" parse dropped.
+ */
+export declare function releaseParse(engine: object, slot: ParseSlot, treeId: TreeId): Array<number>
 
 /**
  * Render a typed node object (napi-native, numeric `$type`).

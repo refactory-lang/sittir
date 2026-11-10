@@ -9,7 +9,7 @@ use std::cell::Cell;
 use std::rc::Rc;
 
 use sittir_core::arena::{Held, HeldParses, ParseReleased, LINK_WORDS};
-use sittir_core::types::TreeId;
+use sittir_core::types::{ParseSlot, TreeId};
 
 /// A held value that counts its drops in `dropped`.
 struct Parse {
@@ -37,10 +37,10 @@ fn parse(id: u32, dropped: &Rc<Cell<u32>>) -> Parse {
 fn parses_each_released_leave_the_table_empty() {
     let dropped = Rc::new(Cell::new(0));
     let mut table = HeldParses::default();
-    let slots: Vec<u32> = (0..100).map(|id| table.hold(parse(id, &dropped))).collect();
+    let slots: Vec<ParseSlot> = (0..100).map(|id| table.hold(parse(id, &dropped))).collect();
     assert_eq!(table.len(), 100);
     for slot in slots {
-        assert!(table.release(slot).is_some(), "the root's release frees slot {slot}");
+        assert!(table.release(slot).is_some(), "the root's release frees slot {slot:?}");
     }
     assert_eq!(table.len(), 0);
     assert_eq!(dropped.get(), 100);
@@ -63,10 +63,10 @@ fn a_linked_parse_outlives_its_root_and_goes_with_the_link() {
     let dropped = Rc::new(Cell::new(0));
     let mut table = HeldParses::default();
     let slot = table.hold(parse(7, &dropped));
-    table.link(slot, TreeId(7)).expect("a live parse is linked");
+    table.retain(slot, TreeId(7)).expect("a live parse is linked");
     assert!(table.release(slot).is_none(), "the root's release leaves the link's count");
     assert_eq!(table.borrowed(slot, TreeId(7)).map(Held::id), Ok(TreeId(7)));
-    assert_eq!(table.get(slot).id(), TreeId(7));
+    assert_eq!(table.get(slot).map(Held::id), Some(TreeId(7)));
     assert!(table.release(slot).is_some(), "the link's release frees the parse");
     assert_eq!(dropped.get(), 1);
     assert_eq!(table.len(), 0);
@@ -87,15 +87,15 @@ fn a_handle_kept_past_its_parse_is_refused_by_name_even_once_its_slot_is_reused(
 }
 
 #[test]
-fn a_link_to_a_released_parse_is_refused_by_name() {
+fn a_record_naming_a_released_parse_is_refused_by_name() {
     let dropped = Rc::new(Cell::new(0));
     let mut table = HeldParses::default();
     let slot = table.hold(parse(3, &dropped));
     assert!(table.release(slot).is_some());
-    assert_eq!(table.link(slot, TreeId(3)), Err(ParseReleased(TreeId(3))));
+    assert_eq!(table.retain(slot, TreeId(3)), Err(ParseReleased(TreeId(3))));
     let reused = table.hold(parse(4, &dropped));
-    assert_eq!(table.link(reused, TreeId(3)), Err(ParseReleased(TreeId(3))));
-    assert!(table.release(reused).is_some(), "the refused link took no count");
+    assert_eq!(table.retain(reused, TreeId(3)), Err(ParseReleased(TreeId(3))));
+    assert!(table.release(reused).is_some(), "the refused record took no count");
 }
 
 #[test]
@@ -105,7 +105,7 @@ fn a_slot_in_use_is_never_reused() {
     let first = table.hold(parse(1, &dropped));
     let second = table.hold(parse(2, &dropped));
     assert_ne!(first, second);
-    table.link(first, TreeId(1)).expect("linked");
+    table.retain(first, TreeId(1)).expect("linked");
     assert!(table.release(first).is_none());
     let third = table.hold(parse(3, &dropped));
     assert_ne!(third, first, "a slot a link still counts is not reused");
@@ -120,8 +120,8 @@ fn hold_and_release_cycles_never_free_a_counted_slot() {
     let dropped = Rc::new(Cell::new(0));
     let mut table = HeldParses::default();
     let mut next_id = 0;
-    let mut live: Vec<(u32, TreeId, u32)> = Vec::new();
-    let mut gone: Vec<(u32, TreeId)> = Vec::new();
+    let mut live: Vec<(ParseSlot, TreeId, u32)> = Vec::new();
+    let mut gone: Vec<(ParseSlot, TreeId)> = Vec::new();
     let mut state: u64 = 0x5eed;
     let mut pick = |n: usize| {
         state = state.wrapping_mul(6_364_136_223_846_793_005).wrapping_add(1_442_695_040_888_963_407);
@@ -136,13 +136,13 @@ fn hold_and_release_cycles_never_free_a_counted_slot() {
             let at = pick(live.len());
             if pick(3) == 0 {
                 let (slot, id, count) = &mut live[at];
-                table.link(*slot, *id).expect("a counted parse is linked");
+                table.retain(*slot, *id).expect("a counted parse is linked");
                 *count += 1;
             } else {
                 let (slot, id, count) = &mut live[at];
                 *count -= 1;
                 let freed = table.release(*slot);
-                assert_eq!(freed.is_some(), *count == 0, "slot {slot} frees exactly when its count reaches 0");
+                assert_eq!(freed.is_some(), *count == 0, "slot {slot:?} frees exactly when its count reaches 0");
                 if *count == 0 {
                     gone.push((*slot, *id));
                     live.swap_remove(at);
@@ -163,4 +163,27 @@ fn hold_and_release_cycles_never_free_a_counted_slot() {
 #[test]
 fn a_link_record_is_eight_words() {
     assert_eq!(LINK_WORDS, 8);
+}
+
+#[test]
+fn a_slot_a_record_names_is_checked_not_trusted() {
+    let dropped = Rc::new(Cell::new(0));
+    let mut table = HeldParses::default();
+    assert!(table.get(ParseSlot(5)).is_none(), "a slot past the table holds no parse");
+    let slot = table.hold(parse(1, &dropped));
+    assert!(table.release(slot).is_some());
+    assert!(table.get(slot).is_none(), "a released slot holds no parse");
+}
+
+#[test]
+fn draining_the_table_takes_every_parse_however_counted() {
+    let dropped = Rc::new(Cell::new(0));
+    let mut table = HeldParses::default();
+    let first = table.hold(parse(1, &dropped));
+    table.hold(parse(2, &dropped));
+    table.retain(first, TreeId(1)).expect("a live parse is named");
+    let drained: Vec<TreeId> = table.drain().iter().map(Held::id).collect();
+    assert_eq!(drained, [TreeId(1), TreeId(2)]);
+    assert!(table.is_empty());
+    assert_eq!(dropped.get(), 2);
 }

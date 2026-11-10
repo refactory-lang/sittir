@@ -305,6 +305,8 @@ export interface NativeParseResult {
 	readonly options: Readonly<Record<string, unknown>>;
 	/** The tree this parse produced, released once nothing reads from it. */
 	readonly treeId: number;
+	/** In arena storage, the slot of the engine arena's held-parse table that holds the parse, counted by its root; `null` in object storage. */
+	readonly slot: number | null;
 	/** The parse's ERROR and MISSING regions; empty for a clean parse. */
 	readonly errors: readonly ErrorRegion[];
 }

@@ -66,6 +66,8 @@ export interface BuiltRecords {
 	bytes(length: number): BuiltChunk<Uint8Array>;
 	bump(at: number): void;
 	release(at: number, held: number, owned: boolean): readonly number[];
+	holdParse(slot: number, treeId: number): void;
+	releaseParse(slot: number, treeId: number): readonly number[];
 	readonly trivia: {
 		triviaSide(at: number, side: TriviaSideName): unknown[] | undefined;
 		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly unknown[]): void;
@@ -207,13 +209,15 @@ function popcount(word: number): number {
 interface HeldTree {
 	readonly tree: TreeHandle;
 	readonly token: TreeToken;
-	links: number;
 }
+
+type ParsedTree = TreeHandle & { readonly id: number };
 
 const SIDE_BITS: Readonly<Record<TriviaSideName, number>> = { leading: 1, trailing: 2, inner: 4 };
 const sideHolds = new WeakMap<object, Map<string, readonly TreeToken[]>>();
 const NO_RECORDS = 'a side names a built record, and its engine builds no records';
 const OTHER_ENGINE_RECORD = "cannot write another engine's record into a side: a side holds only records its holder's engine built";
+const OTHER_ENGINE_PARSE = 'a built record holds only nodes its own engine built or parsed, not a node another engine parsed';
 
 export type BuiltWith = (node: object, name: string, args: readonly unknown[]) => unknown;
 
@@ -239,11 +243,14 @@ export class BuiltArena {
 	readonly #cells: (Uint32Array | undefined)[] = [];
 	readonly #bump: BuiltRecords['bump'];
 	readonly #release: BuiltRecords['release'];
+	readonly #holdParse: BuiltRecords['holdParse'];
+	readonly #releaseParse: BuiltRecords['releaseParse'];
+	readonly #rootsReleased = new WeakSet<TreeHandle>();
 	readonly #entries: (Map<string, BuiltText> | undefined)[] = [];
 	readonly #entryAt: (Map<number, BuiltText> | undefined)[] = [];
 	readonly #links = new Map<number, Map<number, { readonly at: number; readonly table: CountTable }>>();
 	readonly #linkKeys: (number[] | undefined)[] = [];
-	readonly #trees = new Map<number, HeldTree>();
+	readonly #parses = new Map<number, HeldTree>();
 	readonly #sided: (Map<number, number> | undefined)[] = [];
 	readonly #unitSided: (Set<number> | undefined)[] = [];
 	readonly #leafSited: (Set<number> | undefined)[] = [];
@@ -265,12 +272,14 @@ export class BuiltArena {
 	#pruneAt = DEFERRED_PRUNE;
 	#scopes = 0;
 
-	constructor({ format, owner, kinds, words, bytes, bump, release, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
+	constructor({ format, owner, kinds, words, bytes, bump, release, holdParse, releaseParse, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
 		this.format = format;
 		this.owner = owner;
 		this.kinds = kinds;
 		this.#bump = bump;
 		this.#release = release;
+		this.#holdParse = holdParse;
+		this.#releaseParse = releaseParse;
 		this.#wrap = wrap;
 		this.#handle = handle;
 		this.#views = views;
@@ -633,6 +642,17 @@ export class BuiltArena {
 		this.#released(this.#release(at, this.format.held.record, true));
 	}
 
+	/** Releases what `node` holds: for a handle this arena built, what {@link releaseHandle} releases; for the root of a parse this arena's engine holds, the root's count of the parse, once however often it is released, and the parse with it when no built record names it. Any other parsed node holds nothing. */
+	releaseNode(node: object): void {
+		const tree = (node as { readonly $tree?: TreeHandle }).$tree;
+		if (tree === this.tree) return this.releaseHandle(node);
+		if (tree?.slot === undefined || tree.id === undefined || this.#rootsReleased.has(tree)) return;
+		const coordinate = coordinateOf(node);
+		if (coordinate === undefined || decodeIndex(coordinate.$treeHandle) !== 0) return;
+		this.#rootsReleased.add(tree);
+		this.#released(this.#releaseParse(tree.slot, tree.id));
+	}
+
 	/** Releases what the handle `node` holds: its record's count, or for a leaf not yet placed, the count it holds of each built record its sides park. A record already released, or its count already placed, is passed over, and so is a handle whose record's chunk was freed. */
 	releaseHandle(node: object): void {
 		const at = (node as { readonly $at?: unknown }).$at;
@@ -702,11 +722,8 @@ export class BuiltArena {
 		if (isLive(this.#handle.current)) this.refuseReleased(at);
 	}
 
-	#released(trees: readonly number[]): void {
-		for (const id of trees) {
-			const held = this.#trees.get(id);
-			if (held !== undefined && --held.links === 0) this.#trees.delete(id);
-		}
+	#released(slots: readonly number[]): void {
+		for (const slot of slots) this.#parses.delete(slot);
 	}
 
 	#copyCells(from: number, kind: number, to: BuiltWords, side: boolean): void {
@@ -825,18 +842,18 @@ export class BuiltArena {
 		return entry.text ?? this.entryAt(entry.at).entry.text ?? '';
 	}
 
-	/** The link record naming the parsed node of `kind` at `row` of tree `tree`, interned while a cell holds it, with one more count for the cell that names it: its subtree's end, its record there (0 for none) and its byte span. A new one holds its tree. */
-	link(kind: number, tree: TreeHandle & { readonly id: number }, token: TreeToken, row: number, end: number, record: number, span: { readonly start: number; readonly end: number }): number {
+	/** The link record naming the parsed node of `kind` at `row` of tree `tree`, interned while a cell holds it, with one more count for the cell that names it: its subtree's end, its record there (0 for none) and its byte span. A new one names its parse's slot and holds a count of it. */
+	link(kind: number, tree: ParsedTree, token: TreeToken, row: number, end: number, record: number, span: { readonly start: number; readonly end: number }): number {
 		const key = row * 2 ** this.format.kindBits + kind;
 		const known = this.#links.get(tree.id)?.get(key);
 		if (known !== undefined && this.#tables[chunkOf(known.at, this.format)] === known.table && this.#words.has(chunkOf(known.at, this.format)) && this.#linkHeld(known.at)) {
 			this.hold(known.at);
 			return known.at;
 		}
-		const words = [this.header(kind, this.format.linkFlag), 0, tree.id, row, end, record, span.start, span.end];
+		const words = [this.header(kind, this.format.linkFlag), 0, 0, row, end, record, span.start, span.end];
 		if (words.length !== this.format.linkWords) throw new Error(`a link record takes ${this.format.linkWords} words, not ${words.length}`);
+		words[2] = this.#heldParse(tree, token);
 		const at = this.push(words, 1);
-		this.holdTree(tree, token);
 		const chunk = chunkOf(at, this.format);
 		let rows = this.#links.get(tree.id);
 		if (rows === undefined) this.#links.set(tree.id, (rows = new Map()));
@@ -956,17 +973,19 @@ export class BuiltArena {
 		return this.#views.withs[kind];
 	}
 
-	/** Holds the parsed tree `tree`, which one more link record or side record of this arena names, with its `token`, until the release of the last of them. */
-	holdTree(tree: TreeHandle & { readonly id: number }, token: TreeToken): void {
-		const held = this.#trees.get(tree.id);
-		if (held === undefined) this.#trees.set(tree.id, { tree, token, links: 1 });
-		else held.links++;
+	#heldParse(tree: ParsedTree, token: TreeToken): number {
+		if (treeBuiltArena(tree) !== this) throw new Error(OTHER_ENGINE_PARSE);
+		const { slot } = tree;
+		if (slot === undefined) throw new Error(`parsed tree ${tree.id} is held in no slot of its engine's arena, so no built record names it`);
+		this.#holdParse(slot, tree.id);
+		this.#parses.set(slot, { tree, token });
+		return slot;
 	}
 
-	/** The node a child cell linking the record `at` of parsed tree `tree` names: the parsed tree's own view of it. */
-	linked(tree: number, at: number): object {
-		const held = this.#trees.get(tree);
-		if (held === undefined) throw new Error(`a built record links parsed tree ${tree}, which its arena does not hold`);
+	/** The node a child cell linking the record `at` of the parse in slot `slot` names: the parsed tree's own view of it. */
+	linked(slot: number, at: number): object {
+		const held = this.#parses.get(slot);
+		if (held === undefined) throw new Error(`a built record links the parse in slot ${slot}, which its arena does not hold`);
 		const position = recordStub(held.tree, at);
 		return wrapRegistered(position, held.tree, this.#wrap as (data: object, tree: TreeHandle) => object, rowRole(held.tree, decodeIndex(position.$_layout!.at.$treeHandle), at));
 	}
@@ -977,23 +996,21 @@ export class BuiltArena {
 		return words;
 	}
 
-	rebuiltFrom(node: object, tree: TreeHandle & { readonly id: number }, token: TreeToken, index: number, end: number, span: { readonly start: number; readonly end: number }, own: boolean): object {
+	rebuiltFrom(node: object, tree: ParsedTree, token: TreeToken, index: number, end: number, span: { readonly start: number; readonly end: number }, own: boolean): object {
 		const at = builtRecordOf(node, this);
 		if (at === undefined) throw new Error('only a record this arena built is rebuilt from a parsed node');
 		if (own && this.#heldOnlyByHandle(at)) {
 			const words = this.#chunk(at, 2);
 			const head = wordOf(at, this.format);
 			const side = words[head + 1]!;
-			words[head + 1] = this.#sidesNaming(side, [tree.id, index, end, span.start, span.end]);
+			words[head + 1] = this.#sidesNaming(side, [this.#heldParse(tree, token), index, end, span.start, span.end]);
 			if (side !== 0) this.drop(side, this.format.held.side);
-			this.holdTree(tree, token);
 			return node;
 		}
 		return this.scope(() => {
 			const kind = this.kindAt(at);
 			const record = this.record(kind);
-			record.data[record.base + 1] = this.#sidesNaming(this.words(at, 2)[wordOf(at, this.format) + 1]!, [tree.id, index, end, span.start, span.end]);
-			this.holdTree(tree, token);
+			record.data[record.base + 1] = this.#sidesNaming(this.words(at, 2)[wordOf(at, this.format) + 1]!, [this.#heldParse(tree, token), index, end, span.start, span.end]);
 			this.#copyCells(at, kind, record, false);
 			this.#copySites(at, record.at, []);
 			const last = this.#placedLast;
@@ -1030,9 +1047,9 @@ export class BuiltArena {
 	}
 
 	/** The parsed node a linked leaf's cell names, as its tree's own view of it. */
-	linkedLeaf({ kind, tree, row, span }: { readonly kind: number; readonly tree: number; readonly row: number; readonly span: { readonly start: number; readonly end: number } }): object {
-		const held = this.#trees.get(tree);
-		if (held === undefined) throw new Error(`a built record holds a node of parsed tree ${tree}, which its arena does not hold`);
+	linkedLeaf({ kind, slot, row, span }: { readonly kind: number; readonly slot: number; readonly row: number; readonly span: { readonly start: number; readonly end: number } }): object {
+		const held = this.#parses.get(slot);
+		if (held === undefined) throw new Error(`a built record holds a node of the parse in slot ${slot}, which its arena does not hold`);
 		const data = leafData(held.tree, kind, span, row);
 		holdReadTree(data, held.token);
 		return wrapRegistered(data, held.tree, this.#wrap as (data: object, tree: TreeHandle) => object, rowRole(held.tree, row, undefined));
@@ -1212,9 +1229,9 @@ export function decodeBuiltCell(arena: BuiltArena, word: number): RecordCell {
 		if (flags !== linkFlag) throw new Error(`a built record header holds flags ${flags}, which no builder writes`);
 		const link = arena.words(at, linkWords);
 		const record = link[start + 5]!;
-		const tree = link[start + 2]!;
-		if (record !== 0) return { form: 'child', kind, at: record, link: tree, changed };
-		return { form: 'linkedLeaf', kind, at, tree, row: link[start + 3]!, end: link[start + 4]!, span: { start: link[start + 6]!, end: link[start + 7]! }, changed };
+		const slot = link[start + 2]!;
+		if (record !== 0) return { form: 'child', kind, at: record, link: slot, changed };
+		return { form: 'linkedLeaf', kind, at, slot, row: link[start + 3]!, end: link[start + 4]!, span: { start: link[start + 6]!, end: link[start + 7]! }, changed };
 	}
 	const { kind, len } = arena.entryAt(at);
 	if (kind === 0) return { form: 'builtText', offset: at, len };
@@ -1270,7 +1287,7 @@ function parsedCell(arena: BuiltArena, value: object): number {
 	if (kind === undefined) throw new Error('a built record cannot name a parsed node whose coordinate stamps no kind');
 	const index = decodeIndex(coordinate.$treeHandle);
 	const record = recordOf(value) ?? rowRecordOf(tree.records, index, kind) ?? 0;
-	return builtCell(arena.link(kind, tree as TreeHandle & { readonly id: number }, token, index, coordinate.$end, record, coordinate.$span));
+	return builtCell(arena.link(kind, tree as ParsedTree, token, index, coordinate.$end, record, coordinate.$span));
 }
 
 function rowRecordOf(records: RecordReader, index: number, kind: number): number | undefined {

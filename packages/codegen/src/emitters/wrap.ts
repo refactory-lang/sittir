@@ -531,7 +531,7 @@ function handleSharedLines(shared: HandleShared): string[] {
 	];
 	return [
 		'function $handleQuery(this: RecordPosition): object {',
-		'  return handleQuery(this, rowOf(this, _wrap));',
+		'  return handleQuery(this, _wrap);',
 		'}',
 		'function $handleSnapshot(this: RecordPosition): unknown {',
 		'  return snapshotOf(rowOf(this, _wrap));',

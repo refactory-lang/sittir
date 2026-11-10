@@ -25,7 +25,7 @@ use crate::render::{CoordinateError, RenderError, SourceTable};
 use crate::slot::{ChangedEdges, NodeCoordinate, SeamArm};
 use crate::trivia::{NodeTrivia, TriviaSeam};
 use crate::trivia_store::{Place, Site, TriviaStore};
-use crate::types::{Delimiter, ItemIndex, KindId, SiteId, TreeId};
+use crate::types::{Delimiter, ItemIndex, KindId, ParseSlot, SiteId, TreeId};
 use crate::view::KindOf;
 
 /// A handle's marker: it holds keys only, and its operations take the
@@ -43,25 +43,74 @@ pub trait RecordTrees: RecordArenas {
     fn tree_mut(&mut self, tree: TreeId) -> Option<&mut TreeArena>;
 }
 
-/// The arenas of a render's parsed trees, each held for the render.
-pub struct HeldArenas<'t>(std::collections::HashMap<TreeId, std::sync::MutexGuard<'t, TreeArena>, crate::heap::IndexState>);
+/// The arenas of a render's parsed trees, each held for the render or lent
+/// to it read only by a render that holds it, and the tree of each parse
+/// slot the render's built records name.
+pub struct HeldArenas<'t> {
+    trees: std::collections::HashMap<TreeId, Kept<'t>, crate::heap::IndexState>,
+    parses: Vec<(ParseSlot, TreeId)>,
+}
+
+/// A parsed tree's arena as a render keeps it: locked for the render, or
+/// lent by a render that holds the lock, which this render must not take
+/// again.
+enum Kept<'t> {
+    Held(std::sync::MutexGuard<'t, TreeArena>),
+    Lent(&'t TreeArena),
+}
 
 impl<'t> HeldArenas<'t> {
-    /// The arenas `trees` holds, each by its tree.
+    /// The arenas `trees` holds, each by its tree, for a render whose
+    /// records name no parse slot.
     pub fn of(trees: impl IntoIterator<Item = (TreeId, std::sync::MutexGuard<'t, TreeArena>)>) -> Self {
-        Self(trees.into_iter().collect())
+        Self { trees: trees.into_iter().map(|(tree, arena)| (tree, Kept::Held(arena))).collect(), parses: Vec::new() }
+    }
+
+    /// The arenas of the parses `parses` holds, each by its slot and its
+    /// tree.
+    pub fn named(parses: impl IntoIterator<Item = (ParseSlot, TreeId, std::sync::MutexGuard<'t, TreeArena>)>) -> Self {
+        let mut held = Self::of([]);
+        for (slot, tree, arena) in parses {
+            held.hold(slot, tree, arena);
+        }
+        held
+    }
+
+    /// Keeps `arena`, the arena of the parse in slot `slot`, locked for the
+    /// render.
+    pub fn hold(&mut self, slot: ParseSlot, tree: TreeId, arena: std::sync::MutexGuard<'t, TreeArena>) {
+        self.parses.push((slot, tree));
+        self.trees.insert(tree, Kept::Held(arena));
+    }
+
+    /// Reads `arena`, the arena of the parse in slot `slot`, which a render
+    /// that holds it lent, read only: a node whose record only a write could
+    /// give it is refused (`ArenaError::ReadOnly`).
+    pub fn lend(&mut self, slot: ParseSlot, tree: TreeId, arena: &'t TreeArena) {
+        self.parses.push((slot, tree));
+        self.trees.insert(tree, Kept::Lent(arena));
     }
 }
 
 impl RecordArenas for HeldArenas<'_> {
     fn tree(&self, tree: TreeId) -> Option<&TreeArena> {
-        self.0.get(&tree).map(|arena| &**arena)
+        self.trees.get(&tree).map(|kept| match kept {
+            Kept::Held(arena) => &**arena,
+            Kept::Lent(arena) => *arena,
+        })
+    }
+
+    fn parse(&self, slot: ParseSlot) -> Option<TreeId> {
+        self.parses.iter().find(|(named, _)| *named == slot).map(|&(_, tree)| tree)
     }
 }
 
 impl RecordTrees for HeldArenas<'_> {
     fn tree_mut(&mut self, tree: TreeId) -> Option<&mut TreeArena> {
-        self.0.get_mut(&tree).map(|arena| &mut **arena)
+        match self.trees.get_mut(&tree)? {
+            Kept::Held(arena) => Some(&mut **arena),
+            Kept::Lent(_) => None,
+        }
     }
 }
 
@@ -73,6 +122,10 @@ pub struct ReadArenas<'a>(pub &'a dyn RecordArenas);
 impl RecordArenas for ReadArenas<'_> {
     fn tree(&self, tree: TreeId) -> Option<&TreeArena> {
         self.0.tree(tree)
+    }
+
+    fn parse(&self, slot: ParseSlot) -> Option<TreeId> {
+        self.0.parse(slot)
     }
 }
 
@@ -283,7 +336,7 @@ impl RecordKey {
         match at.cell {
             Cell::Child { kind, at: record, link, changed } if claims(kind) => {
                 let view = match link {
-                    Some(tree) => view.linked(tree)?,
+                    Some(slot) => view.linked(slot)?,
                     None => view,
                 };
                 let (words, side) = record_of(view, record, HEADER_WORDS, kind)?;
@@ -293,8 +346,8 @@ impl RecordKey {
             Cell::BuiltLeaf { kind, changed, .. } if claims(kind) => {
                 Ok(Self { tree: None, at: None, side_at: Address::NONE, place: super::built_leaf_place(at.site)?, changed })
             }
-            Cell::LinkedLeaf { kind, at: record, tree, row, end, span, changed } if claims(kind) => {
-                let leaf = super::Sides { tree, index: row, end, span };
+            Cell::LinkedLeaf { kind, at: record, slot, row, end, span, changed } if claims(kind) => {
+                let leaf = super::Sides { slot, index: row, end, span };
                 Ok(Self { tree: None, at: Some(record), side_at: Address::NONE, place: super::linked_leaf_place(view, record, leaf, at.site)?, changed })
             }
             Cell::ParsedLeaf { kind, row: leaf, .. } if claims(kind) => {
@@ -401,7 +454,7 @@ impl<T: Clone + 'static> LayoutAt<'_, T> {
         if self.enveloped() {
             return Ok(None);
         }
-        Ok(self.key.side(prep)?.sides.map(super::Sides::coordinate))
+        self.key.side(prep)?.sides.map(|from| Ok(from.coordinate(prep.view(None)?.parse_of(from.slot)?))).transpose()
     }
 
     /// The layouts its list slots store (`NodeLayout::slots`): a parsed
@@ -977,7 +1030,8 @@ pub fn record_source_separator<T>(prep: &RecordPrep<'_, T>, at: CellAt, claims: 
         if key.changed.leading {
             return None;
         }
-        ctx.sources.separator_before(&side.sides?.coordinate(), prep.lent())
+        let from = side.sides?;
+        ctx.sources.separator_before(&from.coordinate(prep.view(None).ok()?.parse_of(from.slot).ok()?), prep.lent())
     })
 }
 

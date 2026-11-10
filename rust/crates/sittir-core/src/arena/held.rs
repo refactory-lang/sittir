@@ -1,9 +1,9 @@
 //! The engine's held-parse table: each arena parse sits in a slot counted
-//! once by its root and once by each link record that names the slot.
+//! once by its root and once by each built record that names the slot.
 
 use std::fmt;
 
-use crate::types::TreeId;
+use crate::types::{ParseSlot, TreeId};
 
 /// A parse the held-parse table holds, named by its id.
 pub trait Held {
@@ -12,14 +12,25 @@ pub trait Held {
     fn id(&self) -> TreeId;
 }
 
-/// A read handle's refusal: the parse it names was released, and its slot
-/// holds no parse or another one.
+/// An arena parse as its engine holds it: its id, the key of its tree in
+/// the live-tree table, which keeps what its nodes read from.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct HeldParse(pub TreeId);
+
+impl Held for HeldParse {
+    fn id(&self) -> TreeId {
+        self.0
+    }
+}
+
+/// A refusal of a parse that is no longer held: the slot that names it
+/// holds no parse, or another one.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ParseReleased(pub TreeId);
 
 impl fmt::Display for ParseReleased {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "parse {} was released, so a handle into it reads nothing", self.0 .0)
+        write!(f, "parse {} was released, or another engine parsed it, so this engine reads nothing of it", self.0 .0)
     }
 }
 
@@ -32,13 +43,13 @@ struct Slot<P> {
 }
 
 /// Each parse held, in a slot counted once by the parse's root and once by
-/// each link record naming the slot. A slot whose count reaches 0 drops its
-/// parse and is the next slot a parse takes; one still counted is never
+/// each built record naming the slot. A slot whose count reaches 0 drops
+/// its parse and is the next slot a parse takes; one still counted is never
 /// reused.
 #[derive(Debug)]
 pub struct HeldParses<P> {
     slots: Vec<Slot<P>>,
-    free: Vec<u32>,
+    free: Vec<ParseSlot>,
 }
 
 impl<P> Default for HeldParses<P> {
@@ -50,32 +61,32 @@ impl<P> Default for HeldParses<P> {
 impl<P: Held> HeldParses<P> {
     /// Holds `parse` in a free slot, counted once by its root, and answers
     /// the slot.
-    pub fn hold(&mut self, parse: P) -> u32 {
+    pub fn hold(&mut self, parse: P) -> ParseSlot {
         let held = Slot { parse: Some(parse), count: 1 };
         if let Some(slot) = self.free.pop() {
-            self.slots[slot as usize] = held;
+            self.slots[slot.index()] = held;
             return slot;
         }
         self.slots.push(held);
-        crate::types::narrow(self.slots.len() - 1)
+        ParseSlot(crate::types::narrow(self.slots.len() - 1))
     }
 
-    /// Counts slot `slot` once more, for a link record naming it.
+    /// Counts slot `slot` once more, for a built record naming it.
     ///
     /// # Errors
     ///
     /// `ParseReleased` when the slot no longer holds the parse `parse`.
-    pub fn link(&mut self, slot: u32, parse: TreeId) -> Result<(), ParseReleased> {
-        let held = self.slots.get_mut(slot as usize).filter(|held| held.parse.as_ref().is_some_and(|held| held.id() == parse)).ok_or(ParseReleased(parse))?;
+    pub fn retain(&mut self, slot: ParseSlot, parse: TreeId) -> Result<(), ParseReleased> {
+        let held = self.slots.get_mut(slot.index()).filter(|held| held.parse.as_ref().is_some_and(|held| held.id() == parse)).ok_or(ParseReleased(parse))?;
         held.count += 1;
         Ok(())
     }
 
-    /// Drops one count of slot `slot`: the root's, or a link record's. The
+    /// Drops one count of slot `slot`: the root's, or a built record's. The
     /// last count's release takes the parse out of the table and answers
     /// it; a slot no holder counts is left as it is.
-    pub fn release(&mut self, slot: u32) -> Option<P> {
-        let held = self.slots.get_mut(slot as usize).filter(|held| held.count > 0)?;
+    pub fn release(&mut self, slot: ParseSlot) -> Option<P> {
+        let held = self.slots.get_mut(slot.index()).filter(|held| held.count > 0)?;
         held.count -= 1;
         if held.count > 0 {
             return None;
@@ -84,14 +95,12 @@ impl<P: Held> HeldParses<P> {
         held.parse.take()
     }
 
-    /// The parse in slot `slot`, for a holder that counts it.
-    ///
-    /// # Panics
-    ///
-    /// When the slot holds no parse, which no holder counting it can see.
+    /// The parse in slot `slot`, or `None` when the slot holds none: a slot
+    /// a built record names is read from words the arena's writer wrote,
+    /// so it is checked, not trusted.
     #[must_use]
-    pub fn get(&self, slot: u32) -> &P {
-        self.slots.get(slot as usize).and_then(|held| held.parse.as_ref()).unwrap_or_else(|| panic!("slot {slot} holds no parse, though a holder counts it"))
+    pub fn get(&self, slot: ParseSlot) -> Option<&P> {
+        self.slots.get(slot.index()).and_then(|held| held.parse.as_ref())
     }
 
     /// The parse `parse` in slot `slot`, for a read handle, which borrows the
@@ -100,8 +109,15 @@ impl<P: Held> HeldParses<P> {
     /// # Errors
     ///
     /// `ParseReleased` when the slot no longer holds that parse.
-    pub fn borrowed(&self, slot: u32, parse: TreeId) -> Result<&P, ParseReleased> {
-        self.slots.get(slot as usize).and_then(|held| held.parse.as_ref()).filter(|held| held.id() == parse).ok_or(ParseReleased(parse))
+    pub fn borrowed(&self, slot: ParseSlot, parse: TreeId) -> Result<&P, ParseReleased> {
+        self.get(slot).filter(|held| held.id() == parse).ok_or(ParseReleased(parse))
+    }
+
+    /// Takes every parse out of the table, whatever counts it, and answers
+    /// them: the table's end, at its engine's dispose.
+    pub fn drain(&mut self) -> Vec<P> {
+        self.free.clear();
+        std::mem::take(&mut self.slots).into_iter().filter_map(|held| held.parse).collect()
     }
 
     /// How many parses the table holds.

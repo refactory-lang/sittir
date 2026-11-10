@@ -26,7 +26,7 @@ use super::cell::{flag, header_of, CellWord};
 use super::memory::ChunkMem;
 use super::side::SideRecord;
 use super::{Address, ArenaError, ArenaRead, BuiltChunk, BuiltChunks, RecordShape, ARENA_RELEASED};
-use crate::types::{KindId, TreeId};
+use crate::types::{KindId, ParseSlot};
 
 /// The flag of a count the handle a builder returned holds.
 pub const OWNED: u8 = 0x80;
@@ -413,8 +413,8 @@ impl BuiltChunks {
                 let header = self.word(at)?;
                 match header_of(header, self.kind_bits) {
                     (_, flag::LINK) => {
-                        let tree = self.word(at.offset(2).ok_or(malformed("link record", at.0))?)?;
-                        self.trees.push(TreeId(tree));
+                        let slot = self.word(at.offset(2).ok_or(malformed("link record", at.0))?)?;
+                        self.release_parse(ParseSlot(slot));
                     }
                     (kind, 0) => self.release_record(at, kind, stack, sides)?,
                     (_, flags) => return Err(malformed("record flags", flags)),
@@ -429,7 +429,7 @@ impl BuiltChunks {
             }
             Held::Side(at) => {
                 if let Some(sides) = SideRecord::read(self, at)?.sides {
-                    self.trees.push(sides.tree);
+                    self.release_parse(sides.slot);
                 }
             }
             Held::Text(at) => return Err(malformed("text entry on the release stack", at.0)),
@@ -545,7 +545,8 @@ impl BuiltChunks {
 mod tests {
     use super::*;
     use crate::arena::cell::with_kind;
-    use crate::arena::{CellShape, ChunkMem};
+    use crate::arena::{CellShape, ChunkMem, HeldParse};
+    use crate::types::TreeId;
     use crate::record::form;
 
     const PAIR: KindId = KindId(5);
@@ -688,11 +689,15 @@ mod tests {
     }
 
     #[test]
-    fn a_released_link_record_answers_its_tree() {
+    fn a_released_link_record_drops_its_count_of_the_parse_it_names() {
         let mut built = Builder::new();
-        let link = built.place(&[with_kind(LEAF, BITS).expect("a kind") | flag::LINK << BITS, 0, 4, 1, 2, 0, 0, 3], 1);
+        let slot = built.arena.held_mut().hold(HeldParse(TreeId(9)));
+        built.arena.held_mut().retain(slot, TreeId(9)).expect("a held parse is named");
+        let link = built.place(&[with_kind(LEAF, BITS).expect("a kind") | flag::LINK << BITS, 0, slot.0, 1, 2, 0, 0, 3], 1);
         built.release(link, false).expect("released");
-        assert_eq!(built.arena.take_trees(), vec![TreeId(4)]);
+        assert!(built.arena.take_freed_parses().is_empty(), "the root's count holds the parse");
+        built.arena.release_root(slot, TreeId(9));
+        assert_eq!(built.arena.take_freed_parses(), vec![(slot, HeldParse(TreeId(9)))]);
     }
 
     #[test]

@@ -382,6 +382,10 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	/**
 	 * Parses `source` and returns its root. The root's `$errors` lists every
 	 * region of the source that did not parse, and is empty for a clean parse.
+	 * In arena storage the engine holds the parse until the root is released
+	 * (`release` or the root's `[Symbol.dispose]`) and no built record names a
+	 * node of it, or until the engine is disposed; in object storage the tree
+	 * lives while anything reads from it.
 	 *
 	 * @throws `ParseErrors` when `options.errors` is `'throw'` and the source
 	 * did not parse cleanly.
@@ -409,13 +413,15 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	/**
 	 * Releases what a builder result holds, a `$with` result included, as its `[Symbol.dispose]` does. Under record
 	 * construction a result holds its record until it is placed into a parent or a side, and a built
-	 * leaf holds the records written to its sides until it is placed; a node already placed, read,
-	 * parsed or released, and any node of object construction, holds nothing, so its release does
-	 * nothing. A record nothing holds any more is freed with every child only it held, and a read
-	 * through a node whose memory was freed throws. A result dropped without a release keeps its
-	 * record until the engine is disposed.
+	 * leaf holds the records written to its sides until it is placed. The root of a parse in arena
+	 * storage holds the parse, and its first release drops that hold: a parse no built record names
+	 * is then freed, and a read of any node of it throws. Any other parsed node, a node already
+	 * placed, read or released, and any node of object construction holds nothing, so its release
+	 * does nothing. A record nothing holds any more is freed with every child only it held, and a
+	 * read through a node whose memory was freed throws. A result or root dropped without a release
+	 * keeps what it holds until the engine is disposed.
 	 *
-	 * @throws When `node` was built by another engine.
+	 * @throws When `node` was built or parsed by another engine.
 	 */
 	readonly release: (node: { readonly $type: API['kindId'] }) => void;
 	/**

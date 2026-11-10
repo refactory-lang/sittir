@@ -13,6 +13,8 @@ export interface TreeHandle {
 	text?(span: ByteSpan): string;
 	/** The native tree `read` reads: the tree id every coordinate read from it packs. */
 	id?: number;
+	/** In arena storage, the slot of its engine arena's held-parse table that holds the parse, counted by its root until the root is released. */
+	slot?: number;
 	/** The node at descendant `index` read into its native node, `depth` levels down (one when absent, `Infinity` for all); index 0 is the root. A unit variant's native node is its kind id. */
 	read?(index: number, depth?: number): unknown;
 	/** The tree's layer of the render options (`NativeParseResult.options`). */

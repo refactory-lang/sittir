@@ -1,7 +1,8 @@
 import type { NodeCoordinate } from '@sittir/types';
-import type { BuiltText } from './built-arena.ts';
+import type { BuiltArena, BuiltText } from './built-arena.ts';
 import type { EngineHandle } from './engine-scope.ts';
 import type { ChunkWords, TreeHandle } from './read.ts';
+import { treeBuiltArena } from './engine-scope.ts';
 
 export interface RecordPosition {
 	readonly $type: number;
@@ -53,10 +54,16 @@ export interface Held {
 export const HANDLE_FIELDS: ReadonlySet<string> = new Set(['$tree', '$at', '$words', '$cache', '$entry', '$site']);
 
 export function handleDispose(this: { readonly $tree: TreeHandle; readonly $at?: number }): void {
-	this.$tree.built?.releaseHandle(this);
+	nodeArenaOf(this)?.releaseNode(this);
 }
 
 export function releaseNothing(): void {}
+
+export function nodeArenaOf(value: unknown): BuiltArena | undefined {
+	if (typeof value !== 'object' || value === null || !isHandle(value)) return undefined;
+	const tree = (value as { readonly $tree?: TreeHandle }).$tree;
+	return tree === undefined ? undefined : (tree.built ?? treeBuiltArena(tree));
+}
 
 export function isHandle(value: object): boolean {
 	return Object.hasOwn(value, Symbol.dispose) && (value as { readonly [Symbol.dispose]?: unknown })[Symbol.dispose] === handleDispose;

@@ -11,7 +11,7 @@ use super::{Address, ArenaError, ArenaRead, CellShape, StringRef};
 use crate::record::{form, tagged};
 use crate::record::HEADER_WORDS;
 use crate::slot::ChangedEdges;
-use crate::types::{KindId, NodeIndex, Span, TreeId};
+use crate::types::{KindId, NodeIndex, ParseSlot, Span};
 
 /// The flags a record header holds above its kind field.
 pub mod flag {
@@ -19,8 +19,9 @@ pub mod flag {
     pub const LINK: u32 = 1;
 }
 
-/// A link record's words: its header, an empty side word, then the parsed
-/// node's tree, row, subtree end, record (0 for none) and byte span.
+/// A link record's words: its header, an empty side word, then the slot of
+/// the parsed node's parse, its row, subtree end, record (0 for none) and
+/// byte span.
 pub const LINK_WORDS: u32 = 8;
 
 /// The chunk-0 offset a built blank arm names: all ones, so the arm is apart
@@ -75,11 +76,12 @@ pub enum Cell {
     /// A captured interior string of a parsed node: its byte span.
     ParsedText { span: Span },
     /// A child with a record of its own: in this cell's arena, or, `link`
-    /// set, a parsed record in that tree's arena, which a built record names
-    /// for an untouched parsed child. `changed` is the edges whose neighbour
-    /// this holder changed: a fact of this site, held here and never in the
-    /// child's record, so two holders of one record can differ.
-    Child { kind: KindId, at: Address, link: Option<TreeId>, changed: ChangedEdges },
+    /// set, a parsed record in the arena of the parse that slot holds, which
+    /// a built record names for an untouched parsed child. `changed` is the
+    /// edges whose neighbour this holder changed: a fact of this site, held
+    /// here and never in the child's record, so two holders of one record
+    /// can differ.
+    Child { kind: KindId, at: Address, link: Option<ParseSlot>, changed: ChangedEdges },
     /// A unit, which carries no text. `KindId::BLANK` is a blank arm. A
     /// parsed unit names its row, which keys its sides as any parsed node's
     /// row does; a built unit has none.
@@ -89,10 +91,10 @@ pub enum Cell {
     /// a child's are. Its sides are keyed by its site in the store.
     BuiltLeaf { kind: KindId, text: StringRef, changed: ChangedEdges },
     /// A parsed node with no record a built record holds, through the link
-    /// record at `at`: its tree, row, subtree end and byte span, whose text
-    /// is its source's, and the edges whose neighbour this holder changed.
-    /// Its sides are its row's.
-    LinkedLeaf { kind: KindId, at: Address, tree: TreeId, row: NodeIndex, end: NodeIndex, span: Span, changed: ChangedEdges },
+    /// record at `at`: its parse's slot, its row, subtree end and byte span,
+    /// whose text is its source's, and the edges whose neighbour this holder
+    /// changed. Its sides are its row's.
+    LinkedLeaf { kind: KindId, at: Address, slot: ParseSlot, row: NodeIndex, end: NodeIndex, span: Span, changed: ChangedEdges },
     /// A captured interior string of a built node: its text in the string table.
     BuiltText { text: StringRef },
 }
@@ -485,10 +487,10 @@ fn linked(arena: &dyn ArenaRead, at: Address, kind: KindId, changed: ChangedEdge
     if words[1] != 0 {
         return Err(malformed("link record side", words[1]));
     }
-    let tree = TreeId(words[2]);
+    let slot = ParseSlot(words[2]);
     match words[5] {
-        0 => Ok(Cell::LinkedLeaf { kind, at, tree, row: NodeIndex(words[3]), end: NodeIndex(words[4]), span: span(words[6], words[7])?, changed }),
-        parsed => Ok(Cell::Child { kind, at: record(parsed)?, link: Some(tree), changed }),
+        0 => Ok(Cell::LinkedLeaf { kind, at, slot, row: NodeIndex(words[3]), end: NodeIndex(words[4]), span: span(words[6], words[7])?, changed }),
+        parsed => Ok(Cell::Child { kind, at: record(parsed)?, link: Some(slot), changed }),
     }
 }
 
@@ -582,7 +584,7 @@ mod tests {
             "child" => Cell::Child {
                 kind: kind(),
                 at: Address(n("at")),
-                link: entry["link"].as_u64().map(|tree| TreeId(u32::try_from(tree).expect("a tree"))),
+                link: entry["link"].as_u64().map(|slot| ParseSlot(u32::try_from(slot).expect("a parse slot"))),
                 changed: fixture_changed(entry),
             },
             "unit" => Cell::Unit { kind: kind(), row: row() },
@@ -611,7 +613,7 @@ mod tests {
             "linkedLeaf" => Cell::LinkedLeaf {
                 kind: kind(),
                 at: Address(n("at")),
-                tree: TreeId(n("tree")),
+                slot: ParseSlot(n("slot")),
                 row: NodeIndex(n("row")),
                 end: NodeIndex(n("end")),
                 span: Span { start: n("start"), end: n("spanEnd") },
@@ -686,8 +688,8 @@ mod tests {
         let text = image.entry(KindId::BLANK, "ab");
         image.entry(KindId::ERROR, "?");
         let record = image.record(KindId(14), 3, &[(2, built_cell(name, ChangedEdges { leading: true, trailing: false }))]);
-        image.link(KindId(14), TreeId(3), NodeIndex(7), NodeIndex(9), Address(5000), Span { start: 2, end: 9 });
-        image.link(KindId(16), TreeId(3), NodeIndex(8), NodeIndex(9), Address::NONE, Span { start: 4, end: 8 });
+        image.link(KindId(14), ParseSlot(3), NodeIndex(7), NodeIndex(9), Address(5000), Span { start: 2, end: 9 });
+        image.link(KindId(16), ParseSlot(3), NodeIndex(8), NodeIndex(9), Address::NONE, Span { start: 4, end: 8 });
         image.run(&[built_cell(record, ChangedEdges::default()), built_cell(text, ChangedEdges::default())]);
         for chunk in built["chunks"].as_array().expect("chunks") {
             let n = fixture_number(chunk, "chunk");
@@ -743,7 +745,7 @@ mod tests {
             Cell::Coordinate { kind: KindId(3), index: NodeIndex(1), span: Span { start: 0, end: form::LEAF } },
             Cell::Child { kind: KindId::BLANK, at: Address(4), link: None, changed: ChangedEdges::default() },
             Cell::Child { kind: KindId(2), at: Address::NONE, link: None, changed: ChangedEdges::default() },
-            Cell::Child { kind: KindId(2), at: Address(4), link: Some(TreeId(1)), changed: ChangedEdges::default() },
+            Cell::Child { kind: KindId(2), at: Address(4), link: Some(ParseSlot(1)), changed: ChangedEdges::default() },
             Cell::Child { kind: KindId(2), at: Address(4), link: None, changed: ChangedEdges { leading: true, trailing: false } },
         ] {
             assert!(cell.encode_parsed(&mut words, node, BITS).is_err(), "{cell:?}");

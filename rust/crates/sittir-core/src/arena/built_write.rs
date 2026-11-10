@@ -8,7 +8,7 @@ use super::cell::{flag, with_kind, CellWord, ListCell, LINK_WORDS};
 use super::count::OWNED;
 use super::memory::{ChunkMem, ChunkUnit};
 use super::{Address, ArenaError, BuiltChunks, CHUNK_WORDS, STRING_CHUNK_BYTES};
-use crate::types::{KindId, NodeIndex, Span, TreeId};
+use crate::types::{KindId, NodeIndex, ParseSlot, Span};
 
 /// The bytes of a leaf entry's head, its kind and its text's length.
 const ENTRY_HEAD_BYTES: u32 = 4;
@@ -106,8 +106,8 @@ impl<'a> BuiltWriter<'a> {
     /// # Errors
     ///
     /// As `header` and `place`.
-    pub fn link(&mut self, kind: KindId, tree: TreeId, row: NodeIndex, end: NodeIndex, record: Address, span: Span) -> Result<Address, ArenaError> {
-        let words = [self.header(kind, flag::LINK)?, 0, tree.0, row.0, end.0, record.0, span.start, span.end];
+    pub fn link(&mut self, kind: KindId, slot: ParseSlot, row: NodeIndex, end: NodeIndex, record: Address, span: Span) -> Result<Address, ArenaError> {
+        let words = [self.header(kind, flag::LINK)?, 0, slot.0, row.0, end.0, record.0, span.start, span.end];
         debug_assert_eq!(words.len(), LINK_WORDS as usize);
         self.place(&words, 1)
     }
