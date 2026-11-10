@@ -2154,7 +2154,7 @@ export const build: PortableBuildTable = {
 									leaf: 'docComment',
 									texts: [166],
 									pattern: {
-										source: '^(?:(?:.*\\n?))$',
+										source: '^(?:(?:[^\\x0A]*\\n?))$',
 										flags: 'u'
 									},
 									within: [
@@ -2218,7 +2218,7 @@ export const build: PortableBuildTable = {
 									leaf: 'docComment',
 									texts: [166],
 									pattern: {
-										source: '^(?:(?:.*\\n?))$',
+										source: '^(?:(?:[^\\x0A]*\\n?))$',
 										flags: 'u'
 									},
 									within: [
@@ -44441,7 +44441,7 @@ export const build: PortableBuildTable = {
 									kinds: [],
 									text: true,
 									pattern: {
-										source: '^(?:[\\r\\f\\t\\v ]*(?:[^[\\n].*)?)$',
+										source: '^(?:[\\r\\f\\t\\v ]*(?:[^[\\n][^\\x0A]*)?)$',
 										flags: 'u'
 									}
 								}
@@ -45943,7 +45943,7 @@ export const build: PortableBuildTable = {
 									leaf: 'rawStringLiteralContent',
 									texts: [160],
 									pattern: {
-										source: '^(?:(?:[\\s\\S]*))$',
+										source: '^(?:(?:[\\x09-\\x0D\\x20\\x00-\\x08\\x0E-\\x1F\\x21-\\u{10FFFF}]*))$',
 										flags: 'u'
 									}
 								}
@@ -46045,7 +46045,7 @@ export const build: PortableBuildTable = {
 									leaf: 'rawStringLiteralContent',
 									texts: [160],
 									pattern: {
-										source: '^(?:(?:[\\s\\S]*))$',
+										source: '^(?:(?:[\\x09-\\x0D\\x20\\x00-\\x08\\x0E-\\x1F\\x21-\\u{10FFFF}]*))$',
 										flags: 'u'
 									}
 								}
@@ -46261,7 +46261,7 @@ export const build: PortableBuildTable = {
 									leaf: 'rawStringLiteralContent',
 									texts: [160],
 									pattern: {
-										source: '^(?:(?:[\\s\\S]*))$',
+										source: '^(?:(?:[\\x09-\\x0D\\x20\\x00-\\x08\\x0E-\\x1F\\x21-\\u{10FFFF}]*))$',
 										flags: 'u'
 									}
 								}

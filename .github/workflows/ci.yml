@@ -525,6 +525,14 @@ jobs:
             echo "  pnpm exec tsx packages/cli/src/cli.ts gen --grammar <name> --all --output packages/<name>/src"
             exit 1
           fi
+      # This job's Node is the oldest major the engines fields allow. Importing
+      # each published entry point catches the syntax this Node lacks and the
+      # globals a module reads while it loads; a global used only inside a
+      # function (`DisposableStack`, say) fails only when that function is called.
+      - name: Build the published packages
+        run: pnpm run build:packages
+      - name: Every published entry point loads on this Node
+        run: node scripts/ci/import-published.mjs
 
   # The napi-build legs, as rows of the release target table
   # (packages/tools/src/native-targets.ts). A tag run builds every target.

@@ -49,11 +49,11 @@ describe.each(['python', 'regex', 'rust', 'scm', 'typescript'])('%s: inner-gap e
 
 describe.each(['python', 'regex', 'rust', 'scm', 'typescript'])('%s: the named units are the units the parser names', (grammar) => {
 	it('holds exactly the unit kind ids the parser marks named and visible', async () => {
-		const { lang } = await loadLanguageForGrammar(grammar);
+		const { language } = await loadLanguageForGrammar(grammar);
 		const { hooks } = (await import(`@sittir/${grammar}/api`)) as { hooks: { trivia: TriviaFacts } };
 		const kindId = await loadKindIdFromName(grammar);
 		const units = [...(await loadNodeModel(grammar)).unitKinds].map(kindId);
-		const parserNamed = units.filter((id) => lang.nodeTypeIsNamed(id) && lang.nodeTypeIsVisible(id)).sort((a, b) => a - b);
+		const parserNamed = units.filter((id) => language.nodeTypeIsNamed(id) && language.nodeTypeIsVisible(id)).sort((a, b) => a - b);
 		expect([...hooks.trivia.namedUnits].sort((a, b) => a - b)).toEqual(parserNamed);
 	});
 });

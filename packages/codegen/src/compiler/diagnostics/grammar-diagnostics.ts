@@ -130,6 +130,18 @@ export interface DroppedTokens {
 	readonly tokens: readonly string[];
 }
 
+export function fromStaleParser(grammar: string, wasmPath: string, reason: string): GrammarDiagnostic {
+	return {
+		scope: 'grammar',
+		code: 'stale-parser',
+		severity: 'error',
+		grammar,
+		message: `the parser at ${wasmPath} cannot be read: ${reason}. Run \`sittir gen --grammar ${grammar} --compile-parser\` (or a full \`gen --all\` without --skip-ts-chain) to build it from the grammar`,
+		canProceed: false,
+		details: { wasmPath, reason }
+	};
+}
+
 export function fromMissingParserTables(grammar: string, parserCPath: string): GrammarDiagnostic {
 	return {
 		scope: 'grammar',

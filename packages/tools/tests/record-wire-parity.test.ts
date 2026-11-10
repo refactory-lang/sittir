@@ -4,7 +4,10 @@ import { chunkOf } from '@sittir/common/engine';
 import { coordinateOf, decodeIndex, isCoordinate, nodeText, recordOf, treeOf } from '@sittir/common/utils';
 import { stableGrammars } from '@sittir/codegen/grammars';
 import type { NodeCoordinate } from '@sittir/types';
+import regex from '../../regex/src/index.ts';
+import rust from '../../rust/src/index.ts';
 import { languageByName } from '../src/languages.ts';
+import { layoutWorkOf } from '../src/validate/layout-runs.ts';
 import {
 	loadCorpusEntries,
 	loadSlotAccessorOf,
@@ -29,6 +32,16 @@ function surfaceOf(value: unknown, accessorOf: SlotAccessorOf): unknown {
 		at: placeOf(coordinateOf(node)),
 		slots: slotValuesOf(node, accessorOf).map(([key, slot]) => [key, surfaceOf(slot, accessorOf)])
 	};
+}
+
+type Queried = { readonly $descendants: Iterable<object> };
+
+function facetOf(root: unknown): Queried {
+	return (root as { $query(): Queried }).$query();
+}
+
+function queried(root: unknown): object[] {
+	return [...facetOf(root).$descendants];
 }
 
 async function engines(grammar: string) {
@@ -80,6 +93,27 @@ describe('a read on the arena wire says what the object wire says', () => {
 			object.dispose();
 			arena.dispose();
 		}, 600_000);
+
+		it(`${grammar}: every corpus node a query finds, leaves included`, async () => {
+			const { object, arena, accessorOf } = await engines(grammar);
+			const found = (engine: typeof arena, source: string): { readonly nodes: readonly object[]; readonly surface: unknown } => {
+				try {
+					const nodes = queried(engine.parse(source));
+					return { nodes, surface: nodes.map((node) => surfaceOf(node, accessorOf)) };
+				} catch (error) {
+					return { nodes: [], surface: { refused: (error as Error).message } };
+				}
+			};
+			let leaves = 0;
+			for (const entry of loadCorpusEntries(grammar)) {
+				const inArena = found(arena, entry.source);
+				leaves += inArena.nodes.filter((node) => recordOf(node) === undefined).length;
+				expect(inArena.surface, entry.name).toEqual(found(object, entry.source).surface);
+			}
+			expect(leaves).toBeGreaterThan(0);
+			object.dispose();
+			arena.dispose();
+		}, 600_000);
 	}
 
 	for (const [grammar, source, leaf] of [
@@ -99,6 +133,46 @@ describe('a read on the arena wire says what the object wire says', () => {
 			expect(read).toContain('é');
 			object.dispose();
 			arena.dispose();
+		});
+	}
+});
+
+describe('a node a query finds on the arena wire', () => {
+	it('is read from its records with no tree read: a parsed leaf and a number literal with parts', async () => {
+		const arena = await createEngine(rust, { nodeStorage: 'arena' });
+		const work = await layoutWorkOf('rust');
+		const root = arena.parse('fn f() { let x = 0x1Fu8; g(x) }\n', { depth: Infinity });
+		const facet = facetOf(root);
+		const before = work(root).treeReads;
+		const found = [...facet.$descendants];
+		expect(found.map(nodeText)).toContain('x');
+		expect(found.map((node) => (node as { readonly $type?: unknown }).$type)).toContain(arena.kinds.IntegerLiteralHex);
+		expect(work(root).treeReads).toBe(before);
+		arena.dispose();
+	});
+});
+
+describe('a query finds only the nodes a read takes', () => {
+	const ESCAPES = [
+		'atom escapes - control escapes',
+		'Unicode escape',
+		'\\u without hex codes treated as identity escape',
+		'Unicode escaped characters as atoms in character classes',
+		'Hexadecimal digits escape sequence'
+	];
+	for (const nodeStorage of ['object', 'arena'] as const) {
+		it(`${nodeStorage}: a regex escape's captures are part of its token, not nodes`, async () => {
+			const rx = await createEngine(regex, { nodeStorage });
+			const captures: readonly unknown[] = [rx.kinds.ControlEscapeText1, rx.kinds.ControlEscapeText2, rx.kinds.UnicodeCharacterEscapeText1, rx.kinds.UnicodeCharacterEscapeText2];
+			const tokens: readonly unknown[] = [rx.kinds.ControlEscape, rx.kinds.UnicodeCharacterEscape];
+			const entries = loadCorpusEntries('regex').filter((entry) => ESCAPES.includes(entry.name));
+			expect(entries.map((entry) => entry.name).sort()).toEqual([...ESCAPES].sort());
+			for (const entry of entries) {
+				const kinds = queried(rx.parse(entry.source)).map((node) => (node as { readonly $type?: unknown }).$type);
+				expect(kinds.filter((kind) => captures.includes(kind)), entry.name).toEqual([]);
+				expect(kinds.some((kind) => tokens.includes(kind)), entry.name).toBe(true);
+			}
+			rx.dispose();
 		});
 	}
 });

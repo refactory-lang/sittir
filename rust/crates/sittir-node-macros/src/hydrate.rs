@@ -6,8 +6,9 @@
 //! value, an enum kind's member a unit. A struct's walk meets each child once:
 //! it reads the child and writes its row (`Hydration::meet`), routes it, and
 //! walks into it there and then, handing it over in `ReadCtx::at`, so the
-//! child's own walk asks the tree for none of its ids, row or span again. A
-//! refusal anywhere below breaks the walk out of its children's loop, and
+//! child's own walk asks the tree for none of its ids, row or span again. An
+//! extra it hands to its reader, which walks it whole when it reads it as a
+//! record (`Hydration::extra`). A refusal anywhere below breaks the walk out of its children's loop, and
 //! the walk steps back to its own node before passing the refusal up. Every
 //! `HydrateNode` sits inside `::sittir_core::records_codec!`, beside the read
 //! it mirrors.
@@ -206,6 +207,10 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
                 let __entered = match __route {
                     #(#takes)*
                     #(#separators)*
+                    __rt::Route::Trivia => match records.extra(cursor, ctx, &__child) {
+                        ::core::result::Result::Ok(entered) => entered,
+                        ::core::result::Result::Err(refusal) => break 'walk ::core::result::Result::Err(refusal),
+                    },
                     _ => false,
                 };
                 if !__entered {

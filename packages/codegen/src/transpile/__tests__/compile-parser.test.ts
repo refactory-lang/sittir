@@ -1,11 +1,13 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
-import { join } from 'node:path';
+import { join, posix, win32 } from 'node:path';
 import { tmpdir } from 'node:os';
-import { appendFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { appendFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { Language, Parser } from 'web-tree-sitter';
-import { buildUpstreamWasm, ensureParserWasm, readUpstreamRecord, upstreamKeyOf, withUpstreamGrammar, writeUpstreamRecord } from '../compile-parser.ts';
+import { buildParserWasm, buildUpstreamWasm, builtParserWasm, ensureParserWasm, parserSourceKey, readUpstreamRecord, upstreamKeyOf, withUpstreamGrammar, writeUpstreamRecord } from '../compile-parser.ts';
 import { treeSitterToolchain } from '../tree-sitter-cli.ts';
+import { sittirDirOf } from '../../grammars.ts';
+import { sha256 } from '../../util/content-hash.ts';
+import { languageAt, treeParser } from '../../engine-loader.ts';
 
 const realPythonDir = join(__dirname, '../../../../', 'python');
 const realPythonSittir = join(realPythonDir, '.sittir');
@@ -24,6 +26,12 @@ afterAll(() => {
 	rmSync(tmpRoot, { recursive: true, force: true });
 });
 
+function copyOfPython(name: string): { readonly dir: string; readonly sittir: string } {
+	const dir = join(tmpRoot, name);
+	cpSync(sittirDirOf({ dir: pythonDir }), sittirDirOf({ dir }), { recursive: true });
+	return { dir, sittir: sittirDirOf({ dir }) };
+}
+
 describe('ensureParserWasm', () => {
 	it('builds parser.wasm from the generated sources when it is missing', () => {
 		const { wasmPath, built } = ensureParserWasm(pythonDir);
@@ -35,11 +43,10 @@ describe('ensureParserWasm', () => {
 	it('builds the upstream parser from the grammar the package exports, the same parser its published wasm is', async () => {
 		const built = buildUpstreamWasm(realPythonDir, join(tmpRoot, 'upstream.wasm'));
 		const published = createRequire(join(realPythonDir, 'package.json')).resolve('tree-sitter-python/tree-sitter-python.wasm');
-		await Parser.init();
 		const treeOf = async (wasm: string, source: string): Promise<string> => {
-			const parser = new Parser();
-			parser.setLanguage(await Language.load(wasm));
-			return parser.parse(source)!.rootNode.toString();
+			using parser = treeParser(await languageAt(wasm));
+			using tree = parser.parse(source);
+			return tree.root.toString();
 		};
 		for (const source of ['x = 1\n', 'def f(a, /, b, *, c=1, d):\n    return a\n', 'match p:\n    case [x, *_]: pass\n', 'f"{x!r:>{w}}"\n'])
 			expect(await treeOf(built, source)).toBe(await treeOf(published, source));
@@ -97,11 +104,66 @@ describe('ensureParserWasm', () => {
 		}
 	});
 
-	it('leaves a present parser.wasm untouched', () => {
+	it('leaves a fresh parser.wasm untouched', () => {
 		const wasmPath = join(pythonDir, '.sittir', 'parser.wasm');
 		expect(existsSync(wasmPath)).toBe(true);
 		const before = statSync(wasmPath).mtimeMs;
 		expect(ensureParserWasm(pythonDir)).toEqual({ wasmPath, built: false });
 		expect(statSync(wasmPath).mtimeMs).toBe(before);
+	});
+
+	it('rebuilds a parser.wasm built from other sources than it reads now', () => {
+		const { dir, sittir } = copyOfPython('rebuilt');
+		appendFileSync(join(sittir, 'src', 'parser.c'), '\n');
+		expect(builtParserWasm(dir)).toMatchObject({ fresh: false });
+		expect(ensureParserWasm(dir)).toEqual({ wasmPath: join(sittir, 'parser.wasm'), built: true });
+		expect(builtParserWasm(dir)).toMatchObject({ fresh: true });
+	}, 120_000);
+});
+
+describe('parserSourceKey', () => {
+	it('keys the sources by the same names whatever separator the OS writes', () => {
+		const { dir, sittir } = copyOfPython('separators');
+		mkdirSync(join(dir, 'common'));
+		writeFileSync(join(dir, 'common', 'shared.h'), '#define SHARED 1\n');
+		appendFileSync(join(sittir, 'src', 'scanner.c'), '\n#include "../../common/shared.h"\n');
+		expect(parserSourceKey(sittir, win32)).toBe(parserSourceKey(sittir, posix));
+	});
+});
+
+describe('builtParserWasm', () => {
+	it('reads the parser a build wrote from the sources .sittir/src holds as fresh, and stale once a source changes', () => {
+		const { dir, sittir } = copyOfPython('fresh');
+		const wasmPath = join(sittir, 'parser.wasm');
+		const parser = builtParserWasm(dir);
+		expect(parser).toMatchObject({ wasmPath, fresh: true, digest: sha256(readFileSync(wasmPath)) });
+		expect(parser.fresh && Buffer.from(parser.bytes).equals(readFileSync(wasmPath))).toBe(true);
+		appendFileSync(join(sittir, 'src', 'parser.c'), '\n');
+		expect(builtParserWasm(dir)).toEqual({ wasmPath, fresh: false, reason: 'it was built from other sources than it reads now' });
+	});
+
+	it('reads a parser as stale once a header its scanner includes from outside .sittir/src changes', () => {
+		const { dir, sittir } = copyOfPython('included');
+		mkdirSync(join(dir, 'common'));
+		writeFileSync(join(dir, 'common', 'shared.h'), '#define SHARED 1\n');
+		appendFileSync(join(sittir, 'src', 'scanner.c'), '\n#include "../../common/shared.h"\n');
+		buildParserWasm(dir);
+		expect(builtParserWasm(dir)).toMatchObject({ fresh: true });
+		appendFileSync(join(dir, 'common', 'shared.h'), '#define MORE 2\n');
+		expect(builtParserWasm(dir)).toMatchObject({ fresh: false, reason: 'it was built from other sources than it reads now' });
+	}, 120_000);
+
+	it('reads a parser whose bytes are not the ones its build recorded as stale', () => {
+		const { dir, sittir } = copyOfPython('swapped');
+		appendFileSync(join(sittir, 'parser.wasm'), '\0');
+		expect(builtParserWasm(dir)).toMatchObject({ fresh: false, reason: 'its bytes are not the ones parser.json records' });
+	});
+
+	it('reads a missing parser, and one no record names the sources of, as stale', () => {
+		const { dir, sittir } = copyOfPython('unrecorded');
+		rmSync(join(sittir, 'parser.json'));
+		expect(builtParserWasm(dir)).toMatchObject({ fresh: false, reason: 'no parser.json records what it was built from' });
+		rmSync(join(sittir, 'parser.wasm'));
+		expect(builtParserWasm(dir)).toMatchObject({ fresh: false, reason: 'it does not exist' });
 	});
 });

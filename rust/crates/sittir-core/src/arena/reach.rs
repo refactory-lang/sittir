@@ -6,7 +6,7 @@
 //! no read has written it yet; a node no cell names is held by its tree. So a
 //! tree holds one record per row, however the row is reached.
 
-use super::{Address, ArenaError, ArenaRead, Cell, CellShape, CellWord, HydrateError, HydrateNode, Hydration, ListCell, RecordCells, SideRecord, TreeArena};
+use super::{Address, ArenaError, ArenaRead, Cell, CellShape, CellWord, HydrateError, HydrateNode, ListCell, RecordCells, SideRecord, TreeArena};
 use crate::read::{Depth, ReadCtx};
 use crate::record::HEADER_WORDS;
 use crate::types::{KindId, NodeIndex};
@@ -214,7 +214,7 @@ fn spine(cursor: &mut TreeCursor<'_>, row: NodeIndex) -> Vec<NodeIndex> {
 
 /// Writes the record of the node at `row`, which has none, `depth` levels down.
 fn write<N: HydrateNode>(tree: &mut TreeArena, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, row: NodeIndex, stamped: Option<KindId>, depth: Depth) -> Result<Option<Address>, HydrateError> {
-    super::hydrate_at::<N>(cursor, ctx, row, stamped, depth, &mut Hydration::new(tree))
+    super::hydrate_at::<N>(cursor, ctx, row, stamped, depth, tree)
 }
 
 /// What a walk down a spine meets where no read has written the record it
@@ -378,7 +378,7 @@ pub fn reach<N: HydrateNode + RecordCells>(tree: &mut TreeArena, cursor: &mut Tr
 
 /// The record a cell names: none for a leaf or a unit, which its holder's
 /// cell holds whole.
-fn record_of_cell(cell: Cell) -> Option<Address> {
+pub(crate) fn record_of_cell(cell: Cell) -> Option<Address> {
     match cell {
         Cell::Child { at, .. } => Some(at),
         _ => None,
@@ -397,16 +397,6 @@ fn record_of_cell(cell: Cell) -> Option<Address> {
 pub fn written<N: RecordCells>(tree: &TreeArena, row: NodeIndex) -> Result<Option<Cell>, ArenaError> {
     let Some(rows) = tree.node_rows() else { return Ok(None) };
     walk::<N, _>(&mut Written(tree), &rows.spine(row))
-}
-
-/// The record of the node at `row` a read wrote (`written`): none for a
-/// leaf or a unit.
-///
-/// # Errors
-///
-/// What the arena refuses.
-pub fn written_record<N: RecordCells>(tree: &TreeArena, row: NodeIndex) -> Result<Option<Address>, ArenaError> {
-    Ok(written::<N>(tree, row)?.and_then(record_of_cell))
 }
 
 /// The record a parsed cell names, the item `item` of the slot at `word` of

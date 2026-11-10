@@ -65,7 +65,7 @@ function makeMinimalFixture(): {
 					}
 				}
 			},
-			sourceArtifact: 'parser.wasm'
+			sourceArtifact: 'parser.wasm', parser: null
 		}
 	};
 }

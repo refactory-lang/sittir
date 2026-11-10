@@ -469,11 +469,14 @@ export type GeneratedIdTable =
 	| ReadonlyMap<string, number | GeneratedIdEntry>
 	| Record<string, number | GeneratedIdEntry>;
 
+export type TreeShape = (source: string) => string;
+
 export interface GeneratedIdTables {
 	readonly kindIds: GeneratedIdTable;
 	readonly fieldIds: GeneratedIdTable;
 	readonly folds: ReadonlyMap<number, readonly number[]>;
 	readonly sourceArtifact: string;
+	readonly parser: TreeShape | null;
 }
 
 export interface GeneratedKindEntry {
@@ -519,7 +522,7 @@ export function symbolNameIsNotable(
 	return symbolName !== undefined && (symbolName !== kind || literalRule === true);
 }
 
-export function collectGeneratedKindEntries(tables: GeneratedIdTables): readonly GeneratedKindEntry[] {
+export function collectGeneratedKindEntries(tables: Omit<GeneratedIdTables, 'parser'>): readonly GeneratedKindEntry[] {
 	return toEntries(tables.kindIds)
 		.filter(([, entry]) => entry.id !== undefined)
 		.map(([kind, entry]) => ({
@@ -1483,7 +1486,8 @@ export function predictKindCatalog(grammar: PredictableGrammar): PredictedKindCa
 			kindIds,
 			fieldIds: joinIdNames(table.fields, table.fieldNames, deriveFieldRuntimeName).ids,
 			folds: new Map(),
-			sourceArtifact: 'predicted'
+			sourceArtifact: 'predicted',
+			parser: null
 		},
 		grammar
 	);

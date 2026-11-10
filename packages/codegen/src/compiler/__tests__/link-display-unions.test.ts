@@ -61,7 +61,7 @@ describe('link builds one display union per alias target', () => {
 		});
 		const linked = link(raw, {
 			generatedIdTables: { fieldIds: new Map(), folds: new Map(),
-				sourceArtifact: 'fixture',
+				sourceArtifact: 'fixture', parser: null,
 				kindIds: {
 					source: { id: 1, parser: parser('source') },
 					identifier: { id: 2, parser: parser('identifier') },

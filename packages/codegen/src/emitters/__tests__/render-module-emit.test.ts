@@ -19,7 +19,7 @@ import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
 import { emitReadyModel } from '../../__tests__/helpers/emit-ready-model.ts';
 import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { PATTERN, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { PATTERN, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { runTemplateEmitter } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { generatedFieldIds, type GeneratedKindEntry } from '../../dsl/symbol-table.ts';
@@ -766,6 +766,22 @@ describe('node read facts', () => {
 			'kind = kind::INTEGER_LITERAL_DECIMAL, interior = "^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$"'
 		);
 		expect(args('TypeIdentifierNode')).toBe('kind = kind::_TYPE_IDENTIFIER, display, content = content');
+	});
+
+	it('reads an own-text leaf’s slot by the affixes it is spelled with, checking it first when an external scanner lexes it', () => {
+		expect(args('EscapeSequenceSimpleNode')).toBe('kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\\\\\(?<content>(?:[^xu]))$", affixes = ("\\\\", "")');
+		expect(args('ShebangNode')).toMatch(/, affixes = \("#!", "\\n"\)$/);
+		const leaf = node('EscapeSequenceSimpleNode');
+		const scanned: ReadFactsCtx = { ...ctx, nodeMap: { ...ctx.nodeMap, externals: [...(ctx.nodeMap.externals ?? []), { type: SYMBOL, name: leaf.kind }] } };
+		expect(nodeArgs(leaf, ownId(leaf), scanned, (leaf as AbstractAssembledCompound).slots)).toMatch(/, affixes = \("\\\\", ""\), scanned$/);
+	});
+
+	it('refuses an own-text leaf whose interior is not its affixes around its one slot', () => {
+		const leaf = node('EscapeSequenceSimpleNode') as AssembledNode & { readonly renderRule: { readonly members: readonly unknown[] } };
+		const widened = Object.assign(Object.create(Object.getPrototypeOf(leaf) as object) as object, leaf, {
+			renderRule: { ...leaf.renderRule, members: [...leaf.renderRule.members, { type: STRING, value: '!' }] }
+		}) as AssembledNode;
+		expect(() => nodeArgs(widened, ownId(leaf), ctx, (widened as AbstractAssembledCompound).slots)).toThrow('own-text-interior-not-affixed');
 	});
 
 	it('refuses an envelope whose content is a unit, or a compound sharing its row', () => {

@@ -1086,19 +1086,106 @@ pub enum Router {
 }
 
 /// A node's children as its read routes them: each child (`survey`), the
-/// route it takes (`Route`), and the wire key of each slot by its number.
+/// route it takes (`Route`), and, by each slot's number, its wire key and
+/// whether it is an elided list (`ReadSlot::ELIDED`).
 #[derive(Debug, Clone)]
 pub struct Routed {
     pub children: Vec<Kid>,
     pub routes: Vec<Route>,
     pub keys: &'static [&'static str],
+    pub elided: &'static [bool],
 }
 
 impl HeapBytes for Routed {
     fn heap_bytes(&self) -> usize {
-        let Self { children, routes, keys } = self;
+        let Self { children, routes, keys, elided: _ } = self;
         children.heap_bytes() + routes.heap_bytes() + keys.heap_bytes()
     }
+}
+
+impl Routed {
+    /// Each child a slot stores, by its place among `children`, with its slot
+    /// and its item there (`slot_items`).
+    #[must_use]
+    pub fn slot_items(&self) -> Vec<(usize, crate::types::SlotId, ItemIndex)> {
+        slot_items(&self.routes, self.elided)
+    }
+}
+
+/// Each child `routes` sends to a slot, by its place among them, with its
+/// slot and its item there, `elided` saying by each slot's number whether
+/// it is an elided list. A slot numbers its children in the order they
+/// arrive. An elided list's tagged separators make holes that take items of
+/// their own, and only a segment's first child takes one (`Elided`). One
+/// pass over `routes` counts each slot's arrivals and holes; a second over
+/// the children it took gives each its item.
+#[must_use]
+pub fn slot_items(routes: &[Route], elided: &[bool]) -> Vec<(usize, crate::types::SlotId, ItemIndex)> {
+    #[derive(Clone, Copy, Default)]
+    struct Arrivals {
+        taken: u32,
+        holes: u32,
+        after_item: bool,
+    }
+    let mut lists = vec![Arrivals::default(); elided.len()];
+    let mut arrived = Vec::new();
+    for (child, route) in routes.iter().enumerate() {
+        match *route {
+            Route::Slot { slot, .. } => {
+                let list = &mut lists[slot.index()];
+                arrived.push((child, slot, list.taken, list.holes, !list.after_item));
+                list.taken += 1;
+                list.after_item = true;
+            }
+            Route::Separator { slot, tagged: true } if elided[slot.index()] => {
+                let list = &mut lists[slot.index()];
+                list.taken += 1;
+                list.holes += 1;
+                list.after_item = false;
+            }
+            _ => {}
+        }
+    }
+    arrived
+        .into_iter()
+        .filter_map(|(child, slot, arrival, segment, first)| match lists[slot.index()].holes {
+            0 => Some((child, slot, ItemIndex(arrival))),
+            _ => first.then_some((child, slot, ItemIndex(segment))),
+        })
+        .collect()
+}
+
+/// Each child's item in its slot (`slot_items`), by its place among
+/// `routes`: `None` for a child no slot takes, and none at all where no
+/// route takes a unit. Kept out of line, so a read's frame, which every
+/// nested read stacks, holds only the list.
+#[must_use]
+#[inline(never)]
+pub fn unit_items(routes: &[Route], elided: &[bool]) -> Vec<Option<ItemIndex>> {
+    if !routes.iter().any(|route| matches!(route, Route::Slot { scalar: true, .. })) {
+        return Vec::new();
+    }
+    let mut items = vec![None; routes.len()];
+    for (at, _, item) in slot_items(routes, elided) {
+        items[at] = Some(item);
+    }
+    items
+}
+
+/// The sides of each unit child `routed` names, a child its slot stores as a
+/// bare kind, by its slot's key and its item there (`unit_items`), as `ctx`
+/// seats them (`ReadCtx::unit_sides`): only those that have any.
+#[must_use]
+pub fn units_of<T: crate::trivia::FromTriviaText + 'static>(routed: &Routed, ctx: &ReadCtx<'_>) -> Vec<crate::layout::UnitSides<T>> {
+    unit_items(&routed.routes, routed.elided)
+        .into_iter()
+        .enumerate()
+        .filter_map(|(at, item)| {
+            let (Route::Slot { slot, scalar: true }, Some(item)) = (routed.routes[at], item) else { return None };
+            let trivia = ctx.unit_sides(routed.children[at].index, Depth::ONE)?;
+            Some(crate::layout::UnitSides { slot: routed.keys[slot.index()].to_owned(), item, trivia })
+        })
+        .collect()
 }
 
 impl<T: ReadNode> ReadNode for Box<T> {
@@ -1224,6 +1311,9 @@ pub fn read_value<T: ReadNode, const A: bool>(
 /// are never asked.
 pub trait ReadSlot: Sized {
     type Acc;
+    /// Whether the slot is an elided list, whose tagged separators make
+    /// holes (`Routed::slot_items`).
+    const ELIDED: bool = false;
     fn start() -> Self::Acc;
     fn admits(grammar: KindId, display: KindId) -> bool;
     fn takes_tagged(grammar: KindId, display: KindId, named: bool) -> bool;
@@ -1244,18 +1334,6 @@ pub trait ReadSlot: Sized {
     /// A separator between the slot's children.
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         let _ = (acc, tagged);
-    }
-    /// Where the next child taken arrives, `taken` children having been
-    /// taken: its item in the finished slot unless `position` moves it.
-    fn arrival(acc: &Self::Acc, taken: u32) -> ItemIndex {
-        let _ = acc;
-        ItemIndex(taken)
-    }
-    /// The item in the finished slot of the child that arrived at
-    /// `arrival`; `None` when finishing drops it.
-    fn position(acc: &Self::Acc, arrival: ItemIndex) -> Option<ItemIndex> {
-        let _ = acc;
-        Some(arrival)
     }
     fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError>;
 }
@@ -1372,25 +1450,6 @@ impl<V> Elided<V> {
             self.items.push(None);
         }
     }
-    /// Where the next item pushed arrives: after every item and hole so far.
-    #[must_use]
-    pub fn arrival(&self) -> ItemIndex {
-        ItemIndex(crate::types::narrow(self.items.len()))
-    }
-
-    /// The position in `positions` of the item that arrived at `arrival`:
-    /// its own index when no separator made a hole, else its segment's,
-    /// when it is the segment's first item; `None` for a later one.
-    pub fn position(&self, arrival: ItemIndex) -> Option<ItemIndex> {
-        if self.items.iter().all(Option::is_some) {
-            return Some(arrival);
-        }
-        let before = self.items.get(..arrival.index())?;
-        let segment = crate::types::narrow(before.iter().filter(|item| item.is_none()).count());
-        let first = before.last().is_none_or(Option::is_none);
-        first.then_some(ItemIndex(segment))
-    }
-
     pub fn positions(self) -> Vec<Option<V>> {
         if self.items.iter().all(Option::is_some) {
             return self.items;
@@ -1414,6 +1473,7 @@ impl<V> Elided<V> {
 
 impl<T: ReadNode, const A: bool> ReadSlot for Vec<Option<SlotValue<T, A>>> {
     type Acc = Elided<SlotValue<T, A>>;
+    const ELIDED: bool = true;
     fn start() -> Self::Acc {
         Elided::default()
     }
@@ -1425,12 +1485,6 @@ impl<T: ReadNode, const A: bool> ReadSlot for Vec<Option<SlotValue<T, A>>> {
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         acc.separator(tagged);
     }
-    fn arrival(acc: &Self::Acc, _: u32) -> ItemIndex {
-        acc.arrival()
-    }
-    fn position(acc: &Self::Acc, arrival: ItemIndex) -> Option<ItemIndex> {
-        acc.position(arrival)
-    }
     /// An empty list is `[]`.
     fn finish(acc: Self::Acc, _at: SlotSite) -> Result<Self, ReadError> {
         Ok(acc.positions())
@@ -1440,6 +1494,7 @@ impl<T: ReadNode, const A: bool> ReadSlot for Vec<Option<SlotValue<T, A>>> {
 /// A `repeat1` elided list: the elided read, with an empty one refused as missing.
 impl<T: ReadNode, const A: bool> ReadSlot for crate::NonEmptyVec<Option<SlotValue<T, A>>> {
     type Acc = Elided<SlotValue<T, A>>;
+    const ELIDED: bool = true;
     fn start() -> Self::Acc {
         Elided::default()
     }
@@ -1449,12 +1504,6 @@ impl<T: ReadNode, const A: bool> ReadSlot for crate::NonEmptyVec<Option<SlotValu
     }
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         acc.separator(tagged);
-    }
-    fn arrival(acc: &Self::Acc, _: u32) -> ItemIndex {
-        acc.arrival()
-    }
-    fn position(acc: &Self::Acc, arrival: ItemIndex) -> Option<ItemIndex> {
-        acc.position(arrival)
     }
     fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError> {
         Self::try_from(acc.positions()).map_err(|crate::non_empty::EmptyList| missing(at))
@@ -1535,24 +1584,110 @@ impl<T: ReadNode, const A: bool> ReadRoot for SlotValue<T, A> {
 /// already compiled it, so a pattern that does not compile never reaches here.
 pub struct Interior {
     pattern: &'static str,
+    affixed: Option<Affixed>,
     compiled: OnceLock<regex::Regex>,
+}
+
+/// An interior that is its one group between fixed affixes.
+#[derive(Clone, Copy)]
+struct Affixed {
+    group: &'static str,
+    open: &'static str,
+    close: &'static str,
+    checked: bool,
 }
 
 impl Interior {
     #[must_use]
     pub const fn new(pattern: &'static str) -> Self {
-        Self { pattern, compiled: OnceLock::new() }
+        Self { pattern, affixed: None, compiled: OnceLock::new() }
     }
-    /// The captures of the pattern in `text`, compiling it on first use.
+    /// An interior that is its one group, `group`, between the fixed texts
+    /// `open` and `close`: a text has that group where the affixes leave it,
+    /// found with no capture search. A token the grammar's own rule lexes
+    /// matches the pattern that rule was compiled from, so only a `checked`
+    /// interior, one an external scanner lexes, tests its pattern first.
+    #[must_use]
+    pub const fn affixed(pattern: &'static str, group: &'static str, open: &'static str, close: &'static str, checked: bool) -> Self {
+        Self { pattern, affixed: Some(Affixed { group, open, close, checked }), compiled: OnceLock::new() }
+    }
+    /// The interior's pattern.
+    #[must_use]
+    pub const fn pattern(&self) -> &'static str {
+        self.pattern
+    }
+    /// The fixed texts an affixed interior's group lies between, and whether
+    /// a text is checked against the pattern before them.
+    #[must_use]
+    pub const fn affixes(&self) -> Option<(&'static str, &'static str, bool)> {
+        match self.affixed {
+            Some(Affixed { open, close, checked, .. }) => Some((open, close, checked)),
+            None => None,
+        }
+    }
+    fn compiled(&self) -> &regex::Regex {
+        self.compiled.get_or_init(|| regex::Regex::new(self.pattern).expect("the expansion compiled this pattern"))
+    }
+    /// The groups of the pattern in `text`, compiling it on first use: none
+    /// when the pattern does not match. An affixed interior also has none for
+    /// an empty text (a missing token) or one that does not open and close
+    /// with its affixes.
     ///
     /// # Panics
     ///
     /// If the pattern does not compile; the derive expansion compiled it
     /// already, so it does.
-    pub fn captures<'t>(&self, text: &'t str) -> Option<Captures<'t>> {
-        self.compiled
-            .get_or_init(|| regex::Regex::new(self.pattern).expect("the expansion compiled this pattern"))
-            .captures(text)
+    pub fn captures<'t>(&self, text: &'t str) -> Option<InteriorCaptures<'t>> {
+        let Some(Affixed { group, open, close, checked }) = self.affixed else {
+            return self.compiled().captures(text).map(|captures| InteriorCaptures(Groups::Pattern(captures)));
+        };
+        let content = text.strip_prefix(open)?.strip_suffix(close)?;
+        if text.is_empty() || (checked && !self.compiled().is_match(text)) {
+            return None;
+        }
+        Some(InteriorCaptures(Groups::Affixed { text: content, group, start: open.len(), end: open.len() + content.len() }))
+    }
+}
+
+/// The groups an interior captured in a token's text.
+pub struct InteriorCaptures<'t>(Groups<'t>);
+
+enum Groups<'t> {
+    Pattern(Captures<'t>),
+    Affixed { text: &'t str, group: &'static str, start: usize, end: usize },
+}
+
+/// One captured group: where it lies in the token's text, and its text.
+#[derive(Clone, Copy, Debug)]
+pub struct Group<'t> {
+    text: &'t str,
+    start: usize,
+    end: usize,
+}
+
+impl<'t> Group<'t> {
+    #[must_use]
+    pub const fn start(&self) -> usize {
+        self.start
+    }
+    #[must_use]
+    pub const fn end(&self) -> usize {
+        self.end
+    }
+    #[must_use]
+    pub const fn as_str(&self) -> &'t str {
+        self.text
+    }
+}
+
+impl<'t> InteriorCaptures<'t> {
+    /// The group named `name`, when it matched.
+    #[must_use]
+    pub fn name(&self, name: &str) -> Option<Group<'t>> {
+        match &self.0 {
+            Groups::Pattern(captures) => captures.name(name).map(|m| Group { text: m.as_str(), start: m.start(), end: m.end() }),
+            &Groups::Affixed { text, group, start, end } => (group == name).then_some(Group { text, start, end }),
+        }
     }
 }
 
@@ -1581,14 +1716,14 @@ impl FromCapture for bool {
 }
 
 /// A capture slot's value.
-pub fn capture<F: FromCapture>(captures: &Captures<'_>, name: &str, at: SlotSite) -> Result<F, ReadError> {
+pub fn capture<F: FromCapture>(captures: &InteriorCaptures<'_>, name: &str, at: SlotSite) -> Result<F, ReadError> {
     F::from_capture(captures.name(name).map(|m| m.as_str()), at)
 }
 
 /// Where a capture lies in its tree's source, for the captures of the text
 /// of a node that starts at byte `base`: `None` when its group did not match.
 #[must_use]
-pub fn capture_span(captures: &Captures<'_>, name: &str, base: u32) -> Option<Span> {
+pub fn capture_span(captures: &InteriorCaptures<'_>, name: &str, base: u32) -> Option<Span> {
     captures.name(name).map(|m| Span { start: base + crate::types::narrow(m.start()), end: base + crate::types::narrow(m.end()) })
 }
 
@@ -1648,6 +1783,73 @@ pub fn read_from<T: ReadNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    const BLOCK: &str = r"(?s)^/\*(?<content>(?:([^*]|\*+[^*\/])*\**))\*/$";
+    const LINE: &str = r"(?s)^//(?<content>(?:[^\r\n  ]*))$";
+
+    fn by_regex(pattern: &str, text: &str) -> Option<Vec<Option<(usize, usize, String)>>> {
+        regex::Regex::new(pattern).unwrap().captures(text).map(|groups| vec![groups.name("content").map(|m| (m.start(), m.end(), m.as_str().to_owned()))])
+    }
+
+    fn by_interior(interior: &Interior, text: &str) -> Option<Vec<Option<(usize, usize, String)>>> {
+        interior.captures(text).map(|groups| vec![groups.name("content").map(|m| (m.start(), m.end(), m.as_str().to_owned()))])
+    }
+
+    const LEXED_BLOCKS: [&str; 7] = ["/**/", "/***/", "/****/", "/* a */", "/** doc\n * more\n */", "/*a*b*/", "/* \u{e9} */"];
+    const LEXED_LINES: [&str; 4] = ["//", "// a", "//\u{e9}", "//a/*b*/"];
+
+    #[test]
+    fn a_checked_affixed_interior_reads_its_group_by_its_affixes_as_its_pattern_does() {
+        let block = Interior::affixed(BLOCK, "content", "/*", "*/", true);
+        let line = Interior::affixed(LINE, "content", "//", "", true);
+        for text in LEXED_BLOCKS.into_iter().chain(["/*/", "/* a */ b", "/* a */ */", "/* *", ""]) {
+            assert_eq!(by_interior(&block, text), by_regex(BLOCK, text), "{text:?}");
+        }
+        for text in LEXED_LINES.into_iter().chain(["// a\r", "// a\n", "//a\u{2028}", "/", ""]) {
+            assert_eq!(by_interior(&line, text), by_regex(LINE, text), "{text:?}");
+        }
+        assert!(block.captures("/* a */").is_some_and(|groups| groups.name("other").is_none()), "a name the pattern lacks captures nothing");
+    }
+
+    #[test]
+    fn an_affixed_interior_its_own_rule_lexes_reads_a_lexed_token_as_its_pattern_does() {
+        let block = Interior::affixed(BLOCK, "content", "/*", "*/", false);
+        let line = Interior::affixed(LINE, "content", "//", "", false);
+        for text in LEXED_BLOCKS {
+            assert_eq!(by_interior(&block, text), by_regex(BLOCK, text), "{text:?}");
+        }
+        for text in LEXED_LINES {
+            assert_eq!(by_interior(&line, text), by_regex(LINE, text), "{text:?}");
+        }
+    }
+
+    #[test]
+    fn an_affixed_interior_reads_nothing_from_an_empty_text_or_one_its_affixes_do_not_bound() {
+        let permissive = Interior::affixed(r"(?s)^(?<content>.*)$", "content", "<<", ">>", false);
+        for text in ["", "<", "<<", "<<>", "<>>", "a<<>>", "<<>>a"] {
+            assert!(permissive.captures(text).is_none(), "{text:?} does not open and close with its affixes");
+        }
+        assert_eq!(by_interior(&permissive, "<<>>"), Some(vec![Some((2, 2, String::new()))]));
+        assert_eq!(by_interior(&permissive, "<<\u{e9}>>"), Some(vec![Some((2, 4, "\u{e9}".to_owned()))]));
+        let bare = Interior::affixed(r"(?s)^(?<content>.*)$", "content", "", "", false);
+        assert!(bare.captures("").is_none(), "a missing token is read verbatim");
+    }
+
+    #[test]
+    fn a_list_s_items_are_numbered_in_one_pass_over_its_children() {
+        let slot = crate::types::SlotId(0);
+        let item = || Route::Slot { slot, scalar: true };
+        let separator = |tagged| Route::Separator { slot, tagged };
+        let holes = [item(), separator(true), separator(true), item(), item(), separator(false), item()];
+        assert_eq!(unit_items(&holes, &[true]), [Some(ItemIndex(0)), None, None, Some(ItemIndex(2)), None, None, None], "a segment's first item takes the segment's position");
+        assert_eq!(unit_items(&holes, &[false]), [Some(ItemIndex(0)), None, None, Some(ItemIndex(1)), Some(ItemIndex(2)), None, Some(ItemIndex(3))], "a list that is not elided numbers its items as they arrive");
+        let plain: Vec<Route> = (0..60_000).map(|_| item()).collect();
+        let elided: Vec<Route> = (0..60_000).flat_map(|n| [item(), separator(n % 3 == 0)]).collect();
+        let started = std::time::Instant::now();
+        assert_eq!(unit_items(&plain, &[false]).last(), Some(&Some(ItemIndex(59_999))));
+        assert_eq!(unit_items(&elided, &[true]).iter().flatten().count(), 20_001);
+        assert!(started.elapsed() < std::time::Duration::from_secs(2), "numbering 60,000 children took {:?}", started.elapsed());
+    }
 
     #[test]
     fn a_relaxed_keyword_stamps_its_display_and_a_plain_token_stamps_its_grammar_id() {

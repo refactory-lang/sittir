@@ -17,7 +17,7 @@
 
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { loadLanguageForGrammar } from '../../packages/tools/src/validate/common.ts';
+import { loadLanguageForGrammar, treeParser } from '../../packages/tools/src/validate/common.ts';
 import { inlineAnchor } from '../../packages/tools/src/exercise/codemod-corpus.ts';
 
 const FUNCTION_KINDS = new Set(['function_item', 'method_declaration']);
@@ -48,16 +48,9 @@ export interface CodemodResult {
  * source and the number of insertions performed.
  */
 export async function runCodemodOnSource(source: string): Promise<{ output: string; insertions: number }> {
-	const { Parser, lang } = await loadLanguageForGrammar('rust');
-	const parser = new Parser();
-	parser.setLanguage(lang);
-	const tree = parser.parse(source);
-	if (tree === null) {
-		throw new Error('rust parser returned null tree');
-	}
-	const matches = findInlineCandidates(tree.rootNode, source);
-	parser.delete();
-	tree.delete();
+	using parser = treeParser(await loadLanguageForGrammar('rust'));
+	using tree = parser.parse(source);
+	const matches = findInlineCandidates(tree.root, source);
 	if (matches.length === 0) return { output: source, insertions: 0 };
 	const output = [...matches]
 		.sort((a, b) => b.startIndex - a.startIndex)

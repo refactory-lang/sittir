@@ -17,8 +17,12 @@ export interface HostOptions {
 	readonly adoptedVariantKinds?: ReadonlySet<string>;
 	readonly targetKind?: string;
 	readonly root?: string;
-	/** Parses host text, so a multi-line token's inside is not re-indented. */
-	readonly parse?: (text: string) => { readonly rootNode: SpanNode } | null;
+	/**
+	 * Parses host text, so a multi-line token's inside is not re-indented.
+	 * Returns a tree its caller disposes once it has read `root`, and throws
+	 * when it can't give one.
+	 */
+	readonly parse?: (text: string) => Disposable & { readonly root: SpanNode };
 }
 
 const HOLE = '$r';
@@ -59,12 +63,23 @@ export function lineStartsInsideTokens(root: SpanNode, text: string): ReadonlySe
  * precedes the hole on its line, the rendered text's continuation lines are
  * indented to that column, except lines inside a token spanning lines, which
  * `parse` (a parser for the host language) finds on the unindented text.
+ *
+ * @param template - Host text holding one or more `$r` holes.
+ * @param rendered - The text spliced into every hole.
+ * @param parse - Parses the spliced, unindented text. `applyHost` disposes the
+ *   tree it returns before `applyHost` returns.
+ * @returns The spliced text and where its first hole sits ({@link HostedText}).
+ * @throws Whatever `parse` throws, as when it can't give a tree.
  */
-export function applyHost(template: string, rendered: string, parse?: (text: string) => { readonly rootNode: SpanNode } | null): HostedText {
+export function applyHost(template: string, rendered: string, parse?: HostOptions['parse']): HostedText {
 	const offset = template.split(HOLE).join(SENTINEL).indexOf(SENTINEL);
 	const parts = template.split(HOLE);
 	const plain = parts.join(rendered);
-	const inside = parse === undefined ? new Set<number>() : lineStartsInsideTokens(parse(plain)?.rootNode ?? { startIndex: 0, endIndex: 0, children: [] }, plain);
+	let inside: ReadonlySet<number> = new Set<number>();
+	if (parse !== undefined) {
+		using tree = parse(plain);
+		inside = lineStartsInsideTokens(tree.root, plain);
+	}
 	let text = parts[0]!;
 	let plainAt = parts[0]!.length;
 	const shifts: { readonly at: number; readonly length: number }[] = [];

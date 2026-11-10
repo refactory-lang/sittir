@@ -883,6 +883,24 @@ macro_rules! napi_engine {
                 })
             }
 
+            /// The node at `index` of the live tree `treeId` that has no
+            /// record, read from its holder's cell or its row
+            /// (`ParsedTree::read_leaf`): `[kind, start, end]` for a leaf,
+            /// `[kind]` for a unit, the kind it reads as. Null for a node with
+            /// a record of its own, a node neither answers, and a tree no
+            /// whole read hydrated. Refuses as `read` does, and records it
+            /// cannot read.
+            #[::napi_derive::napi]
+            pub fn read_leaf(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex) -> ::napi::Result<Option<Vec<u32>>> {
+                with_live_node(&env, tree_id, index, |parsed, index| {
+                    let leaf = parsed.read_leaf::<$any>(index).map_err(|error| ::napi::Error::from_reason(error.to_string()))?;
+                    Ok(leaf.map(|leaf| match leaf {
+                        $crate::arena::LeafRead::Leaf { kind, span } => vec![u32::from(kind.0), span.start, span.end],
+                        $crate::arena::LeafRead::Unit(kind) => vec![u32::from(kind.0)],
+                    }))
+                })
+            }
+
             /// Materializes the node at `index` in the live tree `treeId`
             /// to `depth` (one when absent, `Infinity` for all), including
             /// children of records already present. Returns only the root
@@ -1383,9 +1401,10 @@ pub fn trivia_side_from_wire(side: &str) -> napi::Result<crate::trivia_table::Tr
     }
 }
 
-/// Refuses an index that names no node of `parsed`, without moving to it.
+/// Refuses an index that names no node of `parsed`, by its stamped node
+/// count (`ParsedTree::names`), without moving to it.
 pub fn check_node<G: crate::engine::EngineGrammar>(parsed: &crate::ParsedTree<G>, index: crate::types::NodeIndex) -> napi::Result<()> {
-    if crate::engine::names_node(parsed.tree(), index) {
+    if parsed.names(index) {
         Ok(())
     } else {
         Err(no_node(parsed, index))

@@ -624,7 +624,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
     let Body { items, read, routes } = if let Some(fixed) = &attrs.text {
         text_body(ident, &fields, fixed.as_ref())?
     } else if let Some(pattern) = &attrs.interior {
-        interior_body(ident, &fields, pattern, height)?
+        interior_body(ident, &fields, pattern, attrs.affixes.as_ref().map(|affixes| (affixes, attrs.scanned)), height)?
     } else if attrs.content.is_some() {
         envelope_body(ident, attrs, &fields, height)?
     } else {
@@ -804,7 +804,7 @@ fn text_body(ident: &Ident, fields: &[Field<'_>], fixed: Option<&LitStr>) -> syn
     })
 }
 
-fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr, height: Option<&Ident>) -> syn::Result<Body> {
+fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr, affixes: Option<(&(LitStr, LitStr), bool)>, height: Option<&Ident>) -> syn::Result<Body> {
     let flagged = format!("(?s){}", pattern.value());
     regex::Regex::new(&flagged)
         .map_err(|e| syn::Error::new_spanned(pattern, format!("`{ident}`'s token interior does not compile as a Rust regex: {e}")))?;
@@ -824,6 +824,13 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr, height: 
         opaque.push(quote!(#name: ::core::default::Default::default(),));
     }
     let captures: Vec<&LitStr> = captured.iter().map(|&(_, capture)| capture).collect();
+    let interior = match (affixes, captures.as_slice()) {
+        (None, _) => quote!(__rt::Interior::new(#flagged)),
+        (Some(((open, close), scanned)), [group]) => quote!(__rt::Interior::affixed(#flagged, #group, #open, #close, #scanned)),
+        (Some(((open, _), _)), _) => {
+            return Err(syn::Error::new_spanned(open, format!("`{ident}`'s interior is read by its affixes, so it has one capture, the text between them")));
+        }
+    };
     let spans = match layout {
         Some(layout) => {
             inits.push(quote!(#layout: Some(__layout),));
@@ -847,7 +854,7 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr, height: 
             }
         },
         items: quote! {
-            static __INTERIOR: __rt::Interior = __rt::Interior::new(#flagged);
+            static __INTERIOR: __rt::Interior = #interior;
             #router
         },
         read: quote! {
@@ -1070,7 +1077,6 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
     let accs: Vec<Ident> = slots.iter().map(|(i, ..)| format_ident!("__acc{}", i)).collect();
     let tys: Vec<&Type> = slots.iter().map(|(_, field, _)| field.ty).collect();
     let idxs: Vec<TokenStream> = slots.iter().map(|&(i, ..)| slot_id(i)).collect();
-    let positions: Vec<usize> = slots.iter().map(|&(i, ..)| usize::from(i)).collect();
     let names: Vec<&Ident> = slots.iter().map(|(_, field, _)| field.ident).collect();
     let wrapped = attrs.wrapped_items;
     let depths: Vec<TokenStream> = names.iter().map(|name| if attrs.item.as_ref() == Some(*name) { quote!(ctx.item_depth(depth, #wrapped)) } else { quote!(depth) }).collect();
@@ -1079,7 +1085,6 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
         .iter()
         .map(|(_, field, _)| field.key.as_ref().ok_or_else(|| syn::Error::new_spanned(field.ident, "a slot crosses the wire under a key: `#[wire(key = \"…\")]`")))
         .collect::<syn::Result<_>>()?;
-    let slot_count = slots.len();
     let mut inits = common_inits(fields, None, true);
     for (((name, ty), acc), label) in names.iter().zip(&tys).zip(&accs).zip(&labels) {
         inits.push(quote!(#name: <#ty as __rt::ReadSlot>::finish(#acc, __rt::SlotSite { kind: __KIND, slot: #label, index })?,));
@@ -1106,7 +1111,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
                 }
                 let children = nodes.kids(at.index).to_vec();
                 let routes = children.iter().map(__route).collect::<::core::result::Result<::std::vec::Vec<__rt::Route>, __rt::ReadError>>().ok()?;
-                ::core::option::Option::Some(__rt::Routed { children, routes, keys: &[#(#keys),*] })
+                ::core::option::Option::Some(__rt::Routed { children, routes, keys: &[#(#keys),*], elided: __ELIDED })
             }
             fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
                 <Self as __rt::ReadNode>::admits(grammar, display).then_some(__rt::Router::Children(__route, __unit))
@@ -1114,6 +1119,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
             #delimiter
         },
         items: quote! {
+            const __ELIDED: &[bool] = &[#(<#tys as __rt::ReadSlot>::ELIDED),*];
             #[allow(unused_variables)]
             fn __unit(slot: ::sittir_core::types::SlotId, nodes: &mut dyn __rt::Nodes<'_>, at: &__rt::Kid) -> ::core::option::Option<__Kind> {
                 match slot {
@@ -1138,40 +1144,18 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
                 ::core::result::Result::Ok(__rt::Route::Layout)
             }
         },
-        read: {
-            let unit_slots = if idxs.is_empty() {
-                quote!()
-            } else {
-                quote!(let mut __unit_slots: ::std::vec::Vec<::sittir_core::types::SlotId> = ::std::vec::Vec::new();)
-            };
-            let unit_positions = if idxs.is_empty() {
-                quote!()
-            } else {
-                quote! {
-                    let mut __unit_slot = __unit_slots.into_iter();
-                    __units.retain_mut(|__unit| {
-                        let __position = match __unit_slot.next() {
-                            #(::core::option::Option::Some(#idxs) => <#tys as __rt::ReadSlot>::position(&#accs, __unit.item),)*
-                            _ => ::core::option::Option::Some(__unit.item),
-                        };
-                        __position.map(|__item| __unit.item = __item).is_some()
-                    });
-                }
-            };
-            quote! {
+        read: quote! {
             #pass
             #list_span
             #(let mut #accs = <#tys as __rt::ReadSlot>::start();)*
             let mut __units = ::std::vec::Vec::new();
-            #unit_slots
-            let mut __items = [0u32; #slot_count];
+            let __unit_items = __rt::unit_items(&routes, __ELIDED);
             if cursor.goto_first_child() {
                 let mut i = 0usize;
                 loop {
                     match routes[i] {
                         #(__rt::Route::Slot { slot: #idxs, scalar } => {
                             let __child = __rt::index_of(cursor);
-                            let __arrival = <#tys as __rt::ReadSlot>::arrival(&#accs, __items[#positions]);
                             <#tys as __rt::ReadSlot>::take(
                                 &mut #accs,
                                 cursor,
@@ -1179,11 +1163,9 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
                                 #depths,
                                 __rt::SlotSite { kind: __KIND, slot: #labels, index },
                             )?;
-                            if scalar {
-                                __units.push(__rt::UnitRead { slot: #keys, item: __arrival, row: __child, trivia: ctx.unit_sides(__child, #depths) });
-                                __unit_slots.push(#idxs);
+                            if let (true, ::core::option::Option::Some(__item)) = (scalar, __unit_items.get(i).copied().flatten()) {
+                                __units.push(__rt::UnitRead { slot: #keys, item: __item, row: __child, trivia: ctx.unit_sides(__child, #depths) });
                             }
-                            __items[#positions] += 1;
                         })*
                         #(__rt::Route::Separator { slot: #idxs, tagged } => <#tys as __rt::ReadSlot>::separator(&mut #accs, tagged),)*
                         _ => {}
@@ -1195,9 +1177,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
                 }
                 cursor.goto_parent();
             }
-            #unit_positions
             ::core::result::Result::Ok(#built)
-            }
         },
     })
 }
@@ -1347,6 +1327,52 @@ mod tests {
         content.attrs.retain(|attr| !attr.path().is_ident("slot"));
         let error = super::derive(&input).expect_err("a content that is no slot");
         assert!(error.to_string().contains("content"), "{error}");
+    }
+
+    fn affixed_comment(scanned: bool) -> syn::DeriveInput {
+        let scanned = scanned.then(|| quote::quote!(, scanned));
+        parse_quote! {
+            #[node(kind = kind::COMMENT, interior = "^#(?<content>(?:.*))$", affixes = ("#", "") #scanned)]
+            pub struct CommentNode {
+                #[wire(key = "$_layout")]
+                #[layout]
+                pub layout: Option<Box<NodeLayout>>,
+                #[wire(key = "_content")]
+                #[slot(capture = "content")]
+                pub content: String,
+                #[wire(key = "$verbatim")]
+                #[slot]
+                pub verbatim: Option<String>,
+            }
+        }
+    }
+
+    #[test]
+    fn an_interior_between_fixed_affixes_reads_its_capture_by_them() {
+        let lexed = expand(&affixed_comment(false));
+        assert!(has(&lexed, r##"static __INTERIOR: __rt::Interior = __rt::Interior::affixed("(?s)^#(?<content>(?:.*))$", "content", "#", "", false);"##), "{lexed}");
+        let scanned = expand(&affixed_comment(true));
+        assert!(has(&scanned, r##"static __INTERIOR: __rt::Interior = __rt::Interior::affixed("(?s)^#(?<content>(?:.*))$", "content", "#", "", true);"##), "{scanned}");
+    }
+
+    #[test]
+    fn an_interior_between_affixes_has_one_capture() {
+        let input: syn::DeriveInput = parse_quote! {
+            #[node(kind = kind::DECIMAL, interior = "^(?<whole>[0-9]+)(?<suffix>[a-z]+)?$", affixes = ("", ""))]
+            pub struct DecimalNode {
+                #[wire(key = "_whole")]
+                #[slot(capture = "whole")]
+                pub whole: String,
+                #[wire(key = "_suffix")]
+                #[slot(capture = "suffix")]
+                pub suffix: Option<String>,
+                #[wire(key = "$verbatim")]
+                #[slot]
+                pub verbatim: Option<String>,
+            }
+        };
+        let error = super::derive(&input).expect_err("two captures between affixes");
+        assert!(error.to_string().contains("one capture"), "{error}");
     }
 
     #[test]
