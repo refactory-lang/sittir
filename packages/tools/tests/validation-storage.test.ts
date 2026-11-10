@@ -39,6 +39,17 @@ it('summarizes identical validation populations across paired rounds', () => {
 	expect(rows[0]!.timings[0]).toMatchObject({ objectMs: 1, arenaMs: 2, arenaOverObject: 2 });
 });
 
+it('summarizes samples by the phases their own harness timed', () => {
+	const without = <T,>(record: Readonly<Record<string, T>>) => Object.fromEntries(Object.entries(record).filter(([phase]) => phase !== 'copy'));
+	const older = (storage: NodeStorage, round = 0) => {
+		const run = sample(storage, round);
+		for (const bucket of run.buckets) Object.assign(bucket, { phases: without(bucket.phases), timings: without(bucket.timings) });
+		return run;
+	};
+	const rows = summarizeValidationStorage([older('object'), older('arena'), older('arena', 1), older('object', 1)]);
+	for (const row of rows) expect(row.timings.map((timing) => timing.phase)).toEqual(['validator', 'read', 'build', 'render', 'parse']);
+});
+
 it.each(['result', 'cases', 'output', 'calls', 'corpus'] as const)(
 	'refuses %s drift even when aggregate pass counts agree',
 	(field) => {
