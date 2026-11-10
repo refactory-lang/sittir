@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { sharedEngine } from '@sittir/common/testing';
 import typescript from '../src/index.ts';
 
-const ts = await createEngine(typescript, { nodeStorage: 'arena' });
+const ts = await sharedEngine(() => createEngine(typescript, { nodeStorage: 'arena' }));
 
 describe('an arena $with of a slot a spelling is present with', () => {
 	it('adding an exponent adds the marker to a parsed literal', () => {

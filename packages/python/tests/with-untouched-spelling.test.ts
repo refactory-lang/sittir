@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { sharedEngine } from '@sittir/common/testing';
 import python from '../src/index.ts';
 
-const object = await createEngine(python, { nodeStorage: 'object' });
+const object = await sharedEngine(() => createEngine(python, { nodeStorage: 'object' }));
 const arenas = {
-	arena: await createEngine(python, { nodeStorage: 'arena' }),
-	'arena checked at run time': await createEngine(python, { nodeStorage: 'arena', verifyStructure: 'runtime' })
+	arena: await sharedEngine(() => createEngine(python, { nodeStorage: 'arena' })),
+	'arena checked at run time': await sharedEngine(() => createEngine(python, { nodeStorage: 'arena', verifyStructure: 'runtime' }))
 };
 
 type StringStart = { prefix(): string | undefined; $with: { quote(quote: string): StringStart; prefix(prefix: string): StringStart } };
