@@ -1,6 +1,6 @@
 {
-	// What every package's dist compiles to: syntax the oldest Node the
-	// engines fields name can run (es2024 lowers `using`), with the types
+	// What every package's dist compiles to: syntax the oldest major the
+	// engines fields allow can run (es2024 lowers `using`), with the types
 	// of the esnext default library the source is checked against.
 	"compilerOptions": {
 		"target": "es2024",

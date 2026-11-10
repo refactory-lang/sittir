@@ -1,6 +1,8 @@
 // Imports every entry point of every published workspace package with the
-// Node that runs this script, so a dist that uses syntax or a global that
-// Node lacks fails here rather than in a consumer's install.
+// Node that runs this script. An import catches the syntax that Node lacks
+// and the globals a module reads while it loads, here rather than in a
+// consumer's install; a global used only inside a function (`DisposableStack`,
+// say) fails only when that function is called.
 import { readdirSync, readFileSync } from 'node:fs';
 
 const packages = new URL('../../packages/', import.meta.url);

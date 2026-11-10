@@ -61,8 +61,10 @@ export async function languageOf(wasm: Uint8Array, digest: string = sha256(wasm)
 	const languages = (slot[LANGUAGES] ??= new Map());
 	let language = languages.get(digest);
 	if (language === undefined) {
-		language = Language.load(wasm);
-		languages.set(digest, language);
+		const loading = Language.load(wasm);
+		loading.catch(() => languages.delete(digest));
+		languages.set(digest, loading);
+		language = loading;
 	}
 	return { Parser, language: await language };
 }
