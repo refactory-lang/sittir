@@ -8,7 +8,7 @@ import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './rea
 import { BLANK_KIND_ID } from './blank-arm.ts';
 import { checkedKindId } from './kind-id.ts';
 import { addressOf, chunkOf, headerKind, kindField, withKind, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
-import { builtRefOf, handleArenaOf, leafSitesOf, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
+import { builtRefOf, handleArenaOf, leafSitesOf, liveRecordAt, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { cacheOf, freedRecord, leafData, recordDelimiter, recordFlag, recordOf, recordSeparator, recordSlot, recordSlots, recordStub } from './record-view.ts';
 import { isRecordPosition, type LeafMaker, type RecordHandle, type RecordPosition } from './handle.ts';
 import { keepExemplar } from './exemplars.ts';
@@ -734,7 +734,7 @@ export class BuiltArena {
 			to.data[to.base + 1] = data[head + 1]!;
 		}
 		const cells = this.#views.cells[kind] ?? words;
-		to.data.set(data.subarray(head + 2, head + cells), to.base + 2);
+		for (let word = 2; word < cells; word++) to.data[to.base + word] = data[head + word]!;
 		for (let word = cells; word < words; word++) {
 			this.holdCell(data[head + word]!);
 			to.data[to.base + word] = data[head + word]!;
@@ -769,7 +769,7 @@ export class BuiltArena {
 			if (place !== undefined) this.#carry(source, kind, draft, 0, place);
 			return draft;
 		}
-		const found = this.kindAt(at);
+		const found = (source as RecordHandle).$type;
 		if (found !== kind) throw new Error(`a $with of a kind ${kind} record was handed a record of kind ${found}`);
 		const draft = this.draft(kind, this.#widthOf(kind), at, cacheOf(source as RecordHandle));
 		this.#copyCells(at, kind, draft, true);
@@ -1227,8 +1227,10 @@ export function builtArenaOf(value: object): BuiltArena | undefined {
 }
 
 export function builtRecordOf(value: object, arena: BuiltArena): number | undefined {
-	const ref = builtRefOf(value);
-	return ref?.arena === arena ? ref.at : undefined;
+	const own = handleArenaOf(value);
+	if (own === undefined) return undefined;
+	const at = liveRecordAt(value, own);
+	return own === arena ? at : undefined;
 }
 
 function changedWord(changed: ChangedEdges): number {
