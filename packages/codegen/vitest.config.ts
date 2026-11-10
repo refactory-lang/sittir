@@ -1,7 +1,9 @@
 import { defineConfig } from 'vitest/config';
+import { engineGuard } from '../../vitest.engine-guard.config.ts';
 
 export default defineConfig({
 	test: {
+		...engineGuard,
 		// Limit discovery to TS sources under src/ + tests/. Without this,
 		// the default `**/*.test.?(c|m)[jt]s?(x)` glob also picks up the
 		// compiled JS copies in `dist/__tests__/` after a build, and those
