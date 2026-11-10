@@ -5,6 +5,7 @@ import { join, relative, resolve, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ensureWasmToolchain, runTreeSitterCli, treeSitterToolchain } from './tree-sitter-cli.ts';
 import { BASE_ENTRY, UPSTREAM_GENERATION_CONFLICTS, UPSTREAM_WASM, sittirDirOf, upstreamPackage, type GrammarName } from '../grammars.ts';
+import { sha256 } from '../util/content-hash.ts';
 
 const UPSTREAM_RECORD = 'upstream.json';
 const PARSER_RECORD = 'parser.json';
@@ -29,7 +30,7 @@ export function buildParserWasm(grammarDir: string): string {
 	syncExternalScanner(grammarDir, sittirDir);
 	runTreeSitterCli(['build', '--wasm', '-o', PARSER_WASM], sittirDir, 'pipe');
 	const wasmPath = join(sittirDir, PARSER_WASM);
-	const record: ParserRecord = { source: parserSourceKey(sittirDir), wasm: digestOf(readFileSync(wasmPath)) };
+	const record: ParserRecord = { source: parserSourceKey(sittirDir), wasm: sha256(readFileSync(wasmPath)) };
 	writeFileSync(join(sittirDir, PARSER_RECORD), `${JSON.stringify(record, null, '\t')}\n`);
 	return wasmPath;
 }
@@ -40,13 +41,13 @@ interface ParserRecord {
 }
 
 export function ensureParserWasm(grammarDir: string): { readonly wasmPath: string; readonly built: boolean } {
-	const wasmPath = join(sittirDirOf({ dir: grammarDir }), PARSER_WASM);
-	if (existsSync(wasmPath)) return { wasmPath, built: false };
+	const parser = builtParserWasm(grammarDir);
+	if (parser.fresh) return { wasmPath: parser.wasmPath, built: false };
 	return { wasmPath: buildParserWasm(grammarDir), built: true };
 }
 
 export type ParserWasm = { readonly wasmPath: string } & (
-	| { readonly fresh: true; readonly bytes: Uint8Array }
+	| { readonly fresh: true; readonly bytes: Uint8Array; readonly digest: string }
 	| { readonly fresh: false; readonly reason: string }
 );
 
@@ -59,18 +60,15 @@ export function builtParserWasm(grammarDir: string): ParserWasm {
 	const recorded = JSON.parse(readFileSync(recordPath, 'utf8')) as Partial<ParserRecord>;
 	if (recorded.source !== parserSourceKey(sittirDir)) return { wasmPath, fresh: false, reason: 'it was built from other sources than it reads now' };
 	const bytes = new Uint8Array(readFileSync(wasmPath));
-	if (recorded.wasm !== digestOf(bytes)) return { wasmPath, fresh: false, reason: `its bytes are not the ones ${PARSER_RECORD} records` };
-	return { wasmPath, fresh: true, bytes };
+	const digest = sha256(bytes);
+	if (recorded.wasm !== digest) return { wasmPath, fresh: false, reason: `its bytes are not the ones ${PARSER_RECORD} records` };
+	return { wasmPath, fresh: true, bytes, digest };
 }
 
 function parserSourceKey(sittirDir: string): string {
 	const hash = createHash('sha256');
 	for (const file of compiledFiles(join(sittirDir, 'src'))) hash.update(relative(sittirDir, file)).update('\0').update(readFileSync(file));
 	return hash.digest('hex');
-}
-
-function digestOf(bytes: Uint8Array): string {
-	return createHash('sha256').update(bytes).digest('hex');
 }
 
 function compiledFiles(src: string): string[] {

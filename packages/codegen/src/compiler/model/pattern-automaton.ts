@@ -69,9 +69,6 @@ export class CharSet {
 	}
 }
 
-
-const SPACE = CharSet.chars('\t\n\v\f\r       　﻿').union(CharSet.of([[0x2000, 0x200a]]));
-
 const propertySets = new Map<string, CharSet>();
 
 function unicodeProperty(body: string): CharSet {
@@ -496,8 +493,8 @@ function coaccessible(dfa: PatternDfa): Set<number> {
 	return live;
 }
 
-export function requiresNonSpace(dfa: PatternDfa): boolean {
-	const spaceOnly = reachableFrom(dfa, [0], (set) => set.meets(SPACE));
+export function requiresNonSpace(dfa: PatternDfa, whitespace: CharSet): boolean {
+	const spaceOnly = reachableFrom(dfa, [0], (set) => set.meets(whitespace));
 	return ![...spaceOnly].some((at) => dfa.states[at]!.accepting);
 }
 

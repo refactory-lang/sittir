@@ -35,6 +35,7 @@ export interface LineGrammar {
 export interface LineEndings {
 	readonly arms: readonly string[];
 	readonly breaks: LineBreaks;
+	readonly whitespace: CharSet;
 }
 
 const syntactic = new SyntacticRuleWalker<AnyRule>();
@@ -47,7 +48,8 @@ export function lineEndingsOf(nodeMap: NodeMap): LineEndings {
 
 export function admittedLineEndings(grammar: LineGrammar, parser: TreeShape | null): LineEndings {
 	const layout = layoutMembersOf(grammar);
-	const unwritten = extrasChars(grammar).minus(
+	const whitespace = extrasChars(grammar);
+	const unwritten = whitespace.minus(
 		CharSet.chars(
 			INDENT_MEMBERS.filter((member) => layout.has(member))
 				.map(canonicalText)
@@ -66,7 +68,7 @@ export function admittedLineEndings(grammar: LineGrammar, parser: TreeShape | nu
 			!swallowed.has(arm) &&
 			(sample === undefined || parser!(sample + arm + sample) === parser!(sample + PREFERRED + sample))
 	);
-	return { arms, breaks: lineBreaksOf(arms.length > 0 ? arms : [PREFERRED], unwritten) };
+	return { arms, breaks: lineBreaksOf(arms.length > 0 ? arms : [PREFERRED], unwritten), whitespace };
 }
 
 function layoutMembersOf(grammar: LineGrammar): ReadonlySet<string> {

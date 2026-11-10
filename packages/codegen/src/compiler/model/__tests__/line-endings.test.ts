@@ -3,6 +3,7 @@ import { ALIAS, CHOICE, PATTERN, REPEAT, SEQ, STRING, SYMBOL, TOKEN } from '../.
 import type { AnyRule } from '../../../types/rule.ts';
 import type { RuleListEntry } from '../../../dsl/rule-patterns.ts';
 import { admittedLineEndings, type LineGrammar } from '../line-endings.ts';
+import { CharSet } from '../pattern-automaton.ts';
 
 const layout = (...members: string[]): AnyRule =>
 	({
@@ -62,6 +63,12 @@ describe('admittedLineEndings', () => {
 			'\r\n',
 			'\r'
 		]);
+	});
+
+	it("carries every character the grammar's extras run skips as its whitespace", () => {
+		expect(admittedLineEndings(grammar({ identifier: pattern('[a-z]+') }, extras('\\r?\\n', ' ')), null).whitespace).toEqual(
+			CharSet.chars('\r\n ')
+		);
 	});
 
 	it('drops an arm the extras do not lex', () => {

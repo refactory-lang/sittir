@@ -25,6 +25,12 @@ afterAll(() => {
 	rmSync(tmpRoot, { recursive: true, force: true });
 });
 
+function copyOfPython(name: string): { readonly dir: string; readonly sittir: string } {
+	const dir = join(tmpRoot, name);
+	cpSync(sittirDirOf({ dir: pythonDir }), sittirDirOf({ dir }), { recursive: true });
+	return { dir, sittir: sittirDirOf({ dir }) };
+}
+
 describe('ensureParserWasm', () => {
 	it('builds parser.wasm from the generated sources when it is missing', () => {
 		const { wasmPath, built } = ensureParserWasm(pythonDir);
@@ -98,22 +104,24 @@ describe('ensureParserWasm', () => {
 		}
 	});
 
-	it('leaves a present parser.wasm untouched', () => {
+	it('leaves a fresh parser.wasm untouched', () => {
 		const wasmPath = join(pythonDir, '.sittir', 'parser.wasm');
 		expect(existsSync(wasmPath)).toBe(true);
 		const before = statSync(wasmPath).mtimeMs;
 		expect(ensureParserWasm(pythonDir)).toEqual({ wasmPath, built: false });
 		expect(statSync(wasmPath).mtimeMs).toBe(before);
 	});
+
+	it('rebuilds a parser.wasm built from other sources than it reads now', () => {
+		const { dir, sittir } = copyOfPython('rebuilt');
+		appendFileSync(join(sittir, 'src', 'parser.c'), '\n');
+		expect(builtParserWasm(dir)).toMatchObject({ fresh: false });
+		expect(ensureParserWasm(dir)).toEqual({ wasmPath: join(sittir, 'parser.wasm'), built: true });
+		expect(builtParserWasm(dir)).toMatchObject({ fresh: true });
+	}, 120_000);
 });
 
 describe('builtParserWasm', () => {
-	function copyOfPython(name: string): { readonly dir: string; readonly sittir: string } {
-		const dir = join(tmpRoot, name);
-		cpSync(sittirDirOf({ dir: pythonDir }), sittirDirOf({ dir }), { recursive: true });
-		return { dir, sittir: sittirDirOf({ dir }) };
-	}
-
 	it('reads the parser a build wrote from the sources .sittir/src holds as fresh, and stale once a source changes', () => {
 		const { dir, sittir } = copyOfPython('fresh');
 		const wasmPath = join(sittir, 'parser.wasm');

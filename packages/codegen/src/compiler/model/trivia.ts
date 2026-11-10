@@ -183,7 +183,8 @@ function continuesLine(nodeMap: NodeMap, kind: string): boolean {
 	const node = nodeMap.nodes.get(kind);
 	if (!(node instanceof AssembledPattern) || node.textPattern === undefined) return false;
 	const dfa = patternDfa(node.textPattern);
-	return dfa !== undefined && requiresNonSpace(dfa) && endsWithLineBreak(dfa, lineEndingsOf(nodeMap).breaks.chars);
+	const { breaks, whitespace } = lineEndingsOf(nodeMap);
+	return dfa !== undefined && requiresNonSpace(dfa, whitespace) && endsWithLineBreak(dfa, breaks.chars);
 }
 
 export function layoutTriviaKinds(nodeMap: NodeMap): string[] {

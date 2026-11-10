@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+import { Language, Parser, Tree } from 'web-tree-sitter';
 import { ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import { ERROR_KIND_ROW } from '../../dsl/symbol-table.ts';
 import { cpSync, mkdtempSync, rmSync } from 'node:fs';
@@ -643,5 +644,32 @@ describe('loadPackageIdTables', () => {
 	it("loads the grammar's own parser beside its tables", async () => {
 		const { parser } = await loadPackageIdTables(grammarPackage('scm'));
 		expect(parser!('(a)')).toBe('(program definitions: (named_node_plain name: (identifier)))');
+	});
+
+	it('frees the parser and the tree of every probe', async () => {
+		const { parser } = await loadPackageIdTables(grammarPackage('scm'));
+		const parsers = vi.spyOn(Parser.prototype, 'delete');
+		const trees = vi.spyOn(Tree.prototype, 'delete');
+		try {
+			parser!('(a)');
+			parser!('(b)');
+			expect(parsers).toHaveBeenCalledTimes(2);
+			expect(trees).toHaveBeenCalledTimes(2);
+		} finally {
+			parsers.mockRestore();
+			trees.mockRestore();
+		}
+	});
+
+	it('loads no language again when it loads the tables of the same parser again', async () => {
+		await loadPackageIdTables(grammarPackage('scm'));
+		const load = vi.spyOn(Language, 'load');
+		try {
+			const { parser } = await loadPackageIdTables(grammarPackage('scm'));
+			expect(parser!('(a)')).toBe('(program definitions: (named_node_plain name: (identifier)))');
+			expect(load).not.toHaveBeenCalled();
+		} finally {
+			load.mockRestore();
+		}
 	});
 });

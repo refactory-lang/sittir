@@ -182,10 +182,13 @@ describe('endsWithLineBreak and requiresNonSpace', () => {
 		expect(endsWithLineBreak(dfa('[\\r?][\\n\\u2028\\u2029]'), breaks)).toBe(false);
 	});
 
-	it('tells a pattern that needs a visible character from one that can be all space', () => {
-		expect(requiresNonSpace(dfa('\\\\(?:\\r)?\\n'))).toBe(true);
-		expect(requiresNonSpace(dfa('\\n'))).toBe(false);
-		expect(requiresNonSpace(dfa('[ \\t]*'))).toBe(false);
+	it("tells a pattern that needs a character outside the grammar's whitespace from one that can be all whitespace", () => {
+		const whitespace = CharSet.chars(' \t\r\n');
+		expect(requiresNonSpace(dfa('\\\\(?:\\r)?\\n'), whitespace)).toBe(true);
+		expect(requiresNonSpace(dfa('\\n'), whitespace)).toBe(false);
+		expect(requiresNonSpace(dfa('[ \\t]*'), whitespace)).toBe(false);
+		expect(requiresNonSpace(dfa('\\u00a0'), whitespace)).toBe(true);
+		expect(requiresNonSpace(dfa('\\u00a0'), whitespace.union(CharSet.chars('\u00a0')))).toBe(false);
 	});
 });
 
