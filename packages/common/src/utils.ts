@@ -212,9 +212,10 @@ export function writeTrivia(node: object, trivia: NodeTrivia): void {
 }
 
 export function writeLeafSites(leaf: object, sites: readonly number[]): void {
-	const ref = builtLeafOf(leaf);
 	const own = writtenSides(leaf);
-	if (ref !== undefined && own !== undefined) writeSites(ref.arena, sites, own, wireSides(leaf, own));
+	if (own === undefined) return;
+	const ref = builtLeafOf(leaf);
+	if (ref !== undefined) writeSites(ref.arena, sites, own, wireSides(leaf, own));
 }
 
 export function leafWireSides(leaf: object): TriviaSides<unknown> | undefined {
