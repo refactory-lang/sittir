@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 import python from '@sittir/python';
 import type { PortableBuildTable } from '@sittir/types';
 import { createEngine } from '../src/create-engine.ts';
+import { sharedEngine } from '../src/testing.ts';
 import { classifierOf, factsOf, flagHolds, otherTested, portableTextOf, readSlots, slotsOf } from '../src/portable/classify.ts';
 import { portableReader, type PortableCarry } from '../src/portable/read.ts';
 
-const engine = await createEngine(python, { api: 'strict' });
+const engine = await sharedEngine(() => createEngine(python, { api: 'strict' }));
 const rows = engine.portable!;
 const table = await (await python.load()).portableBuild!();
 

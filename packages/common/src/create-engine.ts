@@ -25,6 +25,7 @@ import type {
 	KindMembership,
 	StructureTable
 } from '@sittir/types';
+import { engineClosed, engineOpened } from './engine-census.ts';
 import { bindTree, foreignEngine, inEngine, nodeStorageOf, stampEngineStorage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { keepLayout } from './exemplars.ts';
 import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts';
@@ -232,6 +233,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 	records: object | undefined
 ): Engine<API, M> {
 	const native = hooks.createNative(nativeEngineOptions(options, storage));
+	let open = true;
 	const identity: EngineIdentity<API> = Object.freeze({
 		language,
 		renderModuleHash: hooks.renderModuleHash,
@@ -362,6 +364,10 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		},
 		dispose() {
 			handle.current = identity;
+			if (open) {
+				open = false;
+				engineClosed();
+			}
 			native.dispose();
 		},
 		[Symbol.dispose]() {
@@ -380,6 +386,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		handle.builtArena = new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle, views, writeLeafSites);
 		handle.records = records;
 	}
+	engineOpened();
 	return frozen;
 }
 
