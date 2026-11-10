@@ -46,6 +46,7 @@ export interface ExactReads {
 	readonly viewed: readonly string[];
 	readonly textPaths: readonly string[];
 	readonly varies: (kind: string) => boolean;
+	readonly valueOf: (path: string, kind: string) => ValueRead | undefined;
 	readonly viewClassOf: (kind: string) => ViewClass;
 	readonly readsIn: (kinds: readonly string[]) => RouteReads;
 }
@@ -58,7 +59,9 @@ export interface RouteReads {
 
 export type ViewClass = 'text' | 'claimed' | 'refined' | 'never' | 'token' | 'varies' | 'container' | 'unmapped';
 
-export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest }: PortableTypedInput): ExactReads {
+export type ValueRead = 'text' | 'true' | 'false' | 'float' | 'integer';
+
+export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest, table }: PortableTypedInput): ExactReads {
 	const typed = (kind: string): boolean => findKindEntry(kindEntries, kind) !== undefined;
 	const { model, vocabulary } = input;
 	const own = derive([input]);
@@ -116,6 +119,15 @@ export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest }: 
 		const node = nodeOf(kind);
 		return node !== undefined && node.modelType !== 'enum' && (node.pattern !== null || input.textTokens.has(kind)) && !fixedText.has(kind);
 	};
+	const valueOf = (path: string, kind: string): ValueRead | undefined => {
+		const id = findKindEntry(kindEntries, kind)?.id;
+		const arms = (table.paths[path]?.arms ?? []).filter((arm) => arm.kind === id);
+		const literal = arms.find((arm) => arm.literal !== undefined)?.literal;
+		if (literal !== undefined) return literal.value === undefined ? undefined : literal.value ? 'true' : 'false';
+		const scalar = arms.find((arm) => arm.scalar !== undefined)?.scalar;
+		if (scalar !== undefined) return scalar;
+		return varies(kind) ? 'text' : undefined;
+	};
 	const unclaimed = new Set(input.bindings.unclaimed.map((u) => u.kind));
 	const viewClassOf = (kind: string): ViewClass => {
 		if (textual(kind)) return 'text';
@@ -151,7 +163,7 @@ export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest }: 
 		visit(kinds);
 		return { paths: [...paths].sort(), texts: [...texts].sort(), unmapped: [...unmapped].sort() };
 	};
-	return { own, entries, readPathsOf, readPaths, readsByClaim, entriesFor, literalTextsOf, memberKindsOf, familyOf, token, textual, textTypeOf, claimersOf, viewed, textPaths, varies, viewClassOf, readsIn };
+	return { own, entries, readPathsOf, readPaths, readsByClaim, entriesFor, literalTextsOf, memberKindsOf, familyOf, token, textual, textTypeOf, claimersOf, viewed, textPaths, varies, valueOf, viewClassOf, readsIn };
 }
 
 export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exactReadsOf(input)): ExactSlots {
