@@ -263,6 +263,15 @@ impl<T> TriviaStore<T> {
         self.built.read().unwrap_or_else(PoisonError::into_inner)
     }
 
+    /// Whether `other` answers its record entries from the same built arena
+    /// as this store: a render that reads it already renders their entries
+    /// from that read.
+    #[cfg(feature = "arena")]
+    #[must_use]
+    pub fn shares_built(&self, other: &Self) -> bool {
+        std::ptr::eq(&*self.built, &*other.built)
+    }
+
     /// The chunks of the engine's built arena this store holds, to add to or
     /// release.
     #[cfg(feature = "arena")]

@@ -896,7 +896,7 @@ macro_rules! napi_engine {
                 let arena = chunks.readable().map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 with_live_trees(env, |trees| {
                     let table = render_options(engine, tree_id.and_then(|id| trees.get(id)), options)?;
-                    let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| {
+                    let canonical = $crate::napi_engine::entry_sources_holding(engine.grammar(), trees, owner.written(), &chunks, |sources| {
                         let ctx = $crate::prepare::RenderContext::new(&table, sources);
                         ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| render(arena, chunks.held(), trees, &ctx)))
                     })
@@ -2010,6 +2010,10 @@ pub fn release_built<T>(_env: &napi::Env, _store: &crate::trivia_store::TriviaSt
 struct ArenaSources<'a, 't, G: crate::engine::EngineGrammar, H> {
     grammar: G,
     trees: &'a crate::engine::ReadTrees<'t, G, H>,
+    /// The built arena the render reads, and a store that answers from it:
+    /// an entry of any store sharing it renders from this read, never
+    /// reading the arena again.
+    built: Option<(&'a crate::trivia_store::TriviaStore<G::Trivia>, &'a crate::arena::BuiltChunks)>,
 }
 
 #[cfg(feature = "arena")]
@@ -2098,7 +2102,12 @@ where
         let store = held
             .downcast_ref::<crate::trivia_store::TriviaStore<G::Trivia>>()
             .ok_or(RenderError::Record(crate::arena::ArenaError::Unwritable("a trivia entry's store is another grammar's")))?;
-        crate::arena::render_record_entry(self.grammar, &store.built(), record, store, self.trees, &crate::prepare::RenderContext { options, sources: self, lent }, w)
+        if let Some((_, built)) = self.built.filter(|&(holder, _)| holder.shares_built(store)) {
+            return crate::arena::render_record_entry(self.grammar, built, record, store, self.trees, &crate::prepare::RenderContext { options, sources: self, lent }, w);
+        }
+        let built = store.built();
+        let sources = ArenaSources { grammar: self.grammar, trees: self.trees, built: Some((store, &*built)) };
+        crate::arena::render_record_entry(self.grammar, &built, record, store, self.trees, &crate::prepare::RenderContext { options, sources: &sources, lent }, w)
     }
 }
 
@@ -2114,7 +2123,25 @@ pub fn entry_sources<G: crate::arena::RecordGrammar, H: std::hash::BuildHasher, 
 where
     G::Trivia: crate::boundary::DecodesKind,
 {
-    f(&ArenaSources { grammar, trees })
+    f(&ArenaSources { grammar, trees, built: None })
+}
+
+/// `f` over the table a render of `store`'s built arena renders through,
+/// which reads that arena as `built`: the live `trees`, which render each
+/// trivia entry of a store sharing the arena from `built`, and any other's
+/// from its own store's arena (`ArenaSources`).
+#[cfg(feature = "arena")]
+pub fn entry_sources_holding<G: crate::arena::RecordGrammar, H: std::hash::BuildHasher, R>(
+    grammar: G,
+    trees: &crate::engine::ReadTrees<'_, G, H>,
+    store: &crate::trivia_store::TriviaStore<G::Trivia>,
+    built: &crate::arena::BuiltChunks,
+    f: impl FnOnce(&dyn crate::render::SourceTable) -> R,
+) -> R
+where
+    G::Trivia: crate::boundary::DecodesKind,
+{
+    f(&ArenaSources { grammar, trees, built: Some((store, built)) })
 }
 
 /// `f` over the table a call renders through: the live `trees`; without the
