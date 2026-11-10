@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { formatConformance, portableConformance } from '../src/portable/conformance.ts';
 
-const CEILING = { rust: 14, python: 31, typescript: 45 } as const;
+const CEILING = { rust: 14, python: 31, typescript: 44 } as const;
 
 describe('portable conformance ratchet', () => {
 	for (const [grammar, ceiling] of Object.entries(CEILING)) {

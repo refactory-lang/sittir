@@ -268,9 +268,10 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 		const seen = new Set<string>();
 		for (const at of lineageOf(path, (line) => kinds.get(line)))
 			for (const [name, member] of kinds.get(at)?.own ?? []) {
-				if (seen.has(name) || (composed !== undefined && member.features !== undefined && !member.features.some((feature) => composed.has(feature)))) continue;
+				if (seen.has(name)) continue;
 				seen.add(name);
-				if (member.excluded !== true) all.set(name, member);
+				if (member.excluded === true || (composed !== undefined && member.features !== undefined && !member.features.some((feature) => composed.has(feature)))) continue;
+				all.set(name, member);
 			}
 		return all;
 	};

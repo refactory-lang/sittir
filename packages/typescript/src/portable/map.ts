@@ -34409,7 +34409,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly exponent: string;
 			readonly exponentSign: '+' | '-' | string;
 			readonly fraction: string;
-			readonly integer: never;
 			readonly marker: 'E' | 'e' | string;
 			readonly $forms: V.Form<'fraction'>;
 		};
