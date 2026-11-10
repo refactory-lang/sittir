@@ -4327,6 +4327,10 @@ The line ending a render spells breaks with when none is set: `_newline`'s canon
 
 The grammar's declared render indent unit, checked against `indentChars`. A grammar with indent characters must declare `indent` in its `options:` block, and a missing declaration throws naming the grammar; the unit must be non-empty and made only of those characters. A grammar with none (regex) must not declare one, and gets the empty unit. The unit is the one source of the render default: `renderOptionsRs` emits it into `defaults()`, and the runtime's format extractor compares parsed sources against it.
 
+### `packages/codegen/src/compiler/model/layout-kinds.ts::layoutTokenKindsOf`
+
+The kinds of the layout tokens in the node map, as a set.
+
 ### `packages/codegen/src/compiler/model/site-addresses.ts::resolveLabels`
 
 Each site's arm, with the narrowest address that reaches it winning.
@@ -4691,15 +4695,6 @@ The kinds whose template renders an inner side (`innerSite`), cached per node ma
 ### `packages/codegen/src/compiler/model/trivia.ts::EmptyForm`
 
 One kind's empty form: the emitted type name (`Empty<TypeName>`).
-
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::lexedInterior`
-
-```text
-True when the kind is read as one text and rendered from slots around literal runs: the top rule is a structured
-`token(...)` (`tokenized`) or a structured bare pattern (`lexed`). The reader keeps `$text` for such a kind, the
-render template glues its members with adjacency marks, no seam is minted inside it and it owns no kind-edge
-seams; its slot structure is the single derivation `interiorOf` serializes.
-```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isPatternValue`
 
@@ -5262,6 +5257,14 @@ A closer that is a leaf rather than a literal has no closer text, so only the la
 
 The grammar-wide facts a leaf verdict reads beyond the node map: the `word` rule's name, the `global` reserved set, and the names of the grammar's externals.
 
+### `packages/codegen/src/compiler/model/delimited.ts::contentLeavesOf`
+
+The content leaves of a delimited compound: the leaves its pattern reads as content, given the node map.
+
+### `packages/codegen/src/compiler/model/delimited.ts::freeTextOf`
+
+The free-text facet of a delimited compound, derived from its content and escape text, or undefined when it has none.
+
 ### `packages/codegen/src/compiler/assemble.ts::recordUnguardedDelimiters`
 
 Records `delimited-closer-unguarded` on a skipped delimited composite for each `unguarded` leaf verdict, naming the leaf and the closer.
@@ -5297,6 +5300,14 @@ The shortest text a pattern accepts, found breadth-first. The test emitter spell
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::admitsInside`
 
 Whether some text the pattern accepts holds the literal with more text after it.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet::meets`
+
+Whether this character set shares a character with another.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::includesNonEmpty`
+
+Whether the inner pattern admits some non-empty text that the outer pattern also admits.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::isFlatLeafOrKeyword`
 
@@ -6115,6 +6126,14 @@ The nested arms of the seat, from the seat's direct hosts.
 
 The portable mount call a sub-factory makes.
 
+### `packages/codegen/src/compiler/model/sub-factories.ts::FlattenedSeat::always`
+
+`true` on a flattened seat whose members always merge into the parent rather than nesting under the key.
+
+### `packages/codegen/src/compiler/model/sub-factories.ts::Seat::always`
+
+`true` on a flatten seat that always merges its group's members into the parent rather than nesting them under the key.
+
 ### `packages/codegen/src/compiler/model/leaf-pattern.ts::regexLiteral`
 
 Renders a regular expression as a source literal.
@@ -6126,6 +6145,202 @@ Whether a node or terminal value is fixed text.
 ### `packages/codegen/src/compiler/model/node-map.ts::suppliesNoContent`
 
 Whether a built node has no content to supply: a compound with no slots, or a builder text leaf. Such a kind's factory takes no argument.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::delimiterFacets`
+
+The delimiter facts stamped on this compound (`DelimiterFacets`), or undefined when none were derived. `stampDelimiterFacets` sets it; the render's delimiter fill reads it.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::delimiterOf`
+
+The delimiter token this compound is the body of, or undefined. The delimiter-facets claim sets it, and the node model and the claim both read it.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::delimiterPreference`
+
+The delimiter preference derived for this compound (`DelimiterPreference`): which open token and facet the delimiter is preferred to render with. Undefined when no preference was derived.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::freeText`
+
+The free-text facet (`FreeText`) on this compound: the leaves whose text is free-form inside the delimiter, with the gate that opens them. Undefined when the compound has none.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledLeaf::freeText`
+
+`true` on a leaf whose text is free-form inside a delimiter, which the delimiter facets then gate. Undefined on every other leaf.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledLexedPattern`
+
+A compound whose kind is a lexed pattern: one token read from the source as a whole, such as a string or a number literal. Its model type is `lexedPattern`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledLexedPattern::immediate`
+
+Whether the pattern must match with no extras before it. Read from the render rule's `immediate` flag.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledLexedPattern::modelType`
+
+The model type tag `'lexedPattern'` that identifies this compound class in the discriminated union.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::contentLeaf`
+
+The leaf text of a nonterminal's content when the content is a single literal leaf, or undefined otherwise. The delimiter stamping and the portable build read it.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::delimiterRole`
+
+The role (`DelimiterFacetRole`) this slot plays in a delimiter, as the delimiter facets assign it. Undefined for a slot that plays none.
+
+### `packages/codegen/src/compiler/model/node-map.ts::DelimiterFacetRole`
+
+The role a slot plays in a delimiter: `input`, `preferred`, `run`, `mirror`, or `content`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::DelimiterArm`
+
+One text a delimiter accepts as an arm: its text and whether it is confined to one line.
+
+### `packages/codegen/src/compiler/model/node-map.ts::DelimiterArm::singleLine`
+
+Whether the arm's text is confined to one line.
+
+### `packages/codegen/src/compiler/model/node-map.ts::DelimiterArm::text`
+
+The arm's delimiter text.
+
+### `packages/codegen/src/compiler/model/node-map.ts::DelimiterFacets`
+
+The facets of one delimiter: its open and close text, the arms it accepts, and its optional run, close-lead and escape spellings. The delimiter facets stamp one on a compound.
+
+### `packages/codegen/src/compiler/model/node-map.ts::DelimiterFacets::arms`
+
+The arms the delimiter accepts (`DelimiterArm`).
+
+### `packages/codegen/src/compiler/model/node-map.ts::DelimiterFacets::close`
+
+The closing text of the delimiter.
+
+### `packages/codegen/src/compiler/model/node-map.ts::DelimiterFacets::closeLead`
+
+The text that leads into the close, read before the close token.
+
+### `packages/codegen/src/compiler/model/node-map.ts::DelimiterFacets::escape`
+
+The escape text that keeps a delimiter character inside a literal, when the delimiter has one.
+
+### `packages/codegen/src/compiler/model/node-map.ts::DelimiterFacets::open`
+
+The opening text of the delimiter.
+
+### `packages/codegen/src/compiler/model/node-map.ts::DelimiterFacets::run`
+
+The repeated-character text a delimiter run is made of, when the delimiter is a run.
+
+### `packages/codegen/src/compiler/model/node-map.ts::FreeText`
+
+The free-text facet of a compound: the leaves it covers, the index ranges it excludes, the opening texts, and an optional gate.
+
+### `packages/codegen/src/compiler/model/node-map.ts::FreeText::excluded`
+
+Index pairs marking the text the free-text facet excludes.
+
+### `packages/codegen/src/compiler/model/node-map.ts::FreeText::gate`
+
+The gate that opens the free text (`FreeTextGate`), when the compound has one.
+
+### `packages/codegen/src/compiler/model/node-map.ts::DelimiterPreference`
+
+The delimiter a compound prefers to render with: its open slot, its lexed token, and its facet slot.
+
+### `packages/codegen/src/compiler/model/node-map.ts::DelimiterPreference::facet`
+
+The facet slot the preference names.
+
+### `packages/codegen/src/compiler/model/node-map.ts::DelimiterPreference::open`
+
+The open slot the preference names.
+
+### `packages/codegen/src/compiler/model/node-map.ts::DelimiterPreference::token`
+
+The lexed-pattern token the preference names.
+
+### `packages/codegen/src/compiler/model/node-map.ts::delimiterPreferenceOf`
+
+A node's delimiter preference, or undefined when the node is not a compound or has none.
+
+### `packages/codegen/src/compiler/model/node-map.ts::isDelimiterToken`
+
+Whether a node is a lexed pattern marked as a delimiter's token (`delimiterOf` is set).
+
+### `packages/codegen/src/compiler/model/node-map.ts::isLexedRule`
+
+Whether a render rule is read as one lexed text: its `tokenized` or `lexed` flag is set.
+
+### `packages/codegen/src/compiler/model/node-map.ts::isLexicalToken`
+
+Whether a node is one of the two lexical forms: a leaf or a lexed pattern.
+
+### `packages/codegen/src/compiler/model/node-map.ts::memberOf`
+
+A terminal's member spelling: its canonical spelling when it has one, otherwise its value.
+
+### `packages/codegen/src/compiler/model/node-map.ts::buildableMembersOf`
+
+The members of a spelled slot a builder may take: its members that are not read-only.
+
+### `packages/codegen/src/compiler/model/node-map.ts::spelledReadOf`
+
+The spelled read of a slot: its members and the spelling of each member that differs from its value. Undefined when the slot has no members or no differing spelling.
+
+### `packages/codegen/src/compiler/model/node-map.ts::SpelledRead`
+
+A slot's read of its members: the member values, and the spelling each member is read under when that differs from its value.
+
+### `packages/codegen/src/compiler/model/node-map.ts::SpelledRead::members`
+
+The member values read from the slot.
+
+### `packages/codegen/src/compiler/model/node-map.ts::SpelledRead::spellings`
+
+The spelling each member is read under, keyed by its value.
+
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::canonical`
+
+The canonical spelling of a terminal, when it differs from the value.
+
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::escape`
+
+The escape text of a terminal, when it has one.
+
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::interpolating`
+
+`true` on a terminal whose text is interpolated rather than literal.
+
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::readOnly`
+
+`true` on a member that can be read but not built.
+
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::singleLine`
+
+`true` on a terminal confined to one line.
+
+### `packages/codegen/src/compiler/model/node-map.ts::FreeText::leaves`
+
+The leaf texts the free-text facet covers.
+
+### `packages/codegen/src/compiler/model/node-map.ts::FreeText::opened`
+
+The opening texts of the free-text region.
+
+### `packages/codegen/src/compiler/model/node-map.ts::FreeTextGate`
+
+The gate that opens free text: the token and facet it is keyed on, and the spellings it admits.
+
+### `packages/codegen/src/compiler/model/node-map.ts::FreeTextGate::facet`
+
+The facet the gate is keyed on.
+
+### `packages/codegen/src/compiler/model/node-map.ts::FreeTextGate::spellings`
+
+The spellings the gate admits.
+
+### `packages/codegen/src/compiler/model/node-map.ts::FreeTextGate::token`
+
+The token the gate is keyed on.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 
@@ -6166,3 +6381,15 @@ The item kinds a list kind holds, read through its lead: a kind led to another l
 ### `packages/codegen/src/compiler/model/accessor-classes.ts::holdsAContainer`
 
 True when a slot has value kinds and each one either reads as a list or is an item of one of the value kinds' lists. Used to tell a slot that stores a container from one that stores items directly.
+
+### `packages/codegen/src/compiler/model/delimiter-facets.ts::delimiterOwners`
+
+The kinds that own a delimiter: the set of node kinds a delimiter token is attached to.
+
+### `packages/codegen/src/compiler/model/delimiter-facets.ts::stampDelimiterFacets`
+
+Stamps each compound of the node map with its delimiter facets, free-text facet and preference.
+
+### `packages/codegen/src/compiler/model/delimiter-facets.ts::stampDelimiterTokens`
+
+Marks each delimiter token with the compound it is the body of (`delimiterOf`).

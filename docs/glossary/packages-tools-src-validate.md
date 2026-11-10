@@ -1158,6 +1158,10 @@ A storage run's render result while the run goes on: the counts and failures of 
 
 The `BuiltRenderResult` of a run: its counts and failures, with `total` and `casesByKind` read from its cases.
 
+### `packages/tools/src/validate/built-render.ts::BuiltRenderResult::spellingNormalized`
+
+The count of built renders that matched only after spelling normalization.
+
 ### `packages/tools/src/validate/uncovered-content.ts::computeUncoveredContentCensus`
 
 The census of corpus nodes that hold text no child of theirs covers, read the way the native reader reads them (a deep `readNativeTree` over every validate corpus entry). A node counts when some descendant span intersects its own, and any non-whitespace bytes of its span lie outside every descendant span. Trivia attached anywhere inside counts as covering. Rows group by the kind the node reads as (`$displayType` when present, else `$type`), with the node and entry counts, every distinct uncovered text, and the grammar producers `hiddenProducers` names for the grammar symbol that parsed it.
@@ -1695,6 +1699,50 @@ A fixture the render check reads.
 
 The context in which a render is reparsed.
 
+### `packages/tools/src/validate/read-render-parse.ts::AstTolerance::delimiters`
+
+The delimiter spellings the comparison reads, loaded per grammar.
+
+### `packages/tools/src/validate/read-render-parse.ts::AstTolerance::normalized`
+
+The spellings the comparison normalizes before it compares extras and trivia.
+
+### `packages/tools/src/validate/read-render-parse.ts::AstTolerance::ownSideExtras`
+
+The extras a candidate's own source spells on its own side, which the comparison tolerates.
+
+### `packages/tools/src/validate/read-render-parse.ts::OwnRender`
+
+A function that renders a candidate's own source text, which the reparse reads as the candidate spells it.
+
+### `packages/tools/src/validate/read-render-parse.ts::ReadRenderParseResult::spellingNormalized`
+
+The candidates whose render matched only after spelling normalization.
+
+### `packages/tools/src/validate/read-render-parse.ts::SpellingNormalizedCandidate`
+
+A candidate whose render differs from its input only in spelling: its entry and kind, the input and rendered text, and the spellings that normalize it.
+
+### `packages/tools/src/validate/read-render-parse.ts::SpellingNormalizedCandidate::entry`
+
+The entry the candidate belongs to.
+
+### `packages/tools/src/validate/read-render-parse.ts::SpellingNormalizedCandidate::input`
+
+The input text the candidate was read from.
+
+### `packages/tools/src/validate/read-render-parse.ts::SpellingNormalizedCandidate::kind`
+
+The kind of the candidate's node.
+
+### `packages/tools/src/validate/read-render-parse.ts::SpellingNormalizedCandidate::rendered`
+
+The text the candidate renders to.
+
+### `packages/tools/src/validate/read-render-parse.ts::SpellingNormalizedCandidate::spellings`
+
+The spellings that normalize the render to the input.
+
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel::unitKinds`
 
 The kinds that are units in the loaded node model.
@@ -1722,6 +1770,58 @@ For each kind that has blank-arm slots, the set of those slots' storage keys. Ki
 ### `packages/tools/src/validate/common.ts::KindSlots::blankArms`
 
 The storage keys of this kind's slots that have a blank arm. The set is empty when none do.
+
+### `packages/tools/src/validate/common.ts::DelimiterFacet`
+
+One delimiter facet as the validators read it: its role, the accessor that reads it, and its spellings when the delimiter has any for it.
+
+### `packages/tools/src/validate/common.ts::DelimiterFacet::accessor`
+
+The accessor that reads the facet from a node.
+
+### `packages/tools/src/validate/common.ts::DelimiterFacet::role`
+
+The facet's role (`DelimiterFacetRole`).
+
+### `packages/tools/src/validate/common.ts::DelimiterFacet::spellings`
+
+The facet's spellings, mapping each spelling to its member, when the delimiter has spellings for it.
+
+### `packages/tools/src/validate/common.ts::DelimiterSpelling`
+
+A delimiter's spelling record: its token interior and its facets by name.
+
+### `packages/tools/src/validate/common.ts::DelimiterSpelling::facets`
+
+The delimiter's facets, by name.
+
+### `packages/tools/src/validate/common.ts::DelimiterSpelling::interior`
+
+The token interior the delimiter reads.
+
+### `packages/tools/src/validate/common.ts::loadDelimiterSpellings`
+
+Loads each delimiter's spelling record for a grammar: its interior, and its facets with their spellings from the grammar's portable build table. A delimiter with no interior is left out.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::delimiterFacets`
+
+Each delimiter kind's facets, from the loaded node model, by kind and then facet name.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::delimiterTokens`
+
+The kinds that are delimiter tokens, from the loaded node model.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::derivedSlots`
+
+Each kind's derived slot names, from the loaded node model. A kind with none maps to an empty set.
+
+### `packages/tools/src/validate/common.ts::sameSpelledMeaning`
+
+Whether two texts carry the same spelled meaning under a delimiter spelling: they project to equal content facets, and each input facet agrees under its spellings.
+
+### `packages/tools/src/validate/common.ts::Seat::always`
+
+`true` on a flatten seat that always merges its group's members into the parent, rather than nesting them under the key.
 
 ### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripStage`
 
@@ -1790,6 +1890,38 @@ The entries whose syntax tree did not match.
 ### `packages/tools/src/validate/portable-round-trip.ts::runPortableRoundTrip`
 
 Runs the round trip over a grammar's corpus entries and returns the result.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripArmless`
+
+A corpus entry whose vocabulary path has no build arm: the entry, the kind it reads, and the path.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripArmless::entry`
+
+The corpus entry.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripArmless::kind`
+
+The kind the entry reads.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripArmless::path`
+
+The vocabulary path with no build arm.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripCarry`
+
+A carried fact of a round trip: the portable carry with the kind it belongs to.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripCarry::kind`
+
+The kind the carried fact belongs to.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult::armless`
+
+The entries that have no build arm for a path.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult::spellingNormalized`
+
+The count of entries whose round trip matched only after spelling normalization.
 
 ### `packages/tools/src/portable/conformance.ts::ConformanceCause`
 
@@ -1902,3 +2034,83 @@ The grammars to check. When absent, every grammar that has bindings is checked.
 ### `packages/tools/src/portable/conformance.ts::run`
 
 Runs the conformance check for each grammar and prints each report. A grammar with no typed module prints a line saying so. Returns 0.
+
+### `packages/tools/src/portable/admission.ts::portableAdmission`
+
+Runs the admission check over the given grammars, all binding grammars by default. It types each grammar's portable module, reads every view's yields, and compares the kinds each read site admits with the kinds its reads give. It returns the resulting `AdmissionReport`.
+
+### `packages/tools/src/portable/admission.ts::AdmissionOwnSlot`
+
+An own slot that holds a kind its reads never give: its grammar, the member it sits on, and the excess kinds.
+
+### `packages/tools/src/portable/admission.ts::AdmissionOwnSlot::excess`
+
+The kinds the own slot holds that its reads never give.
+
+### `packages/tools/src/portable/admission.ts::AdmissionOwnSlot::grammar`
+
+The grammar whose typed module the own slot was read from.
+
+### `packages/tools/src/portable/admission.ts::AdmissionOwnSlot::member`
+
+The member the own slot sits on, as `path.slot`.
+
+### `packages/tools/src/portable/admission.ts::AdmissionReport`
+
+The result of the admission check: the read sites counted, how many are role-armed, which admit an unknown kind, which admit a kind no read gives, and which own slots hold such a kind.
+
+### `packages/tools/src/portable/admission.ts::AdmissionReport::overAdmitting`
+
+The read sites that admit a kind no read gives.
+
+### `packages/tools/src/portable/admission.ts::AdmissionReport::ownSlots`
+
+The own slots that hold a kind their reads never give.
+
+### `packages/tools/src/portable/admission.ts::AdmissionReport::roleArmed`
+
+The number of read sites whose type includes a role arm.
+
+### `packages/tools/src/portable/admission.ts::AdmissionReport::sites`
+
+The number of read sites checked.
+
+### `packages/tools/src/portable/admission.ts::AdmissionReport::untyped`
+
+The read sites whose type admits an unknown kind, by site.
+
+### `packages/tools/src/portable/admission.ts::AdmissionSite`
+
+One read site that admits a kind no read gives: its declaration site, the grammars whose reads reach it, the member paths that share it, and the excess kinds.
+
+### `packages/tools/src/portable/admission.ts::AdmissionSite::excess`
+
+The kinds the site admits that no read of it gives.
+
+### `packages/tools/src/portable/admission.ts::AdmissionSite::grammars`
+
+The grammars whose reads reach the site.
+
+### `packages/tools/src/portable/admission.ts::AdmissionSite::members`
+
+The `path.member` pairs that share the site.
+
+### `packages/tools/src/portable/admission.ts::AdmissionSite::site`
+
+The site's declaration, as `file:line`.
+
+### `packages/tools/src/portable/admission.ts::formatAdmission`
+
+Renders an admission report as the lines the command prints: the read-site summary, each over-admitting site, each unknown-admitting site, and each own slot with its excess kinds.
+
+### `packages/tools/src/portable/admission.ts::PortableAdmissionOptions`
+
+The options for the admission command: the grammars to check. Undefined checks every binding grammar.
+
+### `packages/tools/src/portable/admission.ts::PortableAdmissionOptions::grammars`
+
+The grammars to check.
+
+### `packages/tools/src/portable/admission.ts::run`
+
+The admission command: prints the formatted report and returns 0.

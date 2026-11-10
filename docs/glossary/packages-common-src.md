@@ -330,6 +330,14 @@ Throws a query refusal as a `TypeError` with the message given. The query facet 
 
 The query plan evaluator and the slot reader it shares with the portable classifier, kept apart from the query facet so that a module a language descriptor loads (the portable guards) reaches no engine runtime.
 
+### `packages/common/src/query-holds.ts::PlanSubjects::count`
+
+The number of subjects a query plan counts.
+
+### `packages/common/src/query-holds.ts::PlanSubjects::delimiters`
+
+The delimiter subjects a query plan reads through.
+
 ### `packages/common/src/engine-scope.ts::inTreeEngine`
 
 Runs a call inside the handle of the engine that read a tree, or plainly when the tree is bound to none. Every wrap of a read node goes through it, so a child hydrated long after the parse returned, outside any engine call, is stamped with the reading engine.
@@ -800,6 +808,10 @@ A parsed arena's independent lookup, hydration, typed candidate enumeration, ren
 
 Whether a read path names every fact in a guard path: the top-level namespace matches, and each remaining whole segment occurs in order, allowing other refinement facts between them. Shared by namespace kind admission, exact-guard derivation, and the portable guards' matching of a node's reading. An absent read path matches nothing.
 
+### `packages/common/src/portable/facts.ts::textBuilt`
+
+Whether a build arm builds its kind as text, given the portable build table.
+
 ### `packages/common/src/portable/classify.ts::classifierOf`
 
 The classifier of a bound grammar's `PortableRows`, built once per rows object (`classifiers`), so every guard reading nodes of a language shares one. It reads a node as the path of its kind's first read entry, in table order, whose conditions all hold. It reads a bare kind id the same way, the id selecting the entries and a text condition on the id itself reading its `fixedText`, but only through entries whose every condition reads the value itself (`decidesKindId`: no `via` step, and only `self` subjects, `readsItself`). An id shows no slot, so an entry that reads one is skipped for it, as a placed entry is; otherwise an empty slot would make a negated slot test hold (python's `comparison_operator` id would read as a comparison chain). Such an id reads by the first entry it can decide, `expression.binary` for that one: less specific, never wrong. Both filters run once, when the classifier is built (`entriesWhere`): per kind, it keeps the unplaced entries a node reads through (`nodeEntries`) and those a kind id can also decide (`kindIdEntries`), so a call scans only those. An entry that depends on where the node sits, a `within` placement or a condition on an enclosing node (`up > 0`), is skipped (`unplaced`): a node alone carries no context, so it reads as its next entry: the placed reading answers false and the next one true (an impl or class-body method reads as a function) until placed readings become kinds of their own. A condition runs `holds`, the one evaluator of a `QueryPlan`, once over every node its `via` steps reach from the node, an anchored step reading only the first, the last or the only node of its slot (`anchored`); a negated plan therefore holds only when no reached node matches. Texts come from a slot's items through `query-holds.ts::slotItems`, the slot found by the number its subject gives the node's kind in the slot table; a kind the subject does not number holds no item. A slot the table stamps with a keyword holds a boolean: `true` reads as that keyword and `false` as no item. A value's text is a kind-id item's `fixedText` entry, a leaf's `$text`, and otherwise, for a parsed structured node, the slice of its tree's source its span covers (`span.ts::spanSlicer`, one slicer per tree); a value's type is its `$type`, or a kind-id item's own number.
@@ -1260,6 +1272,10 @@ The kind id for a kind name, or `undefined` when the language has no kind of tha
 
 A view of a node's owner.
 
+### `packages/common/src/utils.ts::preferredFacet`
+
+The token with the facet its preference names, or the token unchanged when no preference is given.
+
 ### `packages/common/src/node-data.ts::mapSideEntries`
 
 Maps each entry of a side table, returning the table in the same shape.
@@ -1551,3 +1567,7 @@ Stores a value in a slot whose blank arm is `null`. A `null` becomes the `BLANK_
 ### `packages/common/src/blank-arm.ts::blankArmRead`
 
 Reads a stored slot value back. The `BLANK_KIND_ID` marker becomes `null`, and any other value is returned unchanged. It is the inverse of `blankArmStored`.
+
+### `packages/common/src/spelled.ts::spelledMember`
+
+The text in its spelled form: the spelling the text is declared under, or the text itself when no spelling is declared.

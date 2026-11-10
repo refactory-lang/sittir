@@ -28,6 +28,10 @@ Imports a generated module through its `pathToFileURL` URL, which ESM accepts ac
 
 The required-artifact form of `importGrammarModule`. Missing artifacts throw an error naming the grammar and generated filename, so validators record a load failure instead of treating an empty map as a successful run. It shares path resolution and importing with the optional loader.
 
+### `packages/tools/src/grammar-internals.ts::GrammarModules::portable-build.ts`
+
+The grammar's portable build module, loaded from its `portable-build.ts` file.
+
 ### `packages/tools/src/codegen-surface.ts::evaluateGrammar`
 
 Evaluates a grammar package by name through codegen's `evaluatePackage`, so every probe and diagnostic tool builds its model with the package's real file types and entry choice; `base` selects the upstream `grammar.js` where a tool offers to show it before overrides. `buildSimplifiedGrammar`, the refs, stages and grammar-diagnostics tools start here, and none resolves an entry path or passes file types itself. Full node-map loaders use the canonical compiler instead of rebuilding its phases.
@@ -155,6 +159,10 @@ The absolute path of every codegen module the surface can load (`MODULES`), so w
 ### `packages/tools/src/codegen-surface.ts::Compilation`
 
 What `compileGrammar` returns, as the tools see it through the codegen surface.
+
+### `packages/tools/src/codegen-surface.ts::DelimiterFacetRole`
+
+The delimiter facet role type, re-exported for the tools surface.
 
 ### `packages/tools/src/regen.ts::inPool`
 
@@ -429,3 +437,15 @@ The number of round-trip entries that carried something past the structure.
 ### `packages/tools/src/history.ts::ValidationRun::portableConformance`
 
 The total of the grammar's portable conformance errors, recorded for the validation run when the grammar has a typed module.
+
+### `packages/tools/src/history.ts::ValidationRun::builtRenderParseSpellingNormalized`
+
+The count of built-render parses that matched only after spelling normalization.
+
+### `packages/tools/src/history.ts::ValidationRun::readRenderParseShallowSpellingNormalized`
+
+The count of shallow read-render-parse matches that needed spelling normalization.
+
+### `packages/tools/src/history.ts::ValidationRun::readRenderParseSpellingNormalized`
+
+The count of read-render-parse matches that needed spelling normalization.
