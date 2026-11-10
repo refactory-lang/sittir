@@ -252,7 +252,6 @@ packages/tools/src/__tests__/node-to-config-promotion.test.ts
 packages/tools/src/__tests__/wrapped-tree-materialization.test.ts
 packages/tools/src/validate/__tests__/comment-variants-render.test.ts
 packages/tools/src/validate/__tests__/ir-lane-trivia.test.ts
-packages/tools/src/validate/__tests__/portable-round-trip.test.ts
 packages/tools/src/validate/__tests__/read-render-parse-refusal.test.ts
 packages/tools/src/validate/__tests__/read-render-parse-throws.test.ts
 packages/tools/src/validate/__tests__/snapshot-census.test.ts
@@ -287,7 +286,6 @@ packages/tools/tests/gap-census.test.ts
 packages/tools/tests/hidden-builder-guard.test.ts
 packages/tools/tests/inner-region-parity.test.ts
 packages/tools/tests/ir-empty-seat-group.test.ts
-packages/tools/tests/isolate.test.ts
 packages/tools/tests/leading-trivia-rendered-width.test.ts
 packages/tools/tests/leaf-edges.test.ts
 packages/tools/tests/line-end-floor.test.ts
