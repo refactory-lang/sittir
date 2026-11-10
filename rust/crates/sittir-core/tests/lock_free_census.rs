@@ -5,9 +5,9 @@
 //!
 //! A use is one of the identifiers in `COUNTED`, one of `std::sync::atomic`'s
 //! types (an identifier `Atomic…`), or a `sync::atomic` path.
-//! Comments, string and character literals, and `#[cfg(test)]` modules
-//! (inline, or a `mod name;` declaration and the file it names) are not
-//! scanned.
+//! Comments, string and character literals, and `#[cfg(test)]` modules are
+//! not scanned. Neither is a file the module tree from `lib.rs` reaches only
+//! through a `#[cfg(test)]` module; a file the tree doesn't reach is scanned.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -38,6 +38,24 @@ const CEILINGS: &[(&str, u32)] = &[
 struct Use {
     line: usize,
     what: String,
+}
+
+struct Scan {
+    uses: Vec<Use>,
+    modules: Vec<Module>,
+}
+
+/// A `mod name;` declaration: the inline modules it sits in, then its name.
+struct Module {
+    path: Vec<String>,
+    test: bool,
+}
+
+struct ModuleItem {
+    name: String,
+    test: bool,
+    body: bool,
+    after: usize,
 }
 
 fn ceiling_of(file: &str) -> u32 {
@@ -90,9 +108,12 @@ use std::sync::Arc; // Mutex in a comment
 const TEXT: &str = "OnceLock in a string";
 const RAW: &str = r#"LazyLock in a raw string"#;
 const BYTES: &[u8] = b"Weak in bytes";
+const C_TEXT: &CStr = c"RwLock in a C string";
+const C_RAW: &CStr = cr#"" Mutex ""#;
 const QUOTE: char = '"';
 fn shared<'a>(cell: &'a RefCell<u32>) -> Rc<u32> { std::sync::atomic::fence(Ordering::SeqCst); todo!() }
 static SEEN: std::sync::atomic::AtomicBool = AtomicBool::new(Atomically::ArcSwap);
+use std::sync::Mutex/**/as Lock;
 #[cfg(test)]
 mod tests {
 	use std::sync::Mutex;
@@ -100,8 +121,8 @@ mod tests {
 #[cfg(test)]
 mod outside;
 "##;
-    let (uses, outside) = scan(source);
-    let what: Vec<&str> = uses.iter().map(|found| found.what.as_str()).collect();
+    let found = scan(source);
+    let what: Vec<&str> = found.uses.iter().map(|found| found.what.as_str()).collect();
     assert_eq!(
         what,
         [
@@ -111,33 +132,124 @@ mod outside;
             "sync::atomic",
             "sync::atomic",
             "AtomicBool",
-            "AtomicBool"
+            "AtomicBool",
+            "Mutex"
         ]
     );
-    assert_eq!(outside, ["outside"]);
+    let modules: Vec<(String, bool)> = found
+        .modules
+        .iter()
+        .map(|module| (module.path.join("/"), module.test))
+        .collect();
+    assert_eq!(modules, [("outside".to_owned(), true)]);
+}
+
+#[test]
+fn the_census_follows_the_module_tree() {
+    let src = fixture(
+        "module-tree",
+        &[
+            (
+                "lib.rs",
+                "use std::rc::Rc;\nmod tests;\nmod child { #[cfg(test)] mod tests; }\n#[cfg(test)] mod unit;\n#[cfg(test)] mod spec;\n#[cfg(test)] mod inline { mod outside; }\n",
+            ),
+            ("tests.rs", "use std::sync::Arc;\n"),
+            ("child/tests.rs", "use std::sync::Mutex;\n"),
+            ("unit/mod.rs", "mod helper;\n"),
+            ("unit/helper.rs", "use std::sync::RwLock;\n"),
+            ("spec.rs", "mod fixture;\n"),
+            ("spec/fixture.rs", "use std::rc::Weak;\n"),
+            ("inline/outside.rs", "use std::cell::RefCell;\n"),
+            ("orphan.rs", "use std::sync::OnceLock;\n"),
+        ],
+    );
+    let counted: Vec<(String, Vec<String>)> = census(&src)
+        .into_iter()
+        .map(|(file, uses)| (file, uses.into_iter().map(|found| found.what).collect()))
+        .collect();
+    let expected = [
+        ("lib.rs", "Rc"),
+        ("orphan.rs", "OnceLock"),
+        ("tests.rs", "Arc"),
+    ]
+    .map(|(file, what)| (file.to_owned(), vec![what.to_owned()]));
+    assert_eq!(counted, expected);
+}
+
+/// A fresh `src/` under the test's temporary directory, holding `files`.
+fn fixture(name: &str, files: &[(&str, &str)]) -> PathBuf {
+    let src = Path::new(env!("CARGO_TARGET_TMPDIR"))
+        .join(name)
+        .join("src");
+    if src.exists() {
+        fs::remove_dir_all(&src).unwrap_or_else(|error| panic!("{}: {error}", src.display()));
+    }
+    for (file, text) in files {
+        let path = src.join(file);
+        fs::create_dir_all(path.parent().expect("a fixture file has a directory"))
+            .unwrap_or_else(|error| panic!("{}: {error}", path.display()));
+        fs::write(&path, text).unwrap_or_else(|error| panic!("{}: {error}", path.display()));
+    }
+    src
 }
 
 fn census(src: &Path) -> BTreeMap<String, Vec<Use>> {
     let mut files = Vec::new();
     collect(src, &mut files);
-    files.sort();
-    let mut skipped = BTreeSet::new();
-    let mut found = BTreeMap::new();
-    for path in &files {
-        let source =
-            fs::read_to_string(path).unwrap_or_else(|error| panic!("{}: {error}", path.display()));
-        let (uses, outside) = scan(&source);
-        let dir = module_dir(path);
-        for name in outside {
-            skipped.insert(dir.join(format!("{name}.rs")));
-            skipped.insert(dir.join(&name).join("mod.rs"));
+    let scans: BTreeMap<PathBuf, Scan> = files
+        .into_iter()
+        .map(|path| {
+            let source = fs::read_to_string(&path)
+                .unwrap_or_else(|error| panic!("{}: {error}", path.display()));
+            let scan = scan(&source);
+            (path, scan)
+        })
+        .collect();
+    let test_only = test_only_files(src, &scans);
+    scans
+        .into_iter()
+        .filter(|(path, scan)| !scan.uses.is_empty() && !test_only.contains(path))
+        .map(|(path, scan)| (relative(src, &path), scan.uses))
+        .collect()
+}
+
+/// The files the module tree from the crate roots reaches only through `#[cfg(test)]` modules.
+/// A file the tree doesn't reach is not among them.
+fn test_only_files(src: &Path, scans: &BTreeMap<PathBuf, Scan>) -> BTreeSet<PathBuf> {
+    let mut reached: BTreeMap<PathBuf, bool> = BTreeMap::new();
+    let mut pending: Vec<(PathBuf, bool)> = ["lib.rs", "main.rs"]
+        .iter()
+        .map(|root| (src.join(root), false))
+        .collect();
+    while let Some((file, test)) = pending.pop() {
+        let Some(scan) = scans.get(&file) else {
+            continue;
+        };
+        match reached.get(&file) {
+            Some(false) => continue,
+            Some(true) if test => continue,
+            _ => {}
         }
-        if !uses.is_empty() {
-            found.insert(relative(src, path), uses);
+        reached.insert(file.clone(), test);
+        let dir = module_dir(&file);
+        for module in &scan.modules {
+            let (name, scopes) = module.path.split_last().expect("a module has a name");
+            let parent = scopes
+                .iter()
+                .fold(dir.clone(), |dir, scope| dir.join(scope));
+            for candidate in [
+                parent.join(format!("{name}.rs")),
+                parent.join(name).join("mod.rs"),
+            ] {
+                pending.push((candidate, test || module.test));
+            }
         }
     }
-    found.retain(|file, _| !skipped.contains(&src.join(file)));
-    found
+    reached
+        .into_iter()
+        .filter(|(_, test)| *test)
+        .map(|(file, _)| file)
+        .collect()
 }
 
 fn collect(dir: &Path, files: &mut Vec<PathBuf>) {
@@ -167,37 +279,62 @@ fn relative(src: &Path, path: &Path) -> String {
         .replace('\\', "/")
 }
 
-/// The uses in `source`, and the modules a `#[cfg(test)] mod name;` declares.
-fn scan(source: &str) -> (Vec<Use>, Vec<String>) {
+/// The uses in `source` outside `#[cfg(test)]` modules, and each `mod name;` it declares.
+fn scan(source: &str) -> Scan {
     let tokens = tokens(&code_only(source));
-    let mut uses = Vec::new();
-    let mut outside = Vec::new();
+    let mut found = Scan {
+        uses: Vec::new(),
+        modules: Vec::new(),
+    };
+    let mut scopes: Vec<(String, bool, usize)> = Vec::new();
+    let mut depth = 0usize;
     let mut at = 0;
     while at < tokens.len() {
-        if let Some(after) = test_module(&tokens, at, &mut outside) {
-            at = after;
+        let in_test = scopes.iter().any(|(_, test, _)| *test);
+        if let Some(item) = module_item(&tokens, at) {
+            let test = in_test || item.test;
+            if item.body {
+                depth += 1;
+                scopes.push((item.name, test, depth));
+            } else {
+                let mut path: Vec<String> =
+                    scopes.iter().map(|(name, _, _)| name.clone()).collect();
+                path.push(item.name);
+                found.modules.push(Module { path, test });
+            }
+            at = item.after;
             continue;
         }
         let (line, text) = &tokens[at];
-        if COUNTED.contains(&text.as_str()) || is_atomic_type(text) {
-            uses.push(Use {
+        match text.as_str() {
+            "{" => depth += 1,
+            "}" => {
+                if scopes.last().is_some_and(|(_, _, opened)| *opened == depth) {
+                    scopes.pop();
+                }
+                depth = depth.saturating_sub(1);
+            }
+            _ if in_test => {}
+            word if COUNTED.contains(&word) || is_atomic_type(word) => found.uses.push(Use {
                 line: *line,
                 what: text.clone(),
-            });
-        } else if text == "atomic"
-            && at >= 3
-            && tokens[at - 1].1 == ":"
-            && tokens[at - 2].1 == ":"
-            && tokens[at - 3].1 == "sync"
-        {
-            uses.push(Use {
-                line: *line,
-                what: "sync::atomic".to_owned(),
-            });
+            }),
+            "atomic"
+                if at >= 3
+                    && tokens[at - 1].1 == ":"
+                    && tokens[at - 2].1 == ":"
+                    && tokens[at - 3].1 == "sync" =>
+            {
+                found.uses.push(Use {
+                    line: *line,
+                    what: "sync::atomic".to_owned(),
+                });
+            }
+            _ => {}
         }
         at += 1;
     }
-    (uses, outside)
+    found
 }
 
 /// Whether `word` names one of `std::sync::atomic`'s types (`AtomicBool`, `AtomicU32`, …).
@@ -207,20 +344,18 @@ fn is_atomic_type(word: &str) -> bool {
         .is_some_and(char::is_uppercase)
 }
 
-/// Where a `#[cfg(test)]` module starting at `at` ends, or `None` when none starts there.
-fn test_module(tokens: &[(usize, String)], at: usize, outside: &mut Vec<String>) -> Option<usize> {
+/// The `mod` item starting at `at`, past its attributes and visibility, or `None` when none starts there.
+fn module_item(tokens: &[(usize, String)], at: usize) -> Option<ModuleItem> {
     let text = |index: usize| tokens.get(index).map(|(_, text)| text.as_str());
-    let attribute = ["#", "[", "cfg", "(", "test", ")", "]"];
-    if !attribute
-        .iter()
-        .enumerate()
-        .all(|(offset, expected)| text(at + offset) == Some(expected))
-    {
-        return None;
-    }
-    let mut next = at + attribute.len();
+    let mut next = at;
+    let mut test = false;
     while text(next) == Some("#") && text(next + 1) == Some("[") {
-        next = past_group(tokens, next + 1, "[", "]");
+        let end = past_group(tokens, next + 1, "[", "]");
+        test |= tokens[next..end]
+            .iter()
+            .map(|(_, text)| text.as_str())
+            .eq(["#", "[", "cfg", "(", "test", ")", "]"]);
+        next = end;
     }
     if text(next) == Some("pub") {
         next += 1;
@@ -232,14 +367,17 @@ fn test_module(tokens: &[(usize, String)], at: usize, outside: &mut Vec<String>)
         return None;
     }
     let name = text(next + 1)?.to_owned();
-    match text(next + 2) {
-        Some(";") => {
-            outside.push(name);
-            Some(next + 3)
-        }
-        Some("{") => Some(past_group(tokens, next + 2, "{", "}")),
-        _ => None,
-    }
+    let body = match text(next + 2) {
+        Some(";") => false,
+        Some("{") => true,
+        _ => return None,
+    };
+    Some(ModuleItem {
+        name,
+        test,
+        body,
+        after: next + 3,
+    })
 }
 
 /// The token after the group `open` at `at` opens.
@@ -297,6 +435,7 @@ fn code_only(source: &str) -> String {
                 at += 1;
             }
         } else if c == '/' && next == Some('*') {
+            code.push(' ');
             let mut depth = 0usize;
             while at < chars.len() {
                 if chars[at] == '/' && chars.get(at + 1) == Some(&'*') {
@@ -329,8 +468,10 @@ fn code_only(source: &str) -> String {
             }
             at += closing.len();
             code.push(' ');
-        } else if c == '"' || (c == 'b' && next == Some('"') && !continues_word(&chars, at)) {
-            at += if c == 'b' { 2 } else { 1 };
+        } else if c == '"'
+            || (matches!(c, 'b' | 'c') && next == Some('"') && !continues_word(&chars, at))
+        {
+            at += if c == '"' { 1 } else { 2 };
             while at < chars.len() && chars[at] != '"' {
                 if chars[at] == '\\' {
                     at += 1;
@@ -364,13 +505,13 @@ fn continues_word(chars: &[char], at: usize) -> bool {
     at > 0 && (chars[at - 1].is_alphanumeric() || chars[at - 1] == '_')
 }
 
-/// The `#` count of a raw string (`r"…"`, `r#"…"#`, `br"…"`) starting at `at`.
+/// The `#` count of a raw string (`r"…"`, `r#"…"#`, `br"…"`, `cr"…"`) starting at `at`.
 fn raw_string_start(chars: &[char], at: usize) -> Option<usize> {
     if continues_word(chars, at) {
         return None;
     }
     let mut next = at;
-    if chars.get(next) == Some(&'b') {
+    if matches!(chars.get(next), Some('b' | 'c')) {
         next += 1;
     }
     if chars.get(next) != Some(&'r') {
