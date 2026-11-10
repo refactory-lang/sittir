@@ -22,6 +22,11 @@ refs = json.loads((out / 'refs.json').read_text())
 median = statistics.median
 read = lambda name: json.loads((runs / name).read_text())
 receipts = read('receipts.json')
+def caches_line(machine):
+    caches = machine.get('caches')
+    if not caches:
+        return ''
+    return f", caches L1d {caches['l1d']}, L1i {caches['l1i']}, L2 {caches['l2']}, L3 {caches['l3']}"
 CANDIDATES = list(refs.get('candidates', {}))
 TREES = ['base', 'master', 'feature'] + CANDIDATES
 VERSIONS = [v for t in TREES for v in [t, t + '-arena'] if any(r['version'] == v for r in receipts)]
@@ -124,7 +129,7 @@ lines = [
     + ''.join(f", {c} `{refs['candidates'][c]['commit'][:9]}` ({refs['candidates'][c]['ref']})" for c in CANDIDATES) + f"; build profile {', '.join(sorted(profiles))}. "
     + ("A version ending in -arena is its tree read with `nodeStorage: 'arena'`; the others use object storage." if any(v.endswith('-arena') for v in VERSIONS) else 'Every version uses object storage.'),
     (out / 'build-path.md').read_text().strip(),
-    f"Runner: {runner['os']} {runner['arch']} image {runner['image']} {runner['imageVersion']}, {machine['cpu']}, {machine['cores']} cores, {machine['memory'] / 2**30:.1f} GiB.",
+    f"Runner: {runner['os']} {runner['arch']} image {runner['image']} {runner['imageVersion']}, {machine['cpu']}, {machine['cores']} cores, {machine['memory'] / 2**30:.1f} GiB{caches_line(machine)}.",
     f"{len(receipts)} fresh processes, no idle gate; load1 mean {statistics.mean(load):.2f}, max {max(load):.2f}.", '',
     'Each ratio is the median over five rounds of the ratio of process medians, with a bootstrap 95% range. Every edit result and built root is released after its timed edit; release is its own time (ms only, since a version without counted release releases nothing) and edit+release is what a caller pays under explicit release. The 10-29 column is feature/master in object storage from docs/reviews/2026-10-29-paired-backends.md (a local macOS run against master 7471447a2).', '',
     f"Pipeline (parse + render) against base above ×{BAR:.2f}: {', '.join(over) if over else 'none'}.",
