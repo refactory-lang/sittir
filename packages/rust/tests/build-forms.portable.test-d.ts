@@ -1,4 +1,5 @@
 import type * as V from '../../types/src/vocabulary/index.ts';
+import type { Flag } from '../../types/src/vocabulary/utils.ts';
 import type { RustMap } from '../src/portable/map.ts';
 
 type Path = keyof V.Paths<RustMap>;
@@ -45,6 +46,7 @@ export const boundedConstant: In<'declaration.type_parameter.value'> = { $path: 
 // @ts-expect-error a const generic's const is its refinement, not a flag
 export const flaggedConstant: In<'declaration.type_parameter.value'> = { $path: 'declaration.type_parameter.value', name, type, $flags: ['const'] };
 
+declare const flag: Flag;
 declare const body: At<'declaration.function'>['body'];
 declare const fnName: At<'declaration.function'>['name'];
 export const asyncFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, $flags: ['async', 'unsafe'] };
@@ -54,9 +56,15 @@ export const staticFunction: In<'declaration.function'> = { $path: 'declaration.
 // @ts-expect-error generator functions are a feature rust lacks
 export const generatorFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, $flags: ['generator'] };
 // @ts-expect-error a flag is named in $flags, never written as a member
-export const memberFlag: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, async: true };
+export const memberFlag: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, async: flag };
 
 export const readAsync: At<'declaration.function'>['$flags'] = ['async'];
 // @ts-expect-error a read function carries no static
 export const readStatic: At<'declaration.function'>['$flags'] = ['static'];
 export const readReference: At<'declaration.parameter.receiver'>['$flags'] = ['reference', 'mutable'];
+
+type Defaults = V.Contract<RustMap['features']>;
+type NestedReceiver = Extract<NonNullable<V.Read<Defaults, 'declaration.function'>['receiver']>, { readonly $path: 'declaration.parameter.receiver' }>;
+export const nestedReference: NestedReceiver = { $path: 'declaration.parameter.receiver', $flags: ['reference'] };
+// @ts-expect-error a nested default carries its flags in $flags, never as a member
+export const nestedMember: NestedReceiver = { $path: 'declaration.parameter.receiver', reference: flag };

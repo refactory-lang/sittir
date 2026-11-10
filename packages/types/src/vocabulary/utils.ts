@@ -50,4 +50,8 @@ type Dropped<T, N> = { readonly [M in keyof T as M extends N ? never : M]: T[M] 
 
 type Named<T, N extends string> = [N] extends [never] ? T : Dropped<T & { readonly $flags?: readonly N[] }, N>;
 
-export type NamedFlags<G extends GrammarMap, T> = T extends { readonly $path: infer P } ? Named<T, FlagsAt<G, P>> : T;
+export type NamedFlags<G extends GrammarMap, T> = T extends readonly unknown[]
+	? { readonly [I in keyof T]: NamedFlags<G, T[I]> }
+	: T extends { readonly $path: infer P }
+		? Named<T, FlagsAt<G, P>>
+		: T;

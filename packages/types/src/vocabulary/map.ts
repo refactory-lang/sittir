@@ -43,7 +43,12 @@ type Override<G extends GrammarMap, P extends string, M extends string, D> = [P]
 		: D
 	: D;
 
-export type Slot<G extends GrammarMap, P extends string, M extends string, D> = Override<G, P, M, D | Unmapped>;
+export type Slot<G extends GrammarMap, P extends string, M extends string, D> = Override<
+	G,
+	P,
+	M,
+	NamedFlags<G, D> | Unmapped
+>;
 
 export type Text<G extends GrammarMap, P extends string> = Override<G, P, '$text', string>;
 

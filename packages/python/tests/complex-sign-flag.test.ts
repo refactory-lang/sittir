@@ -16,7 +16,8 @@ const caseOf = (pattern: string): string => `match x:\n    case ${pattern}:\n   
 
 const complexIn = (value: unknown): Read | undefined => {
 	if (value === null || typeof value !== 'object') return undefined;
-	if (typeof (value as Read).$path === 'string' && (value as Read).$path!.startsWith('pattern.complex')) return value as Read;
+	if (typeof (value as Read).$path === 'string' && (value as Read).$path!.startsWith('pattern.complex'))
+		return value as Read;
 	for (const item of Object.values(value)) {
 		const found = complexIn(item);
 		if (found !== undefined) return found;
@@ -30,7 +31,11 @@ describe.each(STORAGES)("a complex pattern's leading minus is a flag, in %s", (_
 
 	it('holds on a parsed pattern that writes the minus, and not on one that does not', async () => {
 		const runtime = await runtimeOf();
-		const patterns = (source: string): unknown[] => [...(runtime.engine.parse(source) as { $query(): { $descendants: { ofType(kind: number): Iterable<unknown> } } }).$query().$descendants.ofType(python.kinds.ComplexPattern)];
+		const patterns = (source: string): unknown[] => [
+			...(runtime.engine.parse(source) as { $query(): { $descendants: { ofType(kind: number): Iterable<unknown> } } })
+				.$query()
+				.$descendants.ofType(python.kinds.ComplexPattern)
+		];
 		expect(patterns(caseOf('-1+2j')).map(sign(runtime.is))).toEqual([true]);
 		expect(patterns(caseOf('1+2j')).map(sign(runtime.is))).toEqual([false]);
 	});
@@ -46,7 +51,8 @@ describe.each(STORAGES)("a complex pattern's leading minus is a flag, in %s", (_
 
 	it('reads and builds a pattern back with its minus, and one without it without', async () => {
 		const runtime = await runtimeOf();
-		const roundTrip = (source: string): string => String(runtime.engine.render(runtime.build(runtime.read(runtime.engine.parse(source)) as never) as never));
+		const roundTrip = (source: string): string =>
+			String(runtime.engine.render(runtime.build(runtime.read(runtime.engine.parse(source)) as never) as never));
 		for (const pattern of ['-1 + 2j', '-1 - 2j', '1 + 2j']) expect(roundTrip(caseOf(pattern))).toBe(caseOf(pattern));
 	});
 });
