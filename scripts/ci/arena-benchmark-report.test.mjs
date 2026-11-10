@@ -324,6 +324,11 @@ test('a phase a validator makes no calls under has no row, and the analysis says
 	assert.match(markdown, /no row for factory-render-parse read/);
 });
 
+test('explains the copy phase only in a report that times one', () => {
+	assert.doesNotMatch(summarize(corpus()).markdown, /copy phase|product reads only/);
+	assert.match(summarize(withCopyPhase(corpus())).markdown, /copy phase times the validators' copy/);
+});
+
 test('a phase is compared with the baseline only where both time the same calls under it', () => {
 	const data = withBaseline(corpus(), 2);
 	withCopyPhase(data);

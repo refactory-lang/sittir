@@ -483,8 +483,12 @@ export function summarize(data) {
 		'',
 		"Each row times its bucket's whole validator round trip: producing the nodes, rendering, reparsing and comparing. The factory and IR rows are therefore not construction measurements.",
 		'',
-		"The copy phase times the validators' copy of each read candidate into the plain data the factories and the render-from-content check take. It is validator tooling, not product work, and nothing is gated on it. The read phase times product reads only: read-render-parse's deep read of each tree.",
-		'',
+		...([...analysis.phases, ...analysis.omitted].some((value) => value.phase === 'copy')
+			? [
+					"The copy phase times the validators' copy of each read candidate into the plain data the factories and the render-from-content check take. It is validator tooling, not product work, and nothing is gated on it. The read phase times product reads only: read-render-parse's deep read of each tree.",
+					''
+				]
+			: []),
 		...(analysis.omitted.length
 			? [
 					`A phase a validator does no work under has no row: ${[...new Set(analysis.omitted.map((value) => `${value.bucket} ${value.phase}`))].map((name) => `no row for ${name}`).join(', ')}.`,
