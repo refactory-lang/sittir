@@ -83,7 +83,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 		{
 			path: 'tsconfig.build.json',
 			contents: json({
-				extends: './tsconfig.json',
+				extends: ['./tsconfig.json', '../../tsconfig.publish.json'],
 				compilerOptions: {
 					noEmit: false,
 					composite: true,

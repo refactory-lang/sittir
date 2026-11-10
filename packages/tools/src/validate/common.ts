@@ -74,6 +74,7 @@ import { NODE_MODEL_FILE, PORTABLE_BUILD_FILE, UPSTREAM_WASM, grammarPackageDir,
 import { CORPUS_ROOT, localCorpusPath, upstreamCorpusDir } from '../corpus/layout.ts';
 import type {
 	CodegenSurface,
+	ParserLanguage,
 	PolymorphVariantMap,
 	FactoryShape,
 	FactorySlotMeta,
@@ -81,8 +82,7 @@ import type {
 	DelimiterFacetRole
 } from '../codegen-surface.ts';
 
-const loadWebTreeSitter: CodegenSurface['engineLoader']['loadWebTreeSitter'] = (await load('engineLoader'))
-	.loadWebTreeSitter;
+const { heldTrees, languageAt, languageOf, treeParser }: Pick<CodegenSurface['engineLoader'], 'heldTrees' | 'languageAt' | 'languageOf' | 'treeParser'> = await load('engineLoader');
 const { opaqueFacts, readFacts } = await load('opaqueFacts');
 const { assertNativeBinaryFresh, hostBinaryFreshnessFor } = await load('nativeBinaryFreshness');
 const { storageKeyOf } = await load('modelNodeMap');
@@ -107,7 +107,6 @@ export interface CorpusEntry {
 }
 
 export type TSNode = TS.Node;
-export type TSTree = TS.Tree;
 
 const CORPUS_HEADER =
 	/^(={3,})([^=\r\n][^\r\n]*)?\r?\n((?:(?:[^=\r\n]|\s+:)[^\r\n]*\r?\n)+)===+([^=\r\n][^\r\n]*)?\r?\n/gm;
@@ -163,7 +162,8 @@ export function loadCorpusEntries(grammar: string): CorpusEntry[] {
 	return entries;
 }
 
-export { loadWebTreeSitter };
+export { heldTrees, languageAt, languageOf, treeParser };
+export type { HeldTrees, ParsedTree, ParserLanguage, TreeParser } from '../codegen-surface.ts';
 
 export type NativeEngine = Engine<LanguageAPI>;
 
@@ -1138,27 +1138,15 @@ export async function loadKindIdFromName(grammar: string): Promise<(name: string
 	return (await requireGrammarModule(grammar, 'types.ts')).kindIdFromName;
 }
 
-export async function loadLanguageForGrammar(grammar: string): Promise<{
-	Parser: typeof TS.Parser;
-	Language: typeof TS.Language;
-	lang: TS.Language;
-	isOverride: boolean;
-}> {
+export async function loadLanguageForGrammar(grammar: string): Promise<ParserLanguage & { readonly isOverride: boolean }> {
 	const { assertGeneratedManifestsClean } = await load('generatedManifest');
 	if (isGrammar(grammar)) assertGeneratedManifestsClean([grammar]);
-	const { Parser, Language } = await loadWebTreeSitter();
-
 	const overrideWasm = join(sittirDirOf({ dir: grammarPackageDir(grammar) }), 'parser.wasm');
-	if (existsSync(overrideWasm)) {
-		const lang = await Language.load(overrideWasm);
-		return { Parser, Language, lang, isOverride: true };
-	}
-
+	if (existsSync(overrideWasm)) return { ...(await languageAt(overrideWasm)), isOverride: true };
 	const baseWasm = upstreamWasmPath(grammar);
 	if (baseWasm === undefined)
 		throw new Error(`no parser wasm for grammar '${grammar}': neither .sittir/parser.wasm nor an upstream package`);
-	const lang = await Language.load(baseWasm);
-	return { Parser, Language, lang, isOverride: false };
+	return { ...(await languageAt(baseWasm)), isOverride: false };
 }
 
 export type { FactoryEntry, Hydrate } from '../grammar-internals.ts';

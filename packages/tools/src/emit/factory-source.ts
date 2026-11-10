@@ -805,6 +805,7 @@ import {
 	materialize,
 	slotAccessorOf,
 	slotNameOf,
+	treeParser,
 	type ModelFullForm
 } from '../validate/common.ts';
 import { Delimiter } from '@sittir/common/utils';
@@ -1014,11 +1015,9 @@ export async function emitFactorySourceText(
 ): Promise<string> {
 	const surface = options.surface ?? 'strict';
 	const nested = options.nested ?? 'calls';
-	const { Parser, lang } = await loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
-	const tree = parser.parse(source);
-	if (!tree || tree.rootNode.hasError) throw new Error(`emit-factory-source: the ${grammar} parse has errors`);
+	using parser = treeParser(await loadLanguageForGrammar(grammar));
+	using tree = parser.parse(source);
+	if (tree.root.hasError) throw new Error(`emit-factory-source: the ${grammar} parse has errors`);
 	const readNode = await readNodeOf(grammar);
 	const hydrate = await hydrateOf(grammar);
 	const handle = await buildReadHandle(grammar, source);

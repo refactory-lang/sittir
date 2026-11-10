@@ -1,0 +1,40 @@
+// Imports every entry point of every published workspace package, as its
+// published manifest names them (`publishConfig` overrides the fields it
+// holds), with the Node that runs this script. An import catches the syntax
+// that Node lacks and the globals a module reads while it loads, here rather
+// than in a consumer's install; a global used only inside a function
+// (`DisposableStack`, say) fails only when that function is called.
+import { readdirSync, readFileSync } from 'node:fs';
+
+const packages = new URL('../../packages/', import.meta.url);
+const failures = [];
+let loaded = 0;
+for (const dir of readdirSync(packages, { withFileTypes: true })) {
+	if (!dir.isDirectory()) continue;
+	let manifest;
+	try {
+		manifest = JSON.parse(readFileSync(new URL(`${dir.name}/package.json`, packages), 'utf8'));
+	} catch {
+		continue;
+	}
+	if (manifest.private) continue;
+	const published = { ...manifest, ...manifest.publishConfig };
+	const entries = new Set();
+	for (const target of Object.values(published.exports ?? { '.': published.main })) {
+		const file = typeof target === 'string' ? target : (target.import ?? target.default);
+		if (typeof file === 'string' && !file.includes('*') && !file.endsWith('.json')) entries.add(file);
+	}
+	for (const file of entries) {
+		try {
+			await import(new URL(`${dir.name}/${file}`, packages).href);
+			loaded++;
+		} catch (error) {
+			failures.push(`${manifest.name} ${file}: ${error instanceof Error ? error.message : String(error)}`);
+		}
+	}
+}
+console.log(`${loaded} entry points loaded on Node ${process.version}`);
+if (failures.length > 0) {
+	console.error(failures.join('\n'));
+	process.exit(1);
+}

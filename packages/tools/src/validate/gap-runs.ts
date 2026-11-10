@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { grammarPackage } from '@sittir/codegen/grammars';
-import { loadCorpusEntries, loadLanguageForGrammar, loadNodeModel, type CorpusEntry, type TSNode } from './common.ts';
+import { loadCorpusEntries, loadLanguageForGrammar, loadNodeModel, treeParser, type CorpusEntry, type TSNode } from './common.ts';
 
 export type Grouping = 'kind' | 'supertype' | 'role';
 
@@ -104,9 +104,7 @@ export function statementPairs(root: TSNode, source: string): { pairs: Pair[]; c
 type MutableSide = { within: Record<BlankBucket, number>; before: Record<BlankBucket, number>; after: Record<BlankBucket, number> };
 
 export async function computeRunCensus(grammar: string, sources?: readonly CorpusEntry[]): Promise<RunCensus> {
-	const { Parser, lang } = await loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
+	using parser = treeParser(await loadLanguageForGrammar(grammar));
 	const entries = sources ?? loadCorpusEntries(grammar);
 	const model = await loadNodeModel(grammar);
 	const supertype = supertypeOfKinds(model.subtypes);
@@ -135,19 +133,12 @@ export async function computeRunCensus(grammar: string, sources?: readonly Corpu
 	};
 	let unparsed = 0;
 	for (const entry of entries) {
-		const parsed = parser.parse(entry.source);
-		if (parsed === null || parsed.rootNode.hasError) {
-			parsed?.delete();
+		using parsed = parser.parse(entry.source);
+		if (parsed.root.hasError) {
 			unparsed += 1;
 			continue;
 		}
-		let scanned: ReturnType<typeof statementPairs>;
-		try {
-			scanned = statementPairs(parsed.rootNode, entry.source);
-		} finally {
-			parsed.delete();
-		}
-		const { pairs, commented } = scanned;
+		const { pairs, commented } = statementPairs(parsed.root, entry.source);
 		for (const [name, count] of commented) listOf(name).commented += count;
 		for (const pair of pairs) {
 			const list = listOf(pair.list);
