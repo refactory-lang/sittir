@@ -5,12 +5,13 @@
 // shallow copy (one level, children as coordinates) and for the detached copy
 // (no coordinate a render would slice), which also equals the copy detached
 // after it was made.
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { detachCoordinates } from '@sittir/common';
 import { TREE, treeTokenOf, type TreeToken } from '@sittir/common/utils';
 import { FULL_PIPELINE_TIMEOUT } from '../../../codegen/src/__tests__/helpers/timeouts.ts';
 import {
 	buildReadHandle,
+	disposeNativeEngines,
 	holdingTreeOf,
 	loadCorpusEntries,
 	loadNativeEngine,
@@ -26,6 +27,8 @@ import {
 } from '../../src/validate/common.ts';
 
 useValidationNodeStorage('arena');
+
+afterAll(disposeNativeEngines);
 
 function holds(value: unknown, token: TreeToken, path = '', out: string[] = []): string[] {
 	if (Array.isArray(value)) value.forEach((entry, at) => holds(entry, token, `${path}[${at}]`, out));
