@@ -40,6 +40,9 @@
 			}
 		}
 	},
+	"engines": {
+		"node": ">=24"
+	},
 	"scripts": {
 		"build": "tsrs --build tsconfig.build.json && tsdown",
 		"clean": "rm -rf build dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",

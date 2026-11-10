@@ -69,6 +69,9 @@
 			"default": "./dist/utils.js"
 		}
 	},
+	"engines": {
+		"node": ">=24"
+	},
 	"scripts": {
 		"build": "tsrs --build tsconfig.build.json",
 		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",

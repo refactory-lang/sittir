@@ -208,6 +208,70 @@ jobs:
       - name: Merge the shards' reports, record and cover
         run: pnpm run test -- --merge-reports --coverage
 
+  # The whole suite again on the newest Node the engines floor admits, over
+  # the build the `build (24.x)` job made: the packages and native addons
+  # carry no Node version, so only the runtime under the tests changes.
+  test-node-26:
+    name: test (26.x, shard ${{ matrix.shard }}/${{ strategy.job-total }})
+    needs: build
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js 26.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 26.x
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download the build
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace-build
+          path: .
+
+      - name: Date the downloaded build after the checkout
+        run: |
+          now=$(date +%s)
+          find packages node_modules/.cache/sittir \( -path '*/dist/*' -o -path 'packages/types/build/*' -o -name '*.tsbuildinfo' -o -name '*.node' -o -name '*.so' -o -path '*/native-build/*' \) -type f -exec touch -d "@$now" {} +
+
+      - name: Install the pinned Rust toolchain
+        uses: ./.github/actions/rust-toolchain
+
+      - name: Bootstrap the pinned build
+        uses: ./.github/actions/bootstrap
+
+      - name: Install the wasm toolchain once
+        run: npx tsx -e "import { ensureWasmToolchain } from './packages/codegen/src/transpile/tree-sitter-cli.ts'; ensureWasmToolchain();"
+
+      - name: Test
+        run: pnpm exec vitest run --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+
+  # Passes only when the build job and every Node 26 shard passed.
+  CI-26:
+    name: CI (26.x)
+    needs: [build, test-node-26]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Every upstream job passed
+        run: |
+          echo "build: ${{ needs.build.result }}, test shards: ${{ needs.test-node-26.result }}"
+          [ "${{ needs.build.result }}" = success ] && [ "${{ needs.test-node-26.result }}" = success ]
+
   # Spec 016 T009 (follow-up) — regression-checker (native mode).
   #
   # RETIRED the TS/JS-mode sibling job (`regression-checker`, compared
@@ -496,7 +560,7 @@ jobs:
       - name: Install Node (for codegen + regen)
         uses: actions/setup-node@v5
         with:
-          node-version: 22.x
+          node-version: 24.x
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -525,7 +589,7 @@ jobs:
             echo "  pnpm exec tsx packages/cli/src/cli.ts gen --grammar <name> --all --output packages/<name>/src"
             exit 1
           fi
-      # This job's Node is the oldest major the engines fields allow. Importing
+      # This job's Node is the engines floor. Importing
       # each published entry point catches the syntax this Node lacks and the
       # globals a module reads while it loads; a global used only inside a
       # function (`DisposableStack`, say) fails only when that function is called.
@@ -554,7 +618,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 22.x
+          node-version: 24.x
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -587,7 +651,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 22.x
+          node-version: 24.x
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

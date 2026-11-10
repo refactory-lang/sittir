@@ -52,7 +52,7 @@
 		"tree-sitter-scm": "github:tree-sitter-grammars/tree-sitter-query#v0.8.0"
 	},
 	"engines": {
-		"node": "^22.14.0 || >=23.6.0"
+		"node": ">=24"
 	},
 	"//native": "Native artifacts are grammar-local implementation details for @sittir/scm, built from rust/crates/sittir-scm: native/ holds the loader and its typings, and each platform's binary ships in its own sittir-scm-<platform> package with the engine and std it links.",
 	"sittir": {

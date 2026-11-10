@@ -52,7 +52,7 @@
 		"tree-sitter-typescript": "^0.23.2"
 	},
 	"engines": {
-		"node": "^22.14.0 || >=23.6.0"
+		"node": ">=24"
 	},
 	"//native": "Native artifacts are grammar-local implementation details for @sittir/typescript, built from rust/crates/sittir-typescript: native/ holds the loader and its typings, and each platform's binary ships in its own sittir-typescript-<platform> package with the engine and std it links.",
 	"sittir": {

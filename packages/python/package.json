@@ -52,7 +52,7 @@
 		"tree-sitter-python": "^0.25.0"
 	},
 	"engines": {
-		"node": "^22.14.0 || >=23.6.0"
+		"node": ">=24"
 	},
 	"//native": "Native artifacts are grammar-local implementation details for @sittir/python, built from rust/crates/sittir-python: native/ holds the loader and its typings, and each platform's binary ships in its own sittir-python-<platform> package with the engine and std it links.",
 	"sittir": {
