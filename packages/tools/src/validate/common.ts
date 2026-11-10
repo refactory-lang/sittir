@@ -31,13 +31,15 @@ import {
 	Source,
 	sourceOf,
 	holdTree,
+	holdTreeOn,
 	sideOf,
 	sidesOf,
 	nodeText,
 	spanOf,
 	sourceTextOf,
 	treeTokenOf,
-	type KindView
+	type KindView,
+	type TreeToken
 } from '@sittir/common/utils';
 import {
 	isFactoryNode,
@@ -871,7 +873,16 @@ export function walkWrappedTree(
 }
 
 export function materialize(root: unknown, accessorOf: SlotAccessorOf, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyUntypedNode {
-	return materializeValue(root, accessorOf, onAccessorThrow) as AnyUntypedNode;
+	return materializeValue(root, { accessorOf, onAccessorThrow }) as AnyUntypedNode;
+}
+
+export function materializeHoldingTree(
+	root: unknown,
+	accessorOf: SlotAccessorOf,
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void
+): AnyUntypedNode {
+	const token = root !== null && typeof root === 'object' ? treeTokenOf(root) : undefined;
+	return materializeValue(root, { accessorOf, onAccessorThrow, token }) as AnyUntypedNode;
 }
 
 export function materializeBuildInput(
@@ -879,8 +890,7 @@ export function materializeBuildInput(
 	accessorOf: SlotAccessorOf,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
-	const data = materialize(root, accessorOf, onAccessorThrow);
-	return validationNodeStorage === 'arena' ? holdingTreeOf(root, data) : data;
+	return validationNodeStorage === 'arena' ? materializeHoldingTree(root, accessorOf, onAccessorThrow) : materialize(root, accessorOf, onAccessorThrow);
 }
 
 export function builtStorageOf(node: unknown, accessorOf: SlotAccessorOf): unknown {
@@ -901,13 +911,14 @@ export function materializeShallow(
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
 	const ownRow = typeof root === 'object' && root !== null ? coordinateOf(root)?.$treeHandle : undefined;
+	const materializing: Materializing = { accessorOf, onAccessorThrow };
 	const asCoordinate = (value: unknown): unknown => {
 		if (Array.isArray(value)) return value.map(asCoordinate);
 		if (!hasNumericType(value)) return value;
 		const at = coordinateOf(value);
-		return at !== undefined && at.$treeHandle !== ownRow ? holdingTreeOf(value, at) : materializeValue(value, accessorOf, onAccessorThrow);
+		return at !== undefined && at.$treeHandle !== ownRow ? holdingTreeOf(value, at) : materializeValue(value, materializing);
 	};
-	return holdingTreeOf(root, materializeValue(root, accessorOf, onAccessorThrow, asCoordinate) as AnyUntypedNode);
+	return holdingTreeOf(root, materializeValue(root, materializing, asCoordinate) as AnyUntypedNode);
 }
 
 /**
@@ -947,16 +958,22 @@ export interface ValidatorSkip {
 	readonly input?: string;
 }
 
+interface Materializing {
+	readonly accessorOf: SlotAccessorOf;
+	readonly onAccessorThrow?: (rec: AccessorThrowRecord) => void;
+	readonly token?: TreeToken;
+}
+
 function materializeValue(
 	value: unknown,
-	accessorOf: SlotAccessorOf,
-	onAccessorThrow?: (rec: AccessorThrowRecord) => void,
-	slotValue: (value: unknown) => unknown = (inner) => materializeValue(inner, accessorOf, onAccessorThrow)
+	materializing: Materializing,
+	slotValue: (value: unknown) => unknown = (inner) => materializeValue(inner, materializing)
 ): unknown {
 	if (Array.isArray(value)) {
-		return value.map((entry) => materializeValue(entry, accessorOf, onAccessorThrow, slotValue));
+		return value.map((entry) => materializeValue(entry, materializing, slotValue));
 	}
 	if (!hasNumericType(value)) return value;
+	const { accessorOf, onAccessorThrow, token } = materializing;
 	const { accessors } = accessorOf(value.$type);
 	const materialized: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
@@ -975,13 +992,13 @@ function materializeValue(
 					: {
 							...layout,
 							trivia: mapTriviaEntries(layout.trivia as TriviaSides<unknown>, (entries) =>
-								entries.map((entry) => materializeValue(hydrateTriviaEntry(entry), accessorOf, onAccessorThrow))
+								entries.map((entry) => materializeValue(hydrateTriviaEntry(entry), materializing))
 							)
 						};
 			continue;
 		}
 		if (key.startsWith('_') && accessors[key] !== undefined) continue;
-		materialized[key] = materializeValue(raw, accessorOf, onAccessorThrow);
+		materialized[key] = materializeValue(raw, materializing);
 	}
 	for (const [storageKey, resolved] of slotValuesOf(value, accessorOf, onAccessorThrow)) {
 		if (resolved !== undefined) materialized[storageKey] = slotValue(resolved);
@@ -989,6 +1006,7 @@ function materializeValue(
 	carryPlace(value, materialized);
 	const source = sourceOf(value);
 	if (source !== undefined) (materialized as { [SOURCE]?: Source })[SOURCE] = source;
+	if (token !== undefined) holdTreeOn(materialized, token);
 	return carryRead(value, materialized);
 }
 
@@ -1590,7 +1608,7 @@ export function tableSides(source: ReadNodeLike, accessorOf: SlotAccessorOf, bui
 		sideOf(source as object, side).flatMap((entry): TriviaEntry[] => {
 			if (!isCoordinate(entry)) return isNode(entry) || typeof entry === 'number' ? [entry] : [];
 			const comment = hydrateTriviaEntry(entry);
-			const built = build(holdingTreeOf(comment, materialize(comment, accessorOf)));
+			const built = build(materializeHoldingTree(comment, accessorOf));
 			if (!isNode(built)) throw new Error(`ir lane: a comment built to ${JSON.stringify(built)}, not a node`);
 			return [built];
 		});
