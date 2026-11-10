@@ -236,6 +236,12 @@ export async function createStrictNativeEngine(grammar: string): Promise<Engine<
 	return releaseEngine(grammar, await createEngine(await languageByName(grammar), { api: 'strict', verifyStructure: 'runtime', nodeStorage: validationNodeStorage }));
 }
 
+export async function disposeNativeEngines(): Promise<void> {
+	const loading = [...cachedNativeEngines.values()].map((entry) => entry.engine);
+	cachedNativeEngines.clear();
+	for (const settled of await Promise.allSettled(loading)) if (settled.status === 'fulfilled') settled.value.dispose();
+}
+
 export function loadNativeEngine(grammar: string): Promise<NativeEngine> {
 	const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 	const binaries = hostBinaryFreshnessFor(repoRoot, grammar);

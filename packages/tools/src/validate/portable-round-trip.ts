@@ -43,7 +43,7 @@ const messageOf = (error: unknown): string => (error instanceof Error ? error.me
 const isStructure = (value: unknown): value is PortableStructure => typeof value === 'object' && value !== null && typeof (value as { readonly $path?: unknown }).$path === 'string';
 
 export async function runPortableRoundTrip(grammar: string, entries: readonly CorpusEntry[] = loadCorpusEntries(grammar)): Promise<PortableRoundTripResult | undefined> {
-	const engine = await createStrictNativeEngine(grammar);
+	using engine = await createStrictNativeEngine(grammar);
 	if (engine.portable === undefined) return undefined;
 	const runtime = await portableRuntime(engine);
 	const classify = classifierOf(engine.portable);
