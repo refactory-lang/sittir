@@ -267,6 +267,14 @@ Run on Task 6's branch before its PR is opened. Tasks 2–5 carry the standard C
   - retained memory on matter.js and next.js;
   - each against the ×1.10 bar.
   Anything over the bar is reported before the PR, with its cause.
+- [ ] **Step 1b: The slot instrument (the maintainer, 2026-11-11: "instrument both options").** It compares the per-source slot with a single arena without building the single arena. The two differ only in what a link keeps alive.
+  - Workload: on matter.js and next.js, a codemod that moves nodes, with their comments, from one parsed file into another file's tree, then releases the source roots. That leaves slots held only by links.
+  - For each slot only links hold, report:
+    - what it retains: source bytes, records, rows, token spans and placed sides;
+    - what its linked records need on their own: the records the links reach, plus the source bytes their spans cover.
+  - Report totals and the distribution of the ratio per corpus, in Task 6's PR body beside Step 1's table.
+  - It's a diagnostic. It adds no cost to a product read or render path and nothing to the lock-free census.
+  - It measures memory only. The single arena's effect on hydration speed would need it built.
 - [ ] **Step 2: Open Task 6's PR to master.** The body carries the table and checks the spec's memory claim against it. Merge waits for the user's word.
 
 ### Task 8: The lock-free census
