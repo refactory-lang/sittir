@@ -3,7 +3,7 @@
 
 use std::fmt;
 use std::fs;
-use std::io::{self, Write};
+use std::io::{self, Read, Seek, Write};
 use std::path::{Path, PathBuf};
 
 /// How [`write_file`] treats a path that already holds a file.
@@ -80,18 +80,23 @@ pub fn write_file(path: &Path, bytes: &[u8], mode: WriteMode) -> Result<bool, Fi
 
 /// `write_file`, writing through what `wrap` makes of the opened file, so a
 /// test can make the write fail partway.
-fn write_through<W: Write>(path: &Path, bytes: &[u8], mode: WriteMode, wrap: impl FnOnce(fs::File) -> W) -> Result<bool, FileError> {
+fn write_through<F: Rewrite>(path: &Path, bytes: &[u8], mode: WriteMode, wrap: impl FnOnce(fs::File) -> F) -> Result<bool, FileError> {
     let refused = |cause| FileError::Write { path: path.to_owned(), cause };
+    let not_regular = || refused(io::Error::other("it is not a regular file"));
     let created = |at: &Path| fs::OpenOptions::new().write(true).create_new(true).open(at);
     let (file, before) = match mode {
         WriteMode::Replace => match fs::metadata(path) {
-            Ok(meta) if !meta.is_file() => return Err(refused(io::Error::other("it is not a regular file"))),
+            Ok(meta) if !meta.is_file() => return Err(not_regular()),
             Ok(_) => {
-                let original = fs::read(path).map_err(refused)?;
+                let mut file = fs::OpenOptions::new().read(true).write(true).open(path).map_err(refused)?;
+                if !file.metadata().map_err(refused)?.is_file() {
+                    return Err(not_regular());
+                }
+                let mut original = Vec::new();
+                file.read_to_end(&mut original).map_err(refused)?;
                 if original == bytes {
                     return Ok(false);
                 }
-                let file = fs::OpenOptions::new().write(true).truncate(true).open(path).map_err(refused)?;
                 (file, Before::Held(original))
             }
             Err(cause) if cause.kind() == io::ErrorKind::NotFound => {
@@ -109,6 +114,37 @@ fn write_through<W: Write>(path: &Path, bytes: &[u8], mode: WriteMode, wrap: imp
         }
     };
     write_or_restore(path, wrap(file), bytes, before)
+}
+
+/// An opened file a write goes through. Writing it and putting it back
+/// both go through the descriptor the write opened, so a file another
+/// process renames over the path meanwhile is never touched.
+trait Rewrite {
+    /// Empties the file and writes `bytes` to it.
+    fn rewrite(&mut self, bytes: &[u8]) -> io::Result<()>;
+    /// Whether `path` still names this file.
+    fn is_at(&self, path: &Path) -> io::Result<bool>;
+}
+
+impl Rewrite for fs::File {
+    fn rewrite(&mut self, bytes: &[u8]) -> io::Result<()> {
+        self.set_len(0)?;
+        self.seek(io::SeekFrom::Start(0))?;
+        self.write_all(bytes)?;
+        self.flush()
+    }
+
+    #[cfg(unix)]
+    fn is_at(&self, path: &Path) -> io::Result<bool> {
+        use std::os::unix::fs::MetadataExt;
+        let (own, named) = (self.metadata()?, fs::symlink_metadata(path)?);
+        Ok(own.dev() == named.dev() && own.ino() == named.ino())
+    }
+
+    #[cfg(not(unix))]
+    fn is_at(&self, path: &Path) -> io::Result<bool> {
+        fs::symlink_metadata(path).map(|_| true)
+    }
 }
 
 /// What a file was before a write opened it: its bytes, or no file at the
@@ -137,34 +173,40 @@ fn referent(path: &Path) -> io::Result<PathBuf> {
 
 const MAX_LINKS: usize = 40;
 
-/// Writes `bytes` through `file`, which `path` opened and emptied, answering
-/// `true`. When the write fails partway, the file goes back to what it was
-/// (`before`): its bytes are written again, or the file the write created is
-/// removed, leaving any link to it as it was. The error names the path and
-/// the failure, and says whether the file went back.
-fn write_or_restore<W: Write>(path: &Path, mut file: W, bytes: &[u8], before: Before) -> Result<bool, FileError> {
-    let Err(cause) = file.write_all(bytes).and_then(|()| file.flush()) else {
+/// Writes `bytes` through `file`, which `path` opened, answering `true`.
+/// When the write fails partway, the file goes back to what it was
+/// (`before`), through the same descriptor: its bytes are written again, or
+/// the file the write created is removed, unless another file has taken
+/// its path since, which is left as it is. The error names the path and the
+/// failure, and says whether the file went back.
+fn write_or_restore<F: Rewrite>(path: &Path, mut file: F, bytes: &[u8], before: Before) -> Result<bool, FileError> {
+    let Err(cause) = file.rewrite(bytes) else {
         return Ok(true);
     };
-    drop(file);
     let outcome = match before {
-        Before::Held(original) => match fs::OpenOptions::new().write(true).truncate(true).open(path).and_then(|mut file| file.write_all(&original)) {
+        Before::Held(original) => match file.rewrite(&original) {
             Ok(()) => "its original bytes were restored".to_owned(),
             Err(failed) => format!("restoring its original bytes failed too: {failed}"),
         },
-        Before::Absent(created) => match fs::remove_file(&created) {
-            Ok(()) => "the file it created was removed".to_owned(),
+        Before::Absent(created) => match file.is_at(&created) {
+            Ok(true) => match fs::remove_file(&created) {
+                Ok(()) => "the file it created was removed".to_owned(),
+                Err(failed) => format!("removing the file it created failed too: {failed}"),
+            },
+            Ok(false) => "another file replaced the one it created, and was left as it is".to_owned(),
+            Err(failed) if failed.kind() == io::ErrorKind::NotFound => "the file it created is gone".to_owned(),
             Err(failed) => format!("removing the file it created failed too: {failed}"),
         },
     };
+    drop(file);
     Err(FileError::Write { path: path.to_owned(), cause: io::Error::new(cause.kind(), format!("{cause}; {outcome}")) })
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{read_source, write_file, write_through, FileError, WriteMode};
+    use super::{read_source, write_file, write_through, FileError, Rewrite, WriteMode};
     use std::fs;
-    use std::io::{self, Write};
+    use std::io;
     use std::path::{Path, PathBuf};
 
     fn directory(name: &str) -> PathBuf {
@@ -187,24 +229,31 @@ mod tests {
         std::os::unix::fs::MetadataExt::ino(&fs::metadata(path).unwrap())
     }
 
-    /// A writer that takes `left` bytes and then fails, as a full disk does.
-    struct FailsAfter<W> {
-        inner: W,
+    /// A file whose first write takes `left` bytes and then fails, as a full
+    /// disk does, running `meanwhile` (another process at work on the path)
+    /// just before. Later writes, the restore among them, go through.
+    struct FailsAfter<F> {
+        inner: F,
         left: usize,
+        meanwhile: Option<Box<dyn FnOnce()>>,
     }
 
-    impl<W: Write> Write for FailsAfter<W> {
-        fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
-            if self.left == 0 {
-                return Err(io::Error::new(io::ErrorKind::StorageFull, "no space left"));
-            }
-            let taken = self.inner.write(&bytes[..bytes.len().min(self.left)])?;
-            self.left -= taken;
-            Ok(taken)
+    fn fails_after(left: usize, meanwhile: impl FnOnce() + 'static) -> impl FnOnce(fs::File) -> FailsAfter<fs::File> {
+        move |inner| FailsAfter { inner, left, meanwhile: Some(Box::new(meanwhile)) }
+    }
+
+    impl<F: Rewrite> Rewrite for FailsAfter<F> {
+        fn rewrite(&mut self, bytes: &[u8]) -> io::Result<()> {
+            let Some(meanwhile) = self.meanwhile.take() else {
+                return self.inner.rewrite(bytes);
+            };
+            self.inner.rewrite(&bytes[..bytes.len().min(self.left)])?;
+            meanwhile();
+            Err(io::Error::new(io::ErrorKind::StorageFull, "no space left"))
         }
 
-        fn flush(&mut self) -> io::Result<()> {
-            self.inner.flush()
+        fn is_at(&self, path: &Path) -> io::Result<bool> {
+            self.inner.is_at(path)
         }
     }
 
@@ -355,7 +404,7 @@ mod tests {
         let dir = directory("restore");
         let path = dir.join("a.rs");
         fs::write(&path, "fn original() {}\n").unwrap();
-        let error = write_through(&path, b"fn replacement() {}\n", WriteMode::Replace, |file| FailsAfter { inner: file, left: 4 }).unwrap_err();
+        let error = write_through(&path, b"fn replacement() {}\n", WriteMode::Replace, fails_after(4, || {})).unwrap_err();
         assert!(matches!(error, FileError::Write { .. }), "{error:?}");
         let message = error.to_string();
         assert!(message.contains(&path.display().to_string()) && message.contains("no space left") && message.contains("restored"), "{message}");
@@ -366,7 +415,7 @@ mod tests {
     fn a_failed_create_removes_its_file() {
         let dir = directory("unmade");
         let path = dir.join("a.rs");
-        let error = write_through(&path, b"fn a() {}\n", WriteMode::CreateNew, |file| FailsAfter { inner: file, left: 4 }).unwrap_err();
+        let error = write_through(&path, b"fn a() {}\n", WriteMode::CreateNew, fails_after(4, || {})).unwrap_err();
         assert!(error.to_string().contains("removed"), "{error}");
         assert_eq!(entries(&dir), Vec::<String>::new());
     }
@@ -377,10 +426,59 @@ mod tests {
         let dir = directory("dangling-failed");
         let link = dir.join("out.rs");
         std::os::unix::fs::symlink("generated.rs", &link).unwrap();
-        let error = write_through(&link, b"fn a() {}\n", WriteMode::Replace, |file| FailsAfter { inner: file, left: 4 }).unwrap_err();
+        let error = write_through(&link, b"fn a() {}\n", WriteMode::Replace, fails_after(4, || {})).unwrap_err();
         assert!(error.to_string().contains("removed"), "{error}");
         assert!(fs::symlink_metadata(&link).unwrap().file_type().is_symlink());
         assert_eq!(entries(&dir), ["out.rs"]);
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn a_failed_write_never_touches_a_file_that_replaced_it() {
+        let dir = directory("raced");
+        let path = dir.join("a.rs");
+        fs::write(&path, "fn original() {}\n").unwrap();
+        let (editor, at) = (dir.join("editor.rs"), path.clone());
+        let error = write_through(&path, b"fn replacement() {}\n", WriteMode::Replace, fails_after(4, move || {
+            fs::write(&editor, "fn editor() {}\n").unwrap();
+            fs::rename(&editor, &at).unwrap();
+        }))
+        .unwrap_err();
+        assert!(error.to_string().contains("restored"), "{error}");
+        assert_eq!(fs::read_to_string(&path).unwrap(), "fn editor() {}\n");
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn a_failed_write_through_a_retargeted_link_restores_the_file_it_opened() {
+        let dir = directory("retarget");
+        let (a, b, link) = (dir.join("a.rs"), dir.join("b.rs"), dir.join("link.rs"));
+        fs::write(&a, "fn a() {}\n").unwrap();
+        fs::write(&b, "fn b() {}\n").unwrap();
+        std::os::unix::fs::symlink(&a, &link).unwrap();
+        let (to, at) = (b.clone(), link.clone());
+        write_through(&link, b"fn replacement() {}\n", WriteMode::Replace, fails_after(4, move || {
+            fs::remove_file(&at).unwrap();
+            std::os::unix::fs::symlink(&to, &at).unwrap();
+        }))
+        .unwrap_err();
+        assert_eq!(fs::read_to_string(&a).unwrap(), "fn a() {}\n");
+        assert_eq!(fs::read_to_string(&b).unwrap(), "fn b() {}\n");
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn a_failed_create_leaves_a_file_that_replaced_it() {
+        let dir = directory("create-raced");
+        let path = dir.join("a.rs");
+        let (editor, at) = (dir.join("editor.rs"), path.clone());
+        let error = write_through(&path, b"fn a() {}\n", WriteMode::CreateNew, fails_after(4, move || {
+            fs::write(&editor, "fn editor() {}\n").unwrap();
+            fs::rename(&editor, &at).unwrap();
+        }))
+        .unwrap_err();
+        assert!(error.to_string().contains("replaced"), "{error}");
+        assert_eq!(fs::read_to_string(&path).unwrap(), "fn editor() {}\n");
     }
 
     #[test]
