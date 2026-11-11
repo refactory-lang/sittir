@@ -5,7 +5,7 @@
 **Goal:** a file goes in as a path and comes out as a file, with no source or rendered text in JavaScript on the way. One native writer serves every write. An arena-only threaded batch, `engine.applyStyle` and `engine.checkStyle`, formats files and is measured beside oxfmt. A guard keeps unrequested crossings from coming back.
 
 **Architecture:**
-- One Rust module, `sittir-core::file_io`, reads a source file (with UTF-8 validation) and writes a rendered file atomically. Every save, write, create and batch file goes through it.
+- One Rust module, `sittir-core::file_io`, reads a source file (with UTF-8 validation) and writes a rendered file in place, restoring the original bytes if a write fails. Every save, write, create and batch file goes through it.
 - The napi layer gains a file sibling for each render entry point, a file parse, plan handles and the batch task. Its results cross as objects and numbers, not JSON.
 - `packages/common` builds `Pending`, the file verbs, `$save` and the batch on those entry points. The batch runs scoped Rust threads with one engine each, inside one asynchronous napi task.
 
@@ -44,7 +44,7 @@
 
 - **No text in JavaScript on a file path.** `read` (with no parse interceptor), `write`, `create`, `$save`, `Rendered.save`, `applyStyle` and `checkStyle` carry no source or rendered text through JavaScript. Text crosses only for `toString()`, `$render()`, `print()`, `$text()`, `diff()`, trivia sides, `parse(source)` and an interceptor's request.
 - **One writer.** Every file write goes through `sittir-core::file_io::write_file`. No `writeFileSync` and no `std::fs::write` remain on a runtime write path. Codegen's `util/write-file-atomic.ts` writes generated outputs and is not a runtime path.
-- **No sync to disk.** The writer is atomic by scratch file and rename, and calls no `sync_data` or `sync_all`.
+- **The writer writes in place** (the maintainer, 2026-11-10: "In place, restore on error"). It never replaces the file, so every kind of metadata survives. It uses no scratch file and no rename, and calls no `sync_data` or `sync_all`.
 - **A parsed tree's source bytes and strings never cross to JavaScript in bulk.**
 - **The batch is arena-only.** It refuses object storage, and an engine with a `render`, `parse` or `file` interceptor, by name.
 - **The lock-free census doesn't rise.**
@@ -69,7 +69,7 @@
 ## Review Focus
 
 1. **A file whose bytes already equal its render:** a UTF-8 BOM, no final newline, or CRLF under `newline: '\r\n'`. `write`, `save` and `applyStyle` leave it untouched, with the same inode and mtime and `changed: false`. Under the default `'\n'`, a CRLF file is rewritten with LF and reported changed. Owned by Task 1 (save) and Task 8 (batch).
-2. **The writer keeps what the file was, and cleans up after itself.** Overwriting keeps the file's permission bits, and a symlinked path writes the link's target and keeps the link. A failed write (missing directory, no permission, a target that is a directory) leaves the target as it was, with no scratch file behind, and names the path. Owned by Task 1.
+2. **The writer keeps what the file was.** A save keeps the file's mode, owner, ACL and extended attributes. A hard-linked file stays one file with its link. A symlinked path writes the link's target and keeps the link. A failed write (missing directory, no permission, a target that isn't a regular file, a write cut off partway) leaves the target's bytes as they were and names the path. Owned by Task 1.
 3. **A `Pending` used twice:** awaited twice, awaited then disposed, or its root edited between `write` and the commit. It writes once, and it writes the root as it is at the commit, which `diff().after` matches. Owned by Task 3.
 4. **A long-lived process formatting again and again,** such as a watch mode running `applyStyle` over 5,000 files every save. It never exhausts the process's tree ids: a batch worker's parse claims none. Owned by Task 8.
 5. **One file passed twice to `applyStyle`,** by the same path or by two spellings of it (`./a.ts` and `a.ts`). The call rejects before any work, naming the path. Owned by Task 8.
@@ -107,23 +107,24 @@
 
 ```rust
 #[test] fn an_unchanged_file_is_not_rewritten()        // same bytes → Ok(false); ino and mtime unchanged
-#[test] fn a_changed_file_is_replaced_whole()          // Ok(true); content equal; no scratch sibling left
+#[test] fn a_changed_file_is_written_in_place()        // Ok(true); content equal; the same inode
 #[test] fn create_new_refuses_an_existing_file()       // Err(Exists); the file's bytes unchanged
 #[test] fn a_missing_directory_is_refused_by_path()    // Err(Write); Display contains the path; no directory created
-#[test] fn overwrite_keeps_permission_bits()           // #[cfg(unix)] 0o755 before and after
+#[test] fn a_save_keeps_mode_and_hard_links()          // #[cfg(unix)] 0o755 survives; a hard link reads the new bytes
+#[test] fn a_save_keeps_extended_attributes()          // #[cfg(target_os = "macos")] an xattr set before survives the save
 #[test] fn a_symlinked_path_writes_its_target()        // #[cfg(unix)] the link is still a link; the target holds the new bytes
-#[test] fn a_failed_write_leaves_no_scratch()          // target is a directory → Err(Write); its parent lists no scratch file
+#[test] fn a_path_that_is_not_a_regular_file_is_refused() // a directory, and #[cfg(unix)] a FIFO, → Err(Write) without blocking
+#[test] fn a_failed_write_restores_the_original()      // a writer that fails after n bytes → Err(Write); the file holds its original bytes
 #[test] fn a_non_utf8_source_is_refused_by_path()      // read_source of [b'a', 0xff] → Err(Encoding { byte: 1, .. }); Display names the path
 ```
 
 - [ ] **Step 2:** Run `cargo test -p sittir-core --no-default-features file_io`. Expected: FAIL (no module).
 - [ ] **Step 3: Implement `file_io`.**
   - Read the current bytes when the file exists. Equal bytes under `Replace` return `Ok(false)` without writing.
-  - Resolve an existing target through `fs::canonicalize`, so a symlink keeps its link.
-  - Write a scratch file beside the resolved target. Its name carries the process id and the thread, with no counter.
-  - Copy the existing target's permissions onto the scratch.
-  - Then `rename` for `Replace`, or `hard_link` and remove the scratch for `CreateNew`. A hard link fails when the target exists, so `CreateNew` never clobbers.
-  - Remove the scratch on every error. Never sync, and never create a directory.
+  - Refuse a path whose metadata isn't a regular file before opening it, so a FIFO never blocks.
+  - `Replace` opens the existing file (following a symlink), truncates it and writes the bytes. `CreateNew` opens with `create_new`, which refuses an existing file.
+  - The write goes through one function generic over `Write`, so a test can make it fail partway. On a failed write, rewrite the original bytes and return the error, naming the path, and saying so if the restore failed too.
+  - Never sync, and never create a directory.
 - [ ] **Step 4:** Run the Rust tests again. Expected: PASS.
 - [ ] **Step 5: Write the TypeScript tests** `render-save.test.ts`, as `describe.each(['object', 'arena'])` over a rust engine:
 
@@ -146,7 +147,7 @@ it('an intercepted render saves the intercepted text') // intercept: [{ render: 
 - [ ] **Step 8:** Run `pnpm run regen:all`, then add the five new names to `ADDON_FUNCTIONS`.
 - [ ] **Step 9:** Run the render-save and native-typings tests. Expected: PASS.
 - [ ] **Step 10:** Run the three-way verification, cargo, clippy and the census.
-- [ ] **Step 11:** Commit `file_io.rs`, `lib.rs`, `napi_engine.rs`, `engine.ts`, `create-engine.ts`, both tests and the regenerated natives (pathspec). Message: `feat(core): one atomic native writer, and every render's save through it`.
+- [ ] **Step 11:** Commit `file_io.rs`, `lib.rs`, `napi_engine.rs`, `engine.ts`, `create-engine.ts`, both tests and the regenerated natives (pathspec). Message: `feat(core): one native writer, and every render's save through it`.
 
 ### Task 2: `parse` returns an object (after the arena tree drop)
 
@@ -438,8 +439,8 @@ it('isSourcePath narrows by the file types')        // rust: 'a.rs' true, 'a.txt
 ## Calls made in this plan, for the maintainer to check
 
 1. **Order:** Tasks 1, 3, 4 and 6 first. Tasks 2, 5 and 7 build on the arena tree drop, then come 8 and 9.
-2. **The writer never syncs to disk and never creates a directory.** A missing parent is refused, naming the path.
-3. **`create` refuses an existing file,** atomically, through a hard link of the scratch file.
+2. **The writer writes in place, restoring the original on a failed write** (your ruling). It never syncs to disk and never creates a directory. A missing parent, or a path that isn't a regular file, is refused, naming the path.
+3. **`create` refuses an existing file,** through `create_new`.
 4. **`applyStyle` rejects the whole call** when it's given one file twice, before any work.
 5. **A write under a render interceptor writes the intercepted text.** That text crosses back to native through `writeText`, since the interceptor asked for it.
 6. **Strings with a closed set of values cross as numbers.** These are the trivia side and `readMany`'s `wire`. `findAndRead` is removed, and `readMany` too if nothing calls it.
