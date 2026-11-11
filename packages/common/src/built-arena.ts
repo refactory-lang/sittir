@@ -479,15 +479,22 @@ export class BuiltArena {
 
 	#abandon(minted: number, moved: number, undos: number, drops: number): void {
 		let failed: { readonly error: unknown } | undefined;
-		for (let n = this.#undosCount - 1; n >= undos; n--) {
+		const attempt = (step: () => void): void => {
 			try {
-				this.#undos[n]!();
+				step();
 			} catch (error) {
 				failed ??= { error };
 			}
+		};
+		for (let n = this.#movedCount - 1; n >= moved; n--) {
+			const at = this.#moved[n]!;
+			attempt(() => this.#giveBack(at));
 		}
-		for (let n = this.#movedCount - 1; n >= moved; n--) this.#giveBack(this.#moved[n]!);
-		for (let n = this.#mintedCount - 1; n >= minted; n--) this.release(this.#minted[n]!);
+		for (let n = this.#undosCount - 1; n >= undos; n--) attempt(this.#undos[n]!);
+		for (let n = this.#mintedCount - 1; n >= minted; n--) {
+			const at = this.#minted[n]!;
+			attempt(() => this.release(at));
+		}
 		this.#movedCount = moved;
 		this.#forgetUndos(undos);
 		this.#forgetMinted(minted);
@@ -737,16 +744,17 @@ export class BuiltArena {
 	}
 
 	#park(leaf: object, trivia: NodeTrivia): void {
-		const taken: (() => void)[] = [];
+		const records: number[] = [];
+		const trees: (readonly [slot: number, treeId: number])[] = [];
+		this.#eachParkedIn(trivia, (at) => records.push(at), (tree) => trees.push(heldIn(tree)));
+		let held = 0;
 		try {
-			this.#eachCount(trivia, (take, drop) => {
-				take();
-				taken.push(drop);
-			});
+			for (; held < trees.length; held++) this.#holdParse(...trees[held]!);
 		} catch (error) {
-			for (let n = taken.length - 1; n >= 0; n--) taken[n]!();
+			while (held-- > 0) this.forgetParses(this.#releaseParse(...trees[held]!));
 			throw error;
 		}
+		for (const at of records) this.hold(at);
 		this.#parkedBy.set(leaf, trivia);
 	}
 
@@ -763,20 +771,15 @@ export class BuiltArena {
 	}
 
 	#dropParked(trivia: NodeTrivia): void {
-		this.#eachCount(trivia, (_take, drop) => drop());
+		this.#eachParkedIn(
+			trivia,
+			(at) => this.drop(at, this.format.held.record),
+			(tree) => this.forgetParses(this.#releaseParse(...heldIn(tree)))
+		);
 	}
 
-	#eachCount(trivia: NodeTrivia, each: (take: () => void, drop: () => void) => void): void {
-		forEachTriviaList(trivia as TriviaSides<unknown>, (entries) =>
-			this.#eachParked(
-				entries,
-				(at) => each(() => this.hold(at), () => this.drop(at, this.format.held.record)),
-				(tree) => {
-					const [slot, treeId] = heldIn(tree);
-					each(() => this.#holdParse(slot, treeId), () => this.forgetParses(this.#releaseParse(slot, treeId)));
-				}
-			)
-		);
+	#eachParkedIn(trivia: NodeTrivia, each: (at: number) => void, eachTree: (tree: TreeHandle) => void): void {
+		forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => this.#eachParked(entries, each, eachTree));
 	}
 
 	#eachParked(entries: readonly unknown[], each: (at: number) => void, eachTree?: (tree: TreeHandle) => void): void {
