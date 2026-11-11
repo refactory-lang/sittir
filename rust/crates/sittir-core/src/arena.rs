@@ -685,6 +685,24 @@ impl BuiltChunks {
         std::mem::take(&mut self.freed_parses)
     }
 
+    /// Counts once more the slot holding the records of tree `tree`, for a
+    /// side entry naming one of them, as a link record counts it; a tree no
+    /// slot of this arena holds takes no count.
+    pub fn retain_slot_of(&mut self, tree: TreeId) {
+        if let Some(slot) = self.held.slot_of(tree) {
+            let _ = self.held.retain(slot, tree);
+        }
+    }
+
+    /// Drops the count a side entry took of the slot holding the records of
+    /// tree `tree` (`retain_slot_of`), noting the slot freed when it was the
+    /// last count.
+    pub fn release_slot_of(&mut self, tree: TreeId) {
+        if let Some(slot) = self.held.slot_of(tree) {
+            self.release_parse(slot);
+        }
+    }
+
     /// Drops the count the root of the parse `parse` holds of `slot`; a slot
     /// that no longer holds that parse is left as it is, so a root releases
     /// only its own parse.

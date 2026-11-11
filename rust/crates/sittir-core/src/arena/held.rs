@@ -113,10 +113,17 @@ impl<P: Held> HeldParses<P> {
         self.get(slot).filter(|held| held.id() == parse).ok_or(ParseReleased(parse))
     }
 
+    /// The slot that holds the records of tree `tree`, when one does.
+    #[must_use]
+    pub fn slot_of(&self, tree: TreeId) -> Option<ParseSlot> {
+        let at = self.slots.iter().position(|held| held.parse.as_ref().is_some_and(|held| held.id() == tree))?;
+        Some(ParseSlot(crate::types::narrow(at)))
+    }
+
     /// Whether a slot holds the parse `parse`.
     #[must_use]
     pub fn holds(&self, parse: TreeId) -> bool {
-        self.slots.iter().any(|held| held.parse.as_ref().is_some_and(|held| held.id() == parse))
+        self.slot_of(parse).is_some()
     }
 
     /// Takes every parse out of the table, whatever counts it, and answers

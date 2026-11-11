@@ -267,6 +267,62 @@ describe('an arena parse, held by its engine and counted by its root and each re
 		}
 	});
 
+	it("keeps the slot of a record a built node's side names past its root's release, and frees it with the built node", async () => {
+		using engine = await arena();
+		const before = live();
+		const donor = engine.parse('/// kept\nfn f() {}\n') as unknown as Root;
+		const b = engine.build;
+		const built = b.binaryExpression({ left: b.identifier('x'), operator: '+', right: b.identifier('y') }) as unknown as Sided;
+		built.$trivia.leading(sidedOf(donor).$trivia.leading()[0]!);
+		donor[Symbol.dispose]();
+		expect(live()).toBe(before + 1);
+		expect(String(engine.render(built as never))).toBe('/// kept\nx + y');
+		engine.release(built as never);
+		expect(live()).toBe(before);
+	});
+
+	it('keeps the slot of a record an interceptor puts on a side of the built node it answers, past the release of the root it discards', async () => {
+		const hook = {
+			parse: (_: unknown, next: () => unknown): unknown => {
+				const b = engine.build;
+				const built = b.binaryExpression({ left: b.identifier('x'), operator: '+', right: b.identifier('y') }) as unknown as Sided;
+				built.$trivia.leading(sidedOf(next() as Root).$trivia.leading()[0]!);
+				return built;
+			}
+		};
+		using engine = await createEngine(rust, { nodeStorage: 'arena', intercept: [hook as never] });
+		const before = live();
+		const answer = engine.parse('/// kept\nfn f() {}\n');
+		expect(live()).toBe(before + 1);
+		expect(String(engine.render(answer as never))).toBe('/// kept\nx + y');
+		engine.release(answer as never);
+		expect(live()).toBe(before);
+	});
+
+	it("keeps the slot of a record another tree's side names past its root's release, and frees it with that tree", async () => {
+		using engine = await arena();
+		const before = live();
+		const host = engine.parse('fn host() {}\n') as unknown as Root;
+		const donor = engine.parse('/// kept\nfn f() {}\n') as unknown as Root;
+		sidedOf(host).$trivia.leading(sidedOf(donor).$trivia.leading()[0]!);
+		donor[Symbol.dispose]();
+		expect(live()).toBe(before + 2);
+		expect(String(engine.render(host as never))).toBe('/// kept\nfn host() {}\n');
+		host[Symbol.dispose]();
+		expect(live()).toBe(before);
+	});
+
+	it("takes no count of a tree's own slot for a record its own side names, so its root's release frees it", async () => {
+		using engine = await arena();
+		const before = live();
+		const root = engine.parse('/// kept\nfn f() {}\nfn g() {}\n') as unknown as Root;
+		const [first, second] = root.statements() as unknown as [Sided, Sided];
+		second.$trivia.leading(first.$trivia.leading()[0]!);
+		expect(String(engine.render(root as never))).toMatch(/^\/\/\/ kept\nfn f\(\) \{\}\n\s*\/\/\/ kept\nfn g\(\) \{\}\n$/);
+		root[Symbol.dispose]();
+		expect(live()).toBe(before);
+	});
+
 	it('refuses to dispose a parse its engine holds, which its root then frees', async () => {
 		using engine = await arena();
 		const before = live();
