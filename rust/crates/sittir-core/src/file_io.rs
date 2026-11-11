@@ -70,28 +70,36 @@ pub fn read_source(path: &Path) -> Result<String, FileError> {
 /// the scratch file. Nothing is synced to disk.
 ///
 /// `Replace` leaves a file that already holds `bytes` untouched and answers
-/// `false`. It writes a symlink's target, keeping the link, even when the
-/// target doesn't exist yet. A replaced file keeps its permission bits, and
-/// its new bytes are readable only by the owner until they replace it. No
+/// `false`, and refuses a path that names anything but a regular file. It
+/// writes a symlink's target, keeping the link, even when the target
+/// doesn't exist yet. A replaced file keeps its owner, group and permission
+/// bits, refusing the write when its owner or group can't be kept, and its
+/// new bytes are readable only by the owner until they replace it. No
 /// directory is ever created.
 pub fn write_file(path: &Path, bytes: &[u8], mode: WriteMode) -> Result<bool, FileError> {
     let refused = |cause| FileError::Write { path: path.to_owned(), cause };
-    let (target, permissions) = match mode {
+    let (target, replaced) = match mode {
         WriteMode::Replace => match fs::canonicalize(path) {
             Ok(resolved) => {
                 let meta = fs::metadata(&resolved).map_err(refused)?;
-                if meta.is_file() && holds(&resolved, &meta, bytes) {
+                if !meta.is_file() {
+                    return Err(refused(io::Error::other("it is not a regular file")));
+                }
+                if holds(&resolved, &meta, bytes) {
                     return Ok(false);
                 }
-                (resolved, Some(meta.permissions()))
+                (resolved, Some(meta))
             }
             Err(cause) if cause.kind() == io::ErrorKind::NotFound => (referent(path).map_err(refused)?, None),
             Err(cause) => return Err(refused(cause)),
         },
         WriteMode::CreateNew => (path.to_owned(), None),
     };
-    let (scratch, mut file) = create_scratch(&target, permissions.is_some()).map_err(refused)?;
-    let staged = file.write_all(bytes).and_then(|()| permissions.map_or(Ok(()), |permissions| file.set_permissions(permissions)));
+    let (scratch, mut file) = create_scratch(&target, replaced.is_some()).map_err(refused)?;
+    let staged = file.write_all(bytes).and_then(|()| match &replaced {
+        Some(meta) => keep_owner(&file, meta).and_then(|()| file.set_permissions(meta.permissions())),
+        None => Ok(()),
+    });
     drop(file);
     let written = staged.and_then(|()| match mode {
         WriteMode::Replace => fs::rename(&scratch, &target),
@@ -108,6 +116,27 @@ pub fn write_file(path: &Path, bytes: &[u8], mode: WriteMode) -> Result<bool, Fi
 
 fn holds(path: &Path, meta: &fs::Metadata, bytes: &[u8]) -> bool {
     meta.len() == bytes.len() as u64 && fs::read(path).is_ok_and(|current| current == bytes)
+}
+
+/// Gives `file` the owner and group of the file it replaces (`replaced`),
+/// so the replacement is readable by no one the replaced file wasn't.
+/// Refuses when the process may not, rather than widening who can read it.
+#[cfg(unix)]
+fn keep_owner(file: &fs::File, replaced: &fs::Metadata) -> io::Result<()> {
+    use std::os::unix::fs::MetadataExt;
+    let own = file.metadata()?;
+    let uid = (own.uid() != replaced.uid()).then_some(replaced.uid());
+    let gid = (own.gid() != replaced.gid()).then_some(replaced.gid());
+    if uid.is_none() && gid.is_none() {
+        return Ok(());
+    }
+    std::os::unix::fs::fchown(file, uid, gid).map_err(|cause| io::Error::new(cause.kind(), format!("its owner and group can't be kept: {cause}")))
+}
+
+#[cfg(not(unix))]
+#[allow(clippy::unnecessary_wraps, reason = "the unix twin refuses an owner it can't keep")]
+fn keep_owner(_: &fs::File, _: &fs::Metadata) -> io::Result<()> {
+    Ok(())
 }
 
 /// `path` with each symlink its last component names followed, so a link to
@@ -315,6 +344,48 @@ mod tests {
         let (scratch, file) = create_scratch(&path, true).unwrap();
         assert_eq!(file.metadata().unwrap().permissions().mode() & 0o777, 0o600);
         fs::remove_file(scratch).unwrap();
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn a_replaced_file_keeps_its_group() {
+        use std::os::unix::fs::{MetadataExt, PermissionsExt};
+        let dir = directory("group");
+        let path = dir.join("shared.rs");
+        fs::write(&path, "a\n").unwrap();
+        let default = fs::metadata(&path).unwrap().gid();
+        let groups = std::process::Command::new("id").arg("-G").output().unwrap();
+        let Some(other) = String::from_utf8_lossy(&groups.stdout).split_whitespace().filter_map(|gid| gid.parse::<u32>().ok()).find(|&gid| gid != default) else {
+            return;
+        };
+        std::os::unix::fs::chown(&path, None, Some(other)).unwrap();
+        fs::set_permissions(&path, fs::Permissions::from_mode(0o640)).unwrap();
+        assert!(write_file(&path, b"b\n", WriteMode::Replace).unwrap());
+        let meta = fs::metadata(&path).unwrap();
+        assert_eq!((meta.gid(), meta.permissions().mode() & 0o777), (other, 0o640));
+        assert_eq!(fs::read_to_string(&path).unwrap(), "b\n");
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn a_socket_or_pipe_is_refused_and_kept() {
+        use std::os::unix::fs::FileTypeExt;
+        let dir = directory("special");
+        let socket = dir.join("a.sock");
+        let _listener = std::os::unix::net::UnixListener::bind(&socket).unwrap();
+        let pipe = dir.join("a.pipe");
+        assert!(std::process::Command::new("mkfifo").arg(&pipe).status().unwrap().success());
+        let link = dir.join("link.rs");
+        std::os::unix::fs::symlink(&pipe, &link).unwrap();
+        for path in [&socket, &pipe, &link] {
+            let error = write_file(path, b"a\n", WriteMode::Replace).unwrap_err();
+            assert!(matches!(error, FileError::Write { .. }), "{error:?}");
+            assert!(error.to_string().contains("not a regular file"), "{error}");
+        }
+        assert!(fs::symlink_metadata(&socket).unwrap().file_type().is_socket());
+        assert!(fs::symlink_metadata(&pipe).unwrap().file_type().is_fifo());
+        assert!(fs::symlink_metadata(&link).unwrap().file_type().is_symlink());
+        assert_eq!(entries(&dir), ["a.pipe", "a.sock", "link.rs"]);
     }
 
     #[test]
