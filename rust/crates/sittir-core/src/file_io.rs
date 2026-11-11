@@ -75,47 +75,84 @@ pub fn read_source(path: &Path) -> Result<String, FileError> {
 /// (`write_or_restore`). A process killed mid-write can still leave a
 /// partial file. Nothing is synced to disk.
 pub fn write_file(path: &Path, bytes: &[u8], mode: WriteMode) -> Result<bool, FileError> {
+    write_through(path, bytes, mode, |file| file)
+}
+
+/// `write_file`, writing through what `wrap` makes of the opened file, so a
+/// test can make the write fail partway.
+fn write_through<W: Write>(path: &Path, bytes: &[u8], mode: WriteMode, wrap: impl FnOnce(fs::File) -> W) -> Result<bool, FileError> {
     let refused = |cause| FileError::Write { path: path.to_owned(), cause };
-    match mode {
-        WriteMode::Replace => {
-            let original = match fs::metadata(path) {
-                Ok(meta) if !meta.is_file() => return Err(refused(io::Error::other("it is not a regular file"))),
-                Ok(_) => Some(fs::read(path).map_err(refused)?),
-                Err(cause) if cause.kind() == io::ErrorKind::NotFound => None,
-                Err(cause) => return Err(refused(cause)),
-            };
-            if original.as_deref() == Some(bytes) {
-                return Ok(false);
+    let created = |at: &Path| fs::OpenOptions::new().write(true).create_new(true).open(at);
+    let (file, before) = match mode {
+        WriteMode::Replace => match fs::metadata(path) {
+            Ok(meta) if !meta.is_file() => return Err(refused(io::Error::other("it is not a regular file"))),
+            Ok(_) => {
+                let original = fs::read(path).map_err(refused)?;
+                if original == bytes {
+                    return Ok(false);
+                }
+                let file = fs::OpenOptions::new().write(true).truncate(true).open(path).map_err(refused)?;
+                (file, Before::Held(original))
             }
-            let file = fs::OpenOptions::new().write(true).truncate(true).create(original.is_none()).open(path).map_err(refused)?;
-            write_or_restore(path, file, bytes, original.as_deref())
-        }
+            Err(cause) if cause.kind() == io::ErrorKind::NotFound => {
+                let target = referent(path).map_err(refused)?;
+                (created(&target).map_err(refused)?, Before::Absent(target))
+            }
+            Err(cause) => return Err(refused(cause)),
+        },
         WriteMode::CreateNew => {
-            let file = fs::OpenOptions::new().write(true).create_new(true).open(path).map_err(|cause| match cause.kind() {
+            let file = created(path).map_err(|cause| match cause.kind() {
                 io::ErrorKind::AlreadyExists => FileError::Exists { path: path.to_owned() },
                 _ => refused(cause),
             })?;
-            write_or_restore(path, file, bytes, None)
+            (file, Before::Absent(path.to_owned()))
         }
-    }
+    };
+    write_or_restore(path, wrap(file), bytes, before)
 }
 
+/// What a file was before a write opened it: its bytes, or no file at the
+/// path the write created.
+enum Before {
+    Held(Vec<u8>),
+    Absent(PathBuf),
+}
+
+/// `path` with each symlink its last component names followed, so a link to
+/// a file that doesn't exist yet names that file. A path that isn't a link
+/// is itself.
+fn referent(path: &Path) -> io::Result<PathBuf> {
+    let mut current = path.to_owned();
+    for _ in 0..MAX_LINKS {
+        match fs::symlink_metadata(&current) {
+            Ok(meta) if meta.file_type().is_symlink() => {
+                let link = fs::read_link(&current)?;
+                current = current.parent().map_or_else(|| link.clone(), |dir| dir.join(&link));
+            }
+            _ => return Ok(current),
+        }
+    }
+    Err(io::Error::other(format!("more than {MAX_LINKS} symbolic links")))
+}
+
+const MAX_LINKS: usize = 40;
+
 /// Writes `bytes` through `file`, which `path` opened and emptied, answering
-/// `true`. When the write fails partway, the file goes back to what it was:
-/// its `original` bytes are written again, or a file the write created is
-/// removed. The error names the path and the failure, and says whether the
-/// file went back.
-fn write_or_restore<W: Write>(path: &Path, mut file: W, bytes: &[u8], original: Option<&[u8]>) -> Result<bool, FileError> {
+/// `true`. When the write fails partway, the file goes back to what it was
+/// (`before`): its bytes are written again, or the file the write created is
+/// removed, leaving any link to it as it was. The error names the path and
+/// the failure, and says whether the file went back.
+fn write_or_restore<W: Write>(path: &Path, mut file: W, bytes: &[u8], before: Before) -> Result<bool, FileError> {
     let Err(cause) = file.write_all(bytes).and_then(|()| file.flush()) else {
         return Ok(true);
     };
     drop(file);
-    let outcome = match original {
-        Some(original) => match fs::OpenOptions::new().write(true).truncate(true).open(path).and_then(|mut file| file.write_all(original)) {
+    let outcome = match before {
+        Before::Held(original) => match fs::OpenOptions::new().write(true).truncate(true).open(path).and_then(|mut file| file.write_all(&original)) {
             Ok(()) => "its original bytes were restored".to_owned(),
             Err(failed) => format!("restoring its original bytes failed too: {failed}"),
         },
-        None => match fs::remove_file(path) {
+        Before::Absent(created) => match fs::remove_file(&created) {
             Ok(()) => "the file it created was removed".to_owned(),
             Err(failed) => format!("removing the file it created failed too: {failed}"),
         },
@@ -125,7 +162,7 @@ fn write_or_restore<W: Write>(path: &Path, mut file: W, bytes: &[u8], original: 
 
 #[cfg(test)]
 mod tests {
-    use super::{read_source, write_file, write_or_restore, FileError, WriteMode};
+    use super::{read_source, write_file, write_through, FileError, WriteMode};
     use std::fs;
     use std::io::{self, Write};
     use std::path::{Path, PathBuf};
@@ -318,8 +355,7 @@ mod tests {
         let dir = directory("restore");
         let path = dir.join("a.rs");
         fs::write(&path, "fn original() {}\n").unwrap();
-        let file = fs::OpenOptions::new().write(true).truncate(true).open(&path).unwrap();
-        let error = write_or_restore(&path, FailsAfter { inner: file, left: 4 }, b"fn replacement() {}\n", Some(b"fn original() {}\n")).unwrap_err();
+        let error = write_through(&path, b"fn replacement() {}\n", WriteMode::Replace, |file| FailsAfter { inner: file, left: 4 }).unwrap_err();
         assert!(matches!(error, FileError::Write { .. }), "{error:?}");
         let message = error.to_string();
         assert!(message.contains(&path.display().to_string()) && message.contains("no space left") && message.contains("restored"), "{message}");
@@ -330,10 +366,21 @@ mod tests {
     fn a_failed_create_removes_its_file() {
         let dir = directory("unmade");
         let path = dir.join("a.rs");
-        let file = fs::OpenOptions::new().write(true).create_new(true).open(&path).unwrap();
-        let error = write_or_restore(&path, FailsAfter { inner: file, left: 4 }, b"fn a() {}\n", None).unwrap_err();
+        let error = write_through(&path, b"fn a() {}\n", WriteMode::CreateNew, |file| FailsAfter { inner: file, left: 4 }).unwrap_err();
         assert!(error.to_string().contains("removed"), "{error}");
         assert_eq!(entries(&dir), Vec::<String>::new());
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn a_failed_write_through_a_dangling_link_removes_its_target_and_keeps_the_link() {
+        let dir = directory("dangling-failed");
+        let link = dir.join("out.rs");
+        std::os::unix::fs::symlink("generated.rs", &link).unwrap();
+        let error = write_through(&link, b"fn a() {}\n", WriteMode::Replace, |file| FailsAfter { inner: file, left: 4 }).unwrap_err();
+        assert!(error.to_string().contains("removed"), "{error}");
+        assert!(fs::symlink_metadata(&link).unwrap().file_type().is_symlink());
+        assert_eq!(entries(&dir), ["out.rs"]);
     }
 
     #[test]
