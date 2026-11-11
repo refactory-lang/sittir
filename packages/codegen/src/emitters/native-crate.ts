@@ -2,7 +2,7 @@ import { NATIVE_NAPI_CONFIG, NATIVE_TARGETS, grammarDisplayName, nativeBinaryNam
 import { NATIVE_PROFILE_FLAGS, type NativeProfile } from '../scripts/native-binary-freshness.ts';
 import { TRIVIA_NODE } from './render-module.ts';
 
-export const NATIVE_RENDER_NODE_ABI = 26;
+export const NATIVE_RENDER_NODE_ABI = 27;
 
 export interface NativeCrateFile {
 	readonly path: string;
