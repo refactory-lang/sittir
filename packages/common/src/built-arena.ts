@@ -264,7 +264,7 @@ export class BuiltArena {
 	readonly #leafSited: (Set<number> | undefined)[] = [];
 	readonly #trivia: BuiltRecords['trivia'];
 	readonly #writeLeafSites: WriteLeafSites;
-	readonly #parkedBy = new WeakMap<object, object>();
+	readonly #parkedBy = new WeakMap<object, NodeTrivia>();
 	readonly #exemplars: object[] = [];
 	readonly #siteAlive = (holder: number): boolean => this.#words.has(chunkOf(holder, this.format)) && this.#linkHeld(holder);
 	#placedLast: { readonly node: object; readonly placed: readonly unknown[] } | undefined;
@@ -278,6 +278,8 @@ export class BuiltArena {
 	#movedCount = 0;
 	readonly #undos: ((() => void) | undefined)[] = [];
 	#undosCount = 0;
+	readonly #dropsAfter: (NodeTrivia | undefined)[] = [];
+	#dropsAfterCount = 0;
 	readonly #deferred: (Map<number, () => void> | undefined)[] = [];
 	#deferredCount = 0;
 	#pruneAt = DEFERRED_PRUNE;
@@ -458,28 +460,59 @@ export class BuiltArena {
 		const minted = this.#mintedCount;
 		const moved = this.#movedCount;
 		const undos = this.#undosCount;
+		const drops = this.#dropsAfterCount;
 		this.#scopes++;
 		try {
 			return build();
 		} catch (error) {
-			this.#abandon(minted, moved, undos);
+			this.#abandon(minted, moved, undos, drops);
 			throw error;
 		} finally {
 			if (--this.#scopes === 0) {
 				if (this.#commits.length === 0) this.#forgetMinted(0);
 				this.#movedCount = 0;
 				this.#forgetUndos(0);
+				this.#runDropsAfter();
 			}
 		}
 	}
 
-	#abandon(minted: number, moved: number, undos: number): void {
-		for (let n = this.#undosCount - 1; n >= undos; n--) this.#undos[n]!();
+	#abandon(minted: number, moved: number, undos: number, drops: number): void {
+		let failed: { readonly error: unknown } | undefined;
+		for (let n = this.#undosCount - 1; n >= undos; n--) {
+			try {
+				this.#undos[n]!();
+			} catch (error) {
+				failed ??= { error };
+			}
+		}
 		for (let n = this.#movedCount - 1; n >= moved; n--) this.#giveBack(this.#moved[n]!);
 		for (let n = this.#mintedCount - 1; n >= minted; n--) this.release(this.#minted[n]!);
 		this.#movedCount = moved;
 		this.#forgetUndos(undos);
 		this.#forgetMinted(minted);
+		this.#forgetDropsAfter(drops);
+		if (failed !== undefined) throw failed.error;
+	}
+
+	#dropAfterBuild(parked: NodeTrivia): void {
+		if (this.#scopes > 0) this.#dropsAfter[this.#dropsAfterCount++] = parked;
+		else this.#dropParked(parked);
+	}
+
+	#runDropsAfter(): void {
+		const count = this.#dropsAfterCount;
+		this.#dropsAfterCount = 0;
+		for (let n = 0; n < count; n++) {
+			const parked = this.#dropsAfter[n]!;
+			this.#dropsAfter[n] = undefined;
+			this.#dropParked(parked);
+		}
+	}
+
+	#forgetDropsAfter(from: number): void {
+		for (let n = from; n < this.#dropsAfterCount; n++) this.#dropsAfter[n] = undefined;
+		this.#dropsAfterCount = from;
 	}
 
 	#forgetMinted(from: number): void {
@@ -666,14 +699,14 @@ export class BuiltArena {
 		heldRootTree(node)?.releaseRoot?.();
 	}
 
-	/** Releases what the handle `node` holds: its record's count, or for a leaf not yet placed, the count it holds of each built record its sides park. A record already released, or its count already placed, is passed over, and so is a handle whose record's chunk was freed. */
+	/** Releases what the handle `node` holds: its record's count, or for a leaf not yet placed, the count it holds of each built record and each other tree's slot its sides park. A record already released, or its count already placed, is passed over, and so is a handle whose record's chunk was freed. */
 	releaseHandle(node: object): void {
 		const at = (node as { readonly $at?: unknown }).$at;
 		if (typeof at === 'number') {
 			if (this.#liveRecord(node, at)) this.release(at);
 			return;
 		}
-		this.#unpark(this.#parkedOf(node));
+		this.#unpark(node);
 	}
 
 	liveAt(node: object, at: number): number {
@@ -692,11 +725,11 @@ export class BuiltArena {
 		const parked = this.#parkedOf(leaf);
 		this.#park(leaf, next);
 		if (this.#commits.length > 0) this.#parked.push(leaf);
-		this.#unpark(parked);
+		if (parked !== undefined) this.#dropAfterBuild(parked);
 		if (this.#scopes > 0) {
 			this.#undos[this.#undosCount++] = () => {
-				this.#unpark(next);
-				if (parked !== undefined) this.#park(leaf, parked);
+				this.#unpark(leaf);
+				if (parked !== undefined) this.#parkedBy.set(leaf, parked);
 				setTriviaOf(leaf, own);
 			};
 		}
@@ -704,19 +737,45 @@ export class BuiltArena {
 	}
 
 	#park(leaf: object, trivia: NodeTrivia): void {
-		forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.hold(at), (tree) => this.#holdParse(...heldIn(tree))));
-		this.#parkedBy.set(trivia, leaf);
+		const taken: (() => void)[] = [];
+		try {
+			this.#eachCount(trivia, (take, drop) => {
+				take();
+				taken.push(drop);
+			});
+		} catch (error) {
+			for (let n = taken.length - 1; n >= 0; n--) taken[n]!();
+			throw error;
+		}
+		this.#parkedBy.set(leaf, trivia);
 	}
 
 	#parkedOf(leaf: object): NodeTrivia | undefined {
 		const trivia = triviaOf(leaf);
-		return trivia !== undefined && this.#parkedBy.get(trivia) === leaf ? trivia : undefined;
+		return trivia !== undefined && this.#parkedBy.get(leaf) === trivia ? trivia : undefined;
 	}
 
-	#unpark(trivia: NodeTrivia | undefined): void {
-		if (trivia === undefined || !this.#parkedBy.delete(trivia)) return;
+	#unpark(leaf: object): void {
+		const trivia = this.#parkedOf(leaf);
+		if (trivia === undefined) return;
+		this.#parkedBy.delete(leaf);
+		this.#dropParked(trivia);
+	}
+
+	#dropParked(trivia: NodeTrivia): void {
+		this.#eachCount(trivia, (_take, drop) => drop());
+	}
+
+	#eachCount(trivia: NodeTrivia, each: (take: () => void, drop: () => void) => void): void {
 		forEachTriviaList(trivia as TriviaSides<unknown>, (entries) =>
-			this.#eachParked(entries, (at) => this.drop(at, this.format.held.record), (tree) => this.forgetParses(this.#releaseParse(...heldIn(tree))))
+			this.#eachParked(
+				entries,
+				(at) => each(() => this.hold(at), () => this.drop(at, this.format.held.record)),
+				(tree) => {
+					const [slot, treeId] = heldIn(tree);
+					each(() => this.#holdParse(slot, treeId), () => this.forgetParses(this.#releaseParse(slot, treeId)));
+				}
+			)
 		);
 	}
 
@@ -1007,8 +1066,10 @@ export class BuiltArena {
 		const parked = this.#kept(leaf) ? undefined : this.#parkedOf(leaf);
 		placeLeaf(leaf, holder, word, item, this.#siteAlive);
 		this.#writeLeafSites(leaf, [holder, word, item]);
-		this.#unpark(parked);
-		if (parked !== undefined && this.#scopes > 0) this.#undos[this.#undosCount++] = () => this.#park(leaf, parked);
+		if (parked === undefined) return;
+		this.#parkedBy.delete(leaf);
+		this.#dropAfterBuild(parked);
+		if (this.#scopes > 0) this.#undos[this.#undosCount++] = () => this.#parkedBy.set(leaf, parked);
 	}
 
 	leafSites(leaf: object): readonly number[] | undefined {

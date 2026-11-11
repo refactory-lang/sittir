@@ -360,6 +360,76 @@ describe('an arena parse, held by its engine and counted by its root and each re
 		expect(live()).toBe(before);
 	});
 
+	it("keeps an unplaced leaf's parked comment and its tree when a build that rewrote the leaf's side throws", async () => {
+		let leaf: Sided | undefined;
+		let fresh: unknown;
+		const hook = {
+			build: (call: { readonly path: readonly string[] }, next: () => unknown): unknown => {
+				if (leaf === undefined || call.path.at(-1) !== 'binaryExpression') return next();
+				leaf.$trivia.leading(fresh);
+				throw new Error('refused');
+			}
+		};
+		using engine = await createEngine(rust, { nodeStorage: 'arena', intercept: [hook as never] });
+		const before = live();
+		const donor = engine.parse('/// old\nfn f() {}\n') as unknown as Root;
+		const other = engine.parse('/// new\nfn g() {}\n') as unknown as Root;
+		const b = engine.build;
+		const made = b.identifier('x') as unknown as Sided;
+		made.$trivia.leading(sidedOf(donor).$trivia.leading()[0]!);
+		fresh = sidedOf(other).$trivia.leading()[0]!;
+		donor[Symbol.dispose]();
+		const records = (): number => {
+			const memory = engine.diagnostics.builtMemory?.();
+			if (memory === undefined) throw new Error('the engine builds no arena');
+			return memory.live;
+		};
+		const y = b.identifier('y');
+		const z = b.identifier('z');
+		const held = records();
+		leaf = made;
+		expect(() => b.binaryExpression({ left: y, operator: '+', right: z })).toThrow('refused');
+		expect(records()).toBe(held);
+		expect(String(engine.render(made as never))).toBe('/// old\nx');
+		other[Symbol.dispose]();
+		expect(live()).toBe(before + 1);
+		engine.release(made as never);
+		expect(live()).toBe(before);
+	});
+
+	it("takes no count for an unplaced leaf's side when one of its entries is refused", async () => {
+		using engine = await arena();
+		const before = live();
+		const kept = engine.parse('/// kept\nfn f() {}\n') as unknown as Root;
+		const gone = engine.parse('/// gone\nfn g() {}\n') as unknown as Root;
+		const comment = sidedOf(kept).$trivia.leading()[0]!;
+		const freed = sidedOf(gone).$trivia.leading()[0]!;
+		gone[Symbol.dispose]();
+		const leaf = engine.build.identifier('x') as unknown as Sided;
+		expect(() => leaf.$trivia.leading(comment, freed)).toThrow();
+		kept[Symbol.dispose]();
+		engine.release(leaf as never);
+		expect(live()).toBe(before);
+	});
+
+	it('counts a spread copy of an unplaced leaf that a scope keeps apart from the leaf, so each release drops its own count', async () => {
+		using engine = await arena();
+		const before = live();
+		const donor = engine.parse('/// kept\nfn f() {}\n') as unknown as Root;
+		const leaf = engine.build.identifier('x') as unknown as Sided;
+		leaf.$trivia.leading(sidedOf(donor).$trivia.leading()[0]!);
+		const copy = { ...(leaf as object) };
+		{
+			using scope = engine.scope();
+			scope.keep(copy);
+		}
+		donor[Symbol.dispose]();
+		engine.release(leaf as never);
+		expect(live()).toBe(before + 1);
+		engine.release(copy as never);
+		expect(live()).toBe(before);
+	});
+
 	it("refuses an arena tree's record on a side of an object-storage node, built or parsed, which no count can keep", async () => {
 		using engine = await arena();
 		using objects = await object();
