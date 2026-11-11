@@ -1,4 +1,4 @@
-import { NATIVE_NAPI_CONFIG, NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, nativePlatformPackage, nodeRangeOfNodeApi, type GrammarName } from '../grammars.ts';
+import { NATIVE_NAPI_CONFIG, NATIVE_TARGETS, NODE_ENGINES, grammarDisplayName, nativeBinaryName, nativePlatformPackage, type GrammarName } from '../grammars.ts';
 import { NATIVE_PROFILE_FLAGS, type NativeProfile } from '../scripts/native-binary-freshness.ts';
 import { TRIVIA_NODE } from './render-module.ts';
 
@@ -14,7 +14,7 @@ const json = (value: unknown): string => `${JSON.stringify(value, null, '\t')}\n
 const buildNative = (grammar: GrammarName, profile: NativeProfile): string =>
 	['tsx ../../../scripts/build-native.mts', grammar, ...NATIVE_PROFILE_FLAGS[profile]].join(' ');
 
-export function nativeCrateFiles(name: GrammarName, nodeApiLevel: number, parserName: string = name): NativeCrateFile[] {
+export function nativeCrateFiles(name: GrammarName, parserName: string = name): NativeCrateFile[] {
 	const v = { name, parserName, Name: grammarDisplayName(name) };
 	return [
 		{
@@ -169,7 +169,7 @@ fn rerun_if_changed_with_includes(
 					'build:gate': buildNative(v.name, 'gate')
 				},
 				devDependencies: { '@napi-rs/cli': 'catalog:' },
-				engines: { node: nodeRangeOfNodeApi(nodeApiLevel) }
+				engines: { node: NODE_ENGINES }
 			})
 		},
 		{

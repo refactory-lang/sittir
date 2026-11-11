@@ -7,6 +7,7 @@ import {
 	GRAMMAR_TYPECHECK_SCRIPT,
 	NATIVE_LOADER,
 	NATIVE_TYPINGS,
+	NODE_ENGINES,
 	PORTABLE_MAP_FILE,
 	PORTABLE_TS6_TYPE_TESTS,
 	PORTABLE_TYPE_TESTS,
@@ -43,6 +44,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 					url: 'https://github.com/refactory-lang/sittir.git',
 					directory: `packages/${v.name}`
 				},
+				engines: { node: NODE_ENGINES },
 				files: ['dist', `native/${NATIVE_LOADER}`, `native/${NATIVE_TYPINGS}`],
 				type: 'module',
 				main: './dist/index.js',
@@ -83,7 +85,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 		{
 			path: 'tsconfig.build.json',
 			contents: json({
-				extends: ['./tsconfig.json', '../../tsconfig.publish.json'],
+				extends: './tsconfig.json',
 				compilerOptions: {
 					noEmit: false,
 					composite: true,

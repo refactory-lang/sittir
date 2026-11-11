@@ -36,7 +36,6 @@ import { load } from '../codegen-surface.ts';
 const { loadRawEntries } = await load('nodeTypesLoader');
 import {
 	loadCorpusEntries,
-	heldTrees,
 	loadLanguageForGrammar,
 	treeParser,
 	FAILED_RUN,
@@ -891,10 +890,10 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 	const run = (async () => {
 		const declared = await loadReparseHosts(grammar);
 		const model = await loadNodeModel(grammar);
-		using held = heldTrees();
+		using held = new DisposableStack();
 		const corpus: { source: string; root: TSNode }[] = [];
 		for (const entry of loadCorpusEntries(grammar)) {
-			const root = held.hold(parser.parse(entry.source));
+			const { root } = held.use(parser.parse(entry.source));
 			if (!root.hasError) corpus.push({ source: entry.source, root });
 		}
 		const types = await requireGrammarModule(grammar, 'types.ts');

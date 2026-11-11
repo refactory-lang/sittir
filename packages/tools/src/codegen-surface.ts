@@ -205,7 +205,6 @@ export type GeneratedKindEntry = import('../../codegen/src/dsl/symbol-table.ts')
 export type ParserLanguage = import('../../codegen/src/engine-loader.ts').ParserLanguage;
 export type ParsedTree = import('../../codegen/src/engine-loader.ts').ParsedTree;
 export type TreeParser = import('../../codegen/src/engine-loader.ts').TreeParser;
-export type HeldTrees = import('../../codegen/src/engine-loader.ts').HeldTrees;
 export type RawGrammar = Awaited<ReturnType<CodegenSurface['evaluate']['evaluate']>>;
 export type LinkedGrammar = ReturnType<CodegenSurface['link']['link']>;
 export type SimplifiedGrammar = ReturnType<CodegenSurface['normalize']['normalizeGrammar']>;
