@@ -578,7 +578,12 @@ export interface Interceptor<API extends LanguageAPI> {
 	build?(call: { readonly path: readonly string[]; readonly args: readonly unknown[] }, next: () => API['node']): API['node'];
 	render?(call: { readonly node: RenderInput<API>; readonly options: API['options'] }, next: () => string): string;
 	parse?(call: { readonly source: string }, next: () => API['root']): API['root'];
-	/** Runs before a `write` or `create` commits; `next` commits it, and an interceptor that never calls it skips the write. */
+	/**
+	 * Runs before a `write` or `create` commits; `next` commits it, and an interceptor that never calls it skips the
+	 * write. A write `next` started is finished before the pending settles, and when it fails the pending rejects with
+	 * its error, unless the interceptor threw its own. `next` and `change.diff()` are refused once the interceptor has
+	 * returned or thrown.
+	 */
 	file?(change: FileWrite, next: () => Promise<void>): Promise<void>;
 }
 

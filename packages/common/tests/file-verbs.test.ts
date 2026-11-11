@@ -249,6 +249,21 @@ describe.each(['object', 'arena'] as const)('engine.write and engine.create (%s)
 		expect(readFileSync(at('a.rs'), 'utf8')).toBe('fn a() {}\n');
 	});
 
+	it.each(['write', 'create'] as const)('a %s a file interceptor started and left rejects when it fails', async (verb) => {
+		const engine = await engineOf({
+			intercept: [
+				{
+					async file(_, next) {
+						void next();
+					}
+				}
+			]
+		});
+		const root = () => engine.parse('fn a() {}\n');
+		const pending = verb === 'write' ? engine.write(directory, root()) : engine.create(directory, root);
+		await expect(pending).rejects.toThrow(verb === 'write' ? /not a regular file/ : /exists/);
+	});
+
 	it('a write under a render interceptor writes the intercepted text', async () => {
 		const engine = await engineOf({ intercept: [{ render: (_, next) => next().toUpperCase() }] });
 		const root = engine.parse('fn a() {}\n');

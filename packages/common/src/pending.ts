@@ -35,10 +35,13 @@ export function pendingFile(path: string, verb: FileVerb, open: () => FileCommit
 		};
 		try {
 			await (chain === undefined ? next() : chain(Object.freeze({ path, verb, diff: preview }), next));
-		} finally {
+		} catch (error) {
 			closed = true;
 			await written?.catch(() => undefined);
+			throw error;
 		}
+		closed = true;
+		await written;
 	};
 	let committed: Promise<void> | undefined;
 	const start = (): Promise<void> => (committed ??= Promise.resolve().then(run));
