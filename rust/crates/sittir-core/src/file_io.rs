@@ -71,10 +71,12 @@ pub fn read_source(path: &Path) -> Result<String, FileError> {
 /// anything but a regular file is refused before it is opened, so a pipe
 /// never blocks, and a missing directory is refused; none is ever created.
 ///
-/// A write that fails partway puts a file that held bytes back as it was,
-/// and leaves a file it created partly written (`write_or_restore`). A
-/// process killed mid-write can still leave a partial file. Nothing is
-/// synced to disk.
+/// A write that fails partway puts the file back as it was: an existing
+/// file gets its original bytes again, through the descriptor it was
+/// written with (`write_or_restore`), and a new file never appears. A new
+/// file is written beside its target and then linked in (`create_file`).
+/// A process killed mid-write can still leave an existing file partly
+/// written. Nothing is synced to disk.
 pub fn write_file(path: &Path, bytes: &[u8], mode: WriteMode) -> Result<bool, FileError> {
     write_through(path, bytes, mode, |file| file)
 }
@@ -84,10 +86,9 @@ pub fn write_file(path: &Path, bytes: &[u8], mode: WriteMode) -> Result<bool, Fi
 fn write_through<F: Rewrite>(path: &Path, bytes: &[u8], mode: WriteMode, wrap: impl FnOnce(fs::File) -> F) -> Result<bool, FileError> {
     let refused = |cause| FileError::Write { path: path.to_owned(), cause };
     let not_regular = || refused(io::Error::other("it is not a regular file"));
-    let created = |at: &Path| fs::OpenOptions::new().write(true).create_new(true).open(at);
-    let (file, before) = match mode {
+    match mode {
         WriteMode::Replace => match fs::metadata(path) {
-            Ok(meta) if !meta.is_file() => return Err(not_regular()),
+            Ok(meta) if !meta.is_file() => Err(not_regular()),
             Ok(_) => {
                 let mut file = fs::OpenOptions::new().read(true).write(true).open(path).map_err(refused)?;
                 if !file.metadata().map_err(refused)?.is_file() {
@@ -98,23 +99,54 @@ fn write_through<F: Rewrite>(path: &Path, bytes: &[u8], mode: WriteMode, wrap: i
                 if original == bytes {
                     return Ok(false);
                 }
-                (file, Before::Held(original))
+                write_or_restore(path, wrap(file), bytes, &original)
             }
-            Err(cause) if cause.kind() == io::ErrorKind::NotFound => {
-                let target = referent(path).map_err(refused)?;
-                (created(&target).map_err(refused)?, Before::Created)
-            }
-            Err(cause) => return Err(refused(cause)),
+            Err(cause) if cause.kind() == io::ErrorKind::NotFound => create_file(path, &referent(path).map_err(refused)?, bytes, mode, wrap),
+            Err(cause) => Err(refused(cause)),
         },
-        WriteMode::CreateNew => {
-            let file = created(path).map_err(|cause| match cause.kind() {
-                io::ErrorKind::AlreadyExists => FileError::Exists { path: path.to_owned() },
-                _ => refused(cause),
-            })?;
-            (file, Before::Created)
-        }
+        WriteMode::CreateNew => match fs::symlink_metadata(path) {
+            Ok(_) => Err(FileError::Exists { path: path.to_owned() }),
+            Err(cause) if cause.kind() == io::ErrorKind::NotFound => create_file(path, path, bytes, mode, wrap),
+            Err(cause) => Err(refused(cause)),
+        },
+    }
+}
+
+/// Creates `target`, which `path` names, holding `bytes`, answering `true`.
+/// The bytes go to a scratch file beside the target, named for it, the
+/// process and the thread, which is then hard-linked to the target. The
+/// link fails when a file has appeared at the target meanwhile, so nothing
+/// is clobbered, and a write that fails partway leaves nothing at the
+/// target. The scratch file is removed either way.
+fn create_file<F: Rewrite>(path: &Path, target: &Path, bytes: &[u8], mode: WriteMode, wrap: impl FnOnce(fs::File) -> F) -> Result<bool, FileError> {
+    let refused = |cause| FileError::Write { path: path.to_owned(), cause };
+    let scratch = scratch_name(target);
+    let file = fs::OpenOptions::new().write(true).create_new(true).open(&scratch).map_err(refused)?;
+    let written = {
+        let mut file = wrap(file);
+        file.rewrite(bytes)
     };
-    write_or_restore(path, wrap(file), bytes, before)
+    let linked = written.and_then(|()| fs::hard_link(&scratch, target));
+    let removed = fs::remove_file(&scratch);
+    let Err(cause) = linked else {
+        return Ok(true);
+    };
+    if mode == WriteMode::CreateNew && cause.kind() == io::ErrorKind::AlreadyExists {
+        return Err(FileError::Exists { path: path.to_owned() });
+    }
+    let outcome = match removed {
+        Ok(()) => "nothing was created".to_owned(),
+        Err(failed) => format!("nothing was created, but removing its scratch file {} failed: {failed}", scratch.display()),
+    };
+    Err(refused(io::Error::new(cause.kind(), format!("{cause}; {outcome}"))))
+}
+
+/// The scratch path beside `target`, named for it, the process and the
+/// thread, so no two writers in flight share one.
+fn scratch_name(target: &Path) -> PathBuf {
+    let name = target.file_name().map_or_else(String::new, |name| name.to_string_lossy().into_owned());
+    let thread: String = format!("{:?}", std::thread::current().id()).chars().filter(char::is_ascii_digit).collect();
+    target.with_file_name(format!(".{name}.{}-{thread}.sittir-tmp", std::process::id()))
 }
 
 /// An opened file a write goes through. Writing it and putting it back
@@ -132,13 +164,6 @@ impl Rewrite for fs::File {
         self.write_all(bytes)?;
         self.flush()
     }
-}
-
-/// What a file was before a write opened it: its bytes, or no file, the
-/// write having created it.
-enum Before {
-    Held(Vec<u8>),
-    Created,
 }
 
 /// `path` with each symlink its last component names followed, so a link to
@@ -160,22 +185,18 @@ fn referent(path: &Path) -> io::Result<PathBuf> {
 
 const MAX_LINKS: usize = 40;
 
-/// Writes `bytes` through `file`, which `path` opened, answering `true`.
-/// When the write fails partway, a file that held bytes gets them back,
-/// through the same descriptor. A file the write created is left as it is,
-/// partly written: removing it by its path could remove a file another
-/// process put there meanwhile. The error names the path and the failure,
-/// and says what became of the file.
-fn write_or_restore<F: Rewrite>(path: &Path, mut file: F, bytes: &[u8], before: Before) -> Result<bool, FileError> {
+/// Writes `bytes` through `file`, the existing file `path` opened,
+/// answering `true`. When the write fails partway, the file gets its
+/// `original` bytes back through the same descriptor, so a file another
+/// process renamed over the path meanwhile is never touched. The error
+/// names the path and the failure, and says whether the file went back.
+fn write_or_restore<F: Rewrite>(path: &Path, mut file: F, bytes: &[u8], original: &[u8]) -> Result<bool, FileError> {
     let Err(cause) = file.rewrite(bytes) else {
         return Ok(true);
     };
-    let outcome = match before {
-        Before::Held(original) => match file.rewrite(&original) {
-            Ok(()) => "its original bytes were restored".to_owned(),
-            Err(failed) => format!("restoring its original bytes failed too: {failed}"),
-        },
-        Before::Created => "the file it created was left, partly written".to_owned(),
+    let outcome = match file.rewrite(original) {
+        Ok(()) => "its original bytes were restored".to_owned(),
+        Err(failed) => format!("restoring its original bytes failed too: {failed}"),
     };
     drop(file);
     Err(FileError::Write { path: path.to_owned(), cause: io::Error::new(cause.kind(), format!("{cause}; {outcome}")) })
@@ -387,24 +408,24 @@ mod tests {
     }
 
     #[test]
-    fn a_failed_create_leaves_its_file_and_says_so() {
+    fn a_failed_create_leaves_nothing_at_the_target_or_beside_it() {
         let dir = directory("unmade");
         let path = dir.join("a.rs");
         let error = write_through(&path, b"fn a() {}\n", WriteMode::CreateNew, fails_after(4, || {})).unwrap_err();
-        assert!(error.to_string().contains("the file it created was left, partly written"), "{error}");
-        assert_eq!(fs::read_to_string(&path).unwrap(), "fn a");
+        assert!(error.to_string().contains("nothing was created"), "{error}");
+        assert_eq!(entries(&dir), Vec::<String>::new());
     }
 
     #[test]
     #[cfg(unix)]
-    fn a_failed_write_through_a_dangling_link_leaves_its_target_and_the_link() {
+    fn a_failed_write_through_a_dangling_link_keeps_the_link_and_creates_nothing() {
         let dir = directory("dangling-failed");
         let link = dir.join("out.rs");
         std::os::unix::fs::symlink("generated.rs", &link).unwrap();
         let error = write_through(&link, b"fn a() {}\n", WriteMode::Replace, fails_after(4, || {})).unwrap_err();
-        assert!(error.to_string().contains("the file it created was left, partly written"), "{error}");
+        assert!(error.to_string().contains("nothing was created"), "{error}");
         assert!(fs::symlink_metadata(&link).unwrap().file_type().is_symlink());
-        assert_eq!(fs::read_to_string(dir.join("generated.rs")).unwrap(), "fn a");
+        assert_eq!(entries(&dir), ["out.rs"]);
     }
 
     #[test]
@@ -452,8 +473,42 @@ mod tests {
             fs::rename(&editor, &at).unwrap();
         }))
         .unwrap_err();
-        assert!(error.to_string().contains("left"), "{error}");
+        assert!(error.to_string().contains("nothing was created"), "{error}");
         assert_eq!(fs::read_to_string(&path).unwrap(), "fn editor() {}\n");
+        assert_eq!(entries(&dir), ["a.rs"]);
+    }
+
+    /// A file whose first write runs `meanwhile` (another process at work
+    /// on the path) and then goes through.
+    struct Meanwhile<F> {
+        inner: F,
+        meanwhile: Option<Box<dyn FnOnce()>>,
+    }
+
+    impl<F: Rewrite> Rewrite for Meanwhile<F> {
+        fn rewrite(&mut self, bytes: &[u8]) -> io::Result<()> {
+            if let Some(meanwhile) = self.meanwhile.take() {
+                meanwhile();
+            }
+            self.inner.rewrite(bytes)
+        }
+    }
+
+    #[test]
+    fn a_create_never_clobbers_a_file_that_appeared_meanwhile() {
+        let dir = directory("appeared");
+        for mode in [WriteMode::CreateNew, WriteMode::Replace] {
+            let path = dir.join(format!("{mode:?}.rs"));
+            let at = path.clone();
+            let error = write_through(&path, b"fn ours() {}\n", mode, |inner| Meanwhile {
+                inner,
+                meanwhile: Some(Box::new(move || fs::write(&at, "fn theirs() {}\n").unwrap())),
+            })
+            .unwrap_err();
+            assert!(matches!((mode, &error), (WriteMode::CreateNew, FileError::Exists { .. }) | (WriteMode::Replace, FileError::Write { .. })), "{error:?}");
+            assert_eq!(fs::read_to_string(&path).unwrap(), "fn theirs() {}\n");
+        }
+        assert_eq!(entries(&dir), ["CreateNew.rs", "Replace.rs"]);
     }
 
     #[test]
