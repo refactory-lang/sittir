@@ -7609,6 +7609,10 @@ Mints a bare `field(name, ref)` arm of an element choice as its own visible kind
 
 Strips `PREC*` and optional wrappers down to the node that decides an arm's slot topology.
 
+### `packages/codegen/src/dsl/choice-arm-partition.ts::ArmStage::isFieldedSlot`
+
+Whether a choice arm is a slot inside a field.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::isNonterminalRuleType`
 
 #### body
@@ -8684,6 +8688,10 @@ The authoring type of the `reserved` verb, which the native rule function of tha
 ### `packages/codegen/src/dsl/dsl-authoring.ts::AuthoringToken`
 
 The authoring type of the `token` verb, which is the native `token` function with its `immediate` member attached.
+
+### `packages/codegen/src/dsl/dsl-authoring.ts::spellings`
+
+The authoring surface for `spellings`: it builds a spelling choice from members and their rules.
 
 ### `packages/codegen/src/dsl/enrich-shapes.ts::EnrichShape`
 

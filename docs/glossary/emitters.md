@@ -6164,42 +6164,6 @@ A kind with a construction surface narrows `BuildArgs` and `LooseArgs` (typed `r
 // silently shifted.
 ```
 
-### `packages/codegen/src/emitters/types.ts::emitFieldArrayDeclaration`
-
-```text
-/**
- * Emit the `readonly <name><opt>: <arrayType>` declaration for a repeated
- * (`multiple`) field inside a `$fields` block.
- *
- * @remarks
- * `repeat1` fields carry a grammar-enforced `length >= 1` guarantee. They
- * are emitted as `NonEmptyArray<T>` — the alias is inherently `readonly`
- * (TS1354 forbids prefixing a type-alias reference with `readonly`, so the
- * `readonly` lives inside the alias definition). Plain `repeat` fields stay
- * `readonly T[]`.
- *
- * @param lines - Output line buffer to append to.
- * @param name - The raw field name (snake_case).
- * @param opt - Optionality suffix: `""` for required, `"?"` for optional.
- * @param typeExpr - The resolved TypeScript type expression for the element type.
- * @param nonEmpty - Whether the field is `repeat1` (non-empty array guaranteed).
- *   `undefined` is treated as `false`.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Field array declaration emission
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// Indentation at interface body level (2 spaces): fields are declared
-// directly on the interface, not inside $fields: {}.
-```
-
 ### `packages/codegen/src/emitters/types.ts::_fieldTypeParts`
 
 ```text
@@ -10556,21 +10520,7 @@ A slot's setter as parts: the accessor `name`, the `input` type text, whether th
  *  the lookup; every value-bearing site goes through `valueKindIdExpr`. */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::elementsTypeOf`
-
-```text
-// ---------------------------------------------------------------------------
-// SeparatedList factory (separator-as-slot)
-// ---------------------------------------------------------------------------
-```
-
-```text
-/** The rest-spread type for a list of `elemType`: a `repeat1`-sourced list
- *  demands its first element and says so on the model. ONE rule, shared by
- *  the list factory's own signature and by its `LooseArgs` counterpart. */
-```
-
-### `packages/codegen/src/emitters/factories.ts::parenthesizeUnion`
+### `packages/codegen/src/emitters/shared.ts::parenthesizeUnion`
 
 Wraps an element type in parentheses only when it has a union at its top level. A union inside generic arguments (`Admit<A | B>`) is atomic and stays bare before an array suffix.
 
@@ -14096,7 +14046,7 @@ Emits a kind's `Bound` and `Parsed` interfaces. Every `Parsed` extends `HoldsTre
 
 The options parameter type of a generated list builder, a forwarding constructor's list overload and a list's argument rows: the list's options type under `ListOptions`, so a node is never taken as the options. The list view hint keeps the bare options type.
 
-### `packages/codegen/src/emitters/factories.ts::hasTopLevelUnion`
+### `packages/codegen/src/emitters/shared.ts::hasTopLevelUnion`
 
 Whether a type text has ` | ` outside every bracket pair, the test `parenthesizeUnion` applies.
 
@@ -14806,6 +14756,10 @@ The tail of a kind the record backend cannot build yet, because it has no record
 
 A text leaf's record tail: the leaf stays the object node its builder made, and the engine's arena gives it a header-only record and its interned text (`BuiltArena::adoptLeaf`), which a parent's cell names.
 
+### `packages/codegen/src/emitters/record-construction.ts::recordVerbatimPlaceOf`
+
+The place a verbatim record field occupies in a compound or list, or undefined when it has none.
+
 ### `packages/codegen/src/emitters/node-members.ts::builtRowLines`
 
 The row a built record's view writes through (`bindRow`): the `$with` setters and `$trivia` members an object node of the kind has, rendered by the same `withBlockLines` and `triviaBlockLines` the object literal's members use.
@@ -14908,6 +14862,10 @@ The render-module emitter, which produces the render module for a grammar.
 
 The options the render-module emitter takes, extending the render options.
 
+### `packages/codegen/src/emitters/render-module.ts::VERBATIM_FIELD`
+
+The field name a verbatim value is stored under in a record.
+
 ### `packages/codegen/src/emitters/shared.ts::EnumArm`
 
 One arm of an enum: its kind and its name.
@@ -14964,6 +14922,18 @@ The separator a factory slot takes.
 
 True when the slot has a blank arm, so the factory's writes store the blank marker for `null`.
 
+### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta::delimiterRole`
+
+The delimiter role of the slot the factory builds, when it plays one.
+
+### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta::preferenceOf`
+
+The open token and facet the slot prefers to render with, when it has a preference.
+
+### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta::spellings`
+
+The spellings of the slot's members, as the factory builds them.
+
 ### `packages/codegen/src/emitters/is.ts::EmitIsConfig`
 
 The options the is-guard emitter takes.
@@ -14987,6 +14957,18 @@ The separator a written slot takes.
 ### `packages/codegen/src/emitters/node-model-read.ts::WrittenSlot::blank`
 
 True when the slot has a blank arm. Writers store `null` as the blank marker and readers map the marker back to `null`.
+
+### `packages/codegen/src/emitters/node-model-read.ts::WrittenSlot::delimiterRole`
+
+The delimiter role a written slot plays, when it plays one.
+
+### `packages/codegen/src/emitters/node-model-read.ts::WrittenValue::canonical`
+
+The canonical spelling of a written value, when it differs from the value.
+
+### `packages/codegen/src/emitters/node-model-read.ts::WrittenValue::value`
+
+The text a written value is written as.
 
 ### `packages/codegen/src/emitters/node-projection.ts::displayClaimedIds`
 
@@ -15315,6 +15297,10 @@ The node's trivia positions, when it has any.
 ### `packages/codegen/src/emitters/node-members.ts::triviaPositionsOf`
 
 The trivia positions of a kind, or undefined.
+
+### `packages/codegen/src/emitters/node-members.ts::StoredAccessor::slot`
+
+The slot a stored accessor reads.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::DelimiterSite::kindId`
 
@@ -15683,6 +15669,30 @@ The read expression for a slot value: `blankArmRead(expr)` when the slot has a b
 ### `packages/codegen/src/emitters/shared.ts::optionalChoiceTexts`
 
 The keyword texts of an optional choice field: every value of the field must store text, and the result is the set of those texts. A field with a value that stores no text yields undefined.
+
+### `packages/codegen/src/emitters/shared.ts::arrayTypeOf`
+
+The array type of a list's elements: `NonEmptyArray` when the list is non-empty, otherwise a readonly or mutable array of the element, parenthesized when it is a union.
+
+### `packages/codegen/src/emitters/shared.ts::finalSeatOf`
+
+The rest and last seats of a slot whose values end in a final value, or undefined when none is final.
+
+### `packages/codegen/src/emitters/shared.ts::slotListTypeOf`
+
+The type of a list slot: an array of the element type, or, when the slot has a final value, a tuple whose leading rest is an array and whose last element is the final value.
+
+### `packages/codegen/src/emitters/shared.ts::spelledReadExpr`
+
+The expression that reads a spelled slot: a `spelledMember` call over the expression with the slot's spellings, or the bare expression when the slot has no spelled read.
+
+### `packages/codegen/src/emitters/shared.ts::spelledReadImports`
+
+The imports a file needs for spelled reads: `spelledMember` when any slot of the node map has a spelled read, otherwise none.
+
+### `packages/codegen/src/emitters/shared.ts::spelledReadType`
+
+The type text of a spelled slot: its members as a union of string literals, or undefined when the slot has no spelled read.
 
 ### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic`
 

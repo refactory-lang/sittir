@@ -1140,23 +1140,6 @@ The classification left after every structural check: an all-text subtree is `'p
 /** Depth-1 leaf label for {@link describeArmShape}. */
 ```
 
-### `packages/codegen/src/compiler/collect-slots.ts::mergeByName`
-
-```text
-/** Merge same-named slots within one arm (collapse duplicate field positions). */
-```
-
-#### body
-
-```text
-// Positional/kind-derived name: never silently merge with anything else
-// sharing that name, even another unnamed slot — that IS a genuine
-// storageName collision (two structurally distinct positions), and
-// downstream diagnostics (the compound constructor's storagename-collision
-// check) must see both entries to catch it. Merging here would union
-// their values and erase the fact they were ever distinct.
-```
-
 ### `packages/codegen/src/compiler/collect-slots.ts::mergeChoiceArms`
 
 ```text
@@ -7623,6 +7606,10 @@ regex is not literal text, naming the kind and the pattern source; its message n
 Records the blocking `token-interior-unstructurable` for a named part inside an optional group beside an
 unnamed pattern; its message names the resolving patch.
 
+### `packages/codegen/src/compiler/token-interior.ts::stampSpellings`
+
+Stamps each rule a spelling set covers with the spellings of its members.
+
 ### `packages/codegen/src/compiler/link.ts::collectDisplayUnions`
 
 ```text
@@ -7964,6 +7951,10 @@ How a rule is classified.
 ### `packages/codegen/src/compiler/types.ts::SimplifiedGrammar::fixedNameLiterals`
 
 The fixed literals a simplified grammar's names take.
+
+### `packages/codegen/src/compiler/types.ts::RawGrammar::spellings`
+
+The spelling groups the raw grammar declares, by kind and field.
 
 ### `packages/codegen/src/compiler/generate.ts::GeneratedFiles::tableFiles`
 
