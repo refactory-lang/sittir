@@ -250,15 +250,15 @@ describe('a built arena rendered natively', () => {
 		expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({ before: '/* its builder */ x;', after: '/* its builder */ x;' });
 	}, 60_000);
 
-	it('refuses a record that links a parsed tree that is not live, naming the tree', async () => {
+	it('keeps a parsed tree a record links live, refusing its disposeTree', async () => {
 		const records = await rust.createEngine();
 		const parsed = records.parse('fn f() { g(); }').statements()[0] as unknown as { body(): unknown };
 		const b = records.build;
 		const fn = b.functionItem({ name: b.identifier('h'), parameters: b.parameters(), body: parsed.body() as never });
 		const id = treeOf(parsed as object)?.id;
 		if (id === undefined) throw new Error('a parsed tree has an id');
-		addon().disposeTree(id);
-		expect(() => records.render(fn).toString()).toThrow(new RegExp(`names tree ${id}, which is not live`));
+		expect(() => addon().disposeTree(id)).toThrow(new RegExp(`tree ${id} is a parse its engine holds`));
+		expect(records.render(fn).toString()).toBe('fn h() { g(); }');
 		records.dispose();
 	});
 });

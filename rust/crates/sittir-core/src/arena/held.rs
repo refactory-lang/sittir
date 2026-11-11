@@ -113,6 +113,12 @@ impl<P: Held> HeldParses<P> {
         self.get(slot).filter(|held| held.id() == parse).ok_or(ParseReleased(parse))
     }
 
+    /// Whether a slot holds the parse `parse`.
+    #[must_use]
+    pub fn holds(&self, parse: TreeId) -> bool {
+        self.slots.iter().any(|held| held.parse.as_ref().is_some_and(|held| held.id() == parse))
+    }
+
     /// Takes every parse out of the table, whatever counts it, and answers
     /// them: the table's end, at its engine's dispose.
     pub fn drain(&mut self) -> Vec<P> {

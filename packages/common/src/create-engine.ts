@@ -313,14 +313,16 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 			);
 		}) as Engine<API, M>['isEmptyNode'],
 		parse(source, parseOptions) {
+			const made: TreeHandle[] = [];
 			const run = (): API['root'] => {
 				const { root, tree } = readAndBind(source, parseOptions);
-				return readOrRelease(tree, () => {
+				made.push(tree);
+				return readOrRelease([tree], () => {
 					if (parseOptions?.errors === 'throw' && root.$errors.length > 0) throw new ParseErrors(root.$errors);
 					return wrapRegistered(root, tree, hooks.wrap);
 				});
 			};
-			return parseChain === undefined ? run() : parseChain({ source }, run);
+			return readOrRelease(made, () => (parseChain === undefined ? run() : parseChain({ source }, run)));
 		},
 		query: ((node: object) => {
 			if (handle.current !== engine)

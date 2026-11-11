@@ -305,7 +305,9 @@ export declare function descendants(from: string, kinds: Array<import('../src/ty
  * Called from the boundary's `FinalizationRegistry` once JavaScript
  * has collected the last object naming it. Unknown ids are not an
  * error — a tree can only be dropped once, and the registry has no
- * way to know whether it already was.
+ * way to know whether it already was. Refuses a parse an arena
+ * engine holds, which no finalizer is registered for: its root's
+ * release or its engine's dispose frees it.
  */
 export declare function disposeTree(treeId: number): void
 

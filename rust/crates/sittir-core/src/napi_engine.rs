@@ -124,9 +124,11 @@ macro_rules! napi_engine {
         /// Called from the boundary's `FinalizationRegistry` once JavaScript
         /// has collected the last object naming it. Unknown ids are not an
         /// error — a tree can only be dropped once, and the registry has no
-        /// way to know whether it already was.
+        /// way to know whether it already was. Refuses a parse an arena
+        /// engine holds, which no finalizer is registered for: its root's
+        /// release or its engine's dispose frees it.
         #[::napi_derive::napi]
-        pub fn dispose_tree(env: ::napi::Env, tree_id: f64) {
+        pub fn dispose_tree(env: ::napi::Env, tree_id: f64) -> ::napi::Result<()> {
             // Checked for the same reason `with_live_node` checks its ids:
             // `as` saturates, so `NaN` and every negative arrive as 0 —
             // and 0 is the first tree, so an unchecked cast would let a
@@ -135,12 +137,17 @@ macro_rules! napi_engine {
             // where nothing is positioned to handle a throw, and
             // disposing an id that names no tree is already a no-op.
             let Ok(tree_id) = $crate::napi_engine::checked_index(tree_id, "treeId") else {
-                return;
+                return Ok(());
             };
             let Ok(tree_id) = u32::try_from(tree_id).map($crate::types::TreeId) else {
-                return;
+                return Ok(());
             };
+            let held = LIVE_TREES.with(|trees| trees.borrow().get(&tree_id).is_some_and(|tree| $crate::napi_engine::holds_parse(tree.store(), tree_id)));
+            if held {
+                return Err(::napi::Error::from_reason(format!("tree {} is a parse its engine holds: its root's release or its engine's dispose frees it, not disposeTree", tree_id.0)));
+            }
             drop_tree(&env, tree_id);
+            Ok(())
         }
 
         /// Drops the live tree `tree_id` (`drop_live_tree`), then the tree
@@ -1977,6 +1984,21 @@ pub fn take_freed_parses<T>(store: &crate::trivia_store::TriviaStore<T>) -> Vec<
 #[must_use]
 pub fn take_freed_parses<T>(_store: &crate::trivia_store::TriviaStore<T>) -> Vec<(crate::types::ParseSlot, crate::types::TreeId)> {
     Vec::new()
+}
+
+/// Whether the built arena `store` holds the parse `tree_id` in a slot of
+/// its held-parse table.
+#[cfg(feature = "arena")]
+#[must_use]
+pub fn holds_parse<T>(store: &crate::trivia_store::TriviaStore<T>, tree_id: crate::types::TreeId) -> bool {
+    store.built().held().holds(tree_id)
+}
+
+/// Without the arena no parse is held.
+#[cfg(not(feature = "arena"))]
+#[must_use]
+pub fn holds_parse<T>(_store: &crate::trivia_store::TriviaStore<T>, _tree_id: crate::types::TreeId) -> bool {
+    false
 }
 
 /// Drops `tree`, then settles its store (`settle`) when that freed what a

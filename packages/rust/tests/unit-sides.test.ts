@@ -38,7 +38,7 @@ describe.each(constructions)("a unit's sides through a rebuild (%s)", (_, rs) =>
 });
 
 describe("a rebuild's carried unit sides once its parsed source is gone", () => {
-	it("render at the rebuild's first render as object storage's do, the source tree held by the rebuild, and refuse alike once that tree is released", () => {
+	it("render at the rebuild's first render as object storage's do, the source tree held by the rebuild, which object storage refuses once that tree is disposed and arena storage keeps, refusing its disposeTree", () => {
 		// A collection can only be forced under `--expose-gc`, so the case runs
 		// in a child process that reports both storages.
 		const fixture = fileURLToPath(new URL('../../common/tests/fixtures/carried-sides-release.mts', import.meta.url));
@@ -48,7 +48,10 @@ describe("a rebuild's carried unit sides once its parsed source is gone", () => 
 			env: { ...process.env, SITTIR_BACKEND: 'native' }
 		});
 		const report = JSON.parse(out.trim().split('\n').at(-1) ?? '') as Record<'object' | 'record', unknown>;
-		const expected = { rendered: '{\n    /* c */ ;\n    y();\n}', held: 1, released: 'throws: tree N is not live (never parsed on this thread, or already released)' };
-		expect(report).toEqual({ object: expected, record: expected });
+		const rendered = '{\n    /* c */ ;\n    y();\n}';
+		expect(report).toEqual({
+			object: { rendered, held: 1, disposed: 'disposed', released: 'throws: tree N is not live (never parsed on this thread, or already released)' },
+			record: { rendered, held: 1, disposed: "throws: tree N is a parse its engine holds: its root's release or its engine's dispose frees it, not disposeTree", released: rendered }
+		});
 	}, 60_000);
 });

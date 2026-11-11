@@ -163,6 +163,49 @@ describe('an arena parse, held by its engine and counted by its root and each re
 		expect(live()).toBe(before);
 	});
 
+	it('holds nothing of a parse an interceptor throws after, however often it called next', async () => {
+		const throwingAfter = (calls: number) => ({
+			parse(_: unknown, next: () => unknown): never {
+				for (let n = 0; n < calls; n++) next();
+				throw new Error('hook refused');
+			}
+		});
+		for (const calls of [1, 2]) {
+			using engine = await createEngine(rust, { nodeStorage: 'arena', intercept: [throwingAfter(calls)] });
+			const before = live();
+			for (let n = 0; n < 50; n++) expect(() => engine.parse('fn f() {}\n')).toThrow('hook refused');
+			expect(live()).toBe(before);
+		}
+	});
+
+	it('holds nothing of a parse whose refusal an interceptor catches', async () => {
+		using other = await object();
+		const fallback = other.parse('fn ok() {}\n');
+		const catching = {
+			parse(_: unknown, next: () => unknown): unknown {
+				try {
+					return next();
+				} catch {
+					return fallback;
+				}
+			}
+		};
+		using engine = await createEngine(rust, { nodeStorage: 'arena', intercept: [catching as never] });
+		const before = live();
+		for (let n = 0; n < 50; n++) expect(engine.parse('fn {', { errors: 'throw' })).toBe(fallback);
+		expect(live()).toBe(before);
+	});
+
+	it('refuses to dispose a parse its engine holds, which its root then frees', async () => {
+		using engine = await arena();
+		const before = live();
+		const root = engine.parse('fn f() {}\n') as unknown as Root & { $tree: TreeHandle };
+		expect(() => addon().disposeTree(root.$tree.id!)).toThrow(/its engine holds/);
+		expect(live()).toBe(before + 1);
+		root[Symbol.dispose]();
+		expect(live()).toBe(before);
+	});
+
 	it('keeps the link record at 8 words', () => {
 		expect(cellFormatOf(addon())?.linkWords).toBe(8);
 	});

@@ -394,7 +394,7 @@ type OnHandle<F> = F extends (...args: infer A) => infer R ? { call(handle: Engi
 
 export type NativeModuleLike<TNode = unknown, TEngine extends NativeEngineInstance = NativeEngineInstance> = {
 	SittirEngine: new (options?: NativeEngineArgs) => TEngine;
-	/** Release one parsed tree of this language. Driven by GC for a tree of object storage — see `treeDisposalRegistry`. An id that names no tree is ignored. */
+	/** Release one parsed tree of this language. Driven by GC for a tree of object storage — see `treeDisposalRegistry`. An id that names no tree is ignored; a parse an arena engine holds is refused, since its root's release or its engine's dispose frees it. */
 	disposeTree(treeId: number): void;
 	/** Trees of this language still held on this thread. Diagnostics only. */
 	liveTreeCount(): number;
@@ -793,7 +793,7 @@ export function createNativeEngine<
 					parseTree,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const tree = parseTree(source);
-						return readOrRelease(tree, () => ({ tree, root: tree.read!(0, depthOf(parseOptions)) as TRoot & ParsedRoot }));
+						return readOrRelease([tree], () => ({ tree, root: tree.read!(0, depthOf(parseOptions)) as TRoot & ParsedRoot }));
 					}
 				}
 			}
