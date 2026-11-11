@@ -96,6 +96,12 @@ interface CommitMark {
 	readonly kept: Set<unknown>;
 	closed: boolean;
 }
+
+interface JournalEntry {
+	readonly undo: () => void;
+	readonly drop?: NodeTrivia | undefined;
+	readonly persists?: ((abandoned: (holder: number) => boolean) => boolean) | undefined;
+}
 const releasedRecord = (at: number): string => `the built node at ${at} was released: its record holds no count`;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', { fatal: true });
@@ -276,10 +282,8 @@ export class BuiltArena {
 	#commitCount = 0;
 	readonly #moved: number[] = [];
 	#movedCount = 0;
-	readonly #undos: ((() => void) | undefined)[] = [];
-	#undosCount = 0;
-	readonly #dropsAfter: (NodeTrivia | undefined)[] = [];
-	#dropsAfterCount = 0;
+	readonly #journal: (JournalEntry | undefined)[] = [];
+	#journalCount = 0;
 	readonly #deferred: (Map<number, () => void> | undefined)[] = [];
 	#deferredCount = 0;
 	#pruneAt = DEFERRED_PRUNE;
@@ -459,25 +463,23 @@ export class BuiltArena {
 	scope<T>(build: () => T): T {
 		const minted = this.#mintedCount;
 		const moved = this.#movedCount;
-		const undos = this.#undosCount;
-		const drops = this.#dropsAfterCount;
+		const journal = this.#journalCount;
 		this.#scopes++;
 		try {
 			return build();
 		} catch (error) {
-			this.#abandon(minted, moved, undos, drops);
+			this.#abandon(minted, moved, journal);
 			throw error;
 		} finally {
 			if (--this.#scopes === 0) {
 				if (this.#commits.length === 0) this.#forgetMinted(0);
 				this.#movedCount = 0;
-				this.#forgetUndos(0);
-				this.#runDropsAfter();
+				this.#settleJournal();
 			}
 		}
 	}
 
-	#abandon(minted: number, moved: number, undos: number, drops: number): void {
+	#abandon(minted: number, moved: number, journal: number): void {
 		let failed: { readonly error: unknown } | undefined;
 		const attempt = (step: () => void): void => {
 			try {
@@ -492,46 +494,56 @@ export class BuiltArena {
 				if (!this.#ownedByHandle(at)) this.#giveBack(at);
 			});
 		}
-		for (let n = this.#undosCount - 1; n >= undos; n--) attempt(this.#undos[n]!);
+		let abandoned: Set<number> | undefined;
+		const isAbandoned = (holder: number): boolean => (abandoned ??= new Set(this.#minted.slice(minted, this.#mintedCount))).has(holder);
+		const persists = (entry: JournalEntry): boolean => {
+			try {
+				return entry.persists?.(isAbandoned) === true;
+			} catch (error) {
+				failed ??= { error };
+				return false;
+			}
+		};
+		const persisting: JournalEntry[] = [];
+		for (let n = this.#journalCount - 1; n >= journal; n--) {
+			const entry = this.#journal[n]!;
+			if (persists(entry)) persisting.push(entry);
+			else attempt(entry.undo);
+		}
 		for (let n = this.#mintedCount - 1; n >= minted; n--) {
 			const at = this.#minted[n]!;
 			attempt(() => this.release(at));
 		}
 		this.#movedCount = moved;
-		this.#forgetUndos(undos);
+		this.#forgetJournal(journal);
+		for (let n = persisting.length - 1; n >= 0; n--) this.#journal[this.#journalCount++] = persisting[n]!;
 		this.#forgetMinted(minted);
-		this.#forgetDropsAfter(drops);
 		if (failed !== undefined) throw failed.error;
 	}
 
-	#dropAfterBuild(parked: NodeTrivia): void {
-		if (this.#scopes > 0) this.#dropsAfter[this.#dropsAfterCount++] = parked;
-		else this.#dropParked(parked);
+	#journalChange(entry: JournalEntry): void {
+		if (this.#scopes > 0) this.#journal[this.#journalCount++] = entry;
+		else if (entry.drop !== undefined) this.#dropParked(entry.drop);
 	}
 
-	#runDropsAfter(): void {
-		const count = this.#dropsAfterCount;
-		this.#dropsAfterCount = 0;
+	#settleJournal(): void {
+		const count = this.#journalCount;
+		this.#journalCount = 0;
 		for (let n = 0; n < count; n++) {
-			const parked = this.#dropsAfter[n]!;
-			this.#dropsAfter[n] = undefined;
-			this.#dropParked(parked);
+			const { drop } = this.#journal[n]!;
+			this.#journal[n] = undefined;
+			if (drop !== undefined) this.#dropParked(drop);
 		}
 	}
 
-	#forgetDropsAfter(from: number): void {
-		for (let n = from; n < this.#dropsAfterCount; n++) this.#dropsAfter[n] = undefined;
-		this.#dropsAfterCount = from;
+	#forgetJournal(from: number): void {
+		for (let n = from; n < this.#journalCount; n++) this.#journal[n] = undefined;
+		this.#journalCount = from;
 	}
 
 	#forgetMinted(from: number): void {
 		for (let n = from; n < this.#mintedCount; n++) this.#mintedWords[n] = undefined;
 		this.#mintedCount = from;
-	}
-
-	#forgetUndos(from: number): void {
-		for (let n = from; n < this.#undosCount; n++) this.#undos[n] = undefined;
-		this.#undosCount = from;
 	}
 
 	commit(): CommitScope {
@@ -567,7 +579,7 @@ export class BuiltArena {
 		forEachTriviaList(own as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.refuseReleased(at)));
 		this.#park(leaf, own);
 		this.#parked.push(leaf);
-		if (this.#scopes > 0) this.#undos[this.#undosCount++] = () => this.#unpark(leaf);
+		this.#journalChange({ undo: () => this.#unpark(leaf) });
 	}
 
 	#ownedByHandle(at: number): boolean {
@@ -730,19 +742,24 @@ export class BuiltArena {
 
 	repark(leaf: object, own: NodeTrivia | undefined, written: NodeTrivia, placed: boolean): NodeTrivia {
 		const next = { ...own, ...written };
-		if (placed && !this.#kept(leaf)) return next;
-		forEachTriviaList(next as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.refuseReleased(at)));
 		const parked = this.#parkedOf(leaf);
+		const persists = placed ? (abandoned: (holder: number) => boolean) => this.#keepsSite(leaf, abandoned) : undefined;
+		if (placed && parked === undefined && !this.#kept(leaf)) {
+			this.#journalChange({ undo: () => setTriviaOf(leaf, own), persists });
+			return next;
+		}
+		forEachTriviaList(next as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.refuseReleased(at)));
 		this.#park(leaf, next);
 		if (this.#commits.length > 0) this.#parked.push(leaf);
-		if (parked !== undefined) this.#dropAfterBuild(parked);
-		if (this.#scopes > 0) {
-			this.#undos[this.#undosCount++] = () => {
+		this.#journalChange({
+			undo: () => {
 				this.#unpark(leaf);
 				if (parked !== undefined) this.#parkedBy.set(leaf, parked);
 				setTriviaOf(leaf, own);
-			};
-		}
+			},
+			drop: parked,
+			persists
+		});
 		return next;
 	}
 
@@ -1074,8 +1091,24 @@ export class BuiltArena {
 		this.#writeLeafSites(leaf, [holder, word, item]);
 		if (parked === undefined) return;
 		this.#parkedBy.delete(leaf);
-		this.#dropAfterBuild(parked);
-		if (this.#scopes > 0) this.#undos[this.#undosCount++] = () => this.#parkedBy.set(leaf, parked);
+		this.#journalChange({ undo: () => this.#parkAgain(leaf, parked), drop: parked });
+	}
+
+	#parkAgain(leaf: object, parked: NodeTrivia): void {
+		const now = triviaOf(leaf);
+		if (now === parked) {
+			this.#parkedBy.set(leaf, parked);
+			return;
+		}
+		if (now !== undefined) this.#park(leaf, now);
+		this.#dropParked(parked);
+	}
+
+	#keepsSite(leaf: object, abandoned: (holder: number) => boolean): boolean {
+		const sites = this.leafSites(leaf);
+		if (sites === undefined) return false;
+		for (let n = 0; n < sites.length; n += 3) if (!abandoned(sites[n]!)) return true;
+		return false;
 	}
 
 	leafSites(leaf: object): readonly number[] | undefined {

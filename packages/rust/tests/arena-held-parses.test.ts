@@ -25,7 +25,9 @@ const itemOf = (root: Root): Named => root.statements()[0]!;
 type Sided = { $trivia: { leading(...entries: unknown[]): readonly { content(): never }[] } };
 const sidedOf = (root: Root): Sided => root.statements()[0] as unknown as Sided;
 
-const linkSide = async (engine: Awaited<ReturnType<typeof arena>>) => {
+type ArenaEngine = Awaited<ReturnType<typeof arena>>;
+
+const linkSide = async (engine: ArenaEngine) => {
 	const host = sidedOf(engine.parse('fn host() {}\n') as unknown as Root);
 	const part = engine.parse('/// kept\nfn part() {}\n') as unknown as Root;
 	const entry = engine.build.lineComment.docOuter(sidedOf(part).$trivia.leading()[0]!.content());
@@ -33,6 +35,28 @@ const linkSide = async (engine: Awaited<ReturnType<typeof arena>>) => {
 	engine.release(entry);
 	part[Symbol.dispose]();
 	return () => host.$trivia.leading(engine.build.lineComment.docOuter(' other'));
+};
+
+const placingBuildThatRewritesAndThrows = async (entry: (engine: ArenaEngine) => unknown) => {
+	let leaf: Sided | undefined;
+	const hook = {
+		build: (call: { readonly path: readonly string[] }, next: () => unknown): unknown => {
+			if (leaf === undefined || call.path.at(-1) !== 'binaryExpression') return next();
+			next();
+			leaf.$trivia.leading(entry(engine));
+			throw new Error('refused');
+		}
+	};
+	const engine: ArenaEngine = await createEngine(rust, { nodeStorage: 'arena', intercept: [hook as never] });
+	const place = (placed: Sided, right: unknown): unknown => {
+		leaf = placed;
+		try {
+			return engine.build.binaryExpression({ left: placed as never, operator: '+', right: right as never });
+		} finally {
+			leaf = undefined;
+		}
+	};
+	return { engine, place };
 };
 
 describe('an arena parse, held by its engine and counted by its root and each record naming it', () => {
@@ -395,6 +419,194 @@ describe('an arena parse, held by its engine and counted by its root and each re
 		expect(live()).toBe(before + 1);
 		engine.release(made as never);
 		expect(live()).toBe(before);
+	});
+
+	it("restores an unplaced leaf's parked comment and its side when a build places the leaf, rewrites the side with a built comment and throws", async () => {
+		const { engine: created, place } = await placingBuildThatRewritesAndThrows((engine) => engine.build.lineComment.docOuter(' new'));
+		using engine = created;
+		const before = live();
+		const donor = engine.parse('/// old\nfn f() {}\n') as unknown as Root;
+		const b = engine.build;
+		const leaf = b.identifier('x') as unknown as Sided;
+		leaf.$trivia.leading(sidedOf(donor).$trivia.leading()[0]!);
+		donor[Symbol.dispose]();
+		const y = b.identifier('y');
+		const held = engine.diagnostics.builtMemory?.()?.live;
+		expect(() => place(leaf, y)).toThrow('refused');
+		expect(engine.diagnostics.builtMemory?.()?.live).toBe(held);
+		expect(String(engine.render(leaf as never))).toBe('/// old\nx');
+		expect(live()).toBe(before + 1);
+		engine.release(leaf as never);
+		expect(live()).toBe(before);
+		expect(engine.diagnostics.builtMemory?.()?.live).toBe(0);
+	});
+
+	it("restores an unplaced leaf's parked built comment when a build places the leaf, rewrites the side with a parsed comment and throws, and frees that comment's tree", async () => {
+		let other: Root | undefined;
+		const { engine: created, place } = await placingBuildThatRewritesAndThrows(() => sidedOf(other!).$trivia.leading()[0]!);
+		using engine = created;
+		const before = live();
+		other = engine.parse('/// new\nfn g() {}\n') as unknown as Root;
+		const b = engine.build;
+		const comment = b.lineComment.docOuter(' old');
+		const leaf = b.identifier('x') as unknown as Sided;
+		leaf.$trivia.leading(comment);
+		const y = b.identifier('y');
+		const held = engine.diagnostics.builtMemory?.()?.live;
+		expect(() => place(leaf, y)).toThrow('refused');
+		expect(engine.diagnostics.builtMemory?.()?.live).toBe(held);
+		expect(String(engine.render(leaf as never))).toBe('/// old\nx');
+		other[Symbol.dispose]();
+		expect(live()).toBe(before);
+		engine.release(leaf as never);
+		engine.release(comment as never);
+		expect(engine.diagnostics.builtMemory?.()?.live).toBe(0);
+	});
+
+	it('keeps a side write to a placed leaf on the leaf and on the node that placed it alike when a build placing the leaf again throws', async () => {
+		const { engine: created, place } = await placingBuildThatRewritesAndThrows((engine) => engine.build.lineComment.docOuter(' new'));
+		using engine = created;
+		const b = engine.build;
+		const comment = b.lineComment.docOuter(' old');
+		const leaf = b.identifier('x') as unknown as Sided;
+		leaf.$trivia.leading(comment);
+		const built = b.binaryExpression({ left: leaf as never, operator: '+', right: b.identifier('y') });
+		expect(() => place(leaf, b.identifier('z'))).toThrow('refused');
+		expect(String(engine.render(built as never))).toBe('/// new\nx + y');
+		expect(String(engine.render(leaf as never))).toBe('/// new\nx');
+		engine.release(built as never);
+		engine.release(leaf as never);
+		engine.release(comment as never);
+		expect(engine.diagnostics.builtMemory?.()?.live).toBe(0);
+	});
+
+	it("frees what a leaf's old comment holds when a closed scope kept the leaf placed and its side is rewritten", async () => {
+		using engine = await arena();
+		const before = live();
+		const b = engine.build;
+		const donor = engine.parse('/// old\nfn f() {}\n') as unknown as Root;
+		const leaf = b.identifier('x') as unknown as Sided;
+		leaf.$trivia.leading(sidedOf(donor).$trivia.leading()[0]!);
+		donor[Symbol.dispose]();
+		let built: unknown;
+		{
+			using scope = engine.scope();
+			built = scope.keep(b.binaryExpression({ left: leaf as never, operator: '+', right: b.identifier('y') }) as object);
+			scope.keep(leaf as unknown as object);
+		}
+		const fresh = b.lineComment.docOuter(' new');
+		leaf.$trivia.leading(fresh);
+		expect(live()).toBe(before);
+		expect(String(engine.render(built as never))).toBe('/// new\nx + y');
+		expect(String(engine.render(leaf as never))).toBe('/// new\nx');
+		engine.release(built as never);
+		engine.release(leaf as never);
+		engine.release(fresh as never);
+		expect(engine.diagnostics.builtMemory?.()?.live).toBe(0);
+	});
+
+	it('keeps a side write to a leaf a closed scope kept placed, and frees what its old comment holds, when a build placing the leaf again throws', async () => {
+		const { engine: created, place } = await placingBuildThatRewritesAndThrows((engine) => engine.build.lineComment.docOuter(' new'));
+		using engine = created;
+		const before = live();
+		const b = engine.build;
+		const donor = engine.parse('/// old\nfn f() {}\n') as unknown as Root;
+		const leaf = b.identifier('x') as unknown as Sided;
+		leaf.$trivia.leading(sidedOf(donor).$trivia.leading()[0]!);
+		donor[Symbol.dispose]();
+		let built: unknown;
+		{
+			using scope = engine.scope();
+			built = scope.keep(b.binaryExpression({ left: leaf as never, operator: '+', right: b.identifier('y') }) as object);
+			scope.keep(leaf as unknown as object);
+		}
+		expect(() => place(leaf, b.identifier('z'))).toThrow('refused');
+		expect(live()).toBe(before);
+		expect(String(engine.render(built as never))).toBe('/// new\nx + y');
+		expect(String(engine.render(leaf as never))).toBe('/// new\nx');
+		engine.release(built as never);
+		engine.release(leaf as never);
+		expect(engine.diagnostics.builtMemory?.()?.live).toBe(0);
+	});
+
+	it('keeps a side write to a leaf a scope keeps placed on the leaf and on the node that placed it alike when the build that wrote it throws', async () => {
+		let target: Sided | undefined;
+		let fresh: unknown;
+		const hook = {
+			build: (call: { readonly path: readonly string[] }, next: () => unknown): unknown => {
+				if (target === undefined || call.path.at(-1) !== 'binaryExpression') return next();
+				target.$trivia.leading(fresh);
+				throw new Error('refused');
+			}
+		};
+		using engine = await createEngine(rust, { nodeStorage: 'arena', intercept: [hook as never] });
+		const before = live();
+		const b = engine.build;
+		const donor = engine.parse('/// old\nfn f() {}\n') as unknown as Root;
+		const leaf = b.identifier('x') as unknown as Sided;
+		leaf.$trivia.leading(sidedOf(donor).$trivia.leading()[0]!);
+		donor[Symbol.dispose]();
+		fresh = b.lineComment.docOuter(' new');
+		let built: unknown;
+		{
+			using scope = engine.scope();
+			built = scope.keep(b.binaryExpression({ left: leaf as never, operator: '+', right: b.identifier('y') }) as object);
+			scope.keep(leaf as unknown as object);
+			target = leaf;
+			expect(() => b.binaryExpression({ left: b.identifier('p'), operator: '+', right: b.identifier('q') })).toThrow('refused');
+			target = undefined;
+			expect(live()).toBe(before);
+		}
+		expect(String(engine.render(built as never))).toBe('/// new\nx + y');
+		expect(String(engine.render(leaf as never))).toBe('/// new\nx');
+		engine.release(built as never);
+		engine.release(leaf as never);
+		engine.release(fresh as never);
+		expect(engine.diagnostics.builtMemory?.()?.live).toBe(0);
+	});
+
+	it.each([false, true])("restores a leaf an outer build placed when an inner build rewrote its side and threw, and the outer build then threw (kept by a scope: %s)", async (kept) => {
+		let leaf: Sided | undefined;
+		let inner = false;
+		const hook = {
+			build: (call: { readonly path: readonly string[] }, next: () => unknown): unknown => {
+				const name = call.path.at(-1);
+				if (leaf !== undefined && name === 'binaryExpression') {
+					next();
+					inner = true;
+					try {
+						engine.build.identifier('w');
+					} catch {}
+					inner = false;
+					throw new Error('outer');
+				}
+				if (inner && name === 'identifier') {
+					leaf!.$trivia.leading(engine.build.lineComment.docOuter(' new'));
+					throw new Error('inner');
+				}
+				return next();
+			}
+		};
+		using engine = await createEngine(rust, { nodeStorage: 'arena', intercept: [hook as never] });
+		const before = live();
+		const donor = engine.parse('/// old\nfn f() {}\n') as unknown as Root;
+		const b = engine.build;
+		const made = b.identifier('x') as unknown as Sided;
+		made.$trivia.leading(sidedOf(donor).$trivia.leading()[0]!);
+		donor[Symbol.dispose]();
+		const y = b.identifier('y');
+		{
+			using scope = engine.scope();
+			if (kept) scope.keep(made as unknown as object);
+			leaf = made;
+			expect(() => b.binaryExpression({ left: made as never, operator: '+', right: y })).toThrow('outer');
+			leaf = undefined;
+		}
+		expect(String(engine.render(made as never))).toBe('/// old\nx');
+		expect(live()).toBe(before + 1);
+		engine.release(made as never);
+		expect(live()).toBe(before);
+		expect(engine.diagnostics.builtMemory?.()?.live).toBe(0);
 	});
 
 	it("takes no count for an unplaced leaf's side when one of its entries is refused", async () => {
