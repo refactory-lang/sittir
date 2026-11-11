@@ -27,6 +27,27 @@ describe('builders and their kind spelled in full', () => {
 		expect([typed, defaulted, chosen, unknown]).toEqual(['0X', '0x', '0x', '0X']);
 	});
 
+	it('types and builds the spelling of a passed node, else a given option, else the text', () => {
+		const options: { readonly radixPrefix?: '0x' | '0X' } = { radixPrefix: '0x' };
+		const optional = py.build.integer.hex('0XFF', options);
+		const either: '0x' | '0X' = optional.radixPrefix();
+		const optionPossible: '0x' extends typeof optional._radixPrefix ? true : false = true;
+		// @ts-expect-error an option that may be absent leaves the text's spelling possible
+		const narrowed: '0x' = optional.radixPrefix();
+		const blank = py.build.integer.hex('0XFF', { radixPrefix: undefined });
+		const kept: '0X' = blank.radixPrefix();
+		const passed = py.build.integer.hex(py.build.integer.hex('0XFF'), { radixPrefix: '0x' });
+		const own: '0X' = passed.radixPrefix();
+		expect([either, narrowed, kept, own, optionPossible]).toEqual(['0x', '0x', '0X', '0X', true]);
+		expect([blank.$render(), passed.$render()]).toEqual(['0XFF', '0XFF']);
+		const dictionary: Record<string, '0X'> = {};
+		const sparse = py.build.integer.hex(255n, dictionary);
+		// @ts-expect-error a dictionary may lack the spelling, so the default stays possible
+		const onlyIndexed: '0X' = sparse.radixPrefix();
+		const defaultPossible: '0x' extends typeof sparse._radixPrefix ? true : false = true;
+		expect([onlyIndexed, defaultPossible, sparse.$render()]).toEqual(['0x', true, '0xff']);
+	});
+
 	it('takes text as content when not told otherwise, where the delimiter can also begin the content', () => {
 		expect(py.build.comment('# x').$render()).toBe('## x\n');
 		expect(py.build.comment('# x', false).$render()).toBe('# x\n');

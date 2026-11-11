@@ -175,7 +175,7 @@ const ARGS_HELPER = [
 ].join('\n');
 
 const TYPES_IMPORT_ALWAYS = 'AnyUntypedNode';
-const TYPES_IMPORT_OPTIONAL = ['Admit', 'LooseValue', 'NonEmptyArray', 'NumericInput', 'PlainBuilders', 'RefuseUndeclared', 'Seat', 'ConfigSeat', 'OptionalConfigSeat', 'EmptyForm', 'WidenSlots', 'SiblingLeadRefusal', 'SpelledAffix', 'WithSpelling'] as const;
+const TYPES_IMPORT_OPTIONAL = ['Admit', 'LooseValue', 'NonEmptyArray', 'NumericInput', 'PlainBuilders', 'RefuseUndeclared', 'Seat', 'ConfigSeat', 'OptionalConfigSeat', 'EmptyForm', 'WidenSlots', 'SiblingLeadRefusal', 'CoercedSpelling', 'WithSpelling'] as const;
 
 function emitFromFieldInputType(lines: string[]): void {
 	lines.push('/** Runtime-narrowed field input bag for generated from() helpers. */');
@@ -305,6 +305,14 @@ function spelledOptionSlots(
 				message: `'${node.kind}' spells its full form in '${field}', which is not a registered option`
 			});
 		}
+		if (fullForm[side].decided !== true) {
+			throw emitShapeFailure({
+				code: 'spelled-affix-undecided',
+				ownerKind: node.kind,
+				slotName: field,
+				message: `'${node.kind}' spells '${field}' as ${literalUnion(fullForm[side].texts)}, and its text cannot always tell which: one spelling ${side === 'open' ? 'begins' : 'ends'} another, or the content can ${side === 'open' ? 'begin' : 'end'} with one`
+			});
+		}
 		return [[side, slot] as const];
 	});
 }
@@ -319,15 +327,8 @@ function spelledReturnType(
 	spelled: readonly (readonly ['open' | 'close', AssembledNonterminal])[]
 ): string {
 	return spelled.reduce((type, [side, slot]) => {
-		if (side === 'close')
-			throw emitShapeFailure({
-				code: 'spelled-closing-delimiter',
-				slotName: slot.propertyName,
-				message: `a spelled closing delimiter ('${slot.propertyName}') has no typed form`
-			});
-		const typed = `SpelledAffix<I, ${literalUnion(fullForm.open.texts)}, ${JSON.stringify(slot.optionDefaultArm)}>`;
-		const key = slot.propertyName;
-		return `WithSpelling<${type}, ${JSON.stringify(key)}, O extends { ${key}: infer P } ? P : ${typed}>`;
+		const key = JSON.stringify(slot.propertyName);
+		return `WithSpelling<${type}, ${key}, CoercedSpelling<I, O, ${key}, ${literalUnion(fullForm[side].texts)}, ${JSON.stringify(slot.optionDefaultArm)}${side === 'close' ? `, ${JSON.stringify(side)}` : ''}>>`;
 	}, returnType);
 }
 
@@ -526,12 +527,12 @@ function emitBranchFrom(
 				fullForm === undefined
 					? 'input'
 					: spelled.length > 0
-						? `(_spelled === undefined ? input : ${refuseSiblingLeadExpr('_spelled.interior', siblings)})`
+						? `(_spelled === undefined ? input : ${isRequired(soleField) ? '_spelled.interior' : "_spelled.interior === '' ? undefined : _spelled.interior"})`
 						: `(typeof input === 'string' ? ${refuseSiblingLeadExpr(`spelledInterior(input, ${JSON.stringify(fullForm.open.texts[0])}, ${JSON.stringify(fullForm.close.texts[0])}${soleGuard === undefined ? '' : `, F.${soleGuard.constName}`})`, siblings)} : input)`;
 			const callOptions =
 				spelled.length === 0
 					? optionsArg
-					: `, _spelled === undefined ? options : { ${spelled.map(([side, slot]) => `${slot.propertyName}: _spelled.${side}`).join(', ')}, ...options }`;
+					: `, _spelled === undefined ? options : { ...options, ${spelled.map(([side, slot]) => `${slot.propertyName}: options?.${slot.propertyName} ?? _spelled.${side}`).join(', ')} }`;
 			const inputExpr = `configFieldOr(input, ${JSON.stringify(soleField.propertyName)}, () => ${bare}, ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)})`;
 			const soleShape = numericSlotShape(soleField);
 			const numeric = soleShape !== undefined;

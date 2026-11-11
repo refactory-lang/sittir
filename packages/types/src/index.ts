@@ -1238,6 +1238,7 @@ export interface LeafNs<
 export type { DerivedOptions, IndentOption, LayoutOption, NewlineOption, OptionsHintOf } from './options.ts';
 export type * from './node-surface.ts';
 export type {
+	CoercedSpelling,
 	Interior,
 	LeadCheck,
 	MatchedAlternative,

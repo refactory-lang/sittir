@@ -32,10 +32,6 @@ export type IntegerBase = Exclude<NumberBase, 'float'>;
 
 const DIGITS: Readonly<Record<IntegerBase, string>> = { 2: '01', 8: '0-7', 10: '0-9', 16: '0-9a-fA-F' };
 
-/**
- * The pattern of every integer text {@link integerValue} reads in `base`: `affix` in either case, then digits of the base with `_`
- * anywhere among them, at least one digit. Unanchored, in the regex syntax a grammar's patterns are written in.
- */
 export function integerSpelling(base: IntegerBase, affix: string): string {
 	const marker = [...affix].map((char) => (char.toLowerCase() === char.toUpperCase() ? char : `[${char.toLowerCase()}${char.toUpperCase()}]`)).join('');
 	return `${marker}_*[${DIGITS[base]}][${DIGITS[base]}_]*`;
@@ -45,7 +41,6 @@ const BIGINT_PREFIX: Readonly<Record<IntegerBase, string>> = { 2: '0b', 8: '0o',
 
 const spellings = new Map<string, RegExp>();
 
-/** The integer an integer text spells in `base` after `affix`, or `undefined` for a text {@link integerSpelling} does not match. */
 export function integerValue(base: IntegerBase, affix: string, text: string): bigint | undefined {
 	const key = `${base} ${affix}`;
 	let spelling = spellings.get(key);
