@@ -22,6 +22,9 @@ function batch(record) {
   sink += wholes.length + renders.reduce((sum, text) => sum + text.length, 0) + editedRenders.reduce((sum, text) => sum + text.length, 0);
   peakRss = Math.max(peakRss, process.memoryUsage.rss());
   if (record) record.push(times);
+  // An arena parse stays held until its root is released, so the batch releases each root it parsed, untimed.
+  for (const node of roots) node[Symbol.dispose]?.();
+  for (const node of wholes) node[Symbol.dispose]?.();
 }
 try {
   const warmupStart = performance.now();
