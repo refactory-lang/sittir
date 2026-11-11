@@ -429,7 +429,7 @@ it('isSourcePath narrows by the file types')        // rust: 'a.rs' true, 'a.txt
 - Modify: `scripts/ci/paired-refs/reference/reference-worker.mjs`. Add `apply-style` and `check-style`. Add `per-file`, today's path: `parse(readFileSync)`, `render().toString()`, `writeFileSync`, one file at a time.
 - Modify: `summarize.py` (the new columns: ratio to oxfmt per CPU model, and peak RSS)
 
-- [ ] **Step 1:** Each round copies the corpus to a fresh scratch directory before any tool writes, so every write-mode round starts from the pinned bytes. Before timing, check that the copy's tree hash equals the pin.
+- [ ] **Step 1:** Each round copies the corpus to a fresh scratch directory before any tool writes, so every write-mode round starts from the pinned bytes. Before timing, check that the copy's tree hash equals the pin. That copy, and any check of the outputs, sits outside the timed span. Every column times product work only, file in to file out, as the validators' read does once their copy is its own phase.
 - [ ] **Step 2:** Run one local smoke round on matter.js at 1 thread. Expected: `apply-style`'s output tree hash equals the `per-file` tool's, and every column prints.
 - [ ] **Step 3:** Commit (pathspec) and push by literal sha. Start the CI run, and give the reviewer the run id and its per-CPU table.
 
