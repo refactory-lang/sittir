@@ -49,10 +49,6 @@ napi-derive = { workspace = true, optional = true }
 # ast-grep-core = "0.42"
 sha2 = { workspace = true }
 
-[target.'cfg(unix)'.dependencies]
-# The error codes a filesystem without hard links answers a link with.
-libc = "0.2"
-
 [dev-dependencies]
 # Grammar crates used only by the engine's tree-query tests. Kept as
 # dev-deps so the `sittir-core` production artifact doesn't pull grammar
