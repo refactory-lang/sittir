@@ -65,15 +65,11 @@ export function stampEngineStorage(engine: object, storage: NodeStorage): void {
 }
 
 export function admitChildren(handle: EngineHandle, kind: string, slots: Readonly<Record<string, unknown>>): void {
-	const current = handle.current;
-	for (const slot in slots) {
-		const value = slots[slot];
-		if (!Array.isArray(value)) admitChild(current, kind, slot, value);
-		else for (const child of value) admitChild(current, kind, slot, child);
-	}
+	for (const slot in slots) admitSlot(handle, kind, slot, slots[slot]);
 }
 
-function admitChild(current: EngineIdentity, kind: string, slot: string, child: unknown): void {
+function admitChild(current: EngineIdentity, own: object | undefined, kind: string, slot: string, child: unknown): void {
+	if (own !== undefined && typeof child === 'object' && child !== null && (child as { readonly $tree?: unknown }).$tree === own) return;
 	const engine = engineOf(child);
 	if (engine === undefined || engine === current) return;
 	if (!sameLanguage(engine, current)) {
@@ -87,7 +83,11 @@ function admitChild(current: EngineIdentity, kind: string, slot: string, child: 
 }
 
 export function admitSlot<T>(handle: EngineHandle | undefined, kind: string, slot: string, value: T): T {
-	if (handle !== undefined) admitChildren(handle, kind, { [slot]: value });
+	if (handle === undefined) return value;
+	const current = handle.current;
+	const own = handle.builtArena?.tree;
+	if (!Array.isArray(value)) admitChild(current, own, kind, slot, value);
+	else for (const child of value) admitChild(current, own, kind, slot, child);
 	return value;
 }
 
@@ -181,5 +181,5 @@ export function hydrateOn(tree: object, value: unknown): unknown {
 
 export function inTreeEngine<T>(tree: object, fn: () => T): T {
 	const handle = treeHandles.get(tree);
-	return handle === undefined ? fn() : inEngine(handle, fn);
+	return handle === undefined || handle === active ? fn() : inEngine(handle, fn);
 }

@@ -21,6 +21,8 @@ import {
 	unaffixed,
 	builtArenaOf,
 	builtInputs,
+	patchesByCopy,
+	setSlot,
 	storeCell,
 	storeFlag,
 	storeList,
@@ -284,18 +286,57 @@ function buildLookaheadAssertion$patch(
 		return node as unknown as T.LookaheadAssertion.Bound;
 	});
 }
+function buildLookaheadAssertion$set(
+	source: object,
+	...[slot, input]:
+		| ['operator', Partial<T.LookaheadAssertion.Config>]
+		| ['pattern', Partial<T.LookaheadAssertion.Config>]
+): T.LookaheadAssertion.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'operator':
+			case 'pattern':
+				return buildLookaheadAssertion$patch(source, { ...(inputs.config as T.LookaheadAssertion.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'operator': {
+			const config = input;
+			const _operator = kindIdStorage<NonNullable<T.LookaheadAssertion['_operator']>>(config.operator);
+			return setSlot(
+				source,
+				TSKindId.LookaheadAssertion as const,
+				'lookahead_assertion',
+				0,
+				'operator',
+				_operator
+			) as unknown as T.LookaheadAssertion.Bound;
+		}
+		case 'pattern': {
+			const config = input;
+			const _pattern = config.pattern;
+			return setSlot(
+				source,
+				TSKindId.LookaheadAssertion as const,
+				'lookahead_assertion',
+				1,
+				'pattern',
+				_pattern
+			) as unknown as T.LookaheadAssertion.Bound;
+		}
+	}
+}
 function withLookaheadAssertion(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.LookaheadAssertion.Config;
 	switch (setter) {
 		case 'operator':
 			return applySetter(args, (value: Admit<NonNullable<T.LookaheadAssertion.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildLookaheadAssertion$patch(node, { ...config, operator: value }))
+				rebuilt(node, handle, () => buildLookaheadAssertion$set(node, 'operator', { operator: value }))
 			);
 		case 'pattern':
 			return applySetter(args, (value: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildLookaheadAssertion$patch(node, { ...config, pattern: value }))
+				rebuilt(node, handle, () => buildLookaheadAssertion$set(node, 'pattern', { pattern: value }))
 			);
 	}
 	throw new Error(`lookahead_assertion has no $with.${setter}`);
@@ -340,18 +381,57 @@ function buildLookbehindAssertion$patch(
 		return node as unknown as T.LookbehindAssertion.Bound;
 	});
 }
+function buildLookbehindAssertion$set(
+	source: object,
+	...[slot, input]:
+		| ['operator', Partial<T.LookbehindAssertion.Config>]
+		| ['pattern', Partial<T.LookbehindAssertion.Config>]
+): T.LookbehindAssertion.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'operator':
+			case 'pattern':
+				return buildLookbehindAssertion$patch(source, { ...(inputs.config as T.LookbehindAssertion.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'operator': {
+			const config = input;
+			const _operator = kindIdStorage<NonNullable<T.LookbehindAssertion['_operator']>>(config.operator);
+			return setSlot(
+				source,
+				TSKindId.LookbehindAssertion as const,
+				'lookbehind_assertion',
+				0,
+				'operator',
+				_operator
+			) as unknown as T.LookbehindAssertion.Bound;
+		}
+		case 'pattern': {
+			const config = input;
+			const _pattern = config.pattern;
+			return setSlot(
+				source,
+				TSKindId.LookbehindAssertion as const,
+				'lookbehind_assertion',
+				1,
+				'pattern',
+				_pattern
+			) as unknown as T.LookbehindAssertion.Bound;
+		}
+	}
+}
 function withLookbehindAssertion(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.LookbehindAssertion.Config;
 	switch (setter) {
 		case 'operator':
 			return applySetter(args, (value: Admit<NonNullable<T.LookbehindAssertion.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildLookbehindAssertion$patch(node, { ...config, operator: value }))
+				rebuilt(node, handle, () => buildLookbehindAssertion$set(node, 'operator', { operator: value }))
 			);
 		case 'pattern':
 			return applySetter(args, (value: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildLookbehindAssertion$patch(node, { ...config, pattern: value }))
+				rebuilt(node, handle, () => buildLookbehindAssertion$set(node, 'pattern', { pattern: value }))
 			);
 	}
 	throw new Error(`lookbehind_assertion has no $with.${setter}`);
@@ -446,18 +526,85 @@ function buildCharacterClass$patch(
 		return node as unknown as T.CharacterClass.Bound;
 	});
 }
+function buildCharacterClass$set(
+	source: object,
+	...[slot, input]:
+		| ['negation', Partial<T.CharacterClass.Config>]
+		| ['leading', Partial<T.CharacterClass.Config>]
+		| ['classAtoms', Partial<T.CharacterClass.Config>]
+		| ['trailing', Partial<T.CharacterClass.Config>]
+): T.CharacterClass.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'negation':
+			case 'leading':
+			case 'classAtoms':
+			case 'trailing':
+				return buildCharacterClass$patch(source, { ...(inputs.config as T.CharacterClass.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'negation': {
+			const config = input;
+			const _negation = strictBooleanStorage(config.negation);
+			return setSlot(
+				source,
+				TSKindId.CharacterClass as const,
+				'character_class',
+				0,
+				'negation',
+				_negation
+			) as unknown as T.CharacterClass.Bound;
+		}
+		case 'leading': {
+			const config = input;
+			const _leading = strictBooleanStorage(config.leading);
+			return setSlot(
+				source,
+				TSKindId.CharacterClass as const,
+				'character_class',
+				1,
+				'leading',
+				_leading
+			) as unknown as T.CharacterClass.Bound;
+		}
+		case 'classAtoms': {
+			const config = input;
+			const _class_atoms = listStorage<NonNullable<T.CharacterClass['_class_atoms']>>(config.classAtoms ?? []);
+			return setSlot(
+				source,
+				TSKindId.CharacterClass as const,
+				'character_class',
+				2,
+				'classAtoms',
+				_class_atoms
+			) as unknown as T.CharacterClass.Bound;
+		}
+		case 'trailing': {
+			const config = input;
+			const _trailing = strictBooleanStorage(config.trailing);
+			return setSlot(
+				source,
+				TSKindId.CharacterClass as const,
+				'character_class',
+				3,
+				'trailing',
+				_trailing
+			) as unknown as T.CharacterClass.Bound;
+		}
+	}
+}
 function withCharacterClass(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.CharacterClass.Config;
 	switch (setter) {
 		case 'negation':
 			return applySetter(args, (value?: Admit<NonNullable<T.CharacterClass.Config>['negation']>) =>
-				rebuilt(node, handle, () => buildCharacterClass$patch(node, { ...config, negation: value }))
+				rebuilt(node, handle, () => buildCharacterClass$set(node, 'negation', { negation: value }))
 			);
 		case 'leading':
 			return applySetter(args, (value?: Admit<NonNullable<T.CharacterClass.Config>['leading']>) =>
-				rebuilt(node, handle, () => buildCharacterClass$patch(node, { ...config, leading: value }))
+				rebuilt(node, handle, () => buildCharacterClass$set(node, 'leading', { leading: value }))
 			);
 		case 'classAtoms':
 			return applySetter(
@@ -476,12 +623,12 @@ function withCharacterClass(node: object, setter: string, args: readonly unknown
 					>
 				) =>
 					rebuilt(node, handle, () =>
-						buildCharacterClass$patch(node, { ...config, classAtoms: restItems('classAtoms', values) })
+						buildCharacterClass$set(node, 'classAtoms', { classAtoms: restItems('classAtoms', values) })
 					)
 			);
 		case 'trailing':
 			return applySetter(args, (value?: Admit<NonNullable<T.CharacterClass.Config>['trailing']>) =>
-				rebuilt(node, handle, () => buildCharacterClass$patch(node, { ...config, trailing: value }))
+				rebuilt(node, handle, () => buildCharacterClass$set(node, 'trailing', { trailing: value }))
 			);
 	}
 	throw new Error(`character_class has no $with.${setter}`);
@@ -594,18 +741,55 @@ function buildClassRange$patch(source: object, config: T.ClassRange.Config): T.C
 		return node as unknown as T.ClassRange.Bound;
 	});
 }
+function buildClassRange$set(
+	source: object,
+	...[slot, input]: ['start', Partial<T.ClassRange.Config>] | ['end', Partial<T.ClassRange.Config>]
+): T.ClassRange.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'start':
+			case 'end':
+				return buildClassRange$patch(source, { ...(inputs.config as T.ClassRange.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'start': {
+			const config = input;
+			const _start = kindIdStorage<NonNullable<T.ClassRange['_start']>>(config.start);
+			return setSlot(
+				source,
+				TSKindId.ClassRange as const,
+				'class_range',
+				0,
+				'start',
+				_start
+			) as unknown as T.ClassRange.Bound;
+		}
+		case 'end': {
+			const config = input;
+			const _end = kindIdStorage<NonNullable<T.ClassRange['_end']>>(config.end);
+			return setSlot(
+				source,
+				TSKindId.ClassRange as const,
+				'class_range',
+				1,
+				'end',
+				_end
+			) as unknown as T.ClassRange.Bound;
+		}
+	}
+}
 function withClassRange(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ClassRange.Config;
 	switch (setter) {
 		case 'start':
 			return applySetter(args, (value: Admit<NonNullable<T.ClassRange.Config>['start']>) =>
-				rebuilt(node, handle, () => buildClassRange$patch(node, { ...config, start: value }))
+				rebuilt(node, handle, () => buildClassRange$set(node, 'start', { start: value }))
 			);
 		case 'end':
 			return applySetter(args, (value: Admit<NonNullable<T.ClassRange.Config>['end']>) =>
-				rebuilt(node, handle, () => buildClassRange$patch(node, { ...config, end: value }))
+				rebuilt(node, handle, () => buildClassRange$set(node, 'end', { end: value }))
 			);
 	}
 	throw new Error(`class_range has no $with.${setter}`);
@@ -747,22 +931,75 @@ function buildNamedCapturingGroup$patch(
 		return node as unknown as T.NamedCapturingGroup.Bound;
 	});
 }
+function buildNamedCapturingGroup$set(
+	source: object,
+	...[slot, input]:
+		| ['operator', Partial<T.NamedCapturingGroup.Config>]
+		| ['groupName', Partial<T.NamedCapturingGroup.Config>]
+		| ['pattern', Partial<T.NamedCapturingGroup.Config>]
+): T.NamedCapturingGroup.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'operator':
+			case 'groupName':
+			case 'pattern':
+				return buildNamedCapturingGroup$patch(source, { ...(inputs.config as T.NamedCapturingGroup.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'operator': {
+			const config = input;
+			const _operator = kindIdStorage<NonNullable<T.NamedCapturingGroup['_operator']>>(config.operator);
+			return setSlot(
+				source,
+				TSKindId.NamedCapturingGroup as const,
+				'named_capturing_group',
+				0,
+				'operator',
+				_operator
+			) as unknown as T.NamedCapturingGroup.Bound;
+		}
+		case 'groupName': {
+			const config = input;
+			const _group_name = config.groupName;
+			return setSlot(
+				source,
+				TSKindId.NamedCapturingGroup as const,
+				'named_capturing_group',
+				1,
+				'groupName',
+				_group_name
+			) as unknown as T.NamedCapturingGroup.Bound;
+		}
+		case 'pattern': {
+			const config = input;
+			const _pattern = config.pattern;
+			return setSlot(
+				source,
+				TSKindId.NamedCapturingGroup as const,
+				'named_capturing_group',
+				2,
+				'pattern',
+				_pattern
+			) as unknown as T.NamedCapturingGroup.Bound;
+		}
+	}
+}
 function withNamedCapturingGroup(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.NamedCapturingGroup.Config;
 	switch (setter) {
 		case 'operator':
 			return applySetter(args, (value: Admit<NonNullable<T.NamedCapturingGroup.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildNamedCapturingGroup$patch(node, { ...config, operator: value }))
+				rebuilt(node, handle, () => buildNamedCapturingGroup$set(node, 'operator', { operator: value }))
 			);
 		case 'groupName':
 			return applySetter(args, (value: Admit<T.GroupName>) =>
-				rebuilt(node, handle, () => buildNamedCapturingGroup$patch(node, { ...config, groupName: value }))
+				rebuilt(node, handle, () => buildNamedCapturingGroup$set(node, 'groupName', { groupName: value }))
 			);
 		case 'pattern':
 			return applySetter(args, (value: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildNamedCapturingGroup$patch(node, { ...config, pattern: value }))
+				rebuilt(node, handle, () => buildNamedCapturingGroup$set(node, 'pattern', { pattern: value }))
 			);
 	}
 	throw new Error(`named_capturing_group has no $with.${setter}`);
@@ -884,14 +1121,38 @@ function buildZeroOrMore$patch(source: object, config: Partial<T.ZeroOrMore.Conf
 		return node as unknown as T.ZeroOrMore.Bound;
 	});
 }
+function buildZeroOrMore$set(
+	source: object,
+	...[slot, input]: ['lazy', Partial<T.ZeroOrMore.Config>]
+): T.ZeroOrMore.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'lazy':
+				return buildZeroOrMore$patch(source, { ...(inputs.config as T.ZeroOrMore.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'lazy': {
+			const config = input;
+			const _lazy = strictBooleanStorage(config.lazy);
+			return setSlot(
+				source,
+				TSKindId.ZeroOrMore as const,
+				'zero_or_more',
+				0,
+				'lazy',
+				_lazy
+			) as unknown as T.ZeroOrMore.Bound;
+		}
+	}
+}
 function withZeroOrMore(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.ZeroOrMore.Config;
 	switch (setter) {
 		case 'lazy':
 			return applySetter(args, (value?: Admit<NonNullable<T.ZeroOrMore.Config>['lazy']>) =>
-				rebuilt(node, handle, () => buildZeroOrMore$patch(node, { ...config, lazy: value }))
+				rebuilt(node, handle, () => buildZeroOrMore$set(node, 'lazy', { lazy: value }))
 			);
 	}
 	throw new Error(`zero_or_more has no $with.${setter}`);
@@ -926,14 +1187,38 @@ function buildOneOrMore$patch(source: object, config: Partial<T.OneOrMore.Config
 		return node as unknown as T.OneOrMore.Bound;
 	});
 }
+function buildOneOrMore$set(
+	source: object,
+	...[slot, input]: ['lazy', Partial<T.OneOrMore.Config>]
+): T.OneOrMore.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'lazy':
+				return buildOneOrMore$patch(source, { ...(inputs.config as T.OneOrMore.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'lazy': {
+			const config = input;
+			const _lazy = strictBooleanStorage(config.lazy);
+			return setSlot(
+				source,
+				TSKindId.OneOrMore as const,
+				'one_or_more',
+				0,
+				'lazy',
+				_lazy
+			) as unknown as T.OneOrMore.Bound;
+		}
+	}
+}
 function withOneOrMore(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.OneOrMore.Config;
 	switch (setter) {
 		case 'lazy':
 			return applySetter(args, (value?: Admit<NonNullable<T.OneOrMore.Config>['lazy']>) =>
-				rebuilt(node, handle, () => buildOneOrMore$patch(node, { ...config, lazy: value }))
+				rebuilt(node, handle, () => buildOneOrMore$set(node, 'lazy', { lazy: value }))
 			);
 	}
 	throw new Error(`one_or_more has no $with.${setter}`);
@@ -968,14 +1253,28 @@ function buildOptional$patch(source: object, config: Partial<T.Optional.Config> 
 		return node as unknown as T.Optional.Bound;
 	});
 }
+function buildOptional$set(source: object, ...[slot, input]: ['lazy', Partial<T.Optional.Config>]): T.Optional.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'lazy':
+				return buildOptional$patch(source, { ...(inputs.config as T.Optional.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'lazy': {
+			const config = input;
+			const _lazy = strictBooleanStorage(config.lazy);
+			return setSlot(source, TSKindId.Optional as const, 'optional', 0, 'lazy', _lazy) as unknown as T.Optional.Bound;
+		}
+	}
+}
 function withOptional(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.Optional.Config;
 	switch (setter) {
 		case 'lazy':
 			return applySetter(args, (value?: Admit<NonNullable<T.Optional.Config>['lazy']>) =>
-				rebuilt(node, handle, () => buildOptional$patch(node, { ...config, lazy: value }))
+				rebuilt(node, handle, () => buildOptional$set(node, 'lazy', { lazy: value }))
 			);
 	}
 	throw new Error(`optional has no $with.${setter}`);
@@ -1017,18 +1316,55 @@ function buildCountQuantifier$patch(source: object, config: T.CountQuantifier.Co
 		return node as unknown as T.CountQuantifier.Bound;
 	});
 }
+function buildCountQuantifier$set(
+	source: object,
+	...[slot, input]: ['content', Partial<T.CountQuantifier.Config>] | ['lazy', Partial<T.CountQuantifier.Config>]
+): T.CountQuantifier.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'content':
+			case 'lazy':
+				return buildCountQuantifier$patch(source, { ...(inputs.config as T.CountQuantifier.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'content': {
+			const config = input;
+			const _content = config.content;
+			return setSlot(
+				source,
+				TSKindId.CountQuantifier as const,
+				'count_quantifier',
+				0,
+				'content',
+				_content
+			) as unknown as T.CountQuantifier.Bound;
+		}
+		case 'lazy': {
+			const config = input;
+			const _lazy = strictBooleanStorage(config.lazy);
+			return setSlot(
+				source,
+				TSKindId.CountQuantifier as const,
+				'count_quantifier',
+				1,
+				'lazy',
+				_lazy
+			) as unknown as T.CountQuantifier.Bound;
+		}
+	}
+}
 function withCountQuantifier(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.CountQuantifier.Config;
 	switch (setter) {
 		case 'content':
 			return applySetter(args, (value: Admit<T.CountQuantifierArm | T.DecimalDigits>) =>
-				rebuilt(node, handle, () => buildCountQuantifier$patch(node, { ...config, content: value }))
+				rebuilt(node, handle, () => buildCountQuantifier$set(node, 'content', { content: value }))
 			);
 		case 'lazy':
 			return applySetter(args, (value?: Admit<NonNullable<T.CountQuantifier.Config>['lazy']>) =>
-				rebuilt(node, handle, () => buildCountQuantifier$patch(node, { ...config, lazy: value }))
+				rebuilt(node, handle, () => buildCountQuantifier$set(node, 'lazy', { lazy: value }))
 			);
 	}
 	throw new Error(`count_quantifier has no $with.${setter}`);
@@ -1297,21 +1633,65 @@ function buildUnicodePropertyValueExpression$patch(
 		return node as unknown as T.UnicodePropertyValueExpression.Bound;
 	});
 }
+function buildUnicodePropertyValueExpression$set(
+	source: object,
+	...[slot, input]:
+		| ['unicodePropertyValueExpressionGroup', Partial<T.UnicodePropertyValueExpression.Config>]
+		| ['unicodePropertyValue', Partial<T.UnicodePropertyValueExpression.Config>]
+): T.UnicodePropertyValueExpression.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'unicodePropertyValueExpressionGroup':
+			case 'unicodePropertyValue':
+				return buildUnicodePropertyValueExpression$patch(source, {
+					...(inputs.config as T.UnicodePropertyValueExpression.Config),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'unicodePropertyValueExpressionGroup': {
+			const config = input;
+			const _unicode_property_value_expression_group = config.unicodePropertyValueExpressionGroup;
+			return setSlot(
+				source,
+				TSKindId.UnicodePropertyValueExpression as const,
+				'unicode_property_value_expression',
+				0,
+				'unicodePropertyValueExpressionGroup',
+				_unicode_property_value_expression_group
+			) as unknown as T.UnicodePropertyValueExpression.Bound;
+		}
+		case 'unicodePropertyValue': {
+			const config = input;
+			const _unicode_property_value = config.unicodePropertyValue;
+			return setSlot(
+				source,
+				TSKindId.UnicodePropertyValueExpression as const,
+				'unicode_property_value_expression',
+				1,
+				'unicodePropertyValue',
+				_unicode_property_value
+			) as unknown as T.UnicodePropertyValueExpression.Bound;
+		}
+	}
+}
 function withUnicodePropertyValueExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.UnicodePropertyValueExpression.Config;
 	switch (setter) {
 		case 'unicodePropertyValueExpressionGroup':
 			return applySetter(args, (value?: Admit<T.UnicodePropertyValueExpressionGroup>) =>
 				rebuilt(node, handle, () =>
-					buildUnicodePropertyValueExpression$patch(node, { ...config, unicodePropertyValueExpressionGroup: value })
+					buildUnicodePropertyValueExpression$set(node, 'unicodePropertyValueExpressionGroup', {
+						unicodePropertyValueExpressionGroup: value
+					})
 				)
 			);
 		case 'unicodePropertyValue':
 			return applySetter(args, (value: Admit<T.UnicodePropertyValue>) =>
 				rebuilt(node, handle, () =>
-					buildUnicodePropertyValueExpression$patch(node, { ...config, unicodePropertyValue: value })
+					buildUnicodePropertyValueExpression$set(node, 'unicodePropertyValue', { unicodePropertyValue: value })
 				)
 			);
 	}
@@ -1567,18 +1947,55 @@ function buildTermGroup$patch(source: object, config: T.TermGroup.Config): T.Ter
 		return node as unknown as T.TermGroup.Bound;
 	});
 }
+function buildTermGroup$set(
+	source: object,
+	...[slot, input]: ['content', Partial<T.TermGroup.Config>] | ['quantifier', Partial<T.TermGroup.Config>]
+): T.TermGroup.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'content':
+			case 'quantifier':
+				return buildTermGroup$patch(source, { ...(inputs.config as T.TermGroup.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'content': {
+			const config = input;
+			const _content = kindIdStorage<NonNullable<T.TermGroup['_content']>>(config.content);
+			return setSlot(
+				source,
+				TSKindId.TermGroup as const,
+				'term_group',
+				0,
+				'content',
+				_content
+			) as unknown as T.TermGroup.Bound;
+		}
+		case 'quantifier': {
+			const config = input;
+			const _quantifier = config.quantifier;
+			return setSlot(
+				source,
+				TSKindId.TermGroup as const,
+				'term_group',
+				1,
+				'quantifier',
+				_quantifier
+			) as unknown as T.TermGroup.Bound;
+		}
+	}
+}
 function withTermGroup(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.TermGroup.Config;
 	switch (setter) {
 		case 'content':
 			return applySetter(args, (value: Admit<NonNullable<T.TermGroup.Config>['content']>) =>
-				rebuilt(node, handle, () => buildTermGroup$patch(node, { ...config, content: value }))
+				rebuilt(node, handle, () => buildTermGroup$set(node, 'content', { content: value }))
 			);
 		case 'quantifier':
 			return applySetter(args, (value?: Admit<T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier>) =>
-				rebuilt(node, handle, () => buildTermGroup$patch(node, { ...config, quantifier: value }))
+				rebuilt(node, handle, () => buildTermGroup$set(node, 'quantifier', { quantifier: value }))
 			);
 	}
 	throw new Error(`term_group has no $with.${setter}`);
@@ -1678,18 +2095,59 @@ function buildCountQuantifierArm$patch(
 		return node as unknown as T.CountQuantifierArm.Bound;
 	});
 }
+function buildCountQuantifierArm$set(
+	source: object,
+	...[slot, input]:
+		| ['decimalDigits', Partial<T.CountQuantifierArm.Config>]
+		| ['countQuantifierGroup', Partial<T.CountQuantifierArm.Config>]
+): T.CountQuantifierArm.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'decimalDigits':
+			case 'countQuantifierGroup':
+				return buildCountQuantifierArm$patch(source, { ...(inputs.config as T.CountQuantifierArm.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'decimalDigits': {
+			const config = input;
+			const _decimal_digits = config.decimalDigits;
+			return setSlot(
+				source,
+				TSKindId.CountQuantifierArm as const,
+				'count_quantifier_arm',
+				0,
+				'decimalDigits',
+				_decimal_digits
+			) as unknown as T.CountQuantifierArm.Bound;
+		}
+		case 'countQuantifierGroup': {
+			const config = input;
+			const _count_quantifier_group = config.countQuantifierGroup;
+			return setSlot(
+				source,
+				TSKindId.CountQuantifierArm as const,
+				'count_quantifier_arm',
+				1,
+				'countQuantifierGroup',
+				_count_quantifier_group
+			) as unknown as T.CountQuantifierArm.Bound;
+		}
+	}
+}
 function withCountQuantifierArm(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.CountQuantifierArm.Config;
 	switch (setter) {
 		case 'decimalDigits':
 			return applySetter(args, (value: Admit<T.DecimalDigits>) =>
-				rebuilt(node, handle, () => buildCountQuantifierArm$patch(node, { ...config, decimalDigits: value }))
+				rebuilt(node, handle, () => buildCountQuantifierArm$set(node, 'decimalDigits', { decimalDigits: value }))
 			);
 		case 'countQuantifierGroup':
 			return applySetter(args, (value?: Admit<T.CountQuantifierGroup>) =>
-				rebuilt(node, handle, () => buildCountQuantifierArm$patch(node, { ...config, countQuantifierGroup: value }))
+				rebuilt(node, handle, () =>
+					buildCountQuantifierArm$set(node, 'countQuantifierGroup', { countQuantifierGroup: value })
+				)
 			);
 	}
 	throw new Error(`count_quantifier_arm has no $with.${setter}`);
@@ -1765,21 +2223,65 @@ function buildCharacterClassEscapeArm$patch(
 		return node as unknown as T.CharacterClassEscapeArm.Bound;
 	});
 }
+function buildCharacterClassEscapeArm$set(
+	source: object,
+	...[slot, input]:
+		| ['characterClassEscapeText2', Partial<T.CharacterClassEscapeArm.Config>]
+		| ['unicodePropertyValueExpression', Partial<T.CharacterClassEscapeArm.Config>]
+): T.CharacterClassEscapeArm.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'characterClassEscapeText2':
+			case 'unicodePropertyValueExpression':
+				return buildCharacterClassEscapeArm$patch(source, {
+					...(inputs.config as T.CharacterClassEscapeArm.Config),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'characterClassEscapeText2': {
+			const config = input;
+			const _character_class_escape_text2 = config.characterClassEscapeText2;
+			return setSlot(
+				source,
+				TSKindId.CharacterClassEscapeArm as const,
+				'character_class_escape_arm',
+				0,
+				'characterClassEscapeText2',
+				_character_class_escape_text2
+			) as unknown as T.CharacterClassEscapeArm.Bound;
+		}
+		case 'unicodePropertyValueExpression': {
+			const config = input;
+			const _unicode_property_value_expression = config.unicodePropertyValueExpression;
+			return setSlot(
+				source,
+				TSKindId.CharacterClassEscapeArm as const,
+				'character_class_escape_arm',
+				1,
+				'unicodePropertyValueExpression',
+				_unicode_property_value_expression
+			) as unknown as T.CharacterClassEscapeArm.Bound;
+		}
+	}
+}
 function withCharacterClassEscapeArm(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.CharacterClassEscapeArm.Config;
 	switch (setter) {
 		case 'characterClassEscapeText2':
 			return applySetter(args, (value: Admit<T.CharacterClassEscapeText2>) =>
 				rebuilt(node, handle, () =>
-					buildCharacterClassEscapeArm$patch(node, { ...config, characterClassEscapeText2: value })
+					buildCharacterClassEscapeArm$set(node, 'characterClassEscapeText2', { characterClassEscapeText2: value })
 				)
 			);
 		case 'unicodePropertyValueExpression':
 			return applySetter(args, (value: Admit<T.UnicodePropertyValueExpression>) =>
 				rebuilt(node, handle, () =>
-					buildCharacterClassEscapeArm$patch(node, { ...config, unicodePropertyValueExpression: value })
+					buildCharacterClassEscapeArm$set(node, 'unicodePropertyValueExpression', {
+						unicodePropertyValueExpression: value
+					})
 				)
 			);
 	}
@@ -1940,18 +2442,60 @@ function buildInlineFlagsGroupEnable$patch(
 		return node as unknown as T.InlineFlagsGroupEnable.Bound;
 	});
 }
+function buildInlineFlagsGroupEnable$set(
+	source: object,
+	...[slot, input]:
+		| ['enabled', Partial<T.InlineFlagsGroupEnable.Config>]
+		| ['pattern', Partial<T.InlineFlagsGroupEnable.Config>]
+): T.InlineFlagsGroupEnable.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'enabled':
+			case 'pattern':
+				return buildInlineFlagsGroupEnable$patch(source, {
+					...(inputs.config as T.InlineFlagsGroupEnable.Config),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'enabled': {
+			const config = input;
+			const _enabled = config.enabled;
+			return setSlot(
+				source,
+				TSKindId.InlineFlagsGroupEnable as const,
+				'inline_flags_group_enable',
+				0,
+				'enabled',
+				_enabled
+			) as unknown as T.InlineFlagsGroupEnable.Bound;
+		}
+		case 'pattern': {
+			const config = input;
+			const _pattern = config.pattern;
+			return setSlot(
+				source,
+				TSKindId.InlineFlagsGroupEnable as const,
+				'inline_flags_group_enable',
+				1,
+				'pattern',
+				_pattern
+			) as unknown as T.InlineFlagsGroupEnable.Bound;
+		}
+	}
+}
 function withInlineFlagsGroupEnable(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.InlineFlagsGroupEnable.Config;
 	switch (setter) {
 		case 'enabled':
 			return applySetter(args, (value: Admit<T.Flags>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupEnable$patch(node, { ...config, enabled: value }))
+				rebuilt(node, handle, () => buildInlineFlagsGroupEnable$set(node, 'enabled', { enabled: value }))
 			);
 		case 'pattern':
 			return applySetter(args, (value?: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupEnable$patch(node, { ...config, pattern: value }))
+				rebuilt(node, handle, () => buildInlineFlagsGroupEnable$set(node, 'pattern', { pattern: value }))
 			);
 	}
 	throw new Error(`inline_flags_group_enable has no $with.${setter}`);
@@ -2009,22 +2553,78 @@ function buildInlineFlagsGroupToggle$patch(
 		return node as unknown as T.InlineFlagsGroupToggle.Bound;
 	});
 }
+function buildInlineFlagsGroupToggle$set(
+	source: object,
+	...[slot, input]:
+		| ['enabled', Partial<T.InlineFlagsGroupToggle.Config>]
+		| ['disabled', Partial<T.InlineFlagsGroupToggle.Config>]
+		| ['pattern', Partial<T.InlineFlagsGroupToggle.Config>]
+): T.InlineFlagsGroupToggle.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'enabled':
+			case 'disabled':
+			case 'pattern':
+				return buildInlineFlagsGroupToggle$patch(source, {
+					...(inputs.config as T.InlineFlagsGroupToggle.Config),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'enabled': {
+			const config = input;
+			const _enabled = config.enabled;
+			return setSlot(
+				source,
+				TSKindId.InlineFlagsGroupToggle as const,
+				'inline_flags_group_toggle',
+				0,
+				'enabled',
+				_enabled
+			) as unknown as T.InlineFlagsGroupToggle.Bound;
+		}
+		case 'disabled': {
+			const config = input;
+			const _disabled = config.disabled;
+			return setSlot(
+				source,
+				TSKindId.InlineFlagsGroupToggle as const,
+				'inline_flags_group_toggle',
+				1,
+				'disabled',
+				_disabled
+			) as unknown as T.InlineFlagsGroupToggle.Bound;
+		}
+		case 'pattern': {
+			const config = input;
+			const _pattern = config.pattern;
+			return setSlot(
+				source,
+				TSKindId.InlineFlagsGroupToggle as const,
+				'inline_flags_group_toggle',
+				2,
+				'pattern',
+				_pattern
+			) as unknown as T.InlineFlagsGroupToggle.Bound;
+		}
+	}
+}
 function withInlineFlagsGroupToggle(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.InlineFlagsGroupToggle.Config;
 	switch (setter) {
 		case 'enabled':
 			return applySetter(args, (value: Admit<T.Flags>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupToggle$patch(node, { ...config, enabled: value }))
+				rebuilt(node, handle, () => buildInlineFlagsGroupToggle$set(node, 'enabled', { enabled: value }))
 			);
 		case 'disabled':
 			return applySetter(args, (value: Admit<T.Flags>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupToggle$patch(node, { ...config, disabled: value }))
+				rebuilt(node, handle, () => buildInlineFlagsGroupToggle$set(node, 'disabled', { disabled: value }))
 			);
 		case 'pattern':
 			return applySetter(args, (value?: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupToggle$patch(node, { ...config, pattern: value }))
+				rebuilt(node, handle, () => buildInlineFlagsGroupToggle$set(node, 'pattern', { pattern: value }))
 			);
 	}
 	throw new Error(`inline_flags_group_toggle has no $with.${setter}`);
@@ -2076,18 +2676,60 @@ function buildInlineFlagsGroupDisable$patch(
 		return node as unknown as T.InlineFlagsGroupDisable.Bound;
 	});
 }
+function buildInlineFlagsGroupDisable$set(
+	source: object,
+	...[slot, input]:
+		| ['disabled', Partial<T.InlineFlagsGroupDisable.Config>]
+		| ['pattern', Partial<T.InlineFlagsGroupDisable.Config>]
+): T.InlineFlagsGroupDisable.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'disabled':
+			case 'pattern':
+				return buildInlineFlagsGroupDisable$patch(source, {
+					...(inputs.config as T.InlineFlagsGroupDisable.Config),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'disabled': {
+			const config = input;
+			const _disabled = config.disabled;
+			return setSlot(
+				source,
+				TSKindId.InlineFlagsGroupDisable as const,
+				'inline_flags_group_disable',
+				0,
+				'disabled',
+				_disabled
+			) as unknown as T.InlineFlagsGroupDisable.Bound;
+		}
+		case 'pattern': {
+			const config = input;
+			const _pattern = config.pattern;
+			return setSlot(
+				source,
+				TSKindId.InlineFlagsGroupDisable as const,
+				'inline_flags_group_disable',
+				1,
+				'pattern',
+				_pattern
+			) as unknown as T.InlineFlagsGroupDisable.Bound;
+		}
+	}
+}
 function withInlineFlagsGroupDisable(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.InlineFlagsGroupDisable.Config;
 	switch (setter) {
 		case 'disabled':
 			return applySetter(args, (value: Admit<T.Flags>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupDisable$patch(node, { ...config, disabled: value }))
+				rebuilt(node, handle, () => buildInlineFlagsGroupDisable$set(node, 'disabled', { disabled: value }))
 			);
 		case 'pattern':
 			return applySetter(args, (value?: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupDisable$patch(node, { ...config, pattern: value }))
+				rebuilt(node, handle, () => buildInlineFlagsGroupDisable$set(node, 'pattern', { pattern: value }))
 			);
 	}
 	throw new Error(`inline_flags_group_disable has no $with.${setter}`);
@@ -2339,6 +2981,80 @@ export const builtViews: BuiltViews = Object.freeze({
 		85: 2,
 		86: 2
 	}),
+	places: Object.freeze({
+		37: [[2, 2, 2, 4, 0, 0]],
+		51: [[2, 2, 3, 8, 3, 0]],
+		52: [[2, 2, 1, 1, 0, 3]],
+		53: [[2, 2, 1, 1, 0, 3]],
+		55: [[2, 2, 8, 8, 8, 0]],
+		56: [
+			[2, 2, 1, 2, 0, 0],
+			[3, 3, 5, 8, 5, 0]
+		],
+		57: [
+			[2, 2, 1, 2, 0, 0],
+			[3, 3, 5, 8, 5, 0]
+		],
+		58: [
+			[2, 0],
+			[2, 1],
+			[3, 3, 1, 1, 0, 3],
+			[2, 2]
+		],
+		59: [[2, 2, 3, 1, 0, 0]],
+		61: [
+			[2, 2, 19, 11, 18, 0],
+			[21, 3, 19, 11, 18, 0]
+		],
+		62: [[2, 2, 5, 8, 5, 0]],
+		63: [
+			[2, 2, 1, 2, 0, 0],
+			[3, 3, 3, 1, 0, 0],
+			[6, 4, 5, 8, 5, 0]
+		],
+		64: [[2, 2, 5, 8, 5, 0]],
+		67: [[2, 0]],
+		68: [[2, 0]],
+		69: [[2, 0]],
+		70: [
+			[3, 3, 11, 9, 10, 0],
+			[2, 0]
+		],
+		71: [[2, 2, 3, 1, 0, 0]],
+		72: [[2, 2, 3, 1, 0, 0]],
+		73: [[2, 2, 16, 9, 15, 0]],
+		75: [
+			[2, 2, 5, 8, 5, 0],
+			[7, 3, 3, 1, 0, 0]
+		],
+		78: [
+			[2, 2, 19, 11, 18, 0],
+			[21, 3, 14, 8, 14, 0]
+		],
+		79: [[2, 2, 3, 1, 0, 0]],
+		80: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 5, 8, 5, 0]
+		],
+		81: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 10, 8, 10, 0]
+		],
+		82: [[2, 2, 3, 1, 0, 0]],
+		84: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 5, 8, 5, 0]
+		],
+		85: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 3, 1, 0, 0],
+			[8, 4, 5, 8, 5, 0]
+		],
+		86: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 5, 8, 5, 0]
+		]
+	} as const),
 	leaves: Object.freeze({
 		12: leafPatternCharacter,
 		20: leafClassCharacter,

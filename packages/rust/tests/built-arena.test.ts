@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { BuiltArena, builtCell, cellFormatOf, chunkOf, decodeBuiltCell, unitCell, wordOf } from '@sittir/common/engine';
-import { builtRecordOf, handleDispose, LEAF_SITES, positionWords, storeCell, storeList, storeListOptions, writeLeafSites } from '@sittir/common/utils';
+import { builtRecordOf, childSlot, handleDispose, LEAF_SITES, positionWords, storeCell, storeList, storeListOptions, writeLeafSites } from '@sittir/common/utils';
 import type { BuiltText, LeafSite, TreeHandle } from '@sittir/common/utils';
-import { sideEntryOf } from '../../common/src/built-arena.ts';
+import { patchCell, sideEntryOf } from '../../common/src/built-arena.ts';
+import type { RecordHandle } from '../../common/src/handle.ts';
 import { leafSitesOf, placeLeaf } from '../../common/src/built-ref.ts';
 import { PLAIN_KINDS, setTriviaOf } from '../../common/src/node-data.ts';
 import { bindTree, treeEngineHandle } from '../../common/src/engine-scope.ts';
@@ -23,7 +24,7 @@ const NO_SIDES: SideStore = {
 };
 type Views = ConstructorParameters<typeof BuiltArena>[3];
 type WriteLeafSites = ConstructorParameters<typeof BuiltArena>[4];
-const NO_VIEWS: Views = { withs: {}, words: {}, cells: {}, leaves: {} };
+const NO_VIEWS: Views = { withs: {}, words: {}, cells: {}, places: {}, leaves: {} };
 
 const metaBytes = (words: number): number => {
 	const blocks = Math.ceil(words / 64);
@@ -376,5 +377,25 @@ describe('a built arena', () => {
 		const other = arenaOf();
 		const child = other.leaf(leafOf(4), 'x');
 		expect(() => storeCell(arena, record, 2, 2, child)).toThrow(/its own engine built/);
+	});
+
+	it('keeps the cell a copy of a built node sets to the text the node reads, when nothing read the node before the copy', () => {
+		const arena = arenaOf(NO_SIDES, { ...NO_VIEWS, words: { 9: 3 } });
+		const record = arena.draft(9, 3);
+		storeCell(arena, record, 2, 2, 'x');
+		const source = arena.view(record) as RecordHandle;
+		const copy = arena.copy(source, 9);
+		expect(childSlot(source, 2, 1, 0, 0, 2)).toBe('x');
+		patchCell(arena, copy, 2, 2, 'x');
+		expect(copy.patched).toBeUndefined();
+		expect(placed(arena, arena.view(copy), 3)).toEqual(placed(arena, source, 3));
+	});
+
+	it('compares a copy of a parsed node against the read cache the node fills, when nothing read the node before the copy', () => {
+		const arena = arenaOf(NO_SIDES, { ...NO_VIEWS, words: { 9: 3 } });
+		const source = { $type: 9, $tree: {} as TreeHandle, $at: 4, $_layout: undefined, $words: undefined, $cache: undefined } as RecordHandle;
+		const copy = arena.copy(source, 9);
+		expect(source.$cache).toBeDefined();
+		expect(copy.kept).toBe(source.$cache);
 	});
 });

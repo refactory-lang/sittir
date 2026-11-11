@@ -1,6 +1,6 @@
 # Native file input and output, and a threaded format batch
 
-Status: draft for the maintainer's approval (2026-11-10).
+Status: approved by the maintainer (2026-11-10). Plan: `docs/superpowers/plans/2026-11-10-native-file-io-and-format-batch.md`.
 
 ## Why
 
@@ -22,6 +22,10 @@ Status: draft for the maintainer's approval (2026-11-10).
 - **A thorough cleanup,** so that nothing crosses the native boundary where it doesn't have to.
 - **`root.$save(path)` is a wrapper over `engine.write`.**
 - **`Pending` carries the path only, and `diff()` is the one way to the text.**
+- **The batch mirrors the format inference, `engine.styleFrom(...sources)`:**
+  - `engine.applyStyle(...paths)` formats files in place, and `engine.checkStyle(...paths)` reports which would change.
+  - Format options are just the render options, so the batch renders with the engine's own and takes no options of its own.
+  - The thread count is a `createEngine` option, `threads`.
 
 Earlier rulings this design keeps:
 - optimizations may be arena-only;
@@ -51,7 +55,7 @@ Earlier rulings this design keeps:
 - A batch whose output differs from writing each file one at a time with `engine.write`, or from a one-thread run.
 - Shared mutable state between the batch's threads, or a new lock on a read or render path.
 - Text filled into a result "in case" a caller reads it.
-- A file left truncated or half-written by a crash or an error.
+- A file left truncated or half-written by a process crash or an error.
 
 ## The end state
 
@@ -78,6 +82,7 @@ Earlier rulings this design keeps:
 
 - One writer serves `write`, `create`, `$save`, `Rendered.save` and the batch.
 - It writes atomically: it writes to a scratch file beside the target and renames it over the target, as codegen's `writeFileAtomic` does for its outputs.
+- It doesn't sync to disk. The rename already means a process crash or an error never leaves a truncated file, and surviving power loss isn't a formatter's job.
 - A file whose rendered bytes equal its current bytes isn't rewritten.
 
 ### Crossings removed
@@ -94,7 +99,7 @@ Earlier rulings this design keeps:
 
 A test lists every napi function that takes or returns a string, a JSON string, or a bulk buffer, each with its reason. A reason is one of:
 - text the caller asked for (`render`, `text(span)`);
-- source the caller handed in (`parse(source)`);
+- input the caller handed in: a source (`parse(source)`), a query's patterns, a file path, or text a render interceptor produced;
 - a built node's buffers, which JavaScript owns by design;
 - a parsed tree's record words lent to JavaScript (`chunk`), which are records, not source bytes;
 - an error message.
@@ -112,29 +117,33 @@ A string crossing with no listed reason fails. A listed one that no longer exist
 
 ### The format batch
 
-`engine.formatFiles(paths, { check?, threads?, options? })` returns `Promise<readonly FormatResult[]>`, in `paths` order.
+`engine.applyStyle(...paths)` formats each file in place. `engine.checkStyle(...paths)` reports which files would change and writes nothing, as `oxfmt --write` and `--check` do. Both return `Promise<readonly StyleResult[]>`, in argument order.
+
+They mirror `engine.styleFrom(...sources)`:
+- **Paths are typed `SourcePath<G>`,** which is `` `${string}.${FileType}` `` over the language's file types, and `never` for a language with none. The type is the whole gate: there's no run-time extension check. `engine.isSourcePath(p)` narrows a string.
+- **Format options are just the render options.** The batch renders with the engine's own render options, and an engine created with other options formats with those. Line endings come from those options too: under the default `'\n'`, a CRLF file is rewritten with LF and reported changed.
 
 For each file, all natively:
 1. read it;
 2. parse it, with tree-sitter's tree freed inside the parse;
-3. render with `options` over the engine's render options;
+3. render with the engine's render options, over the tree's own layer as any render of it does;
 4. compare with the source;
-5. write it through the native writer when it changed and `check` isn't set;
+5. in `applyStyle`, write it through the native writer when it changed;
 6. release the parse.
 
 What it guarantees:
-- **Results.** A `FormatResult` is either `{ path, changed, errors }`, where `errors` is the file's error regions, or `{ path, refused }`. A refusal names its reason: the file can't be read, isn't valid UTF-8, or has an extension outside the language's file types. One file's refusal never stops the others.
+- **Results.** A `StyleResult` is either `{ path, changed, errors }`, where `errors` is the file's error regions, or `{ path, refused }`. A refusal names its reason: the file can't be read, isn't valid UTF-8, or (in `applyStyle`) can't be written. One file's refusal never stops the others.
 - **Parse errors.** A file with parse errors still renders, as `render` does for any parsed root.
-- **Threads.** `threads` defaults to the machine's available parallelism. Each thread builds its own engine from the caller's engine options. Threads share only the process's read-only tables.
+- **Threads.** `createEngine`'s `threads` option sets the count, and the machine's available parallelism is the default. Each thread builds its own engine from the caller's engine options. Threads share only the process's read-only tables.
 - **Scheduling.** Files are handed out largest first, in chunks of at most 8 files or 128 KiB. That removed the probe's stall on matter.js's four largest files, which hold 35% of its bytes.
 - **Off the JavaScript thread.** The batch runs as an asynchronous native task, so the JavaScript thread stays free while it runs. The batch never touches the calling engine's state, since its threads use engines of their own, so the caller can keep using that engine meanwhile.
 - **Memory.** At most one parse is live per thread at any moment.
-- **Refusals by name:** in object storage, and when the engine has a `render`, `parse` or `file` interceptor. Native threads can't call JavaScript.
+- **Refusals by name:** in object storage, and when the engine has a `render`, `parse` or `file` interceptor. Native threads can't call JavaScript. `createEngine` refuses a `threads` option on an object-storage engine.
 - **Byte identity.** The output equals a one-thread run, and equals `engine.write` of each file on its own.
 
 ### Measured
 
-- The oxc speed reference gains the batch at 1, 2, 4 and 8 threads, in both modes, against `oxfmt --write` and `oxfmt --check` at the same thread counts on the same files.
+- The oxc speed reference gains `applyStyle` and `checkStyle` at 1, 2, 4 and 8 threads, against `oxfmt --write` and `oxfmt --check` at the same thread counts on the same files, with both sides set to the same line ending.
 - It also gains the batch at one thread against today's per-file path, which is the crossing cleanup's own gain.
 - As now, results are compared by the ratio to oxfmt on the same CPU model, with peak memory for each.
 
@@ -156,13 +165,12 @@ What it guarantees:
 
 ## Calls I made, for the maintainer to check
 
-1. The batch is named `engine.formatFiles`.
-2. It has both modes: it writes in place by default, and `check: true` only reports which files would change, like oxfmt's `--write` and `--check`.
-3. Writes are atomic (scratch file, then rename), and an unchanged file isn't rewritten.
-4. The batch refuses object storage and engines with interceptors.
-5. A refused file is a result, not a failure of the whole batch.
-6. `Interceptor.file` receives `{ path, verb, diff() }`.
-7. `read(path)` loads the source into JavaScript only when a `parse` interceptor is registered.
-8. `$save` exists only on nodes of the grammar's root kind.
-9. `parse` returns an object, query plans go by handle, and a guard lists every remaining crossing.
-10. `Project` is out of scope.
+1. Writes are atomic (scratch file, then rename), with no sync to disk, and an unchanged file isn't rewritten.
+2. The batch refuses object storage and engines with interceptors.
+3. A refused file is a result, not a failure of the whole batch.
+4. `Interceptor.file` receives `{ path, verb, diff() }`.
+5. `read(path)` loads the source into JavaScript only when a `parse` interceptor is registered.
+6. `$save` exists only on nodes of the grammar's root kind.
+7. `parse` returns an object, query plans go by handle, and a guard lists every remaining crossing.
+8. `Project` is out of scope.
+9. `SourcePath<G>` and `isSourcePath` are built here, with the batch, as the `styleFrom` design has them. `styleFrom` itself stays parked.

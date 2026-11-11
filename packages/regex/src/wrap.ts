@@ -77,9 +77,10 @@ function viewSlot<T>(
 	forms: number,
 	inline: number,
 	built: number,
-	aliasContent = false
+	aliasContent = false,
+	spellings?: Readonly<Record<string, string>>
 ): ParsedOfData<T> {
-	return childSlot(view, word, width, forms, inline, built, _wrap, aliasContent) as ParsedOfData<T>;
+	return childSlot(view, word, width, forms, inline, built, _wrap, aliasContent, spellings) as ParsedOfData<T>;
 }
 function viewSlots<T>(
 	view: RecordHandle,
