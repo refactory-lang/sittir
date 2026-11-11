@@ -4,9 +4,6 @@ import { detachedRenderer } from './helpers/detached-renderer.ts';
 import { languageByName } from '../../languages.ts';
 
 const rust = await createEngine(await languageByName('rust'));
-afterAll(() => {
-	rust.dispose();
-});
 
 afterAll(() => {
 	rust.dispose();
