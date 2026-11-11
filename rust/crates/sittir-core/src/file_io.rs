@@ -75,15 +75,25 @@ pub fn read_source(path: &Path) -> Result<String, FileError> {
 /// file gets its original bytes again, through the descriptor it was
 /// written with (`write_or_restore`), and a new file never appears. A new
 /// file is written beside its target and then linked in (`create_file`).
-/// A process killed mid-write can still leave an existing file partly
-/// written. Nothing is synced to disk.
+/// On a filesystem without hard links, such as exFAT or FAT32, a new file
+/// is created in place instead (`create_in_place`), and only there can a
+/// failed create leave a partly written file; its error says so. A process
+/// killed mid-write can still leave an existing file partly written.
+/// Nothing is synced to disk.
 pub fn write_file(path: &Path, bytes: &[u8], mode: WriteMode) -> Result<bool, FileError> {
-    write_through(path, bytes, mode, |file| file)
+    write_through(path, bytes, mode, |file| file, |scratch, target| fs::hard_link(scratch, target))
 }
 
-/// `write_file`, writing through what `wrap` makes of the opened file, so a
-/// test can make the write fail partway.
-fn write_through<F: Rewrite>(path: &Path, bytes: &[u8], mode: WriteMode, wrap: impl FnOnce(fs::File) -> F) -> Result<bool, FileError> {
+/// `write_file`, writing through what `wrap` makes of each opened file and
+/// linking a new file in with `link`, so a test can make a write fail
+/// partway or a filesystem lack hard links.
+fn write_through<F: Rewrite>(
+    path: &Path,
+    bytes: &[u8],
+    mode: WriteMode,
+    mut wrap: impl FnMut(fs::File) -> F,
+    link: impl FnOnce(&Path, &Path) -> io::Result<()>,
+) -> Result<bool, FileError> {
     let refused = |cause| FileError::Write { path: path.to_owned(), cause };
     let not_regular = || refused(io::Error::other("it is not a regular file"));
     match mode {
@@ -101,12 +111,12 @@ fn write_through<F: Rewrite>(path: &Path, bytes: &[u8], mode: WriteMode, wrap: i
                 }
                 write_or_restore(path, wrap(file), bytes, &original)
             }
-            Err(cause) if cause.kind() == io::ErrorKind::NotFound => create_file(path, &referent(path).map_err(refused)?, bytes, mode, wrap),
+            Err(cause) if cause.kind() == io::ErrorKind::NotFound => create_file(path, &referent(path).map_err(refused)?, bytes, mode, wrap, link),
             Err(cause) => Err(refused(cause)),
         },
         WriteMode::CreateNew => match fs::symlink_metadata(path) {
             Ok(_) => Err(FileError::Exists { path: path.to_owned() }),
-            Err(cause) if cause.kind() == io::ErrorKind::NotFound => create_file(path, path, bytes, mode, wrap),
+            Err(cause) if cause.kind() == io::ErrorKind::NotFound => create_file(path, path, bytes, mode, wrap, link),
             Err(cause) => Err(refused(cause)),
         },
     }
@@ -117,21 +127,28 @@ fn write_through<F: Rewrite>(path: &Path, bytes: &[u8], mode: WriteMode, wrap: i
 /// process and the thread, which is then hard-linked to the target. The
 /// link fails when a file has appeared at the target meanwhile, so nothing
 /// is clobbered, and a write that fails partway leaves nothing at the
-/// target. The scratch file is removed either way.
-fn create_file<F: Rewrite>(path: &Path, target: &Path, bytes: &[u8], mode: WriteMode, wrap: impl FnOnce(fs::File) -> F) -> Result<bool, FileError> {
+/// target. The scratch file is removed either way. On a filesystem without
+/// hard links the target is created in place instead (`create_in_place`).
+fn create_file<F: Rewrite>(
+    path: &Path,
+    target: &Path,
+    bytes: &[u8],
+    mode: WriteMode,
+    mut wrap: impl FnMut(fs::File) -> F,
+    link: impl FnOnce(&Path, &Path) -> io::Result<()>,
+) -> Result<bool, FileError> {
     let refused = |cause| FileError::Write { path: path.to_owned(), cause };
     let scratch = scratch_name(target);
     let file = fs::OpenOptions::new().write(true).create_new(true).open(&scratch).map_err(refused)?;
-    let written = {
-        let mut file = wrap(file);
-        file.rewrite(bytes)
-    };
-    let linked = written.and_then(|()| fs::hard_link(&scratch, target));
+    let written = wrap(file).rewrite(bytes);
+    let linked = written.map(|()| link(&scratch, target));
     let removed = fs::remove_file(&scratch);
-    let Err(cause) = linked else {
-        return Ok(true);
+    let cause = match linked {
+        Ok(Ok(())) => return Ok(true),
+        Ok(Err(cause)) if has_no_hard_links(&cause) => return create_in_place(path, target, bytes, mode, wrap),
+        Ok(Err(cause)) | Err(cause) => cause,
     };
-    if mode == WriteMode::CreateNew && cause.kind() == io::ErrorKind::AlreadyExists {
+    if found_a_file(mode, &cause) {
         return Err(FileError::Exists { path: path.to_owned() });
     }
     let outcome = match removed {
@@ -140,6 +157,48 @@ fn create_file<F: Rewrite>(path: &Path, target: &Path, bytes: &[u8], mode: Write
     };
     Err(refused(io::Error::new(cause.kind(), format!("{cause}; {outcome}"))))
 }
+
+/// Creates `target`, which `path` names, holding `bytes` written in place,
+/// answering `true`, for a filesystem without hard links. Opening it new
+/// refuses a file that has appeared at the target, so nothing is clobbered.
+/// A write that fails partway leaves the new file partly written, since
+/// removing it by path could remove a file another process has put there
+/// since, and the error says so.
+fn create_in_place<F: Rewrite>(path: &Path, target: &Path, bytes: &[u8], mode: WriteMode, mut wrap: impl FnMut(fs::File) -> F) -> Result<bool, FileError> {
+    let refused = |cause| FileError::Write { path: path.to_owned(), cause };
+    let file = match fs::OpenOptions::new().write(true).create_new(true).open(target) {
+        Ok(file) => file,
+        Err(cause) if found_a_file(mode, &cause) => return Err(FileError::Exists { path: path.to_owned() }),
+        Err(cause) => return Err(refused(cause)),
+    };
+    let Err(cause) = wrap(file).rewrite(bytes) else {
+        return Ok(true);
+    };
+    let outcome = "the filesystem has no hard links, so the file was created in place and is left partly written";
+    Err(refused(io::Error::new(cause.kind(), format!("{cause}; {outcome}"))))
+}
+
+/// Whether a create met a file at its path, which `CreateNew` reports as
+/// [`FileError::Exists`].
+fn found_a_file(mode: WriteMode, cause: &io::Error) -> bool {
+    mode == WriteMode::CreateNew && cause.kind() == io::ErrorKind::AlreadyExists
+}
+
+/// Whether a link failed because the filesystem has no hard links.
+fn has_no_hard_links(cause: &io::Error) -> bool {
+    cause.kind() == io::ErrorKind::Unsupported || cause.raw_os_error().is_some_and(|code| NO_HARD_LINKS.contains(&code))
+}
+
+/// The OS error codes, beside [`io::ErrorKind::Unsupported`], a link
+/// answers with on a filesystem without hard links: `ENOTSUP` on macOS
+/// (exFAT and FAT32), `EPERM` on Linux (any filesystem without them), and
+/// `ERROR_INVALID_FUNCTION` and `ERROR_NOT_SUPPORTED` on Windows.
+#[cfg(unix)]
+const NO_HARD_LINKS: [i32; 2] = [libc::ENOTSUP, libc::EPERM];
+#[cfg(windows)]
+const NO_HARD_LINKS: [i32; 2] = [1, 50];
+#[cfg(not(any(unix, windows)))]
+const NO_HARD_LINKS: [i32; 0] = [];
 
 /// The scratch path beside `target`, named for it, the process and the
 /// thread, so no two writers in flight share one.
@@ -204,10 +263,19 @@ fn write_or_restore<F: Rewrite>(path: &Path, mut file: F, bytes: &[u8], original
 
 #[cfg(test)]
 mod tests {
-    use super::{read_source, write_file, write_through, FileError, Rewrite, WriteMode};
+    use super::{read_source, write_file, write_through, FileError, Rewrite, WriteMode, NO_HARD_LINKS};
     use std::fs;
     use std::io;
     use std::path::{Path, PathBuf};
+
+    fn linked(scratch: &Path, target: &Path) -> io::Result<()> {
+        fs::hard_link(scratch, target)
+    }
+
+    /// Each error a filesystem without hard links answers a link with.
+    fn no_hard_links() -> Vec<io::Error> {
+        NO_HARD_LINKS.iter().map(|&code| io::Error::from_raw_os_error(code)).chain([io::ErrorKind::Unsupported.into()]).collect()
+    }
 
     fn directory(name: &str) -> PathBuf {
         let dir = std::env::temp_dir().join(format!("sittir-file-io-{}-{name}", std::process::id()));
@@ -238,8 +306,11 @@ mod tests {
         meanwhile: Option<Box<dyn FnOnce()>>,
     }
 
-    fn fails_after(left: usize, meanwhile: impl FnOnce() + 'static) -> impl FnOnce(fs::File) -> FailsAfter<fs::File> {
-        move |inner| FailsAfter { inner, left, meanwhile: Some(Box::new(meanwhile)) }
+    /// Wraps the first file opened in a [`FailsAfter`], and any later one
+    /// in one whose writes all go through.
+    fn fails_after(left: usize, meanwhile: impl FnOnce() + 'static) -> impl FnMut(fs::File) -> FailsAfter<fs::File> {
+        let mut meanwhile: Option<Box<dyn FnOnce()>> = Some(Box::new(meanwhile));
+        move |inner| FailsAfter { inner, left, meanwhile: meanwhile.take() }
     }
 
     impl<F: Rewrite> Rewrite for FailsAfter<F> {
@@ -400,7 +471,7 @@ mod tests {
         let dir = directory("restore");
         let path = dir.join("a.rs");
         fs::write(&path, "fn original() {}\n").unwrap();
-        let error = write_through(&path, b"fn replacement() {}\n", WriteMode::Replace, fails_after(4, || {})).unwrap_err();
+        let error = write_through(&path, b"fn replacement() {}\n", WriteMode::Replace, fails_after(4, || {}), linked).unwrap_err();
         assert!(matches!(error, FileError::Write { .. }), "{error:?}");
         let message = error.to_string();
         assert!(message.contains(&path.display().to_string()) && message.contains("no space left") && message.contains("restored"), "{message}");
@@ -411,7 +482,7 @@ mod tests {
     fn a_failed_create_leaves_nothing_at_the_target_or_beside_it() {
         let dir = directory("unmade");
         let path = dir.join("a.rs");
-        let error = write_through(&path, b"fn a() {}\n", WriteMode::CreateNew, fails_after(4, || {})).unwrap_err();
+        let error = write_through(&path, b"fn a() {}\n", WriteMode::CreateNew, fails_after(4, || {}), linked).unwrap_err();
         assert!(error.to_string().contains("nothing was created"), "{error}");
         assert_eq!(entries(&dir), Vec::<String>::new());
     }
@@ -422,7 +493,7 @@ mod tests {
         let dir = directory("dangling-failed");
         let link = dir.join("out.rs");
         std::os::unix::fs::symlink("generated.rs", &link).unwrap();
-        let error = write_through(&link, b"fn a() {}\n", WriteMode::Replace, fails_after(4, || {})).unwrap_err();
+        let error = write_through(&link, b"fn a() {}\n", WriteMode::Replace, fails_after(4, || {}), linked).unwrap_err();
         assert!(error.to_string().contains("nothing was created"), "{error}");
         assert!(fs::symlink_metadata(&link).unwrap().file_type().is_symlink());
         assert_eq!(entries(&dir), ["out.rs"]);
@@ -438,7 +509,7 @@ mod tests {
         let error = write_through(&path, b"fn replacement() {}\n", WriteMode::Replace, fails_after(4, move || {
             fs::write(&editor, "fn editor() {}\n").unwrap();
             fs::rename(&editor, &at).unwrap();
-        }))
+        }), linked)
         .unwrap_err();
         assert!(error.to_string().contains("restored"), "{error}");
         assert_eq!(fs::read_to_string(&path).unwrap(), "fn editor() {}\n");
@@ -456,7 +527,7 @@ mod tests {
         write_through(&link, b"fn replacement() {}\n", WriteMode::Replace, fails_after(4, move || {
             fs::remove_file(&at).unwrap();
             std::os::unix::fs::symlink(&to, &at).unwrap();
-        }))
+        }), linked)
         .unwrap_err();
         assert_eq!(fs::read_to_string(&a).unwrap(), "fn a() {}\n");
         assert_eq!(fs::read_to_string(&b).unwrap(), "fn b() {}\n");
@@ -471,7 +542,7 @@ mod tests {
         let error = write_through(&path, b"fn a() {}\n", WriteMode::CreateNew, fails_after(4, move || {
             fs::write(&editor, "fn editor() {}\n").unwrap();
             fs::rename(&editor, &at).unwrap();
-        }))
+        }), linked)
         .unwrap_err();
         assert!(error.to_string().contains("nothing was created"), "{error}");
         assert_eq!(fs::read_to_string(&path).unwrap(), "fn editor() {}\n");
@@ -500,15 +571,72 @@ mod tests {
         for mode in [WriteMode::CreateNew, WriteMode::Replace] {
             let path = dir.join(format!("{mode:?}.rs"));
             let at = path.clone();
-            let error = write_through(&path, b"fn ours() {}\n", mode, |inner| Meanwhile {
-                inner,
-                meanwhile: Some(Box::new(move || fs::write(&at, "fn theirs() {}\n").unwrap())),
+            let mut meanwhile: Option<Box<dyn FnOnce()>> = Some(Box::new(move || fs::write(&at, "fn theirs() {}\n").unwrap()));
+            let error = write_through(&path, b"fn ours() {}\n", mode, |inner| Meanwhile { inner, meanwhile: meanwhile.take() }, linked).unwrap_err();
+            assert!(matches!((mode, &error), (WriteMode::CreateNew, FileError::Exists { .. }) | (WriteMode::Replace, FileError::Write { .. })), "{error:?}");
+            assert_eq!(fs::read_to_string(&path).unwrap(), "fn theirs() {}\n");
+        }
+        assert_eq!(entries(&dir), ["CreateNew.rs", "Replace.rs"]);
+    }
+
+    #[test]
+    fn a_create_without_hard_links_writes_the_file_in_place() {
+        let dir = directory("no-links");
+        let mut made = Vec::new();
+        for mode in [WriteMode::Replace, WriteMode::CreateNew] {
+            for (index, failure) in no_hard_links().into_iter().enumerate() {
+                let name = format!("{mode:?}-{index}.rs");
+                assert!(write_through(&dir.join(&name), b"fn a() {}\n", mode, |file| file, move |_, _| Err(failure)).unwrap());
+                assert_eq!(fs::read_to_string(dir.join(&name)).unwrap(), "fn a() {}\n");
+                made.push(name);
+            }
+        }
+        made.sort();
+        assert_eq!(entries(&dir), made);
+    }
+
+    #[test]
+    fn a_failed_create_without_hard_links_is_left_partly_written_and_says_so() {
+        let dir = directory("no-links-failed");
+        let path = dir.join("a.rs");
+        let failure = no_hard_links().remove(0);
+        let mut opened = 0;
+        let second_fails = |inner: fs::File| {
+            opened += 1;
+            FailsAfter { inner, left: 4, meanwhile: (opened == 2).then(|| Box::new(|| {}) as Box<dyn FnOnce()>) }
+        };
+        let error = write_through(&path, b"fn a() {}\n", WriteMode::CreateNew, second_fails, move |_, _| Err(failure)).unwrap_err();
+        assert!(matches!(error, FileError::Write { .. }), "{error:?}");
+        let message = error.to_string();
+        assert!(message.contains(&path.display().to_string()) && message.contains("no space left") && message.contains("partly written"), "{message}");
+        assert_eq!(fs::read_to_string(&path).unwrap(), "fn a");
+        assert_eq!(entries(&dir), ["a.rs"]);
+    }
+
+    #[test]
+    fn a_create_without_hard_links_never_clobbers_a_file_that_appeared_meanwhile() {
+        let dir = directory("no-links-appeared");
+        for mode in [WriteMode::CreateNew, WriteMode::Replace] {
+            let path = dir.join(format!("{mode:?}.rs"));
+            let failure = no_hard_links().remove(0);
+            let error = write_through(&path, b"fn ours() {}\n", mode, |file| file, move |_, target| {
+                fs::write(target, "fn theirs() {}\n")?;
+                Err(failure)
             })
             .unwrap_err();
             assert!(matches!((mode, &error), (WriteMode::CreateNew, FileError::Exists { .. }) | (WriteMode::Replace, FileError::Write { .. })), "{error:?}");
             assert_eq!(fs::read_to_string(&path).unwrap(), "fn theirs() {}\n");
         }
         assert_eq!(entries(&dir), ["CreateNew.rs", "Replace.rs"]);
+    }
+
+    #[test]
+    fn a_link_that_fails_otherwise_creates_nothing() {
+        let dir = directory("link-failed");
+        let path = dir.join("a.rs");
+        let error = write_through(&path, b"fn a() {}\n", WriteMode::CreateNew, |file| file, |_, _| Err(io::ErrorKind::StorageFull.into())).unwrap_err();
+        assert!(error.to_string().contains("nothing was created"), "{error}");
+        assert_eq!(entries(&dir), Vec::<String>::new());
     }
 
     #[test]
