@@ -21,9 +21,12 @@
  * `pnpm run validate:native`).
  */
 
-import { describe, it, expect } from 'vitest';
+import { afterAll, describe, it, expect } from 'vitest';
 import { generate } from '../../../codegen/src/compiler/generate.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
+import { disposeNativeEngines } from '../validate/common.ts';
+
+afterAll(disposeNativeEngines);
 
 /** Deep (recursive-read) floors per grammar. See header for why ONLY these live here. */
 const FLOORS = {

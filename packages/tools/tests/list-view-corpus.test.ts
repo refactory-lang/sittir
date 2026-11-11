@@ -42,7 +42,7 @@ function* nodesOf(root: Node): Generator<Node> {
 describe('a list view indexes exactly the items it iterates', () => {
 	for (const grammar of allGrammars()) {
 		it(`${grammar}: every list view of the parsed corpus has one length and one item per index`, async () => {
-			const engine = await createEngine(await languageByName(grammar));
+			using engine = await createEngine(await languageByName(grammar));
 			let views = 0;
 			for (const entry of loadCorpusEntries(grammar)) {
 				let root: unknown;

@@ -1,11 +1,14 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
+import { sharedEngine } from '@sittir/common/testing';
 import { createEngine } from '@sittir/common';
 import { sidesOf } from '@sittir/common/utils';
 import type { AnyUntypedNode } from '@sittir/types';
 import python from '../../python/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
-import { loadNativeEngine, loadSlotAccessorOf, materializeDetached } from '../src/validate/common.ts';
+import { loadNativeEngine, loadSlotAccessorOf, materializeDetached, disposeNativeEngines } from '../src/validate/common.ts';
 import { leadingTriviaRenderedWidth } from '../src/validate/read-render-parse.ts';
+
+afterAll(disposeNativeEngines);
 
 /**
  * The width the read-render-parse lookup skips is the leading trivia the
@@ -13,7 +16,7 @@ import { leadingTriviaRenderedWidth } from '../src/validate/read-render-parse.ts
  * both name one parser node: the line gap before it is the envelope's, which a
  * root render leaves out, so the width is the owned comment and nothing else.
  */
-const ts = await createEngine(typescript);
+const ts = await sharedEngine(() => createEngine(typescript));
 const native = await loadNativeEngine('typescript');
 const accessorOf = await loadSlotAccessorOf('typescript');
 const render = (node: AnyUntypedNode): string => native.render(node).toString();
@@ -50,7 +53,7 @@ describe('leadingTriviaRenderedWidth on a detached alias envelope', () => {
  */
 describe('leadingTriviaRenderedWidth through the first-descendant chain', () => {
 	it('counts the comments the block and its first statement print before the first token', async () => {
-		const py = await createEngine(python);
+		using py = await createEngine(python);
 		const nativePy = await loadNativeEngine('python');
 		const renderPy = (node: AnyUntypedNode): string => nativePy.render(node).toString();
 		const triviaPy = (node: object) => sidesOf(node);

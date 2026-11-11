@@ -1,5 +1,6 @@
 import v8 from 'node:v8';
 import { describe, expect, it } from 'vitest';
+import { sharedEngine } from '@sittir/common/testing';
 import { createEngine } from '@sittir/common';
 import { isStorageKey, PLAIN_KINDS, toNodeData, treeTokenOf } from '@sittir/common/utils';
 import rust from '../../rust/src/index.ts';
@@ -12,13 +13,13 @@ const hasFastProperties = new Function('o', 'return %HasFastProperties(o)') as (
 const COUNT = 1000;
 const fastCount = (make: () => object): number => Array.from({ length: COUNT }, make).filter(hasFastProperties).length;
 
-const rs = await createEngine(rust);
-const ts = await createEngine(typescript);
-const py = await createEngine(python);
+const rs = await sharedEngine(() => createEngine(rust));
+const ts = await sharedEngine(() => createEngine(typescript));
+const py = await sharedEngine(() => createEngine(python));
 const objects = {
-	rs: await createEngine(rust, { nodeStorage: 'object' }),
-	ts: await createEngine(typescript, { nodeStorage: 'object' }),
-	py: await createEngine(python, { nodeStorage: 'object' })
+	rs: await sharedEngine(() => createEngine(rust, { nodeStorage: 'object' })),
+	ts: await sharedEngine(() => createEngine(typescript, { nodeStorage: 'object' })),
+	py: await sharedEngine(() => createEngine(python, { nodeStorage: 'object' }))
 };
 const { identifier: buildIdentifier } = await (await rust.load()).tables.default();
 const rustSlots = await loadSlotAccessorOf('rust');

@@ -1,12 +1,15 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
+import { sharedEngine } from '@sittir/common/testing';
 import { createEngine } from '@sittir/common';
 import { sidesOf, treeOf } from '@sittir/common/utils';
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import python from '../../python/src/index.ts';
-import { loadNativeEngine, loadSlotAccessorOf, materializeDetached, tableSides } from '../src/validate/common.ts';
+import { loadNativeEngine, loadSlotAccessorOf, materializeDetached, tableSides, disposeNativeEngines } from '../src/validate/common.ts';
 import { candidateData } from '../src/validate/read-render-parse.ts';
 
-const py = await createEngine(python);
+afterAll(disposeNativeEngines);
+
+const py = await sharedEngine(() => createEngine(python));
 const native = await loadNativeEngine('python');
 const accessorOf = await loadSlotAccessorOf('python');
 const render = (node: AnyUntypedNode): string => native.render(node).toString();
@@ -34,7 +37,7 @@ describe('a candidate rendered alone is its own span', () => {
 	});
 
 	it('is a record view itself, never a copy of it: its record renders none of its outer sides', async () => {
-		const arena = await createEngine(python, { nodeStorage: 'arena' });
+		using arena = await createEngine(python, { nodeStorage: 'arena' });
 		const statement = arena.parse('# lead\nfoo()\n').$query().$descendants.ofType(arena.kinds.ExpressionStatement).at(0);
 		if (statement === undefined) throw new Error('expected an expression statement');
 		const sides = (): NodeTrivia => ({ leading: [statement as never] });
@@ -43,7 +46,7 @@ describe('a candidate rendered alone is its own span', () => {
 	});
 
 	it('is a built record itself, the outer sides a write gave it emptied, so it renders as its own span', async () => {
-		const arena = await createEngine(python, { nodeStorage: 'arena' });
+		using arena = await createEngine(python, { nodeStorage: 'arena' });
 		const b = arena.build;
 		const statement = b.expressionStatement(b.call({ function: b.identifier('foo'), arguments: b.argumentList() }));
 		statement.$trivia.leading(b.comment(' lead'));

@@ -20,10 +20,12 @@
  *   separatedList node keeps the instance's own `_delimiter`, threaded
  *   through as a factory option, rather than the factory's default.
  */
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { probeTrace } from '../../src/probe/kind.ts';
-import { loadNativeEngine } from '../../src/validate/common.ts';
+import { loadNativeEngine, disposeNativeEngines } from '../../src/validate/common.ts';
 import { requireGrammarModule } from '../../src/grammar-internals.ts';
+
+afterAll(disposeNativeEngines);
 
 describe('separatedList wrap capture — real typescript grammar integration', () => {
 	it('captures a present trailing comma with no leading comma', async () => {

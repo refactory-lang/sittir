@@ -18,14 +18,14 @@ describe('a descriptor creates an engine the same way createEngine(descriptor) d
 	for (const [name, descriptor, source] of sources) {
 		it(`${name}: both forms render alike`, async () => {
 			const viaDescriptor = await (descriptor as typeof rust).createEngine();
-			const viaFunction = await createEngine(descriptor as typeof rust);
+			using viaFunction = await createEngine(descriptor as typeof rust);
 			expect(viaDescriptor.render(viaDescriptor.parse(source)).toString()).toBe(viaFunction.render(viaFunction.parse(source)).toString());
 		});
 	}
 
 	it('applies the render options it is given', async () => {
-		const tabs = await rust.createEngine({ render: { layout: { indent: '\t' } } });
-		const spaces = await rust.createEngine({ render: { layout: { indent: '  ' } } });
+		using tabs = await rust.createEngine({ render: { layout: { indent: '\t' } } });
+		using spaces = await rust.createEngine({ render: { layout: { indent: '  ' } } });
 		const block = (engine: typeof tabs) => engine.build.block({ statements: [engine.build.expressionStatement(engine.build.identifier('a'))] });
 		expect(tabs.render(block(tabs)).toString()).toBe('{\n\ta;\n}');
 		expect(spaces.render(block(spaces)).toString()).toBe('{\n  a;\n}');

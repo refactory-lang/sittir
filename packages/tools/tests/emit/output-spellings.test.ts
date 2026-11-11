@@ -1,7 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { emitFactorySourceText } from '../../src/emit/factory-source.ts';
 import { outputSpellingSites } from '../../src/emit/output-spellings.ts';
-import { loadNodeModel } from '../../src/validate/common.ts';
+import { loadNodeModel, disposeNativeEngines } from '../../src/validate/common.ts';
+
+afterAll(disposeNativeEngines);
 
 const model = {
 	modelTypes: { interpolation: 'branch', format_expression: 'branch' } as Record<string, string>,

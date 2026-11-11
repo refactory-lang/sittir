@@ -1,5 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { validateFrom } from '../src/validate/from.ts';
+import { disposeNativeEngines } from '../src/validate/common.ts';
+
+afterAll(disposeNativeEngines);
 
 describe('validateFrom — a shared display is validated per storage kind', () => {
 	it('typescript: string_fragment is not excluded as no-from-function, and none of its storage kinds is', async () => {

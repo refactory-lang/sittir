@@ -215,7 +215,7 @@ export async function defaultDiff(grammar: string, source: string, options: Defa
 	mkdirSync(moduleDir, { recursive: true });
 	moduleCount += 1;
 	const language = await languageByName(grammar);
-	const defaultEngine = await createEngine(language);
+	using defaultEngine = await createEngine(language);
 	const file = join(moduleDir, `${grammar}-${process.pid}-${moduleCount}.ts`);
 	try {
 		writeFileSync(file, await emitFactorySourceText(grammar, source, 'Generated', { surface: 'strict' }));

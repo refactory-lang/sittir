@@ -41,7 +41,7 @@ describe('read then render is byte-exact', () => {
 	for (const [grammar, file] of READ_CASES) {
 		it(`${grammar}: a shallow and a deep read of ${file} both render its bytes`, async () => {
 			const source = readFileSync(ROOT + file, 'utf8');
-			const engine = await createEngine(await languageByName(grammar));
+			using engine = await createEngine(await languageByName(grammar));
 			const read = (deep: boolean) => (engine.parse(source, { depth: deep ? Infinity : 1 }) as unknown as { $render(): string }).$render();
 			expect(read(false)).toBe(source);
 			expect(read(true)).toBe(source);

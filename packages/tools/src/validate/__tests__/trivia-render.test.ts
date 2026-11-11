@@ -8,6 +8,10 @@ import { languageByName } from '../../languages.ts';
 
 const rust = await createEngine(await languageByName('rust'));
 const typescript = await createEngine(await languageByName('typescript'));
+afterAll(() => {
+	rust.dispose();
+	typescript.dispose();
+});
 
 afterAll(() => {
 	rust.dispose();
