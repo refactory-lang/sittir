@@ -269,7 +269,7 @@ impl<T> TriviaStore<T> {
     #[cfg(feature = "arena")]
     #[must_use]
     pub fn shares_built(&self, other: &Self) -> bool {
-        std::ptr::eq(&*self.built, &*other.built)
+        std::ptr::eq(&raw const *self.built, &raw const *other.built)
     }
 
     /// The chunks of the engine's built arena this store holds, to add to or
