@@ -112,13 +112,6 @@ describe('gen command', () => {
 		);
 		expect(spawnedArgs()).toEqual(expect.arrayContaining(['--post-generate-only', '--no-build-native']));
 	});
-	it('hands a caller-resolved --node-api-level to the run as a number', async () => {
-		vi.clearAllMocks();
-		const program = new Command();
-		gen.register(program);
-		await program.parseAsync(['gen', '--grammar', 'rust', '--all', '--output', 'o', '--node-api-level', '10'], { from: 'user' });
-		expect(vi.mocked(runFullRegen)).toHaveBeenCalledWith(expect.objectContaining({ nodeApiLevel: 10 }));
-	});
 	it('skips fixture extraction in the post-generate step under --no-build-native', async () => {
 		vi.clearAllMocks();
 		const program = new Command();

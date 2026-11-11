@@ -55,7 +55,7 @@ Earlier rulings this design keeps:
 - A batch whose output differs from writing each file one at a time with `engine.write`, or from a one-thread run.
 - Shared mutable state between the batch's threads, or a new lock on a read or render path.
 - Text filled into a result "in case" a caller reads it.
-- A file left truncated or half-written by a process crash or an error.
+- A file left truncated or half-written by an error.
 
 ## The end state
 
@@ -81,9 +81,12 @@ Earlier rulings this design keeps:
 ### The native writer
 
 - One writer serves `write`, `create`, `$save`, `Rendered.save` and the batch.
-- It writes atomically: it writes to a scratch file beside the target and renames it over the target, as codegen's `writeFileAtomic` does for its outputs.
-- It doesn't sync to disk. The rename already means a process crash or an error never leaves a truncated file, and surviving power loss isn't a formatter's job.
-- A file whose rendered bytes equal its current bytes isn't rewritten.
+- **It writes the file in place,** as oxfmt, prettier and rustfmt do (the maintainer, 2026-11-10). The file is never replaced, so everything stored on it survives: its owner, mode, ACL, extended attributes, flags and hard links. A symlink writes its target.
+- **It renders in full before it opens the file.** If the write then fails partway, for example on a full disk, it rewrites the original bytes, which it already holds, and the error names the path. A process killed mid-write can still leave a partial file; that is accepted, as it is by every formatter.
+- **It doesn't sync to disk.**
+- **A file whose rendered bytes equal its current bytes isn't rewritten.**
+- **`create` opens with `create_new`,** so it never clobbers an existing file.
+- **It refuses a path that isn't a regular file,** such as a directory, a pipe or a socket, and a missing directory. It never creates one.
 
 ### Crossings removed
 
@@ -165,7 +168,7 @@ What it guarantees:
 
 ## Calls I made, for the maintainer to check
 
-1. Writes are atomic (scratch file, then rename), with no sync to disk, and an unchanged file isn't rewritten.
+1. Writes go in place, restoring the original bytes on a failed write, with no sync to disk, and an unchanged file isn't rewritten.
 2. The batch refuses object storage and engines with interceptors.
 3. A refused file is a result, not a failure of the whole batch.
 4. `Interceptor.file` receives `{ path, verb, diff() }`.

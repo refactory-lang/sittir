@@ -82,7 +82,7 @@ import type {
 	DelimiterFacetRole
 } from '../codegen-surface.ts';
 
-const { heldTrees, languageAt, languageOf, treeParser }: Pick<CodegenSurface['engineLoader'], 'heldTrees' | 'languageAt' | 'languageOf' | 'treeParser'> = await load('engineLoader');
+const { languageAt, languageOf, treeParser }: Pick<CodegenSurface['engineLoader'], 'languageAt' | 'languageOf' | 'treeParser'> = await load('engineLoader');
 const { opaqueFacts, readFacts } = await load('opaqueFacts');
 const { assertNativeBinaryFresh, hostBinaryFreshnessFor } = await load('nativeBinaryFreshness');
 const { storageKeyOf } = await load('modelNodeMap');
@@ -162,8 +162,8 @@ export function loadCorpusEntries(grammar: string): CorpusEntry[] {
 	return entries;
 }
 
-export { heldTrees, languageAt, languageOf, treeParser };
-export type { HeldTrees, ParsedTree, ParserLanguage, TreeParser } from '../codegen-surface.ts';
+export { languageAt, languageOf, treeParser };
+export type { ParsedTree, ParserLanguage, TreeParser } from '../codegen-surface.ts';
 
 export type NativeEngine = Engine<LanguageAPI>;
 

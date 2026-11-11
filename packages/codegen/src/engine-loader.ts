@@ -38,32 +38,6 @@ export interface TreeParser extends Disposable {
 	parse(source: string): ParsedTree;
 }
 
-export interface HeldTrees extends Disposable {
-	hold(tree: ParsedTree): TS.Node;
-}
-
-export function heldTrees(): HeldTrees {
-	const trees: ParsedTree[] = [];
-	return {
-		hold(tree) {
-			trees.push(tree);
-			return tree.root;
-		},
-		[Symbol.dispose]: () => {
-			const failures: unknown[] = [];
-			for (const tree of trees.splice(0)) {
-				try {
-					tree[Symbol.dispose]();
-				} catch (error) {
-					failures.push(error);
-				}
-			}
-			if (failures.length === 1) throw failures[0];
-			if (failures.length > 1) throw new AggregateError(failures, 'web-tree-sitter: deleting held trees failed');
-		}
-	};
-}
-
 export async function languageOf(wasm: Uint8Array, digest: string = sha256(wasm)): Promise<ParserLanguage> {
 	const { Parser, Language } = await loadWebTreeSitter();
 	const slot: typeof Parser & InitSlot = Parser;
