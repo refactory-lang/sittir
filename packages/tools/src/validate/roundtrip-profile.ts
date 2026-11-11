@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-export const roundtripPhases = ['read', 'build', 'render', 'parse'] as const;
+export const roundtripPhases = ['read', 'copy', 'build', 'render', 'parse'] as const;
 export type RoundtripPhase = (typeof roundtripPhases)[number];
 export interface PhaseMeasurement {
 	milliseconds: number;
