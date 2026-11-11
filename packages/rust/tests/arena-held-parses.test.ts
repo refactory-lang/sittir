@@ -501,6 +501,38 @@ describe('an arena parse, held by its engine and counted by its root and each re
 		expect(engine.diagnostics.builtMemory?.()?.live).toBe(0);
 	});
 
+	it.each(['parsed', 'built'] as const)('releases what a %s comment parked on a leaf takes when a build places the leaf, keeps it and throws', async (form) => {
+		let leaf: Sided | undefined;
+		let keep: ((node: object) => object) | undefined;
+		const hook = {
+			build: (call: { readonly path: readonly string[] }, next: () => unknown): unknown => {
+				if (leaf === undefined || call.path.at(-1) !== 'binaryExpression') return next();
+				next();
+				keep!(leaf as unknown as object);
+				throw new Error('refused');
+			}
+		};
+		using engine = await createEngine(rust, { nodeStorage: 'arena', intercept: [hook as never] });
+		const before = live();
+		const b = engine.build;
+		const made = b.identifier('x') as unknown as Sided;
+		const donor = engine.parse('/// kept\nfn f() {}\n') as unknown as Root;
+		made.$trivia.leading(form === 'parsed' ? sidedOf(donor).$trivia.leading()[0]! : b.blockComment('/* c */'));
+		donor[Symbol.dispose]();
+		const z = b.identifier('z');
+		{
+			using scope = engine.scope();
+			keep = (node) => scope.keep(node);
+			leaf = made;
+			expect(() => b.binaryExpression({ left: made as never, operator: '+', right: z })).toThrow('refused');
+			leaf = undefined;
+		}
+		engine.release(made as never);
+		engine.release(z);
+		expect(live()).toBe(before);
+		expect(engine.diagnostics.builtMemory?.()?.live).toBe(0);
+	});
+
 	it('counts a spread copy of an unplaced leaf that a scope keeps apart from the leaf, so each release drops its own count', async () => {
 		using engine = await arena();
 		const before = live();

@@ -567,6 +567,7 @@ export class BuiltArena {
 		forEachTriviaList(own as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.refuseReleased(at)));
 		this.#park(leaf, own);
 		this.#parked.push(leaf);
+		if (this.#scopes > 0) this.#undos[this.#undosCount++] = () => this.#unpark(leaf);
 	}
 
 	#ownedByHandle(at: number): boolean {
