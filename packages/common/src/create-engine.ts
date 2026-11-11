@@ -8,6 +8,7 @@ import type {
 	EngineOptions,
 	Interceptor,
 	ErrorNode,
+	FileChange,
 	Language,
 	LanguageAPI,
 	LanguageIdentity,
@@ -313,20 +314,30 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		if (!hooks.rootKinds.includes(kind)) throw new Error(`cannot write ${kindNameOf(kind)} as a file: write and create take a ${hooks.rootKinds.map(kindNameOf).join(' or ')} root`);
 		return root;
 	};
+	const fileChangeOf = (path: string, rendered: Rendered): FileChange => Object.freeze({ path, before: currentText(path), after: rendered.toString() });
 	const pendingWrite = (path: string, verb: FileVerb, root: API['root'], release?: () => void): Pending =>
 		pendingFile(
 			path,
 			verb,
 			() => {
-				using rendered = engine.render(writable(root));
-				saverOf(rendered)(path, verb === 'create');
+				let rendered: Rendered | undefined;
+				const renderedNow = (): Rendered => (rendered ??= engine.render(writable(root)));
+				return {
+					diff: () => fileChangeOf(path, renderedNow()),
+					commit: () => {
+						saverOf(renderedNow())(path, verb === 'create');
+					},
+					[Symbol.dispose]: () => {
+						rendered?.[Symbol.dispose]();
+						release?.();
+					}
+				};
 			},
 			() => {
 				using rendered = engine.render(writable(root));
-				return Object.freeze({ path, before: currentText(path), after: rendered.toString() });
+				return fileChangeOf(path, rendered);
 			},
-			fileChain,
-			release
+			fileChain
 		);
 	const queryHooks: QueryHooks = {
 		querySlots: hooks.querySlots,

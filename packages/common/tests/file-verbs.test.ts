@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import rust, { type RustAPI } from '@sittir/rust';
-import type { BuildSurface, Engine, EngineOptions, FileChange } from '@sittir/types';
+import type { BuildSurface, Engine, EngineOptions, FileChange, Pending } from '@sittir/types';
 import { createEngine } from '../src/create-engine.ts';
 
 const engines: { dispose(): void }[] = [];
@@ -173,6 +173,47 @@ describe.each(['object', 'arena'] as const)('engine.write and engine.create (%s)
 		await engine.write(at('a.rs'), engine.parse('fn a() {}\n'));
 		expect(diffs).toEqual([{ path: at('a.rs'), before: undefined, after: 'fn a() {}\n' }]);
 		expect(readFileSync(at('a.rs'), 'utf8')).toBe('fn a() {}\n');
+	});
+
+	it.each(['then', 'asyncDispose'] as const)('commits once when a render interceptor reaches the same pending through %s', async (entry) => {
+		let pending: Pending | undefined;
+		let reentered = false;
+		const engine = await engineOf({
+			intercept: [
+				{
+					render(_, next) {
+						if (!reentered && pending !== undefined) {
+							reentered = true;
+							void (entry === 'then' ? pending.then(() => undefined) : pending[Symbol.asyncDispose]());
+						}
+						return next();
+					}
+				}
+			]
+		});
+		pending = engine.create(at('a.rs'), () => engine.parse('fn a() {}\n'));
+		await pending;
+		expect(reentered).toBe(true);
+		expect(readFileSync(at('a.rs'), 'utf8')).toBe('fn a() {}\n');
+	});
+
+	it('a file interceptor approves the text the commit writes', async () => {
+		let renders = 0;
+		let approved: string | undefined;
+		const engine = await engineOf({
+			intercept: [
+				{
+					render: (_, next) => `${next()}// render ${++renders}\n`,
+					async file(change, next) {
+						approved = change.diff().after;
+						await next();
+					}
+				}
+			]
+		});
+		await engine.write(at('a.rs'), engine.parse('fn a() {}\n'));
+		expect(approved).toBe('fn a() {}\n// render 1\n');
+		expect(readFileSync(at('a.rs'), 'utf8')).toBe(approved);
 	});
 
 	it('a write under a render interceptor writes the intercepted text', async () => {

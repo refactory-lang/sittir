@@ -5,6 +5,11 @@ export type FileVerb = FileWrite['verb'];
 
 export type FileChain = (change: FileWrite, next: () => Promise<void>) => Promise<void>;
 
+export interface FileCommit extends Disposable {
+	diff(): FileChange;
+	commit(): void;
+}
+
 export function currentText(path: string): string | undefined {
 	try {
 		return readFileSync(path, 'utf8');
@@ -14,25 +19,15 @@ export function currentText(path: string): string | undefined {
 	}
 }
 
-export function pendingFile(
-	path: string,
-	verb: FileVerb,
-	commit: () => void,
-	diff: () => FileChange,
-	chain: FileChain | undefined,
-	release?: () => void
-): Pending {
-	let written: Promise<void> | undefined;
-	const next = (): Promise<void> => (written ??= (async () => commit())());
+export function pendingFile(path: string, verb: FileVerb, open: () => FileCommit, diff: () => FileChange, chain: FileChain | undefined): Pending {
+	const run = async (): Promise<void> => {
+		using opened = open();
+		let written: Promise<void> | undefined;
+		const next = (): Promise<void> => (written ??= Promise.resolve().then(() => opened.commit()));
+		await (chain === undefined ? next() : chain(Object.freeze({ path, verb, diff: () => opened.diff() }), next));
+	};
 	let committed: Promise<void> | undefined;
-	const start = (): Promise<void> =>
-		(committed ??= (async () => {
-			try {
-				await (chain === undefined ? next() : chain(Object.freeze({ path, verb, diff }), next));
-			} finally {
-				release?.();
-			}
-		})());
+	const start = (): Promise<void> => (committed ??= Promise.resolve().then(run));
 	return Object.freeze({
 		path,
 		diff,

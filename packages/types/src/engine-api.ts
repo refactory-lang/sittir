@@ -322,7 +322,7 @@ export interface Pending extends PromiseLike<void>, AsyncDisposable {
 export interface FileWrite {
 	readonly path: string;
 	readonly verb: 'create' | 'write';
-	/** The file's text now, as `before` (`undefined` for a missing file), and the text the commit writes, as `after`. */
+	/** The file's text now, as `before` (`undefined` for a missing file), and the text the commit writes, as `after`. The commit renders once, so a write after this call writes exactly `after`. */
 	diff(): FileChange;
 }
 
