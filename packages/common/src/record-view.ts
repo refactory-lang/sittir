@@ -21,6 +21,8 @@ import { aliasContentOf, asReadOutput, carryReadTree, coordinateOf, isStorageKey
 import { isRecordPosition, type RecordHandle, type RecordPosition } from './handle.ts';
 
 export function positionWords(position: RecordPosition): ChunkWords | undefined {
+	const own = (position as Partial<RecordHandle>).$words;
+	if (own !== undefined) return own;
 	const parsed = position.$tree.records;
 	if (parsed === undefined) return recordsOf(position.$tree).words(position.$at, 2);
 	const words = parsed.exported(position.$at);
@@ -66,6 +68,11 @@ export function liveWords(holder: RecordPosition): ChunkWords | undefined {
 	if (own?.length !== 0) return own;
 	holder.$tree.records?.words(holder.$at, 1);
 	throw new Error(freedRecord(holder.$at));
+}
+
+export function cacheOf(node: RecordHandle): Record<number, unknown> {
+	liveWords(node);
+	return (node.$cache ??= {});
 }
 
 function holderWords(holder: RecordPosition, length: number): { readonly words: ChunkWords; readonly start: number; readonly records: RecordWords } {
@@ -330,8 +337,13 @@ export function builtInputs(node: object): BuilderInputs {
 		const read = members[accessor];
 		return typeof read === 'function' ? listed((read as () => unknown).call(node)) : undefined;
 	});
+	const settings = listSettingsOf(node);
+	return settings === undefined ? inputs : { ...inputs, options: { ...inputs.options, ...settings } };
+}
+
+export function listSettingsOf(node: object): Readonly<Record<string, unknown>> | undefined {
 	const settings = Object.entries({ delimiter: chosenDelimiterOf(node), separator: chosenSeparatorOf(node) }).filter(([, value]) => value !== undefined);
-	return settings.length === 0 ? inputs : { ...inputs, options: { ...inputs.options, ...Object.fromEntries(settings) } };
+	return settings.length === 0 ? undefined : Object.fromEntries(settings);
 }
 
 function listed(value: unknown): unknown {
