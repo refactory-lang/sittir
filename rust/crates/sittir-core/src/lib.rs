@@ -16,6 +16,7 @@ pub mod codec;
 pub mod delimiters;
 pub mod engine;
 pub mod error_read;
+pub mod file_io;
 pub mod heap;
 pub mod layout;
 pub mod layout_kinds;
