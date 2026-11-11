@@ -32,7 +32,7 @@ import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts'
 import { dataBytes, metricsEnabled, recordFfi } from './metrics.ts';
 import { checkInput, checkRow, verifyStructure } from './verify-structure.ts';
 import { BuiltArena, type BuiltViews } from './built-arena.ts';
-import type { TreeHandle } from './read.ts';
+import { readOrRelease, type TreeHandle } from './read.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { refuseReviver } from './json-refusal.ts';
@@ -315,8 +315,10 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		parse(source, parseOptions) {
 			const run = (): API['root'] => {
 				const { root, tree } = readAndBind(source, parseOptions);
-				if (parseOptions?.errors === 'throw' && root.$errors.length > 0) throw new ParseErrors(root.$errors);
-				return wrapRegistered(root, tree, hooks.wrap);
+				return readOrRelease(tree, () => {
+					if (parseOptions?.errors === 'throw' && root.$errors.length > 0) throw new ParseErrors(root.$errors);
+					return wrapRegistered(root, tree, hooks.wrap);
+				});
 			};
 			return parseChain === undefined ? run() : parseChain({ source }, run);
 		},

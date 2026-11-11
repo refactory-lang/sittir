@@ -14,10 +14,10 @@ type Records = ConstructorParameters<typeof BuiltArena>[0];
 type SideStore = Records['trivia'];
 const NO_SIDES: SideStore = {
 	triviaSide: () => undefined,
-	writeTriviaSide: () => undefined,
+	writeTriviaSide: () => [],
 	unitSides: () => [],
-	writeUnitSides: () => undefined,
-	writeLeafSide: () => undefined,
+	writeUnitSides: () => [],
+	writeLeafSide: () => [],
 	leafSide: () => undefined,
 	copySites: () => undefined
 };
@@ -38,9 +38,9 @@ function chunksOf() {
 	};
 }
 
-const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = NO_VIEWS, leafSites: WriteLeafSites = () => undefined, parses: Partial<Pick<Records, 'holdParse' | 'releaseParse'>> = {}): BuiltArena =>
+const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = NO_VIEWS, leafSites: WriteLeafSites = () => undefined, parses: Partial<Pick<Records, 'holdParse'>> = {}): BuiltArena =>
 	new BuiltArena(
-		{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunksOf(), bump: () => undefined, release: () => [], holdParse: () => undefined, releaseParse: () => [], ...parses, trivia },
+		{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunksOf(), bump: () => undefined, release: () => [], holdParse: () => undefined, ...parses, trivia },
 		(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
 		{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 		views,
@@ -111,9 +111,9 @@ describe('a built arena', () => {
 		const arena = arenaOf({
 			...NO_SIDES,
 			triviaSide: (at, side) => (asked.push(`${side} of ${at}`), stored.get(`${at} ${side}`) as unknown[] | undefined),
-			writeTriviaSide: (at, side, entries) => void stored.set(`${at} ${side}`, entries),
+			writeTriviaSide: (at, side, entries) => (stored.set(`${at} ${side}`, entries), []),
 			unitSides: (at) => (asked.push(`units of ${at}`), [...(stored.get(`${at} units`) ?? [])]),
-			writeUnitSides: (at, units) => void stored.set(`${at} units`, units)
+			writeUnitSides: (at, units) => (stored.set(`${at} units`, units), [])
 		});
 		const a = builtRecordOf(arena.view(arena.draft(7, 2)), arena)!;
 		const b = builtRecordOf(arena.view(arena.draft(7, 2)), arena)!;
@@ -135,7 +135,7 @@ describe('a built arena', () => {
 		const arena = arenaOf({
 			...NO_SIDES,
 			unitSides: (at) => [...(stored.get(at) ?? [])],
-			writeUnitSides: (at, units) => void stored.set(at, units),
+			writeUnitSides: (at, units) => (stored.set(at, units), []),
 			copySites: (from, to) => void stored.set(to, stored.get(from) ?? [])
 		});
 		const source = builtRecordOf(arena.view(arena.draft(7, 2)), arena)!;
@@ -160,7 +160,7 @@ describe('a built arena', () => {
 		let next = 0;
 		const words = (length: number) => ({ chunk: 1, data: new Uint32Array(length), meta: new Uint8Array(metaBytes(length)), freed: next++ === 0 ? [] : [1] });
 		const arena = new BuiltArena(
-			{ format: format!, owner: {}, kinds: PLAIN_KINDS, words, bytes: chunksOf().bytes, bump: () => undefined, release: (at: number) => (released.push(at), []), holdParse: () => undefined, releaseParse: () => [], trivia: NO_SIDES },
+			{ format: format!, owner: {}, kinds: PLAIN_KINDS, words, bytes: chunksOf().bytes, bump: () => undefined, release: (at: number) => (released.push(at), []), holdParse: () => undefined, trivia: NO_SIDES },
 			(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
 			{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 			NO_VIEWS,
@@ -301,7 +301,7 @@ describe('a built arena', () => {
 
 	it('writes the sides of a leaf it places only when the leaf holds some', () => {
 		const written: [readonly number[], string, readonly unknown[]][] = [];
-		const arena = arenaOf({ ...NO_SIDES, writeLeafSide: (sites, side, entries) => void written.push([[...sites], side, entries]) }, NO_VIEWS, writeLeafSites);
+		const arena = arenaOf({ ...NO_SIDES, writeLeafSide: (sites, side, entries) => (written.push([[...sites], side, entries]), []) }, NO_VIEWS, writeLeafSites);
 		const bare = arena.leaf(leafOf(4), 'a');
 		const sided = arena.leaf(leafOf(4), 'b');
 		setTriviaOf(sided, { leading: [3] });
@@ -327,7 +327,7 @@ describe('a built arena', () => {
 		const leafSided: number[][] = [];
 		const held: number[][] = [];
 		const arena = arenaOf(
-			{ ...NO_SIDES, copySites: (from, to, skip) => void copied.push([from, to, [...skip]]), writeLeafSide: (sites) => void leafSided.push([...sites]) },
+			{ ...NO_SIDES, copySites: (from, to, skip) => void copied.push([from, to, [...skip]]), writeLeafSide: (sites) => (leafSided.push([...sites]), []) },
 			{ ...NO_VIEWS, words: { 9: 13 } },
 			writeLeafSites,
 			{ holdParse: (slot, treeId) => void held.push([slot, treeId]) }

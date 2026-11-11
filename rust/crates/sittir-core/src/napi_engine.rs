@@ -143,17 +143,55 @@ macro_rules! napi_engine {
             drop_tree(&env, tree_id);
         }
 
+        /// Drops the live tree `tree_id` (`drop_live_tree`), then the tree
+        /// of each parse its release frees (`drop_freed_parses`), and
+        /// answers each parse freed as `drop_freed_parses` does.
+        fn drop_tree(env: &::napi::Env, tree_id: $crate::types::TreeId) -> Vec<u32> {
+            drop_live_tree(env, tree_id).map_or_else(Vec::new, |store| drop_freed_parses(env, &store))
+        }
+
         /// Drops the live tree `tree_id`, detaching every buffer over its
-        /// arena's chunks; an id that names no live tree is a no-op.
-        fn drop_tree(env: &::napi::Env, tree_id: $crate::types::TreeId) {
+        /// arena's chunks, and answers the store its sides wrote to; an id
+        /// that names no live tree is a no-op.
+        fn drop_live_tree(env: &::napi::Env, tree_id: $crate::types::TreeId) -> Option<$crate::trivia_store::TriviaStore<<$grammar as $crate::engine::EngineGrammar>::Trivia>> {
             if let Some(mut buffers) = TREE_BUFFERS.with(|buffers| buffers.borrow_mut().remove(&tree_id)) {
                 if let Ok(change) = buffers.detach(env) {
                     TREES_REPORTED.with(|total| total.set(total.get() + change));
                 }
             }
-            if let Some(tree) = LIVE_TREES.with(|trees| trees.borrow_mut().remove(&tree_id)) {
-                let _ = $crate::napi_engine::dispose(env, tree);
+            let tree = LIVE_TREES.with(|trees| trees.borrow_mut().remove(&tree_id))?;
+            let store = tree.store().clone();
+            let _ = $crate::napi_engine::dispose(env, tree);
+            Some(store)
+        }
+
+        /// Drops the tree of each parse `store`'s arena freed, and of each
+        /// parse a dropped tree's release frees in turn, until none is
+        /// left: a tree's written sides name built records, whose release
+        /// can free a parse they link. Answers each parse freed as its slot
+        /// then its tree id, so a holder of a slot's parse forgets it only
+        /// while the slot still names that parse.
+        fn drop_freed_parses(env: &::napi::Env, store: &$crate::trivia_store::TriviaStore<<$grammar as $crate::engine::EngineGrammar>::Trivia>) -> Vec<u32> {
+            let mut parses = Vec::new();
+            loop {
+                let freed = $crate::napi_engine::take_freed_parses(store);
+                if freed.is_empty() {
+                    return parses;
+                }
+                for (slot, tree_id) in freed {
+                    parses.extend([slot.0, tree_id.0]);
+                    drop_live_tree(env, tree_id);
+                }
             }
+        }
+
+        /// Settles `store` (`settle`), then drops the tree of each parse
+        /// the call freed (`drop_freed_parses`), and answers each parse
+        /// freed as `drop_freed_parses` does: every call that can release a
+        /// built record ends here.
+        fn settled(env: &::napi::Env, store: &$crate::trivia_store::TriviaStore<<$grammar as $crate::engine::EngineGrammar>::Trivia>) -> ::napi::Result<Vec<u32>> {
+            $crate::napi_engine::settle(env, store)?;
+            Ok(drop_freed_parses(env, store))
         }
 
         /// Runs `f` on the live tree `tree_id`, refusing a tree that is not
@@ -402,6 +440,7 @@ macro_rules! napi_engine {
             #[::napi_derive::napi]
             pub fn dispose(&mut self, env: ::napi::Env) -> ::napi::Result<()> {
                 let engine = engine_of(&self.engine)?;
+                drop_freed_parses(&env, engine.written());
                 #[cfg(feature = "arena")]
                 {
                     let parses = engine.written().built_mut().held_mut().drain();
@@ -514,7 +553,9 @@ macro_rules! napi_engine {
         /// Replace `side` of the node at `index` of the live tree `treeId`
         /// with `entries`. A built record among them (`{ $type, $record }`)
         /// is a record of this engine's built arena, and renders from it
-        /// wherever the side renders. Refuses as `triviaSide` does.
+        /// wherever the side renders. Answers each parse the replaced
+        /// entries' release freed, as its slot then its tree id. Refuses as
+        /// `triviaSide` does.
         #[::napi_derive::napi(ts_args_type = "treeId: number, index: number, side: string, entries: object[]")]
         pub fn write_trivia_side(
             env: ::napi::Env,
@@ -522,13 +563,13 @@ macro_rules! napi_engine {
             index: $crate::types::NodeIndex,
             side: String,
             entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
-        ) -> ::napi::Result<()> {
+        ) -> ::napi::Result<Vec<u32>> {
             let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
             let store = with_live_node(&env, tree_id, index, |parsed, index| {
                 parsed.write_trivia_side(index, side, entries).map_err(::napi::Error::from_reason)?;
                 Ok(parsed.store().clone())
             })?;
-            $crate::napi_engine::settle(&env, &store)
+            settled(&env, &store)
         }
 
         /// Whether a write replaced a side of a node under the node at
@@ -1148,18 +1189,19 @@ macro_rules! napi_engine {
             /// holds, and a chunk left holding nothing live is freed and
             /// its buffers detached. A link record or side record drops its
             /// count of the parse it names, and a parse no holder counts
-            /// any more is dropped with its tree. Answers the slot of each
-            /// parse dropped. Refuses a count below zero, an address no
-            /// entry starts at, and an engine already disposed.
+            /// any more is dropped with its tree. Answers each parse
+            /// dropped, as its slot then its tree id. Refuses a count below
+            /// zero, an address no entry starts at, and an engine already
+            /// disposed.
             #[::napi_derive::napi]
             pub fn release_built(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, address: f64, held: u32, owned: bool) -> ::napi::Result<Vec<u32>> {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                 let held = $crate::arena::count::Held::of(held, address).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 let released = engine.written().release(held, owned).map_err(|e| ::napi::Error::from_reason(e.to_string()));
-                $crate::napi_engine::settle(&env, engine.written())?;
+                let freed = settled(&env, engine.written())?;
                 released?;
-                Ok(drop_freed_parses(&env, engine.written()))
+                Ok(freed)
             }
 
             /// Counts the parse `treeId` once more in slot `slot` of this
@@ -1174,31 +1216,13 @@ macro_rules! napi_engine {
             /// Drops the root's count of the parse `treeId` in slot `slot` of
             /// this engine's held-parse table; a slot that no longer holds
             /// that parse is left as it is. A parse no holder counts any
-            /// more is dropped with its tree. Answers the slot of each
-            /// parse dropped.
+            /// more is dropped with its tree. Answers each parse dropped,
+            /// as its slot then its tree id.
             #[::napi_derive::napi]
             pub fn release_parse(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, slot: $crate::types::ParseSlot, tree_id: $crate::types::TreeId) -> ::napi::Result<Vec<u32>> {
                 let engine = engine_of(engine)?;
                 engine.written().built_mut().release_root(slot, tree_id);
                 Ok(drop_freed_parses(&env, engine.written()))
-            }
-
-            /// Drops the tree of each parse `store`'s arena freed, and of each
-            /// parse a dropped tree's release frees in turn, until none is
-            /// left: a tree's written sides name built records, whose release
-            /// can free a parse they link. Answers the slot of each.
-            fn drop_freed_parses(env: &::napi::Env, store: &$crate::trivia_store::TriviaStore<<$grammar as $crate::engine::EngineGrammar>::Trivia>) -> Vec<u32> {
-                let mut slots = Vec::new();
-                loop {
-                    let freed = store.built_mut().take_freed_parses();
-                    if freed.is_empty() {
-                        return slots;
-                    }
-                    for (slot, parse) in freed {
-                        slots.push(slot.0);
-                        drop_tree(env, $crate::arena::Held::id(&parse));
-                    }
-                }
             }
 
             /// The bytes the built arena's chunks take, and of them the
@@ -1258,7 +1282,8 @@ macro_rules! napi_engine {
             /// `renderBuilt` then writes; a built record among them
             /// renders as `writeTriviaSide` says. Refuses a list whose
             /// length is not a multiple of three, holder 0 and any other
-            /// side, before writing any site.
+            /// side, before writing any site. Answers each parse freed as
+            /// `writeTriviaSide` does.
             #[::napi_derive::napi(ts_args_type = "engine: object, sites: number[], side: string, entries: object[]")]
             pub fn write_built_leaf_side(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
@@ -1266,7 +1291,7 @@ macro_rules! napi_engine {
                 sites: Vec<u32>,
                 side: String,
                 entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
-            ) -> ::napi::Result<()> {
+            ) -> ::napi::Result<Vec<u32>> {
                 let engine = engine_of(engine)?;
                 if sites.len() % 3 != 0 {
                     return Err(::napi::Error::from_reason(format!("a leaf's sites are holder, word and item triples, not {} numbers", sites.len())));
@@ -1274,7 +1299,7 @@ macro_rules! napi_engine {
                 let sites: Vec<_> = sites.chunks_exact(3).map(|site| $crate::trivia_store::Site { holder: $crate::arena::Address(site[0]), word: site[1], item: $crate::types::ItemIndex(site[2]) }).collect();
                 let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
                 engine.write_built_leaf_side(&sites, side, &entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                $crate::napi_engine::settle(&env, engine.written())
+                settled(&env, engine.written())
             }
 
             /// The sides writes gave each unit the record at `address` in
@@ -1296,24 +1321,26 @@ macro_rules! napi_engine {
             /// side it had; `renderBuilt` then writes them, and a built
             /// record among them renders as `writeTriviaSide` says.
             /// Refuses as `builtUnitSides` does, and a slot the record's
-            /// kind has no cell for.
+            /// kind has no cell for. Answers each parse freed as
+            /// `writeTriviaSide` does.
             #[::napi_derive::napi(ts_args_type = "engine: object, address: number, units: object[]")]
             pub fn write_built_unit_sides(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
                 env: ::napi::Env,
                 address: f64,
                 units: Vec<$crate::layout::UnitSides<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
-            ) -> ::napi::Result<()> {
+            ) -> ::napi::Result<Vec<u32>> {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                 engine.write_built_unit_sides(address, units).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                $crate::napi_engine::settle(&env, engine.written())
+                settled(&env, engine.written())
             }
 
             /// Replace `side` of the built record at `address` with
             /// `entries`, which `renderBuilt` then writes; a built record
-            /// among them renders as `writeTriviaSide` says. Refuses as
-            /// `builtTriviaSide` does.
+            /// among them renders as `writeTriviaSide` says, and each parse
+            /// freed is answered as it says. Refuses as `builtTriviaSide`
+            /// does.
             #[::napi_derive::napi(ts_args_type = "engine: object, address: number, side: string, entries: object[]")]
             pub fn write_built_trivia_side(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
@@ -1321,12 +1348,12 @@ macro_rules! napi_engine {
                 address: f64,
                 side: String,
                 entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
-            ) -> ::napi::Result<()> {
+            ) -> ::napi::Result<Vec<u32>> {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                 let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
                 engine.write_built_trivia_side(address, side, entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                $crate::napi_engine::settle(&env, engine.written())
+                settled(&env, engine.written())
             }
 
             /// The coordinate a read of the live tree `treeId` names the node
@@ -1934,6 +1961,22 @@ fn settle_buffers<T>(env: napi::Env, buffers: &mut Buffers, store: &crate::trivi
 #[cfg(not(feature = "arena"))]
 pub fn settle<T>(_env: &napi::Env, _store: &crate::trivia_store::TriviaStore<T>) -> napi::Result<()> {
     Ok(())
+}
+
+/// Takes the parses the built arena `store` holds freed since the last
+/// call, each as the slot it was held in and its tree id.
+#[cfg(feature = "arena")]
+#[must_use]
+pub fn take_freed_parses<T>(store: &crate::trivia_store::TriviaStore<T>) -> Vec<(crate::types::ParseSlot, crate::types::TreeId)> {
+    let freed = store.built_mut().take_freed_parses();
+    freed.into_iter().map(|(slot, parse)| (slot, crate::arena::Held::id(&parse))).collect()
+}
+
+/// Without the arena no parse is held, so none is freed.
+#[cfg(not(feature = "arena"))]
+#[must_use]
+pub fn take_freed_parses<T>(_store: &crate::trivia_store::TriviaStore<T>) -> Vec<(crate::types::ParseSlot, crate::types::TreeId)> {
+    Vec::new()
 }
 
 /// Drops `tree`, then settles its store (`settle`) when that freed what a

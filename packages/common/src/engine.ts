@@ -14,17 +14,17 @@ import type {
 	ParseOptions,
 	Rendered
 } from '@sittir/types';
-import { decodeTree, readObject, type ChunkWords, type RecordReader, type TreeHandle, type TriviaSideName } from './read.ts';
+import { decodeTree, readObject, readOrRelease, type ChunkWords, type RecordReader, type TreeHandle, type TriviaSideName } from './read.ts';
 import { holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
 import type { RecordPosition } from './handle.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
 import { leafData, readStub, recordOf } from './record-view.ts';
-import { readOwnEntries, readOwnUnits, type BuiltRecords, type WritableWords } from './built-arena.ts';
+import { readOwnEntries, readOwnUnits, type BuiltRecords, type FreedParses, type WritableWords } from './built-arena.ts';
 import { builtRefOf } from './built-ref.ts';
 import { nodeArenaOf } from './handle.ts';
-import { nodeStorageOf } from './engine-scope.ts';
+import { nodeStorageOf, treeBuiltArena } from './engine-scope.ts';
 import { leafWireSides } from './utils.ts';
 
 export const ARENA_FEATURE_REFUSED = 'arena node storage needs an addon built with the `arena` feature';
@@ -72,6 +72,10 @@ export function createRenderHandle(renderText: () => string, saveImpl?: (path: s
 function renderTreeOf(node: object): number | undefined {
 	const handle = sourceHandleOf(node);
 	return handle === undefined ? undefined : decodeTree(handle);
+}
+
+function forgetIn(tree: TreeHandle, freed: FreedParses): void {
+	treeBuiltArena(tree)?.forgetParses(freed);
 }
 
 /** The level count a read takes: one by default. */
@@ -159,11 +163,11 @@ export interface NativeEngineLike<TNode = unknown> {
 	 */
 	triviaSide(treeId: number, index: number, side: TriviaSideName): ReadOutput[];
 	/**
-	 * Replaces `side` of the node at descendant `index` of tree `treeId` with `entries`.
+	 * Replaces `side` of the node at descendant `index` of tree `treeId` with `entries`, and answers each parse the replaced entries' release frees, as {@link releaseBuilt} does.
 	 *
 	 * @throws as {@link triviaSide} does.
 	 */
-	writeTriviaSide(treeId: number, index: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	writeTriviaSide(treeId: number, index: number, side: TriviaSideName, entries: readonly unknown[]): FreedParses;
 	/**
 	 * The sides of the unit children of the node at descendant `index` of tree `treeId`, which their
 	 * slots store as bare kinds: each `{ slot, item, leading?, trailing?, inner? }`, by its slot's
@@ -230,12 +234,12 @@ export interface NativeEngineLike<TNode = unknown> {
 	builtBytes?(length: number): { chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] };
 	/** One more count of the built entry at `address`, whose count saturated. Present when the addon carries the record codec. */
 	builtBump?(address: number): void;
-	/** Releases a count of the built entry at `address` of form `held`, the count its builder's handle holds when `owned`; answers the slot of each parse that leaves unheld, freed with its tree. Present when the addon carries the record codec. */
-	releaseBuilt?(address: number, held: number, owned: boolean): number[];
+	/** Releases a count of the built entry at `address` of form `held`, the count its builder's handle holds when `owned`; answers each parse that leaves unheld, freed with its tree, as its slot then its tree id. Present when the addon carries the record codec. */
+	releaseBuilt?(address: number, held: number, owned: boolean): FreedParses;
 	/** Counts the parse `treeId` in slot `slot` of the engine arena's held-parse table once more, for a built record naming it. Refuses a slot that holds no parse of that id. Present when the addon carries the record codec. */
 	holdParse?(slot: number, treeId: number): void;
-	/** Drops the root's count of the parse `treeId` in slot `slot`, a no-op when the slot holds no parse of that id; answers the slot of each parse that leaves unheld, freed with its tree. Present when the addon carries the record codec. */
-	releaseParse?(slot: number, treeId: number): number[];
+	/** Drops the root's count of the parse `treeId` in slot `slot`, a no-op when the slot holds no parse of that id; answers each parse that leaves unheld as {@link releaseBuilt} does. Present when the addon carries the record codec. */
+	releaseParse?(slot: number, treeId: number): FreedParses;
 	/** The bytes the built arena's chunks take, and of them its counts'. Present when the addon carries the record codec. */
 	builtMemory?(): { chunks: number; counts: number; live: number };
 	/** Refuses, by name, a runtime that does not allow external array buffers. Present when the addon carries the record codec. */
@@ -255,10 +259,10 @@ export interface NativeEngineLike<TNode = unknown> {
 		options?: object
 	): string;
 	builtTriviaSide?(address: number, side: TriviaSideName): unknown[] | null;
-	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[]): FreedParses;
 	builtUnitSides?(address: number): unknown[];
-	writeBuiltUnitSides?(address: number, units: readonly unknown[]): void;
-	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void;
+	writeBuiltUnitSides?(address: number, units: readonly unknown[]): FreedParses;
+	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): FreedParses;
 	builtLeafSide?(holder: number, word: number, item: number, side: TriviaSideName): unknown[] | null;
 	copyBuiltSites?(from: number, to: number, skip: readonly number[]): void;
 	/**
@@ -660,9 +664,16 @@ export function createNativeEngine<
 						};
 			const roots = new Map<number, unknown>();
 			const errors = Object.freeze(parsed.errors);
+			const { slot } = parsed;
+			let rootReleased = false;
+			const releaseRoot = (): void => {
+				if (rootReleased || slot === null) return;
+				rootReleased = true;
+				forgetIn(tree, engine.releaseParse!(slot, parsed.treeId));
+			};
 			const tree: TreeHandle = {
 				id: parsed.treeId,
-				...(parsed.slot === null ? {} : { slot: parsed.slot }),
+				...(slot === null ? {} : { slot, releaseRoot }),
 				token: liveToken,
 				text: (span) => engine.text(parsed.treeId, span),
 				...(records === undefined ? {} : { records }),
@@ -679,7 +690,7 @@ export function createNativeEngine<
 				errors,
 				snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
 				triviaSide: (index, side) => readOwnEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
-				writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
+				writeTriviaSide: (index, side, entries) => forgetIn(tree, engine.writeTriviaSide(parsed.treeId, index, side, entries)),
 				unitSides: (index) => readOwnUnits(tree, engine.unitSides(parsed.treeId, index), liveToken),
 				slotLayouts: (index) => engine.slotLayouts(parsed.treeId, index),
 				slotSeparator: (index) => engine.slotSeparator(parsed.treeId, index) ?? undefined,
@@ -782,7 +793,7 @@ export function createNativeEngine<
 					parseTree,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const tree = parseTree(source);
-						return { tree, root: tree.read!(0, depthOf(parseOptions)) as TRoot & ParsedRoot };
+						return readOrRelease(tree, () => ({ tree, root: tree.read!(0, depthOf(parseOptions)) as TRoot & ParsedRoot }));
 					}
 				}
 			}
@@ -825,7 +836,6 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		bump: (at) => builtBump.call(engine, at),
 		release: (at, held, owned) => releaseBuilt.call(engine, at, held, owned),
 		holdParse: (slot, treeId) => holdParse.call(engine, slot, treeId),
-		releaseParse: (slot, treeId) => releaseParse.call(engine, slot, treeId),
 		trivia: {
 			triviaSide: (at, side) => builtTriviaSide.call(engine, at, side) ?? undefined,
 			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries),

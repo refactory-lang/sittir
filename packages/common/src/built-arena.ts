@@ -58,6 +58,8 @@ export interface BuiltChunk<A extends WritableWords | Uint8Array> {
 	readonly sealed?: { readonly chunk: number; readonly meta: Uint8Array };
 }
 
+export type FreedParses = readonly number[];
+
 export interface BuiltRecords {
 	readonly format: CellFormat;
 	readonly owner: object;
@@ -65,15 +67,14 @@ export interface BuiltRecords {
 	words(length: number): BuiltChunk<WritableWords>;
 	bytes(length: number): BuiltChunk<Uint8Array>;
 	bump(at: number): void;
-	release(at: number, held: number, owned: boolean): readonly number[];
+	release(at: number, held: number, owned: boolean): FreedParses;
 	holdParse(slot: number, treeId: number): void;
-	releaseParse(slot: number, treeId: number): readonly number[];
 	readonly trivia: {
 		triviaSide(at: number, side: TriviaSideName): unknown[] | undefined;
-		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly unknown[]): void;
+		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly unknown[]): FreedParses;
 		unitSides(at: number): unknown[];
-		writeUnitSides(at: number, units: readonly unknown[]): void;
-		writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void;
+		writeUnitSides(at: number, units: readonly unknown[]): FreedParses;
+		writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): FreedParses;
 		leafSide(holder: number, word: number, item: number, side: TriviaSideName): unknown[] | undefined;
 		copySites(from: number, to: number, skip: readonly number[]): void;
 	};
@@ -244,8 +245,6 @@ export class BuiltArena {
 	readonly #bump: BuiltRecords['bump'];
 	readonly #release: BuiltRecords['release'];
 	readonly #holdParse: BuiltRecords['holdParse'];
-	readonly #releaseParse: BuiltRecords['releaseParse'];
-	readonly #rootsReleased = new WeakSet<TreeHandle>();
 	readonly #entries: (Map<string, BuiltText> | undefined)[] = [];
 	readonly #entryAt: (Map<number, BuiltText> | undefined)[] = [];
 	readonly #links = new Map<number, Map<number, { readonly at: number; readonly table: CountTable }>>();
@@ -272,14 +271,13 @@ export class BuiltArena {
 	#pruneAt = DEFERRED_PRUNE;
 	#scopes = 0;
 
-	constructor({ format, owner, kinds, words, bytes, bump, release, holdParse, releaseParse, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
+	constructor({ format, owner, kinds, words, bytes, bump, release, holdParse, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
 		this.format = format;
 		this.owner = owner;
 		this.kinds = kinds;
 		this.#bump = bump;
 		this.#release = release;
 		this.#holdParse = holdParse;
-		this.#releaseParse = releaseParse;
 		this.#wrap = wrap;
 		this.#handle = handle;
 		this.#views = views;
@@ -293,7 +291,7 @@ export class BuiltArena {
 				return entries === undefined ? undefined : readEntries(this.tree, entries);
 			},
 			writeTriviaSide: (at, side, entries) => {
-				trivia.writeTriviaSide(at, side, entries);
+				this.forgetParses(trivia.writeTriviaSide(at, side, entries));
 				const sided = (this.#sided[chunkOf(at, format)] ??= new Map());
 				sided.set(at, (sided.get(at) ?? 0) | SIDE_BITS[side]);
 			},
@@ -303,7 +301,7 @@ export class BuiltArena {
 			},
 			writeUnitSides: (at, units) => {
 				this.#undefer(at);
-				trivia.writeUnitSides(at, units);
+				this.forgetParses(trivia.writeUnitSides(at, units));
 				(this.#unitSided[chunkOf(at, format)] ??= new Set()).add(at);
 			}
 		};
@@ -622,7 +620,7 @@ export class BuiltArena {
 			const cells = this.#cells[chunk];
 			if (cells === undefined || cells.length === 0) throw new Error(releasedRecord(at));
 			if (cells[0]! > 1) cells[0] = cells[0]! - 1;
-			else this.#released(this.#release(at, this.format.held.text, false));
+			else this.forgetParses(this.#release(at, this.format.held.text, false));
 			return;
 		}
 		this.drop(at, list ? this.format.held.run : this.format.held.record);
@@ -634,23 +632,21 @@ export class BuiltArena {
 		const byte = counts[index]!;
 		const count = byte & this.format.countSaturated;
 		if (count > 1 && count !== this.format.countSaturated) counts[index] = byte - 1;
-		else this.#released(this.#release(at, held, false));
+		else this.forgetParses(this.#release(at, held, false));
 	}
 
 	/** Releases the count the handle of the record at `at` holds, a no-op when the handle holds none. */
 	release(at: number): void {
-		this.#released(this.#release(at, this.format.held.record, true));
+		this.forgetParses(this.#release(at, this.format.held.record, true));
 	}
 
 	/** Releases what `node` holds: for a handle this arena built, what {@link releaseHandle} releases; for the root of a parse this arena's engine holds, the root's count of the parse, once however often it is released, and the parse with it when no built record names it. Any other parsed node holds nothing. */
 	releaseNode(node: object): void {
 		const tree = (node as { readonly $tree?: TreeHandle }).$tree;
 		if (tree === this.tree) return this.releaseHandle(node);
-		if (tree?.slot === undefined || tree.id === undefined || this.#rootsReleased.has(tree)) return;
+		if (tree?.releaseRoot === undefined) return;
 		const coordinate = coordinateOf(node);
-		if (coordinate === undefined || decodeIndex(coordinate.$treeHandle) !== 0) return;
-		this.#rootsReleased.add(tree);
-		this.#released(this.#releaseParse(tree.slot, tree.id));
+		if (coordinate !== undefined && decodeIndex(coordinate.$treeHandle) === 0) tree.releaseRoot();
 	}
 
 	/** Releases what the handle `node` holds: its record's count, or for a leaf not yet placed, the count it holds of each built record its sides park. A record already released, or its count already placed, is passed over, and so is a handle whose record's chunk was freed. */
@@ -722,8 +718,11 @@ export class BuiltArena {
 		if (isLive(this.#handle.current)) this.refuseReleased(at);
 	}
 
-	#released(slots: readonly number[]): void {
-		for (const slot of slots) this.#parses.delete(slot);
+	/** Forgets each parse of `freed` (a slot then its tree id, after another) whose slot still names it. */
+	forgetParses(freed: FreedParses): void {
+		for (let at = 0; at < freed.length; at += 2) {
+			if (this.#parses.get(freed[at]!)?.tree.id === freed[at + 1]) this.#parses.delete(freed[at]!);
+		}
 	}
 
 	#copyCells(from: number, kind: number, to: BuiltWords, side: boolean): void {
@@ -942,7 +941,7 @@ export class BuiltArena {
 
 	/** Replaces `side` of the built leaf at each site `sites` names, `[holder, word, item]` after another, with `entries`. */
 	writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void {
-		this.#trivia.writeLeafSide(sites, side, entries);
+		this.forgetParses(this.#trivia.writeLeafSide(sites, side, entries));
 		for (let n = 0; n < sites.length; n += 3) (this.#leafSited[chunkOf(sites[n]!, this.format)] ??= new Set()).add(sites[n]!);
 	}
 

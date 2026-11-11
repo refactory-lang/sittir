@@ -15,6 +15,8 @@ export interface TreeHandle {
 	id?: number;
 	/** In arena storage, the slot of its engine arena's held-parse table that holds the parse, counted by its root until the root is released. */
 	slot?: number;
+	/** In arena storage, drops the root's count of the parse, once however often it is called: the parse is freed with its tree when no built record names it. */
+	releaseRoot?(): void;
 	/** The node at descendant `index` read into its native node, `depth` levels down (one when absent, `Infinity` for all); index 0 is the root. A unit variant's native node is its kind id. */
 	read?(index: number, depth?: number): unknown;
 	/** The tree's layer of the render options (`NativeParseResult.options`). */
@@ -115,6 +117,18 @@ export function readNode(tree: TreeHandle, coordinate: NodeCoordinate, depth?: n
 	const owner = decodeTree(coordinate.$treeHandle);
 	if (owner !== tree.id) throw new Error(`readNode: the coordinate names another tree (${owner}), not this one (${String(tree.id)})`);
 	return tree.read(decodeIndex(coordinate.$treeHandle), depth);
+}
+
+/**
+ * What `read` answers of a parse just made, releasing the parse's root when `read` throws: a parse whose root never reaches its caller holds nothing.
+ */
+export function readOrRelease<T>(tree: TreeHandle, read: () => T): T {
+	try {
+		return read();
+	} catch (error) {
+		tree.releaseRoot?.();
+		throw error;
+	}
 }
 
 /**

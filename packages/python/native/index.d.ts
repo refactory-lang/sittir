@@ -534,9 +534,10 @@ export declare const RECORD_HEADER_WORDS: number
  * r" holds, and a chunk left holding nothing live is freed and
  * r" its buffers detached. A link record or side record drops its
  * r" count of the parse it names, and a parse no holder counts
- * r" any more is dropped with its tree. Answers the slot of each
- * r" parse dropped. Refuses a count below zero, an address no
- * r" entry starts at, and an engine already disposed.
+ * r" any more is dropped with its tree. Answers each parse
+ * r" dropped, as its slot then its tree id. Refuses a count below
+ * r" zero, an address no entry starts at, and an engine already
+ * r" disposed.
  */
 export declare function releaseBuilt(engine: object, address: number, held: number, owned: boolean): Array<number>
 
@@ -544,8 +545,8 @@ export declare function releaseBuilt(engine: object, address: number, held: numb
  * r" Drops the root's count of the parse `treeId` in slot `slot` of
  * r" this engine's held-parse table; a slot that no longer holds
  * r" that parse is left as it is. A parse no holder counts any
- * r" more is dropped with its tree. Answers the slot of each
- * r" parse dropped.
+ * r" more is dropped with its tree. Answers each parse dropped,
+ * r" as its slot then its tree id.
  */
 export declare function releaseParse(engine: object, slot: ParseSlot, treeId: TreeId): Array<number>
 
@@ -734,17 +735,19 @@ export declare function unitSides(treeId: TreeId, index: NodeIndex): object[]
  * r" `renderBuilt` then writes; a built record among them
  * r" renders as `writeTriviaSide` says. Refuses a list whose
  * r" length is not a multiple of three, holder 0 and any other
- * r" side, before writing any site.
+ * r" side, before writing any site. Answers each parse freed as
+ * r" `writeTriviaSide` does.
  */
-export declare function writeBuiltLeafSide(engine: object, sites: number[], side: string, entries: object[]): void
+export declare function writeBuiltLeafSide(engine: object, sites: number[], side: string, entries: object[]): Array<number>
 
 /**
  * r" Replace `side` of the built record at `address` with
  * r" `entries`, which `renderBuilt` then writes; a built record
- * r" among them renders as `writeTriviaSide` says. Refuses as
- * r" `builtTriviaSide` does.
+ * r" among them renders as `writeTriviaSide` says, and each parse
+ * r" freed is answered as it says. Refuses as `builtTriviaSide`
+ * r" does.
  */
-export declare function writeBuiltTriviaSide(engine: object, address: number, side: string, entries: object[]): void
+export declare function writeBuiltTriviaSide(engine: object, address: number, side: string, entries: object[]): Array<number>
 
 /**
  * r" The units the record at `address` in the arena this engine
@@ -753,14 +756,17 @@ export declare function writeBuiltTriviaSide(engine: object, address: number, si
  * r" side it had; `renderBuilt` then writes them, and a built
  * r" record among them renders as `writeTriviaSide` says.
  * r" Refuses as `builtUnitSides` does, and a slot the record's
- * r" kind has no cell for.
+ * r" kind has no cell for. Answers each parse freed as
+ * r" `writeTriviaSide` does.
  */
-export declare function writeBuiltUnitSides(engine: object, address: number, units: object[]): void
+export declare function writeBuiltUnitSides(engine: object, address: number, units: object[]): Array<number>
 
 /**
  * Replace `side` of the node at `index` of the live tree `treeId`
  * with `entries`. A built record among them (`{ $type, $record }`)
  * is a record of this engine's built arena, and renders from it
- * wherever the side renders. Refuses as `triviaSide` does.
+ * wherever the side renders. Answers each parse the replaced
+ * entries' release freed, as its slot then its tree id. Refuses as
+ * `triviaSide` does.
  */
-export declare function writeTriviaSide(treeId: number, index: number, side: string, entries: object[]): void
+export declare function writeTriviaSide(treeId: number, index: number, side: string, entries: object[]): Array<number>
