@@ -332,9 +332,6 @@ macro_rules! napi_engine {
         #[::napi_derive::napi]
         pub struct SittirEngine {
             engine: EngineCell,
-            /// Whether the engine stores its nodes in the arena, so holds
-            /// each parse in its arena's held-parse table.
-            holds_parses: bool,
         }
 
         #[::napi_derive::napi]
@@ -360,7 +357,13 @@ macro_rules! napi_engine {
                     $crate::napi_engine::engine_store::<$grammar>(),
                 )
                 .map_err(::napi::Error::from_reason)?;
-                Ok(Self { engine: ::std::rc::Rc::new(::std::cell::RefCell::new(engine)), holds_parses })
+                #[cfg(feature = "arena")]
+                if holds_parses {
+                    engine.written().built_mut().hold_parses();
+                }
+                #[cfg(not(feature = "arena"))]
+                let _ = holds_parses;
+                Ok(Self { engine: ::std::rc::Rc::new(::std::cell::RefCell::new(engine)) })
             }
 
             /// The handle the module's functions on this engine's state take:
@@ -465,9 +468,12 @@ macro_rules! napi_engine {
             /// by its root, and answers its slot.
             fn hold(&self, tree_id: $crate::types::TreeId) -> ::napi::Result<Option<u32>> {
                 #[cfg(feature = "arena")]
-                if self.holds_parses {
+                {
                     let engine = engine_of(&self.engine)?;
-                    return Ok(Some(engine.written().built_mut().held_mut().hold($crate::arena::HeldParse(tree_id)).0));
+                    let mut built = engine.written().built_mut();
+                    if built.holds_parses() {
+                        return Ok(Some(built.held_mut().hold($crate::arena::HeldParse(tree_id)).0));
+                    }
                 }
                 let _ = tree_id;
                 Ok(None)
@@ -1275,13 +1281,15 @@ macro_rules! napi_engine {
             /// Writes the sides of every unit and leaf site of the built
             /// record at `from` at the same site of the record at `to`,
             /// except a site at a word `skip` names. Refuses address 0
-            /// as either record.
-            #[::napi_derive::napi]
-            pub fn copy_built_sites(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, from: f64, to: f64, skip: Vec<u32>) -> ::napi::Result<()> {
+            /// as either record. Answers each parse the release of a
+            /// replaced side freed, as `writeTriviaSide` does.
+            #[::napi_derive::napi(ts_args_type = "engine: object, from: number, to: number, skip: number[]")]
+            pub fn copy_built_sites(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, from: f64, to: f64, skip: Vec<u32>) -> ::napi::Result<Vec<u32>> {
                 let engine = engine_of(engine)?;
                 let from = $crate::arena::Address($crate::napi_engine::checked_whole(from, "from")?);
                 let to = $crate::arena::Address($crate::napi_engine::checked_whole(to, "to")?);
-                engine.copy_built_sites(from, to, &skip).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                engine.copy_built_sites(from, to, &skip).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                settled(&env, engine.written())
             }
 
             /// Replace `side` of the built leaf at each site `sites` names,

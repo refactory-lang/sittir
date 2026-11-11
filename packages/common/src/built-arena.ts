@@ -70,6 +70,7 @@ export interface BuiltRecords {
 	bump(at: number): void;
 	release(at: number, held: number, owned: boolean): FreedParses;
 	holdParse(slot: number, treeId: number): void;
+	releaseParse(slot: number, treeId: number): FreedParses;
 	readonly trivia: {
 		triviaSide(at: number, side: TriviaSideName): unknown[] | undefined;
 		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly unknown[]): FreedParses;
@@ -77,7 +78,7 @@ export interface BuiltRecords {
 		writeUnitSides(at: number, units: readonly unknown[]): FreedParses;
 		writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): FreedParses;
 		leafSide(holder: number, word: number, item: number, side: TriviaSideName): unknown[] | undefined;
-		copySites(from: number, to: number, skip: readonly number[]): void;
+		copySites(from: number, to: number, skip: readonly number[]): FreedParses;
 	};
 }
 
@@ -252,6 +253,7 @@ export class BuiltArena {
 	readonly #bump: BuiltRecords['bump'];
 	readonly #release: BuiltRecords['release'];
 	readonly #holdParse: BuiltRecords['holdParse'];
+	readonly #releaseParse: BuiltRecords['releaseParse'];
 	readonly #entries: (Map<string, BuiltText> | undefined)[] = [];
 	readonly #entryAt: (Map<number, BuiltText> | undefined)[] = [];
 	readonly #links = new Map<number, Map<number, { readonly at: number; readonly table: CountTable }>>();
@@ -281,13 +283,14 @@ export class BuiltArena {
 	#pruneAt = DEFERRED_PRUNE;
 	#scopes = 0;
 
-	constructor({ format, owner, kinds, words, bytes, bump, release, holdParse, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
+	constructor({ format, owner, kinds, words, bytes, bump, release, holdParse, releaseParse, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
 		this.format = format;
 		this.owner = owner;
 		this.kinds = kinds;
 		this.#bump = bump;
 		this.#release = release;
 		this.#holdParse = holdParse;
+		this.#releaseParse = releaseParse;
 		this.#wrap = wrap;
 		this.#handle = handle;
 		this.#views = views;
@@ -701,7 +704,7 @@ export class BuiltArena {
 	}
 
 	#park(leaf: object, trivia: NodeTrivia): void {
-		forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.hold(at)));
+		forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.hold(at), (tree) => this.#holdParse(...heldIn(tree))));
 		this.#parkedBy.set(trivia, leaf);
 	}
 
@@ -712,13 +715,19 @@ export class BuiltArena {
 
 	#unpark(trivia: NodeTrivia | undefined): void {
 		if (trivia === undefined || !this.#parkedBy.delete(trivia)) return;
-		forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.drop(at, this.format.held.record)));
+		forEachTriviaList(trivia as TriviaSides<unknown>, (entries) =>
+			this.#eachParked(entries, (at) => this.drop(at, this.format.held.record), (tree) => this.forgetParses(this.#releaseParse(...heldIn(tree))))
+		);
 	}
 
-	#eachParked(entries: readonly unknown[], each: (at: number) => void): void {
+	#eachParked(entries: readonly unknown[], each: (at: number) => void, eachTree?: (tree: TreeHandle) => void): void {
 		for (const entry of entries) {
 			const parked = recordRefOf(entry);
 			if (parked?.arena === this) each(parked.at);
+			else if (parked === undefined && typeof entry === 'object' && entry !== null) {
+				const tree = parsedEntryOf(entry, this)?.tree;
+				if (tree !== undefined) eachTree?.(tree);
+			}
 		}
 	}
 
@@ -1024,7 +1033,7 @@ export class BuiltArena {
 		const units = this.#unitSided[chunkOf(from, this.format)]?.has(from) === true;
 		const leaves = this.#leafSited[chunkOf(from, this.format)]?.has(from) === true;
 		if (!units && !leaves) return;
-		this.#trivia.copySites(from, to, skip);
+		this.forgetParses(this.#trivia.copySites(from, to, skip));
 		const chunk = chunkOf(to, this.format);
 		if (units) (this.#unitSided[chunk] ??= new Set()).add(to);
 		if (leaves) (this.#leafSited[chunk] ??= new Set()).add(to);
@@ -1039,15 +1048,9 @@ export class BuiltArena {
 		return this.#views.withs[kind];
 	}
 
-	/** Refuses a tree another engine holds: a record of this arena, and a side it writes, name only trees its own engine holds. */
-	refuseForeignTree(tree: object | undefined): void {
-		if (tree === undefined || treeBuiltArena(tree) !== this) throw new Error(OTHER_ENGINE_PARSE);
-	}
-
 	#heldParse(tree: ParsedTree, token: TreeToken): number {
-		this.refuseForeignTree(tree);
-		const { slot } = tree;
-		if (slot === undefined) throw new Error(`parsed tree ${tree.id} is held in no slot of its engine's arena, so no built record names it`);
+		refuseOtherEngineTree(tree, this);
+		const [slot] = heldIn(tree);
 		this.#holdParse(slot, tree.id);
 		this.#parses.set(slot, { tree, token });
 		return slot;
@@ -1205,11 +1208,7 @@ export function sideEntryOf(entry: object, arena: BuiltArena | undefined, holder
 	refuseForeignEntry(entry, holder);
 	if (arena === undefined && isBuiltNode(entry)) throw new Error(NO_RECORDS);
 	const built = recordRefOf(entry);
-	if (built === undefined) {
-		const coordinate = readCoordinateOf(entry);
-		if (coordinate !== undefined) arena?.refuseForeignTree(treeOf(entry));
-		return coordinate;
-	}
+	if (built === undefined) return parsedEntryOf(entry, arena)?.coordinate;
 	if (built.arena !== arena) throw new Error(OTHER_ENGINE_RECORD);
 	built.arena.refuseReleased(built.at);
 	built.arena.settle();
@@ -1226,10 +1225,37 @@ function readCoordinateOf(entry: object): NodeCoordinate | undefined {
 	return isRead(entry) && sourceOf(entry) === Source.Ts ? coordinateOf(entry) : undefined;
 }
 
-export function refuseBuiltEntries(trivia: TriviaSides<unknown>): void {
+export function refuseObjectSideEntries(trivia: TriviaSides<unknown>): void {
 	forEachTriviaList(trivia, (entries) => {
-		if (entries.some((entry) => typeof entry === 'object' && entry !== null && isBuiltNode(entry))) throw new Error(NO_RECORDS);
+		for (const entry of entries) {
+			if (typeof entry !== 'object' || entry === null) continue;
+			if (isBuiltNode(entry)) throw new Error(NO_RECORDS);
+			parsedEntryOf(entry, undefined);
+		}
 	});
+}
+
+function refuseOtherEngineTree(tree: object, arena: BuiltArena | undefined): void {
+	if (treeBuiltArena(tree) !== arena) throw new Error(OTHER_ENGINE_PARSE);
+}
+
+function heldIn(tree: TreeHandle): readonly [slot: number, treeId: number] {
+	const { slot, id } = tree;
+	if (slot === undefined || id === undefined) throw new Error(`parsed tree ${String(id)} is held in no slot of its engine's arena, so no built record names it`);
+	return [slot, id];
+}
+
+function parsedEntryOf(entry: object, arena: BuiltArena | undefined): { readonly coordinate: NodeCoordinate; readonly tree: TreeHandle | undefined } | undefined {
+	const coordinate = readCoordinateOf(entry);
+	if (coordinate === undefined) return undefined;
+	const tree = treeOf(entry);
+	if (tree === undefined) {
+		if (arena !== undefined) throw new Error(OTHER_ENGINE_PARSE);
+	} else {
+		if (decodeTree(coordinate.$treeHandle) !== tree.id) throw new Error(OTHER_ENGINE_PARSE);
+		refuseOtherEngineTree(tree, arena);
+	}
+	return { coordinate, tree };
 }
 
 export function holdSideEntries(table: object, place: string, entries: readonly unknown[]): void {

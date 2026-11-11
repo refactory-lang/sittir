@@ -410,6 +410,7 @@ impl<T: Clone> TriviaStore<T> {
                 }
             }
         }
+        rows.values().try_for_each(|entries| self.check_hold(entries, None))?;
         for entries in rows.values() {
             self.hold(entries, None)?;
         }
@@ -427,17 +428,22 @@ impl<T: Clone> TriviaStore<T> {
 
     /// The sides of every unit and leaf site of `from`'s record, written at
     /// the same site of `to`'s, except a site at a word `skip` names: what a
-    /// copy of a record keeps of its children's sides. Each built record a
-    /// copied side names is held once more.
+    /// copy of a record keeps of its children's sides. What a copied side
+    /// names is held once more (`hold`), and what a side it replaces named
+    /// released; a copy of a record's sites onto its own changes nothing.
     ///
     /// # Errors
     ///
-    /// What holding a record refuses, before any side is copied.
+    /// What holding a record refuses, before any side is copied, and what
+    /// releasing a replaced side's record refuses.
     #[cfg(feature = "arena")]
     pub fn copy_sites(&self, from: crate::arena::Address, to: crate::arena::Address, skip: &[u32]) -> Result<(), crate::arena::ArenaError>
     where
         T: HeapBytes,
     {
+        if from == to {
+            return Ok(());
+        }
         let copied: Vec<(Place, TriviaSide, Vec<TriviaEntry<T>>)> = {
             let sides = self.read();
             let first = Site { holder: from, word: 0, item: crate::types::ItemIndex(0) };
@@ -457,14 +463,15 @@ impl<T: Clone> TriviaStore<T> {
                 })
                 .collect()
         };
+        copied.iter().try_for_each(|(_, _, entries)| self.check_hold(entries, None))?;
         for (_, _, entries) in &copied {
             self.hold(entries, None)?;
         }
-        let mut sides = self.write();
-        for (place, side, entries) in copied {
-            sides.insert(place, side, entries);
-        }
-        Ok(())
+        let replaced: Vec<_> = {
+            let mut sides = self.write();
+            copied.into_iter().filter_map(|(place, side, entries)| sides.insert(place, side, entries)).collect()
+        };
+        replaced.iter().try_for_each(|entries| self.release_entries(entries, None))
     }
 
     /// `side` of the built node at `place` holds `entries`, in place of what
@@ -526,6 +533,7 @@ impl<T: Clone> TriviaStore<T> {
     /// What adopting a record refuses.
     #[cfg(feature = "arena")]
     pub fn hold(&self, entries: &[TriviaEntry<T>], holder: Option<TreeId>) -> Result<(), crate::arena::ArenaError> {
+        self.check_hold(entries, holder)?;
         let records = held_records(entries);
         let trees = linked_trees(entries, holder);
         if records.is_empty() && trees.is_empty() {
@@ -537,6 +545,23 @@ impl<T: Clone> TriviaStore<T> {
             built.retain_slot_of(tree);
         }
         Ok(())
+    }
+
+    /// Refuses `entries` when `hold` would refuse one of them, before it
+    /// counts any: a built record whose count is gone, and, in an engine
+    /// that holds its parses, a record of another tree no slot of it holds.
+    ///
+    /// # Errors
+    ///
+    /// What adopting a record refuses, and `ArenaError::UnheldTree`.
+    #[cfg(feature = "arena")]
+    pub fn check_hold(&self, entries: &[TriviaEntry<T>], holder: Option<TreeId>) -> Result<(), crate::arena::ArenaError> {
+        let mut built = self.built_mut();
+        held_records(entries).into_iter().try_for_each(|at| built.adoptable(at))?;
+        if !built.holds_parses() {
+            return Ok(());
+        }
+        linked_trees(entries, holder).into_iter().find(|&tree| built.held().slot_of(tree).is_none()).map_or(Ok(()), |tree| Err(crate::arena::ArenaError::UnheldTree(tree)))
     }
 
     /// Releases what `hold` took of `entries` for `holder`: a count of each
@@ -829,15 +854,81 @@ mod tests {
     #[cfg(feature = "arena")]
     #[test]
     fn a_unit_side_one_write_gives_twice_counts_only_the_row_it_keeps() {
-        let store = TriviaStore::<TriviaText>::new();
-        let slot = store.built_mut().held_mut().hold(crate::arena::HeldParse(TreeId(7)));
-        let named = TriviaEntry::new(SlotValue::Coord(crate::slot::NodeCoordinate::new(TreeId(7), NodeIndex::new(1), NodeIndex::new(2), crate::types::Span { start: 0, end: 8 })));
-        let leading = |entries| crate::trivia::NodeTrivia { leading: Some(entries), trailing: None, inner: None };
+        let (store, slot) = held_store(7);
         let item = crate::types::ItemIndex(0);
-        store.write_units(Address(5), vec![(2, item, leading(vec![named])), (2, item, leading(Vec::new()))]).expect("a unit write");
+        store.write_units(Address(5), vec![(2, item, leading(vec![named(7)])), (2, item, leading(Vec::new()))]).expect("a unit write");
         assert_eq!(store.side(Place::Unit(Site { holder: Address(5), word: 2, item }), TriviaSide::Leading), Some(Vec::new()), "the last row is the one kept");
-        store.built_mut().release_root(slot, TreeId(7));
-        assert_eq!(store.built_mut().take_freed_parses().len(), 1, "the kept row names no record of tree 7, so its root's release frees its slot");
+        assert!(frees_on_root_release(&store, slot, 7), "the kept row names no record of tree 7, so its root's release frees its slot");
+    }
+
+    #[cfg(feature = "arena")]
+    fn named(tree: u32) -> TriviaEntry<TriviaText> {
+        TriviaEntry::new(SlotValue::Coord(crate::slot::NodeCoordinate::new(TreeId(tree), NodeIndex::new(1), NodeIndex::new(2), crate::types::Span { start: 0, end: 8 })))
+    }
+
+    #[cfg(feature = "arena")]
+    fn leading(entries: Vec<TriviaEntry<TriviaText>>) -> crate::trivia::NodeTrivia<TriviaText> {
+        crate::trivia::NodeTrivia { leading: Some(entries), trailing: None, inner: None }
+    }
+
+    #[cfg(feature = "arena")]
+    fn held_store(tree: u32) -> (TriviaStore<TriviaText>, crate::types::ParseSlot) {
+        let store = TriviaStore::<TriviaText>::new();
+        store.built_mut().hold_parses();
+        let slot = store.built_mut().held_mut().hold(crate::arena::HeldParse(TreeId(tree)));
+        (store, slot)
+    }
+
+    #[cfg(feature = "arena")]
+    fn frees_on_root_release(store: &TriviaStore<TriviaText>, slot: crate::types::ParseSlot, tree: u32) -> bool {
+        store.built_mut().release_root(slot, TreeId(tree));
+        store.built_mut().take_freed_parses().len() == 1
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn an_engine_holding_its_parses_refuses_a_side_entry_naming_a_tree_no_slot_of_it_holds() {
+        let (store, _) = held_store(7);
+        let refused = store.write_held_side(Place::Record(Address(5)), TriviaSide::Leading, vec![named(9)]);
+        assert!(matches!(refused, Err(crate::arena::ArenaError::UnheldTree(TreeId(9)))), "{refused:?}");
+        assert_eq!(store.side(Place::Record(Address(5)), TriviaSide::Leading), None, "a refused write writes nothing");
+        let objects = TriviaStore::<TriviaText>::new();
+        objects.write_held_side(Place::Record(Address(5)), TriviaSide::Leading, vec![named(9)]).expect("an engine holding no parses keeps a coordinate as it is");
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn a_unit_write_that_refuses_a_row_counts_nothing_any_row_names() {
+        let (store, slot) = held_store(7);
+        let item = crate::types::ItemIndex(0);
+        let refused = store.write_units(Address(5), vec![(2, item, leading(vec![named(7)])), (3, item, leading(vec![record(9, None)]))]);
+        assert!(refused.is_err(), "a row naming a record with no count is refused");
+        assert!(frees_on_root_release(&store, slot, 7), "the refused write took no count of tree 7's slot");
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn a_copy_onto_sites_holding_sides_releases_what_they_held() {
+        let (store, slot) = held_store(7);
+        let item = crate::types::ItemIndex(0);
+        store.write_units(Address(5), vec![(2, item, leading(vec![named(7)]))]).expect("a unit write");
+        store.copy_sites(Address(5), Address(6), &[]).expect("a copy");
+        store.copy_sites(Address(5), Address(6), &[]).expect("a copy onto the same sites");
+        store.write_units(Address(5), Vec::new()).expect("a unit write");
+        store.write_units(Address(6), Vec::new()).expect("a unit write");
+        assert!(frees_on_root_release(&store, slot, 7), "no copied row is left counting tree 7's slot");
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn a_copy_of_a_record_s_sites_onto_itself_changes_nothing() {
+        let (store, slot) = held_store(7);
+        let item = crate::types::ItemIndex(0);
+        store.write_units(Address(5), vec![(2, item, leading(vec![named(7)]))]).expect("a unit write");
+        store.copy_sites(Address(5), Address(5), &[]).expect("a copy onto itself");
+        assert_eq!(store.side(Place::Unit(Site { holder: Address(5), word: 2, item }), TriviaSide::Leading), Some(vec![named(7)]));
+        store.write_units(Address(5), Vec::new()).expect("a unit write");
+        assert!(frees_on_root_release(&store, slot, 7), "the copy took no count of its own");
     }
 
     #[cfg(feature = "arena")]

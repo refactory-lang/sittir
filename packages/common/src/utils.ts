@@ -16,7 +16,7 @@ import { snapshotOf } from './snapshot.ts';
 import { cacheOf, chosenSeparatorOf, recordOf, recordSlot, recordSlots, rowOf, rowTrivia, storedSlotValues } from './record-view.ts';
 import { HANDLE, isRecordPosition, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
-import { builtRecordOf, holdSideEntries, isBuiltNode, patchCell, patchFlag, patchList, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
+import { builtRecordOf, holdSideEntries, isBuiltNode, patchCell, patchFlag, patchList, refuseObjectSideEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { BLANK_KIND_ID, blankArmRead, blankArmStored } from './blank-arm.ts';
@@ -201,7 +201,7 @@ export function writeTrivia(node: object, trivia: NodeTrivia): void {
 	}
 	const at = tableAt(node);
 	if (at === undefined) {
-		refuseBuiltEntries(trivia);
+		refuseObjectSideEntries(trivia);
 		const own = triviaOf(node);
 		setTriviaOf(node as AnyUntypedNode, own === undefined ? trivia : { ...own, ...trivia });
 		return;
@@ -246,7 +246,7 @@ function writeSites(arena: BuiltArena, sites: readonly number[], trivia: NodeTri
 export function writeUnitSides(node: object, units: readonly UnitSidesData[]): void {
 	const built = builtRefOf(node);
 	if (built?.at === undefined) {
-		for (const unit of units) refuseBuiltEntries(unit);
+		for (const unit of units) refuseObjectSideEntries(unit);
 		setUnitSides(node, units);
 		return;
 	}

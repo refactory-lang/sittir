@@ -225,6 +225,9 @@ pub enum ArenaError {
     /// A render over arenas lent read-only met the node at `index`, of kind
     /// `kind`, whose record only a write could give it.
     ReadOnly { index: crate::types::NodeIndex, kind: crate::types::KindId },
+    /// A side entry, in an engine that holds its parses, naming a record of
+    /// a tree no slot of the engine holds: another engine's, or one freed.
+    UnheldTree(TreeId),
 }
 
 /// A record entry whose arena, or the store that holds its sides, is gone.
@@ -248,6 +251,7 @@ impl fmt::Display for ArenaError {
             ArenaError::MissingField(key) => write!(f, "Missing field `{key}`"),
             ArenaError::EmptyList { owner, key } => write!(f, "{} on {owner}.{key}", crate::non_empty::EmptyList),
             ArenaError::ReadOnly { index, kind } => write!(f, "a render over arenas lent read-only met node {} of kind {}, which has no record to read", index.0, kind.0),
+            ArenaError::UnheldTree(tree) => write!(f, "a side entry names a record of tree {}, which no slot of this engine holds: a built record holds only nodes its own engine built or parsed, not a node another engine parsed", tree.0),
         }
     }
 }
@@ -573,6 +577,9 @@ pub struct BuiltChunks {
     open: [Option<u32>; 2],
     free: std::collections::VecDeque<u32>,
     freed: Vec<u32>,
+    /// Whether the engine stores its nodes in this arena, so holds each
+    /// parse in `held`.
+    holds_parses: bool,
     /// The parses the engine holds for arena storage, each counted by its
     /// root and by each record of this arena that names it.
     held: HeldParses<HeldParse>,
@@ -587,7 +594,18 @@ impl BuiltChunks {
     /// shapes are `shape`'s: the grammar's stamps.
     #[must_use]
     pub fn new(kind_bits: u32, shape: ShapeOf) -> Self {
-        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), held: HeldParses::default(), freed_parses: Vec::new(), overflow: HashMap::default() }
+        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), holds_parses: false, held: HeldParses::default(), freed_parses: Vec::new(), overflow: HashMap::default() }
+    }
+
+    /// Makes the engine hold each of its parses here: its arena storage.
+    pub fn hold_parses(&mut self) {
+        self.holds_parses = true;
+    }
+
+    /// Whether the engine holds each of its parses here (`hold_parses`).
+    #[must_use]
+    pub fn holds_parses(&self) -> bool {
+        self.holds_parses
     }
 
     /// A new words chunk of `len` words, zeroed: its number, its memory and

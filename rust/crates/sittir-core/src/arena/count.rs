@@ -305,22 +305,31 @@ impl BuiltChunks {
     /// What reaching its count refuses, and `ArenaError::Malformed` for a
     /// record whose count is gone.
     pub fn adopt(&mut self, at: Address) -> Result<(), ArenaError> {
+        self.adoptable(at)?;
         let byte = self.table(at.chunk())?.count(at.word())?;
         if *byte & OWNED != 0 {
             *byte &= !OWNED;
-            return Ok(());
+        } else if *byte & SATURATED == SATURATED {
+            *self.overflow.entry(at.0).or_insert(0) += 1;
+        } else {
+            *byte += 1;
         }
-        match *byte & SATURATED {
-            0 => Err(malformed("released record", at.0)),
-            SATURATED => {
-                *self.overflow.entry(at.0).or_insert(0) += 1;
-                Ok(())
-            }
-            _ => {
-                *byte += 1;
-                Ok(())
-            }
+        Ok(())
+    }
+
+    /// Refuses as `adopt` does, taking no count: the record at `at` has a
+    /// count its builder's handle holds, or one to add to.
+    ///
+    /// # Errors
+    ///
+    /// What reaching its count refuses, and `ArenaError::Malformed` for a
+    /// record whose count is gone.
+    pub fn adoptable(&mut self, at: Address) -> Result<(), ArenaError> {
+        let byte = *self.table(at.chunk())?.count(at.word())?;
+        if byte & OWNED == 0 && byte & SATURATED == 0 {
+            return Err(malformed("released record", at.0));
         }
+        Ok(())
     }
 
     /// Releases a count of `held`: with `owned`, the count the handle a

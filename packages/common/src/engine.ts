@@ -264,7 +264,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	writeBuiltUnitSides?(address: number, units: readonly unknown[]): FreedParses;
 	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): FreedParses;
 	builtLeafSide?(holder: number, word: number, item: number, side: TriviaSideName): unknown[] | null;
-	copyBuiltSites?(from: number, to: number, skip: readonly number[]): void;
+	copyBuiltSites?(from: number, to: number, skip: readonly number[]): FreedParses;
 	/**
 	 * The siblings that hold sides beside each node at descendant `indexes` of tree `treeId`, eight words a node: the
 	 * previous sibling, then the next, each as 1, its kind, its start and its end, or as four zeros for none.
@@ -836,6 +836,7 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		bump: (at) => builtBump.call(engine, at),
 		release: (at, held, owned) => releaseBuilt.call(engine, at, held, owned),
 		holdParse: (slot, treeId) => holdParse.call(engine, slot, treeId),
+		releaseParse: (slot, treeId) => releaseParse.call(engine, slot, treeId),
 		trivia: {
 			triviaSide: (at, side) => builtTriviaSide.call(engine, at, side) ?? undefined,
 			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries),

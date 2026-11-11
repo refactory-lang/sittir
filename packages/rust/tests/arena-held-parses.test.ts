@@ -5,6 +5,7 @@ import { createEngine } from '@sittir/common';
 import { cellFormatOf } from '@sittir/common/engine';
 import type { TreeHandle } from '@sittir/common/utils';
 import { treeBuiltArena } from '../../common/src/engine-scope.ts';
+import { TREE, treeTokenOf } from '../../common/src/tree-token.ts';
 import { getActiveBackend } from '../src/backend.js';
 import rust from '../src/index.ts';
 
@@ -329,6 +330,65 @@ describe('an arena parse, held by its engine and counted by its root and each re
 		host[Symbol.dispose]();
 		engine.release(built as never);
 		expect(live()).toBe(before);
+	});
+
+	it("keeps the slot of a record an unplaced built leaf's side names past its root's release, and frees it with the leaf", async () => {
+		using engine = await arena();
+		const before = live();
+		const donor = engine.parse('/// kept\nfn f() {}\n') as unknown as Root;
+		const leaf = engine.build.identifier('x') as unknown as Sided;
+		leaf.$trivia.leading(sidedOf(donor).$trivia.leading()[0]!);
+		donor[Symbol.dispose]();
+		expect(live()).toBe(before + 1);
+		expect(String(engine.render(leaf as never))).toBe('/// kept\nx');
+		engine.release(leaf as never);
+		expect(live()).toBe(before);
+	});
+
+	it("hands the count an unplaced leaf's side takes of a record's slot on to the node that places the leaf", async () => {
+		using engine = await arena();
+		const before = live();
+		const donor = engine.parse('/// kept\nfn f() {}\n') as unknown as Root;
+		const b = engine.build;
+		const leaf = b.identifier('x') as unknown as Sided;
+		leaf.$trivia.leading(sidedOf(donor).$trivia.leading()[0]!);
+		const built = b.binaryExpression({ left: leaf as never, operator: '+', right: b.identifier('y') });
+		donor[Symbol.dispose]();
+		expect(live()).toBe(before + 1);
+		expect(String(engine.render(built as never))).toBe('/// kept\nx + y');
+		engine.release(built as never);
+		expect(live()).toBe(before);
+	});
+
+	it("refuses an arena tree's record on a side of an object-storage node, built or parsed, which no count can keep", async () => {
+		using engine = await arena();
+		using objects = await object();
+		const donor = engine.parse('/// kept\nfn f() {}\n') as unknown as Root;
+		const comment = sidedOf(donor).$trivia.leading()[0]!;
+		const b = objects.build;
+		const built = b.binaryExpression({ left: b.identifier('x'), operator: '+', right: b.identifier('y') }) as unknown as Sided;
+		expect(() => built.$trivia.leading(comment)).toThrow('a built record holds only nodes its own engine built or parsed, not a node another engine parsed');
+		const host = objects.parse('fn host() {}\n') as unknown as Root;
+		expect(() => sidedOf(host).$trivia.leading(comment)).toThrow('a built record holds only nodes its own engine built or parsed, not a node another engine parsed');
+		donor[Symbol.dispose]();
+		expect(String(objects.render(built as never))).toBe('x + y');
+	});
+
+	it('refuses a side entry whose token names a tree of the holder and whose coordinate names another', async () => {
+		using engine = await arena();
+		using other = await arena();
+		const host = engine.parse('fn host() {}\n') as unknown as Root;
+		const donor = other.parse('/// kept\nfn f() {}\n') as unknown as Root;
+		const comment = sidedOf(donor).$trivia.leading()[0]! as unknown as object;
+		const local = treeTokenOf(host as unknown as object);
+		const spliced = new Proxy(comment, { get: (target, key, receiver) => (key === TREE ? local : Reflect.get(target, key, receiver)) });
+		const b = engine.build;
+		const built = b.binaryExpression({ left: b.identifier('x'), operator: '+', right: b.identifier('y') }) as unknown as Sided;
+		expect(() => built.$trivia.leading(spliced)).toThrow('a built record holds only nodes its own engine built or parsed, not a node another engine parsed');
+		expect(() => sidedOf(host).$trivia.leading(spliced)).toThrow('a built record holds only nodes its own engine built or parsed, not a node another engine parsed');
+		donor[Symbol.dispose]();
+		expect(String(engine.render(built as never))).toBe('x + y');
+		engine.release(built as never);
 	});
 
 	it("takes no count of a tree's own slot for a record its own side names, so its root's release frees it", async () => {

@@ -272,9 +272,10 @@ export declare function coordinate(treeId: TreeId, index: NodeIndex): Array<numb
  * r" Writes the sides of every unit and leaf site of the built
  * r" record at `from` at the same site of the record at `to`,
  * r" except a site at a word `skip` names. Refuses address 0
- * r" as either record.
+ * r" as either record. Answers each parse the release of a
+ * r" replaced side freed, as `writeTriviaSide` does.
  */
-export declare function copyBuiltSites(engine: object, from: number, to: number, skip: Array<number>): void
+export declare function copyBuiltSites(engine: object, from: number, to: number, skip: number[]): Array<number>
 
 /**
  * r" The flag of a built entry's count byte the handle its
