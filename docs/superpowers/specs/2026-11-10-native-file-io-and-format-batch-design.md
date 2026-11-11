@@ -1,6 +1,6 @@
 # Native file input and output, and a threaded format batch
 
-Status: draft for the maintainer's approval (2026-11-10).
+Status: approved by the maintainer (2026-11-10). Plan: `docs/superpowers/plans/2026-11-10-native-file-io-and-format-batch.md`.
 
 ## Why
 
@@ -94,7 +94,7 @@ Earlier rulings this design keeps:
 
 A test lists every napi function that takes or returns a string, a JSON string, or a bulk buffer, each with its reason. A reason is one of:
 - text the caller asked for (`render`, `text(span)`);
-- source the caller handed in (`parse(source)`);
+- input the caller handed in: a source (`parse(source)`), a query's patterns, a file path, or text a render interceptor produced;
 - a built node's buffers, which JavaScript owns by design;
 - a parsed tree's record words lent to JavaScript (`chunk`), which are records, not source bytes;
 - an error message.
@@ -123,7 +123,7 @@ For each file, all natively:
 6. release the parse.
 
 What it guarantees:
-- **Results.** A `FormatResult` is either `{ path, changed, errors }`, where `errors` is the file's error regions, or `{ path, refused }`. A refusal names its reason: the file can't be read, isn't valid UTF-8, or has an extension outside the language's file types. One file's refusal never stops the others.
+- **Results.** A `FormatResult` is either `{ path, changed, errors }`, where `errors` is the file's error regions, or `{ path, refused }`. A refusal names its reason: the file can't be read, isn't valid UTF-8, has an extension outside the language's file types, or can't be written. One file's refusal never stops the others.
 - **Parse errors.** A file with parse errors still renders, as `render` does for any parsed root.
 - **Threads.** `threads` defaults to the machine's available parallelism. Each thread builds its own engine from the caller's engine options. Threads share only the process's read-only tables.
 - **Scheduling.** Files are handed out largest first, in chunks of at most 8 files or 128 KiB. That removed the probe's stall on matter.js's four largest files, which hold 35% of its bytes.
