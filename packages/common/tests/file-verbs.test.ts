@@ -264,6 +264,61 @@ describe.each(['object', 'arena'] as const)('engine.write and engine.create (%s)
 		await expect(pending).rejects.toThrow(verb === 'write' ? /not a regular file/ : /exists/);
 	});
 
+	it.each(['write', 'create'] as const)('a %s a delayed file interceptor started rejects when it fails', async (verb) => {
+		const engine = await engineOf({
+			intercept: [
+				{
+					async file(_, next) {
+						void next();
+						await settled();
+					}
+				}
+			]
+		});
+		const root = () => engine.parse('fn a() {}\n');
+		const pending = verb === 'write' ? engine.write(directory, root()) : engine.create(directory, root);
+		await expect(pending).rejects.toThrow(verb === 'write' ? /not a regular file/ : /exists/);
+	});
+
+	it('waits for a downstream file interceptor an upstream one started and left', async () => {
+		const order: string[] = [];
+		const engine = await engineOf({
+			intercept: [
+				{
+					async file(_, next) {
+						void next();
+						order.push('outer returned');
+					}
+				},
+				{
+					async file(_, next) {
+						await settled();
+						await next();
+						order.push('inner wrote');
+					}
+				}
+			]
+		});
+		const make = (build: BuildSurface<RustAPI, 'default'>) => build.sourceFile({ statements: [...engine.parse('fn a() {}\n').statements()] } as never) as never;
+		await engine.create(at('a.rs'), make);
+		expect(order).toEqual(['outer returned', 'inner wrote']);
+		expect(readFileSync(at('a.rs'), 'utf8')).toBe('fn a() {}\n');
+		await expect(engine.create(directory, make)).rejects.toThrow(/exists/);
+	});
+
+	it('a file interceptor that catches a failed write still leaves the pending rejected', async () => {
+		const engine = await engineOf({
+			intercept: [
+				{
+					async file(_, next) {
+						await next().catch(() => undefined);
+					}
+				}
+			]
+		});
+		await expect(engine.write(directory, engine.parse('fn a() {}\n'))).rejects.toThrow(/not a regular file/);
+	});
+
 	it('a write under a render interceptor writes the intercepted text', async () => {
 		const engine = await engineOf({ intercept: [{ render: (_, next) => next().toUpperCase() }] });
 		const root = engine.parse('fn a() {}\n');

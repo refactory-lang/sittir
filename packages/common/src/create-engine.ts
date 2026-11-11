@@ -267,7 +267,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 	const buildChain = interceptorChain(interceptors.map((hook) => hook.build?.bind(hook)));
 	const parseChain = interceptorChain(interceptors.map((hook) => hook.parse?.bind(hook)));
 	const renderChain = interceptorChain(interceptors.map((hook) => hook.render?.bind(hook)));
-	const fileChain = interceptorChain(interceptors.map((hook) => hook.file?.bind(hook)));
+	const fileHooks = interceptors.flatMap((hook) => (hook.file === undefined ? [] : [hook.file.bind(hook)]));
 	const build = scopedBuild(table, handle, buildChain) as BuildSurface<API, M>;
 	const materializeNative = (target: Parameters<typeof native.render>[0], rendered: Rendered): string => {
 		if (!metricsEnabled) return rendered.toString();
@@ -337,7 +337,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 				using rendered = engine.render(writable(root));
 				return fileChangeOf(path, rendered);
 			},
-			fileChain
+			fileHooks
 		);
 	const queryHooks: QueryHooks = {
 		querySlots: hooks.querySlots,
