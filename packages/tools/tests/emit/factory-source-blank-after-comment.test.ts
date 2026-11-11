@@ -1,10 +1,14 @@
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { emitFactorySourceText } from '../../src/emit/factory-source.ts';
 import { languageByName } from '../../src/languages.ts';
+import { releaseTrackedEngines } from '../helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('../helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 const SCRATCH = join(dirname(fileURLToPath(import.meta.url)), '__scratch__');
 

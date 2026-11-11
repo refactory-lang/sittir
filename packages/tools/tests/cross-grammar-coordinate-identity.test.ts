@@ -4,12 +4,16 @@
 // read by one could slice the other's unrelated tree. A node read by one
 // grammar's engine is refused by another grammar's, naming both languages,
 // whether it is rendered or handed to a builder.
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import type { AnyUntypedNode, TriviaEntry } from '@sittir/types';
 import { createEngine } from '@sittir/common';
 import { writeTrivia } from '@sittir/common/utils';
 import { languageByName } from '../src/languages.ts';
 import { treeIdCounter } from '../src/tree-id-counter.ts';
+import { releaseTrackedEngines } from './helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('./helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 describe('a coordinate names its tree across grammars', () => {
 	it('is refused by an engine of another grammar, naming both, instead of resolved against its own tree', async () => {

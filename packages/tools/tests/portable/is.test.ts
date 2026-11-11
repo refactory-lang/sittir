@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 import type { PortableRows } from '@sittir/types';
 import python from '../../../python/src/index.ts';
@@ -7,6 +7,10 @@ import rust from '../../../rust/src/index.ts';
 import { rows as rustRows } from '../../../rust/src/portable/index.ts';
 import typescript from '../../../typescript/src/index.ts';
 import { rows as typescriptRows } from '../../../typescript/src/portable/index.ts';
+import { releaseTrackedEngines } from '../helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('../helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 type Node = { readonly $type: number; readonly $text?: () => string; readonly $render?: () => string };
 type Item = Node | number;

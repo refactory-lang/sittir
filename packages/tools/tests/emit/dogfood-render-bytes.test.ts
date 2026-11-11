@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import type { TypescriptAPI } from '@sittir/typescript';
 import { readFileSync } from 'node:fs';
@@ -6,6 +6,10 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine } from '@sittir/common';
 import { GENERATED_REBUILDS } from '../../src/emit/dogfood-targets.ts';
 import { languageByName } from '../../src/languages.ts';
+import { releaseTrackedEngines } from '../helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('../helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 

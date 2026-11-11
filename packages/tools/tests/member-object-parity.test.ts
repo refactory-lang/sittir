@@ -1,7 +1,7 @@
 // Every kind's `$with` and `$trivia`, read and built, on object and arena
 // storage: the same own keys (string and symbol alike), only members under
 // `Object.keys`, and a spread copy that behaves as the member object does.
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { scopeBuilders } from '@sittir/common/engine';
 import { FULL_PIPELINE_TIMEOUT } from '../../codegen/src/__tests__/helpers/timeouts.ts';
@@ -16,6 +16,10 @@ import {
 } from '../src/validate/common.ts';
 import { requireGrammarModule } from '../src/grammar-internals.ts';
 import { languageByName } from '../src/languages.ts';
+import { releaseTrackedEngines } from './helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('./helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 const STORAGES = ['object', 'arena'] as const;
 const MEMBER_OBJECTS = ['$with', '$trivia'] as const;

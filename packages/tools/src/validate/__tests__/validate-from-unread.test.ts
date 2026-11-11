@@ -1,4 +1,8 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
+import { releaseTrackedEngines } from '../../../tests/helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('../../../tests/helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 // Two regex sources, each holding a kind the typed read stores without a node
 // of its own: inside its parent's text, or as its parent's presence or unit.

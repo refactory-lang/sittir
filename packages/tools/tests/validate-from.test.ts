@@ -7,7 +7,7 @@
  * which is what `corpus-validation.test.ts` alone can't catch since it only
  * exercises successful generated-module loads.
  */
-import { afterAll, describe, it, expect, vi } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { grammarModulePath } from '../src/grammar-internals.ts';
 import { disposeNativeEngines } from '../src/validate/common.ts';
 
