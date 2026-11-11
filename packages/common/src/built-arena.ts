@@ -1,9 +1,9 @@
 import type { CommitScope, EngineIdentity, NodeCoordinate, NodeTrivia } from '@sittir/types';
 import { bindTree, engineOf, isLive, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered, type Role } from './identity.ts';
-import { type ChangedEdges, coordinateOf, heldRootTree, holdReadCoordinate, holdReadTree, isRead, type KindView, listEdges, type ReadOutput, setTriviaOf, triviaOf } from './node-data.ts';
-import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
-import { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
+import { type ChangedEdges, holdReadCoordinate, holdReadTree, isRead, type KindView, listEdges, type ReadOutput, setTriviaOf, triviaOf } from './node-data.ts';
+import { coordinateOf, decodeIndex, decodeTree, isCoordinate } from './read.ts';
+import { carryTree, heldRootTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
 import { BLANK_KIND_ID } from './blank-arm.ts';
 import { checkedKindId } from './kind-id.ts';

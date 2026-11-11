@@ -1,6 +1,6 @@
 import type { BuiltArena } from './built-arena.ts';
 import type { CellFormat, RecordCell } from './record-cell.ts';
-import type { ByteSpan, ErrorRegion, NodeCoordinate } from '@sittir/types';
+import type { ByteSpan, ErrorRegion, NodeCoordinate, NodeLayout } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
 import type { TreeToken } from './tree-token.ts';
 
@@ -117,6 +117,13 @@ export function readNode(tree: TreeHandle, coordinate: NodeCoordinate, depth?: n
 	const owner = decodeTree(coordinate.$treeHandle);
 	if (owner !== tree.id) throw new Error(`readNode: the coordinate names another tree (${owner}), not this one (${String(tree.id)})`);
 	return tree.read(decodeIndex(coordinate.$treeHandle), depth);
+}
+
+/** The coordinate a read node came from (`$_layout.at`), or the node itself when it is a coordinate. */
+export function coordinateOf(node: object): NodeCoordinate | undefined {
+	if (isCoordinate(node)) return node;
+	const at = (node as { readonly $_layout?: NodeLayout }).$_layout?.at;
+	return at !== undefined && isCoordinate(at) ? at : undefined;
 }
 
 /**

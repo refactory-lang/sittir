@@ -16,7 +16,7 @@ import {
 	rebuilt,
 	renderText,
 	refuseJSON,
-	releaseNothing,
+	releaseReadNode,
 	SOURCE,
 	Source,
 	TREE,
@@ -116,7 +116,7 @@ export function wrapPattern(data: T.Pattern, tree: TreeHandle): T.Pattern.Parsed
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapPattern$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -161,7 +161,7 @@ export function wrapAlternation(data: T.Alternation, tree: TreeHandle): T.Altern
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { terms: wrapAlternation$with$terms, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -209,7 +209,7 @@ export function wrapTerm(data: T.Term, tree: TreeHandle): T.Term.Parsed {
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { termGroups: wrapTerm$with$termGroups, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -262,7 +262,7 @@ export function wrapLookaroundAssertion(data: T.LookaroundAssertion, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapLookaroundAssertion$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -313,7 +313,7 @@ export function wrapLookaheadAssertion(data: T.LookaheadAssertion, tree: TreeHan
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		operator: wrapLookaheadAssertion$with$operator,
@@ -380,7 +380,7 @@ export function wrapLookbehindAssertion(data: T.LookbehindAssertion, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		operator: wrapLookbehindAssertion$with$operator,
@@ -461,7 +461,7 @@ export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		negation: wrapCharacterClass$with$negation,
@@ -545,7 +545,7 @@ export function wrapPosixCharacterClass(data: T.PosixCharacterClass, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { posixClassName: wrapPosixCharacterClass$with$posixClassName, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -604,7 +604,7 @@ export function wrapClassRange(data: T.ClassRange, tree: TreeHandle): T.ClassRan
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { start: wrapClassRange$with$start, end: wrapClassRange$with$end, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -661,7 +661,7 @@ export function wrapAnonymousCapturingGroup(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { pattern: wrapAnonymousCapturingGroup$with$pattern, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -715,7 +715,7 @@ export function wrapNamedCapturingGroup(data: T.NamedCapturingGroup, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		operator: wrapNamedCapturingGroup$with$operator,
@@ -792,7 +792,7 @@ export function wrapNonCapturingGroup(data: T.NonCapturingGroup, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { pattern: wrapNonCapturingGroup$with$pattern, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -840,7 +840,7 @@ export function wrapZeroOrMore(data: T.ZeroOrMore, tree: TreeHandle): T.ZeroOrMo
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { lazy: wrapZeroOrMore$with$lazy, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -885,7 +885,7 @@ export function wrapOneOrMore(data: T.OneOrMore, tree: TreeHandle): T.OneOrMore.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { lazy: wrapOneOrMore$with$lazy, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -930,7 +930,7 @@ export function wrapOptional(data: T.Optional, tree: TreeHandle): T.Optional.Par
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { lazy: wrapOptional$with$lazy, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -978,7 +978,7 @@ export function wrapCountQuantifier(data: T.CountQuantifier, tree: TreeHandle): 
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapCountQuantifier$with$content, lazy: wrapCountQuantifier$with$lazy, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1032,7 +1032,7 @@ export function wrapBackreferenceEscape(data: T.BackreferenceEscape, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { groupName: wrapBackreferenceEscape$with$groupName, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1083,7 +1083,7 @@ export function wrapNamedGroupBackreference(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { groupName: wrapNamedGroupBackreference$with$groupName, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1138,7 +1138,7 @@ export function wrapCharacterClassEscape(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapCharacterClassEscape$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1196,7 +1196,7 @@ export function wrapUnicodePropertyValueExpression(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		unicodePropertyValueExpressionGroup: wrapUnicodePropertyValueExpression$with$unicodePropertyValueExpressionGroup,
@@ -1287,7 +1287,7 @@ export function wrapIdentityEscape(data: T.IdentityEscape, tree: TreeHandle): T.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapIdentityEscape$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1360,7 +1360,7 @@ export function wrapTermGroup(data: T.TermGroup, tree: TreeHandle): T.TermGroup.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapTermGroup$with$content, quantifier: wrapTermGroup$with$quantifier, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1417,7 +1417,7 @@ export function wrapCountQuantifierGroup(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { decimalDigits: wrapCountQuantifierGroup$with$decimalDigits, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1468,7 +1468,7 @@ export function wrapCountQuantifierArm(data: T.CountQuantifierArm, tree: TreeHan
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decimalDigits: wrapCountQuantifierArm$with$decimalDigits,
@@ -1541,7 +1541,7 @@ export function wrapCharacterClassEscapeArm(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		characterClassEscapeText2: wrapCharacterClassEscapeArm$with$characterClassEscapeText2,
@@ -1635,7 +1635,7 @@ export function wrapUnicodePropertyValueExpressionGroup(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		unicodePropertyName: wrapUnicodePropertyValueExpressionGroup$with$unicodePropertyName,
@@ -1707,7 +1707,7 @@ export function wrapInlineFlagsGroupEnable(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		enabled: wrapInlineFlagsGroupEnable$with$enabled,
@@ -1780,7 +1780,7 @@ export function wrapInlineFlagsGroupToggle(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		enabled: wrapInlineFlagsGroupToggle$with$enabled,
@@ -1863,7 +1863,7 @@ export function wrapInlineFlagsGroupDisable(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		disabled: wrapInlineFlagsGroupDisable$with$disabled,
@@ -2933,7 +2933,7 @@ function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): object {
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node;

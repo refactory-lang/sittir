@@ -913,6 +913,7 @@ export function hydrateStoredSlots(node: object, key: string): readonly unknown[
 
 export { numberRefusal, numberText, type NumberBase } from './number.ts';
 export {
+	coordinateOf,
 	decodeIndex,
 	decodeTree,
 	encodeHandle,
@@ -926,7 +927,7 @@ export { admitChildren, admitSlot, builtArenaOf, currentHandle, dispatched, inEn
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toNodeData, toDetachedNodeData, PLAIN_KINDS, coordinateOf, spanOf, sourceTextOf, nodeText, hasNodeText, textOf, sideOf, sidesOf, writtenSides, carryPlace, type NodeDataLayout, type KindView, markEdited, detachCoordinate, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf } from './node-data.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, sourceTextOf, nodeText, hasNodeText, textOf, sideOf, sidesOf, writtenSides, carryPlace, type NodeDataLayout, type KindView, markEdited, detachCoordinate, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf } from './node-data.ts';
 export { TREE, holdTreeOn, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { SOURCE, sourceOf } from './source-stamp.ts';
 export { snapshotOf } from './snapshot.ts';
@@ -965,7 +966,7 @@ export {
 	storedSlotValues,
 	type RefusedSlot
 } from './record-view.ts';
-export { HANDLE, handleDispose, INPUT, isLeafHandle, isRecordPosition, OPTIONS, READ_TREE, RECEIVER, receiverOf, releaseNothing, type Held, type LeafHandle, type LeafMaker, type LeafSite, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
+export { HANDLE, handleDispose, INPUT, isLeafHandle, isRecordPosition, OPTIONS, READ_TREE, RECEIVER, receiverOf, releaseReadNode, type Held, type LeafHandle, type LeafMaker, type LeafSite, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 
 export { BuiltArena, builtRecordOf, isBuiltNode, patchCell, patchFlag, patchList, patchListOptions, storeCell, storeFlag, storeList, storeListOptions, type BuiltDraft, type BuiltPlace, type BuiltText, type BuiltViews, type BuiltWith } from './built-arena.ts';
 export { LEAF_SITES } from './built-ref.ts';

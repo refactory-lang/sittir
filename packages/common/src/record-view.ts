@@ -17,7 +17,8 @@ import {
 	wordOf,
 	type RecordCell
 } from './record-cell.ts';
-import { aliasContentOf, asReadOutput, carryReadTree, coordinateOf, isStorageKey, type ReadOutput } from './node-data.ts';
+import { aliasContentOf, asReadOutput, carryReadTree, isStorageKey, type ReadOutput } from './node-data.ts';
+import { coordinateOf } from './read.ts';
 import { isRecordPosition, type RecordHandle, type RecordPosition } from './handle.ts';
 
 export function positionWords(position: RecordPosition): ChunkWords | undefined {

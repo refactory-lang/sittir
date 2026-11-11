@@ -11,7 +11,7 @@ import {
 	rebuilt,
 	renderText,
 	refuseJSON,
-	releaseNothing,
+	releaseReadNode,
 	RECEIVER,
 	SOURCE,
 	Source,
@@ -68,7 +68,7 @@ export function buildPattern(value: Admit<T.Alternation | T.Term>): T.Pattern.Bo
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildPattern$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -110,7 +110,7 @@ export function buildAlternation(...children: NonEmptyArray<Admit<T.Term>>): T.A
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { terms: buildAlternation$with$terms, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -152,7 +152,7 @@ export function buildTerm(...children: NonEmptyArray<Admit<T.TermGroup>>): T.Ter
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { termGroups: buildTerm$with$termGroups, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -211,7 +211,7 @@ export function buildLookaroundAssertion(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildLookaroundAssertion$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -257,7 +257,7 @@ export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		operator: buildLookaheadAssertion$with$operator,
@@ -315,7 +315,7 @@ export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): 
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		operator: buildLookbehindAssertion$with$operator,
@@ -365,7 +365,7 @@ export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.PatternCharacter.Bound;
@@ -409,7 +409,7 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		negation: buildCharacterClass$with$negation,
@@ -492,7 +492,7 @@ export function buildPosixCharacterClass(value: Admit<T.PosixClassName>): T.Posi
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { posixClassName: buildPosixCharacterClass$with$posixClassName, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -530,7 +530,7 @@ export function buildPosixClassName(text: string): T.PosixClassName.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.PosixClassName.Bound;
@@ -562,7 +562,7 @@ export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Bound
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { start: buildClassRange$with$start, end: buildClassRange$with$end, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -608,7 +608,7 @@ export function buildClassCharacter(text: string): T.ClassCharacter.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ClassCharacter.Bound;
@@ -652,7 +652,7 @@ function _buildAnonymousCapturingGroup(value: Admit<T.Pattern>): T.AnonymousCapt
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { pattern: buildAnonymousCapturingGroup$with$pattern, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -705,7 +705,7 @@ export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): 
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		operator: buildNamedCapturingGroup$with$operator,
@@ -784,7 +784,7 @@ function _buildNonCapturingGroup(value: Admit<T.Pattern>): T.NonCapturingGroup.B
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { pattern: buildNonCapturingGroup$with$pattern, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -821,7 +821,7 @@ export function buildFlags(text: string): T.Flags.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Flags.Bound;
@@ -846,7 +846,7 @@ export function buildZeroOrMore(config: Partial<T.ZeroOrMore.Config> = {}): T.Ze
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { lazy: buildZeroOrMore$with$lazy, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -887,7 +887,7 @@ export function buildOneOrMore(config: Partial<T.OneOrMore.Config> = {}): T.OneO
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { lazy: buildOneOrMore$with$lazy, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -928,7 +928,7 @@ export function buildOptional(config: Partial<T.Optional.Config> = {}): T.Option
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { lazy: buildOptional$with$lazy, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -975,7 +975,7 @@ export function buildCountQuantifier(config: T.CountQuantifier.Config): T.CountQ
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildCountQuantifier$with$content, lazy: buildCountQuantifier$with$lazy, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1024,7 +1024,7 @@ export function buildBackreferenceEscape(value: Admit<T.GroupName>): T.Backrefer
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { groupName: buildBackreferenceEscape$with$groupName, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1065,7 +1065,7 @@ export function buildNamedGroupBackreference(value: Admit<T.GroupName>): T.Named
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { groupName: buildNamedGroupBackreference$with$groupName, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1103,7 +1103,7 @@ export function buildDecimalEscape(text: string): T.DecimalEscape.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DecimalEscape.Bound;
@@ -1131,7 +1131,7 @@ export function buildCharacterClassEscape(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildCharacterClassEscape$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1172,7 +1172,7 @@ export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEsc
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UnicodeCharacterEscape.Bound;
@@ -1219,7 +1219,7 @@ export function buildUnicodePropertyValueExpression(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		unicodePropertyValueExpressionGroup: buildUnicodePropertyValueExpression$with$unicodePropertyValueExpressionGroup,
@@ -1286,7 +1286,7 @@ export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UnicodePropertyValue.Bound;
@@ -1309,7 +1309,7 @@ export function buildControlEscape(text: string): T.ControlEscape.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ControlEscape.Bound;
@@ -1332,7 +1332,7 @@ export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Bo
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ControlLetterEscape.Bound;
@@ -1367,7 +1367,7 @@ export function buildIdentityEscape(input: string, affix: boolean = true): T.Ide
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildIdentityEscape$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1403,7 +1403,7 @@ export function buildGroupName(text: string): T.GroupName.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.GroupName.Bound;
@@ -1430,7 +1430,7 @@ export function buildDecimalDigits(text: string | number | bigint): T.DecimalDig
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.DecimalDigits.Bound;
@@ -1464,7 +1464,7 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildTermGroup$with$content, quantifier: buildTermGroup$with$quantifier, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1513,7 +1513,7 @@ export function buildCountQuantifierGroup(value?: Admit<T.DecimalDigits>): T.Cou
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { decimalDigits: buildCountQuantifierGroup$with$decimalDigits, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1569,7 +1569,7 @@ export function buildCountQuantifierArm(config: T.CountQuantifierArm.Config): T.
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decimalDigits: buildCountQuantifierArm$with$decimalDigits,
@@ -1642,7 +1642,7 @@ export function buildCharacterClassEscapeArm(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		characterClassEscapeText2: buildCharacterClassEscapeArm$with$characterClassEscapeText2,
@@ -1712,7 +1712,7 @@ export function buildUnicodePropertyValueExpressionGroup(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		unicodePropertyName: buildUnicodePropertyValueExpressionGroup$with$unicodePropertyName,
@@ -1761,7 +1761,7 @@ export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEs
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.CharacterClassEscapeText1.Bound;
@@ -1785,7 +1785,7 @@ export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEs
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.CharacterClassEscapeText2.Bound;
@@ -1822,7 +1822,7 @@ export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Con
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		enabled: buildInlineFlagsGroupEnable$with$enabled,
@@ -1891,7 +1891,7 @@ export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Con
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		enabled: buildInlineFlagsGroupToggle$with$enabled,
@@ -1963,7 +1963,7 @@ export function buildInlineFlagsGroupDisable(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		disabled: buildInlineFlagsGroupDisable$with$disabled,
@@ -2021,7 +2021,7 @@ export function buildUnicodePropertyName(text: string): T.UnicodePropertyName.Bo
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UnicodePropertyName.Bound;

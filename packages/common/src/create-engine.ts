@@ -33,7 +33,7 @@ import { dataBytes, metricsEnabled, recordFfi } from './metrics.ts';
 import { checkInput, checkRow, verifyStructure } from './verify-structure.ts';
 import { BuiltArena, type BuiltViews } from './built-arena.ts';
 import { readOrRelease, type TreeHandle } from './read.ts';
-import { heldRootTree } from './node-data.ts';
+import { heldRootTree } from './tree-token.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { refuseReviver } from './json-refusal.ts';

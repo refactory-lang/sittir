@@ -36,7 +36,7 @@ import {
 	rebuilt,
 	renderText,
 	refuseJSON,
-	releaseNothing,
+	releaseReadNode,
 	RECEIVER,
 	SOURCE,
 	Source,
@@ -184,7 +184,7 @@ export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { shebang: buildProgram$with$shebang, statements: buildProgram$with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -242,7 +242,7 @@ export function buildHashBangLine(input: string, affix: boolean = true): T.HashB
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildHashBangLine$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -293,7 +293,7 @@ export function buildNamespaceExport(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { moduleExportName: buildNamespaceExport$with$moduleExportName, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -393,7 +393,7 @@ function _buildExportClause(value?: Admit<T.ExportSpecifiers>): T.ExportClause.B
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { exportSpecifiers: buildExportClause$with$exportSpecifiers, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -471,7 +471,7 @@ export function buildExportSpecifier(config: T.ExportSpecifier.Config): T.Export
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		typeKeyword: buildExportSpecifier$with$typeKeyword,
@@ -565,7 +565,7 @@ export function buildImportStatement(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		typeKeyword: buildImportStatement$with$typeKeyword,
@@ -637,7 +637,7 @@ export function buildImportClause(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildImportClause$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -678,7 +678,7 @@ export function buildNamespaceImport(value: Admit<T.Identifier>): T.NamespaceImp
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: buildNamespaceImport$with$name, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -776,7 +776,7 @@ function _buildNamedImports(value?: Admit<T.ImportSpecifiers>): T.NamedImports.B
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { importSpecifiers: buildNamedImports$with$importSpecifiers, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -830,7 +830,7 @@ export function buildImportAttribute(config: T.ImportAttribute.Config): T.Import
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		attributeKind: buildImportAttribute$with$attributeKind,
@@ -901,7 +901,7 @@ export function buildExpressionStatement(
 		[HANDLE]: handle,
 		[INPUT]: value,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		expression: buildExpressionStatement$with$expression,
@@ -977,7 +977,7 @@ export function buildVariableDeclaration(...args: unknown[]): T.VariableDeclarat
 		[HANDLE]: handle,
 		[INPUT]: children,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		declarators: buildVariableDeclaration$with$declarators,
@@ -1048,7 +1048,7 @@ export function buildLexicalDeclaration(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		kind: buildLexicalDeclaration$with$kind,
@@ -1135,7 +1135,7 @@ export function buildUsingDeclaration(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		kind: buildUsingDeclaration$with$kind,
@@ -1222,7 +1222,7 @@ export function buildStatementBlock(...args: unknown[]): T.StatementBlock.Bound 
 		[HANDLE]: handle,
 		[INPUT]: children,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		statements: buildStatementBlock$with$statements,
@@ -1274,7 +1274,7 @@ export function buildElseClause(value: Admit<T.Statement>): T.ElseClause.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { body: buildElseClause$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1335,7 +1335,7 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		condition: buildIfStatement$with$condition,
@@ -1402,7 +1402,7 @@ export function buildSwitchStatement(config: T.SwitchStatement.Config): T.Switch
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { value: buildSwitchStatement$with$value, body: buildSwitchStatement$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1491,7 +1491,7 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		initializer: buildForStatement$with$initializer,
@@ -1569,7 +1569,7 @@ export function buildForInStatement(config: T.ForInStatement.Config): T.ForInSta
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		async: buildForInStatement$with$async,
@@ -1638,7 +1638,7 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { condition: buildWhileStatement$with$condition, body: buildWhileStatement$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1704,7 +1704,7 @@ export function buildDoStatement(config: T.DoStatement.Config, options?: T.DoSta
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		body: buildDoStatement$with$body,
@@ -1782,7 +1782,7 @@ export function buildTryStatement(config: Partial<T.TryStatement.Config> = {}): 
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		body: buildTryStatement$with$body,
@@ -1849,7 +1849,7 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { object: buildWithStatement$with$object, body: buildWithStatement$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1932,7 +1932,7 @@ function _buildBreakStatement(
 		[HANDLE]: handle,
 		[INPUT]: value,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		label: buildBreakStatement$with$label,
@@ -2023,7 +2023,7 @@ function _buildContinueStatement(
 		[HANDLE]: handle,
 		[INPUT]: value,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		label: buildContinueStatement$with$label,
@@ -2083,7 +2083,7 @@ export function buildDebuggerStatement(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { terminator: buildDebuggerStatement$with$terminator, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -2143,7 +2143,7 @@ export function buildReturnStatement(
 		[HANDLE]: handle,
 		[INPUT]: value,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		expression: buildReturnStatement$with$expression,
@@ -2215,7 +2215,7 @@ export function buildThrowStatement(
 		[HANDLE]: handle,
 		[INPUT]: value,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		expression: buildThrowStatement$with$expression,
@@ -2280,7 +2280,7 @@ export function buildLabeledStatement(config: T.LabeledStatement.Config): T.Labe
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { label: buildLabeledStatement$with$label, body: buildLabeledStatement$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -2331,7 +2331,7 @@ export function buildSwitchBody(...children: Admit<(T.SwitchCase | T.SwitchDefau
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { cases: buildSwitchBody$with$cases, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -2383,7 +2383,7 @@ export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { value: buildSwitchCase$with$value, bodies: buildSwitchCase$with$bodies, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -2433,7 +2433,7 @@ export function buildSwitchDefault(...children: Admit<T.Statement[]>): T.SwitchD
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { bodies: buildSwitchDefault$with$bodies, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -2485,7 +2485,7 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		catchClauseGroup: buildCatchClause$with$catchClauseGroup,
@@ -2613,7 +2613,7 @@ function _buildFinallyClause(value: Admit<T.StatementBlock>): T.FinallyClause.Bo
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { body: buildFinallyClause$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -2659,7 +2659,7 @@ export function buildYieldExpression(value?: Admit<T.YieldExpressionDelegate | T
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: buildYieldExpression$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -2722,7 +2722,7 @@ export function buildObject(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { properties: buildObject$with$properties, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -2791,7 +2791,7 @@ export function buildObjectPattern(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { properties: buildObjectPattern$with$properties, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -2849,7 +2849,7 @@ export function buildAssignmentPattern(config: T.AssignmentPattern.Config): T.As
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { left: buildAssignmentPattern$with$left, right: buildAssignmentPattern$with$right, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -2921,7 +2921,7 @@ export function buildObjectAssignmentPattern(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		left: buildObjectAssignmentPattern$with$left,
@@ -2989,7 +2989,7 @@ export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: buildArray$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -3032,7 +3032,7 @@ export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPa
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: buildArrayPattern$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -3089,7 +3089,7 @@ export function buildNestedIdentifier(config: T.NestedIdentifier.Config): T.Nest
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		qualifier: buildNestedIdentifier$with$qualifier,
@@ -3181,7 +3181,7 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: buildClass$with$decorators,
@@ -3315,7 +3315,7 @@ export function buildClassDeclaration(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: buildClassDeclaration$with$decorators,
@@ -3411,7 +3411,7 @@ export function buildClassHeritage(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildClassHeritage$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -3497,7 +3497,7 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		async: buildFunctionExpression$with$async,
@@ -3645,7 +3645,7 @@ export function buildFunctionDeclaration(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		async: buildFunctionDeclaration$with$async,
@@ -3790,7 +3790,7 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		async: buildGeneratorFunction$with$async,
@@ -3938,7 +3938,7 @@ export function buildGeneratorFunctionDeclaration(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		async: buildGeneratorFunctionDeclaration$with$async,
@@ -4053,7 +4053,7 @@ export function buildArrowFunction(config: T.ArrowFunction.Config): T.ArrowFunct
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		async: buildArrowFunction$with$async,
@@ -4141,7 +4141,7 @@ export function buildNewExpression(config: T.NewExpression.Config): T.NewExpress
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		function: buildNewExpression$with$function,
@@ -4213,7 +4213,7 @@ export function buildAwaitExpression(value: Admit<T.Expression>): T.AwaitExpress
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: buildAwaitExpression$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -4274,7 +4274,7 @@ export function buildMemberExpression(config: T.MemberExpression.Config): T.Memb
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		object: buildMemberExpression$with$object,
@@ -4359,7 +4359,7 @@ export function buildSubscriptExpression(config: T.SubscriptExpression.Config): 
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		object: buildSubscriptExpression$with$object,
@@ -4448,7 +4448,7 @@ export function buildLhsExpression(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildLhsExpression$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -4519,7 +4519,7 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		disposable: buildAssignmentExpression$with$disposable,
@@ -4604,7 +4604,7 @@ export function buildAugmentedAssignmentExpression(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		left: buildAugmentedAssignmentExpression$with$left,
@@ -4675,7 +4675,7 @@ export function buildSpreadElement(value: Admit<T.Expression>): T.SpreadElement.
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: buildSpreadElement$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -4751,7 +4751,7 @@ export function buildTernaryExpression(config: T.TernaryExpression.Config): T.Te
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		condition: buildTernaryExpression$with$condition,
@@ -4846,7 +4846,7 @@ export function buildBinaryExpression(config: Partial<T.BinaryExpression.Config>
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		left: buildBinaryExpression$with$left,
@@ -4925,7 +4925,7 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		operator: buildUnaryExpression$with$operator,
@@ -4984,7 +4984,7 @@ export function buildSequenceExpression(...children: NonEmptyArray<Admit<T.Expre
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expressions: buildSequenceExpression$with$expressions, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5023,7 +5023,7 @@ export function buildUnescapedDoubleStringFragment(text: string): T.UnescapedDou
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UnescapedDoubleStringFragment.Bound;
@@ -5047,7 +5047,7 @@ export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSin
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.UnescapedSingleStringFragment.Bound;
@@ -5082,7 +5082,7 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildEscapeSequence$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5124,7 +5124,7 @@ export function buildTemplateString(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: buildTemplateString$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5172,7 +5172,7 @@ export function buildTemplateSubstitution(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: buildTemplateSubstitution$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5218,7 +5218,7 @@ export function buildRegex(config: T.Regex.Config): T.Regex.Bound {
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { pattern: buildRegex$with$pattern, flags: buildRegex$with$flags, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5264,7 +5264,7 @@ export function buildRegexPattern(text: string): T.RegexPattern.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.RegexPattern.Bound;
@@ -5287,7 +5287,7 @@ export function buildRegexFlags(text: string): T.RegexFlags.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.RegexFlags.Bound;
@@ -5310,7 +5310,7 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Identifier.Bound;
@@ -5333,7 +5333,7 @@ export function buildIdentifierUnreserved(text: string): T.Identifier.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Identifier.Bound;
@@ -5371,7 +5371,7 @@ export function buildPrivatePropertyIdentifier(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildPrivatePropertyIdentifier$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5431,7 +5431,7 @@ export function buildArguments(...children: Admit<(T.Expression | T.SpreadElemen
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: buildArguments$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -5478,7 +5478,7 @@ export function buildDecorator(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildDecorator$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5553,7 +5553,7 @@ export function buildDecoratorMemberExpression(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		object: buildDecoratorMemberExpression$with$object,
@@ -5633,7 +5633,7 @@ export function buildDecoratorCallExpression(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		function: buildDecoratorCallExpression$with$function,
@@ -5702,7 +5702,7 @@ export function buildClassBody(...children: Admit<T.ClassBodyMember[]>): T.Class
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { members: buildClassBody$with$members, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -5746,7 +5746,7 @@ export function buildFormalParameters(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: buildFormalParameters$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -5820,7 +5820,7 @@ function _buildClassStaticBlock(
 		[HANDLE]: handle,
 		[INPUT]: value,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		terminator: buildClassStaticBlock$with$terminator,
@@ -5912,7 +5912,7 @@ export function buildRestPattern(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { lhsExpression: buildRestPattern$with$lhsExpression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5982,7 +5982,7 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { key: buildPair$with$key, value: buildPair$with$value, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6050,7 +6050,7 @@ export function buildPairPattern(config: T.PairPattern.Config): T.PairPattern.Bo
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { key: buildPairPattern$with$key, value: buildPairPattern$with$value, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6114,7 +6114,7 @@ export function buildComputedPropertyName(value: Admit<T.Expression>): T.Compute
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: buildComputedPropertyName$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6160,7 +6160,7 @@ export function buildNonNullExpression(value: Admit<T.Expression>): T.NonNullExp
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: buildNonNullExpression$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6248,7 +6248,7 @@ export function buildFunctionSignature(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		async: buildFunctionSignature$with$async,
@@ -6349,7 +6349,7 @@ export function buildDecoratorParenthesizedExpression(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: buildDecoratorParenthesizedExpression$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6404,7 +6404,7 @@ export function buildTypeAssertion(config: T.TypeAssertion.Config): T.TypeAssert
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		typeArguments: buildTypeAssertion$with$typeArguments,
@@ -6482,7 +6482,7 @@ export function buildAsExpression(config: T.AsExpression.Config): T.AsExpression
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: buildAsExpression$with$expression, type: buildAsExpression$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6552,7 +6552,7 @@ export function buildSatisfiesExpression(config: T.SatisfiesExpression.Config): 
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		expression: buildSatisfiesExpression$with$expression,
@@ -6621,7 +6621,7 @@ export function buildInstantiationExpression(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		function: buildInstantiationExpression$with$function,
@@ -6693,7 +6693,7 @@ export function buildImportRequireClause(config: T.ImportRequireClause.Config): 
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: buildImportRequireClause$with$name,
@@ -6747,7 +6747,7 @@ export function buildExtendsClause(...children: NonEmptyArray<Admit<T.ExtendsCla
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { types: buildExtendsClause$with$types, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6802,7 +6802,7 @@ export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config): 
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		value: buildExtendsClauseSingle$with$value,
@@ -6867,7 +6867,7 @@ export function buildImplementsClause(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { types: buildImplementsClause$with$types, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6910,7 +6910,7 @@ export function buildAmbientDeclaration(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildAmbientDeclaration$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6999,7 +6999,7 @@ export function buildAbstractClassDeclaration(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: buildAbstractClassDeclaration$with$decorators,
@@ -7089,7 +7089,7 @@ export function buildModule(config: T.Module.Config): T.Module.Bound {
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: buildModule$with$name, body: buildModule$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -7149,7 +7149,7 @@ export function buildInternalModule(config: T.InternalModule.Config): T.Internal
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: buildInternalModule$with$name, body: buildInternalModule$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -7225,7 +7225,7 @@ export function buildImportAlias(config: T.ImportAlias.Config, options?: T.Impor
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: buildImportAlias$with$name,
@@ -7303,7 +7303,7 @@ export function buildNestedTypeIdentifier(config: T.NestedTypeIdentifier.Config)
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		qualifier: buildNestedTypeIdentifier$with$qualifier,
@@ -7384,7 +7384,7 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: buildInterfaceDeclaration$with$name,
@@ -7467,7 +7467,7 @@ export function buildExtendsTypeClause(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { types: buildExtendsTypeClause$with$types, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -7527,7 +7527,7 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		const: buildEnumDeclaration$with$const,
@@ -7651,7 +7651,7 @@ function _buildEnumBody(value?: Admit<T.EnumBodyElements>): T.EnumBody.Bound {
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: buildEnumBody$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -7713,7 +7713,7 @@ export function buildEnumAssignment(config: T.EnumAssignment.Config): T.EnumAssi
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: buildEnumAssignment$with$name, value: buildEnumAssignment$with$value, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -7815,7 +7815,7 @@ export function buildTypeAliasDeclaration(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: buildTypeAliasDeclaration$with$name,
@@ -7938,7 +7938,7 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: buildRequiredParameter$with$decorators,
@@ -8075,7 +8075,7 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: buildOptionalParameter$with$decorators,
@@ -8178,7 +8178,7 @@ export function buildOmittingTypeAnnotation(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: buildOmittingTypeAnnotation$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8227,7 +8227,7 @@ export function buildAddingTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: buildAddingTypeAnnotation$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8276,7 +8276,7 @@ export function buildOptingTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: buildOptingTypeAnnotation$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8325,7 +8325,7 @@ export function buildTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier.Types
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: buildTypeAnnotation$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8388,7 +8388,7 @@ export function buildTypeQueryMemberExpressionInTypeAnnotation(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		object: buildTypeQueryMemberExpressionInTypeAnnotation$with$object,
@@ -8469,7 +8469,7 @@ export function buildTypeQueryCallExpressionInTypeAnnotation(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		function: buildTypeQueryCallExpressionInTypeAnnotation$with$function,
@@ -8538,7 +8538,7 @@ export function buildAsserts(value: Admit<T.TypePredicate | T.Identifier | TSKin
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { value: buildAsserts$with$value, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8597,7 +8597,7 @@ function _buildAssertsAnnotation(value: Admit<T.Asserts>): T.AssertsAnnotation.B
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { asserts: buildAssertsAnnotation$with$asserts, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8649,7 +8649,7 @@ export function buildTupleParameter(config: T.TupleParameter.Config): T.TuplePar
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: buildTupleParameter$with$name, type: buildTupleParameter$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8711,7 +8711,7 @@ export function buildOptionalTupleParameter(config: T.OptionalTupleParameter.Con
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: buildOptionalTupleParameter$with$name,
@@ -8772,7 +8772,7 @@ export function buildOptionalType(value: Admit<T.Type | T.TypeIdentifier.Types>)
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: buildOptionalType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8821,7 +8821,7 @@ export function buildRestType(value: Admit<T.Type | T.TypeIdentifier.Types>): T.
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: buildRestType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8894,7 +8894,7 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		abstract: buildConstructorType$with$abstract,
@@ -8979,7 +8979,7 @@ export function buildTemplateType(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: buildTemplateType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -9023,7 +9023,7 @@ export function buildTemplateLiteralType(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: buildTemplateLiteralType$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -9081,7 +9081,7 @@ export function buildInferType(config: T.InferType.Config): T.InferType.Bound {
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: buildInferType$with$name, type: buildInferType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -9187,7 +9187,7 @@ export function buildConditionalType(config: T.ConditionalType.Config): T.Condit
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		left: buildConditionalType$with$left,
@@ -9267,7 +9267,7 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: buildGenericType$with$name,
@@ -9350,7 +9350,7 @@ export function buildTypePredicate(config: T.TypePredicate.Config): T.TypePredic
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: buildTypePredicate$with$name, type: buildTypePredicate$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -9422,7 +9422,7 @@ function _buildTypePredicateAnnotation(value: Admit<T.TypePredicate>): T.TypePre
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { typePredicate: buildTypePredicateAnnotation$with$typePredicate, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -9499,7 +9499,7 @@ export function buildTypeQueryMemberExpression(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		object: buildTypeQueryMemberExpression$with$object,
@@ -9590,7 +9590,7 @@ export function buildTypeQuerySubscriptExpression(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		object: buildTypeQuerySubscriptExpression$with$object,
@@ -9672,7 +9672,7 @@ function _buildTypeQueryCallExpression(value: Admit<T.Arguments>): T.TypeQueryCa
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { arguments: buildTypeQueryCallExpression$with$arguments, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -9740,7 +9740,7 @@ export function buildTypeQueryInstantiationExpression(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		function: buildTypeQueryInstantiationExpression$with$function,
@@ -9826,7 +9826,7 @@ export function buildTypeQuery(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: buildTypeQuery$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -9887,7 +9887,7 @@ export function buildIndexTypeQuery(value: Admit<T.PrimaryType | T.TypeIdentifie
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: buildIndexTypeQuery$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -9950,7 +9950,7 @@ export function buildLookupType(config: T.LookupType.Config): T.LookupType.Bound
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: buildLookupType$with$type, indexType: buildLookupType$with$indexType, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -10030,7 +10030,7 @@ export function buildMappedTypeClause(config: T.MappedTypeClause.Config): T.Mapp
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: buildMappedTypeClause$with$name,
@@ -10109,7 +10109,7 @@ export function buildLiteralType(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildLiteralType$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -10173,7 +10173,7 @@ export function buildFlowMaybeType(value: Admit<T.PrimaryType | T.TypeIdentifier
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: buildFlowMaybeType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -10222,7 +10222,7 @@ export function buildParenthesizedType(value: Admit<T.Type | T.TypeIdentifier.Ty
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: buildParenthesizedType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -10319,7 +10319,7 @@ function _buildTypeArguments(value: Admit<T.Types>): T.TypeArguments.Bound {
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { types: buildTypeArguments$with$types, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -10376,7 +10376,7 @@ export function buildObjectType(config: ConfigOf<T.ObjectType>): T.ObjectType.Bo
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		opening: buildObjectType$with$opening,
@@ -10452,7 +10452,7 @@ export function buildObjectTypeCurly(config?: T.ObjectType.Curly.Config): T.Obje
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { members: buildObjectTypeCurly$with$members, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -10503,7 +10503,7 @@ export function buildObjectTypeFlow(config?: T.ObjectType.Flow.Config): T.Object
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { members: buildObjectTypeFlow$with$members, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -10565,7 +10565,7 @@ export function buildCallSignature(config: Partial<T.CallSignature.Config> = {})
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		typeParameters: buildCallSignature$with$typeParameters,
@@ -10667,7 +10667,7 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: buildPropertySignature$with$accessibilityModifier,
@@ -10830,7 +10830,7 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: buildTypeParameters$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -10897,7 +10897,7 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		const: buildTypeParameter$with$const,
@@ -10974,7 +10974,7 @@ export function buildDefaultType(value: Admit<T.Type | T.TypeIdentifier.Types>):
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: buildDefaultType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -11035,7 +11035,7 @@ export function buildConstraint(
 		[HANDLE]: handle,
 		[INPUT]: value,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { operator: buildConstraint$with$operator, bounds: buildConstraint$with$bounds, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -11109,7 +11109,7 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		abstract: buildConstructSignature$with$abstract,
@@ -11192,7 +11192,7 @@ export function buildArrayType(value: Admit<T.PrimaryType | T.TypeIdentifier.Typ
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: buildArrayType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -11296,7 +11296,7 @@ function _buildTupleType(value?: Admit<T.TupleTypeMembers>): T.TupleType.Bound {
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { tupleTypeMembers: buildTupleType$with$tupleTypeMembers, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -11352,7 +11352,7 @@ export function buildReadonlyType(value: Admit<T.Type | T.TypeIdentifier.Types>)
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: buildReadonlyType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -11415,7 +11415,7 @@ export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { left: buildUnionType$with$left, right: buildUnionType$with$right, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -11486,7 +11486,7 @@ export function buildIntersectionType(config: T.IntersectionType.Config): T.Inte
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { left: buildIntersectionType$with$left, right: buildIntersectionType$with$right, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -11563,7 +11563,7 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		typeParameters: buildFunctionType$with$typeParameters,
@@ -11707,7 +11707,7 @@ function _buildExportSpecifiers(
 		[HANDLE]: handle,
 		[INPUT]: elements,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		items: buildExportSpecifiers$with$items,
@@ -11825,7 +11825,7 @@ function _buildImportSpecifiers(
 		[HANDLE]: handle,
 		[INPUT]: elements,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		items: buildImportSpecifiers$with$items,
@@ -11943,7 +11943,7 @@ function _buildFormalParametersElements(
 		[HANDLE]: handle,
 		[INPUT]: elements,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		items: buildFormalParametersElements$with$items,
@@ -12009,7 +12009,7 @@ export function buildEnumBodyElementName(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: buildEnumBodyElementName$with$name, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -12115,7 +12115,7 @@ function _buildEnumBodyElements(
 		[HANDLE]: handle,
 		[INPUT]: elements,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		items: buildEnumBodyElements$with$items,
@@ -12233,7 +12233,7 @@ function _buildTypes(
 		[HANDLE]: handle,
 		[INPUT]: elements,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { items: buildTypes$with$items, delimiter: buildTypes$with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -12361,7 +12361,7 @@ function _buildTypeParametersElements(
 		[HANDLE]: handle,
 		[INPUT]: elements,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		items: buildTypeParametersElements$with$items,
@@ -12492,7 +12492,7 @@ function _buildTupleTypeMembers(
 		[HANDLE]: handle,
 		[INPUT]: elements,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		items: buildTupleTypeMembers$with$items,
@@ -12561,7 +12561,7 @@ export function buildImportClauseGroup(value: Admit<T.NamespaceImport | T.NamedI
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildImportClauseGroup$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -12617,7 +12617,7 @@ export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config): T.Catc
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		parameter: buildCatchClauseGroup$with$parameter,
@@ -12674,7 +12674,7 @@ export function buildGetAccessorSignature(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: buildGetAccessorSignature$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -12745,7 +12745,7 @@ function _buildAmbientDeclarationGlobal(value: Admit<T.StatementBlock>): T.Ambie
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { body: buildAmbientDeclarationGlobal$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -12822,7 +12822,7 @@ export function buildAmbientDeclarationModule(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: buildAmbientDeclarationModule$with$name,
@@ -13006,7 +13006,7 @@ function _buildObjectTypeContent(
 		[HANDLE]: handle,
 		[INPUT]: elements,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		items: buildObjectTypeContent$with$items,
@@ -13111,7 +13111,7 @@ export function buildExportStatementNamespaceExport(
 		[HANDLE]: handle,
 		[INPUT]: value,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: buildExportStatementNamespaceExport$with$name,
@@ -13183,7 +13183,7 @@ export function buildExportStatementEqualsExport(
 		[HANDLE]: handle,
 		[INPUT]: value,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		value: buildExportStatementEqualsExport$with$value,
@@ -13245,7 +13245,7 @@ export function buildCommentLine(input: string, affix: boolean = true): T.Commen
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildCommentLine$with$content, [RECEIVER]: node };
 	return node as unknown as T.CommentLine.Bound;
@@ -13291,7 +13291,7 @@ export function buildCommentBlock(input: string, affix: boolean = true): T.Comme
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildCommentBlock$with$content, [RECEIVER]: node };
 	checkDelimited(handle, node, _delimited_buildCommentBlock, [_content]);
@@ -13330,7 +13330,7 @@ export function buildLiteralTypeNegativeNumber(value: Admit<T.Number>): T.Litera
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { value: buildLiteralTypeNegativeNumber$with$value, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -13388,7 +13388,7 @@ export function buildNumberHex(
 		[HANDLE]: handle,
 		[INPUT]: value,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { radixPrefix: buildNumberHex$with$radixPrefix, content: buildNumberHex$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -13512,7 +13512,7 @@ export function buildNumberFloatPoint(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		integer: buildNumberFloatPoint$with$integer,
@@ -13650,7 +13650,7 @@ export function buildNumberFloatLeadingPoint(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		fraction: buildNumberFloatLeadingPoint$with$fraction,
@@ -13774,7 +13774,7 @@ export function buildNumberFloatScientific(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		integer: buildNumberFloatScientific$with$integer,
@@ -13845,7 +13845,7 @@ export function buildNumberDecimal(text: string | number | bigint): T.NumberDeci
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.NumberDecimal.Bound;
@@ -13888,7 +13888,7 @@ export function buildNumberBinary(
 		[HANDLE]: handle,
 		[INPUT]: value,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		radixPrefix: buildNumberBinary$with$radixPrefix,
@@ -13959,7 +13959,7 @@ export function buildNumberOctal(
 		[HANDLE]: handle,
 		[INPUT]: value,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		radixPrefix: buildNumberOctal$with$radixPrefix,
@@ -14025,7 +14025,7 @@ export function buildNumberBigintHex(input: string | number | bigint, affix: boo
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildNumberBigintHex$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -14081,7 +14081,7 @@ export function buildNumberBigintBinary(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildNumberBigintBinary$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -14137,7 +14137,7 @@ export function buildNumberBigintOctal(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildNumberBigintOctal$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -14193,7 +14193,7 @@ export function buildNumberBigintDecimal(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildNumberBigintDecimal$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -14252,7 +14252,7 @@ export function buildBinaryExpressionIn(config: T.BinaryExpressionIn.Config): T.
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { left: buildBinaryExpressionIn$with$left, right: buildBinaryExpressionIn$with$right, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -14330,7 +14330,7 @@ export function buildClassBodyMemberMethod(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: buildClassBodyMemberMethod$with$decorators,
@@ -14410,7 +14410,7 @@ export function buildClassBodyMemberMethodSig(
 		[HANDLE]: handle,
 		[INPUT]: value,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		methodSignature: buildClassBodyMemberMethodSig$with$methodSignature,
@@ -14476,7 +14476,7 @@ export function buildClassBodyMemberDeclaration(
 		[HANDLE]: handle,
 		[INPUT]: value,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		member: buildClassBodyMemberDeclaration$with$member,
@@ -14572,7 +14572,7 @@ export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): 
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		sign: buildIndexSignatureColon$with$sign,
@@ -14676,7 +14676,7 @@ export function buildIndexSignatureMappedTypeClause(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		sign: buildIndexSignatureMappedTypeClause$with$sign,
@@ -14758,7 +14758,7 @@ export function buildImportStatementClauseFrom(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		importClause: buildImportStatementClauseFrom$with$importClause,
@@ -14816,7 +14816,7 @@ export function buildYieldExpressionDelegate(value: Admit<T.Expression>): T.Yiel
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: buildYieldExpressionDelegate$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -14869,7 +14869,7 @@ export function buildImportSpecifierName(config: T.ImportSpecifierName.Config): 
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		typeKeyword: buildImportSpecifierName$with$typeKeyword,
@@ -14947,7 +14947,7 @@ export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.Im
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		typeKeyword: buildImportSpecifierAs$with$typeKeyword,
@@ -15024,7 +15024,7 @@ export function buildParenthesizedExpressionTyped(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		expression: buildParenthesizedExpressionTyped$with$expression,
@@ -15102,7 +15102,7 @@ function _buildParenthesizedExpressionSequence(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { sequenceExpression: buildParenthesizedExpressionSequence$with$sequenceExpression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -15175,7 +15175,7 @@ export function buildCallExpressionCall(config: T.CallExpressionCall.Config): T.
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		function: buildCallExpressionCall$with$function,
@@ -15258,7 +15258,7 @@ export function buildCallExpressionTemplateCall(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		function: buildCallExpressionTemplateCall$with$function,
@@ -15336,7 +15336,7 @@ export function buildCallExpressionMember(config: T.CallExpressionMember.Config)
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		function: buildCallExpressionMember$with$function,
@@ -15406,7 +15406,7 @@ export function buildStringDouble(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: buildStringDouble$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -15450,7 +15450,7 @@ export function buildStringSingle(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: buildStringSingle$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -15504,7 +15504,7 @@ export function buildUpdateExpressionPostfix(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		argument: buildUpdateExpressionPostfix$with$argument,
@@ -15568,7 +15568,7 @@ export function buildUpdateExpressionPrefix(config: T.UpdateExpressionPrefix.Con
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		operator: buildUpdateExpressionPrefix$with$operator,
@@ -15626,7 +15626,7 @@ export function buildArrowFunctionParameter(value: Admit<T.Identifier>): T.Arrow
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { parameter: buildArrowFunctionParameter$with$parameter, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -15684,7 +15684,7 @@ export function buildClassHeritageExtendsClause(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		extendsClause: buildClassHeritageExtendsClause$with$extendsClause,
@@ -15759,7 +15759,7 @@ export function buildImportClauseDefaultImport(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		identifier: buildImportClauseDefaultImport$with$identifier,
@@ -15833,7 +15833,7 @@ export function buildExportStatementDefaultFrom(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		typeOnly: buildExportStatementDefaultFrom$with$typeOnly,
@@ -15918,7 +15918,7 @@ export function buildExportStatementDefaultDeclaration(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: buildExportStatementDefaultDeclaration$with$decorators,
@@ -15975,7 +15975,7 @@ export function buildExportStatementDefaultFromStarFrom(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { source: buildExportStatementDefaultFromStarFrom$with$source, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -16033,7 +16033,7 @@ export function buildExportStatementDefaultFromNsFrom(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		namespaceExport: buildExportStatementDefaultFromNsFrom$with$namespaceExport,
@@ -16103,7 +16103,7 @@ export function buildExportStatementDefaultFromClauseFrom(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		exportClause: buildExportStatementDefaultFromClauseFrom$with$exportClause,
@@ -16169,7 +16169,7 @@ export function buildExportStatementDefaultDeclarationDefaultKw(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildExportStatementDefaultDeclarationDefaultKw$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -16237,7 +16237,7 @@ export function buildExportStatementDefaultDeclarationDefaultKwValue(
 		[HANDLE]: handle,
 		[INPUT]: value,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		value: buildExportStatementDefaultDeclarationDefaultKwValue$with$value,
@@ -16332,7 +16332,7 @@ export function buildVariableDeclaratorPlain(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: buildVariableDeclaratorPlain$with$name,
@@ -16408,7 +16408,7 @@ export function buildVariableDeclaratorDefinite(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: buildVariableDeclaratorDefinite$with$name,
@@ -16480,7 +16480,7 @@ export function buildForHeaderLhs(config: T.ForHeaderLhs.Config): T.ForHeaderLhs
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		left: buildForHeaderLhs$with$left,
@@ -16572,7 +16572,7 @@ export function buildForHeaderVarKind(config: T.ForHeaderVarKind.Config): T.ForH
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		left: buildForHeaderVarKind$with$left,
@@ -16683,7 +16683,7 @@ export function buildForHeaderLetConstKind(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		kind: buildForHeaderLetConstKind$with$kind,
@@ -16803,7 +16803,7 @@ export function buildForHeaderUsingKind(
 		[HANDLE]: handle,
 		[INPUT]: config,
 		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		kind: buildForHeaderUsingKind$with$kind,
@@ -16914,7 +16914,7 @@ function _buildFormalParametersSetAccessorSignature(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: buildFormalParametersSetAccessorSignature$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -16986,7 +16986,7 @@ function _buildFormalParametersElementsSetAccessorSignature(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { item: buildFormalParametersElementsSetAccessorSignature$with$item, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -17065,7 +17065,7 @@ export function buildSetterParameter(config: T.SetterParameter.Config): T.Setter
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: buildSetterParameter$with$decorators,
@@ -17219,7 +17219,7 @@ export function buildMethodDefinitionPlain(config: T.MethodDefinitionPlain.Confi
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: buildMethodDefinitionPlain$with$accessibilityModifier,
@@ -17406,7 +17406,7 @@ export function buildMethodDefinitionGetter(config: T.MethodDefinitionGetter.Con
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: buildMethodDefinitionGetter$with$accessibilityModifier,
@@ -17542,7 +17542,7 @@ export function buildMethodDefinitionSetter(config: T.MethodDefinitionSetter.Con
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: buildMethodDefinitionSetter$with$accessibilityModifier,
@@ -17699,7 +17699,7 @@ export function buildMethodSignaturePlain(config: T.MethodSignaturePlain.Config)
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: buildMethodSignaturePlain$with$accessibilityModifier,
@@ -17869,7 +17869,7 @@ export function buildMethodSignatureGetter(config: T.MethodSignatureGetter.Confi
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: buildMethodSignatureGetter$with$accessibilityModifier,
@@ -17989,7 +17989,7 @@ export function buildMethodSignatureSetter(config: T.MethodSignatureSetter.Confi
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: buildMethodSignatureSetter$with$accessibilityModifier,
@@ -18133,7 +18133,7 @@ export function buildAbstractMethodSignaturePlain(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: buildAbstractMethodSignaturePlain$with$accessibilityModifier,
@@ -18291,7 +18291,7 @@ export function buildAbstractMethodSignatureGetter(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: buildAbstractMethodSignatureGetter$with$accessibilityModifier,
@@ -18411,7 +18411,7 @@ export function buildAbstractMethodSignatureSetter(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: buildAbstractMethodSignatureSetter$with$accessibilityModifier,
@@ -18569,7 +18569,7 @@ export function buildPublicFieldDefinitionPlain(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: buildPublicFieldDefinitionPlain$with$decorators,
@@ -18770,7 +18770,7 @@ export function buildPublicFieldDefinitionAccessor(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: buildPublicFieldDefinitionAccessor$with$decorators,
@@ -18887,7 +18887,7 @@ export function buildHtmlComment(text: string): T.HtmlComment.Bound {
 		toJSON: refuseJSON,
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	return node as unknown as T.HtmlComment.Bound;
 }
@@ -18909,7 +18909,7 @@ export function buildJsxText(text: string): T.JsxText.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.JsxText.Bound;
@@ -18932,7 +18932,7 @@ export function buildTemplateChars(text: string): T.TemplateChars.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TemplateChars.Bound;
@@ -18999,7 +18999,7 @@ export function buildConstructorDeclaration(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: buildConstructorDeclaration$with$accessibilityModifier,
@@ -19105,7 +19105,7 @@ export function buildReceiverParameterDeclaration(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: buildReceiverParameterDeclaration$with$decorators,
@@ -19219,7 +19219,7 @@ export function buildFormalParametersElementsReceiver(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		receiver: buildFormalParametersElementsReceiver$with$receiver,
@@ -19357,7 +19357,7 @@ function _buildFormalParametersElementsReceiverGroup(
 		[Symbol.isConcatSpreadable]: true,
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: buildFormalParametersElementsReceiverGroup$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -19404,7 +19404,7 @@ export function buildTernaryQmark(text: string): T.TernaryQmark.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.TernaryQmark.Bound;
@@ -19425,7 +19425,7 @@ export function buildErrorRecovery(text: string): T.ErrorRecovery.Bound {
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ErrorRecovery.Bound;
@@ -19456,7 +19456,7 @@ export function buildStatementIdentifier(value: Admit<T.Identifier>): T.Statemen
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildStatementIdentifier$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -19502,7 +19502,7 @@ export function buildShorthandPropertyIdentifier(value: Admit<T.Identifier>): T.
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildShorthandPropertyIdentifier$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -19550,7 +19550,7 @@ export function buildShorthandPropertyIdentifierPattern(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildShorthandPropertyIdentifierPattern$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -19591,7 +19591,7 @@ export function buildPropertyIdentifierContent(value: Admit<T.Identifier>): T.Pr
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildPropertyIdentifierContent$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -19648,7 +19648,7 @@ export function buildTypeIdentifier(value: Admit<T.Identifier>): T.TypeIdentifie
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: buildTypeIdentifier$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -19696,7 +19696,7 @@ export function buildInterfaceBody(config: ConfigOf<T.InterfaceBody>): T.Interfa
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		opening: buildInterfaceBody$with$opening,
@@ -19772,7 +19772,7 @@ export function buildInterfaceBodyCurly(config?: T.InterfaceBody.Curly.Config): 
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { members: buildInterfaceBodyCurly$with$members, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -19823,7 +19823,7 @@ export function buildInterfaceBodyFlow(config?: T.InterfaceBody.Flow.Config): T.
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { members: buildInterfaceBodyFlow$with$members, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };

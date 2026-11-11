@@ -3,6 +3,7 @@ import type { BuiltArena, BuiltText } from './built-arena.ts';
 import type { EngineHandle } from './engine-scope.ts';
 import type { ChunkWords, TreeHandle } from './read.ts';
 import { treeBuiltArena } from './engine-scope.ts';
+import { heldRootTree } from './tree-token.ts';
 
 export interface RecordPosition {
 	readonly $type: number;
@@ -57,11 +58,13 @@ export function handleDispose(this: { readonly $tree: TreeHandle; readonly $at?:
 	nodeArenaOf(this)?.releaseNode(this);
 }
 
-export function releaseNothing(): void {}
+export function releaseReadNode(this: object): void {
+	heldRootTree(this)?.releaseRoot?.();
+}
 
 export function nodeArenaOf(value: unknown): BuiltArena | undefined {
-	if (typeof value !== 'object' || value === null || !isHandle(value)) return undefined;
-	const tree = (value as { readonly $tree?: TreeHandle }).$tree;
+	if (typeof value !== 'object' || value === null) return undefined;
+	const tree = isHandle(value) ? (value as { readonly $tree?: TreeHandle }).$tree : heldRootTree(value);
 	return tree === undefined ? undefined : (tree.built ?? treeBuiltArena(tree));
 }
 
