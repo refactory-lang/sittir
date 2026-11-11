@@ -488,7 +488,9 @@ export class BuiltArena {
 		};
 		for (let n = this.#movedCount - 1; n >= moved; n--) {
 			const at = this.#moved[n]!;
-			attempt(() => this.#giveBack(at));
+			attempt(() => {
+				if (!this.#ownedByHandle(at)) this.#giveBack(at);
+			});
 		}
 		for (let n = this.#undosCount - 1; n >= undos; n--) attempt(this.#undos[n]!);
 		for (let n = this.#mintedCount - 1; n >= minted; n--) {

@@ -472,6 +472,35 @@ describe('an arena parse, held by its engine and counted by its root and each re
 		expect(engine.diagnostics.builtMemory?.()?.live).toBe(0);
 	});
 
+	it('gives a built comment its count back once when a build that parked it on a leaf and kept it throws', async () => {
+		let leaf: Sided | undefined;
+		let comment: unknown;
+		let keep: ((node: object) => object) | undefined;
+		const hook = {
+			build: (call: { readonly path: readonly string[] }, next: () => unknown): unknown => {
+				if (leaf === undefined || call.path.at(-1) !== 'binaryExpression') return next();
+				leaf.$trivia.leading(comment);
+				keep!(comment as object);
+				throw new Error('refused');
+			}
+		};
+		using engine = await createEngine(rust, { nodeStorage: 'arena', intercept: [hook as never] });
+		const b = engine.build;
+		const made = b.identifier('x') as unknown as Sided;
+		comment = b.lineComment.docOuter(' c');
+		const y = b.identifier('y');
+		const z = b.identifier('z');
+		{
+			using scope = engine.scope();
+			keep = (node) => scope.keep(node);
+			leaf = made;
+			expect(() => b.binaryExpression({ left: y, operator: '+', right: z })).toThrow('refused');
+			leaf = undefined;
+		}
+		for (const node of [made, comment, y, z]) engine.release(node as never);
+		expect(engine.diagnostics.builtMemory?.()?.live).toBe(0);
+	});
+
 	it('counts a spread copy of an unplaced leaf that a scope keeps apart from the leaf, so each release drops its own count', async () => {
 		using engine = await arena();
 		const before = live();
