@@ -1039,8 +1039,13 @@ export class BuiltArena {
 		return this.#views.withs[kind];
 	}
 
+	/** Refuses a tree another engine holds: a record of this arena, and a side it writes, name only trees its own engine holds. */
+	refuseForeignTree(tree: object | undefined): void {
+		if (tree === undefined || treeBuiltArena(tree) !== this) throw new Error(OTHER_ENGINE_PARSE);
+	}
+
 	#heldParse(tree: ParsedTree, token: TreeToken): number {
-		if (treeBuiltArena(tree) !== this) throw new Error(OTHER_ENGINE_PARSE);
+		this.refuseForeignTree(tree);
 		const { slot } = tree;
 		if (slot === undefined) throw new Error(`parsed tree ${tree.id} is held in no slot of its engine's arena, so no built record names it`);
 		this.#holdParse(slot, tree.id);
@@ -1200,7 +1205,11 @@ export function sideEntryOf(entry: object, arena: BuiltArena | undefined, holder
 	refuseForeignEntry(entry, holder);
 	if (arena === undefined && isBuiltNode(entry)) throw new Error(NO_RECORDS);
 	const built = recordRefOf(entry);
-	if (built === undefined) return readCoordinateOf(entry);
+	if (built === undefined) {
+		const coordinate = readCoordinateOf(entry);
+		if (coordinate !== undefined) arena?.refuseForeignTree(treeOf(entry));
+		return coordinate;
+	}
 	if (built.arena !== arena) throw new Error(OTHER_ENGINE_RECORD);
 	built.arena.refuseReleased(built.at);
 	built.arena.settle();

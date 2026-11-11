@@ -312,6 +312,25 @@ describe('an arena parse, held by its engine and counted by its root and each re
 		expect(live()).toBe(before);
 	});
 
+	it("refuses a side entry naming another engine's tree, on a built node and on a tree, as a link to it is refused", async () => {
+		using engine = await arena();
+		using other = await arena();
+		const before = live();
+		const donor = other.parse('/// kept\nfn f() {}\n') as unknown as Root;
+		const comment = sidedOf(donor).$trivia.leading()[0]!;
+		const b = engine.build;
+		const built = b.binaryExpression({ left: b.identifier('x'), operator: '+', right: b.identifier('y') }) as unknown as Sided;
+		expect(() => built.$trivia.leading(comment)).toThrow('a built record holds only nodes its own engine built or parsed, not a node another engine parsed');
+		const host = engine.parse('fn host() {}\n') as unknown as Root;
+		expect(() => sidedOf(host).$trivia.leading(comment)).toThrow('a built record holds only nodes its own engine built or parsed, not a node another engine parsed');
+		donor[Symbol.dispose]();
+		expect(String(engine.render(built as never))).toBe('x + y');
+		expect(String(engine.render(host as never))).toBe('fn host() {}\n');
+		host[Symbol.dispose]();
+		engine.release(built as never);
+		expect(live()).toBe(before);
+	});
+
 	it("takes no count of a tree's own slot for a record its own side names, so its root's release frees it", async () => {
 		using engine = await arena();
 		const before = live();
