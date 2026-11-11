@@ -122,7 +122,8 @@ fn write_through<F: Rewrite>(path: &Path, bytes: &[u8], mode: WriteMode, wrap: i
 trait Rewrite {
     /// Empties the file and writes `bytes` to it.
     fn rewrite(&mut self, bytes: &[u8]) -> io::Result<()>;
-    /// Whether `path` still names this file.
+    /// Whether `path` still names this file. Unsupported where the platform
+    /// can't tell, and a file isn't removed then.
     fn is_at(&self, path: &Path) -> io::Result<bool>;
 }
 
@@ -142,8 +143,8 @@ impl Rewrite for fs::File {
     }
 
     #[cfg(not(unix))]
-    fn is_at(&self, path: &Path) -> io::Result<bool> {
-        fs::symlink_metadata(path).map(|_| true)
+    fn is_at(&self, _: &Path) -> io::Result<bool> {
+        Err(io::Error::new(io::ErrorKind::Unsupported, "this platform can't tell whether the path still names it"))
     }
 }
 
@@ -177,7 +178,7 @@ const MAX_LINKS: usize = 40;
 /// When the write fails partway, the file goes back to what it was
 /// (`before`), through the same descriptor: its bytes are written again, or
 /// the file the write created is removed, unless another file has taken
-/// its path since, which is left as it is. The error names the path and the
+/// its path since, or the platform can't tell, when it is left as it is. The error names the path and the
 /// failure, and says whether the file went back.
 fn write_or_restore<F: Rewrite>(path: &Path, mut file: F, bytes: &[u8], before: Before) -> Result<bool, FileError> {
     let Err(cause) = file.rewrite(bytes) else {
@@ -195,6 +196,7 @@ fn write_or_restore<F: Rewrite>(path: &Path, mut file: F, bytes: &[u8], before: 
             },
             Ok(false) => "another file replaced the one it created, and was left as it is".to_owned(),
             Err(failed) if failed.kind() == io::ErrorKind::NotFound => "the file it created is gone".to_owned(),
+            Err(failed) if failed.kind() == io::ErrorKind::Unsupported => format!("the file it created was left, since {failed}"),
             Err(failed) => format!("removing the file it created failed too: {failed}"),
         },
     };
@@ -479,6 +481,29 @@ mod tests {
         .unwrap_err();
         assert!(error.to_string().contains("replaced"), "{error}");
         assert_eq!(fs::read_to_string(&path).unwrap(), "fn editor() {}\n");
+    }
+
+    /// A file whose identity this platform can't check, as on Windows.
+    struct IdentityUnknown<F>(F);
+
+    impl<F: Rewrite> Rewrite for IdentityUnknown<F> {
+        fn rewrite(&mut self, bytes: &[u8]) -> io::Result<()> {
+            self.0.rewrite(bytes)
+        }
+
+        fn is_at(&self, _: &Path) -> io::Result<bool> {
+            Err(io::Error::new(io::ErrorKind::Unsupported, "this platform can't tell whether the path still names it"))
+        }
+    }
+
+    #[test]
+    fn a_failed_create_whose_identity_is_unknown_leaves_its_file() {
+        let dir = directory("identity");
+        let path = dir.join("a.rs");
+        let failing = fails_after(4, || {});
+        let error = write_through(&path, b"fn a() {}\n", WriteMode::CreateNew, |file| IdentityUnknown(failing(file))).unwrap_err();
+        assert!(error.to_string().contains("the file it created was left"), "{error}");
+        assert_eq!(entries(&dir), ["a.rs"]);
     }
 
     #[test]
