@@ -48,7 +48,7 @@ Captures the active hooks of one operation and composes them in registration ord
 
 ### `packages/common/src/create-engine.ts::interceptedRender`
 
-A lazy output handle whose text is produced through render middleware. The hook receives the resolved node and engine render options overlaid by per-call options. The native output handle is created at the original render boundary, preserving the native node snapshot taken there; its text stays lazy. `next` materializes that handle through the supplied continuation, which also measures native rendering when metrics are enabled. Capture alone does not format text or record metrics; a short circuit bypasses both. Disposing the outer handle disposes both handles, including an inner handle that was never materialized. The outer handle caches successful transformed text once, so `toString`, `print` and `save` share the same bytes; a short circuit never materializes the native output. Disposal retains the existing output refusal.
+A lazy output handle whose text is produced through render middleware. The hook receives the resolved node and engine render options overlaid by per-call options. The native output handle is created at the original render boundary, preserving the native node snapshot taken there; its text stays lazy. `next` materializes that handle through the supplied continuation, which also measures native rendering when metrics are enabled. Capture alone does not format text or record metrics; a short circuit bypasses both. Saving the output writes its materialized text through `writeText`, the native writer, so a save writes what `toString` returns. Disposing the outer handle disposes both handles, including an inner handle that was never materialized. The outer handle caches successful transformed text once, so `toString`, `print` and `save` share the same bytes; a short circuit never materializes the native output. Disposal retains the existing output refusal.
 
 ### `packages/common/src/create-engine.ts::assemblePortableEngine`
 
@@ -368,7 +368,7 @@ A value as an accessor of a node of a tree returns it, through the generated `hy
 
 ### `packages/common/src/engine.ts::createRenderHandle`
 
-A lazily rendered text: the render runs on first use and its text is cached. `save` writes through the native file path when the engine offers one, else writes the text. Disposing drops the cached text; any use after that throws `rendered text disposed`.
+A lazily rendered text: the render runs on first use and its text is cached. `save` is required and writes the render through the engine while the text has not been produced; once it has, `writeText` writes the cached text instead. `release`, when given, runs on dispose, which drops the cached text; any use after that throws `rendered text disposed`.
 
 ### `packages/common/src/engine.ts::NativeEngineDiagnostics`
 
@@ -1068,7 +1068,7 @@ Reads the emitted presence word and bit directly after checking the word slice. 
 
 ### `packages/common/src/built-arena.ts::BuiltArena`
 
-The records one engine's builders write, in chunks of words and of UTF-8 bytes that JavaScript owns. Native code is handed the chunks for one synchronous call (`chunks`), each cut to what is written, so nothing native holds them between calls. The arena only appends: a record is written once, by its builder, and never changes, so a `$with` writes a new record that names the unchanged children by their addresses.
+The records one engine's builders write, in chunks of words and of UTF-8 bytes that native memory owns and lends to JavaScript as views (`builtWords`, `builtBytes`). Each chunk is freed by native once the counts its records hold reach zero: `release`, `drop` and `dropCell` drop a record's count, and the native side reports each chunk it frees back, which the arena then forgets. `chunks()` gives each chunk cut to what is written, for one synchronous call. The arena only appends: a record is written once, by its builder, and never changes, so a `$with` writes a new record that names the unchanged children by their addresses.
 
 Allocation follows the native arena's chunk policy. The first shared chunk is small and each later one doubles, up to the words a packed address can name within a chunk (`2 ** chunkShift`); an allocation larger than that gets a chunk of its own, and the arena refuses once it holds as many chunks as an address can name. Word 0 of the first chunk is never allocated, so address 0 means no record, as it does natively.
 
@@ -1131,6 +1131,10 @@ What the built arena of a language engine that reads trees as records is made wi
 ### `packages/common/src/engine.ts::builtRecordsOf`
 
 The `BuiltRecords` of a native engine that reads trees as records: its cell format, and its trivia table of built records, which reads and writes the engine's store of written sides by record address (`builtTriviaSide`, `writeBuiltTriviaSide`). A read of a side no write gave answers `undefined`, as the table contract has it (`TreeHandle.triviaSide`), so the side falls back to the one of the node the record was rebuilt from. An addon without the record codec has no such table, and is refused.
+
+### `packages/common/src/engine.ts::saverOf`
+
+The save function a render an engine returned carries, which `save` and a cached-text write both go through. It throws for a render no engine returned.
 
 ### `packages/common/src/built-arena.ts::BuiltArena::node`
 

@@ -577,7 +577,7 @@ export async function validateFactoryStorage(
 				// this node, fully materialized (no lazy stubs).
 				// $text is handled per-node by the comparator itself (see
 				// isTextShapeNode) rather than stripped here.
-				const referenceData = measureRoundtrip(options.profile, 'read', () => materializeBuildInput(cand.node, accessorOf));
+				const referenceData = measureRoundtrip(options.profile, 'copy', () => materializeBuildInput(cand.node, accessorOf));
 
 				const cstNamedChildKinds = node1 ? namedChildKinds(node1) : [];
 

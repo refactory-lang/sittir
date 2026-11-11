@@ -44,7 +44,7 @@
 
 - **No text in JavaScript on a file path.** `read` (with no parse interceptor), `write`, `create`, `$save`, `Rendered.save`, `applyStyle` and `checkStyle` carry no source or rendered text through JavaScript. Text crosses only for `toString()`, `$render()`, `print()`, `$text()`, `diff()`, trivia sides, `parse(source)` and an interceptor's request.
 - **One writer.** Every file write goes through `sittir-core::file_io::write_file`. No `writeFileSync` and no `std::fs::write` remain on a runtime write path. Codegen's `util/write-file-atomic.ts` writes generated outputs and is not a runtime path.
-- **The writer writes in place** (the maintainer, 2026-11-10: "In place, restore on error"). It never replaces the file, so every kind of metadata survives. It uses no scratch file and no rename, and calls no `sync_data` or `sync_all`.
+- **The writer writes in place** (the maintainer, 2026-11-10: "In place, restore on error"). It never replaces the file, so every kind of metadata survives. It uses no scratch file, hard link or rename, and calls no `sync_data` or `sync_all`. A create whose write fails partway leaves the partial file and says so; nothing is removed by path (the maintainer, 2026-11-11).
 - **A parsed tree's source bytes and strings never cross to JavaScript in bulk.**
 - **The batch is arena-only.** It refuses object storage, and an engine with a `render`, `parse` or `file` interceptor, by name.
 - **The lock-free census doesn't rise.**
@@ -115,6 +115,7 @@
 #[test] fn a_symlinked_path_writes_its_target()        // #[cfg(unix)] the link is still a link; the target holds the new bytes
 #[test] fn a_path_that_is_not_a_regular_file_is_refused() // a directory, and #[cfg(unix)] a FIFO, → Err(Write) without blocking
 #[test] fn a_failed_write_restores_the_original()      // a writer that fails after n bytes → Err(Write); the file holds its original bytes
+#[test] fn a_failed_create_is_left_partly_written_and_says_so() // CreateNew, and Replace of a missing path: a writer that fails after n bytes → Err(Write) whose Display names the path and says the file is partly written
 #[test] fn a_non_utf8_source_is_refused_by_path()      // read_source of [b'a', 0xff] → Err(Encoding { byte: 1, .. }); Display names the path
 ```
 
@@ -122,7 +123,7 @@
 - [ ] **Step 3: Implement `file_io`.**
   - Read the current bytes when the file exists. Equal bytes under `Replace` return `Ok(false)` without writing.
   - Refuse a path whose metadata isn't a regular file before opening it, so a FIFO never blocks.
-  - `Replace` opens the existing file (following a symlink), truncates it and writes the bytes. `CreateNew` opens with `create_new`, which refuses an existing file.
+  - `Replace` opens the existing file (following a symlink), truncates it and writes the bytes. `CreateNew`, and `Replace` of a missing path, open with `create_new`, which refuses an existing file, and write in place. A failed create leaves what it wrote and says so in the error.
   - The write goes through one function generic over `Write`, so a test can make it fail partway. On a failed write, rewrite the original bytes and return the error, naming the path, and saying so if the restore failed too.
   - Never sync, and never create a directory.
 - [ ] **Step 4:** Run the Rust tests again. Expected: PASS.

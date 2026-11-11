@@ -1026,6 +1026,10 @@ The loader for the portable build table, when the language has one.
 
 `true` on the structure row for a final seat.
 
+### `packages/types/src/engine-api.ts::NativeLanguageEngine::writeText`
+
+Writes `text` to `path` through the native writer: a new file when `create`, which refuses a file already at the path and, when the write fails, leaves the partial file in place and says so; otherwise an in-place write that restores the file's original bytes when it fails. Answers whether it wrote.
+
 ### `packages/types/src/portable.ts::PortableRows::flags`
 
 The flag query for a portable row.

@@ -55,7 +55,7 @@ Earlier rulings this design keeps:
 - A batch whose output differs from writing each file one at a time with `engine.write`, or from a one-thread run.
 - Shared mutable state between the batch's threads, or a new lock on a read or render path.
 - Text filled into a result "in case" a caller reads it.
-- A file left truncated or half-written by an error.
+- An existing file left truncated or half-written by an error.
 
 ## The end state
 
@@ -85,7 +85,7 @@ Earlier rulings this design keeps:
 - **It renders in full before it opens the file.** If the write then fails partway, for example on a full disk, it rewrites the original bytes, which it already holds, and the error names the path. A process killed mid-write can still leave a partial file; that is accepted, as it is by every formatter.
 - **It doesn't sync to disk.**
 - **A file whose rendered bytes equal its current bytes isn't rewritten.**
-- **`create` opens with `create_new`,** so it never clobbers an existing file.
+- **`create` opens with `create_new`,** so it never clobbers an existing file, and writes in place like any other write. A create whose write fails partway leaves the new file partly written, and the error says so, as oxfmt's `fs::write` does (the maintainer, 2026-11-11). The writer never removes a file by path, since another program may have put its own file there meanwhile.
 - **It refuses a path that isn't a regular file,** such as a directory, a pipe or a socket, and a missing directory. It never creates one.
 
 ### Crossings removed
