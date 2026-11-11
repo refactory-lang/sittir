@@ -22,7 +22,8 @@
 		"tests/kind-id-only.test-d.ts",
 		"tests/grammar-map.test-d.ts",
 		"tests/input-derivation.test-d.ts",
-		"tests/feature-gating.test-d.ts"
+		"tests/feature-gating.test-d.ts",
+		"tests/full-form.test-d.ts"
 	],
 	"exclude": ["node_modules", "dist"]
 }

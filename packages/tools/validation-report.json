@@ -1,8 +1,8 @@
 {
 	"grammars": {
-		"python": {"digest":"1007a40404aa053a6c98bc215b83e90a7089226a14df406db4a9ac537c684549","counts":{"conflict-resolution":{"info":10},"conflict-unnecessary-upstream":{"info":3},"conflict-dynamic-precedence-authored":{"info":1}},"blocking":{"rule-reauthored-without-cause":{"error":4},"patch-without-cause":{"error":4}}},
+		"python": {"digest":"5b219b05dd16687e8a398f756287d3360f97276a73a7f3d8f0fe7b02c66183e0","counts":{"conflict-resolution":{"info":10},"conflict-unnecessary-upstream":{"info":3},"conflict-dynamic-precedence-authored":{"info":1},"portable-value-unshaped":{"warning":2},"portable-integer-partial":{"warning":3}},"blocking":{"rule-reauthored-without-cause":{"error":4},"patch-without-cause":{"error":4}}},
 		"regex": {"digest":"d5827129060789840ec92799e6f10a5f883d7877e2bca483b3f47e06ae12b2f7","counts":{"conflict-resolution":{"info":2}},"blocking":{}},
-		"rust": {"digest":"794dcd36a0a6556847bcc554506f507ac2bd14a1c6628d1c42aea1b89831d26f","counts":{"conflict-resolution":{"info":8},"conflict-unnecessary-upstream":{"info":3}},"blocking":{"rule-reauthored-without-cause":{"error":3},"unclassifiable-shape":{"error":1}}},
+		"rust": {"digest":"0870dc80db8feb7b6f8da954ca4d7a4a7ce99f7902b95307570361f8cbc3b83c","counts":{"conflict-resolution":{"info":8},"conflict-unnecessary-upstream":{"info":3},"portable-integer-partial":{"warning":3}},"blocking":{"rule-reauthored-without-cause":{"error":3},"unclassifiable-shape":{"error":1}}},
 		"scm": {"digest":"57f8d34d368f69844ffc80a90b96e70f992169bb0cf4cd2978acab6eec81e965","counts":{},"blocking":{"unclassifiable-shape":{"error":1}}},
 		"typescript": {"digest":"65876e31c1eae409ebea253b2fb446a7ba0bef78574e88ce7958b691b4679886","counts":{"conflict-resolution":{"info":75},"conflict-unnecessary-upstream":{"info":9}},"blocking":{"rule-reauthored-without-cause":{"error":1},"unclassifiable-shape":{"error":2},"union-slot-mixed-row":{"error":1}}}
 	},

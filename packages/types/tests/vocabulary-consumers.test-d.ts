@@ -26,6 +26,7 @@ import type {
 	Fits,
 	GrammarMap,
 	Identifier,
+	Literal,
 	Missing,
 	OptionalMembers,
 	Pattern,
@@ -172,6 +173,18 @@ export function looseEqual(left: Identifier.Any<Core>, right: Identifier.Any<Cor
 export function looseAsEqual(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary.Comparison.Equal<Core> {
 	// @ts-expect-error a coercing comparison is not an equality
 	return { $path: 'expression.binary.comparison.loose_equal', left, right };
+}
+
+// A negative number holds the number it negates as its value, and has no $value of its own.
+export function negative(): Literal.Number.Negative<Core> {
+	return { $path: 'literal.number.negative', value: { $path: 'literal.number.integer', $value: 1 } };
+}
+export function restatedNegative(): Literal.Number.Negative<Core> {
+	return {
+		...negative(),
+		// @ts-expect-error a negative number has no $value
+		$value: -1
+	};
 }
 
 // A trait is an interface with more: a refinement carries its own kind and the members its parent lacks.

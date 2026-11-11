@@ -45540,6 +45540,10 @@ export const build: PortableBuildTable = {
 					kind: 141,
 					builder: 'integerLiteralDecimal',
 					numeric: 'content',
+					digits: {
+						base: 10,
+						affix: ''
+					},
 					members: [
 						{
 							name: 'content',
@@ -45604,6 +45608,10 @@ export const build: PortableBuildTable = {
 					kind: 143,
 					builder: 'integerLiteralBinary',
 					numeric: 'content',
+					digits: {
+						base: 2,
+						affix: '0b'
+					},
 					members: [
 						{
 							name: 'content',
@@ -45668,6 +45676,10 @@ export const build: PortableBuildTable = {
 					kind: 142,
 					builder: 'integerLiteralHex',
 					numeric: 'content',
+					digits: {
+						base: 16,
+						affix: '0x'
+					},
 					members: [
 						{
 							name: 'content',
@@ -45732,6 +45744,10 @@ export const build: PortableBuildTable = {
 					kind: 144,
 					builder: 'integerLiteralOctal',
 					numeric: 'content',
+					digits: {
+						base: 8,
+						affix: '0o'
+					},
 					members: [
 						{
 							name: 'content',

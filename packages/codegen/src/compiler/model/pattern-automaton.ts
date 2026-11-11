@@ -453,13 +453,8 @@ function determinize(root: Node): PatternDfa {
 }
 
 export function dfaAccepts(dfa: PatternDfa, text: string): boolean {
-	let at = 0;
-	for (const char of text) {
-		const edge = dfa.states[at]!.edges.find(({ set }) => set.has(char.codePointAt(0)!));
-		if (edge === undefined) return false;
-		at = edge.to;
-	}
-	return dfa.states[at]!.accepting;
+	const after = readFrom(dfa, 0, text);
+	return after !== undefined && dfa.states[after]!.accepting;
 }
 
 export function includesNonEmpty(inner: PatternDfa, outer: PatternDfa): boolean {
@@ -489,6 +484,28 @@ export function includesNonEmpty(inner: PatternDfa, outer: PatternDfa): boolean 
 		}
 	}
 	return true;
+}
+
+function readFrom(dfa: PatternDfa, at: number, text: string): number | undefined {
+	let state: number | undefined = at;
+	for (const char of text) {
+		const code = char.codePointAt(0)!;
+		state = dfa.states[state]!.edges.find(({ set }) => set.has(code))?.to;
+		if (state === undefined) return undefined;
+	}
+	return state;
+}
+
+export function acceptsSomeStartingWith(dfa: PatternDfa, text: string): boolean {
+	const after = readFrom(dfa, 0, text);
+	return after !== undefined && coaccessible(dfa).has(after);
+}
+
+export function acceptsSomeEndingWith(dfa: PatternDfa, text: string): boolean {
+	return [...reachableFrom(dfa, [0], () => true)].some((at) => {
+		const after = readFrom(dfa, at, text);
+		return after !== undefined && dfa.states[after]!.accepting;
+	});
 }
 
 function reachableFrom(dfa: PatternDfa, seeds: readonly number[], keep: (set: CharSet) => boolean): Set<number> {

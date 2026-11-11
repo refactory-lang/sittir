@@ -3,6 +3,7 @@
  * language engine. Pure type-level module — zero runtime code.
  */
 
+import type { Uncovered, UnlessRestated } from './argument-lists.ts';
 import type { KeysOfUnion } from 'type-fest';
 import type { HoldsTrivia, NodeMethods } from './engine-api.ts';
 export type {
@@ -219,7 +220,13 @@ export interface Terminal<ID extends number = number, V extends string = string>
  * mutable array. Each `infer` is constrained to `readonly unknown[]`: an
  * unconstrained rest `infer` carries a mutable `unknown[]` bound that a
  * `readonly` rest parameter fails, and one failed signature fails the whole
- * pattern.
+ * pattern. A fixed-length tuple another fixed-length tuple strictly covers is
+ * dropped: each argument list it takes, an optional element counted with and
+ * without it, is one the other takes, each element's union members among the
+ * other's at that position by identity, and not the reverse. Of fixed-length
+ * tuples that take the same calls, only the last overload's stays. So overloads
+ * whose lists one list takes, such as `(x)`, `(x, o: O)` and `(x, o?: O)`,
+ * spread as that one list, and an `any` covers or is covered only by `any`.
  */
 export type ArgsOf<F> = F extends {
 	(...a: infer A extends readonly unknown[]): unknown;
@@ -227,8 +234,14 @@ export type ArgsOf<F> = F extends {
 	(...c: infer C extends readonly unknown[]): unknown;
 	(...d: infer D extends readonly unknown[]): unknown;
 }
-	? MutableRest<A> | MutableRest<B> | MutableRest<C> | MutableRest<D>
+	? Uncovered<
+			| UnlessRestated<MutableRest<A>, MutableRest<B> | MutableRest<C> | MutableRest<D>>
+			| UnlessRestated<MutableRest<B>, MutableRest<C> | MutableRest<D>>
+			| UnlessRestated<MutableRest<C>, MutableRest<D>>
+			| MutableRest<D>
+		>
 	: never;
+
 
 type AnyBuilderFn = (...args: never[]) => unknown;
 
@@ -1238,6 +1251,7 @@ export interface LeafNs<
 export type { DerivedOptions, IndentOption, LayoutOption, NewlineOption, OptionsHintOf } from './options.ts';
 export type * from './node-surface.ts';
 export type {
+	CoercedSpelling,
 	Interior,
 	LeadCheck,
 	MatchedAlternative,

@@ -19,9 +19,12 @@
  * difference. The invariant comparison is not used because an entry's
  * overloads read as a union of argument lists (`[] | [input?: X]`) that
  * is the same call as the row's one list (`[input?: X]`) without being the
- * same spelling.
+ * same spelling. For the same reason each optional element is unfolded
+ * into the lists without it and with it, so a row's `[X, options?: O]` is
+ * the same call as an entry's `[X] | [X, O | undefined]`.
  */
 
+import type { Unfolded } from '../../src/argument-lists.ts';
 import type { ArgsOf } from '../../src/index.ts';
 
 type Call = (...args: never[]) => unknown;
@@ -40,8 +43,8 @@ export type SameArguments<A, B> = HasAny<A> extends true
 	? false
 	: HasAny<B> extends true
 		? false
-		: [A] extends [B]
-			? [B] extends [A]
+		: [Unfolded<A>] extends [Unfolded<B>]
+			? [Unfolded<B>] extends [Unfolded<A>]
 				? true
 				: false
 			: false;

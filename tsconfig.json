@@ -14,6 +14,7 @@
 			"@sittir/common/language": ["./packages/common/src/language.ts"],
 			"@sittir/common/native-binding": ["./packages/common/src/native-binding.ts"],
 			"@sittir/common/portable": ["./packages/common/src/portable/index.ts"],
+			"@sittir/common/portable/utils": ["./packages/common/src/portable/utils.ts"],
 			"@sittir/common/utils": ["./packages/common/src/utils.ts"],
 			"@sittir/codegen": ["./packages/codegen/src/index.ts"],
 			"@sittir/codegen/run-codegen": ["./packages/codegen/src/run-codegen.ts"],

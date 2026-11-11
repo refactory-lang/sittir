@@ -28,6 +28,27 @@ export function numberText<V extends string | number | bigint | undefined>(
 	return `${affix}${value.toString(base)}` as never;
 }
 
+export type IntegerBase = Exclude<NumberBase, 'float'>;
+
+const DIGITS: Readonly<Record<IntegerBase, string>> = { 2: '01', 8: '0-7', 10: '0-9', 16: '0-9a-fA-F' };
+
+export function integerSpelling(base: IntegerBase, affix: string): string {
+	const marker = [...affix].map((char) => (char.toLowerCase() === char.toUpperCase() ? char : `[${char.toLowerCase()}${char.toUpperCase()}]`)).join('');
+	return `${marker}_*[${DIGITS[base]}][${DIGITS[base]}_]*`;
+}
+
+const BIGINT_PREFIX: Readonly<Record<IntegerBase, string>> = { 2: '0b', 8: '0o', 10: '', 16: '0x' };
+
+const spellings = new Map<string, RegExp>();
+
+export function integerValue(base: IntegerBase, affix: string, text: string): bigint | undefined {
+	const key = `${base} ${affix}`;
+	let spelling = spellings.get(key);
+	if (spelling === undefined) spellings.set(key, (spelling = new RegExp(`^(?:${integerSpelling(base, affix)})$`, 'u')));
+	if (!spelling.test(text)) return undefined;
+	return BigInt(`${BIGINT_PREFIX[base]}${text.slice(affix.length).replaceAll('_', '')}`);
+}
+
 export function numberRefusal(value: number | bigint, integer: boolean, signed: boolean): string | undefined {
 	if (typeof value === 'number' && !Number.isFinite(value)) return `${value} has no literal spelling`;
 	const negativeZero = Object.is(value, -0);

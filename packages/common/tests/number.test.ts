@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { numberRefusal, numberText } from '../src/number.ts';
+import { integerValue, numberRefusal, numberText } from '../src/number.ts';
 
 describe('numberText', () => {
 	it('writes an integer in the base of the slot with its prefix', () => {
@@ -59,5 +59,26 @@ describe('numberRefusal', () => {
 	it('still refuses what no signed literal spells', () => {
 		expect(numberRefusal(Number.NEGATIVE_INFINITY, false, true)).toMatch(/no literal spelling/);
 		expect(numberRefusal(-(2 ** 53), true, true)).toMatch(/pass it as a bigint/);
+	});
+});
+
+describe('integerValue', () => {
+	it('reads the integer a text spells in its base after its affix in either case, with digit separators anywhere after the affix', () => {
+		expect(integerValue(10, '', '1_')).toBe(1n);
+		expect(integerValue(10, '', '1__0')).toBe(10n);
+		expect(integerValue(16, '0x', '0x_ff')).toBe(255n);
+		expect(integerValue(16, '0x', '0XFF')).toBe(255n);
+		expect(integerValue(8, '0o', '0o_7_7')).toBe(63n);
+		expect(integerValue(2, '0b', '0b101')).toBe(5n);
+		expect(integerValue(10, '', '12345678901234567890')).toBe(12345678901234567890n);
+	});
+	it('reads nothing from a text with no digit, a digit outside its base, or a missing affix', () => {
+		expect(integerValue(16, '0x', '0x_')).toBeUndefined();
+		expect(integerValue(8, '0o', '0o8')).toBeUndefined();
+		expect(integerValue(16, '0x', 'ff')).toBeUndefined();
+	});
+	it('converts a long literal in one native step', () => {
+		const digits = '9'.repeat(500_000);
+		expect(integerValue(10, '', digits)).toBe(BigInt(digits));
 	});
 });
