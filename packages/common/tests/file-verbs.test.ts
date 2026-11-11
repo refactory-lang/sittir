@@ -216,6 +216,39 @@ describe.each(['object', 'arena'] as const)('engine.write and engine.create (%s)
 		expect(readFileSync(at('a.rs'), 'utf8')).toBe(approved);
 	});
 
+	it("refuses a file interceptor's next and diff once its commit is done", async () => {
+		let kept: { next: () => Promise<void>; diff: () => FileChange } | undefined;
+		const engine = await engineOf({
+			intercept: [
+				{
+					async file(change, next) {
+						kept = { next, diff: () => change.diff() };
+					}
+				}
+			]
+		});
+		await engine.create(at('a.rs'), () => engine.parse('fn a() {}\n'));
+		await expect(kept!.next()).rejects.toThrow(/create of .*a\.rs is done/);
+		expect(() => kept!.diff()).toThrow(/create of .*a\.rs is done/);
+		expect(existsSync(at('a.rs'))).toBe(false);
+	});
+
+	it('finishes a write a file interceptor started before the interceptor threw', async () => {
+		const engine = await engineOf({
+			intercept: [
+				{
+					file(_, next) {
+						void next();
+						throw new Error('file hook failed');
+					}
+				}
+			]
+		});
+		const make = (build: BuildSurface<RustAPI, 'default'>) => build.sourceFile({ statements: [...engine.parse('fn a() {}\n').statements()] } as never) as never;
+		await expect(engine.create(at('a.rs'), make)).rejects.toThrow('file hook failed');
+		expect(readFileSync(at('a.rs'), 'utf8')).toBe('fn a() {}\n');
+	});
+
 	it('a write under a render interceptor writes the intercepted text', async () => {
 		const engine = await engineOf({ intercept: [{ render: (_, next) => next().toUpperCase() }] });
 		const root = engine.parse('fn a() {}\n');

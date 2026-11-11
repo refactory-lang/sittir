@@ -20,11 +20,25 @@ export function currentText(path: string): string | undefined {
 }
 
 export function pendingFile(path: string, verb: FileVerb, open: () => FileCommit, diff: () => FileChange, chain: FileChain | undefined): Pending {
+	const done = (): Error => new Error(`the ${verb} of ${path} is done: a file interceptor's next and diff run only before it returns`);
 	const run = async (): Promise<void> => {
 		using opened = open();
+		let closed = false;
 		let written: Promise<void> | undefined;
-		const next = (): Promise<void> => (written ??= Promise.resolve().then(() => opened.commit()));
-		await (chain === undefined ? next() : chain(Object.freeze({ path, verb, diff: () => opened.diff() }), next));
+		const next = (): Promise<void> => {
+			if (written === undefined && closed) return Promise.reject(done());
+			return (written ??= Promise.resolve().then(() => opened.commit()));
+		};
+		const preview = (): FileChange => {
+			if (closed) throw done();
+			return opened.diff();
+		};
+		try {
+			await (chain === undefined ? next() : chain(Object.freeze({ path, verb, diff: preview }), next));
+		} finally {
+			closed = true;
+			await written?.catch(() => undefined);
+		}
 	};
 	let committed: Promise<void> | undefined;
 	const start = (): Promise<void> => (committed ??= Promise.resolve().then(run));
