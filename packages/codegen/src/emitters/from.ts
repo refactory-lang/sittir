@@ -324,11 +324,12 @@ function literalUnion(texts: readonly string[]): string {
 function spelledReturnType(
 	returnType: string,
 	fullForm: FullForm,
-	spelled: readonly (readonly ['open' | 'close', AssembledNonterminal])[]
+	spelled: readonly (readonly ['open' | 'close', AssembledNonterminal])[],
+	options: string
 ): string {
 	return spelled.reduce((type, [side, slot]) => {
 		const key = JSON.stringify(slot.propertyName);
-		return `WithSpelling<${type}, ${key}, CoercedSpelling<I, O, ${key}, ${literalUnion(fullForm[side].texts)}, ${JSON.stringify(slot.optionDefaultArm)}${side === 'close' ? `, ${JSON.stringify(side)}` : ''}>>`;
+		return `WithSpelling<${type}, ${key}, CoercedSpelling<I, ${options}, ${key}, ${literalUnion(fullForm[side].texts)}, ${JSON.stringify(slot.optionDefaultArm)}${side === 'close' ? `, ${JSON.stringify(side)}` : ''}>>`;
 	}, returnType);
 }
 
@@ -420,22 +421,37 @@ function emitBranchFrom(
 			message: `'${node.kind}' has both a spelled delimiter and sibling leads; no typed form covers both`
 		});
 	}
-	const spelledType = fullForm === undefined || spelled.length === 0 ? undefined : spelledReturnType(returnType, fullForm, spelled);
+	const spelledTypeWith = (options: string): string | undefined =>
+		fullForm === undefined || spelled.length === 0 ? undefined : spelledReturnType(returnType, fullForm, spelled, options);
+	const spelledType = spelledTypeWith('O');
 	const bareShape = bareInteriorText(node.kind, node)?.number ?? (soleField === undefined ? undefined : numericSlotShape(soleField));
 	const numericRefusal = numericInputRefusal(node, bareShape);
 	const loose = looseRefusal(nodeMap);
 	const refused = (...parts: readonly (string | undefined)[]): string => ['I', ...parts.filter((part) => part !== undefined)].join(' & ');
+	const optionsGeneric = (name: string, fallback: string): string => `const ${name} extends T.${typeName}.Options | undefined = ${fallback}`;
+	const suppliedGeneric = optionsGeneric('O', `T.${typeName}.Options | undefined`);
 	const signature =
 		spelledType !== undefined
-			? `export function ${fn}<const I extends ${inputType}, const O extends T.${typeName}.Options = {}>(input${opt}: ${refused(numericRefusal)}, options?: O): ${spelledType} {`
+			? `export function ${fn}<const I extends ${inputType}, ${suppliedGeneric}>(input${opt}: ${refused(numericRefusal)}, options?: O): ${spelledType} {`
 			: refusal !== undefined
 				? `export function ${fn}<const I extends ${inputType}>(input${opt}: ${refused(refusal, numericRefusal)}${optionsParam}): ${returnType} {`
 				: `export function ${fn}(input${opt}: ${inputType}${optionsParam}): ${returnType} {`;
 	const inputParams = (input: string, options: string): string =>
 		opt === '?' ? `...input: [input?: ${input}${options}] & ${refuseUndeclared('I', inputType, loose)}` : `input: ${input} & ${refuseUndeclared('I', inputType, loose)}${options}`;
+	const spelledInput = refused(numericRefusal);
+	const spelledOverload = (generic: string, options: string, required: boolean, type: string): string =>
+		`export function ${fn}<const I extends ${inputType}, ${generic}>(${
+			opt === '?' && required ? `...input: [input: ${spelledInput} | undefined${options}] & ${refuseUndeclared('I', inputType, loose)}` : inputParams(spelledInput, options)
+		}): ${type};`;
+	const omittedType = spelledTypeWith('undefined');
+	const possiblyOmittedType = spelledTypeWith('O | undefined');
 	const publicOverloads =
-		spelledType !== undefined
-			? [`export function ${fn}<const I extends ${inputType}, const O extends T.${typeName}.Options = {}>(${inputParams(refused(numericRefusal), ', options?: O')}): ${spelledType};`]
+		spelledType !== undefined && omittedType !== undefined && possiblyOmittedType !== undefined
+			? [
+					spelledOverload(suppliedGeneric, ', options: O', true, spelledType),
+					spelledOverload(optionsGeneric('_O', 'undefined'), ', options?: undefined', false, omittedType),
+					spelledOverload(suppliedGeneric, ', options?: O', false, possiblyOmittedType)
+				]
 			: [`export function ${fn}<const I extends ${inputType}>(${inputParams(refused(refusal, numericRefusal), optionsParam)}): ${returnType};`];
 	const spreadTarget = canDirectFactoryCall ? listSpreadTarget(node, nodeMap, kindEntries) : null;
 	const config = spelledType === undefined && refusal === undefined && numericRefusal === undefined && optionsParam === '' ? refusingParam('input', inputType, { optional: opt === '?', loose }) : undefined;

@@ -35,6 +35,12 @@ export type AnAnyEntryDiffers = Expect<Same<RowDiffersFromCall<AnyEntries, KeyOf
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnAnyParameterDiffers = Expect<Same<SameArguments<[x: any], [x: string]>, false>>;
 
+export type AnOptionalElementIsTheListsWithoutAndWithIt = Expect<SameArguments<[x: string, options?: number], [string] | [string, number | undefined]>>;
+export type AnOptionalElementIsNotARequiredOne = Expect<Same<SameArguments<[x: string, options?: number], [x: string, options: number]>, false>>;
+export type AnOptionalElementIsNotAMissingOne = Expect<Same<SameArguments<[x: string, options?: number], [x: string]>, false>>;
+export type AnOptionalElementKeepsItsType = Expect<Same<SameArguments<[x: string, options?: number], [string] | [string, string]>, false>>;
+export type ARestIsNotUnfolded = Expect<Same<SameArguments<string[], [x?: string]>, false>>;
+
 type StrictRows = { readonly [Id in keyof Rows]: { readonly LooseArgs: Rows[Id]['BuildArgs'] } };
 export type AWrongRowDiffers = Expect<Same<RowDiffersFromCall<Entries, KeyOf, StrictRows>, 'leaf'>>;
 

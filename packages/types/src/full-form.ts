@@ -21,11 +21,15 @@ export type CoercedSpelling<
 	Alts extends string,
 	Default extends Alts,
 	Side extends 'open' | 'close' = 'open'
-> = I extends NodeMethods
-	? I extends Record<`_${K}`, infer P extends Alts>
-		? P
-		: Alts
-	: OptionedSpelling<O, K, SpelledAffix<I, Alts, Default, Side>>;
+> = 0 extends 1 & I
+	? Alts
+	: I extends NodeMethods
+		? I extends Record<`_${K}`, infer P extends Alts>
+			? P
+			: Alts
+		: 0 extends 1 & O
+			? Alts
+			: OptionedSpelling<O, K, SpelledAffix<I, Alts, Default, Side>>;
 
 type OptionedSpelling<O, K extends string, Fallback> = O extends unknown
 	? K extends keyof O

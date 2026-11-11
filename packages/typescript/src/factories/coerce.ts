@@ -7984,15 +7984,43 @@ export function resolveNumberHex_content(value: T.NumberHex.LooseConfig['content
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
-export function coerceToNumberHex<const I extends T.NumberHex.Loose, const O extends T.NumberHex.Options = {}>(
+export function coerceToNumberHex<
+	const I extends T.NumberHex.Loose,
+	const O extends T.NumberHex.Options | undefined = T.NumberHex.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberHex.Loose>,
-	options?: O
+	options: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberHex>,
 	'radixPrefix',
 	CoercedSpelling<I, O, 'radixPrefix', '0x' | '0X', '0x'>
 >;
-export function coerceToNumberHex<const I extends T.NumberHex.Loose, const O extends T.NumberHex.Options = {}>(
+export function coerceToNumberHex<
+	const I extends T.NumberHex.Loose,
+	const _O extends T.NumberHex.Options | undefined = undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberHex.Loose>,
+	options?: undefined
+): WithSpelling<
+	ReturnType<typeof F.buildNumberHex>,
+	'radixPrefix',
+	CoercedSpelling<I, undefined, 'radixPrefix', '0x' | '0X', '0x'>
+>;
+export function coerceToNumberHex<
+	const I extends T.NumberHex.Loose,
+	const O extends T.NumberHex.Options | undefined = T.NumberHex.Options | undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberHex.Loose>,
+	options?: O
+): WithSpelling<
+	ReturnType<typeof F.buildNumberHex>,
+	'radixPrefix',
+	CoercedSpelling<I, O | undefined, 'radixPrefix', '0x' | '0X', '0x'>
+>;
+export function coerceToNumberHex<
+	const I extends T.NumberHex.Loose,
+	const O extends T.NumberHex.Options | undefined = T.NumberHex.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
@@ -8206,15 +8234,43 @@ export function resolveNumberBinary_content(
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
-export function coerceToNumberBinary<const I extends T.NumberBinary.Loose, const O extends T.NumberBinary.Options = {}>(
+export function coerceToNumberBinary<
+	const I extends T.NumberBinary.Loose,
+	const O extends T.NumberBinary.Options | undefined = T.NumberBinary.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberBinary.Loose>,
-	options?: O
+	options: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberBinary>,
 	'radixPrefix',
 	CoercedSpelling<I, O, 'radixPrefix', '0b' | '0B', '0b'>
 >;
-export function coerceToNumberBinary<const I extends T.NumberBinary.Loose, const O extends T.NumberBinary.Options = {}>(
+export function coerceToNumberBinary<
+	const I extends T.NumberBinary.Loose,
+	const _O extends T.NumberBinary.Options | undefined = undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberBinary.Loose>,
+	options?: undefined
+): WithSpelling<
+	ReturnType<typeof F.buildNumberBinary>,
+	'radixPrefix',
+	CoercedSpelling<I, undefined, 'radixPrefix', '0b' | '0B', '0b'>
+>;
+export function coerceToNumberBinary<
+	const I extends T.NumberBinary.Loose,
+	const O extends T.NumberBinary.Options | undefined = T.NumberBinary.Options | undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberBinary.Loose>,
+	options?: O
+): WithSpelling<
+	ReturnType<typeof F.buildNumberBinary>,
+	'radixPrefix',
+	CoercedSpelling<I, O | undefined, 'radixPrefix', '0b' | '0B', '0b'>
+>;
+export function coerceToNumberBinary<
+	const I extends T.NumberBinary.Loose,
+	const O extends T.NumberBinary.Options | undefined = T.NumberBinary.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
@@ -8253,15 +8309,43 @@ export function resolveNumberOctal_content(
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
-export function coerceToNumberOctal<const I extends T.NumberOctal.Loose, const O extends T.NumberOctal.Options = {}>(
+export function coerceToNumberOctal<
+	const I extends T.NumberOctal.Loose,
+	const O extends T.NumberOctal.Options | undefined = T.NumberOctal.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberOctal.Loose>,
-	options?: O
+	options: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberOctal>,
 	'radixPrefix',
 	CoercedSpelling<I, O, 'radixPrefix', '0o' | '0O', '0o'>
 >;
-export function coerceToNumberOctal<const I extends T.NumberOctal.Loose, const O extends T.NumberOctal.Options = {}>(
+export function coerceToNumberOctal<
+	const I extends T.NumberOctal.Loose,
+	const _O extends T.NumberOctal.Options | undefined = undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberOctal.Loose>,
+	options?: undefined
+): WithSpelling<
+	ReturnType<typeof F.buildNumberOctal>,
+	'radixPrefix',
+	CoercedSpelling<I, undefined, 'radixPrefix', '0o' | '0O', '0o'>
+>;
+export function coerceToNumberOctal<
+	const I extends T.NumberOctal.Loose,
+	const O extends T.NumberOctal.Options | undefined = T.NumberOctal.Options | undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberOctal.Loose>,
+	options?: O
+): WithSpelling<
+	ReturnType<typeof F.buildNumberOctal>,
+	'radixPrefix',
+	CoercedSpelling<I, O | undefined, 'radixPrefix', '0o' | '0O', '0o'>
+>;
+export function coerceToNumberOctal<
+	const I extends T.NumberOctal.Loose,
+	const O extends T.NumberOctal.Options | undefined = T.NumberOctal.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<

@@ -48,6 +48,30 @@ describe('builders and their kind spelled in full', () => {
 		expect([onlyIndexed, defaultPossible, sparse.$render()]).toEqual(['0x', true, '0xff']);
 	});
 
+	it('types a forwarded options object that may be absent as its spelling or the text\'s', () => {
+		const forward = (options?: { readonly radixPrefix: '0x' }) => py.build.integer.hex('0XFF', options);
+		const omitted = forward();
+		const given = forward({ radixPrefix: '0x' });
+		const either: '0x' | '0X' = omitted.radixPrefix();
+		// @ts-expect-error the forwarded options may be absent, so the text's spelling stays possible
+		const onlyOption: '0x' = omitted.radixPrefix();
+		const textPossible: '0X' extends typeof omitted._radixPrefix ? true : false = true;
+		const optionPossible: '0x' extends typeof given._radixPrefix ? true : false = true;
+		expect([either, onlyOption, textPossible, optionPossible]).toEqual(['0X', '0X', true, true]);
+		expect([omitted.$render(), given.$render()]).toEqual(['0XFF', '0xFF']);
+		const callback: (text: '0XFF', options?: { readonly radixPrefix?: '0x' | '0X' }) => { radixPrefix(): '0x' | '0X' } = py.build.integer.hex;
+		expect([callback('0XFF').radixPrefix(), callback('0XFF', { radixPrefix: '0x' }).radixPrefix()]).toEqual(['0X', '0x']);
+	});
+
+	it('builds any-typed options as given, and returns a passed node as it is', () => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const anyOptions: any = { radixPrefix: '0x' };
+		const node = py.build.integer.hex('0XFF');
+		const passed = py.build.integer.hex(node, anyOptions);
+		const own: '0X' = passed.radixPrefix();
+		expect([py.build.integer.hex('0XFF', anyOptions).$render(), passed.$render(), own]).toEqual(['0xFF', '0XFF', '0X']);
+	});
+
 	it('takes text as content when not told otherwise, where the delimiter can also begin the content', () => {
 		expect(py.build.comment('# x').$render()).toBe('## x\n');
 		expect(py.build.comment('# x', false).$render()).toBe('# x\n');

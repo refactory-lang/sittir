@@ -52,6 +52,16 @@ describe('a coercer whose kind spells a delimiter in its text', () => {
 		expect(hex).toContain('CoercedSpelling<I, O, "radixPrefix", "0x" | "0X", "0x">>');
 		expect(hex).toContain('spelledForm(input, ["0x", "0X"] as const, [""] as const)');
 		expect(hex).toContain('radixPrefix: options?.radixPrefix ?? _spelled.open');
+		const input = 'input: I & NumericInput<I, true, { "content": true }> & RefuseUndeclared<I, T.Hex.Loose>';
+		const spelled = 'WithSpelling<ReturnType<typeof F.buildHex>, "radixPrefix", CoercedSpelling<I, ';
+		const overloads = [
+			`const O extends T.Hex.Options | undefined = T.Hex.Options | undefined>(${input}, options: O): ${spelled}O, `,
+			`const _O extends T.Hex.Options | undefined = undefined>(${input}, options?: undefined): ${spelled}undefined, `,
+			`const O extends T.Hex.Options | undefined = T.Hex.Options | undefined>(${input}, options?: O): ${spelled}O | undefined, `
+		];
+		const at = overloads.map((overload) => hex.indexOf(overload));
+		expect(at.every((index) => index >= 0)).toBe(true);
+		expect(at).toEqual([...at].sort((a, b) => a - b));
 	});
 
 	it('types a closing spelling from the alternative the text ends with', () => {
@@ -102,9 +112,13 @@ describe('a coercer that reads a spelled closing delimiter', () => {
 
 	it('builds absent optional content from a text that is only the spelling', async () => {
 		const optional = { extras: '/\\s/', rules: ["source: ($) => repeat($.long)", "long: () => token(seq(optional(/[0-9]+/), choice('L', 'l')))"].join(', ') };
-		const coerce = runLong(
-			await emittedFor(optional, "edits: { long: { '0/0': field('content'), '0/1': field('suffix') } }, options: { long: { 'suffix:': preference('L') } }")
-		);
+		const emitted = await emittedFor(optional, "edits: { long: { '0/0': field('content'), '0/1': field('suffix') } }, options: { long: { 'suffix:': preference('L') } }");
+		const long = coercerOf(emitted, 'coerceToLong');
+		const input = 'I & NumericInput<I, true, { "content": true }>';
+		expect(long).toContain(`(...input: [input?: ${input}, options?: undefined] & RefuseUndeclared<I, T.Long.Loose>): `);
+		expect(long).toContain(`(...input: [input: ${input} | undefined, options: O] & RefuseUndeclared<I, T.Long.Loose>): `);
+		expect(long).toContain(`(...input: [input?: ${input}, options?: O] & RefuseUndeclared<I, T.Long.Loose>): `);
+		const coerce = runLong(emitted);
 		expect(coerce('l')).toEqual({ content: undefined, options: { suffix: 'l' } });
 		expect(coerce('L')).toEqual({ content: undefined, options: { suffix: 'L' } });
 		expect(coerce('7L')).toEqual({ content: '7', options: { suffix: 'L' } });
