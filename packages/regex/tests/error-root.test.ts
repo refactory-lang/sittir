@@ -37,4 +37,20 @@ describe('an ERROR root', () => {
 			expect(live()).toBe(before);
 		}
 	});
+
+	it("frees no parse through a copy whose tree token, $tree and coordinate name different trees", async () => {
+		const arena = () => createEngine(regex, { nodeStorage: 'arena' });
+		const releases = [(engine: Awaited<ReturnType<typeof arena>>, node: object) => engine.release(node as never), (_: unknown, node: object) => (node as Disposable)[Symbol.dispose]()];
+		for (const release of releases) {
+			using a = await arena();
+			using b = await arena();
+			const ours = a.parse('a');
+			const theirs = b.parse('?');
+			const before = live();
+			release(a, { ...theirs, ...ours });
+			expect(live()).toBe(before);
+			expect(b.render(theirs as never).toString()).toBe('?');
+			expect(a.render(ours as never).toString()).toBe('a');
+		}
+	});
 });

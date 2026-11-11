@@ -1,5 +1,5 @@
 import type { TreeMember, TreeToken } from '@sittir/types';
-import { coordinateOf, decodeIndex, type TreeHandle } from './read.ts';
+import { coordinateOf, decodeIndex, decodeTree, type TreeHandle } from './read.ts';
 import { isHandle } from './handle.ts';
 
 export type { TreeToken };
@@ -48,13 +48,16 @@ export function treeOf(node: object): TreeHandle | undefined {
 }
 
 /** The tree `token` names, while it is registered. */
-/** The tree whose root's count a release of `node` drops: the tree it reads from, by its token or its `$tree`, when `node` is the root of a parse its engine holds. */
+/** The tree whose root's count a release of `node` drops: the tree it reads from, when `node` is the root of a parse its engine holds and its token, its `$tree` and its coordinate all name that tree. */
 export function heldRootTree(node: object): TreeHandle | undefined {
-	const token = (node as Holder)[TREE] ?? (node as { readonly $tree?: TreeHandle }).$tree?.token;
+	const own = (node as Holder)[TREE];
+	const read = (node as { readonly $tree?: TreeHandle }).$tree;
+	if (own != null && read !== undefined && read.token !== own) return undefined;
+	const token = own ?? read?.token;
 	const tree = token === undefined ? undefined : treeOfToken(token);
 	if (tree?.releaseRoot === undefined) return undefined;
 	const coordinate = coordinateOf(node);
-	return coordinate !== undefined && decodeIndex(coordinate.$treeHandle) === 0 ? tree : undefined;
+	return coordinate !== undefined && decodeIndex(coordinate.$treeHandle) === 0 && decodeTree(coordinate.$treeHandle) === tree.id ? tree : undefined;
 }
 
 export function treeOfToken(token: TreeToken): TreeHandle | undefined {
