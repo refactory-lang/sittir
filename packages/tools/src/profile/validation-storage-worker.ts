@@ -37,11 +37,11 @@ export async function sampleValidationStorage(options: ValidationStorageOptions)
 						surface: bucket === 'ir-render-parse' ? 'ir' : 'raw',
 						profile
 					});
-		for (let i = 0; i < options.warmup; i++) await run(new RoundtripProfile());
+		for (let i = 0; i < options.warmup; i++) await run(new RoundtripProfile(undefined, bucket));
 		let first: ValidationBucketSample | undefined;
 		for (let i = 0; i < options.iterations; i++) {
 			await collectGarbage();
-			const profile = new RoundtripProfile();
+			const profile = new RoundtripProfile(undefined, bucket);
 			const start = performance.now();
 			const result = await run(profile);
 			const elapsed = performance.now() - start;

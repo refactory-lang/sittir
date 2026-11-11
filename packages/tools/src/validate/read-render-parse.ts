@@ -800,12 +800,30 @@ export function renderReparse(
 	dumpLabel?: string,
 	printReparsed = false
 ): RenderReparseOutcome {
-	const rendered = measureRoundtrip(ctx.profile, 'render', () => {
+	const own = typeof data === 'function';
+	const outcome = renderReparseOnce(data, renderedKind, targetKind, source, treeRoot, ctx, tolerance, dumpLabel, printReparsed);
+	ctx.profile?.outcome(own ? 'own' : 'primary', outcome.status);
+	return outcome;
+}
+
+function renderReparseOnce(
+	data: AnyUntypedNode | OwnRender,
+	renderedKind: string,
+	targetKind: string,
+	source: TSNode | null,
+	treeRoot: boolean,
+	ctx: RenderReparseContext,
+	tolerance?: AstTolerance,
+	dumpLabel?: string,
+	printReparsed = false
+): RenderReparseOutcome {
+	const own = typeof data === 'function';
+	const rendered = measureRoundtrip(ctx.profile, own ? 'own-render' : 'render', () => {
 		if (typeof data === 'function') return data();
 		data = candidateData(data, ctx.triviaOf);
 		return ctx.render(data);
 	});
-	ctx.profile?.output(renderedKind, targetKind, rendered);
+	ctx.profile?.output(renderedKind, targetKind, rendered, own ? 'own-render' : 'render');
 	if (dumpLabel !== undefined) {
 		writeSync(2, `[dump-render] ${dumpLabel} data=${JSON.stringify(data)}\n`);
 		writeSync(2, `[dump-render] ${dumpLabel} rendered=${JSON.stringify(rendered)}\n`);
@@ -813,7 +831,7 @@ export function renderReparse(
 	const wrapped = wrapRendered(rendered, renderedKind, targetKind, ctx);
 	if (wrapped === null) return { status: 'excluded', reason: hostlessReason(renderedKind, targetKind, ctx), rendered };
 	if (rendered.trim() === '') return { status: 'excluded', reason: 'empty-render', rendered };
-	using tree2 = measureRoundtrip(ctx.profile, 'parse', () => ctx.parser.parse(wrapped.text));
+	using tree2 = measureRoundtrip(ctx.profile, own ? 'own-parse' : 'parse', () => ctx.parser.parse(wrapped.text));
 	if (dumpLabel !== undefined) {
 		writeSync(
 			2,
@@ -823,7 +841,13 @@ export function renderReparse(
 	if (tree2.root.hasError) {
 		return { status: 'failed', message: `re-parse error [${firstParseDefect(tree2.root) ?? 'unlocated'}]`, rendered };
 	}
-	const triviaOffsetAdjust = typeof data === 'function' ? 0 : leadingTriviaRenderedWidth(data, ctx.render, ctx.triviaOf, ctx.accessorOf);
+	const countedRender = (node: AnyUntypedNode): string => {
+		const text = ctx.render(node);
+		ctx.profile?.rendered('lead-width', text);
+		return text;
+	};
+	const triviaOffsetAdjust =
+		typeof data === 'function' ? 0 : measureRoundtrip(ctx.profile, 'lead-width', () => leadingTriviaRenderedWidth(data as AnyUntypedNode, countedRender, ctx.triviaOf, ctx.accessorOf));
 	const locate = (at: { text: string; offset: number; at?: (renderedOffset: number) => number }) =>
 		treeRoot
 			? tree2.root
@@ -847,7 +871,7 @@ export function renderReparse(
 		rendered,
 		wrapped,
 		...(printReparsed ? { reparsedTree: reparsed.toString() } : {}),
-		astDiff: source ? astStructuralDiff(source, reparsed, '', ctx.variantChildKinds, tolerance, ctx.readIdentity) : null
+		astDiff: source ? measureRoundtrip(ctx.profile, own ? 'own-compare' : 'compare', () => astStructuralDiff(source, reparsed, '', ctx.variantChildKinds, tolerance, ctx.readIdentity)) : null
 	};
 }
 

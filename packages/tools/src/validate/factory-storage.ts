@@ -585,24 +585,26 @@ export async function validateFactoryStorage(
 					skips.push({ entry: entry.name, kind, reason: 'no-factory-data', input: inputSource });
 					continue;
 				}
-				const factoryData = buildFactoryUntypedNode(
-					referenceData,
-					kind,
-					node1?.type,
-					cstNamedChildKinds[0],
-					cstNamedChildKinds,
-					factoryMap,
-					factoryShapes,
-					fieldAliasMap,
-					factoryFields,
-					factorySlots,
-					surface,
-					entry.name,
-					inputSource,
-					errors,
-					accessorOf,
-					kindNameFromId,
-					handle
+				const factoryData = measureRoundtrip(options.profile, 'storage-build', () =>
+					buildFactoryUntypedNode(
+						referenceData,
+						kind,
+						node1?.type,
+						cstNamedChildKinds[0],
+						cstNamedChildKinds,
+						factoryMap,
+						factoryShapes,
+						fieldAliasMap,
+						factoryFields,
+						factorySlots,
+						surface,
+						entry.name,
+						inputSource,
+						errors,
+						accessorOf,
+						kindNameFromId,
+						handle
+					)
 				);
 				render.cases.add(kind);
 				const renderFailure = (message: string, rendered?: string): BuiltRenderFailure => ({
@@ -703,11 +705,13 @@ export async function validateFactoryStorage(
 
 				release(builtTree);
 				if (factoryData === null) continue;
-				const diff = compareNodeStorage(
-					referenceData as unknown as Record<string, unknown>,
-					builtStorageOf(factoryData, accessorOf) as Record<string, unknown>,
-					'',
-					{ factoryShapes, kindNameFromId, derivedSlots, factorySlots }
+				const diff = measureRoundtrip(options.profile, 'storage-compare', () =>
+					compareNodeStorage(
+						referenceData as unknown as Record<string, unknown>,
+						builtStorageOf(factoryData, accessorOf) as Record<string, unknown>,
+						'',
+						{ factoryShapes, kindNameFromId, derivedSlots, factorySlots }
+					)
 				);
 				release(factoryData);
 				if (diff) {
