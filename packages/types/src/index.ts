@@ -1266,6 +1266,7 @@ export type {
 	EngineSettings,
 	ApiSelection,
 	FileChange,
+	FileWrite,
 	GrammarInnerTrivia,
 	HoldsTrivia,
 	NodeMethods,
