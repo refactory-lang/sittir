@@ -1,7 +1,7 @@
 import type { CommitScope, EngineIdentity, NodeCoordinate, NodeTrivia } from '@sittir/types';
 import { bindTree, engineOf, isLive, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered, type Role } from './identity.ts';
-import { type ChangedEdges, coordinateOf, holdReadCoordinate, holdReadTree, isRead, type KindView, listEdges, type ReadOutput, setTriviaOf, triviaOf } from './node-data.ts';
+import { type ChangedEdges, coordinateOf, heldRootTree, holdReadCoordinate, holdReadTree, isRead, type KindView, listEdges, type ReadOutput, setTriviaOf, triviaOf } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
@@ -660,9 +660,7 @@ export class BuiltArena {
 	releaseNode(node: object): void {
 		const tree = (node as { readonly $tree?: TreeHandle }).$tree;
 		if (tree === this.tree) return this.releaseHandle(node);
-		if (tree?.releaseRoot === undefined) return;
-		const coordinate = coordinateOf(node);
-		if (coordinate !== undefined && decodeIndex(coordinate.$treeHandle) === 0) tree.releaseRoot();
+		heldRootTree(node)?.releaseRoot?.();
 	}
 
 	/** Releases what the handle `node` holds: its record's count, or for a leaf not yet placed, the count it holds of each built record its sides park. A record already released, or its count already placed, is passed over, and so is a handle whose record's chunk was freed. */

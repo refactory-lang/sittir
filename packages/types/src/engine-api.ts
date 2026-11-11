@@ -389,7 +389,8 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	 *
 	 * @throws `ParseErrors` when `options.errors` is `'throw'` and the source
 	 * did not parse cleanly, and when `options.depth` is not a whole number of
-	 * levels of at least 1 or `Infinity`. A parse that throws holds nothing.
+	 * levels of at least 1 or `Infinity`. A parse that throws holds nothing, and
+	 * neither does one a `parse` interceptor makes but does not return.
 	 */
 	readonly parse: (source: string, options?: ParseOptions) => API['root'];
 	/**

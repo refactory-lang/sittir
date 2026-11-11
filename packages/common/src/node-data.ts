@@ -18,6 +18,14 @@ export function coordinateOf(node: object): NodeCoordinate | undefined {
 	return at !== undefined && isCoordinate(at) ? at : undefined;
 }
 
+/** The tree whose root's count a release of `node` drops: its own, when `node` is the root of a parse its engine holds. */
+export function heldRootTree(node: object): TreeHandle | undefined {
+	const tree = (node as { readonly $tree?: TreeHandle }).$tree;
+	if (tree?.releaseRoot === undefined) return undefined;
+	const coordinate = coordinateOf(node);
+	return coordinate !== undefined && decodeIndex(coordinate.$treeHandle) === 0 ? tree : undefined;
+}
+
 /**
  * The byte range of a parsed node in the source its tree was read from, or `undefined` for a node that was built. Internal: a node's position is not part of the public node surface, and the range belongs to the version of the tree the node was read from, so it says nothing about the node after an edit.
  */

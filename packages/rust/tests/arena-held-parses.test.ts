@@ -216,6 +216,50 @@ describe('an arena parse, held by its engine and counted by its root and each re
 		}
 	});
 
+	it('keeps the parse whose root an interceptor returns behind a proxy that binds its methods', async () => {
+		const proxied = {
+			parse: (_: unknown, next: () => unknown): unknown =>
+				new Proxy(next() as object, {
+					get: (target, key) => {
+						const value: unknown = Reflect.get(target, key, target);
+						return typeof value === 'function' ? (value as (...args: unknown[]) => unknown).bind(target) : value;
+					}
+				})
+		};
+		using engine = await createEngine(rust, { nodeStorage: 'arena', intercept: [proxied as never] });
+		const before = live();
+		const root = engine.parse('fn f() {}\n') as unknown as Root;
+		expect(String(engine.render(root as never))).toBe('fn f() {}\n');
+		expect(live()).toBe(before + 1);
+		root[Symbol.dispose]();
+		expect(live()).toBe(before);
+	});
+
+	it('holds nothing of a parse whose returned value an interceptor revoked, or that is not a root', async () => {
+		const hooks = [
+			{
+				parse: (_: unknown, next: () => unknown): unknown => {
+					const { proxy, revoke } = Proxy.revocable(next() as object, {});
+					revoke();
+					return proxy;
+				}
+			},
+			{ parse: (_: unknown, next: () => unknown): unknown => (next() as Root).statements()[0] }
+		];
+		for (const hook of hooks) {
+			using engine = await createEngine(rust, { nodeStorage: 'arena', intercept: [hook as never] });
+			const before = live();
+			for (let n = 0; n < 20; n++) {
+				try {
+					engine.parse('fn f() {}\n');
+				} catch (error) {
+					expect(String(error)).toMatch(/revoked/);
+				}
+			}
+			expect(live()).toBe(before);
+		}
+	});
+
 	it('refuses to dispose a parse its engine holds, which its root then frees', async () => {
 		using engine = await arena();
 		const before = live();

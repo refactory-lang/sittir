@@ -124,13 +124,14 @@ export function readNode(tree: TreeHandle, coordinate: NodeCoordinate, depth?: n
  */
 export function readOrRelease<T>(trees: readonly TreeHandle[], read: () => T, returned: (answer: T) => TreeHandle | undefined): T {
 	let answer: T;
+	let kept: TreeHandle | undefined;
 	try {
 		answer = read();
+		kept = returned(answer);
 	} catch (error) {
 		for (const tree of trees) tree.releaseRoot?.();
 		throw error;
 	}
-	const kept = returned(answer);
 	for (const tree of trees) if (tree !== kept) tree.releaseRoot?.();
 	return answer;
 }
