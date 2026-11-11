@@ -196,6 +196,26 @@ describe('an arena parse, held by its engine and counted by its root and each re
 		expect(live()).toBe(before);
 	});
 
+	it('holds nothing of a parse an interceptor does not return, and keeps the one it does', async () => {
+		using other = await object();
+		const fallback = other.parse('fn ok() {}\n');
+		const hooks = [
+			{ parse: (_: unknown, next: () => unknown): unknown => (next(), next()) },
+			{ parse: (_: unknown, next: () => unknown): unknown => (next(), fallback) }
+		];
+		for (const hook of hooks) {
+			using engine = await createEngine(rust, { nodeStorage: 'arena', intercept: [hook as never] });
+			const before = live();
+			for (let n = 0; n < 20; n++) {
+				const root = engine.parse('fn f() {}\n');
+				if (root === fallback) continue;
+				expect(String(engine.render(root))).toBe('fn f() {}\n');
+				engine.release(root);
+			}
+			expect(live()).toBe(before);
+		}
+	});
+
 	it('refuses to dispose a parse its engine holds, which its root then frees', async () => {
 		using engine = await arena();
 		const before = live();

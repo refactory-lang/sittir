@@ -793,7 +793,7 @@ export function createNativeEngine<
 					parseTree,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const tree = parseTree(source);
-						return readOrRelease([tree], () => ({ tree, root: tree.read!(0, depthOf(parseOptions)) as TRoot & ParsedRoot }));
+						return readOrRelease([tree], () => ({ tree, root: tree.read!(0, depthOf(parseOptions)) as TRoot & ParsedRoot }), () => tree);
 					}
 				}
 			}

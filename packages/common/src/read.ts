@@ -120,15 +120,19 @@ export function readNode(tree: TreeHandle, coordinate: NodeCoordinate, depth?: n
 }
 
 /**
- * What `read` answers of the parses `trees` holds, releasing each one's root when `read` throws: a parse whose root never reaches its caller holds nothing.
+ * What `read` answers of the parses `trees` holds, releasing the root of each whose root does not reach its caller: every one when `read` throws, and otherwise every one but the tree `returned` names of the answer. A parse whose root never reaches its caller holds nothing.
  */
-export function readOrRelease<T>(trees: readonly TreeHandle[], read: () => T): T {
+export function readOrRelease<T>(trees: readonly TreeHandle[], read: () => T, returned: (answer: T) => TreeHandle | undefined): T {
+	let answer: T;
 	try {
-		return read();
+		answer = read();
 	} catch (error) {
 		for (const tree of trees) tree.releaseRoot?.();
 		throw error;
 	}
+	const kept = returned(answer);
+	for (const tree of trees) if (tree !== kept) tree.releaseRoot?.();
+	return answer;
 }
 
 /**
