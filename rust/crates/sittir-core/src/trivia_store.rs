@@ -389,8 +389,9 @@ impl<T: Clone> TriviaStore<T> {
 
     /// The units `holder`'s record holds have the sides `units` gives, each by
     /// its slot word and its item there, in place of every unit side the
-    /// holder had. The built records the new sides name are held, and the
-    /// ones the old sides named released.
+    /// holder had; a side `units` gives twice is the last one given. What the
+    /// kept sides name is held (`hold`), and what the old sides named
+    /// released.
     ///
     /// # Errors
     ///
@@ -401,10 +402,16 @@ impl<T: Clone> TriviaStore<T> {
     where
         T: HeapBytes,
     {
-        for (_, _, trivia) in &units {
-            for entries in [&trivia.leading, &trivia.trailing, &trivia.inner].into_iter().flatten() {
-                self.hold(entries, None)?;
+        let mut rows = std::collections::BTreeMap::new();
+        for (word, item, trivia) in units {
+            for (side, entries) in [(TriviaSide::Leading, trivia.leading), (TriviaSide::Trailing, trivia.trailing), (TriviaSide::Inner, trivia.inner)] {
+                if let Some(entries) = entries {
+                    rows.insert((word, item, side), entries);
+                }
             }
+        }
+        for entries in rows.values() {
+            self.hold(entries, None)?;
         }
         let released: Vec<_> = {
             let mut sides = self.write();
@@ -412,13 +419,8 @@ impl<T: Clone> TriviaStore<T> {
             let held: Vec<_> = sides.range(first..).take_while(|((place, _), _)| matches!(place, Place::Unit(site) if site.holder == holder)).map(|(&key, _)| key).collect();
             held.into_iter().filter_map(|key| sides.remove(&key)).collect()
         };
-        for (word, item, trivia) in units {
-            let place = Place::Unit(Site { holder, word, item });
-            for (side, entries) in [(TriviaSide::Leading, trivia.leading), (TriviaSide::Trailing, trivia.trailing), (TriviaSide::Inner, trivia.inner)] {
-                if let Some(entries) = entries {
-                    self.insert(place, side, entries);
-                }
-            }
+        for ((word, item, side), entries) in rows {
+            self.insert(Place::Unit(Site { holder, word, item }), side, entries);
         }
         released.iter().try_for_each(|entries| self.release_entries(entries, None))
     }
@@ -822,6 +824,20 @@ mod tests {
         assert_eq!(store.side(leaf, TriviaSide::Trailing), Some(vec![entry("// leaf")]), "a leaf at a unit's site keeps its sides");
         store.write_units(Address(5), Vec::new()).expect("a write");
         assert_eq!(store.units(Address(5)), []);
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn a_unit_side_one_write_gives_twice_counts_only_the_row_it_keeps() {
+        let store = TriviaStore::<TriviaText>::new();
+        let slot = store.built_mut().held_mut().hold(crate::arena::HeldParse(TreeId(7)));
+        let named = TriviaEntry::new(SlotValue::Coord(crate::slot::NodeCoordinate::new(TreeId(7), NodeIndex::new(1), NodeIndex::new(2), crate::types::Span { start: 0, end: 8 })));
+        let leading = |entries| crate::trivia::NodeTrivia { leading: Some(entries), trailing: None, inner: None };
+        let item = crate::types::ItemIndex(0);
+        store.write_units(Address(5), vec![(2, item, leading(vec![named])), (2, item, leading(Vec::new()))]).expect("a unit write");
+        assert_eq!(store.side(Place::Unit(Site { holder: Address(5), word: 2, item }), TriviaSide::Leading), Some(Vec::new()), "the last row is the one kept");
+        store.built_mut().release_root(slot, TreeId(7));
+        assert_eq!(store.built_mut().take_freed_parses().len(), 1, "the kept row names no record of tree 7, so its root's release frees its slot");
     }
 
     #[cfg(feature = "arena")]
