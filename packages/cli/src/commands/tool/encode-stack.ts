@@ -10,7 +10,7 @@ export const encodeStack: CommandModule = {
 			.option('--addon <paths...>', 'Unstripped addon files to check instead of the copy each release build keeps (sittir-<grammar>.<platform>.node)')
 			.option(
 				'--objdump <path>',
-				"llvm-objdump to disassemble with (default: $LLVM_OBJDUMP, then the pinned Rust toolchain's llvm-tools)"
+				"llvm-objdump to disassemble with (default: $LLVM_OBJDUMP, then the pinned Rust toolchain's llvm-tools, then xcrun on macOS)"
 			)
 			.option('--paths', 'Print every costliest path, not only those over budget')
 			.option('--json', 'Print the measurements as JSON')

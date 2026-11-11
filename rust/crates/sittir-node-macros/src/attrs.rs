@@ -32,6 +32,14 @@ pub struct KindAttrs {
     #[allow(clippy::option_option, reason = "the attribute's three spellings: absent, bare `text`, and `text = \"…\"`")]
     pub text: Option<Option<LitStr>>,
     pub interior: Option<LitStr>,
+    /// `affixes = ("open", "close")`, beside `interior`: the interior is its
+    /// one capture between these fixed texts, so a matching text's capture
+    /// is what they leave.
+    pub affixes: Option<(LitStr, LitStr)>,
+    /// `scanned`, beside `affixes`: an external scanner lexes the kind, not
+    /// the rule its interior was compiled from, so a text is checked against
+    /// the interior before its affixes are trusted.
+    pub scanned: bool,
     pub content: Option<Ident>,
     pub item: Option<Ident>,
     /// On a list kind: its items are wrappers a client reads through, to
@@ -196,6 +204,16 @@ fn token_groups(input: ParseStream) -> syn::Result<Vec<TokenGroup>> {
     }
 }
 
+/// `("open", "close")`.
+fn affixes(input: ParseStream) -> syn::Result<(LitStr, LitStr)> {
+    let content;
+    syn::parenthesized!(content in input);
+    let open = content.parse()?;
+    content.parse::<Token![,]>()?;
+    let close = content.parse()?;
+    Ok((open, close))
+}
+
 /// `[PATH, …]`, or one `PATH`.
 fn paths(input: ParseStream) -> syn::Result<Vec<Path>> {
     if input.peek(syn::token::Bracket) {
@@ -226,6 +244,8 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "content_list" => out.content_list = true,
                 "text" => out.text = Some(if meta.input.peek(Token![=]) { Some(meta.value()?.parse()?) } else { None }),
                 "interior" => out.interior = Some(meta.value()?.parse()?),
+                "affixes" => out.affixes = Some(affixes(meta.value()?)?),
+                "scanned" => out.scanned = true,
                 "content" => out.content = Some(meta.value()?.parse()?),
                 "item" => out.item = Some(meta.value()?.parse()?),
                 "wrapped_items" => out.wrapped_items = true,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { allGrammars } from '@sittir/codegen/grammars';
-import { loadNodeModel, loadReparseHosts, wrapForReparse } from '../../src/validate/common.ts';
+import { loadLanguageForGrammar, loadNodeModel, loadReparseHosts, treeParser, wrapForReparse, type TreeParser } from '../../src/validate/common.ts';
 import { wrapRendered } from '../../src/validate/read-render-parse.ts';
 
 describe('the root identity reparse wrapper', () => {
@@ -21,15 +21,17 @@ describe('the root identity reparse wrapper', () => {
 
 describe('wrapping a rendered split kind', () => {
 	const placements = new Map([['split_kind', { kind: '_expression', display: '_expression', prefix: '(', suffix: ')' }]]);
-	const ctx = { grammar: 'rust', kindToSupertypes: new Map(), adoptedVariantKinds: new Set<string>(), root: undefined, placements, parser: { parse: () => null } };
+	const contextOf = (parser: TreeParser) => ({ grammar: 'rust', kindToSupertypes: new Map(), adoptedVariantKinds: new Set<string>(), root: undefined, placements, parser });
 
 	it('places a kind with no host of its own inside its placement owner, at the offset after the prefix', async () => {
 		await loadReparseHosts('rust');
-		expect(wrapRendered('x', 'split_kind', 'split_kind', ctx)).toMatchObject({ text: 'fn _f() { let _ = (x); }', offset: 19 });
+		using parser = treeParser(await loadLanguageForGrammar('rust'));
+		expect(wrapRendered('x', 'split_kind', 'split_kind', contextOf(parser))).toMatchObject({ text: 'fn _f() { let _ = (x); }', offset: 19 });
 	});
 
 	it('gives a kind with neither a host nor a placement no wrapper', async () => {
 		await loadReparseHosts('rust');
-		expect(wrapRendered('x', 'unplaced_kind', 'unplaced_kind', ctx)).toBeNull();
+		using parser = treeParser(await loadLanguageForGrammar('rust'));
+		expect(wrapRendered('x', 'unplaced_kind', 'unplaced_kind', contextOf(parser))).toBeNull();
 	});
 });

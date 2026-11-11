@@ -1,21 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
-import { loadWebTreeSitter } from '../validate/common.ts';
+import { languageAt, treeParser } from '../validate/common.ts';
 
 const pythonSittirDir = join(__dirname, '../../../python/.sittir');
 const wasmPath = join(pythonSittirDir, 'parser.wasm');
 
 describe('spike: override-compiled parser', () => {
 	it.skipIf(!existsSync(wasmPath))('loads override WASM and parses python', async () => {
-		const { Parser, Language } = await loadWebTreeSitter();
-		const lang = await Language.load(wasmPath);
-		const parser = new Parser();
-		parser.setLanguage(lang);
-
-		const tree = parser.parse('a if b else c');
-		if (tree === null) throw new Error('parser returned no tree');
-		const root = tree.rootNode;
+		using parser = treeParser(await languageAt(wasmPath));
+		using tree = parser.parse('a if b else c');
+		const root = tree.root;
 
 		expect(root.type).toBe('module');
 		const expr = root.descendantsOfType('expression_statement')[0];

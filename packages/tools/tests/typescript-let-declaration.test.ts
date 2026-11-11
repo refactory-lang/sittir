@@ -1,12 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { loadLanguageForGrammar } from '../src/validate/common.ts';
+import { loadLanguageForGrammar, treeParser } from '../src/validate/common.ts';
 
 async function parse(source: string): Promise<string> {
-	const { lang } = await loadLanguageForGrammar('typescript');
-	const { Parser } = await import('web-tree-sitter');
-	const parser = new Parser();
-	parser.setLanguage(lang);
-	return parser.parse(source)!.rootNode.toString();
+	using parser = treeParser(await loadLanguageForGrammar('typescript'));
+	using tree = parser.parse(source);
+	return tree.root.toString();
 }
 
 describe('typescript keeps `let` an identifier only where a declaration cannot start', () => {

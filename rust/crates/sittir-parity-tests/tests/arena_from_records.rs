@@ -5,12 +5,13 @@
 //! no record.
 #![cfg(feature = "arena")]
 
-use sittir_core::arena::{Address, ArenaRead, BuiltChunks, Cell, CellAt, HeldArenas, HydrateNode, Linked, RecordCells, RecordGrammar, RecordSink, RecordTrees, WriteCell};
-use sittir_core::engine::{EngineGrammar, ParsedTree};
-use sittir_core::layout::LayoutWork;
+use sittir_core::arena::{Address, ArenaRead, BuiltChunks, Cell, CellAt, HeldArenas, HydrateNode, LeafRead, Linked, RecordCells, RecordGrammar, RecordSink, RecordTrees, WriteCell};
+use sittir_core::engine::{node_at_index, EngineGrammar, NodeRead, ParsedTree};
+use sittir_core::layout::{LayoutWork, NodeLayout, UnitSides};
+use sittir_core::nodes::Nodes;
 use sittir_core::options::ResolvedOptions;
-use sittir_core::prepare::RenderContext;
-use sittir_core::read::{Depth, ReadNode};
+use sittir_core::prepare::{Prepare, RenderContext};
+use sittir_core::read::{descendant_count, Depth, HasLayout, ReadNode};
 use sittir_core::render::RenderError;
 use sittir_core::slot::{ChangedEdges, NodeCoordinate};
 use sittir_core::trivia_store::TriviaStore;
@@ -346,4 +347,213 @@ fn a_baseline_measured_from_records_is_the_one_measured_through_the_tree() {
     for (name, n) in runs {
         assert!(n > 0, "{name}: its fixtures hold layout runs");
     }
+}
+
+/// Sources whose record-less reads take no tree once a whole read hydrated
+/// them: one holding an `ERROR`, and one holding an identifier, a number
+/// literal with parts (`kind:n`), whose interior has a record of its own,
+/// units with sides, and the case's edited node.
+struct Reads {
+    error: &'static str,
+    source: &'static str,
+    number: &'static str,
+}
+
+fn rust_reads() -> Reads {
+    Reads { error: "fn f() { let = ; }\n", source: "fn f(a: i32) -> i32 {\n    let v = [true, /* b */ false];\n    g(a, 0x1Fu8 as /* c */ u16);\n    a\n}\n", number: "integer_literal_hex:0" }
+}
+
+fn python_reads() -> Reads {
+    Reads { error: "def f(a b):\n    pass\n", source: "def f(a):\n    x = [True, # c\n         None]\n    g(a, 1.5)\n", number: "float_point:0" }
+}
+
+fn typescript_reads() -> Reads {
+    Reads { error: "let x = (;\n", source: "const t = [/* a */ true, , /* b */ false]\ng(t, 1.5)\n", number: "number_float_point:0" }
+}
+
+/// The tree reads each record-less read of `reads` makes in arena storage
+/// once a whole read hydrated its tree: an `ERROR`'s read, an identifier's
+/// leaf read, a number literal with parts' record, and the unit sides of
+/// every node after a codemod edit.
+fn record_less_reads<G: RecordGrammar, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells>(case: &Case<G, N>, reads: &Reads) -> [u32; 4] {
+    let tree = parsed(case.grammar, (case.options)(), reads.error);
+    let count = descendant_count(&tree.tree().root_node());
+    let error = (0..count)
+        .map(NodeIndex::new)
+        .find(|&index| node_at_index(tree.tree(), index).is_some_and(|node| node.is_error()))
+        .unwrap_or_else(|| panic!("{}: {:?} holds an ERROR", case.name, reads.error));
+    tree.hydrate_record::<N>(NodeIndex::ROOT, Depth::All).expect("a whole read");
+    let before = tree.layout_work();
+    let read = tree.read_node::<N>(error, Depth::ONE).expect("a node").expect("a read");
+    assert!(matches!(read, NodeRead::Error(_)), "{}: an ERROR reads as one", case.name);
+    let error_reads = since(tree.layout_work(), before).tree_reads;
+
+    let mut tree = parsed(case.grammar, (case.options)(), reads.source);
+    let identifier = nth_of_kind(&tree, "identifier:0");
+    let number = nth_of_kind(&tree, reads.number);
+    let edited = nth_of_kind(&tree, case.edited);
+    let count = descendant_count(&tree.tree().root_node());
+    tree.hydrate_record::<N>(NodeIndex::ROOT, Depth::All).expect("a whole read");
+    let before = tree.layout_work();
+    assert!(tree.read_leaf::<N>(identifier).expect("the records read").is_some(), "{}: a cell of its holder names an identifier", case.name);
+    let identifier_reads = since(tree.layout_work(), before).tree_reads;
+    let before = tree.layout_work();
+    assert!(tree.written_record::<N>(number).is_some(), "{}: a number literal with parts has a record", case.name);
+    let number_reads = since(tree.layout_work(), before).tree_reads;
+    edit_in_place(&mut tree, edited);
+    let before = tree.layout_work();
+    let units: usize = (0..count).map(|index| tree.unit_sides(NodeIndex(index)).len()).sum();
+    let unit_reads = since(tree.layout_work(), before).tree_reads;
+    assert!(units > 0, "{}: {:?} holds units with sides", case.name, reads.source);
+    [error_reads, identifier_reads, number_reads, unit_reads]
+}
+
+#[test]
+fn leaf_error_and_unit_reads_take_no_tree() {
+    let reads = [
+        ("rust", record_less_reads(&rust(), &rust_reads())),
+        ("python", record_less_reads(&python(), &python_reads())),
+        ("typescript", record_less_reads(&typescript(), &typescript_reads())),
+    ];
+    assert_eq!(reads, [("rust", [0; 4]), ("python", [0; 4]), ("typescript", [0; 4])], "tree reads of an ERROR's read, an identifier's leaf read, a number's record and the unit sides after an edit");
+}
+
+/// Over `source`, every node's unit sides in object storage are a typed
+/// read's of its tree (`typed_unit_sides`), and arena storage's records
+/// answer its nodes, unit sides and leaf reads as its tree does
+/// (`backer_parity`): how many nodes it compared, or each that differs.
+fn reads_agree<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells + Prepare + HasLayout<Option<Box<NodeLayout<G::Trivia>>>>>(name: &str, grammar: G, options: fn() -> ResolvedOptions, source: &str) -> Result<u32, String>
+where
+    G::Trivia: PartialEq + std::fmt::Debug,
+{
+    let object = parsed(grammar, options(), source);
+    let count = descendant_count(&object.tree().root_node());
+    let mut differ: Vec<String> = (0..count)
+        .map(NodeIndex)
+        .filter_map(|index| {
+            let (typed, in_object) = (object.typed_unit_sides::<N>(index), object.unit_sides(index));
+            (in_object != typed).then(|| format!("{name} {source:?} node {}: unit sides typed {typed:?}, object {in_object:?}", index.0))
+        })
+        .collect();
+    let parity = parsed(grammar, options(), source).backer_parity::<N>().map_err(|refusal| format!("{name} {source:?}: {refusal}"))?;
+    if parity.differing > 0 {
+        differ.push(format!("{name} {source:?}: arena storage reads apart from its tree: {parity:?}"));
+    }
+    if differ.is_empty() { Ok(count) } else { Err(differ.join("\n")) }
+}
+
+fn grammar_reads_agree<G: RecordGrammar + Copy, N: ReadNode + HydrateNode + RecordCells + Prepare + HasLayout<Option<Box<NodeLayout<G::Trivia>>>>>(name: &str, grammar: G, options: fn() -> ResolvedOptions, extra: &[&str]) -> u32
+where
+    G::Trivia: PartialEq + std::fmt::Debug,
+{
+    let sources: Vec<String> = fixture_sources(name).into_iter().chain(extra.iter().map(|source| (*source).to_owned())).collect();
+    assert!(!sources.is_empty(), "{name} has fixtures");
+    let (mut nodes, mut differ) = (0, Vec::new());
+    for source in &sources {
+        match reads_agree::<G, N>(name, grammar, options, source) {
+            Ok(n) => nodes += n,
+            Err(e) => differ.push(e),
+        }
+    }
+    assert!(differ.is_empty(), "{} of {} {name} sources read apart:\n{}", differ.len(), sources.len(), differ.join("\n"));
+    nodes
+}
+
+#[test]
+fn leaf_and_unit_reads_agree_across_storages() {
+    let nodes = [
+        ("python", grammar_reads_agree::<_, sittir_python::render::AnyNode>("python", sittir_python::PythonGrammar, sittir_python::render::options::defaults, &[python().source, python_reads().source])),
+        ("regex", grammar_reads_agree::<_, sittir_regex::render::AnyNode>("regex", sittir_regex::RegexGrammar, sittir_regex::render::options::defaults, &[])),
+        ("rust", grammar_reads_agree::<_, sittir_rust::render::AnyNode>("rust", sittir_rust::RustGrammar, sittir_rust::render::options::defaults, &[rust().source, rust_reads().source])),
+        ("scm", grammar_reads_agree::<_, sittir_scm::render::AnyNode>("scm", sittir_scm::ScmGrammar, sittir_scm::render::options::defaults, &[])),
+        ("typescript", grammar_reads_agree::<_, sittir_typescript::render::AnyNode>("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults, &[typescript().source, typescript_reads().source])),
+    ];
+    for (name, n) in nodes {
+        assert!(n > 0, "{name}: its fixtures hold nodes");
+    }
+}
+
+/// A list with a hole numbers each unit in it once: the typed read, the
+/// units walk in both storages, and the list's slot items give the units
+/// after the hole the same item.
+#[test]
+fn a_list_item_is_numbered_once() {
+    let source = "const t = [/* a */ true, , /* b */ false]\n";
+    let options = sittir_typescript::render::options::defaults;
+    let object = parsed(sittir_typescript::TypeScriptGrammar, options(), source);
+    let arena = parsed(sittir_typescript::TypeScriptGrammar, options(), source);
+    arena.hydrate_record::<sittir_typescript::render::AnyNode>(NodeIndex::ROOT, Depth::All).expect("a whole read");
+    let array = nth_of_kind(&object, "array:0");
+    let items = |units: Vec<UnitSides<_>>| units.into_iter().map(|unit| unit.item.0).collect::<Vec<u32>>();
+    let typed = items(object.typed_unit_sides::<sittir_typescript::render::AnyNode>(array));
+    assert_eq!(typed, [0, 2], "the typed read numbers the units around the hole");
+    assert_eq!(items(object.unit_sides(array)), typed, "object storage");
+    assert_eq!(items(arena.unit_sides(array)), typed, "arena storage");
+    let mut nodes = arena.nodes();
+    let at = nodes.kid(array);
+    let routed = sittir_typescript::TypeScriptGrammar.slot_routes(&mut nodes, &at).expect("an array routes its children");
+    let scalar: Vec<u32> = routed
+        .slot_items()
+        .into_iter()
+        .filter(|&(child, _, _)| matches!(routed.routes[child], sittir_core::read::Route::Slot { scalar: true, .. }))
+        .map(|(_, _, item)| item.0)
+        .collect();
+    assert_eq!(scalar, typed, "the list's slot items");
+}
+
+/// Once a tree is read whole, an extra whose read has structure has a record
+/// of its own, which its tree holds since no cell names it: a rust doc
+/// comment, and a python comment, whose read captures its content. A named
+/// node that neither a cell nor a record of its own holds reads from its
+/// row: as the unit its read stores (python's newline token, a regex
+/// quantifier's lazy flag), else as a leaf (python's line continuation).
+#[test]
+fn an_extra_with_structure_is_held_and_a_node_no_cell_names_reads_from_its_row() {
+    type Rust = sittir_rust::render::AnyNode;
+    type Python = sittir_python::render::AnyNode;
+    type Regex = sittir_regex::render::AnyNode;
+    let rust_tree = parsed(sittir_rust::RustGrammar, sittir_rust::render::options::defaults(), "/// doc\nfn f() {}\n");
+    rust_tree.hydrate_record::<Rust>(NodeIndex::ROOT, Depth::All).expect("a whole read");
+    let doc = nth_of_kind(&rust_tree, "line_comment:0");
+    assert!(rust_tree.written_record::<Rust>(doc).is_some(), "a doc comment's record is held");
+    assert_eq!(rust_tree.read_leaf::<Rust>(doc), Ok(None), "a doc comment reads through its record");
+    let python_tree = parsed(sittir_python::PythonGrammar, sittir_python::render::options::defaults(), "x = 1  # c\n");
+    python_tree.hydrate_record::<Python>(NodeIndex::ROOT, Depth::All).expect("a whole read");
+    assert!(python_tree.written_record::<Python>(nth_of_kind(&python_tree, "comment:0")).is_some(), "a comment's record is held");
+    let newline = nth_of_kind(&python_tree, "newline:0");
+    assert!(python_tree.written_record::<Python>(newline).is_none(), "a newline token has no record");
+    assert_eq!(python_tree.read_leaf::<Python>(newline), Ok(Some(LeafRead::Unit(sittir_python::render::kind_ids::_NEWLINE))));
+    let regex_tree = parsed(sittir_regex::RegexGrammar, sittir_regex::render::options::defaults(), "a*?");
+    regex_tree.hydrate_record::<Regex>(NodeIndex::ROOT, Depth::All).expect("a whole read");
+    let lazy = nth_of_kind(&regex_tree, "lazy:0");
+    assert_eq!(regex_tree.read_leaf::<Regex>(lazy), Ok(Some(LeafRead::Unit(sittir_regex::render::kind_ids::_LAZY))));
+    let continued = parsed(sittir_python::PythonGrammar, sittir_python::render::options::defaults(), "x = 1 + \\\n    2\n");
+    continued.hydrate_record::<Python>(NodeIndex::ROOT, Depth::All).expect("a whole read");
+    let continuation = nth_of_kind(&continued, "line_continuation_newline:0");
+    let at = continued.row_coordinate(continuation).expect("a row");
+    assert_eq!(continued.read_leaf::<Python>(continuation), Ok(Some(LeafRead::Leaf { kind: at.kind.expect("a stamped kind"), span: at.span })));
+}
+
+/// A walk writes and holds the record of each extra its reader reads as one
+/// as it meets the extra among its node's children, with no pass over the
+/// tree after it: a root read one level down, which leaves rows under its
+/// children unwritten, holds the doc comment among them.
+#[test]
+fn a_walk_holds_each_structural_extra_it_meets() {
+    type Rust = sittir_rust::render::AnyNode;
+    let tree = parsed(sittir_rust::RustGrammar, sittir_rust::render::options::defaults(), "/// doc\nfn f() {}\n");
+    let doc = nth_of_kind(&tree, "line_comment:0");
+    tree.read_record::<Rust>(NodeIndex::ROOT, Depth::ONE).expect("a read");
+    let arena = tree.tree_arena();
+    assert!(arena.node_rows().is_none(), "a read one level down leaves rows under its children unwritten");
+    assert!(arena.held(doc).is_some(), "the doc comment's record is held");
+}
+
+#[test]
+fn a_node_of_a_record_kind_no_written_record_names_is_no_leaf() {
+    type Ts = sittir_typescript::render::AnyNode;
+    let tree = parsed(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults(), "class A { constructor() {} }\n");
+    assert_eq!(tree.backer_parity::<Ts>().expect("a census").differing, 0, "the typed read takes a method name's envelope as a node with a slot");
+    let name = nth_of_kind(&tree, "property_identifier:0");
+    assert_eq!(tree.read_leaf::<Ts>(name), Ok(None), "a method name's envelope is no leaf before a read writes its record");
 }

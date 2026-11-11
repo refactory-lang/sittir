@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import {
 	NATIVE_NAPI_CONFIG,
 	NATIVE_TARGETS,
-	NODE_API_NODE_RANGES,
+	NODE_ENGINES,
 	allGrammars,
 	grammarPackageDir,
 	nativeCrateDir,
@@ -14,15 +14,13 @@ import {
 } from '../../grammars.ts';
 import { nativeCrateFiles } from '../native-crate.ts';
 
-const nodeApiLevel = workspaceNodeApiLevel();
-const nativeFloor = nodeRangeOfNodeApi(nodeApiLevel);
-const recordedLevels = Object.keys(NODE_API_NODE_RANGES).map(Number);
-const crateManifest = (grammar: string, level: number): string => nativeCrateFiles(grammar, level).find((file) => file.path === 'package.json')!.contents;
+const nativeFloor = nodeRangeOfNodeApi(workspaceNodeApiLevel());
+const crateManifest = (grammar: string): string => nativeCrateFiles(grammar).find((file) => file.path === 'package.json')!.contents;
 const admitsOnlyLoadable = (range: string): boolean => subset(range, nativeFloor);
 
 describe('a grammar crate builds its binding', () => {
 	it('under the release profile for CI and publishing, and the gate profile for local regeneration', () => {
-		const pkg = JSON.parse(crateManifest('rust', nodeApiLevel)) as { scripts: Record<string, string> };
+		const pkg = JSON.parse(crateManifest('rust')) as { scripts: Record<string, string> };
 		expect(pkg.scripts).toEqual({
 			build: 'tsx ../../../scripts/build-native.mts rust --release',
 			'build:debug': 'tsx ../../../scripts/build-native.mts rust',
@@ -33,12 +31,12 @@ describe('a grammar crate builds its binding', () => {
 
 describe("napi reads a grammar crate's config from its own file", () => {
 	it('names the binary, the stem of the platform packages and the targets', () => {
-		const config = nativeCrateFiles('rust', nodeApiLevel).find((file) => file.path === NATIVE_NAPI_CONFIG);
+		const config = nativeCrateFiles('rust').find((file) => file.path === NATIVE_NAPI_CONFIG);
 		expect(JSON.parse(config?.contents ?? '{}')).toEqual({ binaryName: 'sittir-rust', packageName: 'sittir-rust', targets: [...NATIVE_TARGETS] });
 	});
 
 	it('keeps the version and the napi config out of the crate manifest: the grammar package holds the one version', () => {
-		const pkg = JSON.parse(crateManifest('rust', nodeApiLevel)) as Record<string, unknown>;
+		const pkg = JSON.parse(crateManifest('rust')) as Record<string, unknown>;
 		expect(pkg).not.toHaveProperty('version');
 		expect(pkg).not.toHaveProperty('napi');
 	});
@@ -46,7 +44,7 @@ describe("napi reads a grammar crate's config from its own file", () => {
 
 describe('every grammar crate holds the generated crate files', () => {
 	for (const grammar of allGrammars()) {
-		for (const file of nativeCrateFiles(grammar, nodeApiLevel)) {
+		for (const file of nativeCrateFiles(grammar)) {
 			it(`${grammar} ${file.path}`, () => {
 				expect(readFileSync(join(nativeCrateDir(grammar), file.path), 'utf8')).toBe(file.contents);
 			});
@@ -55,7 +53,7 @@ describe('every grammar crate holds the generated crate files', () => {
 });
 
 describe('a grammar addon links the shared engine', () => {
-	const files = nativeCrateFiles('python', nodeApiLevel);
+	const files = nativeCrateFiles('python');
 	const buildScript = files.find((file) => file.path === 'build.rs')!.contents;
 	const manifest = files.find((file) => file.path === 'Cargo.toml')!.contents;
 
@@ -85,20 +83,14 @@ describe('a grammar addon links the shared engine', () => {
 	});
 });
 
-describe('a native addon publishes the Node floor of the Node-API level it builds with', () => {
-	it('writes the range of the workspace napi feature into the crate manifest', () => {
-		const pkg = JSON.parse(crateManifest('rust', nodeApiLevel)) as { engines: { node: string } };
-		expect(pkg.engines.node).toBe(nativeFloor);
+describe('a native addon publishes the one Node floor', () => {
+	it('writes NODE_ENGINES into the crate manifest', () => {
+		const pkg = JSON.parse(crateManifest('rust')) as { engines: { node: string } };
+		expect(pkg.engines.node).toBe(NODE_ENGINES);
 	});
 
-	it('leaves the committed crate manifest stale when the napi feature moves to another level', () => {
-		const otherLevel = recordedLevels.find((level) => level !== nodeApiLevel)!;
-		expect(crateManifest('rust', otherLevel)).not.toBe(readFileSync(join(nativeCrateDir('rust'), 'package.json'), 'utf8'));
-	});
-
-	it('refuses a Node-API level the table records no range for', () => {
-		const unrecorded = Math.max(...recordedLevels) + 1;
-		expect(() => crateManifest('rust', unrecorded)).toThrow(`Node-API ${unrecorded} has no Node range in NODE_API_NODE_RANGES`);
+	it('admits no Node the workspace napi feature cannot load', () => {
+		expect(admitsOnlyLoadable(NODE_ENGINES)).toBe(true);
 	});
 });
 

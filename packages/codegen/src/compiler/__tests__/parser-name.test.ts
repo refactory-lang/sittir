@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
-import { parserNameOf, workspaceNodeApiLevel } from '../../grammars.ts';
+import { parserNameOf } from '../../grammars.ts';
 import { nativeCrateFiles } from '../../emitters/native-crate.ts';
 import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 
@@ -55,10 +55,10 @@ describe('the tree-sitter grammar name is upstream’s, and the package name is 
 	});
 
 	it('names the native crate’s parser entry point after the grammar, not the package', () => {
-		const lib = nativeCrateFiles('csharp', workspaceNodeApiLevel(), 'c_sharp').find((file) => file.path === 'src/lib.rs')!.contents;
+		const lib = nativeCrateFiles('csharp', 'c_sharp').find((file) => file.path === 'src/lib.rs')!.contents;
 		expect(lib).toContain('fn tree_sitter_c_sharp() -> *const ();');
 		expect(lib).toContain('LanguageFn::from_raw(tree_sitter_c_sharp)');
 		expect(lib).not.toContain('tree_sitter_csharp');
-		expect(nativeCrateFiles('regex', workspaceNodeApiLevel()).find((file) => file.path === 'src/lib.rs')!.contents).toContain('fn tree_sitter_regex()');
+		expect(nativeCrateFiles('regex').find((file) => file.path === 'src/lib.rs')!.contents).toContain('fn tree_sitter_regex()');
 	});
 });

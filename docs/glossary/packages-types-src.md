@@ -344,7 +344,7 @@ A builder's own public overloads are generic, and a generic parameter gives no c
 
 ### `packages/types/src/vocabulary/utils.ts::Flag`
 
-The marker a vocabulary interface declares a yes/no fact with: `readonly static?: Flag`. A flag is a bit in the node's one bitflag, tested by `is` and set by a builder step or a structure's `$flags`, never a member, so no value satisfies the marker and a structure can only leave it out. A `boolean` member is data, as a python complex pattern's `sign` is. The inventory reads the marker to write the flag's bit in `Flags`, and the generator to emit its guard and step.
+The marker a vocabulary interface declares a yes/no fact with: `readonly static?: Flag`. `Flag` is a unique symbol, so no value satisfies the marker and a structure can only leave it out. A flag is a name carried in the node's `$flags`, tested by `is` and set by a builder step or a structure's `$flags`, never a member. A `boolean` member is data, as a python complex pattern's `sign` is. The inventory reads the marker, and the generator emits its guard and step.
 
 ### `packages/common/src/portable/flags.ts::Flags`
 
@@ -489,6 +489,14 @@ A slot by its number in each kind that has it, keyed by stamped kind id. The num
 ### `packages/types/src/query.ts::SlotRefOf`
 
 The recorder member of one slot of a node type: a `PresenceRef` when the slot's hint takes a `BooleanKeyword`, else a `SlotRef`. Over a union it is the union of each member's, so a slot that is boolean in one kind and text in another has an `eq` taking `string & boolean`, which no argument satisfies: the union rule the recorder applies to slots, applied to their members.
+
+### `packages/types/src/query.ts::QueryPlan::delimiter`
+
+The delimiter a query plan reads through, when it has one.
+
+### `packages/types/src/query.ts::QueryPlan::min`
+
+The minimum count a query plan requires.
 
 ### `packages/types/src/engine-api.ts::NodeJSON`
 
@@ -874,6 +882,10 @@ The synonyms the `Clause` vocabulary resolves: each canonical kind mapped to the
 
 The synonyms the `Declaration` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
 
+### `packages/types/src/vocabulary/declaration.ts::DeclarationSynonyms::parameters`
+
+The synonyms of a declaration's parameters.
+
 ### `packages/types/src/vocabulary/element.ts::ElementSynonyms`
 
 The synonyms the `Element` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
@@ -1009,6 +1021,14 @@ The single-slot entries of a structure row, as storage key and label pairs.
 ### `packages/types/src/engine-api.ts::LanguageHooks::portableBuild`
 
 The loader for the portable build table, when the language has one.
+
+### `packages/types/src/engine-api.ts::StructureRow::final`
+
+`true` on the structure row for a final seat.
+
+### `packages/types/src/engine-api.ts::NativeLanguageEngine::writeText`
+
+Writes `text` to `path` through the native writer: a new file when `create`, which refuses a file already at the path and, when the write fails, leaves the partial file in place and says so; otherwise an in-place write that restores the file's original bytes when it fails. Answers whether it wrote.
 
 ### `packages/types/src/portable.ts::PortableRows::flags`
 
@@ -1430,6 +1450,74 @@ The options each builder takes, by name.
 
 The container's member steps, each naming a member and the slot steps it takes.
 
+### `packages/types/src/portable.ts::PortableBuildArm::content`
+
+The content slot's name. A `content` arm builds a lexed identifier from the text of this slot and passes that text to its builder.
+
+### `packages/types/src/portable.ts::PortableBuildArm::empty`
+
+The slots that must be empty for the arm to build.
+
+### `packages/types/src/portable.ts::PortableBuildArm::sole`
+
+The member a `sole` arm builds its list from, and the delimiter that makes one item a list.
+
+### `packages/types/src/portable.ts::PortableBuildTable::delimiters`
+
+By delimiter token kind id, the facets of each delimiter token that carry meaning. A delimiter's other facets are spelled from its content, so reading none of them loses nothing.
+
+### `packages/types/src/portable.ts::PortableBuildTable::tokens`
+
+By kind id, the accessors of the slots that can hold a token read by its interior.
+
+### `packages/types/src/portable.ts::PortableDelimiterToken`
+
+A delimiter token's facets that carry meaning: its meaning, and where present its content facet, its spellings, and its read-only members.
+
+### `packages/types/src/portable.ts::PortableDelimiterToken::content`
+
+The delimiter's content facet: its facet name, and the kind of the content leaf that reads its text.
+
+### `packages/types/src/portable.ts::PortableDelimiterToken::meaning`
+
+The facets of the delimiter token that carry meaning.
+
+### `packages/types/src/portable.ts::PortableDelimiterToken::readOnly`
+
+By spelled facet, the canonical members that are read and never built.
+
+### `packages/types/src/portable.ts::PortableDelimiterToken::spellings`
+
+By spelled facet, each spelling that is not its own canonical member, mapped to that member.
+
+### `packages/types/src/portable.ts::PortableFlagStep::delimiter`
+
+The delimiter token kind a flag step reads through, when the flag sits on a delimiter.
+
+### `packages/types/src/portable.ts::PortableFlagStep::list`
+
+The slot steps that reach the list a flag step tests, when the flag sits on a list.
+
+### `packages/types/src/portable.ts::PortablePickTest::empty`
+
+A pick test that holds when every listed slot is empty.
+
+### `packages/types/src/portable.ts::PortablePreset::among`
+
+The kinds a preset is chosen among, when the preset names a set of kinds rather than one.
+
+### `packages/types/src/portable.ts::PortableSeat::contents`
+
+The text of each content index of a seat that is read as text, keyed by its index.
+
+### `packages/types/src/portable.ts::PortableSeat::final`
+
+`true` on the seat that is the final one of its sequence.
+
+### `packages/types/src/portable.ts::PortableSeat::text`
+
+`true` on a seat that holds text rather than a node.
+
 ### `packages/types/src/vocabulary/features/range-expressions/expression.ts::Legacy`
 
 The legacy form of the inclusive range expression: a sub-kind of `Expression.Range.Inclusive`, with the `$kind` `expression.range.inclusive.legacy`, claimed by the `r` pattern.
@@ -1469,3 +1557,23 @@ The lambda member of the generic-lambda expression namespace.
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/generic-lambdas/index.ts::GenericLambdas::generic-lambdas`
 
 The `generic-lambdas` feature key of the generic-lambdas vocabulary.
+
+### `packages/types/src/vocabulary/features/attributes/declaration.ts::Declaration::Parameter`
+
+A parameter of a declaration in the vocabulary.
+
+### `packages/types/src/vocabulary/features/unicode-strings/index.ts::UnicodeStrings`
+
+The unicode-strings vocabulary feature.
+
+### `packages/types/src/vocabulary/features/unicode-strings/index.ts::UnicodeStrings::unicode-strings`
+
+The `unicode-strings` member of the unicode-strings feature.
+
+### `packages/types/src/vocabulary/features/unicode-strings/literal.ts::Literal`
+
+The unicode string literal vocabulary entry.
+
+### `packages/types/src/vocabulary/features/unicode-strings/literal.ts::Literal::String`
+
+The string member of the unicode literal.

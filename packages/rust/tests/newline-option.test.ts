@@ -1,6 +1,6 @@
-// The line ending is one of the arms of the grammar's `_newline` member
-// (`LineEnding`: '\n', '\r\n', '\r'), set under `render.layout`, per engine or
-// per call. Every break of a render takes it.
+// The line ending is one of the arms of the grammar's `_newline` member its
+// parser reads as a line break (`LineEnding`: '\n', '\r\n'), set under
+// `render.layout`, per engine or per call. Every break of a render takes it.
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import rust from '../src/index.ts';
@@ -25,7 +25,7 @@ describe('newline option', () => {
 	});
 
 	it('takes a line ending per call', () => {
-		expect(rs.render(fn(), { layout: { newline: '\r' } }).toString()).toBe('fn f() {\r    a;\r}');
+		expect(rs.render(fn(), { layout: { newline: '\r\n' } }).toString()).toBe('fn f() {\r\n    a;\r\n}');
 		expect(rs.render(fn(), { layout: { newline: '\n' } }).toString()).toBe('fn f() {\n    a;\n}');
 	});
 
@@ -36,7 +36,9 @@ describe('newline option', () => {
 
 	it('refuses an ending outside the arms, naming them', async () => {
 		// @ts-expect-error a tab is not a line ending
-		await expect(createEngine(rust, { render: { layout: { newline: '\t' } } })).rejects.toThrow(/newline "\\t" is not one of \['\\n', '\\r\\n', '\\r'\]/);
+		await expect(createEngine(rust, { render: { layout: { newline: '\t' } } })).rejects.toThrow(/newline "\\t" is not one of \['\\n', '\\r\\n'\]/);
+		// @ts-expect-error a line comment would run on through a lone carriage return
+		await expect(createEngine(rust, { render: { layout: { newline: '\r' } } })).rejects.toThrow(/newline "\\r" is not one of/);
 		// @ts-expect-error per-call endings are checked the same way
 		expect(() => rs.render(fn(), { layout: { newline: '\n\n' } }).toString()).toThrow(/is not one of/);
 	});

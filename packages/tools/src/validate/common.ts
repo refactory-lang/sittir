@@ -27,17 +27,21 @@ import { scopeBuilders } from '@sittir/common/engine';
 import {
 	carryRead,
 	carryPlace,
+	detachCoordinate,
+	holdsSlots,
 	SOURCE,
 	Source,
 	sourceOf,
 	holdTree,
+	holdTreeOn,
 	sideOf,
 	sidesOf,
 	nodeText,
 	spanOf,
 	sourceTextOf,
 	treeTokenOf,
-	type KindView
+	type KindView,
+	type TreeToken
 } from '@sittir/common/utils';
 import {
 	isFactoryNode,
@@ -49,6 +53,7 @@ import {
 	mapTriviaEntries,
 	projectInterior,
 	isDataKey,
+	isStorageKey,
 	type TokenInterior
 } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
@@ -69,6 +74,7 @@ import { NODE_MODEL_FILE, PORTABLE_BUILD_FILE, UPSTREAM_WASM, grammarPackageDir,
 import { CORPUS_ROOT, localCorpusPath, upstreamCorpusDir } from '../corpus/layout.ts';
 import type {
 	CodegenSurface,
+	ParserLanguage,
 	PolymorphVariantMap,
 	FactoryShape,
 	FactorySlotMeta,
@@ -76,8 +82,7 @@ import type {
 	DelimiterFacetRole
 } from '../codegen-surface.ts';
 
-const loadWebTreeSitter: CodegenSurface['engineLoader']['loadWebTreeSitter'] = (await load('engineLoader'))
-	.loadWebTreeSitter;
+const { languageAt, languageOf, treeParser }: Pick<CodegenSurface['engineLoader'], 'languageAt' | 'languageOf' | 'treeParser'> = await load('engineLoader');
 const { opaqueFacts, readFacts } = await load('opaqueFacts');
 const { assertNativeBinaryFresh, hostBinaryFreshnessFor } = await load('nativeBinaryFreshness');
 const { storageKeyOf } = await load('modelNodeMap');
@@ -102,7 +107,6 @@ export interface CorpusEntry {
 }
 
 export type TSNode = TS.Node;
-export type TSTree = TS.Tree;
 
 const CORPUS_HEADER =
 	/^(={3,})([^=\r\n][^\r\n]*)?\r?\n((?:(?:[^=\r\n]|\s+:)[^\r\n]*\r?\n)+)===+([^=\r\n][^\r\n]*)?\r?\n/gm;
@@ -158,7 +162,8 @@ export function loadCorpusEntries(grammar: string): CorpusEntry[] {
 	return entries;
 }
 
-export { loadWebTreeSitter };
+export { languageAt, languageOf, treeParser };
+export type { ParsedTree, ParserLanguage, TreeParser } from '../codegen-surface.ts';
 
 export type NativeEngine = Engine<LanguageAPI>;
 
@@ -229,6 +234,12 @@ async function createNativeEngine(grammar: string): Promise<NativeEngine> {
 
 export async function createStrictNativeEngine(grammar: string): Promise<Engine<LanguageAPI, 'strict'>> {
 	return releaseEngine(grammar, await createEngine(await languageByName(grammar), { api: 'strict', verifyStructure: 'runtime', nodeStorage: validationNodeStorage }));
+}
+
+export async function disposeNativeEngines(): Promise<void> {
+	const loading = [...cachedNativeEngines.values()].map((entry) => entry.engine);
+	cachedNativeEngines.clear();
+	for (const settled of await Promise.allSettled(loading)) if (settled.status === 'fulfilled') settled.value.dispose();
 }
 
 export function loadNativeEngine(grammar: string): Promise<NativeEngine> {
@@ -874,13 +885,21 @@ export function materialize(root: unknown, accessorOf: SlotAccessorOf, onAccesso
 	return materializeValue(root, accessorOf, onAccessorThrow) as AnyUntypedNode;
 }
 
+export function materializeHoldingTree(
+	root: unknown,
+	accessorOf: SlotAccessorOf,
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void
+): AnyUntypedNode {
+	const token = root !== null && typeof root === 'object' ? treeTokenOf(root) : undefined;
+	return materializeValue(root, accessorOf, onAccessorThrow, undefined, token) as AnyUntypedNode;
+}
+
 export function materializeBuildInput(
 	root: unknown,
 	accessorOf: SlotAccessorOf,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
-	const data = materialize(root, accessorOf, onAccessorThrow);
-	return validationNodeStorage === 'arena' ? holdingTreeOf(root, data) : data;
+	return validationNodeStorage === 'arena' ? materializeHoldingTree(root, accessorOf, onAccessorThrow) : materialize(root, accessorOf, onAccessorThrow);
 }
 
 export function builtStorageOf(node: unknown, accessorOf: SlotAccessorOf): unknown {
@@ -892,7 +911,8 @@ export function materializeDetached(
 	accessorOf: SlotAccessorOf,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
-	return holdingTreeOf(root, detachCoordinates(materialize(root, accessorOf, onAccessorThrow)));
+	const token = root !== null && typeof root === 'object' ? treeTokenOf(root) : undefined;
+	return materializeValue(root, accessorOf, onAccessorThrow, undefined, token, true) as AnyUntypedNode;
 }
 
 export function materializeShallow(
@@ -901,13 +921,14 @@ export function materializeShallow(
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
 	const ownRow = typeof root === 'object' && root !== null ? coordinateOf(root)?.$treeHandle : undefined;
+	const token = typeof root === 'object' && root !== null ? treeTokenOf(root) : undefined;
 	const asCoordinate = (value: unknown): unknown => {
 		if (Array.isArray(value)) return value.map(asCoordinate);
 		if (!hasNumericType(value)) return value;
 		const at = coordinateOf(value);
-		return at !== undefined && at.$treeHandle !== ownRow ? holdingTreeOf(value, at) : materializeValue(value, accessorOf, onAccessorThrow);
+		return at !== undefined && at.$treeHandle !== ownRow ? holdingTreeOf(value, at) : materializeValue(value, accessorOf, onAccessorThrow, undefined, token);
 	};
-	return holdingTreeOf(root, materializeValue(root, accessorOf, onAccessorThrow, asCoordinate) as AnyUntypedNode);
+	return materializeValue(root, accessorOf, onAccessorThrow, asCoordinate, token) as AnyUntypedNode;
 }
 
 /**
@@ -951,10 +972,12 @@ function materializeValue(
 	value: unknown,
 	accessorOf: SlotAccessorOf,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void,
-	slotValue: (value: unknown) => unknown = (inner) => materializeValue(inner, accessorOf, onAccessorThrow)
+	slotValue: (value: unknown) => unknown = (inner) => materializeValue(inner, accessorOf, onAccessorThrow, undefined, token, detached),
+	token?: TreeToken,
+	detached = false
 ): unknown {
 	if (Array.isArray(value)) {
-		return value.map((entry) => materializeValue(entry, accessorOf, onAccessorThrow, slotValue));
+		return value.map((entry) => materializeValue(entry, accessorOf, onAccessorThrow, slotValue, token, detached));
 	}
 	if (!hasNumericType(value)) return value;
 	const { accessors } = accessorOf(value.$type);
@@ -975,13 +998,13 @@ function materializeValue(
 					: {
 							...layout,
 							trivia: mapTriviaEntries(layout.trivia as TriviaSides<unknown>, (entries) =>
-								entries.map((entry) => materializeValue(hydrateTriviaEntry(entry), accessorOf, onAccessorThrow))
+								entries.map((entry) => materializeValue(hydrateTriviaEntry(entry), accessorOf, onAccessorThrow, undefined, token))
 							)
 						};
 			continue;
 		}
 		if (key.startsWith('_') && accessors[key] !== undefined) continue;
-		materialized[key] = materializeValue(raw, accessorOf, onAccessorThrow);
+		materialized[key] = materializeValue(raw, accessorOf, onAccessorThrow, undefined, token, detached && isStorageKey(key));
 	}
 	for (const [storageKey, resolved] of slotValuesOf(value, accessorOf, onAccessorThrow)) {
 		if (resolved !== undefined) materialized[storageKey] = slotValue(resolved);
@@ -989,6 +1012,8 @@ function materializeValue(
 	carryPlace(value, materialized);
 	const source = sourceOf(value);
 	if (source !== undefined) (materialized as { [SOURCE]?: Source })[SOURCE] = source;
+	if (detached && holdsSlots(materialized)) detachCoordinate(materialized);
+	if (token !== undefined) holdTreeOn(materialized, token);
 	return carryRead(value, materialized);
 }
 
@@ -1119,27 +1144,15 @@ export async function loadKindIdFromName(grammar: string): Promise<(name: string
 	return (await requireGrammarModule(grammar, 'types.ts')).kindIdFromName;
 }
 
-export async function loadLanguageForGrammar(grammar: string): Promise<{
-	Parser: typeof TS.Parser;
-	Language: typeof TS.Language;
-	lang: TS.Language;
-	isOverride: boolean;
-}> {
+export async function loadLanguageForGrammar(grammar: string): Promise<ParserLanguage & { readonly isOverride: boolean }> {
 	const { assertGeneratedManifestsClean } = await load('generatedManifest');
 	if (isGrammar(grammar)) assertGeneratedManifestsClean([grammar]);
-	const { Parser, Language } = await loadWebTreeSitter();
-
 	const overrideWasm = join(sittirDirOf({ dir: grammarPackageDir(grammar) }), 'parser.wasm');
-	if (existsSync(overrideWasm)) {
-		const lang = await Language.load(overrideWasm);
-		return { Parser, Language, lang, isOverride: true };
-	}
-
+	if (existsSync(overrideWasm)) return { ...(await languageAt(overrideWasm)), isOverride: true };
 	const baseWasm = upstreamWasmPath(grammar);
 	if (baseWasm === undefined)
 		throw new Error(`no parser wasm for grammar '${grammar}': neither .sittir/parser.wasm nor an upstream package`);
-	const lang = await Language.load(baseWasm);
-	return { Parser, Language, lang, isOverride: false };
+	return { ...(await languageAt(baseWasm)), isOverride: false };
 }
 
 export type { FactoryEntry, Hydrate } from '../grammar-internals.ts';
@@ -1590,7 +1603,7 @@ export function tableSides(source: ReadNodeLike, accessorOf: SlotAccessorOf, bui
 		sideOf(source as object, side).flatMap((entry): TriviaEntry[] => {
 			if (!isCoordinate(entry)) return isNode(entry) || typeof entry === 'number' ? [entry] : [];
 			const comment = hydrateTriviaEntry(entry);
-			const built = build(holdingTreeOf(comment, materialize(comment, accessorOf)));
+			const built = build(materializeHoldingTree(comment, accessorOf));
 			if (!isNode(built)) throw new Error(`ir lane: a comment built to ${JSON.stringify(built)}, not a node`);
 			return [built];
 		});

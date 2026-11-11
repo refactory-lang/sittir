@@ -414,7 +414,7 @@ describe('a visible wrapper declared flattened seats on its parent', () => {
 
 	it('builds the group from its own keys and passes the seat key, a hand-spelled wrapper, through to the parent', () => {
 		const { nodeMap } = wrapperGrammar();
-		const generatedIdTables: GeneratedIdTables = { kindIds: { root: 1, arm: 2, wrapper: 3 }, fieldIds: new Map(), folds: new Map(), sourceArtifact: 'test' };
+		const generatedIdTables: GeneratedIdTables = { kindIds: { root: 1, arm: 2, wrapper: 3 }, fieldIds: new Map(), folds: new Map(), sourceArtifact: 'test', parser: null };
 		stampIrSurface(nodeMap, generatedIdTables);
 		const { combinators, strict } = emitTables(nodeMap);
 		expect(combinators).toMatch(/export const arm\$flatten\$match = <[^\n]*>\(parent: PF, child: CF\) =>\n/);

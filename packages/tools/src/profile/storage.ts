@@ -13,6 +13,7 @@ import type { LibraryMemoryOptions, LibraryMemoryRun } from './library-memory-wo
 import { nativePhases, type HydrationDepth } from './native-hydration.ts';
 import type { NativeHydrationOptions, NativeHydrationRun } from './native-hydration-worker.ts';
 import { measureBuilt } from '../built.ts';
+import { holdPeers } from './hold-peers.ts';
 import { median } from './storage-common.ts';
 import { summarizeValidationStorage, type ValidationStorageRun } from './validation-storage.ts';
 import type { ValidationStorageOptions } from './validation-storage-worker.ts';
@@ -27,6 +28,7 @@ export interface StorageBenchOptions {
 	limit?: number;
 	nativeDepth?: HydrationDepth;
 	idleGate?: string;
+	holdPeers?: boolean;
 	output?: string;
 	validation?: boolean;
 	baseline?: string;
@@ -161,47 +163,57 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 	const validationSamples: Record<Revision, (ValidationStorageRun & { round: number; idle: string | null })[]> = { branch: [], baseline: [] };
 	const memorySamples: (LibraryMemoryRun & { grammar: GrammarName; revision: Revision; round: number; idle: string | null })[] = [];
 	const startedAt = new Date().toISOString();
-	for (const grammar of grammars) {
-		for (let round = 0; round < rounds; round++) {
-			if (!options.validation) {
-				nativeSamples.push(
-					await runWorker<NativeHydrationRun>(
-						ownWorker('native-hydration'),
-						{ grammar, depth: nativeDepth, warmup, iterations, limit: options.limit },
-						`${grammar} native`,
-						round,
-						options.idleGate
-					)
-				);
-				continue;
-			}
-			for (const slot of roundWorkers(round, revisions, options.baseline !== undefined)) {
-				const tree = trees[slot.revision];
-				if ('storage' in slot) {
-					validationSamples[slot.revision].push(
-						await runWorker<ValidationStorageRun>(
-							inTree(tree, ownWorker('validation-storage')),
-							{ grammar, storage: slot.storage, warmup, iterations },
-							`${grammar} ${slot.storage} ${slot.revision}`,
+	const hold = options.holdPeers ? await holdPeers() : undefined;
+	let peersHeld: number | null = null;
+	try {
+		for (const grammar of grammars) {
+			for (let round = 0; round < rounds; round++) {
+				if (!options.validation) {
+					nativeSamples.push(
+						await runWorker<NativeHydrationRun>(
+							ownWorker('native-hydration'),
+							{ grammar, depth: nativeDepth, warmup, iterations, limit: options.limit },
+							`${grammar} native`,
+							round,
+							options.idleGate
+						)
+					);
+					continue;
+				}
+				for (const slot of roundWorkers(round, revisions, options.baseline !== undefined)) {
+					const tree = trees[slot.revision];
+					if ('storage' in slot) {
+						validationSamples[slot.revision].push(
+							await runWorker<ValidationStorageRun>(
+								inTree(tree, ownWorker('validation-storage')),
+								{ grammar, storage: slot.storage, warmup, iterations },
+								`${grammar} ${slot.storage} ${slot.revision}`,
+								round,
+								options.idleGate,
+								tree
+							)
+						);
+					} else {
+						const loaded = slot.grammars === 'one' ? [grammar] : stableGrammars();
+						const sample = await runWorker<LibraryMemoryRun>(
+							ownWorker('library-memory'),
+							{ tree, grammars: loaded },
+							`${slot.grammars === 'one' ? grammar : 'all grammars'} memory ${slot.revision}`,
 							round,
 							options.idleGate,
 							tree
-						)
-					);
-				} else {
-					const loaded = slot.grammars === 'one' ? [grammar] : stableGrammars();
-					const sample = await runWorker<LibraryMemoryRun>(
-						ownWorker('library-memory'),
-						{ tree, grammars: loaded },
-						`${slot.grammars === 'one' ? grammar : 'all grammars'} memory ${slot.revision}`,
-						round,
-						options.idleGate,
-						tree
-					);
-					memorySamples.push({ ...sample, grammar, revision: slot.revision });
+						);
+						memorySamples.push({ ...sample, grammar, revision: slot.revision });
+					}
 				}
+				for (const revision of revisions) summarizeValidationStorage(validationSamples[revision]);
 			}
-			for (const revision of revisions) summarizeValidationStorage(validationSamples[revision]);
+		}
+	} finally {
+		if (hold) {
+			const { held, restored } = hold.release();
+			peersHeld = held;
+			process.stderr.write(`bench-storage: held ${held} processes of other sessions on the efficiency cores; gave ${restored} still running back\n`);
 		}
 	}
 	const nativeSummary = summarizeNativeHydration(nativeSamples);
@@ -251,6 +263,7 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 			cwd: process.cwd(),
 			nodeEnv: 'production',
 			idleGated: Boolean(options.idleGate),
+			peersHeld,
 			harnessSha256: await harnessDigest(PROFILE_DIR, harnessFiles)
 		},
 		options: {

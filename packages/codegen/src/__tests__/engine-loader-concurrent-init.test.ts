@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it, vi } from 'vitest';
 import { Parser as TSParser } from 'web-tree-sitter';
-import { loadWebTreeSitter } from '../engine-loader.ts';
+import { loadWebTreeSitter, treeParser } from '../engine-loader.ts';
 
 const wasm = fileURLToPath(new URL('../../../rust/.sittir/parser.wasm', import.meta.url));
 
@@ -11,7 +11,7 @@ describe('loadWebTreeSitter — concurrent callers', () => {
 		const init = vi.spyOn(TSParser, 'init');
 		const [{ Parser, Language }] = await Promise.all([loadWebTreeSitter(), loadWebTreeSitter()]);
 		expect(init).toHaveBeenCalledTimes(1);
-		const lang = await Language.load(readFileSync(wasm));
-		expect(() => new Parser().setLanguage(lang)).not.toThrow();
+		const language = await Language.load(readFileSync(wasm));
+		expect(() => treeParser({ Parser, language })[Symbol.dispose]()).not.toThrow();
 	});
 });

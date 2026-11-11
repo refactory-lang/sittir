@@ -48,7 +48,7 @@ Captures the active hooks of one operation and composes them in registration ord
 
 ### `packages/common/src/create-engine.ts::interceptedRender`
 
-A lazy output handle whose text is produced through render middleware. The hook receives the resolved node and engine render options overlaid by per-call options. The native output handle is created at the original render boundary, preserving the native node snapshot taken there; its text stays lazy. `next` materializes that handle through the supplied continuation, which also measures native rendering when metrics are enabled. Capture alone does not format text or record metrics; a short circuit bypasses both. Disposing the outer handle disposes both handles, including an inner handle that was never materialized. The outer handle caches successful transformed text once, so `toString`, `print` and `save` share the same bytes; a short circuit never materializes the native output. Disposal retains the existing output refusal.
+A lazy output handle whose text is produced through render middleware. The hook receives the resolved node and engine render options overlaid by per-call options. The native output handle is created at the original render boundary, preserving the native node snapshot taken there; its text stays lazy. `next` materializes that handle through the supplied continuation, which also measures native rendering when metrics are enabled. Capture alone does not format text or record metrics; a short circuit bypasses both. Saving the output writes its materialized text through `writeText`, the native writer, so a save writes what `toString` returns. Disposing the outer handle disposes both handles, including an inner handle that was never materialized. The outer handle caches successful transformed text once, so `toString`, `print` and `save` share the same bytes; a short circuit never materializes the native output. Disposal retains the existing output refusal.
 
 ### `packages/common/src/create-engine.ts::assemblePortableEngine`
 
@@ -330,6 +330,14 @@ Throws a query refusal as a `TypeError` with the message given. The query facet 
 
 The query plan evaluator and the slot reader it shares with the portable classifier, kept apart from the query facet so that a module a language descriptor loads (the portable guards) reaches no engine runtime.
 
+### `packages/common/src/query-holds.ts::PlanSubjects::count`
+
+The number of subjects a query plan counts.
+
+### `packages/common/src/query-holds.ts::PlanSubjects::delimiters`
+
+The delimiter subjects a query plan reads through.
+
 ### `packages/common/src/engine-scope.ts::inTreeEngine`
 
 Runs a call inside the handle of the engine that read a tree, or plainly when the tree is bound to none. Every wrap of a read node goes through it, so a child hydrated long after the parse returned, outside any engine call, is stamped with the reading engine.
@@ -360,7 +368,7 @@ A value as an accessor of a node of a tree returns it, through the generated `hy
 
 ### `packages/common/src/engine.ts::createRenderHandle`
 
-A lazily rendered text: the render runs on first use and its text is cached. `save` writes through the native file path when the engine offers one, else writes the text. Disposing drops the cached text; any use after that throws `rendered text disposed`.
+A lazily rendered text: the render runs on first use and its text is cached. `save` is required and writes the render through the engine while the text has not been produced; once it has, `writeText` writes the cached text instead. `release`, when given, runs on dispose, which drops the cached text; any use after that throws `rendered text disposed`.
 
 ### `packages/common/src/engine.ts::NativeEngineDiagnostics`
 
@@ -723,14 +731,6 @@ A list option an owner reads from its list's stored `_<option>`, or the option's
 
 The separator a list writes between its items, as a grammar id: its live tree's for a parsed list (its slot's stored separator where its source's gaps differ from what the read-time options render, else the one those options render, which also answers a list with no gap to measure), else that of the list it was rebuilt from. Rebuilding a list with this separator reproduces its source's separators, since the stored separator is the majority of its gaps.
 
-### `packages/common/src/utils.ts::defineListSeparator`
-
-Defines the `separator` of a wrapped list or list owner as a shared, non-enumerable getter, one function per owner accessor: the list's own stored `_separator` when it has one, else the separator its tree answers (`slotSeparatorOf`). It is a getter because the tree's answer measures the list's gaps and records its render, which a wrapped list pays on first read, not at wrap time. An owner names its list accessor and answers the `separator` of the list that accessor returns, whatever that list is (parsed, or built with or without its own separator), so an owner never disagrees with its list; a list defines it on itself.
-
-### `packages/common/src/utils.ts::defineListIndices`
-
-Defines the index positions of a wrapped list or list owner: one getter per position, shared by every wrapped list and not enumerable. A wrapped owner's items are unread until first use, so an index must hydrate them on demand, and a per-node getter would force dictionary mode; one shared getter per position reads the item through `listItemsOf` from whichever list calls it. The getters are the only getters a wrapped node carries, together with the `separator` getter of a wrapped list or list owner (`defineListSeparator`), which is shared in the same way.
-
 ### `packages/common/src/utils.ts::refuseReadStub`
 
 The refusal of a raw factory given a list owner's storage that is a read stub, a parsed list that cannot be counted without its tree. A factory has no tree, and `engine.build` already refuses a bare stub, so the build throws naming the stub rather than carrying a node whose `length` or items cannot be read. A built owner's `length` is always plain data, so it keeps its fast shape.
@@ -799,6 +799,10 @@ A parsed arena's independent lookup, hydration, typed candidate enumeration, ren
 ### `packages/common/src/portable/facts.ts::portablePathHasFacts`
 
 Whether a read path names every fact in a guard path: the top-level namespace matches, and each remaining whole segment occurs in order, allowing other refinement facts between them. Shared by namespace kind admission, exact-guard derivation, and the portable guards' matching of a node's reading. An absent read path matches nothing.
+
+### `packages/common/src/portable/facts.ts::textBuilt`
+
+Whether a build arm builds its kind as text, given the portable build table.
 
 ### `packages/common/src/portable/classify.ts::classifierOf`
 
@@ -1064,7 +1068,7 @@ Reads the emitted presence word and bit directly after checking the word slice. 
 
 ### `packages/common/src/built-arena.ts::BuiltArena`
 
-The records one engine's builders write, in chunks of words and of UTF-8 bytes that JavaScript owns. Native code is handed the chunks for one synchronous call (`chunks`), each cut to what is written, so nothing native holds them between calls. The arena only appends: a record is written once, by its builder, and never changes, so a `$with` writes a new record that names the unchanged children by their addresses.
+The records one engine's builders write, in chunks of words and of UTF-8 bytes that native memory owns and lends to JavaScript as views (`builtWords`, `builtBytes`). Each chunk is freed by native once the counts its records hold reach zero: `release`, `drop` and `dropCell` drop a record's count, and the native side reports each chunk it frees back, which the arena then forgets. `chunks()` gives each chunk cut to what is written, for one synchronous call. The arena only appends: a record is written once, by its builder, and never changes, so a `$with` writes a new record that names the unchanged children by their addresses.
 
 Allocation follows the native arena's chunk policy. The first shared chunk is small and each later one doubles, up to the words a packed address can name within a chunk (`2 ** chunkShift`); an allocation larger than that gets a chunk of its own, and the arena refuses once it holds as many chunks as an address can name. Word 0 of the first chunk is never allocated, so address 0 means no record, as it does natively.
 
@@ -1127,6 +1131,10 @@ What the built arena of a language engine that reads trees as records is made wi
 ### `packages/common/src/engine.ts::builtRecordsOf`
 
 The `BuiltRecords` of a native engine that reads trees as records: its cell format, and its trivia table of built records, which reads and writes the engine's store of written sides by record address (`builtTriviaSide`, `writeBuiltTriviaSide`). A read of a side no write gave answers `undefined`, as the table contract has it (`TreeHandle.triviaSide`), so the side falls back to the one of the node the record was rebuilt from. An addon without the record codec has no such table, and is refused.
+
+### `packages/common/src/engine.ts::saverOf`
+
+The save function a render an engine returned carries, which `save` and a cached-text write both go through. It throws for a render no engine returned.
 
 ### `packages/common/src/built-arena.ts::BuiltArena::node`
 
@@ -1259,6 +1267,10 @@ The kind id for a kind name, or `undefined` when the language has no kind of tha
 ### `packages/common/src/utils.ts::OwnerView`
 
 A view of a node's owner.
+
+### `packages/common/src/utils.ts::preferredFacet`
+
+The token with the facet its preference names, or the token unchanged when no preference is given.
 
 ### `packages/common/src/node-data.ts::mapSideEntries`
 
@@ -1551,3 +1563,7 @@ Stores a value in a slot whose blank arm is `null`. A `null` becomes the `BLANK_
 ### `packages/common/src/blank-arm.ts::blankArmRead`
 
 Reads a stored slot value back. The `BLANK_KIND_ID` marker becomes `null`, and any other value is returned unchanged. It is the inverse of `blankArmStored`.
+
+### `packages/common/src/spelled.ts::spelledMember`
+
+The text in its spelled form: the spelling the text is declared under, or the text itself when no spelling is declared.

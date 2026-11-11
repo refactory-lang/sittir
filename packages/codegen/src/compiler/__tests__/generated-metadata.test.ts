@@ -1,7 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+import { Language, Parser, Tree } from 'web-tree-sitter';
 import { ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import { ERROR_KIND_ROW } from '../../dsl/symbol-table.ts';
-import { deriveGeneratedIdTablesFromParserCSource } from '../generated-metadata.ts';
+import { cpSync, mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { grammarPackage, sittirDirOf } from '../../grammars.ts';
+import { deriveGeneratedIdTablesFromParserCSource, loadPackageIdTables } from '../generated-metadata.ts';
 import { collectGeneratedKindEntries, findEntryForLiteralText, reservedWordset } from '../../dsl/symbol-table.ts';
 
 describe('generated metadata', () => {
@@ -620,5 +625,51 @@ static const char * const ts_field_names[] = {
 			nonLiteral: ['PATTERN']
 		});
 		expect(reservedWordset(reserved, 'properties', entries)).toEqual({ words: [], nonLiteral: [] });
+	});
+});
+
+describe('loadPackageIdTables', () => {
+	it('refuses a parser it cannot tell was built from the grammar, naming the command that builds it', async () => {
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-stale-parser-'));
+		try {
+			const copy = grammarPackage('scm', dir);
+			cpSync(sittirDirOf(grammarPackage('scm')), sittirDirOf(copy), { recursive: true });
+			rmSync(join(sittirDirOf(copy), 'parser.json'), { force: true });
+			await expect(loadPackageIdTables(copy)).rejects.toThrow(/stale-parser[\s\S]*parser\.json[\s\S]*--compile-parser/);
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	});
+
+	it("loads the grammar's own parser beside its tables", async () => {
+		const { parser } = await loadPackageIdTables(grammarPackage('scm'));
+		expect(parser!('(a)')).toBe('(program definitions: (named_node_plain name: (identifier)))');
+	});
+
+	it('frees the parser and the tree of every probe', async () => {
+		const { parser } = await loadPackageIdTables(grammarPackage('scm'));
+		const parsers = vi.spyOn(Parser.prototype, 'delete');
+		const trees = vi.spyOn(Tree.prototype, 'delete');
+		try {
+			parser!('(a)');
+			parser!('(b)');
+			expect(parsers).toHaveBeenCalledTimes(2);
+			expect(trees).toHaveBeenCalledTimes(2);
+		} finally {
+			parsers.mockRestore();
+			trees.mockRestore();
+		}
+	});
+
+	it('loads no language again when it loads the tables of the same parser again', async () => {
+		await loadPackageIdTables(grammarPackage('scm'));
+		const load = vi.spyOn(Language, 'load');
+		try {
+			const { parser } = await loadPackageIdTables(grammarPackage('scm'));
+			expect(parser!('(a)')).toBe('(program definitions: (named_node_plain name: (identifier)))');
+			expect(load).not.toHaveBeenCalled();
+		} finally {
+			load.mockRestore();
+		}
 	});
 });

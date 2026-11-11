@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '../src/create-engine.ts';
+import { sharedEngine } from '../src/testing.ts';
 import type { LanguageAPI } from '@sittir/types';
 import { portableRuntime, type PortableRuntime } from '../src/portable/runtime.ts';
 import python from '@sittir/python';
@@ -14,9 +15,9 @@ const surface = <API extends LanguageAPI>(runtime: PortableRuntime<API>) => ({
 });
 
 const runtimes = {
-	rust: surface(await portableRuntime(await createEngine(rust, { api: 'strict' }))),
-	python: surface(await portableRuntime(await createEngine(python, { api: 'strict' }))),
-	typescript: surface(await portableRuntime(await createEngine(typescript, { api: 'strict' })))
+	rust: surface(await portableRuntime(await sharedEngine(() => createEngine(rust, { api: 'strict' })))),
+	python: surface(await portableRuntime(await sharedEngine(() => createEngine(python, { api: 'strict' })))),
+	typescript: surface(await portableRuntime(await sharedEngine(() => createEngine(typescript, { api: 'strict' }))))
 } as const;
 
 const kindOf = (kinds: object, id: number): string | undefined => Object.entries(kinds).find(([, kind]) => kind === id)?.[0];

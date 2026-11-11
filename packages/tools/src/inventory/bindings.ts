@@ -2,7 +2,7 @@ import { type BindingPattern, bindingPatterns } from '@sittir/codegen/bindings';
 import { grammarPackage } from '@sittir/codegen/grammars';
 import type { Language } from 'web-tree-sitter';
 import { evaluateGrammar, load } from '../codegen-surface.ts';
-import { loadWebTreeSitter } from '../validate/common.ts';
+import { languageOf } from '../validate/common.ts';
 
 const sourceLanguages = new Map<string, Promise<Language>>();
 
@@ -21,8 +21,7 @@ async function sourceLanguage(grammar: string): Promise<Language> {
 
 async function loadSourceLanguage(grammar: string): Promise<Language> {
 	const { buildSourceParser } = await load('sourceParser');
-	const { Language } = await loadWebTreeSitter();
-	return Language.load(buildSourceParser(grammarPackage(grammar)));
+	return (await languageOf(buildSourceParser(grammarPackage(grammar)))).language;
 }
 
 const mints = new Map<string, Promise<ReadonlyMap<string, string>>>();

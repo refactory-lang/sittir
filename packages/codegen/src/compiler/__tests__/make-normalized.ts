@@ -1,4 +1,5 @@
 import { kindIdTablesOf } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { admittedLineEndings } from '../model/line-endings.ts';
 import { computeSimplifiedRules, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { flattenRules } from '../flatten.ts';
@@ -47,6 +48,7 @@ export function makeNormalized(
 		factoryInline: new Set(),
 		splicedNames: new Set(),
 		word: null,
+		lineEndings: admittedLineEndings({ name: 'test', rules: stamped }, null),
 		...overrides
 	};
 }

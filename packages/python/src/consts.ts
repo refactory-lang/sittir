@@ -4,9 +4,9 @@ import type { TokenInterior } from '@sittir/common/utils';
 
 /** Slot structure of every token whose lexed text carries literal affixes, flags or enums around its content. */
 export const TOKEN_INTERIORS = {
-	comment: { regex: '^#(?<content>(?:.*))$', slots: [{ name: 'content', propertyName: 'content' }] },
+	comment: { regex: '^#(?<content>(?:[^\\x0A]*))$', slots: [{ name: 'content', propertyName: 'content' }] },
 	escape_sequence_hex: {
-		regex: '^\\\\(?<content>(?:x[a-fA-F\\d]{2}))$',
+		regex: '^\\\\(?<content>(?:x[a-fA-F0-9]{2}))$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	escape_sequence_line_break: {
@@ -18,7 +18,7 @@ export const TOKEN_INTERIORS = {
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	escape_sequence_octal: {
-		regex: '^\\\\(?<content>(?:\\d{1,3}))$',
+		regex: '^\\\\(?<content>(?:[0-9]{1,3}))$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	escape_sequence_simple: {
@@ -26,11 +26,11 @@ export const TOKEN_INTERIORS = {
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	escape_sequence_unicode_fixed: {
-		regex: '^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$',
+		regex: '^\\\\(?<content>(?:u[a-fA-F0-9]{4}))$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	escape_sequence_unicode_wide: {
-		regex: '^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$',
+		regex: '^\\\\(?<content>(?:U[a-fA-F0-9]{8}))$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	float_leading_point: {
@@ -90,7 +90,8 @@ export const TOKEN_INTERIORS = {
 		]
 	},
 	string_end: {
-		regex: '^(?<content>(?:(?:\\\\[\\s\\S])*))(?<quote>"""|\'\'\'|"|\'|`)$',
+		regex:
+			'^(?<content>(?:(?:\\\\[\\x09-\\x0D\\x20\\x00-\\x08\\x0E-\\x1F\\x21-\\u{10FFFF}])*))(?<quote>"""|\'\'\'|"|\'|`)$',
 		slots: [
 			{ name: 'content', propertyName: 'content' },
 			{ name: 'quote', propertyName: 'quote' }

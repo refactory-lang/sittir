@@ -1,14 +1,15 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync, readdirSync, realpathSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { basename, join, relative } from 'node:path';
+import { join, relative } from 'node:path';
 import { BINDINGS_FILE, VOCABULARY_DIR } from '../bindings/facts.ts';
 import { isVocabularySource, vocabularySources } from '../bindings/vocabulary.ts';
 import { PIN_FILE } from '../bootstrap/bootstrap.ts';
 import { moduleClosure } from './module-closure.ts';
 import { sha256File } from '../util/content-hash.ts';
 import { writeFileAtomic } from '../util/write-file-atomic.ts';
+import { filesUnder } from '../util/files.ts';
 import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
 import { readUpstreamRecord } from '../transpile/compile-parser.ts';
 import { ensureWasmToolchain, treeSitterToolchain, treeSitterToolchainIdentity, wasmToolchainInstalled } from '../transpile/tree-sitter-cli.ts';
@@ -74,22 +75,6 @@ export function manifestPath(grammar: GrammarName, src: ManifestSource = worktre
 	return join(src.checkout, MANIFEST_DIR, `${grammar}.json`);
 }
 
-function isJunkFile(name: string): boolean {
-	return name === '.DS_Store';
-}
-
-function walk(path: string, out: string[]): void {
-	if (!existsSync(path)) return;
-	const stat = statSync(path);
-	if (stat.isFile()) {
-		if (isJunkFile(basename(path))) return;
-		out.push(path);
-		return;
-	}
-	if (stat.isDirectory()) {
-		for (const name of readdirSync(path)) walk(join(path, name), out);
-	}
-}
 
 export function gitVisiblePaths(root: string): ReadonlySet<string> {
 	let stdout: string;
@@ -118,9 +103,8 @@ function isManifestExcluded(relPath: string, src: ManifestSource): boolean {
 }
 
 function collectFiles(grammar: GrammarName, src: ManifestSource): string[] {
-	const all: string[] = [];
-	for (const root of pathsFor(grammar)) walk(join(src.root, root), all);
-	return all
+	return pathsFor(grammar)
+		.flatMap((root) => filesUnder(join(src.root, root)))
 		.filter((f) => !isManifestExcluded(relative(src.root, f), src))
 		.sort();
 }
@@ -180,9 +164,9 @@ const codegenHashBySource = new WeakMap<ManifestSource, string>();
 const runtimeClosureBySource = new WeakMap<ManifestSource, readonly string[]>();
 
 function codegenSourceFiles(src: ManifestSource): string[] {
-	const files: string[] = [];
-	walk(join(src.root, CODEGEN_SOURCE_DIR), files);
-	return files.sort().filter((f) => isCodegenSourceInput(relative(src.root, f)));
+	return filesUnder(join(src.root, CODEGEN_SOURCE_DIR))
+		.sort()
+		.filter((f) => isCodegenSourceInput(relative(src.root, f)));
 }
 
 function runtimeClosure(src: ManifestSource): readonly string[] {

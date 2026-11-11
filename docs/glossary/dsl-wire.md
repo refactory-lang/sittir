@@ -2333,3 +2333,11 @@ Whether a wire is applied inside a path edit.
 ### `packages/codegen/src/dsl/wire/wire.ts::wireIsShown`
 
 Whether a rule is shown under a display name.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::currentLift`
+
+The rule the wire pass is lifting now, or null outside a lift. Under a refused entry it is `'scoped'`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireGetFieldOwner`
+
+The owner kind of the field the wire pass is in, or null when no field is being wired.

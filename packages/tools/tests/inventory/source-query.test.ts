@@ -3,14 +3,13 @@ import { join } from 'node:path';
 import { expect, it } from 'vitest';
 import { grammarPackageDir } from '@sittir/codegen/grammars';
 import { compileQuery, bindingIssues } from '../../src/inventory/bindings.ts';
-import { loadWebTreeSitter } from '../../src/validate/common.ts';
+import { languageAt } from '../../src/validate/common.ts';
 
 it('validates authored fields before the bindings rename them', async () => {
-	const { Language } = await loadWebTreeSitter();
 	const { Query } = await import('web-tree-sitter');
 	const boundPath = join(grammarPackageDir('python'), '.sittir/parser.wasm');
 	const before = readFileSync(boundPath);
-	const bound = await Language.load(boundPath);
+	const { language: bound } = await languageAt(boundPath);
 	const source = '(conditional_expression body: (_) @consequence) @expression.conditional';
 	expect(() => new Query(bound, source)).toThrow();
 	expect(await compileQuery('python', source)).toMatchObject({

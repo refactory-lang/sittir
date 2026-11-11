@@ -1,14 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { loadLanguageForGrammar, upstreamWasmPath } from '../src/validate/common.ts';
+import { languageAt, loadLanguageForGrammar, treeParser, upstreamWasmPath } from '../src/validate/common.ts';
 
 async function parse(source: string): Promise<{ sittir: string; upstream: string }> {
-	const { Parser, Language, lang } = await loadLanguageForGrammar('rust');
-	const parser = new Parser();
-	parser.setLanguage(lang);
-	const sittir = parser.parse(source)!.rootNode.toString();
-	parser.setLanguage(await Language.load(upstreamWasmPath('rust')!));
-	const upstream = parser.parse(source)!.rootNode.toString();
-	return { sittir, upstream };
+	using sittirParser = treeParser(await loadLanguageForGrammar('rust'));
+	using upstreamParser = treeParser(await languageAt(upstreamWasmPath('rust')!));
+	using sittir = sittirParser.parse(source);
+	using upstream = upstreamParser.parse(source);
+	return { sittir: sittir.root.toString(), upstream: upstream.root.toString() };
 }
 
 describe('rust reads a parenthesized primitive parameter as a type, as upstream does', () => {

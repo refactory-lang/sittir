@@ -301,7 +301,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	stampWhitespaceBuilders(nodes);
 	stampDelimiterTokens(nodes);
 	stampFullForms(nodes, wordMatcherRegex);
-	stampDelimited(nodes, wordMatcherRegex);
+	stampDelimited(nodes, wordMatcherRegex, normalized.lineEndings.breaks.chars);
 	recordUnguardedDelimiters(nodes, ctx);
 	resolveCollidingNames(nodes, ctx);
 	resolveIrKeys(nodes);
@@ -368,6 +368,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		externals: normalized.externals,
 		extras: normalized.extras,
 		nodelessExtrasRun: normalized.nodelessExtrasRun,
+		lineEndings: normalized.lineEndings,
 		refineForms: normalized.refineForms,
 		parseKindCollisions: assembleDiagnostics.parseKindCollisions.all,
 		assembleWarnings: assembleDiagnostics.assembleWarnings.all,

@@ -17,6 +17,10 @@ export const benchStorage: CommandModule = {
 				"With --validation, also measure another built checkout's own validation workers in the same rounds, the order turning each round, with the memory of loading one grammar and every grammar, and the bytes a host install of each grammar costs, for both"
 			)
 			.option('--idle-gate <path>', "Run a shell idle gate before each worker, passing the worker's checkout")
+			.option(
+				'--hold-peers',
+				'While it runs, keep the work of other Claude sessions and the sccache server on the efficiency cores (macOS background class), giving it back at the end'
+			)
 			.option('--output <path>', 'Write the complete JSON report to this file')
 			.action(
 				async (
@@ -29,6 +33,7 @@ export const benchStorage: CommandModule = {
 						nativeDepth: string;
 						validation?: boolean;
 						idleGate?: string;
+						holdPeers?: boolean;
 						output?: string;
 						baseline?: string;
 					}
@@ -43,6 +48,7 @@ export const benchStorage: CommandModule = {
 						nativeDepth: opts.nativeDepth === 'all' ? 'all' : Number(opts.nativeDepth),
 						validation: opts.validation,
 						idleGate: opts.idleGate,
+						holdPeers: opts.holdPeers,
 						output: opts.output,
 						baseline: opts.baseline
 					});

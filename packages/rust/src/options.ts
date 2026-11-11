@@ -8,7 +8,7 @@ export type { WhitespaceKindId, LayoutKindId };
 
 export type IndentChar = ' ' | '\t';
 
-export type LineEnding = '\n' | '\r\n' | '\r';
+export type LineEnding = '\n' | '\r\n';
 
 /// The virtual kinds the grammar declares beside its node kinds, by the sites bound to them.
 export interface LabelOptions {

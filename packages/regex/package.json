@@ -52,7 +52,7 @@
 		"tree-sitter-regex": "^0.25.0"
 	},
 	"engines": {
-		"node": "^22.14.0 || >=23.6.0"
+		"node": ">=24.12.0"
 	},
 	"//native": "Native artifacts are grammar-local implementation details for @sittir/regex, built from rust/crates/sittir-regex: native/ holds the loader and its typings, and each platform's binary ships in its own sittir-regex-<platform> package with the engine and std it links.",
 	"sittir": {

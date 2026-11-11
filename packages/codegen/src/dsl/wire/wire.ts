@@ -1280,20 +1280,25 @@ function refuseEditSite(kind: string, cfg: WireConfig<any>, ctx: WireEntryCtx): 
 	});
 }
 
-export interface WireRefusal {
+export interface WireNotice {
 	readonly code: string;
 	readonly ownerKind: string;
 	readonly message: string;
 	readonly details: Record<string, unknown>;
 }
 
-function recordRefusal(context: WireContext | null, grammar: string, { code, ownerKind, message, details }: WireRefusal): void {
+function recordRefusal(context: WireContext | null, grammar: string, { code, ownerKind, message, details }: WireNotice): void {
 	if (context?.layer === undefined) throw new Error(message);
 	context.layer.diagnostics.push({ scope: 'grammar', code, severity: 'fail', canProceed: false, grammar, ownerKind, message, details });
 }
 
-export function wireRefuse(refusal: WireRefusal): void {
+export function wireRefuse(refusal: WireNotice): void {
 	recordRefusal(currentContext, currentContext?.layer?.name ?? '', refusal);
+}
+
+export function wireWarn({ code, ownerKind, message, details }: WireNotice): void {
+	const layer = currentContext?.layer;
+	layer?.diagnostics.push({ scope: 'grammar', code, severity: 'warning', canProceed: true, grammar: layer.name, ownerKind, message, details });
 }
 
 function aboveFirstLayer(context: WireContext | null): context is WireContext {

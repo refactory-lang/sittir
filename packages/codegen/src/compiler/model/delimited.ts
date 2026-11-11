@@ -12,7 +12,7 @@ import {
 	type DelimiterEnd,
 	type FreeText
 } from './node-map.ts';
-import { CharSet, LINE_TERMINATORS, admitsInside, dfaAccepts, includesNonEmpty, leadingChars, patternDfa } from './pattern-automaton.ts';
+import { CharSet, admitsInside, dfaAccepts, includesNonEmpty, leadingChars, patternDfa } from './pattern-automaton.ts';
 import { delimiterOwners } from './delimiter-facets.ts';
 
 function firstChars(text: string): CharSet {
@@ -203,7 +203,7 @@ function delimitedVerdictOf(
 	if (holdsWordChar(closing, isWordChar)) return { skipped };
 	const { hazardous, otherLeaders } = hazardousArms(content, facts);
 	if (!hazardous.some(Boolean)) return { skipped };
-	const excluded = otherLeaders.union(closing).union(LINE_TERMINATORS);
+	const excluded = otherLeaders.union(closing);
 	const nodeKinds = arms.flatMap((arm) => (arm.type === SYMBOL && !facts.isText(arm) ? [arm.name] : []));
 	return { delimited: { open, close, excluded: excluded.ranges, nodeKinds, varying: open.slot !== undefined || close.slot !== undefined } };
 }
@@ -283,12 +283,14 @@ function leafSafety(
 	return leaf.name !== undefined && grammar.externals.has(leaf.name) ? 'unguarded' : 'regular-token';
 }
 
-export function stampDelimited(nodes: ReadonlyMap<string, AssembledNode>, wordMatcher: RegExp | undefined): void {
+export function stampDelimited(nodes: ReadonlyMap<string, AssembledNode>, wordMatcher: RegExp | undefined, lineBreaks: CharSet): void {
 	const facts = new DelimitedFacts(nodes);
 	const isWordChar = wordCharPredicate(wordMatcher);
 	const derived = delimiterOwners(nodes);
 	for (const node of nodes.values()) {
-		if (node instanceof AbstractAssembledCompound && !derived.has(node.kind)) node.delimited = delimitedVerdictOf(node, facts, nodes, isWordChar)?.delimited;
+		if (!(node instanceof AbstractAssembledCompound) || derived.has(node.kind)) continue;
+		const delimited = delimitedVerdictOf(node, facts, nodes, isWordChar)?.delimited;
+		node.delimited = delimited && { ...delimited, excluded: CharSet.of(delimited.excluded).union(lineBreaks).ranges };
 	}
 }
 

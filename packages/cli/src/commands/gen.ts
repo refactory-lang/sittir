@@ -21,7 +21,6 @@ interface GenCliOptions {
 	postGenerateOnly?: boolean;
 	nativeOnly?: boolean;
 	allowDiagnostic?: string[];
-	nodeApiLevel?: number;
 }
 
 function collectRepeatable(value: string, previous: string[]): string[] {
@@ -84,9 +83,6 @@ export const gen: CommandModule = {
 			.addOption(
 				new Option('--native-only', 'Rebuild only the N-API binding from the generated sources, then run post-generate').hideHelp()
 			)
-			.addOption(
-				new Option('--node-api-level <level>', 'The Node-API level the workspace builds with, read once by a multi-grammar driver').argParser(Number).hideHelp()
-			)
 			.addOption(new Option('--no-build-native', 'Skip the post-regen N-API rebuild'))
 			.option(
 				'--native-debug',
@@ -121,8 +117,7 @@ export const gen: CommandModule = {
 					nativeDebug: opts.nativeDebug, // true only if --native-debug
 					workspaceCheck: opts.workspaceCheck, // false only if --no-workspace-check
 					noEmitDiff: opts.emitDiff === false, // true only if --no-emit-diff
-					allowDiagnostics: opts.allowDiagnostic,
-					nodeApiLevel: opts.nodeApiLevel
+					allowDiagnostics: opts.allowDiagnostic
 				};
 
 				// The second half of a multi-grammar regeneration: every grammar is

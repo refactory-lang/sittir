@@ -330,7 +330,7 @@ describe('grammar diagnostics preflight', () => {
 			['inline_only_kind'],
 			['inline_only_kind']
 		);
-		const generatedIdTables: GeneratedIdTables = { kindIds: { known: 1 }, fieldIds: new Map(), folds: new Map(), sourceArtifact: 'test' };
+		const generatedIdTables: GeneratedIdTables = { kindIds: { known: 1 }, fieldIds: new Map(), folds: new Map(), sourceArtifact: 'test', parser: null };
 		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar, generatedIdTables });
 		expect(result.compilerDiagnostics.all().map((d) => d.code)).toEqual(
 			expect.arrayContaining(['kindid-inline-excluded-symbols', 'kindid-unclassified-symbols'])
