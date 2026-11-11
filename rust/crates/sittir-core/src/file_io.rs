@@ -3,6 +3,7 @@
 
 use std::fmt;
 use std::fs;
+use std::hash::{BuildHasher, RandomState};
 use std::io::{self, Read, Seek, Write};
 use std::path::{Path, PathBuf};
 
@@ -200,12 +201,13 @@ const NO_HARD_LINKS: [i32; 2] = [1, 50];
 #[cfg(not(any(unix, windows)))]
 const NO_HARD_LINKS: [i32; 0] = [];
 
-/// The scratch path beside `target`, named for it, the process and the
-/// thread, so no two writers in flight share one.
+/// A scratch path beside `target`, unique to this call: named for the
+/// process and a random key, which std's keyed hasher draws afresh on every
+/// `RandomState::new()`. So a scratch file an earlier create left behind
+/// never blocks a later one, and the name stays short whatever the target's.
 fn scratch_name(target: &Path) -> PathBuf {
-    let name = target.file_name().map_or_else(String::new, |name| name.to_string_lossy().into_owned());
-    let thread: String = format!("{:?}", std::thread::current().id()).chars().filter(char::is_ascii_digit).collect();
-    target.with_file_name(format!(".{name}.{}-{thread}.sittir-tmp", std::process::id()))
+    let key = RandomState::new().hash_one(target);
+    target.with_file_name(format!(".{}-{key:016x}.sittir-tmp", std::process::id()))
 }
 
 /// An opened file a write goes through. Writing it and putting it back
@@ -263,7 +265,7 @@ fn write_or_restore<F: Rewrite>(path: &Path, mut file: F, bytes: &[u8], original
 
 #[cfg(test)]
 mod tests {
-    use super::{read_source, write_file, write_through, FileError, Rewrite, WriteMode, NO_HARD_LINKS};
+    use super::{read_source, scratch_name, write_file, write_through, FileError, Rewrite, WriteMode, NO_HARD_LINKS};
     use std::fs;
     use std::io;
     use std::path::{Path, PathBuf};
@@ -628,6 +630,37 @@ mod tests {
             assert_eq!(fs::read_to_string(&path).unwrap(), "fn theirs() {}\n");
         }
         assert_eq!(entries(&dir), ["CreateNew.rs", "Replace.rs"]);
+    }
+
+    #[test]
+    fn a_near_limit_name_is_created_in_both_modes() {
+        let dir = directory("long-name");
+        for (mode, letter) in [(WriteMode::Replace, "a"), (WriteMode::CreateNew, "b")] {
+            let path = dir.join(format!("{}.rs", letter.repeat(252)));
+            assert!(write_file(&path, b"fn a() {}\n", mode).unwrap());
+            assert_eq!(fs::read_to_string(&path).unwrap(), "fn a() {}\n");
+        }
+        assert_eq!(entries(&dir).len(), 2);
+    }
+
+    #[test]
+    fn each_create_takes_a_short_scratch_name_of_its_own() {
+        let target = Path::new("dir").join("a".repeat(255));
+        let (first, second) = (scratch_name(&target), scratch_name(&target));
+        assert_ne!(first, second);
+        assert_eq!(first.parent(), target.parent());
+        assert!(first.file_name().unwrap().len() <= 40, "{}", first.display());
+    }
+
+    #[test]
+    fn a_leftover_scratch_never_blocks_a_later_create() {
+        let dir = directory("leftover");
+        let path = dir.join("a.rs");
+        let leftover = scratch_name(&path);
+        fs::write(&leftover, "left\n").unwrap();
+        assert!(write_file(&path, b"fn a() {}\n", WriteMode::CreateNew).unwrap());
+        assert_eq!(fs::read_to_string(&path).unwrap(), "fn a() {}\n");
+        assert_eq!(fs::read_to_string(&leftover).unwrap(), "left\n");
     }
 
     #[test]
