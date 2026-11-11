@@ -36,7 +36,7 @@ import type { TreeHandle } from './read.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { refuseReviver } from './json-refusal.ts';
-import { ARENA_FEATURE_REFUSED, createRenderHandle, nativeBuiltRecords } from './engine.ts';
+import { ARENA_FEATURE_REFUSED, createRenderHandle, nativeBuiltRecords, type TextWriter } from './engine.ts';
 import { portable, portableGuardsOf, registerPortableRows } from './portable/index.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered, writeLeafSites } from './utils.ts';
 
@@ -165,11 +165,12 @@ function interceptedRender<Call>(
 	chain: Middleware<Call, string>,
 	rendered: Rendered,
 	materialize: () => string,
-	writeText: (path: string, text: string, create: boolean) => boolean
+	writeText: TextWriter
 ): Rendered {
 	const output: Rendered = createRenderHandle(
 		() => chain(call, materialize),
 		(path, create) => writeText(path, output.toString(), create),
+		writeText,
 		() => rendered[Symbol.dispose]()
 	);
 	return output;

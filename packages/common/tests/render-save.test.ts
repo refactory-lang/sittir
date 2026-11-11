@@ -88,6 +88,21 @@ describe.each(['object', 'arena'] as const)('render(node).save(path) (%s)', (nod
 		expect(readFileSync(path, 'utf8')).toBe('x');
 	});
 
+	it.each([
+		['a parsed root', (engine: Engine<RustAPI>) => engine.parse('fn a() {}\nfn b() {}\n')],
+		['a built root', (engine: Engine<RustAPI>) => engine.build.sourceFile({ statements: [...engine.parse('fn a() {}\nfn b() {}\n').statements()] } as never)]
+	])('%s saves the text its toString returned, though the options changed since', async (_, rootOf) => {
+		const engine = await engineOf();
+		const options = { layout: { newline: '\n' as '\n' | '\r\n' } };
+		const rendered = engine.render(rootOf(engine) as never, options as never);
+		const text = rendered.toString();
+		options.layout.newline = '\r\n';
+		const path = join(directory, 'a.rs');
+		rendered.save(path);
+		expect(readFileSync(path, 'utf8')).toBe(text);
+		expect(rendered.toString()).toBe(text);
+	});
+
 	it("a render's saver creates a new file and refuses an existing one", async () => {
 		const engine = await engineOf();
 		const path = join(directory, 'new.rs');

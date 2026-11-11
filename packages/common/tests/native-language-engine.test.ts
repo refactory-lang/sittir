@@ -2,6 +2,10 @@ import { describe, it, expect } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { createRenderHandle, nativeLanguageEngine, type SittirEngine } from '../src/engine.ts';
 
+const writesNoFile = (): never => {
+	throw new Error('a fake engine writes no file');
+};
+
 function fakeSittirEngine() {
 	const calls: { render: unknown[]; disposed: number } = { render: [], disposed: 0 };
 	let reads = 0;
@@ -10,9 +14,8 @@ function fakeSittirEngine() {
 			calls.render.push(options);
 			return createRenderHandle(
 				() => `rendered:${String(node.$type)}`,
-				() => {
-					throw new Error('a fake engine writes no file');
-				}
+				writesNoFile,
+				writesNoFile
 			);
 		},
 		dispose() {

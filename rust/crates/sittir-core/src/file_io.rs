@@ -3,7 +3,7 @@
 
 use std::fmt;
 use std::fs;
-use std::io;
+use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 
 /// How [`write_file`] treats a path that already holds a file.
@@ -63,49 +63,46 @@ pub fn read_source(path: &Path) -> Result<String, FileError> {
 
 /// Writes `bytes` to `path`, answering whether it wrote.
 ///
-/// The bytes go to a scratch file beside the target, which is then renamed
-/// over it (`Replace`) or linked to it (`CreateNew`, which a file at the
-/// path refuses). So an error or a crash of the process never leaves the
-/// target truncated or half-written, and a failure removes the scratch
-/// file. Nothing is synced to disk.
+/// The bytes go to a scratch file this call creates beside the target,
+/// which is then renamed over it (`Replace`) or linked to it (`CreateNew`,
+/// which a file at the path refuses). So an error or a crash of the process
+/// never leaves the target truncated or half-written, and a failure removes
+/// the scratch file. Nothing is synced to disk.
 ///
 /// `Replace` leaves a file that already holds `bytes` untouched and answers
-/// `false`. It writes a symlink's target, keeping the link, and keeps the
-/// replaced file's permission bits. No directory is ever created.
+/// `false`. It writes a symlink's target, keeping the link, even when the
+/// target doesn't exist yet. A replaced file keeps its permission bits, and
+/// its new bytes are readable only by the owner until they replace it. No
+/// directory is ever created.
 pub fn write_file(path: &Path, bytes: &[u8], mode: WriteMode) -> Result<bool, FileError> {
     let refused = |cause| FileError::Write { path: path.to_owned(), cause };
-    let existing = match mode {
+    let (target, permissions) = match mode {
         WriteMode::Replace => match fs::canonicalize(path) {
-            Ok(resolved) => Some(resolved),
-            Err(cause) if cause.kind() == io::ErrorKind::NotFound => None,
+            Ok(resolved) => {
+                let meta = fs::metadata(&resolved).map_err(refused)?;
+                if meta.is_file() && holds(&resolved, &meta, bytes) {
+                    return Ok(false);
+                }
+                (resolved, Some(meta.permissions()))
+            }
+            Err(cause) if cause.kind() == io::ErrorKind::NotFound => (referent(path).map_err(refused)?, None),
             Err(cause) => return Err(refused(cause)),
         },
-        WriteMode::CreateNew => None,
+        WriteMode::CreateNew => (path.to_owned(), None),
     };
-    let permissions = match &existing {
-        Some(target) => {
-            let meta = fs::metadata(target).map_err(refused)?;
-            if meta.is_file() && holds(target, &meta, bytes) {
-                return Ok(false);
-            }
-            Some(meta.permissions())
-        }
-        None => None,
-    };
-    let target = existing.as_deref().unwrap_or(path);
-    let scratch = scratch_beside(target);
-    let written = fs::write(&scratch, bytes)
-        .and_then(|()| permissions.map_or(Ok(()), |permissions| fs::set_permissions(&scratch, permissions)))
-        .and_then(|()| match mode {
-            WriteMode::Replace => fs::rename(&scratch, target),
-            WriteMode::CreateNew => fs::hard_link(&scratch, target).and_then(|()| fs::remove_file(&scratch)),
-        });
-    written.map(|()| true).map_err(|cause| {
+    let (scratch, mut file) = create_scratch(&target, permissions.is_some()).map_err(refused)?;
+    let staged = file.write_all(bytes).and_then(|()| permissions.map_or(Ok(()), |permissions| file.set_permissions(permissions)));
+    drop(file);
+    let written = staged.and_then(|()| match mode {
+        WriteMode::Replace => fs::rename(&scratch, &target),
+        WriteMode::CreateNew => fs::hard_link(&scratch, &target),
+    });
+    if mode == WriteMode::CreateNew || written.is_err() {
         let _ = fs::remove_file(&scratch);
-        match (mode, cause.kind()) {
-            (WriteMode::CreateNew, io::ErrorKind::AlreadyExists) => FileError::Exists { path: path.to_owned() },
-            _ => refused(cause),
-        }
+    }
+    written.map(|()| true).map_err(|cause| match (mode, cause.kind()) {
+        (WriteMode::CreateNew, io::ErrorKind::AlreadyExists) => FileError::Exists { path: path.to_owned() },
+        _ => refused(cause),
     })
 }
 
@@ -113,17 +110,61 @@ fn holds(path: &Path, meta: &fs::Metadata, bytes: &[u8]) -> bool {
     meta.len() == bytes.len() as u64 && fs::read(path).is_ok_and(|current| current == bytes)
 }
 
-/// A scratch path in `target`'s directory, named for the process and the
-/// thread, so no two writers in flight share one.
-fn scratch_beside(target: &Path) -> PathBuf {
+/// `path` with each symlink its last component names followed, so a link to
+/// a file that doesn't exist yet names that file. A path that isn't a link
+/// is itself.
+fn referent(path: &Path) -> io::Result<PathBuf> {
+    let mut current = path.to_owned();
+    for _ in 0..MAX_LINKS {
+        match fs::symlink_metadata(&current) {
+            Ok(meta) if meta.file_type().is_symlink() => {
+                let link = fs::read_link(&current)?;
+                current = current.parent().map_or_else(|| link.clone(), |dir| dir.join(&link));
+            }
+            _ => return Ok(current),
+        }
+    }
+    Err(io::Error::other(format!("more than {MAX_LINKS} symbolic links")))
+}
+
+const MAX_LINKS: usize = 40;
+
+const SCRATCH_ATTEMPTS: u32 = 16;
+
+/// A scratch file this call creates beside `target`: exclusively, so it is
+/// never a file or link that was already there, and readable only by the
+/// owner when it will replace a file (`private`).
+fn create_scratch(target: &Path, private: bool) -> io::Result<(PathBuf, fs::File)> {
+    let mut options = fs::OpenOptions::new();
+    options.write(true).create_new(true);
+    #[cfg(unix)]
+    if private {
+        std::os::unix::fs::OpenOptionsExt::mode(&mut options, 0o600);
+    }
+    #[cfg(not(unix))]
+    let _ = private;
+    for attempt in 0..SCRATCH_ATTEMPTS {
+        let scratch = scratch_name(target, attempt);
+        match options.open(&scratch) {
+            Ok(file) => return Ok((scratch, file)),
+            Err(cause) if cause.kind() == io::ErrorKind::AlreadyExists => {}
+            Err(cause) => return Err(cause),
+        }
+    }
+    Err(io::Error::new(io::ErrorKind::AlreadyExists, format!("{SCRATCH_ATTEMPTS} scratch names beside it are taken")))
+}
+
+/// The scratch path of `attempt` in `target`'s directory, named for the
+/// process and the thread, so writers in flight don't contend for one.
+fn scratch_name(target: &Path, attempt: u32) -> PathBuf {
     let name = target.file_name().map_or_else(String::new, |name| name.to_string_lossy().into_owned());
     let thread: String = format!("{:?}", std::thread::current().id()).chars().filter(char::is_ascii_digit).collect();
-    target.with_file_name(format!(".{name}.{}-{thread}.sittir-tmp", std::process::id()))
+    target.with_file_name(format!(".{name}.{}-{thread}-{attempt}.sittir-tmp", std::process::id()))
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{read_source, write_file, FileError, WriteMode};
+    use super::{create_scratch, read_source, scratch_name, write_file, FileError, WriteMode};
     use std::fs;
     use std::path::{Path, PathBuf};
 
@@ -232,6 +273,60 @@ mod tests {
         assert!(fs::symlink_metadata(&link).unwrap().file_type().is_symlink());
         assert_eq!(fs::read_to_string(&target).unwrap(), "fn b() {}\n");
         assert_eq!(entries(&dir), ["link.rs", "target.rs"]);
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn a_stale_scratch_linked_to_the_target_never_changes_it() {
+        let dir = directory("stale");
+        let path = dir.join("a.rs");
+        fs::write(&path, "keep\n").unwrap();
+        let stale = scratch_name(&path, 0);
+        fs::hard_link(&path, &stale).unwrap();
+        let error = write_file(&path, b"new\n", WriteMode::CreateNew).unwrap_err();
+        assert!(matches!(error, FileError::Exists { .. }), "{error:?}");
+        assert_eq!(fs::read_to_string(&path).unwrap(), "keep\n");
+        assert!(write_file(&path, b"new\n", WriteMode::Replace).unwrap());
+        assert_eq!(fs::read_to_string(&path).unwrap(), "new\n");
+        assert_eq!(fs::read_to_string(&stale).unwrap(), "keep\n");
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn a_planted_scratch_link_is_never_written_through() {
+        let dir = directory("planted");
+        let path = dir.join("a.rs");
+        let other = dir.join("other.rs");
+        fs::write(&path, "a\n").unwrap();
+        fs::write(&other, "other\n").unwrap();
+        std::os::unix::fs::symlink(&other, scratch_name(&path, 0)).unwrap();
+        assert!(write_file(&path, b"b\n", WriteMode::Replace).unwrap());
+        assert_eq!(fs::read_to_string(&other).unwrap(), "other\n");
+        assert_eq!(fs::read_to_string(&path).unwrap(), "b\n");
+        assert!(!fs::symlink_metadata(&path).unwrap().file_type().is_symlink());
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn the_scratch_replacing_a_file_is_owner_only_from_its_creation() {
+        use std::os::unix::fs::PermissionsExt;
+        let dir = directory("private");
+        let path = dir.join("secret.rs");
+        let (scratch, file) = create_scratch(&path, true).unwrap();
+        assert_eq!(file.metadata().unwrap().permissions().mode() & 0o777, 0o600);
+        fs::remove_file(scratch).unwrap();
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn a_dangling_symlink_writes_its_referent() {
+        let dir = directory("dangling");
+        let link = dir.join("link.rs");
+        std::os::unix::fs::symlink("missing.rs", &link).unwrap();
+        assert!(write_file(&link, b"fn a() {}\n", WriteMode::Replace).unwrap());
+        assert!(fs::symlink_metadata(&link).unwrap().file_type().is_symlink());
+        assert_eq!(fs::read_to_string(dir.join("missing.rs")).unwrap(), "fn a() {}\n");
+        assert_eq!(entries(&dir), ["link.rs", "missing.rs"]);
     }
 
     #[test]

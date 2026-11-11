@@ -36,9 +36,11 @@ export interface RenderOptions<O extends object = RenderOptionValues> {
 
 export type RenderSaver = (path: string, create: boolean) => boolean;
 
+export type TextWriter = (path: string, text: string, create: boolean) => boolean;
+
 const savers = new WeakMap<Rendered, RenderSaver>();
 
-export function createRenderHandle(renderText: () => string, save: RenderSaver, release?: () => void): Rendered {
+export function createRenderHandle(renderText: () => string, save: RenderSaver, writeText: TextWriter, release?: () => void): Rendered {
 	let cached: string | undefined;
 	let disposed = false;
 	function live(): void {
@@ -51,7 +53,7 @@ export function createRenderHandle(renderText: () => string, save: RenderSaver, 
 	}
 	const saver: RenderSaver = (path, create) => {
 		live();
-		return save(path, create);
+		return cached === undefined ? save(path, create) : writeText(path, cached, create);
 	};
 	const rendered: Rendered = {
 		save(path: string): void {
@@ -725,6 +727,8 @@ export function createNativeEngine<
 			return tree;
 		};
 
+		const writeText: TextWriter = (path, text, create) => engine.writeText(path, text, create);
+
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
 			const holdsTrees = (): unknown => node;
@@ -743,14 +747,16 @@ export function createNativeEngine<
 					};
 					return createRenderHandle(
 						() => renderBuilt.call(engine, built.arena.owner, settled(), changed.leading, changed.trailing, renderTreeOf(node as object), perCall),
-						(path, create) => renderBuiltToFile.call(engine, built.arena.owner, settled(), changed.leading, changed.trailing, path, create, renderTreeOf(node as object), perCall)
+						(path, create) => renderBuiltToFile.call(engine, built.arena.owner, settled(), changed.leading, changed.trailing, path, create, renderTreeOf(node as object), perCall),
+						writeText
 					);
 				}
 				const kind = (node as AnyUntypedNode).$type as number;
 				const entry = (): number => built.arena.placeEntry(node as object, kind, built.text).at;
 				return createRenderHandle(
 					() => renderBuiltLeaf.call(engine, built.arena.owner, kind, entry(), leafWireSides(node as object) ?? null, changed.leading, changed.trailing, perCall),
-					(path, create) => renderBuiltLeafToFile.call(engine, built.arena.owner, kind, entry(), leafWireSides(node as object) ?? null, changed.leading, changed.trailing, path, create, perCall)
+					(path, create) => renderBuiltLeafToFile.call(engine, built.arena.owner, kind, entry(), leafWireSides(node as object) ?? null, changed.leading, changed.trailing, path, create, perCall),
+					writeText
 				);
 			}
 			const record = typeof node === 'number' ? undefined : recordOf(node);
@@ -771,7 +777,8 @@ export function createNativeEngine<
 					(path, create) => {
 						holdsTrees();
 						return renderRecordToFile.call(engine, treeId, record, changed.leading, changed.trailing, path, create, perCall);
-					}
+					},
+					writeText
 				);
 			}
 			const data = (typeof node === 'number' ? node : toNodeData(node, kindView)) as TNode;
@@ -784,7 +791,8 @@ export function createNativeEngine<
 				(path, create) => {
 					holdsTrees();
 					return engine.renderToFile(data, path, create, treeId, perCall);
-				}
+				},
+				writeText
 			);
 		}
 
@@ -795,9 +803,7 @@ export function createNativeEngine<
 					return renderNativeNode(node, opts);
 				},
 
-				writeText(path, text, create) {
-					return engine.writeText(path, text, create);
-				},
+				writeText,
 
 				release(node) {
 					const arena = handleArenaOf(node);
