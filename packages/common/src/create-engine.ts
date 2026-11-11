@@ -164,16 +164,15 @@ function interceptedRender<Call>(
 	call: Call,
 	chain: Middleware<Call, string>,
 	rendered: Rendered,
-	materialize: () => string
+	materialize: () => string,
+	writeText: (path: string, text: string, create: boolean) => boolean
 ): Rendered {
-	const output = createRenderHandle(() => chain(call, materialize));
-	return {
-		...output,
-		[Symbol.dispose]() {
-			output[Symbol.dispose]();
-			rendered[Symbol.dispose]();
-		}
-	};
+	const output: Rendered = createRenderHandle(
+		() => chain(call, materialize),
+		(path, create) => writeText(path, output.toString(), create),
+		() => rendered[Symbol.dispose]()
+	);
+	return output;
 }
 
 const builderScopes = new WeakMap<object, <T extends object>(table: T) => T>();
@@ -347,7 +346,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 				node: target,
 				options: mergeRenderOptions(options?.render, renderOptions)
 			};
-			return interceptedRender(call, renderChain, rendered, () => materializeNative(target, rendered));
+			return interceptedRender(call, renderChain, rendered, () => materializeNative(target, rendered), (path, text, create) => native.writeText(path, text, create));
 		},
 		create(): Pending {
 			throw unimplementedVerb('create');

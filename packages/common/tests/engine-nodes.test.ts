@@ -44,7 +44,12 @@ function fakeLanguage(name: string) {
 			const label = String.fromCharCode(65 + engines++);
 			return {
 				render: (n: AnyUntypedNode, call?: Options) =>
-					createRenderHandle(() => `${label}:${call?.indent ?? opts?.options?.indent ?? ''}:${n.$type}`),
+					createRenderHandle(
+						() => `${label}:${call?.indent ?? opts?.options?.indent ?? ''}:${n.$type}`,
+						() => {
+							throw new Error('a fake engine writes no file');
+						}
+					),
 				parseAndRead: () => {
 					const tree = { source: 'src' };
 					trees.push(tree);

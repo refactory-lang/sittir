@@ -559,6 +559,18 @@ export declare function renderBuilt(engine: object, owner: object, address: numb
 export declare function renderBuiltLeaf(engine: object, owner: object, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null): string
 
 /**
+ * r" `render_built_leaf`'s text written to `path`
+ * r" (`save_rendered`), answering whether it wrote.
+ */
+export declare function renderBuiltLeafToFile(engine: object, owner: object, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object | undefined | null): boolean
+
+/**
+ * r" `render_built`'s text written to `path` (`save_rendered`),
+ * r" answering whether it wrote.
+ */
+export declare function renderBuiltToFile(engine: object, owner: object, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, treeId?: number | undefined | null, options?: object | undefined | null): boolean
+
+/**
  * r" The record at `address` of the live tree `treeId` rendered, as
  * r" `render` renders a node read from the tree: a render root
  * r" whose `leading` and `trailing` edges have no neighbour, as
@@ -570,7 +582,18 @@ export declare function renderBuiltLeaf(engine: object, owner: object, kind: num
  */
 export declare function renderRecord(engine: object, treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
 
-export declare function renderToFile(engine: object, node: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null): void
+/**
+ * r" `render_record`'s text written to `path` (`save_rendered`),
+ * r" answering whether it wrote.
+ */
+export declare function renderRecordToFile(engine: object, treeId: number, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object | undefined | null): boolean
+
+/**
+ * `render`'s text written to `path` (`save_rendered`), answering
+ * whether it wrote: `create` refuses a file at the path, and
+ * otherwise a file already holding the text is left untouched.
+ */
+export declare function renderToFile(engine: object, node: object, path: string, create: boolean, treeId?: number | undefined | null, options?: object | undefined | null): boolean
 
 /**
  * The separator before the node at `index` of the live tree
@@ -725,6 +748,13 @@ export declare function writeBuiltTriviaSide(engine: object, address: number, si
  * r" kind has no cell for.
  */
 export declare function writeBuiltUnitSides(engine: object, address: number, units: object[]): void
+
+/**
+ * `text`, which a render interceptor produced in JavaScript,
+ * written to `path` as a render's file sibling writes its text
+ * (`save_rendered`), answering whether it wrote.
+ */
+export declare function writeText(path: string, text: string, create: boolean): boolean
 
 /**
  * Replace `side` of the node at `index` of the live tree `treeId`

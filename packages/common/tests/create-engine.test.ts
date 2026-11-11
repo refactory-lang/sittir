@@ -35,7 +35,12 @@ function fakeLanguage(name = 'fake', loaders: { readonly default?: TableLoader; 
 			let disposed = false;
 			const native = {
 				render: (n: { text?: string }, call?: FakeRenderOptions) =>
-					createRenderHandle(() => `${call?.indent ?? opts?.options?.indent ?? ''}${n.text ?? ''}`),
+					createRenderHandle(
+						() => `${call?.indent ?? opts?.options?.indent ?? ''}${n.text ?? ''}`,
+						() => {
+							throw new Error('a fake engine writes no file');
+						}
+					),
 				parseAndRead: (s: string) => ({ root: { $type: 1, text: s }, tree: { source: s } }),
 				dispose: () => {
 					disposed = true;

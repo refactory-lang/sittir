@@ -267,6 +267,8 @@ export interface NativeLanguageEngine<API extends LanguageAPI> {
 	parseAndRead: EngineDiagnostics<AnyUntypedNode>['parseAndRead'];
 	readonly buildProfile?: EngineDiagnostics['buildProfile'];
 	readonly builtMemory?: EngineDiagnostics['builtMemory'];
+	/** `text` written to `path` by the native writer that saves a render: a new file when `create`, and otherwise a replacement that leaves a file already holding `text` untouched. Answers whether it wrote. */
+	writeText(path: string, text: string, create: boolean): boolean;
 	release(node: object): void;
 	dispose(): void;
 }

@@ -8,7 +8,12 @@ function fakeSittirEngine() {
 	const engine = {
 		render(node: AnyUntypedNode, options?: unknown) {
 			calls.render.push(options);
-			return createRenderHandle(() => `rendered:${String(node.$type)}`);
+			return createRenderHandle(
+				() => `rendered:${String(node.$type)}`,
+				() => {
+					throw new Error('a fake engine writes no file');
+				}
+			);
 		},
 		dispose() {
 			calls.disposed++;
