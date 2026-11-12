@@ -146,8 +146,6 @@ export interface LanguageAPI {
 	readonly kinds: object;
 	readonly types: object;
 	readonly root: AnyUntypedNode & ParsedRoot;
-	/** The grammar's root kind as a builder returns it: what `write` and `create` take beside a parsed `root`. */
-	readonly rootBound: AnyUntypedNode;
 	readonly node: AnyUntypedNode;
 	readonly fixedTextKindId: number;
 	readonly kindId: number;
@@ -421,24 +419,31 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
 	/**
 	 * Renders `node`, a node this engine built, parsed or edited, as source text. A node a build callback returns is
-	 * released when the handle is disposed, so a node kept from inside the callback is then a released record.
+	 * released when the handle is disposed, so a node kept from inside the callback is then a released record. If the
+	 * callback throws, what it built is released, and so is a node it placed into that. A scope the callback opened
+	 * and left open is closed when the callback ends, as `using` would close it.
 	 *
 	 * @throws When `node` was built by another engine, and when it is a built record that was released, as a commit
-	 * scope's close releases the records it did not keep.
+	 * scope's close releases the records it did not keep. What a build callback throws, and, in arena storage, a
+	 * build callback called while a build is running.
 	 */
 	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API, M> | SnapshotInput<API>>;
 	/**
-	 * Builds a root with `fn` and returns the pending creation of `path` holding its render. `fn` runs now, so a builder
-	 * that throws throws from `create`. Nothing is written until the result is awaited or disposed, and then once: as
-	 * {@link write} commits, except that a file already at `path` is refused, never replaced. Once the commit is done,
-	 * written, refused or skipped by a file interceptor, the root `fn` built is released: a node kept from inside `fn`
-	 * is then a released record, which a later read or render refuses, and so does the pending's `diff()`.
+	 * Builds a root with `fn`, a node of the grammar's root kind, built, parsed or edited, and returns the pending
+	 * creation of `path` holding its render. `fn` runs now, so a builder that throws throws from `create`. Nothing is
+	 * written until the result is awaited or disposed, and then once: as {@link write} commits, except that a file
+	 * already at `path` is refused, never replaced. Once the commit is done, written, refused or skipped by a file
+	 * interceptor, the root `fn` built is released: a node kept from inside `fn` is then a released record, which a
+	 * later read or render refuses, and so does the pending's `diff()`. If `fn` throws, what it built is released, and
+	 * so is a node it placed into that. A scope `fn` opened and left open is closed when `fn` ends, as `using` would
+	 * close it.
 	 *
-	 * @throws What `fn` throws.
+	 * @throws What `fn` throws, and, in arena storage, when called while a build is running.
 	 */
-	readonly create: (path: string, fn: (build: BuildSurface<API, M>) => API['root'] | API['rootBound']) => Pending;
+	readonly create: (path: string, fn: (build: BuildSurface<API, M>) => RootInput<API>) => Pending;
 	/**
-	 * Returns the pending write of `root` to `path`. Nothing is written until the result is awaited or disposed (`await
+	 * Returns the pending write of `root`, a node of the grammar's root kind, built, parsed or edited, to `path`. The
+	 * type admits only the root kind, as {@link Renderable} does. Nothing is written until the result is awaited or disposed (`await
 	 * using`); then the root is rendered as it is at that moment, through any render interceptor, and written once,
 	 * however often it is awaited. A result neither awaited nor disposed writes nothing. The write is the one
 	 * `Rendered.save` makes: in place, leaving a file that already holds the text untouched, and creating a missing one.
@@ -446,7 +451,7 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	 * The pending result rejects when `root` is not a node of the grammar's root kind (`rootKinds`), naming its kind,
 	 * when another engine parsed or built it, and when the file can't be written, naming the path.
 	 */
-	readonly write: (path: string, root: API['root'] | API['rootBound']) => Pending;
+	readonly write: (path: string, root: RootInput<API>) => Pending;
 	/**
 	 * Releases what a builder result holds, a `$with` result included, as its `[Symbol.dispose]` does. Under record
 	 * construction a result holds its record until it is placed into a parent or a side, and a built
@@ -512,6 +517,8 @@ export type Renderable<Kind extends number> = Admit<{ readonly $type: Kind }>;
 type Draft<API extends LanguageAPI> = Renderable<Extract<API['node']['$type'], number>>;
 
 type StoredInput<API extends LanguageAPI> = API['node'] | API['fixedTextKindId'];
+
+type RootInput<API extends LanguageAPI> = Renderable<Extract<API['root']['$type'], number>>;
 
 type RenderBuilder<API extends LanguageAPI, M extends ApiSurface = 'default'> = (build: BuildSurface<API, M>) => API['node'];
 

@@ -7,7 +7,7 @@ import type { ir as strictTable } from './ir-strict.js';
 import { isMember, membersOf, type is } from './is.js';
 import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from './portable/index.js';
 import type { TSKindId } from './kinds.js';
-import type { FixedTextKindId, TypeKeyOf, NamespaceMap, TypescriptNode, TypescriptTypeMap, Program } from './types.js';
+import type { FixedTextKindId, TypeKeyOf, NamespaceMap, TypescriptNode, TypescriptTypeMap } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { querySlots, structure, triviaFacts } from './utils.js';
 import { buildCommentBlock, buildCommentLine } from './factories/raw.js';
@@ -23,7 +23,6 @@ export interface TypescriptAPI extends LanguageAPI {
 	readonly kinds: typeof TSKindId & { readonly portable: PortableKinds };
 	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: ProgramTree;
-	readonly rootBound: Program.Bound;
 	readonly node: TypescriptNode;
 	readonly fixedTextKindId: FixedTextKindId;
 	readonly kindId: TSKindId;

@@ -6,7 +6,7 @@ import type { ir as looseTable } from './ir.js';
 import type { ir as strictTable } from './ir-strict.js';
 import { isMember, membersOf, type is } from './is.js';
 import type { TSKindId } from './kinds.js';
-import type { FixedTextKindId, TypeKeyOf, NamespaceMap, RegexNode, RegexTypeMap, Pattern } from './types.js';
+import type { FixedTextKindId, TypeKeyOf, NamespaceMap, RegexNode, RegexTypeMap } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { querySlots, structure, triviaFacts } from './utils.js';
 import { RENDER_MODULE_HASH } from './hash.js';
@@ -20,7 +20,6 @@ export interface RegexAPI extends LanguageAPI {
 	readonly kinds: typeof TSKindId;
 	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: PatternTree;
-	readonly rootBound: Pattern.Bound;
 	readonly node: RegexNode;
 	readonly fixedTextKindId: FixedTextKindId;
 	readonly kindId: TSKindId;

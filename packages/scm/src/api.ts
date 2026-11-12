@@ -6,7 +6,7 @@ import type { ir as looseTable } from './ir.js';
 import type { ir as strictTable } from './ir-strict.js';
 import { isMember, membersOf, type is } from './is.js';
 import type { TSKindId } from './kinds.js';
-import type { FixedTextKindId, TypeKeyOf, NamespaceMap, ScmNode, ScmTypeMap, Program } from './types.js';
+import type { FixedTextKindId, TypeKeyOf, NamespaceMap, ScmNode, ScmTypeMap } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { querySlots, structure, triviaFacts } from './utils.js';
 import { coerceToComment } from './factories/coerce.js';
@@ -21,7 +21,6 @@ export interface ScmAPI extends LanguageAPI {
 	readonly kinds: typeof TSKindId;
 	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: ProgramTree;
-	readonly rootBound: Program.Bound;
 	readonly node: ScmNode;
 	readonly fixedTextKindId: FixedTextKindId;
 	readonly kindId: TSKindId;

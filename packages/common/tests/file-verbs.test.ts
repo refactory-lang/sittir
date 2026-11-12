@@ -90,6 +90,15 @@ describe.each(['object', 'arena'] as const)('engine.write and engine.create (%s)
 		expect(written.diff().after).toBe(text);
 	});
 
+	it('writes an edited root', async () => {
+		const engine = await engineOf();
+		const root = engine.parse('fn a() {}\nfn b() {}\n');
+		const edited = root.$with.statements(...root.statements().slice(1));
+		await engine.write(at('a.rs'), edited);
+		expect(readFileSync(at('a.rs'), 'utf8')).toBe(engine.render(edited).toString());
+		expect(readFileSync(at('a.rs'), 'utf8')).not.toContain('fn a');
+	});
+
 	it('diff names a new file with no before', async () => {
 		const engine = await engineOf();
 		const root = engine.parse('fn a() {}\n');
