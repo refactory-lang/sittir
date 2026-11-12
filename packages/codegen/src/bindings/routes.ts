@@ -1418,10 +1418,19 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 
 	for (const [kind, entries] of readEntries) readEntries.set(kind, entries.map((entry) => ({ ...entry, present: presentSlotsOf(entry, entries) })));
 
+	const declares = declaredBy(input.vocabulary);
+	const restricted = (kind: string, entry: ReadEntry): boolean =>
+		entry.claimed !== kind && modelNode(input.model, entry.claimed)?.modelType === 'supertype' && input.vocabulary.kinds.has(entry.vocab);
+	const routesDeclared = (kind: string, entry: ReadEntry) => (route: MemberRoute): boolean => !restricted(kind, entry) || declares(entry.vocab, route.name);
 	for (const [kind, entries] of readEntries)
 		readEntries.set(
 			kind,
-			entries.map((entry) => ({ ...entry, members: membersOf(input, kind, entries, entry, slotNamesOf, (held) => reads.has(held)).map((route) => declaredArity(input.vocabulary, entry.vocab, flaggedDelimiter(kind, route))) }))
+			entries.map((entry) => ({
+				...entry,
+				members: membersOf(input, kind, entries, entry, slotNamesOf, (held) => reads.has(held))
+					.filter(routesDeclared(kind, entry))
+					.map((route) => declaredArity(input.vocabulary, entry.vocab, flaggedDelimiter(kind, route)))
+			}))
 		);
 	const claims = refineClaims(input.bindings.claims, (kind) => formsOf(input.model, kind), (kind) => mountHoldersOf(input.model, kind).map(({ holder }) => holder));
 	liftMounted(input.model, claims, readEntries, order);

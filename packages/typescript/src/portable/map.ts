@@ -15996,9 +15996,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unique symbol'
 				| 'unknown'
 				| 'void';
-			readonly $forms:
-				| V.Form<'mappedTypeClause' | 'type', 'indexType' | 'name'>
-				| V.Form<'indexType' | 'name' | 'type', 'mappedTypeClause'>;
+			readonly $forms: V.Form<'indexType' | 'name' | 'type'>;
 		};
 		readonly 'declaration.signature.index.mapped': {
 			readonly indexType:
@@ -33683,15 +33681,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'identifier.super': {
 			readonly $text: PortableTexts['identifier.super'];
-		};
-		readonly 'literal.number': {
-			readonly $forms:
-				| V.Form<'content', 'exponent' | 'exponentSign' | 'fraction' | 'integer' | 'marker' | 'radixPrefix'>
-				| V.Form<never, 'content' | 'exponent' | 'exponentSign' | 'fraction' | 'integer' | 'marker' | 'radixPrefix'>
-				| V.Form<'content' | 'radixPrefix', 'exponent' | 'exponentSign' | 'fraction' | 'integer' | 'marker'>
-				| V.Form<'fraction', 'content' | 'integer' | 'radixPrefix'>
-				| V.Form<'integer', 'content' | 'radixPrefix'>
-				| V.Form<'exponent' | 'integer' | 'marker', 'content' | 'fraction' | 'radixPrefix'>;
 		};
 		readonly 'literal.number.float': {
 			readonly exponent: string;

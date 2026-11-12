@@ -7516,17 +7516,6 @@
           ]
         },
         {
-          "name": "mappedTypeClause",
-          "route": "slot",
-          "slot": "mapped_type_clause",
-          "path": [
-            {
-              "owner": "index_signature_mapped_type_clause",
-              "slot": "mapped_type_clause"
-            }
-          ]
-        },
-        {
           "name": "type",
           "route": "slot",
           "slot": "type",
@@ -10200,17 +10189,6 @@
               "slot": "content"
             }
           ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "number_bigint_binary",
-              "slot": "content"
-            }
-          ]
         }
       ]
     },
@@ -10233,17 +10211,6 @@
         }
       ],
       "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "number_bigint_decimal",
-              "slot": "content"
-            }
-          ]
-        },
         {
           "name": "content",
           "route": "slot",
@@ -10286,17 +10253,6 @@
               "slot": "content"
             }
           ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "number_bigint_hex",
-              "slot": "content"
-            }
-          ]
         }
       ]
     },
@@ -10329,17 +10285,6 @@
               "slot": "content"
             }
           ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "number_bigint_octal",
-              "slot": "content"
-            }
-          ]
         }
       ]
     },
@@ -10362,28 +10307,6 @@
         }
       ],
       "members": [
-        {
-          "name": "radixPrefix",
-          "route": "slot",
-          "slot": "radix_prefix",
-          "path": [
-            {
-              "owner": "number_binary",
-              "slot": "radix_prefix"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "number_binary",
-              "slot": "content"
-            }
-          ]
-        },
         {
           "name": "radixPrefix",
           "route": "slot",
@@ -10447,50 +10370,6 @@
         }
       ],
       "members": [
-        {
-          "name": "fraction",
-          "route": "slot",
-          "slot": "fraction",
-          "path": [
-            {
-              "owner": "number_float_leading_point",
-              "slot": "fraction"
-            }
-          ]
-        },
-        {
-          "name": "marker",
-          "route": "slot",
-          "slot": "marker",
-          "path": [
-            {
-              "owner": "number_float_leading_point",
-              "slot": "marker"
-            }
-          ]
-        },
-        {
-          "name": "exponentSign",
-          "route": "slot",
-          "slot": "exponent_sign",
-          "path": [
-            {
-              "owner": "number_float_leading_point",
-              "slot": "exponent_sign"
-            }
-          ]
-        },
-        {
-          "name": "exponent",
-          "route": "slot",
-          "slot": "exponent",
-          "path": [
-            {
-              "owner": "number_float_leading_point",
-              "slot": "exponent"
-            }
-          ]
-        },
         {
           "name": "fraction",
           "route": "slot",
@@ -10610,61 +10489,6 @@
               "slot": "exponent"
             }
           ]
-        },
-        {
-          "name": "integer",
-          "route": "slot",
-          "slot": "integer",
-          "path": [
-            {
-              "owner": "number_float_point",
-              "slot": "integer"
-            }
-          ]
-        },
-        {
-          "name": "fraction",
-          "route": "slot",
-          "slot": "fraction",
-          "path": [
-            {
-              "owner": "number_float_point",
-              "slot": "fraction"
-            }
-          ]
-        },
-        {
-          "name": "marker",
-          "route": "slot",
-          "slot": "marker",
-          "path": [
-            {
-              "owner": "number_float_point",
-              "slot": "marker"
-            }
-          ]
-        },
-        {
-          "name": "exponentSign",
-          "route": "slot",
-          "slot": "exponent_sign",
-          "path": [
-            {
-              "owner": "number_float_point",
-              "slot": "exponent_sign"
-            }
-          ]
-        },
-        {
-          "name": "exponent",
-          "route": "slot",
-          "slot": "exponent",
-          "path": [
-            {
-              "owner": "number_float_point",
-              "slot": "exponent"
-            }
-          ]
         }
       ]
     },
@@ -10687,50 +10511,6 @@
         }
       ],
       "members": [
-        {
-          "name": "integer",
-          "route": "slot",
-          "slot": "integer",
-          "path": [
-            {
-              "owner": "number_float_scientific",
-              "slot": "integer"
-            }
-          ]
-        },
-        {
-          "name": "marker",
-          "route": "slot",
-          "slot": "marker",
-          "path": [
-            {
-              "owner": "number_float_scientific",
-              "slot": "marker"
-            }
-          ]
-        },
-        {
-          "name": "exponentSign",
-          "route": "slot",
-          "slot": "exponent_sign",
-          "path": [
-            {
-              "owner": "number_float_scientific",
-              "slot": "exponent_sign"
-            }
-          ]
-        },
-        {
-          "name": "exponent",
-          "route": "slot",
-          "slot": "exponent",
-          "path": [
-            {
-              "owner": "number_float_scientific",
-              "slot": "exponent"
-            }
-          ]
-        },
         {
           "name": "integer",
           "route": "slot",
@@ -10817,28 +10597,6 @@
               "slot": "content"
             }
           ]
-        },
-        {
-          "name": "radixPrefix",
-          "route": "slot",
-          "slot": "radix_prefix",
-          "path": [
-            {
-              "owner": "number_hex",
-              "slot": "radix_prefix"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "number_hex",
-              "slot": "content"
-            }
-          ]
         }
       ]
     },
@@ -10891,17 +10649,6 @@
               "slot": "content"
             }
           ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "number_legacy_octal",
-              "slot": "content"
-            }
-          ]
         }
       ]
     },
@@ -10924,28 +10671,6 @@
         }
       ],
       "members": [
-        {
-          "name": "radixPrefix",
-          "route": "slot",
-          "slot": "radix_prefix",
-          "path": [
-            {
-              "owner": "number_octal",
-              "slot": "radix_prefix"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "number_octal",
-              "slot": "content"
-            }
-          ]
-        },
         {
           "name": "radixPrefix",
           "route": "slot",

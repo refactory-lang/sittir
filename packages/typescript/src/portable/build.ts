@@ -20346,222 +20346,6 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 413,
-					builder: 'indexSignatureMappedTypeClause',
-					members: [
-						{
-							name: 'sign',
-							steps: [
-								{
-									key: 'sign',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [413, 'sign'],
-									kinds: [103, 104],
-									tokens: {
-										'+': 103,
-										'-': 104
-									}
-								}
-							]
-						},
-						{
-							name: 'mappedTypeClause',
-							steps: [
-								{
-									key: 'mappedTypeClause'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [413, 'mappedTypeClause'],
-									kinds: [361]
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [413, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
-									],
-									leaf: 'identifier',
-									texts: [1, 505],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 504,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [331, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
-									],
-									leaf: 'identifier',
-									texts: [1, 505],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 504,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'omittingTypeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [332, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
-									],
-									leaf: 'identifier',
-									texts: [1, 505],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 504,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'addingTypeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [333, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
-									],
-									leaf: 'identifier',
-									texts: [1, 505],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 504,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'optingTypeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {
-						readonly: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'readonly',
-											optional: true
-										}
-									],
-									kind: 38
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: ['indexType', 'name'],
-							required: ['mappedTypeClause', 'type']
-						}
-					]
-				},
-				{
 					kind: 412,
 					builder: 'indexSignatureColon',
 					members: [
@@ -20820,7 +20604,7 @@ export const build: PortableBuildTable = {
 					},
 					when: [
 						{
-							absent: ['mappedTypeClause'],
+							absent: [],
 							required: ['indexType', 'name', 'type']
 						}
 					]
@@ -31215,28 +30999,7 @@ export const build: PortableBuildTable = {
 						base: 10,
 						affix: ''
 					},
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [166, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:[0-9](_?[0-9])*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'bigint',
@@ -31245,10 +31008,6 @@ export const build: PortableBuildTable = {
 							variant: 'number_bigint',
 							value: 166,
 							default: true
-						},
-						{
-							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
-							required: ['content']
 						}
 					]
 				},
@@ -31260,28 +31019,7 @@ export const build: PortableBuildTable = {
 						base: 2,
 						affix: '0b'
 					},
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [164, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:0b|0B)(?:[0-1](_?[0-1])*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'bigint',
@@ -31289,10 +31027,6 @@ export const build: PortableBuildTable = {
 						{
 							variant: 'number_bigint',
 							value: 164
-						},
-						{
-							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
-							required: ['content']
 						}
 					]
 				},
@@ -31304,28 +31038,7 @@ export const build: PortableBuildTable = {
 						base: 16,
 						affix: '0x'
 					},
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [163, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:0x|0X)(?:[0-9a-fA-F](_?[0-9a-fA-F])*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'bigint',
@@ -31333,10 +31046,6 @@ export const build: PortableBuildTable = {
 						{
 							variant: 'number_bigint',
 							value: 163
-						},
-						{
-							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
-							required: ['content']
 						}
 					]
 				},
@@ -31348,28 +31057,7 @@ export const build: PortableBuildTable = {
 						base: 8,
 						affix: '0o'
 					},
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [165, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:0o|0O)(?:[0-7](_?[0-7])*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'bigint',
@@ -31377,10 +31065,6 @@ export const build: PortableBuildTable = {
 						{
 							variant: 'number_bigint',
 							value: 165
-						},
-						{
-							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
-							required: ['content']
 						}
 					]
 				},
@@ -31400,10 +31084,6 @@ export const build: PortableBuildTable = {
 							variant: 'number',
 							value: 160,
 							default: true
-						},
-						{
-							absent: ['content', 'exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
-							required: []
 						}
 					]
 				},
@@ -31415,48 +31095,7 @@ export const build: PortableBuildTable = {
 						base: 2,
 						affix: '0b'
 					},
-					members: [
-						{
-							name: 'radixPrefix',
-							steps: [
-								{
-									key: 'radixPrefix'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [161, 'radixPrefix'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:0b|0B)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [161, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:[0-1](_?[0-1])*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
@@ -31464,10 +31103,6 @@ export const build: PortableBuildTable = {
 						{
 							variant: 'number',
 							value: 161
-						},
-						{
-							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker'],
-							required: ['content', 'radixPrefix']
 						}
 					]
 				},
@@ -31479,48 +31114,7 @@ export const build: PortableBuildTable = {
 						base: 16,
 						affix: '0x'
 					},
-					members: [
-						{
-							name: 'radixPrefix',
-							steps: [
-								{
-									key: 'radixPrefix'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [155, 'radixPrefix'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:0x|0X)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [155, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:[0-9a-fA-F](_?[0-9a-fA-F])*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
@@ -31528,10 +31122,6 @@ export const build: PortableBuildTable = {
 						{
 							variant: 'number',
 							value: 155
-						},
-						{
-							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker'],
-							required: ['content', 'radixPrefix']
 						}
 					]
 				},
@@ -31543,28 +31133,7 @@ export const build: PortableBuildTable = {
 						base: 8,
 						affix: ''
 					},
-					members: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [159, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:0*[1-7][0-7]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
@@ -31572,10 +31141,6 @@ export const build: PortableBuildTable = {
 						{
 							variant: 'number',
 							value: 159
-						},
-						{
-							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker', 'radixPrefix'],
-							required: ['content']
 						}
 					]
 				},
@@ -31587,48 +31152,7 @@ export const build: PortableBuildTable = {
 						base: 8,
 						affix: '0o'
 					},
-					members: [
-						{
-							name: 'radixPrefix',
-							steps: [
-								{
-									key: 'radixPrefix'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [162, 'radixPrefix'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:0o|0O)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [162, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:[0-7](_?[0-7])*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
@@ -31636,115 +31160,6 @@ export const build: PortableBuildTable = {
 						{
 							variant: 'number',
 							value: 162
-						},
-						{
-							absent: ['exponent', 'exponentSign', 'fraction', 'integer', 'marker'],
-							required: ['content', 'radixPrefix']
-						}
-					]
-				},
-				{
-					kind: 157,
-					builder: 'numberFloatLeadingPoint',
-					numeric: {
-						fraction: 'fraction',
-						exponent: 'exponent',
-						marker: 'marker',
-						exponentSign: 'exponentSign'
-					},
-					numericRequired: ['fraction'],
-					members: [
-						{
-							name: 'fraction',
-							steps: [
-								{
-									key: 'fraction'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [157, 'fraction'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:[0-9](_?[0-9])*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'marker',
-							steps: [
-								{
-									key: 'marker',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [157, 'marker'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:e|E)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'exponentSign',
-							steps: [
-								{
-									key: 'exponentSign',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [157, 'exponentSign'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:-|\\+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'exponent',
-							steps: [
-								{
-									key: 'exponent',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [157, 'exponent'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:[0-9](_?[0-9])*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					scalar: 'float',
-					when: [
-						{
-							absent: ['content', 'integer', 'radixPrefix'],
-							required: ['fraction']
 						}
 					]
 				},
@@ -31759,121 +31174,27 @@ export const build: PortableBuildTable = {
 						exponentSign: 'exponentSign'
 					},
 					numericRequired: ['integer'],
-					members: [
-						{
-							name: 'integer',
-							steps: [
-								{
-									key: 'integer'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [156, 'integer'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:[0-9](_?[0-9])*))?))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'fraction',
-							steps: [
-								{
-									key: 'fraction',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [156, 'fraction'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:[0-9](_?[0-9])*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'marker',
-							steps: [
-								{
-									key: 'marker',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [156, 'marker'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:e|E)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'exponentSign',
-							steps: [
-								{
-									key: 'exponentSign',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [156, 'exponentSign'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:-|\\+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'exponent',
-							steps: [
-								{
-									key: 'exponent',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [156, 'exponent'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:[0-9](_?[0-9])*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'float',
-					when: [
-						{
-							absent: ['content', 'radixPrefix'],
-							required: ['integer']
-						}
-					]
+					when: []
+				},
+				{
+					kind: 157,
+					builder: 'numberFloatLeadingPoint',
+					numeric: {
+						fraction: 'fraction',
+						exponent: 'exponent',
+						marker: 'marker',
+						exponentSign: 'exponentSign'
+					},
+					numericRequired: ['fraction'],
+					members: [],
+					presets: [],
+					flags: {},
+					scalar: 'float',
+					when: []
 				},
 				{
 					kind: 158,
@@ -31885,98 +31206,11 @@ export const build: PortableBuildTable = {
 						exponentSign: 'exponentSign'
 					},
 					numericRequired: ['integer', 'exponent', 'marker'],
-					members: [
-						{
-							name: 'integer',
-							steps: [
-								{
-									key: 'integer'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [158, 'integer'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:[0-9](_?[0-9])*))?))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'marker',
-							steps: [
-								{
-									key: 'marker'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [158, 'marker'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:e|E)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'exponentSign',
-							steps: [
-								{
-									key: 'exponentSign',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [158, 'exponentSign'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:-|\\+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'exponent',
-							steps: [
-								{
-									key: 'exponent'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [158, 'exponent'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:[0-9](_?[0-9])*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					members: [],
 					presets: [],
 					flags: {},
 					scalar: 'float',
-					when: [
-						{
-							absent: ['content', 'fraction', 'radixPrefix'],
-							required: ['exponent', 'integer', 'marker']
-						}
-					]
+					when: []
 				}
 			],
 			builds: {
