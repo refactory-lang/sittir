@@ -6,6 +6,7 @@ import type {
 	LanguageHooks,
 	NodeStorage,
 	NodeStorageOptions,
+	Pending,
 	QuerySlots,
 	Rendered,
 	StructureTable
@@ -16,6 +17,7 @@ import { decodeTree, isCoordinate } from './read.ts';
 export interface LiveEngine extends EngineIdentity {
 	render(node: AnyUntypedNode | number, options?: object): Rendered;
 	query(node: object): object;
+	write(path: string, root: AnyUntypedNode): Pending;
 }
 
 export interface EngineHandle {

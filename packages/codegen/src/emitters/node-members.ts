@@ -56,6 +56,7 @@ export interface NodeMemberSpec {
 }
 
 export const ROOT_ERRORS_LINE = '    $errors: (data as { readonly $errors?: unknown }).$errors,';
+export const ROOT_SAVE_LINE = '    $save: handleSave,';
 
 export function triviaPositionsOf(kind: string, nodeMap: NodeMap): TriviaPositions | undefined {
 	return nodeMap.nodes.get(kind)?.triviaInterior ? undefined : { inner: emptyForms(nodeMap).has(kind) };
@@ -158,7 +159,7 @@ export function nodeMemberParts(spec: NodeMemberSpec): NodeMemberParts {
 				]
 			: []),
 		'    $engine: handle && (() => handle.current),',
-		...(spec.root === true ? [ROOT_ERRORS_LINE] : []),
+		...(spec.root === true ? [ROOT_SAVE_LINE, ...(spec.parsed ? [ROOT_ERRORS_LINE] : [])] : []),
 		...(spec.tail ?? []),
 		...(spec.parsed ? ['    [TREE]: treeTokenOf(data) ?? null,'] : []),
 		`    [SOURCE]: ${spec.parsed ? 'treeTokenOf(data) === undefined ? Source.Factory : Source.Ts' : 'Source.Factory'},`,

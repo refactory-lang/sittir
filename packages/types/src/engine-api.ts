@@ -116,6 +116,17 @@ export interface NodeMethods {
 	toJSON(): never;
 }
 
+/** What a node of the grammar's root kind carries, parsed, built or edited: a way to save itself to a file. */
+export interface SavesFile {
+	/**
+	 * Returns the pending write of this root to `path`, as `engine.write(path, root)` through the engine that parsed or
+	 * built it: nothing is written until the result is awaited or disposed, and then once.
+	 *
+	 * @throws When the root has no engine, and when its engine is disposed.
+	 */
+	$save(path: string): Pending;
+}
+
 /**
  * The trivia a node holds: its leading and trailing sides, read and written through `$trivia`. Every node
  * holds them but a node of an extra's kind and the nodes it is made of: an extra gets no extras.
