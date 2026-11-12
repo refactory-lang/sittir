@@ -10,7 +10,8 @@ import type {
 	ParsedRead,
 	ParsedRoot,
 	ParseOptions,
-	Rendered
+	Rendered,
+	TriviaWireEntry
 } from '@sittir/types';
 import { decodeTree, readObject, type ChunkWords, type RecordReader, type TreeHandle, type TriviaSideName } from './read.ts';
 import { holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
@@ -177,7 +178,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	 *
 	 * @throws as {@link triviaSide} does.
 	 */
-	writeTriviaSide(treeId: number, index: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	writeTriviaSide(treeId: number, index: number, side: TriviaSideName, entries: readonly TriviaWireEntry[]): void;
 	/**
 	 * The sides of the unit children of the node at descendant `index` of tree `treeId`, which their
 	 * slots store as bare kinds: each `{ slot, item, leading?, trailing?, inner? }`, by its slot's
@@ -280,12 +281,12 @@ export interface NativeEngineLike<TNode = unknown> {
 		create: boolean,
 		options?: object
 	): boolean;
-	builtTriviaSide?(address: number, side: TriviaSideName): unknown[] | null;
-	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	builtTriviaSide?(address: number, side: TriviaSideName): TriviaWireEntry[] | null;
+	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly TriviaWireEntry[]): void;
 	builtUnitSides?(address: number): unknown[];
-	writeBuiltUnitSides?(address: number, units: readonly unknown[]): void;
-	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void;
-	builtLeafSide?(holder: number, word: number, item: number, side: TriviaSideName): unknown[] | null;
+	writeBuiltUnitSides?(address: number, units: readonly object[]): void;
+	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly TriviaWireEntry[]): void;
+	builtLeafSide?(holder: number, word: number, item: number, side: TriviaSideName): TriviaWireEntry[] | null;
 	copyBuiltSites?(from: number, to: number, skip: readonly number[]): void;
 	/**
 	 * The siblings that hold sides beside each node at descendant `indexes` of tree `treeId`, eight words a node: the

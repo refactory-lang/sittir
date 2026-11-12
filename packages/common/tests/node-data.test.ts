@@ -191,7 +191,7 @@ const NO_SIBLINGS: readonly number[] = [0, 0, 0, 0, 0, 0, 0, 0];
 function tableTree(id: number, siblings: (index: number) => readonly number[] = () => NO_SIBLINGS) {
 	const token = mintTreeToken(id);
 	const written: string[] = [];
-	registerTree(token, { id, triviaSide: (index, side) => [`${index}:${side}`], writeTriviaSide: (index, side) => written.push(`${index}:${side}`), siblings: (indexes) => indexes.flatMap(siblings) });
+	registerTree(token, { id, triviaSide: (index, side) => [{ side: `${index}:${side}` }], writeTriviaSide: (index, side) => written.push(`${index}:${side}`), siblings: (indexes) => indexes.flatMap(siblings) });
 	return { token, written };
 }
 
@@ -200,7 +200,7 @@ describe('sideOf', () => {
 		const { token } = tableTree(11);
 		const read = { $type: 5, $_layout: { at: at(5, 2, 3), trivia: { leading: [8] } } };
 		holdTree(read, token);
-		expect(sideOf(read, 'leading')).toEqual(['2:leading']);
+		expect(sideOf(read, 'leading')).toEqual([{ side: '2:leading' }]);
 	});
 
 	it("reads a built node's stored side, else the side of the node it was rebuilt from", () => {
@@ -210,7 +210,7 @@ describe('sideOf', () => {
 		const draft = markEdited({ ...read, $_layout: { ...read.$_layout, trivia: { trailing: [8] } } });
 		carryPlace(read, draft);
 		expect(sideOf(draft, 'trailing')).toEqual([8]);
-		expect(sideOf(draft, 'leading')).toEqual(['4:leading']);
+		expect(sideOf(draft, 'leading')).toEqual([{ side: '4:leading' }]);
 		expect(sideOf({ $type: 5 }, 'leading')).toEqual([]);
 	});
 });

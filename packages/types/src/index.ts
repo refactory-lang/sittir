@@ -85,6 +85,7 @@ export type {
 	CSTNode,
 	NodeTrivia,
 	TriviaEntry,
+	TriviaWireEntry,
 	NativeParseResult,
 	GrammarTriviaEntry,
 	TriviaSetter,

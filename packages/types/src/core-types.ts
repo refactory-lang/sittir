@@ -22,6 +22,8 @@
  */
 export type TriviaEntry = AnyUntypedNode | number;
 
+export type TriviaWireEntry = object | number;
+
 export interface NodeTrivia {
 	leading?: readonly TriviaEntry[];
 	trailing?: readonly TriviaEntry[];

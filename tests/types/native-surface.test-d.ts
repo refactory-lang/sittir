@@ -10,7 +10,7 @@ import type * as Rust from '../../packages/rust/native/index.js';
 import type * as Scm from '../../packages/scm/native/index.js';
 import type * as TypeScript from '../../packages/typescript/native/index.js';
 
-type Declared = NativeModuleLike;
+type Declared = NativeModuleLike<object>;
 type Unbranded<R> = R extends readonly (infer E)[]
 	? Unbranded<E>[]
 	: [R] extends [ReadOutput]
@@ -18,13 +18,16 @@ type Unbranded<R> = R extends readonly (infer E)[]
 		: R extends { readonly side: TriviaSideName }
 			? { readonly [K in keyof R]: K extends 'side' ? string : R[K] }
 			: R;
-type Admitting<F> = F extends (...args: infer A) => infer R ? { call(...args: A): Unbranded<R> }['call'] : F;
+type Admitting<F> = F extends (...args: infer A) => infer R ? (...args: A) => Unbranded<R> : F;
+type ReadonlyArg<T> = T extends (infer E)[] ? readonly E[] : T;
+type Accepting<F> = F extends (...args: infer A) => infer R ? (...args: { [I in keyof A]: ReadonlyArg<A[I]> }) => R : F;
+type Admits<Generated, Declaration> = Accepting<Generated> extends Admitting<Declaration> ? true : false;
 type Member<M> = keyof Declared & keyof M;
 type Arity<F> = F extends (...args: infer A) => unknown ? A['length'] : never;
 
 type Drift<M> = {
 	readonly missing: Exclude<keyof Declared, keyof M>;
-	readonly mistyped: { [K in Member<M>]-?: M[K] extends Admitting<Declared[K]> ? never : K }[Member<M>];
+	readonly mistyped: { [K in Member<M>]-?: Admits<M[K], Declared[K]> extends true ? never : K }[Member<M>];
 	readonly arity: { [K in Member<M>]-?: [Arity<M[K]>] extends [Arity<Declared[K]>] ? ([Arity<Declared[K]>] extends [Arity<M[K]>] ? never : K) : K }[Member<M>];
 	readonly engine: M extends { SittirEngine: abstract new (...args: never) => infer E } ? (E extends NativeEngineInstance ? never : 'SittirEngine') : 'SittirEngine';
 };
@@ -61,6 +64,8 @@ type DeclaredShapes = {
 	readonly span: ByteSpan;
 	readonly buildProfile: EngineDiagnostics['buildProfile'];
 };
+
+expectTypeOf<Admits<(profile: 'release') => void, (profile: string) => void>>().toEqualTypeOf<false>();
 
 expectTypeOf<Drift<typeof Python>>().toEqualTypeOf<NoDrift>();
 expectTypeOf<Drift<typeof Regex>>().toEqualTypeOf<NoDrift>();

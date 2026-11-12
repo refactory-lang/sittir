@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, Pending, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, Pending, TriviaEntry, TriviaFacts, TriviaWireEntry } from '@sittir/types';
 import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
 import { carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
 import { Source } from './source.ts';
@@ -230,12 +230,12 @@ export function leafWireSides(leaf: object): TriviaSides<unknown> | undefined {
 	return own === undefined ? undefined : wireSides(leaf, own);
 }
 
-function wireSides(node: object, trivia: NodeTrivia): TriviaSides<unknown> {
+function wireSides(node: object, trivia: NodeTrivia): TriviaSides<TriviaWireEntry> {
 	const wire = entryWire(node);
 	return mapTriviaEntries(trivia as TriviaSides<TriviaEntry>, (entries) => entries.map(wire));
 }
 
-function writeSites(arena: BuiltArena, sites: readonly number[], trivia: NodeTrivia, wired: TriviaSides<unknown>): void {
+function writeSites(arena: BuiltArena, sites: readonly number[], trivia: NodeTrivia, wired: TriviaSides<TriviaWireEntry>): void {
 	for (const side of TRIVIA_SIDES) {
 		const entries = trivia[side];
 		const wire = wired[side];
@@ -268,7 +268,7 @@ function carryUnitSidesNow(from: object, to: object): void {
 	if (units !== undefined && units.length > 0) writeUnitSides(to, realignedUnits(units, from, to));
 }
 
-function entryWire(node: object): (entry: TriviaEntry) => unknown {
+function entryWire(node: object): (entry: TriviaEntry) => TriviaWireEntry {
 	const tree = treeOf(node);
 	const built = builtRefOf(node)?.arena;
 	const arena = built ?? (tree === undefined ? undefined : treeBuiltArena(tree));

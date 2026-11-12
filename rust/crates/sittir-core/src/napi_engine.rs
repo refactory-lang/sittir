@@ -460,7 +460,7 @@ macro_rules! napi_engine {
         /// with `entries`. A built record among them (`{ $type, $record }`)
         /// is a record of this engine's built arena, and renders from it
         /// wherever the side renders. Refuses as `triviaSide` does.
-        #[::napi_derive::napi(ts_args_type = "treeId: number, index: number, side: string, entries: object[]")]
+        #[::napi_derive::napi(ts_args_type = "treeId: number, index: number, side: string, entries: import('@sittir/types').TriviaWireEntry[]")]
         pub fn write_trivia_side(
             env: ::napi::Env,
             tree_id: $crate::types::TreeId,
@@ -1174,7 +1174,7 @@ macro_rules! napi_engine {
             /// The entries a write gave `side` (`leading`, `trailing` or
             /// `inner`) of the built record at `address`, or `null` when
             /// no write did. Refuses address 0 and any other side.
-            #[::napi_derive::napi(ts_return_type = "object[] | null")]
+            #[::napi_derive::napi(ts_return_type = "import('@sittir/types').TriviaWireEntry[] | null")]
             pub fn built_trivia_side(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, address: f64, side: String) -> ::napi::Result<Option<Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>>> {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
@@ -1186,7 +1186,7 @@ macro_rules! napi_engine {
             /// `inner`) of the built leaf at the site `holder`, `word`,
             /// `item`, or `null` when no write did. Refuses holder 0 and
             /// any other side.
-            #[::napi_derive::napi(ts_return_type = "object[] | null")]
+            #[::napi_derive::napi(ts_return_type = "import('@sittir/types').TriviaWireEntry[] | null")]
             pub fn built_leaf_side(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, holder: f64, word: u32, item: u32, side: String) -> ::napi::Result<Option<Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>>> {
                 let engine = engine_of(engine)?;
                 let holder = $crate::arena::Address($crate::napi_engine::checked_whole(holder, "holder")?);
@@ -1213,7 +1213,7 @@ macro_rules! napi_engine {
             /// renders as `writeTriviaSide` says. Refuses a list whose
             /// length is not a multiple of three, holder 0 and any other
             /// side, before writing any site.
-            #[::napi_derive::napi(ts_args_type = "engine: object, sites: number[], side: string, entries: object[]")]
+            #[::napi_derive::napi(ts_args_type = "engine: object, sites: number[], side: string, entries: import('@sittir/types').TriviaWireEntry[]")]
             pub fn write_built_leaf_side(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
                 env: ::napi::Env,
@@ -1268,7 +1268,7 @@ macro_rules! napi_engine {
             /// `entries`, which `renderBuilt` then writes; a built record
             /// among them renders as `writeTriviaSide` says. Refuses as
             /// `builtTriviaSide` does.
-            #[::napi_derive::napi(ts_args_type = "engine: object, address: number, side: string, entries: object[]")]
+            #[::napi_derive::napi(ts_args_type = "engine: object, address: number, side: string, entries: import('@sittir/types').TriviaWireEntry[]")]
             pub fn write_built_trivia_side(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
                 env: ::napi::Env,

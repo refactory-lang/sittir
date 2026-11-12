@@ -165,7 +165,7 @@ export declare function builtBytes(engine: object, length: number): { chunk: num
  * r" `item`, or `null` when no write did. Refuses holder 0 and
  * r" any other side.
  */
-export declare function builtLeafSide(engine: object, holder: number, word: number, item: number, side: string): object[] | null
+export declare function builtLeafSide(engine: object, holder: number, word: number, item: number, side: string): import('@sittir/types').TriviaWireEntry[] | null
 
 /**
  * r" The bytes the built arena's chunks take, and of them the
@@ -178,7 +178,7 @@ export declare function builtMemory(engine: object): { chunks: number; counts: n
  * r" `inner`) of the built record at `address`, or `null` when
  * r" no write did. Refuses address 0 and any other side.
  */
-export declare function builtTriviaSide(engine: object, address: number, side: string): object[] | null
+export declare function builtTriviaSide(engine: object, address: number, side: string): import('@sittir/types').TriviaWireEntry[] | null
 
 /**
  * r" The sides writes gave each unit the record at `address` in
@@ -727,7 +727,7 @@ export declare function unitSides(treeId: TreeId, index: NodeIndex): object[]
  * r" length is not a multiple of three, holder 0 and any other
  * r" side, before writing any site.
  */
-export declare function writeBuiltLeafSide(engine: object, sites: number[], side: string, entries: object[]): void
+export declare function writeBuiltLeafSide(engine: object, sites: number[], side: string, entries: import('@sittir/types').TriviaWireEntry[]): void
 
 /**
  * r" Replace `side` of the built record at `address` with
@@ -735,7 +735,7 @@ export declare function writeBuiltLeafSide(engine: object, sites: number[], side
  * r" among them renders as `writeTriviaSide` says. Refuses as
  * r" `builtTriviaSide` does.
  */
-export declare function writeBuiltTriviaSide(engine: object, address: number, side: string, entries: object[]): void
+export declare function writeBuiltTriviaSide(engine: object, address: number, side: string, entries: import('@sittir/types').TriviaWireEntry[]): void
 
 /**
  * r" The units the record at `address` in the arena this engine
@@ -761,4 +761,4 @@ export declare function writeText(path: string, text: string, create: boolean): 
  * is a record of this engine's built arena, and renders from it
  * wherever the side renders. Refuses as `triviaSide` does.
  */
-export declare function writeTriviaSide(treeId: number, index: number, side: string, entries: object[]): void
+export declare function writeTriviaSide(treeId: number, index: number, side: string, entries: import('@sittir/types').TriviaWireEntry[]): void
