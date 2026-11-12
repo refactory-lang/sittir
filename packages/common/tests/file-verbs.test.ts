@@ -381,6 +381,21 @@ describe.each(['object', 'arena'] as const)('a root built for a create or a rend
 		expectReleased(engine, kept);
 	});
 
+	it('a render handle disposed twice releases what its callback built once', async () => {
+		const engine = await engineOf();
+		let kept: unknown;
+		const rendered = engine.render((build) => (kept = build.expressionStatement.withSemi(build.identifier('a'))));
+		const parent = engine.build.sourceFile({ statements: [kept] } as never);
+		rendered[Symbol.dispose]();
+		{
+			using scope = engine.scope();
+			scope.keep(kept as object);
+			rendered[Symbol.dispose]();
+		}
+		engine.release(parent);
+		expect(engine.render(kept as never).toString()).toBe('a;');
+	});
+
 	const live = (engine: Engine<RustAPI>): number => engine.diagnostics.builtMemory?.()?.live ?? 0;
 	const failing = (verb: 'create' | 'render', engine: Engine<RustAPI>, fn: (build: BuildSurface<RustAPI, 'default'>) => void) => () => {
 		const run = (build: BuildSurface<RustAPI, 'default'>): never => {
