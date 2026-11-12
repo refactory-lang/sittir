@@ -107,12 +107,11 @@ export declare class SittirEngine {
   get renderModuleHash(): string
   get nativeRenderNodeAbi(): number
   /**
-   * Compile profile baked into this binary — `"debug"` or `"release"`.
-   * Validators refuse debug binaries (known segfault class) unless
-   * `SITTIR_ALLOW_DEBUG_VALIDATE=1`; the binary self-reporting makes
-   * the gate immune to stale env assumptions.
+   * The profile build-native built this binary with, from the
+   * `SITTIR_BUILD_PROFILE` it passes the build; `undefined` for a
+   * binary build-native didn't build.
    */
-  get buildProfile(): string
+  get buildProfile(): import('@sittir/types').EngineDiagnostics['buildProfile']
   findAndRead(source: string, pattern: string): string
   /**
    * Parse `source` and keep its tree. As JSON `{ treeId, options,

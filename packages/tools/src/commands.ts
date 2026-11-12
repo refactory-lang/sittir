@@ -19,7 +19,7 @@ import { appendHistory, commitHistory, readHistory, type ValidationRun } from '.
 import { readTestHistory } from './test-history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
 import type { NodeStorage } from '@sittir/types';
-import { cachedNativeEngineProfile, useValidationNodeStorage, validationStorage, type ValidatorSkip } from './validate/common.ts';
+import { cachedNativeEngineProfile, unvalidatedBuild, useValidationNodeStorage, validationStorage, type ValidatorSkip } from './validate/common.ts';
 import type { ReadRenderParseFailure } from './validate/read-render-parse.ts';
 import { readGrammarDiagnostics } from './validate/grammar-diagnostics-file.ts';
 import { diffValidationReports, formatReportDiff, readComparableReport, reportMoved } from './validate/report-diff.ts';
@@ -726,14 +726,9 @@ export async function runCountsCli(
 			try {
 				const counts = await collectGrammarCounts(grammar, backend);
 				console.log(formatGrammarCounts(counts));
-				// A debug-profile native engine only reaches here via
-				// SITTIR_ALLOW_DEBUG_VALIDATE=1 (loadNativeEngineForGrammar refuses it
-				// otherwise) — debug builds are a known segfault/behavioral-divergence
-				// class, so their counts must never become part of the recorded
-				// before/after trend that validate:history compares against.
-				const profile = backend === 'native' ? cachedNativeEngineProfile(grammar) : undefined;
-				if (profile === 'debug') {
-					console.log(`  ⚠ native engine for ${grammar} is a DEBUG build — skipping validation-history record.`);
+				const build = backend === 'native' ? unvalidatedBuild(cachedNativeEngineProfile(grammar)) : undefined;
+				if (build !== undefined) {
+					console.log(`  ⚠ native engine for ${grammar} is ${build} — skipping validation-history record.`);
 				} else if (validationStorage() !== 'object') {
 					console.log(`  ${grammar} read trees as '${validationStorage()}' storage — skipping validation-history record.`);
 				} else {

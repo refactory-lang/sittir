@@ -340,8 +340,8 @@ export interface NativeEngineLike<TNode = unknown> {
 	renderToFile(node: TNode, path: string, create: boolean, treeId?: number, options?: object): boolean;
 	/** `text` written to `path` as {@link renderToFile} writes a render's text, answering whether it wrote. */
 	writeText(path: string, text: string, create: boolean): boolean;
-	/** The binary's compile profile (`debug` | `release`); absent on a binary that predates the getter. */
-	readonly buildProfile?: string;
+	/** The profile build-native built the binary with; `undefined` for a binary build-native didn't build. */
+	readonly buildProfile?: EngineDiagnostics['buildProfile'];
 	dispose(): void;
 }
 
@@ -353,7 +353,7 @@ export interface NativeEngineInstance {
 	readonly handle: EngineHandle;
 	parse(source: string): string;
 	dispose(): void;
-	readonly buildProfile?: string;
+	readonly buildProfile?: EngineDiagnostics['buildProfile'];
 }
 
 const TREE_FUNCTIONS = [

@@ -59,7 +59,7 @@ import {
 import type * as TS from 'web-tree-sitter';
 import type { DisplayFamilies } from './display-families.ts';
 
-import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeLayout, NodeStorage, NodeTrivia, ParseOptions, NodeCoordinate, QuerySlotEntry, QuerySlots, TriviaEntry } from '@sittir/types';
+import type { AnyUntypedNode, Engine, EngineDiagnostics, LanguageAPI, NativeLanguageEngine, NodeLayout, NodeStorage, NodeTrivia, ParseOptions, NodeCoordinate, QuerySlotEntry, QuerySlots, TriviaEntry } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { invoke, load } from '../codegen-surface.ts';
@@ -192,7 +192,7 @@ export function kindViewOf(engine: NativeEngine): KindView {
 
 const cachedNativeEngines = new Map<
 	string,
-	{ engine: Promise<NativeEngine>; binaryMtimeMs: number; profile?: string | undefined }
+	{ engine: Promise<NativeEngine>; binaryMtimeMs: number; profile?: EngineDiagnostics['buildProfile'] }
 >();
 
 const NODE_STORAGES: readonly NodeStorage[] = ['object', 'arena'];
@@ -217,12 +217,17 @@ export function validationStorage(): NodeStorage {
 	return validationNodeStorage;
 }
 
-function releaseEngine<E extends { readonly diagnostics: { readonly buildProfile?: string | undefined } }>(grammar: string, engine: E): E {
-	if (engine.diagnostics.buildProfile === 'debug' && process.env.SITTIR_ALLOW_DEBUG_VALIDATE !== '1') {
+export function unvalidatedBuild(profile: EngineDiagnostics['buildProfile']): string | undefined {
+	if (profile === 'release' || profile === 'gate') return undefined;
+	return profile === undefined ? 'an unstamped build' : `a ${profile} build`;
+}
+
+function releaseEngine<E extends { readonly diagnostics: Pick<EngineDiagnostics, 'buildProfile'> }>(grammar: string, engine: E): E {
+	const build = unvalidatedBuild(engine.diagnostics.buildProfile);
+	if (build !== undefined && process.env.SITTIR_ALLOW_DEBUG_VALIDATE !== '1') {
 		throw new Error(
-			`Native engine for '${grammar}' is a DEBUG build — debug binaries are refused for ` +
-				`validation (known segfault class). Rebuild release (\`gen\` without --native-debug), ` +
-				`or set SITTIR_ALLOW_DEBUG_VALIDATE=1 to override.`
+			`Native engine for '${grammar}' is ${build}; validation takes a release or gate build. ` +
+				`Rebuild it (\`gen\` without --native-debug), or set SITTIR_ALLOW_DEBUG_VALIDATE=1 to override.`
 		);
 	}
 	return engine;
@@ -279,7 +284,7 @@ export async function loadNativeRender(grammar: string): Promise<(node: AnyUntyp
 	return (node) => engine.render(node).toString();
 }
 
-export function cachedNativeEngineProfile(grammar: string): string | undefined {
+export function cachedNativeEngineProfile(grammar: string): EngineDiagnostics['buildProfile'] {
 	return cachedNativeEngines.get(grammar)?.profile;
 }
 

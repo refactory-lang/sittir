@@ -1,5 +1,6 @@
 import { expectTypeOf } from 'vitest';
 import type { ByteSpan } from '../../packages/types/src/core-types.ts';
+import type { EngineDiagnostics } from '../../packages/types/src/engine-api.ts';
 import type { BackerParity, BaselineRun, LayoutWork, NativeEngineInstance, NativeEngineLike, NativeModuleLike, StoredLayout } from '../../packages/common/src/engine.ts';
 import type { ReadOutput } from '../../packages/common/src/node-data.ts';
 import type { TriviaSideName } from '../../packages/common/src/read.ts';
@@ -32,7 +33,8 @@ type NoDrift = { readonly missing: never; readonly mistyped: never; readonly ari
 type Sided<T> = { readonly [K in keyof T]: K extends 'side' ? TriviaSideName : T[K] };
 type Ret<F> = F extends (...args: never) => infer R ? R : never;
 type SpanOf<F> = F extends (treeId: never, span: infer S) => unknown ? S : never;
-type Shaped = Record<'layoutWork' | 'layoutBaseline' | 'storedLayout' | 'backerParity' | 'treeMemory' | 'engineStamp' | 'builtWords' | 'builtBytes' | 'builtMemory' | 'text', unknown>;
+type ProfileOf<C> = C extends abstract new (...args: never) => { readonly buildProfile: infer P } ? P : never;
+type Shaped = Record<'SittirEngine' | 'layoutWork' | 'layoutBaseline' | 'storedLayout' | 'backerParity' | 'treeMemory' | 'engineStamp' | 'builtWords' | 'builtBytes' | 'builtMemory' | 'text', unknown>;
 type Shapes<M extends Shaped> = {
 	readonly layoutWork: Readonly<Ret<M['layoutWork']>>;
 	readonly baselineRun: Sided<Ret<M['layoutBaseline']> extends readonly (infer E)[] ? E : never>;
@@ -44,6 +46,7 @@ type Shapes<M extends Shaped> = {
 	readonly builtBytes: Ret<M['builtBytes']>;
 	readonly builtMemory: Ret<M['builtMemory']>;
 	readonly span: Readonly<SpanOf<M['text']>>;
+	readonly buildProfile: ProfileOf<M['SittirEngine']>;
 };
 type DeclaredShapes = {
 	readonly layoutWork: LayoutWork;
@@ -56,6 +59,7 @@ type DeclaredShapes = {
 	readonly builtBytes: ReturnType<NonNullable<NativeEngineLike['builtBytes']>>;
 	readonly builtMemory: ReturnType<NonNullable<NativeEngineLike['builtMemory']>>;
 	readonly span: ByteSpan;
+	readonly buildProfile: EngineDiagnostics['buildProfile'];
 };
 
 expectTypeOf<Drift<typeof Python>>().toEqualTypeOf<NoDrift>();

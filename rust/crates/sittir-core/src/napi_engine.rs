@@ -310,16 +310,14 @@ macro_rules! napi_engine {
                 $abi
             }
 
-            /// Compile profile baked into this binary — `"debug"` or `"release"`.
-            /// Validators refuse debug binaries (known segfault class) unless
-            /// `SITTIR_ALLOW_DEBUG_VALIDATE=1`; the binary self-reporting makes
-            /// the gate immune to stale env assumptions.
-            #[::napi_derive::napi(getter)]
-            pub fn build_profile(&self) -> &'static str {
-                if cfg!(debug_assertions) {
-                    "debug"
-                } else {
-                    "release"
+            /// The profile build-native built this binary with, from the
+            /// `SITTIR_BUILD_PROFILE` it passes the build; `undefined` for a
+            /// binary build-native didn't build.
+            #[::napi_derive::napi(getter, ts_return_type = "import('@sittir/types').EngineDiagnostics['buildProfile']")]
+            pub fn build_profile(&self) -> ::napi::bindgen_prelude::Either<&'static str, ::napi::bindgen_prelude::Undefined> {
+                match option_env!("SITTIR_BUILD_PROFILE") {
+                    Some(profile) => ::napi::bindgen_prelude::Either::A(profile),
+                    None => ::napi::bindgen_prelude::Either::B(()),
                 }
             }
 
