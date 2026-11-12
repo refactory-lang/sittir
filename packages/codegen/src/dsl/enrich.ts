@@ -100,7 +100,7 @@ import { baseRulesOf } from './shared.ts';
 import { enrichWhitespace, type EnrichedWhitespace } from './whitespace.ts';
 import { LAYOUT_SUPERTYPE } from './primitives/spacing.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
-import { distributeLeafEnum, distributeTokenForms, factorSharedOptional } from './transform/token-forms.ts';
+import { distributeLeafEnum, distributeTokenForms, factorSharedOptional, type AuthoredSitePaths, type SitePaths } from './transform/token-forms.ts';
 import { ENRICH_AUTOMATIC_VARIANTS_KEY, isSupertypeOwner, seedAutomaticVariants, stampAutomaticVariants, type AutomaticVariants, type CopyBase } from './automatic-variants.ts';
 import { predictedSymbolSourceOf } from './symbol-table.ts';
 import { armNameOf, undisplayedKindAddress } from './arm-names.ts';
@@ -130,6 +130,7 @@ export interface EnrichAuthoredConfig {
 	readonly groupBodies?: readonly RuntimeRule[];
 	readonly extras?: (...args: never[]) => unknown;
 	readonly fieldSites?: ReadonlyMap<string, readonly AuthoredFieldSite[]>;
+	readonly variantSites?: ReadonlyMap<string, SitePaths>;
 	readonly displayFamilies?: DisplayFamilies;
 }
 
@@ -210,12 +211,15 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 		}
 	}
 	const tokenFormParents: string[] = [];
-	const tokenFormSites = tokenFormFieldSites(enrichedRules, authored.fieldSites);
+	const fieldPaths = new Map([...(authored.fieldSites ?? [])].map(([name, own]) => [name, own.map((site) => site.path)]));
+	const fielded = tokenFormSites(enrichedRules, fieldPaths);
+	const variants = tokenFormSites(enrichedRules, authored.variantSites ?? new Map());
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
 		if (!rule) continue;
 		const counter: ClauseHoistCounter = { opt: 0, grp: 0, arm: 0, supertypeNames };
-		const hoisted = hoistTokenForms(name, rule, ctx, counter, unhoistableNames, tokenFormParents, tokenFormSites.get(name) ?? []);
+		const sites = { fielded: fielded.get(name) ?? [], variants: variants.get(name) ?? [] };
+		const hoisted = hoistTokenForms(name, rule, ctx, counter, unhoistableNames, tokenFormParents, sites);
 		if (hoisted !== rule) enrichedRules[name] = hoisted;
 	}
 	const hoistCtx = ctx.withHoist({
@@ -448,10 +452,10 @@ function hoistTokenForms(
 	counter: ClauseHoistCounter,
 	unhoistableNames: ReadonlySet<string>,
 	parents: string[],
-	fielded: readonly (readonly number[])[]
+	sites: AuthoredSitePaths
 ): Rule {
 	if (unhoistableNames.has(parentKind)) return rule;
-	const distributed = distributeTokenForms(rule as unknown as RuntimeRule, parentKind, fielded) as unknown as Rule;
+	const distributed = distributeTokenForms(rule as unknown as RuntimeRule, parentKind, sites) as unknown as Rule;
 	if (distributed === rule) return rule;
 	parents.push(parentKind);
 	const { precs: precStack, core } = peelPrecs(distributed);
@@ -468,8 +472,8 @@ function hoistTokenForms(
 		);
 		if (minted === null) throw new Error(`token forms: '${parentKind}' could not mint form ${i}`);
 		const armBody = ctx.clauseGroupRules[minted]!;
-		const armFielded = armFieldSites(fielded, i);
-		const nested = hoistTokenForms(minted, armBody, ctx, { ...counter, opt: 0, grp: 0, arm: 0 }, unhoistableNames, parents, armFielded);
+		const armSitePaths = { fielded: armSites(sites.fielded, i), variants: armSites(sites.variants, i) };
+		const nested = hoistTokenForms(minted, armBody, ctx, { ...counter, opt: 0, grp: 0, arm: 0 }, unhoistableNames, parents, armSitePaths);
 		if (nested !== armBody) ctx.clauseGroupRules[minted] = withAnnotations(nested, { tokenForm: true });
 		return makeGroupLiftSymbol(arm, minted);
 	});
@@ -478,17 +482,12 @@ function hoistTokenForms(
 	return out;
 }
 
-function armFieldSites(fielded: readonly (readonly number[])[], arm: number): (readonly number[])[] {
-	return fielded.flatMap((site) => (site[0] === arm ? [site.slice(1)] : []));
+function armSites(sites: SitePaths, arm: number): SitePaths {
+	return sites.flatMap((site) => (site[0] === arm ? [site.slice(1)] : []));
 }
 
-function tokenFormFieldSites(
-	rules: Record<string, Rule>,
-	authored: ReadonlyMap<string, readonly AuthoredFieldSite[]> | undefined
-): ReadonlyMap<string, readonly (readonly number[])[]> {
-	const sites = new Map<string, readonly (readonly number[])[]>(
-		[...(authored ?? [])].map(([name, own]) => [name, own.map((site) => site.path)])
-	);
+function tokenFormSites(rules: Record<string, Rule>, authored: ReadonlyMap<string, SitePaths>): ReadonlyMap<string, SitePaths> {
+	const sites = new Map<string, SitePaths>(authored);
 	const queue = [...sites.keys()];
 	for (let parent = queue.shift(); parent !== undefined; parent = queue.shift()) {
 		const rule = rules[parent];
@@ -500,7 +499,7 @@ function tokenFormFieldSites(
 				const { name, annotations } = member as { name?: string; annotations?: { variantOf?: string } };
 				if (name === undefined || annotations?.variantOf !== parent || sites.has(name)) return;
 				if ((rules[name] as { annotations?: { tokenForm?: boolean } } | undefined)?.annotations?.tokenForm !== true) return;
-				sites.set(name, armFieldSites(parentSites, i));
+				sites.set(name, armSites(parentSites, i));
 				queue.push(name);
 			});
 			return core;

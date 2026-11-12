@@ -35,6 +35,7 @@ import type { LiftName } from './wire/lift-names.ts';
 import type { OptionsConfig } from './wire/options-block.ts';
 import {
 	authoredFieldSites,
+	authoredVariantSites,
 	dropFlattenedParentAliases,
 	evaluatedConfig,
 	factoryInlineNamesOf,
@@ -382,7 +383,8 @@ function intake(source: GrammarResult, ctx: IntakeCtx): GrammarResult {
 		return enrich(source, {
 			groupBodies: ctx.declared.patterns.map((pattern) => pattern.body),
 			extras: config.extras,
-			fieldSites: authoredFieldSites(config.edits)
+			fieldSites: authoredFieldSites(config.edits),
+			variantSites: authoredVariantSites(config.edits)
 		}) as unknown as GrammarResult;
 	if (config.resolutions !== undefined)
 		throw new Error(`wire(): '${ctx.name}' gives resolutions, which belong to the first layer; its layer applies its section of the first layer's file`);

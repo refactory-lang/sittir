@@ -27,6 +27,7 @@ import {
 	type VariantPlaceholder
 } from '../primitives/variant.ts';
 import { applyPath, ApplyPathSkip, parsePath } from '../transform/transform-path.ts';
+import type { SitePaths } from '../transform/token-forms.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
 import { divergeSharedLifts } from './shared-lifts.ts';
@@ -1434,15 +1435,27 @@ function assertNoDeclaredGroupPatches(edits: EditsConfig, groups: GroupsConfig |
 }
 
 export function authoredFieldSites(edits: EditsConfig | undefined): ReadonlyMap<string, readonly AuthoredFieldSite[]> {
-	const sites = new Map<string, AuthoredFieldSite[]>();
+	return authoredSites(edits, isFieldPlaceholder, (path, field) => ({ path, name: field.name }));
+}
+
+export function authoredVariantSites(edits: EditsConfig | undefined): ReadonlyMap<string, SitePaths> {
+	return authoredSites(edits, isVariantPlaceholder, (path) => path);
+}
+
+function authoredSites<P, S>(
+	edits: EditsConfig | undefined,
+	marks: (patch: unknown) => patch is P,
+	siteOf: (path: readonly number[], patch: P) => S
+): ReadonlyMap<string, readonly S[]> {
+	const sites = new Map<string, S[]>();
 	for (const [kind, entry] of Object.entries(edits ?? {})) {
 		if (!entry) continue;
 		for (const set of patchSetsOf(entry)) {
-			for (const [key, value] of Object.entries(set)) {
-				if (!isFieldPlaceholder(value)) continue;
+			for (const [key, patch] of Object.entries(set)) {
+				if (!marks(patch)) continue;
 				const path = parsePath(key);
 				const indices = path.flatMap((segment) => (segment.kind === 'index' ? [segment.value] : []));
-				if (indices.length === path.length) sites.set(kind, [...(sites.get(kind) ?? []), { path: indices, name: value.name }]);
+				if (indices.length === path.length) sites.set(kind, [...(sites.get(kind) ?? []), siteOf(indices, patch)]);
 			}
 		}
 	}
