@@ -171,6 +171,16 @@ describe('printRustBody', () => {
 		]);
 	});
 
+	it('writes whitespace a lexed token spells as a lexeme seam, and a whitespace token as a seam', () => {
+		expect(printRustBody(concat(text('#!'), slot('content'), tokenSeam('\n', true)), printer)).toEqual([
+			'    w.text("#!")?;',
+			'    content.render(w)?;',
+			'    w.lexeme_seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE);',
+			'    Ok(())'
+		]);
+		expect(equalBodies(tokenSeam('\n', true), tokenSeam('\n'))).toBe(false);
+	});
+
 	it('writes a literal brace as-is (no escaping) and maps slot names through the printer', () => {
 		expect(printRustBody(concat(text('{'), slot('type'), text('}')), printer)).toEqual([
 			'    w.text("{")?;',

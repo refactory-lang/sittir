@@ -488,7 +488,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 			if ((rule as { multiplicity?: Multiplicity }).multiplicity === 'optional') {
 				return EMPTY;
 			}
-			return literalBody(rule.value);
+			return literalBody(rule.value, ctx.lexedTop !== undefined);
 		}
 
 		case PATTERN: {

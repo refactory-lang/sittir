@@ -195,12 +195,6 @@ describe('emitRule — seq', () => {
 	});
 
 	it('a whitespace-only STRING member is a token seam, the one seam at its flank (no join beside it)', () => {
-		// literalBody classifies a whitespace-only literal as a tokenSeam
-		// regardless of which render-body site produced it (STRING, SYMBOL's
-		// own literal, or a hidden kind's fixed text) — no real grammar's
-		// STRING/SYMBOL literal is ever whitespace-only in practice (its
-		// spacing comes from the static-spacing pass, not a literal member),
-		// so this exercises the classification itself, not a real shape.
 		const rule: SeqRule = {
 			type: SEQ,
 			members: [
@@ -210,6 +204,18 @@ describe('emitRule — seq', () => {
 			]
 		};
 		expect(shown(rule, makeCtx())).toBe('fn⟨tokenSeam " "⟩main');
+	});
+
+	it('a whitespace-only STRING member of a lexed pattern is a lexeme seam: the token spells it', () => {
+		const rule: SeqRule = {
+			type: SEQ,
+			members: [
+				{ type: STRING, value: '#!' },
+				{ type: STRING, value: '\n' }
+			]
+		};
+		expect(shown(rule, makeCtx({ lexedTop: rule }))).toBe('#!⟨tokenSeam "\\n" lexeme⟩');
+		expect(shown(rule, makeCtx())).toBe('#!⟨tokenSeam "\\n"⟩');
 	});
 
 	it('recurses into nested seqs, defaulting every undeclared literal seam to a space', () => {

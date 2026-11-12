@@ -43,6 +43,7 @@ export interface DedentNode {
 export interface TokenSeamNode {
 	readonly kind: 'tokenSeam';
 	readonly text: string;
+	readonly lexeme?: true;
 }
 
 export interface IfArm {
@@ -85,13 +86,13 @@ export function text(value: string): Body {
 	return value === '' ? EMPTY : [{ kind: 'text', text: value }];
 }
 
-export function tokenSeam(text: string): Body {
-	return [{ kind: 'tokenSeam', text }];
+export function tokenSeam(text: string, lexeme = false): Body {
+	return [lexeme ? { kind: 'tokenSeam', text, lexeme } : { kind: 'tokenSeam', text }];
 }
 
-export function literalBody(value: string): Body {
+export function literalBody(value: string, lexeme = false): Body {
 	if (isDepthText(value)) return value === INDENT_TEXT ? INDENT : DEDENT;
-	return isWhitespaceOnly(value) ? tokenSeam(value) : text(value);
+	return isWhitespaceOnly(value) ? tokenSeam(value, lexeme) : text(value);
 }
 
 export function slot(name: string): Body {
@@ -294,7 +295,7 @@ export function equalNodes(a: BodyNode, b: BodyNode): boolean {
 		case 'text':
 			return a.text === (b as TextNode).text;
 		case 'tokenSeam':
-			return a.text === (b as TokenSeamNode).text;
+			return a.text === (b as TokenSeamNode).text && a.lexeme === (b as TokenSeamNode).lexeme;
 		case 'slot':
 			return a.name === (b as SlotNode).name;
 		case 'seam':
@@ -753,7 +754,7 @@ function printStatements(
 				break;
 			case 'tokenSeam':
 				flush();
-				lines.push(`${pad}w.seam(${layoutKindsOfText(node.text + payload)});`);
+				lines.push(`${pad}w.${node.lexeme === true ? 'lexeme_seam' : 'seam'}(${layoutKindsOfText(node.text + payload)});`);
 				break;
 			case 'wordSeam':
 				flush();

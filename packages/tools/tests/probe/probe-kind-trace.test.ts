@@ -74,6 +74,14 @@ describe('probe-kind native trace helpers', () => {
 		expect(trace.trace.native).toBeDefined();
 	});
 
+	it('traces the root for a range spanning the document, though the parser root starts after leading whitespace', async () => {
+		const source = '\n#!x\n';
+		const trace = await probeTrace('rust', source, { range: { start: 0, end: source.length }, engine: 'native' });
+
+		expect(trace.probeRange).toBeUndefined();
+		expect(trace.trace.native).toBeDefined();
+	});
+
 	it('limits trace output to the requested engine for validator-like probes', async () => {
 		// This probe historically reproduced a native wrap error ("singular slot
 		// 'comprehension_clauses' on 'generator_expression' requires one value")

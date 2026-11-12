@@ -14,7 +14,7 @@ export function showBody(body: Body): string {
 				out += '⟨dedent⟩';
 				break;
 			case 'tokenSeam':
-				out += `⟨tokenSeam ${JSON.stringify(node.text)}⟩`;
+				out += `⟨tokenSeam ${JSON.stringify(node.text)}${node.lexeme === true ? ' lexeme' : ''}⟩`;
 				break;
 			case 'wordSeam':
 				out += '⟨wordSeam⟩';
