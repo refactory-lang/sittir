@@ -1,9 +1,12 @@
 import { createRequire } from 'node:module';
-import { expect, it, vi } from 'vitest';
+import { afterAll, expect, it, vi } from 'vitest';
 import type { NativeModuleLike } from '@sittir/common/engine';
 import { measureRoundtrip, RoundtripProfile } from '../src/validate/roundtrip-profile.ts';
 import { validateReadRenderParse } from '../src/validate/read-render-parse.ts';
 import { validateFactoryStorage } from '../src/validate/factory-storage.ts';
+import { disposeNativeEngines } from '../src/validate/common.ts';
+
+afterAll(disposeNativeEngines);
 
 it('deep-reads every object root for read-render-parse', async () => {
 	const native = createRequire(import.meta.url)('../../scm/native/index.cjs') as NativeModuleLike;

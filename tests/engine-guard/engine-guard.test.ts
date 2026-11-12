@@ -65,3 +65,47 @@ describe('the allowlist check holds for a filtered run', () => {
 		expect(await run(file, join(ROOT, 'vitest.config.ts'), 'disposes its native engine')).toBe('passed');
 	}, 120_000);
 });
+
+describe('sharedEngine in a reused worker', () => {
+	it('is accepted at file scope after another file ran a test in the same worker', async () => {
+		const dir = join(ROOT, 'packages', 'common', 'tests', '__guard__');
+		mkdirSync(dir, { recursive: true });
+		const first = join(dir, 'a-first.guard.ts');
+		const second = join(dir, 'b-second.guard.ts');
+		try {
+			writeFileSync(first, ["import { it } from 'vitest';", "it('runs a test', () => {});", ''].join('\n'));
+			writeFileSync(
+				second,
+				[
+					"import { expect, it } from 'vitest';",
+					`import { sharedEngine } from '${pathToFileURL(join(ROOT, 'packages/common/src/testing.ts')).href}';`,
+					'const held = await sharedEngine(async () => ({ [Symbol.dispose]() {} }));',
+					"it('holds the engine', () => expect(held).toBeDefined());",
+					''
+				].join('\n')
+			);
+			const vitest = await startVitest('test', [], {
+				run: true,
+				watch: false,
+				include: [first, second],
+				config: join(ROOT, 'vitest.config.ts'),
+				isolate: false,
+				fileParallelism: false,
+				maxWorkers: 1,
+				globalSetup: [],
+				reporters: [],
+				outputFile: undefined,
+				coverage: { enabled: false }
+			});
+			try {
+				const files = vitest.state.getFiles();
+				expect(files).toHaveLength(2);
+				expect(files.map((f) => f.result?.state)).toEqual(['pass', 'pass']);
+			} finally {
+				await vitest.close();
+			}
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	}, 120_000);
+});

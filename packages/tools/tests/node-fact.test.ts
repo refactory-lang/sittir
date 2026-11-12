@@ -4,12 +4,16 @@
 // or the token — is not. Built nodes are pinned the same way, per kind, by
 // each grammar's generated nodes test. Each wire a parse can be read through
 // is one entry of `WIRES`.
-import { afterAll, describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import type { Language, LanguageAPI } from '@sittir/types';
 import { createEngine } from '@sittir/common';
 import { isCoordinate, isNode, Source, sourceOf } from '@sittir/common/utils';
 import { languageByName } from '../src/languages.ts';
 import { loadCorpusEntries, loadSlotAccessorOf, walkWrappedTree, type SlotAccessorOf, disposeNativeEngines } from '../src/validate/common.ts';
+import { releaseTrackedEngines } from './helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('./helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 afterAll(disposeNativeEngines);
 
