@@ -222,9 +222,10 @@ export function unvalidatedBuild(profile: EngineDiagnostics['buildProfile']): st
 	return profile === undefined ? 'an unstamped build' : `a ${profile} build`;
 }
 
-function releaseEngine<E extends { readonly diagnostics: Pick<EngineDiagnostics, 'buildProfile'> }>(grammar: string, engine: E): E {
+function releaseEngine<E extends { readonly diagnostics: Pick<EngineDiagnostics, 'buildProfile'>; dispose(): void }>(grammar: string, engine: E): E {
 	const build = unvalidatedBuild(engine.diagnostics.buildProfile);
 	if (build !== undefined && process.env.SITTIR_ALLOW_DEBUG_VALIDATE !== '1') {
+		engine.dispose();
 		throw new Error(
 			`Native engine for '${grammar}' is ${build}; validation takes a release or gate build. ` +
 				`Rebuild it (\`gen\` without --native-debug), or set SITTIR_ALLOW_DEBUG_VALIDATE=1 to override.`
