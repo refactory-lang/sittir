@@ -29,12 +29,13 @@ const receiverIn = (value: unknown): Read | undefined => {
 };
 
 describe.each(STORAGES)("a receiver's & is a flag, in %s", (_storage, storage) => {
-	const runtimeOf = async () => portableRuntime(await createEngine(rust, { api: 'strict', ...storage }));
+	const engineOf = () => createEngine(rust, { api: 'strict', ...storage });
 	const reference = (is: unknown): Guard =>
 		(is as { declaration: { parameter: { receiver: { reference: Guard } } } }).declaration.parameter.receiver.reference;
 
 	it('holds on a parsed receiver that writes the &, and not on one that does not', async () => {
-		const runtime = await runtimeOf();
+		using engine = await engineOf();
+		const runtime = await portableRuntime(engine);
 		const receivers = (source: string): unknown[] => [
 			...(runtime.engine.parse(source) as { $query(): { $descendants: { ofType(kind: number): Iterable<unknown> } } })
 				.$query()
@@ -47,7 +48,8 @@ describe.each(STORAGES)("a receiver's & is a flag, in %s", (_storage, storage) =
 	});
 
 	it('reads the & as a flag of the receiver', async () => {
-		const runtime = await runtimeOf();
+		using engine = await engineOf();
+		const runtime = await portableRuntime(engine);
 		const read = (receiver: string): Read | undefined =>
 			receiverIn(runtime.read(runtime.engine.parse(implOf(receiver))));
 		expect(read('&self')).toMatchObject({ $flags: ['reference'] });
@@ -57,7 +59,8 @@ describe.each(STORAGES)("a receiver's & is a flag, in %s", (_storage, storage) =
 	});
 
 	it('reads and builds a receiver back with its &, and one without it without', async () => {
-		const runtime = await runtimeOf();
+		using engine = await engineOf();
+		const runtime = await portableRuntime(engine);
 		const roundTrip = (source: string): string =>
 			String(runtime.engine.render(runtime.build(runtime.read(runtime.engine.parse(source)) as never) as never));
 		for (const receiver of ['&self', '&mut self', 'self', 'mut self'])

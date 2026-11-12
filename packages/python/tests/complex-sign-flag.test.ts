@@ -26,11 +26,12 @@ const complexIn = (value: unknown): Read | undefined => {
 };
 
 describe.each(STORAGES)("a complex pattern's leading minus is a flag, in %s", (_storage, storage) => {
-	const runtimeOf = async () => portableRuntime(await createEngine(python, { api: 'strict', ...storage }));
+	const engineOf = () => createEngine(python, { api: 'strict', ...storage });
 	const sign = (is: unknown): Guard => (is as { pattern: { complex: { sign: Guard } } }).pattern.complex.sign;
 
 	it('holds on a parsed pattern that writes the minus, and not on one that does not', async () => {
-		const runtime = await runtimeOf();
+		using engine = await engineOf();
+		const runtime = await portableRuntime(engine);
 		const patterns = (source: string): unknown[] => [
 			...(runtime.engine.parse(source) as { $query(): { $descendants: { ofType(kind: number): Iterable<unknown> } } })
 				.$query()
@@ -41,7 +42,8 @@ describe.each(STORAGES)("a complex pattern's leading minus is a flag, in %s", (_
 	});
 
 	it('reads the minus as a flag of the pattern', async () => {
-		const runtime = await runtimeOf();
+		using engine = await engineOf();
+		const runtime = await portableRuntime(engine);
 		const read = (pattern: string): Read | undefined => complexIn(runtime.read(runtime.engine.parse(caseOf(pattern))));
 		expect(read('-1+2j')).toMatchObject({ $path: 'pattern.complex.add', $flags: ['sign'] });
 		expect(read('-1-2j')).toMatchObject({ $path: 'pattern.complex.subtract', $flags: ['sign'] });
@@ -50,7 +52,8 @@ describe.each(STORAGES)("a complex pattern's leading minus is a flag, in %s", (_
 	});
 
 	it('reads and builds a pattern back with its minus, and one without it without', async () => {
-		const runtime = await runtimeOf();
+		using engine = await engineOf();
+		const runtime = await portableRuntime(engine);
 		const roundTrip = (source: string): string =>
 			String(runtime.engine.render(runtime.build(runtime.read(runtime.engine.parse(source)) as never) as never));
 		for (const pattern of ['-1 + 2j', '-1 - 2j', '1 + 2j']) expect(roundTrip(caseOf(pattern))).toBe(caseOf(pattern));
