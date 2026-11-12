@@ -223,7 +223,8 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 
 **Interfaces:**
 - Consumes: Task 5b's `holder_cell`, for leaves inside a snapshot.
-- Produces: `ParsedTree::snapshot_spans(&self, root: NodeIndex, holder: Option<u32>) -> Result<Vec<Span>, ReadError>`, in the walk's order.
+- Produces: `ParsedTree::snapshot_layouts(&self, root: NodeIndex, holder: Option<u32>)`, which returns each row's snapshot layout as `(row, layout)` pairs in preorder, plus the root's flanks word. It walks rows over `Nodes` with no typed read, holding at `Children` and `Interior` routers, and reuses master's snapshot-mode layout code. Over napi, `snapshotLayouts(treeId, index, holderByte)` replaces `snapshot` (maintainer, 2026-11-12, "Approve"). A layout is needed, not only a span, because a side's ERROR entry reaches JavaScript with no row and the root's edge runs are dropped natively.
+- Output change (maintainer, 2026-11-12, "Canonical: renders ur\"a\""): a snapshot holds a spelled slot's canonical member, so python `UR"a"` snapshots render `ur"a"`. Object storage's read of a spelled slot moves to the canonical member as well, so both storages give the same snapshot. Both changes go in the PR as API rows.
 
 - [ ] **Step 1: Failing tests:**
   - `a_parsed_snapshot_takes_no_tree`: an arena snapshot makes 0 tree reads, and so does `$query()` on an arena record view;
