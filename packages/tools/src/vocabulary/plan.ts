@@ -109,7 +109,8 @@ export function plan(source: VocabularySource): Plan {
 
 	const owned = ownership(declarations, features, issues);
 	const lines = new Map([...kinds.keys()].map((path) => [path, lineageOf(path, (at) => kinds.get(at))]));
-	const flagsAt = flagLookup(kinds, declarations, lines);
+	const flags = new Map([...kinds.keys()].map((path) => [path, flagsOf(path, lines, declarations, owned)] as const));
+	const flagsAt = flagsAtOf(kinds, flags);
 	issues.push(...flagSegments(kinds, flagsAt));
 	issues.push(...synonymCollisions(source.synonyms, kinds, declarations, lines, flagsAt));
 	for (const [path, members] of owned) {
@@ -140,7 +141,6 @@ export function plan(source: VocabularySource): Plan {
 	}
 
 	const levelArms = levels([...kinds.values()]);
-	const flags = new Map([...kinds.keys()].map((path) => [path, flagsOf(path, lines, declarations, owned)] as const));
 
 	return { features, kinds, owned, flags, levels: levelArms, issues, notes };
 }
@@ -233,11 +233,7 @@ function flagsOf(
 	return flags;
 }
 
-function flagLookup(
-	kinds: ReadonlyMap<string, Kind>,
-	declarations: ReadonlyMap<string, ReadonlyMap<string, readonly Declaration[]>>,
-	lines: ReadonlyMap<string, readonly string[]>
-): (prefix: string) => ReadonlySet<string> {
+function flagsAtOf(kinds: ReadonlyMap<string, Kind>, flags: ReadonlyMap<string, ReadonlyMap<string, Feature | undefined>>): (prefix: string) => ReadonlySet<string> {
 	const kindAt = (prefix: string): string | undefined => {
 		for (let at = prefix; ; at = at.slice(0, at.lastIndexOf('.'))) {
 			if (kinds.has(at)) return at;
@@ -246,11 +242,7 @@ function flagLookup(
 	};
 	return (prefix) => {
 		const at = kindAt(prefix);
-		return new Set(
-			(at === undefined ? [] : (lines.get(at) ?? [])).flatMap((line) =>
-				[...(declarations.get(line) ?? [])].flatMap(([name, list]) => (list.some((d) => d.member.flag) ? [name] : []))
-			)
-		);
+		return new Set(at === undefined ? [] : (flags.get(at)?.keys() ?? []));
 	};
 }
 
