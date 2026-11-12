@@ -267,8 +267,8 @@ shared arena, ruling 15), so the record layout fixed after this design must allo
   classes, trivia joins) goes into side arrays keyed by record address, never into the records.
 
 Records and cells are immutable once written: a setter appends a new record and never writes in
-place, so one child record may sit under two parents. Records nothing reaches are reclaimed by
-chunk (shared arena, § Reclamation).
+place, so one child record may sit under two parents. A record is freed by count once nothing holds
+it (shared arena, § Reclamation).
 
 ## Sequencing
 

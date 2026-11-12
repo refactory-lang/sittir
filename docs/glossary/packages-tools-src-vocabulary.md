@@ -59,10 +59,6 @@ A gated owner is recorded in `owned`. A kind's own declaration is not, since the
 
 The path segments that name a flag of the path before them. The flags of a prefix are the ones declared along the inheritance line of its nearest kind. A claim resolves each segment of its path to a kind or to a flag of the kind before it, so a segment that could be both has no single reading: `declaration.method.static` cannot be a kind while `static` is a flag of `declaration.method`. Each segment is reported once, at the path it ends (`declaration.method.static: static is a flag of declaration.method`), however many kinds lie below it.
 
-### `packages/tools/src/vocabulary/plan.ts::directReferences`
-
-The members typed by a direct reference to a kind some feature restates (`V.Declaration.Field<G>`), or to a level holding one (`V.Declaration.Any<G>`, read as each of its arms). A language's context applies a restatement only where it names the kind, in its namespace sets and slot fills, so a direct reference would type the member without it. Such a member takes its type from the slot table, as `declaration.union`'s `body` does. Each member and reference is reported once, naming the features that restate the kind.
-
 ### `packages/tools/src/vocabulary/plan.ts::levels`
 
 The levels are every proper prefix of each kind's qualified name, plus each top-level namespace, so a namespace whose only kind is its root still has a level.

@@ -3,13 +3,15 @@
 // through the row its record makes to the same structure. So the row's reader
 // of a builder's input from a record's slots feeds every builder the corpus
 // reaches as its signature takes it.
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { isNode, snapshotOf, storedSlotValues } from '@sittir/common/utils';
 import { builtRefOf } from '../../common/src/built-ref.ts';
 import { FULL_PIPELINE_TIMEOUT } from '../../codegen/src/__tests__/helpers/timeouts.ts';
-import { useValidationNodeStorage } from '../src/validate/common.ts';
+import { useValidationNodeStorage, disposeNativeEngines } from '../src/validate/common.ts';
 import { validateFactoryStorage } from '../src/validate/factory-storage.ts';
 import { structureOf } from '../../../examples/helpers.ts';
+
+afterAll(disposeNativeEngines);
 
 useValidationNodeStorage('arena');
 

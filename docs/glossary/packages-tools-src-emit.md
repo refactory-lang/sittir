@@ -648,10 +648,6 @@ The kinds whose factory forwards its arguments.
 
 The layout trivia the printed node carries.
 
-### `packages/tools/src/emit/factory-source.ts::Printed::$named`
-
-Always `true`: a printed node is a named node.
-
 ### `packages/tools/src/emit/factory-source.ts::Printed::$type`
 
 The printed node's kind id.

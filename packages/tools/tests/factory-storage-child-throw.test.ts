@@ -1,8 +1,12 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, describe, expect, it, vi } from 'vitest';
 import { FULL_PIPELINE_TIMEOUT } from '../../codegen/src/__tests__/helpers/timeouts.ts';
 import { grammarModulePath } from '../src/grammar-internals.ts';
+import { disposeNativeEngines } from '../src/validate/common.ts';
 
-afterEach(() => {
+afterAll(disposeNativeEngines);
+
+afterEach(async () => {
+	await (await import('../src/validate/common.ts')).disposeNativeEngines();
 	vi.doUnmock(grammarModulePath('regex', 'factories/raw.ts')!);
 	vi.resetModules();
 });

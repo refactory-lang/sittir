@@ -1,7 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { applyHost } from '@sittir/common';
 import { findReparsedNodeAtOffset, hostlessReason, loadRenderReparseContext, type RenderReparseContext } from '../src/validate/read-render-parse.ts';
-import { loadLanguageForGrammar, loadNativeRender, treeParser, wrapForReparse } from '../src/validate/common.ts';
+import { loadLanguageForGrammar, loadNativeRender, treeParser, wrapForReparse, disposeNativeEngines } from '../src/validate/common.ts';
+
+afterAll(disposeNativeEngines);
 
 async function contextFor(grammar: 'python' | 'regex' | 'rust' | 'typescript'): Promise<RenderReparseContext & Disposable> {
 	using owned = new DisposableStack();

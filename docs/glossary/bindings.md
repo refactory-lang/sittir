@@ -502,14 +502,6 @@ The bound name of a vocabulary path: its segments reversed, subkind first, keepi
 
 A vocabulary member's field name: its camelCase name in snake case, so every slot a member reaches is named by the member.
 
-### `packages/codegen/src/bindings/grammar-bindings.ts::isLift`
-
-A group lift at the patch stage: the symbol enrich's group lift leaves in a rule, unless it is a variant's arm (a rule of its own at the patch stage).
-
-### `packages/codegen/src/bindings/grammar-bindings.ts::isGroupAlias`
-
-The alias enrich wraps a visible group in.
-
 ### `packages/codegen/src/bindings/grammar-bindings.ts::FieldRequest`
 
 A field edit the derivation asks bind for: a rename of an existing field or a wrap of an unfielded child.
@@ -517,10 +509,6 @@ A field edit the derivation asks bind for: a rename of an existing field or a wr
 ### `packages/codegen/src/bindings/grammar-bindings.ts::SINGLE`
 
 The rule types with one `content` child, which the patch walk descends at path index `0`.
-
-### `packages/codegen/src/bindings/grammar-bindings.ts::metaOf`
-
-A rule's `metadata` record, or an empty one.
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::fieldOfReference`
 
@@ -601,10 +589,6 @@ Requests grouped by each host rule they apply in, in request order.
 ### `packages/codegen/src/bindings/grammar-bindings.ts::pathText`
 
 A walk path as a patch key: its indices joined by `/`, or `.` for the root.
-
-### `packages/codegen/src/bindings/grammar-bindings.ts::unwrappedPrec`
-
-A rule below its precedence wrappers.
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::pathMode`
 
@@ -1209,17 +1193,9 @@ What a read entry's own tests guarantee about the slots they reach, as `membersO
 
 An entry's guarantees: whether a build path's steps to an only node all hold (`holds`), and whether a step's slot holds other than exactly one node (`many`).
 
-### `packages/codegen/src/bindings/routes.ts::stepKey`
-
-A `SlotStep` as a set key: its owner, slot and anchor.
-
 ### `packages/codegen/src/bindings/routes.ts::DeepMember`
 
 A member fact reached through a child: a `presence` or a `nested` member.
-
-### `packages/codegen/src/bindings/routes.ts::deepRouteOf`
-
-A deep member's route on a kind, with the build path back through its `via` steps (`viaPath`) to the slot that holds it, `undefined` when some step has no slot or holds many with no anchor.
 
 ### `packages/codegen/src/bindings/routes.ts::membersOf`
 
@@ -1408,10 +1384,6 @@ A name and every grammar kind the parser shows by it at an alias site (`ModelNod
 ### `packages/codegen/src/bindings/routes.ts::matchedKinds`
 
 The concrete kinds a pattern naming these kinds matches: each name's `shownKinds`, each expanded to its concrete kinds.
-
-### `packages/codegen/src/bindings/routes.ts::reaches`
-
-Whether a kind is, or is shown by the name of (`ModelNode.shownAs`), or is reached through supertype arms from, another kind.
 
 ### `packages/codegen/src/bindings/routes.ts::holdsNodes`
 
@@ -1680,13 +1652,6 @@ retaining constraints except the kind tests proved by the lead itself. Minted
 visible variants receive their source's applicable claims without changing
 ordinary alias builder policy.
 
-### `packages/codegen/src/bindings/lead-facts.ts::headMember`
-
-Projects a capture whose route crosses the list by appending its own selector to its `via` path and projecting both through `headPath`: a receiver capture lands on its new singular field, a rest capture crosses the receiver form, canonical group and original rest-list field, and the projected step above the capture is its parent. Every name comes from the realization record; no naming convention is reconstructed.
-
-
-Lead projection uses one `bindFacts` projection for the minted variants. Besides owned captures, it preserves explicit container declarations and unclaimed-kind declarations on their cloned owners, including the container's element, captured slots, and dropped layout. Without that projection a receiver wrapper loses its declared content route even though its parser shape is correct.
-
 ### `packages/codegen/src/bindings/pinned-memo.ts::module`
 
 Pinned reads kept on disk. A pinned read is a function of the pinned build, its mode, its input and the workspace code the child runs, so while all four are unchanged a stored answer stands in for the child's, and a process that finds every read stored never starts the child. The entries live in the pinned build's directory, which the pin sha names, so a new pin starts with none and the old pin's go with its directory.
@@ -1737,6 +1702,13 @@ Builds the member list after a lead projection. A member the lead heads contribu
 ### `packages/codegen/src/bindings/lead-facts.ts::projectLead`
 
 Applies one lead effect to a facts record. The facts are rebound through the effect's variant map. Each claim is projected: a claim the receiver owns keeps only its head form, and a claim on a variant kind keeps its plain form and gains a head form. The indices are recorded, and members, containers and unclaimed facts for variant kinds are projected to match. Why: a lead composes the head's admits in the context of the field and the rest in the context of the item.
+
+### `packages/codegen/src/bindings/lead-facts.ts::headMembers`
+
+Projects a capture whose route crosses the list by appending its own selector to its `via` path and projecting both through `headPath`: a receiver capture lands on its new singular field, a rest capture crosses the receiver form, canonical group and original rest-list field, and the projected step above the capture is its parent. Every name comes from the realization record; no naming convention is reconstructed.
+
+
+Lead projection uses one `bindFacts` projection for the minted variants. Besides owned captures, it preserves explicit container declarations and unclaimed-kind declarations on their cloned owners, including the container's element, captured slots, and dropped layout. Without that projection a receiver wrapper loses its declared content route even though its parser shape is correct.
 
 ### `packages/codegen/src/bindings/pinned-memo.ts::read`
 

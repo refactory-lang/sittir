@@ -38,6 +38,7 @@ export const hooks: LanguageHooks<ScmAPI> = Object.freeze<LanguageHooks<ScmAPI>>
 	}),
 	records: () => import('./factories/records.js'),
 	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
+	rootKinds: Object.freeze([33]),
 	querySlots,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),

@@ -1,9 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { emitFactorySourceText } from '../../src/emit/factory-source.ts';
 import { GENERATED_REBUILDS, REBUILD_SETS } from '../../src/emit/dogfood-targets.ts';
 import { expectWithinTypecheckCeiling, typeCheckErrorLines } from '../../../codegen/src/__tests__/helpers/typecheck-ceiling.ts';
+import { releaseTrackedEngines } from '../helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('../helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 describe('generated rebuilds', () => {

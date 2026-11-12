@@ -1,8 +1,14 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { nodeAddressOf, treeOf } from '@sittir/common/utils';
 import type { QueryPlan } from '@sittir/types';
 import { requireGrammarModule } from '../../src/grammar-internals.ts';
-import { createStrictNativeEngine, loadCorpusEntries } from '../../src/validate/common.ts';
+import { createStrictNativeEngine, loadCorpusEntries, disposeNativeEngines } from '../../src/validate/common.ts';
+import { releaseTrackedEngines } from '../helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('../helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
+
+afterAll(disposeNativeEngines);
 
 interface Walked {
 	readonly $type: number;

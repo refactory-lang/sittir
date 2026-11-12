@@ -47,6 +47,7 @@ import {
 	applySetter,
 	objectLeading,
 	objectTrailing,
+	handleSave,
 	objectInner,
 	describeValue,
 	restItems,
@@ -181,6 +182,7 @@ export function buildModule(...children: Admit<T.Statement[]>): T.Module.Bound {
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
+		$save: handleSave,
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing

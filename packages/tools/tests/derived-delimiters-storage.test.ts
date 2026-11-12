@@ -1,6 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../src/languages.ts';
+import { releaseTrackedEngines } from './helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('./helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 type Rendered = { $render(): unknown };
 type Builder = Record<string, (...args: unknown[]) => Rendered>;

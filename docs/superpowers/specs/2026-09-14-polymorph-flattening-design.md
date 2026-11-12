@@ -1,5 +1,7 @@
 # Polymorph flattening
 
+**Amended by the user, 2026-11-06** ("Merge: display as block", then "block_statement everywhere (Recommended)"): python's `suite_inline` is merged into the block, so every python block is `block_statement` (bindings spec §6, Kinds, rule 2). The `_suite` examples below name the forms as they stood when this design was written.
+
 A polymorph parent is a kind whose rule is a pure choice of its variants. It costs a `content` slot in every model, factory and vocabulary interface, and when the parent is visible it also costs a level of nesting in every parse tree. This design lists every such parent as a tree-sitter supertype, so its variants become its subtypes and each variant carries everything the parent carried.
 
 What that removes depends on whether the parent is visible:

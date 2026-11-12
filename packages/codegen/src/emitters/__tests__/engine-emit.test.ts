@@ -39,7 +39,7 @@ describe('emitRenderEngine', () => {
 });
 
 describe('emitApi', () => {
-	const output = emitApi({ grammar: 'python', rootTypeName: 'Module', rootTreeTypeName: 'ModuleTree' });
+	const output = emitApi({ grammar: 'python', rootTypeName: 'Module', rootTreeTypeName: 'ModuleTree', rootKinds: [108] });
 
 	it('names the language API after the grammar', () => {
 		expect(languageApiName('python')).toBe('PythonAPI');
@@ -72,6 +72,7 @@ describe('emitApi', () => {
 			grammar: 'python',
 			rootTypeName: 'Module',
 			rootTreeTypeName: 'ModuleTree',
+			rootKinds: [108],
 			commentCoercer: 'coerceToComment'
 		});
 		expect(withComment).toContain('trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),');
@@ -85,10 +86,14 @@ describe('emitApi', () => {
 	it('declares the portable views and hands over the portable rows, the build table and the flag table only for a grammar with bindings', () => {
 		expect(output).not.toContain('portable');
 		expect(output).not.toContain('queryFlags');
-		const bound = emitApi({ grammar: 'python', rootTypeName: 'Module', rootTreeTypeName: 'ModuleTree', portable: true });
+		const bound = emitApi({ grammar: 'python', rootTypeName: 'Module', rootTreeTypeName: 'ModuleTree', rootKinds: [108], portable: true });
 		expect(bound).toContain("import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from './portable/index.js';");
 		expect(bound).toContain('readonly portable: { readonly kinds: PortableKinds; readonly is: PortableIs };');
 		expect(bound).toContain("\tportable: rows,\n\tportableBuild: () => import('./portable/build.js').then((m) => m.build),\n\tqueryFlags,\n\tquerySlotFlags\n});");
+	});
+
+	it("stamps the grammar's root kinds on the hooks", () => {
+		expect(output).toContain('\trootKinds: Object.freeze([108]),\n');
 	});
 
 	it("hands the engine the package's render module hash", () => {

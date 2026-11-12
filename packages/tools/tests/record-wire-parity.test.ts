@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { chunkOf } from '@sittir/common/engine';
 import { coordinateOf, decodeIndex, isCoordinate, nodeText, recordOf, treeOf } from '@sittir/common/utils';
@@ -14,8 +14,15 @@ import {
 	slotValuesOf,
 	wrappedNodesOf,
 	type SlotAccessorOf,
-	type TypedNode
+	type TypedNode,
+	disposeNativeEngines
 } from '../src/validate/common.ts';
+import { releaseTrackedEngines } from './helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('./helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
+
+afterAll(disposeNativeEngines);
 
 const placeOf = (at: NodeCoordinate | undefined) =>
 	at && { row: decodeIndex(at.$treeHandle), end: at.$end, span: at.$span, kind: at.$type };
@@ -139,7 +146,7 @@ describe('a read on the arena wire says what the object wire says', () => {
 
 describe('a node a query finds on the arena wire', () => {
 	it('is read from its records with no tree read: a parsed leaf and a number literal with parts', async () => {
-		const arena = await createEngine(rust, { nodeStorage: 'arena' });
+		using arena = await createEngine(rust, { nodeStorage: 'arena' });
 		const work = await layoutWorkOf('rust');
 		const root = arena.parse('fn f() { let x = 0x1Fu8; g(x) }\n', { depth: Infinity });
 		const facet = facetOf(root);
@@ -162,7 +169,7 @@ describe('a query finds only the nodes a read takes', () => {
 	];
 	for (const nodeStorage of ['object', 'arena'] as const) {
 		it(`${nodeStorage}: a regex escape's captures are part of its token, not nodes`, async () => {
-			const rx = await createEngine(regex, { nodeStorage });
+			using rx = await createEngine(regex, { nodeStorage });
 			const captures: readonly unknown[] = [rx.kinds.ControlEscapeText1, rx.kinds.ControlEscapeText2, rx.kinds.UnicodeCharacterEscapeText1, rx.kinds.UnicodeCharacterEscapeText2];
 			const tokens: readonly unknown[] = [rx.kinds.ControlEscape, rx.kinds.UnicodeCharacterEscape];
 			const entries = loadCorpusEntries('regex').filter((entry) => ESCAPES.includes(entry.name));

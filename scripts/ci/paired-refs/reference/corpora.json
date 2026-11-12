@@ -1,0 +1,15 @@
+[
+  {
+    "name": "matter.js",
+    "url": "https://github.com/project-chip/matter.js",
+    "commit": "2078d664893df6538a656c2f55686076c043f645",
+    "license": "Apache-2.0"
+  },
+  {
+    "name": "next.js",
+    "url": "https://github.com/vercel/next.js",
+    "commit": "4e5335a00314be7fbb2aace5e9be56a88e64e5a8",
+    "tag": "v16.4.5",
+    "license": "MIT"
+  }
+]

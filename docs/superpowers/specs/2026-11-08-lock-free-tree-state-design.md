@@ -2,7 +2,7 @@
 
 **Status:** approved by the maintainer, 2026-11-08. Amended the same day to rule out shared ownership ("And Rc and Arc") and to scope the work to arena storage ("Arena only").
 **Scope:**
-- the state arena storage uses on the parse, read, render and edit paths in `sittir-core`: the engine's held-parse table and what each slot keeps, the tree arena, the built arena's chunks and the engine cell;
+- the state arena storage uses on the parse, read, render and edit paths in `sittir-core`: what outlives an arena parse call (its nodes and its source text), the tree arena, the built arena's chunks and the engine cell;
 - the types both storages share: the trivia placement, the trivia store, the layout work counters and the `Nodes` interface.
 
 ## Why
@@ -26,14 +26,14 @@
 
 ## Goals
 
-1. **One borrow per call.** In arena storage, the engine owns every parse through its held-parse table (arena Task 6). A call borrows the engine once and reaches its parses through that borrow.
+1. **One borrow per call.** In arena storage, the engine owns what outlives each parse call, its nodes and its source text (arena Task 6). A call borrows the engine once and reaches them through that borrow.
    - A second borrow of the engine within the call is refused by name and never blocks.
    - The engine has one owner, its JavaScript object, on one thread, so the flag is a plain `Cell`.
 2. **Plain data under the borrow.** None of `Mutex`, `RwLock`, atomics, `OnceLock`, `RefCell`, `Rc` or `Arc` appears in arena storage's state or in the shared types. Caches and counters are ordinary fields, changed through `&mut`.
 3. **Callees receive the borrow.** A function that needs a parse takes it, or a `&mut` part of it, from its caller and never re-acquires it. The deadlock Task 5 hit can then only be a compile error.
 4. **One owner; everything else borrows.**
-   - The engine owns its held-parse slots, whose counts are plain integers.
-   - A parse owns its source, and everything else reads it as `&str`.
+   - The engine owns the nodes and the source text each parse call leaves.
+   - The source text has one owner, and everything else reads it as `&str`.
    - Caches own their values. A lookup returns `&T` tied to the borrow. Where a borrow can't outlive a later insert, it returns an index into storage the owner keeps, never a clone.
    - `Nodes::kids` fills a buffer its caller owns, or gives a borrowed slice. It no longer allocates an `Arc<[Kid]>` per call.
 5. **The work counters belong to the call.** `LayoutWork` is a plain record the borrow owns and the caller reads after the call. Tests read it the way they do today.
@@ -62,7 +62,7 @@
 ## Shape
 
 - **Shared types are plain data.** The placement, the trivia store's per-tree parts, the counters and the `Nodes` backers hold no lock, atomic or shared pointer. They mutate through `&mut`.
-- **Arena storage** holds the shared types directly in each held-parse slot, under the engine borrow.
+- **Arena storage** holds the shared types directly under the engine borrow. Its per-tree state lives only inside the read call (arena Task 6).
 - **Object storage** wraps its per-tree state, including its copies of the shared types, in one coarse holder at its own boundary, as today's live-tree table does.
   - The table's borrow hands out `&mut` for a write and `&` for a read.
   - Object storage's locks and shared pointers stay outside the shared code.
@@ -108,7 +108,7 @@
   - multithreading happens only on the native side;
   - arena regressions are acceptable only as planned trade-offs;
   - the trees-as-objects object half is deferred.
-- The arena's single owner is arena Task 6's held-parse table. This work builds on it, and on no per-tree cell.
+- After the read call, arena storage has no per-tree owner (arena Task 6). This work builds on that, and on no per-tree cell.
 
 ## Left to the builder
 

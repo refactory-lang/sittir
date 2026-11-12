@@ -964,6 +964,21 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.site_mark(arm, strength, flank);
     }
 
+    /// Holds the seam each token at a coordinate's end writes in place of
+    /// text (`ResolvedOptions::token_seam`). The whitespace such a token
+    /// stands for follows it, outside the coordinate's bytes, so its seam
+    /// would otherwise be lost. It is held as the gap it stands for, not as
+    /// a token's text: a render that ends there drops it, as it drops any
+    /// gap. At the coordinate's start that whitespace is inside its bytes,
+    /// and the slice writes it.
+    fn token_seams(&mut self, options: &crate::options::ResolvedOptions, levels: &[crate::render::EdgeLevel]) {
+        for level in levels {
+            if let Some(seam) = [level.stamp, level.display, level.grammar].into_iter().find_map(|kind| options.token_seam(kind)) {
+                self.merge_seam(seam);
+            }
+        }
+    }
+
     /// Places what `outer`'s template writes on `side` between its edge and
     /// `inner`, its child at that edge: the arm for `inner` in the row of
     /// `outer`'s stamped kind, or of its grammar kind when the stamp's row
@@ -1396,6 +1411,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
                 }
             }
             crate::options::Side::After => {
+                self.token_seams(options, &levels);
                 for pair in levels.windows(2).rev() {
                     self.boundary_marks(options, pair[0], pair[1], side);
                 }

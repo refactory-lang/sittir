@@ -13,7 +13,8 @@ const identity: EngineIdentity = {
 	language: { name: 'fake', fileTypes: [], is: {}, kinds: {}, load: () => Promise.reject(new Error('type-only')) },
 	renderModuleHash: 'hash',
 	options: {},
-	trivia: { kindName: () => undefined, kinds: new Set<string>(), innerKinds: new Set<string>(), rebuildWrappers: new Set<number>(), listKinds: new Set<number>(), layout: new Set<number>(), innerRegions: new Map<number, readonly string[]>(), namedUnits: new Set<number>() }
+	trivia: { kindName: () => undefined, kinds: new Set<string>(), innerKinds: new Set<string>(), rebuildWrappers: new Set<number>(), listKinds: new Set<number>(), layout: new Set<number>(), innerRegions: new Map<number, readonly string[]>(), namedUnits: new Set<number>() },
+	rootKinds: []
 };
 
 function handleOf(label: string): EngineHandle {
@@ -21,6 +22,9 @@ function handleOf(label: string): EngineHandle {
 		...identity,
 		render: () => Object.assign(() => label, { toString: () => label }) as never,
 		query: () => {
+			throw new Error('type-only');
+		},
+		write: () => {
 			throw new Error('type-only');
 		}
 	};

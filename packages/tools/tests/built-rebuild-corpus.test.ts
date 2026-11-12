@@ -6,7 +6,7 @@
 // released its roots, the built arena holds no record, on the raw surface and
 // on the ir surface, where a seated group is read apart into its parent's call
 // and so is never built on its own.
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { isNode, snapshotOf, storedSlotValues } from '@sittir/common/utils';
 import { builtRefOf } from '../../common/src/built-ref.ts';
 import { FULL_PIPELINE_TIMEOUT } from '../../codegen/src/__tests__/helpers/timeouts.ts';
@@ -19,11 +19,14 @@ import {
 	loadStorageKindNameFromId,
 	useValidationNodeStorage,
 	type FactoryDispatchArtifacts,
-	type ReadNodeLike
+	type ReadNodeLike,
+	disposeNativeEngines
 } from '../src/validate/common.ts';
 import { validateFactoryStorage } from '../src/validate/factory-storage.ts';
 import { requireGrammarModule } from '../src/grammar-internals.ts';
 import { structureOf } from '../../../examples/helpers.ts';
+
+afterAll(disposeNativeEngines);
 
 useValidationNodeStorage('arena');
 

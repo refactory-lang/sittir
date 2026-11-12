@@ -6,7 +6,7 @@ import { createInterface } from 'node:readline';
 import type { Readable } from 'node:stream';
 import { fileURLToPath } from 'node:url';
 import { afterEach, expect, it, vi } from 'vitest';
-import { claim, giveBack, holdPeers, parseProcessTable, peerWork, processTable, sessionOf, stillHeld, type Mark } from '../src/profile/hold-peers.ts';
+import { THROTTLED_PRIORITY, claim, giveBack, holdPeers, parseProcessTable, peerWork, processTable, sessionOf, stillHeld, type Mark } from '../src/profile/hold-peers.ts';
 
 const darwin = process.platform === 'darwin';
 const cleanups: (() => void)[] = [];
@@ -15,6 +15,7 @@ afterEach(() => {
 });
 
 const priority = (pid: number) => Number(execFileSync('ps', ['-o', 'pri=', '-p', String(pid)], { encoding: 'utf8' }).trim());
+const throttled = (pid: number) => priority(pid) === THROTTLED_PRIORITY;
 const priorities = (pids: readonly number[]) =>
 	execFileSync('ps', ['-o', 'pri=', '-p', pids.join(',')], { encoding: 'utf8' })
 		.trim()
@@ -226,10 +227,10 @@ it.runIf(darwin)('gives back what it held when its process is killed outright', 
 	const state = join(dir, 'hold.json');
 	const { root, work } = await fakeSession(dir);
 	const holder = await holderProcess(root, state);
-	expect(work.map(priority)).toEqual([4, 4]);
+	expect(work.map(throttled)).toEqual([true, true]);
 	holder.kill('SIGKILL');
 	await eventually(() => !existsSync(state));
-	expect(work.map(priority)).toEqual([31, 31]);
+	expect(work.map(throttled)).toEqual([false, false]);
 }, 20_000);
 
 it.runIf(darwin)('waits for another hold to end before it holds anything', async () => {
@@ -254,9 +255,9 @@ it.runIf(darwin)('waits for another hold to end before it holds anything', async
 	expect(secondHeld).toBe(false);
 	first.release();
 	const hold = await second;
-	expect(work.map(priority)).toEqual([4, 4]);
+	expect(work.map(throttled)).toEqual([true, true]);
 	hold.release();
-	expect(work.map(priority)).toEqual([31, 31]);
+	expect(work.map(throttled)).toEqual([false, false]);
 }, 20_000);
 
 it.runIf(darwin)('gives back what a hold whose owner died left held before it holds anything', async () => {
@@ -270,10 +271,10 @@ it.runIf(darwin)('gives back what a hold whose owner died left held before it ho
 	const gone = spawn('true');
 	await new Promise((resolve) => gone.on('exit', resolve));
 	writeFileSync(state, JSON.stringify({ owner: { pid: gone.pid, started: 'Thu Jan 1 00:00:00 1970' }, held: work.map((pid) => [pid, started(pid), group(pid)]), kept: [], bystanders: [] }));
-	expect(work.map(priority)).toEqual([4, 4]);
+	expect(work.map(throttled)).toEqual([true, true]);
 	const { root: elsewhere } = await fakeSession(scratch());
 	const hold = await holdPeers({ within: elsewhere, state, intervalMs: 200 });
-	expect(work.map(priority)).toEqual([31, 31]);
+	expect(work.map(throttled)).toEqual([false, false]);
 	hold.release();
 }, 20_000);
 
@@ -312,11 +313,11 @@ it.runIf(darwin)('neither holds nor gives back a process already in the backgrou
 	const { root, work } = await fakeSession(dir);
 	const [plain, deliberate] = work;
 	demote(deliberate!);
-	expect([priority(plain!), priority(deliberate!)]).toEqual([31, 4]);
+	expect([throttled(plain!), throttled(deliberate!)]).toEqual([false, true]);
 	const hold = await holdPeers({ within: root, state: join(dir, 'hold.json'), intervalMs: 200 });
-	expect([priority(plain!), priority(deliberate!)]).toEqual([4, 4]);
+	expect([throttled(plain!), throttled(deliberate!)]).toEqual([true, true]);
 	expect(hold.release().held).toBe(1);
-	expect([priority(plain!), priority(deliberate!)]).toEqual([31, 4]);
+	expect([throttled(plain!), throttled(deliberate!)]).toEqual([false, true]);
 }, 20_000);
 
 it.runIf(darwin)('leaves a process already in the background class there when a held process runs it and the holder is killed outright', async () => {
@@ -326,12 +327,12 @@ it.runIf(darwin)('leaves a process already in the background class there when a 
 	const [shell] = work;
 	const [deliberate] = await read('inner');
 	demote(deliberate!);
-	expect([priority(shell!), priority(deliberate!)]).toEqual([31, 4]);
+	expect([throttled(shell!), throttled(deliberate!)]).toEqual([false, true]);
 	const holder = await holderProcess(root, state);
-	expect(priority(shell!)).toBe(4);
+	expect(throttled(shell!)).toBe(true);
 	holder.kill('SIGKILL');
 	await eventually(() => !existsSync(state));
-	expect([priority(shell!), priority(deliberate!)]).toEqual([31, 4]);
+	expect([throttled(shell!), throttled(deliberate!)]).toEqual([false, true]);
 }, 20_000);
 
 it.runIf(darwin)('gives back what a held process started and left behind before the next look', async () => {
@@ -341,7 +342,7 @@ it.runIf(darwin)('gives back what a held process started and left behind before 
 	const { root, work, session, read } = await fakeSession(dir, [`bash -c 'read _ < ${go}; sleep 60 & taskpolicy -b -p $!; echo "left $!"; exit'`]);
 	const [shell] = work;
 	const hold = await holdPeers({ within: root, state: join(dir, 'hold.json'), intervalMs: 60_000 });
-	expect(priority(shell!)).toBe(4);
+	expect(throttled(shell!)).toBe(true);
 	execFileSync('taskpolicy', ['-B', '-p', String(shell)]);
 	const ended = new Promise((resolve) => session.once('exit', resolve));
 	writeFileSync(go, '\n');
@@ -354,7 +355,7 @@ it.runIf(darwin)('gives back what a held process started and left behind before 
 	await ended;
 	expect(processTable().find((row) => row.pid === left)).toMatchObject({ ppid: 1, group: root, background: true });
 	hold.release();
-	expect(priority(left!)).toBe(31);
+	expect(throttled(left!)).toBe(false);
 }, 20_000);
 
 it.runIf(darwin)('holds after a holder that died while it wrote its state', async () => {
@@ -363,9 +364,9 @@ it.runIf(darwin)('holds after a holder that died while it wrote its state', asyn
 	writeFileSync(state, '');
 	const { root, work } = await fakeSession(dir);
 	const hold = await holdPeers({ within: root, state, intervalMs: 100 });
-	expect(work.map(priority)).toEqual([4, 4]);
+	expect(work.map(throttled)).toEqual([true, true]);
 	hold.release();
-	expect(work.map(priority)).toEqual([31, 31]);
+	expect(work.map(throttled)).toEqual([false, false]);
 }, 20_000);
 
 it.runIf(darwin)('starts no hold while a killed holder’s peers are still being given back', async () => {
@@ -376,11 +377,11 @@ it.runIf(darwin)('starts no hold while a killed holder’s peers are still being
 	mkdirSync(slow);
 	writeFileSync(join(slow, 'taskpolicy'), '#!/bin/sh\nsleep 0.05\nexec /usr/sbin/taskpolicy "$@"\n', { mode: 0o755 });
 	const holder = await holderProcess(root, state, { ...process.env, PATH: `${slow}:${process.env.PATH}` });
-	expect(work.map(priority)).toEqual(work.map(() => 4));
+	expect(work.map(throttled)).toEqual(work.map(() => true));
 	holder.kill('SIGKILL');
-	while (priorities(work).every((pri) => pri === 4)) await pause(0);
+	while (priorities(work).every((pri) => pri === THROTTLED_PRIORITY)) await pause(0);
 	const hold = await holdPeers({ within: root, state, intervalMs: 20 });
-	expect(work.map(priority)).toEqual(work.map(() => 4));
+	expect(work.map(throttled)).toEqual(work.map(() => true));
 	expect(hold.release().held).toBe(work.length);
-	expect(work.map(priority)).toEqual(work.map(() => 31));
+	expect(work.map(throttled)).toEqual(work.map(() => false));
 }, 30_000);

@@ -58,6 +58,14 @@ export default defineConfig({
 			rules: {
 				'no-unused-vars': ['error', { varsIgnorePattern: '^(G|K)$' }]
 			}
+		},
+		{
+			// A pending write or create is PromiseLike on purpose: awaiting
+			// it is what commits it.
+			files: ['packages/common/src/pending.ts'],
+			rules: {
+				'unicorn/no-thenable': 'off'
+			}
 		}
 	],
 	env: {

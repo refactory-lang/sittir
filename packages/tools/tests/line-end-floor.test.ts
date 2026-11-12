@@ -3,7 +3,7 @@ import { createEngine } from '@sittir/common';
 import { languageByName } from '../src/languages.ts';
 
 async function rebuilt(source: string): Promise<string> {
-	const engine = await createEngine(await languageByName('python'));
+	using engine = await createEngine(await languageByName('python'));
 	const module = engine.parse(source);
 	return module.$with.statements(...module.statements()).$render();
 }

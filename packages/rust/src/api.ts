@@ -47,6 +47,7 @@ export const hooks: LanguageHooks<RustAPI> = Object.freeze<LanguageHooks<RustAPI
 			{ open: '//', close: '', build: (text: string) => coerceToLineComment(text) }
 		])
 	}),
+	rootKinds: Object.freeze([176]),
 	querySlots,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),

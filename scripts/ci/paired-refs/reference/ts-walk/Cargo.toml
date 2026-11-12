@@ -1,0 +1,18 @@
+[package]
+name = "ts-walk"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[dependencies]
+tree-sitter = "=0.27.1"
+tree-sitter-language = "=0.1.9"
+
+[build-dependencies]
+cc = "=1.8.0"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1

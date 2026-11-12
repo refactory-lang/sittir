@@ -2,10 +2,16 @@
 // is rendered from a CRLF copy of every entry: under the default the render is
 // its LF twin, under '\r\n' every break is CRLF and nothing else differs, and
 // the CRLF render parses back to a tree that renders as the same LF text.
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../src/languages.ts';
-import { loadCorpusEntries, loadLanguageForGrammar, treeParser } from '../src/validate/common.ts';
+import { loadCorpusEntries, loadLanguageForGrammar, treeParser, disposeNativeEngines } from '../src/validate/common.ts';
+import { releaseTrackedEngines } from './helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('./helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
+
+afterAll(disposeNativeEngines);
 
 const LONE_BREAK = /(?<!\r)\n|\r(?!\n)/;
 const toCrlf = (text: string): string => text.replace(/\r?\n/g, '\r\n');

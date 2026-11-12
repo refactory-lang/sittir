@@ -1,10 +1,14 @@
-import { afterAll, describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { carryReadTree, isCoordinate, sidesOf } from '@sittir/common/utils';
 import { loadNativeEngine, loadSlotAccessorOf, readNodeOf, materializeDetached, parseNativeTree, nativeLanguageEngineOf } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../../languages.ts';
+import { releaseTrackedEngines } from '../../../tests/helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('../../../tests/helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 const rust = await createEngine(await languageByName('rust'));
 const typescript = await createEngine(await languageByName('typescript'));
