@@ -8,7 +8,7 @@
 - A navigation interface gives a node's facts (`Kid`), its children in order and its parent.
 - The tree backer reads tree-sitter's tree with one cursor that moves locally. The record backer reads records, token spans and node rows.
 - Trivia placement, the `SourceTable` methods and the engine's tree functions run once, over the interface, in both storages.
-- The arena holds each parse in a counted held-parse slot.
+- In arena storage, a parsed tree lives only inside the read call. Afterwards, only the nodes and the source text remain.
 
 **Tech stack:** Rust (`sittir-core`, `sittir-node-macros`), the TypeScript engine in `packages/common`, and the tools' validators and benchmarks.
 
@@ -27,7 +27,8 @@
 ## Global Constraints
 
 - **Worktree and branches:** prototype's one worktree, `scratchpad/wt-2c-census`, with a new branch per task from `origin/master`. No other worktrees. Pathspec commits (`git commit -- <paths>`). No force, stash, amend, rebase, revert or abort. Push by literal sha.
-- **The tree-holders plan's object half is deferred** (the maintainer, 2026-11-08). Arena parses move from the live-tree table straight into the engine's held-parse table. No `TreeCell` or interim `Tree` object comes first.
+- **Tree lifetime is settled** (the spec's Decided and Tree lifetime sections). The tree's scope is the read call. Only the source text and the nodes outlive it. The root holds no reference to a tree, and node memory is out of scope. A proposal starts from these rulings and doesn't reopen them.
+- **The tree-holders plan's object half is deferred** (the maintainer, 2026-11-08). Arena parses leave the live-tree table, and no held-parse table replaces it. No `TreeCell` or interim `Tree` object comes first.
 - **Native threads, when added,** are scoped threads that borrow immutable published data: rows, the source and written records. Each returns its scratch to the borrow's owner. Nothing is reference-counted to cross a thread.
 - **Object storage's speed is not a gate** (the maintainer: "as long as it doesn't affect arenas and the public api"). Its correctness is a gate: rows, renders and records. So is the public API.
 - **No napi or V8 call runs off the JavaScript thread, or on a grown stack segment.** Render stays a recursive descent.
@@ -46,7 +47,7 @@
 2. **Zero-width tokens:** python's indent and dedent, typescript's automatic semicolons. They keep their index, appear in children, and count in `depth_move` the same in both backers. Owned by Task 4.
 3. **Multi-byte UTF-8 sources and multi-line tokens.** Spans stay byte offsets, `line_starts_inside_tokens` gives the same lines, and columns come from the line table, not from byte counts. Owned by Tasks 3 and 4.
 4. **A deeply nested source hydrated at parse.** 10,000 levels hydrate without overflow, with no napi call on a grown segment. Owned by Task 6.
-5. **A built node that links parsed nodes from a released parse root.** The parse stays held until the link goes, and a stale read handle is refused by name, never reading a reused slot. Owned by Task 6.
+5. **A built node that links parsed nodes, rendered after the parsed root is released.** Expected: it renders byte-identical to its render before the release. Owned by Task 6.
 6. **A second call into the same engine while one is running,** for example from a finalizer or a callback that reaches the engine. Expected: refused by name, with no deadlock and no aliasing `&mut`. Owned by Task 9.
 7. **A JavaScript view of a built chunk kept past the chunk's free.** Expected: the view is detached (`byteLength` 0) before the memory goes, never a read of freed memory. Owned by Task 12.
 
@@ -224,39 +225,34 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 - [ ] **Step 4: Run the three-way verification** in both storages. Object storage's snapshot speed is not a gate. Its output is.
 - [ ] **Step 5: Commit:** `feat(snapshot): one snapshot rule for built and parsed nodes in both storages`.
 
-### Task 6: Hydrate at parse, drop the tree, and hold each parse in a counted slot
+### Task 6: Hydrate at parse and drop the tree inside the read call
+
+This is tree lifetime only, as the spec's Tree lifetime section rules. It adds no per-tree owner, slot, table or count, and it designs no node release.
 
 **Files:**
-- Modify: `napi_engine.rs` and `engine.rs`. In arena storage, `parse` hydrates the whole tree in the same call, then drops the `tree_sitter::Tree`. The parse's `TreeArena`, token spans, rows, source buffer and placed sides go into the engine arena's held-parse table. Root release drops the root's count.
-- Modify: `arena/built_image.rs`. The LINK record's tree word names a held-parse slot.
+- Modify: `napi_engine.rs` and `engine.rs`. In arena storage, `parse` hydrates the whole tree in the same call, then drops the `tree_sitter::Tree`, the placement scratch and the read caches before it returns. Only the nodes and the source text remain.
+- Modify: `arena/built_image.rs`. The LINK record names a node, not a tree, and stays 8 words.
 - Remove the branches Task 5 keeps for trees read part-way: `edited_record`'s coordinate branch and the baseline measured through the tree. Every arena tree is now read whole at parse.
-- Modify: `packages/common/src/{read,record-view,handle,engine,create-engine,built-arena}.ts`. An arena `TreeHandle` carries the slot and the parse id, and holds no `Tree` object. `handleDispose` on a parse root releases the root's count. The arena's `#trees` and its `holdTree` calls go.
+- Modify: `packages/common/src/{read,record-view,handle,engine,create-engine,built-arena}.ts`. An arena root holds no `Tree` object and no reference to a tree. The arena's `#trees` and its `holdTree` calls go.
 - Modify: `packages/tools/src/validate/layout-runs.ts` and `packages/tools/src/profile/native-hydration.ts`, which release their roots.
-- Test: `rust/crates/sittir-core/tests/arena_held_parses.rs` and `packages/common/tests/arena-held-parses.test.ts`.
+- Test: `rust/crates/sittir-core/tests/arena_tree_lifetime.rs` and `packages/common/tests/arena-tree-lifetime.test.ts`.
 
 **Interfaces:**
-- Consumes: Tasks 5, 5b and 5c. The tree drop lands after both 5b and 5c. HeldParses, the LINK slot word and link counting don't need them. Arena parses leave the live-tree table here.
-- Produces:
-  - `pub struct HeldParse`, owning its `TreeArena`, token spans, rows, source (`Box<str>`) and placed sides as direct fields, none wrapped in `Arc`, `Rc`, `Mutex`, `RwLock` or an atomic. What those values hold inside becomes plain in Tasks 11 and 12.
-  - `HeldParses`, a field of the engine, reached only through the engine's borrow. Counts are plain `u32`s.
-  - `HeldParses::hold(&mut self, parse: HeldParse) -> u32`;
-  - `HeldParses::release(&mut self, slot: u32)`;
-  - `HeldParses::get(&self, slot: u32) -> &HeldParse`, for a counted holder;
-  - `HeldParses::borrowed(&self, slot: u32, parse: TreeId) -> Result<&HeldParse, ParseReleased>`, for every read-handle call. `ParseReleased` names the parse's id;
-  - a slot is reused only when its count is 0.
+- Consumes: Tasks 5, 5b and 5c. Arena parses leave the live-tree table here.
+- Produces: the census below, as the PR body's first table. Its placement of each field fixes the names later tasks use.
 
-- [ ] **Step 1: Failing tests:**
-  - a parse in arena storage leaves no live `tree_sitter::Tree`, through a test-only count;
-  - 100 parses, each released, leave the table empty. 100 never released are freed at the engine's dispose;
-  - (Review Focus 5) a built node linking a parsed node keeps its parse after the root's release, and releasing the built node frees it. A read handle kept past its parse's release is refused by `ParseReleased`, and after a new parse reuses the slot it's still refused and never reads the new parse;
-  - 10,000 hold/release cycles over 3 parses never leave a live link's slot at count 0, checked under the debug checks;
+- [ ] **Step 1: The census, before code.** List every field of `ParsedTree` (`engine.rs`) and `TreeArena` (`arena/rows.rs`). Place each in one bin: node data; source text; recomputed from those on demand (with its cost and its readers); or dropped inside the read call. A field that isn't per-tree moves to the engine (grammar, the built-arena `store`) or to the call (the work counters, per Task 10). Say what lazy trivia placement reads after the call. A field that fits none of these goes to brainstorm, which takes it to the maintainer, before any code is written.
+- [ ] **Step 2: Failing tests:**
+  - a parse in arena storage leaves no live `tree_sitter::Tree` after `parse` returns, through a test-only count;
+  - after `parse` returns, arena storage holds no per-tree value besides the nodes' data and the source text, through the same test-only accounting;
+  - (Review Focus 5) a built node linking a parsed node renders byte-identical after the parsed root's release;
   - (Review Focus 4) a 10,000-level nested source in each grammar hydrates at parse with no overflow, and the parse call makes no napi call on a grown segment;
   - the LINK record is still 8 words, asserted on `size_of` and in the JavaScript twin;
   - no `Tree` instance is made in arena storage.
-- [ ] **Step 2:** Run them. They fail.
-- [ ] **Step 3: Implement.**
-- [ ] **Step 4: Run the three-way verification** in arena storage, plus Task 4's parity on the corpora and Task 5's corpus render with the tree dropped.
-- [ ] **Step 5: Commit:** `feat(arena): an arena parse hydrates at parse, drops its tree, and is held in a counted slot`.
+- [ ] **Step 3:** Run them. They fail.
+- [ ] **Step 4: Implement.**
+- [ ] **Step 5: Run the three-way verification** in arena storage, plus Task 4's parity on the corpora and Task 5's corpus render with the tree dropped.
+- [ ] **Step 6: Commit:** `feat(arena): an arena parse hydrates at parse and drops its tree inside the read call`.
 
 ### Task 7: The measurements
 
@@ -356,7 +352,7 @@ A ratchet that every later task lowers. Each of Tasks 9–12 starts by lowering 
 **Files:**
 - Modify: `engine.rs`, `arena.rs`, `arena/*.rs` and `napi_engine.rs`.
   - Arena storage's records, slots, items and gaps, its arena, lines and depth members: no `Mutex`, `OnceLock` or atomic. Lazily built values are `Option` fields.
-  - Task 5's rows `Arc`: the held parse owns the rows, and `RecordNodes` borrows them.
+  - Task 5's rows `Arc`: the rows are node data the engine owns, and `RecordNodes` borrows them.
   - The source: owned as `Box<str>`, read as `&str`. `SourceTable::source_of` returns `Option<&str>`.
   - Cached `Arc` values (`Record`, `NodeSlots`, `SlotItems`) become owned values that lookups borrow.
 - Modify: `arena.rs`, `arena/memory.rs`, `arena/count.rs` and `napi_engine.rs` (`external_view`, `release_share`, `Buffers`).

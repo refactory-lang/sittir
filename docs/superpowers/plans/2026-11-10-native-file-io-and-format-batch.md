@@ -24,13 +24,7 @@
 - The root kinds are stamped natively as `kind::ROOT_KINDS`, from `emitters/wrap.ts::rootKindIds`. Each descriptor's `fileTypes` is typed `readonly string[]` today.
 - Render writes the `layout.newline` option, `'\n'` by default. A file's own line ending isn't inferred.
 - Tree ids come from one process counter (`claim_tree_id`), and a process has about 2M of them.
-- **Prototype's arena Task 6** (held-parse slots, open as a PR soon) changes several things this plan builds on:
-  - the parse result gains `slot`, null in object storage;
-  - `parseTree` registers its finalizer only when `slot` is null, and sets `slot` and `releaseRoot`;
-  - `parse` and `parseAndRead` run through `readOrRelease`, so a parse whose call throws holds nothing;
-  - the side writes answer the parses they freed as `[slot, treeId]` pairs, for `BuiltArena.forgetParses`;
-  - `dispose` drops freed parses, drains the held table, then calls `release_built`.
-  The arena tree drop that follows rewrites `parse`, `parseTree` and the read again.
+- **Arena Task 6** (the arena tree drop, prototype) changes what `parse` answers in arena storage. The tree lives only inside the read call, and only the nodes and the source text outlive it. There's no held-parse slot, held table or per-tree count (the arena spec's Tree lifetime section). Tasks 2 and 5 take `parse`, `parseTree` and the parse result as that task leaves them.
 - **Reference:** `origin/probe/threading` (`parse_render_batch`, `packages/tools/src/profile/threading/pipeline.ts`), and the oxc reference harness in `scripts/ci/paired-refs/reference/` on `origin/bench/oxc-reference`.
 
 **Executor:** sittir-engine-api for Tasks 1–8, sittir-prototype for Task 9 (the maintainer, 2026-11-10). **Reviewer:** sittir-brainstorm, at the end of every task.
@@ -159,19 +153,19 @@ it('an intercepted render saves the intercepted text') // intercept: [{ render: 
 - Test: `packages/common/tests/native-parse-result.test.ts`
 
 **Interfaces:**
-- Produces: napi `SittirEngine.parse(source: string): NativeParseResult`, a plain object with every field the JSON carried when the task starts: `{ treeId, slot, options, errors }` once the arena work has landed. `@sittir/types`' `NativeParseResult` gains `slot`.
-- Produces: `treeFromParse(parsed: NativeParseResult): TreeHandle` in `engine.ts`. It's `parseTree` from the parsed result on, keeping all of its behavior: the finalizer only when `slot` is null, `slot` and `releaseRoot` on the handle, and the side-write report routed to the engine's built arena. Task 5 reuses it. The name stays clear of `tree-token.ts::treeOf`.
+- Produces: napi `SittirEngine.parse(source: string): NativeParseResult`, a plain object with every field the JSON carries when the task starts, as the arena tree drop leaves it.
+- Produces: `treeFromParse(parsed: NativeParseResult): TreeHandle` in `engine.ts`. It's `parseTree` from the parsed result on, keeping all of its behavior as the arena tree drop leaves it. Task 5 reuses it. The name stays clear of `tree-token.ts::treeOf`.
 
 - [ ] **Step 1: Write the failing test.**
 
 ```ts
-it('parse answers an object, not JSON')   // typeof r === 'object'; Number.isInteger(r.treeId); Array.isArray(r.errors); 'slot' in r
+it('parse answers an object, not JSON')   // typeof r === 'object'; Number.isInteger(r.treeId); Array.isArray(r.errors)
 it('a parse with errors carries them')    // errors.length > 0 for 'fn main( {'; the root's $errors deep-equals them
 ```
 
 - [ ] **Step 2:** Run it. Expected: FAIL (`typeof` is `'string'`).
 - [ ] **Step 3: Implement.** Return a `#[napi(object)]` struct, or `serde_json::Value` through napi's serde conversion, and make `parseTree(source)` be `treeFromParse(engine.parse(source))`.
-- [ ] **Step 4:** Regenerate and run the test with the arena work's held-parse tests. Expected: PASS.
+- [ ] **Step 4:** Regenerate and run the test with the arena tree drop's tree-lifetime tests. Expected: PASS.
 - [ ] **Step 5:** Run the three-way verification, then commit (pathspec). Message: `perf(core): parse answers its result as an object`.
 
 ### Task 3: `engine.write`, `engine.create`, `Pending` and the file interceptor
@@ -249,9 +243,9 @@ it('only the root kind has $save')        // child.$save === undefined
 ### Task 5: `engine.read(path)` (after the arena tree drop)
 
 **Files:**
-- Modify: `napi_engine.rs` (`SittirEngine::parse_file(path) -> NativeParseResult`, holding its parse in a slot as `parse` does, through `hold`; and `read_source(path) -> String`)
+- Modify: `napi_engine.rs` (`SittirEngine::parse_file(path) -> NativeParseResult`, answering as `parse` does; and `read_source(path) -> String`)
 - Modify: `engine.ts` (`NativeEngineLike.parseFile`, `readSource`, and `parseFileTree`, which is `treeFromParse(engine.parseFile(path))`)
-- Modify: `create-engine.ts` (`read`, through `readOrRelease`; `unimplementedVerb` goes)
+- Modify: `create-engine.ts` (`read`; `unimplementedVerb` goes)
 - Test: `packages/common/tests/file-read.test.ts`
 
 **Interfaces:**
@@ -265,7 +259,7 @@ it('reads a file to the root parse gives')        // (await engine.read(p)).toSt
 it('rejects an unreadable path, naming it')       // rejects /missing\.rs/
 it('rejects a file that is not UTF-8, naming it') // with no interceptor, and with a parse interceptor: both reject /not valid UTF-8/ and name p
 it('gives a parse interceptor the source')        // intercept: [{ parse(call, next) { seen = call.source; return next(); } }]; seen === text
-it("a read that throws holds nothing")            // errors: 'throw' on a source with errors rejects ParseErrors, and the engine's held-parse count is back to its value before
+it("a read that throws holds nothing")            // errors: 'throw' on a source with errors rejects ParseErrors, and arena storage holds nothing more than before, by the arena tree drop's test-only accounting
 it('rejects a path that is not a regular file without blocking') // a directory, and on unix a FIFO with no writer: rejects /not a regular file/ and names p, within a timeout, on both routes
 ```
 
