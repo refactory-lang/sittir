@@ -47,6 +47,7 @@ describe('emitApi', () => {
 		expect(output).toContain("readonly name: 'python';");
 		expect(output).toContain('readonly node: PythonNode;');
 		expect(output).toContain('readonly root: ModuleTree;');
+		expect(output).toContain('readonly rootBound: Module.Bound;');
 	});
 
 	it("types the API's empty forms from the grammar's type map", () => {

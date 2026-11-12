@@ -120,7 +120,7 @@ describe.each(['object', 'arena'] as const)('engine.write and engine.create (%s)
 	it('create writes a new file and refuses an existing one', async () => {
 		const engine = await engineOf();
 		const path = at('a.rs');
-		const make = (build: BuildSurface<RustAPI, 'default'>) => build.sourceFile({ statements: [...engine.parse('fn a() {}\n').statements()] } as never) as never;
+		const make = (build: BuildSurface<RustAPI, 'default'>) => build.sourceFile({ statements: [...engine.parse('fn a() {}\n').statements()] } as never);
 		await engine.create(path, make);
 		expect(readFileSync(path, 'utf8')).toBe('fn a() {}\n');
 		await expect(engine.create(path, make)).rejects.toThrow(/exists/);
@@ -244,7 +244,7 @@ describe.each(['object', 'arena'] as const)('engine.write and engine.create (%s)
 				}
 			]
 		});
-		const make = (build: BuildSurface<RustAPI, 'default'>) => build.sourceFile({ statements: [...engine.parse('fn a() {}\n').statements()] } as never) as never;
+		const make = (build: BuildSurface<RustAPI, 'default'>) => build.sourceFile({ statements: [...engine.parse('fn a() {}\n').statements()] } as never);
 		await expect(engine.create(at('a.rs'), make)).rejects.toThrow('file hook failed');
 		expect(readFileSync(at('a.rs'), 'utf8')).toBe('fn a() {}\n');
 	});
@@ -299,7 +299,7 @@ describe.each(['object', 'arena'] as const)('engine.write and engine.create (%s)
 				}
 			]
 		});
-		const make = (build: BuildSurface<RustAPI, 'default'>) => build.sourceFile({ statements: [...engine.parse('fn a() {}\n').statements()] } as never) as never;
+		const make = (build: BuildSurface<RustAPI, 'default'>) => build.sourceFile({ statements: [...engine.parse('fn a() {}\n').statements()] } as never);
 		await engine.create(at('a.rs'), make);
 		expect(order).toEqual(['outer returned', 'inner wrote']);
 		expect(readFileSync(at('a.rs'), 'utf8')).toBe('fn a() {}\n');
@@ -346,7 +346,7 @@ describe.each(['object', 'arena'] as const)('a root built for a create or a rend
 	it('create releases the root it built once its pending commits', async () => {
 		const engine = await engineOf();
 		let kept: unknown;
-		const created = engine.create(join(directory, 'a.rs'), (build) => (kept = builtRoot(engine, build)) as never);
+		const created = engine.create(join(directory, 'a.rs'), (build) => (kept = builtRoot(engine, build)));
 		expect(engine.render(kept as never).toString()).toBe('fn a() {}\n');
 		await created;
 		expect(readFileSync(join(directory, 'a.rs'), 'utf8')).toBe('fn a() {}\n');
@@ -357,7 +357,7 @@ describe.each(['object', 'arena'] as const)('a root built for a create or a rend
 		const engine = await engineOf();
 		let kept: unknown;
 		{
-			await using _ = engine.create(join(directory, 'a.rs'), (build) => (kept = builtRoot(engine, build)) as never);
+			await using _ = engine.create(join(directory, 'a.rs'), (build) => (kept = builtRoot(engine, build)));
 		}
 		expectReleased(engine, kept);
 	});
@@ -366,7 +366,7 @@ describe.each(['object', 'arena'] as const)('a root built for a create or a rend
 		const engine = await createEngine(rust, { nodeStorage, intercept: [{ file: async () => undefined }] });
 		engines.push(engine);
 		let kept: unknown;
-		await engine.create(join(directory, 'a.rs'), (build) => (kept = builtRoot(engine, build)) as never);
+		await engine.create(join(directory, 'a.rs'), (build) => (kept = builtRoot(engine, build)));
 		expect(existsSync(join(directory, 'a.rs'))).toBe(false);
 		expectReleased(engine, kept);
 	});
@@ -374,7 +374,7 @@ describe.each(['object', 'arena'] as const)('a root built for a create or a rend
 	it('a render of a build callback releases what it built once its handle is disposed', async () => {
 		const engine = await engineOf();
 		let kept: unknown;
-		const rendered = engine.render((build) => (kept = builtRoot(engine, build)) as never);
+		const rendered = engine.render((build) => (kept = builtRoot(engine, build)));
 		expect(rendered.toString()).toBe('fn a() {}\n');
 		expect(engine.render(kept as never).toString()).toBe('fn a() {}\n');
 		rendered[Symbol.dispose]();

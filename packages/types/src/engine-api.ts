@@ -146,6 +146,8 @@ export interface LanguageAPI {
 	readonly kinds: object;
 	readonly types: object;
 	readonly root: AnyUntypedNode & ParsedRoot;
+	/** The grammar's root kind as a builder returns it: what `write` and `create` take beside a parsed `root`. */
+	readonly rootBound: AnyUntypedNode;
 	readonly node: AnyUntypedNode;
 	readonly fixedTextKindId: number;
 	readonly kindId: number;
@@ -434,7 +436,7 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	 *
 	 * @throws What `fn` throws.
 	 */
-	readonly create: (path: string, fn: (build: BuildSurface<API, M>) => API['root']) => Pending;
+	readonly create: (path: string, fn: (build: BuildSurface<API, M>) => API['root'] | API['rootBound']) => Pending;
 	/**
 	 * Returns the pending write of `root` to `path`. Nothing is written until the result is awaited or disposed (`await
 	 * using`); then the root is rendered as it is at that moment, through any render interceptor, and written once,
@@ -444,7 +446,7 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	 * The pending result rejects when `root` is not a node of the grammar's root kind (`rootKinds`), naming its kind,
 	 * when another engine parsed or built it, and when the file can't be written, naming the path.
 	 */
-	readonly write: (path: string, root: API['root']) => Pending;
+	readonly write: (path: string, root: API['root'] | API['rootBound']) => Pending;
 	/**
 	 * Releases what a builder result holds, a `$with` result included, as its `[Symbol.dispose]` does. Under record
 	 * construction a result holds its record until it is placed into a parent or a side, and a built

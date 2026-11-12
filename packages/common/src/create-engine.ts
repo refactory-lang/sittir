@@ -307,7 +307,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 	};
 	const inLanguage = inLanguageOf(language);
 	const kindNameOf = (kind: number): string => hooks.trivia.kindName(kind as API['kindId']) ?? String(kind);
-	const writable = (root: API['root']): API['root'] => {
+	const writable = (root: API['root'] | API['rootBound']): API['root'] | API['rootBound'] => {
 		const owner = engineOf(root);
 		if (owner !== undefined && owner !== engine && owner !== identity) throw new Error(`cannot write a root another engine parsed or built; write it through that engine`);
 		const kind = (root as AnyUntypedNode).$type as number;
@@ -315,7 +315,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		return root;
 	};
 	const fileChangeOf = (path: string, rendered: Rendered): FileChange => Object.freeze({ path, before: currentText(path), after: rendered.toString() });
-	const pendingWrite = (path: string, verb: FileVerb, root: API['root'], release?: () => void): Pending =>
+	const pendingWrite = (path: string, verb: FileVerb, root: API['root'] | API['rootBound'], release?: () => void): Pending =>
 		pendingFile(
 			path,
 			verb,

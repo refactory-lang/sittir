@@ -141,7 +141,7 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 ${BUILDER_TABLES.map(({ surface, alias }) => `import type { ir as ${alias} } from './${irModuleOf(surface)}.js';\n`).join('')}import { isMember, membersOf, type is } from './is.js';
 ${config.portable === true ? `import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from '${moduleSpecifier('api.ts', PORTABLE_SURFACE_FILE)}';\n` : ''}import type { TSKindId } from './kinds.js';
-import type { FixedTextKindId, TypeKeyOf, NamespaceMap, ${grammarNodeTypeName(grammar)}, ${grammarTypeMapName(grammar)} } from './types.js';
+import type { FixedTextKindId, TypeKeyOf, NamespaceMap, ${grammarNodeTypeName(grammar)}, ${grammarTypeMapName(grammar)}, ${rootTypeName} } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { querySlots, structure, triviaFacts } from './utils.js';
 ${factoryImports(config)}import { RENDER_MODULE_HASH } from './hash.js';
@@ -155,6 +155,7 @@ export interface ${api} extends LanguageAPI {
 	readonly kinds: typeof TSKindId${config.portable === true ? ' & { readonly portable: PortableKinds }' : ''};
 	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: ${rootTreeTypeName};
+	readonly rootBound: ${rootTypeName}.Bound;
 	readonly node: ${grammarNodeTypeName(grammar)};
 	readonly fixedTextKindId: FixedTextKindId;
 	readonly kindId: TSKindId;
