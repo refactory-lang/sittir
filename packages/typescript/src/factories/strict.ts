@@ -194,6 +194,7 @@ export {
 	buildNumberFloatPoint,
 	buildNumberFloatLeadingPoint,
 	buildNumberFloatScientific,
+	buildNumberLegacyOctal,
 	buildNumberDecimal,
 	buildNumberBinary,
 	buildNumberOctal,

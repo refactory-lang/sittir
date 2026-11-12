@@ -36,6 +36,14 @@ describe('the portable build through the strict table', () => {
 		expect(() => runtime.build({ $path: 'literal.number.float', $value: Number.NaN })).toThrow(/literal\.number\.float: no python literal spells NaN/);
 	});
 
+	it('builds a scientific $value with an integer mantissa, its trailing zeros moved into the exponent, and rebuilds a read the same way', () => {
+		for (const [value, text] of [[1000, '1e3'], [1500, '15e2'], [0.5, '5e-1'], [1, '1e0'], [1.5e-7, '15e-8'], [0, '0e0']] as const)
+			expect(render(runtime.build({ $path: 'literal.number.float.scientific', $value: value }))).toBe(text);
+		for (const [source, text] of [['1E3', '1e3'], ['1e+3', '1e3'], ['15e2', '15e2']])
+			expect(render(runtime.build(runtime.read(runtime.engine.parse(`x = ${source}\n`)) as never))).toBe(`x = ${text}\n`);
+		expect(render(runtime.build({ $path: 'literal.number.float', $value: 1500 }))).toBe('1500.0');
+	});
+
 	it('refuses a bigint at a float form that takes its parts, keeping every digit in the refusal', () => {
 		expect(() => runtime.build({ $path: 'literal.number.float', $value: 2n ** 60n + 1n })).toThrow(/literal\.number\.float takes a float \(a number\) in python, not 1152921504606846977n/);
 	});

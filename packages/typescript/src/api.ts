@@ -48,7 +48,7 @@ export const hooks: LanguageHooks<TypescriptAPI> = Object.freeze<LanguageHooks<T
 			{ open: '//', close: '', build: (text: string) => buildCommentLine(text as `//${string}`, false) }
 		])
 	}),
-	rootKinds: Object.freeze([189]),
+	rootKinds: Object.freeze([190]),
 	querySlots,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),

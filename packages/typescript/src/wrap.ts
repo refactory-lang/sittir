@@ -12550,6 +12550,54 @@ function wrapNumberFloatScientific$with$exponent(this: Received<Held>, ...args: 
 	return wrapNumberFloatScientific$with(receiverOf(this, '$with.exponent'), 'exponent', args);
 }
 
+export function wrapNumberLegacyOctal(data: T.NumberLegacyOctal, tree: TreeHandle): T.NumberLegacyOctal.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.NumberLegacyOctal as const,
+		content() {
+			return hydrateSlot<string>(this, '_content', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { content: wrapNumberLegacyOctal$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.NumberLegacyOctal.Parsed;
+}
+function wrapNumberLegacyOctal$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.NumberLegacyOctal;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.NumberLegacyOctal['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapNumberLegacyOctal(
+						{ ...$edited(data), _content: admitSlot(handle, 'number_legacy_octal', 'content', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`number_legacy_octal has no $with.${setter}`);
+}
+function wrapNumberLegacyOctal$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapNumberLegacyOctal$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
 export function wrapNumberBinary(data: T.NumberBinary, tree: TreeHandle): T.NumberBinary.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -24869,6 +24917,35 @@ function viewNumberFloatScientific(data: RecordPosition, tree: TreeHandle): T.Nu
 	return node as unknown as T.NumberFloatScientific.Parsed;
 }
 
+function viewNumberLegacyOctal$content(this: RecordHandle) {
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+}
+function viewNumberLegacyOctal(data: RecordPosition, tree: TreeHandle): T.NumberLegacyOctal.Parsed {
+	const node = {
+		$type: TSKindId.NumberLegacyOctal as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
+		content: viewNumberLegacyOctal$content,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
+	return node as unknown as T.NumberLegacyOctal.Parsed;
+}
+
 function viewNumberBinary$radixPrefix(this: RecordHandle) {
 	return viewSlot<'0b' | '0B'>(this, 2, 2, 4, 0, 2);
 }
@@ -28120,6 +28197,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.NumberFloatLeadingPoint]: (d, t) =>
 		wrapNumberFloatLeadingPoint(d as unknown as T.NumberFloatLeadingPoint, t),
 	[TSKindId.NumberFloatScientific]: (d, t) => wrapNumberFloatScientific(d as unknown as T.NumberFloatScientific, t),
+	[TSKindId.NumberLegacyOctal]: (d, t) => wrapNumberLegacyOctal(d as unknown as T.NumberLegacyOctal, t),
 	[TSKindId.NumberBinary]: (d, t) => wrapNumberBinary(d as unknown as T.NumberBinary, t),
 	[TSKindId.NumberOctal]: (d, t) => wrapNumberOctal(d as unknown as T.NumberOctal, t),
 	[TSKindId.NumberBigintHex]: (d, t) => wrapNumberBigintHex(d as unknown as T.NumberBigintHex, t),
@@ -28406,6 +28484,7 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.NumberFloatPoint]: viewNumberFloatPoint,
 	[TSKindId.NumberFloatLeadingPoint]: viewNumberFloatLeadingPoint,
 	[TSKindId.NumberFloatScientific]: viewNumberFloatScientific,
+	[TSKindId.NumberLegacyOctal]: viewNumberLegacyOctal,
 	[TSKindId.NumberBinary]: viewNumberBinary,
 	[TSKindId.NumberOctal]: viewNumberOctal,
 	[TSKindId.NumberBigintHex]: viewNumberBigintHex,

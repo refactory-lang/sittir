@@ -252,10 +252,12 @@ export interface PortableDecimalParts {
 /**
  * One way a vocabulary path builds: the kind and its builder, the tests that pick it, the holder slots it is picked in, and what it builds from the
  * structure. A fixed literal has no builder and builds as its kind id; a kind its holder's builder builds has none either, and says by `seated`
- * whether the holder takes its config or its sole value. `scalar` marks the one arm at the path that builds a number of that type (`bigint` where the path's `$value` is a bigint, read and built as one); it takes the
- * number as its builder's input, or, where its builder takes a config, through `numeric`: the slot of its kind that takes the number whole, or the slot
- * that takes each part of its decimal spelling, of which `numericRequired` names the ones the kind always spells. An integer arm reads its number in the
- * `digits` base after the `digits` affix. Its other members read and build beside the `$value`. A `template`
+ * whether the holder takes its config or its sole value. `scalar` is the type of the number a number arm reads (`bigint` where the path's `$value` is
+ * a bigint, read and built as one); its path's `builds` names the arm that builds a `$value` of each type. `numeric` says what spells the number: the
+ * slots of its kind whose texts, in order, spell it (one slot, or a radix prefix and its digits), or the slot of each part of its decimal spelling, of
+ * which `numericRequired` names the ones the kind always spells; an arm with no `numeric` spells it in its kind's whole text. An arm builds the number
+ * as its builder's input, or, where its builder takes a config, through its last `numeric` slot or its decimal parts. An integer arm reads its number
+ * in the `digits` base after the `digits` affix. Its other members read and build beside the `$value`. A `template`
  * spells its member from the named holes. A `mounted` arm's builder is a mount that builds its holder, the kind
  * `mounted.holder`, with the arm's kind seated at `mounted.key`. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
  * holds) are the path's read tests, which a built node must pass. Where the arm's routes run through different forms of one slot, `owners`
@@ -273,7 +275,7 @@ export interface PortableBuildArm {
 	readonly mounted?: PortableMount & { readonly holder: number };
 	readonly seated?: PortableCallShape;
 	readonly scalar?: 'integer' | 'float' | 'bigint';
-	readonly numeric?: string | PortableDecimalParts;
+	readonly numeric?: readonly string[] | PortableDecimalParts;
 	readonly numericRequired?: readonly string[];
 	readonly digits?: { readonly base: 2 | 8 | 10 | 16; readonly affix: string };
 	readonly literal?: { readonly value?: boolean };
@@ -290,10 +292,14 @@ export interface PortableBuildArm {
 	readonly content?: string;
 }
 
-/** A vocabulary path's build arms, tried in order; a path with `root` false builds only inside a holder slot its arms name. */
+/**
+ * A vocabulary path's build arms, tried in order; a path with `root` false builds only inside a holder slot its arms name. Every number arm
+ * reads its own `scalar`; `builds` names, for each scalar type, the kind of the one arm that builds a `$value` of that type.
+ */
 export interface PortableBuildPath {
 	readonly root: boolean;
 	readonly arms: readonly PortableBuildArm[];
+	readonly builds?: Readonly<Partial<Record<NonNullable<PortableBuildArm['scalar']>, number>>>;
 }
 
 /**

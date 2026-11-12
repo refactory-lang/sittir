@@ -6129,6 +6129,17 @@
         },
         {
           "type": "SYMBOL",
+          "name": "integer_legacy_octal",
+          "metadata": {
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "legacy_octal",
+            "variantOf": "integer"
+          }
+        },
+        {
+          "type": "SYMBOL",
           "name": "integer_decimal",
           "metadata": {
             "symbolSource": "group-lift"
@@ -7872,156 +7883,127 @@
       }
     },
     "integer_hex": {
-      "type": "TOKEN",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "FIELD",
-            "name": "radix_prefix",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "0x"
-                },
-                {
-                  "type": "STRING",
-                  "value": "0X"
-                }
-              ]
-            },
-            "metadata": {
-              "fieldSource": "override"
-            }
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "integer_hex_long",
+          "metadata": {
+            "symbolSource": "group-lift"
           },
-          {
-            "type": "REPEAT1",
-            "content": {
-              "type": "PATTERN",
-              "value": "_?[A-Fa-f0-9]+"
-            }
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "[Ll]"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+          "annotations": {
+            "variant": "long",
+            "variantOf": "integer_hex"
           }
-        ]
-      },
+        },
+        {
+          "type": "SYMBOL",
+          "name": "integer_hex_plain",
+          "metadata": {
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "plain",
+            "variantOf": "integer_hex",
+            "default": true
+          }
+        }
+      ],
       "annotations": {
-        "tokenForm": true,
-        "hoisted": true
+        "tokenForm": true
       }
     },
     "integer_octal": {
-      "type": "TOKEN",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "FIELD",
-            "name": "radix_prefix",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "0o"
-                },
-                {
-                  "type": "STRING",
-                  "value": "0O"
-                }
-              ]
-            },
-            "metadata": {
-              "fieldSource": "override"
-            }
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "integer_octal_long",
+          "metadata": {
+            "symbolSource": "group-lift"
           },
-          {
-            "type": "REPEAT1",
-            "content": {
-              "type": "PATTERN",
-              "value": "_?[0-7]+"
-            }
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "[Ll]"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+          "annotations": {
+            "variant": "long",
+            "variantOf": "integer_octal"
           }
-        ]
-      },
+        },
+        {
+          "type": "SYMBOL",
+          "name": "integer_octal_plain",
+          "metadata": {
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "plain",
+            "variantOf": "integer_octal",
+            "default": true
+          }
+        }
+      ],
       "annotations": {
-        "tokenForm": true,
-        "hoisted": true
+        "tokenForm": true
       }
     },
     "integer_binary": {
-      "type": "TOKEN",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "FIELD",
-            "name": "radix_prefix",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "0b"
-                },
-                {
-                  "type": "STRING",
-                  "value": "0B"
-                }
-              ]
-            },
-            "metadata": {
-              "fieldSource": "override"
-            }
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "integer_binary_long",
+          "metadata": {
+            "symbolSource": "group-lift"
           },
-          {
-            "type": "REPEAT1",
-            "content": {
-              "type": "PATTERN",
-              "value": "_?[0-1]+"
-            }
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "[Ll]"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+          "annotations": {
+            "variant": "long",
+            "variantOf": "integer_binary"
           }
-        ]
-      },
+        },
+        {
+          "type": "SYMBOL",
+          "name": "integer_binary_plain",
+          "metadata": {
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "plain",
+            "variantOf": "integer_binary",
+            "default": true
+          }
+        }
+      ],
       "annotations": {
-        "tokenForm": true,
-        "hoisted": true
+        "tokenForm": true
+      }
+    },
+    "integer_legacy_octal": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "integer_legacy_octal_long",
+          "metadata": {
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "long",
+            "variantOf": "integer_legacy_octal"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "integer_legacy_octal_plain",
+          "metadata": {
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "plain",
+            "variantOf": "integer_legacy_octal",
+            "default": true
+          }
+        }
+      ],
+      "annotations": {
+        "tokenForm": true
       }
     },
     "integer_decimal": {
@@ -8066,6 +8048,360 @@
         "tokenForm": true
       }
     },
+    "integer_hex_long": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "radix_prefix",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "0x"
+                },
+                {
+                  "type": "STRING",
+                  "value": "0X"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "PATTERN",
+              "value": "_?[A-Fa-f0-9]+"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "marker",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "L"
+                },
+                {
+                  "type": "STRING",
+                  "value": "l"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "integer_hex_plain": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "radix_prefix",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "0x"
+                },
+                {
+                  "type": "STRING",
+                  "value": "0X"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "PATTERN",
+              "value": "_?[A-Fa-f0-9]+"
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "integer_octal_long": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "radix_prefix",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "0o"
+                },
+                {
+                  "type": "STRING",
+                  "value": "0O"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "PATTERN",
+              "value": "_?[0-7]+"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "marker",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "L"
+                },
+                {
+                  "type": "STRING",
+                  "value": "l"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "integer_octal_plain": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "radix_prefix",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "0o"
+                },
+                {
+                  "type": "STRING",
+                  "value": "0O"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "PATTERN",
+              "value": "_?[0-7]+"
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "integer_binary_long": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "radix_prefix",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "0b"
+                },
+                {
+                  "type": "STRING",
+                  "value": "0B"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "PATTERN",
+              "value": "_?[0-1]+"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "marker",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "L"
+                },
+                {
+                  "type": "STRING",
+                  "value": "l"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "integer_binary_plain": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "radix_prefix",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "0b"
+                },
+                {
+                  "type": "STRING",
+                  "value": "0B"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "PATTERN",
+              "value": "_?[0-1]+"
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "integer_legacy_octal_long": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "0"
+          },
+          {
+            "type": "PATTERN",
+            "value": "0*[1-7][0-7]*"
+          },
+          {
+            "type": "FIELD",
+            "name": "marker",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "L"
+                },
+                {
+                  "type": "STRING",
+                  "value": "l"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "integer_legacy_octal_plain": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "0"
+          },
+          {
+            "type": "PATTERN",
+            "value": "0*[1-7][0-7]*"
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
     "integer_decimal_long": {
       "type": "TOKEN",
       "content": {
@@ -8079,8 +8415,24 @@
             }
           },
           {
-            "type": "PATTERN",
-            "value": "[Ll]"
+            "type": "FIELD",
+            "name": "marker",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "L"
+                },
+                {
+                  "type": "STRING",
+                  "value": "l"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ]
       },
@@ -10063,6 +10415,10 @@
     "parameter",
     "escape_sequence",
     "integer",
+    "integer_hex",
+    "integer_octal",
+    "integer_binary",
+    "integer_legacy_octal",
     "integer_decimal",
     "float",
     "line_continuation",

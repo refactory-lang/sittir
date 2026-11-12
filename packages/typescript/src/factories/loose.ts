@@ -194,6 +194,7 @@ export {
 	coerceToNumberFloatPoint as buildNumberFloatPoint,
 	coerceToNumberFloatLeadingPoint as buildNumberFloatLeadingPoint,
 	coerceToNumberFloatScientific as buildNumberFloatScientific,
+	coerceToNumberLegacyOctal as buildNumberLegacyOctal,
 	coerceToNumberDecimal as buildNumberDecimal,
 	coerceToNumberBinary as buildNumberBinary,
 	coerceToNumberOctal as buildNumberOctal,

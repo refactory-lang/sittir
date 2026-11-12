@@ -72,6 +72,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -107,9 +110,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -185,6 +185,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -220,9 +223,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -299,6 +299,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -334,9 +337,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -356,6 +356,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -461,6 +464,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -496,9 +502,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -571,6 +574,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -606,9 +612,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -704,6 +707,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -739,9 +745,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.LambdaWithinForInClause.Parsed
 				| T.ListComprehension.Parsed
@@ -818,6 +821,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -853,9 +859,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -936,6 +939,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -971,9 +977,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -1076,6 +1079,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -1163,6 +1169,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -1198,9 +1207,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -1284,6 +1290,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -1577,6 +1586,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -1612,9 +1624,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -1710,6 +1719,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -1745,9 +1757,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -1898,6 +1907,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -1937,9 +1949,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -2012,6 +2021,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -2043,9 +2055,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2110,6 +2119,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -2141,9 +2153,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2209,6 +2218,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -2240,9 +2252,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2308,6 +2317,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -2339,9 +2351,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2407,6 +2416,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -2438,9 +2450,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2506,6 +2515,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -2537,9 +2549,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2605,6 +2614,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -2636,9 +2648,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2704,6 +2713,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -2735,9 +2747,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2803,6 +2812,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -2834,9 +2846,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2902,6 +2911,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -2933,9 +2945,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -3001,6 +3010,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -3032,9 +3044,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -3100,6 +3109,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -3131,9 +3143,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -3206,6 +3215,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -3241,9 +3253,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -3316,6 +3325,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -3351,9 +3363,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -3429,6 +3438,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -3464,9 +3476,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -3542,6 +3551,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -3577,9 +3589,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -3659,6 +3668,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -3760,6 +3772,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -3796,9 +3811,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -3888,6 +3900,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -3925,9 +3940,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4017,6 +4029,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -4054,9 +4069,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4147,6 +4159,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -4184,9 +4199,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4277,6 +4289,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -4314,9 +4329,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4407,6 +4419,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -4444,9 +4459,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4537,6 +4549,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -4574,9 +4589,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4667,6 +4679,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -4704,9 +4719,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4797,6 +4809,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -4834,9 +4849,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4927,6 +4939,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -4964,9 +4979,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5057,6 +5069,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -5094,9 +5109,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5187,6 +5199,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -5224,9 +5239,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5317,6 +5329,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -5354,9 +5369,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5447,6 +5459,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -5484,9 +5499,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5577,6 +5589,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -5614,9 +5629,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5686,6 +5698,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -5717,9 +5732,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -5792,6 +5804,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -5823,9 +5838,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -5895,6 +5907,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -5926,9 +5941,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6000,6 +6012,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -6031,9 +6046,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6103,6 +6115,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -6134,9 +6149,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6209,6 +6221,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -6240,9 +6255,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6312,6 +6324,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -6343,9 +6358,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6418,6 +6430,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -6449,9 +6464,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6521,6 +6533,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -6552,9 +6567,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6627,6 +6639,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -6658,9 +6673,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6730,6 +6742,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -6761,9 +6776,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6836,6 +6848,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -6867,9 +6882,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6939,6 +6951,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -6970,9 +6985,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7045,6 +7057,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -7076,9 +7091,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7148,6 +7160,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -7179,9 +7194,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7254,6 +7266,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -7285,9 +7300,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7357,6 +7369,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -7388,9 +7403,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7463,6 +7475,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -7494,9 +7509,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7566,6 +7578,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -7597,9 +7612,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7672,6 +7684,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -7703,9 +7718,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7775,6 +7787,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -7806,9 +7821,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7881,6 +7893,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -7912,9 +7927,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7984,6 +7996,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -8015,9 +8030,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8097,6 +8109,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -8128,9 +8143,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8200,6 +8212,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -8282,6 +8297,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -8313,9 +8331,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8378,6 +8393,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -8409,9 +8427,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8477,6 +8492,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -8508,9 +8526,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8573,6 +8588,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -8604,9 +8622,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8672,6 +8687,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -8703,9 +8721,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8768,6 +8783,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -8799,9 +8817,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8867,6 +8882,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -8898,9 +8916,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8963,6 +8978,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -8994,9 +9012,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9062,6 +9077,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -9093,9 +9111,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9158,6 +9173,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -9189,9 +9207,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9257,6 +9272,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -9288,9 +9306,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9353,6 +9368,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -9384,9 +9402,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9452,6 +9467,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -9483,9 +9501,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9548,6 +9563,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -9579,9 +9597,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9647,6 +9662,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -9678,9 +9696,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9743,6 +9758,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -9774,9 +9792,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9842,6 +9857,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -9873,9 +9891,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9938,6 +9953,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -9969,9 +9987,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -10044,6 +10059,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -10079,9 +10097,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -10154,6 +10169,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -10189,9 +10207,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -10266,6 +10281,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -10301,9 +10319,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -10376,6 +10391,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -10411,9 +10429,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -10489,6 +10504,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -10524,9 +10542,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -10599,6 +10614,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -10634,9 +10652,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -10712,6 +10727,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -10743,9 +10761,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -10815,6 +10830,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -10846,9 +10864,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -10914,6 +10929,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -10945,9 +10963,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11010,6 +11025,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -11041,9 +11059,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11109,6 +11124,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -11140,9 +11158,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11205,6 +11220,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -11236,9 +11254,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11311,6 +11326,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -11342,9 +11360,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11414,6 +11429,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -11445,9 +11463,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11520,6 +11535,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -11551,9 +11569,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11623,6 +11638,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -11654,9 +11672,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11733,6 +11748,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -11814,6 +11832,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -11845,9 +11866,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11924,6 +11942,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -11992,6 +12013,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -12023,9 +12047,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -12102,6 +12123,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -12198,6 +12222,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -12293,6 +12320,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -12383,6 +12413,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -12418,9 +12451,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -12495,6 +12525,9 @@ export interface PythonMap extends V.GrammarMap {
 								| V.Read<PythonMap, 'literal.number.float.scientific'>
 								| V.Read<PythonMap, 'literal.number.integer'>
 								| V.Read<PythonMap, 'literal.number.integer.big'>
+								| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+								| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+								| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 								| V.Read<PythonMap, 'literal.number.integer.binary'>
 								| V.Read<PythonMap, 'literal.number.integer.hex'>
 								| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -12530,9 +12563,6 @@ export interface PythonMap extends V.GrammarMap {
 								| T.FloatPoint.Parsed
 								| T.FloatScientific.Parsed
 								| T.GeneratorExpression.Parsed
-								| T.IntegerBinary.Parsed
-								| T.IntegerHex.Parsed
-								| T.IntegerOctal.Parsed
 								| T.Lambda.Parsed
 								| T.ListComprehension.Parsed
 								| T.NamedExpression.Parsed
@@ -12609,6 +12639,9 @@ export interface PythonMap extends V.GrammarMap {
 								| V.Read<PythonMap, 'literal.number.float.scientific'>
 								| V.Read<PythonMap, 'literal.number.integer'>
 								| V.Read<PythonMap, 'literal.number.integer.big'>
+								| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+								| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+								| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 								| V.Read<PythonMap, 'literal.number.integer.binary'>
 								| V.Read<PythonMap, 'literal.number.integer.hex'>
 								| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -12644,9 +12677,6 @@ export interface PythonMap extends V.GrammarMap {
 								| T.FloatPoint.Parsed
 								| T.FloatScientific.Parsed
 								| T.GeneratorExpression.Parsed
-								| T.IntegerBinary.Parsed
-								| T.IntegerHex.Parsed
-								| T.IntegerOctal.Parsed
 								| T.Lambda.Parsed
 								| T.ListComprehension.Parsed
 								| T.NamedExpression.Parsed
@@ -12725,6 +12755,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -12760,9 +12793,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -12839,6 +12869,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -12874,9 +12907,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -12958,6 +12988,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -12993,9 +13026,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -13072,6 +13102,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -13107,9 +13140,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -13182,6 +13212,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -13217,9 +13250,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -13292,6 +13322,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -13327,9 +13360,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -13408,6 +13438,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -13445,9 +13478,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -13529,6 +13559,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -13624,6 +13657,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -13715,6 +13751,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -13750,9 +13789,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.LambdaWithinForInClause.Parsed
 				| T.ListComprehension.Parsed
@@ -13838,6 +13874,9 @@ export interface PythonMap extends V.GrammarMap {
 								| V.Read<PythonMap, 'literal.number.float.scientific'>
 								| V.Read<PythonMap, 'literal.number.integer'>
 								| V.Read<PythonMap, 'literal.number.integer.big'>
+								| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+								| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+								| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 								| V.Read<PythonMap, 'literal.number.integer.binary'>
 								| V.Read<PythonMap, 'literal.number.integer.hex'>
 								| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -13873,9 +13912,6 @@ export interface PythonMap extends V.GrammarMap {
 								| T.FloatPoint.Parsed
 								| T.FloatScientific.Parsed
 								| T.GeneratorExpression.Parsed
-								| T.IntegerBinary.Parsed
-								| T.IntegerHex.Parsed
-								| T.IntegerOctal.Parsed
 								| T.Lambda.Parsed
 								| T.ListComprehension.Parsed
 								| T.NamedExpression.Parsed
@@ -13950,6 +13986,9 @@ export interface PythonMap extends V.GrammarMap {
 								| V.Read<PythonMap, 'literal.number.float.scientific'>
 								| V.Read<PythonMap, 'literal.number.integer'>
 								| V.Read<PythonMap, 'literal.number.integer.big'>
+								| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+								| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+								| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 								| V.Read<PythonMap, 'literal.number.integer.binary'>
 								| V.Read<PythonMap, 'literal.number.integer.hex'>
 								| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -13985,9 +14024,6 @@ export interface PythonMap extends V.GrammarMap {
 								| T.FloatPoint.Parsed
 								| T.FloatScientific.Parsed
 								| T.GeneratorExpression.Parsed
-								| T.IntegerBinary.Parsed
-								| T.IntegerHex.Parsed
-								| T.IntegerOctal.Parsed
 								| T.Lambda.Parsed
 								| T.LambdaWithinForInClause.Parsed
 								| T.ListComprehension.Parsed
@@ -14058,6 +14094,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -14089,9 +14128,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -14167,6 +14203,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -14202,9 +14241,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -14281,6 +14317,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -14316,9 +14355,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -14391,6 +14427,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -14478,6 +14517,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -14513,9 +14555,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -14592,6 +14631,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -14673,6 +14715,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -14704,9 +14749,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -14779,6 +14821,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -14810,9 +14855,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -14884,6 +14926,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -14915,9 +14960,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -14990,6 +15032,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -15021,9 +15066,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -15096,6 +15138,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -15131,9 +15176,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -15209,6 +15251,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -15240,9 +15285,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -15317,6 +15359,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -15353,9 +15398,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -15432,6 +15474,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -15532,6 +15577,29 @@ export interface PythonMap extends V.GrammarMap {
 			readonly marker: 'E' | 'e' | string;
 			readonly $forms: V.Form<'exponent' | 'integer' | 'marker'>;
 		};
+		readonly 'literal.number.integer.big': {
+			readonly content: string;
+			readonly marker: 'L' | 'l' | string;
+			readonly $forms: V.Form<'content' | 'marker'>;
+		};
+		readonly 'literal.number.integer.big.binary': {
+			readonly content: string;
+			readonly marker: 'L' | 'l' | string;
+			readonly radixPrefix: '0B' | '0b' | string;
+			readonly $forms: V.Form<'content' | 'marker' | 'radixPrefix'>;
+		};
+		readonly 'literal.number.integer.big.hex': {
+			readonly content: string;
+			readonly marker: 'L' | 'l' | string;
+			readonly radixPrefix: '0X' | '0x' | string;
+			readonly $forms: V.Form<'content' | 'marker' | 'radixPrefix'>;
+		};
+		readonly 'literal.number.integer.big.octal': {
+			readonly content: string;
+			readonly marker: 'L' | 'l' | string;
+			readonly radixPrefix: '0O' | '0o' | string;
+			readonly $forms: V.Form<'content' | 'marker', 'radixPrefix'> | V.Form<'content' | 'marker' | 'radixPrefix'>;
+		};
 		readonly 'literal.number.integer.binary': {
 			readonly content: string;
 			readonly radixPrefix: '0B' | '0b' | string;
@@ -15545,7 +15613,7 @@ export interface PythonMap extends V.GrammarMap {
 		readonly 'literal.number.integer.octal': {
 			readonly content: string;
 			readonly radixPrefix: '0O' | '0o' | string;
-			readonly $forms: V.Form<'content' | 'radixPrefix'>;
+			readonly $forms: V.Form<'content', 'radixPrefix'> | V.Form<'content' | 'radixPrefix'>;
 		};
 		readonly 'literal.number.negative': {
 			readonly value:
@@ -15554,16 +15622,16 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
 				| V.Read<PythonMap, 'literal.number.integer.octal'>
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
-				| T.FloatScientific.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed;
+				| T.FloatScientific.Parsed;
 			readonly $forms: V.Form<'value'>;
 		};
 		readonly 'literal.string': {
@@ -15757,6 +15825,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -15803,32 +15874,32 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
 				| V.Read<PythonMap, 'literal.number.integer.octal'>
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
-				| T.FloatScientific.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed;
+				| T.FloatScientific.Parsed;
 			readonly real:
 				| V.Read<PythonMap, 'literal.number.float'>
 				| V.Read<PythonMap, 'literal.number.float.leading_point'>
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
 				| V.Read<PythonMap, 'literal.number.integer.octal'>
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
-				| T.FloatScientific.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed;
+				| T.FloatScientific.Parsed;
 		};
 		readonly 'pattern.complex.add': {
 			readonly imaginary:
@@ -15837,32 +15908,32 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
 				| V.Read<PythonMap, 'literal.number.integer.octal'>
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
-				| T.FloatScientific.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed;
+				| T.FloatScientific.Parsed;
 			readonly real:
 				| V.Read<PythonMap, 'literal.number.float'>
 				| V.Read<PythonMap, 'literal.number.float.leading_point'>
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
 				| V.Read<PythonMap, 'literal.number.integer.octal'>
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
-				| T.FloatScientific.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed;
+				| T.FloatScientific.Parsed;
 			readonly $forms: V.Form<'imaginary' | 'real'>;
 		};
 		readonly 'pattern.complex.subtract': {
@@ -15872,32 +15943,32 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
 				| V.Read<PythonMap, 'literal.number.integer.octal'>
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
-				| T.FloatScientific.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed;
+				| T.FloatScientific.Parsed;
 			readonly real:
 				| V.Read<PythonMap, 'literal.number.float'>
 				| V.Read<PythonMap, 'literal.number.float.leading_point'>
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
 				| V.Read<PythonMap, 'literal.number.integer.octal'>
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
-				| T.FloatScientific.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed;
+				| T.FloatScientific.Parsed;
 			readonly $forms: V.Form<'imaginary' | 'real'>;
 		};
 		readonly 'pattern.list': {
@@ -15914,6 +15985,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -15980,6 +16054,9 @@ export interface PythonMap extends V.GrammarMap {
 								| V.Read<PythonMap, 'literal.number.float.scientific'>
 								| V.Read<PythonMap, 'literal.number.integer'>
 								| V.Read<PythonMap, 'literal.number.integer.big'>
+								| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+								| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+								| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 								| V.Read<PythonMap, 'literal.number.integer.binary'>
 								| V.Read<PythonMap, 'literal.number.integer.hex'>
 								| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -16036,6 +16113,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -16075,9 +16155,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.SimplePatternNegative.Parsed
 				| T.String.Parsed
 				| T.UnionPattern.Parsed;
@@ -16091,6 +16168,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -16130,9 +16210,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.SimplePatternNegative.Parsed
 				| T.String.Parsed
 				| T.UnionPattern.Parsed;
@@ -16171,6 +16248,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -16222,6 +16302,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -16269,6 +16352,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -16308,9 +16394,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.SimplePatternNegative.Parsed
 				| T.String.Parsed
 				| T.UnionPattern.Parsed;
@@ -16331,6 +16414,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -16397,6 +16483,9 @@ export interface PythonMap extends V.GrammarMap {
 								| V.Read<PythonMap, 'literal.number.float.scientific'>
 								| V.Read<PythonMap, 'literal.number.integer'>
 								| V.Read<PythonMap, 'literal.number.integer.big'>
+								| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+								| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+								| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 								| V.Read<PythonMap, 'literal.number.integer.binary'>
 								| V.Read<PythonMap, 'literal.number.integer.hex'>
 								| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -16450,6 +16539,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -16520,6 +16612,9 @@ export interface PythonMap extends V.GrammarMap {
 								| V.Read<PythonMap, 'literal.number.float.scientific'>
 								| V.Read<PythonMap, 'literal.number.integer'>
 								| V.Read<PythonMap, 'literal.number.integer.big'>
+								| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+								| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+								| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 								| V.Read<PythonMap, 'literal.number.integer.binary'>
 								| V.Read<PythonMap, 'literal.number.integer.hex'>
 								| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -16626,6 +16721,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -16661,9 +16759,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -16782,6 +16877,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -16818,9 +16916,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -16920,6 +17015,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -16955,9 +17053,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -17052,6 +17147,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -17091,9 +17189,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -17178,6 +17273,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -17213,9 +17311,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -17325,6 +17420,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -17361,9 +17459,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -17441,6 +17536,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -17476,9 +17574,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -17556,6 +17651,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -17651,6 +17749,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -17738,6 +17839,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -17773,9 +17877,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -17857,6 +17958,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -17893,9 +17997,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -17970,6 +18071,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -18005,9 +18109,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -18081,6 +18182,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -18117,9 +18221,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -18201,6 +18302,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -18241,9 +18345,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinary.Parsed
-				| T.IntegerHex.Parsed
-				| T.IntegerOctal.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -18335,6 +18436,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -18428,6 +18532,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -18529,6 +18636,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -18622,6 +18732,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -18720,6 +18833,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.float.scientific'>
 				| V.Read<PythonMap, 'literal.number.integer'>
 				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
 				| V.Read<PythonMap, 'literal.number.integer.binary'>
 				| V.Read<PythonMap, 'literal.number.integer.hex'>
 				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
@@ -18771,7 +18887,6 @@ export interface PythonMap extends V.GrammarMap {
 		readonly 'expression.interpolation.conversion': string;
 		readonly identifier: string;
 		readonly 'literal.number.integer': string;
-		readonly 'literal.number.integer.big': string;
 		readonly 'literal.number.integer.imaginary': string;
 		readonly 'literal.string.escape': string;
 		readonly 'literal.string.text': string;

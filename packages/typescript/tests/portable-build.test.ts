@@ -61,6 +61,20 @@ describe('the portable build through the strict table', () => {
 		expect(runtime.build({ $path: 'literal.boolean', $value: true })).toBe(typescript.kinds.True);
 	});
 
+	it('builds a scientific $value with an integer mantissa, its trailing zeros moved into the exponent, and rebuilds a read the same way', () => {
+		for (const [value, text] of [[1000, '1e3'], [1500, '15e2'], [0.5, '5e-1'], [1, '1e0']] as const)
+			expect(render(runtime.build({ $path: 'literal.number.float.scientific', $value: value }))).toBe(text);
+		for (const [source, text] of [['1E3', '1e3'], ['1e+3', '1e3'], ['15e2', '15e2']])
+			expect(render(runtime.build(runtime.read(runtime.engine.parse(`x = ${source};\n`)) as never))).toBe(`x = ${text};\n`);
+	});
+
+	it('builds a leading-point $value the point spelling cannot place with its digits after the point and its scale in the exponent', () => {
+		for (const [value, text] of [[500, '.5e3'], [1, '.1e1'], [1.5e-7, '.15e-6'], [0.5, '.5'], [0.0005, '.0005']] as const)
+			expect(render(runtime.build({ $path: 'literal.number.float.leading_point', $value: value }))).toBe(text);
+		for (const source of ['.5e3', '.1e1', '.5', '.5e-3'])
+			expect(render(runtime.build(runtime.read(runtime.engine.parse(`x = ${source};\n`)) as never))).toBe(`x = ${source === '.5e-3' ? '.0005' : source};\n`);
+	});
+
 	it('builds a default export of a value through the nested mount, and of a declaration through the default form', () => {
 		expect(render(runtime.build({ $path: 'statement.export.default', value: 'x' }))).toBe('export default x;');
 		const declaration = { $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } };

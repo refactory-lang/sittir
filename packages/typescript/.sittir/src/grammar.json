@@ -8336,6 +8336,17 @@
         },
         {
           "type": "SYMBOL",
+          "name": "number_legacy_octal",
+          "metadata": {
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "legacy_octal",
+            "variantOf": "number"
+          }
+        },
+        {
+          "type": "SYMBOL",
           "name": "number_decimal",
           "metadata": {
             "symbolSource": "group-lift"
@@ -14734,6 +14745,26 @@
                 ]
               }
             ]
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "number_legacy_octal": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "0"
+          },
+          {
+            "type": "PATTERN",
+            "value": "0*[1-7][0-7]*"
           }
         ]
       },

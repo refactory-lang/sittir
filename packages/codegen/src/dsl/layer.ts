@@ -18,6 +18,8 @@ import type { TransformPatchMap } from '../grammar-shapes/path-type.ts';
 import type { ExternalRole } from '../types/ir.ts';
 import { layerRecordOf, mergedRecords, synthesizedOf, withLayerRecord, type LayerFixpoint, type LayerRecord, type LayerRecords, type StageBases } from './layer-record.ts';
 import { withRoleScope } from './primitives/role.ts';
+import { ruleCauseOf, withRuleCause, type RuleCauseDeclaration } from './primitives/rule-cause.ts';
+import { isTokenWrapperType } from '../types/runtime-shapes.ts';
 import { isRecord, type GrammarRecord } from './rule-patterns.ts';
 import { spellingFieldsOf } from './primitives/spellings.ts';
 import { RuleWalker } from './rule-walker.ts';
@@ -35,6 +37,7 @@ import type { LiftName } from './wire/lift-names.ts';
 import type { OptionsConfig } from './wire/options-block.ts';
 import {
 	authoredFieldSites,
+	authoredVariantSites,
 	dropFlattenedParentAliases,
 	evaluatedConfig,
 	factoryInlineNamesOf,
@@ -374,25 +377,55 @@ interface IntakeCtx {
 	readonly name: string;
 	readonly inherited: LayerRecord | undefined;
 	readonly declared: EvaluatedConfig;
+	readonly refined: ReadonlyMap<string, RefinedToken>;
+}
+
+interface RefinedToken {
+	readonly body: Rule;
+	readonly cause: RuleCauseDeclaration;
+}
+
+function refinedTokens(source: GrammarResult, rules: LayerConfig['rules']): ReadonlyMap<string, RefinedToken> {
+	const upstream = baseRulesOf<Rule>(source) ?? {};
+	const $ = layerSymbols();
+	const refined = new Map<string, RefinedToken>();
+	for (const [name, fn] of Object.entries(rules ?? {})) {
+		const body = upstream[name];
+		const cause = ruleCauseOf(fn);
+		if (body !== undefined && isTokenWrapperType(body.type) && cause?.kind === 'reauthored') refined.set(name, { body: normalizedBody(fn($, body), name), cause });
+	}
+	return refined;
+}
+
+function withRefinedTokens(source: GrammarResult, refined: ReadonlyMap<string, RefinedToken>): GrammarResult {
+	if (refined.size === 0) return source;
+	const rules = { ...baseRulesOf<Rule>(source), ...Object.fromEntries([...refined].map(([name, { body }]) => [name, body])) };
+	return { ...source, grammar: { ...source.grammar, rules } } as GrammarResult;
+}
+
+function enrichedTokenRules(refined: ReadonlyMap<string, RefinedToken>): Readonly<Record<string, (_$: unknown, previous?: unknown) => unknown>> {
+	return Object.fromEntries([...refined].map(([name, { cause }]) => [name, withRuleCause((_$: unknown, previous?: unknown) => previous, cause)]));
 }
 
 function intake(source: GrammarResult, ctx: IntakeCtx): GrammarResult {
 	const { config, inherited } = ctx;
 	if (inherited === undefined)
-		return enrich(source, {
+		return enrich(withRefinedTokens(source, ctx.refined), {
 			groupBodies: ctx.declared.patterns.map((pattern) => pattern.body),
 			extras: config.extras,
-			fieldSites: authoredFieldSites(config.edits)
+			fieldSites: authoredFieldSites(config.edits),
+			variantSites: authoredVariantSites(config.edits)
 		}) as unknown as GrammarResult;
 	if (config.resolutions !== undefined)
 		throw new Error(`wire(): '${ctx.name}' gives resolutions, which belong to the first layer; its layer applies its section of the first layer's file`);
 	return inherited.fixpoint().checked;
 }
 
-function wireConfigOf(config: LayerConfig, ctx: Pick<IntakeCtx, 'name' | 'inherited'>): WireConfig<any> {
+function wireConfigOf(config: LayerConfig, ctx: Pick<IntakeCtx, 'name' | 'inherited' | 'refined'>): WireConfig<any> {
 	if (ctx.inherited !== undefined) return { ...config, name: ctx.name } as WireConfig<any>;
 	const { extras: _intakeExtras, ...wired } = config;
-	return { ...wired, name: ctx.name } as WireConfig<any>;
+	const rules = ctx.refined.size === 0 ? wired.rules : { ...wired.rules, ...enrichedTokenRules(ctx.refined) };
+	return { ...wired, ...(rules === undefined ? {} : { rules }), name: ctx.name } as WireConfig<any>;
 }
 
 export function runLayerPass(base: PendingBase<unknown>, config: LayerConfig): LayerOutput {
@@ -407,11 +440,12 @@ function evaluatedLayer(base: PendingBase<unknown>, source: GrammarResult, confi
 	const name = config.name ?? source.grammar.name;
 	const diagnostics = [...(inherited?.diagnostics ?? []), ...unknownConfigKeys(name, config)];
 	const declared = evaluatedConfig(config);
-	const completed = intake(source, { config, name, inherited, declared });
+	const refined = inherited === undefined ? refinedTokens(source, config.rules) : new Map<string, RefinedToken>();
+	const completed = intake(source, { config, name, inherited, declared, refined });
 	completePendingBase(base, completed);
 	const depth = (inherited?.depth ?? 0) + 1;
 	const layer: WireLayer = { name, depth, diagnostics, narrows: [], leads: [], renames: [] };
-	const wired = wireImpl(wireConfigOf(config, { name, inherited }), completed, source, layer, declared);
+	const wired = wireImpl(wireConfigOf(config, { name, inherited, refined }), completed, source, layer, declared);
 	const wire = wired.__wireContext__!;
 	const anyName = layerSymbols();
 	const externals = wired.externals!.call(anyName, anyName, completed.grammar.externals as unknown[]);

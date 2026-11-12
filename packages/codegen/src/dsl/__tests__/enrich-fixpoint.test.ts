@@ -76,6 +76,17 @@ describe('enrich is a fixpoint of its own output', () => {
 		expect(again(grammarWith(rules), authored)).toEqual({ names: [], minted: [] });
 	});
 
+	it('keeps the presence split of a token-form arm whose arms authored variants name', () => {
+		const blank = { type: 'BLANK' };
+		const hex = seq(choice(S('0x'), S('0X')), repeat1(P('_?[0-9a-f]+')), choice(P('[Ll]'), blank));
+		const decimal = seq(repeat1(P('[0-9]+_?')), choice(choice(P('[Ll]'), P('[jJ]')), blank));
+		const grammar = grammarWith({ integer: token(choice(hex, decimal)) });
+		const authored = { variantSites: new Map([['integer', [[0], [1], [0, 0], [0, 1], [1, 0], [1, 1], [1, 2]]]]) };
+		const hexArm = (rulesOf(enrich(structuredClone(grammar) as never, authored)).integer as { members: { name: string }[] }).members[0]!.name;
+		expect((rulesOf(enrich(structuredClone(grammar) as never, authored))[hexArm] as { type: string }).type).toBe('CHOICE');
+		expect(again(grammar, authored)).toEqual({ names: [], minted: [] });
+	});
+
 	it('names a hidden list from its element, not from the item field it added', () => {
 		const item = choice(sym('expression'), sym('splat'));
 		const elems = seq(item, repeat(seq(S(','), item)), optional(S(',')));

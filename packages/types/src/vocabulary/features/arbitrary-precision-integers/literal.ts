@@ -1,4 +1,4 @@
-import type { GrammarMap } from '../../map.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
 import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Literal {
@@ -8,6 +8,8 @@ export namespace Literal {
 				// claimed by pt
 				readonly $path: K;
 				readonly $value: bigint;
+				readonly marker?: Slot<G, K, 'marker', string>;
+				// p only
 			}
 		}
 	}

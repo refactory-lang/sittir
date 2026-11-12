@@ -25,32 +25,33 @@ export const triviaFacts = Object.freeze({
 	]),
 	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([
-		90, 91, 92, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 285,
-		288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 310, 350
+		90, 91, 92, 93, 94, 95, 96, 97, 98, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 265, 266, 267, 268, 269, 270,
+		271, 272, 273, 274, 290, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314,
+		315, 319, 359
 	]),
 	listKinds: new Set<number>([
-		136, 181, 193, 194, 218, 243, 260, 261, 262, 263, 264, 265, 266, 267, 268, 273, 274, 275, 276, 280, 281, 296, 297,
-		353
+		141, 186, 198, 199, 223, 248, 265, 266, 267, 268, 269, 270, 271, 272, 273, 278, 279, 280, 281, 285, 286, 305, 306,
+		362
 	]),
-	layout: new Set<number>([106, 107, 116, 117, 118, 123, 124, 125, 126, 127]),
+	layout: new Set<number>([111, 112, 121, 122, 123, 128, 129, 130, 131, 132]),
 	innerRegions: new Map<number, readonly string[]>([
-		[128, ['_statements']],
-		[155, ['_alternative']],
-		[166, ['_elements']],
-		[177, ['_arguments']],
-		[187, ['_elements']],
-		[197, ['_elements']],
-		[198, ['_elements']],
-		[233, ['_elements']],
-		[235, ['_elements']],
-		[236, ['_elements']],
-		[278, ['_elements']],
-		[279, ['_elements']]
+		[133, ['_statements']],
+		[160, ['_alternative']],
+		[171, ['_elements']],
+		[182, ['_arguments']],
+		[192, ['_elements']],
+		[202, ['_elements']],
+		[203, ['_elements']],
+		[238, ['_elements']],
+		[240, ['_elements']],
+		[241, ['_elements']],
+		[283, ['_elements']],
+		[284, ['_elements']]
 	]),
-	namedUnits: new Set<number>([63, 69, 70, 71, 107, 115, 116, 117, 118, 138, 148, 149, 150, 253, 258, 259, 284]),
+	namedUnits: new Set<number>([63, 69, 70, 71, 112, 120, 121, 122, 123, 143, 153, 154, 155, 258, 263, 264, 289]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\x09-\x0D\x20\f\uFEFF\u2060\u200B]|\r?\n))+)$/u,
-		kindIdByText: Object.freeze({ '': 123, ' ': 124, '\t': 125, '\n': 116, '\n\n': 126, '\n\n\n': 127 })
+		kindIdByText: Object.freeze({ '': 128, ' ': 129, '\t': 130, '\n': 121, '\n\n': 131, '\n\n\n': 132 })
 	})
 } satisfies TriviaFacts<TSKindId>);
 
@@ -58,7 +59,8 @@ export const querySlots: QuerySlots = Object.freeze({
 	72: [['content', 0, undefined, '_content']],
 	90: [
 		['radixPrefix', 0, undefined, '_radix_prefix'],
-		['content', 1, undefined, '_content']
+		['content', 1, undefined, '_content'],
+		['marker', 2, undefined, '_marker']
 	],
 	91: [
 		['radixPrefix', 0, undefined, '_radix_prefix'],
@@ -66,39 +68,62 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	92: [
 		['radixPrefix', 0, undefined, '_radix_prefix'],
+		['content', 1, undefined, '_content'],
+		['marker', 2, undefined, '_marker']
+	],
+	93: [
+		['radixPrefix', 0, undefined, '_radix_prefix'],
+		['content', 1, undefined, '_content']
+	],
+	94: [
+		['radixPrefix', 0, undefined, '_radix_prefix'],
+		['content', 1, undefined, '_content'],
+		['marker', 2, undefined, '_marker']
+	],
+	95: [
+		['radixPrefix', 0, undefined, '_radix_prefix'],
 		['content', 1, undefined, '_content']
 	],
 	96: [
-		['integer', 0, undefined, '_integer'],
-		['fraction', 1, undefined, '_fraction'],
-		['marker', 2, undefined, '_marker'],
-		['exponentSign', 3, undefined, '_exponent_sign'],
-		['exponent', 4, undefined, '_exponent'],
-		['imaginary', 5, undefined, '_imaginary']
+		['content', 0, undefined, '_content'],
+		['marker', 1, undefined, '_marker']
 	],
-	97: [
-		['integer', 0, undefined, '_integer'],
-		['fraction', 1, undefined, '_fraction'],
-		['marker', 2, undefined, '_marker'],
-		['exponentSign', 3, undefined, '_exponent_sign'],
-		['exponent', 4, undefined, '_exponent'],
-		['imaginary', 5, undefined, '_imaginary']
-	],
+	97: [['content', 0, undefined, '_content']],
 	98: [
+		['content', 0, undefined, '_content'],
+		['marker', 1, undefined, '_marker']
+	],
+	101: [
+		['integer', 0, undefined, '_integer'],
+		['fraction', 1, undefined, '_fraction'],
+		['marker', 2, undefined, '_marker'],
+		['exponentSign', 3, undefined, '_exponent_sign'],
+		['exponent', 4, undefined, '_exponent'],
+		['imaginary', 5, undefined, '_imaginary']
+	],
+	102: [
+		['integer', 0, undefined, '_integer'],
+		['fraction', 1, undefined, '_fraction'],
+		['marker', 2, undefined, '_marker'],
+		['exponentSign', 3, undefined, '_exponent_sign'],
+		['exponent', 4, undefined, '_exponent'],
+		['imaginary', 5, undefined, '_imaginary']
+	],
+	103: [
 		['integer', 0, undefined, '_integer'],
 		['marker', 1, undefined, '_marker'],
 		['exponentSign', 2, undefined, '_exponent_sign'],
 		['exponent', 3, undefined, '_exponent'],
 		['imaginary', 4, undefined, '_imaginary']
 	],
-	99: [['content', 0, undefined, '_content']],
-	100: [['content', 0, undefined, '_content']],
-	101: [['content', 0, undefined, '_content']],
-	102: [['content', 0, undefined, '_content']],
-	103: [['content', 0, undefined, '_content']],
 	104: [['content', 0, undefined, '_content']],
 	105: [['content', 0, undefined, '_content']],
-	119: [
+	106: [['content', 0, undefined, '_content']],
+	107: [['content', 0, undefined, '_content']],
+	108: [['content', 0, undefined, '_content']],
+	109: [['content', 0, undefined, '_content']],
+	110: [['content', 0, undefined, '_content']],
+	124: [
 		[
 			'prefix',
 			0,
@@ -140,93 +165,93 @@ export const querySlots: QuerySlots = Object.freeze({
 		],
 		['quote', 1, undefined, '_quote']
 	],
-	122: [
+	127: [
 		['content', 0, undefined, '_content'],
 		['quote', 1, undefined, '_quote']
 	],
-	128: [['statements', 0, undefined, '_statements']],
-	130: [['statements', 0, undefined, '_statements']],
-	131: [['names', 0, undefined, '_names']],
-	133: [
+	133: [['statements', 0, undefined, '_statements']],
+	135: [['statements', 0, undefined, '_statements']],
+	136: [['names', 0, undefined, '_names']],
+	138: [
 		['dots', 0, undefined, '_dots'],
 		['name', 1, undefined, '_name']
 	],
-	134: [['content', 0, undefined, '_content']],
-	135: [
+	139: [['content', 0, undefined, '_content']],
+	140: [
 		['moduleName', 0, undefined, '_module_name'],
 		['content', 1, undefined, '_content']
 	],
-	136: [['names', 0, undefined, '_name']],
-	137: [
+	141: [['names', 0, undefined, '_name']],
+	142: [
 		['name', 0, undefined, '_name'],
 		['alias', 1, undefined, '_alias']
 	],
-	139: [['content', 0, undefined, '_content']],
-	140: [['expression', 0, undefined, '_expression']],
-	141: [['expressions', 0, undefined, '_expression']],
-	142: [['content', 0, undefined, '_content']],
-	143: [
+	144: [['content', 0, undefined, '_content']],
+	145: [['expression', 0, undefined, '_expression']],
+	146: [['expressions', 0, undefined, '_expression']],
+	147: [['content', 0, undefined, '_content']],
+	148: [
 		['left', 0, undefined, '_left'],
 		['right', 1, undefined, '_right']
 	],
-	144: [['identifier', 0, undefined, '_identifier']],
-	145: [['expressions', 0, undefined, '_expressions']],
-	146: [['expressions', 0, undefined, '_expressions']],
-	147: [
+	149: [['identifier', 0, undefined, '_identifier']],
+	150: [['expressions', 0, undefined, '_expressions']],
+	151: [['expressions', 0, undefined, '_expressions']],
+	152: [
 		['expressions', 0, undefined, '_expressions'],
 		['cause', 1, undefined, '_cause']
 	],
-	151: [
+	156: [
 		['condition', 0, undefined, '_condition'],
 		['consequence', 1, undefined, '_consequence'],
 		['alternatives', 2, undefined, '_alternative']
 	],
-	152: [
+	157: [
 		['condition', 0, undefined, '_condition'],
 		['consequence', 1, undefined, '_consequence']
 	],
-	153: [['body', 0, undefined, '_body']],
-	154: [
+	158: [['body', 0, undefined, '_body']],
+	159: [
 		['subject', 0, undefined, '_subject'],
 		['body', 1, undefined, '_body']
 	],
-	155: [['alternatives', 0, undefined, '_alternative']],
-	156: [
+	160: [['alternatives', 0, undefined, '_alternative']],
+	161: [
 		['pattern', 0, undefined, '_pattern'],
 		['guard', 1, undefined, '_guard'],
 		['body', 2, undefined, '_body']
 	],
-	157: [
+	162: [
 		['async', 0, 'async', '_async', 67],
 		['left', 1, undefined, '_left'],
 		['right', 2, undefined, '_right'],
 		['body', 3, undefined, '_body'],
 		['alternative', 4, undefined, '_alternative']
 	],
-	158: [
+	163: [
 		['condition', 0, undefined, '_condition'],
 		['body', 1, undefined, '_body'],
 		['alternative', 2, undefined, '_alternative']
 	],
-	159: [
+	164: [
 		['body', 0, undefined, '_body'],
 		['handlers', 1, undefined, '_handlers'],
 		['alternative', 2, undefined, '_alternative'],
 		['finalizer', 3, undefined, '_finalizer']
 	],
-	160: [
+	165: [
 		['group', 0, '*', '_group', 8],
 		['exception', 1, undefined, '_exception'],
 		['body', 2, undefined, '_body']
 	],
-	161: [['body', 0, undefined, '_body']],
-	162: [
+	166: [['body', 0, undefined, '_body']],
+	167: [
 		['async', 0, 'async', '_async', 67],
 		['withClause', 1, undefined, '_with_clause'],
 		['body', 2, undefined, '_body']
 	],
-	164: [['value', 0, undefined, '_value']],
-	165: [
+	169: [['value', 0, undefined, '_value']],
+	170: [
 		['async', 0, 'async', '_async', 67],
 		['name', 1, undefined, '_name'],
 		['typeParameters', 2, undefined, '_type_parameters'],
@@ -234,305 +259,305 @@ export const querySlots: QuerySlots = Object.freeze({
 		['returnType', 4, undefined, '_return_type'],
 		['body', 5, undefined, '_body']
 	],
-	166: [['elements', 0, undefined, '_elements']],
-	167: [['parametersElements', 0, undefined, '_parameters_elements']],
-	168: [['expression', 0, undefined, '_expression']],
-	169: [['expression', 0, undefined, '_expression']],
-	170: [['names', 0, undefined, '_names']],
-	171: [['names', 0, undefined, '_names']],
-	172: [
+	171: [['elements', 0, undefined, '_elements']],
+	172: [['parametersElements', 0, undefined, '_parameters_elements']],
+	173: [['expression', 0, undefined, '_expression']],
+	174: [['expression', 0, undefined, '_expression']],
+	175: [['names', 0, undefined, '_names']],
+	176: [['names', 0, undefined, '_names']],
+	177: [
 		['code', 0, undefined, '_code'],
 		['inClauses', 1, undefined, '_in_clause']
 	],
-	173: [
+	178: [
 		['name', 0, undefined, '_name'],
 		['typeParameters', 1, undefined, '_type_parameters'],
 		['value', 2, undefined, '_value']
 	],
-	174: [
+	179: [
 		['name', 0, undefined, '_name'],
 		['typeParameters', 1, undefined, '_type_parameters'],
 		['bases', 2, undefined, '_bases'],
 		['body', 3, undefined, '_body']
 	],
-	175: [['types', 0, undefined, '_types']],
-	176: [['content', 0, undefined, '_content']],
-	177: [['arguments', 0, undefined, '_arguments']],
-	178: [
+	180: [['types', 0, undefined, '_types']],
+	181: [['content', 0, undefined, '_content']],
+	182: [['arguments', 0, undefined, '_arguments']],
+	183: [
 		['decorators', 0, undefined, '_decorator'],
 		['definition', 1, undefined, '_definition']
 	],
-	179: [['expression', 0, undefined, '_expression']],
-	180: [['statements', 0, undefined, '_statements']],
-	181: [['elements', 0, undefined, '_elements']],
-	182: [
+	184: [['expression', 0, undefined, '_expression']],
+	185: [['statements', 0, undefined, '_statements']],
+	186: [['elements', 0, undefined, '_elements']],
+	187: [
 		['qualifier', 0, undefined, '_qualifier'],
 		['name', 1, undefined, '_name']
 	],
-	183: [['content', 0, undefined, '_content']],
-	184: [['content', 0, undefined, '_content']],
-	185: [
+	188: [['content', 0, undefined, '_content']],
+	189: [['content', 0, undefined, '_content']],
+	190: [
 		['casePattern', 0, undefined, '_case_pattern'],
 		['identifier', 1, undefined, '_identifier']
 	],
-	186: [
+	191: [
 		['left', 0, undefined, '_left'],
 		['right', 1, undefined, '_right']
 	],
-	187: [['elements', 0, undefined, '_elements']],
-	188: [
+	192: [['elements', 0, undefined, '_elements']],
+	193: [
 		['key', 0, undefined, '_key'],
 		['value', 1, undefined, '_value']
 	],
-	189: [
+	194: [
 		['name', 0, undefined, '_name'],
 		['pattern', 1, undefined, '_pattern']
 	],
-	191: [
+	196: [
 		['type', 0, undefined, '_type'],
 		['fields', 1, undefined, '_fields']
 	],
-	192: [
+	197: [
 		['sign', 0, '-', '_sign', 49],
 		['real', 1, undefined, '_real'],
 		['operator', 2, undefined, '_operator'],
 		['imaginary', 3, undefined, '_imaginary']
 	],
-	193: [['items', 0, undefined, '_item']],
-	194: [['items', 0, undefined, '_item']],
-	197: [['elements', 0, undefined, '_elements']],
-	198: [['elements', 0, undefined, '_elements']],
-	199: [
+	198: [['items', 0, undefined, '_item']],
+	199: [['items', 0, undefined, '_item']],
+	202: [['elements', 0, undefined, '_elements']],
+	203: [['elements', 0, undefined, '_elements']],
+	204: [
 		['name', 0, undefined, '_name'],
 		['default', 1, undefined, '_default']
 	],
-	200: [
+	205: [
 		['name', 0, undefined, '_name'],
 		['type', 1, undefined, '_type'],
 		['default', 2, undefined, '_default']
 	],
-	201: [['pattern', 0, undefined, '_pattern']],
-	202: [['pattern', 0, undefined, '_pattern']],
-	203: [
+	206: [['pattern', 0, undefined, '_pattern']],
+	207: [['pattern', 0, undefined, '_pattern']],
+	208: [
 		['expression', 0, undefined, '_expression'],
 		['alias', 1, undefined, '_alias']
 	],
-	207: [['argument', 0, undefined, '_argument']],
-	208: [
+	212: [['argument', 0, undefined, '_argument']],
+	213: [
 		['left', 0, undefined, '_left'],
 		['operator', 1, undefined, '_operator'],
 		['right', 2, undefined, '_right']
 	],
-	209: [
+	214: [
 		['left', 0, undefined, '_left'],
 		['operator', 1, undefined, '_operator'],
 		['right', 2, undefined, '_right']
 	],
-	210: [
+	215: [
 		['operator', 0, undefined, '_operator'],
 		['argument', 1, undefined, '_argument']
 	],
-	213: [
+	218: [
 		['left', 0, undefined, '_left'],
 		['comparators', 1, undefined, '_comparators']
 	],
-	214: [
+	219: [
 		['parameters', 0, undefined, '_parameters'],
 		['body', 1, undefined, '_body']
 	],
-	215: [
+	220: [
 		['parameters', 0, undefined, '_parameters'],
 		['body', 1, undefined, '_body']
 	],
-	217: [
+	222: [
 		['left', 0, undefined, '_left'],
 		['operator', 1, undefined, '_operator'],
 		['right', 2, undefined, '_right']
 	],
-	218: [['elements', 0, undefined, '_elements']],
-	220: [['content', 0, undefined, '_content']],
-	221: [
+	223: [['elements', 0, undefined, '_elements']],
+	225: [['content', 0, undefined, '_content']],
+	226: [
 		['object', 0, undefined, '_object'],
 		['property', 1, undefined, '_property']
 	],
-	222: [
+	227: [
 		['object', 0, undefined, '_object'],
 		['index', 1, undefined, '_index']
 	],
-	223: [
+	228: [
 		['start', 0, undefined, '_start'],
 		['stop', 1, undefined, '_stop'],
 		['step', 2, undefined, '_step']
 	],
-	224: [
+	229: [
 		['function', 0, undefined, '_function'],
 		['arguments', 1, undefined, '_arguments']
 	],
-	225: [
+	230: [
 		['name', 0, undefined, '_name'],
 		['type', 1, undefined, '_type']
 	],
-	226: [['content', 0, undefined, '_content']],
-	227: [['type', 0, undefined, '_type']],
-	228: [
+	231: [['content', 0, undefined, '_content']],
+	232: [['type', 0, undefined, '_type']],
+	233: [
 		['name', 0, undefined, '_name'],
 		['typeParameter', 1, undefined, '_type_parameter']
 	],
-	229: [
+	234: [
 		['left', 0, undefined, '_left'],
 		['right', 1, undefined, '_right']
 	],
-	230: [
+	235: [
 		['baseType', 0, undefined, '_base_type'],
 		['constraint', 1, undefined, '_constraint']
 	],
-	231: [
+	236: [
 		['qualifier', 0, undefined, '_qualifier'],
 		['name', 1, undefined, '_name']
 	],
-	232: [
+	237: [
 		['name', 0, undefined, '_name'],
 		['value', 1, undefined, '_value']
 	],
-	233: [['elements', 0, undefined, '_elements']],
-	234: [['elements', 0, undefined, '_elements']],
-	235: [['elements', 0, undefined, '_elements']],
-	236: [['elements', 0, undefined, '_elements']],
-	237: [
+	238: [['elements', 0, undefined, '_elements']],
+	239: [['elements', 0, undefined, '_elements']],
+	240: [['elements', 0, undefined, '_elements']],
+	241: [['elements', 0, undefined, '_elements']],
+	242: [
 		['key', 0, undefined, '_key'],
 		['value', 1, undefined, '_value']
 	],
-	238: [
+	243: [
 		['body', 0, undefined, '_body'],
 		['clauses', 1, undefined, '_clauses']
 	],
-	239: [
-		['body', 0, undefined, '_body'],
-		['clauses', 1, undefined, '_clauses']
-	],
-	240: [
-		['body', 0, undefined, '_body'],
-		['clauses', 1, undefined, '_clauses']
-	],
-	241: [
-		['body', 0, undefined, '_body'],
-		['clauses', 1, undefined, '_clauses']
-	],
-	242: [['expression', 0, undefined, '_expression']],
-	243: [['items', 0, undefined, '_item']],
 	244: [
+		['body', 0, undefined, '_body'],
+		['clauses', 1, undefined, '_clauses']
+	],
+	245: [
+		['body', 0, undefined, '_body'],
+		['clauses', 1, undefined, '_clauses']
+	],
+	246: [
+		['body', 0, undefined, '_body'],
+		['clauses', 1, undefined, '_clauses']
+	],
+	247: [['expression', 0, undefined, '_expression']],
+	248: [['items', 0, undefined, '_item']],
+	249: [
 		['async', 0, 'async', '_async', 67],
 		['left', 1, undefined, '_left'],
 		['rights', 2, undefined, '_right'],
 		['trailingComma', 3, undefined, '_trailing_comma', undefined, true]
 	],
-	245: [['condition', 0, undefined, '_condition']],
-	246: [
+	250: [['condition', 0, undefined, '_condition']],
+	251: [
 		['consequence', 0, undefined, '_consequence'],
 		['condition', 1, undefined, '_condition'],
 		['alternative', 2, undefined, '_alternative']
 	],
-	247: [['strings', 0, undefined, '_string']],
-	248: [
+	252: [['strings', 0, undefined, '_string']],
+	253: [
 		['stringStart', 0, undefined, '_string_start'],
 		['contents', 1, undefined, '_content'],
 		['stringEnd', 2, undefined, '_string_end']
 	],
-	249: [['elements', 0, undefined, '_elements']],
-	250: [
+	254: [['elements', 0, undefined, '_elements']],
+	255: [
 		['expression', 0, undefined, '_expression'],
 		['debug', 1, '=', '_debug', 40],
 		['typeConversion', 2, undefined, '_type_conversion'],
 		['formatSpecifier', 3, undefined, '_format_specifier']
 	],
-	254: [['elements', 0, undefined, '_elements']],
-	257: [['expression', 0, undefined, '_expression']],
-	260: [['items', 0, undefined, '_item']],
-	261: [['elements', 0, undefined, '_elements']],
-	262: [['items', 0, undefined, '_item']],
-	263: [['items', 0, undefined, '_item']],
-	264: [['items', 0, undefined, '_item']],
+	259: [['elements', 0, undefined, '_elements']],
+	262: [['expression', 0, undefined, '_expression']],
 	265: [['items', 0, undefined, '_item']],
-	266: [['items', 0, undefined, '_item']],
-	267: [['elements', 0, undefined, '_elements']],
+	266: [['elements', 0, undefined, '_elements']],
+	267: [['items', 0, undefined, '_item']],
 	268: [['items', 0, undefined, '_item']],
-	269: [['expression', 0, undefined, '_expression']],
-	272: [['items', 0, undefined, '_items']],
+	269: [['items', 0, undefined, '_item']],
+	270: [['items', 0, undefined, '_item']],
+	271: [['items', 0, undefined, '_item']],
+	272: [['elements', 0, undefined, '_elements']],
 	273: [['items', 0, undefined, '_item']],
-	274: [['items', 0, undefined, '_item']],
-	275: [['elements', 0, undefined, '_elements']],
-	276: [['items', 0, undefined, '_item']],
-	277: [
+	274: [['expression', 0, undefined, '_expression']],
+	277: [['items', 0, undefined, '_items']],
+	278: [['items', 0, undefined, '_item']],
+	279: [['items', 0, undefined, '_item']],
+	280: [['elements', 0, undefined, '_elements']],
+	281: [['items', 0, undefined, '_item']],
+	282: [
 		['value', 0, undefined, '_value'],
 		['alias', 1, undefined, '_alias']
 	],
-	278: [['elements', 0, undefined, '_elements']],
-	279: [['elements', 0, undefined, '_elements']],
-	280: [['items', 0, undefined, '_item']],
-	281: [['items', 0, undefined, '_item']],
-	282: [
+	283: [['elements', 0, undefined, '_elements']],
+	284: [['elements', 0, undefined, '_elements']],
+	285: [['items', 0, undefined, '_item']],
+	286: [['items', 0, undefined, '_item']],
+	287: [
 		['chevron', 0, undefined, '_chevron'],
 		['arguments', 1, undefined, '_arguments']
 	],
-	283: [['arguments', 0, undefined, '_arguments']],
-	285: [['importList', 0, undefined, '_import_list']],
-	286: [['contents', 0, undefined, '_content']],
-	288: [['value', 0, undefined, '_value']],
-	289: [['values', 0, undefined, '_value']],
-	290: [['content', 0, undefined, '_content']],
-	291: [['pattern', 0, undefined, '_pattern']],
-	292: [['pattern', 0, undefined, '_pattern']],
-	293: [
+	288: [['arguments', 0, undefined, '_arguments']],
+	290: [['importList', 0, undefined, '_import_list']],
+	291: [['contents', 0, undefined, '_content']],
+	297: [['value', 0, undefined, '_value']],
+	298: [['values', 0, undefined, '_value']],
+	299: [['content', 0, undefined, '_content']],
+	300: [['pattern', 0, undefined, '_pattern']],
+	301: [['pattern', 0, undefined, '_pattern']],
+	302: [
 		['name', 0, undefined, '_name'],
 		['value', 1, undefined, '_value']
 	],
-	294: [
+	303: [
 		['name', 0, undefined, '_name'],
 		['type', 1, undefined, '_type']
 	],
-	295: [
+	304: [
 		['name', 0, undefined, '_name'],
 		['type', 1, undefined, '_type'],
 		['value', 2, undefined, '_value']
 	],
-	296: [['elements', 0, undefined, '_elements']],
-	297: [['items', 0, undefined, '_items']],
-	298: [['items', 0, undefined, '_items']],
-	299: [['statements', 0, undefined, '_statements']],
-	300: [['block', 0, undefined, '_block']],
-	301: [['newline', 0, undefined, '_newline']],
-	302: [
+	305: [['elements', 0, undefined, '_elements']],
+	306: [['items', 0, undefined, '_items']],
+	307: [['items', 0, undefined, '_items']],
+	308: [['statements', 0, undefined, '_statements']],
+	309: [['block', 0, undefined, '_block']],
+	310: [['newline', 0, undefined, '_newline']],
+	311: [
 		['operators', 0, undefined, '_operators'],
 		['primaryExpression', 1, undefined, '_primary_expression']
 	],
-	303: [['expression', 0, undefined, '_expression']],
-	304: [
+	312: [['expression', 0, undefined, '_expression']],
+	313: [
 		['name', 0, undefined, '_name'],
 		['bounds', 1, undefined, '_bounds']
 	],
-	305: [['name', 0, undefined, '_name']],
-	306: [['name', 0, undefined, '_name']],
-	307: [
+	314: [['name', 0, undefined, '_name']],
+	315: [['name', 0, undefined, '_name']],
+	316: [
 		['async', 0, 'async', '_async', 67],
 		['typeParameters', 1, undefined, '_type_parameters'],
 		['parameters', 2, undefined, '_parameters'],
 		['returnType', 3, undefined, '_return_type'],
 		['body', 4, undefined, '_body']
 	],
-	309: [['statements', 0, undefined, '_statements']],
-	310: [['blockClassDeclaration', 0, undefined, '_block_class_declaration']],
-	311: [
+	318: [['statements', 0, undefined, '_statements']],
+	319: [['blockClassDeclaration', 0, undefined, '_block_class_declaration']],
+	320: [
 		['decorators', 0, undefined, '_decorator'],
 		['definition', 1, undefined, '_definition']
 	],
-	350: [['content', 0, undefined, '_content']],
-	351: [
+	359: [['content', 0, undefined, '_content']],
+	360: [
 		['expression', 0, undefined, '_expression'],
 		['debug', 1, '=', '_debug', 40],
 		['typeConversion', 2, undefined, '_type_conversion'],
 		['formatSpecifier', 3, undefined, '_format_specifier']
 	],
-	352: [
+	361: [
 		['async', 0, 'async', '_async', 67],
 		['name', 1, undefined, '_name'],
 		['typeParameters', 2, undefined, '_type_parameters'],
@@ -540,33 +565,82 @@ export const querySlots: QuerySlots = Object.freeze({
 		['returnType', 4, undefined, '_return_type'],
 		['body', 5, undefined, '_body']
 	],
-	353: [['names', 0, undefined, '_name']]
+	362: [['names', 0, undefined, '_name']]
 });
 
 export const structure: StructureTable = Object.freeze({
 	72: { kind: 'comment', required: [['_content', 'content']], single: [['_content', 'Comment.content']] },
 	90: {
-		kind: 'integer_hex',
+		kind: 'integer_hex_long',
 		required: [['_content', 'content']],
-		single: [['_content', 'IntegerHex.content']],
-		texts: [['_radix_prefix', 'IntegerHex.radixPrefix', ['0x', '0X']]],
-		options: ['radixPrefix']
+		single: [['_content', 'IntegerHexLong.content']],
+		texts: [
+			['_radix_prefix', 'IntegerHexLong.radixPrefix', ['0x', '0X']],
+			['_marker', 'IntegerHexLong.marker', ['L', 'l']]
+		],
+		options: ['radixPrefix', 'marker']
 	},
 	91: {
-		kind: 'integer_octal',
+		kind: 'integer_hex_plain',
 		required: [['_content', 'content']],
-		single: [['_content', 'IntegerOctal.content']],
-		texts: [['_radix_prefix', 'IntegerOctal.radixPrefix', ['0o', '0O']]],
+		single: [['_content', 'IntegerHexPlain.content']],
+		texts: [['_radix_prefix', 'IntegerHexPlain.radixPrefix', ['0x', '0X']]],
 		options: ['radixPrefix']
 	},
 	92: {
-		kind: 'integer_binary',
+		kind: 'integer_octal_long',
 		required: [['_content', 'content']],
-		single: [['_content', 'IntegerBinary.content']],
-		texts: [['_radix_prefix', 'IntegerBinary.radixPrefix', ['0b', '0B']]],
+		single: [['_content', 'IntegerOctalLong.content']],
+		texts: [
+			['_radix_prefix', 'IntegerOctalLong.radixPrefix', ['0o', '0O']],
+			['_marker', 'IntegerOctalLong.marker', ['L', 'l']]
+		],
+		options: ['radixPrefix', 'marker']
+	},
+	93: {
+		kind: 'integer_octal_plain',
+		required: [['_content', 'content']],
+		single: [['_content', 'IntegerOctalPlain.content']],
+		texts: [['_radix_prefix', 'IntegerOctalPlain.radixPrefix', ['0o', '0O']]],
+		options: ['radixPrefix']
+	},
+	94: {
+		kind: 'integer_binary_long',
+		required: [['_content', 'content']],
+		single: [['_content', 'IntegerBinaryLong.content']],
+		texts: [
+			['_radix_prefix', 'IntegerBinaryLong.radixPrefix', ['0b', '0B']],
+			['_marker', 'IntegerBinaryLong.marker', ['L', 'l']]
+		],
+		options: ['radixPrefix', 'marker']
+	},
+	95: {
+		kind: 'integer_binary_plain',
+		required: [['_content', 'content']],
+		single: [['_content', 'IntegerBinaryPlain.content']],
+		texts: [['_radix_prefix', 'IntegerBinaryPlain.radixPrefix', ['0b', '0B']]],
 		options: ['radixPrefix']
 	},
 	96: {
+		kind: 'integer_legacy_octal_long',
+		required: [['_content', 'content']],
+		single: [['_content', 'IntegerLegacyOctalLong.content']],
+		texts: [['_marker', 'IntegerLegacyOctalLong.marker', ['L', 'l']]],
+		options: ['marker']
+	},
+	97: {
+		kind: 'integer_legacy_octal_plain',
+		required: [['_content', 'content']],
+		single: [['_content', 'IntegerLegacyOctalPlain.content']]
+	},
+	98: {
+		kind: 'integer_decimal_long',
+		required: [['_content', 'content']],
+		single: [['_content', 'IntegerDecimalLong.content']],
+		texts: [['_marker', 'IntegerDecimalLong.marker', ['L', 'l']]],
+		options: ['marker']
+	},
+	101: {
 		kind: 'float_point',
 		required: [['_integer', 'integer']],
 		single: [
@@ -582,7 +656,7 @@ export const structure: StructureTable = Object.freeze({
 		config: ['integer', 'fraction', 'marker', 'exponentSign', 'exponent', 'imaginary'],
 		options: ['marker']
 	},
-	97: {
+	102: {
 		kind: 'float_leading_point',
 		required: [['_fraction', 'fraction']],
 		single: [
@@ -598,7 +672,7 @@ export const structure: StructureTable = Object.freeze({
 		config: ['integer', 'fraction', 'marker', 'exponentSign', 'exponent', 'imaginary'],
 		options: ['marker']
 	},
-	98: {
+	103: {
 		kind: 'float_scientific',
 		required: [
 			['_integer', 'integer'],
@@ -616,42 +690,42 @@ export const structure: StructureTable = Object.freeze({
 		config: ['integer', 'marker', 'exponentSign', 'exponent', 'imaginary'],
 		options: ['marker']
 	},
-	99: {
+	104: {
 		kind: 'escape_sequence_unicode_fixed',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceUnicodeFixed.content']]
 	},
-	100: {
+	105: {
 		kind: 'escape_sequence_unicode_wide',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceUnicodeWide.content']]
 	},
-	101: {
+	106: {
 		kind: 'escape_sequence_hex',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceHex.content']]
 	},
-	102: {
+	107: {
 		kind: 'escape_sequence_octal',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceOctal.content']]
 	},
-	103: {
+	108: {
 		kind: 'escape_sequence_line_break',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceLineBreak.content']]
 	},
-	104: {
+	109: {
 		kind: 'escape_sequence_simple',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceSimple.content']]
 	},
-	105: {
+	110: {
 		kind: 'escape_sequence_named',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceNamed.content']]
 	},
-	119: {
+	124: {
 		kind: 'string_start',
 		texts: [
 			[
@@ -702,30 +776,30 @@ export const structure: StructureTable = Object.freeze({
 		],
 		options: ['quote']
 	},
-	122: {
+	127: {
 		kind: 'string_end',
 		texts: [['_quote', 'StringEnd.quote', ['"', "'", '"""', "'''", '`']]],
 		config: ['content', 'quote'],
 		options: ['content', 'quote']
 	},
-	128: {
+	133: {
 		kind: 'module',
-		nodeOnly: [['_statements', 'Module.statements', 'a built Statement', [129]]],
+		nodeOnly: [['_statements', 'Module.statements', 'a built Statement', [134]]],
 		lists: [['statements', false, 0]]
 	},
-	130: {
+	135: {
 		kind: '_simple_statements',
 		required: [['_statements', 'statements']],
 		single: [['_statements', 'SimpleStatements.statements']],
-		nodeOnly: [['_statements', 'SimpleStatements.statements', 'a built SimpleStatementsElements', [260]]]
+		nodeOnly: [['_statements', 'SimpleStatements.statements', 'a built SimpleStatementsElements', [265]]]
 	},
-	131: {
+	136: {
 		kind: 'import_statement',
 		required: [['_names', 'names']],
 		single: [['_names', 'ImportStatement.names']],
-		nodeOnly: [['_names', 'ImportStatement.names', 'a built Names', [353]]]
+		nodeOnly: [['_names', 'ImportStatement.names', 'a built Names', [362]]]
 	},
-	133: {
+	138: {
 		kind: 'relative_import',
 		required: [['_dots', 'dots']],
 		single: [
@@ -733,20 +807,20 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'RelativeImport.name']
 		],
 		nodeOnly: [
-			['_dots', 'RelativeImport.dots', 'buildImportPrefix(…)', [132]],
-			['_name', 'RelativeImport.name', 'a built DottedName', [182]]
+			['_dots', 'RelativeImport.dots', 'buildImportPrefix(…)', [137]],
+			['_name', 'RelativeImport.name', 'a built DottedName', [187]]
 		],
 		config: ['dots', 'name']
 	},
-	134: {
+	139: {
 		kind: 'future_import_statement',
 		required: [['_content', 'content']],
 		single: [['_content', 'FutureImportStatement.content']],
 		nodeOnly: [
-			['_content', 'FutureImportStatement.content', 'a built ImportList / ParenthesizedImportList', [136, 285]]
+			['_content', 'FutureImportStatement.content', 'a built ImportList / ParenthesizedImportList', [141, 290]]
 		]
 	},
-	135: {
+	140: {
 		kind: 'import_from_statement',
 		required: [
 			['_module_name', 'moduleName'],
@@ -757,18 +831,18 @@ export const structure: StructureTable = Object.freeze({
 			['_content', 'ImportFromStatement.content']
 		],
 		nodeOnly: [
-			['_module_name', 'ImportFromStatement.moduleName', 'a built RelativeImport / DottedName', [133, 182]],
+			['_module_name', 'ImportFromStatement.moduleName', 'a built RelativeImport / DottedName', [138, 187]],
 			['_content', 'ImportFromStatement.content', 'a built ImportList / ParenthesizedImportList']
 		],
 		config: ['moduleName', 'content']
 	},
-	136: {
+	141: {
 		kind: 'import_list',
 		nonEmpty: [['_name', 'import_list.elements']],
-		nodeOnly: [['_name', 'ImportList.names', 'a built DottedName / AliasedImport', [137, 182]]],
+		nodeOnly: [['_name', 'ImportList.names', 'a built DottedName / AliasedImport', [142, 187]]],
 		lists: [['names', false, 0]]
 	},
-	137: {
+	142: {
 		kind: 'aliased_import',
 		required: [
 			['_name', 'name'],
@@ -779,32 +853,32 @@ export const structure: StructureTable = Object.freeze({
 			['_alias', 'AliasedImport.alias']
 		],
 		nodeOnly: [
-			['_name', 'AliasedImport.name', 'a built DottedName', [182]],
+			['_name', 'AliasedImport.name', 'a built DottedName', [187]],
 			['_alias', 'AliasedImport.alias', 'buildIdentifier(…)', [1]]
 		],
 		config: ['name', 'alias']
 	},
-	139: {
+	144: {
 		kind: 'print_statement',
 		required: [['_content', 'content']],
 		single: [['_content', 'PrintStatement.content']],
 		nodeOnly: [
-			['_content', 'PrintStatement.content', 'a built PrintStatementChevron / PrintStatementPlain', [282, 283]]
+			['_content', 'PrintStatement.content', 'a built PrintStatementChevron / PrintStatementPlain', [287, 288]]
 		]
 	},
-	140: {
+	145: {
 		kind: 'chevron',
 		required: [['_expression', 'expression']],
 		single: [['_expression', 'Chevron.expression']],
-		nodeOnly: [['_expression', 'Chevron.expression', 'a built Expression', [205]]]
+		nodeOnly: [['_expression', 'Chevron.expression', 'a built Expression', [210]]]
 	},
-	141: {
+	146: {
 		kind: 'assert_statement',
 		nonEmpty: [['_expression', 'assert_statement.children']],
-		nodeOnly: [['_expression', 'AssertStatement.expressions', 'a built Expression', [205]]],
+		nodeOnly: [['_expression', 'AssertStatement.expressions', 'a built Expression', [210]]],
 		lists: [['expressions', false, 0]]
 	},
-	142: {
+	147: {
 		kind: 'expression_statement',
 		required: [['_content', 'content']],
 		single: [['_content', 'ExpressionStatement.content']],
@@ -813,11 +887,11 @@ export const structure: StructureTable = Object.freeze({
 				'_content',
 				'ExpressionStatement.content',
 				'a built Expression / ExpressionStatementTuple / Assignment / AugmentedAssignment / Yield',
-				[205, 216, 217, 220, 296]
+				[210, 221, 222, 225, 305]
 			]
 		]
 	},
-	143: {
+	148: {
 		kind: 'named_expression',
 		required: [
 			['_left', 'left'],
@@ -829,41 +903,41 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_left', 'NamedExpression.left', 'buildIdentifier(…)', [1]],
-			['_right', 'NamedExpression.right', 'a built Expression', [205]]
+			['_right', 'NamedExpression.right', 'a built Expression', [210]]
 		],
 		config: ['left', 'right']
 	},
-	144: {
+	149: {
 		kind: '_named_expression_lhs',
 		required: [['_identifier', 'identifier']],
 		single: [['_identifier', 'NamedExpressionLhs.identifier']],
 		nodeOnly: [['_identifier', 'NamedExpressionLhs.identifier', 'buildIdentifier(…)', [1]]],
 		config: ['identifier']
 	},
-	145: {
+	150: {
 		kind: 'return_statement',
 		single: [['_expressions', 'ReturnStatement.expressions']],
-		nodeOnly: [['_expressions', 'ReturnStatement.expressions', 'a built Expression / ExpressionList', [181, 205]]]
+		nodeOnly: [['_expressions', 'ReturnStatement.expressions', 'a built Expression / ExpressionList', [186, 210]]]
 	},
-	146: {
+	151: {
 		kind: 'delete_statement',
 		required: [['_expressions', 'expressions']],
 		single: [['_expressions', 'DeleteStatement.expressions']],
-		nodeOnly: [['_expressions', 'DeleteStatement.expressions', 'a built Expression / ExpressionList', [181, 205]]]
+		nodeOnly: [['_expressions', 'DeleteStatement.expressions', 'a built Expression / ExpressionList', [186, 210]]]
 	},
-	147: {
+	152: {
 		kind: 'raise_statement',
 		single: [
 			['_expressions', 'RaiseStatement.expressions'],
 			['_cause', 'RaiseStatement.cause']
 		],
 		nodeOnly: [
-			['_expressions', 'RaiseStatement.expressions', 'a built Expression / ExpressionList', [181, 205]],
-			['_cause', 'RaiseStatement.cause', 'a built Expression', [205]]
+			['_expressions', 'RaiseStatement.expressions', 'a built Expression / ExpressionList', [186, 210]],
+			['_cause', 'RaiseStatement.cause', 'a built Expression', [210]]
 		],
 		config: ['expressions', 'cause']
 	},
-	151: {
+	156: {
 		kind: 'if_statement',
 		required: [
 			['_condition', 'condition'],
@@ -874,14 +948,14 @@ export const structure: StructureTable = Object.freeze({
 			['_consequence', 'IfStatement.consequence']
 		],
 		nodeOnly: [
-			['_condition', 'IfStatement.condition', 'a built Expression', [205]],
+			['_condition', 'IfStatement.condition', 'a built Expression', [210]],
 			['_consequence', 'IfStatement.consequence', 'a built Suite'],
-			['_alternative', 'IfStatement.alternatives', 'a built ElifClause / ElseClause', [152, 153]]
+			['_alternative', 'IfStatement.alternatives', 'a built ElifClause / ElseClause', [157, 158]]
 		],
 		config: ['condition', 'consequence', 'alternatives'],
 		lists: [['alternatives', false, 'key']]
 	},
-	152: {
+	157: {
 		kind: 'elif_clause',
 		required: [
 			['_condition', 'condition'],
@@ -892,18 +966,18 @@ export const structure: StructureTable = Object.freeze({
 			['_consequence', 'ElifClause.consequence']
 		],
 		nodeOnly: [
-			['_condition', 'ElifClause.condition', 'a built Expression', [205]],
+			['_condition', 'ElifClause.condition', 'a built Expression', [210]],
 			['_consequence', 'ElifClause.consequence', 'a built Suite']
 		],
 		config: ['condition', 'consequence']
 	},
-	153: {
+	158: {
 		kind: 'else_clause',
 		required: [['_body', 'body']],
 		single: [['_body', 'ElseClause.body']],
 		nodeOnly: [['_body', 'ElseClause.body', 'a built Suite']]
 	},
-	154: {
+	159: {
 		kind: 'match_statement',
 		required: [
 			['_subject', 'subject'],
@@ -914,17 +988,17 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'MatchStatement.body']
 		],
 		nodeOnly: [
-			['_subject', 'MatchStatement.subject', 'a built Subjects', [261]],
-			['_body', 'MatchStatement.body', 'a built MatchBlock', [155]]
+			['_subject', 'MatchStatement.subject', 'a built Subjects', [266]],
+			['_body', 'MatchStatement.body', 'a built MatchBlock', [160]]
 		],
 		config: ['subject', 'body']
 	},
-	155: {
+	160: {
 		kind: 'match_block',
-		nodeOnly: [['_alternative', 'MatchBlock.alternatives', 'a built CaseClause', [156]]],
+		nodeOnly: [['_alternative', 'MatchBlock.alternatives', 'a built CaseClause', [161]]],
 		lists: [['alternatives', false, 0]]
 	},
-	156: {
+	161: {
 		kind: 'case_clause',
 		required: [
 			['_pattern', 'pattern'],
@@ -936,13 +1010,13 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'CaseClause.body']
 		],
 		nodeOnly: [
-			['_pattern', 'CaseClause.pattern', 'a built CasePattern / CasePatternList', [183, 275]],
-			['_guard', 'CaseClause.guard', 'a built IfClause', [245]],
+			['_pattern', 'CaseClause.pattern', 'a built CasePattern / CasePatternList', [188, 280]],
+			['_guard', 'CaseClause.guard', 'a built IfClause', [250]],
 			['_body', 'CaseClause.body', 'a built Suite']
 		],
 		config: ['pattern', 'guard', 'body']
 	},
-	157: {
+	162: {
 		kind: 'for_statement',
 		required: [
 			['_left', 'left'],
@@ -956,15 +1030,15 @@ export const structure: StructureTable = Object.freeze({
 			['_alternative', 'ForStatement.alternative']
 		],
 		nodeOnly: [
-			['_left', 'ForStatement.left', 'a built Pattern / PatternList', [196, 218]],
-			['_right', 'ForStatement.right', 'a built Expression / ExpressionList', [181, 205]],
+			['_left', 'ForStatement.left', 'a built Pattern / PatternList', [201, 223]],
+			['_right', 'ForStatement.right', 'a built Expression / ExpressionList', [186, 210]],
 			['_body', 'ForStatement.body', 'a built Suite'],
-			['_alternative', 'ForStatement.alternative', 'a built ElseClause', [153]]
+			['_alternative', 'ForStatement.alternative', 'a built ElseClause', [158]]
 		],
 		booleans: [['_async', 'ForStatement.async']],
 		config: ['async', 'left', 'right', 'body', 'alternative']
 	},
-	158: {
+	163: {
 		kind: 'while_statement',
 		required: [
 			['_condition', 'condition'],
@@ -976,13 +1050,13 @@ export const structure: StructureTable = Object.freeze({
 			['_alternative', 'WhileStatement.alternative']
 		],
 		nodeOnly: [
-			['_condition', 'WhileStatement.condition', 'a built Expression', [205]],
+			['_condition', 'WhileStatement.condition', 'a built Expression', [210]],
 			['_body', 'WhileStatement.body', 'a built Suite'],
-			['_alternative', 'WhileStatement.alternative', 'a built ElseClause', [153]]
+			['_alternative', 'WhileStatement.alternative', 'a built ElseClause', [158]]
 		],
 		config: ['condition', 'body', 'alternative']
 	},
-	159: {
+	164: {
 		kind: 'try_statement',
 		required: [['_body', 'body']],
 		single: [
@@ -992,14 +1066,14 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_body', 'TryStatement.body', 'a built Suite'],
-			['_handlers', 'TryStatement.handlers', 'a built ExceptClause', [160]],
-			['_alternative', 'TryStatement.alternative', 'a built ElseClause', [153]],
-			['_finalizer', 'TryStatement.finalizer', 'a built FinallyClause', [161]]
+			['_handlers', 'TryStatement.handlers', 'a built ExceptClause', [165]],
+			['_alternative', 'TryStatement.alternative', 'a built ElseClause', [158]],
+			['_finalizer', 'TryStatement.finalizer', 'a built FinallyClause', [166]]
 		],
 		config: ['body', 'handlers', 'alternative', 'finalizer'],
 		lists: [['handlers', false, 'key']]
 	},
-	160: {
+	165: {
 		kind: 'except_clause',
 		required: [['_body', 'body']],
 		single: [
@@ -1007,19 +1081,19 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'ExceptClause.body']
 		],
 		nodeOnly: [
-			['_exception', 'ExceptClause.exception', 'a built ExceptClauseException', [290]],
+			['_exception', 'ExceptClause.exception', 'a built ExceptClauseException', [299]],
 			['_body', 'ExceptClause.body', 'a built Suite']
 		],
 		booleans: [['_group', 'ExceptClause.group']],
 		config: ['group', 'exception', 'body']
 	},
-	161: {
+	166: {
 		kind: 'finally_clause',
 		required: [['_body', 'body']],
 		single: [['_body', 'FinallyClause.body']],
 		nodeOnly: [['_body', 'FinallyClause.body', 'a built Suite']]
 	},
-	162: {
+	167: {
 		kind: 'with_statement',
 		required: [
 			['_with_clause', 'withClause'],
@@ -1030,19 +1104,19 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'WithStatement.body']
 		],
 		nodeOnly: [
-			['_with_clause', 'WithStatement.withClause', 'a built WithClause', [163]],
+			['_with_clause', 'WithStatement.withClause', 'a built WithClause', [168]],
 			['_body', 'WithStatement.body', 'a built Suite']
 		],
 		booleans: [['_async', 'WithStatement.async']],
 		config: ['async', 'withClause', 'body']
 	},
-	164: {
+	169: {
 		kind: 'with_item',
 		required: [['_value', 'value']],
 		single: [['_value', 'WithItem.value']],
-		nodeOnly: [['_value', 'WithItem.value', 'a built Expression', [205]]]
+		nodeOnly: [['_value', 'WithItem.value', 'a built Expression', [210]]]
 	},
-	165: {
+	170: {
 		kind: 'function_definition',
 		required: [
 			['_name', 'name'],
@@ -1058,61 +1132,61 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_name', 'FunctionDefinition.name', 'buildIdentifier(…)', [1]],
-			['_type_parameters', 'FunctionDefinition.typeParameters', 'a built TypeParams', [272]],
-			['_parameters', 'FunctionDefinition.parameters', 'a built Parameters', [166]],
-			['_return_type', 'FunctionDefinition.returnType', 'a built Type', [226]],
+			['_type_parameters', 'FunctionDefinition.typeParameters', 'a built TypeParams', [277]],
+			['_parameters', 'FunctionDefinition.parameters', 'a built Parameters', [171]],
+			['_return_type', 'FunctionDefinition.returnType', 'a built Type', [231]],
 			['_body', 'FunctionDefinition.body', 'a built Suite']
 		],
 		booleans: [['_async', 'FunctionDefinition.async']],
 		config: ['async', 'name', 'typeParameters', 'parameters', 'returnType', 'body']
 	},
-	166: {
+	171: {
 		kind: 'parameters',
 		single: [['_elements', 'Parameters.elements']],
-		nodeOnly: [['_elements', 'Parameters.elements', 'a built ParametersElements', [193]]]
+		nodeOnly: [['_elements', 'Parameters.elements', 'a built ParametersElements', [198]]]
 	},
-	167: {
+	172: {
 		kind: 'lambda_parameters',
 		required: [['_parameters_elements', 'parametersElements']],
 		single: [['_parameters_elements', 'LambdaParameters.parametersElements']],
-		nodeOnly: [['_parameters_elements', 'LambdaParameters.parametersElements', 'a built ParametersElements', [193]]]
+		nodeOnly: [['_parameters_elements', 'LambdaParameters.parametersElements', 'a built ParametersElements', [198]]]
 	},
-	168: {
+	173: {
 		kind: 'list_splat',
 		required: [['_expression', 'expression']],
 		single: [['_expression', 'ListSplat.expression']],
-		nodeOnly: [['_expression', 'ListSplat.expression', 'a built Expression', [205]]]
+		nodeOnly: [['_expression', 'ListSplat.expression', 'a built Expression', [210]]]
 	},
-	169: {
+	174: {
 		kind: 'dictionary_splat',
 		required: [['_expression', 'expression']],
 		single: [['_expression', 'DictionarySplat.expression']],
-		nodeOnly: [['_expression', 'DictionarySplat.expression', 'a built Expression', [205]]]
+		nodeOnly: [['_expression', 'DictionarySplat.expression', 'a built Expression', [210]]]
 	},
-	170: {
+	175: {
 		kind: 'global_statement',
 		nonEmpty: [['_names', 'global_statement.children']],
 		nodeOnly: [['_names', 'GlobalStatement.names', 'buildIdentifier(…)', [1]]],
 		lists: [['names', false, 0]]
 	},
-	171: {
+	176: {
 		kind: 'nonlocal_statement',
 		nonEmpty: [['_names', 'nonlocal_statement.children']],
 		nodeOnly: [['_names', 'NonlocalStatement.names', 'buildIdentifier(…)', [1]]],
 		lists: [['names', false, 0]]
 	},
-	172: {
+	177: {
 		kind: 'exec_statement',
 		required: [['_code', 'code']],
 		single: [['_code', 'ExecStatement.code']],
 		nodeOnly: [
-			['_code', 'ExecStatement.code', 'buildIdentifier(…)', [1, 248]],
-			['_in_clause', 'ExecStatement.inClauses', 'a built Expression', [205]]
+			['_code', 'ExecStatement.code', 'buildIdentifier(…)', [1, 253]],
+			['_in_clause', 'ExecStatement.inClauses', 'a built Expression', [210]]
 		],
 		config: ['code', 'inClauses'],
 		lists: [['inClauses', false, 'key']]
 	},
-	173: {
+	178: {
 		kind: 'type_alias_statement',
 		required: [
 			['_name', 'name'],
@@ -1125,12 +1199,12 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_name', 'TypeAliasStatement.name', 'buildIdentifier(…)', [1]],
-			['_type_parameters', 'TypeAliasStatement.typeParameters', 'a built TypeParams', [272]],
-			['_value', 'TypeAliasStatement.value', 'a built Type', [226]]
+			['_type_parameters', 'TypeAliasStatement.typeParameters', 'a built TypeParams', [277]],
+			['_value', 'TypeAliasStatement.value', 'a built Type', [231]]
 		],
 		config: ['name', 'typeParameters', 'value']
 	},
-	174: {
+	179: {
 		kind: 'class_definition',
 		required: [
 			['_name', 'name'],
@@ -1144,59 +1218,59 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_name', 'ClassDefinition.name', 'buildIdentifier(…)', [1]],
-			['_type_parameters', 'ClassDefinition.typeParameters', 'a built TypeParams', [272]],
-			['_bases', 'ClassDefinition.bases', 'a built ArgumentList', [177]],
+			['_type_parameters', 'ClassDefinition.typeParameters', 'a built TypeParams', [277]],
+			['_bases', 'ClassDefinition.bases', 'a built ArgumentList', [182]],
 			['_body', 'ClassDefinition.body', 'a built SuiteClassDefinition']
 		],
 		config: ['name', 'typeParameters', 'bases', 'body']
 	},
-	175: {
+	180: {
 		kind: 'type_parameter',
 		required: [['_types', 'types']],
 		single: [['_types', 'TypeParameter.types']],
-		nodeOnly: [['_types', 'TypeParameter.types', 'a built Types', [263]]]
+		nodeOnly: [['_types', 'TypeParameter.types', 'a built Types', [268]]]
 	},
-	176: {
+	181: {
 		kind: 'parenthesized_list_splat',
 		required: [['_content', 'content']],
 		single: [['_content', 'ParenthesizedListSplat.content']],
-		nodeOnly: [['_content', 'ParenthesizedListSplat.content', 'a built ParenthesizedListSplat / ListSplat', [168, 176]]]
+		nodeOnly: [['_content', 'ParenthesizedListSplat.content', 'a built ParenthesizedListSplat / ListSplat', [173, 181]]]
 	},
-	177: {
+	182: {
 		kind: 'argument_list',
 		single: [['_arguments', 'ArgumentList.arguments']],
-		nodeOnly: [['_arguments', 'ArgumentList.arguments', 'a built ArgumentListElements', [264]]]
+		nodeOnly: [['_arguments', 'ArgumentList.arguments', 'a built ArgumentListElements', [269]]]
 	},
-	178: {
+	183: {
 		kind: 'decorated_definition',
 		required: [['_definition', 'definition']],
 		single: [['_definition', 'DecoratedDefinition.definition']],
 		nonEmpty: [['_decorator', 'decorated_definition.decorators']],
 		nodeOnly: [
-			['_decorator', 'DecoratedDefinition.decorators', 'a built Decorator', [179]],
-			['_definition', 'DecoratedDefinition.definition', 'a built ClassDefinition / FunctionDefinition', [165, 174]]
+			['_decorator', 'DecoratedDefinition.decorators', 'a built Decorator', [184]],
+			['_definition', 'DecoratedDefinition.definition', 'a built ClassDefinition / FunctionDefinition', [170, 179]]
 		],
 		config: ['decorators', 'definition'],
 		lists: [['decorators', false, 'key']]
 	},
-	179: {
+	184: {
 		kind: 'decorator',
 		required: [['_expression', 'expression']],
 		single: [['_expression', 'Decorator.expression']],
-		nodeOnly: [['_expression', 'Decorator.expression', 'a built Expression', [205]]]
+		nodeOnly: [['_expression', 'Decorator.expression', 'a built Expression', [210]]]
 	},
-	180: {
+	185: {
 		kind: 'block',
-		nodeOnly: [['_statements', 'Block.statements', 'a built Statement', [129]]],
+		nodeOnly: [['_statements', 'Block.statements', 'a built Statement', [134]]],
 		lists: [['statements', false, 0]]
 	},
-	181: {
+	186: {
 		kind: 'expression_list',
 		nonEmpty: [['_elements', 'expression_list.elements']],
-		nodeOnly: [['_elements', 'ExpressionList.elements', 'a built Expression', [205]]],
+		nodeOnly: [['_elements', 'ExpressionList.elements', 'a built Expression', [210]]],
 		lists: [['elements', false, 0]]
 	},
-	182: {
+	187: {
 		kind: 'dotted_name',
 		required: [['_name', 'name']],
 		single: [
@@ -1204,20 +1278,20 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'DottedName.name']
 		],
 		nodeOnly: [
-			['_qualifier', 'DottedName.qualifier', 'a built DottedName', [182]],
+			['_qualifier', 'DottedName.qualifier', 'a built DottedName', [187]],
 			['_name', 'DottedName.name', 'buildIdentifier(…)', [1]]
 		],
 		config: ['qualifier', 'name']
 	},
-	183: {
+	188: {
 		kind: 'case_pattern',
 		required: [['_content', 'content']],
 		single: [['_content', 'CasePattern.content']],
 		nodeOnly: [
-			['_content', 'CasePattern.content', 'a built CaseAsPattern / KeywordPattern / SimplePattern', [184, 185, 189]]
+			['_content', 'CasePattern.content', 'a built CaseAsPattern / KeywordPattern / SimplePattern', [189, 190, 194]]
 		]
 	},
-	184: {
+	189: {
 		kind: '_simple_pattern',
 		required: [['_content', 'content']],
 		single: [['_content', 'SimplePattern.content']],
@@ -1229,7 +1303,7 @@ export const structure: StructureTable = Object.freeze({
 			]
 		]
 	},
-	185: {
+	190: {
 		kind: 'case_as_pattern',
 		required: [
 			['_case_pattern', 'casePattern'],
@@ -1240,12 +1314,12 @@ export const structure: StructureTable = Object.freeze({
 			['_identifier', 'CaseAsPattern.identifier']
 		],
 		nodeOnly: [
-			['_case_pattern', 'CaseAsPattern.casePattern', 'a built CasePattern', [183]],
+			['_case_pattern', 'CaseAsPattern.casePattern', 'a built CasePattern', [188]],
 			['_identifier', 'CaseAsPattern.identifier', 'buildIdentifier(…)', [1]]
 		],
 		config: ['casePattern', 'identifier']
 	},
-	186: {
+	191: {
 		kind: 'union_pattern',
 		required: [
 			['_left', 'left'],
@@ -1269,12 +1343,12 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['left', 'right']
 	},
-	187: {
+	192: {
 		kind: 'dict_pattern',
 		single: [['_elements', 'DictPattern.elements']],
-		nodeOnly: [['_elements', 'DictPattern.elements', 'a built DictPatternElements', [266]]]
+		nodeOnly: [['_elements', 'DictPattern.elements', 'a built DictPatternElements', [271]]]
 	},
-	188: {
+	193: {
 		kind: 'key_value_pattern',
 		required: [
 			['_key', 'key'],
@@ -1290,11 +1364,11 @@ export const structure: StructureTable = Object.freeze({
 				'KeyValuePattern.key',
 				'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / Integer / Float / SimplePatternNegative / ComplexPattern / DottedName'
 			],
-			['_value', 'KeyValuePattern.value', 'a built CasePattern', [183]]
+			['_value', 'KeyValuePattern.value', 'a built CasePattern', [188]]
 		],
 		config: ['key', 'value']
 	},
-	189: {
+	194: {
 		kind: 'keyword_pattern',
 		required: [
 			['_name', 'name'],
@@ -1314,7 +1388,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['name', 'pattern']
 	},
-	191: {
+	196: {
 		kind: 'class_pattern',
 		required: [['_type', 'type']],
 		single: [
@@ -1322,12 +1396,12 @@ export const structure: StructureTable = Object.freeze({
 			['_fields', 'ClassPattern.fields']
 		],
 		nodeOnly: [
-			['_type', 'ClassPattern.type', 'a built DottedName', [182]],
-			['_fields', 'ClassPattern.fields', 'a built ListPatternCasePatterns', [265]]
+			['_type', 'ClassPattern.type', 'a built DottedName', [187]],
+			['_fields', 'ClassPattern.fields', 'a built ListPatternCasePatterns', [270]]
 		],
 		config: ['type', 'fields']
 	},
-	192: {
+	197: {
 		kind: 'complex_pattern',
 		required: [
 			['_real', 'real'],
@@ -1339,36 +1413,36 @@ export const structure: StructureTable = Object.freeze({
 			['_imaginary', 'ComplexPattern.imaginary']
 		],
 		nodeOnly: [
-			['_real', 'ComplexPattern.real', 'a built Integer / Float', [255, 256]],
-			['_imaginary', 'ComplexPattern.imaginary', 'a built Integer / Float', [255, 256]]
+			['_real', 'ComplexPattern.real', 'a built Integer / Float', [260, 261]],
+			['_imaginary', 'ComplexPattern.imaginary', 'a built Integer / Float', [260, 261]]
 		],
 		booleans: [['_sign', 'ComplexPattern.sign']],
 		kindIds: [['_operator', 'ComplexPattern.operator', [48, 49]]],
 		config: ['sign', 'real', 'operator', 'imaginary']
 	},
-	193: {
+	198: {
 		kind: 'parameters_elements',
 		nonEmpty: [['_item', 'parameters_elements.elements']],
-		nodeOnly: [['_item', 'ParametersElements.items', 'a built Parameter', [195]]],
+		nodeOnly: [['_item', 'ParametersElements.items', 'a built Parameter', [200]]],
 		lists: [['items', false, 0]]
-	},
-	194: {
-		kind: 'patterns',
-		nonEmpty: [['_item', 'patterns.elements']],
-		nodeOnly: [['_item', 'Patterns.items', 'a built Pattern', [196]]],
-		lists: [['items', false, 0]]
-	},
-	197: {
-		kind: 'tuple_pattern',
-		single: [['_elements', 'TuplePattern.elements']],
-		nodeOnly: [['_elements', 'TuplePattern.elements', 'a built TuplePatternElements', [274]]]
-	},
-	198: {
-		kind: 'list_pattern',
-		single: [['_elements', 'ListPattern.elements']],
-		nodeOnly: [['_elements', 'ListPattern.elements', 'a built Patterns', [194]]]
 	},
 	199: {
+		kind: 'patterns',
+		nonEmpty: [['_item', 'patterns.elements']],
+		nodeOnly: [['_item', 'Patterns.items', 'a built Pattern', [201]]],
+		lists: [['items', false, 0]]
+	},
+	202: {
+		kind: 'tuple_pattern',
+		single: [['_elements', 'TuplePattern.elements']],
+		nodeOnly: [['_elements', 'TuplePattern.elements', 'a built TuplePatternElements', [279]]]
+	},
+	203: {
+		kind: 'list_pattern',
+		single: [['_elements', 'ListPattern.elements']],
+		nodeOnly: [['_elements', 'ListPattern.elements', 'a built Patterns', [199]]]
+	},
+	204: {
 		kind: 'default_parameter',
 		required: [
 			['_name', 'name'],
@@ -1379,12 +1453,12 @@ export const structure: StructureTable = Object.freeze({
 			['_default', 'DefaultParameter.default']
 		],
 		nodeOnly: [
-			['_name', 'DefaultParameter.name', 'buildIdentifier(…)', [1, 197]],
-			['_default', 'DefaultParameter.default', 'a built Expression', [205]]
+			['_name', 'DefaultParameter.name', 'buildIdentifier(…)', [1, 202]],
+			['_default', 'DefaultParameter.default', 'a built Expression', [210]]
 		],
 		config: ['name', 'default']
 	},
-	200: {
+	205: {
 		kind: 'typed_default_parameter',
 		required: [
 			['_name', 'name'],
@@ -1398,24 +1472,24 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_name', 'TypedDefaultParameter.name', 'buildIdentifier(…)', [1]],
-			['_type', 'TypedDefaultParameter.type', 'a built Type', [226]],
-			['_default', 'TypedDefaultParameter.default', 'a built Expression', [205]]
+			['_type', 'TypedDefaultParameter.type', 'a built Type', [231]],
+			['_default', 'TypedDefaultParameter.default', 'a built Expression', [210]]
 		],
 		config: ['name', 'type', 'default']
 	},
-	201: {
+	206: {
 		kind: 'list_splat_pattern',
 		required: [['_pattern', 'pattern']],
 		single: [['_pattern', 'ListSplatPattern.pattern']],
-		nodeOnly: [['_pattern', 'ListSplatPattern.pattern', 'buildIdentifier(…)', [1, 221, 222]]]
+		nodeOnly: [['_pattern', 'ListSplatPattern.pattern', 'buildIdentifier(…)', [1, 226, 227]]]
 	},
-	202: {
+	207: {
 		kind: 'dictionary_splat_pattern',
 		required: [['_pattern', 'pattern']],
 		single: [['_pattern', 'DictionarySplatPattern.pattern']],
-		nodeOnly: [['_pattern', 'DictionarySplatPattern.pattern', 'buildIdentifier(…)', [1, 221, 222]]]
+		nodeOnly: [['_pattern', 'DictionarySplatPattern.pattern', 'buildIdentifier(…)', [1, 226, 227]]]
 	},
-	203: {
+	208: {
 		kind: 'as_pattern',
 		required: [
 			['_expression', 'expression'],
@@ -1426,18 +1500,18 @@ export const structure: StructureTable = Object.freeze({
 			['_alias', 'AsPattern.alias']
 		],
 		nodeOnly: [
-			['_expression', 'AsPattern.expression', 'a built Expression', [205]],
-			['_alias', 'AsPattern.alias', 'a built AsPatternTarget', [350]]
+			['_expression', 'AsPattern.expression', 'a built Expression', [210]],
+			['_alias', 'AsPattern.alias', 'a built AsPatternTarget', [359]]
 		],
 		config: ['expression', 'alias']
 	},
-	207: {
+	212: {
 		kind: 'not_operator',
 		required: [['_argument', 'argument']],
 		single: [['_argument', 'NotOperator.argument']],
-		nodeOnly: [['_argument', 'NotOperator.argument', 'a built Expression', [205]]]
+		nodeOnly: [['_argument', 'NotOperator.argument', 'a built Expression', [210]]]
 	},
-	208: {
+	213: {
 		kind: 'boolean_operator',
 		required: [
 			['_left', 'left'],
@@ -1449,13 +1523,13 @@ export const structure: StructureTable = Object.freeze({
 			['_right', 'BooleanOperator.right']
 		],
 		nodeOnly: [
-			['_left', 'BooleanOperator.left', 'a built Expression', [205]],
-			['_right', 'BooleanOperator.right', 'a built Expression', [205]]
+			['_left', 'BooleanOperator.left', 'a built Expression', [210]],
+			['_right', 'BooleanOperator.right', 'a built Expression', [210]]
 		],
 		kindIds: [['_operator', 'BooleanOperator.operator', [51, 52]]],
 		config: ['left', 'operator', 'right']
 	},
-	209: {
+	214: {
 		kind: 'binary_operator',
 		required: [
 			['_left', 'left'],
@@ -1467,36 +1541,36 @@ export const structure: StructureTable = Object.freeze({
 			['_right', 'BinaryOperator.right']
 		],
 		nodeOnly: [
-			['_left', 'BinaryOperator.left', 'a built PrimaryExpression', [206]],
-			['_right', 'BinaryOperator.right', 'a built PrimaryExpression', [206]]
+			['_left', 'BinaryOperator.left', 'a built PrimaryExpression', [211]],
+			['_right', 'BinaryOperator.right', 'a built PrimaryExpression', [211]]
 		],
 		kindIds: [['_operator', 'BinaryOperator.operator', [8, 9, 35, 44, 45, 48, 49, 53, 54, 55, 56, 57, 58]]],
 		config: ['left', 'operator', 'right']
 	},
-	210: {
+	215: {
 		kind: 'unary_operator',
 		required: [
 			['_operator', 'operator'],
 			['_argument', 'argument']
 		],
 		single: [['_argument', 'UnaryOperator.argument']],
-		nodeOnly: [['_argument', 'UnaryOperator.argument', 'a built PrimaryExpression', [206]]],
+		nodeOnly: [['_argument', 'UnaryOperator.argument', 'a built PrimaryExpression', [211]]],
 		kindIds: [['_operator', 'UnaryOperator.operator', [48, 49, 59]]],
 		config: ['operator', 'argument']
 	},
-	213: {
+	218: {
 		kind: 'comparison_operator',
 		required: [['_left', 'left']],
 		single: [['_left', 'ComparisonOperator.left']],
 		nonEmpty: [['_comparators', 'comparison_operator.comparators']],
 		nodeOnly: [
-			['_left', 'ComparisonOperator.left', 'a built PrimaryExpression', [206]],
-			['_comparators', 'ComparisonOperator.comparators', 'a built ComparisonOperatorComparator', [302]]
+			['_left', 'ComparisonOperator.left', 'a built PrimaryExpression', [211]],
+			['_comparators', 'ComparisonOperator.comparators', 'a built ComparisonOperatorComparator', [311]]
 		],
 		config: ['left', 'comparators'],
 		lists: [['comparators', false, 'key']]
 	},
-	214: {
+	219: {
 		kind: 'lambda',
 		required: [['_body', 'body']],
 		single: [
@@ -1504,12 +1578,12 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'Lambda.body']
 		],
 		nodeOnly: [
-			['_parameters', 'Lambda.parameters', 'a built LambdaParameters', [167]],
-			['_body', 'Lambda.body', 'a built Expression', [205]]
+			['_parameters', 'Lambda.parameters', 'a built LambdaParameters', [172]],
+			['_body', 'Lambda.body', 'a built Expression', [210]]
 		],
 		config: ['parameters', 'body']
 	},
-	215: {
+	220: {
 		kind: 'lambda_within_for_in_clause',
 		required: [['_body', 'body']],
 		single: [
@@ -1517,12 +1591,12 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'LambdaWithinForInClause.body']
 		],
 		nodeOnly: [
-			['_parameters', 'LambdaWithinForInClause.parameters', 'a built LambdaParameters', [167]],
-			['_body', 'LambdaWithinForInClause.body', 'a built Expression / LambdaWithinForInClause', [205, 215]]
+			['_parameters', 'LambdaWithinForInClause.parameters', 'a built LambdaParameters', [172]],
+			['_body', 'LambdaWithinForInClause.body', 'a built Expression / LambdaWithinForInClause', [210, 220]]
 		],
 		config: ['parameters', 'body']
 	},
-	217: {
+	222: {
 		kind: 'augmented_assignment',
 		required: [
 			['_left', 'left'],
@@ -1534,29 +1608,29 @@ export const structure: StructureTable = Object.freeze({
 			['_right', 'AugmentedAssignment.right']
 		],
 		nodeOnly: [
-			['_left', 'AugmentedAssignment.left', 'a built Pattern / PatternList', [196, 218]],
+			['_left', 'AugmentedAssignment.left', 'a built Pattern / PatternList', [201, 223]],
 			[
 				'_right',
 				'AugmentedAssignment.right',
 				'a built Expression / ExpressionList / PatternList / Yield',
-				[181, 205, 218, 220]
+				[186, 210, 223, 225]
 			]
 		],
 		kindIds: [['_operator', 'AugmentedAssignment.operator', [75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87]]],
 		config: ['left', 'operator', 'right']
 	},
-	218: {
+	223: {
 		kind: 'pattern_list',
 		nonEmpty: [['_elements', 'pattern_list.elements']],
-		nodeOnly: [['_elements', 'PatternList.elements', 'a built Pattern', [196]]],
+		nodeOnly: [['_elements', 'PatternList.elements', 'a built Pattern', [201]]],
 		lists: [['elements', false, 0]]
 	},
-	220: {
+	225: {
 		kind: 'yield',
 		single: [['_content', 'Yield.content']],
-		nodeOnly: [['_content', 'Yield.content', 'a built YieldFromClause / Expression / ExpressionList', [181, 205, 303]]]
+		nodeOnly: [['_content', 'Yield.content', 'a built YieldFromClause / Expression / ExpressionList', [186, 210, 312]]]
 	},
-	221: {
+	226: {
 		kind: 'attribute',
 		required: [
 			['_object', 'object'],
@@ -1567,12 +1641,12 @@ export const structure: StructureTable = Object.freeze({
 			['_property', 'Attribute.property']
 		],
 		nodeOnly: [
-			['_object', 'Attribute.object', 'a built PrimaryExpression', [206]],
+			['_object', 'Attribute.object', 'a built PrimaryExpression', [211]],
 			['_property', 'Attribute.property', 'buildIdentifier(…)', [1]]
 		],
 		config: ['object', 'property']
 	},
-	222: {
+	227: {
 		kind: 'subscript',
 		required: [
 			['_object', 'object'],
@@ -1583,12 +1657,12 @@ export const structure: StructureTable = Object.freeze({
 			['_index', 'Subscript.index']
 		],
 		nodeOnly: [
-			['_object', 'Subscript.object', 'a built PrimaryExpression', [206]],
-			['_index', 'Subscript.index', 'a built Subscripts', [267]]
+			['_object', 'Subscript.object', 'a built PrimaryExpression', [211]],
+			['_index', 'Subscript.index', 'a built Subscripts', [272]]
 		],
 		config: ['object', 'index']
 	},
-	223: {
+	228: {
 		kind: 'slice',
 		single: [
 			['_start', 'Slice.start'],
@@ -1596,13 +1670,13 @@ export const structure: StructureTable = Object.freeze({
 			['_step', 'Slice.step']
 		],
 		nodeOnly: [
-			['_start', 'Slice.start', 'a built Expression', [205]],
-			['_stop', 'Slice.stop', 'a built Expression', [205]],
-			['_step', 'Slice.step', 'a built SliceGroup', [269]]
+			['_start', 'Slice.start', 'a built Expression', [210]],
+			['_stop', 'Slice.stop', 'a built Expression', [210]],
+			['_step', 'Slice.step', 'a built SliceGroup', [274]]
 		],
 		config: ['start', 'stop', 'step']
 	},
-	224: {
+	229: {
 		kind: 'call',
 		required: [
 			['_function', 'function'],
@@ -1613,12 +1687,12 @@ export const structure: StructureTable = Object.freeze({
 			['_arguments', 'Call.arguments']
 		],
 		nodeOnly: [
-			['_function', 'Call.function', 'a built PrimaryExpression', [206]],
-			['_arguments', 'Call.arguments', 'a built GeneratorExpression / ArgumentList', [177, 241]]
+			['_function', 'Call.function', 'a built PrimaryExpression', [211]],
+			['_arguments', 'Call.arguments', 'a built GeneratorExpression / ArgumentList', [182, 246]]
 		],
 		config: ['function', 'arguments']
 	},
-	225: {
+	230: {
 		kind: 'typed_parameter',
 		required: [
 			['_name', 'name'],
@@ -1629,12 +1703,12 @@ export const structure: StructureTable = Object.freeze({
 			['_type', 'TypedParameter.type']
 		],
 		nodeOnly: [
-			['_name', 'TypedParameter.name', 'buildIdentifier(…)', [1, 201, 202]],
-			['_type', 'TypedParameter.type', 'a built Type', [226]]
+			['_name', 'TypedParameter.name', 'buildIdentifier(…)', [1, 206, 207]],
+			['_type', 'TypedParameter.type', 'a built Type', [231]]
 		],
 		config: ['name', 'type']
 	},
-	226: {
+	231: {
 		kind: 'type',
 		required: [['_content', 'content']],
 		single: [['_content', 'Type.content']],
@@ -1643,17 +1717,17 @@ export const structure: StructureTable = Object.freeze({
 				'_content',
 				'Type.content',
 				'a built Expression / SplatType / GenericType / UnionType / ConstrainedType / MemberType',
-				[205, 227, 228, 229, 230, 231]
+				[210, 232, 233, 234, 235, 236]
 			]
 		]
 	},
-	227: {
+	232: {
 		kind: 'splat_type',
 		required: [['_type', 'type']],
 		single: [['_type', 'SplatType.type']],
-		nodeOnly: [['_type', 'SplatType.type', 'buildIdentifier(…)', [1, 228]]]
+		nodeOnly: [['_type', 'SplatType.type', 'buildIdentifier(…)', [1, 233]]]
 	},
-	228: {
+	233: {
 		kind: 'generic_type',
 		required: [
 			['_name', 'name'],
@@ -1665,11 +1739,11 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_name', 'GenericType.name', 'buildIdentifier(…)', [1]],
-			['_type_parameter', 'GenericType.typeParameter', 'a built TypeParameter', [175]]
+			['_type_parameter', 'GenericType.typeParameter', 'a built TypeParameter', [180]]
 		],
 		config: ['name', 'typeParameter']
 	},
-	229: {
+	234: {
 		kind: 'union_type',
 		required: [
 			['_left', 'left'],
@@ -1680,12 +1754,12 @@ export const structure: StructureTable = Object.freeze({
 			['_right', 'UnionType.right']
 		],
 		nodeOnly: [
-			['_left', 'UnionType.left', 'a built Type', [226]],
-			['_right', 'UnionType.right', 'a built Type', [226]]
+			['_left', 'UnionType.left', 'a built Type', [231]],
+			['_right', 'UnionType.right', 'a built Type', [231]]
 		],
 		config: ['left', 'right']
 	},
-	230: {
+	235: {
 		kind: 'constrained_type',
 		required: [
 			['_base_type', 'baseType'],
@@ -1696,12 +1770,12 @@ export const structure: StructureTable = Object.freeze({
 			['_constraint', 'ConstrainedType.constraint']
 		],
 		nodeOnly: [
-			['_base_type', 'ConstrainedType.baseType', 'a built Type', [226]],
-			['_constraint', 'ConstrainedType.constraint', 'a built Type', [226]]
+			['_base_type', 'ConstrainedType.baseType', 'a built Type', [231]],
+			['_constraint', 'ConstrainedType.constraint', 'a built Type', [231]]
 		],
 		config: ['baseType', 'constraint']
 	},
-	231: {
+	236: {
 		kind: 'member_type',
 		required: [
 			['_qualifier', 'qualifier'],
@@ -1712,12 +1786,12 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'MemberType.name']
 		],
 		nodeOnly: [
-			['_qualifier', 'MemberType.qualifier', 'a built Type', [226]],
+			['_qualifier', 'MemberType.qualifier', 'a built Type', [231]],
 			['_name', 'MemberType.name', 'buildIdentifier(…)', [1]]
 		],
 		config: ['qualifier', 'name']
 	},
-	232: {
+	237: {
 		kind: 'keyword_argument',
 		required: [
 			['_name', 'name'],
@@ -1729,32 +1803,32 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_name', 'KeywordArgument.name', 'buildIdentifier(…)', [1]],
-			['_value', 'KeywordArgument.value', 'a built Expression', [205]]
+			['_value', 'KeywordArgument.value', 'a built Expression', [210]]
 		],
 		config: ['name', 'value']
 	},
-	233: {
+	238: {
 		kind: 'list',
 		single: [['_elements', 'List.elements']],
-		nodeOnly: [['_elements', 'List.elements', 'a built CollectionElements', [243]]]
+		nodeOnly: [['_elements', 'List.elements', 'a built CollectionElements', [248]]]
 	},
-	234: {
+	239: {
 		kind: 'set',
 		required: [['_elements', 'elements']],
 		single: [['_elements', 'Set.elements']],
-		nodeOnly: [['_elements', 'Set.elements', 'a built CollectionElements', [243]]]
+		nodeOnly: [['_elements', 'Set.elements', 'a built CollectionElements', [248]]]
 	},
-	235: {
+	240: {
 		kind: 'tuple',
 		single: [['_elements', 'Tuple.elements']],
-		nodeOnly: [['_elements', 'Tuple.elements', 'a built TupleElements', [276]]]
+		nodeOnly: [['_elements', 'Tuple.elements', 'a built TupleElements', [281]]]
 	},
-	236: {
+	241: {
 		kind: 'dictionary',
 		single: [['_elements', 'Dictionary.elements']],
-		nodeOnly: [['_elements', 'Dictionary.elements', 'a built DictionaryElements', [268]]]
+		nodeOnly: [['_elements', 'Dictionary.elements', 'a built DictionaryElements', [273]]]
 	},
-	237: {
+	242: {
 		kind: 'pair',
 		required: [
 			['_key', 'key'],
@@ -1765,12 +1839,12 @@ export const structure: StructureTable = Object.freeze({
 			['_value', 'Pair.value']
 		],
 		nodeOnly: [
-			['_key', 'Pair.key', 'a built Expression', [205]],
-			['_value', 'Pair.value', 'a built Expression', [205]]
+			['_key', 'Pair.key', 'a built Expression', [210]],
+			['_value', 'Pair.value', 'a built Expression', [210]]
 		],
 		config: ['key', 'value']
 	},
-	238: {
+	243: {
 		kind: 'list_comprehension',
 		required: [
 			['_body', 'body'],
@@ -1781,12 +1855,12 @@ export const structure: StructureTable = Object.freeze({
 			['_clauses', 'ListComprehension.clauses']
 		],
 		nodeOnly: [
-			['_body', 'ListComprehension.body', 'a built Expression', [205]],
-			['_clauses', 'ListComprehension.clauses', 'a built ComprehensionClauses', [286]]
+			['_body', 'ListComprehension.body', 'a built Expression', [210]],
+			['_clauses', 'ListComprehension.clauses', 'a built ComprehensionClauses', [291]]
 		],
 		config: ['body', 'clauses']
 	},
-	239: {
+	244: {
 		kind: 'dictionary_comprehension',
 		required: [
 			['_body', 'body'],
@@ -1797,12 +1871,12 @@ export const structure: StructureTable = Object.freeze({
 			['_clauses', 'DictionaryComprehension.clauses']
 		],
 		nodeOnly: [
-			['_body', 'DictionaryComprehension.body', 'a built Pair', [237]],
-			['_clauses', 'DictionaryComprehension.clauses', 'a built ComprehensionClauses', [286]]
+			['_body', 'DictionaryComprehension.body', 'a built Pair', [242]],
+			['_clauses', 'DictionaryComprehension.clauses', 'a built ComprehensionClauses', [291]]
 		],
 		config: ['body', 'clauses']
 	},
-	240: {
+	245: {
 		kind: 'set_comprehension',
 		required: [
 			['_body', 'body'],
@@ -1813,12 +1887,12 @@ export const structure: StructureTable = Object.freeze({
 			['_clauses', 'SetComprehension.clauses']
 		],
 		nodeOnly: [
-			['_body', 'SetComprehension.body', 'a built Expression', [205]],
-			['_clauses', 'SetComprehension.clauses', 'a built ComprehensionClauses', [286]]
+			['_body', 'SetComprehension.body', 'a built Expression', [210]],
+			['_clauses', 'SetComprehension.clauses', 'a built ComprehensionClauses', [291]]
 		],
 		config: ['body', 'clauses']
 	},
-	241: {
+	246: {
 		kind: 'generator_expression',
 		required: [
 			['_body', 'body'],
@@ -1829,18 +1903,18 @@ export const structure: StructureTable = Object.freeze({
 			['_clauses', 'GeneratorExpression.clauses']
 		],
 		nodeOnly: [
-			['_body', 'GeneratorExpression.body', 'a built Expression', [205]],
-			['_clauses', 'GeneratorExpression.clauses', 'a built ComprehensionClauses', [286]]
+			['_body', 'GeneratorExpression.body', 'a built Expression', [210]],
+			['_clauses', 'GeneratorExpression.clauses', 'a built ComprehensionClauses', [291]]
 		],
 		config: ['body', 'clauses']
 	},
-	242: {
+	247: {
 		kind: 'parenthesized_expression',
 		required: [['_expression', 'expression']],
 		single: [['_expression', 'ParenthesizedExpression.expression']],
-		nodeOnly: [['_expression', 'ParenthesizedExpression.expression', 'a built Expression / Yield', [205, 220]]]
+		nodeOnly: [['_expression', 'ParenthesizedExpression.expression', 'a built Expression / Yield', [210, 225]]]
 	},
-	243: {
+	248: {
 		kind: 'collection_elements',
 		nonEmpty: [['_item', 'collection_elements.elements']],
 		nodeOnly: [
@@ -1848,19 +1922,19 @@ export const structure: StructureTable = Object.freeze({
 				'_item',
 				'CollectionElements.items',
 				'a built Expression / Yield / ListSplat / ParenthesizedListSplat',
-				[168, 176, 205, 220]
+				[173, 181, 210, 225]
 			]
 		],
 		lists: [['items', false, 0]]
 	},
-	244: {
+	249: {
 		kind: 'for_in_clause',
 		required: [['_left', 'left']],
 		single: [['_left', 'ForInClause.left']],
 		nonEmpty: [['_right', 'for_in_clause.rights']],
 		nodeOnly: [
-			['_left', 'ForInClause.left', 'a built Pattern / PatternList', [196, 218]],
-			['_right', 'ForInClause.rights', 'a built Expression / LambdaWithinForInClause', [205, 215]]
+			['_left', 'ForInClause.left', 'a built Pattern / PatternList', [201, 223]],
+			['_right', 'ForInClause.rights', 'a built Expression / LambdaWithinForInClause', [210, 220]]
 		],
 		booleans: [['_async', 'ForInClause.async']],
 		kindIds: [['_trailing_comma', 'ForInClause.trailingComma', [0, 6]]],
@@ -1868,13 +1942,13 @@ export const structure: StructureTable = Object.freeze({
 		lists: [['rights', false, 'key']],
 		options: ['trailingComma']
 	},
-	245: {
+	250: {
 		kind: 'if_clause',
 		required: [['_condition', 'condition']],
 		single: [['_condition', 'IfClause.condition']],
-		nodeOnly: [['_condition', 'IfClause.condition', 'a built Expression', [205]]]
+		nodeOnly: [['_condition', 'IfClause.condition', 'a built Expression', [210]]]
 	},
-	246: {
+	251: {
 		kind: 'conditional_expression',
 		required: [
 			['_consequence', 'consequence'],
@@ -1887,19 +1961,19 @@ export const structure: StructureTable = Object.freeze({
 			['_alternative', 'ConditionalExpression.alternative']
 		],
 		nodeOnly: [
-			['_consequence', 'ConditionalExpression.consequence', 'a built Expression', [205]],
-			['_condition', 'ConditionalExpression.condition', 'a built Expression', [205]],
-			['_alternative', 'ConditionalExpression.alternative', 'a built Expression', [205]]
+			['_consequence', 'ConditionalExpression.consequence', 'a built Expression', [210]],
+			['_condition', 'ConditionalExpression.condition', 'a built Expression', [210]],
+			['_alternative', 'ConditionalExpression.alternative', 'a built Expression', [210]]
 		],
 		config: ['consequence', 'condition', 'alternative']
 	},
-	247: {
+	252: {
 		kind: 'concatenated_string',
 		nonEmpty: [['_string', 'concatenated_string.children']],
-		nodeOnly: [['_string', 'ConcatenatedString.strings', 'a built String', [248]]],
+		nodeOnly: [['_string', 'ConcatenatedString.strings', 'a built String', [253]]],
 		lists: [['strings', false, 0]]
 	},
-	248: {
+	253: {
 		kind: 'string',
 		required: [
 			['_string_start', 'stringStart'],
@@ -1910,20 +1984,20 @@ export const structure: StructureTable = Object.freeze({
 			['_string_end', 'String.stringEnd']
 		],
 		nodeOnly: [
-			['_string_start', 'String.stringStart', 'a built StringStart', [119]],
-			['_content', 'String.contents', 'a built Interpolation / StringContent', [249, 250]],
-			['_string_end', 'String.stringEnd', 'a built StringEnd', [122]]
+			['_string_start', 'String.stringStart', 'a built StringStart', [124]],
+			['_content', 'String.contents', 'a built Interpolation / StringContent', [254, 255]],
+			['_string_end', 'String.stringEnd', 'a built StringEnd', [127]]
 		],
 		config: ['stringStart', 'contents', 'stringEnd'],
 		lists: [['contents', false, 'key']]
 	},
-	249: {
+	254: {
 		kind: 'string_content',
 		nonEmpty: [['_elements', 'string_content.children']],
 		nodeOnly: [['_elements', 'StringContent.elements', 'buildEscapeInterpolation(…) / buildStringFragment(…)']],
 		lists: [['elements', false, 0]]
 	},
-	250: {
+	255: {
 		kind: 'interpolation',
 		required: [['_expression', 'expression']],
 		single: [
@@ -1936,50 +2010,50 @@ export const structure: StructureTable = Object.freeze({
 				'_expression',
 				'Interpolation.expression',
 				'a built Expression / ExpressionList / PatternList / Yield',
-				[181, 205, 218, 220]
+				[186, 210, 223, 225]
 			],
 			['_type_conversion', 'Interpolation.typeConversion', 'buildTypeConversion(…)', [65]],
-			['_format_specifier', 'Interpolation.formatSpecifier', 'a built FormatSpecifier', [254]]
+			['_format_specifier', 'Interpolation.formatSpecifier', 'a built FormatSpecifier', [259]]
 		],
 		booleans: [['_debug', 'Interpolation.debug']],
 		config: ['expression', 'debug', 'typeConversion', 'formatSpecifier']
 	},
-	254: {
+	259: {
 		kind: 'format_specifier',
-		nodeOnly: [['_elements', 'FormatSpecifier.elements', 'buildFormatSpecifierText(…)', [88, 351]]],
+		nodeOnly: [['_elements', 'FormatSpecifier.elements', 'buildFormatSpecifierText(…)', [88, 360]]],
 		lists: [['elements', false, 0]]
 	},
-	257: {
+	262: {
 		kind: 'await',
 		required: [['_expression', 'expression']],
 		single: [['_expression', 'Await.expression']],
-		nodeOnly: [['_expression', 'Await.expression', 'a built PrimaryExpression', [206]]]
+		nodeOnly: [['_expression', 'Await.expression', 'a built PrimaryExpression', [211]]]
 	},
-	260: {
+	265: {
 		kind: 'simple_statements_elements',
 		nonEmpty: [['_item', 'simple_statements_elements.elements']],
 		nodeOnly: [['_item', 'SimpleStatementsElements.items', 'a built SimpleStatement']],
 		lists: [['items', false, 0]]
 	},
-	261: {
+	266: {
 		kind: 'subjects',
 		nonEmpty: [['_elements', 'subjects.elements']],
-		nodeOnly: [['_elements', 'Subjects.elements', 'a built Expression', [205]]],
+		nodeOnly: [['_elements', 'Subjects.elements', 'a built Expression', [210]]],
 		lists: [['elements', false, 0]]
 	},
-	262: {
+	267: {
 		kind: 'with_clause_with_items',
 		nonEmpty: [['_item', 'with_clause_with_items.elements']],
-		nodeOnly: [['_item', 'WithClauseWithItems.items', 'a built WithItem', [164]]],
+		nodeOnly: [['_item', 'WithClauseWithItems.items', 'a built WithItem', [169]]],
 		lists: [['items', false, 0]]
 	},
-	263: {
+	268: {
 		kind: 'types',
 		nonEmpty: [['_item', 'types.elements']],
-		nodeOnly: [['_item', 'Types.items', 'a built Type', [226]]],
+		nodeOnly: [['_item', 'Types.items', 'a built Type', [231]]],
 		lists: [['items', false, 0]]
 	},
-	264: {
+	269: {
 		kind: 'argument_list_elements',
 		nonEmpty: [['_item', 'argument_list_elements.elements']],
 		nodeOnly: [
@@ -1987,65 +2061,65 @@ export const structure: StructureTable = Object.freeze({
 				'_item',
 				'ArgumentListElements.items',
 				'a built Expression / ListSplat / DictionarySplat / ParenthesizedListSplat / KeywordArgument',
-				[168, 169, 176, 205, 232]
+				[173, 174, 181, 210, 237]
 			]
 		],
 		lists: [['items', false, 0]]
 	},
-	265: {
+	270: {
 		kind: 'list_pattern_case_patterns',
 		nonEmpty: [['_item', 'list_pattern_case_patterns.elements']],
-		nodeOnly: [['_item', 'ListPatternCasePatterns.items', 'a built CasePattern', [183]]],
+		nodeOnly: [['_item', 'ListPatternCasePatterns.items', 'a built CasePattern', [188]]],
 		lists: [['items', false, 0]]
 	},
-	266: {
+	271: {
 		kind: 'dict_pattern_elements',
 		nonEmpty: [['_item', 'dict_pattern_elements.elements']],
-		nodeOnly: [['_item', 'DictPatternElements.items', 'a built KeyValuePattern / SplatPattern', [188, 190]]],
+		nodeOnly: [['_item', 'DictPatternElements.items', 'a built KeyValuePattern / SplatPattern', [193, 195]]],
 		lists: [['items', false, 0]]
-	},
-	267: {
-		kind: 'subscripts',
-		nonEmpty: [['_elements', 'subscripts.elements']],
-		nodeOnly: [['_elements', 'Subscripts.elements', 'a built Expression / Slice', [205, 223]]],
-		lists: [['elements', false, 0]]
-	},
-	268: {
-		kind: 'dictionary_elements',
-		nonEmpty: [['_item', 'dictionary_elements.elements']],
-		nodeOnly: [['_item', 'DictionaryElements.items', 'a built Pair / DictionarySplat', [169, 237]]],
-		lists: [['items', false, 0]]
-	},
-	269: {
-		kind: 'slice_group',
-		single: [['_expression', 'SliceGroup.expression']],
-		nodeOnly: [['_expression', 'SliceGroup.expression', 'a built Expression', [205]]]
 	},
 	272: {
-		kind: 'type_params',
-		required: [['_items', 'items']],
-		single: [['_items', 'TypeParams.items']],
-		nodeOnly: [['_items', 'TypeParams.items', 'a built TypeParamsItems', [273]]]
+		kind: 'subscripts',
+		nonEmpty: [['_elements', 'subscripts.elements']],
+		nodeOnly: [['_elements', 'Subscripts.elements', 'a built Expression / Slice', [210, 228]]],
+		lists: [['elements', false, 0]]
 	},
 	273: {
-		kind: 'type_params_items',
-		nonEmpty: [['_item', 'type_params_items.elements']],
-		nodeOnly: [['_item', 'TypeParamsItems.items', 'a built TypeParam', [270]]],
+		kind: 'dictionary_elements',
+		nonEmpty: [['_item', 'dictionary_elements.elements']],
+		nodeOnly: [['_item', 'DictionaryElements.items', 'a built Pair / DictionarySplat', [174, 242]]],
 		lists: [['items', false, 0]]
 	},
 	274: {
-		kind: 'tuple_pattern_elements',
-		nonEmpty: [['_item', 'tuple_pattern_elements.elements']],
-		nodeOnly: [['_item', 'TuplePatternElements.items', 'a built Pattern', [196]]],
+		kind: 'slice_group',
+		single: [['_expression', 'SliceGroup.expression']],
+		nodeOnly: [['_expression', 'SliceGroup.expression', 'a built Expression', [210]]]
+	},
+	277: {
+		kind: 'type_params',
+		required: [['_items', 'items']],
+		single: [['_items', 'TypeParams.items']],
+		nodeOnly: [['_items', 'TypeParams.items', 'a built TypeParamsItems', [278]]]
+	},
+	278: {
+		kind: 'type_params_items',
+		nonEmpty: [['_item', 'type_params_items.elements']],
+		nodeOnly: [['_item', 'TypeParamsItems.items', 'a built TypeParam', [275]]],
 		lists: [['items', false, 0]]
 	},
-	275: {
+	279: {
+		kind: 'tuple_pattern_elements',
+		nonEmpty: [['_item', 'tuple_pattern_elements.elements']],
+		nodeOnly: [['_item', 'TuplePatternElements.items', 'a built Pattern', [201]]],
+		lists: [['items', false, 0]]
+	},
+	280: {
 		kind: 'case_pattern_list',
 		nonEmpty: [['_elements', 'case_pattern_list.elements']],
-		nodeOnly: [['_elements', 'CasePatternList.elements', 'a built CasePattern', [183]]],
+		nodeOnly: [['_elements', 'CasePatternList.elements', 'a built CasePattern', [188]]],
 		lists: [['elements', false, 0]]
 	},
-	276: {
+	281: {
 		kind: 'tuple_elements',
 		nonEmpty: [['_item', 'tuple_elements.elements']],
 		nodeOnly: [
@@ -2053,12 +2127,12 @@ export const structure: StructureTable = Object.freeze({
 				'_item',
 				'TupleElements.items',
 				'a built Expression / Yield / ListSplat / ParenthesizedListSplat',
-				[168, 176, 205, 220]
+				[173, 181, 210, 225]
 			]
 		],
 		lists: [['items', false, 0]]
 	},
-	277: {
+	282: {
 		kind: 'except_clause_exception_as',
 		required: [['_value', 'value']],
 		single: [
@@ -2066,34 +2140,34 @@ export const structure: StructureTable = Object.freeze({
 			['_alias', 'ExceptClauseExceptionAs.alias']
 		],
 		nodeOnly: [
-			['_value', 'ExceptClauseExceptionAs.value', 'a built Expression', [205]],
-			['_alias', 'ExceptClauseExceptionAs.alias', 'a built Expression', [205]]
+			['_value', 'ExceptClauseExceptionAs.value', 'a built Expression', [210]],
+			['_alias', 'ExceptClauseExceptionAs.alias', 'a built Expression', [210]]
 		],
 		config: ['value', 'alias']
 	},
-	278: {
+	283: {
 		kind: 'case_tuple_pattern',
 		single: [['_elements', 'CaseTuplePattern.elements']],
-		nodeOnly: [['_elements', 'CaseTuplePattern.elements', 'a built ListPatternCasePatterns', [265]]]
+		nodeOnly: [['_elements', 'CaseTuplePattern.elements', 'a built ListPatternCasePatterns', [270]]]
 	},
-	279: {
+	284: {
 		kind: 'case_list_pattern',
 		single: [['_elements', 'CaseListPattern.elements']],
-		nodeOnly: [['_elements', 'CaseListPattern.elements', 'a built ListPatternCasePatterns', [265]]]
+		nodeOnly: [['_elements', 'CaseListPattern.elements', 'a built ListPatternCasePatterns', [270]]]
 	},
-	280: {
+	285: {
 		kind: 'print_arguments',
 		nonEmpty: [['_item', 'print_arguments.elements']],
-		nodeOnly: [['_item', 'PrintArguments.items', 'a built Expression', [205]]],
+		nodeOnly: [['_item', 'PrintArguments.items', 'a built Expression', [210]]],
 		lists: [['items', false, 0]]
 	},
-	281: {
+	286: {
 		kind: 'print_chevron_arguments',
 		nonEmpty: [['_item', 'print_chevron_arguments.elements']],
-		nodeOnly: [['_item', 'PrintChevronArguments.items', 'a built Expression', [205]]],
+		nodeOnly: [['_item', 'PrintChevronArguments.items', 'a built Expression', [210]]],
 		lists: [['items', false, 0]]
 	},
-	282: {
+	287: {
 		kind: 'print_statement_chevron',
 		required: [['_chevron', 'chevron']],
 		single: [
@@ -2101,42 +2175,42 @@ export const structure: StructureTable = Object.freeze({
 			['_arguments', 'PrintStatementChevron.arguments']
 		],
 		nodeOnly: [
-			['_chevron', 'PrintStatementChevron.chevron', 'a built Chevron', [140]],
-			['_arguments', 'PrintStatementChevron.arguments', 'a built PrintChevronArguments', [281]]
+			['_chevron', 'PrintStatementChevron.chevron', 'a built Chevron', [145]],
+			['_arguments', 'PrintStatementChevron.arguments', 'a built PrintChevronArguments', [286]]
 		],
 		config: ['chevron', 'arguments']
 	},
-	283: {
+	288: {
 		kind: 'print_statement_plain',
 		required: [['_arguments', 'arguments']],
 		single: [['_arguments', 'PrintStatementPlain.arguments']],
-		nodeOnly: [['_arguments', 'PrintStatementPlain.arguments', 'a built PrintArguments', [280]]]
+		nodeOnly: [['_arguments', 'PrintStatementPlain.arguments', 'a built PrintArguments', [285]]]
 	},
-	285: {
+	290: {
 		kind: 'parenthesized_import_list',
 		required: [['_import_list', 'importList']],
 		single: [['_import_list', 'ParenthesizedImportList.importList']],
-		nodeOnly: [['_import_list', 'ParenthesizedImportList.importList', 'a built ImportList', [136]]]
+		nodeOnly: [['_import_list', 'ParenthesizedImportList.importList', 'a built ImportList', [141]]]
 	},
-	286: {
+	291: {
 		kind: 'comprehension_clauses',
 		nonEmpty: [['_content', 'comprehension_clauses.children']],
-		nodeOnly: [['_content', 'ComprehensionClauses.contents', 'a built ForInClause / IfClause', [244, 245]]],
+		nodeOnly: [['_content', 'ComprehensionClauses.contents', 'a built ForInClause / IfClause', [249, 250]]],
 		lists: [['contents', false, 0]]
 	},
-	288: {
+	297: {
 		kind: 'simple_pattern_negative',
 		required: [['_value', 'value']],
 		single: [['_value', 'SimplePatternNegative.value']],
-		nodeOnly: [['_value', 'SimplePatternNegative.value', 'a built Integer / Float', [255, 256]]]
+		nodeOnly: [['_value', 'SimplePatternNegative.value', 'a built Integer / Float', [260, 261]]]
 	},
-	289: {
+	298: {
 		kind: 'except_clause_exception_list',
 		nonEmpty: [['_value', 'except_clause_exception_list.children']],
-		nodeOnly: [['_value', 'ExceptClauseExceptionList.values', 'a built Expression', [205]]],
+		nodeOnly: [['_value', 'ExceptClauseExceptionList.values', 'a built Expression', [210]]],
 		lists: [['values', false, 0]]
 	},
-	290: {
+	299: {
 		kind: 'except_clause_exception',
 		required: [['_content', 'content']],
 		single: [['_content', 'ExceptClauseException.content']],
@@ -2145,23 +2219,23 @@ export const structure: StructureTable = Object.freeze({
 				'_content',
 				'ExceptClauseException.content',
 				'a built ExceptClauseExceptionAs / ExceptClauseExceptionList',
-				[277, 289]
+				[282, 298]
 			]
 		]
 	},
-	291: {
+	300: {
 		kind: 'splat_pattern_list',
 		required: [['_pattern', 'pattern']],
 		single: [['_pattern', 'SplatPatternList.pattern']],
 		nodeOnly: [['_pattern', 'SplatPatternList.pattern', 'buildIdentifier(…)']]
 	},
-	292: {
+	301: {
 		kind: 'splat_pattern_dictionary',
 		required: [['_pattern', 'pattern']],
 		single: [['_pattern', 'SplatPatternDictionary.pattern']],
 		nodeOnly: [['_pattern', 'SplatPatternDictionary.pattern', 'buildIdentifier(…)']]
 	},
-	293: {
+	302: {
 		kind: 'assignment_eq',
 		required: [
 			['_name', 'name'],
@@ -2172,17 +2246,17 @@ export const structure: StructureTable = Object.freeze({
 			['_value', 'AssignmentEq.value']
 		],
 		nodeOnly: [
-			['_name', 'AssignmentEq.name', 'a built Pattern / PatternList', [196, 218]],
+			['_name', 'AssignmentEq.name', 'a built Pattern / PatternList', [201, 223]],
 			[
 				'_value',
 				'AssignmentEq.value',
 				'a built Expression / ExpressionList / PatternList / Yield / Assignment',
-				[181, 205, 216, 218, 220]
+				[186, 210, 221, 223, 225]
 			]
 		],
 		config: ['name', 'value']
 	},
-	294: {
+	303: {
 		kind: 'assignment_type',
 		required: [
 			['_name', 'name'],
@@ -2193,12 +2267,12 @@ export const structure: StructureTable = Object.freeze({
 			['_type', 'AssignmentType.type']
 		],
 		nodeOnly: [
-			['_name', 'AssignmentType.name', 'a built Pattern / PatternList', [196, 218]],
-			['_type', 'AssignmentType.type', 'a built Type', [226]]
+			['_name', 'AssignmentType.name', 'a built Pattern / PatternList', [201, 223]],
+			['_type', 'AssignmentType.type', 'a built Type', [231]]
 		],
 		config: ['name', 'type']
 	},
-	295: {
+	304: {
 		kind: 'assignment_typed',
 		required: [
 			['_name', 'name'],
@@ -2211,53 +2285,53 @@ export const structure: StructureTable = Object.freeze({
 			['_value', 'AssignmentTyped.value']
 		],
 		nodeOnly: [
-			['_name', 'AssignmentTyped.name', 'a built Pattern / PatternList', [196, 218]],
-			['_type', 'AssignmentTyped.type', 'a built Type', [226]],
+			['_name', 'AssignmentTyped.name', 'a built Pattern / PatternList', [201, 223]],
+			['_type', 'AssignmentTyped.type', 'a built Type', [231]],
 			[
 				'_value',
 				'AssignmentTyped.value',
 				'a built Expression / ExpressionList / PatternList / Yield',
-				[181, 205, 218, 220]
+				[186, 210, 223, 225]
 			]
 		],
 		config: ['name', 'type', 'value']
 	},
-	296: {
+	305: {
 		kind: 'expression_statement_tuple',
 		nonEmpty: [['_elements', 'expression_statement_tuple.elements']],
-		nodeOnly: [['_elements', 'ExpressionStatementTuple.elements', 'a built Expression', [205]]],
+		nodeOnly: [['_elements', 'ExpressionStatementTuple.elements', 'a built Expression', [210]]],
 		lists: [['elements', false, 0]]
 	},
-	297: {
+	306: {
 		kind: 'with_clause_bare',
 		nonEmpty: [['_items', 'with_clause_bare.elements']],
-		nodeOnly: [['_items', 'WithClauseBare.items', 'a built WithItem', [164]]],
+		nodeOnly: [['_items', 'WithClauseBare.items', 'a built WithItem', [169]]],
 		lists: [['items', false, 0]]
 	},
-	298: {
+	307: {
 		kind: 'with_clause_paren',
 		required: [['_items', 'items']],
 		single: [['_items', 'WithClauseParen.items']],
-		nodeOnly: [['_items', 'WithClauseParen.items', 'a built WithClauseWithItems', [262]]]
+		nodeOnly: [['_items', 'WithClauseParen.items', 'a built WithClauseWithItems', [267]]]
 	},
-	299: {
+	308: {
 		kind: 'suite_inline',
 		required: [['_statements', 'statements']],
 		single: [['_statements', 'SuiteInline.statements']],
-		nodeOnly: [['_statements', 'SuiteInline.statements', 'a built SimpleStatementsElements', [260]]]
+		nodeOnly: [['_statements', 'SuiteInline.statements', 'a built SimpleStatementsElements', [265]]]
 	},
-	300: {
+	309: {
 		kind: 'suite_block',
 		required: [['_block', 'block']],
 		single: [['_block', 'SuiteBlock.block']],
-		nodeOnly: [['_block', 'SuiteBlock.block', 'a built Block', [180]]]
+		nodeOnly: [['_block', 'SuiteBlock.block', 'a built Block', [185]]]
 	},
-	301: {
+	310: {
 		kind: 'suite_empty',
 		required: [['_newline', 'newline']],
-		kindIds: [['_newline', 'SuiteEmpty.newline', [116]]]
+		kindIds: [['_newline', 'SuiteEmpty.newline', [121]]]
 	},
-	302: {
+	311: {
 		kind: 'comparison_operator_comparator',
 		required: [
 			['_operators', 'operators'],
@@ -2265,20 +2339,20 @@ export const structure: StructureTable = Object.freeze({
 		],
 		single: [['_primary_expression', 'ComparisonOperatorComparator.primaryExpression']],
 		nodeOnly: [
-			['_primary_expression', 'ComparisonOperatorComparator.primaryExpression', 'a built PrimaryExpression', [206]]
+			['_primary_expression', 'ComparisonOperatorComparator.primaryExpression', 'a built PrimaryExpression', [211]]
 		],
 		kindIds: [
-			['_operators', 'ComparisonOperatorComparator.operators', [25, 60, 108, 109, 110, 111, 112, 113, 114, 211, 212]]
+			['_operators', 'ComparisonOperatorComparator.operators', [25, 60, 113, 114, 115, 116, 117, 118, 119, 216, 217]]
 		],
 		config: ['operators', 'primaryExpression']
 	},
-	303: {
+	312: {
 		kind: 'yield_from_clause',
 		required: [['_expression', 'expression']],
 		single: [['_expression', 'YieldFromClause.expression']],
-		nodeOnly: [['_expression', 'YieldFromClause.expression', 'a built Expression', [205]]]
+		nodeOnly: [['_expression', 'YieldFromClause.expression', 'a built Expression', [210]]]
 	},
-	304: {
+	313: {
 		kind: 'type_param_type_var',
 		required: [['_name', 'name']],
 		single: [
@@ -2287,23 +2361,23 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_name', 'TypeParamTypeVar.name', 'buildIdentifier(…)', [1]],
-			['_bounds', 'TypeParamTypeVar.bounds', 'a built Type', [226]]
+			['_bounds', 'TypeParamTypeVar.bounds', 'a built Type', [231]]
 		],
 		config: ['name', 'bounds']
 	},
-	305: {
+	314: {
 		kind: 'type_param_type_var_tuple',
 		required: [['_name', 'name']],
 		single: [['_name', 'TypeParamTypeVarTuple.name']],
 		nodeOnly: [['_name', 'TypeParamTypeVarTuple.name', 'buildIdentifier(…)', [1]]]
 	},
-	306: {
+	315: {
 		kind: 'type_param_param_spec',
 		required: [['_name', 'name']],
 		single: [['_name', 'TypeParamParamSpec.name']],
 		nodeOnly: [['_name', 'TypeParamParamSpec.name', 'buildIdentifier(…)', [1]]]
 	},
-	307: {
+	316: {
 		kind: 'constructor_declaration',
 		required: [
 			['_parameters', 'parameters'],
@@ -2316,20 +2390,20 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'ConstructorDeclaration.body']
 		],
 		nodeOnly: [
-			['_type_parameters', 'ConstructorDeclaration.typeParameters', 'a built TypeParams', [272]],
-			['_parameters', 'ConstructorDeclaration.parameters', 'a built Parameters', [166]],
-			['_return_type', 'ConstructorDeclaration.returnType', 'a built Type', [226]],
+			['_type_parameters', 'ConstructorDeclaration.typeParameters', 'a built TypeParams', [277]],
+			['_parameters', 'ConstructorDeclaration.parameters', 'a built Parameters', [171]],
+			['_return_type', 'ConstructorDeclaration.returnType', 'a built Type', [231]],
 			['_body', 'ConstructorDeclaration.body', 'a built Suite']
 		],
 		booleans: [['_async', 'ConstructorDeclaration.async']],
 		config: ['async', 'typeParameters', 'parameters', 'returnType', 'body']
 	},
-	309: {
+	318: {
 		kind: 'block_class_declaration',
-		nodeOnly: [['_statements', 'BlockClassDeclaration.statements', 'a built StatementClassDefinition', [308]]],
+		nodeOnly: [['_statements', 'BlockClassDeclaration.statements', 'a built StatementClassDefinition', [317]]],
 		lists: [['statements', false, 0]]
 	},
-	310: {
+	319: {
 		kind: 'suite_block_class_declaration',
 		required: [['_block_class_declaration', 'blockClassDeclaration']],
 		single: [['_block_class_declaration', 'SuiteBlockClassDeclaration.blockClassDeclaration']],
@@ -2338,34 +2412,34 @@ export const structure: StructureTable = Object.freeze({
 				'_block_class_declaration',
 				'SuiteBlockClassDeclaration.blockClassDeclaration',
 				'a built BlockClassDeclaration',
-				[309]
+				[318]
 			]
 		]
 	},
-	311: {
+	320: {
 		kind: 'decorated_definition_class_declaration',
 		required: [['_definition', 'definition']],
 		single: [['_definition', 'DecoratedDefinitionClassDeclaration.definition']],
 		nonEmpty: [['_decorator', 'decorated_definition_class_declaration.decorators']],
 		nodeOnly: [
-			['_decorator', 'DecoratedDefinitionClassDeclaration.decorators', 'a built Decorator', [179]],
+			['_decorator', 'DecoratedDefinitionClassDeclaration.decorators', 'a built Decorator', [184]],
 			[
 				'_definition',
 				'DecoratedDefinitionClassDeclaration.definition',
 				'a built ClassDefinition / MethodDeclaration / ConstructorDeclaration',
-				[174, 307, 352]
+				[179, 316, 361]
 			]
 		],
 		config: ['decorators', 'definition'],
 		lists: [['decorators', false, 'key']]
 	},
-	350: {
+	359: {
 		kind: 'as_pattern_target',
 		required: [['_content', 'content']],
 		single: [['_content', 'AsPatternTarget.content']],
-		nodeOnly: [['_content', 'AsPatternTarget.content', 'a built Expression', [205]]]
+		nodeOnly: [['_content', 'AsPatternTarget.content', 'a built Expression', [210]]]
 	},
-	351: {
+	360: {
 		kind: 'format_expression',
 		required: [['_expression', 'expression']],
 		single: [
@@ -2378,15 +2452,15 @@ export const structure: StructureTable = Object.freeze({
 				'_expression',
 				'FormatExpression.expression',
 				'a built Expression / ExpressionList / PatternList / Yield',
-				[181, 205, 218, 220]
+				[186, 210, 223, 225]
 			],
 			['_type_conversion', 'FormatExpression.typeConversion', 'buildTypeConversion(…)', [65]],
-			['_format_specifier', 'FormatExpression.formatSpecifier', 'a built FormatSpecifier', [254]]
+			['_format_specifier', 'FormatExpression.formatSpecifier', 'a built FormatSpecifier', [259]]
 		],
 		booleans: [['_debug', 'FormatExpression.debug']],
 		config: ['expression', 'debug', 'typeConversion', 'formatSpecifier']
 	},
-	352: {
+	361: {
 		kind: 'method_declaration',
 		required: [
 			['_name', 'name'],
@@ -2402,18 +2476,18 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_name', 'MethodDeclaration.name', 'buildIdentifier(…)', [1]],
-			['_type_parameters', 'MethodDeclaration.typeParameters', 'a built TypeParams', [272]],
-			['_parameters', 'MethodDeclaration.parameters', 'a built Parameters', [166]],
-			['_return_type', 'MethodDeclaration.returnType', 'a built Type', [226]],
+			['_type_parameters', 'MethodDeclaration.typeParameters', 'a built TypeParams', [277]],
+			['_parameters', 'MethodDeclaration.parameters', 'a built Parameters', [171]],
+			['_return_type', 'MethodDeclaration.returnType', 'a built Type', [231]],
 			['_body', 'MethodDeclaration.body', 'a built Suite']
 		],
 		booleans: [['_async', 'MethodDeclaration.async']],
 		config: ['async', 'name', 'typeParameters', 'parameters', 'returnType', 'body']
 	},
-	353: {
+	362: {
 		kind: 'names',
 		nonEmpty: [['_name', 'names.elements']],
-		nodeOnly: [['_name', 'Names.names', 'a built DottedName / AliasedImport', [137, 182]]],
+		nodeOnly: [['_name', 'Names.names', 'a built DottedName / AliasedImport', [142, 187]]],
 		lists: [['names', false, 0]]
 	}
 });

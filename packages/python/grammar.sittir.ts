@@ -126,6 +126,13 @@ const TYPE_ALIAS_WITNESSES = [
 	}
 ] as const;
 
+const LEGACY_OCTAL_WITNESSES = [
+	{ text: 'x = 0377\n', form: ['0377'], kind: 'integer', meaning: 'Octal 255: Python 2 reads an integer with a leading zero as octal, where upstream lexes it as decimal 377.' },
+	{ text: 'x = 0377L\n', form: ['0377', 'L'], kind: 'integer', meaning: 'A long octal 255 in Python 2, where upstream lexes it as a long decimal 377.' }
+] as const;
+
+const LEGACY_OCTAL_DIGITS = /0*[1-7][0-7]*/;
+
 export default grammar(enrich(base), wire({
 	resolutions,
 	name: 'python',
@@ -196,9 +203,14 @@ export default grammar(enrich(base), wire({
 		indent: preference('    '),
 		gap: { separator: preference('tight') },
 		string_start: { 'quote:': preference('"') },
-		integer_hex: { 'radix_prefix:': preference('0x') },
-		integer_octal: { 'radix_prefix:': preference('0o') },
-		integer_binary: { 'radix_prefix:': preference('0b') },
+		integer_hex_long: { 'radix_prefix:': preference('0x'), 'marker:': preference('L') },
+		integer_hex_plain: { 'radix_prefix:': preference('0x') },
+		integer_octal_long: { 'radix_prefix:': preference('0o'), 'marker:': preference('L') },
+		integer_octal_plain: { 'radix_prefix:': preference('0o') },
+		integer_binary_long: { 'radix_prefix:': preference('0b'), 'marker:': preference('L') },
+		integer_binary_plain: { 'radix_prefix:': preference('0b') },
+		integer_legacy_octal_long: { 'marker:': preference('L') },
+		integer_decimal_long: { 'marker:': preference('L') },
 		float_point: { 'marker:': preference('e') },
 		float_leading_point: { 'marker:': preference('e') },
 		float_scientific: { 'marker:': preference('e') },
@@ -289,16 +301,33 @@ export default grammar(enrich(base), wire({
 		set_comprehension: [{ 2: comprehensionClauses }, { 2: field('clauses') }],
 		generator_expression: [{ 2: comprehensionClauses }, { 2: field('clauses') }],
 		integer: {
-			'0/0/0': field('radix_prefix'),
-			'1/0/0': field('radix_prefix'),
-			'2/0/0': field('radix_prefix'),
+			'0/0/0/0': field('radix_prefix'),
+			'0/1/0/0': field('radix_prefix'),
+			'1/0/0/0': field('radix_prefix'),
+			'1/1/0/0': field('radix_prefix'),
+			'2/0/0/0': field('radix_prefix'),
+			'2/1/0/0': field('radix_prefix'),
+			'0/0/0/2': field('marker', choice('L', 'l')),
+			'1/0/0/2': field('marker', choice('L', 'l')),
+			'2/0/0/2': field('marker', choice('L', 'l')),
+			'3/0/0/2': field('marker', choice('L', 'l')),
+			'4/0/0/1': field('marker', choice('L', 'l')),
 			0: variant('hex'),
+			'0/0': variant('long'),
+			'0/1': variant('plain', { default: true }),
 			1: variant('octal'),
+			'1/0': variant('long'),
+			'1/1': variant('plain', { default: true }),
 			2: variant('binary'),
-			3: variant('decimal', { default: true }),
+			'2/0': variant('long'),
+			'2/1': variant('plain', { default: true }),
+			3: variant('legacy_octal'),
 			'3/0': variant('long'),
-			'3/1': variant('imaginary'),
-			'3/2': variant('plain', { default: true })
+			'3/1': variant('plain', { default: true }),
+			4: variant('decimal', { default: true }),
+			'4/0': variant('long'),
+			'4/1': variant('imaginary'),
+			'4/2': variant('plain', { default: true })
 		},
 		float: {
 			'0/0/0/0': field('integer'),
@@ -498,6 +527,10 @@ export default grammar(enrich(base), wire({
 		]
 	},
 	rules: {
+		integer: reauthored('semantic-gap', LEGACY_OCTAL_WITNESSES, ($, original) => {
+			const [hex, octal, binary, decimal] = original.content.members;
+			return token(choice(hex, octal, binary, seq('0', LEGACY_OCTAL_DIGITS, optional(/[Ll]/)), decimal));
+		}),
 		_match_block: reauthored('accepts-invalid-syntax', MATCH_BLOCK_WITNESSES, ($, original) => original.members[0]),
 		_right_hand_side: reauthored('accepts-invalid-syntax', RIGHT_HAND_SIDE_WITNESSES, ($) => choice($.expression, $.expression_list, $.pattern_list, $.yield)),
 		assignment: reauthored('accepts-invalid-syntax', ASSIGNMENT_WITNESSES, ($, original) =>

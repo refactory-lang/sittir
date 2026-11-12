@@ -1027,6 +1027,22 @@ describe("keptKinds over a supertype the slot holds", () => {
 		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['title', 'fields']);
 	});
 
+	it('routes at a supertype-claimed path only the members that path declares, and every slot where a form is claimed on its own', async () => {
+		const declaring: Vocabulary = {
+			...EMPTY_VOCABULARY,
+			kinds: new Map([['declaration.struct', {} as never]]),
+			members: (path) => new Map(path === 'declaration.struct' ? [['title', { optional: false, flag: false }]] : [])
+		};
+		const membersAt = async (bindings: string, kind: string, vocab: string): Promise<readonly string[] | undefined> =>
+			resolveRoutes({ ...(await grammar(bindings)), vocabulary: declaring })
+				.readEntries.get(kind)
+				?.find((entry) => entry.vocab === vocab)
+				?.members.map((route) => route.name);
+		expect(await membersAt('(_struct name: (_) @title) @declaration.struct', 'struct_tuple', 'declaration.struct')).toEqual(['title']);
+		expect(await membersAt('(struct_tuple name: (_) @title) @declaration.struct', 'struct_tuple', 'declaration.struct')).toEqual(['title', 'fields']);
+		expect(await membersAt('(_struct name: (_) @title) @declaration.class', 'struct_tuple', 'declaration.class')).toEqual(['title', 'fields']);
+	});
+
 	it("carries a supertype claim's nested captures to each form, through the slot each form holds", async () => {
 		const routes = resolveRoutes(await grammar('(_arm match: (arm_pattern pattern: _ @pattern condition: _? @guard) value: _ @body) @clause.case'));
 		for (const form of ['arm_comma', 'arm_block']) {

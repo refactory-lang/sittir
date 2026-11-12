@@ -54,9 +54,14 @@ export interface KindMembers {
 		| TSKindId.Identifier
 		| TSKindId.String
 		| TSKindId.ConcatenatedString
-		| TSKindId.IntegerHex
-		| TSKindId.IntegerOctal
-		| TSKindId.IntegerBinary
+		| TSKindId.IntegerHexLong
+		| TSKindId.IntegerHexPlain
+		| TSKindId.IntegerOctalLong
+		| TSKindId.IntegerOctalPlain
+		| TSKindId.IntegerBinaryLong
+		| TSKindId.IntegerBinaryPlain
+		| TSKindId.IntegerLegacyOctalLong
+		| TSKindId.IntegerLegacyOctalPlain
 		| TSKindId.IntegerDecimalLong
 		| TSKindId.IntegerDecimalImaginary
 		| TSKindId.IntegerDecimalPlain
@@ -90,9 +95,14 @@ export interface KindMembers {
 		| TSKindId.Identifier
 		| TSKindId.String
 		| TSKindId.ConcatenatedString
-		| TSKindId.IntegerHex
-		| TSKindId.IntegerOctal
-		| TSKindId.IntegerBinary
+		| TSKindId.IntegerHexLong
+		| TSKindId.IntegerHexPlain
+		| TSKindId.IntegerOctalLong
+		| TSKindId.IntegerOctalPlain
+		| TSKindId.IntegerBinaryLong
+		| TSKindId.IntegerBinaryPlain
+		| TSKindId.IntegerLegacyOctalLong
+		| TSKindId.IntegerLegacyOctalPlain
 		| TSKindId.IntegerDecimalLong
 		| TSKindId.IntegerDecimalImaginary
 		| TSKindId.IntegerDecimalPlain
@@ -126,14 +136,23 @@ export interface KindMembers {
 		| TSKindId.EscapeSequenceSimple
 		| TSKindId.EscapeSequenceNamed;
 	[TSKindId.Integer]:
-		| TSKindId.IntegerHex
-		| TSKindId.IntegerOctal
-		| TSKindId.IntegerBinary
+		| TSKindId.IntegerHexLong
+		| TSKindId.IntegerHexPlain
+		| TSKindId.IntegerOctalLong
+		| TSKindId.IntegerOctalPlain
+		| TSKindId.IntegerBinaryLong
+		| TSKindId.IntegerBinaryPlain
+		| TSKindId.IntegerLegacyOctalLong
+		| TSKindId.IntegerLegacyOctalPlain
 		| TSKindId.IntegerDecimalLong
 		| TSKindId.IntegerDecimalImaginary
 		| TSKindId.IntegerDecimalPlain;
 	[TSKindId.Float]: TSKindId.FloatPoint | TSKindId.FloatLeadingPoint | TSKindId.FloatScientific;
 	[TSKindId.TypeParam]: TSKindId.TypeParamTypeVar | TSKindId.TypeParamTypeVarTuple | TSKindId.TypeParamParamSpec;
+	[TSKindId.IntegerHex]: TSKindId.IntegerHexLong | TSKindId.IntegerHexPlain;
+	[TSKindId.IntegerOctal]: TSKindId.IntegerOctalLong | TSKindId.IntegerOctalPlain;
+	[TSKindId.IntegerBinary]: TSKindId.IntegerBinaryLong | TSKindId.IntegerBinaryPlain;
+	[TSKindId.IntegerLegacyOctal]: TSKindId.IntegerLegacyOctalLong | TSKindId.IntegerLegacyOctalPlain;
 	[TSKindId.IntegerDecimal]:
 		| TSKindId.IntegerDecimalLong
 		| TSKindId.IntegerDecimalImaginary
@@ -636,15 +655,33 @@ export interface IsGuards {
 	comprehensionClauses<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ComprehensionClauses };
-	integerHex<T extends { readonly $type: number } | number>(
+	integerHexLong<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerHex };
-	integerOctal<T extends { readonly $type: number } | number>(
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerHexLong };
+	integerHexPlain<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerOctal };
-	integerBinary<T extends { readonly $type: number } | number>(
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerHexPlain };
+	integerOctalLong<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerBinary };
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerOctalLong };
+	integerOctalPlain<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerOctalPlain };
+	integerBinaryLong<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerBinaryLong };
+	integerBinaryPlain<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerBinaryPlain };
+	integerLegacyOctalLong<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLegacyOctalLong };
+	integerLegacyOctalPlain<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLegacyOctalPlain };
+	integerDecimalLong<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerDecimalLong };
 	floatPoint<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FloatPoint };
@@ -1115,15 +1152,10 @@ export interface IsGuards {
 	};
 	readonly integer: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Integer]>;
-		hex<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerHex };
-		octal<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerOctal };
-		binary<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerBinary };
+		hex: IsGuards['integerHex'];
+		octal: IsGuards['integerOctal'];
+		binary: IsGuards['integerBinary'];
+		legacyOctal: IsGuards['integerLegacyOctal'];
 		decimal: IsGuards['integerDecimal'];
 	};
 	readonly float: {
@@ -1158,6 +1190,42 @@ export interface IsGuards {
 		paramSpec<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParamParamSpec };
+	};
+	readonly integerHex: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.IntegerHex]>;
+		long<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerHexLong };
+		plain<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerHexPlain };
+	};
+	readonly integerOctal: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.IntegerOctal]>;
+		long<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerOctalLong };
+		plain<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerOctalPlain };
+	};
+	readonly integerBinary: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.IntegerBinary]>;
+		long<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerBinaryLong };
+		plain<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerBinaryPlain };
+	};
+	readonly integerLegacyOctal: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.IntegerLegacyOctal]>;
+		long<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLegacyOctalLong };
+		plain<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLegacyOctalPlain };
 	};
 	readonly integerDecimal: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.IntegerDecimal]>;
@@ -1214,39 +1282,43 @@ export interface IsGuards {
 	newline<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Newline>;
 }
 
-const _supertype_statement_ids = new Set<number>([130, 151, 157, 158, 159, 162, 165, 174, 178, 154]);
+const _supertype_statement_ids = new Set<number>([135, 156, 162, 163, 164, 167, 170, 179, 183, 159]);
 const _supertype_simpleStatement_ids = new Set<number>([
-	134, 131, 135, 139, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173
+	139, 136, 140, 144, 146, 147, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178
 ]);
-const _supertype_compoundStatement_ids = new Set<number>([151, 157, 158, 159, 162, 165, 174, 178, 154]);
-const _supertype_withClause_ids = new Set<number>([297, 298]);
-const _supertype_suite_ids = new Set<number>([180, 299, 300, 301]);
-const _supertype_splatPattern_ids = new Set<number>([201, 202, 291, 292]);
-const _supertype_parameter_ids = new Set<number>([201, 202, 1, 225, 199, 200, 197, 259, 258]);
-const _supertype_pattern_ids = new Set<number>([201, 1, 222, 221, 197, 198]);
+const _supertype_compoundStatement_ids = new Set<number>([156, 162, 163, 164, 167, 170, 179, 183, 159]);
+const _supertype_withClause_ids = new Set<number>([306, 307]);
+const _supertype_suite_ids = new Set<number>([185, 308, 309, 310]);
+const _supertype_splatPattern_ids = new Set<number>([206, 207, 300, 301]);
+const _supertype_parameter_ids = new Set<number>([206, 207, 1, 230, 204, 205, 202, 264, 263]);
+const _supertype_pattern_ids = new Set<number>([206, 1, 227, 226, 202, 203]);
 const _supertype_expression_ids = new Set<number>([
-	214, 213, 207, 208, 201, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 69, 70, 71, 210, 221, 222, 224,
-	233, 238, 236, 239, 234, 240, 235, 242, 241, 63, 246, 143, 203
+	219, 218, 212, 213, 206, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 69, 70,
+	71, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 251, 148, 208
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	201, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 69, 70, 71, 210, 221, 222, 224, 233, 238, 236, 239,
-	234, 240, 235, 242, 241, 63
+	206, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 69, 70, 71, 215, 226, 227,
+	229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63
 ]);
-const _supertype_assignment_ids = new Set<number>([293, 294, 295]);
-const _supertype_escapeSequence_ids = new Set<number>([99, 100, 101, 102, 103, 104, 105]);
-const _supertype_integer_ids = new Set<number>([90, 91, 92, 93, 94, 95]);
-const _supertype_float_ids = new Set<number>([96, 97, 98]);
-const _supertype_lineContinuation_ids = new Set<number>([106, 107]);
-const _supertype_typeParam_ids = new Set<number>([304, 305, 306]);
-const _supertype_integerDecimal_ids = new Set<number>([93, 94, 95]);
-const _supertype_layout_ids = new Set<number>([123, 124, 125, 116, 126, 127]);
+const _supertype_assignment_ids = new Set<number>([302, 303, 304]);
+const _supertype_escapeSequence_ids = new Set<number>([104, 105, 106, 107, 108, 109, 110]);
+const _supertype_integer_ids = new Set<number>([90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100]);
+const _supertype_float_ids = new Set<number>([101, 102, 103]);
+const _supertype_lineContinuation_ids = new Set<number>([111, 112]);
+const _supertype_typeParam_ids = new Set<number>([313, 314, 315]);
+const _supertype_integerHex_ids = new Set<number>([90, 91]);
+const _supertype_integerOctal_ids = new Set<number>([92, 93]);
+const _supertype_integerBinary_ids = new Set<number>([94, 95]);
+const _supertype_integerLegacyOctal_ids = new Set<number>([96, 97]);
+const _supertype_integerDecimal_ids = new Set<number>([98, 99, 100]);
+const _supertype_layout_ids = new Set<number>([128, 129, 130, 121, 131, 132]);
 const _supertype_compoundStatementClassDefinition_ids = new Set<number>([
-	352, 151, 157, 158, 159, 162, 307, 174, 311, 154
+	361, 156, 162, 163, 164, 167, 316, 179, 320, 159
 ]);
 const _supertype_statementClassDefinition_ids = new Set<number>([
-	130, 352, 151, 157, 158, 159, 162, 307, 174, 311, 154
+	135, 361, 156, 162, 163, 164, 167, 316, 179, 320, 159
 ]);
-const _supertype_suiteClassDefinition_ids = new Set<number>([180, 299, 310, 301]);
+const _supertype_suiteClassDefinition_ids = new Set<number>([185, 308, 319, 310]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.Statement, _supertype_statement_ids],
@@ -1261,6 +1333,10 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.Integer, _supertype_integer_ids],
 	[TSKindId.Float, _supertype_float_ids],
 	[TSKindId.TypeParam, _supertype_typeParam_ids],
+	[TSKindId.IntegerHex, _supertype_integerHex_ids],
+	[TSKindId.IntegerOctal, _supertype_integerOctal_ids],
+	[TSKindId.IntegerBinary, _supertype_integerBinary_ids],
+	[TSKindId.IntegerLegacyOctal, _supertype_integerLegacyOctal_ids],
 	[TSKindId.IntegerDecimal, _supertype_integerDecimal_ids],
 	[TSKindId.StatementClassDefinition, _supertype_statementClassDefinition_ids]
 ]);
@@ -1396,9 +1472,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_EscapeSequenceLineBreak_guard = _g(TSKindId.EscapeSequenceLineBreak);
 	const _kind_EscapeSequenceSimple_guard = _g(TSKindId.EscapeSequenceSimple);
 	const _kind_EscapeSequenceNamed_guard = _g(TSKindId.EscapeSequenceNamed);
-	const _kind_IntegerHex_guard = _g(TSKindId.IntegerHex);
-	const _kind_IntegerOctal_guard = _g(TSKindId.IntegerOctal);
-	const _kind_IntegerBinary_guard = _g(TSKindId.IntegerBinary);
 	const _kind_FloatPoint_guard = _g(TSKindId.FloatPoint);
 	const _kind_FloatLeadingPoint_guard = _g(TSKindId.FloatLeadingPoint);
 	const _kind_FloatScientific_guard = _g(TSKindId.FloatScientific);
@@ -1407,6 +1480,14 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_TypeParamTypeVar_guard = _g(TSKindId.TypeParamTypeVar);
 	const _kind_TypeParamTypeVarTuple_guard = _g(TSKindId.TypeParamTypeVarTuple);
 	const _kind_TypeParamParamSpec_guard = _g(TSKindId.TypeParamParamSpec);
+	const _kind_IntegerHexLong_guard = _g(TSKindId.IntegerHexLong);
+	const _kind_IntegerHexPlain_guard = _g(TSKindId.IntegerHexPlain);
+	const _kind_IntegerOctalLong_guard = _g(TSKindId.IntegerOctalLong);
+	const _kind_IntegerOctalPlain_guard = _g(TSKindId.IntegerOctalPlain);
+	const _kind_IntegerBinaryLong_guard = _g(TSKindId.IntegerBinaryLong);
+	const _kind_IntegerBinaryPlain_guard = _g(TSKindId.IntegerBinaryPlain);
+	const _kind_IntegerLegacyOctalLong_guard = _g(TSKindId.IntegerLegacyOctalLong);
+	const _kind_IntegerLegacyOctalPlain_guard = _g(TSKindId.IntegerLegacyOctalPlain);
 	const _kind_IntegerDecimalLong_guard = _g(TSKindId.IntegerDecimalLong);
 	const _kind_IntegerDecimalImaginary_guard = _g(TSKindId.IntegerDecimalImaginary);
 	const _kind_IntegerDecimalPlain_guard = _g(TSKindId.IntegerDecimalPlain);
@@ -1619,7 +1700,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		decorated: _kind_DecoratedDefinition_guard,
 		match: _kind_MatchStatement_guard
 	});
-	const _supertype_withClause_guard = _vg(_mg(163), {
+	const _supertype_withClause_guard = _vg(_mg(168), {
 		bare: _kind_WithClauseBare_guard,
 		paren: _kind_WithClauseParen_guard
 	});
@@ -1628,11 +1709,11 @@ export function guardsWith(test: KindTest): IsGuards {
 		block: _kind_SuiteBlock_guard,
 		empty: _kind_SuiteEmpty_guard
 	});
-	const _supertype_splatPattern_guard = _vg(_mg(190), {
+	const _supertype_splatPattern_guard = _vg(_mg(195), {
 		list: _kind_SplatPatternList_guard,
 		dictionary: _kind_SplatPatternDictionary_guard
 	});
-	const _supertype_parameter_guard = _vg(_mg(195), {
+	const _supertype_parameter_guard = _vg(_mg(200), {
 		identifier: _kind_Identifier_guard,
 		typed: _kind_TypedParameter_guard,
 		default: _kind_DefaultParameter_guard,
@@ -1643,7 +1724,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		positionalSeparator: _kind_PositionalSeparator_guard,
 		dictionarySplat: _kind_DictionarySplatPattern_guard
 	});
-	const _supertype_pattern_guard = _vg(_mg(196), {
+	const _supertype_pattern_guard = _vg(_mg(201), {
 		identifier: _kind_Identifier_guard,
 		subscript: _kind_Subscript_guard,
 		attribute: _kind_Attribute_guard,
@@ -1651,12 +1732,12 @@ export function guardsWith(test: KindTest): IsGuards {
 		tuple: _kind_TuplePattern_guard,
 		list: _kind_ListPattern_guard
 	});
-	const _supertype_assignment_guard = _vg(_mg(216), {
+	const _supertype_assignment_guard = _vg(_mg(221), {
 		eq: _kind_AssignmentEq_guard,
 		type: _kind_AssignmentType_guard,
 		typed: _kind_AssignmentTyped_guard
 	});
-	const _supertype_escapeSequence_guard = _vg(_mg(252), {
+	const _supertype_escapeSequence_guard = _vg(_mg(257), {
 		unicodeFixed: _kind_EscapeSequenceUnicodeFixed_guard,
 		unicodeWide: _kind_EscapeSequenceUnicodeWide_guard,
 		hex: _kind_EscapeSequenceHex_guard,
@@ -1665,7 +1746,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		simple: _kind_EscapeSequenceSimple_guard,
 		named: _kind_EscapeSequenceNamed_guard
 	});
-	const _supertype_float_guard = _vg(_mg(256), {
+	const _supertype_float_guard = _vg(_mg(261), {
 		point: _kind_FloatPoint_guard,
 		leadingPoint: _kind_FloatLeadingPoint_guard,
 		scientific: _kind_FloatScientific_guard
@@ -1674,23 +1755,40 @@ export function guardsWith(test: KindTest): IsGuards {
 		newline: _kind_LineContinuationNewline_guard,
 		nul: _kind_LineContinuationNul_guard
 	});
-	const _supertype_typeParam_guard = _vg(_mg(270), {
+	const _supertype_typeParam_guard = _vg(_mg(275), {
 		typeVar: _kind_TypeParamTypeVar_guard,
 		typeVarTuple: _kind_TypeParamTypeVarTuple_guard,
 		paramSpec: _kind_TypeParamParamSpec_guard
 	});
-	const _supertype_integerDecimal_guard = _vg(_mg(287), {
+	const _supertype_integerHex_guard = _vg(_mg(292), {
+		long: _kind_IntegerHexLong_guard,
+		plain: _kind_IntegerHexPlain_guard
+	});
+	const _supertype_integerOctal_guard = _vg(_mg(293), {
+		long: _kind_IntegerOctalLong_guard,
+		plain: _kind_IntegerOctalPlain_guard
+	});
+	const _supertype_integerBinary_guard = _vg(_mg(294), {
+		long: _kind_IntegerBinaryLong_guard,
+		plain: _kind_IntegerBinaryPlain_guard
+	});
+	const _supertype_integerLegacyOctal_guard = _vg(_mg(295), {
+		long: _kind_IntegerLegacyOctalLong_guard,
+		plain: _kind_IntegerLegacyOctalPlain_guard
+	});
+	const _supertype_integerDecimal_guard = _vg(_mg(296), {
 		long: _kind_IntegerDecimalLong_guard,
 		imaginary: _kind_IntegerDecimalImaginary_guard,
 		plain: _kind_IntegerDecimalPlain_guard
 	});
-	const _supertype_integer_guard = _vg(_mg(255), {
-		hex: _kind_IntegerHex_guard,
-		octal: _kind_IntegerOctal_guard,
-		binary: _kind_IntegerBinary_guard,
+	const _supertype_integer_guard = _vg(_mg(260), {
+		hex: _supertype_integerHex_guard,
+		octal: _supertype_integerOctal_guard,
+		binary: _supertype_integerBinary_guard,
+		legacyOctal: _supertype_integerLegacyOctal_guard,
 		decimal: _supertype_integerDecimal_guard
 	});
-	const _supertype_primaryExpression_guard = _vg(_mg(206), {
+	const _supertype_primaryExpression_guard = _vg(_mg(211), {
 		await: _kind_Await_guard,
 		binary: _kind_BinaryOperator_guard,
 		identifier: _kind_Identifier_guard,
@@ -1717,7 +1815,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		ellipsis: _kind_Ellipsis_guard,
 		listSplat: _kind_ListSplatPattern_guard
 	});
-	const _supertype_expression_guard = _vg(_mg(205), {
+	const _supertype_expression_guard = _vg(_mg(210), {
 		comparison: _kind_ComparisonOperator_guard,
 		not: _kind_NotOperator_guard,
 		boolean: _kind_BooleanOperator_guard,
@@ -1861,9 +1959,15 @@ export function guardsWith(test: KindTest): IsGuards {
 		printStatementPlain: _kind_PrintStatementPlain_guard,
 		parenthesizedImportList: _kind_ParenthesizedImportList_guard,
 		comprehensionClauses: _kind_ComprehensionClauses_guard,
-		integerHex: _kind_IntegerHex_guard,
-		integerOctal: _kind_IntegerOctal_guard,
-		integerBinary: _kind_IntegerBinary_guard,
+		integerHexLong: _kind_IntegerHexLong_guard,
+		integerHexPlain: _kind_IntegerHexPlain_guard,
+		integerOctalLong: _kind_IntegerOctalLong_guard,
+		integerOctalPlain: _kind_IntegerOctalPlain_guard,
+		integerBinaryLong: _kind_IntegerBinaryLong_guard,
+		integerBinaryPlain: _kind_IntegerBinaryPlain_guard,
+		integerLegacyOctalLong: _kind_IntegerLegacyOctalLong_guard,
+		integerLegacyOctalPlain: _kind_IntegerLegacyOctalPlain_guard,
+		integerDecimalLong: _kind_IntegerDecimalLong_guard,
 		floatPoint: _kind_FloatPoint_guard,
 		floatLeadingPoint: _kind_FloatLeadingPoint_guard,
 		floatScientific: _kind_FloatScientific_guard,
@@ -1904,7 +2008,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		formatExpression: _kind_FormatExpression_guard,
 		methodDeclaration: _kind_MethodDeclaration_guard,
 		kind: (v: { readonly $type: number }, k: number): boolean => typeof v !== 'number' && test(v, _kinds(k)),
-		statement: _mg(129),
+		statement: _mg(134),
 		simpleStatement: _supertype_simpleStatement_guard,
 		compoundStatement: _supertype_compoundStatement_guard,
 		withClause: _supertype_withClause_guard,
@@ -1920,6 +2024,10 @@ export function guardsWith(test: KindTest): IsGuards {
 		float: _supertype_float_guard,
 		lineContinuation: _supertype_lineContinuation_guard,
 		typeParam: _supertype_typeParam_guard,
+		integerHex: _supertype_integerHex_guard,
+		integerOctal: _supertype_integerOctal_guard,
+		integerBinary: _supertype_integerBinary_guard,
+		integerLegacyOctal: _supertype_integerLegacyOctal_guard,
 		integerDecimal: _supertype_integerDecimal_guard,
 		layout: _sg(_supertype_layout_ids),
 		importPrefix: _kind_ImportPrefix_guard,
