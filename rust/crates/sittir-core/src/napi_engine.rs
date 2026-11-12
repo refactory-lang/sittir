@@ -445,7 +445,7 @@ macro_rules! napi_engine {
         /// it, else the ones the tree's trivia placement assigns it. Refuses a
         /// tree that is not live, an index naming no node of it, and any
         /// other side.
-        #[::napi_derive::napi(ts_return_type = "object[]")]
+        #[::napi_derive::napi(ts_return_type = "import('@sittir/types').TriviaWireEntry[]")]
         pub fn trivia_side(
             env: ::napi::Env,
             tree_id: $crate::types::TreeId,

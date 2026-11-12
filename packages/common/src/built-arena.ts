@@ -1170,10 +1170,10 @@ export function readEntries(table: object, entries: readonly TriviaWireEntry[]):
 	return builtEntries(entries, table);
 }
 
-export function readOwnEntries(table: object, entries: readonly ReadOutput[], own: TreeToken): TriviaWireEntry[] {
+export function readOwnEntries(table: object, entries: readonly TriviaWireEntry<ReadOutput>[], own: TreeToken): TriviaWireEntry[] {
 	for (const entry of entries) {
 		if (isCoordinate(entry)) readCoordinate(table, entry, own);
-		else if (!isBuiltEntry(entry)) holdReadTree(entry, own);
+		else if (typeof entry === 'object' && !isBuiltEntry(entry)) holdReadTree(entry, own);
 	}
 	return builtEntries(entries, table);
 }
@@ -1189,7 +1189,7 @@ export function readUnits(table: object, units: readonly unknown[]): unknown[] {
 }
 
 export function readOwnUnits(table: object, units: readonly ReadOutput[], own: TreeToken): unknown[] {
-	return units.map((unit) => ({ ...unit, ...mapTriviaEntries(unit as TriviaSides<ReadOutput>, (entries) => readOwnEntries(table, entries, own)) }));
+	return units.map((unit) => ({ ...unit, ...mapTriviaEntries(unit as TriviaSides<TriviaWireEntry<ReadOutput>>, (entries) => readOwnEntries(table, entries, own)) }));
 }
 
 function heldTree(table: object, treeId: number, own: TreeToken | undefined): TreeToken | undefined {

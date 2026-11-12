@@ -1,5 +1,5 @@
 import { expectTypeOf } from 'vitest';
-import type { ByteSpan } from '../../packages/types/src/core-types.ts';
+import type { ByteSpan, TriviaWireEntry } from '../../packages/types/src/core-types.ts';
 import type { EngineDiagnostics } from '../../packages/types/src/engine-api.ts';
 import type { BackerParity, BaselineRun, LayoutWork, NativeEngineInstance, NativeEngineLike, NativeModuleLike, StoredLayout } from '../../packages/common/src/engine.ts';
 import type { ReadOutput } from '../../packages/common/src/node-data.ts';
@@ -12,12 +12,13 @@ import type * as TypeScript from '../../packages/typescript/native/index.js';
 
 type Declared = NativeModuleLike<object>;
 type Unbranded<R> = R extends readonly (infer E)[]
-	? Unbranded<E>[]
+	? UnbrandedItem<E>[]
 	: [R] extends [ReadOutput]
 		? object
 		: R extends { readonly side: TriviaSideName }
 			? { readonly [K in keyof R]: K extends 'side' ? string : R[K] }
 			: R;
+type UnbrandedItem<E> = E extends ReadOutput ? object : Unbranded<E>;
 type Admitting<F> = F extends (...args: infer A) => infer R ? (...args: A) => Unbranded<R> : F;
 type ReadonlyArg<T> = T extends (infer E)[] ? readonly E[] : T;
 type Accepting<F> = F extends (...args: infer A) => infer R ? (...args: { [I in keyof A]: ReadonlyArg<A[I]> }) => R : F;
@@ -37,7 +38,7 @@ type Sided<T> = { readonly [K in keyof T]: K extends 'side' ? TriviaSideName : T
 type Ret<F> = F extends (...args: never) => infer R ? R : never;
 type SpanOf<F> = F extends (treeId: never, span: infer S) => unknown ? S : never;
 type ProfileOf<C> = C extends abstract new (...args: never) => { readonly buildProfile: infer P } ? P : never;
-type Shaped = Record<'SittirEngine' | 'layoutWork' | 'layoutBaseline' | 'storedLayout' | 'backerParity' | 'treeMemory' | 'engineStamp' | 'builtWords' | 'builtBytes' | 'builtMemory' | 'text', unknown>;
+type Shaped = Record<'SittirEngine' | 'triviaSide' | 'layoutWork' | 'layoutBaseline' | 'storedLayout' | 'backerParity' | 'treeMemory' | 'engineStamp' | 'builtWords' | 'builtBytes' | 'builtMemory' | 'text', unknown>;
 type Shapes<M extends Shaped> = {
 	readonly layoutWork: Readonly<Ret<M['layoutWork']>>;
 	readonly baselineRun: Sided<Ret<M['layoutBaseline']> extends readonly (infer E)[] ? E : never>;
@@ -50,6 +51,7 @@ type Shapes<M extends Shaped> = {
 	readonly builtMemory: Ret<M['builtMemory']>;
 	readonly span: Readonly<SpanOf<M['text']>>;
 	readonly buildProfile: ProfileOf<M['SittirEngine']>;
+	readonly triviaEntry: Ret<M['triviaSide']> extends readonly (infer E)[] ? E : never;
 };
 type DeclaredShapes = {
 	readonly layoutWork: LayoutWork;
@@ -63,9 +65,11 @@ type DeclaredShapes = {
 	readonly builtMemory: ReturnType<NonNullable<NativeEngineLike['builtMemory']>>;
 	readonly span: ByteSpan;
 	readonly buildProfile: EngineDiagnostics['buildProfile'];
+	readonly triviaEntry: TriviaWireEntry;
 };
 
 expectTypeOf<Admits<(profile: 'release') => void, (profile: string) => void>>().toEqualTypeOf<false>();
+expectTypeOf<UnbrandedItem<ReturnType<Declared['triviaSide']>[number]>>().toEqualTypeOf<TriviaWireEntry>();
 
 expectTypeOf<Drift<typeof Python>>().toEqualTypeOf<NoDrift>();
 expectTypeOf<Drift<typeof Regex>>().toEqualTypeOf<NoDrift>();

@@ -172,7 +172,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	 *
 	 * @throws when the tree is not live, `index` is past its last node, or `side` is none of the three.
 	 */
-	triviaSide(treeId: number, index: number, side: TriviaSideName): ReadOutput[];
+	triviaSide(treeId: number, index: number, side: TriviaSideName): TriviaWireEntry<ReadOutput>[];
 	/**
 	 * Replaces `side` of the node at descendant `index` of tree `treeId` with `entries`.
 	 *

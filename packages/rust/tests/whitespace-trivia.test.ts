@@ -8,10 +8,10 @@ const rs = await createEngine(rust);
 const objects = await createEngine(rust, { nodeStorage: 'object' });
 const { Blankline: blankline, Newline: newline, Space: space } = rs.kinds;
 
-const statementsOf = (source: string, deep = false) => {
-	const item = rs.parse(source, { depth: deep ? Infinity : 1 }).statements()[0];
-	if (item === undefined || !rs.is.functionItem(item)) throw new Error('expected a function item');
-	return [...item.body().statements()].filter((statement) => rs.is.expressionStatement(statement));
+const statementsOf = (source: string, deep = false, engine = rs) => {
+	const item = engine.parse(source, { depth: deep ? Infinity : 1 }).statements()[0];
+	if (item === undefined || !engine.is.functionItem(item)) throw new Error('expected a function item');
+	return [...item.body().statements()].filter((statement) => engine.is.expressionStatement(statement));
 };
 
 describe('a read node carries the whitespace before it that differs from the read-time options as whitespace trivia', () => {
@@ -58,8 +58,11 @@ describe('a read node carries the whitespace before it that differs from the rea
 		expect(root.$with.statements(f, g).$render()).toBe(source);
 	});
 
-	it('keeps what was written over what was read', () => {
-		const [, b] = statementsOf('fn f() {\n    a;\n\n    b;\n}\n');
+	it.each([
+		['arena', rs],
+		['object', objects]
+	] as const)('keeps what was written over what was read, in %s storage', (_storage, engine) => {
+		const [, b] = statementsOf('fn f() {\n    a;\n\n    b;\n}\n', false, engine);
 		b!.$trivia.leading(newline);
 		expect(b!.$trivia.leading()).toEqual([newline]);
 		expect(b!.$trivia.trailing()).toEqual([]);

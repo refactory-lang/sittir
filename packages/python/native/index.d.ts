@@ -709,7 +709,7 @@ export declare function treeMemory(): { trees: number; counted: number; reported
  * tree that is not live, an index naming no node of it, and any
  * other side.
  */
-export declare function triviaSide(treeId: TreeId, index: NodeIndex, side: string): object[]
+export declare function triviaSide(treeId: TreeId, index: NodeIndex, side: string): import('@sittir/types').TriviaWireEntry[]
 
 /**
  * The sides of the unit children of the node at `index` of the

@@ -22,7 +22,7 @@
  */
 export type TriviaEntry = AnyUntypedNode | number;
 
-export type TriviaWireEntry = object | number;
+export type TriviaWireEntry<Node extends object = object> = Node | number;
 
 export interface NodeTrivia {
 	leading?: readonly TriviaEntry[];
