@@ -256,6 +256,7 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 **Files:**
 - Modify: `napi_engine.rs` and `engine.rs`. In arena storage, `parse` hydrates the whole tree in the same call, then drops the `tree_sitter::Tree`, the placement scratch and the read caches before it returns. Only the nodes and the source text remain.
 - Modify: `arena/built_image.rs`. The LINK record names a node, not a tree, and stays 8 words.
+- Modify: `napi_engine.rs`, the lent arena's second read (see Task 5's follow-up and the spec's Tree lifetime section). `render_built_with` hands the arena it holds to `entry_sources_holding`, so `ArenaSources::render_record_entry` doesn't take `store.built()` again. `TriviaStore::shares_built` is `pub(crate)`. No failing test first, on the maintainer's word.
 - Remove the branches Task 5 keeps for trees read part-way: `edited_record`'s coordinate branch and the baseline measured through the tree. Every arena tree is now read whole at parse.
 - Modify: `packages/common/src/{read,record-view,handle,engine,create-engine,built-arena}.ts`. An arena root holds no `Tree` object and no reference to a tree. The arena's `#trees` and its `holdTree` calls go.
 - Modify: `packages/tools/src/validate/layout-runs.ts` and `packages/tools/src/profile/native-hydration.ts`, which release their roots.
@@ -264,6 +265,7 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 **Interfaces:**
 - Consumes: Tasks 5, 5b and 5c. Arena parses leave the live-tree table here.
 - Produces: the census below, as the PR body's first table. Its placement of each field fixes the names later tasks use.
+- Produces: `sittir_core::napi_engine::entry_sources_holding(grammar, store, built, f) -> R`, arena only, internal pub, taking no tree (API row approved by the maintainer, 2026-11-12).
 
 - [ ] **Step 1: The census, before code.** List every field of `ParsedTree` (`engine.rs`) and `TreeArena` (`arena/rows.rs`). Place each in one bin: node data; source text; recomputed from those on demand (with its cost and its readers); or dropped inside the read call. A field that isn't per-tree moves to the engine (grammar, the built-arena `store`) or to the call (the work counters, per Task 10). Say what lazy trivia placement reads after the call. A field that fits none of these goes to brainstorm, which takes it to the maintainer, before any code is written.
 - [ ] **Step 2: Failing tests:**

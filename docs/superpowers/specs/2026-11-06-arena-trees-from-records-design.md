@@ -97,6 +97,7 @@ This replaces tree holders Task 4.
 - **Every field of today's `ParsedTree` and `TreeArena`** is node data, source text, recomputed from those on demand, or dropped inside the read call. A field that isn't per-tree at all belongs to the engine (its grammar, its built-arena store) or to the call (its work counters, per the lock-free spec). Lazy trivia placement after the call reads only nodes and source text.
 - **A coordinate or link names a node,** not a tree. The link record stays 8 words.
 - **A built node linking parsed nodes** renders the same after the parsed root is released as before.
+- **A render takes the built store's read once.** Today `render_built_with` holds that read for the whole render and `ArenaSources::render_record_entry` takes it again on the same thread, which deadlocks once a writer queues between the two (latent while one JS thread drives the engine). With the live-tree table gone, the render hands core the arena it already holds through `sittir_core::napi_engine::entry_sources_holding(grammar, store, built, f)`, an internal pub function that takes no tree (the maintainer, 2026-11-12: "Yes but it can't reference the tree"). The fix lands with the tree drop, in the same PR, and has no failing test first, since the code is napi-only and can't be tested where it sits (the maintainer, 2026-11-12: "Fold into Task 6's PR", "Port without a test").
 
 ## Order of work
 
