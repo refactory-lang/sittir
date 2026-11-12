@@ -28,6 +28,8 @@ Bookkeeping edits are docs commits to master: pathspec commits, pushed by litera
   2. it failed by timeout or a runner fault, not by an assertion or a wrong value;
   3. the PR's diff doesn't touch the test's file.
 
+  A finished job's log can be read while its run is still going: `gh api --allow-escape-sequences repos/refactory-lang/sittir/actions/jobs/<job id>/logs`. `gh run view --log` waits for the whole run. The `##[error] … never disposed` lines are the engine guard's own fixtures, and they appear on green jobs too.
+
   Post the proof as a PR comment (test name, both job links, the error line), then merge pinned. Use `--admin` only when branch protection refuses the red check. Report it to brainstorm. Anything short of all three is red, and it goes to the Owner line.
 - **Master's health:** master's CI, including push-only checks such as the glossary key ratchet. Report red to the owner of that check (docs for the glossary ratchet) and to brainstorm.
 
