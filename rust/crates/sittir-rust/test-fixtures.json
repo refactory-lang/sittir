@@ -155678,24 +155678,10 @@
                           }
                         },
                         {
-                          "$_layout": {
-                            "trivia": {
-                              "leading": [
-                                168
-                              ]
-                            }
-                          },
                           "$type": 189,
                           "_content": 2
                         },
                         {
-                          "$_layout": {
-                            "trivia": {
-                              "leading": [
-                                169
-                              ]
-                            }
-                          },
                           "$type": 406,
                           "_token_patterns": [
                             {
@@ -155776,24 +155762,10 @@
                               "_name": "x"
                             },
                             {
-                              "$_layout": {
-                                "trivia": {
-                                  "leading": [
-                                    169
-                                  ]
-                                }
-                              },
                               "$type": 189,
                               "_content": 8
                             },
                             {
-                              "$_layout": {
-                                "trivia": {
-                                  "leading": [
-                                    169
-                                  ]
-                                }
-                              },
                               "$type": 127,
                               "_name": "e"
                             }
@@ -156430,24 +156402,10 @@
                       }
                     },
                     {
-                      "$_layout": {
-                        "trivia": {
-                          "leading": [
-                            168
-                          ]
-                        }
-                      },
                       "$type": 189,
                       "_content": 2
                     },
                     {
-                      "$_layout": {
-                        "trivia": {
-                          "leading": [
-                            169
-                          ]
-                        }
-                      },
                       "$type": 406,
                       "_token_patterns": [
                         {
@@ -156528,24 +156486,10 @@
                           "_name": "x"
                         },
                         {
-                          "$_layout": {
-                            "trivia": {
-                              "leading": [
-                                169
-                              ]
-                            }
-                          },
                           "$type": 189,
                           "_content": 8
                         },
                         {
-                          "$_layout": {
-                            "trivia": {
-                              "leading": [
-                                169
-                              ]
-                            }
-                          },
                           "$type": 127,
                           "_name": "e"
                         }
@@ -157076,24 +157020,10 @@
                     }
                   },
                   {
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          168
-                        ]
-                      }
-                    },
                     "$type": 189,
                     "_content": 2
                   },
                   {
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          169
-                        ]
-                      }
-                    },
                     "$type": 406,
                     "_token_patterns": [
                       {
@@ -157174,24 +157104,10 @@
                         "_name": "x"
                       },
                       {
-                        "$_layout": {
-                          "trivia": {
-                            "leading": [
-                              169
-                            ]
-                          }
-                        },
                         "$type": 189,
                         "_content": 8
                       },
                       {
-                        "$_layout": {
-                          "trivia": {
-                            "leading": [
-                              169
-                            ]
-                          }
-                        },
                         "$type": 127,
                         "_name": "e"
                       }
@@ -157729,24 +157645,10 @@
                 }
               },
               {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      168
-                    ]
-                  }
-                },
                 "$type": 189,
                 "_content": 2
               },
               {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      169
-                    ]
-                  }
-                },
                 "$type": 406,
                 "_token_patterns": [
                   {
@@ -157827,24 +157729,10 @@
                     "_name": "x"
                   },
                   {
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          169
-                        ]
-                      }
-                    },
                     "$type": 189,
                     "_content": 8
                   },
                   {
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          169
-                        ]
-                      }
-                    },
                     "$type": 127,
                     "_name": "e"
                   }
@@ -158163,24 +158051,10 @@
               }
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    168
-                  ]
-                }
-              },
               "$type": 189,
               "_content": 2
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    169
-                  ]
-                }
-              },
               "$type": 406,
               "_token_patterns": [
                 {
@@ -159465,24 +159339,10 @@
                   "_name": "x"
                 },
                 {
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        169
-                      ]
-                    }
-                  },
                   "$type": 189,
                   "_content": 8
                 },
                 {
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        169
-                      ]
-                    }
-                  },
                   "$type": 127,
                   "_name": "e"
                 }
@@ -160072,24 +159932,10 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                168
-              ]
-            }
-          },
           "$type": 189,
           "_content": 2
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                169
-              ]
-            }
-          },
           "$type": 406,
           "_token_patterns": [
             {
@@ -160332,24 +160178,10 @@
               "_name": "x"
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    169
-                  ]
-                }
-              },
               "$type": 189,
               "_content": 8
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    169
-                  ]
-                }
-              },
               "$type": 127,
               "_name": "e"
             }
@@ -160392,24 +160224,10 @@
           "_name": "x"
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                169
-              ]
-            }
-          },
           "$type": 189,
           "_content": 8
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                169
-              ]
-            }
-          },
           "$type": 127,
           "_name": "e"
         }

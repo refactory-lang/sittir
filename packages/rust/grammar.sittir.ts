@@ -187,6 +187,8 @@ export default grammar(enrich(base), wire({
 		delim_token_tree_paren: { before: preference('tight') },
 		token_tree_paren: { before: preference('tight') },
 		token_binding_pattern: { '":"/after': preference('tight'), 'fragment:/before': preference('tight') },
+		token_repetition: { 'operator:/before': preference('tight') },
+		token_repetition_pattern: { 'operator:/before': preference('tight') },
 
 		block: { before: preference('space'), 'statements:/end': preference('newline') },
 		match_block: { before: preference('space') },
@@ -234,9 +236,7 @@ export default grammar(enrich(base), wire({
 			'last_match_arm/attributes:/separator': 'gap/separator',
 			'match_arm/attributes:/separator': 'gap/separator',
 			'match_block_arms/arms:/separator': 'gap/separator',
-			'shorthand_field_initializer/attributes:/separator': 'gap/separator',
-			'token_repetition/tokens:/separator': 'gap/separator',
-			'token_repetition_pattern/token_patterns:/separator': 'gap/separator'
+			'shorthand_field_initializer/attributes:/separator': 'gap/separator'
 		}
 	},
 
