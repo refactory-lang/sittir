@@ -315,7 +315,8 @@ macro_rules! napi_engine {
             /// binary build-native didn't build.
             #[::napi_derive::napi(getter, ts_return_type = "import('@sittir/types').EngineDiagnostics['buildProfile']")]
             pub fn build_profile(&self) -> ::napi::bindgen_prelude::Either<&'static str, ::napi::bindgen_prelude::Undefined> {
-                match option_env!("SITTIR_BUILD_PROFILE") {
+                const PROFILE: Option<&str> = $crate::boundary::build_profile(option_env!("SITTIR_BUILD_PROFILE"));
+                match PROFILE {
                     Some(profile) => ::napi::bindgen_prelude::Either::A(profile),
                     None => ::napi::bindgen_prelude::Either::B(()),
                 }
