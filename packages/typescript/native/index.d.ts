@@ -165,7 +165,7 @@ export declare function builtBytes(engine: object, length: number): { chunk: num
  * r" `item`, or `null` when no write did. Refuses holder 0 and
  * r" any other side.
  */
-export declare function builtLeafSide(engine: object, holder: number, word: number, item: number, side: string): import('@sittir/types').TriviaWireEntry[] | null
+export declare function builtLeafSide(engine: object, holder: number, word: number, item: number, side: string): import('@sittir/types').WireNode[] | null
 
 /**
  * r" The bytes the built arena's chunks take, and of them the
@@ -178,7 +178,7 @@ export declare function builtMemory(engine: object): { chunks: number; counts: n
  * r" `inner`) of the built record at `address`, or `null` when
  * r" no write did. Refuses address 0 and any other side.
  */
-export declare function builtTriviaSide(engine: object, address: number, side: string): import('@sittir/types').TriviaWireEntry[] | null
+export declare function builtTriviaSide(engine: object, address: number, side: string): import('@sittir/types').WireNode[] | null
 
 /**
  * r" The sides writes gave each unit the record at `address` in
@@ -186,7 +186,7 @@ export declare function builtTriviaSide(engine: object, address: number, side: s
  * r" trailing?, inner? }`. Refuses an arena this engine no
  * r" longer holds and an address naming no record in it.
  */
-export declare function builtUnitSides(engine: object, address: number): object[]
+export declare function builtUnitSides(engine: object, address: number): import('@sittir/types').UnitSidesWire[]
 
 /**
  * r" A new chunk of `length` words of the built arena this
@@ -441,7 +441,7 @@ export declare function planHolds(addresses: string, plan: string): Array<boolea
  * and a node the model has no route for, naming the kind, the
  * child and the index.
  */
-export declare function read(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): object
+export declare function read(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): import('@sittir/types').WireNode
 
 /**
  * r" The address of the record the parsed cell at `word`, item
@@ -473,7 +473,7 @@ export declare function readLeaf(treeId: TreeId, index: NodeIndex): Array<number
  * r" `Uint32Array`. Refuses as `read` does at the first index it
  * r" refuses, and any other wire.
  */
-export declare function readMany(treeId: TreeId, indexes: Array<NodeIndex>, depth: number | undefined | null, wire: string): Array<object> | Uint32Array
+export declare function readMany(treeId: TreeId, indexes: Array<NodeIndex>, depth: number | undefined | null, wire: string): import('@sittir/types').WireNode[] | Uint32Array
 
 /**
  * r" The record wire: a node's record named by its tree and its
@@ -651,7 +651,7 @@ export declare const SIDE_WORDS_SPAN: number
  * after?, separator? }`, by its slot's wire key. Refuses as
  * `triviaSide` does.
  */
-export declare function slotLayouts(treeId: TreeId, index: NodeIndex): object[]
+export declare function slotLayouts(treeId: TreeId, index: NodeIndex): import('@sittir/types').SlotLayoutWire[]
 
 /**
  * The separator the list at `index` of the live tree `treeId`
@@ -672,7 +672,7 @@ export declare function slotSeparator(treeId: TreeId, index: NodeIndex): import(
  * `read` does, and a `holderByte` after the first byte the snapshot
  * measures.
  */
-export declare function snapshot(treeId: TreeId, index: NodeIndex, holderByte?: number | undefined | null): object
+export declare function snapshot(treeId: TreeId, index: NodeIndex, holderByte?: number | undefined | null): import('@sittir/types').WireNode
 
 /**
  * How much of its layout the live tree `treeId` stores apart from
@@ -709,7 +709,7 @@ export declare function treeMemory(): { trees: number; counted: number; reported
  * tree that is not live, an index naming no node of it, and any
  * other side.
  */
-export declare function triviaSide(treeId: TreeId, index: NodeIndex, side: string): import('@sittir/types').TriviaWireEntry[]
+export declare function triviaSide(treeId: TreeId, index: NodeIndex, side: string): import('@sittir/types').WireNode[]
 
 /**
  * The sides of the unit children of the node at `index` of the
@@ -717,7 +717,7 @@ export declare function triviaSide(treeId: TreeId, index: NodeIndex, side: strin
  * `{ slot, item, leading?, trailing?, inner? }`, by its slot's wire
  * key and its item in that slot. Refuses as `triviaSide` does.
  */
-export declare function unitSides(treeId: TreeId, index: NodeIndex): object[]
+export declare function unitSides(treeId: TreeId, index: NodeIndex): import('@sittir/types').UnitSidesWire[]
 
 /**
  * r" Replace `side` of the built leaf at each site `sites` names,
@@ -727,7 +727,7 @@ export declare function unitSides(treeId: TreeId, index: NodeIndex): object[]
  * r" length is not a multiple of three, holder 0 and any other
  * r" side, before writing any site.
  */
-export declare function writeBuiltLeafSide(engine: object, sites: number[], side: string, entries: import('@sittir/types').TriviaWireEntry[]): void
+export declare function writeBuiltLeafSide(engine: object, sites: number[], side: string, entries: import('@sittir/types').WireNode[]): void
 
 /**
  * r" Replace `side` of the built record at `address` with
@@ -735,7 +735,7 @@ export declare function writeBuiltLeafSide(engine: object, sites: number[], side
  * r" among them renders as `writeTriviaSide` says. Refuses as
  * r" `builtTriviaSide` does.
  */
-export declare function writeBuiltTriviaSide(engine: object, address: number, side: string, entries: import('@sittir/types').TriviaWireEntry[]): void
+export declare function writeBuiltTriviaSide(engine: object, address: number, side: string, entries: import('@sittir/types').WireNode[]): void
 
 /**
  * r" The units the record at `address` in the arena this engine
@@ -746,7 +746,7 @@ export declare function writeBuiltTriviaSide(engine: object, address: number, si
  * r" Refuses as `builtUnitSides` does, and a slot the record's
  * r" kind has no cell for.
  */
-export declare function writeBuiltUnitSides(engine: object, address: number, units: object[]): void
+export declare function writeBuiltUnitSides(engine: object, address: number, units: import('@sittir/types').UnitSidesWire[]): void
 
 /**
  * `text`, which a render interceptor produced in JavaScript,
@@ -761,4 +761,4 @@ export declare function writeText(path: string, text: string, create: boolean): 
  * is a record of this engine's built arena, and renders from it
  * wherever the side renders. Refuses as `triviaSide` does.
  */
-export declare function writeTriviaSide(treeId: number, index: number, side: string, entries: import('@sittir/types').TriviaWireEntry[]): void
+export declare function writeTriviaSide(treeId: number, index: number, side: string, entries: import('@sittir/types').WireNode[]): void

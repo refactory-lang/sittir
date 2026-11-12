@@ -1,6 +1,6 @@
 import type { BuiltArena } from './built-arena.ts';
 import type { CellFormat, RecordCell } from './record-cell.ts';
-import type { ByteSpan, ErrorRegion, NodeCoordinate, TriviaWireEntry } from '@sittir/types';
+import type { ByteSpan, ErrorRegion, NodeCoordinate, SlotLayoutWire, UnitSidesWire, WireNode } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
 import type { TreeToken } from './tree-token.ts';
 
@@ -23,15 +23,15 @@ export interface TreeHandle {
 	/** A snapshot of the node at descendant `index`, measured from the byte `holderByte`, or from where it or its leading side begins (`snapshotOf`). */
 	snapshot?(index: number, holderByte?: number): unknown;
 	/** The entries of `side` of the node at descendant `index`: the ones a write gave it, else the ones the tree's trivia table assigns it. */
-	triviaSide?(index: number, side: TriviaSideName): TriviaWireEntry[] | undefined;
+	triviaSide?(index: number, side: TriviaSideName): WireNode[] | undefined;
 	/** Replaces `side` of the node at descendant `index` with `entries`. */
-	writeTriviaSide?(index: number, side: TriviaSideName, entries: readonly TriviaWireEntry[]): void;
+	writeTriviaSide?(index: number, side: TriviaSideName, entries: readonly WireNode[]): void;
 	/** The sides of the unit children of the node at descendant `index`, by slot and item (`NodeLayout.units`). */
-	unitSides?(index: number): unknown[];
+	unitSides?(index: number): UnitSidesWire[];
 	/** Replaces every side of the unit children of the node at descendant `index` with `units`, by slot and item (`NodeLayout.units`). */
-	writeUnitSides?(index: number, units: readonly object[]): void;
+	writeUnitSides?(index: number, units: readonly UnitSidesWire[]): void;
 	/** The stored layout of each list slot of the node at descendant `index` that stores any (`NodeLayout.slots`). */
-	slotLayouts?(index: number): unknown[];
+	slotLayouts?(index: number): SlotLayoutWire[];
 	/** The separator the list at descendant `index` writes between its items: its slot's stored one, else the read-time options'. */
 	slotSeparator?(index: number): number | undefined;
 	/** The separator before the node at descendant `index` as a list item, where it is not its slot's (`NodeLayout.separator`). */

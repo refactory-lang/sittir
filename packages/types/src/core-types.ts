@@ -22,7 +22,16 @@
  */
 export type TriviaEntry = AnyUntypedNode | number;
 
-export type TriviaWireEntry<Node extends object = object> = Node | number;
+export type WireNode<Node extends object = object> = Node | number;
+
+export type UnitSidesWire<Node extends object = object> = { readonly slot: string; readonly item: number } & { readonly [Side in keyof NodeTrivia]?: readonly WireNode<Node>[] };
+
+export interface SlotLayoutWire {
+	readonly slot: string;
+	readonly before?: number;
+	readonly after?: number;
+	readonly separator?: number;
+}
 
 export interface NodeTrivia {
 	leading?: readonly TriviaEntry[];
