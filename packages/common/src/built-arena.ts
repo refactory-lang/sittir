@@ -1,7 +1,7 @@
 import type { CommitScope, EngineIdentity, NodeCoordinate, NodeTrivia } from '@sittir/types';
 import { bindTree, engineOf, isLive, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered, type Role } from './identity.ts';
-import { type ChangedEdges, coordinateOf, holdReadCoordinate, holdReadTree, isRead, type KindView, listEdges, type ReadOutput, setTriviaOf, triviaOf } from './node-data.ts';
+import { type ChangedEdges, coordinateOf, holdReadCoordinate, holdReadTree, isRead, type KindView, listEdges, type ReadOutput, triviaOf } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
@@ -168,6 +168,10 @@ class Chunks<A extends WritableWords | Uint8Array> {
 	has(chunk: number): boolean {
 		const data = this.chunks[chunk];
 		return data !== undefined && data.length !== 0;
+	}
+
+	current(chunk: number, data: unknown): boolean {
+		return this.chunks[chunk] === data && this.has(chunk);
 	}
 
 	released(chunk: number): boolean {
@@ -569,7 +573,7 @@ export class BuiltArena {
 		for (let n = mark.minted; n < this.#mintedCount; n++) {
 			const at = this.#minted[n]!;
 			const words = this.#mintedWords[n]!;
-			if (this.#words.chunks[chunkOf(at, this.format)] !== words) continue;
+			if (!this.#words.current(chunkOf(at, this.format), words)) continue;
 			if (mark.kept.has(at) || this.#kept(at)) {
 				keptAt.push(at);
 				keptWords.push(words);
@@ -706,13 +710,6 @@ export class BuiltArena {
 		this.#park(leaf, next);
 		if (this.#commits.length > 0) this.#parked.push(leaf);
 		this.#unpark(parked);
-		if (this.#scopes > 0) {
-			this.#undos[this.#undosCount++] = () => {
-				this.#unpark(next);
-				if (parked !== undefined) this.#park(leaf, parked);
-				setTriviaOf(leaf, own);
-			};
-		}
 		return next;
 	}
 
@@ -896,8 +893,7 @@ export class BuiltArena {
 	}
 
 	#live(entry: BuiltText): boolean {
-		const data = this.#bytes.chunks[chunkOf(entry.at, this.format)];
-		return data === entry.data && data !== undefined && data.length !== 0;
+		return this.#bytes.current(chunkOf(entry.at, this.format), entry.data);
 	}
 
 	/** The leaf entry at `at`: its kind, its text's length in bytes, and the entry. */
