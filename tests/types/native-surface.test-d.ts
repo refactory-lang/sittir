@@ -5,6 +5,11 @@ import type { BackerParity, BaselineRun, LayoutWork, NativeEngineInstance, Nativ
 import type { ReadOutput } from '../../packages/common/src/node-data.ts';
 import type { ChunkWords, TriviaSideName } from '../../packages/common/src/read.ts';
 import type { TriviaSides } from '../../packages/common/src/trivia.ts';
+import type { TSKindId as PythonKindId } from '../../packages/python/src/kinds.ts';
+import type { TSKindId as RegexKindId } from '../../packages/regex/src/kinds.ts';
+import type { TSKindId as RustKindId } from '../../packages/rust/src/kinds.ts';
+import type { TSKindId as ScmKindId } from '../../packages/scm/src/kinds.ts';
+import type { TSKindId as TypeScriptKindId } from '../../packages/typescript/src/kinds.ts';
 import type * as Python from '../../packages/python/native/index.js';
 import type * as Regex from '../../packages/regex/native/index.js';
 import type * as Rust from '../../packages/rust/native/index.js';
@@ -13,10 +18,13 @@ import type * as TypeScript from '../../packages/typescript/native/index.js';
 
 type Declared = NativeModuleLike<object>;
 type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
-type Wire<R> = R extends readonly (infer E)[]
-	? readonly Wire<E>[]
-	: R extends number
-		? number
+type KindIdAsNumber<R, Kind> = [Kind] extends [Extract<R, Kind>] ? Exclude<R, Kind> | number : R;
+type KindIdsAsNumbers<R> = KindIdAsNumber<KindIdAsNumber<KindIdAsNumber<KindIdAsNumber<KindIdAsNumber<R, PythonKindId>, RegexKindId>, RustKindId>, ScmKindId>, TypeScriptKindId>;
+type Wire<R> = WireOf<KindIdsAsNumbers<R>>;
+type WireOf<R> = R extends readonly [unknown, ...unknown[]]
+	? { -readonly [I in keyof R]: Wire<R[I]> }
+	: R extends readonly (infer E)[]
+		? readonly Wire<E>[]
 		: [R] extends [ReadOutput]
 			? object
 			: Equal<R, ChunkWords> extends true
@@ -26,7 +34,7 @@ type Wire<R> = R extends readonly (infer E)[]
 					: object extends R
 						? R
 						: R extends object
-							? { -readonly [K in keyof R]: K extends 'side' ? (R[K] extends TriviaSideName ? string : Wire<R[K]>) : Wire<R[K]> }
+							? { -readonly [K in keyof R]: K extends 'side' ? (Equal<R[K], TriviaSideName> extends true ? string : Wire<R[K]>) : Wire<R[K]> }
 							: R;
 type Same<A, B> = Equal<Wire<A>, Wire<B>>;
 type Taking<F> = F extends (...args: infer A) => unknown ? (...args: A) => unknown : F;
@@ -112,6 +120,9 @@ type WireTypes = {
 };
 type Misdeclared = { [K in keyof WireTypes]-?: Same<Ret<Declared[K]>, WireTypes[K]> extends true ? never : K }[keyof WireTypes];
 type ObjectOnlyUnit<Node extends object> = Omit<UnitSidesWire<Node>, keyof NodeTrivia> & TriviaSides<Node>;
+type GeneratedRun = ItemOf<Ret<typeof Rust.layoutBaseline>>;
+type LeadingOnly<Run> = Omit<Run, 'side'> & { readonly side: 'leading' };
+type NoBreaks<Run> = Omit<Run, 'breaks'> & { readonly breaks?: 0 };
 
 expectTypeOf<Admits<(profile: 'release') => void, (profile: string) => void>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => UnitSidesWire[], () => UnitSidesWire<ReadOutput>[]>>().toEqualTypeOf<true>();
@@ -120,6 +131,16 @@ expectTypeOf<ReturnsExactly<() => ObjectOnlyUnit<object>[], () => UnitSidesWire[
 expectTypeOf<ReturnsExactly<() => UnitSidesWire[], () => ObjectOnlyUnit<ReadOutput>[]>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => { slot: string; item: number }[], () => UnitSidesWire[]>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => { slot: string }[], () => SlotLayoutWire[]>>().toEqualTypeOf<false>();
+expectTypeOf<ReturnsExactly<() => GeneratedRun[], () => BaselineRun[]>>().toEqualTypeOf<true>();
+expectTypeOf<ReturnsExactly<() => LeadingOnly<GeneratedRun>[], () => BaselineRun[]>>().toEqualTypeOf<false>();
+expectTypeOf<ReturnsExactly<() => GeneratedRun[], () => LeadingOnly<BaselineRun>[]>>().toEqualTypeOf<false>();
+expectTypeOf<ReturnsExactly<() => NoBreaks<GeneratedRun>[], () => BaselineRun[]>>().toEqualTypeOf<false>();
+expectTypeOf<ReturnsExactly<() => GeneratedRun[], () => NoBreaks<BaselineRun>[]>>().toEqualTypeOf<false>();
+expectTypeOf<ReturnsExactly<() => RustKindId | null, () => number | null>>().toEqualTypeOf<true>();
+expectTypeOf<ReturnsExactly<() => RustKindId.Semi | null, () => number | null>>().toEqualTypeOf<false>();
+expectTypeOf<ReturnsExactly<() => RustKindId | null, () => 0 | null>>().toEqualTypeOf<false>();
+expectTypeOf<ReturnsExactly<() => [number, object][], () => readonly (readonly [number, object])[]>>().toEqualTypeOf<true>();
+expectTypeOf<ReturnsExactly<() => [number, object][], () => readonly (readonly [object, number])[]>>().toEqualTypeOf<false>();
 
 expectTypeOf<Misdeclared>().toEqualTypeOf<never>();
 expectTypeOf<Renders<Ret<Declared['read']>, NonNullable<Declared['render']>, NonNullable<Declared['renderToFile']>>>().toEqualTypeOf<true>();
