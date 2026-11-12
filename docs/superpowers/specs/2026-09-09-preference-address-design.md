@@ -556,3 +556,12 @@ literals. A render therefore has one line ending.
 
 Inferring a tree's own line ending belongs to the layout-inference design,
 which supplies the option's value.
+
+**Amended by the maintainer, 2026-11-09:** "Drop '\r' where it breaks", then "Drop it
+on regex too". A grammar admits a line ending only if every token that runs
+to the end of a line ends at it, and its own parser reads the arm as a line
+break. The admitted arms are stamped once at link, and `LineEnding`, the
+newline arms and the line ends read that stamp. All five grammars admit
+`'\n' | '\r\n'`, and `newline: '\r'` is refused. The reason: tree-sitter
+lexes `.` as `[^\n]`, so a comment that runs to the end of a line swallows a
+lone `\r`, and the next rendered line would parse into the comment.

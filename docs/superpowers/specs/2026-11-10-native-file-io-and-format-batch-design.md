@@ -26,6 +26,8 @@ Status: approved by the maintainer (2026-11-10). Plan: `docs/superpowers/plans/2
   - `engine.applyStyle(...paths)` formats files in place, and `engine.checkStyle(...paths)` reports which would change.
   - Format options are just the render options, so the batch renders with the engine's own and takes no options of its own.
   - The thread count is a `createEngine` option, `threads`.
+- **`write` and `create` admit what `render` admits** (2026-11-12): `write(path, root: Renderable<root kind>)` and `create(path, fn: (build) => Renderable<root kind>)`, the same admission `render`, builder slots and `$with` setters use, so an edited root is accepted. This replaces the earlier `API['root'] | API['rootBound']` pick, which refused an edited root, and `LanguageAPI.rootBound` is removed.
+- **"Remove the build hook only"** (2026-11-12). The build interceptor hook goes. The `parse`, `render` and `file` hooks stay.
 
 Earlier rulings this design keeps:
 - optimizations may be arena-only;
@@ -177,3 +179,4 @@ What it guarantees:
 7. `parse` returns an object, query plans go by handle, and a guard lists every remaining crossing.
 8. `Project` is out of scope.
 9. `SourcePath<G>` and `isSourcePath` are built here, with the batch, as the `styleFrom` design has them. `styleFrom` itself stays parked.
+10. With the build hook gone, master's two entry refusals stay: `engine.scope()`, and `render(fn)` or `create` while a build runs, each with a test whose input is a getter. There's no replay guard. The JSDoc says an input accessor that changes engine state during a build is unsupported.
