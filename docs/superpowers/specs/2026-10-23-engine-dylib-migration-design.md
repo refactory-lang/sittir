@@ -36,7 +36,7 @@ The list reaches each linker in its own form: an `exported_symbols_list` (macOS)
 
 The addon's generated typings and common's declared surface state the same type for every member, and a test checks each return exactly, naming its deliberate exceptions (the maintainer, 2026-11-12, "Approve all"). The wire types live in `@sittir/types` and are internal to the boundary:
 
-- `WireNode<Node extends object = object> = Node | number`: a node as it crosses, its data or a bare kind id for a fixed token. Trivia entries, `read`, `snapshot` and `readMany` (`WireNode[] | Uint32Array`) use it.
+- `WireNode<Node extends object = object> = Node | number`: a node as it crosses, its data or a bare kind id for a fixed token. Trivia entries, `read` and `readMany` (`WireNode[] | Uint32Array`) use it. `snapshotLayouts` returns `[row, layout]` pairs, not nodes.
 - `UnitSidesWire<Node>`: `{ slot, item }` and the sides, with `WireNode` entries, for `unitSides`, `builtUnitSides`, `writeUnitSides` and `writeBuiltUnitSides`.
 - `SlotLayoutWire`: `{ slot, before?, after?, separator? }`, each a kind id, for `slotLayouts`.
 
