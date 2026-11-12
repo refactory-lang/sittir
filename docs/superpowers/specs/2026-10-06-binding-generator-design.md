@@ -57,9 +57,9 @@ These go into the grammar package's types module, beside `ParsedByKindId` and `B
 There is one factory per read entry, meaning a grammar kind and one vocabulary kind it can be. It returns that kind's entry in `VocabViews`, an object literal whose one public data member is `$type`:
 
 ```ts
-const FunctionItemAsDeclarationFunction = (n: T.FunctionItem.Parsed, set = 0): VocabViews['declaration.function'] => ({
+const FunctionItemAsDeclarationFunction = (n: T.FunctionItem.Parsed, set: readonly string[] = []): VocabViews['declaration.function'] => ({
 	$type: n.$type,
-	[flags]: () => set | (n.functionModifiers()?.modifiers().includes(TSKindId.AsyncKeyword) ? Flags.Async : 0) | …,
+	[flags]: () => [...set, ...(n.functionModifiers()?.modifiers().includes(TSKindId.AsyncKeyword) ? ['async'] : []), …],
 	name: () => read(n.name()),
 	parameters: () => read(n.parameters()),
 	…
@@ -69,7 +69,7 @@ const FunctionItemAsDeclarationFunction = (n: T.FunctionItem.Parsed, set = 0): V
 - **Members** come from the route resolution (§3.2). Every non-layout slot of the claimed kind is captured: a member or a fact is named by its capture, and a slot that is neither is `@dropped`; the inventory fails on a slot that is none of them (bindings spec §2.1). A deep member through one arm of a slot takes that arm, and the slot keeps its others.
 - **Every interface member has a closure,** inherited members included, read from the vocabulary itself. A member with no route returns `undefined`, so a required member with no route is a compile error.
 - **Closures by member type:** a nested member reads along its route; a slot member returns the reader's result read as a portable value.
-- **Flags** are one bitflag behind a module-private symbol, which only `is` reads: each flag tests its token, or the kind in its slot, along its route, and `set` carries the facts the envelope that made the node decides (§2.3).
+- **Flags** are a set of names behind a module-private symbol, which only `is` reads: each flag tests its token, or the kind in its slot, along its route, and `set` carries the flags the envelope that made the node decides (§2.3).
 - **The return type is the conformance check.** A member the portable node form rejects, and a member the interface does not declare, are compile errors in the generated module; an object literal's excess properties are refused.
 - **A refinement** (a claim with field literals beside the grammar kind's plain claim) reads like its parent. The literal it fixes is its kind, and no member returns it.
 - **Leaf text:** a leaf whose text varies carries a `$value` closure; a fixed-literal leaf is its const string, with no `$value`.
@@ -80,7 +80,7 @@ const FunctionItemAsDeclarationFunction = (n: T.FunctionItem.Parsed, set = 0): V
 
 The portable engine's `parse` enters at the root, and its `attach` accepts a low-level node whose kind is in `Backward`. Behind both, the member closures share one internal dispatch that takes any value:
 
-- **A node,** by its `$type`. A grammar kind with several entries tests them most specific first: predicate claims, then claims with more field literals. A literal is tested by comparing the slot's stored token with the literal's kind id. A predicate claim (`#eq?`, `#match?`) is tested on the text of the node its capture names, read along that capture's route (python's constructor claim compares `@name`, not the function, with `"__init__"`), and a template fills its holes from the regex's named groups. A container unwraps to its elements with its element slot's reader, and an absent optional list reads as `[]`. An envelope that unwraps its element passes the facts its own captures decide to the element's factory, one level down, into the element's bitflag (python's `decorated_definition`, from its decorator's text); nothing queries a node's ancestors.
+- **A node,** by its `$type`. A grammar kind with several entries tests them most specific first: predicate claims, then claims with more field literals. A literal is tested by comparing the slot's stored token with the literal's kind id. A predicate claim (`#eq?`, `#match?`) is tested on the text of the node its capture names, read along that capture's route (python's constructor claim compares `@name`, not the function, with `"__init__"`), and a template fills its holes from the regex's named groups. A container unwraps to its elements with its element slot's reader, and an absent optional list reads as `[]`. An envelope that unwraps its element passes the facts its own captures decide to the element's factory, one level down, into the element's flags (python's `decorated_definition`, from its decorator's text); nothing queries a node's ancestors.
 - **A token kind id,** as the vocabulary's const string for it. Where a slot admits a claimed enum, the slot decides that the id is that enum's value, since the two readings are one number: `bool` as a `primitive_type` value and `bool` as a slot's terminal share a kind id.
 - **`undefined`,** as `undefined`.
 
@@ -122,7 +122,7 @@ The input is runtime data (a structure can arrive as JSON), so the build side ca
 - **High→low:** a parsed portable node is re-wrapped as its low-level node from the same row; a built one is rebuilt through the build entries.
 - **A node of the engine's own surface:** a node bound to this engine is returned as is; one bound to another engine of the same surface is re-wrapped from its row when parsed, or rebuilt when built, exactly as a crossing is. No identity is promised either way.
 
-`is.<role path>(x)` decides from `$type`, the node's own predicates and its flags. The read entries under the path, a grammar kind set plus slot constraints (`operator: "+="`), text predicates and kind tests, compile into the query facet's plan form, one derivation and no separate kind table, and the path's flags into a mask tested against the node's bitflag. A kind test is the plan's `is` op, which holds where a slot holds a node of one of its kinds, and a step toward a captured child may take the slot's `first` or `last` value. The plan tests only the node and its captured children, so no query runs over the tree. A guard tests each fact its path names, not the path as a prefix (bindings spec §3.3): it sits under every path that names its facts, so `is.declaration.method.public` passes a public getter, and a flag's guard passes alongside the node's refinement.
+`is.<role path>(x)` decides from `$type`, the node's own predicates and its flags. The read entries under the path, a grammar kind set plus slot constraints (`operator: "+="`), text predicates and kind tests, compile into the query facet's plan form, one derivation and no separate kind table, and each of the path's flags into a plan of its own, tested on the node. A kind test is the plan's `is` op, which holds where a slot holds a node of one of its kinds, and a step toward a captured child may take the slot's `first` or `last` value. The plan tests only the node and its captured children, so no query runs over the tree. A guard tests each fact its path names, not the path as a prefix (bindings spec §3.3): it sits under every path that names its facts, so `is.declaration.method.public` passes a public getter, and a flag's guard passes alongside the node's refinement.
 
 ## 3. From claims to routes
 
@@ -131,7 +131,7 @@ The input is runtime data (a structure can arrive as JSON), so the build side ca
 Whether a fact is a refinement or a flag is the vocabulary's declaration, made by its authors and informed by the grammars: the vocabulary declares each axis, with its values as kinds, and each flag (bindings spec §3.3, §3.4). The bindings map grammar sites onto those facts and name each by its path, whatever its form (bindings spec §2.1). The generator joins the two:
 
 - **Each name resolves against the declarations.** A claimed path resolves segment by segment: the namespace path to a kind, then each further segment to a value of one of the kind's axes or to one of its flags. A single-segment capture resolves to a member, to a flag, or to an axis whose value the captured node's claim gives.
-- **It emits by the declared form.** An axis value is a refinement kind: an entry in `VocabViews`, a read entry, a builder and a guard. A flag is a bit: its route, read into the node's bitflag, a step on each builder of its kind, and a guard under each path of its kind. A member is a closure and a build parameter.
+- **It emits by the declared form.** An axis value is a refinement kind: an entry in `VocabViews`, a read entry, a builder and a guard. A flag is a name: its route, read into the node's flags, a step on each builder of its kind, and a guard under each path of its kind. A member is a closure and a build parameter.
 - **It never infers a fact's form from the grammar.** A choice, a keyword or a slot's arity decides nothing: `accessor_kind: "get"` is a refinement because the vocabulary declares the accessor kind an axis, and `"async"` sets a flag because the vocabulary declares `async` one.
 - **A claim that maps onto no declared fact is reported,** with the inventory's other diagnostics, and gets no entry.
 - **The spelling outlives a reclassification.** A flag's guard and step are spelled as a refinement's are (bindings spec §3.3). When the vocabulary moves a fact from one form to the other, the bindings and the generated guards and steps keep their names, and only the types change.
