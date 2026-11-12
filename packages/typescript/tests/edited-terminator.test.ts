@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { sharedEngine } from '@sittir/common/testing';
 import type { TreeHandle } from '@sittir/common/utils';
 import typescript from '../src/index.ts';
 
 const engines = {
-	arena: await createEngine(typescript, { nodeStorage: 'arena' }),
-	object: await createEngine(typescript, { nodeStorage: 'object' })
+	arena: await sharedEngine(() => createEngine(typescript, { nodeStorage: 'arena' })),
+	object: await sharedEngine(() => createEngine(typescript, { nodeStorage: 'object' }))
 };
 
 const editedRender = (engine: (typeof engines)['arena'], source: string, text: string): string => {
