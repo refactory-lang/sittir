@@ -19,7 +19,7 @@ Bookkeeping edits are docs commits to master: pathspec commits, pushed by litera
 
 - **Every open PR, each pass:** required checks, review threads (Copilot's included) and conflicts.
   - **Red:** tell the Owner line's session, naming the failing test and its first error, not just the job.
-  - **Green with no open threads:** tell brainstorm `#N green on <sha>`.
+  - **Green with no open threads:** tell brainstorm `#N green on <sha>`, only once Copilot has reviewed the PR. A PR Copilot never reviewed has no threads because nobody read it. Tell its owner to request the review instead.
 - **Merging,** on the maintainer's word only, given directly or relayed by brainstorm:
   - pin the head (`gh pr merge N --merge --match-head-commit <sha>`), no `--delete-branch`, and keep the remote branch;
   - re-verify first: head unchanged, MERGEABLE, required checks green, 0 open threads, and the task status line (section 1).
@@ -38,6 +38,7 @@ Bookkeeping edits are docs commits to master: pathspec commits, pushed by litera
 - Fast-forward the main checkout to `origin/master`, only if it's clean.
 - Tell the owners of open branches that overlap the merged files to merge master. Don't nudge during a gate.
 - **Worktree teardown:** the owner removes its own tree. Maint verifies, then runs `git worktree prune` and `infigraph worktree clean`, first as a preview and then with `--apply`, only for trees confirmed finished and with no live process (`lsof +D`). Never touch another peer's tree without its word.
+- `infigraph worktree clean` takes no tree argument, and it lists a clean tree checked out at a commit another ref contains as finished, which is also how a peer's base measurement looks. Run `--apply` only when the dry run lists nothing but trees whose owners said yes.
 
 ## 4. Resources and peer health
 
