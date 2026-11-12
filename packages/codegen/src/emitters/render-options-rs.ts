@@ -727,7 +727,8 @@ export function renderOptionsRs(
 	plan: RenderOptionsPlan,
 	addresses: AddressTables,
 	kindEntries: readonly IdEntry[],
-	boundaries: readonly KindBoundary[] = []
+	boundaries: readonly KindBoundary[] = [],
+	tokenSeams: ReadonlyMap<number, string> = new Map()
 ): string {
 	const L: string[] = [];
 	const siteIndex = siteIndexOf(plan);
@@ -814,6 +815,8 @@ export function renderOptionsRs(
 	L.push(...denseCells('SEAT_WRAPPERS', 'SeatPath', new Map(plan.seatWrappers.map((row) => [row.id, row.field === undefined ? 'SeatPath::Content' : `SeatPath::Field(${idLiteral('FieldId', row.field)})`]))));
 	L.push("/// Per kind id of a list, the site its items' separator reads.");
 	L.push(...denseTable('SEPARATOR_SITES', 'SiteId', separatorSitesOf(plan)));
+	L.push('/// Per kind id of a token whose render writes no text, the seam it writes in its place.');
+	L.push(...denseCells('TOKEN_SEAMS', '::sittir_core::layout_kinds::LayoutKinds', tokenSeams));
 	L.push('#[must_use]');
 	L.push('pub fn defaults() -> ResolvedOptions {');
 	L.push('    ResolvedOptions {');
@@ -824,6 +827,7 @@ export function renderOptionsRs(
 	L.push('        kind_flags: KIND_FLAGS,');
 	L.push('        seat_wrappers: SEAT_WRAPPERS,');
 	L.push('        separator_sites: SEPARATOR_SITES,');
+	L.push('        token_seams: TOKEN_SEAMS,');
 	L.push('        sites: SITE_SPECS,');
 	L.push(`        newline: ${rustStringLiteral(plan.newline)}.to_string(),`);
 	if (plan.indent !== '') L.push(`        indent: ${rustStringLiteral(plan.indent)}.to_string(),`);
