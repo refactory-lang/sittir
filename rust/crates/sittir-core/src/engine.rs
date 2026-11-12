@@ -738,6 +738,56 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.arena.get().is_some()
     }
 
+    /// Probe only: drops the tree's parts one at a time, answering each
+    /// part's drop time: rows, arena, records, slots and items, placement
+    /// (trivia, depth members, lines), the tree-sitter tree, the rest.
+    #[cfg(feature = "arena")]
+    pub fn probe_drop_split(mut self) -> [std::time::Duration; 7] {
+        use std::time::{Duration, Instant};
+        thread_local! {
+            static SPARE: std::cell::RefCell<Option<tree_sitter::Tree>> = const { std::cell::RefCell::new(None) };
+        }
+        let grammar = self.grammar;
+        let spare = SPARE.with(|spare| {
+            let mut spare = spare.borrow_mut();
+            if spare.is_none() {
+                let mut parser = tree_sitter::Parser::new();
+                if grammar.configure_parser(&mut parser).is_ok() {
+                    *spare = parser.parse("", None);
+                }
+            }
+            spare.clone()
+        });
+        let mut out = [Duration::ZERO; 7];
+        let at = Instant::now();
+        drop(self.rows.take());
+        out[0] = at.elapsed();
+        let at = Instant::now();
+        drop(self.arena.take());
+        out[1] = at.elapsed();
+        let at = Instant::now();
+        drop(std::mem::take(owned(&mut self.records)));
+        out[2] = at.elapsed();
+        let at = Instant::now();
+        drop(std::mem::take(owned(&mut self.slots)));
+        drop(std::mem::take(owned(&mut self.items)));
+        out[3] = at.elapsed();
+        let at = Instant::now();
+        drop(std::mem::take(&mut self.trivia));
+        drop(self.depth_members.take());
+        drop(self.lines.take());
+        out[4] = at.elapsed();
+        if let Some(spare) = spare {
+            let at = Instant::now();
+            drop(std::mem::replace(&mut self.tree, spare));
+            out[5] = at.elapsed();
+        }
+        let at = Instant::now();
+        drop(self);
+        out[6] = at.elapsed();
+        out
+    }
+
     /// Drops the tree's written sides, releasing the built records those
     /// held (`TriviaStore::release_rows`), and answers whether one did.
     /// Dropping the tree releases them too; once released, a release finds

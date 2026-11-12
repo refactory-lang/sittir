@@ -161,14 +161,19 @@ macro_rules! napi_engine {
         /// arena's chunks, and answers the store its sides wrote to; an id
         /// that names no live tree is a no-op.
         fn drop_live_tree(env: &::napi::Env, tree_id: $crate::types::TreeId) -> Option<$crate::trivia_store::TriviaStore<<$grammar as $crate::engine::EngineGrammar>::Trivia>> {
+            let whole = std::time::Instant::now();
             if let Some(mut buffers) = TREE_BUFFERS.with(|buffers| buffers.borrow_mut().remove(&tree_id)) {
+                let at = std::time::Instant::now();
                 if let Ok(change) = buffers.detach(env) {
                     TREES_REPORTED.with(|total| total.set(total.get() + change));
                 }
+                drop(buffers);
+                $crate::napi_engine::drop_split_add($crate::napi_engine::DROP_DETACH, at.elapsed());
             }
             let tree = LIVE_TREES.with(|trees| trees.borrow_mut().remove(&tree_id))?;
             let store = tree.store().clone();
             let _ = $crate::napi_engine::dispose(env, tree);
+            $crate::napi_engine::drop_split_add($crate::napi_engine::DROP_LIVE_TREE, whole.elapsed());
             Some(store)
         }
 
@@ -1257,12 +1262,14 @@ macro_rules! napi_engine {
             /// disposed.
             #[::napi_derive::napi]
             pub fn release_built(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, address: f64, held: u32, owned: bool) -> ::napi::Result<Vec<u32>> {
+                let whole = std::time::Instant::now();
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                 let held = $crate::arena::count::Held::of(held, address).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 let released = engine.written().release(held, owned).map_err(|e| ::napi::Error::from_reason(e.to_string()));
                 let freed = settled(&env, engine.written())?;
                 released?;
+                $crate::napi_engine::drop_split_add($crate::napi_engine::DROP_RELEASE_BUILT, whole.elapsed());
                 Ok(freed)
             }
 
@@ -1282,9 +1289,23 @@ macro_rules! napi_engine {
             /// as its slot then its tree id.
             #[::napi_derive::napi]
             pub fn release_parse(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, slot: $crate::types::ParseSlot, tree_id: $crate::types::TreeId) -> ::napi::Result<Vec<u32>> {
+                let whole = std::time::Instant::now();
                 let engine = engine_of(engine)?;
+                let at = std::time::Instant::now();
                 engine.written().built_mut().release_root(slot, tree_id);
-                Ok(drop_freed_parses(&env, engine.written()))
+                $crate::napi_engine::drop_split_add($crate::napi_engine::DROP_RELEASE_ROOT, at.elapsed());
+                let freed = drop_freed_parses(&env, engine.written());
+                $crate::napi_engine::drop_split_add($crate::napi_engine::DROP_RELEASE_PARSE, whole.elapsed());
+                Ok(freed)
+            }
+
+            /// Probe only: this thread's drop split since the last call, in
+            /// ms, zeroed: detach, sides, rows, arena, records, slots and
+            /// items, placement, tree-sitter tree, rest, settle, release
+            /// root, release parse, drop live tree, trees, release built.
+            #[::napi_derive::napi]
+            pub fn drop_split() -> Vec<f64> {
+                $crate::napi_engine::take_drop_split()
             }
 
             /// The bytes the built arena's chunks take, and of them the
@@ -2077,12 +2098,53 @@ pub fn holds_parse<T>(_store: &crate::trivia_store::TriviaStore<T>, _tree_id: cr
 /// What `settle` refuses.
 #[cfg(feature = "arena")]
 pub fn dispose<G: crate::engine::EngineGrammar>(env: &napi::Env, mut tree: crate::engine::ParsedTree<G>) -> napi::Result<()> {
-    if !(tree.release_sides() || tree.made_arena()) {
+    let at = std::time::Instant::now();
+    let released = tree.release_sides();
+    drop_split_add(DROP_SIDES, at.elapsed());
+    let made = tree.made_arena();
+    let store = tree.store().clone();
+    for (part, took) in tree.probe_drop_split().into_iter().enumerate() {
+        drop_split_add(DROP_ROWS + part, took);
+    }
+    drop_split_count(DROP_TREES);
+    if !(released || made) {
         return Ok(());
     }
-    let store = tree.store().clone();
-    drop(tree);
-    settle(env, &store)
+    let at = std::time::Instant::now();
+    let settled = settle(env, &store);
+    drop_split_add(DROP_SETTLE, at.elapsed());
+    settled
+}
+
+pub const DROP_DETACH: usize = 0;
+pub const DROP_SIDES: usize = 1;
+pub const DROP_ROWS: usize = 2;
+pub const DROP_SETTLE: usize = 9;
+pub const DROP_RELEASE_ROOT: usize = 10;
+pub const DROP_RELEASE_PARSE: usize = 11;
+pub const DROP_LIVE_TREE: usize = 12;
+pub const DROP_TREES: usize = 13;
+pub const DROP_RELEASE_BUILT: usize = 14;
+const DROP_PARTS: usize = 15;
+
+thread_local! {
+    static DROP_SPLIT: std::cell::RefCell<[f64; DROP_PARTS]> = const { std::cell::RefCell::new([0.0; DROP_PARTS]) };
+}
+
+/// Probe only: adds `took` to part `at` of this thread's drop split, in ms.
+pub fn drop_split_add(at: usize, took: std::time::Duration) {
+    DROP_SPLIT.with(|split| split.borrow_mut()[at] += took.as_secs_f64() * 1000.0);
+}
+
+/// Probe only: counts one more at part `at` of this thread's drop split.
+pub fn drop_split_count(at: usize) {
+    DROP_SPLIT.with(|split| split.borrow_mut()[at] += 1.0);
+}
+
+/// Probe only: this thread's drop split since the last take, zeroed.
+#[must_use]
+pub fn take_drop_split() -> Vec<f64> {
+    DROP_SPLIT.with(|split| std::mem::take(&mut *split.borrow_mut()).to_vec())
 }
 
 /// Drops `tree`: without the arena no chunk is freed.
