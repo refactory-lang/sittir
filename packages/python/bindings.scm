@@ -235,6 +235,7 @@
 (keyword_pattern value: (_) @pattern) @pattern.struct.field
 (wildcard_pattern) @pattern.wildcard
 (complex_pattern) @pattern.complex
+(complex_pattern sign: _ @sign)
 (complex_pattern operator: "+") @pattern.complex.add
 (complex_pattern operator: "-") @pattern.complex.subtract
 (case_tuple_pattern) @pattern.tuple
@@ -280,9 +281,14 @@
 (integer_decimal_plain) @literal.number.integer
 (integer_decimal_long) @literal.number.integer.big
 (integer_decimal_imaginary) @literal.number.integer.imaginary
-(integer_hex) @literal.number.integer.hex
-(integer_binary) @literal.number.integer.binary
-(integer_octal) @literal.number.integer.octal
+(integer_hex_plain) @literal.number.integer.hex
+(integer_binary_plain) @literal.number.integer.binary
+(integer_octal_plain) @literal.number.integer.octal
+(integer_legacy_octal_plain) @literal.number.integer.octal
+(integer_hex_long) @literal.number.integer.big.hex
+(integer_binary_long) @literal.number.integer.big.binary
+(integer_octal_long) @literal.number.integer.big.octal
+(integer_legacy_octal_long) @literal.number.integer.big.octal
 (float_point) @literal.number.float
 (float_leading_point) @literal.number.float.leading_point
 (float_scientific) @literal.number.float.scientific

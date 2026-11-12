@@ -10,8 +10,8 @@ use sittir_core::{NodeCoordinate, SlotValue};
 
 struct Sources(HashMap<sittir_core::types::TreeId, Arc<str>>);
 impl SourceTable for Sources {
-    fn source_of(&self, tree_id: sittir_core::types::TreeId) -> Option<&Arc<str>> {
-        self.0.get(&tree_id)
+    fn source_of(&self, tree_id: sittir_core::types::TreeId) -> Option<&str> {
+        self.0.get(&tree_id).map(|source| &**source)
     }
 }
 
@@ -550,6 +550,30 @@ fn the_roots_edges_are_written_at_both_ends_of_its_render() {
         w.edge(KindId(3), Side::After, None);
     });
     assert_eq!(not_root, "a", "a node rendered on its own carries no edge whitespace");
+}
+
+#[test]
+fn a_node_of_the_root_kind_inside_another_meets_its_neighbours_as_any_node() {
+    let group = |nested: bool| {
+        root_render(ROOT_FLAGS, |w| {
+            w.open_frame(None);
+            w.text("(").unwrap();
+            w.seam(LayoutKinds::NEWLINE);
+            if nested {
+                w.open_frame(None);
+            }
+            w.edge(KindId(3), Side::Before, None);
+            w.text("b").unwrap();
+            w.edge(KindId(3), Side::After, None);
+            if nested {
+                w.close_frame();
+            }
+            w.text(")").unwrap();
+            w.close_frame();
+        })
+    };
+    assert_eq!(group(true), "(\nb\n)");
+    assert_eq!(group(false), "(b\n)");
 }
 
 #[test]

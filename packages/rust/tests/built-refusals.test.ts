@@ -49,26 +49,13 @@ describe('a build refused while its record is drafted, in arena storage', () => 
 		expect(live()).toBe(start);
 	});
 
-	it('gives a leaf its caller holds back the sides it parked when the build that placed it is refused after its view', async () => {
-		let refuse = false;
-		const rs = await createEngine(rust, {
-			nodeStorage: 'arena',
-			intercept: [
-				{
-					build(_call, next) {
-						const built = next();
-						if (refuse) throw new Error('refused after the view');
-						return built;
-					}
-				}
-			]
-		});
-		const live = (): number => rs.diagnostics.builtMemory!()!.live;
+	it('gives a leaf its caller holds back the sides it parked when the loose child that placed it goes with a refused build', async () => {
+		const { rs, other, live } = await enginesOf();
 		const leaf = rs.build.identifier('a').$trivia.leading(rs.build.blockComment(' c '));
+		const statement = { $type: TSKindId.ExpressionStatement, content: { $type: TSKindId.ExpressionStatementWithSemi, expression: leaf } } as const;
 		const before = live();
-		refuse = true;
-		expect(() => rs.build.expressionStatement.withSemi(leaf)).toThrow('refused after the view');
-		refuse = false;
+		const shebang = other.build.shebang('#!/bin/sh');
+		expect(() => rs.build.sourceFile({ shebang, statements: [statement] } as never)).toThrow(/its own engine built/);
 		expect(live()).toBe(before);
 		expect(rs.render(rs.build.expressionStatement.withSemi(leaf)).toString()).toBe('/* c */ a;');
 	});

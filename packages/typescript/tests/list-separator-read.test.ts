@@ -19,6 +19,14 @@ describe('a read list answers the separator its source used', () => {
 		expect(membersOf('type T = { a: string; b: number; c: boolean, d: string };').separator()).toBe(ts.kinds.Semi);
 	});
 
+	it('answers the separator a gap spells across a comment in it', () => {
+		const automatic = membersOf('type T = {\n  a: number\n  b: string\n}\n').separator();
+		expect(automatic).not.toBe(ts.kinds.Comma);
+		expect(automatic).not.toBe(ts.kinds.Semi);
+		expect(membersOf('type T = {\n  a: number, // note\n  b: string\n}\n').separator()).toBe(ts.kinds.Comma);
+		expect(membersOf('type T = {\n  a: number // note\n  b: string\n}\n').separator()).toBe(automatic);
+	});
+
 	it('answers the separator the engine renders for a list with no gap to measure', () => {
 		expect(membersOf('type T = { a: string };').separator()).toBe(ts.kinds.Semi);
 	});

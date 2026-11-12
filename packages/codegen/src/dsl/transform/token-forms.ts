@@ -1,4 +1,4 @@
-import { isChoiceType, isSeqType, isTokenWrapperType, type RuntimeRule } from '../../types/runtime-shapes.ts';
+import { isChoiceType, isRepeatType, isSeqType, isTokenWrapperType, type RuntimeRule } from '../../types/runtime-shapes.ts';
 import { isBlank, matchesEmpty, optionalContentOf, peelPrecs } from '../rule-patterns.ts';
 
 export type TokenChoiceClass = 'presence' | 'spelling' | 'forms';
@@ -28,34 +28,44 @@ function flattenFormArms(arms: readonly RuntimeRule[]): RuntimeRule[] {
 	);
 }
 
-type Site = { readonly path: readonly number[]; readonly arms: readonly RuntimeRule[] };
+type Site = { readonly path: readonly number[]; readonly class: TokenChoiceClass; readonly arms: readonly RuntimeRule[] };
 
-type Fielded = readonly (readonly number[])[];
+export type SitePaths = readonly (readonly number[])[];
 
-const isFieldedAt = (fielded: Fielded, path: readonly number[]): boolean =>
+export interface AuthoredSitePaths {
+	readonly fielded: SitePaths;
+	readonly variants: SitePaths;
+}
+
+const NO_SITES: AuthoredSitePaths = { fielded: [], variants: [] };
+
+const isFieldedAt = (fielded: SitePaths, path: readonly number[]): boolean =>
 	fielded.some((site) => site.length === path.length && site.every((index, i) => index === path[i]));
 
-function findOutermostForms(rule: RuntimeRule, path: readonly number[], fielded: Fielded): Site | undefined {
+function outermostChoices(rule: RuntimeRule, path: readonly number[], fielded: SitePaths): Site[] {
 	const t = typeOf(rule);
-	if (t === 'FIELD' || (isChoiceType(t) && isFieldedAt(fielded, path))) return undefined;
+	if (t === 'FIELD' || isRepeatType(t)) return [];
 	const optional = optionalContentOf(rule);
+	if ((optional !== undefined || isChoiceType(t)) && isFieldedAt(fielded, path)) return [];
 	if (optional !== undefined) {
 		const forms = isChoiceType(typeOf(optional)) && classifyTokenChoice(optional) === 'forms';
-		return forms ? { path, arms: [...flattenFormArms(membersOf(optional)), BLANK] } : undefined;
+		return [{ path, class: forms ? 'forms' : 'presence', arms: [...(forms ? flattenFormArms(membersOf(optional)) : [optional]), BLANK] }];
 	}
-	if (isChoiceType(t)) {
-		return classifyTokenChoice(rule) === 'forms' ? { path, arms: flattenFormArms(membersOf(rule)) } : undefined;
-	}
-	if (isSeqType(t)) {
-		const members = membersOf(rule);
-		for (let i = 0; i < members.length; i++) {
-			const found = findOutermostForms(members[i]!, [...path, i], fielded);
-			if (found) return found;
-		}
-		return undefined;
-	}
-	if (contentOf(rule) !== undefined) return findOutermostForms(contentOf(rule), [...path, 0], fielded);
-	return undefined;
+	if (isChoiceType(t)) return [{ path, class: classifyTokenChoice(rule), arms: flattenFormArms(membersOf(rule)) }];
+	if (isSeqType(t)) return membersOf(rule).flatMap((member, i) => outermostChoices(member, [...path, i], fielded));
+	if (contentOf(rule) !== undefined) return outermostChoices(contentOf(rule), [...path, 0], fielded);
+	return [];
+}
+
+function presenceSite(choices: readonly Site[], kind: string): Site {
+	const presence = choices.filter((choice) => choice.class === 'presence');
+	const [only, ...others] = presence;
+	if (only !== undefined && others.length === 0) return only;
+	const found =
+		presence.length === 0
+			? 'no unfielded presence choice'
+			: `${presence.length} unfielded presence choices, at ${presence.map((choice) => choice.path.join('/') || '(body)').join(', ')} in its token body`;
+	throw new Error(`token forms: authored variants name the arms of '${kind}', which has no form alternation to split and ${found}`);
 }
 
 function replaceAt(rule: RuntimeRule, path: readonly number[], arm: RuntimeRule): RuntimeRule {
@@ -116,14 +126,16 @@ export function factorSharedOptional(rule: RuntimeRule): RuntimeRule {
 export const canonicalRuleText = (rule: RuntimeRule): string =>
 	JSON.stringify(rule, (key, value: unknown) => (key === 'id' || key === 'metadata' ? undefined : value));
 
-const underWrapper = (fielded: Fielded): Fielded => fielded.flatMap((site) => (site[0] === 0 ? [site.slice(1)] : []));
+const underWrapper = (fielded: SitePaths): SitePaths => fielded.flatMap((site) => (site[0] === 0 ? [site.slice(1)] : []));
 
-export function distributeTokenForms(rule: RuntimeRule, kind: string, fielded: Fielded = []): RuntimeRule {
+export function distributeTokenForms(rule: RuntimeRule, kind: string, sites: AuthoredSitePaths = NO_SITES): RuntimeRule {
 	const { precs: precStack, core } = peelPrecs(rule);
-	const sites = precStack.reduce(underWrapper, fielded);
 	if (!isTokenWrapper(core)) return rule;
+	const armed = sites.variants.some((site) => site.length === 1);
+	const fielded = armed ? [] : underWrapper(precStack.reduce(underWrapper, sites.fielded));
 	const body = contentOf(core);
-	const site = findOutermostForms(body, [], underWrapper(sites));
+	const choices = outermostChoices(body, [], fielded);
+	const site = choices.find((choice) => choice.class === 'forms') ?? (armed ? presenceSite(choices, kind) : undefined);
 	if (site === undefined) return rule;
 	const arms = site.arms.map((arm) => (isBlank(arm) ? dropAt(body, site.path) : replaceAt(body, site.path, arm)));
 	const empty = arms.findIndex(matchesEmpty);

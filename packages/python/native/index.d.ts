@@ -528,6 +528,18 @@ export declare function releaseBuilt(engine: object, address: number, held: numb
 export declare function render(engine: object, node: import('@sittir/types').WireNode, treeId?: number | undefined | null, options?: object | undefined | null): string
 
 /**
+ * The node at `index` of the live tree `treeId` rendered as `render`
+ * renders the node a read of it gives: a render root whose
+ * `leading` and `trailing` edges have no neighbour, under `options`
+ * over the tree's layer over the engine's; `templates` renders it
+ * and each node under it that has a record from its template, each
+ * leaf and unit as its source (`render::ThroughTemplates`). Refuses a
+ * tree that is not live, an index naming no node of it, and a node
+ * whose read or render refuses.
+ */
+export declare function renderAt(engine: object, treeId: number, index: number, leading: boolean, trailing: boolean, options?: object | undefined | null, templates?: boolean | undefined | null): string
+
+/**
  * r" The built record at `address` of the built arena `owner`
  * r" holds (`holdBuiltArena`) rendered as a render root whose
  * r" `leading` and `trailing` edges have no neighbour, under
@@ -575,11 +587,14 @@ export declare function renderBuiltToFile(engine: object, owner: object, address
  * r" whose `leading` and `trailing` edges have no neighbour, as
  * r" the node crossing as its coordinate marks them, under
  * r" `options` over the tree's layer over the engine's, each
- * r" trivia entry's built record from its store's arena. Refuses
- * r" a tree that is not live, an address naming no record of its
- * r" arena, and a record whose render refuses.
+ * r" trivia entry's built record from its store's arena;
+ * r" `templates` renders it and every parsed node under it that
+ * r" has a record from its template, each leaf and unit as its
+ * r" source (`render::ThroughTemplates`). Refuses a tree that is
+ * r" not live, an address naming no record of its arena, and a
+ * r" record whose read or render refuses.
  */
-export declare function renderRecord(engine: object, treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
+export declare function renderRecord(engine: object, treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null, templates?: boolean | undefined | null): string
 
 /**
  * r" `render_record`'s text written to `path` (`save_rendered`),
@@ -663,16 +678,16 @@ export declare function slotLayouts(treeId: TreeId, index: NodeIndex): import('@
 export declare function slotSeparator(treeId: TreeId, index: NodeIndex): import('../src/types.ts').TSKindId | null
 
 /**
- * A snapshot of the node at `index` of the live tree `treeId`: the
- * node read at every depth into plain data with no tree, each
- * node with its span (`$_layout.span`) from the native node that
- * holds it and each placed extra with its text, the node itself
- * measured from the byte `holderByte`, or, when absent, from where
- * it or its leading side begins, whichever is first. Refuses as
- * `read` does, and a `holderByte` after the first byte the snapshot
- * measures.
+ * A snapshot's layout of the node at `index` of the live tree
+ * `treeId` and of each node under it that a read gives a layout, as
+ * `[row, layout]` pairs in preorder (`ParsedTree::snapshot_layouts`):
+ * each with its span (`span`) from the native node that holds it and
+ * each placed extra and `ERROR` as its text, the node itself measured
+ * from the byte `holderByte`, or, when absent, from where it or its
+ * leading side begins, whichever is first. Refuses as `read` does,
+ * and a `holderByte` after the first byte the snapshot measures.
  */
-export declare function snapshot(treeId: TreeId, index: NodeIndex, holderByte?: number | undefined | null): import('@sittir/types').WireNode
+export declare function snapshotLayouts(treeId: TreeId, index: NodeIndex, holderByte?: number | undefined | null): [number, object][]
 
 /**
  * How much of its layout the live tree `treeId` stores apart from

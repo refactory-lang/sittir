@@ -415,6 +415,10 @@ impl<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a> BodyLayout<'a> for Optio
     }
 }
 
+/// A snapshot's layouts (`ParsedTree::snapshot_layouts`): each node's row and
+/// its layout, in preorder, crossing as `[row, layout]` pairs.
+pub type SnapshotLayouts<T> = Vec<(crate::types::NodeIndex, Box<NodeLayout<T>>)>;
+
 impl<T> Default for NodeLayout<T> {
     fn default() -> Self {
         Self {
@@ -990,8 +994,8 @@ mod tests {
     fn a_coordinate_renders_between_its_sides_as_a_node_does() {
         struct Sources(std::sync::Arc<str>);
         impl crate::render::SourceTable for Sources {
-            fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&std::sync::Arc<str>> {
-                (tree_id == crate::types::TreeId(1)).then_some(&self.0)
+            fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
+                (tree_id == crate::types::TreeId(1)).then_some(&*self.0)
             }
             fn sides(&self, _: &crate::slot::NodeCoordinate, _: crate::render::Lent<'_>) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
                 Some(Box::new(NodeTrivia { leading: Some(leading(&["// top"])), trailing: Some(trailing(&["// bottom"], false)), inner: None }))

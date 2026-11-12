@@ -32,6 +32,14 @@ A Rust dylib exports its Rust symbols and none of the C libraries it links, but 
 
 The list reaches each linker in its own form: an `exported_symbols_list` (macOS), a version script (Linux), and `/EXPORT` lines with `DATA` for the slots (MSVC). The engine defines the runtime and no addon does; a grammar's addon imports only what its scanner reads.
 
+### What crosses is typed as what it is
+
+The addon's generated typings and common's declared surface state the same type for every member, and a test checks each return exactly, naming its deliberate exceptions (the maintainer, 2026-11-12, "Approve all"). The wire types live in `@sittir/types` and are internal to the boundary:
+
+- `WireNode<Node extends object = object> = Node | number`: a node as it crosses, its data or a bare kind id for a fixed token. Trivia entries, `read` and `readMany` (`WireNode[] | Uint32Array`) use it. `snapshotLayouts` returns `[row, layout]` pairs, not nodes.
+- `UnitSidesWire<Node>`: `{ slot, item }` and the sides, with `WireNode` entries, for `unitSides`, `builtUnitSides`, `writeUnitSides` and `writeBuiltUnitSides`.
+- `SlotLayoutWire`: `{ slot, before?, after?, separator? }`, each a kind id, for `slotLayouts`.
+
 ## Build
 
 - **`-C prefer-dynamic` for the engine and every addon.** It is the switch between the shapes: `sittir-engine` is `crate-type = ["dylib", "rlib"]`, so without the flag everything links statically. The flag comes from a tracked `[target.*] rustflags` entry or the build's environment. A build script cannot set it.
@@ -55,6 +63,7 @@ The grammar packages are one `fixed` Changesets group, so a release that bumps o
 - Each addon compares `BUILT` with `LOADED` in its `#[napi(module_exports)]` hook, before any call into the engine, so `require` fails with one message naming both stamps and the path the loaded engine came from. Only once they differ does the hook call the engine, for that message. A call may be bound lazily, and a lazily bound call into an engine that lacks it crashes the process instead of failing the load.
 - The stamp is not a hash of source bytes. That hash differed between a Unix checkout and a Windows one with CRLF line endings.
 - A release stamp carries the commit. A dev build stamps `<version>@local`, so two dev builds under different profiles carry the same stamp and the check cannot tell them apart. A dev workspace relies on regen's freshness check of each binary's profile and inputs instead.
+- **A binary reports the profile it was built with** (the maintainer, 2026-11-12: "The built profile name"). build-native passes the profile it builds into the build, and `engine.diagnostics.buildProfile` reads it back. It reports `'release'`, `'gate'` or `'dev'`, or `undefined` for a binary build-native didn't build. Its value never comes from the debug-assertions flag, which a gate build shares with release. Any other name fails the build: `sittir_core::boundary::build_profile`, a public `const fn` the generated napi macro calls, panics on it in a `const` (the maintainer, 2026-11-12, "Approve both"). The validators refuse `'dev'` and unstamped binaries unless `SITTIR_ALLOW_DEBUG_VALIDATE=1` is set.
 - A newer engine version changes every mangled symbol, `LOADED` among them, so the OS loader fails the addon at load, with "symbol not found" or its platform's equivalent. The JavaScript loader maps that failure to the same mismatch message, reading the addon's stamp from its bytes.
 - A build reads the stamps of the `.node` and the engine copy it ships, stripped and signed, and fails by name unless they match each other and the workspace's engine version. Cargo gives every build of the engine one file name, so after a version change it can keep a build of the other version that it judges fresh.
 

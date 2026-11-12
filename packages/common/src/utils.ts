@@ -69,10 +69,14 @@ export function handleOf(node: Positioned): EngineHandle | undefined {
 	return treeEngineHandle(node.$tree);
 }
 
-export function handleQuery(node: Positioned, row: object): object {
-	const handle = handleOf(node);
+export function handleQuery(this: Positioned): object {
+	const handle = handleOf(this);
 	if (handle === undefined) throw new Error(NO_ENGINE);
-	return queryOf(handle, row);
+	return queryOf(handle, this);
+}
+
+export function handleSnapshot(this: Positioned): unknown {
+	return snapshotOf(this);
 }
 
 export function handleRender(this: Positioned): string {

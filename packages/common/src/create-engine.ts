@@ -114,45 +114,34 @@ function refuseWrite(): never {
 	throw new Error('the build table of an engine is read-only');
 }
 
-type BuildCall = Parameters<NonNullable<Interceptor<LanguageAPI>['build']>>[0];
-
 function attempting<T>(handle: EngineHandle, run: () => T): T {
 	return handle.builtArena === undefined ? run() : handle.builtArena.attempt(run);
 }
 
-function scopedBuild<B, Node>(
-	build: B,
-	handle: EngineHandle,
-	intercept: ((call: BuildCall, next: () => Node) => Node) | undefined
-): B {
-	const proxies = new WeakMap<object, Map<string, unknown>>();
-	const scope = (value: unknown, path: readonly string[]): unknown => {
+function scopedBuild<B>(build: B, handle: EngineHandle): B {
+	const proxies = new WeakMap<object, unknown>();
+	const scope = (value: unknown): unknown => {
 		if (value === null || (typeof value !== 'function' && typeof value !== 'object')) return value;
-		const key = intercept === undefined ? '' : JSON.stringify(path);
-		const paths = proxies.get(value) ?? new Map<string, unknown>();
-		const known = paths.get(key);
+		const known = proxies.get(value);
 		if (known !== undefined) return known;
 		const shell = typeof value === 'function' ? () => undefined : {};
 		const proxy = new Proxy(shell, {
 			get: (_, key, receiver) => {
 				const member: unknown = Reflect.get(value, key, receiver);
-				return Object.hasOwn(value, key) ? scope(member, [...path, String(key)]) : member;
+				return Object.hasOwn(value, key) ? scope(member) : member;
 			},
 			has: (_, key) => Reflect.has(value, key),
 			ownKeys: () => Reflect.ownKeys(value),
 			getOwnPropertyDescriptor: (_, key) => {
 				const descriptor = Reflect.getOwnPropertyDescriptor(value, key);
 				if (descriptor === undefined) return undefined;
-				return 'value' in descriptor
-					? { ...descriptor, value: scope(descriptor.value, [...path, String(key)]), configurable: true }
-					: { ...descriptor, configurable: true };
+				return 'value' in descriptor ? { ...descriptor, value: scope(descriptor.value), configurable: true } : { ...descriptor, configurable: true };
 			},
 			getPrototypeOf: () => Reflect.getPrototypeOf(value),
 			apply: (_, self, args) =>
 				inEngine(handle, () => {
 					if (typeof value !== 'function') throw new TypeError('builder is not callable');
-					const run = (): Node => Reflect.apply(value, self, args);
-					const built = (): Node => handle.settle(intercept === undefined ? run() : intercept({ path, args }, run));
+					const built = (): unknown => handle.settle(Reflect.apply(value, self, args));
 					return handle.builtArena === undefined ? built() : handle.builtArena.scope(built);
 				}),
 			set: refuseWrite,
@@ -161,11 +150,10 @@ function scopedBuild<B, Node>(
 			setPrototypeOf: refuseWrite,
 			preventExtensions: refuseWrite
 		});
-		paths.set(key, proxy);
-		proxies.set(value, paths);
+		proxies.set(value, proxy);
 		return proxy;
 	};
-	return scope(build, []) as B;
+	return scope(build) as B;
 }
 
 function releasing(rendered: Rendered, release: () => void, writeText: TextWriter): Rendered {
@@ -268,11 +256,10 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		admit: admitterOf(options?.verifyStructure, hooks.structure)
 	};
 	const interceptors = options?.intercept ?? [];
-	const buildChain = interceptorChain(interceptors.map((hook) => hook.build?.bind(hook)));
 	const parseChain = interceptorChain(interceptors.map((hook) => hook.parse?.bind(hook)));
 	const renderChain = interceptorChain(interceptors.map((hook) => hook.render?.bind(hook)));
 	const fileHooks = interceptors.flatMap((hook) => (hook.file === undefined ? [] : [hook.file.bind(hook)]));
-	const build = scopedBuild(table, handle, buildChain) as BuildSurface<API, M>;
+	const build = scopedBuild(table, handle) as BuildSurface<API, M>;
 	const materializeNative = (target: Parameters<typeof native.render>[0], rendered: Rendered): string => {
 		if (!metricsEnabled) return rendered.toString();
 		const kind =
@@ -363,6 +350,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		diagnostics: {
 			buildProfile: native.buildProfile,
 			builtMemory: native.builtMemory,
+			renderTemplates: (node) => native.renderTemplates(node),
 			parseTree: parseAndBind,
 			parseAndRead: readAndBind
 		},
@@ -434,7 +422,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 	handle.current = engine;
 	const frozen = Object.freeze(engine);
 	stampEngineStorage(frozen, storage);
-	builderScopes.set(frozen, (table) => scopedBuild(table, handle, buildChain));
+	builderScopes.set(frozen, (table) => scopedBuild(table, handle));
 	if (records !== undefined) {
 		const built = nativeBuiltRecords(native);
 		if (built === undefined) throw new Error(ARENA_FEATURE_REFUSED);

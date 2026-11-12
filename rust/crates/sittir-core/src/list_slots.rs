@@ -76,6 +76,7 @@ pub fn slot_gaps(routed: &Routed, run_at: impl Fn(u32, u32) -> Option<crate::typ
                     for between in pair[0] + 1..pair[1] {
                         match routed.routes[between] {
                             Route::Separator { slot: own, .. } if own == slot => separators.push(&routed.children[between]),
+                            Route::Trivia => {}
                             _ => return None,
                         }
                     }
@@ -155,7 +156,32 @@ mod tests {
     }
 
     #[test]
-    fn a_gap_holding_trivia_or_another_slots_child_is_not_spelled() {
+    fn a_gap_holding_a_comment_beside_its_separator_is_spelled_by_that_separator() {
+        let routed = Routed {
+            children: vec![child(1, 0, 1), child(2, 1, 2), child(3, 3, 8), child(4, 9, 10), child(5, 11, 12), child(6, 12, 12), child(7, 13, 14)],
+            routes: vec![
+                Route::Slot { slot: crate::types::SlotId(0), scalar: false },
+                Route::Separator { slot: crate::types::SlotId(0), tagged: false },
+                Route::Trivia,
+                Route::Slot { slot: crate::types::SlotId(0), scalar: false },
+                Route::Trivia,
+                Route::Separator { slot: crate::types::SlotId(0), tagged: false },
+                Route::Slot { slot: crate::types::SlotId(0), scalar: false },
+            ],
+            keys: &["_item"],
+            elided: &[false],
+        };
+        let runs = [(1, 1), (2, 9), (10, 11), (12, 12), (12, 13)];
+        let run_at = |start, end| runs.iter().position(|&run| run == (start, end)).map(|at| RunId(crate::types::narrow(at)));
+        let [slot] = slot_gaps(&routed, run_at).try_into().unwrap();
+        assert_eq!(slot.gaps.len(), 2, "{:?}", slot.gaps);
+        assert_eq!(slot.gaps[0].separator, Separator { kind: KindId(2), start: 1, end: 2 });
+        assert_eq!((slot.gaps[0].before, slot.gaps[0].after), (Some(RunId(0)), Some(RunId(1))));
+        assert_eq!(slot.gaps[1].separator, Separator { kind: KindId(6), start: 12, end: 12 });
+    }
+
+    #[test]
+    fn a_gap_with_no_separator_of_its_own_is_not_spelled_whatever_else_it_holds() {
         let routed = Routed {
             children: vec![child(1, 0, 1), child(2, 2, 3), child(3, 4, 5), child(4, 6, 7), child(5, 8, 9)],
             routes: vec![

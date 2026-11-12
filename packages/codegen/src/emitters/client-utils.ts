@@ -2,7 +2,7 @@ import type { QuerySlotEntry, StructureRow } from '@sittir/types';
 import type { NodeMap } from '../compiler/types.ts';
 import { innerRegions, whitespaceTrivia, type WhitespaceTrivia } from '../compiler/model/trivia.ts';
 import { compareOrdinal, keywordPresenceStorage, wireRoutesOf, type WireRoutes } from './shared.ts';
-import { AssembledSupertype, storageKeyOf, type AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { AssembledSupertype, spelledReadOf, storageKeyOf, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import { grammarTypeMapName } from './engine.ts';
 import { nodeSlotNumbers } from './render-module.ts';
@@ -101,6 +101,8 @@ export function querySlotRows(nodeMap: NodeMap): ReadonlyMap<number, readonly Qu
 				const keyword = keywordPresenceStorage(slot, nodeMap);
 				const keywordKind = keyword?.via === 'kindId' ? keyword.kindId : undefined;
 				const storageKey = storageKeyOf(slot.storageName);
+				const spellings = spelledReadOf(slot)?.spellings;
+				if (spellings !== undefined) return [slot.propertyName, number, keyword?.text, storageKey, keywordKind, hasBlankArm(slot) ? true : undefined, spellings];
 				if (hasBlankArm(slot)) return [slot.propertyName, number, keyword?.text, storageKey, keywordKind, true];
 				return keywordKind === undefined
 					? [slot.propertyName, number, keyword?.text, storageKey]

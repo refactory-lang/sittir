@@ -3,8 +3,8 @@
 //! or a line continuation, goes with it: the members of one side render in
 //! source order. The lines after the gap keep their levels, since the
 //! excess the moved runs change is restored at the end of the item's side.
-//! Each source renders as it reads, from its snapshot and with every node
-//! edited in place. The members after an entry that leads a list's first
+//! Each source renders as it reads with every node edited in place, and so
+//! does its snapshot (`packages/tools/tests/snapshot-one-rule.test.ts`). The members after an entry that leads a list's first
 //! item go with that entry likewise.
 
 use sittir_core::read::SideEntry;

@@ -48,6 +48,7 @@ The maintainer settled tree lifetime on 2026-11-10 and 2026-11-12. A proposal st
 - **"Cross node reuse is not unique to the parsed nodes."** A built node linking a parsed node is the same relation as a built node linking a built node, or a side entry naming a record from elsewhere. One node-level mechanism covers every case, and it is node work, not this design's.
 - **Node memory is out of scope:** "We don't need to free our nodes - we just need to get rid of the tree." For when nodes come up, the recorded direction is that released node buffers are reused and memory returns at the engine's dispose.
 - **A link to another engine's nodes is refused** in arena storage, as a cross-engine side entry is.
+- **A snapshot is canonical** (2026-11-12: "Canonical: renders `ur"a"`"). A detached snapshot holds a spelled slot's canonical member and no source spelling, so a snapshot of python `UR"a"` renders `ur"a"`. Both storages read the canonical member, per the 2026-11-09 ruling that spelling is its own channel, so object storage's read of a spelled slot follows it too.
 
 ## What lives after an arena parse call
 
@@ -96,6 +97,7 @@ This replaces tree holders Task 4.
 - **Every field of today's `ParsedTree` and `TreeArena`** is node data, source text, recomputed from those on demand, or dropped inside the read call. A field that isn't per-tree at all belongs to the engine (its grammar, its built-arena store) or to the call (its work counters, per the lock-free spec). Lazy trivia placement after the call reads only nodes and source text.
 - **A coordinate or link names a node,** not a tree. The link record stays 8 words.
 - **A built node linking parsed nodes** renders the same after the parsed root is released as before.
+- **A render takes the built store's read once.** Today `render_built_with` holds that read for the whole render and `ArenaSources::render_record_entry` takes it again on the same thread, which deadlocks once a writer queues between the two (latent while one JS thread drives the engine). With the live-tree table gone, the render hands core the arena it already holds through `sittir_core::napi_engine::entry_sources_holding(grammar, store, built, f)`, an internal pub function that takes no tree (the maintainer, 2026-11-12: "Yes but it can't reference the tree"). The fix lands with the tree drop, in the same PR, and has no failing test first, since the code is napi-only and can't be tested where it sits (the maintainer, 2026-11-12: "Fold into Task 6's PR", "Port without a test").
 
 ## Order of work
 
@@ -105,6 +107,7 @@ Each step lands on its own and stays green:
 3. Token spans and node rows in arena records, plus the record backer, with backer parity on the corpora. The tree is still kept.
 4. Arena render, queries and edits read the record backer, and baseline gaps are stamped with their run.
 5. Hydrate at parse and drop the tree inside the read call. The interim `Tree` object and the live-tree table leave arena storage.
+   - Then, as its own step (plan Task 6b; the maintainer, 2026-11-12): string-pool interning moves native, so the pool has one writer and one write position. Step 5 only writes each read's source into the pool natively and leaves built text's JavaScript interning as it is. Today a repeat intern is one JavaScript map lookup with no crossing, and the bench is almost all hits, so the move ships only in a shape that crosses less than once per intern call and leaves arena no slower on any CI CPU.
 6. CI measurements.
 
 ## Verification

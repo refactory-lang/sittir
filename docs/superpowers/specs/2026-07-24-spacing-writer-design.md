@@ -137,10 +137,10 @@ problem and no view or template struct changes.
 - **Inert when a literal already carries its space.** At a seam following `"fn "`, `last` is `' '` (not word-class) → no insert.
 - **Absent optionals are free.** A missing optional's render is a no-op call → context untouched → the next seam tests against whatever actually preceded. The adjacent-optionals case needs zero special handling.
 - **Style vs required separation falls out.** Style spaces (around `->`, after `,`) are baked into generated literal text, visible and unconditional. The writer supplies only lexically-required spaces at dynamic boundaries.
+- **Two tokens never join into a third** (the maintainer, 2026-11-12: "We insert space wherever the two sides joined together were themselves a token"). A pair gets the space when its join is itself a token the parser lexes at that seam, token-tree punctuation included (rust's `& &`, `. .`, `< <` inside a macro's tokens). `literal_merge_pairs` holds those pairs, from one derivation (`literalMergePairs`). A doubled symbol stays tight only where no token at that seam is the join: nested generics' `>>` and turbofish `::<`.
 
 ### What it does NOT cover (by design)
 
-- **Punct-punct merges outside the registered pairs** (e.g. a grammar with no multi-char operator sharing a prefix with another). Not word-class collisions; the `literal_merge_pairs` table covers exactly the transitions a grammar's own anonymous-literal inventory proves risky, and a doubled unambiguous symbol like nested `>>` in generics is deliberately excluded (see `spacing.rs::write_text`'s `symbol_seam` comment).
 - **Newline-required boundaries** (line comment followed by code). Safe as long as trivia writes include their terminating newline — `last` becomes `'\n'`, not word-class. Trivia render pins this with a test.
 
 ---

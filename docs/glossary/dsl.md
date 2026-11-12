@@ -4765,14 +4765,6 @@ a stamp made there would be lost. The stamp is the declaration link collects
 
 Whether a field node came from an authored patch (`fieldSource: 'override'`). The clause hoist and the field-enum synthesis leave its content untouched.
 
-### `packages/codegen/src/dsl/enrich.ts::armFieldSites`
-
-The authored field sites under arm `arm` of a distributed token form, with the arm index stripped. The first pass hands each nested token-form hoist this slice of its parent's sites, and a later pass derives the same slice for an arm rule it meets as a root (`tokenFormFieldSites`), so both decide the nested distribution from the same paths.
-
-### `packages/codegen/src/dsl/enrich.ts::tokenFormFieldSites`
-
-The authored field sites of every rule, plus those a token-form arm inherits from its parent: an arm rule (annotated `tokenForm`, referenced from its parent's choice by a symbol whose `variantOf` names the parent) takes `armFieldSites` of the parent's sites at its index, transitively.
-
 ### `packages/codegen/src/dsl/enrich.ts::TextTokenTest`
 
 A predicate over rule names: whether the name is a text token an earlier enrich pass minted. The field-wrap stages read such a symbol as the pattern it replaced.

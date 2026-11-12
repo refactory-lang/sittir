@@ -55,7 +55,6 @@ type Renders<Read, Render, RenderToFile> = [Read] extends [NodeOf<Render> & Node
 type Shaped = Record<
 	| 'SittirEngine'
 	| 'read'
-	| 'snapshot'
 	| 'readMany'
 	| 'render'
 	| 'renderToFile'
@@ -84,7 +83,7 @@ type Shapes<M extends Shaped> = {
 	readonly span: SpanOf<M['text']>;
 	readonly buildProfile: ProfileOf<M['SittirEngine']>;
 	readonly readMany: Ret<M['readMany']>;
-	readonly readsRender: Renders<Ret<M['read']> | Ret<M['snapshot']> | ItemOf<Ret<M['readMany']>>, M['render'], M['renderToFile']>;
+	readonly readsRender: Renders<Ret<M['read']> | ItemOf<Ret<M['readMany']>>, M['render'], M['renderToFile']>;
 };
 type DeclaredShapes = {
 	readonly layoutWork: LayoutWork;
@@ -104,7 +103,6 @@ type DeclaredShapes = {
 type Misshaped<M extends Shaped> = { [K in keyof DeclaredShapes]-?: Same<Shapes<M>[K], DeclaredShapes[K]> extends true ? never : K }[keyof DeclaredShapes];
 type WireTypes = {
 	readonly read: WireNode;
-	readonly snapshot: WireNode;
 	readonly triviaSide: WireNode[];
 	readonly unitSides: UnitSidesWire[];
 	readonly slotLayouts: SlotLayoutWire[];
@@ -124,7 +122,7 @@ expectTypeOf<ReturnsExactly<() => { slot: string; item: number }[], () => UnitSi
 expectTypeOf<ReturnsExactly<() => { slot: string }[], () => SlotLayoutWire[]>>().toEqualTypeOf<false>();
 
 expectTypeOf<Misdeclared>().toEqualTypeOf<never>();
-expectTypeOf<Renders<Ret<Declared['read']> | Ret<Declared['snapshot']>, NonNullable<Declared['render']>, NonNullable<Declared['renderToFile']>>>().toEqualTypeOf<true>();
+expectTypeOf<Renders<Ret<Declared['read']>, NonNullable<Declared['render']>, NonNullable<Declared['renderToFile']>>>().toEqualTypeOf<true>();
 
 expectTypeOf<Drift<typeof Python>>().toEqualTypeOf<NoDrift>();
 expectTypeOf<Drift<typeof Regex>>().toEqualTypeOf<NoDrift>();

@@ -26897,7 +26897,7 @@ export const build: PortableBuildTable = {
 					},
 					when: [
 						{
-							absent: ['lifetime', 'reference'],
+							absent: ['lifetime'],
 							required: ['type']
 						}
 					],
@@ -26975,7 +26975,7 @@ export const build: PortableBuildTable = {
 					},
 					when: [
 						{
-							absent: ['lifetime', 'reference'],
+							absent: ['lifetime'],
 							required: ['type']
 						}
 					],
@@ -26985,26 +26985,6 @@ export const build: PortableBuildTable = {
 					kind: 231,
 					builder: 'selfParameter',
 					members: [
-						{
-							name: 'reference',
-							steps: [
-								{
-									key: 'reference',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [231, 'reference'],
-									kinds: [54],
-									tokens: {
-										'&': 54
-									}
-								}
-							]
-						},
 						{
 							name: 'lifetime',
 							steps: [
@@ -27025,6 +27005,19 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
+						reference: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'reference',
+											optional: true
+										}
+									],
+									kind: 54
+								}
+							]
+						},
 						mutable: {
 							presets: [
 								{
@@ -42551,95 +42544,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: [
-						{
-							variant: 'array_expression',
-							value: 436,
-							default: true
-						},
-						{
-							absent: ['element', 'length'],
-							required: []
-						}
-					]
-				},
-				{
-					kind: 435,
-					builder: 'arrayExpressionSemi',
-					members: [
-						{
-							name: 'element',
-							steps: [
-								{
-									key: 'element'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [435, 'element'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'length',
-							steps: [
-								{
-									key: 'length'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [435, 'length'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							variant: 'array_expression',
-							value: 435
-						},
-						{
-							absent: ['elements'],
-							required: ['element', 'length']
-						}
-					]
+					when: []
 				}
 			]
 		},
@@ -45531,7 +45436,10 @@ export const build: PortableBuildTable = {
 					scalar: 'float',
 					when: []
 				}
-			]
+			],
+			builds: {
+				float: 162
+			}
 		},
 		'literal.number.integer': {
 			root: true,
@@ -45539,7 +45447,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 141,
 					builder: 'integerLiteralDecimal',
-					numeric: 'content',
+					numeric: ['content'],
 					digits: {
 						base: 10,
 						affix: ''
@@ -45599,7 +45507,10 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			builds: {
+				integer: 141
+			}
 		},
 		'literal.number.integer.binary': {
 			root: true,
@@ -45607,7 +45518,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 143,
 					builder: 'integerLiteralBinary',
-					numeric: 'content',
+					numeric: ['content'],
 					digits: {
 						base: 2,
 						affix: '0b'
@@ -45667,7 +45578,10 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			builds: {
+				integer: 143
+			}
 		},
 		'literal.number.integer.hex': {
 			root: true,
@@ -45675,7 +45589,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 142,
 					builder: 'integerLiteralHex',
-					numeric: 'content',
+					numeric: ['content'],
 					digits: {
 						base: 16,
 						affix: '0x'
@@ -45735,7 +45649,10 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			builds: {
+				integer: 142
+			}
 		},
 		'literal.number.integer.octal': {
 			root: true,
@@ -45743,7 +45660,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 144,
 					builder: 'integerLiteralOctal',
-					numeric: 'content',
+					numeric: ['content'],
 					digits: {
 						base: 8,
 						affix: '0o'
@@ -45803,7 +45720,10 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			builds: {
+				integer: 144
+			}
 		},
 		'literal.number.negative': {
 			root: true,

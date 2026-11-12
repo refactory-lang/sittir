@@ -9,10 +9,9 @@
 
 use sittir_core::engine::ParsedTree;
 use sittir_core::layout::LayoutWork;
-use sittir_core::read::{Depth, ReadNode, SideLookup, SnapshotCtx};
+use sittir_core::read::SideLookup;
 use sittir_core::trivia_table::TriviaSide;
 use sittir_core::types::NodeIndex;
-use sittir_rust::render::AnyNode;
 use sittir_parity_tests::{block_chain, indented_block_line, on_deep_stack, parsed_rust, probe_input, tuple_chain, unary_chain, wide_unit_blocks};
 use sittir_rust::RustGrammar;
 
@@ -44,19 +43,16 @@ impl SideLookup for Alone<'_> {
     }
 }
 
-/// The snapshot of `tree`'s root, each side seated by lookups of its own
-/// (`Alone`).
-fn seated_alone(tree: &ParsedTree<RustGrammar>) -> AnyNode {
-    let alone = Alone(tree);
-    let seating = tree.seating();
-    let mut ctx = seating.ctx().with_sides(&alone).snapshot(SnapshotCtx::new(tree.lines(), None, NodeIndex::ROOT));
-    AnyNode::read(&mut tree.tree().walk(), &mut ctx, Depth::All).expect("a read")
+/// The snapshot layouts of `tree`'s root, each side seated by lookups of its
+/// own (`Alone`).
+fn seated_alone(tree: &ParsedTree<RustGrammar>) -> sittir_core::layout::SnapshotLayouts<<RustGrammar as sittir_core::engine::EngineGrammar>::Trivia> {
+    tree.snapshot_layouts_seated(NodeIndex::ROOT, None, &Alone(tree)).expect("a root").expect("a snapshot")
 }
 
 #[test]
 fn a_snapshot_seats_nested_sides_as_the_tree_seats_each_alone() {
     for (name, source) in [("nested", NESTED.to_owned()), ("spacing.rs", probe_input("spacing.rs")), ("engine.rs", probe_input("engine.rs"))] {
-        let through_one = parsed_rust(&source).snapshot::<AnyNode>(NodeIndex::ROOT, None).expect("a snapshot");
+        let through_one = parsed_rust(&source).snapshot_layouts(NodeIndex::ROOT, None).expect("a root").expect("a snapshot");
         assert_eq!(through_one, seated_alone(&parsed_rust(&source)), "{name}");
     }
 }
@@ -65,7 +61,7 @@ fn a_snapshot_seats_nested_sides_as_the_tree_seats_each_alone() {
 fn a_region_s_render_finds_every_node_it_looks_up_inside_the_region() {
     for (name, source) in [("nested", NESTED.to_owned()), ("spacing.rs", probe_input("spacing.rs")), ("engine.rs", probe_input("engine.rs"))] {
         let tree = parsed_rust(&source);
-        tree.snapshot::<AnyNode>(NodeIndex::ROOT, None).expect("a snapshot");
+        tree.snapshot_layouts(NodeIndex::ROOT, None).expect("a root").expect("a snapshot");
         assert_ne!(tree.records_rendered(), 0, "{name}: the snapshot renders regions");
         assert_eq!(tree.layout_work().region_fallbacks, 0, "{name}");
     }
@@ -75,7 +71,7 @@ fn a_region_s_render_finds_every_node_it_looks_up_inside_the_region() {
 fn chain_work(chain: fn(usize) -> String, levels: usize) -> LayoutWork {
     on_deep_stack(move || {
         let tree = parsed_rust(&chain(levels));
-        tree.snapshot::<AnyNode>(NodeIndex::ROOT, None).expect("a snapshot");
+        tree.snapshot_layouts(NodeIndex::ROOT, None).expect("a root").expect("a snapshot");
         tree.layout_work()
     })
 }
@@ -130,7 +126,7 @@ fn the_record_of_a_chain_of_blocks_tallies_the_same_text_at_each_level() {
     let [one, two, four] = [100, 200, 400].map(|levels| {
         on_deep_stack(move || {
             let tree = parsed_rust(&block_chain(levels));
-            tree.snapshot::<AnyNode>(NodeIndex::ROOT, None).expect("a snapshot");
+            tree.snapshot_layouts(NodeIndex::ROOT, None).expect("a root").expect("a snapshot");
             tree.records_scanned()
         })
     });
@@ -144,7 +140,7 @@ fn the_record_of_blocks_under_a_wide_indentation_unit_tallies_the_unit_once() {
         on_deep_stack(move || {
             let tree = parsed_rust(&wide_unit_blocks(levels));
             assert_eq!(tree.inferred().indent.as_ref().map(String::len), Some(levels), "the unit is the line's indentation");
-            tree.snapshot::<AnyNode>(NodeIndex::ROOT, None).expect("a snapshot");
+            tree.snapshot_layouts(NodeIndex::ROOT, None).expect("a root").expect("a snapshot");
             tree.records_scanned()
         })
     });
@@ -179,7 +175,7 @@ fn a_snapshot_renders_one_record_however_deep_its_tree() {
     for levels in [100, 200, 400] {
         let records = on_deep_stack(move || {
             let tree = parsed_rust(&tuple_chain(levels));
-            tree.snapshot::<AnyNode>(NodeIndex::ROOT, None).expect("a snapshot");
+            tree.snapshot_layouts(NodeIndex::ROOT, None).expect("a root").expect("a snapshot");
             tree.records_rendered()
         });
         assert_eq!(records, 1, "{levels} levels");

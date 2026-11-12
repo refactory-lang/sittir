@@ -424,19 +424,19 @@ macro_rules! napi_engine {
             with_live_node(&env, tree_id, index, |parsed, index| Ok(parsed.separator_before(index)))
         }
 
-        /// A snapshot of the node at `index` of the live tree `treeId`: the
-        /// node read at every depth into plain data with no tree, each
-        /// node with its span (`$_layout.span`) from the native node that
-        /// holds it and each placed extra with its text, the node itself
-        /// measured from the byte `holderByte`, or, when absent, from where
-        /// it or its leading side begins, whichever is first. Refuses as
-        /// `read` does, and a `holderByte` after the first byte the snapshot
-        /// measures.
-        #[::napi_derive::napi(ts_return_type = "import('@sittir/types').WireNode")]
-        pub fn snapshot(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, holder_byte: Option<f64>) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
+        /// A snapshot's layout of the node at `index` of the live tree
+        /// `treeId` and of each node under it that a read gives a layout, as
+        /// `[row, layout]` pairs in preorder (`ParsedTree::snapshot_layouts`):
+        /// each with its span (`span`) from the native node that holds it and
+        /// each placed extra and `ERROR` as its text, the node itself measured
+        /// from the byte `holderByte`, or, when absent, from where it or its
+        /// leading side begins, whichever is first. Refuses as `read` does,
+        /// and a `holderByte` after the first byte the snapshot measures.
+        #[::napi_derive::napi(ts_return_type = "[number, object][]")]
+        pub fn snapshot_layouts(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, holder_byte: Option<f64>) -> ::napi::Result<$crate::layout::SnapshotLayouts<<$grammar as $crate::engine::EngineGrammar>::Trivia>> {
             let holder_byte = holder_byte.map(|byte| $crate::napi_engine::checked_whole::<u32>(byte, "holderByte")).transpose()?;
             with_live_tree(&env, tree_id, |parsed| {
-                $crate::napi_engine::node_or_error(parsed, index, "snapshot panicked", || parsed.snapshot_node::<$any>(index, holder_byte))
+                $crate::napi_engine::answered(parsed, index, "snapshot panicked", || parsed.snapshot_layouts(index, holder_byte))
             })
         }
 
@@ -666,6 +666,44 @@ macro_rules! napi_engine {
                     $render_parts(node, &ctx, None).map(|(_, canonical)| canonical)
                 })
                 .map_err(|e| ::napi::Error::from_reason(format!("render_node failed: {e}")))?;
+                Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))
+            })
+        }
+
+        /// The node at `index` of the live tree `treeId` rendered as `render`
+        /// renders the node a read of it gives: a render root whose
+        /// `leading` and `trailing` edges have no neighbour, under `options`
+        /// over the tree's layer over the engine's; `templates` renders it
+        /// and each node under it that has a record from its template, each
+        /// leaf and unit as its source (`render::ThroughTemplates`). Refuses a
+        /// tree that is not live, an index naming no node of it, and a node
+        /// whose read or render refuses.
+        #[::napi_derive::napi(ts_args_type = "engine: object, treeId: number, index: number, leading: boolean, trailing: boolean, options?: object | undefined | null, templates?: boolean | undefined | null", ts_return_type = "string")]
+        #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
+        pub fn render_at(
+            engine: &::napi::bindgen_prelude::External<EngineCell>,
+            env: ::napi::Env,
+            tree_id: $crate::types::TreeId,
+            index: $crate::types::NodeIndex,
+            leading: bool,
+            trailing: bool,
+            options: Option<$options>,
+            templates: Option<bool>,
+        ) -> ::napi::Result<$crate::boundary::RenderedText> {
+            let engine = engine_of(engine)?;
+            with_live_trees(&env, |trees| {
+                let parsed = trees.get(tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                $crate::napi_engine::check_node(parsed, index)?;
+                let table = render_options(&engine, Some(parsed), options)?;
+                let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| {
+                    let coord = $crate::render::SourceTable::row_coordinate(sources, tree_id, index).ok_or_else(|| format!("index {} names no node of tree {}", index.0, tree_id.0))?;
+                    let writes = Some(Box::new($crate::slot::CoordinateWrites { changed: $crate::slot::ChangedEdges { leading, trailing } }));
+                    let through = $crate::render::ThroughTemplates(sources);
+                    let sources: &dyn $crate::render::SourceTable = if templates == Some(true) { &through } else { sources };
+                    let ctx = $crate::prepare::RenderContext::new(&table, sources);
+                    $render_parts($crate::SlotValue::Coord($crate::slot::NodeCoordinate { writes, ..coord }), &ctx, None).map(|(_, canonical)| canonical).map_err(|e| e.to_string())
+                })
+                .map_err(|e| ::napi::Error::from_reason(format!("render_at failed: {e}")))?;
                 Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))
             })
         }
@@ -989,19 +1027,32 @@ macro_rules! napi_engine {
             /// whose `leading` and `trailing` edges have no neighbour, as
             /// the node crossing as its coordinate marks them, under
             /// `options` over the tree's layer over the engine's, each
-            /// trivia entry's built record from its store's arena. Refuses
-            /// a tree that is not live, an address naming no record of its
-            /// arena, and a record whose render refuses.
-            #[::napi_derive::napi(ts_args_type = "engine: object, treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null", ts_return_type = "string")]
-            pub fn render_record(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, tree_id: $crate::types::TreeId, address: f64, leading: bool, trailing: bool, options: Option<$options>) -> ::napi::Result<$crate::boundary::RenderedText> {
+            /// trivia entry's built record from its store's arena;
+            /// `templates` renders it and every parsed node under it that
+            /// has a record from its template, each leaf and unit as its
+            /// source (`render::ThroughTemplates`). Refuses a tree that is
+            /// not live, an address naming no record of its arena, and a
+            /// record whose read or render refuses.
+            #[::napi_derive::napi(ts_args_type = "engine: object, treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null, templates?: boolean | undefined | null", ts_return_type = "string")]
+            #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
+            pub fn render_record(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, tree_id: $crate::types::TreeId, address: f64, leading: bool, trailing: bool, options: Option<$options>, templates: Option<bool>) -> ::napi::Result<$crate::boundary::RenderedText> {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
+                let changed = $crate::slot::ChangedEdges { leading, trailing };
                 with_live_trees(&env, |trees| {
                     let parsed = trees.get(tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                     let table = render_options(&engine, Some(parsed), options)?;
-                    let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_record(address, $crate::slot::ChangedEdges { leading, trailing }, &table, sources))))
-                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_record panicked")))?
-                        .map_err(|e| ::napi::Error::from_reason(format!("render_record failed: {e}")))?;
+                    let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| {
+                        ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| {
+                            if templates == Some(true) {
+                                parsed.render_record(address, changed, &table, &$crate::render::ThroughTemplates(sources))
+                            } else {
+                                parsed.render_record(address, changed, &table, sources)
+                            }
+                        }))
+                    })
+                    .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_record panicked")))?
+                    .map_err(|e| ::napi::Error::from_reason(format!("render_record failed: {e}")))?;
                     Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))
                 })
             }
@@ -1011,7 +1062,7 @@ macro_rules! napi_engine {
             #[::napi_derive::napi(ts_args_type = "engine: object, treeId: number, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object | undefined | null")]
             #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
             pub fn render_record_to_file(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, tree_id: $crate::types::TreeId, address: f64, leading: bool, trailing: bool, path: String, create: bool, options: Option<$options>) -> ::napi::Result<bool> {
-                let rendered = render_record(engine, env, tree_id, address, leading, trailing, options)?;
+                let rendered = render_record(engine, env, tree_id, address, leading, trailing, options, None)?;
                 $crate::napi_engine::save_rendered(&path, &rendered.0, create)
             }
 
@@ -1475,11 +1526,9 @@ pub fn no_node<G: crate::engine::EngineGrammar>(parsed: &crate::ParsedTree<G>, i
     napi::Error::from_reason(format!("index {index} names no node of tree {}", parsed.tree_id()))
 }
 
-/// What `read` and `snapshot` answer for the node at `index` of `parsed`,
-/// from `read` (`ParsedTree::read_node`, `ParsedTree::snapshot_node`): the
-/// node, or the `ERROR` holding it. Refuses an index naming no node of the
-/// tree, a read that panicked (`what`), and a node the model has no route
-/// for, naming the kind, the child and the index.
+/// What `read` answers for the node at `index` of `parsed`
+/// (`ParsedTree::read_node`): the node, or the `ERROR` holding it, refused as
+/// `answered` refuses.
 ///
 /// # Errors
 ///
@@ -1490,12 +1539,27 @@ pub fn node_or_error<G: crate::engine::EngineGrammar, T>(
     what: &str,
     read: impl FnOnce() -> Option<Result<crate::engine::NodeRead<T>, crate::read::ReadError>>,
 ) -> napi::Result<napi::Either<T, crate::ErrorRead>> {
-    let read = std::panic::catch_unwind(std::panic::AssertUnwindSafe(read)).map_err(|payload| napi::Error::from_reason(crate::panic_msg(&*payload, what)))?;
-    match read.ok_or_else(|| no_node(parsed, index))? {
-        Ok(crate::engine::NodeRead::Node(node)) => Ok(napi::Either::A(node)),
-        Ok(crate::engine::NodeRead::Error(error)) => Ok(napi::Either::B(error)),
-        Err(refusal) => Err(napi::Error::from_reason(refusal.describe(&|kind| parsed.grammar().kind_name(kind)))),
-    }
+    Ok(match answered(parsed, index, what, read)? {
+        crate::engine::NodeRead::Node(node) => napi::Either::A(node),
+        crate::engine::NodeRead::Error(error) => napi::Either::B(error),
+    })
+}
+
+/// What `answer` gives for the node at `index` of `parsed`. Refuses an index
+/// naming no node of the tree, an answer that panicked (`what`), and a node
+/// the model refuses, naming the kind, the child and the index.
+///
+/// # Errors
+///
+/// Those refusals.
+pub fn answered<G: crate::engine::EngineGrammar, T>(
+    parsed: &crate::ParsedTree<G>,
+    index: crate::types::NodeIndex,
+    what: &str,
+    answer: impl FnOnce() -> Option<Result<T, crate::read::ReadError>>,
+) -> napi::Result<T> {
+    let answer = std::panic::catch_unwind(std::panic::AssertUnwindSafe(answer)).map_err(|payload| napi::Error::from_reason(crate::panic_msg(&*payload, what)))?;
+    answer.ok_or_else(|| no_node(parsed, index))?.map_err(|refusal| napi::Error::from_reason(refusal.describe(&|kind| parsed.grammar().kind_name(kind))))
 }
 
 /// The refusal for an address into a tree this thread does not hold.
@@ -1981,7 +2045,7 @@ impl<G: crate::arena::RecordGrammar, H: std::hash::BuildHasher> crate::render::S
 where
     G::Trivia: crate::boundary::DecodesKind,
 {
-    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&std::sync::Arc<str>> {
+    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
         self.trees.source_of(tree_id)
     }
 

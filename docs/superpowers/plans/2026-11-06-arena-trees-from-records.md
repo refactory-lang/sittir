@@ -177,6 +177,8 @@
 - [x] **Step 4: Run the three-way verification** in both storages, then a byte-identical render over all of matter.js and next.js in arena storage, through the validators' corpus mode.
 - [x] **Step 5: Commit:** `feat(arena): render, queries and edits read records, not the tree`.
 
+**Follow-up, the lent arena's second read:** `render_built_with` holds the built store's read for the whole render, and `ArenaSources::render_record_entry` takes that read again on the same thread, which deadlocks once a writer queues between the two. One JS thread never queues one, so it can't fail today. The fix is ported in place in `napi_engine`, inside Task 6's PR (the maintainer, 2026-11-12: "Fold into Task 6's PR"; until Task 6 an arena render still reads a linked node's source through the live-tree table, so the tree-free signature isn't possible sooner), with no failing test first (the maintainer, 2026-11-12: "Port without a test"). It adds one internal pub function, `sittir_core::napi_engine::entry_sources_holding`, because the render expands inside each grammar crate and must hand core the arena it already holds. That function takes no tree (the maintainer, 2026-11-12: "Yes but it can't reference the tree"). The code is napi-only and can't be tested where it sits.
+
 ### Task 5b: Leaf, ERROR and unit reads take no tree
 
 **Status:** merged as #1164 (3c2f22bee), 2026-11-10.
@@ -213,6 +215,8 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 
 ### Task 5c: One snapshot rule for every storage
 
+**Status:** merged as #1193 (25f2ac1ed), 2026-11-12.
+
 **Files:**
 - Modify: `packages/common/src/snapshot.ts`. A parsed node's snapshot is the node-surface walk (`copyStep`) that built nodes already take, in both storages.
 - Modify: `engine.rs` (`SnapshotCtx::span_of`) and `napi_engine.rs`. One native call measures, over `Nodes`, each node's span in a subtree from its holder, with today's `unmeasured` refusal. The walk attaches those spans. A side entry's text and span come through `Nodes`.
@@ -222,18 +226,28 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 - Test: `packages/common/tests/snapshot.test.ts` and the snapshot census.
 
 **Interfaces:**
-- Consumes: Task 5b's `holder_cell`, for leaves inside a snapshot.
-- Produces: `ParsedTree::snapshot_spans(&self, root: NodeIndex, holder: Option<u32>) -> Result<Vec<Span>, ReadError>`, in the walk's order.
+- Consumes: Task 5b's `read::units_of`, for unit sides inside a snapshot (the native walk), and `ParsedTree::read_leaf` through `RecordReader.leaf`, for a bare coordinate the JS walk hydrates.
+- Produces: `ParsedTree::snapshot_layouts(&self, root: NodeIndex, holder: Option<u32>)`, which returns each row's snapshot layout as `(row, layout)` pairs in preorder, plus the root's flanks word. It walks rows over `Nodes` with no typed read, holding at `Children` and `Interior` routers, and reuses master's snapshot-mode layout code. Over napi, `snapshotLayouts(treeId, index, holderByte)` replaces `snapshot` (maintainer, 2026-11-12, "Approve"). A layout is needed, not only a span, because a side's ERROR entry reaches JavaScript with no row and the root's edge runs are dropped natively.
+- Output change (maintainer, 2026-11-12, "Canonical: renders `ur"a"`"): a snapshot holds a spelled slot's canonical member, so python `UR"a"` snapshots render `ur"a"`. Object storage's read of a spelled slot moves to the canonical member as well, so both storages give the same snapshot. Both changes go in the PR as API rows.
+- Object storage's canonical read: `storedSlotValues` on an object node applies its kind's spellings from its `querySlots` row. `QuerySlotEntry` gains an optional seventh element, `spellings?: Readonly<Record<string, string>>`, beside `blank` (the maintainer, 2026-11-12, "Approve both"). It is emitted from `spelledReadOf`, the derivation record views' accessors already pass to `viewSlot(…, spellings)`. The rows are read only when a node stores a string under a storage key. Object data keeps the source spelling, so `$with` and render keep it ("set to the same value keeps the spelling").
+- Census (maintainer, 2026-11-12, "Grant 46 → 48"): the python snapshot census gains two entries, "Strings" (`UR'bye'` snapshots as `ur'bye'`) and "Template Strings" (`tr"…"` as `rt"…"`), and (maintainer, 2026-11-12, "Grant Raw strings") a third, "Raw strings" (`fr"…"` as `rf"…"`). All three follow from the canonical ruling. The rewrite also drops the 16 entries that render fixes since the census was last written (2026-10-11) left matching. Against master's own snapshots, which give 29 entries, the pin lands at 32. The other grammars' censuses aren't rewritten.
+- API rows (maintainer, 2026-11-12, "Approve all 6"):
+  - `Router::Children` carries its kind's routes (`KindRoutes`), and `Router::Envelope` its content's router;
+  - `ParsedTree::snapshot_layouts_seated` is public, for tests;
+  - `ReadCtx::hold(&Kid, &[Kid])` replaces `hold(&TreeCursor)`, so the typed read no longer holds;
+  - `ParsedTree::snapshot`, `snapshot_node` and `snapshot_error` are removed;
+  - in `@sittir/common/utils`, `handleQuery` becomes a method record views call on themselves, and `handleSnapshot` is new;
+  - `napi_engine::answered` is public, shared by read and `snapshotLayouts`.
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   - `a_parsed_snapshot_takes_no_tree`: an arena snapshot makes 0 tree reads, and so does `$query()` on an arena record view;
   - snapshots equal master's, for every node of the fixtures and both corpora, in both storages and all three grammars;
   - a snapshot of a node holding an ERROR side or a MISSING token equals master's, and an unmeasurable holder is still refused as `unmeasured`;
   - `an_alias_content_snapshots_as_itself`: a parsed alias content's snapshot carries the content's own `$type` and text, not its envelope's, though the two share a row. A snapshot is the node as read, detached. This is the one place output differs from master's, and the PR lists it.
-- [ ] **Step 2:** Run them. They fail.
-- [ ] **Step 3: Implement.**
-- [ ] **Step 4: Run the three-way verification** in both storages. Object storage's snapshot speed is not a gate. Its output is.
-- [ ] **Step 5: Commit:** `feat(snapshot): one snapshot rule for built and parsed nodes in both storages`.
+- [x] **Step 2:** Run them. They fail.
+- [x] **Step 3: Implement.**
+- [x] **Step 4: Run the three-way verification** in both storages. Object storage's snapshot speed is not a gate. Its output is.
+- [x] **Step 5: Commit:** `feat(snapshot): one snapshot rule for built and parsed nodes in both storages`.
 
 ### Task 6: Hydrate at parse and drop the tree inside the read call
 
@@ -244,6 +258,7 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 **Files:**
 - Modify: `napi_engine.rs` and `engine.rs`. In arena storage, `parse` hydrates the whole tree in the same call, then drops the `tree_sitter::Tree`, the placement scratch and the read caches before it returns. Only the nodes and the source text remain.
 - Modify: `arena/built_image.rs`. The LINK record names a node, not a tree, and stays 8 words.
+- Modify: `napi_engine.rs`, the lent arena's second read (see Task 5's follow-up and the spec's Tree lifetime section). `render_built_with` hands the arena it holds to `entry_sources_holding`, so `ArenaSources::render_record_entry` doesn't take `store.built()` again. `TriviaStore::shares_built` is `pub(crate)`. No failing test first, on the maintainer's word.
 - Remove the branches Task 5 keeps for trees read part-way: `edited_record`'s coordinate branch and the baseline measured through the tree. Every arena tree is now read whole at parse.
 - Modify: `packages/common/src/{read,record-view,handle,engine,create-engine,built-arena}.ts`. An arena root holds no `Tree` object and no reference to a tree. The arena's `#trees` and its `holdTree` calls go.
 - Modify: `packages/tools/src/validate/layout-runs.ts` and `packages/tools/src/profile/native-hydration.ts`, which release their roots.
@@ -252,6 +267,7 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 **Interfaces:**
 - Consumes: Tasks 5, 5b and 5c. Arena parses leave the live-tree table here.
 - Produces: the census below, as the PR body's first table. Its placement of each field fixes the names later tasks use.
+- Produces: `sittir_core::napi_engine::entry_sources_holding(grammar, store, built, f) -> R`, arena only, internal pub, taking no tree (API row approved by the maintainer, 2026-11-12).
 
 - [ ] **Step 1: The census, before code.** List every field of `ParsedTree` (`engine.rs`) and `TreeArena` (`arena/rows.rs`). Place each in one bin: node data; source text; recomputed from those on demand (with its cost and its readers); or dropped inside the read call. A field that isn't per-tree moves to the engine (grammar, the built-arena `store`) or to the call (the work counters, per Task 10). Say what lazy trivia placement reads after the call. A field that fits none of these goes to brainstorm, which takes it to the maintainer, before any code is written.
 - [ ] **Step 2: Failing tests:**
@@ -265,6 +281,30 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 - [ ] **Step 4: Implement.**
 - [ ] **Step 5: Run the three-way verification** in arena storage, plus Task 4's parity on the corpora and Task 5's corpus render with the tree dropped.
 - [ ] **Step 6: Commit:** `feat(arena): an arena parse hydrates at parse and drops its tree inside the read call`.
+
+### Task 6b: String-pool interning moves native
+
+The maintainer, 2026-11-12: "needs to be a task '6b'". It follows Task 6 as its own PR. Task 6 itself changes no interning: its read writes the source into the pool natively, and built text keeps its JavaScript path until this task.
+
+**Facts this task starts from** (measured on Task 5c's head, arena storage):
+- `BuiltArena.entry(kind, text)` (`built-arena.ts`) interns built text in JavaScript: a `Map` lookup per call, and on a miss an encode, a `Chunks.alloc` and a copy into a chunk native handed out whole (`builtBytes`). The write position is JavaScript's.
+- The bench is almost all hits: building or editing 2,000 functions makes 2,000 calls and 1 miss; a corpus codemod edit and a parse make none. No bench case builds many distinct names.
+- Parsed text is not interned. A parsed leaf is a span into its source's one string.
+
+**Files:**
+- Modify: `packages/common/src/built-arena.ts` (`BuiltArena.entry`, `Chunks`) and `rust/crates/sittir-core/src/{arena.rs,napi_engine.rs}` (`Arena::intern`, the addon's intern call). The pool has one writer and one write position, native's.
+- Test: a bench case that builds many distinct names, added before the change so the miss path has a base.
+
+**Interfaces:**
+- Consumes: Task 6's native source write.
+- Produces: the addon's intern call and `BuiltArena.entry`'s new internals. Their API rows go to the maintainer before code.
+
+- [ ] **Step 1: The proposal, before code.** The shape that crosses less than once per `entry()` call (a batch per build, a native build path, or another), with the call and miss counts on the rebuilt, codemod and many-names cases, and its API rows.
+- [ ] **Step 2: Failing tests:** the pool's write position is native's alone; a built string interned twice has one entry; a build's text renders byte-identical.
+- [ ] **Step 3:** Run them. They fail.
+- [ ] **Step 4: Implement.**
+- [ ] **Step 5: Run the three-way verification** in arena storage, and the speed gate: arena is not slower on any CI CPU on the rebuilt, codemod and many-names cases.
+- [ ] **Step 6: Commit:** `feat(arena): the string pool is interned natively`.
 
 ### Task 7: The measurements
 

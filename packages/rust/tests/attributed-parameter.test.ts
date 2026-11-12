@@ -17,7 +17,7 @@ describe("a parameter's attributes are a list, read and built through its attrib
 
 	it("reads a receiver's attribute as a one-element list", () => {
 		expect(JSON.stringify(readOf('impl S { fn f(#[a] &self) {} }\n'))).toBe(
-			'{"$path":"file","statements":[{"$path":"declaration.extension","type":"S","body":[{"$path":"declaration.method","name":"f","body":{"$path":"statement.block","statements":[]},"receiver":{"$path":"declaration.parameter.receiver","reference":true,"attributes":[{"$path":"attribute","content":{"$path":"attribute.content","path":"a"}}]},"parameters":[]}],"typeParameters":[]}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.extension","type":"S","body":[{"$path":"declaration.method","name":"f","body":{"$path":"statement.block","statements":[]},"receiver":{"$path":"declaration.parameter.receiver","$flags":["reference"],"attributes":[{"$path":"attribute","content":{"$path":"attribute.content","path":"a"}}]},"parameters":[]}],"typeParameters":[]}]}'
 		);
 	});
 

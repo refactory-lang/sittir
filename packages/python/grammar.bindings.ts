@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "ef814dd7ebc577d3798e8b2df65c2053feb260b3c9a8d8117b6c90b6c01fd2bb";
+export const hash = "1cb4369274ab970e2aa08121fe05d222d18dfe1b49e90080ddbcdca7b86adc91";
 
 export const renames = {
 	module: "file",
@@ -76,9 +76,12 @@ export const renames = {
 	integer_decimal_plain: "integer_number_literal",
 	integer_decimal_long: "big_integer_number_literal",
 	integer_decimal_imaginary: "imaginary_integer_number_literal",
-	integer_hex: "hex_integer_number_literal",
-	integer_binary: "binary_integer_number_literal",
-	integer_octal: "octal_integer_number_literal",
+	integer_hex_plain: "hex_integer_number_literal",
+	integer_binary_plain: "binary_integer_number_literal",
+	integer_octal_plain: "octal_integer_number_literal",
+	integer_hex_long: "hex_big_integer_number_literal",
+	integer_binary_long: "binary_big_integer_number_literal",
+	integer_octal_long: "octal_big_integer_number_literal",
 	float_point: "float_number_literal",
 	float_leading_point: "leading_point_float_number_literal",
 	float_scientific: "scientific_float_number_literal",

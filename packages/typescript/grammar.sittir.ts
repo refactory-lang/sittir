@@ -74,6 +74,14 @@ const TYPE_QUERY_CALL_WITNESSES = [
 	{ text: 'export type A = typeof f()["a"];\n', form: ['typeof', { symbol: 'identifier' }, { symbol: 'arguments' }], kind: 'type_query', production: TYPE_QUERY_CALL },
 	{ text: 'export let y: typeof f()\nexport let z = 1;\n', form: ['typeof', { symbol: 'identifier' }, { symbol: 'arguments' }], kind: 'type_query', production: TYPE_QUERY_CALL }
 ] as const;
+const LEGACY_OCTAL_WITNESSES = [
+	{
+		text: 'let x = 0377;\n',
+		form: ['0377'],
+		kind: 'number',
+		meaning: 'Octal 255: ECMAScript Annex B reads a leading zero followed by octal digits as a legacy octal literal, where upstream lexes it as decimal 377.'
+	}
+] as const;
 
 interface AccessorPositions {
 	readonly override: number;
@@ -280,8 +288,8 @@ export default grammar(enrich(base), wire({
 		_number: { '0/0': { type: 'STRING', value: '-' } },
 		number: {
 			'0/0/0': field('radix_prefix'),
-			'5/0/0': field('radix_prefix'),
 			'6/0/0': field('radix_prefix'),
+			'7/0/0': field('radix_prefix'),
 			'1/0/0': field('integer'),
 			'1/0/2': field('fraction'),
 			'1/0/3/0/0': field('marker'),
@@ -299,14 +307,15 @@ export default grammar(enrich(base), wire({
 			1: variant('float_point'),
 			2: variant('float_leading_point'),
 			3: variant('float_scientific'),
-			4: variant('decimal', { default: true }),
-			5: variant('binary'),
-			6: variant('octal'),
-			7: variant('bigint'),
-			'7/0': variant('hex'),
-			'7/1': variant('binary'),
-			'7/2': variant('octal'),
-			'7/3': variant('decimal', { default: true })
+			4: variant('legacy_octal'),
+			5: variant('decimal', { default: true }),
+			6: variant('binary'),
+			7: variant('octal'),
+			8: variant('bigint'),
+			'8/0': variant('hex'),
+			'8/1': variant('binary'),
+			'8/2': variant('octal'),
+			'8/3': variant('decimal', { default: true })
 		},
 		hash_bang_line: { '.': regex(/#!(?<content>.*)/) },
 		binary_expression: {
@@ -659,6 +668,11 @@ export default grammar(enrich(base), wire({
 		method_signature: reauthored('accepts-invalid-syntax', METHOD_SIGNATURE_WITNESSES, ($, original) =>
 			accessorArms($, original, { override: 2, dropped: [3, 4], kind: 5, optional: 7, signature: 8 })
 		),
+		number: reauthored('semantic-gap', LEGACY_OCTAL_WITNESSES, ($, original) => {
+			const [hex, decimal, ...radixes] = original.content.members;
+			const [point, leadingPoint, scientific, digits] = decimal.members;
+			return token(choice(hex, point, leadingPoint, scientific, seq('0', /0*[1-7][0-7]*/), digits, ...radixes));
+		}),
 		_type_query_call_expression: reauthored('accepts-invalid-syntax', TYPE_QUERY_CALL_WITNESSES, ($) => seq(field('function', $.import), field('arguments', $.arguments))),
 		abstract_method_signature: reauthored('accepts-invalid-syntax', ABSTRACT_METHOD_SIGNATURE_WITNESSES, ($, original) =>
 			accessorArms($, original, { override: 2, dropped: [], kind: 3, optional: 5, signature: 6 })

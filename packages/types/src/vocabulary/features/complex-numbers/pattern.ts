@@ -1,5 +1,5 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { SubKindOf, Under } from '../../utils.ts';
+import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Pattern {
 	export interface Complex<G extends GrammarMap, K extends Under<'pattern.complex'> = 'pattern.complex'> extends SubKindOf<V.Pattern<G, K>> {
@@ -13,6 +13,9 @@ export namespace Pattern {
 			| V.Literal.Number.Float.Any<G>
 			| V.Literal.Number.Integer<G>
 			| V.Literal.Number.Integer.Big<G>
+			| V.Literal.Number.Integer.Big.Binary<G>
+			| V.Literal.Number.Integer.Big.Hex<G>
+			| V.Literal.Number.Integer.Big.Octal<G>
 			| V.Literal.Number.Integer.Binary<G>
 			| V.Literal.Number.Integer.Hex<G>
 			| V.Literal.Number.Integer.Imaginary<G>
@@ -26,12 +29,15 @@ export namespace Pattern {
 			| V.Literal.Number.Float.Any<G>
 			| V.Literal.Number.Integer<G>
 			| V.Literal.Number.Integer.Big<G>
+			| V.Literal.Number.Integer.Big.Binary<G>
+			| V.Literal.Number.Integer.Big.Hex<G>
+			| V.Literal.Number.Integer.Big.Octal<G>
 			| V.Literal.Number.Integer.Binary<G>
 			| V.Literal.Number.Integer.Hex<G>
 			| V.Literal.Number.Integer.Imaginary<G>
 			| V.Literal.Number.Integer.Octal<G>
 		>;
-		readonly sign?: boolean;
+		readonly sign?: Flag;
 	}
 	export namespace Complex {
 		export interface Add<G extends GrammarMap, K extends Under<'pattern.complex.add'> = 'pattern.complex.add'> extends SubKindOf<V.Pattern.Complex<G, K>> {

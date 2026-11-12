@@ -29,6 +29,10 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'declaration.struct.public.restricted', name: 'S', scope: 'a', body: [] }))).toBe('pub(in a) struct S {}');
 	});
 
+	it('builds a block comment from its content text, through the one form its content seat holds', () => {
+		expect(render(runtime.build({ $path: 'comment.block', content: ' x ' }))).toBe('/* x */');
+	});
+
 	it('builds an expression statement through the form its content takes', () => {
 		expect(render(runtime.build({ $path: 'statement.expression', content: 'x' }))).toBe('x;');
 	});
@@ -123,7 +127,7 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it("places a receiver at the key its holder takes flattened, and the parameters after it in the group the holder takes as arguments", () => {
-		const receiver = { $path: 'declaration.parameter.receiver', reference: true };
+		const receiver = { $path: 'declaration.parameter.receiver', $flags: ['reference'] };
 		expect(render(runtime.build({ $path: 'declaration.method', name: 'f', receiver, parameters: [parameter('u8')], body: fn.body }))).toBe('fn f(&self, x: u8) {}');
 	});
 

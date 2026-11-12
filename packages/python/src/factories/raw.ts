@@ -156,9 +156,14 @@ export const buildPrintStatementPlain = dispatched(() => backend().buildPrintSta
 export const buildWildcardPattern = O.buildWildcardPattern;
 export const buildParenthesizedImportList = dispatched(() => backend().buildParenthesizedImportList);
 export const buildComprehensionClauses = dispatched(() => backend().buildComprehensionClauses);
-export const buildIntegerHex = dispatched(() => backend().buildIntegerHex);
-export const buildIntegerOctal = dispatched(() => backend().buildIntegerOctal);
-export const buildIntegerBinary = dispatched(() => backend().buildIntegerBinary);
+export const buildIntegerHexLong = dispatched(() => backend().buildIntegerHexLong);
+export const buildIntegerHexPlain = dispatched(() => backend().buildIntegerHexPlain);
+export const buildIntegerOctalLong = dispatched(() => backend().buildIntegerOctalLong);
+export const buildIntegerOctalPlain = dispatched(() => backend().buildIntegerOctalPlain);
+export const buildIntegerBinaryLong = dispatched(() => backend().buildIntegerBinaryLong);
+export const buildIntegerBinaryPlain = dispatched(() => backend().buildIntegerBinaryPlain);
+export const buildIntegerLegacyOctalLong = dispatched(() => backend().buildIntegerLegacyOctalLong);
+export const buildIntegerLegacyOctalPlain = dispatched(() => backend().buildIntegerLegacyOctalPlain);
 export const buildIntegerDecimalLong = dispatched(() => backend().buildIntegerDecimalLong);
 export const buildIntegerDecimalImaginary = dispatched(() => backend().buildIntegerDecimalImaginary);
 export const buildIntegerDecimalPlain = dispatched(() => backend().buildIntegerDecimalPlain);
@@ -366,9 +371,14 @@ export const _factoryMap = {
 	wildcard_pattern: buildWildcardPattern,
 	parenthesized_import_list: buildParenthesizedImportList,
 	comprehension_clauses: buildComprehensionClauses,
-	integer_hex: buildIntegerHex,
-	integer_octal: buildIntegerOctal,
-	integer_binary: buildIntegerBinary,
+	integer_hex_long: buildIntegerHexLong,
+	integer_hex_plain: buildIntegerHexPlain,
+	integer_octal_long: buildIntegerOctalLong,
+	integer_octal_plain: buildIntegerOctalPlain,
+	integer_binary_long: buildIntegerBinaryLong,
+	integer_binary_plain: buildIntegerBinaryPlain,
+	integer_legacy_octal_long: buildIntegerLegacyOctalLong,
+	integer_legacy_octal_plain: buildIntegerLegacyOctalPlain,
 	integer_decimal_long: buildIntegerDecimalLong,
 	integer_decimal_imaginary: buildIntegerDecimalImaginary,
 	integer_decimal_plain: buildIntegerDecimalPlain,

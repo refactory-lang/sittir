@@ -10,6 +10,9 @@ const choice = (...members: RuntimeRule[]) => ({ type: 'CHOICE', members }) as u
 const token = (content: RuntimeRule) => ({ type: 'TOKEN', content }) as unknown as RuntimeRule;
 const immediate = (content: RuntimeRule) => ({ type: 'IMMEDIATE_TOKEN', content }) as unknown as RuntimeRule;
 const prec = (value: number, content: RuntimeRule) => ({ type: 'PREC', value, content }) as unknown as RuntimeRule;
+const repeat1 = (content: RuntimeRule) => ({ type: 'REPEAT1', content }) as unknown as RuntimeRule;
+const optionalRule = (content: RuntimeRule) => ({ type: 'OPTIONAL', content }) as unknown as RuntimeRule;
+const fieldOf = (name: string, content: RuntimeRule) => ({ type: 'FIELD', name, content }) as unknown as RuntimeRule;
 const shape = (r: RuntimeRule): unknown => JSON.parse(JSON.stringify(r));
 
 describe('classifyTokenChoice', () => {
@@ -64,6 +67,14 @@ describe('distributeTokenForms', () => {
 		const viaOptional = distributeTokenForms(token(seq(S("'"), { type: 'OPTIONAL', content: forms } as unknown as RuntimeRule, S("'"))), 'c');
 		expect(shape(viaOptional)).toEqual(shape(viaChoice));
 	});
+	it('leaves a form alternation an authored field holds unsplit, whether its optional is a choice with a blank or an OPTIONAL', () => {
+		const forms = choice(seq(S('\\'), P('[a-z]')), P("[^']"));
+		const sites = { fielded: [[0, 1]], variants: [] };
+		for (const optional of [choice(forms, BLANK), optionalRule(forms)]) {
+			const rule = token(seq(S("'"), optional, S("'")));
+			expect(distributeTokenForms(rule, 'c', sites)).toBe(rule);
+		}
+	});
 	it('flattens an arm that is itself a form alternation into the parent, one token per form', () => {
 		const point = seq(P('\\d+'), S('.'));
 		const dec = choice(point, P('\\d+'));
@@ -83,6 +94,12 @@ describe('distributeTokenForms', () => {
 		expect(out.value).toBe(3);
 		expect(out.content.type).toBe('CHOICE');
 	});
+	it('leaves a choice under a repeat alone: the token is a run of its arms, not one of them', () => {
+		const rule = token(repeat1(choice(seq(S('\\'), P('.')), P('[^/\\\\]'))));
+		expect(distributeTokenForms(rule, 'pattern')).toBe(rule);
+		const armed = { fielded: [], variants: [[0], [1]] };
+		expect(() => distributeTokenForms(token(repeat1(seq(P('[a-z]'), choice(S('_'), BLANK)))), 'word', armed)).toThrow(/no unfielded presence choice/);
+	});
 	it('throws when an arm would match the empty string', () => {
 		expect(() => distributeTokenForms(token(choice(P('a*'), seq(S('b'), P('c')))), 'demo')).toThrow(
 			/token forms: arm 0 of 'demo' matches the empty string/
@@ -92,6 +109,58 @@ describe('distributeTokenForms', () => {
 		const arm = seq(S('0x'), P('[0-9a-f]+'));
 		expect(() => distributeTokenForms(token(choice(arm, seq(S('0x'), P('[0-9a-f]+')))), 'demo')).toThrow(
 			/token forms: arms 0 and 1 of 'demo' are identical/
+		);
+	});
+});
+
+describe('distributeTokenForms: authored variants on the arms of a token with no form alternation', () => {
+	const prefix = choice(S('0x'), S('0X'));
+	const digits = repeat1(P('_?[0-9a-f]+'));
+	const armed = { fielded: [], variants: [[0], [1]] };
+
+	it('splits its one presence choice, the live arm first and the blank arm last', () => {
+		const out = distributeTokenForms(token(seq(prefix, digits, choice(P('[Ll]'), BLANK))), 'hex', armed);
+		expect(shape(out)).toEqual(shape(choice(token(seq(prefix, digits, P('[Ll]'))), token(seq(prefix, digits)))));
+	});
+	it('splits an OPTIONAL exactly as the choice-with-blank spelling', () => {
+		const viaChoice = distributeTokenForms(token(seq(prefix, digits, choice(P('[Ll]'), BLANK))), 'hex', armed);
+		const viaOptional = distributeTokenForms(token(seq(prefix, digits, optionalRule(P('[Ll]')))), 'hex', armed);
+		expect(shape(viaOptional)).toEqual(shape(viaChoice));
+	});
+	it('keeps a spelling choice under the presence choice as one live arm', () => {
+		const out = distributeTokenForms(token(seq(digits, choice(choice(S('L'), S('l')), BLANK))), 'hex', armed);
+		expect(shape(out)).toEqual(shape(choice(token(seq(digits, choice(S('L'), S('l')))), token(seq(digits)))));
+	});
+	it('leaves the token alone when no authored variant names one of its arms', () => {
+		const rule = token(seq(prefix, digits, choice(P('[Ll]'), BLANK)));
+		expect(distributeTokenForms(rule, 'hex', { fielded: [], variants: [[]] })).toBe(rule);
+		expect(distributeTokenForms(rule, 'hex', { fielded: [], variants: [[0, 1]] })).toBe(rule);
+	});
+	it('splits a form alternation as before, whatever variants name its arms', () => {
+		const rule = token(choice(seq(prefix, P('[0-9a-f]+')), seq(P('[0-9]+'), choice(P('[Ll]'), BLANK))));
+		expect(shape(distributeTokenForms(rule, 'number', armed))).toEqual(shape(distributeTokenForms(rule, 'number')));
+	});
+	it('does not count a presence choice a field holds', () => {
+		const sign = fieldOf('sign', choice(S('-'), BLANK));
+		const out = distributeTokenForms(token(seq(sign, digits, choice(P('[Ll]'), BLANK))), 'hex', armed);
+		expect(shape(out)).toEqual(shape(choice(token(seq(sign, digits, P('[Ll]'))), token(seq(sign, digits)))));
+	});
+	it('reads the authored field sites of a token whose arms variants name as sites in those arms, whether its choice has a blank or is an OPTIONAL', () => {
+		const sites = { fielded: [[0, 0, 1], [1, 0, 1]], variants: [[0], [1]] };
+		const viaChoice = distributeTokenForms(token(seq(seq(S('['), choice(S('!'), BLANK)), P('[a-z]+'), S(']'))), 'tag', sites);
+		const viaOptional = distributeTokenForms(token(seq(seq(S('['), optionalRule(S('!'))), P('[a-z]+'), S(']'))), 'tag', sites);
+		expect(shape(viaChoice)).toEqual(shape(choice(token(seq(seq(S('['), S('!')), P('[a-z]+'), S(']'))), token(seq(seq(S('[')), P('[a-z]+'), S(']'))))));
+		expect(shape(viaOptional)).toEqual(shape(viaChoice));
+	});
+	it('throws, naming the token, when it has no unfielded presence choice', () => {
+		expect(() => distributeTokenForms(token(seq(prefix, digits)), 'hex', armed)).toThrow(
+			"token forms: authored variants name the arms of 'hex', which has no form alternation to split and no unfielded presence choice"
+		);
+	});
+	it('throws, naming the token and each candidate, when it has several', () => {
+		const rule = token(seq(choice(S('-'), BLANK), digits, choice(P('[Ll]'), BLANK)));
+		expect(() => distributeTokenForms(rule, 'hex', armed)).toThrow(
+			"token forms: authored variants name the arms of 'hex', which has no form alternation to split and 2 unfielded presence choices, at 0, 2 in its token body"
 		);
 	});
 });
