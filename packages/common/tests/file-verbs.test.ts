@@ -1,4 +1,5 @@
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { execFileSync, spawn } from 'node:child_process';
+import { existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -88,6 +89,22 @@ describe.each(['object', 'arena'] as const)('engine.write and engine.create (%s)
 		expect(text).toContain('// note');
 		expect(readFileSync(at('a.rs'), 'utf8')).toBe(text);
 		expect(written.diff().after).toBe(text);
+	});
+
+	it.skipIf(process.platform === 'win32')('diff refuses a pipe, or a link to one, without reading it', async () => {
+		const engine = await engineOf();
+		const pipe = at('pipe.rs');
+		execFileSync('mkfifo', [pipe]);
+		symlinkSync(pipe, at('link.rs'));
+		const feeder = spawn('sh', ['-c', 'sleep 2; printf x > "$1"', 'sh', pipe], { stdio: 'ignore' });
+		try {
+			for (const path of [pipe, at('link.rs')]) {
+				const pending = engine.write(path, engine.parse('fn a() {}\n'));
+				expect(() => pending.diff()).toThrow(/cannot read .*: it is not a regular file/);
+			}
+		} finally {
+			feeder.kill();
+		}
 	});
 
 	it('writes an edited root', async () => {

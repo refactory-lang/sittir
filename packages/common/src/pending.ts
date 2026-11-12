@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { closeSync, constants, fstatSync, openSync, readFileSync } from 'node:fs';
 import type { FileChange, FileWrite, Pending } from '@sittir/types';
 
 export type FileVerb = FileWrite['verb'];
@@ -11,11 +11,18 @@ export interface FileCommit extends Disposable {
 }
 
 export function currentText(path: string): string | undefined {
+	let descriptor: number;
 	try {
-		return readFileSync(path, 'utf8');
+		descriptor = openSync(path, constants.O_RDONLY | (constants.O_NONBLOCK ?? 0));
 	} catch (error) {
 		if ((error as NodeJS.ErrnoException).code === 'ENOENT') return undefined;
 		throw error;
+	}
+	try {
+		if (!fstatSync(descriptor).isFile()) throw new Error(`cannot read ${path}: it is not a regular file`);
+		return readFileSync(descriptor, 'utf8');
+	} finally {
+		closeSync(descriptor);
 	}
 }
 
