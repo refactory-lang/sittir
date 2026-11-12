@@ -33,16 +33,38 @@ export const externed: In<'declaration.function'> = { ...fn, extern };
 // @ts-expect-error a function states one extern
 export const twice: In<'declaration.function'> = { ...fn, extern: [extern, extern] };
 
-declare const flag: Flag;
 declare const lifetime: At<'declaration.type_parameter.lifetime'>['name'];
 export const bounded: In<'declaration.type_parameter.lifetime'> = { $path: 'declaration.type_parameter.lifetime', name: lifetime, bounds: [lifetime] };
 // @ts-expect-error a lifetime parameter takes no default
 export const defaulted: In<'declaration.type_parameter.lifetime'> = { $path: 'declaration.type_parameter.lifetime', name: lifetime, default: type };
 // @ts-expect-error a lifetime parameter is never const
-export const constLifetime: In<'declaration.type_parameter.lifetime'> = { $path: 'declaration.type_parameter.lifetime', name: lifetime, const: flag };
+export const constLifetime: In<'declaration.type_parameter.lifetime'> = { $path: 'declaration.type_parameter.lifetime', name: lifetime, $flags: ['const'] };
 declare const fallback: NonNullable<At<'declaration.type_parameter.value'>['default']>;
 export const constant: In<'declaration.type_parameter.value'> = { $path: 'declaration.type_parameter.value', name, type, default: fallback };
 // @ts-expect-error a const generic takes no bounds
 export const boundedConstant: In<'declaration.type_parameter.value'> = { $path: 'declaration.type_parameter.value', name, type, bounds: [type] };
 // @ts-expect-error a const generic's const is its refinement, not a flag
-export const flaggedConstant: In<'declaration.type_parameter.value'> = { $path: 'declaration.type_parameter.value', name, type, const: flag };
+export const flaggedConstant: In<'declaration.type_parameter.value'> = { $path: 'declaration.type_parameter.value', name, type, $flags: ['const'] };
+
+declare const flag: Flag;
+declare const body: At<'declaration.function'>['body'];
+declare const fnName: At<'declaration.function'>['name'];
+export const asyncFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, $flags: ['async', 'unsafe'] };
+export const asyncPublic: In<'declaration.function.public'> = { $path: 'declaration.function.public', name: fnName, parameters: [], body, $flags: ['async'] };
+// @ts-expect-error a function declares no static; a method does
+export const staticFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, $flags: ['static'] };
+// @ts-expect-error generator functions are a feature rust lacks
+export const generatorFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, $flags: ['generator'] };
+// @ts-expect-error a flag is named in $flags, never written as a member
+export const memberFlag: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, async: flag };
+
+export const readAsync: At<'declaration.function'>['$flags'] = ['async'];
+// @ts-expect-error a read function carries no static
+export const readStatic: At<'declaration.function'>['$flags'] = ['static'];
+export const readReference: At<'declaration.parameter.receiver'>['$flags'] = ['reference', 'mutable'];
+
+type Defaults = V.Contract<RustMap['features']>;
+type NestedReceiver = Extract<NonNullable<V.Read<Defaults, 'declaration.function'>['receiver']>, { readonly $path: 'declaration.parameter.receiver' }>;
+export const nestedReference: NestedReceiver = { $path: 'declaration.parameter.receiver', $flags: ['reference'] };
+// @ts-expect-error a nested default carries its flags in $flags, never as a member
+export const nestedMember: NestedReceiver = { $path: 'declaration.parameter.receiver', reference: flag };

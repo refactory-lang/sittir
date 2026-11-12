@@ -1,4 +1,5 @@
 import type * as V from '../src/vocabulary/index.ts';
+import type { NamedFlags } from '../src/vocabulary/utils.ts';
 
 type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 type Expect<T extends true> = T;
@@ -20,12 +21,15 @@ export type OverrideIsTheMember = Expect<
 export type UnoverriddenMemberIsItsDefault = Expect<
 	Equal<
 		V.Expression.Member<Fixture>['object'],
-		| V.Declaration.Module<Fixture>
-		| V.Expression.Any<Fixture>
-		| V.Identifier.Any<Fixture>
-		| V.Literal.Any<Fixture>
-		| V.Pattern.Rest<Fixture>
-		| V.Statement.Any<Fixture>
+		| NamedFlags<
+				Fixture,
+				| V.Declaration.Module<Fixture>
+				| V.Expression.Any<Fixture>
+				| V.Identifier.Any<Fixture>
+				| V.Literal.Any<Fixture>
+				| V.Pattern.Rest<Fixture>
+				| V.Statement.Any<Fixture>
+		  >
 		| V.Unmapped
 	>
 >;

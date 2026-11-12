@@ -8537,7 +8537,10 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ReferenceExpressionRawMut]: { writable: { op: 'and', of: [] }, raw: { op: 'and', of: [] } },
 	[TSKindId.ReferencePattern]: { exclusive: { op: 'is', types: [57], slots: { '326': 0 } } },
 	[TSKindId.ReferenceType]: { exclusive: { op: 'is', types: [57], slots: { '252': 1 } } },
-	[TSKindId.SelfParameter]: { mutable: { op: 'is', types: [57], slots: { '231': 2 } } },
+	[TSKindId.SelfParameter]: {
+		reference: { op: 'present', slots: { '231': 0 } },
+		mutable: { op: 'is', types: [57], slots: { '231': 2 } }
+	},
 	[TSKindId.SignatureMethodDeclaration]: {
 		async: { op: 'child', slots: { '483': 1 }, of: { op: 'eq', text: 'async', slots: { '210': 0 } } },
 		const: { op: 'child', slots: { '483': 1 }, of: { op: 'eq', text: 'const', slots: { '210': 0 } } },
@@ -9486,7 +9489,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			writable: { types: [389], kinds: [] }
 		}
 	},
-	440: { content: { mutable: { types: [], kinds: [231, 439] } } },
+	440: { content: { mutable: { types: [], kinds: [231, 439] }, reference: { types: [], kinds: [231] } } },
 	476: { content: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } } },
 	480: {
 		returnType: {
@@ -9593,7 +9596,7 @@ declare module '../types.js' {
 		readonly __flags__?: 'exclusive';
 	}
 	interface SelfParameter {
-		readonly __flags__?: 'mutable';
+		readonly __flags__?: 'reference' | 'mutable';
 	}
 	interface SignatureMethodDeclaration {
 		readonly __flags__?: 'async' | 'const' | 'unsafe' | 'default' | 'static';
@@ -10020,7 +10023,7 @@ declare module '../types.js' {
 		readonly __slotFlags__?: { readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface AttributedParameterReceiver {
-		readonly __slotFlags__?: { readonly content: 'mutable' };
+		readonly __slotFlags__?: { readonly content: 'mutable' | 'reference' };
 	}
 	interface ClosureParameter {
 		readonly __slotFlags__?: { readonly content: 'byte' | 'exclusive' };
