@@ -4,7 +4,8 @@
 # the build path every tree was built on (build-path.mjs place and check).
 # The versions are base, master, feature and each candidate in object storage
 # and, when they ran, <tree>-arena (that tree in arena storage). A candidate
-# is compared with base and with feature in the same storage. Every
+# is compared with base and with feature in the same storage, and the headline
+# pairs compare arena with arena; a cross-storage pair is labelled. Every
 # ratio is the median of the per-round ratios of process medians, with a
 # seeded bootstrap 95% range of that median, beside the earlier summary's
 # feature/master. Pipeline ratios against base above <bar> (default 1.10) are
@@ -32,9 +33,10 @@ TREES = ['base', 'master', 'feature'] + CANDIDATES
 VERSIONS = [v for t in TREES for v in [t, t + '-arena'] if any(r['version'] == v for r in receipts)]
 treeOf = lambda v: v.removesuffix('-arena')
 storageOf = lambda v: 'arena' if v.endswith('-arena') else 'object'
-PAIRS = [(a, b) for a, b in [('feature', 'base'), ('feature-arena', 'base'), ('master', 'base'), ('feature', 'master'), ('feature-arena', 'master')]
-         + [p for c in CANDIDATES for p in [(c, 'base'), (c + '-arena', 'base'), (c, 'feature'), (c + '-arena', 'feature-arena')]] if a in VERSIONS and b in VERSIONS]
-AGAINST_BASE = [a for a, b in PAIRS if b == 'base' and a != 'master']
+LIKE_FOR_LIKE = [('feature', 'base'), ('feature-arena', 'base-arena'), ('master', 'base'), ('feature', 'master')] + [p for c in CANDIDATES for p in [(c, 'base'), (c + '-arena', 'base-arena'), (c, 'feature'), (c + '-arena', 'feature-arena')]]
+CROSS_STORAGE = [('feature-arena', 'base'), ('feature-arena', 'master')] + [(c + '-arena', 'base') for c in CANDIDATES]
+PAIRS = [(a, b) for a, b in LIKE_FOR_LIKE + CROSS_STORAGE if a in VERSIONS and b in VERSIONS]
+AGAINST_BASE = [(a, b) for a, b in PAIRS if b in ('base', 'base-arena') and a != 'master' and storageOf(a) == storageOf(b)]
 GRAMMARS = ['python', 'rust', 'typescript', 'regex', 'scm']
 
 
@@ -107,7 +109,7 @@ for t in TREES:
     assert trees[t]['commit'] == commitOf(t), f'{t}: measured {trees[t]["commit"]}, expected {commitOf(t)}'
 load = [r['load1'] for r in receipts]
 machine, runner = trees['feature']['machine'], trees['feature']['runner']
-over = [f"{row['grammar']} {a} ×{row['pairs'][f'{a}/base']['pipelineMs']['ratio']:.3f}" for row in corpus for a in AGAINST_BASE if row['pairs'][f'{a}/base']['pipelineMs']['ratio'] > BAR]
+over = [f"{row['grammar']} {a} ×{row['pairs'][f'{a}/{b}']['pipelineMs']['ratio']:.3f}" for row in corpus for a, b in AGAINST_BASE if row['pairs'][f'{a}/{b}']['pipelineMs']['ratio'] > BAR]
 result = {'refs': refs, 'versions': {v: {'tree': treeOf(v), 'nodeStorage': storageOf(v)} for v in VERSIONS}, 'bar': BAR, 'overBar': over, 'mismatches': mismatches,
           'buildProfiles': sorted(profiles), 'processes': len(receipts), 'meanLoad1': statistics.mean(load), 'maxLoad1': max(load), 'machine': machine, 'runner': runner,
           'trees': {t: {'commit': x['commit'], 'workingTreeDiffSha256': x['workingTreeDiffSha256'], 'sections': {k: {'files': s['files'], 'sha256': s['sha256']} for k, s in x['sections'].items()}} for t, x in trees.items()},
@@ -119,7 +121,7 @@ old = {r['grammar']: r['timings'] for r in earlier['corpus']}
 oldConstruction = {(r['functionRoots'], r['reusedName']): r['timings'] for r in earlier['construction']}
 cell = lambda p, ph, row: f"{row['pairs'][p][ph]['ratio']:.3f} [{row['pairs'][p][ph]['range95'][0]:.3f}, {row['pairs'][p][ph]['range95'][1]:.3f}]" if ph in row['pairs'][p] else '-'
 ratios = lambda ph, row: ' | '.join(cell(f'{a}/{b}', ph, row) for a, b in PAIRS)
-heads = ' | '.join(f'{a}/{b}' for a, b in PAIRS)
+heads = ' | '.join(f'{a}/{b}' + (' (cross-storage)' if storageOf(a) != storageOf(b) else '') for a, b in PAIRS)
 ms = lambda ph, row: ' | '.join(f"{row['ms'][v][ph]:.3f}" for v in VERSIONS)
 msHeads = ' | '.join(f'ms {v}' for v in VERSIONS)
 EMPTY_DIFF = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
