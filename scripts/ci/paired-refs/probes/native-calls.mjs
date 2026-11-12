@@ -11,7 +11,7 @@
 // warmup; then enough batches for about three seconds of timed work.
 import { createRequire } from 'node:module';
 import { readFileSync, writeFileSync } from 'node:fs';
-import os from 'node:os';
+import { cpuModel } from '../../arena-benchmark-cpu.mjs';
 import path from 'node:path';
 import { performance, PerformanceObserver } from 'node:perf_hooks';
 const [root, grammar, nodeStorage, out, editMode = 'joint'] = process.argv.slice(2);
@@ -133,7 +133,7 @@ const result = {
 	nodeStorage,
 	editMode,
 	buildProfile: engine.diagnostics.buildProfile,
-	cpu: os.cpus()[0].model,
+	cpu: cpuModel(),
 	node: process.version,
 	batches,
 	trees,

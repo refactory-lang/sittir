@@ -42,6 +42,10 @@ on:
         description: paired-refs and probe. A commit whose change to the build driver every tree's addons are built with. A tree it applies to is patched, any other tree is built as it is, and every tree's stamps must agree. Empty builds each tree with its own.
         type: string
         default: ''
+      runner:
+        description: The runner label every benchmark job runs on.
+        type: string
+        default: ubuntu-24.04-arm
 
 permissions:
   contents: read
@@ -50,7 +54,7 @@ jobs:
   baseline:
     name: Resolve the baseline
     if: inputs.benchmark == 'all' || inputs.benchmark == 'corpus'
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.runner }}
     outputs:
       commit: ${{ steps.resolve.outputs.commit }}
     steps:
@@ -73,6 +77,8 @@ jobs:
   prepare:
     if: inputs.benchmark == 'all' || inputs.benchmark == 'corpus'
     uses: ./.github/workflows/benchmark-build.yml
+    with:
+      runner: ${{ inputs.runner }}
   native:
     needs: prepare
     strategy:
@@ -81,6 +87,7 @@ jobs:
         grammar: ${{ fromJSON(needs.prepare.outputs.grammars) }}
     uses: ./.github/workflows/benchmark-native.yml
     with:
+      runner: ${{ inputs.runner }}
       grammar: ${{ matrix.grammar }}
       prefix: ${{ needs.prepare.outputs.prefix }}
   baseline-prepare:
@@ -88,6 +95,7 @@ jobs:
     if: needs.baseline.outputs.commit != ''
     uses: ./.github/workflows/benchmark-build.yml
     with:
+      runner: ${{ inputs.runner }}
       ref: ${{ needs.baseline.outputs.commit }}
       label: baseline
   baseline-native:
@@ -98,6 +106,7 @@ jobs:
         grammar: ${{ fromJSON(needs.baseline-prepare.outputs.grammars) }}
     uses: ./.github/workflows/benchmark-native.yml
     with:
+      runner: ${{ inputs.runner }}
       grammar: ${{ matrix.grammar }}
       prefix: ${{ needs.baseline-prepare.outputs.prefix }}
       ref: ${{ needs.baseline.outputs.commit }}
@@ -109,6 +118,7 @@ jobs:
       && (inputs.benchmark == 'all' || inputs.benchmark == 'corpus')
     uses: ./.github/workflows/benchmark-corpus.yml
     with:
+      runner: ${{ inputs.runner }}
       runtime-prefix: ${{ needs.prepare.outputs.prefix }}
       grammars: ${{ needs.prepare.outputs.grammars }}
       baseline: ${{ needs.baseline.outputs.commit }}
@@ -117,6 +127,7 @@ jobs:
     if: inputs.benchmark == 'paired-refs'
     uses: ./.github/workflows/benchmark-paired-refs.yml
     with:
+      runner: ${{ inputs.runner }}
       feature-ref: ${{ inputs.feature-ref }}
       master-ref: ${{ inputs.master-ref }}
       profile: ${{ inputs.profile }}
@@ -127,12 +138,14 @@ jobs:
     if: inputs.benchmark == 'oxc-reference'
     uses: ./.github/workflows/benchmark-oxc-reference.yml
     with:
+      runner: ${{ inputs.runner }}
       sittir-ref: ${{ inputs.feature-ref }}
       profile: ${{ inputs.profile }}
   probe:
     if: inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile'
     uses: ./.github/workflows/benchmark-probe.yml
     with:
+      runner: ${{ inputs.runner }}
       script: ${{ inputs.benchmark == 'profile' && 'run-profile.py' || inputs.benchmark == 'waiting' && 'run-waiting.py' || inputs.benchmark == 'parse-profile' && 'run-parse-profile.py' || 'run-probe.py' }}
       feature-ref: ${{ inputs.feature-ref }}
       master-ref: ${{ inputs.master-ref }}

@@ -7,7 +7,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { performance } from 'node:perf_hooks';
-import os from 'node:os';
+import { cpuModel } from '../../arena-benchmark-cpu.mjs';
 import path from 'node:path';
 const [root, grammar, nodeStorage, out, holdGrammar, heldArg] = process.argv.slice(2);
 const held = Number(heldArg);
@@ -38,6 +38,6 @@ await settle();
 const samples = [];
 for (let i = 0; i < 60; i++) { samples.push(batch()); await settle(); }
 const median = (xs) => [...xs].sort((a, b) => a - b)[xs.length >> 1];
-const result = { grammar, nodeStorage, holdGrammar, held, cpu: os.cpus()[0].model, parseMs: median(samples.map((s) => s.parseMs)), renderMs: median(samples.map((s) => s.renderMs)), pipelineMs: median(samples.map((s) => s.parseMs + s.renderMs)), liveTrees: { [grammar]: liveOf(grammar), [holdGrammar]: liveOf(holdGrammar) }, rssMB: process.memoryUsage.rss() / 2 ** 20, heldRoots: roots.length, sink };
+const result = { grammar, nodeStorage, holdGrammar, held, cpu: cpuModel(), parseMs: median(samples.map((s) => s.parseMs)), renderMs: median(samples.map((s) => s.renderMs)), pipelineMs: median(samples.map((s) => s.parseMs + s.renderMs)), liveTrees: { [grammar]: liveOf(grammar), [holdGrammar]: liveOf(holdGrammar) }, rssMB: process.memoryUsage.rss() / 2 ** 20, heldRoots: roots.length, sink };
 writeFileSync(out, JSON.stringify(result) + '\n');
 console.log(JSON.stringify({ grammar, holdGrammar, held, pipelineMs: result.pipelineMs }));

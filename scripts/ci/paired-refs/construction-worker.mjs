@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { writeFileSync } from 'node:fs';
 import { performance } from 'node:perf_hooks';
 import os from 'node:os';
+import { cpuModel } from '../arena-benchmark-cpu.mjs';
 const [root, phase, out, nodeStorage = 'object'] = process.argv.slice(2);
 const rust = (await import(root + '/packages/rust/dist/index.js')).default;
 const engine = await rust.createEngine({ nodeStorage });
@@ -77,7 +78,7 @@ try {
     samples.push({ retainedBatches: retained.length, retainedFunctionRoots: 32000, baseline, after, delta: Object.fromEntries(Object.keys(after).map(key => [key, after[key] - baseline[key]])) });
   } else throw new Error('unknown phase');
   const builtMemory = engine.diagnostics.builtMemory?.();
-  const result = { at: new Date().toISOString(), root, phase, buildProfile: engine.diagnostics.buildProfile, node: process.version, v8: process.versions.v8, cpu: os.cpus()[0].model, loadAverage: os.loadavg(), mode: { storage: nodeStorage, construction: nodeStorage === 'arena' ? 'record' : 'object' }, protocol: 'Public Rust function builders and name edits, built roots and edit results released after the timed edit (releaseMs); seven rotated batches after at least two seconds of warmup; no forced GC in timing mode. Separate retained-population process forces GC before and after retaining 32000 function roots. Hashes and edit/input identity asserted. Whole-worker memory, not native attribution.', warmupBatches, builtMemory, samples, sink };
+  const result = { at: new Date().toISOString(), root, phase, buildProfile: engine.diagnostics.buildProfile, node: process.version, v8: process.versions.v8, cpu: cpuModel(), loadAverage: os.loadavg(), mode: { storage: nodeStorage, construction: nodeStorage === 'arena' ? 'record' : 'object' }, protocol: 'Public Rust function builders and name edits, built roots and edit results released after the timed edit (releaseMs); seven rotated batches after at least two seconds of warmup; no forced GC in timing mode. Separate retained-population process forces GC before and after retaining 32000 function roots. Hashes and edit/input identity asserted. Whole-worker memory, not native attribution.', warmupBatches, builtMemory, samples, sink };
   writeFileSync(out, JSON.stringify(result, null, 2) + '\n');
   console.log(JSON.stringify({ phase, samples: samples.length, sink, builtMemory }));
 } finally { retained = undefined; engine.dispose(); }

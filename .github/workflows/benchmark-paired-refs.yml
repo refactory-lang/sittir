@@ -3,6 +3,10 @@ name: Paired refs benchmark
 on:
   workflow_call:
     inputs:
+      runner:
+        description: The runner label every job runs on, which benchmarks.yml sets once
+        type: string
+        required: true
       feature-ref:
         type: string
         required: true
@@ -31,8 +35,8 @@ env:
 
 jobs:
   measure:
-    name: Feature, master, the candidates and the merge base on one runner (Linux x64)
-    runs-on: ubuntu-24.04
+    name: Feature, master, the candidates and the merge base on one runner (${{ inputs.runner }})
+    runs-on: ${{ inputs.runner }}
     timeout-minutes: 360
     steps:
       - uses: actions/checkout@v6

@@ -8,7 +8,7 @@ import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { performance, PerformanceObserver } from 'node:perf_hooks';
-import os from 'node:os';
+import { cpuModel } from '../../arena-benchmark-cpu.mjs';
 import path from 'node:path';
 const [root, grammar, nodeStorage, out] = process.argv.slice(2);
 const require = createRequire(import.meta.url);
@@ -71,6 +71,6 @@ for (let i = 0; i < 150; i++) {
 	batch(true);
 	await new Promise(setImmediate);
 }
-writeFileSync(out, JSON.stringify({ root, grammar, nodeStorage, cpu: os.cpus()[0].model, node: process.version, warmupBatches, batches, sink }) + '\n');
+writeFileSync(out, JSON.stringify({ root, grammar, nodeStorage, cpu: cpuModel(), node: process.version, warmupBatches, batches, sink }) + '\n');
 console.log(grammar, nodeStorage, 'warmup', warmupBatches, 'batches', batches.length);
 engine.dispose();

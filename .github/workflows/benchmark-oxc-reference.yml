@@ -3,6 +3,10 @@ name: oxc speed reference
 on:
   workflow_call:
     inputs:
+      runner:
+        description: The runner label every job runs on, which benchmarks.yml sets once
+        type: string
+        required: true
       sittir-ref:
         type: string
         required: true
@@ -19,8 +23,8 @@ env:
 
 jobs:
   measure:
-    name: sittir against oxfmt and oxlint, copy ${{ matrix.copy }} (Linux x64)
-    runs-on: ubuntu-24.04
+    name: sittir against oxfmt and oxlint, copy ${{ matrix.copy }} (${{ inputs.runner }})
+    runs-on: ${{ inputs.runner }}
     timeout-minutes: 360
     strategy:
       fail-fast: false
@@ -98,7 +102,7 @@ jobs:
     name: Per-CPU medians over every copy
     needs: measure
     if: always()
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.runner }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/download-artifact@v4

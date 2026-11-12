@@ -18,6 +18,7 @@
 import assert from 'node:assert/strict';
 import { writeFileSync } from 'node:fs';
 import os from 'node:os';
+import { cpuModel } from '../../arena-benchmark-cpu.mjs';
 import path from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { corpusBatch, hash } from '../corpus-batch.mjs';
@@ -127,7 +128,7 @@ try {
   for (let i = 0; i < batches; i++) await batch(true);
   writeFileSync(out, JSON.stringify({
     at: new Date().toISOString(), tree, ...describe, corpus: manifest.name, commit: manifest.commit, files: sources.length, bytes,
-    node: process.version, v8: process.versions.v8, cpu: os.cpus()[0].model, loadAverage: os.loadavg(),
+    node: process.version, v8: process.versions.v8, cpu: cpuModel(), loadAverage: os.loadavg(),
     protocol: `Every admitted file of one corpus per batch (sittir in path-order chunks of about ${CHUNK_BYTES / 1e6} MB, each phase summed over the chunks, every parse root and whole tree released after its chunk (treeReleaseMs), a yield between chunks; deep-read the addon's parse and readRecordStub(0, Infinity) per file, timed apart; oxfmt one awaited format() per file); at least two seconds and one batch of warmup, then the timed batches, an event-loop yield between batches, no forced GC; output hashes equal across batches.`,
     warmupBatches, signature, rendersDifferingFromSource, samples, peakRssMB: peakRss / 2 ** 20,
   }, null, 1) + '\n');

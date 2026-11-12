@@ -6,6 +6,7 @@ import os from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
+import { cpu } from './arena-benchmark-cpu.mjs';
 
 const MEMORY_FIELDS = ['heapUsed', 'heapTotal', 'external', 'arrayBuffers', 'rss'];
 const REVISIONS = ['branch', 'baseline'];
@@ -13,12 +14,6 @@ const MiB = 1048576;
 const IDLE = 'docs/superpowers/probes/2026-10-01-shared-arena/timing/idle.sh';
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 const command = (name, args) => execFileSync(name, args, { encoding: 'utf8' }).trim();
-const cacheSizes = () => {
-	if (process.platform !== 'linux') return undefined;
-	const lines = command('lscpu', []).split('\n');
-	const field = (label) => lines.find((line) => line.startsWith(label))?.split(':')[1]?.replace(/\s*\(.*\)\s*$/, '').trim();
-	return { modelName: field('Model name'), l1d: field('L1d cache'), l1i: field('L1i cache'), l2: field('L2 cache'), l3: field('L3 cache') };
-};
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const median = (values) => {
 	assert(values.length > 0, 'empty sample population');
@@ -66,6 +61,7 @@ function section(paths) {
 }
 
 export function capture() {
+	const host = cpu();
 	const grammars = command('pnpm', ['exec', 'tsx', 'packages/tools/src/scripts/list-grammars.ts', 'stable']).split(
 		/\s+/
 	);
@@ -99,10 +95,10 @@ export function capture() {
 			platform: process.platform,
 			arch: process.arch,
 			release: os.release(),
-			cpu: os.cpus()[0]?.model,
+			cpu: host.model,
 			cores: os.cpus().length,
 			memory: os.totalmem(),
-				caches: cacheSizes()
+			caches: host.caches
 		},
 		runner: {
 			os: process.env.RUNNER_OS,

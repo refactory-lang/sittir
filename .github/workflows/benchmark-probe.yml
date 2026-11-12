@@ -3,6 +3,10 @@ name: Native call probe
 on:
   workflow_call:
     inputs:
+      runner:
+        description: The runner label every job runs on, which benchmarks.yml sets once
+        type: string
+        required: true
       feature-ref:
         type: string
         required: true
@@ -37,8 +41,8 @@ env:
 
 jobs:
   probe:
-    name: Native calls per tree, feature and the candidates against their merge base (Linux x64)
-    runs-on: ubuntu-24.04
+    name: Native calls per tree, feature and the candidates against their merge base (${{ inputs.runner }})
+    runs-on: ${{ inputs.runner }}
     timeout-minutes: 240
     steps:
       - uses: actions/checkout@v6
