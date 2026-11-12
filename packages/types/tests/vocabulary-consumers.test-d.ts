@@ -26,6 +26,7 @@ import type {
 	Fits,
 	GrammarMap,
 	Identifier,
+	Literal,
 	Missing,
 	OptionalMembers,
 	Pattern,
@@ -138,41 +139,51 @@ export function binary(left: Identifier.Any<Core>, right: Identifier.Any<Core>):
 	return { $path: 'expression.binary', left, right };
 }
 
-// A refinement pins its operator.
+// A refinement fixes its operator by its path, and no member restates it.
 export function add(): Expression.Binary.Arithmetic.Add<Core> {
-	return { $path: 'expression.binary.arithmetic.add', operator: '+' };
+	return { $path: 'expression.binary.arithmetic.add' };
 }
-export function notAdd(): Expression.Binary.Arithmetic.Add<Core> {
+export function restatedAdd(): Expression.Binary.Arithmetic.Add<Core> {
 	return {
 		...add(),
-		// @ts-expect-error the addition refinement pins '+'
-		operator: '-'
+		// @ts-expect-error the addition refinement has no operator member
+		operator: '+'
 	};
 }
-
-// Every comparison pins the one converged operator member.
-export function equal(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary.Comparison.Equal<Core> {
-	return { $path: 'expression.binary.comparison.equal', left, right, operator: '==' };
+// The unrefined binary expression keeps the operator it reads.
+export function unrefined(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary<Core> {
+	return { $path: 'expression.binary', left, operator: '+', right };
 }
-export function notEqual(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary.Comparison.Equal<Core> {
+
+export function equal(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary.Comparison.Equal<Core> {
+	return { $path: 'expression.binary.comparison.equal', left, right };
+}
+export function restatedEqual(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary.Comparison.Equal<Core> {
 	return {
 		...equal(left, right),
-		// @ts-expect-error the equality refinement pins '=='
-		operator: '!='
+		// @ts-expect-error the equality refinement has no operator member
+		operator: '=='
 	};
 }
 
-// Equality is strict in every language, typescript's `===` included; its coercing `==` is a comparison of its own.
-export function strictEqual(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary.Comparison.Equal<Core> {
-	return { ...equal(left, right), operator: '===' };
-}
+// Equality is strict in every language; typescript's coercing `==` is a comparison of its own, never an equality.
 export function looseEqual(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary.Comparison.LooseEqual<Core> {
+	return { $path: 'expression.binary.comparison.loose_equal', left, right };
+}
+export function looseAsEqual(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary.Comparison.Equal<Core> {
+	// @ts-expect-error a coercing comparison is not an equality
+	return { $path: 'expression.binary.comparison.loose_equal', left, right };
+}
+
+// A negative number holds the number it negates as its value, and has no $value of its own.
+export function negative(): Literal.Number.Negative<Core> {
+	return { $path: 'literal.number.negative', value: { $path: 'literal.number.integer', $value: 1 } };
+}
+export function restatedNegative(): Literal.Number.Negative<Core> {
 	return {
-		$path: 'expression.binary.comparison.loose_equal',
-		left,
-		right,
-		// @ts-expect-error a coercing comparison is never strict
-		operator: '==='
+		...negative(),
+		// @ts-expect-error a negative number has no $value
+		$value: -1
 	};
 }
 

@@ -1,6 +1,10 @@
 import type { GrammarMap, Literal } from '../src/vocabulary/index.ts';
 
-export function numericValue<G extends GrammarMap>(literal: Literal.Number.Any<G>): number | bigint {
+export function numericValue<G extends GrammarMap>(literal: Exclude<Literal.Number.Any<G>, Literal.Number.Negative<G>>): number | bigint {
+	return literal.$value;
+}
+
+export function negativeValue<G extends GrammarMap>(literal: Literal.Number.Negative<G>): undefined {
 	return literal.$value;
 }
 

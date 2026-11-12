@@ -1791,6 +1791,7 @@ export interface InnerGap {
 export interface FullFormAffix {
 	readonly texts: readonly string[];
 	readonly slot?: string;
+	readonly decided?: boolean;
 }
 
 export interface FullForm {

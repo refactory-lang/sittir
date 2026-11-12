@@ -1,6 +1,8 @@
 import type { RenderRule } from '../../types/rule.ts';
 import { CHOICE, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { isSoleEnumContent } from '../token-interior.ts';
+import { ruleToRegexSource } from '../../util/word-matcher.ts';
+import { acceptsSomeEndingWith, acceptsSomeStartingWith, patternDfa } from './pattern-automaton.ts';
 import {
 	AbstractAssembledCompound, AssembledLexedPattern,
 	AssembledPattern,
@@ -103,6 +105,25 @@ function isSeparated(node: AbstractAssembledCompound, form: FullForm, content: R
 	);
 }
 
+function contentPatternOf(member: RenderRule, forms: FullForms): string | undefined {
+	if (member.type === SYMBOL) return forms.textPattern(member.name);
+	return ruleToRegexSource(member) ?? undefined;
+}
+
+function decidedByText(affix: FullFormAffix, side: keyof FullForm, content: string | undefined): boolean {
+	const dfa = content === undefined ? undefined : patternDfa(content);
+	if (dfa === undefined) return false;
+	const extendsOther = (text: string): boolean =>
+		affix.texts.some((other) => other !== text && (side === 'open' ? text.startsWith(other) : text.endsWith(other)));
+	const contentMeets = (text: string): boolean =>
+		side === 'open' ? acceptsSomeStartingWith(dfa, text) : acceptsSomeEndingWith(dfa, text);
+	return !affix.texts.some((text) => extendsOther(text) || contentMeets(text));
+}
+
+function stampDecided(affix: FullFormAffix, side: keyof FullForm, content: string | undefined): FullFormAffix {
+	return affix.slot === undefined ? affix : { ...affix, decided: decidedByText(affix, side, content) };
+}
+
 function fullFormOf(node: AbstractAssembledCompound, forms: FullForms): FullForm | undefined {
 	if (node.renderRule.type !== SEQ) return undefined;
 	const members = node.renderRule.members;
@@ -118,7 +139,9 @@ function fullFormOf(node: AbstractAssembledCompound, forms: FullForms): FullForm
 	const close = joinRun(run(end, members.length));
 	if (open === undefined || close === undefined) return undefined;
 	const form = { open, close };
-	return isSeparated(node, form, members[start]!, forms.edges) ? undefined : form;
+	if (isSeparated(node, form, members[start]!, forms.edges)) return undefined;
+	const content = contentPatternOf(members[start]!, forms);
+	return { open: stampDecided(open, 'open', content), close: stampDecided(close, 'close', content) };
 }
 
 class FullForms {
@@ -137,6 +160,11 @@ class FullForms {
 
 	isPattern(kind: string): boolean {
 		return this.nodes.get(kind) instanceof AssembledPattern;
+	}
+
+	textPattern(kind: string): string | undefined {
+		const node = this.nodes.get(kind);
+		return node instanceof AssembledPattern ? node.textPattern : undefined;
 	}
 
 	isText(kind: string): boolean {
