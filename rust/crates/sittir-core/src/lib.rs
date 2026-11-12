@@ -26,6 +26,7 @@ pub mod list_slots;
 pub mod napi_engine;
 pub mod options;
 pub mod points;
+pub mod probe_split;
 pub mod trivia_table;
 pub mod prepare;
 pub mod query;

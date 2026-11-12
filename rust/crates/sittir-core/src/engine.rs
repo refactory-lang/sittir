@@ -738,12 +738,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.arena.get().is_some()
     }
 
-    /// Probe only: drops the tree's parts one at a time, answering each
-    /// part's drop time: rows, arena, records, slots and items, placement
-    /// (trivia, depth members, lines), the tree-sitter tree, the rest.
+    /// Probe only: drops the tree's parts one at a time, each under its
+    /// part of the probe split: rows, arena, records, slots and items, the
+    /// placement's parts, depth members, lines, the tree-sitter tree, the
+    /// rest.
     #[cfg(feature = "arena")]
-    pub fn probe_drop_split(mut self) -> [std::time::Duration; 7] {
-        use std::time::{Duration, Instant};
+    pub fn probe_drop_split(mut self) {
+        use crate::probe_split::{Part, ARENA, DEPTH_MEMBERS, LINES, RECORDS, REST, ROWS, SLOTS_ITEMS, TREE};
         thread_local! {
             static SPARE: std::cell::RefCell<Option<tree_sitter::Tree>> = const { std::cell::RefCell::new(None) };
         }
@@ -758,34 +759,34 @@ impl<G: EngineGrammar> ParsedTree<G> {
             }
             spare.clone()
         });
-        let mut out = [Duration::ZERO; 7];
-        let at = Instant::now();
+        let part = Part::start(ROWS);
         drop(self.rows.take());
-        out[0] = at.elapsed();
-        let at = Instant::now();
+        part.end();
+        let part = Part::start(ARENA);
         drop(self.arena.take());
-        out[1] = at.elapsed();
-        let at = Instant::now();
+        part.end();
+        let part = Part::start(RECORDS);
         drop(std::mem::take(owned(&mut self.records)));
-        out[2] = at.elapsed();
-        let at = Instant::now();
+        part.end();
+        let part = Part::start(SLOTS_ITEMS);
         drop(std::mem::take(owned(&mut self.slots)));
         drop(std::mem::take(owned(&mut self.items)));
-        out[3] = at.elapsed();
-        let at = Instant::now();
-        drop(std::mem::take(&mut self.trivia));
+        part.end();
+        std::mem::take(&mut self.trivia).probe_drop_split();
+        let part = Part::start(DEPTH_MEMBERS);
         drop(self.depth_members.take());
+        part.end();
+        let part = Part::start(LINES);
         drop(self.lines.take());
-        out[4] = at.elapsed();
+        part.end();
         if let Some(spare) = spare {
-            let at = Instant::now();
+            let part = Part::start(TREE);
             drop(std::mem::replace(&mut self.tree, spare));
-            out[5] = at.elapsed();
+            part.end();
         }
-        let at = Instant::now();
+        let part = Part::start(REST);
         drop(self);
-        out[6] = at.elapsed();
-        out
+        part.end();
     }
 
     /// Drops the tree's written sides, releasing the built records those

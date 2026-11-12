@@ -562,6 +562,33 @@ impl Placement {
 
     /// Whether the placement placed or read anything under its lock since
     /// the last call, and so may hold more than at the last count.
+    /// Probe only: drops the placement's parts one at a time, each under
+    /// its part of the probe split: the shapes, the heap-valued maps (sims,
+    /// stretches, gaps), the ordered maps, the rest of the state, then the
+    /// published tables.
+    pub fn probe_drop_split(mut self) {
+        use crate::probe_split::{Part, PLACEMENT_BTREES, PLACEMENT_HEAP_MAPS, PLACEMENT_PUBLISHED, PLACEMENT_SHAPES, PLACEMENT_STATE_REST};
+        let state = self.state.get_mut().unwrap_or_else(std::sync::PoisonError::into_inner);
+        let part = Part::start(PLACEMENT_SHAPES);
+        drop(std::mem::take(&mut state.shapes));
+        part.end();
+        let part = Part::start(PLACEMENT_HEAP_MAPS);
+        drop(std::mem::take(&mut state.sims));
+        drop(std::mem::take(&mut state.stretches));
+        drop(std::mem::take(&mut state.gaps));
+        part.end();
+        let part = Part::start(PLACEMENT_BTREES);
+        drop(std::mem::take(&mut state.unowned));
+        drop(std::mem::take(&mut state.order));
+        part.end();
+        let part = Part::start(PLACEMENT_STATE_REST);
+        drop(std::mem::take(state));
+        part.end();
+        let part = Part::start(PLACEMENT_PUBLISHED);
+        drop(self);
+        part.end();
+    }
+
     pub fn take_grown(&mut self) -> bool {
         std::mem::take(self.grown.get_mut())
     }
