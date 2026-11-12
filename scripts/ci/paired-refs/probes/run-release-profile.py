@@ -7,12 +7,15 @@
 #   perf:     `perf record --call-graph dwarf`; each sample is filed under the
 #             first root its stack holds (ROOTS: release, parse, gc, other),
 #             and a release sample's self symbol is summed by symbol and by
-#             CLASSES (first match);
+#             CLASSES (first match), by owner (OWNERS: the nearest
+#             tree-sitter or sittir frame above the leaf), and every frame
+#             under the release callback inclusively; the `perf script`
+#             text is kept as perf-script-<grammar>-<version>.txt.gz;
 #   strace:   `strace -f -c`, the syscalls by time;
 #   cpu-prof: node --cpu-prof, JavaScript self time by function.
 # A tool that cannot be installed is skipped and named. Writes
 # release-profile.md.
-import glob, json, os, re, shutil, subprocess, sys
+import glob, gzip, json, os, re, shutil, subprocess, sys
 from collections import Counter
 from pathlib import Path
 
@@ -96,8 +99,14 @@ def run(label, argv, tree, env):
     return done.returncode == 0
 
 
+OWNERS = [
+    ('tree (tree-sitter)', r'^ts_|tree_sitter'),
+    ('node data (sittir)', r'sittir'),
+]
+
+
 def fold(script):
-    roots, release, classes = Counter(), Counter(), Counter()
+    roots, release, classes, owners, inclusive = Counter(), Counter(), Counter(), Counter(), Counter()
     for sample in script.split('\n\n'):
         frames = []
         for line in sample.splitlines()[1:]:
@@ -109,14 +118,20 @@ def fold(script):
             continue
         root = next((name for name, pattern in ROOTS if any(re.search(pattern, sym) for sym, _ in frames)), 'other')
         roots[root] += 1
-        if root == 'release':
-            sym, dso = frames[0]
-            label = sym if sym != '[unknown]' else f'[unknown] ({Path(dso).name})'
-            release[label] += 1
-            kind = next((name for name, pattern in CLASSES if re.search(pattern, sym) or (name == 'kernel' and re.search(pattern, dso))), 'other')
-            classes[kind] += 1
-    return roots, release, classes
-
+        if root != 'release':
+            continue
+        sym, dso = frames[0]
+        label = sym if sym != '[unknown]' else f'[unknown] ({Path(dso).name})'
+        release[label] += 1
+        kind = next((name for name, pattern in CLASSES if re.search(pattern, sym) or (name == 'kernel' and re.search(pattern, dso))), 'other')
+        classes[kind] += 1
+        callback = next(i for i, (frame, _) in enumerate(frames) if re.search(ROOTS[0][1], frame))
+        below = frames[:callback]
+        owner = next((name for frame, _ in below for name, pattern in OWNERS if re.search(pattern, frame)), 'the callback itself')
+        owners[(owner, kind)] += 1
+        for frame in {frame for frame, _ in below}:
+            inclusive[frame] += 1
+    return roots, release, classes, owners, inclusive
 
 lines = [(out.parent / 'build-path.md').read_text().strip(), '', tools, '']
 for grammar in grammars:
@@ -132,12 +147,19 @@ for grammar in grammars:
             data = out / f'perf-{label}.data'
             if run(f'perf {label}', [perf, 'record', '-F', '499', '--call-graph', 'dwarf,32768', '-o', str(data), '--'] + worker(tree, grammar, storage, SECONDS, out / f'perf-timing-{label}.json'), tree, env):
                 script = subprocess.run([perf, 'script', '-i', str(data), '-F', 'comm,tid,ip,sym,dso', '--no-inline'], capture_output=True, text=True).stdout
-                roots, release, classes = fold(script)
+                with gzip.open(out / f'perf-script-{label}.txt.gz', 'wt') as kept:
+                    kept.write(script)
+                roots, release, classes, owners, inclusive = fold(script)
                 total = sum(roots.values()) or 1
                 lines += ['perf samples by root: ' + ', '.join(f'{k} {v} ({100 * v / total:.1f}%)' for k, v in roots.most_common()), '']
                 rtotal = sum(release.values()) or 1
-                lines += ['release self samples by class: ' + ', '.join(f'{k} {v} ({100 * v / rtotal:.1f}%)' for k, v in classes.most_common()), '', '| release self symbol | samples | share |', '|---|---|---|']
-                lines += [f'| `{sym[:140]}` | {count} | {100 * count / rtotal:.1f}% |' for sym, count in release.most_common(30)]
+                lines += ['release self samples by class: ' + ', '.join(f'{k} {v} ({100 * v / rtotal:.1f}%)' for k, v in classes.most_common()), '']
+                lines += ['release samples by owner (the nearest tree-sitter or sittir frame above the leaf) and leaf class', '', '| owner | leaf class | samples | share |', '|---|---|---|---|']
+                lines += [f'| {owner} | {kind} | {count} | {100 * count / rtotal:.1f}% |' for (owner, kind), count in owners.most_common()]
+                lines += ['', '| frame under the release callback (inclusive) | samples | share |', '|---|---|---|']
+                lines += [f'| `{sym[:140]}` | {count} | {100 * count / rtotal:.1f}% |' for sym, count in inclusive.most_common(30)]
+                lines += ['', '| release self symbol | samples | share |', '|---|---|---|']
+                lines += [f'| `{sym[:140]}` | {count} | {100 * count / rtotal:.1f}% |' for sym, count in release.most_common(20)]
                 lines.append('')
                 data.unlink(missing_ok=True)
         if strace:
