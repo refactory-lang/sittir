@@ -91,6 +91,7 @@ interface CommitMark {
 	readonly parked: number;
 	readonly kept: Set<unknown>;
 	closed: boolean;
+	settle: boolean | undefined;
 }
 const releasedRecord = (at: number): string => `the built node at ${at} was released: its record holds no count`;
 const encoder = new TextEncoder();
@@ -483,21 +484,26 @@ export class BuiltArena {
 	}
 
 	attempt<T>(build: () => T): T {
-		if (this.#scopes > 0) return build();
+		if (this.#scopes > 0) throw new Error('a build callback (render or create) called while a build is running: call it before or after the build');
 		const mark = this.#open();
 		let built: T;
 		try {
 			built = build();
 		} catch (error) {
-			this.#close(mark, false);
+			this.#settle(mark, false);
 			throw error;
 		}
-		this.#close(mark, true);
+		this.#settle(mark, true);
 		return built;
 	}
 
+	#settle(mark: CommitMark, keepAll: boolean): void {
+		mark.settle = keepAll;
+		if (this.#commits.at(-1) === mark) this.#close(mark, keepAll);
+	}
+
 	#open(): CommitMark {
-		const mark: CommitMark = { id: ++this.#commitCount, minted: this.#mintedCount, parked: this.#parked.length, kept: new Set(), closed: false };
+		const mark: CommitMark = { id: ++this.#commitCount, minted: this.#mintedCount, parked: this.#parked.length, kept: new Set(), closed: false, settle: undefined };
 		this.#commits.push(mark);
 		return mark;
 	}
@@ -542,6 +548,11 @@ export class BuiltArena {
 	}
 
 	#close(mark: CommitMark, keepAll: boolean): void {
+		this.#closeMark(mark, keepAll);
+		for (let top = this.#commits.at(-1); top?.settle !== undefined; top = this.#commits.at(-1)) this.#closeMark(top, top.settle);
+	}
+
+	#closeMark(mark: CommitMark, keepAll: boolean): void {
 		if (mark.closed) return;
 		if (!isLive(this.#handle.current)) {
 			for (const open of this.#commits) open.closed = true;

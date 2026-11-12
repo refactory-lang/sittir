@@ -442,7 +442,7 @@ describe.each(['object', 'arena'] as const)('a root built for a create or a rend
 		expect(live(engine)).toBe(start);
 	});
 
-	it('a build callback rendered inside a running build runs under that build', async () => {
+	it('a build callback inside a running build is refused in arena storage, as engine.scope() is', async () => {
 		const seen: string[] = [];
 		const engine: Engine<RustAPI> = await createEngine(rust, {
 			nodeStorage,
@@ -460,8 +460,57 @@ describe.each(['object', 'arena'] as const)('a root built for a create or a rend
 			]
 		});
 		engines.push(engine);
-		expect(engine.render(engine.build.expressionStatement.withSemi(engine.build.identifier('a'))).toString()).toBe('a;');
-		expect(seen).toEqual(['seen']);
+		const built = () => engine.render(engine.build.expressionStatement.withSemi(engine.build.identifier('a'))).toString();
+		if (nodeStorage === 'arena') {
+			expect(built).toThrow(/build callback .*while a build is running/);
+			expect(seen).toEqual([]);
+		} else {
+			expect(built()).toBe('a;');
+			expect(seen).toEqual(['seen']);
+		}
+	});
+
+	type Scope = ReturnType<Engine<RustAPI>['scope']>;
+
+	it.each(['create', 'render'] as const)('a scope a throwing %s callback left open closes, and the callback holds nothing once it has', async (verb) => {
+		const engine = await engineOf();
+		const start = live(engine);
+		let escaped: Scope | undefined;
+		{
+			using _enclosing = engine.scope();
+			const call = failing(verb, engine, (build) => {
+				escaped = engine.scope();
+				build.sourceFile({});
+			});
+			expect(call).toThrow('callback failed');
+			escaped![Symbol.dispose]();
+		}
+		expect(live(engine)).toBe(start);
+	});
+
+	it.each(['create', 'render'] as const)('a scope a returning %s callback left open closes, and what it kept is released when done', async (verb) => {
+		const engine = await engineOf();
+		const start = live(engine);
+		let escaped: Scope | undefined;
+		{
+			using _enclosing = engine.scope();
+			const make = (build: BuildSurface<RustAPI, 'default'>) => {
+				escaped = engine.scope();
+				return escaped.keep(builtRoot(engine, build));
+			};
+			if (verb === 'create') {
+				const created = engine.create(join(directory, 'a.rs'), make);
+				escaped![Symbol.dispose]();
+				await created;
+				expect(readFileSync(join(directory, 'a.rs'), 'utf8')).toBe('fn a() {}\n');
+			} else {
+				const rendered = engine.render(make);
+				escaped![Symbol.dispose]();
+				expect(rendered.toString()).toBe('fn a() {}\n');
+				rendered[Symbol.dispose]();
+			}
+		}
+		expect(live(engine)).toBe(start);
 	});
 
 	it('engine.scope() opens inside a build callback as well as before it', async () => {
