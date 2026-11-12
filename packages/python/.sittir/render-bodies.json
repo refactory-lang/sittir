@@ -2810,6 +2810,39 @@
 			"name": "content"
 		}
 	],
+	"integer_legacy_octal_long": [
+		{
+			"kind": "text",
+			"text": "0"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "marker"
+		}
+	],
+	"integer_legacy_octal_plain": [
+		{
+			"kind": "text",
+			"text": "0"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"integer_octal_long": [
 		{
 			"kind": "slot",

@@ -159,6 +159,8 @@ export {
 	buildIntegerOctalPlain,
 	buildIntegerBinaryLong,
 	buildIntegerBinaryPlain,
+	buildIntegerLegacyOctalLong,
+	buildIntegerLegacyOctalPlain,
 	buildIntegerDecimalLong,
 	buildIntegerDecimalImaginary,
 	buildIntegerDecimalPlain,

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { PortableBuildArm, PortableBuildTable } from '@sittir/types';
 import { createEngine } from '../src/create-engine.ts';
 import { portableBuilder } from '../src/portable/build.ts';
+import { isNumberSlots } from '../src/portable/facts.ts';
 import { Delimiter } from '../src/utils.ts';
 import python from '@sittir/python';
 import rust from '@sittir/rust';
@@ -266,12 +267,23 @@ describe('the portable build table', () => {
 		expect(typed!.kind).toBe(typescript.kinds.ParenthesizedExpressionTyped);
 	});
 
-	it('builds a number by the one arm at its path that takes its scalar type, apart from the structural tests', () => {
-		const scalarArm = (scalar: 'integer' | 'float') => armsOf('typescript', 'literal.number').filter((arm) => arm.scalar === scalar);
-		expect(scalarArm('integer').map((arm) => arm.kind)).toEqual([typescript.kinds.NumberDecimal]);
-		expect(scalarArm('float').map((arm) => arm.kind)).toEqual([typescript.kinds.NumberFloatPoint]);
+	it('builds a number through the arm its path names for the scalar type, apart from the structural tests', () => {
+		const { kinds } = typescript;
+		expect(tables.typescript.table.paths['literal.number']!.builds).toEqual({ integer: kinds.NumberDecimal, float: kinds.NumberFloatPoint, bigint: kinds.NumberBigintDecimal });
 		for (const { table } of Object.values(tables))
-			for (const { arms } of Object.values(table.paths)) for (const arm of arms) for (const test of arm.when) expect(Object.keys(test)).not.toContain('scalar');
+			for (const { arms, builds } of Object.values(table.paths)) {
+				for (const [scalar, kind] of Object.entries(builds ?? {})) expect(arms.some((arm) => arm.kind === kind && arm.scalar === scalar)).toBe(true);
+				for (const arm of arms) for (const test of arm.when) expect(Object.keys(test)).not.toContain('scalar');
+			}
+	});
+
+	it('reads a value through every number arm, and builds one through the arm that spells every value: a legacy octal reads, its prefixed sibling builds', () => {
+		expect(armOf('typescript', 'literal.number.integer.octal', typescript.kinds.NumberLegacyOctal).scalar).toBe('integer');
+		expect(tables.typescript.table.paths['literal.number.integer.octal']!.builds).toEqual({ integer: typescript.kinds.NumberOctal });
+		expect(armOf('python', 'literal.number.integer.octal', python.kinds.IntegerLegacyOctalPlain).scalar).toBe('integer');
+		expect(tables.python.table.paths['literal.number.integer.octal']!.builds).toEqual({ integer: python.kinds.IntegerOctalPlain });
+		expect(armOf('python', 'literal.number.integer.big.octal', python.kinds.IntegerLegacyOctalLong).scalar).toBe('bigint');
+		expect(tables.python.table.paths['literal.number.integer.big.octal']!.builds).toEqual({ bigint: python.kinds.IntegerOctalLong });
 	});
 
 	it('takes the float form that spells every float, for a $value and first among the forms a member structure fits', () => {
@@ -298,20 +310,20 @@ describe('the portable build table', () => {
 		expect(tables.typescript.table.values?.['literal.number']).toBeUndefined();
 	});
 
-	it("tests a boolean arm by the value its binding declares, and names a config builder's numeric slots", () => {
+	it("tests a boolean arm by the value its binding declares, and names the slots that spell a number: a config builder's, or a radix prefix and its digits", () => {
 		expect(armsOf('rust', 'literal.boolean').map((arm) => arm.when)).toEqual([[{ boolean: true }], [{ boolean: false }]]);
-		expect(armsOf('rust', 'literal.number.integer')[0]!.numeric).toBe('content');
+		expect(armsOf('rust', 'literal.number.integer')[0]!.numeric).toEqual(['content']);
 		expect(armsOf('python', 'literal.number.float')[0]!.numeric).toEqual({ integer: 'integer', fraction: 'fraction', exponent: 'exponent', marker: 'marker', exponentSign: 'exponentSign' });
-		expect(armsOf('python', 'literal.number.integer.hex')[0]!.numeric).toBeUndefined();
+		expect(armsOf('python', 'literal.number.integer.hex')[0]!.numeric).toEqual(['radixPrefix', 'content']);
 	});
 
 	it("spells a number's decimal parts through its kind's slots, whatever its members are named, and refuses a part it has no slot for", async () => {
 		const engine = await createEngine(python, { api: 'strict' });
-		const signed = (arm: PortableBuildArm): string | undefined => (typeof arm.numeric === 'object' ? arm.numeric.exponentSign : undefined);
+		const signed = (arm: PortableBuildArm): string | undefined => (arm.numeric === undefined || isNumberSlots(arm.numeric) ? undefined : arm.numeric.exponentSign);
 		const renamed = (arm: PortableBuildArm): PortableBuildArm =>
 			signed(arm) === undefined ? arm : { ...arm, members: arm.members.map((member) => (member.steps[0]?.key === signed(arm) ? { ...member, name: 'signOfExponent' } : member)) };
 		const unsigned = (arm: PortableBuildArm): PortableBuildArm => {
-			if (typeof arm.numeric !== 'object' || arm.numeric.exponentSign === undefined) return arm;
+			if (arm.numeric === undefined || isNumberSlots(arm.numeric) || arm.numeric.exponentSign === undefined) return arm;
 			const { exponentSign, ...rest } = arm.numeric;
 			return { ...arm, numeric: rest, members: arm.members.filter((member) => member.steps[0]?.key !== exponentSign) };
 		};
@@ -336,12 +348,7 @@ describe('the portable build table', () => {
 	});
 
 	const expectedDiagnostics: Readonly<Record<keyof typeof languages, readonly string[]>> = {
-		python: [
-			'portable-integer-partial literal.number.integer.big.binary',
-			'portable-integer-partial literal.number.integer.big.hex',
-			'portable-integer-partial literal.number.integer.big.octal',
-			'portable-value-unshaped literal.number.integer.imaginary'
-		],
+		python: ['portable-value-unshaped literal.number.integer.imaginary'],
 		rust: ['portable-integer-partial literal.number.integer.binary', 'portable-integer-partial literal.number.integer.hex', 'portable-integer-partial literal.number.integer.octal'],
 		typescript: []
 	};
@@ -399,6 +406,30 @@ describe('the portable build of a registered option', () => {
 
 	it('passes no options when the structure states none of them', () => {
 		expect(build({ holder: ['spelling'] }, { value: 'v' })).toEqual([['v']]);
+	});
+
+	it('passes a member stated beside a $value in the trailing options, after the number as its input', () => {
+		const calls: unknown[][] = [];
+		const builder = portableBuilder({
+			language: 'test',
+			table: {
+				builders: { long: 'direct' },
+				options: { long: ['marker'] },
+				paths: {
+					'literal.number.big': {
+						root: true,
+						arms: [{ kind: 2, builder: 'long', scalar: 'bigint', numeric: ['content'], members: [textSeat('content'), textSeat('marker')], presets: [], flags: {}, when: [] }],
+						builds: { bigint: 2 }
+					}
+				}
+			},
+			builders: { long: (...args: unknown[]) => (calls.push(args), { $type: 2 }) },
+			kindName: () => undefined,
+			readsAs: () => true,
+			spellingOf: () => undefined
+		});
+		builder({ $path: 'literal.number.big', $value: 3n, marker: 'l' } as never);
+		expect(calls).toEqual([[3n, { marker: 'l' }]]);
 	});
 });
 

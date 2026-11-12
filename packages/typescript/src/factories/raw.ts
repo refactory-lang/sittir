@@ -204,6 +204,7 @@ export const buildNumberHex = dispatched(() => backend().buildNumberHex);
 export const buildNumberFloatPoint = dispatched(() => backend().buildNumberFloatPoint);
 export const buildNumberFloatLeadingPoint = dispatched(() => backend().buildNumberFloatLeadingPoint);
 export const buildNumberFloatScientific = dispatched(() => backend().buildNumberFloatScientific);
+export const buildNumberLegacyOctal = dispatched(() => backend().buildNumberLegacyOctal);
 export const buildNumberDecimal = dispatched(() => backend().buildNumberDecimal);
 export const buildNumberBinary = dispatched(() => backend().buildNumberBinary);
 export const buildNumberOctal = dispatched(() => backend().buildNumberOctal);
@@ -504,6 +505,7 @@ export const _factoryMap = {
 	number_float_point: buildNumberFloatPoint,
 	number_float_leading_point: buildNumberFloatLeadingPoint,
 	number_float_scientific: buildNumberFloatScientific,
+	number_legacy_octal: buildNumberLegacyOctal,
 	number_decimal: buildNumberDecimal,
 	number_binary: buildNumberBinary,
 	number_octal: buildNumberOctal,

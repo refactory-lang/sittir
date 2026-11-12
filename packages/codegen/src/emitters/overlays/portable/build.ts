@@ -53,7 +53,7 @@ import {
 } from '../../../compiler/model/node-map.ts';
 import { buildFactoryMap } from '../../factory-map.ts';
 import { slotResolverKinds, transparentEnvelopeTextLeaves } from '../../from.ts';
-import { interiorSlotGuards, kindNumberShape, numericSlotShape, readsEveryInteger, slotPattern, spellsItsBase, wholeTextPattern, wholeTextShape, type NumberShape } from '../../interior.ts';
+import { interiorSlotGuards, kindNumberShape, numberSpelling, numericSlotShape, readsEveryInteger, slotPattern, spellsItsBase, wholeTextPattern, wholeTextShape, type NumberShape } from '../../interior.ts';
 import { leafReDeclaration } from '../../factories.ts';
 import { findKindEntry, fixedTextKinds, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { membershipKindsOf } from '../../membership.ts';
@@ -971,23 +971,23 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				const slotShape = numericSlotShape(slot);
 				return slotShape !== undefined && spellsItsBase(slotShape);
 			};
-			const numericSlots =
-				scalar === undefined || builder === undefined
-					? []
-					: builders.get(builder) === 'config'
-						? node.slots.filter(spellsAlone)
-						: contentSlot !== undefined && spellsAlone(contentSlot)
-							? [contentSlot]
-							: [];
+			const config = builder !== undefined && builders.get(builder) === 'config';
+			const spelled = scalar === undefined || builder === undefined || config || contentSlot === undefined ? undefined : numberSpelling(node, contentSlot);
+			const numericSlots = scalar === undefined || builder === undefined ? [] : config ? node.slots.filter(spellsAlone) : (spelled?.slots ?? []);
 			const numericKeys = numericSlots.map((slot) => slot.propertyName);
-			const partless = numericKeys.length > 1 ? numericKeys.filter((key) => !DECIMAL_PARTS.some((part) => part === key)) : [];
+			const parts = config && numericKeys.length > 1;
+			const partless = parts ? numericKeys.filter((key) => !DECIMAL_PARTS.some((part) => part === key)) : [];
 			if (partless.length > 0) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${kind}'s numeric slots ${partless.join(', ')} are no part of a decimal spelling` });
-			const partSlots = numericKeys.length > 1 ? DECIMAL_PARTS.flatMap((part) => node.slots.find((slot) => slot.propertyName === part) ?? []) : [];
+			const partSlots = parts ? DECIMAL_PARTS.flatMap((part) => node.slots.find((slot) => slot.propertyName === part) ?? []) : [];
 			const numeric: PortableBuildArm['numeric'] =
-				numericKeys.length === 0 ? undefined : numericKeys.length === 1 ? numericKeys[0] : Object.fromEntries(partSlots.map((slot) => [slot.propertyName, slot.propertyName]));
+				numericKeys.length === 0 ? undefined : parts ? Object.fromEntries(partSlots.map((slot) => [slot.propertyName, slot.propertyName])) : numericKeys;
 			const numericRequired = partSlots.filter((slot) => isRequired(slot)).map((slot) => slot.propertyName);
 			const read =
-				numericKeys.length === 0 ? { shape: wholeTextShape(kind, node), pattern: wholeTextPattern(node) } : numericKeys.length === 1 ? { shape: numericSlotShape(numericSlots[0]!), pattern: slotPattern(numericSlots[0]!) } : undefined;
+				numericKeys.length === 0
+					? { shape: wholeTextShape(kind, node), pattern: wholeTextPattern(node) }
+					: parts
+						? undefined
+						: (spelled ?? { shape: numericSlotShape(numericSlots[0]!), pattern: slotPattern(numericSlots[0]!) });
 			const readShape = scalar === 'integer' || scalar === 'bigint' ? read?.shape : undefined;
 			const digits = readShape === undefined || readShape.base === 'float' ? undefined : { base: readShape.base, affix: readShape.prefix };
 			if (scalar === 'integer' || scalar === 'bigint') {
@@ -1017,7 +1017,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					text: fixedText.get(kind),
 					value: declaredValues.get(kind),
 					scalar,
-					complete: shape?.base !== 'float' || shape.complete,
+					complete: shape?.complete ?? true,
 					arm: {
 						kind: builtId,
 						...(builder === undefined ? {} : { builder }),
@@ -1307,11 +1307,12 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			arms: ordered.map(
 				(arm): PortableBuildArm => ({
 					...arm.arm,
-					...(scalarArms.has(arm) ? { scalar: scalarArms.get(arm)! } : {}),
+					...(arm.scalar === undefined ? {} : { scalar: arm.scalar }),
 					when: tests.get(arm)!,
 					...(holders.has(arm) ? { holders: holders.get(arm)! } : {})
 				})
-			)
+			),
+			...(scalarArms.size === 0 ? {} : { builds: Object.fromEntries([...scalarArms].map(([arm, scalar]) => [scalar, arm.arm.kind])) })
 		};
 	}
 	const values = valueBuilds(paths, decided, (kinds) => grammarDefault(kinds)?.kind, diagnostics);

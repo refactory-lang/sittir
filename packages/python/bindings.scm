@@ -283,9 +283,11 @@
 (integer_hex_plain) @literal.number.integer.hex
 (integer_binary_plain) @literal.number.integer.binary
 (integer_octal_plain) @literal.number.integer.octal
+(integer_legacy_octal_plain) @literal.number.integer.octal
 (integer_hex_long) @literal.number.integer.big.hex
 (integer_binary_long) @literal.number.integer.big.binary
 (integer_octal_long) @literal.number.integer.big.octal
+(integer_legacy_octal_long) @literal.number.integer.big.octal
 (float_point) @literal.number.float
 (float_leading_point) @literal.number.float.leading_point
 (float_scientific) @literal.number.float.scientific

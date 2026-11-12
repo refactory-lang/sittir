@@ -1,6 +1,6 @@
 {
 	"grammars": {
-		"python": {"digest":"e3a8f0a2730a1d48512bcb7263ef79a36323b1e2fcd6d4b07e0e7ad5069cd877","counts":{"conflict-resolution":{"info":10},"conflict-unnecessary-upstream":{"info":3},"conflict-dynamic-precedence-authored":{"info":1},"portable-value-unshaped":{"warning":1},"portable-integer-partial":{"warning":3}},"blocking":{"rule-reauthored-without-cause":{"error":4},"patch-without-cause":{"error":4}}},
+		"python": {"digest":"b41c4b3e8b5d52d14478c5f5792692031c2bb346f0335d8c934ba9e0fb7348b3","counts":{"conflict-resolution":{"info":10},"conflict-unnecessary-upstream":{"info":3},"conflict-dynamic-precedence-authored":{"info":1},"portable-value-unshaped":{"warning":1}},"blocking":{"rule-reauthored-without-cause":{"error":4},"patch-without-cause":{"error":4}}},
 		"regex": {"digest":"d5827129060789840ec92799e6f10a5f883d7877e2bca483b3f47e06ae12b2f7","counts":{"conflict-resolution":{"info":2}},"blocking":{}},
 		"rust": {"digest":"0870dc80db8feb7b6f8da954ca4d7a4a7ce99f7902b95307570361f8cbc3b83c","counts":{"conflict-resolution":{"info":8},"conflict-unnecessary-upstream":{"info":3},"portable-integer-partial":{"warning":3}},"blocking":{"rule-reauthored-without-cause":{"error":3},"unclassifiable-shape":{"error":1}}},
 		"scm": {"digest":"57f8d34d368f69844ffc80a90b96e70f992169bb0cf4cd2978acab6eec81e965","counts":{},"blocking":{"unclassifiable-shape":{"error":1}}},

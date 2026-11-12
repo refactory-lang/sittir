@@ -95,6 +95,9 @@ import {
 	_slotRe_buildIntegerBinaryLong_marker,
 	_slotRe_buildIntegerBinaryPlain_radix_prefix,
 	_slotRe_buildIntegerBinaryPlain_content,
+	_slotRe_buildIntegerLegacyOctalLong_content,
+	_slotRe_buildIntegerLegacyOctalLong_marker,
+	_slotRe_buildIntegerLegacyOctalPlain_content,
 	_slotRe_buildIntegerDecimalLong_content,
 	_slotRe_buildIntegerDecimalLong_marker,
 	_slotRe_buildFloatPoint_integer,
@@ -5803,8 +5806,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				216, 210, 211, 217, 260, 212, 1, 251, 250, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 69, 70, 71, 213,
-				224, 225, 227, 236, 241, 239, 242, 237, 243, 238, 245, 244, 63, 204, 249, 146, 206
+				218, 212, 213, 219, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 69, 70,
+				71, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 206, 251, 148, 208
 			],
 			(v: unknown) => buildAsPatternTarget(v as never)
 		]
@@ -5828,8 +5831,8 @@ function buildAsPattern$patch(source: object, config: T.AsPattern.Config): T.AsP
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				216, 210, 211, 217, 260, 212, 1, 251, 250, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 69, 70, 71, 213,
-				224, 225, 227, 236, 241, 239, 242, 237, 243, 238, 245, 244, 63, 204, 249, 146, 206
+				218, 212, 213, 219, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 69, 70,
+				71, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 206, 251, 148, 208
 			],
 			(v: unknown) => buildAsPatternTarget(v as never)
 		]
@@ -5876,8 +5879,8 @@ function buildAsPattern$set(
 			const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 				[
 					[
-						216, 210, 211, 217, 260, 212, 1, 251, 250, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 69, 70, 71,
-						213, 224, 225, 227, 236, 241, 239, 242, 237, 243, 238, 245, 244, 63, 204, 249, 146, 206
+						218, 212, 213, 219, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 69,
+						70, 71, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 206, 251, 148, 208
 					],
 					(v: unknown) => buildAsPatternTarget(v as never)
 				]
@@ -13168,6 +13171,200 @@ function withIntegerBinaryPlain(node: object, setter: string, args: readonly unk
 	throw new Error(`integer_binary_plain has no $with.${setter}`);
 }
 
+export function buildIntegerLegacyOctalLong<const N extends string | number | bigint>(
+	value: Admit<string | (N & NumericLiteral<N, true>)>,
+	options?: T.IntegerLegacyOctalLong.Options
+): T.IntegerLegacyOctalLong.Bound;
+export function buildIntegerLegacyOctalLong(
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerLegacyOctalLong.Options
+): T.IntegerLegacyOctalLong.Bound {
+	const _content = numberText(8, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_legacy_octal_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerLegacyOctalLong_content.test(_content))
+		throw new Error(`integer_legacy_octal_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_legacy_octal_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerLegacyOctalLong_marker.test(_marker))
+		throw new Error(`integer_legacy_octal_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_legacy_octal_long', { content: _content, marker: _marker });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IntegerLegacyOctalLong as const, { _content, _marker });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.IntegerLegacyOctalLong as const);
+		storeCell(arena, record, 2, 2, _content);
+		storeCell(arena, record, 3, 4, _marker);
+		const node = arena.view(record);
+		return node as unknown as T.IntegerLegacyOctalLong.Bound;
+	});
+}
+
+function buildIntegerLegacyOctalLong$patch(
+	source: object,
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerLegacyOctalLong.Options
+): T.IntegerLegacyOctalLong.Bound {
+	const _content = numberText(8, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_legacy_octal_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerLegacyOctalLong_content.test(_content))
+		throw new Error(`integer_legacy_octal_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_legacy_octal_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerLegacyOctalLong_marker.test(_marker))
+		throw new Error(`integer_legacy_octal_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_legacy_octal_long', { content: _content, marker: _marker });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IntegerLegacyOctalLong as const, { _content, _marker });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.IntegerLegacyOctalLong as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 3, 4, carriedSlot(source, 'marker', _marker));
+		const node = arena.view(record);
+		return node as unknown as T.IntegerLegacyOctalLong.Bound;
+	});
+}
+function buildIntegerLegacyOctalLong$set(
+	source: object,
+	...[slot, input]: ['content', Admit<string | number | bigint>] | ['marker', T.IntegerLegacyOctalLong.Options]
+): T.IntegerLegacyOctalLong.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'content':
+				return buildIntegerLegacyOctalLong$patch(source, input, inputs.options as T.IntegerLegacyOctalLong.Options);
+			case 'marker':
+				return buildIntegerLegacyOctalLong$patch(source, inputs.config['content'] as Admit<string | number | bigint>, {
+					...(inputs.options as T.IntegerLegacyOctalLong.Options),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'content': {
+			const value = input;
+			const _content = numberText(8, '', value);
+			if (typeof _content !== 'string')
+				throw new Error(`integer_legacy_octal_long.content: text must be a string: ${describeValue(_content)}`);
+			if (!_slotRe_buildIntegerLegacyOctalLong_content.test(_content))
+				throw new Error(`integer_legacy_octal_long.content: text does not match pattern: ${describeValue(_content)}`);
+			return setSlot(
+				source,
+				TSKindId.IntegerLegacyOctalLong as const,
+				'integer_legacy_octal_long',
+				0,
+				'content',
+				_content
+			) as unknown as T.IntegerLegacyOctalLong.Bound;
+		}
+		case 'marker': {
+			const options = input;
+			const _marker = options?.marker ?? 'L';
+			if (_marker !== undefined && typeof _marker !== 'string')
+				throw new Error(`integer_legacy_octal_long.marker: text must be a string: ${describeValue(_marker)}`);
+			if (_marker !== undefined && !_slotRe_buildIntegerLegacyOctalLong_marker.test(_marker))
+				throw new Error(`integer_legacy_octal_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+			return setSlot(
+				source,
+				TSKindId.IntegerLegacyOctalLong as const,
+				'integer_legacy_octal_long',
+				1,
+				'marker',
+				_marker
+			) as unknown as T.IntegerLegacyOctalLong.Bound;
+		}
+	}
+}
+function withIntegerLegacyOctalLong(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerLegacyOctalLong$set(node, 'content', value))
+			);
+		case 'marker':
+			return applySetter(args, (spelling: 'L' | 'l') =>
+				rebuilt(node, handle, () => buildIntegerLegacyOctalLong$set(node, 'marker', { marker: spelling }))
+			);
+	}
+	throw new Error(`integer_legacy_octal_long has no $with.${setter}`);
+}
+
+export function buildIntegerLegacyOctalPlain<const N extends string | number | bigint>(
+	content: N & NumericLiteral<N, true>,
+	affix?: true
+): T.IntegerLegacyOctalPlain.Bound;
+export function buildIntegerLegacyOctalPlain(text: `0${string}`, affix: false): T.IntegerLegacyOctalPlain.Bound;
+export function buildIntegerLegacyOctalPlain(
+	input: string | number | bigint,
+	affix: boolean = true
+): T.IntegerLegacyOctalPlain.Bound {
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`integer_legacy_octal_plain.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '0', '', 'integer_legacy_octal_plain');
+	}
+	const _content = numberText(8, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_legacy_octal_plain.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerLegacyOctalPlain_content.test(_content))
+		throw new Error(`integer_legacy_octal_plain.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_legacy_octal_plain', { content: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IntegerLegacyOctalPlain as const, { _content });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.IntegerLegacyOctalPlain as const);
+		storeCell(arena, record, 2, 2, _content);
+		const node = arena.view(record);
+		return node as unknown as T.IntegerLegacyOctalPlain.Bound;
+	});
+}
+
+function buildIntegerLegacyOctalPlain$patch(
+	source: object,
+	input: string | number | bigint,
+	affix: boolean = true
+): T.IntegerLegacyOctalPlain.Bound {
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`integer_legacy_octal_plain.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '0', '', 'integer_legacy_octal_plain');
+	}
+	const _content = numberText(8, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_legacy_octal_plain.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerLegacyOctalPlain_content.test(_content))
+		throw new Error(`integer_legacy_octal_plain.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_legacy_octal_plain', { content: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IntegerLegacyOctalPlain as const, { _content });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.IntegerLegacyOctalPlain as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		const node = arena.view(record);
+		return node as unknown as T.IntegerLegacyOctalPlain.Bound;
+	});
+}
+function withIntegerLegacyOctalPlain(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerLegacyOctalPlain$patch(node, value))
+			);
+	}
+	throw new Error(`integer_legacy_octal_plain has no $with.${setter}`);
+}
+
 export function buildIntegerDecimalLong<const N extends string | number | bigint>(
 	value: Admit<string | (N & NumericLiteral<N, true>)>,
 	options?: T.IntegerDecimalLong.Options
@@ -17604,6 +17801,8 @@ export type FluentKindMap = {
 	integer_octal_plain: T.IntegerOctalPlain.Bound;
 	integer_binary_long: T.IntegerBinaryLong.Bound;
 	integer_binary_plain: T.IntegerBinaryPlain.Bound;
+	integer_legacy_octal_long: T.IntegerLegacyOctalLong.Bound;
+	integer_legacy_octal_plain: T.IntegerLegacyOctalPlain.Bound;
 	integer_decimal_long: T.IntegerDecimalLong.Bound;
 	integer_decimal_imaginary: T.IntegerDecimalImaginary;
 	integer_decimal_plain: T.IntegerDecimalPlain;
@@ -17816,6 +18015,8 @@ export const _factoryMap = {
 	integer_octal_plain: buildIntegerOctalPlain,
 	integer_binary_long: buildIntegerBinaryLong,
 	integer_binary_plain: buildIntegerBinaryPlain,
+	integer_legacy_octal_long: buildIntegerLegacyOctalLong,
+	integer_legacy_octal_plain: buildIntegerLegacyOctalPlain,
 	integer_decimal_long: buildIntegerDecimalLong,
 	integer_decimal_imaginary: buildIntegerDecimalImaginary,
 	integer_decimal_plain: buildIntegerDecimalPlain,
@@ -17882,178 +18083,180 @@ export const builtViews: BuiltViews = Object.freeze({
 		93: withIntegerOctalPlain,
 		94: withIntegerBinaryLong,
 		95: withIntegerBinaryPlain,
-		96: withIntegerDecimalLong,
-		99: withFloatPoint,
-		100: withFloatLeadingPoint,
-		101: withFloatScientific,
-		102: withEscapeSequenceUnicodeFixed,
-		103: withEscapeSequenceUnicodeWide,
-		104: withEscapeSequenceHex,
-		105: withEscapeSequenceOctal,
-		106: withEscapeSequenceLineBreak,
-		107: withEscapeSequenceSimple,
-		108: withEscapeSequenceNamed,
-		122: withStringStart,
-		125: withStringEnd,
-		131: withModule,
-		133: withSimpleStatements,
-		134: withImportStatement,
-		136: withRelativeImport,
-		137: withFutureImportStatement,
-		138: withImportFromStatement,
-		139: withImportList,
-		140: withAliasedImport,
-		142: withPrintStatement,
-		143: withChevron,
-		144: withAssertStatement,
-		145: withExpressionStatement,
-		146: withNamedExpression,
-		147: withNamedExpressionLhs,
-		148: withReturnStatement,
-		149: withDeleteStatement,
-		150: withRaiseStatement,
-		154: withIfStatement,
-		155: withElifClause,
-		156: withElseClause,
-		157: withMatchStatement,
-		158: withMatchBlock,
-		159: withCaseClause,
-		160: withForStatement,
-		161: withWhileStatement,
-		162: withTryStatement,
-		163: withExceptClause,
-		164: withFinallyClause,
-		165: withWithStatement,
-		167: withWithItem,
-		168: withFunctionDefinition,
-		169: withParameters,
-		170: withLambdaParameters,
-		171: withListSplat,
-		172: withDictionarySplat,
-		173: withGlobalStatement,
-		174: withNonlocalStatement,
-		175: withExecStatement,
-		176: withTypeAliasStatement,
-		177: withClassDefinition,
-		178: withTypeParameter,
-		179: withParenthesizedListSplat,
-		180: withArgumentList,
-		181: withDecoratedDefinition,
-		182: withDecorator,
-		183: withBlock,
-		184: withExpressionList,
-		185: withDottedName,
-		186: withCasePattern,
-		187: withSimplePattern,
-		188: withCaseAsPattern,
-		189: withUnionPattern,
-		190: withDictPattern,
-		191: withKeyValuePattern,
-		192: withKeywordPattern,
-		194: withClassPattern,
-		195: withComplexPattern,
-		196: withParametersElements,
-		197: withPatterns,
-		200: withTuplePattern,
-		201: withListPattern,
-		202: withDefaultParameter,
-		203: withTypedDefaultParameter,
-		204: withListSplatPattern,
-		205: withDictionarySplatPattern,
-		206: withAsPattern,
-		210: withNotOperator,
-		211: withBooleanOperator,
-		212: withBinaryOperator,
-		213: withUnaryOperator,
-		216: withComparisonOperator,
-		217: withLambda,
-		218: withLambdaWithinForInClause,
-		220: withAugmentedAssignment,
-		221: withPatternList,
-		223: withYield,
-		224: withAttribute,
-		225: withSubscript,
-		226: withSlice,
-		227: withCall,
-		228: withTypedParameter,
-		229: withType,
-		230: withSplatType,
-		231: withGenericType,
-		232: withUnionType,
-		233: withConstrainedType,
-		234: withMemberType,
-		235: withKeywordArgument,
-		236: withList,
-		237: withSet,
-		238: withTuple,
-		239: withDictionary,
-		240: withPair,
-		241: withListComprehension,
-		242: withDictionaryComprehension,
-		243: withSetComprehension,
-		244: withGeneratorExpression,
-		245: withParenthesizedExpression,
-		246: withCollectionElements,
-		247: withForInClause,
-		248: withIfClause,
-		249: withConditionalExpression,
-		250: withConcatenatedString,
-		251: withString,
-		252: withStringContent,
-		253: withInterpolation,
-		257: withFormatSpecifier,
-		260: withAwait,
-		263: withSimpleStatementsElements,
-		264: withSubjects,
-		265: withWithClauseWithItems,
-		266: withTypes,
-		267: withArgumentListElements,
-		268: withListPatternCasePatterns,
-		269: withDictPatternElements,
-		270: withSubscripts,
-		271: withDictionaryElements,
-		272: withSliceGroup,
-		275: withTypeParams,
-		276: withTypeParamsItems,
-		277: withTuplePatternElements,
-		278: withCasePatternList,
-		279: withTupleElements,
-		280: withExceptClauseExceptionAs,
-		281: withCaseTuplePattern,
-		282: withCaseListPattern,
-		283: withPrintArguments,
-		284: withPrintChevronArguments,
-		285: withPrintStatementChevron,
-		286: withPrintStatementPlain,
-		288: withParenthesizedImportList,
-		289: withComprehensionClauses,
-		294: withSimplePatternNegative,
-		295: withExceptClauseExceptionList,
-		296: withExceptClauseException,
-		297: withSplatPatternList,
-		298: withSplatPatternDictionary,
-		299: withAssignmentEq,
-		300: withAssignmentType,
-		301: withAssignmentTyped,
-		302: withExpressionStatementTuple,
-		303: withWithClauseBare,
-		304: withWithClauseParen,
-		305: withSuiteInline,
-		306: withSuiteBlock,
-		307: withSuiteEmpty,
-		308: withComparisonOperatorComparator,
-		309: withYieldFromClause,
-		310: withTypeParamTypeVar,
-		311: withTypeParamTypeVarTuple,
-		312: withTypeParamParamSpec,
-		313: withConstructorDeclaration,
-		315: withBlockClassDeclaration,
-		316: withSuiteBlockClassDeclaration,
-		317: withDecoratedDefinitionClassDeclaration,
-		356: withAsPatternTarget,
-		357: withFormatExpression,
-		358: withMethodDeclaration,
-		359: withNames
+		96: withIntegerLegacyOctalLong,
+		97: withIntegerLegacyOctalPlain,
+		98: withIntegerDecimalLong,
+		101: withFloatPoint,
+		102: withFloatLeadingPoint,
+		103: withFloatScientific,
+		104: withEscapeSequenceUnicodeFixed,
+		105: withEscapeSequenceUnicodeWide,
+		106: withEscapeSequenceHex,
+		107: withEscapeSequenceOctal,
+		108: withEscapeSequenceLineBreak,
+		109: withEscapeSequenceSimple,
+		110: withEscapeSequenceNamed,
+		124: withStringStart,
+		127: withStringEnd,
+		133: withModule,
+		135: withSimpleStatements,
+		136: withImportStatement,
+		138: withRelativeImport,
+		139: withFutureImportStatement,
+		140: withImportFromStatement,
+		141: withImportList,
+		142: withAliasedImport,
+		144: withPrintStatement,
+		145: withChevron,
+		146: withAssertStatement,
+		147: withExpressionStatement,
+		148: withNamedExpression,
+		149: withNamedExpressionLhs,
+		150: withReturnStatement,
+		151: withDeleteStatement,
+		152: withRaiseStatement,
+		156: withIfStatement,
+		157: withElifClause,
+		158: withElseClause,
+		159: withMatchStatement,
+		160: withMatchBlock,
+		161: withCaseClause,
+		162: withForStatement,
+		163: withWhileStatement,
+		164: withTryStatement,
+		165: withExceptClause,
+		166: withFinallyClause,
+		167: withWithStatement,
+		169: withWithItem,
+		170: withFunctionDefinition,
+		171: withParameters,
+		172: withLambdaParameters,
+		173: withListSplat,
+		174: withDictionarySplat,
+		175: withGlobalStatement,
+		176: withNonlocalStatement,
+		177: withExecStatement,
+		178: withTypeAliasStatement,
+		179: withClassDefinition,
+		180: withTypeParameter,
+		181: withParenthesizedListSplat,
+		182: withArgumentList,
+		183: withDecoratedDefinition,
+		184: withDecorator,
+		185: withBlock,
+		186: withExpressionList,
+		187: withDottedName,
+		188: withCasePattern,
+		189: withSimplePattern,
+		190: withCaseAsPattern,
+		191: withUnionPattern,
+		192: withDictPattern,
+		193: withKeyValuePattern,
+		194: withKeywordPattern,
+		196: withClassPattern,
+		197: withComplexPattern,
+		198: withParametersElements,
+		199: withPatterns,
+		202: withTuplePattern,
+		203: withListPattern,
+		204: withDefaultParameter,
+		205: withTypedDefaultParameter,
+		206: withListSplatPattern,
+		207: withDictionarySplatPattern,
+		208: withAsPattern,
+		212: withNotOperator,
+		213: withBooleanOperator,
+		214: withBinaryOperator,
+		215: withUnaryOperator,
+		218: withComparisonOperator,
+		219: withLambda,
+		220: withLambdaWithinForInClause,
+		222: withAugmentedAssignment,
+		223: withPatternList,
+		225: withYield,
+		226: withAttribute,
+		227: withSubscript,
+		228: withSlice,
+		229: withCall,
+		230: withTypedParameter,
+		231: withType,
+		232: withSplatType,
+		233: withGenericType,
+		234: withUnionType,
+		235: withConstrainedType,
+		236: withMemberType,
+		237: withKeywordArgument,
+		238: withList,
+		239: withSet,
+		240: withTuple,
+		241: withDictionary,
+		242: withPair,
+		243: withListComprehension,
+		244: withDictionaryComprehension,
+		245: withSetComprehension,
+		246: withGeneratorExpression,
+		247: withParenthesizedExpression,
+		248: withCollectionElements,
+		249: withForInClause,
+		250: withIfClause,
+		251: withConditionalExpression,
+		252: withConcatenatedString,
+		253: withString,
+		254: withStringContent,
+		255: withInterpolation,
+		259: withFormatSpecifier,
+		262: withAwait,
+		265: withSimpleStatementsElements,
+		266: withSubjects,
+		267: withWithClauseWithItems,
+		268: withTypes,
+		269: withArgumentListElements,
+		270: withListPatternCasePatterns,
+		271: withDictPatternElements,
+		272: withSubscripts,
+		273: withDictionaryElements,
+		274: withSliceGroup,
+		277: withTypeParams,
+		278: withTypeParamsItems,
+		279: withTuplePatternElements,
+		280: withCasePatternList,
+		281: withTupleElements,
+		282: withExceptClauseExceptionAs,
+		283: withCaseTuplePattern,
+		284: withCaseListPattern,
+		285: withPrintArguments,
+		286: withPrintChevronArguments,
+		287: withPrintStatementChevron,
+		288: withPrintStatementPlain,
+		290: withParenthesizedImportList,
+		291: withComprehensionClauses,
+		297: withSimplePatternNegative,
+		298: withExceptClauseExceptionList,
+		299: withExceptClauseException,
+		300: withSplatPatternList,
+		301: withSplatPatternDictionary,
+		302: withAssignmentEq,
+		303: withAssignmentType,
+		304: withAssignmentTyped,
+		305: withExpressionStatementTuple,
+		306: withWithClauseBare,
+		307: withWithClauseParen,
+		308: withSuiteInline,
+		309: withSuiteBlock,
+		310: withSuiteEmpty,
+		311: withComparisonOperatorComparator,
+		312: withYieldFromClause,
+		313: withTypeParamTypeVar,
+		314: withTypeParamTypeVarTuple,
+		315: withTypeParamParamSpec,
+		316: withConstructorDeclaration,
+		318: withBlockClassDeclaration,
+		319: withSuiteBlockClassDeclaration,
+		320: withDecoratedDefinitionClassDeclaration,
+		359: withAsPatternTarget,
+		360: withFormatExpression,
+		361: withMethodDeclaration,
+		362: withNames
 	}),
 	words: Object.freeze({
 		72: 4,
@@ -18064,128 +18267,128 @@ export const builtViews: BuiltViews = Object.freeze({
 		94: 6,
 		95: 5,
 		96: 5,
-		99: 9,
-		100: 9,
-		101: 8,
-		102: 4,
-		103: 4,
+		97: 4,
+		98: 5,
+		101: 9,
+		102: 9,
+		103: 8,
 		104: 4,
 		105: 4,
 		106: 4,
 		107: 4,
 		108: 4,
-		122: 5,
-		125: 5,
-		131: 3,
+		109: 4,
+		110: 4,
+		124: 5,
+		127: 5,
 		133: 3,
-		134: 3,
-		136: 4,
-		137: 3,
+		135: 3,
+		136: 3,
 		138: 4,
 		139: 3,
 		140: 4,
-		142: 3,
-		143: 3,
+		141: 3,
+		142: 4,
 		144: 3,
 		145: 3,
-		146: 4,
+		146: 3,
 		147: 3,
-		148: 3,
+		148: 4,
 		149: 3,
-		150: 4,
-		154: 5,
-		155: 4,
-		156: 3,
+		150: 3,
+		151: 3,
+		152: 4,
+		156: 5,
 		157: 4,
 		158: 3,
-		159: 5,
-		160: 7,
+		159: 4,
+		160: 3,
 		161: 5,
-		162: 6,
+		162: 7,
 		163: 5,
-		164: 3,
+		164: 6,
 		165: 5,
-		167: 3,
-		168: 8,
+		166: 3,
+		167: 5,
 		169: 3,
-		170: 3,
+		170: 8,
 		171: 3,
 		172: 3,
 		173: 3,
 		174: 3,
-		175: 4,
-		176: 5,
-		177: 6,
-		178: 3,
-		179: 3,
+		175: 3,
+		176: 3,
+		177: 4,
+		178: 5,
+		179: 6,
 		180: 3,
-		181: 4,
+		181: 3,
 		182: 3,
-		183: 3,
+		183: 4,
 		184: 3,
-		185: 4,
+		185: 3,
 		186: 3,
-		187: 3,
-		188: 4,
-		189: 4,
-		190: 3,
+		187: 4,
+		188: 3,
+		189: 3,
+		190: 4,
 		191: 4,
-		192: 4,
+		192: 3,
+		193: 4,
 		194: 4,
-		195: 6,
-		196: 3,
-		197: 3,
-		200: 3,
-		201: 3,
-		202: 4,
-		203: 5,
-		204: 3,
-		205: 3,
-		206: 4,
-		210: 3,
-		211: 5,
-		212: 5,
-		213: 4,
-		216: 4,
-		217: 4,
+		196: 4,
+		197: 6,
+		198: 3,
+		199: 3,
+		202: 3,
+		203: 3,
+		204: 4,
+		205: 5,
+		206: 3,
+		207: 3,
+		208: 4,
+		212: 3,
+		213: 5,
+		214: 5,
+		215: 4,
 		218: 4,
-		220: 5,
-		221: 3,
+		219: 4,
+		220: 4,
+		222: 5,
 		223: 3,
-		224: 4,
-		225: 4,
-		226: 5,
+		225: 3,
+		226: 4,
 		227: 4,
-		228: 4,
-		229: 3,
-		230: 3,
-		231: 4,
-		232: 4,
+		228: 5,
+		229: 4,
+		230: 4,
+		231: 3,
+		232: 3,
 		233: 4,
 		234: 4,
 		235: 4,
-		236: 3,
-		237: 3,
+		236: 4,
+		237: 4,
 		238: 3,
 		239: 3,
-		240: 4,
-		241: 4,
+		240: 3,
+		241: 3,
 		242: 4,
 		243: 4,
 		244: 4,
-		245: 3,
-		246: 3,
-		247: 6,
+		245: 4,
+		246: 4,
+		247: 3,
 		248: 3,
-		249: 5,
+		249: 6,
 		250: 3,
 		251: 5,
 		252: 3,
-		253: 6,
-		257: 3,
-		260: 3,
-		263: 3,
-		264: 3,
+		253: 5,
+		254: 3,
+		255: 6,
+		259: 3,
+		262: 3,
 		265: 3,
 		266: 3,
 		267: 3,
@@ -18194,47 +18397,49 @@ export const builtViews: BuiltViews = Object.freeze({
 		270: 3,
 		271: 3,
 		272: 3,
-		275: 3,
-		276: 3,
+		273: 3,
+		274: 3,
 		277: 3,
 		278: 3,
 		279: 3,
-		280: 4,
+		280: 3,
 		281: 3,
-		282: 3,
+		282: 4,
 		283: 3,
 		284: 3,
-		285: 4,
+		285: 3,
 		286: 3,
+		287: 4,
 		288: 3,
-		289: 3,
-		294: 3,
-		295: 3,
-		296: 3,
+		290: 3,
+		291: 3,
 		297: 3,
 		298: 3,
-		299: 4,
-		300: 4,
-		301: 5,
-		302: 3,
-		303: 3,
-		304: 3,
+		299: 3,
+		300: 3,
+		301: 3,
+		302: 4,
+		303: 4,
+		304: 5,
 		305: 3,
 		306: 3,
 		307: 3,
-		308: 4,
+		308: 3,
 		309: 3,
-		310: 4,
-		311: 3,
+		310: 3,
+		311: 4,
 		312: 3,
-		313: 7,
+		313: 4,
+		314: 3,
 		315: 3,
-		316: 3,
-		317: 4,
-		356: 3,
-		357: 6,
-		358: 8,
-		359: 3
+		316: 7,
+		318: 3,
+		319: 3,
+		320: 4,
+		359: 3,
+		360: 6,
+		361: 8,
+		362: 3
 	}),
 	cells: Object.freeze({
 		72: 2,
@@ -18245,8 +18450,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		94: 2,
 		95: 2,
 		96: 2,
-		99: 2,
-		100: 2,
+		97: 2,
+		98: 2,
 		101: 2,
 		102: 2,
 		103: 2,
@@ -18255,18 +18460,18 @@ export const builtViews: BuiltViews = Object.freeze({
 		106: 2,
 		107: 2,
 		108: 2,
-		122: 2,
-		125: 2,
-		131: 2,
+		109: 2,
+		110: 2,
+		124: 2,
+		127: 2,
 		133: 2,
-		134: 2,
+		135: 2,
 		136: 2,
-		137: 2,
 		138: 2,
 		139: 2,
 		140: 2,
+		141: 2,
 		142: 2,
-		143: 2,
 		144: 2,
 		145: 2,
 		146: 2,
@@ -18274,22 +18479,22 @@ export const builtViews: BuiltViews = Object.freeze({
 		148: 2,
 		149: 2,
 		150: 2,
-		154: 2,
-		155: 2,
+		151: 2,
+		152: 2,
 		156: 2,
 		157: 2,
 		158: 2,
 		159: 2,
-		160: 3,
+		160: 2,
 		161: 2,
-		162: 2,
-		163: 3,
+		162: 3,
+		163: 2,
 		164: 2,
 		165: 3,
-		167: 2,
-		168: 3,
+		166: 2,
+		167: 3,
 		169: 2,
-		170: 2,
+		170: 3,
 		171: 2,
 		172: 2,
 		173: 2,
@@ -18312,28 +18517,28 @@ export const builtViews: BuiltViews = Object.freeze({
 		190: 2,
 		191: 2,
 		192: 2,
+		193: 2,
 		194: 2,
-		195: 3,
 		196: 2,
-		197: 2,
-		200: 2,
-		201: 2,
+		197: 3,
+		198: 2,
+		199: 2,
 		202: 2,
 		203: 2,
 		204: 2,
 		205: 2,
 		206: 2,
-		210: 2,
-		211: 2,
+		207: 2,
+		208: 2,
 		212: 2,
 		213: 2,
-		216: 2,
-		217: 2,
+		214: 2,
+		215: 2,
 		218: 2,
+		219: 2,
 		220: 2,
-		221: 2,
+		222: 2,
 		223: 2,
-		224: 2,
 		225: 2,
 		226: 2,
 		227: 2,
@@ -18356,17 +18561,17 @@ export const builtViews: BuiltViews = Object.freeze({
 		244: 2,
 		245: 2,
 		246: 2,
-		247: 3,
+		247: 2,
 		248: 2,
-		249: 2,
+		249: 3,
 		250: 2,
 		251: 2,
 		252: 2,
-		253: 3,
-		257: 2,
-		260: 2,
-		263: 2,
-		264: 2,
+		253: 2,
+		254: 2,
+		255: 3,
+		259: 2,
+		262: 2,
 		265: 2,
 		266: 2,
 		267: 2,
@@ -18375,8 +18580,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		270: 2,
 		271: 2,
 		272: 2,
-		275: 2,
-		276: 2,
+		273: 2,
+		274: 2,
 		277: 2,
 		278: 2,
 		279: 2,
@@ -18387,11 +18592,10 @@ export const builtViews: BuiltViews = Object.freeze({
 		284: 2,
 		285: 2,
 		286: 2,
+		287: 2,
 		288: 2,
-		289: 2,
-		294: 2,
-		295: 2,
-		296: 2,
+		290: 2,
+		291: 2,
 		297: 2,
 		298: 2,
 		299: 2,
@@ -18408,14 +18612,17 @@ export const builtViews: BuiltViews = Object.freeze({
 		310: 2,
 		311: 2,
 		312: 2,
-		313: 3,
+		313: 2,
+		314: 2,
 		315: 2,
-		316: 2,
-		317: 2,
-		356: 2,
-		357: 3,
-		358: 3,
-		359: 2
+		316: 3,
+		318: 2,
+		319: 2,
+		320: 2,
+		359: 2,
+		360: 3,
+		361: 3,
+		362: 2
 	}),
 	places: Object.freeze({
 		72: [[2, 2, 2, 4, 0, 0]],
@@ -18450,130 +18657,135 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0]
 		],
-		99: [
+		97: [[2, 2, 2, 4, 0, 0]],
+		98: [
 			[2, 2, 2, 4, 0, 0],
-			[4, 3, 2, 4, 0, 0],
-			[6, 4, 2, 4, 0, 0],
-			[8, 5, 2, 4, 0, 0],
-			[10, 6, 2, 4, 0, 0],
-			[12, 7, 2, 4, 0, 0]
-		],
-		100: [
-			[2, 2, 2, 4, 0, 0],
-			[4, 3, 2, 4, 0, 0],
-			[6, 4, 2, 4, 0, 0],
-			[8, 5, 2, 4, 0, 0],
-			[10, 6, 2, 4, 0, 0],
-			[12, 7, 2, 4, 0, 0]
+			[4, 3, 2, 4, 0, 0]
 		],
 		101: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0],
 			[6, 4, 2, 4, 0, 0],
 			[8, 5, 2, 4, 0, 0],
+			[10, 6, 2, 4, 0, 0],
+			[12, 7, 2, 4, 0, 0]
+		],
+		102: [
+			[2, 2, 2, 4, 0, 0],
+			[4, 3, 2, 4, 0, 0],
+			[6, 4, 2, 4, 0, 0],
+			[8, 5, 2, 4, 0, 0],
+			[10, 6, 2, 4, 0, 0],
+			[12, 7, 2, 4, 0, 0]
+		],
+		103: [
+			[2, 2, 2, 4, 0, 0],
+			[4, 3, 2, 4, 0, 0],
+			[6, 4, 2, 4, 0, 0],
+			[8, 5, 2, 4, 0, 0],
 			[10, 6, 2, 4, 0, 0]
 		],
-		102: [[2, 2, 2, 4, 0, 0]],
-		103: [[2, 2, 2, 4, 0, 0]],
 		104: [[2, 2, 2, 4, 0, 0]],
 		105: [[2, 2, 2, 4, 0, 0]],
 		106: [[2, 2, 2, 4, 0, 0]],
 		107: [[2, 2, 2, 4, 0, 0]],
 		108: [[2, 2, 2, 4, 0, 0]],
-		122: [
+		109: [[2, 2, 2, 4, 0, 0]],
+		110: [[2, 2, 2, 4, 0, 0]],
+		124: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0]
 		],
-		125: [
+		127: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0]
 		],
-		131: [[2, 2, 1, 1, 0, 3]],
-		133: [[2, 2, 3, 8, 3, 0]],
-		134: [[2, 2, 3, 8, 3, 0]],
-		136: [
+		133: [[2, 2, 1, 1, 0, 3]],
+		135: [[2, 2, 3, 8, 3, 0]],
+		136: [[2, 2, 3, 8, 3, 0]],
+		138: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		137: [[2, 2, 5, 8, 5, 0]],
-		138: [
+		139: [[2, 2, 5, 8, 5, 0]],
+		140: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 6, 10, 5, 0]
 		],
-		139: [
+		141: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		140: [
+		142: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		142: [[2, 2, 11, 8, 11, 0]],
-		143: [[2, 2, 4, 3, 0, 0]],
-		144: [[2, 2, 1, 3, 0, 4]],
+		144: [[2, 2, 11, 8, 11, 0]],
 		145: [[2, 2, 4, 3, 0, 0]],
-		146: [
+		146: [[2, 2, 1, 3, 0, 4]],
+		147: [[2, 2, 4, 3, 0, 0]],
+		148: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 4, 3, 0, 0]
 		],
-		147: [[2, 2, 3, 1, 0, 0]],
-		148: [[2, 2, 4, 3, 0, 0]],
-		149: [[2, 2, 4, 3, 0, 0]],
-		150: [
+		149: [[2, 2, 3, 1, 0, 0]],
+		150: [[2, 2, 4, 3, 0, 0]],
+		151: [[2, 2, 4, 3, 0, 0]],
+		152: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0]
 		],
-		154: [
+		156: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0],
 			[11, 4, 1, 1, 0, 3]
 		],
-		155: [
+		157: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0]
 		],
-		156: [[2, 2, 5, 8, 5, 0]],
-		157: [
+		158: [[2, 2, 5, 8, 5, 0]],
+		159: [
 			[2, 2, 3, 8, 3, 0],
 			[5, 3, 3, 8, 3, 0]
 		],
-		158: [[2, 2, 1, 1, 0, 3]],
-		159: [
+		160: [[2, 2, 1, 1, 0, 3]],
+		161: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 6, 8, 6, 0],
 			[11, 4, 5, 8, 5, 0]
 		],
-		160: [
+		162: [
 			[2, 0],
 			[3, 3, 3, 1, 0, 0],
 			[6, 4, 4, 3, 0, 0],
 			[10, 5, 5, 8, 5, 0],
 			[15, 6, 7, 8, 7, 0]
 		],
-		161: [
+		163: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0],
 			[11, 4, 7, 8, 7, 0]
 		],
-		162: [
+		164: [
 			[2, 2, 5, 8, 5, 0],
 			[7, 3, 1, 1, 0, 3],
 			[8, 4, 7, 8, 7, 0],
 			[15, 5, 7, 8, 7, 0]
 		],
-		163: [
+		165: [
 			[2, 0],
 			[3, 3, 12, 8, 12, 0],
 			[15, 4, 5, 8, 5, 0]
 		],
-		164: [[2, 2, 5, 8, 5, 0]],
-		165: [
+		166: [[2, 2, 5, 8, 5, 0]],
+		167: [
 			[2, 0],
 			[3, 3, 5, 8, 5, 0],
 			[8, 4, 5, 8, 5, 0]
 		],
-		167: [[2, 2, 4, 3, 0, 0]],
-		168: [
+		169: [[2, 2, 4, 3, 0, 0]],
+		170: [
 			[2, 0],
 			[3, 3, 3, 1, 0, 0],
 			[6, 4, 5, 8, 5, 0],
@@ -18581,169 +18793,161 @@ export const builtViews: BuiltViews = Object.freeze({
 			[16, 6, 3, 1, 0, 0],
 			[19, 7, 5, 8, 5, 0]
 		],
-		169: [[2, 2, 3, 8, 3, 0]],
-		170: [[2, 2, 3, 8, 3, 0]],
-		171: [[2, 2, 4, 3, 0, 0]],
-		172: [[2, 2, 4, 3, 0, 0]],
-		173: [[2, 2, 1, 1, 0, 3]],
-		174: [[2, 2, 1, 1, 0, 3]],
-		175: [
+		171: [[2, 2, 3, 8, 3, 0]],
+		172: [[2, 2, 3, 8, 3, 0]],
+		173: [[2, 2, 4, 3, 0, 0]],
+		174: [[2, 2, 4, 3, 0, 0]],
+		175: [[2, 2, 1, 1, 0, 3]],
+		176: [[2, 2, 1, 1, 0, 3]],
+		177: [
 			[2, 2, 20, 9, 19, 0],
 			[22, 3, 1, 3, 0, 4]
 		],
-		176: [
+		178: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 5, 8, 5, 0],
 			[10, 4, 3, 1, 0, 0]
 		],
-		177: [
+		179: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 5, 8, 5, 0],
 			[10, 4, 5, 8, 5, 0],
 			[15, 5, 5, 8, 5, 0]
 		],
-		178: [[2, 2, 3, 8, 3, 0]],
-		179: [[2, 2, 3, 1, 0, 0]],
 		180: [[2, 2, 3, 8, 3, 0]],
-		181: [
+		181: [[2, 2, 3, 1, 0, 0]],
+		182: [[2, 2, 3, 8, 3, 0]],
+		183: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 24, 8, 24, 0]
 		],
-		182: [[2, 2, 4, 3, 0, 0]],
-		183: [[2, 2, 1, 1, 0, 3]],
-		184: [
+		184: [[2, 2, 4, 3, 0, 0]],
+		185: [[2, 2, 1, 1, 0, 3]],
+		186: [
 			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
-		185: [
+		187: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		186: [[2, 2, 3, 1, 0, 0]],
-		187: [[2, 2, 4, 3, 0, 0]],
-		188: [
+		188: [[2, 2, 3, 1, 0, 0]],
+		189: [[2, 2, 4, 3, 0, 0]],
+		190: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		189: [
+		191: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0]
 		],
-		190: [[2, 2, 3, 8, 3, 0]],
-		191: [
+		192: [[2, 2, 3, 8, 3, 0]],
+		193: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0]
 		],
-		192: [
+		194: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 4, 3, 0, 0]
 		],
-		194: [
+		196: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 8, 3, 0]
 		],
-		195: [
+		197: [
 			[2, 0],
 			[3, 3, 17, 9, 16, 0],
 			[20, 4, 1, 2, 0, 0],
 			[21, 5, 17, 9, 16, 0]
 		],
-		196: [
+		198: [
 			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
-		197: [
+		199: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		200: [[2, 2, 3, 8, 3, 0]],
-		201: [[2, 2, 3, 8, 3, 0]],
-		202: [
+		202: [[2, 2, 3, 8, 3, 0]],
+		203: [[2, 2, 3, 8, 3, 0]],
+		204: [
 			[2, 2, 6, 9, 5, 0],
 			[8, 3, 4, 3, 0, 0]
 		],
-		203: [
+		205: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0],
 			[8, 4, 4, 3, 0, 0]
 		],
-		204: [[2, 2, 3, 1, 0, 0]],
-		205: [[2, 2, 3, 1, 0, 0]],
-		206: [
+		206: [[2, 2, 3, 1, 0, 0]],
+		207: [[2, 2, 3, 1, 0, 0]],
+		208: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0]
 		],
-		210: [[2, 2, 4, 3, 0, 0]],
-		211: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 1, 2, 0, 0],
-			[7, 4, 4, 3, 0, 0]
-		],
-		212: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 1, 2, 0, 0],
-			[7, 4, 4, 3, 0, 0]
-		],
+		212: [[2, 2, 4, 3, 0, 0]],
 		213: [
+			[2, 2, 4, 3, 0, 0],
+			[6, 3, 1, 2, 0, 0],
+			[7, 4, 4, 3, 0, 0]
+		],
+		214: [
+			[2, 2, 4, 3, 0, 0],
+			[6, 3, 1, 2, 0, 0],
+			[7, 4, 4, 3, 0, 0]
+		],
+		215: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 4, 3, 0, 0]
 		],
-		216: [
+		218: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 1, 0, 3]
 		],
-		217: [
-			[2, 2, 5, 8, 5, 0],
-			[7, 3, 4, 3, 0, 0]
-		],
-		218: [
+		219: [
 			[2, 2, 5, 8, 5, 0],
 			[7, 3, 4, 3, 0, 0]
 		],
 		220: [
+			[2, 2, 5, 8, 5, 0],
+			[7, 3, 4, 3, 0, 0]
+		],
+		222: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 1, 2, 0, 0],
 			[6, 4, 4, 3, 0, 0]
 		],
-		221: [
+		223: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		223: [[2, 2, 4, 3, 0, 0]],
-		224: [
+		225: [[2, 2, 4, 3, 0, 0]],
+		226: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0]
 		],
-		225: [
+		227: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 8, 3, 0]
 		],
-		226: [
+		228: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0],
 			[10, 4, 6, 8, 6, 0]
 		],
-		227: [
+		229: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0]
 		],
-		228: [
+		230: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		229: [[2, 2, 4, 3, 0, 0]],
-		230: [[2, 2, 11, 9, 10, 0]],
-		231: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 5, 8, 5, 0]
-		],
-		232: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0]
-		],
+		231: [[2, 2, 4, 3, 0, 0]],
+		232: [[2, 2, 11, 9, 10, 0]],
 		233: [
 			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0]
+			[5, 3, 5, 8, 5, 0]
 		],
 		234: [
 			[2, 2, 3, 1, 0, 0],
@@ -18751,82 +18955,82 @@ export const builtViews: BuiltViews = Object.freeze({
 		],
 		235: [
 			[2, 2, 3, 1, 0, 0],
+			[5, 3, 3, 1, 0, 0]
+		],
+		236: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 3, 1, 0, 0]
+		],
+		237: [
+			[2, 2, 3, 1, 0, 0],
 			[5, 3, 4, 3, 0, 0]
 		],
-		236: [[2, 2, 3, 8, 3, 0]],
-		237: [[2, 2, 3, 8, 3, 0]],
 		238: [[2, 2, 3, 8, 3, 0]],
 		239: [[2, 2, 3, 8, 3, 0]],
-		240: [
+		240: [[2, 2, 3, 8, 3, 0]],
+		241: [[2, 2, 3, 8, 3, 0]],
+		242: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0]
-		],
-		241: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 8, 3, 0]
-		],
-		242: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 8, 3, 0]
 		],
 		243: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 8, 3, 0]
 		],
 		244: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 3, 8, 3, 0]
+		],
+		245: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 8, 3, 0]
 		],
-		245: [[2, 2, 4, 3, 0, 0]],
 		246: [
+			[2, 2, 4, 3, 0, 0],
+			[6, 3, 3, 8, 3, 0]
+		],
+		247: [[2, 2, 4, 3, 0, 0]],
+		248: [
 			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
-		247: [
+		249: [
 			[2, 0],
 			[3, 3, 3, 1, 0, 0],
 			[6, 4, 1, 3, 0, 4],
 			[7, 5, 1, 18, 0, 0]
 		],
-		248: [[2, 2, 4, 3, 0, 0]],
-		249: [
+		250: [[2, 2, 4, 3, 0, 0]],
+		251: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0],
 			[10, 4, 4, 3, 0, 0]
 		],
-		250: [[2, 2, 1, 1, 0, 3]],
-		251: [
+		252: [[2, 2, 1, 1, 0, 3]],
+		253: [
 			[2, 2, 8, 8, 8, 0],
 			[10, 3, 1, 1, 0, 3],
 			[11, 4, 8, 8, 8, 0]
 		],
-		252: [[2, 2, 1, 3, 0, 4]],
-		253: [
+		254: [[2, 2, 1, 3, 0, 4]],
+		255: [
 			[3, 3, 4, 3, 0, 0],
 			[2, 0],
 			[7, 4, 3, 1, 0, 0],
 			[10, 5, 3, 8, 3, 0]
 		],
-		257: [[2, 2, 1, 1, 0, 3]],
-		260: [[2, 2, 4, 3, 0, 0]],
-		263: [
-			[2, 2, 1, 3, 0, 4],
-			['side', true, false]
-		],
-		264: [
-			[2, 2, 1, 3, 0, 4],
-			['side', true, false]
-		],
+		259: [[2, 2, 1, 1, 0, 3]],
+		262: [[2, 2, 4, 3, 0, 0]],
 		265: [
-			[2, 2, 1, 1, 0, 3],
+			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
 		266: [
-			[2, 2, 1, 1, 0, 3],
+			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
 		267: [
-			[2, 2, 1, 3, 0, 4],
+			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
 		268: [
@@ -18834,118 +19038,126 @@ export const builtViews: BuiltViews = Object.freeze({
 			['side', true, false]
 		],
 		269: [
-			[2, 2, 1, 1, 0, 3],
+			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
 		270: [
-			[2, 2, 1, 3, 0, 4],
+			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
 		271: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		272: [[2, 2, 4, 3, 0, 0]],
-		275: [[2, 2, 3, 8, 3, 0]],
-		276: [
+		272: [
+			[2, 2, 1, 3, 0, 4],
+			['side', true, false]
+		],
+		273: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		277: [
-			[2, 2, 1, 1, 0, 3],
-			['side', true, false]
-		],
+		274: [[2, 2, 4, 3, 0, 0]],
+		277: [[2, 2, 3, 8, 3, 0]],
 		278: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
 		279: [
-			[2, 2, 1, 3, 0, 4],
+			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
 		280: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
+		],
+		281: [
+			[2, 2, 1, 3, 0, 4],
+			['side', true, false]
+		],
+		282: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0]
 		],
-		281: [[2, 2, 3, 8, 3, 0]],
-		282: [[2, 2, 3, 8, 3, 0]],
-		283: [
-			[2, 2, 1, 3, 0, 4],
-			['side', true, false]
-		],
-		284: [
-			[2, 2, 1, 3, 0, 4],
-			['side', true, false]
-		],
+		283: [[2, 2, 3, 8, 3, 0]],
+		284: [[2, 2, 3, 8, 3, 0]],
 		285: [
+			[2, 2, 1, 3, 0, 4],
+			['side', true, false]
+		],
+		286: [
+			[2, 2, 1, 3, 0, 4],
+			['side', true, false]
+		],
+		287: [
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 3, 8, 3, 0]
 		],
-		286: [[2, 2, 3, 8, 3, 0]],
 		288: [[2, 2, 3, 8, 3, 0]],
-		289: [[2, 2, 1, 1, 0, 3]],
-		294: [[2, 2, 17, 9, 16, 0]],
-		295: [[2, 2, 1, 3, 0, 4]],
-		296: [[2, 2, 10, 8, 10, 0]],
-		297: [[2, 2, 4, 3, 0, 0]],
-		298: [[2, 2, 4, 3, 0, 0]],
-		299: [
+		290: [[2, 2, 3, 8, 3, 0]],
+		291: [[2, 2, 1, 1, 0, 3]],
+		297: [[2, 2, 17, 9, 16, 0]],
+		298: [[2, 2, 1, 3, 0, 4]],
+		299: [[2, 2, 10, 8, 10, 0]],
+		300: [[2, 2, 4, 3, 0, 0]],
+		301: [[2, 2, 4, 3, 0, 0]],
+		302: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 4, 3, 0, 0]
 		],
-		300: [
+		303: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		301: [
+		304: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0],
 			[8, 4, 4, 3, 0, 0]
 		],
-		302: [
+		305: [
 			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
-		303: [
+		306: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		304: [[2, 2, 3, 8, 3, 0]],
-		305: [[2, 2, 3, 8, 3, 0]],
-		306: [[2, 2, 3, 8, 3, 0]],
-		307: [[2, 2, 1, 2, 0, 0]],
-		308: [
+		307: [[2, 2, 3, 8, 3, 0]],
+		308: [[2, 2, 3, 8, 3, 0]],
+		309: [[2, 2, 3, 8, 3, 0]],
+		310: [[2, 2, 1, 2, 0, 0]],
+		311: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 4, 3, 0, 0]
 		],
-		309: [[2, 2, 4, 3, 0, 0]],
-		310: [
+		312: [[2, 2, 4, 3, 0, 0]],
+		313: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		311: [[2, 2, 3, 1, 0, 0]],
-		312: [[2, 2, 3, 1, 0, 0]],
-		313: [
+		314: [[2, 2, 3, 1, 0, 0]],
+		315: [[2, 2, 3, 1, 0, 0]],
+		316: [
 			[2, 0],
 			[3, 3, 5, 8, 5, 0],
 			[8, 4, 5, 8, 5, 0],
 			[13, 5, 3, 1, 0, 0],
 			[16, 6, 5, 8, 5, 0]
 		],
-		315: [[2, 2, 1, 1, 0, 3]],
-		316: [[2, 2, 3, 8, 3, 0]],
-		317: [
+		318: [[2, 2, 1, 1, 0, 3]],
+		319: [[2, 2, 3, 8, 3, 0]],
+		320: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 24, 8, 24, 0]
 		],
-		356: [[2, 2, 4, 3, 0, 0]],
-		357: [
+		359: [[2, 2, 4, 3, 0, 0]],
+		360: [
 			[3, 3, 4, 3, 0, 0],
 			[2, 0],
 			[7, 4, 3, 1, 0, 0],
 			[10, 5, 3, 8, 3, 0]
 		],
-		358: [
+		361: [
 			[2, 0],
 			[3, 3, 3, 1, 0, 0],
 			[6, 4, 5, 8, 5, 0],
@@ -18953,7 +19165,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[16, 6, 3, 1, 0, 0],
 			[19, 7, 5, 8, 5, 0]
 		],
-		359: [
+		362: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		]
@@ -18962,11 +19174,11 @@ export const builtViews: BuiltViews = Object.freeze({
 		1: leafIdentifier,
 		65: leafTypeConversion,
 		88: leafFormatSpecifierText,
-		97: leafIntegerDecimalImaginary,
-		98: leafIntegerDecimalPlain,
-		109: leafLineContinuationNewline,
-		123: leafStringFragment,
-		124: leafEscapeInterpolation,
-		135: leafImportPrefix
+		99: leafIntegerDecimalImaginary,
+		100: leafIntegerDecimalPlain,
+		111: leafLineContinuationNewline,
+		125: leafStringFragment,
+		126: leafEscapeInterpolation,
+		137: leafImportPrefix
 	})
 });

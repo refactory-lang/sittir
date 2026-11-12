@@ -1226,6 +1226,8 @@ function baseDeclares(base: BaseArg | undefined, key: string): boolean {
 	return grammar?.[key] !== undefined;
 }
 
+export function layerSymbols(): ShapedSymbols<GrammarJson>;
+export function layerSymbols(names: ReadonlySet<string>): Record<string, unknown>;
 export function layerSymbols(names?: ReadonlySet<string>): Record<string, unknown> {
 	const symbol = nativeRuleFn<(name: string) => unknown>('sym');
 	return new Proxy({} as Record<string, unknown>, {

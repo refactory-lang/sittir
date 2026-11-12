@@ -220,6 +220,10 @@
         "named": true
       },
       {
+        "type": "integer_legacy_octal",
+        "named": true
+      },
+      {
         "type": "integer_octal",
         "named": true
       }
@@ -267,6 +271,20 @@
       },
       {
         "type": "integer_hex_plain",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "integer_legacy_octal",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "integer_legacy_octal_long",
+        "named": true
+      },
+      {
+        "type": "integer_legacy_octal_plain",
         "named": true
       }
     ]
@@ -5496,6 +5514,14 @@
   },
   {
     "type": "integer_hex_plain",
+    "named": true
+  },
+  {
+    "type": "integer_legacy_octal_long",
+    "named": true
+  },
+  {
+    "type": "integer_legacy_octal_plain",
     "named": true
   },
   {

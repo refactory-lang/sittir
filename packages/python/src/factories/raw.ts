@@ -162,6 +162,8 @@ export const buildIntegerOctalLong = dispatched(() => backend().buildIntegerOcta
 export const buildIntegerOctalPlain = dispatched(() => backend().buildIntegerOctalPlain);
 export const buildIntegerBinaryLong = dispatched(() => backend().buildIntegerBinaryLong);
 export const buildIntegerBinaryPlain = dispatched(() => backend().buildIntegerBinaryPlain);
+export const buildIntegerLegacyOctalLong = dispatched(() => backend().buildIntegerLegacyOctalLong);
+export const buildIntegerLegacyOctalPlain = dispatched(() => backend().buildIntegerLegacyOctalPlain);
 export const buildIntegerDecimalLong = dispatched(() => backend().buildIntegerDecimalLong);
 export const buildIntegerDecimalImaginary = dispatched(() => backend().buildIntegerDecimalImaginary);
 export const buildIntegerDecimalPlain = dispatched(() => backend().buildIntegerDecimalPlain);
@@ -375,6 +377,8 @@ export const _factoryMap = {
 	integer_octal_plain: buildIntegerOctalPlain,
 	integer_binary_long: buildIntegerBinaryLong,
 	integer_binary_plain: buildIntegerBinaryPlain,
+	integer_legacy_octal_long: buildIntegerLegacyOctalLong,
+	integer_legacy_octal_plain: buildIntegerLegacyOctalPlain,
 	integer_decimal_long: buildIntegerDecimalLong,
 	integer_decimal_imaginary: buildIntegerDecimalImaginary,
 	integer_decimal_plain: buildIntegerDecimalPlain,

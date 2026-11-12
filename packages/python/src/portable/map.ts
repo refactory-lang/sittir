@@ -110,9 +110,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -226,9 +223,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -343,9 +337,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -511,9 +502,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -624,9 +612,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -760,9 +745,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.LambdaWithinForInClause.Parsed
 				| T.ListComprehension.Parsed
@@ -877,9 +859,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -998,9 +977,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -1231,9 +1207,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -1651,9 +1624,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -1787,9 +1757,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -1982,9 +1949,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -2091,9 +2055,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2192,9 +2153,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2294,9 +2252,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2396,9 +2351,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2498,9 +2450,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2600,9 +2549,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2702,9 +2648,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2804,9 +2747,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -2906,9 +2846,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -3008,9 +2945,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -3110,9 +3044,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -3212,9 +3143,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -3325,9 +3253,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -3438,9 +3363,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -3554,9 +3476,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -3670,9 +3589,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -3895,9 +3811,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4027,9 +3940,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4159,9 +4069,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4292,9 +4199,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4425,9 +4329,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4558,9 +4459,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4691,9 +4589,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4824,9 +4719,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -4957,9 +4849,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5090,9 +4979,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5223,9 +5109,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5356,9 +5239,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5489,9 +5369,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5622,9 +5499,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5755,9 +5629,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -5861,9 +5732,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -5970,9 +5838,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6076,9 +5941,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6184,9 +6046,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6290,9 +6149,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6399,9 +6255,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6505,9 +6358,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6614,9 +6464,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6720,9 +6567,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6829,9 +6673,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -6935,9 +6776,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7044,9 +6882,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7150,9 +6985,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7259,9 +7091,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7365,9 +7194,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7474,9 +7300,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7580,9 +7403,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7689,9 +7509,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7795,9 +7612,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -7904,9 +7718,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8010,9 +7821,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8119,9 +7927,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8225,9 +8030,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8341,9 +8143,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8532,9 +8331,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8631,9 +8427,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8733,9 +8526,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8832,9 +8622,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -8934,9 +8721,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9033,9 +8817,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9135,9 +8916,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9234,9 +9012,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9336,9 +9111,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9435,9 +9207,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9537,9 +9306,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9636,9 +9402,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9738,9 +9501,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9837,9 +9597,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -9939,9 +9696,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -10038,9 +9792,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -10140,9 +9891,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -10239,9 +9987,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -10352,9 +10097,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -10465,9 +10207,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -10580,9 +10319,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -10693,9 +10429,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -10809,9 +10542,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -10922,9 +10652,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -11034,9 +10761,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11140,9 +10864,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11242,9 +10963,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11341,9 +11059,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11443,9 +11158,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11542,9 +11254,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11651,9 +11360,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11757,9 +11463,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11866,9 +11569,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -11972,9 +11672,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -12169,9 +11866,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -12353,9 +12047,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -12760,9 +12451,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -12875,9 +12563,6 @@ export interface PythonMap extends V.GrammarMap {
 								| T.FloatPoint.Parsed
 								| T.FloatScientific.Parsed
 								| T.GeneratorExpression.Parsed
-								| T.IntegerBinaryLong.Parsed
-								| T.IntegerHexLong.Parsed
-								| T.IntegerOctalLong.Parsed
 								| T.Lambda.Parsed
 								| T.ListComprehension.Parsed
 								| T.NamedExpression.Parsed
@@ -12992,9 +12677,6 @@ export interface PythonMap extends V.GrammarMap {
 								| T.FloatPoint.Parsed
 								| T.FloatScientific.Parsed
 								| T.GeneratorExpression.Parsed
-								| T.IntegerBinaryLong.Parsed
-								| T.IntegerHexLong.Parsed
-								| T.IntegerOctalLong.Parsed
 								| T.Lambda.Parsed
 								| T.ListComprehension.Parsed
 								| T.NamedExpression.Parsed
@@ -13111,9 +12793,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -13228,9 +12907,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -13350,9 +13026,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -13467,9 +13140,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -13580,9 +13250,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -13693,9 +13360,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -13814,9 +13478,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -14128,9 +13789,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.LambdaWithinForInClause.Parsed
 				| T.ListComprehension.Parsed
@@ -14254,9 +13912,6 @@ export interface PythonMap extends V.GrammarMap {
 								| T.FloatPoint.Parsed
 								| T.FloatScientific.Parsed
 								| T.GeneratorExpression.Parsed
-								| T.IntegerBinaryLong.Parsed
-								| T.IntegerHexLong.Parsed
-								| T.IntegerOctalLong.Parsed
 								| T.Lambda.Parsed
 								| T.ListComprehension.Parsed
 								| T.NamedExpression.Parsed
@@ -14369,9 +14024,6 @@ export interface PythonMap extends V.GrammarMap {
 								| T.FloatPoint.Parsed
 								| T.FloatScientific.Parsed
 								| T.GeneratorExpression.Parsed
-								| T.IntegerBinaryLong.Parsed
-								| T.IntegerHexLong.Parsed
-								| T.IntegerOctalLong.Parsed
 								| T.Lambda.Parsed
 								| T.LambdaWithinForInClause.Parsed
 								| T.ListComprehension.Parsed
@@ -14476,9 +14128,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -14592,9 +14241,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -14709,9 +14355,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -14912,9 +14555,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -15109,9 +14749,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -15218,9 +14855,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -15326,9 +14960,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -15435,9 +15066,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -15548,9 +15176,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -15660,9 +15285,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.ListComprehension.Parsed
 				| T.ParenthesizedExpression.Parsed
 				| T.SetComprehension.Parsed
@@ -15776,9 +15398,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -15979,7 +15598,7 @@ export interface PythonMap extends V.GrammarMap {
 			readonly content: string;
 			readonly marker: 'L' | 'l' | string;
 			readonly radixPrefix: '0O' | '0o' | string;
-			readonly $forms: V.Form<'content' | 'marker' | 'radixPrefix'>;
+			readonly $forms: V.Form<'content' | 'marker', 'radixPrefix'> | V.Form<'content' | 'marker' | 'radixPrefix'>;
 		};
 		readonly 'literal.number.integer.binary': {
 			readonly content: string;
@@ -15994,7 +15613,7 @@ export interface PythonMap extends V.GrammarMap {
 		readonly 'literal.number.integer.octal': {
 			readonly content: string;
 			readonly radixPrefix: '0O' | '0o' | string;
-			readonly $forms: V.Form<'content' | 'radixPrefix'>;
+			readonly $forms: V.Form<'content', 'radixPrefix'> | V.Form<'content' | 'radixPrefix'>;
 		};
 		readonly 'literal.number.negative': {
 			readonly value:
@@ -16012,10 +15631,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.integer.octal'>
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
-				| T.FloatScientific.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed;
+				| T.FloatScientific.Parsed;
 			readonly $forms: V.Form<'value'>;
 		};
 		readonly 'literal.string': {
@@ -16267,10 +15883,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.integer.octal'>
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
-				| T.FloatScientific.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed;
+				| T.FloatScientific.Parsed;
 			readonly real:
 				| V.Read<PythonMap, 'literal.number.float'>
 				| V.Read<PythonMap, 'literal.number.float.leading_point'>
@@ -16286,10 +15899,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.integer.octal'>
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
-				| T.FloatScientific.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed;
+				| T.FloatScientific.Parsed;
 		};
 		readonly 'pattern.complex.add': {
 			readonly imaginary:
@@ -16307,10 +15917,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.integer.octal'>
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
-				| T.FloatScientific.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed;
+				| T.FloatScientific.Parsed;
 			readonly real:
 				| V.Read<PythonMap, 'literal.number.float'>
 				| V.Read<PythonMap, 'literal.number.float.leading_point'>
@@ -16326,10 +15933,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.integer.octal'>
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
-				| T.FloatScientific.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed;
+				| T.FloatScientific.Parsed;
 			readonly $forms: V.Form<'imaginary' | 'real'>;
 		};
 		readonly 'pattern.complex.subtract': {
@@ -16348,10 +15952,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.integer.octal'>
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
-				| T.FloatScientific.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed;
+				| T.FloatScientific.Parsed;
 			readonly real:
 				| V.Read<PythonMap, 'literal.number.float'>
 				| V.Read<PythonMap, 'literal.number.float.leading_point'>
@@ -16367,10 +15968,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.number.integer.octal'>
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
-				| T.FloatScientific.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed;
+				| T.FloatScientific.Parsed;
 			readonly $forms: V.Form<'imaginary' | 'real'>;
 		};
 		readonly 'pattern.list': {
@@ -16557,9 +16155,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.SimplePatternNegative.Parsed
 				| T.String.Parsed
 				| T.UnionPattern.Parsed;
@@ -16615,9 +16210,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.SimplePatternNegative.Parsed
 				| T.String.Parsed
 				| T.UnionPattern.Parsed;
@@ -16802,9 +16394,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatLeadingPoint.Parsed
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.SimplePatternNegative.Parsed
 				| T.String.Parsed
 				| T.UnionPattern.Parsed;
@@ -17170,9 +16759,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -17330,9 +16916,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -17470,9 +17053,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -17609,9 +17189,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -17734,9 +17311,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -17885,9 +17459,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -18003,9 +17574,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -18309,9 +17877,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -18432,9 +17997,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -18547,9 +18109,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -18662,9 +18221,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed
@@ -18789,9 +18345,6 @@ export interface PythonMap extends V.GrammarMap {
 				| T.FloatPoint.Parsed
 				| T.FloatScientific.Parsed
 				| T.GeneratorExpression.Parsed
-				| T.IntegerBinaryLong.Parsed
-				| T.IntegerHexLong.Parsed
-				| T.IntegerOctalLong.Parsed
 				| T.Lambda.Parsed
 				| T.ListComprehension.Parsed
 				| T.NamedExpression.Parsed

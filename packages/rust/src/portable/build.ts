@@ -45531,7 +45531,10 @@ export const build: PortableBuildTable = {
 					scalar: 'float',
 					when: []
 				}
-			]
+			],
+			builds: {
+				float: 162
+			}
 		},
 		'literal.number.integer': {
 			root: true,
@@ -45539,7 +45542,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 141,
 					builder: 'integerLiteralDecimal',
-					numeric: 'content',
+					numeric: ['content'],
 					digits: {
 						base: 10,
 						affix: ''
@@ -45599,7 +45602,10 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			builds: {
+				integer: 141
+			}
 		},
 		'literal.number.integer.binary': {
 			root: true,
@@ -45607,7 +45613,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 143,
 					builder: 'integerLiteralBinary',
-					numeric: 'content',
+					numeric: ['content'],
 					digits: {
 						base: 2,
 						affix: '0b'
@@ -45667,7 +45673,10 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			builds: {
+				integer: 143
+			}
 		},
 		'literal.number.integer.hex': {
 			root: true,
@@ -45675,7 +45684,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 142,
 					builder: 'integerLiteralHex',
-					numeric: 'content',
+					numeric: ['content'],
 					digits: {
 						base: 16,
 						affix: '0x'
@@ -45735,7 +45744,10 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			builds: {
+				integer: 142
+			}
 		},
 		'literal.number.integer.octal': {
 			root: true,
@@ -45743,7 +45755,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 144,
 					builder: 'integerLiteralOctal',
-					numeric: 'content',
+					numeric: ['content'],
 					digits: {
 						base: 8,
 						affix: '0o'
@@ -45803,7 +45815,10 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			]
+			],
+			builds: {
+				integer: 144
+			}
 		},
 		'literal.number.negative': {
 			root: true,

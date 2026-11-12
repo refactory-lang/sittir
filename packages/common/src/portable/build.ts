@@ -20,7 +20,7 @@ import type {
 	PortableValueBuild
 } from '@sittir/types';
 import { hasKind } from './classify.ts';
-import { leafSeatOf, numberMembers, spells, textBuilt, tokenKind, tokenText } from './facts.ts';
+import { isNumberSlots, leafSeatOf, numberMembers, spells, textBuilt, tokenKind, tokenText } from './facts.ts';
 import { vocabularyPathFeatures } from './vocabulary-paths.ts';
 
 export interface PortableBuildContext {
@@ -186,10 +186,10 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 	const builtFrom = (frame: Frame, builder: string): unknown => {
 		if (frame.delimiter !== undefined) return delimited(builder, frame.delimiter, inputOf(frame));
 		const keys = table.options?.[builder] ?? [];
-		if (frame.input !== undefined || keys.length === 0) return call(builder, inputOf(frame));
+		if (keys.length === 0) return call(builder, inputOf(frame));
 		const config = configOf(frame);
 		const options = Object.fromEntries(keys.flatMap((key) => (config[key] === undefined ? [] : [[key, config[key]]])));
-		const input = inputFrom(frame, Object.fromEntries(Object.entries(config).filter(([key]) => !keys.includes(key))));
+		const input = frame.input !== undefined ? frame.input : inputFrom(frame, Object.fromEntries(Object.entries(config).filter(([key]) => !keys.includes(key))));
 		return call(builder, input, Object.keys(options).length === 0 ? undefined : options);
 	};
 	const materialize = (frame: Frame): unknown => {
@@ -342,12 +342,13 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 			const memo = picks.get(structure) ?? picks.set(structure, new Map()).get(structure)!;
 			if (memo.has(seats)) return memo.get(seats);
 			memo.set(seats, undefined);
-			const open = (pathOf(structure)?.arms ?? []).flatMap((arm): Picked[] => {
+			const path = pathOf(structure);
+			const open = (path?.arms ?? []).flatMap((arm): Picked[] => {
 				const seat = seats === undefined ? undefined : seatOf(arm, seats, structure);
 				return (seats === undefined ? arm.holders !== undefined : seat === undefined) ? [] : [{ arm, seat }];
 			});
 			const scalar = scalarOf(structure);
-			const scalars = scalar === undefined ? [] : open.filter(({ arm }) => arm.scalar !== undefined);
+			const scalars = scalar === undefined ? [] : open.filter(({ arm }) => arm.scalar !== undefined && path?.builds?.[arm.scalar] === arm.kind);
 			const picked =
 				scalars.length > 0
 					? (scalars.find(({ arm }) => arm.scalar === (typeof scalar === 'bigint' ? 'bigint' : integral(scalar!) ? 'integer' : 'float')) ??
@@ -750,8 +751,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 				const stated = numberMembers(arm).flatMap((member) => (values.has(member.name) ? [member.name] : []));
 				if (stated.length > 0)
 					throw new Error(`portable build: ${structure.$path}: $value ${spelledValue(scalar)} spells ${stated.join(' and ')}; state the $value or ${stated.length === 1 ? 'that member' : 'those members'}, not both`);
-				if (arm.numeric === undefined || (typeof arm.numeric === 'string' && !takesConfig(arm.builder!))) frame.input = scalar;
-				else if (typeof arm.numeric === 'string') frame.config[arm.numeric] = scalar;
+				if (arm.numeric === undefined || (isNumberSlots(arm.numeric) && !takesConfig(arm.builder!))) frame.input = scalar;
+				else if (isNumberSlots(arm.numeric)) frame.config[arm.numeric.at(-1)!] = scalar;
 				else for (const [key, part] of decimalParts(scalar, arm.numeric, arm, structure.$path)) frame.config[key] = part;
 			}
 			if (arm.content !== undefined && typeof structure.$value !== 'string') throw new Error(`portable build: ${structure.$path} takes its ${nameOf(arm.kind)} as a text $value`);

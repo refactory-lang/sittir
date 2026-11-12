@@ -440,6 +440,7 @@
 (number_hex) @literal.number.integer.hex
 (number_binary) @literal.number.integer.binary
 (number_octal) @literal.number.integer.octal
+(number_legacy_octal) @literal.number.integer.octal
 (number_bigint_decimal) @literal.number.integer.big
 (number_bigint_hex) @literal.number.integer.big.hex
 (number_bigint_binary) @literal.number.integer.big.binary

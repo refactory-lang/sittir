@@ -160,6 +160,8 @@ export {
 	coerceToIntegerOctalPlain as buildIntegerOctalPlain,
 	coerceToIntegerBinaryLong as buildIntegerBinaryLong,
 	coerceToIntegerBinaryPlain as buildIntegerBinaryPlain,
+	coerceToIntegerLegacyOctalLong as buildIntegerLegacyOctalLong,
+	coerceToIntegerLegacyOctalPlain as buildIntegerLegacyOctalPlain,
 	coerceToIntegerDecimalLong as buildIntegerDecimalLong,
 	coerceToIntegerDecimalImaginary as buildIntegerDecimalImaginary,
 	coerceToIntegerDecimalPlain as buildIntegerDecimalPlain,

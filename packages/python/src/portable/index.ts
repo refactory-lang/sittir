@@ -271,6 +271,8 @@ export interface PortableIds {
 		| TSKindId.IntegerDecimalPlain
 		| TSKindId.IntegerHexLong
 		| TSKindId.IntegerHexPlain
+		| TSKindId.IntegerLegacyOctalLong
+		| TSKindId.IntegerLegacyOctalPlain
 		| TSKindId.IntegerOctalLong
 		| TSKindId.IntegerOctalPlain
 		| TSKindId.None
@@ -294,6 +296,8 @@ export interface PortableIds {
 		| TSKindId.IntegerDecimalPlain
 		| TSKindId.IntegerHexLong
 		| TSKindId.IntegerHexPlain
+		| TSKindId.IntegerLegacyOctalLong
+		| TSKindId.IntegerLegacyOctalPlain
 		| TSKindId.IntegerOctalLong
 		| TSKindId.IntegerOctalPlain
 		| TSKindId.SimplePatternNegative;
@@ -308,20 +312,27 @@ export interface PortableIds {
 		| TSKindId.IntegerDecimalPlain
 		| TSKindId.IntegerHexLong
 		| TSKindId.IntegerHexPlain
+		| TSKindId.IntegerLegacyOctalLong
+		| TSKindId.IntegerLegacyOctalPlain
 		| TSKindId.IntegerOctalLong
 		| TSKindId.IntegerOctalPlain;
 	'literal.number.integer.big':
 		| TSKindId.IntegerBinaryLong
 		| TSKindId.IntegerDecimalLong
 		| TSKindId.IntegerHexLong
+		| TSKindId.IntegerLegacyOctalLong
 		| TSKindId.IntegerOctalLong;
 	'literal.number.integer.big.binary': TSKindId.IntegerBinaryLong;
 	'literal.number.integer.big.hex': TSKindId.IntegerHexLong;
-	'literal.number.integer.big.octal': TSKindId.IntegerOctalLong;
+	'literal.number.integer.big.octal': TSKindId.IntegerLegacyOctalLong | TSKindId.IntegerOctalLong;
 	'literal.number.integer.binary': TSKindId.IntegerBinaryLong | TSKindId.IntegerBinaryPlain;
 	'literal.number.integer.hex': TSKindId.IntegerHexLong | TSKindId.IntegerHexPlain;
 	'literal.number.integer.imaginary': TSKindId.IntegerDecimalImaginary;
-	'literal.number.integer.octal': TSKindId.IntegerOctalLong | TSKindId.IntegerOctalPlain;
+	'literal.number.integer.octal':
+		| TSKindId.IntegerLegacyOctalLong
+		| TSKindId.IntegerLegacyOctalPlain
+		| TSKindId.IntegerOctalLong
+		| TSKindId.IntegerOctalPlain;
 	'literal.number.negative': TSKindId.SimplePatternNegative;
 	'literal.string':
 		| TSKindId.ConcatenatedString
@@ -3087,6 +3098,8 @@ const table: PortableTable = {
 				TSKindId.IntegerDecimalPlain,
 				TSKindId.IntegerHexLong,
 				TSKindId.IntegerHexPlain,
+				TSKindId.IntegerLegacyOctalLong,
+				TSKindId.IntegerLegacyOctalPlain,
 				TSKindId.IntegerOctalLong,
 				TSKindId.IntegerOctalPlain,
 				TSKindId.None,
@@ -3114,6 +3127,8 @@ const table: PortableTable = {
 				TSKindId.IntegerDecimalPlain,
 				TSKindId.IntegerHexLong,
 				TSKindId.IntegerHexPlain,
+				TSKindId.IntegerLegacyOctalLong,
+				TSKindId.IntegerLegacyOctalPlain,
 				TSKindId.IntegerOctalLong,
 				TSKindId.IntegerOctalPlain,
 				TSKindId.SimplePatternNegative
@@ -3135,6 +3150,8 @@ const table: PortableTable = {
 				TSKindId.IntegerDecimalPlain,
 				TSKindId.IntegerHexLong,
 				TSKindId.IntegerHexPlain,
+				TSKindId.IntegerLegacyOctalLong,
+				TSKindId.IntegerLegacyOctalPlain,
 				TSKindId.IntegerOctalLong,
 				TSKindId.IntegerOctalPlain
 			],
@@ -3145,17 +3162,29 @@ const table: PortableTable = {
 				TSKindId.IntegerBinaryLong,
 				TSKindId.IntegerDecimalLong,
 				TSKindId.IntegerHexLong,
+				TSKindId.IntegerLegacyOctalLong,
 				TSKindId.IntegerOctalLong
 			],
 			exact: true
 		},
 		'literal.number.integer.big.binary': { ids: [TSKindId.IntegerBinaryLong], exact: true },
 		'literal.number.integer.big.hex': { ids: [TSKindId.IntegerHexLong], exact: true },
-		'literal.number.integer.big.octal': { ids: [TSKindId.IntegerOctalLong], exact: true },
+		'literal.number.integer.big.octal': {
+			ids: [TSKindId.IntegerLegacyOctalLong, TSKindId.IntegerOctalLong],
+			exact: true
+		},
 		'literal.number.integer.binary': { ids: [TSKindId.IntegerBinaryLong, TSKindId.IntegerBinaryPlain], exact: true },
 		'literal.number.integer.hex': { ids: [TSKindId.IntegerHexLong, TSKindId.IntegerHexPlain], exact: true },
 		'literal.number.integer.imaginary': { ids: [TSKindId.IntegerDecimalImaginary], exact: true },
-		'literal.number.integer.octal': { ids: [TSKindId.IntegerOctalLong, TSKindId.IntegerOctalPlain], exact: true },
+		'literal.number.integer.octal': {
+			ids: [
+				TSKindId.IntegerLegacyOctalLong,
+				TSKindId.IntegerLegacyOctalPlain,
+				TSKindId.IntegerOctalLong,
+				TSKindId.IntegerOctalPlain
+			],
+			exact: true
+		},
 		'literal.number.negative': { ids: [TSKindId.SimplePatternNegative], exact: true },
 		'literal.string': {
 			ids: [
@@ -3331,8 +3360,8 @@ const table: PortableTable = {
 				path: 'declaration.constant',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '299': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '299': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '302': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '302': 0 } } }
 				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
@@ -3342,8 +3371,8 @@ const table: PortableTable = {
 				path: 'declaration.constant',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '300': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '300': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '303': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '303': 0 } } }
 				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
@@ -3353,8 +3382,8 @@ const table: PortableTable = {
 				path: 'declaration.constant',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '301': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '301': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '304': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '304': 0 } } }
 				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
@@ -3363,7 +3392,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.member',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<property>.*[^_]_?)$', slots: { '224': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<property>.*[^_]_?)$', slots: { '226': 1 } } }]
 			},
 			{ path: 'expression.member', within: [], test: [] }
 		],
@@ -3371,67 +3400,67 @@ const table: PortableTable = {
 			{
 				path: 'expression.assignment.compound.add',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+=', slots: { '220': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+=', slots: { '222': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.subtract',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-=', slots: { '220': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-=', slots: { '222': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.multiply',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*=', slots: { '220': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*=', slots: { '222': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.divide',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/=', slots: { '220': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/=', slots: { '222': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.floor_divide',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '//=', slots: { '220': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '//=', slots: { '222': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.modulo',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%=', slots: { '220': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%=', slots: { '222': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.exponent',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**=', slots: { '220': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**=', slots: { '222': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.matrix_multiply',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '@=', slots: { '220': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '@=', slots: { '222': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.bitwise_and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&=', slots: { '220': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&=', slots: { '222': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.bitwise_or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|=', slots: { '220': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|=', slots: { '222': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.bitwise_xor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^=', slots: { '220': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^=', slots: { '222': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.shift_left',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<=', slots: { '220': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<=', slots: { '222': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.shift_right',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>=', slots: { '220': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>=', slots: { '222': 1 } } }]
 			},
 			{ path: 'expression.assignment.compound', within: [], test: [] }
 		],
@@ -3440,67 +3469,67 @@ const table: PortableTable = {
 			{
 				path: 'expression.binary.arithmetic.add',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '212': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '214': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.subtract',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '212': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '214': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.multiply',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*', slots: { '212': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*', slots: { '214': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.divide',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/', slots: { '212': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/', slots: { '214': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.modulo',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%', slots: { '212': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%', slots: { '214': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.floor_divide',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '//', slots: { '212': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '//', slots: { '214': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.exponent',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**', slots: { '212': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**', slots: { '214': 1 } } }]
 			},
 			{
 				path: 'expression.binary.matrix_multiply',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '@', slots: { '212': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '@', slots: { '214': 1 } } }]
 			},
 			{
 				path: 'expression.binary.bitwise.and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&', slots: { '212': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&', slots: { '214': 1 } } }]
 			},
 			{
 				path: 'expression.binary.bitwise.or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|', slots: { '212': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|', slots: { '214': 1 } } }]
 			},
 			{
 				path: 'expression.binary.bitwise.xor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^', slots: { '212': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^', slots: { '214': 1 } } }]
 			},
 			{
 				path: 'expression.binary.shift.left',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<', slots: { '212': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<', slots: { '214': 1 } } }]
 			},
 			{
 				path: 'expression.binary.shift.right',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>', slots: { '212': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>', slots: { '214': 1 } } }]
 			},
 			{ path: 'expression.binary', within: [], test: [] }
 		],
@@ -3510,12 +3539,12 @@ const table: PortableTable = {
 			{
 				path: 'expression.binary.logical.and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'and', slots: { '211': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'and', slots: { '213': 1 } } }]
 			},
 			{
 				path: 'expression.binary.logical.or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'or', slots: { '211': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'or', slots: { '213': 1 } } }]
 			},
 			{ path: 'expression.binary.logical', within: [], test: [] }
 		],
@@ -3524,7 +3553,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.call.member',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [224], slots: { '227': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [226], slots: { '229': 0 } } }]
 			},
 			{ path: 'expression.call', within: [], test: [] }
 		],
@@ -3541,56 +3570,56 @@ const table: PortableTable = {
 				path: 'expression.binary.comparison.equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '216': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '==', slots: { '308': 0 } } }
+					{ up: 0, via: [{ slots: { '218': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '==', slots: { '311': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.not_equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '216': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '!=', slots: { '308': 0 } } }
+					{ up: 0, via: [{ slots: { '218': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '!=', slots: { '311': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.not_equal.legacy',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '216': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<>', slots: { '308': 0 } } }
+					{ up: 0, via: [{ slots: { '218': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<>', slots: { '311': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.less',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '216': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<', slots: { '308': 0 } } }
+					{ up: 0, via: [{ slots: { '218': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<', slots: { '311': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.greater',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '216': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '>', slots: { '308': 0 } } }
+					{ up: 0, via: [{ slots: { '218': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '>', slots: { '311': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.less_equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '216': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<=', slots: { '308': 0 } } }
+					{ up: 0, via: [{ slots: { '218': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<=', slots: { '311': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.greater_equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '216': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '>=', slots: { '308': 0 } } }
+					{ up: 0, via: [{ slots: { '218': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '>=', slots: { '311': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.membership.in',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '216': 1 }, anchor: 'only' }], plan: { op: 'eq', text: 'in', slots: { '308': 0 } } }
+					{ up: 0, via: [{ slots: { '218': 1 }, anchor: 'only' }], plan: { op: 'eq', text: 'in', slots: { '311': 0 } } }
 				]
 			},
 			{
@@ -3599,8 +3628,8 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '216': 1 }, anchor: 'only' }],
-						plan: { op: 'eq', text: 'not in', slots: { '308': 0 } }
+						via: [{ slots: { '218': 1 }, anchor: 'only' }],
+						plan: { op: 'eq', text: 'not in', slots: { '311': 0 } }
 					}
 				]
 			},
@@ -3608,7 +3637,7 @@ const table: PortableTable = {
 				path: 'expression.binary.identity.is',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '216': 1 }, anchor: 'only' }], plan: { op: 'eq', text: 'is', slots: { '308': 0 } } }
+					{ up: 0, via: [{ slots: { '218': 1 }, anchor: 'only' }], plan: { op: 'eq', text: 'is', slots: { '311': 0 } } }
 				]
 			},
 			{
@@ -3617,8 +3646,8 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '216': 1 }, anchor: 'only' }],
-						plan: { op: 'eq', text: 'is not', slots: { '308': 0 } }
+						via: [{ slots: { '218': 1 }, anchor: 'only' }],
+						plan: { op: 'eq', text: 'is not', slots: { '311': 0 } }
 					}
 				]
 			},
@@ -3628,8 +3657,8 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '216': 1 }, anchor: 'only' }],
-						plan: { op: 'not', of: { op: 'is', types: [308], self: true } }
+						via: [{ slots: { '218': 1 }, anchor: 'only' }],
+						plan: { op: 'not', of: { op: 'is', types: [311], self: true } }
 					}
 				]
 			},
@@ -3639,57 +3668,57 @@ const table: PortableTable = {
 			{
 				path: 'element.comparator.comparison.equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', slots: { '308': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', slots: { '311': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.not_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', slots: { '308': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', slots: { '311': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.not_equal.legacy',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<>', slots: { '308': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<>', slots: { '311': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.less',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', slots: { '308': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', slots: { '311': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.greater',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', slots: { '308': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', slots: { '311': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.less_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', slots: { '308': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', slots: { '311': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.greater_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', slots: { '308': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', slots: { '311': 0 } } }]
 			},
 			{
 				path: 'element.comparator.membership.in',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'in', slots: { '308': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'in', slots: { '311': 0 } } }]
 			},
 			{
 				path: 'element.comparator.membership.not_in',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'not in', slots: { '308': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'not in', slots: { '311': 0 } } }]
 			},
 			{
 				path: 'element.comparator.identity.is',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is', slots: { '308': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is', slots: { '311': 0 } } }]
 			},
 			{
 				path: 'element.comparator.identity.is_not',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is not', slots: { '308': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is not', slots: { '311': 0 } } }]
 			},
 			{ path: 'element.comparator', within: [], test: [] }
 		],
@@ -3698,12 +3727,12 @@ const table: PortableTable = {
 			{
 				path: 'pattern.complex.add',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '195': 2 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '197': 2 } } }]
 			},
 			{
 				path: 'pattern.complex.subtract',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '195': 2 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '197': 2 } } }]
 			}
 		],
 		[TSKindId.ComprehensionClauses]: [{ path: 'clause.comprehension', within: [], test: [] }],
@@ -3748,7 +3777,7 @@ const table: PortableTable = {
 						plan: {
 							op: 'or',
 							of: [
-								{ op: 'count', min: 2, slots: { '302': 0 } },
+								{ op: 'count', min: 2, slots: { '305': 0 } },
 								{ op: 'delimiter', delimiter: 2 }
 							]
 						}
@@ -3773,11 +3802,11 @@ const table: PortableTable = {
 				path: 'type.nullable',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'Optional', slots: { '231': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'Optional', slots: { '233': 0 } } },
 					{
 						up: 0,
-						via: [{ slots: { '231': 1 } }, { slots: { '178': 0 } }, { slots: { '266': 0 }, anchor: 'only' }],
-						plan: { op: 'is', types: [229], self: true }
+						via: [{ slots: { '233': 1 } }, { slots: { '180': 0 } }, { slots: { '268': 0 }, anchor: 'only' }],
+						plan: { op: 'is', types: [231], self: true }
 					}
 				]
 			},
@@ -3797,6 +3826,8 @@ const table: PortableTable = {
 		[TSKindId.IntegerDecimalPlain]: [{ path: 'literal.number.integer', within: [], test: [] }],
 		[TSKindId.IntegerHexLong]: [{ path: 'literal.number.integer.big.hex', within: [], test: [] }],
 		[TSKindId.IntegerHexPlain]: [{ path: 'literal.number.integer.hex', within: [], test: [] }],
+		[TSKindId.IntegerLegacyOctalLong]: [{ path: 'literal.number.integer.big.octal', within: [], test: [] }],
+		[TSKindId.IntegerLegacyOctalPlain]: [{ path: 'literal.number.integer.octal', within: [], test: [] }],
 		[TSKindId.IntegerOctalLong]: [{ path: 'literal.number.integer.big.octal', within: [], test: [] }],
 		[TSKindId.IntegerOctalPlain]: [{ path: 'literal.number.integer.octal', within: [], test: [] }],
 		[TSKindId.Interpolation]: [{ path: 'expression.interpolation', within: [], test: [] }],
@@ -3815,17 +3846,17 @@ const table: PortableTable = {
 			{
 				path: 'declaration.method',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<name>.*[^_]_?)$', slots: { '358': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<name>.*[^_]_?)$', slots: { '361': 1 } } }]
 			},
 			{
 				path: 'declaration.constructor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '358': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '361': 1 } } }]
 			},
 			{
 				path: 'declaration.method.special',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '358': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '361': 1 } } }]
 			},
 			{ path: 'declaration.method', within: [], test: [] }
 		],
@@ -3856,114 +3887,114 @@ const table: PortableTable = {
 				path: 'literal.string.interpolated.deferred.raw.multiline',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[tT]', slots: { '251': 0 } } },
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', slots: { '251': 0 } } },
-					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', slots: { '251': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[tT]', slots: { '253': 0 } } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', slots: { '253': 0 } } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', slots: { '253': 0 } } }
 				]
 			},
 			{
 				path: 'literal.string.interpolated.raw.multiline',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[fF]', slots: { '251': 0 } } },
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', slots: { '251': 0 } } },
-					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', slots: { '251': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[fF]', slots: { '253': 0 } } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', slots: { '253': 0 } } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', slots: { '253': 0 } } }
 				]
 			},
 			{
 				path: 'literal.string.bytes.raw.multiline',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[bB]', slots: { '251': 0 } } },
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', slots: { '251': 0 } } },
-					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', slots: { '251': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[bB]', slots: { '253': 0 } } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', slots: { '253': 0 } } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', slots: { '253': 0 } } }
 				]
 			},
 			{
 				path: 'literal.string.interpolated.deferred.raw',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[tT]', slots: { '251': 0 } } },
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', slots: { '251': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[tT]', slots: { '253': 0 } } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', slots: { '253': 0 } } }
 				]
 			},
 			{
 				path: 'literal.string.interpolated.deferred.multiline',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[tT]', slots: { '251': 0 } } },
-					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', slots: { '251': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[tT]', slots: { '253': 0 } } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', slots: { '253': 0 } } }
 				]
 			},
 			{
 				path: 'literal.string.interpolated.raw',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[fF]', slots: { '251': 0 } } },
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', slots: { '251': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[fF]', slots: { '253': 0 } } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', slots: { '253': 0 } } }
 				]
 			},
 			{
 				path: 'literal.string.interpolated.multiline',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[fF]', slots: { '251': 0 } } },
-					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', slots: { '251': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[fF]', slots: { '253': 0 } } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', slots: { '253': 0 } } }
 				]
 			},
 			{
 				path: 'literal.string.bytes.raw',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[bB]', slots: { '251': 0 } } },
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', slots: { '251': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[bB]', slots: { '253': 0 } } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', slots: { '253': 0 } } }
 				]
 			},
 			{
 				path: 'literal.string.bytes.multiline',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[bB]', slots: { '251': 0 } } },
-					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', slots: { '251': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[bB]', slots: { '253': 0 } } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', slots: { '253': 0 } } }
 				]
 			},
 			{
 				path: 'literal.string.raw.multiline',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', slots: { '251': 0 } } },
-					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', slots: { '251': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', slots: { '253': 0 } } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', slots: { '253': 0 } } }
 				]
 			},
 			{
 				path: 'literal.string.interpolated.deferred',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[tT]', slots: { '251': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[tT]', slots: { '253': 0 } } }]
 			},
 			{
 				path: 'literal.string.interpolated',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[fF]', slots: { '251': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[fF]', slots: { '253': 0 } } }]
 			},
 			{
 				path: 'literal.string.bytes',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[bB]', slots: { '251': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[bB]', slots: { '253': 0 } } }]
 			},
 			{
 				path: 'literal.string.raw',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', slots: { '251': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', slots: { '253': 0 } } }]
 			},
 			{
 				path: 'literal.string.unicode',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[uU]', slots: { '251': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[uU]', slots: { '253': 0 } } }]
 			},
 			{
 				path: 'literal.string.multiline',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', slots: { '251': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', slots: { '253': 0 } } }]
 			},
 			{ path: 'literal.string', within: [], test: [] }
 		],
@@ -3979,7 +4010,7 @@ const table: PortableTable = {
 						plan: {
 							op: 'or',
 							of: [
-								{ op: 'count', min: 2, slots: { '264': 0 } },
+								{ op: 'count', min: 2, slots: { '266': 0 } },
 								{ op: 'delimiter', delimiter: 2 }
 							]
 						}
@@ -3999,7 +4030,7 @@ const table: PortableTable = {
 						plan: {
 							op: 'or',
 							of: [
-								{ op: 'count', min: 2, slots: { '270': 0 } },
+								{ op: 'count', min: 2, slots: { '272': 0 } },
 								{ op: 'delimiter', delimiter: 2 }
 							]
 						}
@@ -4025,17 +4056,17 @@ const table: PortableTable = {
 			{
 				path: 'expression.unary.negation',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '213': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '215': 0 } } }]
 			},
 			{
 				path: 'expression.unary.plus',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '213': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '215': 0 } } }]
 			},
 			{
 				path: 'expression.unary.bitwise_not',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '~', slots: { '213': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '~', slots: { '215': 0 } } }]
 			},
 			{ path: 'expression.unary', within: [], test: [] }
 		],
@@ -4053,7 +4084,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.yield.delegate',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [309], slots: { '223': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [312], slots: { '225': 0 } } }]
 			},
 			{ path: 'expression.yield', within: [], test: [] }
 		]
@@ -4065,52 +4096,52 @@ const table: PortableTable = {
 				name: 'getter',
 				path: 'declaration.property.getter',
 				member: 'decorators',
-				items: { slots: { '317': 0 } },
-				test: { op: 'eq', text: 'property', slots: { '182': 0 } },
-				spelled: { slots: { '182': 0 } }
+				items: { slots: { '320': 0 } },
+				test: { op: 'eq', text: 'property', slots: { '184': 0 } },
+				spelled: { slots: { '184': 0 } }
 			},
 			{
 				container: TSKindId.DecoratedDefinitionClassDeclaration,
 				name: 'setter',
 				path: 'declaration.property.setter',
 				member: 'decorators',
-				items: { slots: { '317': 0 } },
-				test: { op: 'child', slots: { '182': 0 }, of: { op: 'eq', text: 'setter', slots: { '224': 1 } } },
-				spelled: { slots: { '182': 0 } },
-				same: { item: [{ slots: { '182': 0 } }, { slots: { '224': 0 } }], node: [{ slots: { '358': 1 } }] }
+				items: { slots: { '320': 0 } },
+				test: { op: 'child', slots: { '184': 0 }, of: { op: 'eq', text: 'setter', slots: { '226': 1 } } },
+				spelled: { slots: { '184': 0 } },
+				same: { item: [{ slots: { '184': 0 } }, { slots: { '226': 0 } }], node: [{ slots: { '361': 1 } }] }
 			},
 			{
 				container: TSKindId.DecoratedDefinitionClassDeclaration,
 				name: 'static',
 				flag: 'static',
 				member: 'decorators',
-				items: { slots: { '317': 0 } },
-				test: { op: 'eq', text: 'staticmethod', slots: { '182': 0 } },
-				spelled: { slots: { '182': 0 } }
+				items: { slots: { '320': 0 } },
+				test: { op: 'eq', text: 'staticmethod', slots: { '184': 0 } },
+				spelled: { slots: { '184': 0 } }
 			},
 			{
 				container: TSKindId.DecoratedDefinitionClassDeclaration,
 				name: 'override',
 				flag: 'override',
 				member: 'decorators',
-				items: { slots: { '317': 0 } },
-				test: { op: 'eq', text: 'override', slots: { '182': 0 } },
-				spelled: { slots: { '182': 0 } }
+				items: { slots: { '320': 0 } },
+				test: { op: 'eq', text: 'override', slots: { '184': 0 } },
+				spelled: { slots: { '184': 0 } }
 			},
 			{
 				container: TSKindId.DecoratedDefinitionClassDeclaration,
 				name: 'override',
 				flag: 'override',
 				member: 'decorators',
-				items: { slots: { '317': 0 } },
+				items: { slots: { '320': 0 } },
 				test: {
 					op: 'and',
 					of: [
-						{ op: 'child', slots: { '182': 0 }, of: { op: 'eq', text: 'typing', slots: { '224': 0 } } },
-						{ op: 'child', slots: { '182': 0 }, of: { op: 'eq', text: 'override', slots: { '224': 1 } } }
+						{ op: 'child', slots: { '184': 0 }, of: { op: 'eq', text: 'typing', slots: { '226': 0 } } },
+						{ op: 'child', slots: { '184': 0 }, of: { op: 'eq', text: 'override', slots: { '226': 1 } } }
 					]
 				},
-				spelled: { slots: { '182': 0 } }
+				spelled: { slots: { '184': 0 } }
 			}
 		]
 	},
@@ -4227,24 +4258,24 @@ const table: PortableTable = {
 };
 
 export const queryFlags: QueryFlags = Object.freeze({
-	[TSKindId.Attribute]: { privateName: { op: 'match', pattern: '^__(?<property>.*[^_]_?)$', slots: { '224': 1 } } },
+	[TSKindId.Attribute]: { privateName: { op: 'match', pattern: '^__(?<property>.*[^_]_?)$', slots: { '226': 1 } } },
 	[TSKindId.CasePatternList]: {
 		trailingComma: {
 			op: 'and',
 			of: [
 				{ op: 'delimiter', delimiter: 2 },
-				{ op: 'count', min: 2, slots: { '278': 0 } }
+				{ op: 'count', min: 2, slots: { '280': 0 } }
 			]
 		}
 	},
-	[TSKindId.ConstructorDeclaration]: { async: { op: 'present', slots: { '313': 0 } } },
-	[TSKindId.ExceptClause]: { group: { op: 'present', slots: { '163': 0 } } },
+	[TSKindId.ConstructorDeclaration]: { async: { op: 'present', slots: { '316': 0 } } },
+	[TSKindId.ExceptClause]: { group: { op: 'present', slots: { '165': 0 } } },
 	[TSKindId.ExpressionList]: {
 		trailingComma: {
 			op: 'and',
 			of: [
 				{ op: 'delimiter', delimiter: 2 },
-				{ op: 'count', min: 2, slots: { '184': 0 } }
+				{ op: 'count', min: 2, slots: { '186': 0 } }
 			]
 		}
 	},
@@ -4253,21 +4284,21 @@ export const queryFlags: QueryFlags = Object.freeze({
 			op: 'and',
 			of: [
 				{ op: 'delimiter', delimiter: 2 },
-				{ op: 'count', min: 2, slots: { '302': 0 } }
+				{ op: 'count', min: 2, slots: { '305': 0 } }
 			]
 		}
 	},
 	[TSKindId.ForInClause]: {
-		async: { op: 'present', slots: { '247': 0 } },
-		trailingComma: { op: 'present', slots: { '247': 3 } }
+		async: { op: 'present', slots: { '249': 0 } },
+		trailingComma: { op: 'present', slots: { '249': 3 } }
 	},
-	[TSKindId.ForStatement]: { async: { op: 'present', slots: { '160': 0 } } },
-	[TSKindId.FormatExpression]: { debug: { op: 'present', slots: { '357': 1 } } },
-	[TSKindId.FunctionDefinition]: { async: { op: 'present', slots: { '168': 0 } } },
-	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '253': 1 } } },
+	[TSKindId.ForStatement]: { async: { op: 'present', slots: { '162': 0 } } },
+	[TSKindId.FormatExpression]: { debug: { op: 'present', slots: { '360': 1 } } },
+	[TSKindId.FunctionDefinition]: { async: { op: 'present', slots: { '170': 0 } } },
+	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '255': 1 } } },
 	[TSKindId.MethodDeclaration]: {
-		async: { op: 'present', slots: { '358': 0 } },
-		privateName: { op: 'match', pattern: '^__(?<name>.*[^_]_?)$', slots: { '358': 1 } },
+		async: { op: 'present', slots: { '361': 0 } },
+		privateName: { op: 'match', pattern: '^__(?<name>.*[^_]_?)$', slots: { '361': 1 } },
 		override: null,
 		static: null
 	},
@@ -4276,22 +4307,22 @@ export const queryFlags: QueryFlags = Object.freeze({
 			op: 'and',
 			of: [
 				{ op: 'delimiter', delimiter: 2 },
-				{ op: 'count', min: 2, slots: { '221': 0 } }
+				{ op: 'count', min: 2, slots: { '223': 0 } }
 			]
 		}
 	},
 	[TSKindId.PrintStatementChevron]: {
-		trailingComma: { op: 'child', slots: { '285': 1 }, of: { op: 'delimiter', delimiter: 2 } }
+		trailingComma: { op: 'child', slots: { '287': 1 }, of: { op: 'delimiter', delimiter: 2 } }
 	},
 	[TSKindId.PrintStatementPlain]: {
-		trailingComma: { op: 'child', slots: { '286': 0 }, of: { op: 'delimiter', delimiter: 2 } }
+		trailingComma: { op: 'child', slots: { '288': 0 }, of: { op: 'delimiter', delimiter: 2 } }
 	},
 	[TSKindId.Subjects]: {
 		trailingComma: {
 			op: 'and',
 			of: [
 				{ op: 'delimiter', delimiter: 2 },
-				{ op: 'count', min: 2, slots: { '264': 0 } }
+				{ op: 'count', min: 2, slots: { '266': 0 } }
 			]
 		}
 	},
@@ -4300,128 +4331,128 @@ export const queryFlags: QueryFlags = Object.freeze({
 			op: 'and',
 			of: [
 				{ op: 'delimiter', delimiter: 2 },
-				{ op: 'count', min: 2, slots: { '270': 0 } }
+				{ op: 'count', min: 2, slots: { '272': 0 } }
 			]
 		}
 	},
-	[TSKindId.WithStatement]: { async: { op: 'present', slots: { '165': 0 } } }
+	[TSKindId.WithStatement]: { async: { op: 'present', slots: { '167': 0 } } }
 } satisfies QueryFlags);
 
 export const rows: PortableRows = Object.freeze({ table, querySlots, flags: queryFlags });
 
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
-	131: { statements: { async: { types: [], kinds: [160, 165, 168] } } },
-	142: { content: { trailingComma: { types: [], kinds: [285, 286] } } },
-	143: { expression: { privateName: { types: [], kinds: [224] } } },
-	144: { expressions: { privateName: { types: [], kinds: [224] } } },
-	145: { content: { privateName: { types: [], kinds: [224] }, trailingComma: { types: [], kinds: [302] } } },
-	146: { right: { privateName: { types: [], kinds: [224] } } },
-	148: { expressions: { privateName: { types: [], kinds: [224] }, trailingComma: { types: [], kinds: [184] } } },
-	149: { expressions: { privateName: { types: [], kinds: [224] }, trailingComma: { types: [], kinds: [184] } } },
-	150: {
-		expressions: { privateName: { types: [], kinds: [224] }, trailingComma: { types: [], kinds: [184] } },
-		cause: { privateName: { types: [], kinds: [224] } }
+	133: { statements: { async: { types: [], kinds: [162, 167, 170] } } },
+	144: { content: { trailingComma: { types: [], kinds: [287, 288] } } },
+	145: { expression: { privateName: { types: [], kinds: [226] } } },
+	146: { expressions: { privateName: { types: [], kinds: [226] } } },
+	147: { content: { privateName: { types: [], kinds: [226] }, trailingComma: { types: [], kinds: [305] } } },
+	148: { right: { privateName: { types: [], kinds: [226] } } },
+	150: { expressions: { privateName: { types: [], kinds: [226] }, trailingComma: { types: [], kinds: [186] } } },
+	151: { expressions: { privateName: { types: [], kinds: [226] }, trailingComma: { types: [], kinds: [186] } } },
+	152: {
+		expressions: { privateName: { types: [], kinds: [226] }, trailingComma: { types: [], kinds: [186] } },
+		cause: { privateName: { types: [], kinds: [226] } }
 	},
-	154: { condition: { privateName: { types: [], kinds: [224] } } },
-	155: { condition: { privateName: { types: [], kinds: [224] } } },
-	157: { subject: { trailingComma: { types: [], kinds: [264] } } },
-	160: {
-		left: { privateName: { types: [], kinds: [224] } },
-		right: { privateName: { types: [], kinds: [224] }, trailingComma: { types: [], kinds: [184] } }
+	156: { condition: { privateName: { types: [], kinds: [226] } } },
+	157: { condition: { privateName: { types: [], kinds: [226] } } },
+	159: { subject: { trailingComma: { types: [], kinds: [266] } } },
+	162: {
+		left: { privateName: { types: [], kinds: [226] } },
+		right: { privateName: { types: [], kinds: [226] }, trailingComma: { types: [], kinds: [186] } }
 	},
-	161: { condition: { privateName: { types: [], kinds: [224] } } },
-	162: { handlers: { group: { types: [], kinds: [163] } } },
-	167: { value: { privateName: { types: [], kinds: [224] } } },
-	171: { expression: { privateName: { types: [], kinds: [224] } } },
-	172: { expression: { privateName: { types: [], kinds: [224] } } },
-	175: { inClauses: { privateName: { types: [], kinds: [224] } } },
-	181: { definition: { async: { types: [], kinds: [168] } } },
-	182: { expression: { privateName: { types: [], kinds: [224] } } },
-	183: { statements: { async: { types: [], kinds: [160, 165, 168] } } },
-	184: { elements: { privateName: { types: [], kinds: [224] } } },
-	197: { items: { privateName: { types: [], kinds: [224] } } },
-	202: { default: { privateName: { types: [], kinds: [224] } } },
-	203: { default: { privateName: { types: [], kinds: [224] } } },
-	204: { pattern: { privateName: { types: [], kinds: [224] } } },
-	205: { pattern: { privateName: { types: [], kinds: [224] } } },
-	206: { expression: { privateName: { types: [], kinds: [224] } } },
-	210: { argument: { privateName: { types: [], kinds: [224] } } },
-	211: { left: { privateName: { types: [], kinds: [224] } }, right: { privateName: { types: [], kinds: [224] } } },
-	212: { left: { privateName: { types: [], kinds: [224] } }, right: { privateName: { types: [], kinds: [224] } } },
-	213: { argument: { privateName: { types: [], kinds: [224] } } },
-	216: { left: { privateName: { types: [], kinds: [224] } } },
-	217: { body: { privateName: { types: [], kinds: [224] } } },
-	218: { body: { privateName: { types: [], kinds: [224] } } },
-	220: {
-		left: { privateName: { types: [], kinds: [224] } },
-		right: { privateName: { types: [], kinds: [224] }, trailingComma: { types: [], kinds: [184] } }
+	163: { condition: { privateName: { types: [], kinds: [226] } } },
+	164: { handlers: { group: { types: [], kinds: [165] } } },
+	169: { value: { privateName: { types: [], kinds: [226] } } },
+	173: { expression: { privateName: { types: [], kinds: [226] } } },
+	174: { expression: { privateName: { types: [], kinds: [226] } } },
+	177: { inClauses: { privateName: { types: [], kinds: [226] } } },
+	183: { definition: { async: { types: [], kinds: [170] } } },
+	184: { expression: { privateName: { types: [], kinds: [226] } } },
+	185: { statements: { async: { types: [], kinds: [162, 167, 170] } } },
+	186: { elements: { privateName: { types: [], kinds: [226] } } },
+	199: { items: { privateName: { types: [], kinds: [226] } } },
+	204: { default: { privateName: { types: [], kinds: [226] } } },
+	205: { default: { privateName: { types: [], kinds: [226] } } },
+	206: { pattern: { privateName: { types: [], kinds: [226] } } },
+	207: { pattern: { privateName: { types: [], kinds: [226] } } },
+	208: { expression: { privateName: { types: [], kinds: [226] } } },
+	212: { argument: { privateName: { types: [], kinds: [226] } } },
+	213: { left: { privateName: { types: [], kinds: [226] } }, right: { privateName: { types: [], kinds: [226] } } },
+	214: { left: { privateName: { types: [], kinds: [226] } }, right: { privateName: { types: [], kinds: [226] } } },
+	215: { argument: { privateName: { types: [], kinds: [226] } } },
+	218: { left: { privateName: { types: [], kinds: [226] } } },
+	219: { body: { privateName: { types: [], kinds: [226] } } },
+	220: { body: { privateName: { types: [], kinds: [226] } } },
+	222: {
+		left: { privateName: { types: [], kinds: [226] } },
+		right: { privateName: { types: [], kinds: [226] }, trailingComma: { types: [], kinds: [186] } }
 	},
-	221: { elements: { privateName: { types: [], kinds: [224] } } },
-	223: { content: { privateName: { types: [], kinds: [224] }, trailingComma: { types: [], kinds: [184] } } },
-	224: { object: { privateName: { types: [], kinds: [224] } } },
-	225: { object: { privateName: { types: [], kinds: [224] } }, index: { trailingComma: { types: [], kinds: [270] } } },
-	226: { start: { privateName: { types: [], kinds: [224] } }, stop: { privateName: { types: [], kinds: [224] } } },
-	227: { function: { privateName: { types: [], kinds: [224] } } },
-	229: { content: { privateName: { types: [], kinds: [224] } } },
-	235: { value: { privateName: { types: [], kinds: [224] } } },
-	240: { key: { privateName: { types: [], kinds: [224] } }, value: { privateName: { types: [], kinds: [224] } } },
-	241: { body: { privateName: { types: [], kinds: [224] } } },
-	243: { body: { privateName: { types: [], kinds: [224] } } },
-	244: { body: { privateName: { types: [], kinds: [224] } } },
-	245: { expression: { privateName: { types: [], kinds: [224] } } },
-	246: { items: { privateName: { types: [], kinds: [224] } } },
-	247: { left: { privateName: { types: [], kinds: [224] } }, rights: { privateName: { types: [], kinds: [224] } } },
-	248: { condition: { privateName: { types: [], kinds: [224] } } },
-	249: {
-		consequence: { privateName: { types: [], kinds: [224] } },
-		condition: { privateName: { types: [], kinds: [224] } },
-		alternative: { privateName: { types: [], kinds: [224] } }
+	223: { elements: { privateName: { types: [], kinds: [226] } } },
+	225: { content: { privateName: { types: [], kinds: [226] }, trailingComma: { types: [], kinds: [186] } } },
+	226: { object: { privateName: { types: [], kinds: [226] } } },
+	227: { object: { privateName: { types: [], kinds: [226] } }, index: { trailingComma: { types: [], kinds: [272] } } },
+	228: { start: { privateName: { types: [], kinds: [226] } }, stop: { privateName: { types: [], kinds: [226] } } },
+	229: { function: { privateName: { types: [], kinds: [226] } } },
+	231: { content: { privateName: { types: [], kinds: [226] } } },
+	237: { value: { privateName: { types: [], kinds: [226] } } },
+	242: { key: { privateName: { types: [], kinds: [226] } }, value: { privateName: { types: [], kinds: [226] } } },
+	243: { body: { privateName: { types: [], kinds: [226] } } },
+	245: { body: { privateName: { types: [], kinds: [226] } } },
+	246: { body: { privateName: { types: [], kinds: [226] } } },
+	247: { expression: { privateName: { types: [], kinds: [226] } } },
+	248: { items: { privateName: { types: [], kinds: [226] } } },
+	249: { left: { privateName: { types: [], kinds: [226] } }, rights: { privateName: { types: [], kinds: [226] } } },
+	250: { condition: { privateName: { types: [], kinds: [226] } } },
+	251: {
+		consequence: { privateName: { types: [], kinds: [226] } },
+		condition: { privateName: { types: [], kinds: [226] } },
+		alternative: { privateName: { types: [], kinds: [226] } }
 	},
-	251: { contents: { debug: { types: [], kinds: [253] } } },
-	253: { expression: { privateName: { types: [], kinds: [224] }, trailingComma: { types: [], kinds: [184] } } },
-	257: { elements: { debug: { types: [], kinds: [357] } } },
-	260: { expression: { privateName: { types: [], kinds: [224] } } },
-	264: { elements: { privateName: { types: [], kinds: [224] } } },
-	267: { items: { privateName: { types: [], kinds: [224] } } },
-	270: { elements: { privateName: { types: [], kinds: [224] } } },
-	272: { expression: { privateName: { types: [], kinds: [224] } } },
-	277: { items: { privateName: { types: [], kinds: [224] } } },
-	279: { items: { privateName: { types: [], kinds: [224] } } },
-	280: { value: { privateName: { types: [], kinds: [224] } }, alias: { privateName: { types: [], kinds: [224] } } },
-	283: { items: { privateName: { types: [], kinds: [224] } } },
-	284: { items: { privateName: { types: [], kinds: [224] } } },
-	289: { contents: { async: { types: [], kinds: [247] }, trailingComma: { types: [], kinds: [247] } } },
-	295: { values: { privateName: { types: [], kinds: [224] } } },
-	299: {
-		name: { privateName: { types: [], kinds: [224] } },
-		value: { privateName: { types: [], kinds: [224] }, trailingComma: { types: [], kinds: [184] } }
+	253: { contents: { debug: { types: [], kinds: [255] } } },
+	255: { expression: { privateName: { types: [], kinds: [226] }, trailingComma: { types: [], kinds: [186] } } },
+	259: { elements: { debug: { types: [], kinds: [360] } } },
+	262: { expression: { privateName: { types: [], kinds: [226] } } },
+	266: { elements: { privateName: { types: [], kinds: [226] } } },
+	269: { items: { privateName: { types: [], kinds: [226] } } },
+	272: { elements: { privateName: { types: [], kinds: [226] } } },
+	274: { expression: { privateName: { types: [], kinds: [226] } } },
+	279: { items: { privateName: { types: [], kinds: [226] } } },
+	281: { items: { privateName: { types: [], kinds: [226] } } },
+	282: { value: { privateName: { types: [], kinds: [226] } }, alias: { privateName: { types: [], kinds: [226] } } },
+	285: { items: { privateName: { types: [], kinds: [226] } } },
+	286: { items: { privateName: { types: [], kinds: [226] } } },
+	291: { contents: { async: { types: [], kinds: [249] }, trailingComma: { types: [], kinds: [249] } } },
+	298: { values: { privateName: { types: [], kinds: [226] } } },
+	302: {
+		name: { privateName: { types: [], kinds: [226] } },
+		value: { privateName: { types: [], kinds: [226] }, trailingComma: { types: [], kinds: [186] } }
 	},
-	300: { name: { privateName: { types: [], kinds: [224] } } },
-	301: {
-		name: { privateName: { types: [], kinds: [224] } },
-		value: { privateName: { types: [], kinds: [224] }, trailingComma: { types: [], kinds: [184] } }
+	303: { name: { privateName: { types: [], kinds: [226] } } },
+	304: {
+		name: { privateName: { types: [], kinds: [226] } },
+		value: { privateName: { types: [], kinds: [226] }, trailingComma: { types: [], kinds: [186] } }
 	},
-	302: { elements: { privateName: { types: [], kinds: [224] } } },
-	308: { primaryExpression: { privateName: { types: [], kinds: [224] } } },
-	309: { expression: { privateName: { types: [], kinds: [224] } } },
-	315: {
+	305: { elements: { privateName: { types: [], kinds: [226] } } },
+	311: { primaryExpression: { privateName: { types: [], kinds: [226] } } },
+	312: { expression: { privateName: { types: [], kinds: [226] } } },
+	318: {
 		statements: {
-			async: { types: [], kinds: [160, 165, 313, 358] },
-			override: { kind: 358 },
-			privateName: { types: [], kinds: [358] },
-			static: { kind: 358 }
+			async: { types: [], kinds: [162, 167, 316, 361] },
+			override: { kind: 361 },
+			privateName: { types: [], kinds: [361] },
+			static: { kind: 361 }
 		}
 	},
-	317: {
+	320: {
 		definition: {
-			async: { types: [], kinds: [313, 358] },
-			override: { kind: 358 },
-			privateName: { types: [], kinds: [358] },
-			static: { kind: 358 }
+			async: { types: [], kinds: [316, 361] },
+			override: { kind: 361 },
+			privateName: { types: [], kinds: [361] },
+			static: { kind: 361 }
 		}
 	},
-	356: { content: { privateName: { types: [], kinds: [224] } } },
-	357: { expression: { privateName: { types: [], kinds: [224] }, trailingComma: { types: [], kinds: [184] } } }
+	359: { content: { privateName: { types: [], kinds: [226] } } },
+	360: { expression: { privateName: { types: [], kinds: [226] }, trailingComma: { types: [], kinds: [186] } } }
 } satisfies QuerySlotFlags);
 
 declare module '../types.js' {

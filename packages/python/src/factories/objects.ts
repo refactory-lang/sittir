@@ -128,6 +128,9 @@ export const _slotRe_buildIntegerBinaryLong_content = /^(?:(?:(?:_?[0-1]+))+)$/u
 export const _slotRe_buildIntegerBinaryLong_marker = _slotRe_buildIntegerHexLong_marker;
 export const _slotRe_buildIntegerBinaryPlain_radix_prefix = _slotRe_buildIntegerBinaryLong_radix_prefix;
 export const _slotRe_buildIntegerBinaryPlain_content = _slotRe_buildIntegerBinaryLong_content;
+export const _slotRe_buildIntegerLegacyOctalLong_content = /^(?:(?:0*[1-7][0-7]*))$/u;
+export const _slotRe_buildIntegerLegacyOctalLong_marker = _slotRe_buildIntegerHexLong_marker;
+export const _slotRe_buildIntegerLegacyOctalPlain_content = _slotRe_buildIntegerLegacyOctalLong_content;
 export const _slotRe_buildIntegerDecimalLong_content = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildIntegerDecimalLong_marker = _slotRe_buildIntegerHexLong_marker;
 export const _slotRe_buildFloatPoint_integer = _leafRe_buildIntegerDecimalPlain;
@@ -4691,8 +4694,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				216, 210, 211, 217, 260, 212, 1, 251, 250, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 69, 70, 71, 213,
-				224, 225, 227, 236, 241, 239, 242, 237, 243, 238, 245, 244, 63, 204, 249, 146, 206
+				218, 212, 213, 219, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 69, 70,
+				71, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 206, 251, 148, 208
 			],
 			(v: unknown) => buildAsPatternTarget(v as never)
 		]
@@ -10693,6 +10696,133 @@ function buildIntegerBinaryPlain$with$content(this: Received<Held>, ...args: unk
 	return buildIntegerBinaryPlain$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
+export function buildIntegerLegacyOctalLong<const N extends string | number | bigint>(
+	value: Admit<string | (N & NumericLiteral<N, true>)>,
+	options?: T.IntegerLegacyOctalLong.Options
+): T.IntegerLegacyOctalLong.Bound;
+export function buildIntegerLegacyOctalLong(
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerLegacyOctalLong.Options
+): T.IntegerLegacyOctalLong.Bound {
+	const _content = numberText(8, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_legacy_octal_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerLegacyOctalLong_content.test(_content))
+		throw new Error(`integer_legacy_octal_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_legacy_octal_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerLegacyOctalLong_marker.test(_marker))
+		throw new Error(`integer_legacy_octal_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_legacy_octal_long', { content: _content, marker: _marker });
+	const node = {
+		$type: TSKindId.IntegerLegacyOctalLong as const,
+		_content,
+		_marker,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		content: () => hydrateStoredSlot(node, '_content'),
+		marker: () => hydrateStoredSlot(node, '_marker'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: buildIntegerLegacyOctalLong$with$content,
+		marker: buildIntegerLegacyOctalLong$with$marker,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerLegacyOctalLong.Bound;
+}
+
+function buildIntegerLegacyOctalLong$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<string | number | bigint>;
+	const options = node[OPTIONS] as T.IntegerLegacyOctalLong.Options;
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerLegacyOctalLong(value, options))
+			);
+		case 'marker':
+			return applySetter(args, (spelling: 'L' | 'l') =>
+				rebuilt(node, handle, () => buildIntegerLegacyOctalLong(value, { ...options, marker: spelling }))
+			);
+	}
+	throw new Error(`integer_legacy_octal_long has no $with.${setter}`);
+}
+function buildIntegerLegacyOctalLong$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerLegacyOctalLong$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function buildIntegerLegacyOctalLong$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerLegacyOctalLong$with(receiverOf(this, '$with.marker'), 'marker', args);
+}
+
+export function buildIntegerLegacyOctalPlain<const N extends string | number | bigint>(
+	content: N & NumericLiteral<N, true>,
+	affix?: true
+): T.IntegerLegacyOctalPlain.Bound;
+export function buildIntegerLegacyOctalPlain(text: `0${string}`, affix: false): T.IntegerLegacyOctalPlain.Bound;
+export function buildIntegerLegacyOctalPlain(
+	input: string | number | bigint,
+	affix: boolean = true
+): T.IntegerLegacyOctalPlain.Bound {
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`integer_legacy_octal_plain.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '0', '', 'integer_legacy_octal_plain');
+	}
+	const _content = numberText(8, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_legacy_octal_plain.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerLegacyOctalPlain_content.test(_content))
+		throw new Error(`integer_legacy_octal_plain.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_legacy_octal_plain', { content: _content });
+	const node = {
+		$type: TSKindId.IntegerLegacyOctalPlain as const,
+		_content,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		content: () => hydrateStoredSlot(node, '_content'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { content: buildIntegerLegacyOctalPlain$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerLegacyOctalPlain.Bound;
+}
+
+function buildIntegerLegacyOctalPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerLegacyOctalPlain(value))
+			);
+	}
+	throw new Error(`integer_legacy_octal_plain has no $with.${setter}`);
+}
+function buildIntegerLegacyOctalPlain$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerLegacyOctalPlain$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
 export function buildIntegerDecimalLong<const N extends string | number | bigint>(
 	value: Admit<string | (N & NumericLiteral<N, true>)>,
 	options?: T.IntegerDecimalLong.Options
@@ -13962,6 +14092,8 @@ export type FluentKindMap = {
 	integer_octal_plain: T.IntegerOctalPlain.Bound;
 	integer_binary_long: T.IntegerBinaryLong.Bound;
 	integer_binary_plain: T.IntegerBinaryPlain.Bound;
+	integer_legacy_octal_long: T.IntegerLegacyOctalLong.Bound;
+	integer_legacy_octal_plain: T.IntegerLegacyOctalPlain.Bound;
 	integer_decimal_long: T.IntegerDecimalLong.Bound;
 	integer_decimal_imaginary: T.IntegerDecimalImaginary;
 	integer_decimal_plain: T.IntegerDecimalPlain;
@@ -14174,6 +14306,8 @@ export const _factoryMap = {
 	integer_octal_plain: buildIntegerOctalPlain,
 	integer_binary_long: buildIntegerBinaryLong,
 	integer_binary_plain: buildIntegerBinaryPlain,
+	integer_legacy_octal_long: buildIntegerLegacyOctalLong,
+	integer_legacy_octal_plain: buildIntegerLegacyOctalPlain,
 	integer_decimal_long: buildIntegerDecimalLong,
 	integer_decimal_imaginary: buildIntegerDecimalImaginary,
 	integer_decimal_plain: buildIntegerDecimalPlain,

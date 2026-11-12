@@ -5,7 +5,7 @@ import { isErrorNode } from '../utils.ts';
 import { treeOf } from '../tree-token.ts';
 import { spelledMember } from '../spelled.ts';
 import { hasKind, type HoldingFact, type PortableClassifier } from './classify.ts';
-import { builtFlags, leafSeatOf, numberMembers, textBuilt, tokenText } from './facts.ts';
+import { builtFlags, isNumberSlots, leafSeatOf, numberMembers, textBuilt, tokenText } from './facts.ts';
 import { slotItems } from '../query-holds.ts';
 
 type Node = { readonly $type: number };
@@ -201,9 +201,14 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		const [integer, fraction, exponent, sign] = [part(parts.integer), part(parts.fraction), part(parts.exponent), part(parts.exponentSign)];
 		return floatOf(`${integer ?? '0'}.${fraction ?? '0'}${exponent === undefined ? '' : `e${sign ?? ''}${exponent}`}`);
 	};
+	const slotsText = (node: Node, keys: readonly string[]): string | undefined => {
+		const texts = keys.map((key) => slotText(node, key));
+		return texts.every((text) => text !== undefined) ? texts.join('') : undefined;
+	};
 	const scalarOf = (node: Node, arm: PortableBuildArm): number | bigint | undefined => {
-		if (typeof arm.numeric === 'object') return decimalOf(node, arm.numeric);
-		const text = arm.numeric === undefined ? textOf(node) : slotText(node, arm.numeric);
+		const { numeric } = arm;
+		if (numeric !== undefined && !isNumberSlots(numeric)) return decimalOf(node, numeric);
+		const text = numeric === undefined ? textOf(node) : slotsText(node, numeric);
 		if (text === undefined) return undefined;
 		return arm.scalar === 'float' ? floatOf(text) : integerOf(arm, text);
 	};

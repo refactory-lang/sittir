@@ -98,7 +98,7 @@ describe('ofType selects an element by the kind it reads as', async () => {
 describe('ofType holds only for an element of the view\'s language, as the guards do', async () => {
 	const rs = await createEngine(rust);
 	const ts = await createEngine(typescript);
-	const foreign = [...descendants(ts, 'using resource = open();\n')].find((item) => kindOf(item) === rs.kinds.FunctionItem);
+	const foreign = [...descendants(ts, source('packages/common/src/portable/classify.ts'))].find((item) => kindOf(item) === rs.kinds.FunctionItem);
 	const mapped = (): View => descendants(rs, 'fn f() {}').map(() => foreign);
 
 	it('rejects a node of another language whose kind id the view\'s kind would accept', () => {

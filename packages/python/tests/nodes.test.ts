@@ -4514,6 +4514,32 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
+	describe('integer_legacy_octal_long', () => {
+		it('factory produces correct type', () => {
+			const node = ir.integerLegacyOctalLong('1', { marker: 'L' });
+			expect(node.$type).toBe(TSKindId.IntegerLegacyOctalLong);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.integerLegacyOctalLong('1', { marker: 'L' });
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('integer_legacy_octal_plain', () => {
+		it('factory produces correct type', () => {
+			const node = ir.integerLegacyOctalPlain('1');
+			expect(node.$type).toBe(TSKindId.IntegerLegacyOctalPlain);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.integerLegacyOctalPlain('1');
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
 	describe('integer_decimal_long', () => {
 		it('factory produces correct type', () => {
 			const node = ir.integerDecimalLong('1', { marker: 'L' });

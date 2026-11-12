@@ -34,6 +34,7 @@ import {
 	TOKEN
 } from '../../types/rule-types.ts';
 import { assertNever } from '../../polymorph-variant.ts';
+import { patternAccepts } from '../../types/runtime-shapes.ts';
 import type { RawGrammar } from '../types.ts';
 import { mappedName } from '../../dsl/bind.ts';
 import type { StageDiagnosis } from '../stage.ts';
@@ -295,6 +296,7 @@ function derivesForm({ rules, expands }: Derivation, rule: Rule<'evaluate'>, for
 			case 'BLANK':
 				return [at];
 			case PATTERN:
+				return typeof item === 'string' && patternAccepts(node.value, item) ? [at + 1] : [];
 			case SUPERTYPE:
 			case INDENT:
 			case DEDENT:

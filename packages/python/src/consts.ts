@@ -105,6 +105,17 @@ export const TOKEN_INTERIORS = {
 			{ name: 'content', propertyName: 'content' }
 		]
 	},
+	integer_legacy_octal_long: {
+		regex: '^0(?<content>(?:0*[1-7][0-7]*))(?<marker>L|l)$',
+		slots: [
+			{ name: 'content', propertyName: 'content' },
+			{ name: 'marker', propertyName: 'marker' }
+		]
+	},
+	integer_legacy_octal_plain: {
+		regex: '^0(?<content>(?:0*[1-7][0-7]*))$',
+		slots: [{ name: 'content', propertyName: 'content' }]
+	},
 	integer_octal_long: {
 		regex: '^(?<radix_prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+)(?<marker>L|l)$',
 		slots: [

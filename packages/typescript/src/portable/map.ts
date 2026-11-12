@@ -33745,7 +33745,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'literal.number.integer.octal': {
 			readonly content: string;
 			readonly radixPrefix: '0O' | '0o' | string;
-			readonly $forms: V.Form<'content' | 'radixPrefix'>;
+			readonly $forms: V.Form<'content', 'radixPrefix'> | V.Form<'content' | 'radixPrefix'>;
 		};
 		readonly 'literal.number.negative': {
 			readonly value:

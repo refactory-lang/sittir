@@ -241,7 +241,7 @@ export function collectInteriors(nodeMap: { readonly nodes: ReadonlyMap<string, 
 	return out;
 }
 
-export type NumberShape = ({ readonly base: 2 | 8 | 10 | 16; readonly prefix: string } | { readonly base: 'float'; readonly whole: string; readonly complete: boolean }) & { readonly signed: boolean };
+export type NumberShape = ({ readonly base: 2 | 8 | 10 | 16; readonly prefix: string } | { readonly base: 'float'; readonly whole: string }) & { readonly complete: boolean; readonly signed: boolean };
 export type NumberSignature = 'decimal' | 'hex' | 'octal' | 'binary' | 'float';
 
 const FLOAT_PROBES = ['1.5', '.5', '1e5', '1.5e5'] as const;
@@ -253,7 +253,7 @@ const FLOAT_EVERY_PART = '1.5e5';
 const INTEGER_BASES: readonly { readonly base: 2 | 8 | 10 | 16; readonly accepts: string; readonly rejects: string; readonly prefixes: readonly string[] }[] = [
 	{ base: 16, accepts: 'ff', rejects: 'g', prefixes: ['0x', '0X', ''] },
 	{ base: 10, accepts: '89', rejects: 'a', prefixes: [''] },
-	{ base: 8, accepts: '77', rejects: '8', prefixes: ['0o', '0O', ''] },
+	{ base: 8, accepts: '77', rejects: '8', prefixes: ['0o', '0O', '', '0'] },
 	{ base: 2, accepts: '11', rejects: '2', prefixes: ['0b', '0B', ''] }
 ];
 
@@ -268,7 +268,7 @@ export function numberShape(pattern: RegExp): NumberShape | undefined {
 	for (const { base, accepts, rejects, prefixes } of INTEGER_BASES) {
 		for (const prefix of prefixes) {
 			if (pattern.test(`${prefix}${accepts}`) && !pattern.test(`${prefix}${rejects}`)) {
-				return { base, prefix: prefix.toLowerCase(), signed: spellsSign(pattern) };
+				return { base, prefix: prefix.toLowerCase(), complete: pattern.test(`${prefix}0`), signed: spellsSign(pattern) };
 			}
 		}
 	}
@@ -341,6 +341,27 @@ export function numericSlotShape(slot: AssembledNonterminal): NumberShape | unde
 
 export function spellsItsBase(shape: NumberShape): boolean {
 	return shape.base === 'float' || shape.base === 10 || shape.prefix !== '';
+}
+
+export interface NumberSpelling {
+	readonly slots: readonly AssembledNonterminal[];
+	readonly shape: NumberShape;
+	readonly pattern: string;
+}
+
+export function numberSpelling(node: AssembledNode, content: AssembledNonterminal): NumberSpelling | undefined {
+	const pattern = slotPattern(content);
+	const shape = numericSlotShape(content);
+	if (pattern === undefined || shape === undefined) return undefined;
+	if (spellsItsBase(shape)) return { slots: [content], shape, pattern };
+	const open = node instanceof AbstractAssembledCompound ? node.fullForm?.open : undefined;
+	if (open === undefined) return undefined;
+	const prefix = open.slot === undefined ? undefined : node.slots.find((slot) => slot.name === open.slot);
+	if (open.slot !== undefined && prefix === undefined) return undefined;
+	const joined = `(?:${open.texts.map(escapeRegexLiteral).join('|')})(?:${pattern})`;
+	const spelled = numberShapeOfPattern(content.name, joined);
+	if (spelled === undefined || !spellsItsBase(spelled)) return undefined;
+	return prefix === undefined ? { slots: [content], shape, pattern } : { slots: [prefix, content], shape: spelled, pattern: joined };
 }
 
 export function slotPattern(slot: AssembledNonterminal): string | undefined {

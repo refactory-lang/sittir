@@ -237,6 +237,10 @@ export interface Routes<Table extends AnyTable> {
 		readonly long: Table['buildIntegerBinaryLong'];
 		readonly plain: Table['buildIntegerBinaryPlain'];
 	};
+	readonly integerLegacyOctal: typeof F.buildIntegerLegacyOctalPlain & {
+		readonly long: Table['buildIntegerLegacyOctalLong'];
+		readonly plain: typeof F.buildIntegerLegacyOctalPlain;
+	};
 	readonly integerDecimal: typeof F.buildIntegerDecimalPlain & {
 		readonly long: Table['buildIntegerDecimalLong'];
 		readonly imaginary: typeof F.buildIntegerDecimalImaginary;
@@ -403,6 +407,20 @@ export interface Routes<Table extends AnyTable> {
 				V,
 				OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & {
 					pattern: ArgsOf<Routes<Table>['integerBinary']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildKeywordPattern']>
+	) => ReturnType<Table['buildKeywordPattern']>;
+	readonly keywordPattern$legacyOctal: <
+		const V extends OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & {
+			pattern: ArgsOf<Routes<Table>['integerLegacyOctal']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & {
+					pattern: ArgsOf<Routes<Table>['integerLegacyOctal']>;
 				}
 			>,
 		options?: OptionsArg<Table['buildKeywordPattern']>
@@ -578,6 +596,34 @@ export interface Routes<Table extends AnyTable> {
 			>,
 		options?: OptionsArg<Table['buildKeywordPattern']>
 	) => ReturnType<Table['buildKeywordPattern']>;
+	readonly keywordPattern$legacyOctal$long: <
+		const V extends OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & {
+			pattern: ArgsOf<Table['buildIntegerLegacyOctalLong']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & {
+					pattern: ArgsOf<Table['buildIntegerLegacyOctalLong']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildKeywordPattern']>
+	) => ReturnType<Table['buildKeywordPattern']>;
+	readonly keywordPattern$legacyOctal$plain: <
+		const V extends OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & {
+			pattern: ArgsOf<typeof F.buildIntegerLegacyOctalPlain>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & {
+					pattern: ArgsOf<typeof F.buildIntegerLegacyOctalPlain>;
+				}
+			>,
+		options?: OptionsArg<Table['buildKeywordPattern']>
+	) => ReturnType<Table['buildKeywordPattern']>;
 	readonly keywordPattern$decimal$long: <
 		const V extends OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & {
 			pattern: ArgsOf<Table['buildIntegerDecimalLong']>;
@@ -645,6 +691,10 @@ export interface Routes<Table extends AnyTable> {
 			readonly long: Routes<Table>['keywordPattern$binary$long'];
 			readonly plain: Routes<Table>['keywordPattern$binary$plain'];
 		};
+		readonly legacyOctal: Routes<Table>['keywordPattern$legacyOctal'] & {
+			readonly long: Routes<Table>['keywordPattern$legacyOctal$long'];
+			readonly plain: Routes<Table>['keywordPattern$legacyOctal$plain'];
+		};
 		readonly decimal: Routes<Table>['keywordPattern$decimal'] & {
 			readonly long: Routes<Table>['keywordPattern$decimal$long'];
 			readonly imaginary: Routes<Table>['keywordPattern$decimal$imaginary'];
@@ -697,6 +747,10 @@ export interface Routes<Table extends AnyTable> {
 	readonly simplePattern$hex: Seat<ArgsOf<Routes<Table>['integerHex']>, ReturnType<typeof F.buildSimplePattern>>;
 	readonly simplePattern$octal: Seat<ArgsOf<Routes<Table>['integerOctal']>, ReturnType<typeof F.buildSimplePattern>>;
 	readonly simplePattern$binary: Seat<ArgsOf<Routes<Table>['integerBinary']>, ReturnType<typeof F.buildSimplePattern>>;
+	readonly simplePattern$legacyOctal: Seat<
+		ArgsOf<Routes<Table>['integerLegacyOctal']>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
 	readonly simplePattern$decimal: Seat<
 		ArgsOf<Routes<Table>['integerDecimal']>,
 		ReturnType<typeof F.buildSimplePattern>
@@ -743,6 +797,14 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Table['buildIntegerBinaryPlain']>,
 		ReturnType<typeof F.buildSimplePattern>
 	>;
+	readonly simplePattern$legacyOctal$long: Seat<
+		ArgsOf<Table['buildIntegerLegacyOctalLong']>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
+	readonly simplePattern$legacyOctal$plain: Seat<
+		ArgsOf<typeof F.buildIntegerLegacyOctalPlain>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
 	readonly simplePattern$decimal$long: Seat<
 		ArgsOf<Table['buildIntegerDecimalLong']>,
 		ReturnType<typeof F.buildSimplePattern>
@@ -779,6 +841,10 @@ export interface Routes<Table extends AnyTable> {
 		readonly binary: Routes<Table>['simplePattern$binary'] & {
 			readonly long: Routes<Table>['simplePattern$binary$long'];
 			readonly plain: Routes<Table>['simplePattern$binary$plain'];
+		};
+		readonly legacyOctal: Routes<Table>['simplePattern$legacyOctal'] & {
+			readonly long: Routes<Table>['simplePattern$legacyOctal$long'];
+			readonly plain: Routes<Table>['simplePattern$legacyOctal$plain'];
 		};
 		readonly decimal: Routes<Table>['simplePattern$decimal'] & {
 			readonly long: Routes<Table>['simplePattern$decimal$long'];
@@ -874,6 +940,15 @@ export interface Routes<Table extends AnyTable> {
 		>,
 		ReturnType<typeof F.buildCasePattern>
 	>;
+	readonly casePattern$keywordPattern$legacyOctal: Seat<
+		ArgsOf<
+			Routes<Table>['keywordPattern$legacyOctal'] & {
+				readonly long: Routes<Table>['keywordPattern$legacyOctal$long'];
+				readonly plain: Routes<Table>['keywordPattern$legacyOctal$plain'];
+			}
+		>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
 	readonly casePattern$keywordPattern$decimal: Seat<
 		ArgsOf<
 			Routes<Table>['keywordPattern$decimal'] & {
@@ -934,6 +1009,14 @@ export interface Routes<Table extends AnyTable> {
 	>;
 	readonly casePattern$keywordPattern$binary$plain: Seat<
 		ArgsOf<Routes<Table>['keywordPattern$binary$plain']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$legacyOctal$long: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$legacyOctal$long']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$legacyOctal$plain: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$legacyOctal$plain']>,
 		ReturnType<typeof F.buildCasePattern>
 	>;
 	readonly casePattern$keywordPattern$decimal$long: Seat<
@@ -1023,6 +1106,15 @@ export interface Routes<Table extends AnyTable> {
 		>,
 		ReturnType<typeof F.buildCasePattern>
 	>;
+	readonly casePattern$simplePattern$legacyOctal: Seat<
+		ArgsOf<
+			Routes<Table>['simplePattern$legacyOctal'] & {
+				readonly long: Routes<Table>['simplePattern$legacyOctal$long'];
+				readonly plain: Routes<Table>['simplePattern$legacyOctal$plain'];
+			}
+		>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
 	readonly casePattern$simplePattern$decimal: Seat<
 		ArgsOf<
 			Routes<Table>['simplePattern$decimal'] & {
@@ -1085,6 +1177,14 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Routes<Table>['simplePattern$binary$plain']>,
 		ReturnType<typeof F.buildCasePattern>
 	>;
+	readonly casePattern$simplePattern$legacyOctal$long: Seat<
+		ArgsOf<Routes<Table>['simplePattern$legacyOctal$long']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$legacyOctal$plain: Seat<
+		ArgsOf<Routes<Table>['simplePattern$legacyOctal$plain']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
 	readonly casePattern$simplePattern$decimal$long: Seat<
 		ArgsOf<Routes<Table>['simplePattern$decimal$long']>,
 		ReturnType<typeof F.buildCasePattern>
@@ -1124,6 +1224,10 @@ export interface Routes<Table extends AnyTable> {
 				readonly long: Routes<Table>['casePattern$keywordPattern$binary$long'];
 				readonly plain: Routes<Table>['casePattern$keywordPattern$binary$plain'];
 			};
+			readonly legacyOctal: Routes<Table>['casePattern$keywordPattern$legacyOctal'] & {
+				readonly long: Routes<Table>['casePattern$keywordPattern$legacyOctal$long'];
+				readonly plain: Routes<Table>['casePattern$keywordPattern$legacyOctal$plain'];
+			};
 			readonly decimal: Routes<Table>['casePattern$keywordPattern$decimal'] & {
 				readonly long: Routes<Table>['casePattern$keywordPattern$decimal$long'];
 				readonly imaginary: Routes<Table>['casePattern$keywordPattern$decimal$imaginary'];
@@ -1161,6 +1265,10 @@ export interface Routes<Table extends AnyTable> {
 			readonly binary: Routes<Table>['casePattern$simplePattern$binary'] & {
 				readonly long: Routes<Table>['casePattern$simplePattern$binary$long'];
 				readonly plain: Routes<Table>['casePattern$simplePattern$binary$plain'];
+			};
+			readonly legacyOctal: Routes<Table>['casePattern$simplePattern$legacyOctal'] & {
+				readonly long: Routes<Table>['casePattern$simplePattern$legacyOctal$long'];
+				readonly plain: Routes<Table>['casePattern$simplePattern$legacyOctal$plain'];
 			};
 			readonly decimal: Routes<Table>['casePattern$simplePattern$decimal'] & {
 				readonly long: Routes<Table>['casePattern$simplePattern$decimal$long'];
@@ -1328,6 +1436,18 @@ export interface Routes<Table extends AnyTable> {
 			>,
 		options?: OptionsArg<Table['buildKeyValuePattern']>
 	) => ReturnType<Table['buildKeyValuePattern']>;
+	readonly keyValuePattern$legacyOctal: <
+		const V extends OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & {
+			key: ArgsOf<Routes<Table>['integerLegacyOctal']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & { key: ArgsOf<Routes<Table>['integerLegacyOctal']> }
+			>,
+		options?: OptionsArg<Table['buildKeyValuePattern']>
+	) => ReturnType<Table['buildKeyValuePattern']>;
 	readonly keyValuePattern$decimal: <
 		const V extends OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & {
 			key: ArgsOf<Routes<Table>['integerDecimal']>;
@@ -1481,6 +1601,34 @@ export interface Routes<Table extends AnyTable> {
 			>,
 		options?: OptionsArg<Table['buildKeyValuePattern']>
 	) => ReturnType<Table['buildKeyValuePattern']>;
+	readonly keyValuePattern$legacyOctal$long: <
+		const V extends OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & {
+			key: ArgsOf<Table['buildIntegerLegacyOctalLong']>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & {
+					key: ArgsOf<Table['buildIntegerLegacyOctalLong']>;
+				}
+			>,
+		options?: OptionsArg<Table['buildKeyValuePattern']>
+	) => ReturnType<Table['buildKeyValuePattern']>;
+	readonly keyValuePattern$legacyOctal$plain: <
+		const V extends OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & {
+			key: ArgsOf<typeof F.buildIntegerLegacyOctalPlain>;
+		}
+	>(
+		config: V &
+			RefuseUndeclared<
+				V,
+				OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & {
+					key: ArgsOf<typeof F.buildIntegerLegacyOctalPlain>;
+				}
+			>,
+		options?: OptionsArg<Table['buildKeyValuePattern']>
+	) => ReturnType<Table['buildKeyValuePattern']>;
 	readonly keyValuePattern$decimal$long: <
 		const V extends OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & {
 			key: ArgsOf<Table['buildIntegerDecimalLong']>;
@@ -1544,6 +1692,10 @@ export interface Routes<Table extends AnyTable> {
 			readonly long: Routes<Table>['keyValuePattern$binary$long'];
 			readonly plain: Routes<Table>['keyValuePattern$binary$plain'];
 		};
+		readonly legacyOctal: Routes<Table>['keyValuePattern$legacyOctal'] & {
+			readonly long: Routes<Table>['keyValuePattern$legacyOctal$long'];
+			readonly plain: Routes<Table>['keyValuePattern$legacyOctal$plain'];
+		};
 		readonly decimal: Routes<Table>['keyValuePattern$decimal'] & {
 			readonly long: Routes<Table>['keyValuePattern$decimal$long'];
 			readonly imaginary: Routes<Table>['keyValuePattern$decimal$imaginary'];
@@ -1561,6 +1713,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly hex: Routes<Table>['integerHex'];
 		readonly octal: Routes<Table>['integerOctal'];
 		readonly binary: Routes<Table>['integerBinary'];
+		readonly legacyOctal: Routes<Table>['integerLegacyOctal'];
 		readonly decimal: Routes<Table>['integerDecimal'];
 	};
 	readonly primaryExpression: {
@@ -3409,6 +3562,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly integerOctalPlain: Table['buildIntegerOctalPlain'];
 	readonly integerBinaryLong: Table['buildIntegerBinaryLong'];
 	readonly integerBinaryPlain: Table['buildIntegerBinaryPlain'];
+	readonly integerLegacyOctalLong: Table['buildIntegerLegacyOctalLong'];
 	readonly integerDecimalLong: Table['buildIntegerDecimalLong'];
 	readonly floatPoint: Table['buildFloatPoint'];
 	readonly floatLeadingPoint: Table['buildFloatLeadingPoint'];
@@ -3449,6 +3603,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly integerHex: Routes<Table>['integerHex'];
 	readonly integerOctal: Routes<Table>['integerOctal'];
 	readonly integerBinary: Routes<Table>['integerBinary'];
+	readonly integerLegacyOctal: Routes<Table>['integerLegacyOctal'];
 	readonly integerDecimal: Routes<Table>['integerDecimal'];
 	readonly integer: Routes<Table>['integer'];
 	readonly primaryExpression: Routes<Table>['primaryExpression'];
@@ -3467,6 +3622,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly wildcardPattern: typeof F.buildWildcardPattern;
 	readonly newline: typeof F.buildNewline;
 	readonly comment: typeof F.buildComment;
+	readonly integerLegacyOctalPlain: typeof F.buildIntegerLegacyOctalPlain;
 	readonly escapeSequenceUnicodeFixed: typeof F.buildEscapeSequenceUnicodeFixed;
 	readonly escapeSequenceUnicodeWide: typeof F.buildEscapeSequenceUnicodeWide;
 	readonly escapeSequenceHex: typeof F.buildEscapeSequenceHex;
@@ -3686,6 +3842,12 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			plain: $at('buildIntegerBinaryPlain')
 		} as const)
 	);
+	const integerLegacyOctal: Routes<Table>['integerLegacyOctal'] = Object.freeze(
+		Object.assign(delegate(F.buildIntegerLegacyOctalPlain), {
+			long: $at('buildIntegerLegacyOctalLong'),
+			plain: F.buildIntegerLegacyOctalPlain
+		} as const)
+	);
 	const integerDecimal: Routes<Table>['integerDecimal'] = Object.freeze(
 		Object.assign(delegate(F.buildIntegerDecimalPlain), {
 			long: $at('buildIntegerDecimalLong'),
@@ -3747,6 +3909,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		$at('buildKeywordPattern'),
 		integerBinary
 	);
+	const keywordPattern$legacyOctal: Routes<Table>['keywordPattern$legacyOctal'] = K.keywordPattern$legacyOctal(
+		$at('buildKeywordPattern'),
+		integerLegacyOctal
+	);
 	const keywordPattern$decimal: Routes<Table>['keywordPattern$decimal'] = K.keywordPattern$decimal(
 		$at('buildKeywordPattern'),
 		integerDecimal
@@ -3801,6 +3967,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		$at('buildKeywordPattern'),
 		integerBinary.plain
 	);
+	const keywordPattern$legacyOctal$long: Routes<Table>['keywordPattern$legacyOctal$long'] =
+		K.keywordPattern$legacyOctal$long($at('buildKeywordPattern'), integerLegacyOctal.long);
+	const keywordPattern$legacyOctal$plain: Routes<Table>['keywordPattern$legacyOctal$plain'] =
+		K.keywordPattern$legacyOctal$plain($at('buildKeywordPattern'), F.buildIntegerLegacyOctalPlain);
 	const keywordPattern$decimal$long: Routes<Table>['keywordPattern$decimal$long'] = K.keywordPattern$decimal$long(
 		$at('buildKeywordPattern'),
 		integerDecimal.long
@@ -3838,6 +4008,12 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 				Object.assign(keywordPattern$binary, {
 					long: keywordPattern$binary$long,
 					plain: keywordPattern$binary$plain
+				} as const)
+			),
+			legacyOctal: Object.freeze(
+				Object.assign(keywordPattern$legacyOctal, {
+					long: keywordPattern$legacyOctal$long,
+					plain: keywordPattern$legacyOctal$plain
 				} as const)
 			),
 			decimal: Object.freeze(
@@ -3909,6 +4085,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		F.buildSimplePattern,
 		integerBinary
 	);
+	const simplePattern$legacyOctal: Routes<Table>['simplePattern$legacyOctal'] = K.simplePattern$legacyOctal(
+		F.buildSimplePattern,
+		integerLegacyOctal
+	);
 	const simplePattern$decimal: Routes<Table>['simplePattern$decimal'] = K.simplePattern$decimal(
 		F.buildSimplePattern,
 		integerDecimal
@@ -3965,6 +4145,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		F.buildSimplePattern,
 		integerBinary.plain
 	);
+	const simplePattern$legacyOctal$long: Routes<Table>['simplePattern$legacyOctal$long'] =
+		K.simplePattern$legacyOctal$long(F.buildSimplePattern, integerLegacyOctal.long);
+	const simplePattern$legacyOctal$plain: Routes<Table>['simplePattern$legacyOctal$plain'] =
+		K.simplePattern$legacyOctal$plain(F.buildSimplePattern, F.buildIntegerLegacyOctalPlain);
 	const simplePattern$decimal$long: Routes<Table>['simplePattern$decimal$long'] = K.simplePattern$decimal$long(
 		F.buildSimplePattern,
 		integerDecimal.long
@@ -4002,6 +4186,12 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 				Object.assign(simplePattern$binary, {
 					long: simplePattern$binary$long,
 					plain: simplePattern$binary$plain
+				} as const)
+			),
+			legacyOctal: Object.freeze(
+				Object.assign(simplePattern$legacyOctal, {
+					long: simplePattern$legacyOctal$long,
+					plain: simplePattern$legacyOctal$plain
 				} as const)
 			),
 			decimal: Object.freeze(
@@ -4062,6 +4252,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		K.casePattern$keywordPattern$octal(F.buildCasePattern, keywordPattern.octal);
 	const casePattern$keywordPattern$binary: Routes<Table>['casePattern$keywordPattern$binary'] =
 		K.casePattern$keywordPattern$binary(F.buildCasePattern, keywordPattern.binary);
+	const casePattern$keywordPattern$legacyOctal: Routes<Table>['casePattern$keywordPattern$legacyOctal'] =
+		K.casePattern$keywordPattern$legacyOctal(F.buildCasePattern, keywordPattern.legacyOctal);
 	const casePattern$keywordPattern$decimal: Routes<Table>['casePattern$keywordPattern$decimal'] =
 		K.casePattern$keywordPattern$decimal(F.buildCasePattern, keywordPattern.decimal);
 	const casePattern$keywordPattern$point: Routes<Table>['casePattern$keywordPattern$point'] =
@@ -4090,6 +4282,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		K.casePattern$keywordPattern$binary$long(F.buildCasePattern, keywordPattern.binary.long);
 	const casePattern$keywordPattern$binary$plain: Routes<Table>['casePattern$keywordPattern$binary$plain'] =
 		K.casePattern$keywordPattern$binary$plain(F.buildCasePattern, keywordPattern.binary.plain);
+	const casePattern$keywordPattern$legacyOctal$long: Routes<Table>['casePattern$keywordPattern$legacyOctal$long'] =
+		K.casePattern$keywordPattern$legacyOctal$long(F.buildCasePattern, keywordPattern.legacyOctal.long);
+	const casePattern$keywordPattern$legacyOctal$plain: Routes<Table>['casePattern$keywordPattern$legacyOctal$plain'] =
+		K.casePattern$keywordPattern$legacyOctal$plain(F.buildCasePattern, keywordPattern.legacyOctal.plain);
 	const casePattern$keywordPattern$decimal$long: Routes<Table>['casePattern$keywordPattern$decimal$long'] =
 		K.casePattern$keywordPattern$decimal$long(F.buildCasePattern, keywordPattern.decimal.long);
 	const casePattern$keywordPattern$decimal$imaginary: Routes<Table>['casePattern$keywordPattern$decimal$imaginary'] =
@@ -4128,6 +4324,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		K.casePattern$simplePattern$octal(F.buildCasePattern, simplePattern.octal);
 	const casePattern$simplePattern$binary: Routes<Table>['casePattern$simplePattern$binary'] =
 		K.casePattern$simplePattern$binary(F.buildCasePattern, simplePattern.binary);
+	const casePattern$simplePattern$legacyOctal: Routes<Table>['casePattern$simplePattern$legacyOctal'] =
+		K.casePattern$simplePattern$legacyOctal(F.buildCasePattern, simplePattern.legacyOctal);
 	const casePattern$simplePattern$decimal: Routes<Table>['casePattern$simplePattern$decimal'] =
 		K.casePattern$simplePattern$decimal(F.buildCasePattern, simplePattern.decimal);
 	const casePattern$simplePattern$point: Routes<Table>['casePattern$simplePattern$point'] =
@@ -4156,6 +4354,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		K.casePattern$simplePattern$binary$long(F.buildCasePattern, simplePattern.binary.long);
 	const casePattern$simplePattern$binary$plain: Routes<Table>['casePattern$simplePattern$binary$plain'] =
 		K.casePattern$simplePattern$binary$plain(F.buildCasePattern, simplePattern.binary.plain);
+	const casePattern$simplePattern$legacyOctal$long: Routes<Table>['casePattern$simplePattern$legacyOctal$long'] =
+		K.casePattern$simplePattern$legacyOctal$long(F.buildCasePattern, simplePattern.legacyOctal.long);
+	const casePattern$simplePattern$legacyOctal$plain: Routes<Table>['casePattern$simplePattern$legacyOctal$plain'] =
+		K.casePattern$simplePattern$legacyOctal$plain(F.buildCasePattern, simplePattern.legacyOctal.plain);
 	const casePattern$simplePattern$decimal$long: Routes<Table>['casePattern$simplePattern$decimal$long'] =
 		K.casePattern$simplePattern$decimal$long(F.buildCasePattern, simplePattern.decimal.long);
 	const casePattern$simplePattern$decimal$imaginary: Routes<Table>['casePattern$simplePattern$decimal$imaginary'] =
@@ -4195,6 +4397,12 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 						Object.assign(casePattern$keywordPattern$binary, {
 							long: casePattern$keywordPattern$binary$long,
 							plain: casePattern$keywordPattern$binary$plain
+						} as const)
+					),
+					legacyOctal: Object.freeze(
+						Object.assign(casePattern$keywordPattern$legacyOctal, {
+							long: casePattern$keywordPattern$legacyOctal$long,
+							plain: casePattern$keywordPattern$legacyOctal$plain
 						} as const)
 					),
 					decimal: Object.freeze(
@@ -4243,6 +4451,12 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 						Object.assign(casePattern$simplePattern$binary, {
 							long: casePattern$simplePattern$binary$long,
 							plain: casePattern$simplePattern$binary$plain
+						} as const)
+					),
+					legacyOctal: Object.freeze(
+						Object.assign(casePattern$simplePattern$legacyOctal, {
+							long: casePattern$simplePattern$legacyOctal$long,
+							plain: casePattern$simplePattern$legacyOctal$plain
 						} as const)
 					),
 					decimal: Object.freeze(
@@ -4317,6 +4531,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		$at('buildKeyValuePattern'),
 		integerBinary
 	);
+	const keyValuePattern$legacyOctal: Routes<Table>['keyValuePattern$legacyOctal'] = K.keyValuePattern$legacyOctal(
+		$at('buildKeyValuePattern'),
+		integerLegacyOctal
+	);
 	const keyValuePattern$decimal: Routes<Table>['keyValuePattern$decimal'] = K.keyValuePattern$decimal(
 		$at('buildKeyValuePattern'),
 		integerDecimal
@@ -4369,6 +4587,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		$at('buildKeyValuePattern'),
 		integerBinary.plain
 	);
+	const keyValuePattern$legacyOctal$long: Routes<Table>['keyValuePattern$legacyOctal$long'] =
+		K.keyValuePattern$legacyOctal$long($at('buildKeyValuePattern'), integerLegacyOctal.long);
+	const keyValuePattern$legacyOctal$plain: Routes<Table>['keyValuePattern$legacyOctal$plain'] =
+		K.keyValuePattern$legacyOctal$plain($at('buildKeyValuePattern'), F.buildIntegerLegacyOctalPlain);
 	const keyValuePattern$decimal$long: Routes<Table>['keyValuePattern$decimal$long'] = K.keyValuePattern$decimal$long(
 		$at('buildKeyValuePattern'),
 		integerDecimal.long
@@ -4411,6 +4633,12 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 					plain: keyValuePattern$binary$plain
 				} as const)
 			),
+			legacyOctal: Object.freeze(
+				Object.assign(keyValuePattern$legacyOctal, {
+					long: keyValuePattern$legacyOctal$long,
+					plain: keyValuePattern$legacyOctal$plain
+				} as const)
+			),
 			decimal: Object.freeze(
 				Object.assign(keyValuePattern$decimal, {
 					long: keyValuePattern$decimal$long,
@@ -4432,6 +4660,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			hex: integerHex,
 			octal: integerOctal,
 			binary: integerBinary,
+			legacyOctal: integerLegacyOctal,
 			decimal: integerDecimal
 		} as const)
 	);
@@ -5898,6 +6127,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		integerOctalPlain: $at('buildIntegerOctalPlain'),
 		integerBinaryLong: $at('buildIntegerBinaryLong'),
 		integerBinaryPlain: $at('buildIntegerBinaryPlain'),
+		integerLegacyOctalLong: $at('buildIntegerLegacyOctalLong'),
 		integerDecimalLong: $at('buildIntegerDecimalLong'),
 		floatPoint: $at('buildFloatPoint'),
 		floatLeadingPoint: $at('buildFloatLeadingPoint'),
@@ -5938,6 +6168,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		integerHex: integerHex,
 		integerOctal: integerOctal,
 		integerBinary: integerBinary,
+		integerLegacyOctal: integerLegacyOctal,
 		integerDecimal: integerDecimal,
 		integer: integer,
 		primaryExpression: primaryExpression,
@@ -5956,6 +6187,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		wildcardPattern: F.buildWildcardPattern,
 		newline: F.buildNewline,
 		comment: F.buildComment,
+		integerLegacyOctalPlain: F.buildIntegerLegacyOctalPlain,
 		escapeSequenceUnicodeFixed: F.buildEscapeSequenceUnicodeFixed,
 		escapeSequenceUnicodeWide: F.buildEscapeSequenceUnicodeWide,
 		escapeSequenceHex: F.buildEscapeSequenceHex,

@@ -38,12 +38,11 @@ describe('long and plain hex, octal and binary integers', () => {
 		expect(py.build.integer.hex.long('FF', { marker: 'l' }).$render()).toBe('0xFFl');
 	});
 
-	it('read the plain form as its value and carry the long form as its own kind, and render each back as written', () => {
-		const kindOf = (source: string): unknown => (value(source) as { readonly $type: unknown }).$type;
-		expect(kindOf('x = 0xFFL')).toBe(python.kinds.IntegerHexLong);
-		expect(kindOf('x = 0o17l')).toBe(python.kinds.IntegerOctalLong);
-		expect(kindOf('x = 0B101L')).toBe(python.kinds.IntegerBinaryLong);
+	it('read each form as its value, a long form with its marker, and rebuild it in the standard spelling', () => {
+		expect(value('x = 0xFFL')).toEqual({ $path: 'literal.number.integer.big.hex', $value: 255n, marker: 'L' });
+		expect(value('x = 0o17l')).toEqual({ $path: 'literal.number.integer.big.octal', $value: 15n, marker: 'l' });
+		expect(value('x = 0B101L')).toEqual({ $path: 'literal.number.integer.big.binary', $value: 5n, marker: 'L' });
 		expect(value('x = 0xff')).toEqual({ $path: 'literal.number.integer.hex', $value: 255 });
-		for (const source of ['x = 0xFFL', 'x = 0o17l', 'x = 0B101L', 'x = 0xff']) expect(roundTrip(source)).toBe(`${source}\n`);
+		expect(['x = 0xFFL', 'x = 0o17l', 'x = 0B101L', 'x = 0xff'].map(roundTrip)).toEqual(['x = 0xffL\n', 'x = 0o17l\n', 'x = 0b101L\n', 'x = 0xff\n']);
 	});
 });

@@ -516,6 +516,19 @@ export const records = {
 		content: { word: 4, width: 2, forms: 4, built: 3 },
 		verbatim: { word: 6, width: 2, forms: 4, built: 4 }
 	},
+	IntegerLegacyOctalLongNode: {
+		words: 8,
+		builtWords: 5,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		marker: { word: 4, width: 2, forms: 4, built: 3 },
+		verbatim: { word: 6, width: 2, forms: 4, built: 4 }
+	},
+	IntegerLegacyOctalPlainNode: {
+		words: 6,
+		builtWords: 4,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
+	},
 	IntegerDecimalLongNode: {
 		words: 8,
 		builtWords: 5,

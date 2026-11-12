@@ -75,6 +75,9 @@ export interface SubBuilderRowKind {
 	'expression.primary.integer.hex': TSKindId.IntegerHexPlain;
 	'expression.primary.integer.hex.long': TSKindId.IntegerHexLong;
 	'expression.primary.integer.hex.plain': TSKindId.IntegerHexPlain;
+	'expression.primary.integer.legacyOctal': TSKindId.IntegerLegacyOctalPlain;
+	'expression.primary.integer.legacyOctal.long': TSKindId.IntegerLegacyOctalLong;
+	'expression.primary.integer.legacyOctal.plain': TSKindId.IntegerLegacyOctalPlain;
 	'expression.primary.integer.octal': TSKindId.IntegerOctalPlain;
 	'expression.primary.integer.octal.long': TSKindId.IntegerOctalLong;
 	'expression.primary.integer.octal.plain': TSKindId.IntegerOctalPlain;
@@ -105,6 +108,9 @@ export interface SubBuilderRowKind {
 	'integer.hex': TSKindId.IntegerHexPlain;
 	'integer.hex.long': TSKindId.IntegerHexLong;
 	'integer.hex.plain': TSKindId.IntegerHexPlain;
+	'integer.legacyOctal': TSKindId.IntegerLegacyOctalPlain;
+	'integer.legacyOctal.long': TSKindId.IntegerLegacyOctalLong;
+	'integer.legacyOctal.plain': TSKindId.IntegerLegacyOctalPlain;
 	'integer.octal': TSKindId.IntegerOctalPlain;
 	'integer.octal.long': TSKindId.IntegerOctalLong;
 	'integer.octal.plain': TSKindId.IntegerOctalPlain;
@@ -118,6 +124,9 @@ export interface SubBuilderRowKind {
 	integerHex: TSKindId.IntegerHexPlain;
 	'integerHex.long': TSKindId.IntegerHexLong;
 	'integerHex.plain': TSKindId.IntegerHexPlain;
+	integerLegacyOctal: TSKindId.IntegerLegacyOctalPlain;
+	'integerLegacyOctal.long': TSKindId.IntegerLegacyOctalLong;
+	'integerLegacyOctal.plain': TSKindId.IntegerLegacyOctalPlain;
 	integerOctal: TSKindId.IntegerOctalPlain;
 	'integerOctal.long': TSKindId.IntegerOctalLong;
 	'integerOctal.plain': TSKindId.IntegerOctalPlain;
@@ -165,6 +174,9 @@ export interface SubBuilderRowKind {
 	'primaryExpression.integer.hex': TSKindId.IntegerHexPlain;
 	'primaryExpression.integer.hex.long': TSKindId.IntegerHexLong;
 	'primaryExpression.integer.hex.plain': TSKindId.IntegerHexPlain;
+	'primaryExpression.integer.legacyOctal': TSKindId.IntegerLegacyOctalPlain;
+	'primaryExpression.integer.legacyOctal.long': TSKindId.IntegerLegacyOctalLong;
+	'primaryExpression.integer.legacyOctal.plain': TSKindId.IntegerLegacyOctalPlain;
 	'primaryExpression.integer.octal': TSKindId.IntegerOctalPlain;
 	'primaryExpression.integer.octal.long': TSKindId.IntegerOctalLong;
 	'primaryExpression.integer.octal.plain': TSKindId.IntegerOctalPlain;
