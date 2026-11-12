@@ -215,7 +215,7 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 
 ### Task 5c: One snapshot rule for every storage
 
-**Status:** open as #1193.
+**Status:** merged as #1193 (25f2ac1ed), 2026-11-12.
 
 **Files:**
 - Modify: `packages/common/src/snapshot.ts`. A parsed node's snapshot is the node-surface walk (`copyStep`) that built nodes already take, in both storages.
