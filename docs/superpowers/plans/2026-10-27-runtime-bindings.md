@@ -151,6 +151,8 @@
 
 ### Task 3: The build table and the pick
 
+**Status:** amended 2026-11-12 (scalar split, number slots); the amendment is open as #1190.
+
 **Files:**
 - Modify: `packages/types/src/portable.ts`, adding:
 

@@ -27,6 +27,23 @@ describe('numberSignature: the shape of a leaf guard pattern', () => {
 	});
 });
 
+describe('numberShape: the prefix an integer is read past, and whether it spells every value', () => {
+	it.each([
+		['an octal literal', '0[oO][0-7](_?[0-7])*', { base: 8, prefix: '0o', complete: true }],
+		['a run of octal digits', '(_?[0-7]+)+', { base: 8, prefix: '', complete: true }],
+		['a legacy octal: a leading zero, then octal digits with a nonzero one', '0+[1-7][0-7]*', { base: 8, prefix: '0', complete: false }],
+		['a legacy octal that spells zero', '0[0-7]+', { base: 8, prefix: '0', complete: true }],
+		['a hex literal', '0x[0-9a-fA-F_]+', { base: 16, prefix: '0x', complete: true }],
+		['a decimal run with no leading zero', '[1-9][0-9]*', { base: 10, prefix: '', complete: false }]
+	])('%s', (_label, source, expected) => {
+		expect(numberShape(anchored(source))).toMatchObject(expected);
+	});
+
+	it('names a legacy octal pattern octal', () => {
+		expect(numberSignature(anchored('0+[1-7][0-7]*'))).toBe('octal');
+	});
+});
+
 describe('numberShape: whether a leaf guard spells a sign', () => {
 	it.each([
 		['a decimal run', '[0-9][0-9_]*'],

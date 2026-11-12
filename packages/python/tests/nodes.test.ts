@@ -1802,33 +1802,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
-		it('keywordPattern.hex builds the parent', () => {
-			const node = ir.casePattern.keywordPattern.hex({
-				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				pattern: 'a'
-			});
-			expect(node.$type).toBe(TSKindId.CasePattern);
-			expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('keywordPattern.octal builds the parent', () => {
-			const node = ir.casePattern.keywordPattern.octal({
-				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				pattern: '1'
-			});
-			expect(node.$type).toBe(TSKindId.CasePattern);
-			expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('keywordPattern.binary builds the parent', () => {
-			const node = ir.casePattern.keywordPattern.binary({
-				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				pattern: '1'
-			});
-			expect(node.$type).toBe(TSKindId.CasePattern);
-			expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
 		it('keywordPattern.point builds the parent', () => {
 			const node = ir.casePattern.keywordPattern.point({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
@@ -1860,7 +1833,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('keywordPattern.negative builds the parent', () => {
 			const node = ir.casePattern.keywordPattern.negative({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				pattern: { $type: TSKindId.IntegerDecimalLong, text: '0L' } as never
+				pattern: { $type: TSKindId.IntegerDecimalImaginary, text: '0j' } as never
 			});
 			expect(node.$type).toBe(TSKindId.CasePattern);
 			expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
@@ -1869,9 +1842,9 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('keywordPattern.complexPattern builds the parent', () => {
 			const node = ir.casePattern.keywordPattern.complexPattern({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				real: { $type: TSKindId.IntegerDecimalLong, text: '0L' } as never,
+				real: { $type: TSKindId.IntegerDecimalImaginary, text: '0j' } as never,
 				operator: '+',
-				imaginary: { $type: TSKindId.IntegerDecimalLong, text: '0L' } as never
+				imaginary: { $type: TSKindId.IntegerDecimalImaginary, text: '0j' } as never
 			});
 			expect(node.$type).toBe(TSKindId.CasePattern);
 			expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
@@ -2002,24 +1975,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
-		it('simplePattern.hex builds the parent', () => {
-			const node = ir.casePattern.simplePattern.hex('a', { radixPrefix: '0x' });
-			expect(node.$type).toBe(TSKindId.CasePattern);
-			expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('simplePattern.octal builds the parent', () => {
-			const node = ir.casePattern.simplePattern.octal('1', { radixPrefix: '0o' });
-			expect(node.$type).toBe(TSKindId.CasePattern);
-			expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('simplePattern.binary builds the parent', () => {
-			const node = ir.casePattern.simplePattern.binary('1', { radixPrefix: '0b' });
-			expect(node.$type).toBe(TSKindId.CasePattern);
-			expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
 		it('simplePattern.point builds the parent', () => {
 			const node = ir.casePattern.simplePattern.point({ integer: '1' });
 			expect(node.$type).toBe(TSKindId.CasePattern);
@@ -2039,16 +1994,19 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('simplePattern.negative builds the parent', () => {
-			const node = ir.casePattern.simplePattern.negative({ $type: TSKindId.IntegerDecimalLong, text: '0L' } as never);
+			const node = ir.casePattern.simplePattern.negative({
+				$type: TSKindId.IntegerDecimalImaginary,
+				text: '0j'
+			} as never);
 			expect(node.$type).toBe(TSKindId.CasePattern);
 			expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('simplePattern.complexPattern builds the parent', () => {
 			const node = ir.casePattern.simplePattern.complexPattern({
-				real: { $type: TSKindId.IntegerDecimalLong, text: '0L' } as never,
+				real: { $type: TSKindId.IntegerDecimalImaginary, text: '0j' } as never,
 				operator: '+',
-				imaginary: { $type: TSKindId.IntegerDecimalLong, text: '0L' } as never
+				imaginary: { $type: TSKindId.IntegerDecimalImaginary, text: '0j' } as never
 			});
 			expect(node.$type).toBe(TSKindId.CasePattern);
 			expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
@@ -2379,54 +2337,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.None);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
-		it('hex builds the parent', () => {
-			const node = ir.keyValuePattern.hex({
-				value: {
-					$type: TSKindId.CasePattern,
-					content: {
-						$type: TSKindId.KeywordPattern,
-						name: { $type: TSKindId.Identifier, text: 'test' } as never,
-						pattern: TSKindId.True as never
-					} as never
-				} as never,
-				key: 'a'
-			});
-			expect(node.$type).toBe(TSKindId.KeyValuePattern);
-			expect((node as any).key()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('octal builds the parent', () => {
-			const node = ir.keyValuePattern.octal({
-				value: {
-					$type: TSKindId.CasePattern,
-					content: {
-						$type: TSKindId.KeywordPattern,
-						name: { $type: TSKindId.Identifier, text: 'test' } as never,
-						pattern: TSKindId.True as never
-					} as never
-				} as never,
-				key: '1'
-			});
-			expect(node.$type).toBe(TSKindId.KeyValuePattern);
-			expect((node as any).key()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('binary builds the parent', () => {
-			const node = ir.keyValuePattern.binary({
-				value: {
-					$type: TSKindId.CasePattern,
-					content: {
-						$type: TSKindId.KeywordPattern,
-						name: { $type: TSKindId.Identifier, text: 'test' } as never,
-						pattern: TSKindId.True as never
-					} as never
-				} as never,
-				key: '1'
-			});
-			expect(node.$type).toBe(TSKindId.KeyValuePattern);
-			expect((node as any).key()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
 		it('point builds the parent', () => {
 			const node = ir.keyValuePattern.point({
 				value: {
@@ -2486,7 +2396,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 						pattern: TSKindId.True as never
 					} as never
 				} as never,
-				key: { $type: TSKindId.IntegerDecimalLong, text: '0L' } as never
+				key: { $type: TSKindId.IntegerDecimalImaginary, text: '0j' } as never
 			});
 			expect(node.$type).toBe(TSKindId.KeyValuePattern);
 			expect((node as any).key()).toBeDefined();
@@ -2502,9 +2412,9 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 						pattern: TSKindId.True as never
 					} as never
 				} as never,
-				real: { $type: TSKindId.IntegerDecimalLong, text: '0L' } as never,
+				real: { $type: TSKindId.IntegerDecimalImaginary, text: '0j' } as never,
 				operator: '+',
-				imaginary: { $type: TSKindId.IntegerDecimalLong, text: '0L' } as never
+				imaginary: { $type: TSKindId.IntegerDecimalImaginary, text: '0j' } as never
 			});
 			expect(node.$type).toBe(TSKindId.KeyValuePattern);
 			expect((node as any).key()).toBeDefined();
@@ -2689,30 +2599,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.None);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
-		it('hex builds the parent', () => {
-			const node = ir.keywordPattern.hex({ name: { $type: TSKindId.Identifier, text: 'test' } as never, pattern: 'a' });
-			expect(node.$type).toBe(TSKindId.KeywordPattern);
-			expect((node as any).pattern()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('octal builds the parent', () => {
-			const node = ir.keywordPattern.octal({
-				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				pattern: '1'
-			});
-			expect(node.$type).toBe(TSKindId.KeywordPattern);
-			expect((node as any).pattern()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('binary builds the parent', () => {
-			const node = ir.keywordPattern.binary({
-				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				pattern: '1'
-			});
-			expect(node.$type).toBe(TSKindId.KeywordPattern);
-			expect((node as any).pattern()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
 		it('point builds the parent', () => {
 			const node = ir.keywordPattern.point({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
@@ -2744,7 +2630,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('negative builds the parent', () => {
 			const node = ir.keywordPattern.negative({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				pattern: { $type: TSKindId.IntegerDecimalLong, text: '0L' } as never
+				pattern: { $type: TSKindId.IntegerDecimalImaginary, text: '0j' } as never
 			});
 			expect(node.$type).toBe(TSKindId.KeywordPattern);
 			expect((node as any).pattern()).toBeDefined();
@@ -2753,9 +2639,9 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('complexPattern builds the parent', () => {
 			const node = ir.keywordPattern.complexPattern({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
-				real: { $type: TSKindId.IntegerDecimalLong, text: '0L' } as never,
+				real: { $type: TSKindId.IntegerDecimalImaginary, text: '0j' } as never,
 				operator: '+',
-				imaginary: { $type: TSKindId.IntegerDecimalLong, text: '0L' } as never
+				imaginary: { $type: TSKindId.IntegerDecimalImaginary, text: '0j' } as never
 			});
 			expect(node.$type).toBe(TSKindId.KeywordPattern);
 			expect((node as any).pattern()).toBeDefined();
@@ -2799,18 +2685,18 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('complex_pattern', () => {
 		it('factory produces correct type', () => {
 			const node = ir.complexPattern({
-				real: { $type: TSKindId.IntegerDecimalLong, text: '0L' } as never,
+				real: { $type: TSKindId.IntegerDecimalImaginary, text: '0j' } as never,
 				operator: '+',
-				imaginary: { $type: TSKindId.IntegerDecimalLong, text: '0L' } as never
+				imaginary: { $type: TSKindId.IntegerDecimalImaginary, text: '0j' } as never
 			});
 			expect(node.$type).toBe(TSKindId.ComplexPattern);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.complexPattern({
-				real: { $type: TSKindId.IntegerDecimalLong, text: '0L' } as never,
+				real: { $type: TSKindId.IntegerDecimalImaginary, text: '0j' } as never,
 				operator: '+',
-				imaginary: { $type: TSKindId.IntegerDecimalLong, text: '0L' } as never
+				imaginary: { $type: TSKindId.IntegerDecimalImaginary, text: '0j' } as never
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -4550,40 +4436,118 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
-	describe('integer_hex', () => {
+	describe('integer_hex_long', () => {
 		it('factory produces correct type', () => {
-			const node = ir.integerHex('a', { radixPrefix: '0x' });
-			expect(node.$type).toBe(TSKindId.IntegerHex);
+			const node = ir.integerHexLong('a', { radixPrefix: '0x', marker: 'L' });
+			expect(node.$type).toBe(TSKindId.IntegerHexLong);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.integerHex('a', { radixPrefix: '0x' });
+			const node = ir.integerHexLong('a', { radixPrefix: '0x', marker: 'L' });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
 	});
 
-	describe('integer_octal', () => {
+	describe('integer_hex_plain', () => {
 		it('factory produces correct type', () => {
-			const node = ir.integerOctal('1', { radixPrefix: '0o' });
-			expect(node.$type).toBe(TSKindId.IntegerOctal);
+			const node = ir.integerHexPlain('a', { radixPrefix: '0x' });
+			expect(node.$type).toBe(TSKindId.IntegerHexPlain);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.integerOctal('1', { radixPrefix: '0o' });
+			const node = ir.integerHexPlain('a', { radixPrefix: '0x' });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
 	});
 
-	describe('integer_binary', () => {
+	describe('integer_octal_long', () => {
 		it('factory produces correct type', () => {
-			const node = ir.integerBinary('1', { radixPrefix: '0b' });
-			expect(node.$type).toBe(TSKindId.IntegerBinary);
+			const node = ir.integerOctalLong('1', { radixPrefix: '0o', marker: 'L' });
+			expect(node.$type).toBe(TSKindId.IntegerOctalLong);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.integerBinary('1', { radixPrefix: '0b' });
+			const node = ir.integerOctalLong('1', { radixPrefix: '0o', marker: 'L' });
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('integer_octal_plain', () => {
+		it('factory produces correct type', () => {
+			const node = ir.integerOctalPlain('1', { radixPrefix: '0o' });
+			expect(node.$type).toBe(TSKindId.IntegerOctalPlain);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.integerOctalPlain('1', { radixPrefix: '0o' });
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('integer_binary_long', () => {
+		it('factory produces correct type', () => {
+			const node = ir.integerBinaryLong('1', { radixPrefix: '0b', marker: 'L' });
+			expect(node.$type).toBe(TSKindId.IntegerBinaryLong);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.integerBinaryLong('1', { radixPrefix: '0b', marker: 'L' });
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('integer_binary_plain', () => {
+		it('factory produces correct type', () => {
+			const node = ir.integerBinaryPlain('1', { radixPrefix: '0b' });
+			expect(node.$type).toBe(TSKindId.IntegerBinaryPlain);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.integerBinaryPlain('1', { radixPrefix: '0b' });
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('integer_legacy_octal_long', () => {
+		it('factory produces correct type', () => {
+			const node = ir.integerLegacyOctalLong('1', { marker: 'L' });
+			expect(node.$type).toBe(TSKindId.IntegerLegacyOctalLong);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.integerLegacyOctalLong('1', { marker: 'L' });
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('integer_legacy_octal_plain', () => {
+		it('factory produces correct type', () => {
+			const node = ir.integerLegacyOctalPlain('1');
+			expect(node.$type).toBe(TSKindId.IntegerLegacyOctalPlain);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.integerLegacyOctalPlain('1');
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('integer_decimal_long', () => {
+		it('factory produces correct type', () => {
+			const node = ir.integerDecimalLong('1', { marker: 'L' });
+			expect(node.$type).toBe(TSKindId.IntegerDecimalLong);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.integerDecimalLong('1', { marker: 'L' });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});

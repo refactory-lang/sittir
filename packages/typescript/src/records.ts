@@ -818,6 +818,12 @@ export const records = {
 		exponent: { word: 8, width: 2, forms: 4, built: 5 },
 		verbatim: { word: 10, width: 2, forms: 4, built: 6 }
 	},
+	NumberLegacyOctalNode: {
+		words: 6,
+		builtWords: 4,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
+	},
 	NumberDecimalNode: { words: 2, builtWords: 2 },
 	NumberBinaryNode: {
 		words: 8,

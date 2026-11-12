@@ -261,28 +261,6 @@
               "slot": "length"
             }
           ]
-        },
-        {
-          "name": "element",
-          "route": "slot",
-          "slot": "element",
-          "path": [
-            {
-              "owner": "array_expression_semi",
-              "slot": "element"
-            }
-          ]
-        },
-        {
-          "name": "length",
-          "route": "slot",
-          "slot": "length",
-          "path": [
-            {
-              "owner": "array_expression_semi",
-              "slot": "length"
-            }
-          ]
         }
       ]
     },

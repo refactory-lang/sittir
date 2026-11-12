@@ -133,6 +133,7 @@ export interface SubBuilderRowKind {
 	'number.floatPoint': TSKindId.NumberFloatPoint;
 	'number.floatScientific': TSKindId.NumberFloatScientific;
 	'number.hex': TSKindId.NumberHex;
+	'number.legacyOctal': TSKindId.NumberLegacyOctal;
 	'number.octal': TSKindId.NumberOctal;
 	numberBigint: TSKindId.NumberBigintDecimal;
 	'numberBigint.binary': TSKindId.NumberBigintBinary;

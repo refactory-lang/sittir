@@ -9817,11 +9817,88 @@ function wrapComprehensionClauses$with$contents(this: Received<Held>, ...args: u
 	return wrapComprehensionClauses$with(receiverOf(this, '$with.contents'), 'contents', args);
 }
 
-export function wrapIntegerHex(data: T.IntegerHex, tree: TreeHandle): T.IntegerHex.Parsed {
+export function wrapIntegerHexLong(data: T.IntegerHexLong, tree: TreeHandle): T.IntegerHexLong.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.IntegerHex as const,
+		$type: TSKindId.IntegerHexLong as const,
+		radixPrefix() {
+			return hydrateSlot<'0x' | '0X'>(this, '_radix_prefix', tree);
+		},
+		content() {
+			return hydrateSlot<string>(this, '_content', tree);
+		},
+		marker() {
+			return hydrateSlot<'L' | 'l'>(this, '_marker', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		radixPrefix: wrapIntegerHexLong$with$radixPrefix,
+		content: wrapIntegerHexLong$with$content,
+		marker: wrapIntegerHexLong$with$marker,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerHexLong.Parsed;
+}
+function wrapIntegerHexLong$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.IntegerHexLong;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'radixPrefix':
+			return applySetter(args, (v: NonNullable<T.IntegerHexLong['_radix_prefix']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerHexLong(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_hex_long', 'radixPrefix', v) },
+						tree
+					)
+				)
+			);
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.IntegerHexLong['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerHexLong({ ...$edited(data), _content: admitSlot(handle, 'integer_hex_long', 'content', v) }, tree)
+				)
+			);
+		case 'marker':
+			return applySetter(args, (v: NonNullable<T.IntegerHexLong['_marker']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerHexLong({ ...$edited(data), _marker: admitSlot(handle, 'integer_hex_long', 'marker', v) }, tree)
+				)
+			);
+	}
+	throw new Error(`integer_hex_long has no $with.${setter}`);
+}
+function wrapIntegerHexLong$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerHexLong$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+}
+function wrapIntegerHexLong$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerHexLong$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function wrapIntegerHexLong$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerHexLong$with(receiverOf(this, '$with.marker'), 'marker', args);
+}
+
+export function wrapIntegerHexPlain(data: T.IntegerHexPlain, tree: TreeHandle): T.IntegerHexPlain.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.IntegerHexPlain as const,
 		radixPrefix() {
 			return hydrateSlot<'0x' | '0X'>(this, '_radix_prefix', tree);
 		},
@@ -9843,42 +9920,135 @@ export function wrapIntegerHex(data: T.IntegerHex, tree: TreeHandle): T.IntegerH
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { radixPrefix: wrapIntegerHex$with$radixPrefix, content: wrapIntegerHex$with$content, [RECEIVER]: node };
+	node.$with = {
+		radixPrefix: wrapIntegerHexPlain$with$radixPrefix,
+		content: wrapIntegerHexPlain$with$content,
+		[RECEIVER]: node
+	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.IntegerHex.Parsed;
+	return node as unknown as T.IntegerHexPlain.Parsed;
 }
-function wrapIntegerHex$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapIntegerHexPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.IntegerHex;
+	const data = node[INPUT] as T.IntegerHexPlain;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'radixPrefix':
-			return applySetter(args, (v: NonNullable<T.IntegerHex['_radix_prefix']>) =>
+			return applySetter(args, (v: NonNullable<T.IntegerHexPlain['_radix_prefix']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerHex({ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_hex', 'radixPrefix', v) }, tree)
+					wrapIntegerHexPlain(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_hex_plain', 'radixPrefix', v) },
+						tree
+					)
 				)
 			);
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.IntegerHex['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.IntegerHexPlain['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerHex({ ...$edited(data), _content: admitSlot(handle, 'integer_hex', 'content', v) }, tree)
+					wrapIntegerHexPlain(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_hex_plain', 'content', v) },
+						tree
+					)
 				)
 			);
 	}
-	throw new Error(`integer_hex has no $with.${setter}`);
+	throw new Error(`integer_hex_plain has no $with.${setter}`);
 }
-function wrapIntegerHex$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerHex$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+function wrapIntegerHexPlain$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerHexPlain$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
 }
-function wrapIntegerHex$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerHex$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapIntegerHexPlain$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerHexPlain$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function wrapIntegerOctal(data: T.IntegerOctal, tree: TreeHandle): T.IntegerOctal.Parsed {
+export function wrapIntegerOctalLong(data: T.IntegerOctalLong, tree: TreeHandle): T.IntegerOctalLong.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.IntegerOctal as const,
+		$type: TSKindId.IntegerOctalLong as const,
+		radixPrefix() {
+			return hydrateSlot<'0o' | '0O'>(this, '_radix_prefix', tree);
+		},
+		content() {
+			return hydrateSlot<string>(this, '_content', tree);
+		},
+		marker() {
+			return hydrateSlot<'L' | 'l'>(this, '_marker', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		radixPrefix: wrapIntegerOctalLong$with$radixPrefix,
+		content: wrapIntegerOctalLong$with$content,
+		marker: wrapIntegerOctalLong$with$marker,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerOctalLong.Parsed;
+}
+function wrapIntegerOctalLong$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.IntegerOctalLong;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'radixPrefix':
+			return applySetter(args, (v: NonNullable<T.IntegerOctalLong['_radix_prefix']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerOctalLong(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_octal_long', 'radixPrefix', v) },
+						tree
+					)
+				)
+			);
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.IntegerOctalLong['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerOctalLong(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_octal_long', 'content', v) },
+						tree
+					)
+				)
+			);
+		case 'marker':
+			return applySetter(args, (v: NonNullable<T.IntegerOctalLong['_marker']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerOctalLong(
+						{ ...$edited(data), _marker: admitSlot(handle, 'integer_octal_long', 'marker', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`integer_octal_long has no $with.${setter}`);
+}
+function wrapIntegerOctalLong$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerOctalLong$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+}
+function wrapIntegerOctalLong$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerOctalLong$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function wrapIntegerOctalLong$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerOctalLong$with(receiverOf(this, '$with.marker'), 'marker', args);
+}
+
+export function wrapIntegerOctalPlain(data: T.IntegerOctalPlain, tree: TreeHandle): T.IntegerOctalPlain.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.IntegerOctalPlain as const,
 		radixPrefix() {
 			return hydrateSlot<'0o' | '0O'>(this, '_radix_prefix', tree);
 		},
@@ -9901,48 +10071,134 @@ export function wrapIntegerOctal(data: T.IntegerOctal, tree: TreeHandle): T.Inte
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		radixPrefix: wrapIntegerOctal$with$radixPrefix,
-		content: wrapIntegerOctal$with$content,
+		radixPrefix: wrapIntegerOctalPlain$with$radixPrefix,
+		content: wrapIntegerOctalPlain$with$content,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.IntegerOctal.Parsed;
+	return node as unknown as T.IntegerOctalPlain.Parsed;
 }
-function wrapIntegerOctal$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapIntegerOctalPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.IntegerOctal;
+	const data = node[INPUT] as T.IntegerOctalPlain;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'radixPrefix':
-			return applySetter(args, (v: NonNullable<T.IntegerOctal['_radix_prefix']>) =>
+			return applySetter(args, (v: NonNullable<T.IntegerOctalPlain['_radix_prefix']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerOctal(
-						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_octal', 'radixPrefix', v) },
+					wrapIntegerOctalPlain(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_octal_plain', 'radixPrefix', v) },
 						tree
 					)
 				)
 			);
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.IntegerOctal['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.IntegerOctalPlain['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerOctal({ ...$edited(data), _content: admitSlot(handle, 'integer_octal', 'content', v) }, tree)
+					wrapIntegerOctalPlain(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_octal_plain', 'content', v) },
+						tree
+					)
 				)
 			);
 	}
-	throw new Error(`integer_octal has no $with.${setter}`);
+	throw new Error(`integer_octal_plain has no $with.${setter}`);
 }
-function wrapIntegerOctal$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerOctal$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+function wrapIntegerOctalPlain$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerOctalPlain$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
 }
-function wrapIntegerOctal$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerOctal$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapIntegerOctalPlain$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerOctalPlain$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function wrapIntegerBinary(data: T.IntegerBinary, tree: TreeHandle): T.IntegerBinary.Parsed {
+export function wrapIntegerBinaryLong(data: T.IntegerBinaryLong, tree: TreeHandle): T.IntegerBinaryLong.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.IntegerBinary as const,
+		$type: TSKindId.IntegerBinaryLong as const,
+		radixPrefix() {
+			return hydrateSlot<'0b' | '0B'>(this, '_radix_prefix', tree);
+		},
+		content() {
+			return hydrateSlot<string>(this, '_content', tree);
+		},
+		marker() {
+			return hydrateSlot<'L' | 'l'>(this, '_marker', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		radixPrefix: wrapIntegerBinaryLong$with$radixPrefix,
+		content: wrapIntegerBinaryLong$with$content,
+		marker: wrapIntegerBinaryLong$with$marker,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerBinaryLong.Parsed;
+}
+function wrapIntegerBinaryLong$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.IntegerBinaryLong;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'radixPrefix':
+			return applySetter(args, (v: NonNullable<T.IntegerBinaryLong['_radix_prefix']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerBinaryLong(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_binary_long', 'radixPrefix', v) },
+						tree
+					)
+				)
+			);
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.IntegerBinaryLong['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerBinaryLong(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_binary_long', 'content', v) },
+						tree
+					)
+				)
+			);
+		case 'marker':
+			return applySetter(args, (v: NonNullable<T.IntegerBinaryLong['_marker']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerBinaryLong(
+						{ ...$edited(data), _marker: admitSlot(handle, 'integer_binary_long', 'marker', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`integer_binary_long has no $with.${setter}`);
+}
+function wrapIntegerBinaryLong$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerBinaryLong$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+}
+function wrapIntegerBinaryLong$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerBinaryLong$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function wrapIntegerBinaryLong$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerBinaryLong$with(receiverOf(this, '$with.marker'), 'marker', args);
+}
+
+export function wrapIntegerBinaryPlain(data: T.IntegerBinaryPlain, tree: TreeHandle): T.IntegerBinaryPlain.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.IntegerBinaryPlain as const,
 		radixPrefix() {
 			return hydrateSlot<'0b' | '0B'>(this, '_radix_prefix', tree);
 		},
@@ -9965,41 +10221,232 @@ export function wrapIntegerBinary(data: T.IntegerBinary, tree: TreeHandle): T.In
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		radixPrefix: wrapIntegerBinary$with$radixPrefix,
-		content: wrapIntegerBinary$with$content,
+		radixPrefix: wrapIntegerBinaryPlain$with$radixPrefix,
+		content: wrapIntegerBinaryPlain$with$content,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.IntegerBinary.Parsed;
+	return node as unknown as T.IntegerBinaryPlain.Parsed;
 }
-function wrapIntegerBinary$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapIntegerBinaryPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.IntegerBinary;
+	const data = node[INPUT] as T.IntegerBinaryPlain;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'radixPrefix':
-			return applySetter(args, (v: NonNullable<T.IntegerBinary['_radix_prefix']>) =>
+			return applySetter(args, (v: NonNullable<T.IntegerBinaryPlain['_radix_prefix']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerBinary(
-						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_binary', 'radixPrefix', v) },
+					wrapIntegerBinaryPlain(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_binary_plain', 'radixPrefix', v) },
 						tree
 					)
 				)
 			);
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.IntegerBinary['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.IntegerBinaryPlain['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerBinary({ ...$edited(data), _content: admitSlot(handle, 'integer_binary', 'content', v) }, tree)
+					wrapIntegerBinaryPlain(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_binary_plain', 'content', v) },
+						tree
+					)
 				)
 			);
 	}
-	throw new Error(`integer_binary has no $with.${setter}`);
+	throw new Error(`integer_binary_plain has no $with.${setter}`);
 }
-function wrapIntegerBinary$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerBinary$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+function wrapIntegerBinaryPlain$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerBinaryPlain$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
 }
-function wrapIntegerBinary$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerBinary$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapIntegerBinaryPlain$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerBinaryPlain$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
+export function wrapIntegerLegacyOctalLong(
+	data: T.IntegerLegacyOctalLong,
+	tree: TreeHandle
+): T.IntegerLegacyOctalLong.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.IntegerLegacyOctalLong as const,
+		content() {
+			return hydrateSlot<string>(this, '_content', tree);
+		},
+		marker() {
+			return hydrateSlot<'L' | 'l'>(this, '_marker', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: wrapIntegerLegacyOctalLong$with$content,
+		marker: wrapIntegerLegacyOctalLong$with$marker,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerLegacyOctalLong.Parsed;
+}
+function wrapIntegerLegacyOctalLong$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.IntegerLegacyOctalLong;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.IntegerLegacyOctalLong['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerLegacyOctalLong(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_legacy_octal_long', 'content', v) },
+						tree
+					)
+				)
+			);
+		case 'marker':
+			return applySetter(args, (v: NonNullable<T.IntegerLegacyOctalLong['_marker']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerLegacyOctalLong(
+						{ ...$edited(data), _marker: admitSlot(handle, 'integer_legacy_octal_long', 'marker', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`integer_legacy_octal_long has no $with.${setter}`);
+}
+function wrapIntegerLegacyOctalLong$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerLegacyOctalLong$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function wrapIntegerLegacyOctalLong$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerLegacyOctalLong$with(receiverOf(this, '$with.marker'), 'marker', args);
+}
+
+export function wrapIntegerLegacyOctalPlain(
+	data: T.IntegerLegacyOctalPlain,
+	tree: TreeHandle
+): T.IntegerLegacyOctalPlain.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.IntegerLegacyOctalPlain as const,
+		content() {
+			return hydrateSlot<string>(this, '_content', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { content: wrapIntegerLegacyOctalPlain$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerLegacyOctalPlain.Parsed;
+}
+function wrapIntegerLegacyOctalPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.IntegerLegacyOctalPlain;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.IntegerLegacyOctalPlain['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerLegacyOctalPlain(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_legacy_octal_plain', 'content', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`integer_legacy_octal_plain has no $with.${setter}`);
+}
+function wrapIntegerLegacyOctalPlain$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerLegacyOctalPlain$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
+export function wrapIntegerDecimalLong(data: T.IntegerDecimalLong, tree: TreeHandle): T.IntegerDecimalLong.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.IntegerDecimalLong as const,
+		content() {
+			return hydrateSlot<string>(this, '_content', tree);
+		},
+		marker() {
+			return hydrateSlot<'L' | 'l'>(this, '_marker', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: wrapIntegerDecimalLong$with$content,
+		marker: wrapIntegerDecimalLong$with$marker,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerDecimalLong.Parsed;
+}
+function wrapIntegerDecimalLong$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.IntegerDecimalLong;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.IntegerDecimalLong['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerDecimalLong(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_decimal_long', 'content', v) },
+						tree
+					)
+				)
+			);
+		case 'marker':
+			return applySetter(args, (v: NonNullable<T.IntegerDecimalLong['_marker']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerDecimalLong(
+						{ ...$edited(data), _marker: admitSlot(handle, 'integer_decimal_long', 'marker', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`integer_decimal_long has no $with.${setter}`);
+}
+function wrapIntegerDecimalLong$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerDecimalLong$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function wrapIntegerDecimalLong$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerDecimalLong$with(receiverOf(this, '$with.marker'), 'marker', args);
 }
 
 export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle): T.FloatPoint.Parsed {
@@ -18447,23 +18894,60 @@ function viewComprehensionClauses(data: RecordPosition, tree: TreeHandle): T.Com
 	return node as unknown as T.ComprehensionClauses.Parsed;
 }
 
-function viewIntegerHex$radixPrefix(this: RecordHandle) {
+function viewIntegerHexLong$radixPrefix(this: RecordHandle) {
 	return viewSlot<'0x' | '0X'>(this, 2, 2, 4, 0, 2);
 }
-function viewIntegerHex$content(this: RecordHandle) {
+function viewIntegerHexLong$content(this: RecordHandle) {
 	return viewSlot<string>(this, 4, 2, 4, 0, 3);
 }
-function viewIntegerHex(data: RecordPosition, tree: TreeHandle): T.IntegerHex.Parsed {
+function viewIntegerHexLong$marker(this: RecordHandle) {
+	return viewSlot<'L' | 'l'>(this, 6, 2, 4, 0, 4);
+}
+function viewIntegerHexLong(data: RecordPosition, tree: TreeHandle): T.IntegerHexLong.Parsed {
 	const node = {
-		$type: TSKindId.IntegerHex as const,
+		$type: TSKindId.IntegerHexLong as const,
 		$tree: tree,
 		$at: data.$at,
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		$verbatim: undefined as string | undefined,
-		radixPrefix: viewIntegerHex$radixPrefix,
-		content: viewIntegerHex$content,
+		radixPrefix: viewIntegerHexLong$radixPrefix,
+		content: viewIntegerHexLong$content,
+		marker: viewIntegerHexLong$marker,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : $handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, marker: $with$marker, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 8, 2, 4, 0, 5);
+	return node as unknown as T.IntegerHexLong.Parsed;
+}
+
+function viewIntegerHexPlain$radixPrefix(this: RecordHandle) {
+	return viewSlot<'0x' | '0X'>(this, 2, 2, 4, 0, 2);
+}
+function viewIntegerHexPlain$content(this: RecordHandle) {
+	return viewSlot<string>(this, 4, 2, 4, 0, 3);
+}
+function viewIntegerHexPlain(data: RecordPosition, tree: TreeHandle): T.IntegerHexPlain.Parsed {
+	const node = {
+		$type: TSKindId.IntegerHexPlain as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
+		radixPrefix: viewIntegerHexPlain$radixPrefix,
+		content: viewIntegerHexPlain$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -18477,26 +18961,30 @@ function viewIntegerHex(data: RecordPosition, tree: TreeHandle): T.IntegerHex.Pa
 	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
-	return node as unknown as T.IntegerHex.Parsed;
+	return node as unknown as T.IntegerHexPlain.Parsed;
 }
 
-function viewIntegerOctal$radixPrefix(this: RecordHandle) {
+function viewIntegerOctalLong$radixPrefix(this: RecordHandle) {
 	return viewSlot<'0o' | '0O'>(this, 2, 2, 4, 0, 2);
 }
-function viewIntegerOctal$content(this: RecordHandle) {
+function viewIntegerOctalLong$content(this: RecordHandle) {
 	return viewSlot<string>(this, 4, 2, 4, 0, 3);
 }
-function viewIntegerOctal(data: RecordPosition, tree: TreeHandle): T.IntegerOctal.Parsed {
+function viewIntegerOctalLong$marker(this: RecordHandle) {
+	return viewSlot<'L' | 'l'>(this, 6, 2, 4, 0, 4);
+}
+function viewIntegerOctalLong(data: RecordPosition, tree: TreeHandle): T.IntegerOctalLong.Parsed {
 	const node = {
-		$type: TSKindId.IntegerOctal as const,
+		$type: TSKindId.IntegerOctalLong as const,
 		$tree: tree,
 		$at: data.$at,
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		$verbatim: undefined as string | undefined,
-		radixPrefix: viewIntegerOctal$radixPrefix,
-		content: viewIntegerOctal$content,
+		radixPrefix: viewIntegerOctalLong$radixPrefix,
+		content: viewIntegerOctalLong$content,
+		marker: viewIntegerOctalLong$marker,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -18507,29 +18995,29 @@ function viewIntegerOctal(data: RecordPosition, tree: TreeHandle): T.IntegerOcta
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
+	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, marker: $with$marker, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
-	return node as unknown as T.IntegerOctal.Parsed;
+	node.$verbatim = viewSlot<string | undefined>(node, 8, 2, 4, 0, 5);
+	return node as unknown as T.IntegerOctalLong.Parsed;
 }
 
-function viewIntegerBinary$radixPrefix(this: RecordHandle) {
-	return viewSlot<'0b' | '0B'>(this, 2, 2, 4, 0, 2);
+function viewIntegerOctalPlain$radixPrefix(this: RecordHandle) {
+	return viewSlot<'0o' | '0O'>(this, 2, 2, 4, 0, 2);
 }
-function viewIntegerBinary$content(this: RecordHandle) {
+function viewIntegerOctalPlain$content(this: RecordHandle) {
 	return viewSlot<string>(this, 4, 2, 4, 0, 3);
 }
-function viewIntegerBinary(data: RecordPosition, tree: TreeHandle): T.IntegerBinary.Parsed {
+function viewIntegerOctalPlain(data: RecordPosition, tree: TreeHandle): T.IntegerOctalPlain.Parsed {
 	const node = {
-		$type: TSKindId.IntegerBinary as const,
+		$type: TSKindId.IntegerOctalPlain as const,
 		$tree: tree,
 		$at: data.$at,
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		$verbatim: undefined as string | undefined,
-		radixPrefix: viewIntegerBinary$radixPrefix,
-		content: viewIntegerBinary$content,
+		radixPrefix: viewIntegerOctalPlain$radixPrefix,
+		content: viewIntegerOctalPlain$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -18543,7 +19031,172 @@ function viewIntegerBinary(data: RecordPosition, tree: TreeHandle): T.IntegerBin
 	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
-	return node as unknown as T.IntegerBinary.Parsed;
+	return node as unknown as T.IntegerOctalPlain.Parsed;
+}
+
+function viewIntegerBinaryLong$radixPrefix(this: RecordHandle) {
+	return viewSlot<'0b' | '0B'>(this, 2, 2, 4, 0, 2);
+}
+function viewIntegerBinaryLong$content(this: RecordHandle) {
+	return viewSlot<string>(this, 4, 2, 4, 0, 3);
+}
+function viewIntegerBinaryLong$marker(this: RecordHandle) {
+	return viewSlot<'L' | 'l'>(this, 6, 2, 4, 0, 4);
+}
+function viewIntegerBinaryLong(data: RecordPosition, tree: TreeHandle): T.IntegerBinaryLong.Parsed {
+	const node = {
+		$type: TSKindId.IntegerBinaryLong as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
+		radixPrefix: viewIntegerBinaryLong$radixPrefix,
+		content: viewIntegerBinaryLong$content,
+		marker: viewIntegerBinaryLong$marker,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : $handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, marker: $with$marker, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 8, 2, 4, 0, 5);
+	return node as unknown as T.IntegerBinaryLong.Parsed;
+}
+
+function viewIntegerBinaryPlain$radixPrefix(this: RecordHandle) {
+	return viewSlot<'0b' | '0B'>(this, 2, 2, 4, 0, 2);
+}
+function viewIntegerBinaryPlain$content(this: RecordHandle) {
+	return viewSlot<string>(this, 4, 2, 4, 0, 3);
+}
+function viewIntegerBinaryPlain(data: RecordPosition, tree: TreeHandle): T.IntegerBinaryPlain.Parsed {
+	const node = {
+		$type: TSKindId.IntegerBinaryPlain as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
+		radixPrefix: viewIntegerBinaryPlain$radixPrefix,
+		content: viewIntegerBinaryPlain$content,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : $handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
+	return node as unknown as T.IntegerBinaryPlain.Parsed;
+}
+
+function viewIntegerLegacyOctalLong$content(this: RecordHandle) {
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+}
+function viewIntegerLegacyOctalLong$marker(this: RecordHandle) {
+	return viewSlot<'L' | 'l'>(this, 4, 2, 4, 0, 3);
+}
+function viewIntegerLegacyOctalLong(data: RecordPosition, tree: TreeHandle): T.IntegerLegacyOctalLong.Parsed {
+	const node = {
+		$type: TSKindId.IntegerLegacyOctalLong as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
+		content: viewIntegerLegacyOctalLong$content,
+		marker: viewIntegerLegacyOctalLong$marker,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : $handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { content: $with$content, marker: $with$marker, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
+	return node as unknown as T.IntegerLegacyOctalLong.Parsed;
+}
+
+function viewIntegerLegacyOctalPlain$content(this: RecordHandle) {
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+}
+function viewIntegerLegacyOctalPlain(data: RecordPosition, tree: TreeHandle): T.IntegerLegacyOctalPlain.Parsed {
+	const node = {
+		$type: TSKindId.IntegerLegacyOctalPlain as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
+		content: viewIntegerLegacyOctalPlain$content,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : $handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
+	return node as unknown as T.IntegerLegacyOctalPlain.Parsed;
+}
+
+function viewIntegerDecimalLong$content(this: RecordHandle) {
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+}
+function viewIntegerDecimalLong$marker(this: RecordHandle) {
+	return viewSlot<'L' | 'l'>(this, 4, 2, 4, 0, 3);
+}
+function viewIntegerDecimalLong(data: RecordPosition, tree: TreeHandle): T.IntegerDecimalLong.Parsed {
+	const node = {
+		$type: TSKindId.IntegerDecimalLong as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
+		content: viewIntegerDecimalLong$content,
+		marker: viewIntegerDecimalLong$marker,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : $handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { content: $with$content, marker: $with$marker, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
+	return node as unknown as T.IntegerDecimalLong.Parsed;
 }
 
 function viewFloatPoint$integer(this: RecordHandle) {
@@ -20544,9 +21197,16 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.ParenthesizedImportList]: (d, t) =>
 		wrapParenthesizedImportList(d as unknown as T.ParenthesizedImportList, t),
 	[TSKindId.ComprehensionClauses]: (d, t) => wrapComprehensionClauses(d as unknown as T.ComprehensionClauses, t),
-	[TSKindId.IntegerHex]: (d, t) => wrapIntegerHex(d as unknown as T.IntegerHex, t),
-	[TSKindId.IntegerOctal]: (d, t) => wrapIntegerOctal(d as unknown as T.IntegerOctal, t),
-	[TSKindId.IntegerBinary]: (d, t) => wrapIntegerBinary(d as unknown as T.IntegerBinary, t),
+	[TSKindId.IntegerHexLong]: (d, t) => wrapIntegerHexLong(d as unknown as T.IntegerHexLong, t),
+	[TSKindId.IntegerHexPlain]: (d, t) => wrapIntegerHexPlain(d as unknown as T.IntegerHexPlain, t),
+	[TSKindId.IntegerOctalLong]: (d, t) => wrapIntegerOctalLong(d as unknown as T.IntegerOctalLong, t),
+	[TSKindId.IntegerOctalPlain]: (d, t) => wrapIntegerOctalPlain(d as unknown as T.IntegerOctalPlain, t),
+	[TSKindId.IntegerBinaryLong]: (d, t) => wrapIntegerBinaryLong(d as unknown as T.IntegerBinaryLong, t),
+	[TSKindId.IntegerBinaryPlain]: (d, t) => wrapIntegerBinaryPlain(d as unknown as T.IntegerBinaryPlain, t),
+	[TSKindId.IntegerLegacyOctalLong]: (d, t) => wrapIntegerLegacyOctalLong(d as unknown as T.IntegerLegacyOctalLong, t),
+	[TSKindId.IntegerLegacyOctalPlain]: (d, t) =>
+		wrapIntegerLegacyOctalPlain(d as unknown as T.IntegerLegacyOctalPlain, t),
+	[TSKindId.IntegerDecimalLong]: (d, t) => wrapIntegerDecimalLong(d as unknown as T.IntegerDecimalLong, t),
 	[TSKindId.FloatPoint]: (d, t) => wrapFloatPoint(d as unknown as T.FloatPoint, t),
 	[TSKindId.FloatLeadingPoint]: (d, t) => wrapFloatLeadingPoint(d as unknown as T.FloatLeadingPoint, t),
 	[TSKindId.FloatScientific]: (d, t) => wrapFloatScientific(d as unknown as T.FloatScientific, t),
@@ -20598,7 +21258,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.TypeConversion]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.Identifier]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.FormatSpecifierText]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.IntegerDecimalLong]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.IntegerDecimalImaginary]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.IntegerDecimalPlain]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.LineContinuationNewline]: (d, t) => wrapInteriorLeaf(d, t),
@@ -20741,9 +21400,15 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.PrintStatementPlain]: viewPrintStatementPlain,
 	[TSKindId.ParenthesizedImportList]: viewParenthesizedImportList,
 	[TSKindId.ComprehensionClauses]: viewComprehensionClauses,
-	[TSKindId.IntegerHex]: viewIntegerHex,
-	[TSKindId.IntegerOctal]: viewIntegerOctal,
-	[TSKindId.IntegerBinary]: viewIntegerBinary,
+	[TSKindId.IntegerHexLong]: viewIntegerHexLong,
+	[TSKindId.IntegerHexPlain]: viewIntegerHexPlain,
+	[TSKindId.IntegerOctalLong]: viewIntegerOctalLong,
+	[TSKindId.IntegerOctalPlain]: viewIntegerOctalPlain,
+	[TSKindId.IntegerBinaryLong]: viewIntegerBinaryLong,
+	[TSKindId.IntegerBinaryPlain]: viewIntegerBinaryPlain,
+	[TSKindId.IntegerLegacyOctalLong]: viewIntegerLegacyOctalLong,
+	[TSKindId.IntegerLegacyOctalPlain]: viewIntegerLegacyOctalPlain,
+	[TSKindId.IntegerDecimalLong]: viewIntegerDecimalLong,
 	[TSKindId.FloatPoint]: viewFloatPoint,
 	[TSKindId.FloatLeadingPoint]: viewFloatLeadingPoint,
 	[TSKindId.FloatScientific]: viewFloatScientific,

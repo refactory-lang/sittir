@@ -79,6 +79,10 @@ export const TOKEN_INTERIORS = {
 			{ name: 'content', propertyName: 'content' }
 		]
 	},
+	number_legacy_octal: {
+		regex: '^0(?<content>(?:0*[1-7][0-7]*))$',
+		slots: [{ name: 'content', propertyName: 'content' }]
+	},
 	number_octal: {
 		regex: '^(?<radix_prefix>0o|0O)(?<content>(?:[0-7](?:_?[0-7])*))$',
 		slots: [

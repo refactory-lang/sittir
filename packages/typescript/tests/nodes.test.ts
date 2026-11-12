@@ -2946,6 +2946,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect((node as any).content()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
+		it('legacyOctal builds the parent', () => {
+			const node = ir.literalType.legacyOctal('1');
+			expect(node.$type).toBe(TSKindId.LiteralType);
+			expect((node as any).content()).toBeDefined();
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
 		it('decimal builds the parent', () => {
 			const node = ir.literalType.decimal('1');
 			expect(node.$type).toBe(TSKindId.LiteralType);
@@ -3582,6 +3588,19 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.numberFloatScientific({ integer: '1', exponent: '1' }, { marker: 'e' });
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('number_legacy_octal', () => {
+		it('factory produces correct type', () => {
+			const node = ir.numberLegacyOctal('1');
+			expect(node.$type).toBe(TSKindId.NumberLegacyOctal);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.numberLegacyOctal('1');
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});

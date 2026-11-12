@@ -74,19 +74,32 @@ import {
 	_leafRe_buildTypeConversion,
 	_leafRe_buildIdentifier,
 	_leafRe_buildFormatSpecifierText,
-	_leafRe_buildIntegerDecimalLong,
 	_leafRe_buildIntegerDecimalImaginary,
 	_leafRe_buildIntegerDecimalPlain,
 	_leafRe_buildLineContinuationNewline,
 	_leafRe_buildStringFragment,
 	_leafRe_buildEscapeInterpolation,
 	_slotRe_buildComment_content,
-	_slotRe_buildIntegerHex_radix_prefix,
-	_slotRe_buildIntegerHex_content,
-	_slotRe_buildIntegerOctal_radix_prefix,
-	_slotRe_buildIntegerOctal_content,
-	_slotRe_buildIntegerBinary_radix_prefix,
-	_slotRe_buildIntegerBinary_content,
+	_slotRe_buildIntegerHexLong_radix_prefix,
+	_slotRe_buildIntegerHexLong_content,
+	_slotRe_buildIntegerHexLong_marker,
+	_slotRe_buildIntegerHexPlain_radix_prefix,
+	_slotRe_buildIntegerHexPlain_content,
+	_slotRe_buildIntegerOctalLong_radix_prefix,
+	_slotRe_buildIntegerOctalLong_content,
+	_slotRe_buildIntegerOctalLong_marker,
+	_slotRe_buildIntegerOctalPlain_radix_prefix,
+	_slotRe_buildIntegerOctalPlain_content,
+	_slotRe_buildIntegerBinaryLong_radix_prefix,
+	_slotRe_buildIntegerBinaryLong_content,
+	_slotRe_buildIntegerBinaryLong_marker,
+	_slotRe_buildIntegerBinaryPlain_radix_prefix,
+	_slotRe_buildIntegerBinaryPlain_content,
+	_slotRe_buildIntegerLegacyOctalLong_content,
+	_slotRe_buildIntegerLegacyOctalLong_marker,
+	_slotRe_buildIntegerLegacyOctalPlain_content,
+	_slotRe_buildIntegerDecimalLong_content,
+	_slotRe_buildIntegerDecimalLong_marker,
 	_slotRe_buildFloatPoint_integer,
 	_slotRe_buildFloatPoint_fraction,
 	_slotRe_buildFloatPoint_marker,
@@ -5793,8 +5806,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				213, 207, 208, 214, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 69, 70, 71, 210, 221, 222, 224,
-				233, 238, 236, 239, 234, 240, 235, 242, 241, 63, 201, 246, 143, 203
+				218, 212, 213, 219, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 69, 70,
+				71, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 206, 251, 148, 208
 			],
 			(v: unknown) => buildAsPatternTarget(v as never)
 		]
@@ -5818,8 +5831,8 @@ function buildAsPattern$patch(source: object, config: T.AsPattern.Config): T.AsP
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				213, 207, 208, 214, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 69, 70, 71, 210, 221, 222, 224,
-				233, 238, 236, 239, 234, 240, 235, 242, 241, 63, 201, 246, 143, 203
+				218, 212, 213, 219, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 69, 70,
+				71, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 206, 251, 148, 208
 			],
 			(v: unknown) => buildAsPatternTarget(v as never)
 		]
@@ -5866,8 +5879,8 @@ function buildAsPattern$set(
 			const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 				[
 					[
-						213, 207, 208, 214, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 69, 70, 71, 210, 221, 222,
-						224, 233, 238, 236, 239, 234, 240, 235, 242, 241, 63, 201, 246, 143, 203
+						218, 212, 213, 219, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 69,
+						70, 71, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 206, 251, 148, 208
 					],
 					(v: unknown) => buildAsPatternTarget(v as never)
 				]
@@ -12286,76 +12299,94 @@ function withComprehensionClauses(node: object, setter: string, args: readonly u
 	throw new Error(`comprehension_clauses has no $with.${setter}`);
 }
 
-export function buildIntegerHex<const N extends string | number | bigint>(
+export function buildIntegerHexLong<const N extends string | number | bigint>(
 	value: Admit<string | (N & NumericLiteral<N, true>)>,
-	options?: T.IntegerHex.Options
-): T.IntegerHex.Bound;
-export function buildIntegerHex(
+	options?: T.IntegerHexLong.Options
+): T.IntegerHexLong.Bound;
+export function buildIntegerHexLong(
 	value: Admit<string | number | bigint>,
-	options?: T.IntegerHex.Options
-): T.IntegerHex.Bound {
+	options?: T.IntegerHexLong.Options
+): T.IntegerHexLong.Bound {
 	const _radix_prefix = options?.radixPrefix ?? '0x';
 	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
-		throw new Error(`integer_hex.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
-	if (_radix_prefix !== undefined && !_slotRe_buildIntegerHex_radix_prefix.test(_radix_prefix))
-		throw new Error(`integer_hex.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+		throw new Error(`integer_hex_long.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerHexLong_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_hex_long.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(16, '', value);
 	if (typeof _content !== 'string')
-		throw new Error(`integer_hex.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildIntegerHex_content.test(_content))
-		throw new Error(`integer_hex.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`integer_hex_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerHexLong_content.test(_content))
+		throw new Error(`integer_hex_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_hex_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerHexLong_marker.test(_marker))
+		throw new Error(`integer_hex_long.marker: text does not match pattern: ${describeValue(_marker)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'integer_hex', { radixPrefix: _radix_prefix, content: _content });
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_hex_long', { radixPrefix: _radix_prefix, content: _content, marker: _marker });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.IntegerHex as const, { _radix_prefix, _content });
+	handle?.verifyStored?.(TSKindId.IntegerHexLong as const, { _radix_prefix, _content, _marker });
 	return arena.scope(() => {
-		const record = arena.record(TSKindId.IntegerHex as const);
+		const record = arena.record(TSKindId.IntegerHexLong as const);
 		storeCell(arena, record, 2, 2, _radix_prefix);
 		storeCell(arena, record, 3, 4, _content);
+		storeCell(arena, record, 4, 6, _marker);
 		const node = arena.view(record);
-		return node as unknown as T.IntegerHex.Bound;
+		return node as unknown as T.IntegerHexLong.Bound;
 	});
 }
 
-function buildIntegerHex$patch(
+function buildIntegerHexLong$patch(
 	source: object,
 	value: Admit<string | number | bigint>,
-	options?: T.IntegerHex.Options
-): T.IntegerHex.Bound {
+	options?: T.IntegerHexLong.Options
+): T.IntegerHexLong.Bound {
 	const _radix_prefix = options?.radixPrefix ?? '0x';
 	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
-		throw new Error(`integer_hex.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
-	if (_radix_prefix !== undefined && !_slotRe_buildIntegerHex_radix_prefix.test(_radix_prefix))
-		throw new Error(`integer_hex.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+		throw new Error(`integer_hex_long.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerHexLong_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_hex_long.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(16, '', value);
 	if (typeof _content !== 'string')
-		throw new Error(`integer_hex.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildIntegerHex_content.test(_content))
-		throw new Error(`integer_hex.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`integer_hex_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerHexLong_content.test(_content))
+		throw new Error(`integer_hex_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_hex_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerHexLong_marker.test(_marker))
+		throw new Error(`integer_hex_long.marker: text does not match pattern: ${describeValue(_marker)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'integer_hex', { radixPrefix: _radix_prefix, content: _content });
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_hex_long', { radixPrefix: _radix_prefix, content: _content, marker: _marker });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.IntegerHex as const, { _radix_prefix, _content });
+	handle?.verifyStored?.(TSKindId.IntegerHexLong as const, { _radix_prefix, _content, _marker });
 	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.IntegerHex as const);
+		const record = arena.copy(source, TSKindId.IntegerHexLong as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'radixPrefix', _radix_prefix));
 		patchCell(arena, record, 3, 4, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 4, 6, carriedSlot(source, 'marker', _marker));
 		const node = arena.view(record);
-		return node as unknown as T.IntegerHex.Bound;
+		return node as unknown as T.IntegerHexLong.Bound;
 	});
 }
-function buildIntegerHex$set(
+function buildIntegerHexLong$set(
 	source: object,
-	...[slot, input]: ['content', Admit<string | number | bigint>] | ['radixPrefix', T.IntegerHex.Options]
-): T.IntegerHex.Bound {
+	...[slot, input]:
+		| ['content', Admit<string | number | bigint>]
+		| ['radixPrefix', T.IntegerHexLong.Options]
+		| ['marker', T.IntegerHexLong.Options]
+): T.IntegerHexLong.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'content':
-				return buildIntegerHex$patch(source, input, inputs.options as T.IntegerHex.Options);
+				return buildIntegerHexLong$patch(source, input, inputs.options as T.IntegerHexLong.Options);
 			case 'radixPrefix':
-				return buildIntegerHex$patch(source, inputs.config['content'] as Admit<string | number | bigint>, {
-					...(inputs.options as T.IntegerHex.Options),
+			case 'marker':
+				return buildIntegerHexLong$patch(source, inputs.config['content'] as Admit<string | number | bigint>, {
+					...(inputs.options as T.IntegerHexLong.Options),
 					...input
 				});
 		}
@@ -12365,121 +12396,285 @@ function buildIntegerHex$set(
 			const value = input;
 			const _content = numberText(16, '', value);
 			if (typeof _content !== 'string')
-				throw new Error(`integer_hex.content: text must be a string: ${describeValue(_content)}`);
-			if (!_slotRe_buildIntegerHex_content.test(_content))
-				throw new Error(`integer_hex.content: text does not match pattern: ${describeValue(_content)}`);
+				throw new Error(`integer_hex_long.content: text must be a string: ${describeValue(_content)}`);
+			if (!_slotRe_buildIntegerHexLong_content.test(_content))
+				throw new Error(`integer_hex_long.content: text does not match pattern: ${describeValue(_content)}`);
 			return setSlot(
 				source,
-				TSKindId.IntegerHex as const,
-				'integer_hex',
+				TSKindId.IntegerHexLong as const,
+				'integer_hex_long',
 				1,
 				'content',
 				_content
-			) as unknown as T.IntegerHex.Bound;
+			) as unknown as T.IntegerHexLong.Bound;
 		}
 		case 'radixPrefix': {
 			const options = input;
 			const _radix_prefix = options?.radixPrefix ?? '0x';
 			if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
-				throw new Error(`integer_hex.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
-			if (_radix_prefix !== undefined && !_slotRe_buildIntegerHex_radix_prefix.test(_radix_prefix))
-				throw new Error(`integer_hex.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+				throw new Error(`integer_hex_long.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+			if (_radix_prefix !== undefined && !_slotRe_buildIntegerHexLong_radix_prefix.test(_radix_prefix))
+				throw new Error(`integer_hex_long.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 			return setSlot(
 				source,
-				TSKindId.IntegerHex as const,
-				'integer_hex',
+				TSKindId.IntegerHexLong as const,
+				'integer_hex_long',
 				0,
 				'radixPrefix',
 				_radix_prefix
-			) as unknown as T.IntegerHex.Bound;
+			) as unknown as T.IntegerHexLong.Bound;
+		}
+		case 'marker': {
+			const options = input;
+			const _marker = options?.marker ?? 'L';
+			if (_marker !== undefined && typeof _marker !== 'string')
+				throw new Error(`integer_hex_long.marker: text must be a string: ${describeValue(_marker)}`);
+			if (_marker !== undefined && !_slotRe_buildIntegerHexLong_marker.test(_marker))
+				throw new Error(`integer_hex_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+			return setSlot(
+				source,
+				TSKindId.IntegerHexLong as const,
+				'integer_hex_long',
+				2,
+				'marker',
+				_marker
+			) as unknown as T.IntegerHexLong.Bound;
 		}
 	}
 }
-function withIntegerHex(node: object, setter: string, args: readonly unknown[]): unknown {
+function withIntegerHexLong(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'radixPrefix':
 			return applySetter(args, (spelling: '0x' | '0X') =>
-				rebuilt(node, handle, () => buildIntegerHex$set(node, 'radixPrefix', { radixPrefix: spelling }))
+				rebuilt(node, handle, () => buildIntegerHexLong$set(node, 'radixPrefix', { radixPrefix: spelling }))
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildIntegerHex$set(node, 'content', value))
+				rebuilt(node, handle, () => buildIntegerHexLong$set(node, 'content', value))
+			);
+		case 'marker':
+			return applySetter(args, (spelling: 'L' | 'l') =>
+				rebuilt(node, handle, () => buildIntegerHexLong$set(node, 'marker', { marker: spelling }))
 			);
 	}
-	throw new Error(`integer_hex has no $with.${setter}`);
+	throw new Error(`integer_hex_long has no $with.${setter}`);
 }
 
-export function buildIntegerOctal<const N extends string | number | bigint>(
+export function buildIntegerHexPlain<const N extends string | number | bigint>(
 	value: Admit<string | (N & NumericLiteral<N, true>)>,
-	options?: T.IntegerOctal.Options
-): T.IntegerOctal.Bound;
-export function buildIntegerOctal(
+	options?: T.IntegerHexPlain.Options
+): T.IntegerHexPlain.Bound;
+export function buildIntegerHexPlain(
 	value: Admit<string | number | bigint>,
-	options?: T.IntegerOctal.Options
-): T.IntegerOctal.Bound {
-	const _radix_prefix = options?.radixPrefix ?? '0o';
+	options?: T.IntegerHexPlain.Options
+): T.IntegerHexPlain.Bound {
+	const _radix_prefix = options?.radixPrefix ?? '0x';
 	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
-		throw new Error(`integer_octal.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
-	if (_radix_prefix !== undefined && !_slotRe_buildIntegerOctal_radix_prefix.test(_radix_prefix))
-		throw new Error(`integer_octal.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
-	const _content = numberText(8, '', value);
+		throw new Error(`integer_hex_plain.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerHexPlain_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_hex_plain.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+	const _content = numberText(16, '', value);
 	if (typeof _content !== 'string')
-		throw new Error(`integer_octal.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildIntegerOctal_content.test(_content))
-		throw new Error(`integer_octal.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`integer_hex_plain.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerHexPlain_content.test(_content))
+		throw new Error(`integer_hex_plain.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'integer_octal', { radixPrefix: _radix_prefix, content: _content });
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_hex_plain', { radixPrefix: _radix_prefix, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.IntegerOctal as const, { _radix_prefix, _content });
+	handle?.verifyStored?.(TSKindId.IntegerHexPlain as const, { _radix_prefix, _content });
 	return arena.scope(() => {
-		const record = arena.record(TSKindId.IntegerOctal as const);
+		const record = arena.record(TSKindId.IntegerHexPlain as const);
 		storeCell(arena, record, 2, 2, _radix_prefix);
 		storeCell(arena, record, 3, 4, _content);
 		const node = arena.view(record);
-		return node as unknown as T.IntegerOctal.Bound;
+		return node as unknown as T.IntegerHexPlain.Bound;
 	});
 }
 
-function buildIntegerOctal$patch(
+function buildIntegerHexPlain$patch(
 	source: object,
 	value: Admit<string | number | bigint>,
-	options?: T.IntegerOctal.Options
-): T.IntegerOctal.Bound {
-	const _radix_prefix = options?.radixPrefix ?? '0o';
+	options?: T.IntegerHexPlain.Options
+): T.IntegerHexPlain.Bound {
+	const _radix_prefix = options?.radixPrefix ?? '0x';
 	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
-		throw new Error(`integer_octal.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
-	if (_radix_prefix !== undefined && !_slotRe_buildIntegerOctal_radix_prefix.test(_radix_prefix))
-		throw new Error(`integer_octal.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
-	const _content = numberText(8, '', value);
+		throw new Error(`integer_hex_plain.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerHexPlain_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_hex_plain.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+	const _content = numberText(16, '', value);
 	if (typeof _content !== 'string')
-		throw new Error(`integer_octal.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildIntegerOctal_content.test(_content))
-		throw new Error(`integer_octal.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`integer_hex_plain.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerHexPlain_content.test(_content))
+		throw new Error(`integer_hex_plain.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'integer_octal', { radixPrefix: _radix_prefix, content: _content });
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_hex_plain', { radixPrefix: _radix_prefix, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.IntegerOctal as const, { _radix_prefix, _content });
+	handle?.verifyStored?.(TSKindId.IntegerHexPlain as const, { _radix_prefix, _content });
 	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.IntegerOctal as const);
+		const record = arena.copy(source, TSKindId.IntegerHexPlain as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'radixPrefix', _radix_prefix));
 		patchCell(arena, record, 3, 4, carriedSlot(source, 'content', _content));
 		const node = arena.view(record);
-		return node as unknown as T.IntegerOctal.Bound;
+		return node as unknown as T.IntegerHexPlain.Bound;
 	});
 }
-function buildIntegerOctal$set(
+function buildIntegerHexPlain$set(
 	source: object,
-	...[slot, input]: ['content', Admit<string | number | bigint>] | ['radixPrefix', T.IntegerOctal.Options]
-): T.IntegerOctal.Bound {
+	...[slot, input]: ['content', Admit<string | number | bigint>] | ['radixPrefix', T.IntegerHexPlain.Options]
+): T.IntegerHexPlain.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'content':
-				return buildIntegerOctal$patch(source, input, inputs.options as T.IntegerOctal.Options);
+				return buildIntegerHexPlain$patch(source, input, inputs.options as T.IntegerHexPlain.Options);
 			case 'radixPrefix':
-				return buildIntegerOctal$patch(source, inputs.config['content'] as Admit<string | number | bigint>, {
-					...(inputs.options as T.IntegerOctal.Options),
+				return buildIntegerHexPlain$patch(source, inputs.config['content'] as Admit<string | number | bigint>, {
+					...(inputs.options as T.IntegerHexPlain.Options),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'content': {
+			const value = input;
+			const _content = numberText(16, '', value);
+			if (typeof _content !== 'string')
+				throw new Error(`integer_hex_plain.content: text must be a string: ${describeValue(_content)}`);
+			if (!_slotRe_buildIntegerHexPlain_content.test(_content))
+				throw new Error(`integer_hex_plain.content: text does not match pattern: ${describeValue(_content)}`);
+			return setSlot(
+				source,
+				TSKindId.IntegerHexPlain as const,
+				'integer_hex_plain',
+				1,
+				'content',
+				_content
+			) as unknown as T.IntegerHexPlain.Bound;
+		}
+		case 'radixPrefix': {
+			const options = input;
+			const _radix_prefix = options?.radixPrefix ?? '0x';
+			if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+				throw new Error(`integer_hex_plain.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+			if (_radix_prefix !== undefined && !_slotRe_buildIntegerHexPlain_radix_prefix.test(_radix_prefix))
+				throw new Error(`integer_hex_plain.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+			return setSlot(
+				source,
+				TSKindId.IntegerHexPlain as const,
+				'integer_hex_plain',
+				0,
+				'radixPrefix',
+				_radix_prefix
+			) as unknown as T.IntegerHexPlain.Bound;
+		}
+	}
+}
+function withIntegerHexPlain(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'radixPrefix':
+			return applySetter(args, (spelling: '0x' | '0X') =>
+				rebuilt(node, handle, () => buildIntegerHexPlain$set(node, 'radixPrefix', { radixPrefix: spelling }))
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerHexPlain$set(node, 'content', value))
+			);
+	}
+	throw new Error(`integer_hex_plain has no $with.${setter}`);
+}
+
+export function buildIntegerOctalLong<const N extends string | number | bigint>(
+	value: Admit<string | (N & NumericLiteral<N, true>)>,
+	options?: T.IntegerOctalLong.Options
+): T.IntegerOctalLong.Bound;
+export function buildIntegerOctalLong(
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerOctalLong.Options
+): T.IntegerOctalLong.Bound {
+	const _radix_prefix = options?.radixPrefix ?? '0o';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_octal_long.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerOctalLong_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_octal_long.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+	const _content = numberText(8, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_octal_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerOctalLong_content.test(_content))
+		throw new Error(`integer_octal_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_octal_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerOctalLong_marker.test(_marker))
+		throw new Error(`integer_octal_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_octal_long', { radixPrefix: _radix_prefix, content: _content, marker: _marker });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IntegerOctalLong as const, { _radix_prefix, _content, _marker });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.IntegerOctalLong as const);
+		storeCell(arena, record, 2, 2, _radix_prefix);
+		storeCell(arena, record, 3, 4, _content);
+		storeCell(arena, record, 4, 6, _marker);
+		const node = arena.view(record);
+		return node as unknown as T.IntegerOctalLong.Bound;
+	});
+}
+
+function buildIntegerOctalLong$patch(
+	source: object,
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerOctalLong.Options
+): T.IntegerOctalLong.Bound {
+	const _radix_prefix = options?.radixPrefix ?? '0o';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_octal_long.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerOctalLong_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_octal_long.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+	const _content = numberText(8, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_octal_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerOctalLong_content.test(_content))
+		throw new Error(`integer_octal_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_octal_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerOctalLong_marker.test(_marker))
+		throw new Error(`integer_octal_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_octal_long', { radixPrefix: _radix_prefix, content: _content, marker: _marker });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IntegerOctalLong as const, { _radix_prefix, _content, _marker });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.IntegerOctalLong as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'radixPrefix', _radix_prefix));
+		patchCell(arena, record, 3, 4, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 4, 6, carriedSlot(source, 'marker', _marker));
+		const node = arena.view(record);
+		return node as unknown as T.IntegerOctalLong.Bound;
+	});
+}
+function buildIntegerOctalLong$set(
+	source: object,
+	...[slot, input]:
+		| ['content', Admit<string | number | bigint>]
+		| ['radixPrefix', T.IntegerOctalLong.Options]
+		| ['marker', T.IntegerOctalLong.Options]
+): T.IntegerOctalLong.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'content':
+				return buildIntegerOctalLong$patch(source, input, inputs.options as T.IntegerOctalLong.Options);
+			case 'radixPrefix':
+			case 'marker':
+				return buildIntegerOctalLong$patch(source, inputs.config['content'] as Admit<string | number | bigint>, {
+					...(inputs.options as T.IntegerOctalLong.Options),
 					...input
 				});
 		}
@@ -12489,121 +12684,289 @@ function buildIntegerOctal$set(
 			const value = input;
 			const _content = numberText(8, '', value);
 			if (typeof _content !== 'string')
-				throw new Error(`integer_octal.content: text must be a string: ${describeValue(_content)}`);
-			if (!_slotRe_buildIntegerOctal_content.test(_content))
-				throw new Error(`integer_octal.content: text does not match pattern: ${describeValue(_content)}`);
+				throw new Error(`integer_octal_long.content: text must be a string: ${describeValue(_content)}`);
+			if (!_slotRe_buildIntegerOctalLong_content.test(_content))
+				throw new Error(`integer_octal_long.content: text does not match pattern: ${describeValue(_content)}`);
 			return setSlot(
 				source,
-				TSKindId.IntegerOctal as const,
-				'integer_octal',
+				TSKindId.IntegerOctalLong as const,
+				'integer_octal_long',
 				1,
 				'content',
 				_content
-			) as unknown as T.IntegerOctal.Bound;
+			) as unknown as T.IntegerOctalLong.Bound;
 		}
 		case 'radixPrefix': {
 			const options = input;
 			const _radix_prefix = options?.radixPrefix ?? '0o';
 			if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
-				throw new Error(`integer_octal.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
-			if (_radix_prefix !== undefined && !_slotRe_buildIntegerOctal_radix_prefix.test(_radix_prefix))
-				throw new Error(`integer_octal.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+				throw new Error(`integer_octal_long.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+			if (_radix_prefix !== undefined && !_slotRe_buildIntegerOctalLong_radix_prefix.test(_radix_prefix))
+				throw new Error(
+					`integer_octal_long.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`
+				);
 			return setSlot(
 				source,
-				TSKindId.IntegerOctal as const,
-				'integer_octal',
+				TSKindId.IntegerOctalLong as const,
+				'integer_octal_long',
 				0,
 				'radixPrefix',
 				_radix_prefix
-			) as unknown as T.IntegerOctal.Bound;
+			) as unknown as T.IntegerOctalLong.Bound;
+		}
+		case 'marker': {
+			const options = input;
+			const _marker = options?.marker ?? 'L';
+			if (_marker !== undefined && typeof _marker !== 'string')
+				throw new Error(`integer_octal_long.marker: text must be a string: ${describeValue(_marker)}`);
+			if (_marker !== undefined && !_slotRe_buildIntegerOctalLong_marker.test(_marker))
+				throw new Error(`integer_octal_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+			return setSlot(
+				source,
+				TSKindId.IntegerOctalLong as const,
+				'integer_octal_long',
+				2,
+				'marker',
+				_marker
+			) as unknown as T.IntegerOctalLong.Bound;
 		}
 	}
 }
-function withIntegerOctal(node: object, setter: string, args: readonly unknown[]): unknown {
+function withIntegerOctalLong(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'radixPrefix':
 			return applySetter(args, (spelling: '0o' | '0O') =>
-				rebuilt(node, handle, () => buildIntegerOctal$set(node, 'radixPrefix', { radixPrefix: spelling }))
+				rebuilt(node, handle, () => buildIntegerOctalLong$set(node, 'radixPrefix', { radixPrefix: spelling }))
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildIntegerOctal$set(node, 'content', value))
+				rebuilt(node, handle, () => buildIntegerOctalLong$set(node, 'content', value))
+			);
+		case 'marker':
+			return applySetter(args, (spelling: 'L' | 'l') =>
+				rebuilt(node, handle, () => buildIntegerOctalLong$set(node, 'marker', { marker: spelling }))
 			);
 	}
-	throw new Error(`integer_octal has no $with.${setter}`);
+	throw new Error(`integer_octal_long has no $with.${setter}`);
 }
 
-export function buildIntegerBinary<const N extends string | number | bigint>(
+export function buildIntegerOctalPlain<const N extends string | number | bigint>(
 	value: Admit<string | (N & NumericLiteral<N, true>)>,
-	options?: T.IntegerBinary.Options
-): T.IntegerBinary.Bound;
-export function buildIntegerBinary(
+	options?: T.IntegerOctalPlain.Options
+): T.IntegerOctalPlain.Bound;
+export function buildIntegerOctalPlain(
 	value: Admit<string | number | bigint>,
-	options?: T.IntegerBinary.Options
-): T.IntegerBinary.Bound {
-	const _radix_prefix = options?.radixPrefix ?? '0b';
+	options?: T.IntegerOctalPlain.Options
+): T.IntegerOctalPlain.Bound {
+	const _radix_prefix = options?.radixPrefix ?? '0o';
 	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
-		throw new Error(`integer_binary.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
-	if (_radix_prefix !== undefined && !_slotRe_buildIntegerBinary_radix_prefix.test(_radix_prefix))
-		throw new Error(`integer_binary.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
-	const _content = numberText(2, '', value);
+		throw new Error(`integer_octal_plain.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerOctalPlain_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_octal_plain.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+	const _content = numberText(8, '', value);
 	if (typeof _content !== 'string')
-		throw new Error(`integer_binary.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildIntegerBinary_content.test(_content))
-		throw new Error(`integer_binary.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`integer_octal_plain.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerOctalPlain_content.test(_content))
+		throw new Error(`integer_octal_plain.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'integer_binary', { radixPrefix: _radix_prefix, content: _content });
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_octal_plain', { radixPrefix: _radix_prefix, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.IntegerBinary as const, { _radix_prefix, _content });
+	handle?.verifyStored?.(TSKindId.IntegerOctalPlain as const, { _radix_prefix, _content });
 	return arena.scope(() => {
-		const record = arena.record(TSKindId.IntegerBinary as const);
+		const record = arena.record(TSKindId.IntegerOctalPlain as const);
 		storeCell(arena, record, 2, 2, _radix_prefix);
 		storeCell(arena, record, 3, 4, _content);
 		const node = arena.view(record);
-		return node as unknown as T.IntegerBinary.Bound;
+		return node as unknown as T.IntegerOctalPlain.Bound;
 	});
 }
 
-function buildIntegerBinary$patch(
+function buildIntegerOctalPlain$patch(
 	source: object,
 	value: Admit<string | number | bigint>,
-	options?: T.IntegerBinary.Options
-): T.IntegerBinary.Bound {
-	const _radix_prefix = options?.radixPrefix ?? '0b';
+	options?: T.IntegerOctalPlain.Options
+): T.IntegerOctalPlain.Bound {
+	const _radix_prefix = options?.radixPrefix ?? '0o';
 	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
-		throw new Error(`integer_binary.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
-	if (_radix_prefix !== undefined && !_slotRe_buildIntegerBinary_radix_prefix.test(_radix_prefix))
-		throw new Error(`integer_binary.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
-	const _content = numberText(2, '', value);
+		throw new Error(`integer_octal_plain.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerOctalPlain_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_octal_plain.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+	const _content = numberText(8, '', value);
 	if (typeof _content !== 'string')
-		throw new Error(`integer_binary.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildIntegerBinary_content.test(_content))
-		throw new Error(`integer_binary.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`integer_octal_plain.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerOctalPlain_content.test(_content))
+		throw new Error(`integer_octal_plain.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'integer_binary', { radixPrefix: _radix_prefix, content: _content });
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_octal_plain', { radixPrefix: _radix_prefix, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.IntegerBinary as const, { _radix_prefix, _content });
+	handle?.verifyStored?.(TSKindId.IntegerOctalPlain as const, { _radix_prefix, _content });
 	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.IntegerBinary as const);
+		const record = arena.copy(source, TSKindId.IntegerOctalPlain as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'radixPrefix', _radix_prefix));
 		patchCell(arena, record, 3, 4, carriedSlot(source, 'content', _content));
 		const node = arena.view(record);
-		return node as unknown as T.IntegerBinary.Bound;
+		return node as unknown as T.IntegerOctalPlain.Bound;
 	});
 }
-function buildIntegerBinary$set(
+function buildIntegerOctalPlain$set(
 	source: object,
-	...[slot, input]: ['content', Admit<string | number | bigint>] | ['radixPrefix', T.IntegerBinary.Options]
-): T.IntegerBinary.Bound {
+	...[slot, input]: ['content', Admit<string | number | bigint>] | ['radixPrefix', T.IntegerOctalPlain.Options]
+): T.IntegerOctalPlain.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'content':
-				return buildIntegerBinary$patch(source, input, inputs.options as T.IntegerBinary.Options);
+				return buildIntegerOctalPlain$patch(source, input, inputs.options as T.IntegerOctalPlain.Options);
 			case 'radixPrefix':
-				return buildIntegerBinary$patch(source, inputs.config['content'] as Admit<string | number | bigint>, {
-					...(inputs.options as T.IntegerBinary.Options),
+				return buildIntegerOctalPlain$patch(source, inputs.config['content'] as Admit<string | number | bigint>, {
+					...(inputs.options as T.IntegerOctalPlain.Options),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'content': {
+			const value = input;
+			const _content = numberText(8, '', value);
+			if (typeof _content !== 'string')
+				throw new Error(`integer_octal_plain.content: text must be a string: ${describeValue(_content)}`);
+			if (!_slotRe_buildIntegerOctalPlain_content.test(_content))
+				throw new Error(`integer_octal_plain.content: text does not match pattern: ${describeValue(_content)}`);
+			return setSlot(
+				source,
+				TSKindId.IntegerOctalPlain as const,
+				'integer_octal_plain',
+				1,
+				'content',
+				_content
+			) as unknown as T.IntegerOctalPlain.Bound;
+		}
+		case 'radixPrefix': {
+			const options = input;
+			const _radix_prefix = options?.radixPrefix ?? '0o';
+			if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+				throw new Error(`integer_octal_plain.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+			if (_radix_prefix !== undefined && !_slotRe_buildIntegerOctalPlain_radix_prefix.test(_radix_prefix))
+				throw new Error(
+					`integer_octal_plain.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`
+				);
+			return setSlot(
+				source,
+				TSKindId.IntegerOctalPlain as const,
+				'integer_octal_plain',
+				0,
+				'radixPrefix',
+				_radix_prefix
+			) as unknown as T.IntegerOctalPlain.Bound;
+		}
+	}
+}
+function withIntegerOctalPlain(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'radixPrefix':
+			return applySetter(args, (spelling: '0o' | '0O') =>
+				rebuilt(node, handle, () => buildIntegerOctalPlain$set(node, 'radixPrefix', { radixPrefix: spelling }))
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerOctalPlain$set(node, 'content', value))
+			);
+	}
+	throw new Error(`integer_octal_plain has no $with.${setter}`);
+}
+
+export function buildIntegerBinaryLong<const N extends string | number | bigint>(
+	value: Admit<string | (N & NumericLiteral<N, true>)>,
+	options?: T.IntegerBinaryLong.Options
+): T.IntegerBinaryLong.Bound;
+export function buildIntegerBinaryLong(
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerBinaryLong.Options
+): T.IntegerBinaryLong.Bound {
+	const _radix_prefix = options?.radixPrefix ?? '0b';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_binary_long.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerBinaryLong_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_binary_long.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+	const _content = numberText(2, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_binary_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerBinaryLong_content.test(_content))
+		throw new Error(`integer_binary_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_binary_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerBinaryLong_marker.test(_marker))
+		throw new Error(`integer_binary_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_binary_long', { radixPrefix: _radix_prefix, content: _content, marker: _marker });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IntegerBinaryLong as const, { _radix_prefix, _content, _marker });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.IntegerBinaryLong as const);
+		storeCell(arena, record, 2, 2, _radix_prefix);
+		storeCell(arena, record, 3, 4, _content);
+		storeCell(arena, record, 4, 6, _marker);
+		const node = arena.view(record);
+		return node as unknown as T.IntegerBinaryLong.Bound;
+	});
+}
+
+function buildIntegerBinaryLong$patch(
+	source: object,
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerBinaryLong.Options
+): T.IntegerBinaryLong.Bound {
+	const _radix_prefix = options?.radixPrefix ?? '0b';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_binary_long.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerBinaryLong_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_binary_long.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+	const _content = numberText(2, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_binary_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerBinaryLong_content.test(_content))
+		throw new Error(`integer_binary_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_binary_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerBinaryLong_marker.test(_marker))
+		throw new Error(`integer_binary_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_binary_long', { radixPrefix: _radix_prefix, content: _content, marker: _marker });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IntegerBinaryLong as const, { _radix_prefix, _content, _marker });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.IntegerBinaryLong as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'radixPrefix', _radix_prefix));
+		patchCell(arena, record, 3, 4, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 4, 6, carriedSlot(source, 'marker', _marker));
+		const node = arena.view(record);
+		return node as unknown as T.IntegerBinaryLong.Bound;
+	});
+}
+function buildIntegerBinaryLong$set(
+	source: object,
+	...[slot, input]:
+		| ['content', Admit<string | number | bigint>]
+		| ['radixPrefix', T.IntegerBinaryLong.Options]
+		| ['marker', T.IntegerBinaryLong.Options]
+): T.IntegerBinaryLong.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'content':
+				return buildIntegerBinaryLong$patch(source, input, inputs.options as T.IntegerBinaryLong.Options);
+			case 'radixPrefix':
+			case 'marker':
+				return buildIntegerBinaryLong$patch(source, inputs.config['content'] as Admit<string | number | bigint>, {
+					...(inputs.options as T.IntegerBinaryLong.Options),
 					...input
 				});
 		}
@@ -12613,78 +12976,517 @@ function buildIntegerBinary$set(
 			const value = input;
 			const _content = numberText(2, '', value);
 			if (typeof _content !== 'string')
-				throw new Error(`integer_binary.content: text must be a string: ${describeValue(_content)}`);
-			if (!_slotRe_buildIntegerBinary_content.test(_content))
-				throw new Error(`integer_binary.content: text does not match pattern: ${describeValue(_content)}`);
+				throw new Error(`integer_binary_long.content: text must be a string: ${describeValue(_content)}`);
+			if (!_slotRe_buildIntegerBinaryLong_content.test(_content))
+				throw new Error(`integer_binary_long.content: text does not match pattern: ${describeValue(_content)}`);
 			return setSlot(
 				source,
-				TSKindId.IntegerBinary as const,
-				'integer_binary',
+				TSKindId.IntegerBinaryLong as const,
+				'integer_binary_long',
 				1,
 				'content',
 				_content
-			) as unknown as T.IntegerBinary.Bound;
+			) as unknown as T.IntegerBinaryLong.Bound;
 		}
 		case 'radixPrefix': {
 			const options = input;
 			const _radix_prefix = options?.radixPrefix ?? '0b';
 			if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
-				throw new Error(`integer_binary.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
-			if (_radix_prefix !== undefined && !_slotRe_buildIntegerBinary_radix_prefix.test(_radix_prefix))
-				throw new Error(`integer_binary.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+				throw new Error(`integer_binary_long.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+			if (_radix_prefix !== undefined && !_slotRe_buildIntegerBinaryLong_radix_prefix.test(_radix_prefix))
+				throw new Error(
+					`integer_binary_long.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`
+				);
 			return setSlot(
 				source,
-				TSKindId.IntegerBinary as const,
-				'integer_binary',
+				TSKindId.IntegerBinaryLong as const,
+				'integer_binary_long',
 				0,
 				'radixPrefix',
 				_radix_prefix
-			) as unknown as T.IntegerBinary.Bound;
+			) as unknown as T.IntegerBinaryLong.Bound;
+		}
+		case 'marker': {
+			const options = input;
+			const _marker = options?.marker ?? 'L';
+			if (_marker !== undefined && typeof _marker !== 'string')
+				throw new Error(`integer_binary_long.marker: text must be a string: ${describeValue(_marker)}`);
+			if (_marker !== undefined && !_slotRe_buildIntegerBinaryLong_marker.test(_marker))
+				throw new Error(`integer_binary_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+			return setSlot(
+				source,
+				TSKindId.IntegerBinaryLong as const,
+				'integer_binary_long',
+				2,
+				'marker',
+				_marker
+			) as unknown as T.IntegerBinaryLong.Bound;
 		}
 	}
 }
-function withIntegerBinary(node: object, setter: string, args: readonly unknown[]): unknown {
+function withIntegerBinaryLong(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'radixPrefix':
 			return applySetter(args, (spelling: '0b' | '0B') =>
-				rebuilt(node, handle, () => buildIntegerBinary$set(node, 'radixPrefix', { radixPrefix: spelling }))
+				rebuilt(node, handle, () => buildIntegerBinaryLong$set(node, 'radixPrefix', { radixPrefix: spelling }))
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildIntegerBinary$set(node, 'content', value))
+				rebuilt(node, handle, () => buildIntegerBinaryLong$set(node, 'content', value))
+			);
+		case 'marker':
+			return applySetter(args, (spelling: 'L' | 'l') =>
+				rebuilt(node, handle, () => buildIntegerBinaryLong$set(node, 'marker', { marker: spelling }))
 			);
 	}
-	throw new Error(`integer_binary has no $with.${setter}`);
+	throw new Error(`integer_binary_long has no $with.${setter}`);
 }
 
-export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Bound {
-	if (typeof text !== 'string') throw new Error(`integer_decimal_long: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`integer_decimal_long: text must be non-empty`);
-	if (!_leafRe_buildIntegerDecimalLong.test(text))
-		throw new Error(`integer_decimal_long: text does not match pattern: ${describeValue(text)}`);
+export function buildIntegerBinaryPlain<const N extends string | number | bigint>(
+	value: Admit<string | (N & NumericLiteral<N, true>)>,
+	options?: T.IntegerBinaryPlain.Options
+): T.IntegerBinaryPlain.Bound;
+export function buildIntegerBinaryPlain(
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerBinaryPlain.Options
+): T.IntegerBinaryPlain.Bound {
+	const _radix_prefix = options?.radixPrefix ?? '0b';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_binary_plain.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerBinaryPlain_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_binary_plain.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+	const _content = numberText(2, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_binary_plain.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerBinaryPlain_content.test(_content))
+		throw new Error(`integer_binary_plain.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).leaf(leafIntegerDecimalLong, text) as unknown as T.IntegerDecimalLong.Bound;
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_binary_plain', { radixPrefix: _radix_prefix, content: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IntegerBinaryPlain as const, { _radix_prefix, _content });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.IntegerBinaryPlain as const);
+		storeCell(arena, record, 2, 2, _radix_prefix);
+		storeCell(arena, record, 3, 4, _content);
+		const node = arena.view(record);
+		return node as unknown as T.IntegerBinaryPlain.Bound;
+	});
 }
 
-function leafIntegerDecimalLong(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
-	const node = {
-		$type: TSKindId.IntegerDecimalLong as const,
-		$tree: tree,
-		$entry: entry,
-		$site: site,
-		$_layout: undefined,
-		$text: leafText,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handleEngine,
-		[LEAF_SITES]: null,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
-	return node;
+function buildIntegerBinaryPlain$patch(
+	source: object,
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerBinaryPlain.Options
+): T.IntegerBinaryPlain.Bound {
+	const _radix_prefix = options?.radixPrefix ?? '0b';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_binary_plain.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerBinaryPlain_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_binary_plain.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+	const _content = numberText(2, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_binary_plain.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerBinaryPlain_content.test(_content))
+		throw new Error(`integer_binary_plain.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_binary_plain', { radixPrefix: _radix_prefix, content: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IntegerBinaryPlain as const, { _radix_prefix, _content });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.IntegerBinaryPlain as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'radixPrefix', _radix_prefix));
+		patchCell(arena, record, 3, 4, carriedSlot(source, 'content', _content));
+		const node = arena.view(record);
+		return node as unknown as T.IntegerBinaryPlain.Bound;
+	});
+}
+function buildIntegerBinaryPlain$set(
+	source: object,
+	...[slot, input]: ['content', Admit<string | number | bigint>] | ['radixPrefix', T.IntegerBinaryPlain.Options]
+): T.IntegerBinaryPlain.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'content':
+				return buildIntegerBinaryPlain$patch(source, input, inputs.options as T.IntegerBinaryPlain.Options);
+			case 'radixPrefix':
+				return buildIntegerBinaryPlain$patch(source, inputs.config['content'] as Admit<string | number | bigint>, {
+					...(inputs.options as T.IntegerBinaryPlain.Options),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'content': {
+			const value = input;
+			const _content = numberText(2, '', value);
+			if (typeof _content !== 'string')
+				throw new Error(`integer_binary_plain.content: text must be a string: ${describeValue(_content)}`);
+			if (!_slotRe_buildIntegerBinaryPlain_content.test(_content))
+				throw new Error(`integer_binary_plain.content: text does not match pattern: ${describeValue(_content)}`);
+			return setSlot(
+				source,
+				TSKindId.IntegerBinaryPlain as const,
+				'integer_binary_plain',
+				1,
+				'content',
+				_content
+			) as unknown as T.IntegerBinaryPlain.Bound;
+		}
+		case 'radixPrefix': {
+			const options = input;
+			const _radix_prefix = options?.radixPrefix ?? '0b';
+			if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+				throw new Error(`integer_binary_plain.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+			if (_radix_prefix !== undefined && !_slotRe_buildIntegerBinaryPlain_radix_prefix.test(_radix_prefix))
+				throw new Error(
+					`integer_binary_plain.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`
+				);
+			return setSlot(
+				source,
+				TSKindId.IntegerBinaryPlain as const,
+				'integer_binary_plain',
+				0,
+				'radixPrefix',
+				_radix_prefix
+			) as unknown as T.IntegerBinaryPlain.Bound;
+		}
+	}
+}
+function withIntegerBinaryPlain(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'radixPrefix':
+			return applySetter(args, (spelling: '0b' | '0B') =>
+				rebuilt(node, handle, () => buildIntegerBinaryPlain$set(node, 'radixPrefix', { radixPrefix: spelling }))
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerBinaryPlain$set(node, 'content', value))
+			);
+	}
+	throw new Error(`integer_binary_plain has no $with.${setter}`);
+}
+
+export function buildIntegerLegacyOctalLong<const N extends string | number | bigint>(
+	value: Admit<string | (N & NumericLiteral<N, true>)>,
+	options?: T.IntegerLegacyOctalLong.Options
+): T.IntegerLegacyOctalLong.Bound;
+export function buildIntegerLegacyOctalLong(
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerLegacyOctalLong.Options
+): T.IntegerLegacyOctalLong.Bound {
+	const _content = numberText(8, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_legacy_octal_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerLegacyOctalLong_content.test(_content))
+		throw new Error(`integer_legacy_octal_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_legacy_octal_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerLegacyOctalLong_marker.test(_marker))
+		throw new Error(`integer_legacy_octal_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_legacy_octal_long', { content: _content, marker: _marker });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IntegerLegacyOctalLong as const, { _content, _marker });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.IntegerLegacyOctalLong as const);
+		storeCell(arena, record, 2, 2, _content);
+		storeCell(arena, record, 3, 4, _marker);
+		const node = arena.view(record);
+		return node as unknown as T.IntegerLegacyOctalLong.Bound;
+	});
+}
+
+function buildIntegerLegacyOctalLong$patch(
+	source: object,
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerLegacyOctalLong.Options
+): T.IntegerLegacyOctalLong.Bound {
+	const _content = numberText(8, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_legacy_octal_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerLegacyOctalLong_content.test(_content))
+		throw new Error(`integer_legacy_octal_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_legacy_octal_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerLegacyOctalLong_marker.test(_marker))
+		throw new Error(`integer_legacy_octal_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_legacy_octal_long', { content: _content, marker: _marker });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IntegerLegacyOctalLong as const, { _content, _marker });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.IntegerLegacyOctalLong as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 3, 4, carriedSlot(source, 'marker', _marker));
+		const node = arena.view(record);
+		return node as unknown as T.IntegerLegacyOctalLong.Bound;
+	});
+}
+function buildIntegerLegacyOctalLong$set(
+	source: object,
+	...[slot, input]: ['content', Admit<string | number | bigint>] | ['marker', T.IntegerLegacyOctalLong.Options]
+): T.IntegerLegacyOctalLong.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'content':
+				return buildIntegerLegacyOctalLong$patch(source, input, inputs.options as T.IntegerLegacyOctalLong.Options);
+			case 'marker':
+				return buildIntegerLegacyOctalLong$patch(source, inputs.config['content'] as Admit<string | number | bigint>, {
+					...(inputs.options as T.IntegerLegacyOctalLong.Options),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'content': {
+			const value = input;
+			const _content = numberText(8, '', value);
+			if (typeof _content !== 'string')
+				throw new Error(`integer_legacy_octal_long.content: text must be a string: ${describeValue(_content)}`);
+			if (!_slotRe_buildIntegerLegacyOctalLong_content.test(_content))
+				throw new Error(`integer_legacy_octal_long.content: text does not match pattern: ${describeValue(_content)}`);
+			return setSlot(
+				source,
+				TSKindId.IntegerLegacyOctalLong as const,
+				'integer_legacy_octal_long',
+				0,
+				'content',
+				_content
+			) as unknown as T.IntegerLegacyOctalLong.Bound;
+		}
+		case 'marker': {
+			const options = input;
+			const _marker = options?.marker ?? 'L';
+			if (_marker !== undefined && typeof _marker !== 'string')
+				throw new Error(`integer_legacy_octal_long.marker: text must be a string: ${describeValue(_marker)}`);
+			if (_marker !== undefined && !_slotRe_buildIntegerLegacyOctalLong_marker.test(_marker))
+				throw new Error(`integer_legacy_octal_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+			return setSlot(
+				source,
+				TSKindId.IntegerLegacyOctalLong as const,
+				'integer_legacy_octal_long',
+				1,
+				'marker',
+				_marker
+			) as unknown as T.IntegerLegacyOctalLong.Bound;
+		}
+	}
+}
+function withIntegerLegacyOctalLong(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerLegacyOctalLong$set(node, 'content', value))
+			);
+		case 'marker':
+			return applySetter(args, (spelling: 'L' | 'l') =>
+				rebuilt(node, handle, () => buildIntegerLegacyOctalLong$set(node, 'marker', { marker: spelling }))
+			);
+	}
+	throw new Error(`integer_legacy_octal_long has no $with.${setter}`);
+}
+
+export function buildIntegerLegacyOctalPlain<const N extends string | number | bigint>(
+	content: N & NumericLiteral<N, true>,
+	affix?: true
+): T.IntegerLegacyOctalPlain.Bound;
+export function buildIntegerLegacyOctalPlain(text: `0${string}`, affix: false): T.IntegerLegacyOctalPlain.Bound;
+export function buildIntegerLegacyOctalPlain(
+	input: string | number | bigint,
+	affix: boolean = true
+): T.IntegerLegacyOctalPlain.Bound {
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`integer_legacy_octal_plain.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '0', '', 'integer_legacy_octal_plain');
+	}
+	const _content = numberText(8, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_legacy_octal_plain.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerLegacyOctalPlain_content.test(_content))
+		throw new Error(`integer_legacy_octal_plain.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_legacy_octal_plain', { content: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IntegerLegacyOctalPlain as const, { _content });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.IntegerLegacyOctalPlain as const);
+		storeCell(arena, record, 2, 2, _content);
+		const node = arena.view(record);
+		return node as unknown as T.IntegerLegacyOctalPlain.Bound;
+	});
+}
+
+function buildIntegerLegacyOctalPlain$patch(
+	source: object,
+	input: string | number | bigint,
+	affix: boolean = true
+): T.IntegerLegacyOctalPlain.Bound {
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`integer_legacy_octal_plain.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '0', '', 'integer_legacy_octal_plain');
+	}
+	const _content = numberText(8, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_legacy_octal_plain.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerLegacyOctalPlain_content.test(_content))
+		throw new Error(`integer_legacy_octal_plain.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_legacy_octal_plain', { content: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IntegerLegacyOctalPlain as const, { _content });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.IntegerLegacyOctalPlain as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		const node = arena.view(record);
+		return node as unknown as T.IntegerLegacyOctalPlain.Bound;
+	});
+}
+function withIntegerLegacyOctalPlain(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerLegacyOctalPlain$patch(node, value))
+			);
+	}
+	throw new Error(`integer_legacy_octal_plain has no $with.${setter}`);
+}
+
+export function buildIntegerDecimalLong<const N extends string | number | bigint>(
+	value: Admit<string | (N & NumericLiteral<N, true>)>,
+	options?: T.IntegerDecimalLong.Options
+): T.IntegerDecimalLong.Bound;
+export function buildIntegerDecimalLong(
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerDecimalLong.Options
+): T.IntegerDecimalLong.Bound {
+	const _content = numberText(10, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_decimal_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerDecimalLong_content.test(_content))
+		throw new Error(`integer_decimal_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_decimal_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerDecimalLong_marker.test(_marker))
+		throw new Error(`integer_decimal_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_decimal_long', { content: _content, marker: _marker });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IntegerDecimalLong as const, { _content, _marker });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.IntegerDecimalLong as const);
+		storeCell(arena, record, 2, 2, _content);
+		storeCell(arena, record, 3, 4, _marker);
+		const node = arena.view(record);
+		return node as unknown as T.IntegerDecimalLong.Bound;
+	});
+}
+
+function buildIntegerDecimalLong$patch(
+	source: object,
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerDecimalLong.Options
+): T.IntegerDecimalLong.Bound {
+	const _content = numberText(10, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_decimal_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerDecimalLong_content.test(_content))
+		throw new Error(`integer_decimal_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_decimal_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerDecimalLong_marker.test(_marker))
+		throw new Error(`integer_decimal_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_decimal_long', { content: _content, marker: _marker });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IntegerDecimalLong as const, { _content, _marker });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.IntegerDecimalLong as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 3, 4, carriedSlot(source, 'marker', _marker));
+		const node = arena.view(record);
+		return node as unknown as T.IntegerDecimalLong.Bound;
+	});
+}
+function buildIntegerDecimalLong$set(
+	source: object,
+	...[slot, input]: ['content', Admit<string | number | bigint>] | ['marker', T.IntegerDecimalLong.Options]
+): T.IntegerDecimalLong.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'content':
+				return buildIntegerDecimalLong$patch(source, input, inputs.options as T.IntegerDecimalLong.Options);
+			case 'marker':
+				return buildIntegerDecimalLong$patch(source, inputs.config['content'] as Admit<string | number | bigint>, {
+					...(inputs.options as T.IntegerDecimalLong.Options),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'content': {
+			const value = input;
+			const _content = numberText(10, '', value);
+			if (typeof _content !== 'string')
+				throw new Error(`integer_decimal_long.content: text must be a string: ${describeValue(_content)}`);
+			if (!_slotRe_buildIntegerDecimalLong_content.test(_content))
+				throw new Error(`integer_decimal_long.content: text does not match pattern: ${describeValue(_content)}`);
+			return setSlot(
+				source,
+				TSKindId.IntegerDecimalLong as const,
+				'integer_decimal_long',
+				0,
+				'content',
+				_content
+			) as unknown as T.IntegerDecimalLong.Bound;
+		}
+		case 'marker': {
+			const options = input;
+			const _marker = options?.marker ?? 'L';
+			if (_marker !== undefined && typeof _marker !== 'string')
+				throw new Error(`integer_decimal_long.marker: text must be a string: ${describeValue(_marker)}`);
+			if (_marker !== undefined && !_slotRe_buildIntegerDecimalLong_marker.test(_marker))
+				throw new Error(`integer_decimal_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+			return setSlot(
+				source,
+				TSKindId.IntegerDecimalLong as const,
+				'integer_decimal_long',
+				1,
+				'marker',
+				_marker
+			) as unknown as T.IntegerDecimalLong.Bound;
+		}
+	}
+}
+function withIntegerDecimalLong(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerDecimalLong$set(node, 'content', value))
+			);
+		case 'marker':
+			return applySetter(args, (spelling: 'L' | 'l') =>
+				rebuilt(node, handle, () => buildIntegerDecimalLong$set(node, 'marker', { marker: spelling }))
+			);
+	}
+	throw new Error(`integer_decimal_long has no $with.${setter}`);
 }
 
 export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImaginary.Bound {
@@ -16993,10 +17795,15 @@ export type FluentKindMap = {
 	wildcard_pattern: T.WildcardPattern;
 	parenthesized_import_list: T.ParenthesizedImportList.Bound;
 	comprehension_clauses: T.ComprehensionClauses.Bound;
-	integer_hex: T.IntegerHex.Bound;
-	integer_octal: T.IntegerOctal.Bound;
-	integer_binary: T.IntegerBinary.Bound;
-	integer_decimal_long: T.IntegerDecimalLong;
+	integer_hex_long: T.IntegerHexLong.Bound;
+	integer_hex_plain: T.IntegerHexPlain.Bound;
+	integer_octal_long: T.IntegerOctalLong.Bound;
+	integer_octal_plain: T.IntegerOctalPlain.Bound;
+	integer_binary_long: T.IntegerBinaryLong.Bound;
+	integer_binary_plain: T.IntegerBinaryPlain.Bound;
+	integer_legacy_octal_long: T.IntegerLegacyOctalLong.Bound;
+	integer_legacy_octal_plain: T.IntegerLegacyOctalPlain.Bound;
+	integer_decimal_long: T.IntegerDecimalLong.Bound;
 	integer_decimal_imaginary: T.IntegerDecimalImaginary;
 	integer_decimal_plain: T.IntegerDecimalPlain;
 	float_point: T.FloatPoint.Bound;
@@ -17202,9 +18009,14 @@ export const _factoryMap = {
 	wildcard_pattern: buildWildcardPattern,
 	parenthesized_import_list: buildParenthesizedImportList,
 	comprehension_clauses: buildComprehensionClauses,
-	integer_hex: buildIntegerHex,
-	integer_octal: buildIntegerOctal,
-	integer_binary: buildIntegerBinary,
+	integer_hex_long: buildIntegerHexLong,
+	integer_hex_plain: buildIntegerHexPlain,
+	integer_octal_long: buildIntegerOctalLong,
+	integer_octal_plain: buildIntegerOctalPlain,
+	integer_binary_long: buildIntegerBinaryLong,
+	integer_binary_plain: buildIntegerBinaryPlain,
+	integer_legacy_octal_long: buildIntegerLegacyOctalLong,
+	integer_legacy_octal_plain: buildIntegerLegacyOctalPlain,
 	integer_decimal_long: buildIntegerDecimalLong,
 	integer_decimal_imaginary: buildIntegerDecimalImaginary,
 	integer_decimal_plain: buildIntegerDecimalPlain,
@@ -17265,411 +18077,424 @@ export type _FactoryMap = typeof _factoryMap;
 export const builtViews: BuiltViews = Object.freeze({
 	withs: Object.freeze({
 		72: withComment,
-		90: withIntegerHex,
-		91: withIntegerOctal,
-		92: withIntegerBinary,
-		96: withFloatPoint,
-		97: withFloatLeadingPoint,
-		98: withFloatScientific,
-		99: withEscapeSequenceUnicodeFixed,
-		100: withEscapeSequenceUnicodeWide,
-		101: withEscapeSequenceHex,
-		102: withEscapeSequenceOctal,
-		103: withEscapeSequenceLineBreak,
-		104: withEscapeSequenceSimple,
-		105: withEscapeSequenceNamed,
-		119: withStringStart,
-		122: withStringEnd,
-		128: withModule,
-		130: withSimpleStatements,
-		131: withImportStatement,
-		133: withRelativeImport,
-		134: withFutureImportStatement,
-		135: withImportFromStatement,
-		136: withImportList,
-		137: withAliasedImport,
-		139: withPrintStatement,
-		140: withChevron,
-		141: withAssertStatement,
-		142: withExpressionStatement,
-		143: withNamedExpression,
-		144: withNamedExpressionLhs,
-		145: withReturnStatement,
-		146: withDeleteStatement,
-		147: withRaiseStatement,
-		151: withIfStatement,
-		152: withElifClause,
-		153: withElseClause,
-		154: withMatchStatement,
-		155: withMatchBlock,
-		156: withCaseClause,
-		157: withForStatement,
-		158: withWhileStatement,
-		159: withTryStatement,
-		160: withExceptClause,
-		161: withFinallyClause,
-		162: withWithStatement,
-		164: withWithItem,
-		165: withFunctionDefinition,
-		166: withParameters,
-		167: withLambdaParameters,
-		168: withListSplat,
-		169: withDictionarySplat,
-		170: withGlobalStatement,
-		171: withNonlocalStatement,
-		172: withExecStatement,
-		173: withTypeAliasStatement,
-		174: withClassDefinition,
-		175: withTypeParameter,
-		176: withParenthesizedListSplat,
-		177: withArgumentList,
-		178: withDecoratedDefinition,
-		179: withDecorator,
-		180: withBlock,
-		181: withExpressionList,
-		182: withDottedName,
-		183: withCasePattern,
-		184: withSimplePattern,
-		185: withCaseAsPattern,
-		186: withUnionPattern,
-		187: withDictPattern,
-		188: withKeyValuePattern,
-		189: withKeywordPattern,
-		191: withClassPattern,
-		192: withComplexPattern,
-		193: withParametersElements,
-		194: withPatterns,
-		197: withTuplePattern,
-		198: withListPattern,
-		199: withDefaultParameter,
-		200: withTypedDefaultParameter,
-		201: withListSplatPattern,
-		202: withDictionarySplatPattern,
-		203: withAsPattern,
-		207: withNotOperator,
-		208: withBooleanOperator,
-		209: withBinaryOperator,
-		210: withUnaryOperator,
-		213: withComparisonOperator,
-		214: withLambda,
-		215: withLambdaWithinForInClause,
-		217: withAugmentedAssignment,
-		218: withPatternList,
-		220: withYield,
-		221: withAttribute,
-		222: withSubscript,
-		223: withSlice,
-		224: withCall,
-		225: withTypedParameter,
-		226: withType,
-		227: withSplatType,
-		228: withGenericType,
-		229: withUnionType,
-		230: withConstrainedType,
-		231: withMemberType,
-		232: withKeywordArgument,
-		233: withList,
-		234: withSet,
-		235: withTuple,
-		236: withDictionary,
-		237: withPair,
-		238: withListComprehension,
-		239: withDictionaryComprehension,
-		240: withSetComprehension,
-		241: withGeneratorExpression,
-		242: withParenthesizedExpression,
-		243: withCollectionElements,
-		244: withForInClause,
-		245: withIfClause,
-		246: withConditionalExpression,
-		247: withConcatenatedString,
-		248: withString,
-		249: withStringContent,
-		250: withInterpolation,
-		254: withFormatSpecifier,
-		257: withAwait,
-		260: withSimpleStatementsElements,
-		261: withSubjects,
-		262: withWithClauseWithItems,
-		263: withTypes,
-		264: withArgumentListElements,
-		265: withListPatternCasePatterns,
-		266: withDictPatternElements,
-		267: withSubscripts,
-		268: withDictionaryElements,
-		269: withSliceGroup,
-		272: withTypeParams,
-		273: withTypeParamsItems,
-		274: withTuplePatternElements,
-		275: withCasePatternList,
-		276: withTupleElements,
-		277: withExceptClauseExceptionAs,
-		278: withCaseTuplePattern,
-		279: withCaseListPattern,
-		280: withPrintArguments,
-		281: withPrintChevronArguments,
-		282: withPrintStatementChevron,
-		283: withPrintStatementPlain,
-		285: withParenthesizedImportList,
-		286: withComprehensionClauses,
-		288: withSimplePatternNegative,
-		289: withExceptClauseExceptionList,
-		290: withExceptClauseException,
-		291: withSplatPatternList,
-		292: withSplatPatternDictionary,
-		293: withAssignmentEq,
-		294: withAssignmentType,
-		295: withAssignmentTyped,
-		296: withExpressionStatementTuple,
-		297: withWithClauseBare,
-		298: withWithClauseParen,
-		299: withSuiteInline,
-		300: withSuiteBlock,
-		301: withSuiteEmpty,
-		302: withComparisonOperatorComparator,
-		303: withYieldFromClause,
-		304: withTypeParamTypeVar,
-		305: withTypeParamTypeVarTuple,
-		306: withTypeParamParamSpec,
-		307: withConstructorDeclaration,
-		309: withBlockClassDeclaration,
-		310: withSuiteBlockClassDeclaration,
-		311: withDecoratedDefinitionClassDeclaration,
-		350: withAsPatternTarget,
-		351: withFormatExpression,
-		352: withMethodDeclaration,
-		353: withNames
+		90: withIntegerHexLong,
+		91: withIntegerHexPlain,
+		92: withIntegerOctalLong,
+		93: withIntegerOctalPlain,
+		94: withIntegerBinaryLong,
+		95: withIntegerBinaryPlain,
+		96: withIntegerLegacyOctalLong,
+		97: withIntegerLegacyOctalPlain,
+		98: withIntegerDecimalLong,
+		101: withFloatPoint,
+		102: withFloatLeadingPoint,
+		103: withFloatScientific,
+		104: withEscapeSequenceUnicodeFixed,
+		105: withEscapeSequenceUnicodeWide,
+		106: withEscapeSequenceHex,
+		107: withEscapeSequenceOctal,
+		108: withEscapeSequenceLineBreak,
+		109: withEscapeSequenceSimple,
+		110: withEscapeSequenceNamed,
+		124: withStringStart,
+		127: withStringEnd,
+		133: withModule,
+		135: withSimpleStatements,
+		136: withImportStatement,
+		138: withRelativeImport,
+		139: withFutureImportStatement,
+		140: withImportFromStatement,
+		141: withImportList,
+		142: withAliasedImport,
+		144: withPrintStatement,
+		145: withChevron,
+		146: withAssertStatement,
+		147: withExpressionStatement,
+		148: withNamedExpression,
+		149: withNamedExpressionLhs,
+		150: withReturnStatement,
+		151: withDeleteStatement,
+		152: withRaiseStatement,
+		156: withIfStatement,
+		157: withElifClause,
+		158: withElseClause,
+		159: withMatchStatement,
+		160: withMatchBlock,
+		161: withCaseClause,
+		162: withForStatement,
+		163: withWhileStatement,
+		164: withTryStatement,
+		165: withExceptClause,
+		166: withFinallyClause,
+		167: withWithStatement,
+		169: withWithItem,
+		170: withFunctionDefinition,
+		171: withParameters,
+		172: withLambdaParameters,
+		173: withListSplat,
+		174: withDictionarySplat,
+		175: withGlobalStatement,
+		176: withNonlocalStatement,
+		177: withExecStatement,
+		178: withTypeAliasStatement,
+		179: withClassDefinition,
+		180: withTypeParameter,
+		181: withParenthesizedListSplat,
+		182: withArgumentList,
+		183: withDecoratedDefinition,
+		184: withDecorator,
+		185: withBlock,
+		186: withExpressionList,
+		187: withDottedName,
+		188: withCasePattern,
+		189: withSimplePattern,
+		190: withCaseAsPattern,
+		191: withUnionPattern,
+		192: withDictPattern,
+		193: withKeyValuePattern,
+		194: withKeywordPattern,
+		196: withClassPattern,
+		197: withComplexPattern,
+		198: withParametersElements,
+		199: withPatterns,
+		202: withTuplePattern,
+		203: withListPattern,
+		204: withDefaultParameter,
+		205: withTypedDefaultParameter,
+		206: withListSplatPattern,
+		207: withDictionarySplatPattern,
+		208: withAsPattern,
+		212: withNotOperator,
+		213: withBooleanOperator,
+		214: withBinaryOperator,
+		215: withUnaryOperator,
+		218: withComparisonOperator,
+		219: withLambda,
+		220: withLambdaWithinForInClause,
+		222: withAugmentedAssignment,
+		223: withPatternList,
+		225: withYield,
+		226: withAttribute,
+		227: withSubscript,
+		228: withSlice,
+		229: withCall,
+		230: withTypedParameter,
+		231: withType,
+		232: withSplatType,
+		233: withGenericType,
+		234: withUnionType,
+		235: withConstrainedType,
+		236: withMemberType,
+		237: withKeywordArgument,
+		238: withList,
+		239: withSet,
+		240: withTuple,
+		241: withDictionary,
+		242: withPair,
+		243: withListComprehension,
+		244: withDictionaryComprehension,
+		245: withSetComprehension,
+		246: withGeneratorExpression,
+		247: withParenthesizedExpression,
+		248: withCollectionElements,
+		249: withForInClause,
+		250: withIfClause,
+		251: withConditionalExpression,
+		252: withConcatenatedString,
+		253: withString,
+		254: withStringContent,
+		255: withInterpolation,
+		259: withFormatSpecifier,
+		262: withAwait,
+		265: withSimpleStatementsElements,
+		266: withSubjects,
+		267: withWithClauseWithItems,
+		268: withTypes,
+		269: withArgumentListElements,
+		270: withListPatternCasePatterns,
+		271: withDictPatternElements,
+		272: withSubscripts,
+		273: withDictionaryElements,
+		274: withSliceGroup,
+		277: withTypeParams,
+		278: withTypeParamsItems,
+		279: withTuplePatternElements,
+		280: withCasePatternList,
+		281: withTupleElements,
+		282: withExceptClauseExceptionAs,
+		283: withCaseTuplePattern,
+		284: withCaseListPattern,
+		285: withPrintArguments,
+		286: withPrintChevronArguments,
+		287: withPrintStatementChevron,
+		288: withPrintStatementPlain,
+		290: withParenthesizedImportList,
+		291: withComprehensionClauses,
+		297: withSimplePatternNegative,
+		298: withExceptClauseExceptionList,
+		299: withExceptClauseException,
+		300: withSplatPatternList,
+		301: withSplatPatternDictionary,
+		302: withAssignmentEq,
+		303: withAssignmentType,
+		304: withAssignmentTyped,
+		305: withExpressionStatementTuple,
+		306: withWithClauseBare,
+		307: withWithClauseParen,
+		308: withSuiteInline,
+		309: withSuiteBlock,
+		310: withSuiteEmpty,
+		311: withComparisonOperatorComparator,
+		312: withYieldFromClause,
+		313: withTypeParamTypeVar,
+		314: withTypeParamTypeVarTuple,
+		315: withTypeParamParamSpec,
+		316: withConstructorDeclaration,
+		318: withBlockClassDeclaration,
+		319: withSuiteBlockClassDeclaration,
+		320: withDecoratedDefinitionClassDeclaration,
+		359: withAsPatternTarget,
+		360: withFormatExpression,
+		361: withMethodDeclaration,
+		362: withNames
 	}),
 	words: Object.freeze({
 		72: 4,
-		90: 5,
+		90: 6,
 		91: 5,
-		92: 5,
-		96: 9,
-		97: 9,
-		98: 8,
-		99: 4,
-		100: 4,
-		101: 4,
-		102: 4,
-		103: 4,
+		92: 6,
+		93: 5,
+		94: 6,
+		95: 5,
+		96: 5,
+		97: 4,
+		98: 5,
+		101: 9,
+		102: 9,
+		103: 8,
 		104: 4,
 		105: 4,
-		119: 5,
-		122: 5,
-		128: 3,
-		130: 3,
-		131: 3,
-		133: 4,
-		134: 3,
-		135: 4,
+		106: 4,
+		107: 4,
+		108: 4,
+		109: 4,
+		110: 4,
+		124: 5,
+		127: 5,
+		133: 3,
+		135: 3,
 		136: 3,
-		137: 4,
+		138: 4,
 		139: 3,
-		140: 3,
+		140: 4,
 		141: 3,
-		142: 3,
-		143: 4,
+		142: 4,
 		144: 3,
 		145: 3,
 		146: 3,
-		147: 4,
-		151: 5,
+		147: 3,
+		148: 4,
+		149: 3,
+		150: 3,
+		151: 3,
 		152: 4,
-		153: 3,
-		154: 4,
-		155: 3,
 		156: 5,
-		157: 7,
-		158: 5,
-		159: 6,
-		160: 5,
-		161: 3,
-		162: 5,
-		164: 3,
-		165: 8,
+		157: 4,
+		158: 3,
+		159: 4,
+		160: 3,
+		161: 5,
+		162: 7,
+		163: 5,
+		164: 6,
+		165: 5,
 		166: 3,
-		167: 3,
-		168: 3,
+		167: 5,
 		169: 3,
-		170: 3,
+		170: 8,
 		171: 3,
-		172: 4,
-		173: 5,
-		174: 6,
+		172: 3,
+		173: 3,
+		174: 3,
 		175: 3,
 		176: 3,
-		177: 3,
-		178: 4,
-		179: 3,
+		177: 4,
+		178: 5,
+		179: 6,
 		180: 3,
 		181: 3,
-		182: 4,
-		183: 3,
+		182: 3,
+		183: 4,
 		184: 3,
-		185: 4,
-		186: 4,
-		187: 3,
-		188: 4,
-		189: 4,
+		185: 3,
+		186: 3,
+		187: 4,
+		188: 3,
+		189: 3,
+		190: 4,
 		191: 4,
-		192: 6,
-		193: 3,
-		194: 3,
-		197: 3,
+		192: 3,
+		193: 4,
+		194: 4,
+		196: 4,
+		197: 6,
 		198: 3,
-		199: 4,
-		200: 5,
-		201: 3,
+		199: 3,
 		202: 3,
-		203: 4,
+		203: 3,
+		204: 4,
+		205: 5,
+		206: 3,
 		207: 3,
-		208: 5,
-		209: 5,
-		210: 4,
-		213: 4,
-		214: 4,
+		208: 4,
+		212: 3,
+		213: 5,
+		214: 5,
 		215: 4,
-		217: 5,
-		218: 3,
-		220: 3,
-		221: 4,
-		222: 4,
-		223: 5,
-		224: 4,
-		225: 4,
-		226: 3,
-		227: 3,
-		228: 4,
+		218: 4,
+		219: 4,
+		220: 4,
+		222: 5,
+		223: 3,
+		225: 3,
+		226: 4,
+		227: 4,
+		228: 5,
 		229: 4,
 		230: 4,
-		231: 4,
-		232: 4,
-		233: 3,
-		234: 3,
-		235: 3,
-		236: 3,
+		231: 3,
+		232: 3,
+		233: 4,
+		234: 4,
+		235: 4,
+		236: 4,
 		237: 4,
-		238: 4,
-		239: 4,
-		240: 4,
-		241: 4,
-		242: 3,
-		243: 3,
-		244: 6,
-		245: 3,
-		246: 5,
+		238: 3,
+		239: 3,
+		240: 3,
+		241: 3,
+		242: 4,
+		243: 4,
+		244: 4,
+		245: 4,
+		246: 4,
 		247: 3,
-		248: 5,
-		249: 3,
-		250: 6,
+		248: 3,
+		249: 6,
+		250: 3,
+		251: 5,
+		252: 3,
+		253: 5,
 		254: 3,
-		257: 3,
-		260: 3,
-		261: 3,
+		255: 6,
+		259: 3,
 		262: 3,
-		263: 3,
-		264: 3,
 		265: 3,
 		266: 3,
 		267: 3,
 		268: 3,
 		269: 3,
+		270: 3,
+		271: 3,
 		272: 3,
 		273: 3,
 		274: 3,
-		275: 3,
-		276: 3,
-		277: 4,
+		277: 3,
 		278: 3,
 		279: 3,
 		280: 3,
 		281: 3,
 		282: 4,
 		283: 3,
+		284: 3,
 		285: 3,
 		286: 3,
+		287: 4,
 		288: 3,
-		289: 3,
 		290: 3,
 		291: 3,
-		292: 3,
-		293: 4,
-		294: 4,
-		295: 5,
-		296: 3,
 		297: 3,
 		298: 3,
 		299: 3,
 		300: 3,
 		301: 3,
 		302: 4,
-		303: 3,
-		304: 4,
+		303: 4,
+		304: 5,
 		305: 3,
 		306: 3,
-		307: 7,
+		307: 3,
+		308: 3,
 		309: 3,
 		310: 3,
 		311: 4,
-		350: 3,
-		351: 6,
-		352: 8,
-		353: 3
+		312: 3,
+		313: 4,
+		314: 3,
+		315: 3,
+		316: 7,
+		318: 3,
+		319: 3,
+		320: 4,
+		359: 3,
+		360: 6,
+		361: 8,
+		362: 3
 	}),
 	cells: Object.freeze({
 		72: 2,
 		90: 2,
 		91: 2,
 		92: 2,
+		93: 2,
+		94: 2,
+		95: 2,
 		96: 2,
 		97: 2,
 		98: 2,
-		99: 2,
-		100: 2,
 		101: 2,
 		102: 2,
 		103: 2,
 		104: 2,
 		105: 2,
-		119: 2,
-		122: 2,
-		128: 2,
-		130: 2,
-		131: 2,
+		106: 2,
+		107: 2,
+		108: 2,
+		109: 2,
+		110: 2,
+		124: 2,
+		127: 2,
 		133: 2,
-		134: 2,
 		135: 2,
 		136: 2,
-		137: 2,
+		138: 2,
 		139: 2,
 		140: 2,
 		141: 2,
 		142: 2,
-		143: 2,
 		144: 2,
 		145: 2,
 		146: 2,
 		147: 2,
+		148: 2,
+		149: 2,
+		150: 2,
 		151: 2,
 		152: 2,
-		153: 2,
-		154: 2,
-		155: 2,
 		156: 2,
-		157: 3,
+		157: 2,
 		158: 2,
 		159: 2,
-		160: 3,
+		160: 2,
 		161: 2,
 		162: 3,
+		163: 2,
 		164: 2,
 		165: 3,
 		166: 2,
-		167: 2,
-		168: 2,
+		167: 3,
 		169: 2,
-		170: 2,
+		170: 3,
 		171: 2,
 		172: 2,
 		173: 2,
@@ -17689,31 +18514,31 @@ export const builtViews: BuiltViews = Object.freeze({
 		187: 2,
 		188: 2,
 		189: 2,
+		190: 2,
 		191: 2,
-		192: 3,
+		192: 2,
 		193: 2,
 		194: 2,
-		197: 2,
+		196: 2,
+		197: 3,
 		198: 2,
 		199: 2,
-		200: 2,
-		201: 2,
 		202: 2,
 		203: 2,
+		204: 2,
+		205: 2,
+		206: 2,
 		207: 2,
 		208: 2,
-		209: 2,
-		210: 2,
+		212: 2,
 		213: 2,
 		214: 2,
 		215: 2,
-		217: 2,
 		218: 2,
+		219: 2,
 		220: 2,
-		221: 2,
 		222: 2,
 		223: 2,
-		224: 2,
 		225: 2,
 		226: 2,
 		227: 2,
@@ -17733,30 +18558,30 @@ export const builtViews: BuiltViews = Object.freeze({
 		241: 2,
 		242: 2,
 		243: 2,
-		244: 3,
+		244: 2,
 		245: 2,
 		246: 2,
 		247: 2,
 		248: 2,
-		249: 2,
-		250: 3,
+		249: 3,
+		250: 2,
+		251: 2,
+		252: 2,
+		253: 2,
 		254: 2,
-		257: 2,
-		260: 2,
-		261: 2,
+		255: 3,
+		259: 2,
 		262: 2,
-		263: 2,
-		264: 2,
 		265: 2,
 		266: 2,
 		267: 2,
 		268: 2,
 		269: 2,
+		270: 2,
+		271: 2,
 		272: 2,
 		273: 2,
 		274: 2,
-		275: 2,
-		276: 2,
 		277: 2,
 		278: 2,
 		279: 2,
@@ -17764,17 +18589,13 @@ export const builtViews: BuiltViews = Object.freeze({
 		281: 2,
 		282: 2,
 		283: 2,
+		284: 2,
 		285: 2,
 		286: 2,
+		287: 2,
 		288: 2,
-		289: 2,
 		290: 2,
 		291: 2,
-		292: 2,
-		293: 2,
-		294: 2,
-		295: 2,
-		296: 2,
 		297: 2,
 		298: 2,
 		299: 2,
@@ -17785,20 +18606,30 @@ export const builtViews: BuiltViews = Object.freeze({
 		304: 2,
 		305: 2,
 		306: 2,
-		307: 3,
+		307: 2,
+		308: 2,
 		309: 2,
 		310: 2,
 		311: 2,
-		350: 2,
-		351: 3,
-		352: 3,
-		353: 2
+		312: 2,
+		313: 2,
+		314: 2,
+		315: 2,
+		316: 3,
+		318: 2,
+		319: 2,
+		320: 2,
+		359: 2,
+		360: 3,
+		361: 3,
+		362: 2
 	}),
 	places: Object.freeze({
 		72: [[2, 2, 2, 4, 0, 0]],
 		90: [
 			[2, 2, 2, 4, 0, 0],
-			[4, 3, 2, 4, 0, 0]
+			[4, 3, 2, 4, 0, 0],
+			[6, 4, 2, 4, 0, 0]
 		],
 		91: [
 			[2, 2, 2, 4, 0, 0],
@@ -17806,17 +18637,32 @@ export const builtViews: BuiltViews = Object.freeze({
 		],
 		92: [
 			[2, 2, 2, 4, 0, 0],
+			[4, 3, 2, 4, 0, 0],
+			[6, 4, 2, 4, 0, 0]
+		],
+		93: [
+			[2, 2, 2, 4, 0, 0],
+			[4, 3, 2, 4, 0, 0]
+		],
+		94: [
+			[2, 2, 2, 4, 0, 0],
+			[4, 3, 2, 4, 0, 0],
+			[6, 4, 2, 4, 0, 0]
+		],
+		95: [
+			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0]
 		],
 		96: [
 			[2, 2, 2, 4, 0, 0],
-			[4, 3, 2, 4, 0, 0],
-			[6, 4, 2, 4, 0, 0],
-			[8, 5, 2, 4, 0, 0],
-			[10, 6, 2, 4, 0, 0],
-			[12, 7, 2, 4, 0, 0]
+			[4, 3, 2, 4, 0, 0]
 		],
-		97: [
+		97: [[2, 2, 2, 4, 0, 0]],
+		98: [
+			[2, 2, 2, 4, 0, 0],
+			[4, 3, 2, 4, 0, 0]
+		],
+		101: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0],
 			[6, 4, 2, 4, 0, 0],
@@ -17824,114 +18670,122 @@ export const builtViews: BuiltViews = Object.freeze({
 			[10, 6, 2, 4, 0, 0],
 			[12, 7, 2, 4, 0, 0]
 		],
-		98: [
+		102: [
+			[2, 2, 2, 4, 0, 0],
+			[4, 3, 2, 4, 0, 0],
+			[6, 4, 2, 4, 0, 0],
+			[8, 5, 2, 4, 0, 0],
+			[10, 6, 2, 4, 0, 0],
+			[12, 7, 2, 4, 0, 0]
+		],
+		103: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0],
 			[6, 4, 2, 4, 0, 0],
 			[8, 5, 2, 4, 0, 0],
 			[10, 6, 2, 4, 0, 0]
 		],
-		99: [[2, 2, 2, 4, 0, 0]],
-		100: [[2, 2, 2, 4, 0, 0]],
-		101: [[2, 2, 2, 4, 0, 0]],
-		102: [[2, 2, 2, 4, 0, 0]],
-		103: [[2, 2, 2, 4, 0, 0]],
 		104: [[2, 2, 2, 4, 0, 0]],
 		105: [[2, 2, 2, 4, 0, 0]],
-		119: [
+		106: [[2, 2, 2, 4, 0, 0]],
+		107: [[2, 2, 2, 4, 0, 0]],
+		108: [[2, 2, 2, 4, 0, 0]],
+		109: [[2, 2, 2, 4, 0, 0]],
+		110: [[2, 2, 2, 4, 0, 0]],
+		124: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0]
 		],
-		122: [
+		127: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0]
 		],
-		128: [[2, 2, 1, 1, 0, 3]],
-		130: [[2, 2, 3, 8, 3, 0]],
-		131: [[2, 2, 3, 8, 3, 0]],
-		133: [
+		133: [[2, 2, 1, 1, 0, 3]],
+		135: [[2, 2, 3, 8, 3, 0]],
+		136: [[2, 2, 3, 8, 3, 0]],
+		138: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		134: [[2, 2, 5, 8, 5, 0]],
-		135: [
+		139: [[2, 2, 5, 8, 5, 0]],
+		140: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 6, 10, 5, 0]
 		],
-		136: [
+		141: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		137: [
+		142: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		139: [[2, 2, 11, 8, 11, 0]],
-		140: [[2, 2, 4, 3, 0, 0]],
-		141: [[2, 2, 1, 3, 0, 4]],
-		142: [[2, 2, 4, 3, 0, 0]],
-		143: [
+		144: [[2, 2, 11, 8, 11, 0]],
+		145: [[2, 2, 4, 3, 0, 0]],
+		146: [[2, 2, 1, 3, 0, 4]],
+		147: [[2, 2, 4, 3, 0, 0]],
+		148: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 4, 3, 0, 0]
 		],
-		144: [[2, 2, 3, 1, 0, 0]],
-		145: [[2, 2, 4, 3, 0, 0]],
-		146: [[2, 2, 4, 3, 0, 0]],
-		147: [
+		149: [[2, 2, 3, 1, 0, 0]],
+		150: [[2, 2, 4, 3, 0, 0]],
+		151: [[2, 2, 4, 3, 0, 0]],
+		152: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0]
 		],
-		151: [
+		156: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0],
 			[11, 4, 1, 1, 0, 3]
 		],
-		152: [
+		157: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0]
 		],
-		153: [[2, 2, 5, 8, 5, 0]],
-		154: [
+		158: [[2, 2, 5, 8, 5, 0]],
+		159: [
 			[2, 2, 3, 8, 3, 0],
 			[5, 3, 3, 8, 3, 0]
 		],
-		155: [[2, 2, 1, 1, 0, 3]],
-		156: [
+		160: [[2, 2, 1, 1, 0, 3]],
+		161: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 6, 8, 6, 0],
 			[11, 4, 5, 8, 5, 0]
 		],
-		157: [
+		162: [
 			[2, 0],
 			[3, 3, 3, 1, 0, 0],
 			[6, 4, 4, 3, 0, 0],
 			[10, 5, 5, 8, 5, 0],
 			[15, 6, 7, 8, 7, 0]
 		],
-		158: [
+		163: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0],
 			[11, 4, 7, 8, 7, 0]
 		],
-		159: [
+		164: [
 			[2, 2, 5, 8, 5, 0],
 			[7, 3, 1, 1, 0, 3],
 			[8, 4, 7, 8, 7, 0],
 			[15, 5, 7, 8, 7, 0]
 		],
-		160: [
+		165: [
 			[2, 0],
 			[3, 3, 12, 8, 12, 0],
 			[15, 4, 5, 8, 5, 0]
 		],
-		161: [[2, 2, 5, 8, 5, 0]],
-		162: [
+		166: [[2, 2, 5, 8, 5, 0]],
+		167: [
 			[2, 0],
 			[3, 3, 5, 8, 5, 0],
 			[8, 4, 5, 8, 5, 0]
 		],
-		164: [[2, 2, 4, 3, 0, 0]],
-		165: [
+		169: [[2, 2, 4, 3, 0, 0]],
+		170: [
 			[2, 0],
 			[3, 3, 3, 1, 0, 0],
 			[6, 4, 5, 8, 5, 0],
@@ -17939,296 +18793,282 @@ export const builtViews: BuiltViews = Object.freeze({
 			[16, 6, 3, 1, 0, 0],
 			[19, 7, 5, 8, 5, 0]
 		],
-		166: [[2, 2, 3, 8, 3, 0]],
-		167: [[2, 2, 3, 8, 3, 0]],
-		168: [[2, 2, 4, 3, 0, 0]],
-		169: [[2, 2, 4, 3, 0, 0]],
-		170: [[2, 2, 1, 1, 0, 3]],
-		171: [[2, 2, 1, 1, 0, 3]],
-		172: [
+		171: [[2, 2, 3, 8, 3, 0]],
+		172: [[2, 2, 3, 8, 3, 0]],
+		173: [[2, 2, 4, 3, 0, 0]],
+		174: [[2, 2, 4, 3, 0, 0]],
+		175: [[2, 2, 1, 1, 0, 3]],
+		176: [[2, 2, 1, 1, 0, 3]],
+		177: [
 			[2, 2, 20, 9, 19, 0],
 			[22, 3, 1, 3, 0, 4]
 		],
-		173: [
+		178: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 5, 8, 5, 0],
 			[10, 4, 3, 1, 0, 0]
 		],
-		174: [
+		179: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 5, 8, 5, 0],
 			[10, 4, 5, 8, 5, 0],
 			[15, 5, 5, 8, 5, 0]
 		],
-		175: [[2, 2, 3, 8, 3, 0]],
-		176: [[2, 2, 3, 1, 0, 0]],
-		177: [[2, 2, 3, 8, 3, 0]],
-		178: [
+		180: [[2, 2, 3, 8, 3, 0]],
+		181: [[2, 2, 3, 1, 0, 0]],
+		182: [[2, 2, 3, 8, 3, 0]],
+		183: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 24, 8, 24, 0]
 		],
-		179: [[2, 2, 4, 3, 0, 0]],
-		180: [[2, 2, 1, 1, 0, 3]],
-		181: [
+		184: [[2, 2, 4, 3, 0, 0]],
+		185: [[2, 2, 1, 1, 0, 3]],
+		186: [
 			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
-		182: [
+		187: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		183: [[2, 2, 3, 1, 0, 0]],
-		184: [[2, 2, 4, 3, 0, 0]],
-		185: [
+		188: [[2, 2, 3, 1, 0, 0]],
+		189: [[2, 2, 4, 3, 0, 0]],
+		190: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		186: [
+		191: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0]
 		],
-		187: [[2, 2, 3, 8, 3, 0]],
-		188: [
+		192: [[2, 2, 3, 8, 3, 0]],
+		193: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0]
 		],
-		189: [
+		194: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 4, 3, 0, 0]
 		],
-		191: [
+		196: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 8, 3, 0]
 		],
-		192: [
+		197: [
 			[2, 0],
 			[3, 3, 17, 9, 16, 0],
 			[20, 4, 1, 2, 0, 0],
 			[21, 5, 17, 9, 16, 0]
 		],
-		193: [
+		198: [
 			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
-		194: [
+		199: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		197: [[2, 2, 3, 8, 3, 0]],
-		198: [[2, 2, 3, 8, 3, 0]],
-		199: [
+		202: [[2, 2, 3, 8, 3, 0]],
+		203: [[2, 2, 3, 8, 3, 0]],
+		204: [
 			[2, 2, 6, 9, 5, 0],
 			[8, 3, 4, 3, 0, 0]
 		],
-		200: [
+		205: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0],
 			[8, 4, 4, 3, 0, 0]
 		],
-		201: [[2, 2, 3, 1, 0, 0]],
-		202: [[2, 2, 3, 1, 0, 0]],
-		203: [
+		206: [[2, 2, 3, 1, 0, 0]],
+		207: [[2, 2, 3, 1, 0, 0]],
+		208: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0]
 		],
-		207: [[2, 2, 4, 3, 0, 0]],
-		208: [
+		212: [[2, 2, 4, 3, 0, 0]],
+		213: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0],
 			[7, 4, 4, 3, 0, 0]
 		],
-		209: [
+		214: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0],
 			[7, 4, 4, 3, 0, 0]
 		],
-		210: [
+		215: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 4, 3, 0, 0]
 		],
-		213: [
+		218: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 1, 0, 3]
 		],
-		214: [
+		219: [
 			[2, 2, 5, 8, 5, 0],
 			[7, 3, 4, 3, 0, 0]
 		],
-		215: [
+		220: [
 			[2, 2, 5, 8, 5, 0],
 			[7, 3, 4, 3, 0, 0]
 		],
-		217: [
+		222: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 1, 2, 0, 0],
 			[6, 4, 4, 3, 0, 0]
 		],
-		218: [
+		223: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		220: [[2, 2, 4, 3, 0, 0]],
-		221: [
+		225: [[2, 2, 4, 3, 0, 0]],
+		226: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0]
 		],
-		222: [
+		227: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 8, 3, 0]
 		],
-		223: [
+		228: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0],
 			[10, 4, 6, 8, 6, 0]
 		],
-		224: [
+		229: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0]
-		],
-		225: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0]
-		],
-		226: [[2, 2, 4, 3, 0, 0]],
-		227: [[2, 2, 11, 9, 10, 0]],
-		228: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 5, 8, 5, 0]
-		],
-		229: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0]
 		],
 		230: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		231: [
+		231: [[2, 2, 4, 3, 0, 0]],
+		232: [[2, 2, 11, 9, 10, 0]],
+		233: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 5, 8, 5, 0]
+		],
+		234: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		232: [
+		235: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 3, 1, 0, 0]
+		],
+		236: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 3, 1, 0, 0]
+		],
+		237: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 4, 3, 0, 0]
 		],
-		233: [[2, 2, 3, 8, 3, 0]],
-		234: [[2, 2, 3, 8, 3, 0]],
-		235: [[2, 2, 3, 8, 3, 0]],
-		236: [[2, 2, 3, 8, 3, 0]],
-		237: [
+		238: [[2, 2, 3, 8, 3, 0]],
+		239: [[2, 2, 3, 8, 3, 0]],
+		240: [[2, 2, 3, 8, 3, 0]],
+		241: [[2, 2, 3, 8, 3, 0]],
+		242: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0]
 		],
-		238: [
+		243: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 8, 3, 0]
 		],
-		239: [
+		244: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 8, 3, 0]
 		],
-		240: [
+		245: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 8, 3, 0]
 		],
-		241: [
+		246: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 8, 3, 0]
 		],
-		242: [[2, 2, 4, 3, 0, 0]],
-		243: [
+		247: [[2, 2, 4, 3, 0, 0]],
+		248: [
 			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
-		244: [
+		249: [
 			[2, 0],
 			[3, 3, 3, 1, 0, 0],
 			[6, 4, 1, 3, 0, 4],
 			[7, 5, 1, 18, 0, 0]
 		],
-		245: [[2, 2, 4, 3, 0, 0]],
-		246: [
+		250: [[2, 2, 4, 3, 0, 0]],
+		251: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0],
 			[10, 4, 4, 3, 0, 0]
 		],
-		247: [[2, 2, 1, 1, 0, 3]],
-		248: [
+		252: [[2, 2, 1, 1, 0, 3]],
+		253: [
 			[2, 2, 8, 8, 8, 0],
 			[10, 3, 1, 1, 0, 3],
 			[11, 4, 8, 8, 8, 0]
 		],
-		249: [[2, 2, 1, 3, 0, 4]],
-		250: [
+		254: [[2, 2, 1, 3, 0, 4]],
+		255: [
 			[3, 3, 4, 3, 0, 0],
 			[2, 0],
 			[7, 4, 3, 1, 0, 0],
 			[10, 5, 3, 8, 3, 0]
 		],
-		254: [[2, 2, 1, 1, 0, 3]],
-		257: [[2, 2, 4, 3, 0, 0]],
-		260: [
-			[2, 2, 1, 3, 0, 4],
-			['side', true, false]
-		],
-		261: [
-			[2, 2, 1, 3, 0, 4],
-			['side', true, false]
-		],
-		262: [
-			[2, 2, 1, 1, 0, 3],
-			['side', true, false]
-		],
-		263: [
-			[2, 2, 1, 1, 0, 3],
-			['side', true, false]
-		],
-		264: [
-			[2, 2, 1, 3, 0, 4],
-			['side', true, false]
-		],
+		259: [[2, 2, 1, 1, 0, 3]],
+		262: [[2, 2, 4, 3, 0, 0]],
 		265: [
-			[2, 2, 1, 1, 0, 3],
+			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
 		266: [
-			[2, 2, 1, 1, 0, 3],
+			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
 		267: [
-			[2, 2, 1, 3, 0, 4],
+			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
 		268: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		269: [[2, 2, 4, 3, 0, 0]],
-		272: [[2, 2, 3, 8, 3, 0]],
+		269: [
+			[2, 2, 1, 3, 0, 4],
+			['side', true, false]
+		],
+		270: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
+		],
+		271: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
+		],
+		272: [
+			[2, 2, 1, 3, 0, 4],
+			['side', true, false]
+		],
 		273: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		274: [
+		274: [[2, 2, 4, 3, 0, 0]],
+		277: [[2, 2, 3, 8, 3, 0]],
+		278: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		275: [
+		279: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		276: [
-			[2, 2, 1, 3, 0, 4],
-			['side', true, false]
-		],
-		277: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 4, 3, 0, 0]
-		],
-		278: [[2, 2, 3, 8, 3, 0]],
-		279: [[2, 2, 3, 8, 3, 0]],
 		280: [
-			[2, 2, 1, 3, 0, 4],
+			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
 		281: [
@@ -18236,74 +19076,88 @@ export const builtViews: BuiltViews = Object.freeze({
 			['side', true, false]
 		],
 		282: [
+			[2, 2, 4, 3, 0, 0],
+			[6, 3, 4, 3, 0, 0]
+		],
+		283: [[2, 2, 3, 8, 3, 0]],
+		284: [[2, 2, 3, 8, 3, 0]],
+		285: [
+			[2, 2, 1, 3, 0, 4],
+			['side', true, false]
+		],
+		286: [
+			[2, 2, 1, 3, 0, 4],
+			['side', true, false]
+		],
+		287: [
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 3, 8, 3, 0]
 		],
-		283: [[2, 2, 3, 8, 3, 0]],
-		285: [[2, 2, 3, 8, 3, 0]],
-		286: [[2, 2, 1, 1, 0, 3]],
-		288: [[2, 2, 17, 9, 16, 0]],
-		289: [[2, 2, 1, 3, 0, 4]],
-		290: [[2, 2, 10, 8, 10, 0]],
-		291: [[2, 2, 4, 3, 0, 0]],
-		292: [[2, 2, 4, 3, 0, 0]],
-		293: [
+		288: [[2, 2, 3, 8, 3, 0]],
+		290: [[2, 2, 3, 8, 3, 0]],
+		291: [[2, 2, 1, 1, 0, 3]],
+		297: [[2, 2, 17, 9, 16, 0]],
+		298: [[2, 2, 1, 3, 0, 4]],
+		299: [[2, 2, 10, 8, 10, 0]],
+		300: [[2, 2, 4, 3, 0, 0]],
+		301: [[2, 2, 4, 3, 0, 0]],
+		302: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 4, 3, 0, 0]
 		],
-		294: [
+		303: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		295: [
+		304: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0],
 			[8, 4, 4, 3, 0, 0]
 		],
-		296: [
+		305: [
 			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
-		297: [
+		306: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		298: [[2, 2, 3, 8, 3, 0]],
-		299: [[2, 2, 3, 8, 3, 0]],
-		300: [[2, 2, 3, 8, 3, 0]],
-		301: [[2, 2, 1, 2, 0, 0]],
-		302: [
+		307: [[2, 2, 3, 8, 3, 0]],
+		308: [[2, 2, 3, 8, 3, 0]],
+		309: [[2, 2, 3, 8, 3, 0]],
+		310: [[2, 2, 1, 2, 0, 0]],
+		311: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 4, 3, 0, 0]
 		],
-		303: [[2, 2, 4, 3, 0, 0]],
-		304: [
+		312: [[2, 2, 4, 3, 0, 0]],
+		313: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		305: [[2, 2, 3, 1, 0, 0]],
-		306: [[2, 2, 3, 1, 0, 0]],
-		307: [
+		314: [[2, 2, 3, 1, 0, 0]],
+		315: [[2, 2, 3, 1, 0, 0]],
+		316: [
 			[2, 0],
 			[3, 3, 5, 8, 5, 0],
 			[8, 4, 5, 8, 5, 0],
 			[13, 5, 3, 1, 0, 0],
 			[16, 6, 5, 8, 5, 0]
 		],
-		309: [[2, 2, 1, 1, 0, 3]],
-		310: [[2, 2, 3, 8, 3, 0]],
-		311: [
+		318: [[2, 2, 1, 1, 0, 3]],
+		319: [[2, 2, 3, 8, 3, 0]],
+		320: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 24, 8, 24, 0]
 		],
-		350: [[2, 2, 4, 3, 0, 0]],
-		351: [
+		359: [[2, 2, 4, 3, 0, 0]],
+		360: [
 			[3, 3, 4, 3, 0, 0],
 			[2, 0],
 			[7, 4, 3, 1, 0, 0],
 			[10, 5, 3, 8, 3, 0]
 		],
-		352: [
+		361: [
 			[2, 0],
 			[3, 3, 3, 1, 0, 0],
 			[6, 4, 5, 8, 5, 0],
@@ -18311,7 +19165,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[16, 6, 3, 1, 0, 0],
 			[19, 7, 5, 8, 5, 0]
 		],
-		353: [
+		362: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		]
@@ -18320,12 +19174,11 @@ export const builtViews: BuiltViews = Object.freeze({
 		1: leafIdentifier,
 		65: leafTypeConversion,
 		88: leafFormatSpecifierText,
-		93: leafIntegerDecimalLong,
-		94: leafIntegerDecimalImaginary,
-		95: leafIntegerDecimalPlain,
-		106: leafLineContinuationNewline,
-		120: leafStringFragment,
-		121: leafEscapeInterpolation,
-		132: leafImportPrefix
+		99: leafIntegerDecimalImaginary,
+		100: leafIntegerDecimalPlain,
+		111: leafLineContinuationNewline,
+		125: leafStringFragment,
+		126: leafEscapeInterpolation,
+		137: leafImportPrefix
 	})
 });
