@@ -69,3 +69,10 @@ void rs.write('a.rs', rs.build.expressionStatement.withSemi(rs.build.identifier(
 void rs.write('a.rs', rs.build.identifier('a'));
 // @ts-expect-error create's builder returns the grammar's root kind
 void rs.create('a.rs', (build) => build.identifier('a'));
+export const savesParsed: Pending = parsedRoot.$save('a.rs');
+export const savesBuilt: Pending = rs.build.sourceFile({}).$save('a.rs');
+export const savesEdited: Pending = parsedRoot.$with.statements(...parsedRoot.statements()).$save('a.rs');
+// @ts-expect-error only the grammar's root kind saves itself
+void rs.build.expressionStatement.withSemi(rs.build.identifier('a')).$save;
+// @ts-expect-error a parsed node of another kind has no $save
+void parsedRoot.statements()[0]?.$save;

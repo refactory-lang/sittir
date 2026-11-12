@@ -586,16 +586,32 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 	return { separators };
 }
 
+function fixedTextSeam(text: string): string | undefined {
+	if (isDepthText(text)) return text === INDENT_TEXT ? breakingKindsOfText(DEPTH_BREAK) : NEWLINE_KINDS;
+	return isWhitespaceOnly(text) ? layoutKindsOfText(text) : undefined;
+}
+
 function literalWrite(valueExpr: string, fixed: string | undefined): string {
-	if (fixed !== undefined && isDepthText(fixed)) {
-		return fixed === INDENT_TEXT
-			? `{ w.indent(); w.seam(${breakingKindsOfText(DEPTH_BREAK)}); Ok::<(), ::sittir_core::render::RenderError>(()) }`
-			: `{ w.dedent(${NEWLINE_KINDS}); Ok::<(), ::sittir_core::render::RenderError>(()) }`;
+	const seam = fixed === undefined ? undefined : fixedTextSeam(fixed);
+	if (fixed === undefined || seam === undefined) return `w.text(${valueExpr})`;
+	const write = fixed === INDENT_TEXT ? `w.indent(); w.seam(${seam});` : isDepthText(fixed) ? `w.dedent(${seam});` : `w.seam(${seam});`;
+	return `{ ${write} Ok::<(), ::sittir_core::render::RenderError>(()) }`;
+}
+
+function tokenSeamsOf(fixed: FixedLiterals): ReadonlyMap<number, string> {
+	const seams = new Map<number, string>();
+	for (const literal of fixed.values()) {
+		const seam = fixedTextSeam(literal.text);
+		if (seam === undefined) continue;
+		for (const id of new Set([...(literal.ownId === undefined ? [] : [literal.ownId]), ...literal.acceptedIds])) {
+			const prior = seams.get(id);
+			if (prior !== undefined && prior !== seam) {
+				throw new Error(`render-module: kind id ${id} writes ${prior} in place of text, and '${literal.kind}' gives it ${seam}`);
+			}
+			seams.set(id, seam);
+		}
 	}
-	if (fixed !== undefined && isWhitespaceOnly(fixed)) {
-		return `{ w.seam(${layoutKindsOfText(fixed)}); Ok::<(), ::sittir_core::render::RenderError>(()) }`;
-	}
-	return `w.text(${valueExpr})`;
+	return seams;
 }
 
 function renderTypedDispatch(
@@ -1148,7 +1164,7 @@ export function emitRenderModule(
 			details: { arms: support.boundaries.dropped.map((arm) => ({ kind: arm.kind, side: arm.side })) }
 		});
 	}
-	const optionsRs = renderOptionsRs(plan, addresses, optionsKindEntries, support.boundaries.rows);
+	const optionsRs = renderOptionsRs(plan, addresses, optionsKindEntries, support.boundaries.rows, support.tokenSeams);
 	const { hashRs, hashTs } = emitHashFiles(lang, [
 		{ filename: 'node.rs', content: nodeRs },
 		{ filename: 'options.rs', content: optionsRs }
@@ -1479,6 +1495,7 @@ function renderNodeSupport(
 	readonly records: ReadonlyMap<string, RecordLayout>;
 	readonly choicePayloads: ReadonlySet<string>;
 	readonly boundaries: BoundaryTable;
+	readonly tokenSeams: ReadonlyMap<number, string>;
 } {
 	const projection = getNodeProjection(nodeMap);
 	const nodes = projection.nodes;
@@ -1582,7 +1599,8 @@ function renderNodeSupport(
 		text: [rendered, '', grammarNodesStatement(read.nodes)].join('\n'),
 		records: read.records,
 		choicePayloads: read.choicePayloads,
-		boundaries: boundaryTableFor(structs, nodeMap, plan, meta, generatedIdTables, read)
+		boundaries: boundaryTableFor(structs, nodeMap, plan, meta, generatedIdTables, read),
+		tokenSeams: tokenSeamsOf(fixed)
 	};
 }
 

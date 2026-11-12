@@ -17,6 +17,7 @@ import type {
 	HoldsTrivia,
 	HoldsTree,
 	HoldsSource,
+	SavesFile,
 	TriviaSetter,
 	GrammarInnerTrivia,
 	SlotHint,
@@ -1772,11 +1773,12 @@ export type LooseArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseA
 // <TypeName>.Config / .Bound / .Parsed / .Loose alongside using <TypeName> as a type.
 export namespace Program {
 	export type Config = ConfigFor<TSKindId.Program>;
-	export interface Bound extends BoundOf<T.Program, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.Program, BoundByKindId>, NodeMethodsOf, HoldsSource, SavesFile {
 		readonly $type: T.Program['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.Program, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed
+		extends ParsedOf<T.Program, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree, SavesFile {
 		readonly $type: T.Program['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<

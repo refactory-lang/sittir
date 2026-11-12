@@ -1306,6 +1306,7 @@ export type {
 	RenderOptionsCheck,
 	Renderable,
 	Rendered,
+	SavesFile,
 	StructureRow,
 	StructureTable,
 	TriviaFacts,

@@ -2140,7 +2140,8 @@ function fieldCarryingFactoryText(
 			accessors: slotsToEmit.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
 			extra: [...(view?.members ?? []), ...groupSeatMembers(plan, (hint) => hint.stored)],
 			tail: view?.tail,
-			trivia
+			trivia,
+			root: node.grammarRoot
 		});
 		lines.push(...members.members, '  };', ...members.after);
 		lines.push(...(view?.postlude ?? []));
@@ -2431,7 +2432,8 @@ function emitRefineFormFactory(
 		const members = nodeMemberParts({
 			setters: { kind: node.kind, prefix: formFn, entries: formSetters, held },
 			accessors: allSlots.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
-			trivia
+			trivia,
+			root: node.grammarRoot
 		});
 		lines.push(...members.members, '  };', ...members.after);
 		lines.push(`  return node as unknown as ${formBuiltName};`);
@@ -3137,7 +3139,8 @@ function emitSeparatedListFactory(
 				accessors: [storedAccessor(contentAccessorName, contentStorageKey, buildSeparatedListContentSlot(node), nodeMap)],
 				extra: view.members,
 				tail: view.tail,
-				trivia
+				trivia,
+				root: node.grammarRoot
 			});
 			lines.push(...members.members, '  };', ...members.after);
 			lines.push(...view.postlude);
@@ -3410,7 +3413,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 
 }
 
-const OBJECT_MEMBER_VALUES = ['HANDLE', 'INPUT', 'OPTIONS', 'receiverOf', 'applySetter', 'objectLeading', 'objectTrailing'];
+const OBJECT_MEMBER_VALUES = ['HANDLE', 'INPUT', 'OPTIONS', 'receiverOf', 'applySetter', 'objectLeading', 'objectTrailing', 'handleSave'];
 const OBJECT_MEMBER_TYPES = ['Held', 'Received'];
 
 const SITTIR_TYPES_IMPORT_CANDIDATES = ['Admit', 'ListOptions', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'NumericConfig', 'NumericLiteral', 'RefuseUndeclared', 'RefusingConfig', 'WidenSlots'];
