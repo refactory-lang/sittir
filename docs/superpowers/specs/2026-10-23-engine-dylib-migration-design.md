@@ -32,6 +32,14 @@ A Rust dylib exports its Rust symbols and none of the C libraries it links, but 
 
 The list reaches each linker in its own form: an `exported_symbols_list` (macOS), a version script (Linux), and `/EXPORT` lines with `DATA` for the slots (MSVC). The engine defines the runtime and no addon does; a grammar's addon imports only what its scanner reads.
 
+### What crosses is typed as what it is
+
+The addon's generated typings and common's declared surface state the same type for every member, and a test checks each return exactly, naming its deliberate exceptions (the maintainer, 2026-11-12, "Approve all"). The wire types live in `@sittir/types` and are internal to the boundary:
+
+- `WireNode<Node extends object = object> = Node | number`: a node as it crosses, its data or a bare kind id for a fixed token. Trivia entries, `read`, `snapshot` and `readMany` (`WireNode[] | Uint32Array`) use it.
+- `UnitSidesWire<Node>`: `{ slot, item }` and the sides, with `WireNode` entries, for `unitSides`, `builtUnitSides`, `writeUnitSides` and `writeBuiltUnitSides`.
+- `SlotLayoutWire`: `{ slot, before?, after?, separator? }`, each a kind id, for `slotLayouts`.
+
 ## Build
 
 - **`-C prefer-dynamic` for the engine and every addon.** It is the switch between the shapes: `sittir-engine` is `crate-type = ["dylib", "rlib"]`, so without the flag everything links statically. The flag comes from a tracked `[target.*] rustflags` entry or the build's environment. A build script cannot set it.

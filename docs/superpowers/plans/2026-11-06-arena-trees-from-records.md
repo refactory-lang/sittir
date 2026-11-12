@@ -177,6 +177,8 @@
 - [x] **Step 4: Run the three-way verification** in both storages, then a byte-identical render over all of matter.js and next.js in arena storage, through the validators' corpus mode.
 - [x] **Step 5: Commit:** `feat(arena): render, queries and edits read records, not the tree`.
 
+**Follow-up, the lent arena's second read:** `render_built_with` holds the built store's read for the whole render, and `ArenaSources::render_record_entry` takes that read again on the same thread, which deadlocks once a writer queues between the two. One JS thread never queues one, so it can't fail today. The fix is ported in place in `napi_engine`, on its own PR, with no failing test first and no new items (the maintainer, 2026-11-12: "Port without a test"). The code is napi-only and can't be tested where it sits.
+
 ### Task 5b: Leaf, ERROR and unit reads take no tree
 
 **Status:** merged as #1164 (3c2f22bee), 2026-11-10.
