@@ -149,26 +149,22 @@ describe('a commit scope under record construction', () => {
 		expect(live(records)).toBe(before);
 	});
 
-	it('refuses to open while a build is running, so a build rolled back leaves every scope as it opened', async () => {
+	it('refuses to open from an input getter while a build is running, so a build rolled back leaves every scope as it opened', async () => {
 		let refusal: unknown;
-		const engine = (await createEngine(rust, {
-			intercept: [
-				{
-					build(_call, next) {
-						const built = next();
-						if (refusal === undefined) {
-							try {
-								(engine as Engine).scope();
-							} catch (error) {
-								refusal = error;
-							}
-						}
-						return built;
-					}
+		const engine = (await createEngine(rust)) as never as Engine;
+		const { build } = engine;
+		build.binaryExpression({
+			left: build.identifier('a'),
+			operator: '+',
+			get right() {
+				try {
+					engine.scope();
+				} catch (error) {
+					refusal = error;
 				}
-			]
-		})) as never as Engine;
-		engine.build.identifier('x');
+				return build.identifier('b');
+			}
+		});
 		expect(String(refusal)).toMatch(/while a build is running/);
 		const before = live(engine);
 		{
@@ -177,6 +173,46 @@ describe('a commit scope under record construction', () => {
 		}
 		expect(live(engine)).toBe(before);
 		engine.dispose();
+	});
+
+	it('refuses to close from an input getter while a build is running, and closes after it', async () => {
+		using engine = (await createEngine(rust)) as never as Engine;
+		const { build } = engine;
+		const before = live(engine);
+		const scope = engine.scope();
+		let refusal: unknown;
+		build.binaryExpression({
+			left: build.identifier('a'),
+			operator: '+',
+			get right() {
+				try {
+					scope[Symbol.dispose]();
+				} catch (error) {
+					refusal = error;
+				}
+				return build.identifier('b');
+			}
+		});
+		expect(String(refusal)).toMatch(/closed while a build is running/);
+		scope[Symbol.dispose]();
+		expect(live(engine)).toBe(before);
+	});
+
+	it('closes over a node released inside it whose chunk then freed', async () => {
+		using engine = (await createEngine(rust)) as never as Engine;
+		const { build } = engine;
+		const chunks = (): number => engine.diagnostics.builtMemory!()!.chunks;
+		const operand = () => build.binaryExpression({ left: build.identifier('a'), operator: '+', right: build.identifier('b') });
+		const before = live(engine);
+		{
+			using _scope = engine.scope();
+			const node = operand();
+			const held = chunks();
+			for (let n = 0; n < 10_000 && chunks() === held; n++) engine.release(operand());
+			expect(chunks()).toBeGreaterThan(held);
+			engine.release(node);
+		}
+		expect(live(engine)).toBe(before);
 	});
 
 	it('keeps a node it kept through a parent that took the node in and was released before the scope closed', () => {
