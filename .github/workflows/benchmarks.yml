@@ -1,5 +1,5 @@
 name: Arena benchmarks
-run-name: Arena benchmarks (${{ inputs.benchmark == 'oxc-reference' && format('oxc-reference {0}', inputs.feature-ref) || (inputs.benchmark == 'paired-refs' || inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile' || inputs.benchmark == 'parse-release' || inputs.benchmark == 'release-profile' || inputs.benchmark == 'drop-split') && format('{0} {1} vs {2}{3}', inputs.benchmark, inputs.feature-ref, inputs.master-ref, inputs.candidates && format(' + {0}', inputs.candidates) || '') || format('{0}, paired node backends', inputs.benchmark) }})
+run-name: Arena benchmarks (${{ inputs.benchmark == 'oxc-reference' && format('oxc-reference {0}', inputs.feature-ref) || (inputs.benchmark == 'paired-refs' || inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile' || inputs.benchmark == 'parse-release' || inputs.benchmark == 'release-profile' || inputs.benchmark == 'drop-split' || inputs.benchmark == 'retained') && format('{0} {1} vs {2}{3}', inputs.benchmark, inputs.feature-ref, inputs.master-ref, inputs.candidates && format(' + {0}', inputs.candidates) || '') || format('{0}, paired node backends', inputs.benchmark) }})
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
         description: Benchmark to run
         type: choice
         default: all
-        options: [all, corpus, paired-refs, probe, profile, waiting, parse-profile, parse-release, release-profile, drop-split, oxc-reference]
+        options: [all, corpus, paired-refs, probe, profile, waiting, parse-profile, parse-release, release-profile, drop-split, retained, oxc-reference]
       baseline:
         description: all and corpus. A commit to measure beside this one in the same rounds. Empty takes the merge-base with master; none measures this one alone.
         type: string
@@ -142,11 +142,11 @@ jobs:
       sittir-ref: ${{ inputs.feature-ref }}
       profile: ${{ inputs.profile }}
   probe:
-    if: inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile' || inputs.benchmark == 'parse-release' || inputs.benchmark == 'release-profile' || inputs.benchmark == 'drop-split'
+    if: inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile' || inputs.benchmark == 'parse-release' || inputs.benchmark == 'release-profile' || inputs.benchmark == 'drop-split' || inputs.benchmark == 'retained'
     uses: ./.github/workflows/benchmark-probe.yml
     with:
       runner: ${{ inputs.runner }}
-      script: ${{ inputs.benchmark == 'profile' && 'run-profile.py' || inputs.benchmark == 'waiting' && 'run-waiting.py' || inputs.benchmark == 'parse-profile' && 'run-parse-profile.py' || inputs.benchmark == 'parse-release' && 'run-parse-release.py' || inputs.benchmark == 'release-profile' && 'run-release-profile.py' || inputs.benchmark == 'drop-split' && 'run-drop-split.py' || 'run-probe.py' }}
+      script: ${{ inputs.benchmark == 'profile' && 'run-profile.py' || inputs.benchmark == 'waiting' && 'run-waiting.py' || inputs.benchmark == 'parse-profile' && 'run-parse-profile.py' || inputs.benchmark == 'parse-release' && 'run-parse-release.py' || inputs.benchmark == 'release-profile' && 'run-release-profile.py' || inputs.benchmark == 'drop-split' && 'run-drop-split.py' || inputs.benchmark == 'retained' && 'run-retained.py' || 'run-probe.py' }}
       feature-ref: ${{ inputs.feature-ref }}
       master-ref: ${{ inputs.master-ref }}
       profile: ${{ inputs.profile }}
