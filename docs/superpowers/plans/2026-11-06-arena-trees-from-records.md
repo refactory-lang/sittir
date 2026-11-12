@@ -282,6 +282,30 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 - [ ] **Step 5: Run the three-way verification** in arena storage, plus Task 4's parity on the corpora and Task 5's corpus render with the tree dropped.
 - [ ] **Step 6: Commit:** `feat(arena): an arena parse hydrates at parse and drops its tree inside the read call`.
 
+### Task 6b: String-pool interning moves native
+
+The maintainer, 2026-11-12: "needs to be a task '6b'". It follows Task 6 as its own PR. Task 6 itself changes no interning: its read writes the source into the pool natively, and built text keeps its JavaScript path until this task.
+
+**Facts this task starts from** (measured on Task 5c's head, arena storage):
+- `BuiltArena.entry(kind, text)` (`built-arena.ts`) interns built text in JavaScript: a `Map` lookup per call, and on a miss an encode, a `Chunks.alloc` and a copy into a chunk native handed out whole (`builtBytes`). The write position is JavaScript's.
+- The bench is almost all hits: building or editing 2,000 functions makes 2,000 calls and 1 miss; a corpus codemod edit and a parse make none. No bench case builds many distinct names.
+- Parsed text is not interned. A parsed leaf is a span into its source's one string.
+
+**Files:**
+- Modify: `packages/common/src/built-arena.ts` (`BuiltArena.entry`, `Chunks`) and `rust/crates/sittir-core/src/{arena.rs,napi_engine.rs}` (`Arena::intern`, the addon's intern call). The pool has one writer and one write position, native's.
+- Test: a bench case that builds many distinct names, added before the change so the miss path has a base.
+
+**Interfaces:**
+- Consumes: Task 6's native source write.
+- Produces: the addon's intern call and `BuiltArena.entry`'s new internals. Their API rows go to the maintainer before code.
+
+- [ ] **Step 1: The proposal, before code.** The shape that crosses less than once per `entry()` call (a batch per build, a native build path, or another), with the call and miss counts on the rebuilt, codemod and many-names cases, and its API rows.
+- [ ] **Step 2: Failing tests:** the pool's write position is native's alone; a built string interned twice has one entry; a build's text renders byte-identical.
+- [ ] **Step 3:** Run them. They fail.
+- [ ] **Step 4: Implement.**
+- [ ] **Step 5: Run the three-way verification** in arena storage, and the speed gate: arena is not slower on any CI CPU on the rebuilt, codemod and many-names cases.
+- [ ] **Step 6: Commit:** `feat(arena): the string pool is interned natively`.
+
 ### Task 7: The measurements
 
 Run on Task 6's branch before its PR is opened. Tasks 2–5 carry the standard CI runs on their own PRs.

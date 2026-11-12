@@ -107,6 +107,7 @@ Each step lands on its own and stays green:
 3. Token spans and node rows in arena records, plus the record backer, with backer parity on the corpora. The tree is still kept.
 4. Arena render, queries and edits read the record backer, and baseline gaps are stamped with their run.
 5. Hydrate at parse and drop the tree inside the read call. The interim `Tree` object and the live-tree table leave arena storage.
+   - Then, as its own step (plan Task 6b; the maintainer, 2026-11-12): string-pool interning moves native, so the pool has one writer and one write position. Step 5 only writes each read's source into the pool natively and leaves built text's JavaScript interning as it is. Today a repeat intern is one JavaScript map lookup with no crossing, and the bench is almost all hits, so the move ships only in a shape that crosses less than once per intern call and leaves arena no slower on any CI CPU.
 6. CI measurements.
 
 ## Verification
