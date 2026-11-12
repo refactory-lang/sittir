@@ -2,16 +2,18 @@
 // same-value edit of each root's settable members (each edit result released
 // after the timed edit, releaseMs), then a whole-tree read (depth: Infinity).
 // The roots, renders, edit renders and whole trees stay live until the caller
-// drops the result.
+// drops the result. `afterParse`, when given, runs untimed right after the
+// timed parse.
 import { createHash } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 
 export const hash = (texts) => createHash('sha256').update(JSON.stringify(texts)).digest('hex');
 
-export function corpusBatch(engine, sources) {
+export function corpusBatch(engine, sources, afterParse) {
   let start = performance.now();
   const roots = sources.map((source) => engine.parse(source));
   const parseMs = performance.now() - start;
+  afterParse?.();
   start = performance.now();
   const renders = roots.map((node) => {
     const rendered = engine.render(node);
