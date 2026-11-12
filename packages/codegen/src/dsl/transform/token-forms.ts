@@ -44,8 +44,9 @@ const isFieldedAt = (fielded: SitePaths, path: readonly number[]): boolean =>
 
 function outermostChoices(rule: RuntimeRule, path: readonly number[], fielded: SitePaths): Site[] {
 	const t = typeOf(rule);
-	if (t === 'FIELD' || isRepeatType(t) || (isChoiceType(t) && isFieldedAt(fielded, path))) return [];
+	if (t === 'FIELD' || isRepeatType(t)) return [];
 	const optional = optionalContentOf(rule);
+	if ((optional !== undefined || isChoiceType(t)) && isFieldedAt(fielded, path)) return [];
 	if (optional !== undefined) {
 		const forms = isChoiceType(typeOf(optional)) && classifyTokenChoice(optional) === 'forms';
 		return [{ path, class: forms ? 'forms' : 'presence', arms: [...(forms ? flattenFormArms(membersOf(optional)) : [optional]), BLANK] }];
@@ -56,10 +57,10 @@ function outermostChoices(rule: RuntimeRule, path: readonly number[], fielded: S
 	return [];
 }
 
-function presenceSite(choices: readonly Site[], kind: string, variants: SitePaths): Site | undefined {
-	if (!variants.some((site) => site.length === 1)) return undefined;
+function presenceSite(choices: readonly Site[], kind: string): Site {
 	const presence = choices.filter((choice) => choice.class === 'presence');
-	if (presence.length === 1) return presence[0];
+	const [only, ...others] = presence;
+	if (only !== undefined && others.length === 0) return only;
 	const found =
 		presence.length === 0
 			? 'no unfielded presence choice'
@@ -129,11 +130,12 @@ const underWrapper = (fielded: SitePaths): SitePaths => fielded.flatMap((site) =
 
 export function distributeTokenForms(rule: RuntimeRule, kind: string, sites: AuthoredSitePaths = NO_SITES): RuntimeRule {
 	const { precs: precStack, core } = peelPrecs(rule);
-	const fielded = precStack.reduce(underWrapper, sites.fielded);
 	if (!isTokenWrapper(core)) return rule;
+	const armed = sites.variants.some((site) => site.length === 1);
+	const fielded = armed ? [] : underWrapper(precStack.reduce(underWrapper, sites.fielded));
 	const body = contentOf(core);
-	const choices = outermostChoices(body, [], underWrapper(fielded));
-	const site = choices.find((choice) => choice.class === 'forms') ?? presenceSite(choices, kind, sites.variants);
+	const choices = outermostChoices(body, [], fielded);
+	const site = choices.find((choice) => choice.class === 'forms') ?? (armed ? presenceSite(choices, kind) : undefined);
 	if (site === undefined) return rule;
 	const arms = site.arms.map((arm) => (isBlank(arm) ? dropAt(body, site.path) : replaceAt(body, site.path, arm)));
 	const empty = arms.findIndex(matchesEmpty);

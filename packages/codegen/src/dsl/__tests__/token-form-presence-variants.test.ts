@@ -30,6 +30,21 @@ describe('variants authored on the arms of a token-form arm with no form alterna
 		expect(rules.integer_hex_plain!.type).toBe('TOKEN');
 	}, 120_000);
 
+	it('split a token whose arms they name with the authored fields in those arms, whether its optional is written with optional() or as a choice with blank()', async () => {
+		const edits = "edits: { tag: { 0: variant('bang'), 1: variant('plain', { default: true }), '0/0/1': field('name'), '1/0/1': field('name') } }";
+		const armsOf = async (optional: string) => {
+			const raw = await evaluateTempGrammar({ extras: '/\\s/', rules: `tag: () => token(seq(seq('[', ${optional}), /[a-z]+/, ']'))` }, edits);
+			const rules = raw.rules as unknown as Record<string, Rule>;
+			return ['tag_bang', 'tag_plain'].map((kind) => rules[kind]!.content!.members!.map((member) => member.type));
+		};
+		const viaOptional = await armsOf("optional('!')");
+		expect(viaOptional).toEqual([
+			['SEQ', 'FIELD', 'STRING'],
+			['STRING', 'FIELD', 'STRING']
+		]);
+		expect(await armsOf("choice('!', blank())")).toEqual(viaOptional);
+	}, 120_000);
+
 	it('refuse a token-form arm with no presence choice to split, naming it', async () => {
 		const evaluated = evaluateTempGrammar(
 			{ ...upstream, rules: upstream.rules.replace(', optional(/[Ll]/)),', '),') },
