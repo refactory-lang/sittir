@@ -38,7 +38,7 @@ function firstDifference(entry: string, live: string, snapshot: string): Differe
 }
 
 async function census(grammar: string): Promise<Difference[]> {
-	const engine = await createEngine(await languageByName(grammar));
+	using engine = await createEngine(await languageByName(grammar));
 	const out: Difference[] = [];
 	for (const { name, source } of loadCorpusEntries(grammar)) {
 		try {

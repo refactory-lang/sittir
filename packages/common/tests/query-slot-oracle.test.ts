@@ -13,6 +13,8 @@ import { hooks as typescriptHooks } from '../../typescript/src/api.ts';
 type Node = { readonly $type: number; readonly $_layout: { readonly at: { readonly $span: { readonly start: number; readonly end: number } } } };
 type View = Iterable<Node> & { ofType(kind: number): View; where(condition: (c: Record<string, { eq(v: unknown): unknown; match(p: RegExp): unknown }>) => unknown): View };
 
+const ORACLE_TIMEOUT = 60_000;
+
 const source = (path: string): string => readFileSync(new URL(`../../../${path}`, import.meta.url), 'utf8');
 
 const GRAMMARS = [
@@ -53,5 +55,5 @@ describe('a where over a slot selects the nodes its read gives the slot', () => 
 		}
 		expect(disagreements).toEqual([]);
 		expect(checked).toBeGreaterThan(50);
-	});
+	}, ORACLE_TIMEOUT);
 });

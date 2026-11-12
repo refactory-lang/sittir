@@ -3,6 +3,10 @@ name: Corpus storage benchmark
 on:
   workflow_call:
     inputs:
+      runner:
+        description: The runner label every job runs on, which benchmarks.yml sets once
+        type: string
+        required: true
       runtime-prefix:
         type: string
         required: true
@@ -23,8 +27,8 @@ permissions:
 
 jobs:
   measure:
-    name: ${{ matrix.grammar }} RRP, factory and IR (Linux x64)
-    runs-on: ubuntu-24.04
+    name: ${{ matrix.grammar }} RRP, factory and IR (${{ inputs.runner }})
+    runs-on: ${{ inputs.runner }}
     timeout-minutes: 180
     env:
       CARGO_NET_RETRY: '10'
@@ -105,7 +109,7 @@ jobs:
   summarize:
     name: Combine verified corpus shards
     needs: measure
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.runner }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6

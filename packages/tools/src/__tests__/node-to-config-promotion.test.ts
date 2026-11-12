@@ -1,8 +1,10 @@
-import { describe, expect, it } from 'vitest';
-import { nodeToConfig, type SlotAccessorOf } from '../validate/common.ts';
+import { afterAll, describe, expect, it } from 'vitest';
+import { nodeToConfig, type SlotAccessorOf, disposeNativeEngines } from '../validate/common.ts';
 
 const accessorOf: SlotAccessorOf = (typeId) => ({ kind: String(typeId), slots: [], accessors: {}, separator: false });
 import { validateFactoryStorage } from '../validate/factory-storage.ts';
+
+afterAll(disposeNativeEngines);
 
 function makeFactorySlots(
 	kind: string,

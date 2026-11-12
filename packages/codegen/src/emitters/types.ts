@@ -7,7 +7,7 @@ import { isWordOrBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compil
 import { AbstractAssembledCompound, isFixedTextLeaf, isKindIdStored, separatorCandidateTexts } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import { bareInteriorText, numberInputType, numericLeafInputTypes, numericLeafShape, numericSlotShape } from './interior.ts';
+import { bareInteriorText, kindNumberShape, numberInputType, numericLeafInputTypes, numericLeafShape } from './interior.ts';
 import {
 	collectKindEntries,
 	collectCatalogKinds,
@@ -84,7 +84,6 @@ import {
 	fromBareInput,
 	bareValueSlot,
 	scalarLeafKinds,
-	lexedContentSlot,
 	canonicalSeparatedListField,
 	enumMemberDiscriminant,
 	pruneUnusedImports,
@@ -494,6 +493,7 @@ const VOCABULARY_IMPORTS = [
 	'HoldsTrivia',
 	'HoldsTree',
 	'HoldsSource',
+	'SavesFile',
 	'TriviaSetter',
 	'GrammarInnerTrivia',
 	'SlotHint',
@@ -956,6 +956,7 @@ function emitNamespaceInterfaceLine(
 
 function emitNodeSurfaceInterfaces(lines: string[], node: AssembledNode, nodeMap: NodeMap, surface: BuiltTypeSurface, indent: string, seated = false): void {
 	const methods = triviaPositionsOf(node.kind, nodeMap) === undefined ? 'NodeMethods' : 'NodeMethodsOf';
+	const saves = node.grammarRoot ? ', SavesFile' : '';
 	const emit = (name: string, extendsList: string, withNode: boolean, self = 'this', exported = true): void => {
 		lines.push(`${indent}${exported ? 'export ' : ''}interface ${name} extends ${extendsList} {`);
 		if (withNode) lines.push(`${indent}  readonly $type: ${surface.mainType}['$type'];`);
@@ -971,8 +972,8 @@ function emitNodeSurfaceInterfaces(lines: string[], node: AssembledNode, nodeMap
 		lines.push(`${indent}}`);
 	};
 	if (surface.mainType === undefined) {
-		emit('Bound', `${methods}, HoldsSource`, false);
-		emit('Parsed', `${methods}, HoldsSource, HoldsTree`, false);
+		emit('Bound', `${methods}, HoldsSource${saves}`, false);
+		emit('Parsed', `${methods}, HoldsSource, HoldsTree${saves}`, false);
 		return;
 	}
 	for (const [name, of, byKindId, held] of [
@@ -980,10 +981,10 @@ function emitNodeSurfaceInterfaces(lines: string[], node: AssembledNode, nodeMap
 		['Parsed', 'ParsedOf', 'ParsedByKindId', ', HoldsSource, HoldsTree']
 	] as const) {
 		if (!seated) {
-			emit(name, `${of}<${surface.mainType}, ${byKindId}>, ${methods}${held}`, true);
+			emit(name, `${of}<${surface.mainType}, ${byKindId}>, ${methods}${held}${saves}`, true);
 			continue;
 		}
-		emit(`${name}Surface`, `${of}<${surface.mainType}, ${byKindId}>, ${methods}${held}`, true, name, false);
+		emit(`${name}Surface`, `${of}<${surface.mainType}, ${byKindId}>, ${methods}${held}${saves}`, true, name, false);
 		lines.push(
 			`${indent}export type ${name} = ${name}Surface & FlatShapesOf<${name}Surface, ${surface.mainType}, ${byKindId}>;`
 		);
@@ -1365,8 +1366,7 @@ function emitNamespaceSugarBlock(
 	const looseWidened = widenedLooseConfig === looseConfig ? '' : ` | ${widenedLooseConfig}`;
 	const bareInterior = bareInteriorText(kind, node);
 	const bareText = bareInterior === undefined ? '' : ' | string';
-	const bareContent = lexedContentSlot(node);
-	const bareShape = (bareContent === undefined ? undefined : numericSlotShape(bareContent)) ?? numericLeafShape(kind, node) ?? bareInterior?.number;
+	const bareShape = kindNumberShape(kind, node);
 	const bareSlot = fromBareInput(node, nodeMap) === 'value' ? bareValueSlot(node, nodeMap) : undefined;
 	const bareEnvelope = bareSlot === undefined ? undefined : splicedEnvelopeType(bareSlot, nodeMap);
 	lines.push(

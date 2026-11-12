@@ -567,7 +567,7 @@ Builds `.sittir/parser.wasm` from the sources the last `tree-sitter generate` le
 
 ### `packages/codegen/src/transpile/compile-parser.ts::ensureParserWasm`
 
-Builds the wasm only when `.sittir/parser.wasm` is missing, and reports whether it did. The wasm is committed and every regen rebuilds it, so this is a backstop for a missing file (the vitest global setup), not a staleness check: a present wasm is never rebuilt, and a grammar edit reaches it through a regen.
+Returns the path to `.sittir/parser.wasm`, building it only when `builtParserWasm` reports it not fresh: missing, its sources changed since it was recorded, or its bytes differ from the recorded digest. `built` says whether it built. A fresh wasm is returned as it is.
 
 ### `packages/codegen/src/transpile/compile-parser.ts::UPSTREAM_RECORD`
 

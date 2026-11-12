@@ -199,6 +199,7 @@ Measure native workflows or paired backend validation buckets
 - `--validation` — Profile deep read, factory and IR render/parse validators under both paired backends
 - `--baseline <tree>` — With --validation, also measure another built checkout's own validation workers in the same rounds, the order turning each round, with the memory of loading one grammar and every grammar, and the bytes a host install of each grammar costs, for both
 - `--idle-gate <path>` — Run a shell idle gate before each worker, passing the worker's checkout
+- `--hold-peers` — While it runs, keep the work of other Claude sessions and the sccache server on the efficiency cores (macOS background class), giving it back at the end
 - `--output <path>` — Write the complete JSON report to this file
 
 **Example**
@@ -456,7 +457,7 @@ Check each built release addon's whole-encode stack, RECURSION_LIMIT levels and 
 **Options**
 
 - `--addon <paths...>` — Unstripped addon files to check instead of the copy each release build keeps (sittir-<grammar>.<platform>.node)
-- `--objdump <path>` — llvm-objdump to disassemble with (default: $LLVM_OBJDUMP, then the pinned Rust toolchain's llvm-tools)
+- `--objdump <path>` — llvm-objdump to disassemble with (default: $LLVM_OBJDUMP, then the pinned Rust toolchain's llvm-tools, then xcrun on macOS)
 - `--paths` — Print every costliest path, not only those over budget
 - `--json` — Print the measurements as JSON
 

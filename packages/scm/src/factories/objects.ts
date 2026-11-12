@@ -23,6 +23,7 @@ import {
 	applySetter,
 	objectLeading,
 	objectTrailing,
+	handleSave,
 	objectInner,
 	describeValue,
 	restItems,
@@ -35,8 +36,8 @@ import {
 export const _leafRe_buildIdentifier = /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u;
 export const _leafRe_buildImmediateIdentifier = _leafRe_buildIdentifier;
 export const _leafRe_buildStringContentText = /^(?:(?:[^"\\\n]+))$/u;
-export const _slotRe_buildEscapeSequence_content = /^(?:(?:.))$/u;
-export const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
+export const _slotRe_buildEscapeSequence_content = /^(?:(?:[^\x0A]))$/u;
+export const _slotRe_buildComment_content = /^(?:(?:[^\x0A]*))$/u;
 
 export function buildProgram(): T.EmptyProgram;
 export function buildProgram<A extends Admit<T.Definition[]>>(...children: A & RefuseUndeclared<A>): T.Program.Bound;
@@ -56,6 +57,7 @@ export function buildProgram(...children: Admit<T.Definition[]>): T.Program.Boun
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
+		$save: handleSave,
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing

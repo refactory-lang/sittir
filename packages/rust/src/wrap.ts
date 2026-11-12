@@ -61,6 +61,7 @@ import {
 	rowWith,
 	handleTrivia,
 	handleRender,
+	handleSave,
 	handleToString,
 	handleEngine,
 	handleDispose,
@@ -100,9 +101,10 @@ function viewSlot<T>(
 	forms: number,
 	inline: number,
 	built: number,
-	aliasContent = false
+	aliasContent = false,
+	spellings?: Readonly<Record<string, string>>
 ): ParsedOfData<T> {
-	return childSlot(view, word, width, forms, inline, built, _wrap, aliasContent) as ParsedOfData<T>;
+	return childSlot(view, word, width, forms, inline, built, _wrap, aliasContent, spellings) as ParsedOfData<T>;
 }
 function viewSlots<T>(
 	view: RecordHandle,
@@ -135,6 +137,7 @@ export function wrapSourceFile(data: T.SourceFile, tree: TreeHandle): T.SourceFi
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
+		$save: handleSave,
 		$errors: (data as { readonly $errors?: unknown }).$errors,
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -18409,6 +18412,7 @@ function viewSourceFile(data: RecordPosition, tree: TreeHandle): T.SourceFile.Pa
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		$errors: (data as { readonly $errors?: unknown }).$errors,
+		$save: handleSave,
 		shebang: viewSourceFile$shebang,
 		statements: viewSourceFile$statements,
 		$with: undefined as unknown as object,

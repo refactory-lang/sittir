@@ -26,6 +26,15 @@ pub struct BackerParity {
     pub first: Option<u32>,
 }
 
+/// What a parsed node with no record reads as (`ParsedTree::read_leaf`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LeafRead {
+    /// A leaf: its kind and byte span, its text its source's there.
+    Leaf { kind: KindId, span: crate::types::Span },
+    /// A unit: the kind its holder's slot stores, which it reads as.
+    Unit(KindId),
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for BackerParity {
     /// `{ nodes, differing, first? }`, `first` only when a node differs.
@@ -168,8 +177,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
         if self.meet_error(index)? {
             return Ok(None);
         }
-        if let Some(at) = self.written::<N>(index)? {
-            return Ok(Some(at));
+        if let Some(cell) = self.written::<N>(index)? {
+            return Ok(super::reach::record_of_cell(cell));
         }
         self.with_reads(|tree, cursor, ctx| super::reach::<N>(tree, cursor, ctx, index, depth, true))
     }
@@ -209,15 +218,56 @@ impl<G: EngineGrammar> ParsedTree<G> {
     #[must_use]
     pub fn written_record<N: HydrateNode + RecordCells>(&self, index: NodeIndex) -> Option<Address> {
         if self.tree_arena().node_rows().is_some() {
-            return self.written::<N>(index).ok().flatten();
+            return self.written::<N>(index).ok().flatten().and_then(super::reach::record_of_cell);
         }
         self.with_reads(|tree, cursor, ctx| super::reach::<N>(tree, cursor, ctx, index, Depth::ONE, false)).ok().flatten()
     }
 
-    /// The record of the node at `index` a read wrote, found by the tree's
-    /// rows once it holds every one (`written`).
-    fn written<N: RecordCells>(&self, index: NodeIndex) -> Result<Option<Address>, String> {
-        super::reach::written_record::<N>(&self.tree_arena(), index).map_err(|error| error.to_string())
+    /// The cell that names the node at `index` as the reads so far wrote it,
+    /// found by the tree's rows once it holds every one (`written`).
+    fn written<N: RecordCells>(&self, index: NodeIndex) -> Result<Option<Cell>, String> {
+        super::written::<N>(&self.tree_arena(), index).map_err(|error| error.to_string())
+    }
+
+    /// The parsed node at `index` that has no record, read as the tree's rows
+    /// and records stamp it, with no cursor: where its holder's record holds
+    /// it in a cell (`written`), that cell's leaf or unit; else its row
+    /// (`row_leaf`). `None` for a node with a record of its own, a node
+    /// neither answers, and a tree no whole read hydrated.
+    ///
+    /// # Errors
+    ///
+    /// What the arena refuses of the records it reads.
+    pub fn read_leaf<N: RecordCells + crate::read::ReadNode>(&self, index: NodeIndex) -> Result<Option<LeafRead>, super::ArenaError> {
+        let cell = super::written::<N>(&self.tree_arena(), index)?;
+        Ok(match cell {
+            Some(Cell::ParsedLeaf { kind, span, .. }) => Some(LeafRead::Leaf { kind, span }),
+            Some(Cell::Unit { kind, .. }) => Some(LeafRead::Unit(kind)),
+            Some(Cell::Child { .. }) => None,
+            _ => self.row_leaf::<N>(index),
+        })
+    }
+
+    /// The named node at `index` that `N` reads (`ReadNode::admits`) and no
+    /// `ERROR` holds, as its row stamps it once the tree's rows are
+    /// published: the unit `N` reads it as (`ReadNode::unit_id`), else, for a
+    /// text leaf, which `N` reads routing no slots (`ReadNode::router`), a
+    /// leaf of its stamped kind and span (`row_coordinate`); `None` for any
+    /// other, such as an envelope whose record no read has written yet.
+    fn row_leaf<N: crate::read::ReadNode>(&self, index: NodeIndex) -> Option<LeafRead> {
+        let crate::nodes::Navigation::Records(mut nodes) = self.nodes() else { return None };
+        let kid = nodes.kid(index);
+        if !kid.named || !N::admits(kid.grammar, kid.display) || self.read_error(index).is_some() {
+            return None;
+        }
+        if let Some(kind) = N::unit_id(&mut nodes, &kid) {
+            return Some(LeafRead::Unit(kind));
+        }
+        if N::router(kid.grammar, kid.display).is_some() {
+            return None;
+        }
+        let at = self.row_coordinate(index)?;
+        Some(LeafRead::Leaf { kind: at.kind?, span: at.span })
     }
 
     /// What a view of the parsed record at `at` names it by, read without
@@ -245,22 +295,36 @@ impl<G: EngineGrammar> ParsedTree<G> {
 
     /// The tree hydrated whole as `N` (`hydrate_record`), past any record a
     /// shallower read wrote, then each node compared as its record backer
-    /// (`RecordNodes`) and its tree backer (`TreeNodes`) answer it. A
-    /// diagnostic.
+    /// (`RecordNodes`) and its tree backer (`TreeNodes`) answer it, and as
+    /// the records and a typed read of the tree answer its unit sides and
+    /// its leaf read (`reads_agree`), and, for an extra, whether its tree
+    /// holds its record (`extra_agrees`). A diagnostic.
     ///
     /// # Errors
     ///
-    /// The hydration's refusal, and one that leaves some node with no row.
-    pub fn backer_parity<N: HydrateNode + RecordCells>(&self) -> Result<BackerParity, String> {
+    /// The hydration's refusal, one that leaves some node with no row, and
+    /// what reading a leaf from the records or walking an extra alone
+    /// refuses.
+    pub fn backer_parity<N>(&self) -> Result<BackerParity, String>
+    where
+        N: HydrateNode + RecordCells + crate::prepare::Prepare + crate::read::HasLayout<Option<Box<crate::layout::NodeLayout<G::Trivia>>>>,
+        G::Trivia: PartialEq,
+    {
         self.hydrate_record::<N>(NodeIndex::ROOT, Depth::All)?;
-        let arena = self.tree_arena();
-        let mut records = RecordNodes::new(&arena, self.source()).ok_or("the whole read left a node with no row")?;
-        let work = crate::layout::LayoutWorkCounter::default();
-        let mut nodes = TreeNodes::new(self.tree(), self.source(), &work);
+        let facts = {
+            let arena = self.tree_arena();
+            let mut records = RecordNodes::new(&arena, self.source()).ok_or("the whole read left a node with no row")?;
+            let work = crate::layout::LayoutWorkCounter::default();
+            let mut nodes = TreeNodes::new(self.tree(), self.source(), &work);
+            (0..nodes.kid(NodeIndex::ROOT).count)
+                .map(NodeIndex)
+                .map(|index| (agree(&mut records, &mut nodes, index), records.kid(index)))
+                .collect::<Vec<_>>()
+        };
         let mut parity = BackerParity::default();
-        for index in (0..nodes.kid(NodeIndex::ROOT).count).map(NodeIndex) {
+        for (index, (backers_agree, kid)) in (0..).map(NodeIndex).zip(facts) {
             parity.nodes += 1;
-            if !agree(&mut records, &mut nodes, index) {
+            if !backers_agree || !self.reads_agree::<N>(index, &kid)? || !self.extra_agrees::<N>(index, &kid)? {
                 parity.differing += 1;
                 parity.first.get_or_insert(index.0);
             }
@@ -268,11 +332,66 @@ impl<G: EngineGrammar> ParsedTree<G> {
         Ok(parity)
     }
 
+    /// Whether the tree, read whole, holds the record of the node at `index`
+    /// (`kid`) as `N` reads it: an extra no `ERROR` is or holds has its
+    /// record held exactly when a walk of it alone, into an arena of its
+    /// own, writes one. Any other node agrees.
+    fn extra_agrees<N: HydrateNode>(&self, index: NodeIndex, kid: &crate::nodes::Kid) -> Result<bool, String> {
+        if !kid.extra || self.read_error(index).is_some() {
+            return Ok(true);
+        }
+        let mut alone = TreeArena::new(G::KIND_BITS, crate::read::descendant_count(&self.tree().root_node()));
+        let grammar = self.grammar();
+        let written = super::hydrate_at::<N>(&mut self.tree().walk(), &mut self.read_ctx(), index, None, Depth::All, &mut alone).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
+        Ok(self.tree_arena().held(index).is_some() == written.is_some())
+    }
+
+    /// The sides of the unit children of the node at `index` as a typed read
+    /// of the tree seats them one level down, through a cursor: what
+    /// `unit_sides` answers through the tree's navigation. A diagnostic.
+    pub fn typed_unit_sides<N>(&self, index: NodeIndex) -> Vec<crate::layout::UnitSides<G::Trivia>>
+    where
+        N: crate::read::ReadNode + crate::read::HasLayout<Option<Box<crate::layout::NodeLayout<G::Trivia>>>>,
+    {
+        let seating = self.seating();
+        crate::read::read_from::<N>(&mut seating.cursor(index), &mut seating.ctx().inline_units().units_only(), Depth::ONE)
+            .ok()
+            .and_then(|mut node| crate::read::HasLayout::take_layout(&mut node))
+            .map_or_else(Vec::new, |layout| layout.units)
+    }
+
+    /// Whether the records answer the node at `index` as a typed read of the
+    /// tree does: its unit sides, and, for a named node (`kid`) with no
+    /// record that no `ERROR` holds and the typed read reads, its leaf read
+    /// (`read_leaf`): a leaf the typed read routes no slots for
+    /// (`ReadNode::router`), of the kind and span its coordinate names, or a
+    /// unit; a node it declines is one the typed read routes slots for.
+    fn reads_agree<N>(&self, index: NodeIndex, kid: &crate::nodes::Kid) -> Result<bool, String>
+    where
+        N: HydrateNode + RecordCells + crate::prepare::Prepare + crate::read::HasLayout<Option<Box<crate::layout::NodeLayout<G::Trivia>>>>,
+        G::Trivia: PartialEq,
+    {
+        if self.unit_sides(index) != self.typed_unit_sides::<N>(index) {
+            return Ok(false);
+        }
+        Ok(match self.read_leaf::<N>(index).map_err(|error| error.to_string())? {
+            Some(LeafRead::Leaf { kind, span }) => N::router(kid.grammar, kid.display).is_none() && matches!(
+                self.read_node::<N>(index, Depth::ONE),
+                Some(Ok(crate::engine::NodeRead::Node(node))) if node.source_coordinate().is_some_and(|at| at.kind == Some(kind) && at.span == span)
+            ),
+            Some(LeafRead::Unit(_)) => true,
+            None => !kid.named || N::router(kid.grammar, kid.display).is_some() || self.read_error(index).is_some() || self.written_record::<N>(index).is_some() || !matches!(self.read_node::<N>(index, Depth::ONE), Some(Ok(_))),
+        })
+    }
+
+    /// `f` of the tree's arena, a cursor on its tree and a read of it, its
+    /// refusal in words.
     fn with_reads<R>(&self, f: impl FnOnce(&mut TreeArena, &mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>) -> Result<R, HydrateError>) -> Result<R, String> {
         let grammar = self.grammar();
         let mut arena = self.tree_arena();
         let mut ctx = self.read_ctx();
-        f(&mut arena, &mut self.tree().walk(), &mut ctx).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))
+        let mut cursor = self.tree().walk();
+        f(&mut arena, &mut cursor, &mut ctx).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))
     }
 
     /// `f` of the words records fill in chunk `n` of the tree's arena,

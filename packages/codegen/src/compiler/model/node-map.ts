@@ -1,6 +1,5 @@
 import type { VariantChild } from '../variant-structural.ts';
 import type { ExternalRole } from '../../types/ir.ts';
-import { opensLineEnd } from './pattern-automaton.ts';
 import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AnyRule,
@@ -27,7 +26,7 @@ import {
 	transitiveParseKinds
 } from '../../types/rule.ts';
 import { isStringType, realizesEmpty, type EmptinessCtx } from '../../types/runtime-shapes.ts';
-import { DEDENT_TEXT, isDepthText } from '../../dsl/primitives/spacing.ts';
+import { isDepthText } from '../../dsl/primitives/spacing.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import { aliasStorageOf, GLOBAL_WORDSET, reservedWordsetsOf } from '../../dsl/rule-metadata.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
@@ -50,16 +49,10 @@ import { wordCharAsciiTable } from '../../util/word-matcher.ts';
 const renderRuleWalker = new RuleWalker<RenderRule>();
 const anyRuleWalker = new RuleWalker<AnyRule>();
 
-export type LineEnd = 'open' | 'closed' | 'dedent' | 'empty' | { readonly symbol: string };
-
 export type EdgeTerminal = { readonly literal: string } | { readonly pattern: string } | 'empty' | { readonly symbol: string };
 
 interface EdgeCtx {
 	readonly edge: 'start' | 'end';
-}
-
-interface LineEndCtx {
-	readonly kind: string;
 }
 
 function ruleEdgeTerminals(rule: AnyRule, ctx: EdgeCtx): EdgeTerminal[] {
@@ -88,20 +81,6 @@ function seqEdgeTerminals(fromEdge: readonly AnyRule[], ctx: EdgeCtx): EdgeTermi
 	const terminals = ruleEdgeTerminals(outer, ctx);
 	if (!terminals.includes('empty')) return terminals;
 	return [...terminals.filter((terminal) => terminal !== 'empty'), ...seqEdgeTerminals(fromEdge.slice(1), ctx)];
-}
-
-function ruleLineEnds(rule: AnyRule, ctx: LineEndCtx): LineEnd[] {
-	return ruleEdgeTerminals(rule, { edge: 'end' }).map((terminal) => {
-		if (terminal === 'empty' || 'symbol' in terminal) return terminal;
-		if ('literal' in terminal) return terminal.literal === DEDENT_TEXT ? 'dedent' : 'closed';
-		const opens = opensLineEnd(terminal.pattern);
-		if (opens === undefined) {
-			throw new Error(
-				`model: kind '${ctx.kind}' pattern ${JSON.stringify(terminal.pattern)} uses regex syntax the pattern automaton does not read.`
-			);
-		}
-		return opens ? 'open' : 'closed';
-	});
 }
 
 function parseKindCollisionKey(diagnostic: ParseKindCollisionDiagnostic): string {
@@ -1137,8 +1116,8 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		return this.kindEntry?.id;
 	}
 
-	get lineEnds(): readonly LineEnd[] {
-		return ruleLineEnds(this.rule, { kind: this.kind });
+	get endTerminals(): readonly EdgeTerminal[] {
+		return ruleEdgeTerminals(this.rule, { edge: 'end' });
 	}
 
 	get leadingTerminals(): readonly EdgeTerminal[] {
@@ -1812,6 +1791,7 @@ export interface InnerGap {
 export interface FullFormAffix {
 	readonly texts: readonly string[];
 	readonly slot?: string;
+	readonly decided?: boolean;
 }
 
 export interface FullForm {

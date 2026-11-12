@@ -4799,12 +4799,7 @@ impl ::sittir_core::render::Render for ImportFromStatementContentNodeSlot {
         match self {
             ImportFromStatementContentNodeSlot::ImportList(inner) => inner.render(w),
             ImportFromStatementContentNodeSlot::ParenthesizedImportList(inner) => inner.render(w),
-            ImportFromStatementContentNodeSlot::WildcardImport => {
-                w.site_at(options::SITE_IMPORT_FROM_STATEMENT_STAR_BEFORE);
-                let written = render_wildcard_import(w);
-                written?;
-                Ok(())
-            }
+            ImportFromStatementContentNodeSlot::WildcardImport => render_wildcard_import(w),
         }
     }
 }
@@ -4825,12 +4820,7 @@ impl ::sittir_core::render::Render for ImportFromStatementContentNodeSlotRecord<
         match self {
             ImportFromStatementContentNodeSlotRecord::ImportList(inner) => inner.render(w),
             ImportFromStatementContentNodeSlotRecord::ParenthesizedImportList(inner) => inner.render(w),
-            ImportFromStatementContentNodeSlotRecord::WildcardImport => {
-                w.site_at(options::SITE_IMPORT_FROM_STATEMENT_STAR_BEFORE);
-                let written = render_wildcard_import(w);
-                written?;
-                Ok(())
-            }
+            ImportFromStatementContentNodeSlotRecord::WildcardImport => render_wildcard_import(w),
         }
     }
 }
@@ -7687,24 +7677,9 @@ impl ::sittir_core::view::KindOf for UnaryOperatorOperatorNodeSlot {
 impl ::sittir_core::render::Render for UnaryOperatorOperatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UnaryOperatorOperatorNodeSlot::Plus => {
-                w.site_at(options::SITE_UNARY_OPERATOR_PLUS_BEFORE);
-                let written = render_plus(w);
-                written?;
-                Ok(())
-            }
-            UnaryOperatorOperatorNodeSlot::Dash => {
-                w.site_at(options::SITE_UNARY_OPERATOR_DASH_BEFORE);
-                let written = render_dash(w);
-                written?;
-                Ok(())
-            }
-            UnaryOperatorOperatorNodeSlot::Tilde => {
-                w.site_at(options::SITE_UNARY_OPERATOR_TILDE_BEFORE);
-                let written = render_tilde(w);
-                written?;
-                Ok(())
-            }
+            UnaryOperatorOperatorNodeSlot::Plus => render_plus(w),
+            UnaryOperatorOperatorNodeSlot::Dash => render_dash(w),
+            UnaryOperatorOperatorNodeSlot::Tilde => render_tilde(w),
         }
     }
 }
@@ -11313,12 +11288,7 @@ impl ::sittir_core::view::KindOf for ForInClauseTrailingCommaNodeSlot {
 impl ::sittir_core::render::Render for ForInClauseTrailingCommaNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ForInClauseTrailingCommaNodeSlot::Comma => {
-                w.site_at(options::SITE_FOR_IN_CLAUSE_COMMA_BEFORE);
-                let written = render_comma(w);
-                written?;
-                Ok(())
-            }
+            ForInClauseTrailingCommaNodeSlot::Comma => render_comma(w),
             ForInClauseTrailingCommaNodeSlot::Blank => Ok(()),
         }
     }
@@ -13157,12 +13127,7 @@ impl ::sittir_core::render::Render for SplatPatternListPatternNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             SplatPatternListPatternNodeSlot::Identifier(inner) => inner.render(w),
-            SplatPatternListPatternNodeSlot::Underscore => {
-                w.site_at(options::SITE_SPLAT_PATTERN_LIST_UNDERSCORE_BEFORE);
-                let written = render_underscore(w);
-                written?;
-                Ok(())
-            }
+            SplatPatternListPatternNodeSlot::Underscore => render_underscore(w),
             SplatPatternListPatternNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -13183,117 +13148,8 @@ impl ::sittir_core::render::Render for SplatPatternListPatternNodeSlotRecord<'_>
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             SplatPatternListPatternNodeSlotRecord::Identifier(inner) => inner.render(w),
-            SplatPatternListPatternNodeSlotRecord::Underscore => {
-                w.site_at(options::SITE_SPLAT_PATTERN_LIST_UNDERSCORE_BEFORE);
-                let written = render_underscore(w);
-                written?;
-                Ok(())
-            }
+            SplatPatternListPatternNodeSlotRecord::Underscore => render_underscore(w),
             SplatPatternListPatternNodeSlotRecord::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp, view = SplatPatternDictionaryPatternNodeSlotRecord)]
-pub enum SplatPatternDictionaryPatternNodeSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::__INIT_U_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
-    Identifier(IdentifierNode),
-    #[kind(kind::UNDERSCORE)]
-    Underscore,
-    #[node(verbatim)]
-    Verbatim(VerbatimNode),
-}
-
-impl ::sittir_core::prepare::Prepare for SplatPatternDictionaryPatternNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            SplatPatternDictionaryPatternNodeSlot::Identifier(t) => t.prepare(ctx),
-            SplatPatternDictionaryPatternNodeSlot::Underscore => Ok(()),
-            SplatPatternDictionaryPatternNodeSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            SplatPatternDictionaryPatternNodeSlot::Identifier(t) => t.gap_edges(),
-            SplatPatternDictionaryPatternNodeSlot::Underscore => None,
-            SplatPatternDictionaryPatternNodeSlot::Verbatim(t) => t.gap_edges(),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            SplatPatternDictionaryPatternNodeSlot::Identifier(t) => t.snapshot_edge(),
-            SplatPatternDictionaryPatternNodeSlot::Underscore => None,
-            SplatPatternDictionaryPatternNodeSlot::Verbatim(t) => t.snapshot_edge(),
-        }
-    }
-    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
-        match self {
-            SplatPatternDictionaryPatternNodeSlot::Identifier(t) => t.source_coordinate(),
-            SplatPatternDictionaryPatternNodeSlot::Underscore => None,
-            SplatPatternDictionaryPatternNodeSlot::Verbatim(t) => t.source_coordinate(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            SplatPatternDictionaryPatternNodeSlot::Identifier(t) => t.source_separator(ctx),
-            SplatPatternDictionaryPatternNodeSlot::Underscore => None,
-            SplatPatternDictionaryPatternNodeSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-}
-
-impl ::sittir_core::view::KindOf for SplatPatternDictionaryPatternNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::Underscore => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for SplatPatternDictionaryPatternNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            SplatPatternDictionaryPatternNodeSlot::Identifier(inner) => inner.render(w),
-            SplatPatternDictionaryPatternNodeSlot::Underscore => {
-                w.site_at(options::SITE_SPLAT_PATTERN_DICTIONARY_UNDERSCORE_BEFORE);
-                let written = render_underscore(w);
-                written?;
-                Ok(())
-            }
-            SplatPatternDictionaryPatternNodeSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for SplatPatternDictionaryPatternNodeSlotRecord<'_> {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::Underscore => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for SplatPatternDictionaryPatternNodeSlotRecord<'_> {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            SplatPatternDictionaryPatternNodeSlotRecord::Identifier(inner) => inner.render(w),
-            SplatPatternDictionaryPatternNodeSlotRecord::Underscore => {
-                w.site_at(options::SITE_SPLAT_PATTERN_DICTIONARY_UNDERSCORE_BEFORE);
-                let written = render_underscore(w);
-                written?;
-                Ok(())
-            }
-            SplatPatternDictionaryPatternNodeSlotRecord::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -13939,72 +13795,17 @@ impl ::sittir_core::view::KindOf for ComparisonOperatorComparatorOperatorsNodeSl
 impl ::sittir_core::render::Render for ComparisonOperatorComparatorOperatorsNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ComparisonOperatorComparatorOperatorsNodeSlot::Lt => {
-                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_LT_BEFORE);
-                let written = render_lt(w);
-                written?;
-                Ok(())
-            }
-            ComparisonOperatorComparatorOperatorsNodeSlot::LtEq => {
-                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_LT_EQ_BEFORE);
-                let written = render_lt_eq(w);
-                written?;
-                Ok(())
-            }
-            ComparisonOperatorComparatorOperatorsNodeSlot::EqEq => {
-                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_EQ_EQ_BEFORE);
-                let written = render_eq_eq(w);
-                written?;
-                Ok(())
-            }
-            ComparisonOperatorComparatorOperatorsNodeSlot::BangEq => {
-                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_BANG_EQ_BEFORE);
-                let written = render_bang_eq(w);
-                written?;
-                Ok(())
-            }
-            ComparisonOperatorComparatorOperatorsNodeSlot::GtEq => {
-                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_GT_EQ_BEFORE);
-                let written = render_gt_eq(w);
-                written?;
-                Ok(())
-            }
-            ComparisonOperatorComparatorOperatorsNodeSlot::Gt => {
-                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_GT_BEFORE);
-                let written = render_gt(w);
-                written?;
-                Ok(())
-            }
-            ComparisonOperatorComparatorOperatorsNodeSlot::LtGt => {
-                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_LT_GT_BEFORE);
-                let written = render_lt_gt(w);
-                written?;
-                Ok(())
-            }
-            ComparisonOperatorComparatorOperatorsNodeSlot::InKeyword => {
-                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_IN_KEYWORD_BEFORE);
-                let written = render_in_keyword(w);
-                written?;
-                Ok(())
-            }
-            ComparisonOperatorComparatorOperatorsNodeSlot::NotIn => {
-                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_NOT_IN_BEFORE);
-                let written = render_not_in(w);
-                written?;
-                Ok(())
-            }
-            ComparisonOperatorComparatorOperatorsNodeSlot::IsKeyword => {
-                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_IS_KEYWORD_BEFORE);
-                let written = render_is_keyword(w);
-                written?;
-                Ok(())
-            }
-            ComparisonOperatorComparatorOperatorsNodeSlot::IsNot => {
-                w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_IS_NOT_BEFORE);
-                let written = render_is_not(w);
-                written?;
-                Ok(())
-            }
+            ComparisonOperatorComparatorOperatorsNodeSlot::Lt => render_lt(w),
+            ComparisonOperatorComparatorOperatorsNodeSlot::LtEq => render_lt_eq(w),
+            ComparisonOperatorComparatorOperatorsNodeSlot::EqEq => render_eq_eq(w),
+            ComparisonOperatorComparatorOperatorsNodeSlot::BangEq => render_bang_eq(w),
+            ComparisonOperatorComparatorOperatorsNodeSlot::GtEq => render_gt_eq(w),
+            ComparisonOperatorComparatorOperatorsNodeSlot::Gt => render_gt(w),
+            ComparisonOperatorComparatorOperatorsNodeSlot::LtGt => render_lt_gt(w),
+            ComparisonOperatorComparatorOperatorsNodeSlot::InKeyword => render_in_keyword(w),
+            ComparisonOperatorComparatorOperatorsNodeSlot::NotIn => render_not_in(w),
+            ComparisonOperatorComparatorOperatorsNodeSlot::IsKeyword => render_is_keyword(w),
+            ComparisonOperatorComparatorOperatorsNodeSlot::IsNot => render_is_not(w),
         }
     }
 }
@@ -23366,7 +23167,7 @@ fn prepare_await<N: AwaitPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMMENT, interior = "^#(?<content>(?:.*))$", words = 6, built_words = 4, fields = CommentFields, prepare = CommentPrepare, view = CommentNodeRecord, prepare_fn = prepare_comment)]
+#[node(kind = kind::COMMENT, interior = "^#(?<content>(?:[^\\x0A]*))$", affixes = ("#", ""), scanned, words = 6, built_words = 4, fields = CommentFields, prepare = CommentPrepare, view = CommentNodeRecord, prepare_fn = prepare_comment)]
 pub struct CommentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26375,7 +26176,7 @@ fn prepare_float_scientific<N: FloatScientificPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$", words = 6, built_words = 4, fields = EscapeSequenceUnicodeFixedFields, prepare = EscapeSequenceUnicodeFixedPrepare, view = EscapeSequenceUnicodeFixedNodeRecord, prepare_fn = prepare_escape_sequence_unicode_fixed)]
+#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[a-fA-F0-9]{4}))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceUnicodeFixedFields, prepare = EscapeSequenceUnicodeFixedPrepare, view = EscapeSequenceUnicodeFixedNodeRecord, prepare_fn = prepare_escape_sequence_unicode_fixed)]
 pub struct EscapeSequenceUnicodeFixedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26449,7 +26250,7 @@ fn prepare_escape_sequence_unicode_fixed<N: EscapeSequenceUnicodeFixedPrepare + 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_WIDE, interior = "^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$", words = 6, built_words = 4, fields = EscapeSequenceUnicodeWideFields, prepare = EscapeSequenceUnicodeWidePrepare, view = EscapeSequenceUnicodeWideNodeRecord, prepare_fn = prepare_escape_sequence_unicode_wide)]
+#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_WIDE, interior = "^\\\\(?<content>(?:U[a-fA-F0-9]{8}))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceUnicodeWideFields, prepare = EscapeSequenceUnicodeWidePrepare, view = EscapeSequenceUnicodeWideNodeRecord, prepare_fn = prepare_escape_sequence_unicode_wide)]
 pub struct EscapeSequenceUnicodeWideNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26523,7 +26324,7 @@ fn prepare_escape_sequence_unicode_wide<N: EscapeSequenceUnicodeWidePrepare + ?S
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[a-fA-F\\d]{2}))$", words = 6, built_words = 4, fields = EscapeSequenceHexFields, prepare = EscapeSequenceHexPrepare, view = EscapeSequenceHexNodeRecord, prepare_fn = prepare_escape_sequence_hex)]
+#[node(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[a-fA-F0-9]{2}))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceHexFields, prepare = EscapeSequenceHexPrepare, view = EscapeSequenceHexNodeRecord, prepare_fn = prepare_escape_sequence_hex)]
 pub struct EscapeSequenceHexNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26597,7 +26398,7 @@ fn prepare_escape_sequence_hex<N: EscapeSequenceHexPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_OCTAL, interior = "^\\\\(?<content>(?:\\d{1,3}))$", words = 6, built_words = 4, fields = EscapeSequenceOctalFields, prepare = EscapeSequenceOctalPrepare, view = EscapeSequenceOctalNodeRecord, prepare_fn = prepare_escape_sequence_octal)]
+#[node(kind = kind::ESCAPE_SEQUENCE_OCTAL, interior = "^\\\\(?<content>(?:[0-9]{1,3}))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceOctalFields, prepare = EscapeSequenceOctalPrepare, view = EscapeSequenceOctalNodeRecord, prepare_fn = prepare_escape_sequence_octal)]
 pub struct EscapeSequenceOctalNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26671,7 +26472,7 @@ fn prepare_escape_sequence_octal<N: EscapeSequenceOctalPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_LINE_BREAK, interior = "^\\\\(?<content>(?:\\r?\\n))$", words = 6, built_words = 4, fields = EscapeSequenceLineBreakFields, prepare = EscapeSequenceLineBreakPrepare, view = EscapeSequenceLineBreakNodeRecord, prepare_fn = prepare_escape_sequence_line_break)]
+#[node(kind = kind::ESCAPE_SEQUENCE_LINE_BREAK, interior = "^\\\\(?<content>(?:\\r?\\n))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceLineBreakFields, prepare = EscapeSequenceLineBreakPrepare, view = EscapeSequenceLineBreakNodeRecord, prepare_fn = prepare_escape_sequence_line_break)]
 pub struct EscapeSequenceLineBreakNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26745,7 +26546,7 @@ fn prepare_escape_sequence_line_break<N: EscapeSequenceLineBreakPrepare + ?Sized
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:['\"abfrntv\\\\]))$", words = 6, built_words = 4, fields = EscapeSequenceSimpleFields, prepare = EscapeSequenceSimplePrepare, view = EscapeSequenceSimpleNodeRecord, prepare_fn = prepare_escape_sequence_simple)]
+#[node(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:['\"abfrntv\\\\]))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceSimpleFields, prepare = EscapeSequenceSimplePrepare, view = EscapeSequenceSimpleNodeRecord, prepare_fn = prepare_escape_sequence_simple)]
 pub struct EscapeSequenceSimpleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26819,7 +26620,7 @@ fn prepare_escape_sequence_simple<N: EscapeSequenceSimplePrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_NAMED, interior = "^\\\\(?<content>(?:N\\{[^}]+\\}))$", words = 6, built_words = 4, fields = EscapeSequenceNamedFields, prepare = EscapeSequenceNamedPrepare, view = EscapeSequenceNamedNodeRecord, prepare_fn = prepare_escape_sequence_named)]
+#[node(kind = kind::ESCAPE_SEQUENCE_NAMED, interior = "^\\\\(?<content>(?:N\\{[^}]+\\}))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceNamedFields, prepare = EscapeSequenceNamedPrepare, view = EscapeSequenceNamedNodeRecord, prepare_fn = prepare_escape_sequence_named)]
 pub struct EscapeSequenceNamedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27309,7 +27110,7 @@ pub struct SplatPatternDictionaryNode {
     height: u16,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN, word = 2, width = 4, forms = 3, built = 2)]
-    pub pattern: ::sittir_core::SlotValue<SplatPatternDictionaryPatternNodeSlot>,
+    pub pattern: ::sittir_core::SlotValue<SplatPatternListPatternNodeSlot>,
 }
 
 impl ::sittir_core::view::KindOf for SplatPatternDictionaryNode {
@@ -28713,7 +28514,7 @@ fn prepare_escape_interpolation<N: EscapeInterpolationPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_END, interior = "^(?<content>(?:(?:\\\\[\\s\\S])*))(?<quote>\"\"\"|'''|\"|'|`)$", words = 8, built_words = 5, fields = StringEndFields, prepare = StringEndPrepare, view = StringEndNodeRecord, prepare_fn = prepare_string_end, facet = quote)]
+#[node(kind = kind::STRING_END, interior = "^(?<content>(?:(?:\\\\[\\x09-\\x0D\\x20\\x00-\\x08\\x0E-\\x1F\\x21-\\u{10FFFF}])*))(?<quote>\"\"\"|'''|\"|'|`)$", words = 8, built_words = 5, fields = StringEndFields, prepare = StringEndPrepare, view = StringEndNodeRecord, prepare_fn = prepare_string_end, facet = quote)]
 pub struct StringEndNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33907,6 +33708,7 @@ fn render_import_from_statement<N: ImportFromStatementFields + ?Sized>(node: &N,
     w.site_at(options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_BEFORE);
     w.text("import")?;
     w.site_at(options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_AFTER);
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(8), ::sittir_core::types::KindId(138)]) { w.site_at(options::SITE_IMPORT_FROM_STATEMENT_STAR_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     w.edge(::sittir_core::types::KindId(135), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -34882,6 +34684,9 @@ fn render_unary_operator<N: UnaryOperatorFields + ?Sized>(node: &N, w: &mut dyn 
     let argument = node.argument();
     let operator = node.operator();
     w.edge(::sittir_core::types::KindId(210), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(48)]) { w.site_at(options::SITE_UNARY_OPERATOR_PLUS_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(49)]) { w.site_at(options::SITE_UNARY_OPERATOR_DASH_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(59)]) { w.site_at(options::SITE_UNARY_OPERATOR_TILDE_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_argument", ::sittir_core::types::ItemIndex(0), w, |w| argument.render(w))?;
@@ -35307,6 +35112,7 @@ fn render_for_in_clause<N: ForInClauseFields + ?Sized>(node: &N, w: &mut dyn ::s
     w.text("in")?;
     w.site_at(options::SITE_FOR_IN_CLAUSE_IN_KEYWORD_AFTER);
     right.render(w)?;
+    if trailing_comma.kind_in(&*w, &[::sittir_core::types::KindId(6)]) { w.site_at(options::SITE_FOR_IN_CLAUSE_COMMA_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_trailing_comma", ::sittir_core::types::ItemIndex(0), w, |w| trailing_comma.render(w))?;
     w.edge(::sittir_core::types::KindId(244), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -36093,6 +35899,7 @@ fn render_splat_pattern_list<N: SplatPatternListFields + ?Sized>(node: &N, w: &m
     w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("*")?;
     w.site_at(options::SITE_SPLAT_PATTERN_LIST_STAR_AFTER);
+    if pattern.kind_in(&*w, &[::sittir_core::types::KindId(89)]) { w.site_at(options::SITE_SPLAT_PATTERN_LIST_UNDERSCORE_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -36103,6 +35910,7 @@ fn render_splat_pattern_dictionary<N: SplatPatternDictionaryFields + ?Sized>(nod
     w.edge(::sittir_core::types::KindId(292), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("**")?;
     w.site_at(options::SITE_SPLAT_PATTERN_DICTIONARY_STAR_STAR_AFTER);
+    if pattern.kind_in(&*w, &[::sittir_core::types::KindId(89)]) { w.site_at(options::SITE_SPLAT_PATTERN_DICTIONARY_UNDERSCORE_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.edge(::sittir_core::types::KindId(292), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -36230,6 +36038,17 @@ fn render_comparison_operator_comparator<N: ComparisonOperatorComparatorFields +
     let operators = node.operators();
     let primary_expression = node.primary_expression();
     w.edge(::sittir_core::types::KindId(302), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    if operators.kind_in(&*w, &[::sittir_core::types::KindId(108)]) { w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_LT_BEFORE); }
+    if operators.kind_in(&*w, &[::sittir_core::types::KindId(109)]) { w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_LT_EQ_BEFORE); }
+    if operators.kind_in(&*w, &[::sittir_core::types::KindId(110)]) { w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_EQ_EQ_BEFORE); }
+    if operators.kind_in(&*w, &[::sittir_core::types::KindId(111)]) { w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_BANG_EQ_BEFORE); }
+    if operators.kind_in(&*w, &[::sittir_core::types::KindId(112)]) { w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_GT_EQ_BEFORE); }
+    if operators.kind_in(&*w, &[::sittir_core::types::KindId(113)]) { w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_GT_BEFORE); }
+    if operators.kind_in(&*w, &[::sittir_core::types::KindId(114)]) { w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_LT_GT_BEFORE); }
+    if operators.kind_in(&*w, &[::sittir_core::types::KindId(25)]) { w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_IN_KEYWORD_BEFORE); }
+    if operators.kind_in(&*w, &[::sittir_core::types::KindId(211)]) { w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_NOT_IN_BEFORE); }
+    if operators.kind_in(&*w, &[::sittir_core::types::KindId(60)]) { w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_IS_KEYWORD_BEFORE); }
+    if operators.kind_in(&*w, &[::sittir_core::types::KindId(212)]) { w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_IS_NOT_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operators", ::sittir_core::types::ItemIndex(0), w, |w| operators.render(w))?;
     if operators.kind_in(&*w, &[::sittir_core::types::KindId(25), ::sittir_core::types::KindId(60)]) {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::SEPARATING);
@@ -38841,7 +38660,7 @@ const _: () = assert!(::core::mem::size_of::<WithStatementNode>() <= 256, "WithS
 const _: () = assert!(::core::mem::size_of::<YieldFromClauseNode>() <= 256, "YieldFromClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldNode>() <= 256, "YieldNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_nodes!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, TypeParamNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, CaseClausePatternNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeTypeNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsElementsNodeSlot, DictionaryElementsItemNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, SplatPatternListPatternNodeSlot, SplatPatternDictionaryPatternNodeSlot, AssignmentEqValueNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, MatchBlockNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TypeParamsNode, TypeParamsItemsNode, TuplePatternElementsNode, CasePatternListNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, SplatPatternListNode, SplatPatternDictionaryNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, TypeParamTypeVarNode, TypeParamTypeVarTupleNode, TypeParamParamSpecNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, PipeNode, LbraceNode, RbraceNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, UnderscoreNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);
+::sittir_core::grammar_nodes!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, TypeParamNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, CaseClausePatternNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeTypeNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsElementsNodeSlot, DictionaryElementsItemNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, SplatPatternListPatternNodeSlot, AssignmentEqValueNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, MatchBlockNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TypeParamsNode, TypeParamsItemsNode, TuplePatternElementsNode, CasePatternListNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, SplatPatternListNode, SplatPatternDictionaryNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, TypeParamTypeVarNode, TypeParamTypeVarTupleNode, TypeParamParamSpecNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, PipeNode, LbraceNode, RbraceNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, UnderscoreNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AliasedImportNode>() == 152, "AliasedImportNode is not the 152 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -39406,8 +39225,6 @@ const _: () = assert!(::core::mem::size_of::<SliceNode>() == 632, "SliceNode is 
 const _: () = assert!(::core::mem::size_of::<SpaceNode>() == 0, "SpaceNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SplatPatternDictionaryNode>() == 64, "SplatPatternDictionaryNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SplatPatternDictionaryPatternNodeSlot>() == 40, "SplatPatternDictionaryPatternNodeSlot is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SplatPatternListNode>() == 64, "SplatPatternListNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

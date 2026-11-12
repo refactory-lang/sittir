@@ -1,6 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { structuralDiff, validateFrom } from '../src/validate/from.ts';
+import { disposeNativeEngines } from '../src/validate/common.ts';
+
+afterAll(disposeNativeEngines);
 
 const node = (fields: Record<string, unknown>): AnyUntypedNode => ({ $type: 7, ...fields }) as unknown as AnyUntypedNode;
 

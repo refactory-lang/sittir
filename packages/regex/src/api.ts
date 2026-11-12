@@ -37,6 +37,7 @@ export const hooks: LanguageHooks<RegexAPI> = Object.freeze<LanguageHooks<RegexA
 	}),
 	records: () => import('./factories/records.js'),
 	trivia: triviaFacts,
+	rootKinds: Object.freeze([51]),
 	querySlots,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),

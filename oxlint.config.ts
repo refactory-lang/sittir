@@ -1,4 +1,5 @@
 import { defineConfig } from 'oxlint';
+import { allGrammars } from './packages/codegen/src/grammars.ts';
 
 export default defineConfig({
 	$schema: './node_modules/oxlint/configuration_schema.json',
@@ -20,7 +21,7 @@ export default defineConfig({
 			// leave module init reading half-built exports as `undefined` —
 			// which surfaces as an opaque "cannot read properties of
 			// undefined", not as an import error.
-			files: ['packages/rust/src/**', 'packages/typescript/src/**', 'packages/python/src/**'],
+			files: allGrammars().map((grammar) => `packages/${grammar}/src/**`),
 			rules: {
 				'import/no-cycle': 'error',
 				// The generated text-leaf guards embed each grammar's own lexer
@@ -56,6 +57,14 @@ export default defineConfig({
 			files: ['packages/types/src/vocabulary/**'],
 			rules: {
 				'no-unused-vars': ['error', { varsIgnorePattern: '^(G|K)$' }]
+			}
+		},
+		{
+			// A pending write or create is PromiseLike on purpose: awaiting
+			// it is what commits it.
+			files: ['packages/common/src/pending.ts'],
+			rules: {
+				'unicorn/no-thenable': 'off'
 			}
 		}
 	],

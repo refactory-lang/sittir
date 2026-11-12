@@ -1,0 +1,122 @@
+name: Paired refs benchmark
+
+on:
+  workflow_call:
+    inputs:
+      runner:
+        description: The runner label every job runs on, which benchmarks.yml sets once
+        type: string
+        required: true
+      feature-ref:
+        type: string
+        required: true
+      master-ref:
+        type: string
+        required: true
+      profile:
+        type: string
+        required: true
+      arena:
+        type: boolean
+        required: true
+      candidates:
+        type: string
+        required: true
+      build-path:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_NET_RETRY: '10'
+  CARGO_HTTP_MULTIPLEXING: 'false'
+
+jobs:
+  measure:
+    name: Feature, master, the candidates and the merge base on one runner (${{ inputs.runner }})
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '26.12.0'
+          cache: pnpm
+      # llvm-tools carries the llvm-strip a tree's build driver strips its
+      # release addons with, once it builds on the path that strips after the build.
+      - uses: ./.github/actions/rust-toolchain
+        with:
+          components: llvm-tools
+      - name: Test the build path placement
+        run: node --test scripts/ci/paired-refs/build-path.test.mjs
+      - name: Resolve the commits
+        shell: bash
+        env:
+          FEATURE_REF: ${{ inputs.feature-ref }}
+          MASTER_REF: ${{ inputs.master-ref }}
+          PROFILE: ${{ inputs.profile }}
+          ARENA: ${{ inputs.arena }}
+          CANDIDATES: ${{ inputs.candidates }}
+          BUILD_PATH: ${{ inputs.build-path }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/trees"
+          scripts/ci/paired-refs/resolve-refs.sh "$RUNNER_TEMP/paired-refs"
+      - name: Build the merge base
+        shell: bash
+        run: scripts/ci/paired-refs/build-tree.sh base "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/paired-refs/build-base.log"
+      - name: Build master
+        shell: bash
+        run: scripts/ci/paired-refs/build-tree.sh master "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/paired-refs/build-master.log"
+      - name: Build feature
+        shell: bash
+        run: scripts/ci/paired-refs/build-tree.sh feature "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/paired-refs/build-feature.log"
+      - name: Build the candidates
+        shell: bash
+        run: |
+          for tree in $(jq -r '.candidates | keys_unsorted[]' "$RUNNER_TEMP/paired-refs/refs.json"); do
+            scripts/ci/paired-refs/build-tree.sh "$tree" "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/paired-refs/build-$tree.log"
+          done
+      - name: Hold every tree to one build path
+        shell: bash
+        run: node scripts/ci/paired-refs/build-path.mjs check "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" base master feature $(jq -r '.candidates | keys_unsorted[]' "$RUNNER_TEMP/paired-refs/refs.json")
+      - name: Fingerprint the built trees
+        shell: bash
+        run: |
+          for tree in base master feature $(jq -r '.candidates | keys_unsorted[]' "$RUNNER_TEMP/paired-refs/refs.json"); do
+            (cd "$RUNNER_TEMP/trees/$tree" && node "$GITHUB_WORKSPACE/scripts/ci/arena-benchmark-report.mjs" capture "$RUNNER_TEMP/paired-refs/before-$tree.json")
+          done
+      - name: Measure every version in alternating fresh processes
+        shell: bash
+        env:
+          ARENA: ${{ inputs.arena }}
+        run: |
+          versions=(base="$RUNNER_TEMP/trees/base" master="$RUNNER_TEMP/trees/master" feature="$RUNNER_TEMP/trees/feature")
+          if [[ $ARENA == true ]]; then versions+=(base-arena="$RUNNER_TEMP/trees/base@arena" feature-arena="$RUNNER_TEMP/trees/feature@arena"); fi
+          for tree in $(jq -r '.candidates | keys_unsorted[]' "$RUNNER_TEMP/paired-refs/refs.json"); do
+            versions+=("$tree=$RUNNER_TEMP/trees/$tree")
+            if [[ $ARENA == true ]]; then versions+=("$tree-arena=$RUNNER_TEMP/trees/$tree@arena"); fi
+          done
+          python3 scripts/ci/paired-refs/run.py "$RUNNER_TEMP/paired-refs/runs" "${versions[@]}" 2>&1 | tee "$RUNNER_TEMP/paired-refs/run.log"
+      - name: Check the trees did not change during measurement
+        shell: bash
+        run: |
+          for tree in base master feature $(jq -r '.candidates | keys_unsorted[]' "$RUNNER_TEMP/paired-refs/refs.json"); do
+            (cd "$RUNNER_TEMP/trees/$tree" && node "$GITHUB_WORKSPACE/scripts/ci/arena-benchmark-report.mjs" capture "$RUNNER_TEMP/paired-refs/after-$tree.json")
+            node scripts/ci/arena-benchmark-report.mjs verify "$RUNNER_TEMP/paired-refs/before-$tree.json" "$RUNNER_TEMP/paired-refs/after-$tree.json"
+          done
+      - name: Summarize the ratios beside 2026-10-29
+        shell: bash
+        run: python3 scripts/ci/paired-refs/summarize.py "$RUNNER_TEMP/paired-refs" docs/reviews/2026-10-29-paired-backends/benchmarks/object-benchmark-summary.json
+      - name: Upload raw samples, fingerprints and summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: paired-refs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/paired-refs/
+          retention-days: 30
+          if-no-files-found: warn

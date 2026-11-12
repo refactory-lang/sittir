@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
+import { sharedEngine } from '@sittir/common/testing';
 import { createEngine } from '@sittir/common';
 import rust from '../../rust/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
 
-const rs = await createEngine(rust);
-const ts = await createEngine(typescript);
+const rs = await sharedEngine(() => createEngine(rust));
+const ts = await sharedEngine(() => createEngine(typescript));
 
 describe("a template line break at a parsed node's seam obeys the gap's stored layout", () => {
 	it.each(['fn f() { x; }\n', 'fn f() {} // c\nfn g() {}\n'])('rust %j snapshots to its source', (source) => {

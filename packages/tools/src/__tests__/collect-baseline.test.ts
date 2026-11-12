@@ -31,10 +31,13 @@
 
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import * as baseline from '../scripts/collect-baseline.ts';
 import { deriveRuleKinds } from '../validate/render-bodies.ts';
 import { stableGrammars } from '@sittir/codegen/grammars';
+import { disposeNativeEngines } from '../validate/common.ts';
+
+afterAll(disposeNativeEngines);
 
 const grammarKeys = stableGrammars();
 
@@ -72,7 +75,8 @@ describe('collect-baseline', () => {
 		expect(result.backend).toBe('native');
 	});
 
-	afterEach(() => {
+	afterEach(async () => {
+		await (await import('../validate/common.ts')).disposeNativeEngines();
 		vi.restoreAllMocks();
 		vi.resetModules();
 		delete process.env.SITTIR_BACKEND;

@@ -131,7 +131,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -283,7 +282,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -665,7 +663,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -809,7 +806,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.LetCondition.Parsed
@@ -884,7 +880,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MutPattern.Parsed
@@ -1040,7 +1035,6 @@ export interface RustMap extends V.GrammarMap {
 								| T.IfExpression.Parsed
 								| T.IndexExpression.Parsed
 								| T.IntegerLiteralBinary.Parsed
-								| T.IntegerLiteralDecimal.Parsed
 								| T.IntegerLiteralHex.Parsed
 								| T.IntegerLiteralOctal.Parsed
 								| T.MatchExpression.Parsed
@@ -1199,7 +1193,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MutPattern.Parsed
@@ -1332,7 +1325,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -1479,7 +1471,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.LetCondition.Parsed
@@ -1658,7 +1649,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.LetCondition.Parsed
@@ -2089,7 +2079,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -2290,7 +2279,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -2491,7 +2479,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -2692,7 +2679,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -2893,7 +2879,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -3107,7 +3092,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -3499,7 +3483,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -3662,7 +3645,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -3825,7 +3807,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -3988,7 +3969,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -4151,7 +4131,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -4327,7 +4306,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -4490,7 +4468,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -4653,7 +4630,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -4816,7 +4792,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -4979,7 +4954,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -5142,7 +5116,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -5318,7 +5291,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -5481,7 +5453,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -5644,7 +5615,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -5807,7 +5777,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -5970,7 +5939,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -6133,7 +6101,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -6309,7 +6276,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -11724,7 +11690,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MutPattern.Parsed
@@ -11939,7 +11904,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MutPattern.Parsed
@@ -13191,7 +13155,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.NegativeLiteral.Parsed
@@ -13467,7 +13430,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MutPattern.Parsed
@@ -13649,7 +13611,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -13851,7 +13812,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -14053,7 +14013,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -14255,7 +14214,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -14457,7 +14415,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -14672,7 +14629,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -14820,7 +14776,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -16518,7 +16473,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -16560,7 +16514,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.number.integer.hex'>
 				| V.Read<RustMap, 'literal.number.integer.octal'>
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed;
 			readonly value:
@@ -16682,7 +16635,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -16827,7 +16779,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.FloatLiteral.Parsed
 				| T.FunctionType.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.Metavariable.Parsed
@@ -17022,7 +16973,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -17163,7 +17113,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -17307,7 +17256,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -17448,7 +17396,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -17591,7 +17538,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -17732,7 +17678,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -17876,7 +17821,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -18017,7 +17961,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -18161,7 +18104,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -18302,7 +18244,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -18446,7 +18387,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -18587,7 +18527,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -18731,7 +18670,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -18872,7 +18810,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -19016,7 +18953,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -19157,7 +19093,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -19301,7 +19236,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -19442,7 +19376,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -19586,7 +19519,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -19727,7 +19659,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -19871,7 +19802,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -20012,7 +19942,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -20156,7 +20085,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -20297,7 +20225,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -20441,7 +20368,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -20585,7 +20511,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -20726,7 +20651,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -20869,7 +20793,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -21010,7 +20933,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -21154,7 +21076,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -21295,7 +21216,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -21439,7 +21359,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -21580,7 +21499,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -21724,7 +21642,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -21865,7 +21782,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -22009,7 +21925,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -22150,7 +22065,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -22294,7 +22208,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -22435,7 +22348,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -22579,7 +22491,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -22720,7 +22631,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -22864,7 +22774,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -23005,7 +22914,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -23149,7 +23057,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -23290,7 +23197,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -23434,7 +23340,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -23575,7 +23480,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -23719,7 +23623,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -23860,7 +23763,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -24004,7 +23906,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -24145,7 +24046,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -24289,7 +24189,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -24430,7 +24329,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -24574,7 +24472,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -24715,7 +24612,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -24859,7 +24755,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -25000,7 +24895,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -25144,7 +25038,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -25285,7 +25178,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -25429,7 +25321,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -25570,7 +25461,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -25714,7 +25604,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -25855,7 +25744,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -26117,7 +26005,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -26365,7 +26252,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -26601,7 +26487,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -26742,7 +26627,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -27037,7 +26921,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -27269,7 +27152,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -27545,7 +27427,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -27738,7 +27619,6 @@ export interface RustMap extends V.GrammarMap {
 								| T.IfExpression.Parsed
 								| T.IndexExpression.Parsed
 								| T.IntegerLiteralBinary.Parsed
-								| T.IntegerLiteralDecimal.Parsed
 								| T.IntegerLiteralHex.Parsed
 								| T.IntegerLiteralOctal.Parsed
 								| T.MatchExpression.Parsed
@@ -27883,7 +27763,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -27918,7 +27797,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.number.integer.hex'>
 				| V.Read<RustMap, 'literal.number.integer.octal'>
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed;
 			readonly $forms: V.Form<'object' | 'property'>;
@@ -28043,7 +27921,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -28187,7 +28064,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -28331,7 +28207,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -28472,7 +28347,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -28616,7 +28490,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -28757,7 +28630,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -28905,7 +28777,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -29046,7 +28917,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -29190,7 +29060,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -29331,7 +29200,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -29475,7 +29343,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -29619,7 +29486,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -29760,7 +29626,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -29904,7 +29769,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -30047,7 +29911,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -30191,7 +30054,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -30335,7 +30197,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -30482,7 +30343,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -30829,7 +30689,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.number.integer.octal'>
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed;
 			readonly $forms: V.Form<'value'>;
@@ -30951,7 +30810,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MutPattern.Parsed
@@ -31079,7 +30937,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MutPattern.Parsed
@@ -31148,7 +31005,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MutPattern.Parsed
@@ -31214,7 +31070,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MutPattern.Parsed
@@ -31266,7 +31121,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.Metavariable.Parsed
@@ -31309,7 +31163,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.Metavariable.Parsed
@@ -31354,7 +31207,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.Metavariable.Parsed
@@ -31397,7 +31249,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.Metavariable.Parsed
@@ -31443,7 +31294,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.Metavariable.Parsed
@@ -31486,7 +31336,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.Metavariable.Parsed
@@ -31532,7 +31381,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.Metavariable.Parsed
@@ -31575,7 +31423,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.Metavariable.Parsed
@@ -31638,7 +31485,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MutPattern.Parsed
@@ -31707,7 +31553,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MutPattern.Parsed
@@ -31903,7 +31748,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MutPattern.Parsed
@@ -32210,7 +32054,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -32353,7 +32196,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -32613,7 +32455,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.LetCondition.Parsed
@@ -33043,7 +32884,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.CharLiteralPlain.Parsed
 				| T.FloatLiteral.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MutPattern.Parsed
@@ -33176,7 +33016,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -33324,7 +33163,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.LetCondition.Parsed
@@ -33471,7 +33309,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -33615,7 +33452,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
@@ -33832,7 +33668,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.IfExpression.Parsed
 				| T.IndexExpression.Parsed
 				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralDecimal.Parsed
 				| T.IntegerLiteralHex.Parsed
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed

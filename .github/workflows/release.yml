@@ -64,7 +64,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v6
         with:
-          node-version: 22.x
+          node-version: 24.x
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Open or update the version PR
@@ -135,7 +135,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v6
         with:
-          node-version: 22.x
+          node-version: 24.x
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Install Rust toolchain (pinned, ${{ matrix.target }})
@@ -195,7 +195,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v6
         with:
-          node-version: 22.x
+          node-version: 24.x
           cache: pnpm
           registry-url: "https://registry.npmjs.org"
       - name: Install npm v11 (OIDC trusted publishing)

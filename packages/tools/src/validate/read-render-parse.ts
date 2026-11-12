@@ -37,6 +37,7 @@ const { loadRawEntries } = await load('nodeTypesLoader');
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
+	treeParser,
 	FAILED_RUN,
 	loadKindNameFromId,
 	loadStorageKindNameFromId,
@@ -57,7 +58,7 @@ import {
 	dedupeMismatchesByContainment,
 	findSpanNode,
 	type TSNode,
-	type TSTree,
+	type TreeParser,
 	type TypedNode,
 	type AccessorThrowRecord,
 	type ValidatorSkip,
@@ -559,27 +560,27 @@ export function selfContainedRenderInput(
  * at it. Pass `leadingTriviaRenderedWidth(data, render)` for this; 0 when
  * the candidate has no leading trivia (the common case, no-op).
  *
- * @param tree2 - The reparsed tree-sitter tree after rendering.
+ * @param root - The root of the reparsed tree-sitter tree after rendering.
  * @param targetKind - The kind to search for: a grammar id (what separates a named rule from the keyword token of the same name), or a tree-sitter kind name.
  * @param wrapped - The wrap result carrying the splice offset.
  * @param offsetAdjust - Bytes to skip past the candidate's own leading trivia.
  * @returns The TSNode at the rendered offset, or null if not found.
  */
 export function findReparsedNodeAtOffset(
-	tree2: TSTree,
+	root: TSNode,
 	targetKind: string | number,
 	wrapped: { text: string; offset: number; at?: (renderedOffset: number) => number },
 	offsetAdjust = 0,
 	identity: ReadIdentity = grammarIdentity
 ): TSNode | null {
-	const adjusted = findNodeAt(tree2.rootNode, targetKind, wrapped.at?.(offsetAdjust) ?? wrapped.offset + offsetAdjust, identity);
+	const adjusted = findNodeAt(root, targetKind, wrapped.at?.(offsetAdjust) ?? wrapped.offset + offsetAdjust, identity);
 	if (adjusted !== null) return adjusted;
-	const plain = offsetAdjust === 0 ? null : findNodeAt(tree2.rootNode, targetKind, wrapped.offset, identity);
+	const plain = offsetAdjust === 0 ? null : findNodeAt(root, targetKind, wrapped.offset, identity);
 	if (plain !== null) return plain;
 	let lead = wrapped.offset;
 	while (lead > 0 && /\s/.test(wrapped.text[lead - 1] ?? 'x')) lead--;
 	for (let at = lead; at < wrapped.offset; at++) {
-		const hit = findNodeAt(tree2.rootNode, targetKind, at, identity);
+		const hit = findNodeAt(root, targetKind, at, identity);
 		if (hit !== null && hit.endIndex > wrapped.offset) return hit;
 	}
 	return null;
@@ -692,7 +693,7 @@ export interface ReadRenderParseFailure {
 export interface RenderReparseContext {
 	readonly profile?: RoundtripProfile;
 	readonly grammar: string;
-	readonly parser: { parse(text: string): unknown };
+	readonly parser: TreeParser;
 	readonly render: (node: AnyUntypedNode) => string;
 	readonly triviaOf: (node: object) => NodeTrivia | undefined;
 	readonly kindToSupertypes: ReturnType<typeof buildKindToSupertypes>;
@@ -726,7 +727,7 @@ export type RenderReparseOutcome =
 			readonly status: 'round-trip';
 			readonly rendered: string;
 			readonly wrapped: NonNullable<ReturnType<typeof wrapForReparse>>;
-			readonly reparsed: TSNode;
+			readonly reparsedTree?: string;
 			readonly astDiff: string | null;
 	  };
 
@@ -742,7 +743,7 @@ export function wrapRendered(
 			adoptedVariantKinds: ctx.adoptedVariantKinds,
 			targetKind: target,
 			root: ctx.root,
-			parse: (source) => ctx.parser.parse(source) as TSTree
+			parse: (source) => ctx.parser.parse(source)
 		});
 	const direct = wrap(rendered, renderedKind, targetKind);
 	const placement = ctx.placements.get(renderedKind);
@@ -795,7 +796,8 @@ export function renderReparse(
 	treeRoot: boolean,
 	ctx: RenderReparseContext,
 	tolerance?: AstTolerance,
-	dumpLabel?: string
+	dumpLabel?: string,
+	printReparsed = false
 ): RenderReparseOutcome {
 	const rendered = measureRoundtrip(ctx.profile, 'render', () => {
 		if (typeof data === 'function') return data();
@@ -810,27 +812,27 @@ export function renderReparse(
 	const wrapped = wrapRendered(rendered, renderedKind, targetKind, ctx);
 	if (wrapped === null) return { status: 'excluded', reason: hostlessReason(renderedKind, targetKind, ctx), rendered };
 	if (rendered.trim() === '') return { status: 'excluded', reason: 'empty-render', rendered };
-	const tree2 = measureRoundtrip(ctx.profile, 'parse', () => ctx.parser.parse(wrapped.text)) as TSTree;
+	using tree2 = measureRoundtrip(ctx.profile, 'parse', () => ctx.parser.parse(wrapped.text));
 	if (dumpLabel !== undefined) {
 		writeSync(
 			2,
-			`[dump-reparse] ${dumpLabel} hasError=${tree2.rootNode.hasError} wrappedText=${JSON.stringify(wrapped.text)} sexp=${JSON.stringify(tree2.rootNode.toString().slice(0, 300))}\n`
+			`[dump-reparse] ${dumpLabel} hasError=${tree2.root.hasError} wrappedText=${JSON.stringify(wrapped.text)} sexp=${JSON.stringify(tree2.root.toString().slice(0, 300))}\n`
 		);
 	}
-	if (tree2.rootNode.hasError) {
-		return { status: 'failed', message: `re-parse error [${firstParseDefect(tree2.rootNode) ?? 'unlocated'}]`, rendered };
+	if (tree2.root.hasError) {
+		return { status: 'failed', message: `re-parse error [${firstParseDefect(tree2.root) ?? 'unlocated'}]`, rendered };
 	}
 	const triviaOffsetAdjust = typeof data === 'function' ? 0 : leadingTriviaRenderedWidth(data, ctx.render, ctx.triviaOf, ctx.accessorOf);
 	const locate = (at: { text: string; offset: number; at?: (renderedOffset: number) => number }) =>
 		treeRoot
-			? tree2.rootNode
+			? tree2.root
 			: source !== null
-				? findReparsedNodeAtOffset(tree2, ctx.readIdentity(source), at, triviaOffsetAdjust, ctx.readIdentity)
-				: (findReparsedNodeAtOffset(tree2, targetKind, at, triviaOffsetAdjust) ??
-					(renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2, renderedKind, at, triviaOffsetAdjust) : null));
+				? findReparsedNodeAtOffset(tree2.root, ctx.readIdentity(source), at, triviaOffsetAdjust, ctx.readIdentity)
+				: (findReparsedNodeAtOffset(tree2.root, targetKind, at, triviaOffsetAdjust) ??
+					(renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2.root, renderedKind, at, triviaOffsetAdjust) : null));
 	const reparsed =
-		locate(wrapped) ?? (typeof data === 'function' ? locate({ text: wrapped.text, offset: pastLeadingExtras(tree2.rootNode, wrapped.offset) }) : null);
-	const miscounted = tolerance?.ownSideExtras === undefined ? undefined : ownSideMiscount(tree2.rootNode, wrapped.offset, tolerance.ownSideExtras);
+		locate(wrapped) ?? (typeof data === 'function' ? locate({ text: wrapped.text, offset: pastLeadingExtras(tree2.root, wrapped.offset) }) : null);
+	const miscounted = tolerance?.ownSideExtras === undefined ? undefined : ownSideMiscount(tree2.root, wrapped.offset, tolerance.ownSideExtras);
 	if (miscounted !== undefined) return { status: 'failed', message: miscounted, rendered };
 	if (!reparsed) {
 		return {
@@ -843,7 +845,7 @@ export function renderReparse(
 		status: 'round-trip',
 		rendered,
 		wrapped,
-		reparsed,
+		...(printReparsed ? { reparsedTree: reparsed.toString() } : {}),
 		astDiff: source ? astStructuralDiff(source, reparsed, '', ctx.variantChildKinds, tolerance, ctx.readIdentity) : null
 	};
 }
@@ -869,7 +871,8 @@ function placementsOf(grammar: string, parser: RenderReparseContext['parser'], s
 			}
 			for (const child of node.namedChildren) if (child !== null) visit(child);
 		};
-		visit((parser.parse(entry.source) as TSTree).rootNode);
+		using tree = parser.parse(entry.source);
+		visit(tree.root);
 		if (placements.size === splitKinds.size) break;
 	}
 	return placements;
@@ -887,10 +890,11 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 	const run = (async () => {
 		const declared = await loadReparseHosts(grammar);
 		const model = await loadNodeModel(grammar);
-		const corpus: { source: string; tree: TSTree }[] = [];
+		using held = new DisposableStack();
+		const corpus: { source: string; root: TSNode }[] = [];
 		for (const entry of loadCorpusEntries(grammar)) {
-			const tree = parser.parse(entry.source) as TSTree;
-			if (!tree.rootNode.hasError) corpus.push({ source: entry.source, tree });
+			const { root } = held.use(parser.parse(entry.source));
+			if (!root.hasError) corpus.push({ source: entry.source, root });
 		}
 		const types = await requireGrammarModule(grammar, 'types.ts');
 		const idsByName = new Map<string, number[]>();
@@ -910,8 +914,8 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 			modelTypeOf: (kind) => model.modelTypes[kind],
 			adoptedVariantKinds: await loadVariantAdoptedKinds(grammar),
 			corpus,
-			parse: (text) => parser.parse(text) as TSTree,
-			findAt: (tree, source, hosted) => findReparsedNodeAtOffset(tree, identityOfNode(source), hosted, 0, identityOfNode),
+			parse: (text) => parser.parse(text),
+			findAt: (root, source, hosted) => findReparsedNodeAtOffset(root, identityOfNode(source), hosted, 0, identityOfNode),
 			same: (source, reparsed) => astStructuralDiff(source, reparsed, '', undefined, undefined, identityOfNode) === null
 		});
 		setDerivedReparseHosts(grammar, derived);
@@ -952,9 +956,7 @@ export async function validateReadRenderParse(
 	grammar: string,
 	options: ValidateReadRenderParseOptions = {}
 ): Promise<ReadRenderParseResult> {
-	const { Parser, lang } = await loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
+	using parser = treeParser(await loadLanguageForGrammar(grammar));
 
 	const kindNameFromId = await loadKindNameFromId(grammar);
 	const accessorOf = await loadSlotAccessorOf(grammar);
@@ -1026,9 +1028,9 @@ export async function validateReadRenderParse(
 		refused = [];
 		try {
 			// Parse original
-			const tree1 = parser.parse(entry.source) as TSTree;
+			using tree1 = parser.parse(entry.source);
 		const spans = sourceSpans(entry.source);
-			if (tree1.rootNode.hasError) {
+			if (tree1.root.hasError) {
 				skips.push({ entry: entry.name, reason: 'parse-error', input: entry.source });
 				if (process.env.SITTIR_VALIDATOR_ENTRY_LOG) {
 					console.log(`ENTRY\t${recursive ? 'deep' : 'shallow'}\t${entry.name}\tskip-parse-error\tast-fail`);
@@ -1118,7 +1120,7 @@ export async function validateReadRenderParse(
 					if (shouldStop) break;
 					const inputSource = spans.slice(cand);
 					const indices = spans.toIndices(cand);
-					const node1ForAst = findSpanNode(tree1.rootNode, indices.start, indices.end, cand.displayKind, canonicalKindNameFromId);
+					const node1ForAst = findSpanNode(tree1.root, indices.start, indices.end, cand.displayKind, canonicalKindNameFromId);
 					const tsVisibleKind = node1ForAst?.type;
 
 					// Materialize the wrapped node directly — it already IS its source
@@ -1132,12 +1134,12 @@ export async function validateReadRenderParse(
 					// send) as distinct from the deep run's full materialization.
 					// Falls back to deep materialization when the wrapped node carries
 					// no coordinate.
-					const treeRoot = cand.displayKind === tree1.rootNode.type;
+					const treeRoot = cand.displayKind === tree1.root.type;
 					options.profile?.candidate(entry.name, entry.source, kind, cand.start, cand.end);
 					let data: AnyUntypedNode;
 					try {
 						const at = (cand.node as AnyUntypedNode).$_layout?.at;
-						data = measureRoundtrip(options.profile, 'read', () =>
+						data = measureRoundtrip(options.profile, 'copy', () =>
 							recursive !== true && at !== undefined
 								? materializeShallow(cand.node, accessorOf, onAccessorThrow)
 								: (materializeDetached(cand.node, accessorOf, onAccessorThrow) as AnyUntypedNode)
@@ -1169,7 +1171,7 @@ export async function validateReadRenderParse(
 								? `mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)}`
 								: undefined;
 						const reparse = (step: AnyUntypedNode | OwnRender, tolerance: AstTolerance) =>
-							renderReparse(step, renderedKind, targetKind, node1ForAst, treeRoot, renderReparseContext, tolerance, dumpLabel);
+							renderReparse(step, renderedKind, targetKind, node1ForAst, treeRoot, renderReparseContext, tolerance, dumpLabel, options.onFixture !== undefined);
 						const failed = (message: string, rendered: string): void => {
 							kindErrors.push({ name: `${entry.name} [${renderedKind}]`, message, input: inputSource, rendered });
 							reportFailure(options, {
@@ -1204,7 +1206,7 @@ export async function validateReadRenderParse(
 							failed(`own render: ${own.status === 'failed' ? own.message : own.reason}`, own.rendered);
 							continue;
 						}
-						const { rendered, wrapped, reparsed: node2 } = outcome;
+						const { rendered, wrapped, reparsedTree } = outcome;
 
 						// Only mark the kind as having had a real candidate attempt
 						// when at least one candidate fully round-trips (reparse OK +
@@ -1265,7 +1267,7 @@ export async function validateReadRenderParse(
 									pattern: renderedKind,
 									edits: [],
 									expectedSourceOut: rendered,
-									expectedReparseTree: node2.toString(),
+									expectedReparseTree: reparsedTree!,
 									wrappedText: wrapped.text,
 									wrappedOffset: wrapped.offset
 								});
@@ -1343,7 +1345,7 @@ export async function validateReadRenderParse(
 			// round-trip attempt ever succeeded past the read step) has tested
 			// nothing — score it like the testableKinds.length===0 case above
 			// (skip), not a silent pass. See entryHadAnyCandidate's doc comment.
-			const namedRoots = tree1.rootNode.namedChildren;
+			const namedRoots = tree1.root.namedChildren;
 			if (!entryHadAnyCandidate && namedRoots.length > 0 && namedRoots.every((n) => n?.isExtra)) {
 				total--;
 				trivia.push({ entry: entry.name, reason: 'native-read-dropped-extras', input: entry.source });

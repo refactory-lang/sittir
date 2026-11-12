@@ -1,5 +1,5 @@
 import type { BuiltArena } from './built-arena.ts';
-import type { CellFormat } from './record-cell.ts';
+import type { CellFormat, RecordCell } from './record-cell.ts';
 import type { ByteSpan, ErrorRegion, NodeCoordinate } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
 import type { TreeToken } from './tree-token.ts';
@@ -66,6 +66,7 @@ export interface RecordReader extends RecordWords {
 	/** The address of the record of the node at descendant `index`, read `depth` levels down (one when absent); `undefined` for a node with none, a leaf or an `ERROR` node. */
 	record(index: number, depth?: number): number | undefined;
 	stub(index: number, depth?: number): readonly number[] | undefined;
+	leaf(index: number): Extract<RecordCell, { readonly form: 'parsedLeaf' | 'unit' }> | undefined;
 	exported(address: number): ChunkWords | undefined;
 	/** The address of the record the parsed cell at `word`, item `item`, of the record at `holder` names: on the first read through the cell, written `depth` levels down (one when absent), and the cell rewritten to name it. */
 	cell(holder: number, word: number, item: number, depth?: number): number;

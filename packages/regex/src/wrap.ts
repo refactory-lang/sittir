@@ -42,6 +42,7 @@ import {
 	rowWith,
 	handleTrivia,
 	handleRender,
+	handleSave,
 	handleToString,
 	handleEngine,
 	handleDispose,
@@ -77,9 +78,10 @@ function viewSlot<T>(
 	forms: number,
 	inline: number,
 	built: number,
-	aliasContent = false
+	aliasContent = false,
+	spellings?: Readonly<Record<string, string>>
 ): ParsedOfData<T> {
-	return childSlot(view, word, width, forms, inline, built, _wrap, aliasContent) as ParsedOfData<T>;
+	return childSlot(view, word, width, forms, inline, built, _wrap, aliasContent, spellings) as ParsedOfData<T>;
 }
 function viewSlots<T>(
 	view: RecordHandle,
@@ -109,6 +111,7 @@ export function wrapPattern(data: T.Pattern, tree: TreeHandle): T.Pattern.Parsed
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
+		$save: handleSave,
 		$errors: (data as { readonly $errors?: unknown }).$errors,
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -1917,6 +1920,7 @@ function viewPattern(data: RecordPosition, tree: TreeHandle): T.Pattern.Parsed {
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		$errors: (data as { readonly $errors?: unknown }).$errors,
+		$save: handleSave,
 		content: viewPattern$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,

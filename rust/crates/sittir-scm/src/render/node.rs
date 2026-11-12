@@ -1324,12 +1324,7 @@ impl ::sittir_core::render::Render for AnonymousNodeNameNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             AnonymousNodeNameNodeSlot::String(inner) => inner.render(w),
-            AnonymousNodeNameNodeSlot::Underscore => {
-                let written = render_underscore(w);
-                written?;
-                w.site_at(options::SITE_ANONYMOUS_NODE_UNDERSCORE_AFTER);
-                Ok(())
-            }
+            AnonymousNodeNameNodeSlot::Underscore => render_underscore(w),
         }
     }
 }
@@ -1348,12 +1343,7 @@ impl ::sittir_core::render::Render for AnonymousNodeNameNodeSlotRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             AnonymousNodeNameNodeSlotRecord::String(inner) => inner.render(w),
-            AnonymousNodeNameNodeSlotRecord::Underscore => {
-                let written = render_underscore(w);
-                written?;
-                w.site_at(options::SITE_ANONYMOUS_NODE_UNDERSCORE_AFTER);
-                Ok(())
-            }
+            AnonymousNodeNameNodeSlotRecord::Underscore => render_underscore(w),
         }
     }
 }
@@ -1795,13 +1785,7 @@ impl ::sittir_core::render::Render for NamedNodePlainNameNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             NamedNodePlainNameNodeSlot::Identifier(inner) => inner.render(w),
-            NamedNodePlainNameNodeSlot::Underscore => {
-                w.site_at(options::SITE_NAMED_NODE_PLAIN_UNDERSCORE_BEFORE);
-                let written = render_underscore(w);
-                written?;
-                w.site_at(options::SITE_NAMED_NODE_PLAIN_UNDERSCORE_AFTER);
-                Ok(())
-            }
+            NamedNodePlainNameNodeSlot::Underscore => render_underscore(w),
             NamedNodePlainNameNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -1822,13 +1806,7 @@ impl ::sittir_core::render::Render for NamedNodePlainNameNodeSlotRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             NamedNodePlainNameNodeSlotRecord::Identifier(inner) => inner.render(w),
-            NamedNodePlainNameNodeSlotRecord::Underscore => {
-                w.site_at(options::SITE_NAMED_NODE_PLAIN_UNDERSCORE_BEFORE);
-                let written = render_underscore(w);
-                written?;
-                w.site_at(options::SITE_NAMED_NODE_PLAIN_UNDERSCORE_AFTER);
-                Ok(())
-            }
+            NamedNodePlainNameNodeSlotRecord::Underscore => render_underscore(w),
             NamedNodePlainNameNodeSlotRecord::Verbatim(inner) => inner.render(w),
         }
     }
@@ -1901,7 +1879,7 @@ impl ::sittir_core::render::Render for NamedNodeSupertypedNameNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             NamedNodeSupertypedNameNodeSlot::ImmediateIdentifier(inner) => inner.render(w),
-            NamedNodeSupertypedNameNodeSlot::ImmediateString(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            NamedNodeSupertypedNameNodeSlot::ImmediateString(inner) => inner.render(w),
             NamedNodeSupertypedNameNodeSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
@@ -1922,7 +1900,7 @@ impl ::sittir_core::render::Render for NamedNodeSupertypedNameNodeSlotRecord<'_>
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             NamedNodeSupertypedNameNodeSlotRecord::ImmediateIdentifier(inner) => inner.render(w),
-            NamedNodeSupertypedNameNodeSlotRecord::ImmediateString(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            NamedNodeSupertypedNameNodeSlotRecord::ImmediateString(inner) => inner.render(w),
             NamedNodeSupertypedNameNodeSlotRecord::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
@@ -2018,7 +1996,7 @@ fn prepare_program<N: ProgramPrepare + ?Sized>(node: &mut N, overlay: &mut N::Ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE, interior = "^\\\\(?<content>(?:.))$", words = 6, built_words = 4, fields = EscapeSequenceFields, prepare = EscapeSequencePrepare, view = EscapeSequenceNodeRecord, prepare_fn = prepare_escape_sequence)]
+#[node(kind = kind::ESCAPE_SEQUENCE, interior = "^\\\\(?<content>(?:[^\\x0A]))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceFields, prepare = EscapeSequencePrepare, view = EscapeSequenceNodeRecord, prepare_fn = prepare_escape_sequence)]
 pub struct EscapeSequenceNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2655,7 +2633,7 @@ fn prepare_parameters<N: ParametersPrepare + ?Sized>(node: &mut N, overlay: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMMENT, interior = "^;(?<content>(?:.*))$", words = 6, built_words = 4, fields = CommentFields, prepare = CommentPrepare, view = CommentNodeRecord, prepare_fn = prepare_comment)]
+#[node(kind = kind::COMMENT, interior = "^;(?<content>(?:[^\\x0A]*))$", affixes = (";", ""), words = 6, built_words = 4, fields = CommentFields, prepare = CommentPrepare, view = CommentNodeRecord, prepare_fn = prepare_comment)]
 pub struct CommentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -5268,6 +5246,7 @@ fn render_anonymous_node<N: AnonymousNodeFields + ?Sized>(node: &N, w: &mut dyn 
     let name = node.name();
     w.edge(::sittir_core::types::KindId(47), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    if name.kind_in(&*w, &[::sittir_core::types::KindId(7)]) { w.site_at(options::SITE_ANONYMOUS_NODE_UNDERSCORE_AFTER); }
     elements.render(w)?;
     w.edge(::sittir_core::types::KindId(47), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -5390,7 +5369,9 @@ fn render_named_node_plain<N: NamedNodePlainFields + ?Sized>(node: &N, w: &mut d
     w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_NAMED_NODE_PLAIN_LPAREN_AFTER);
+    if name.kind_in(&*w, &[::sittir_core::types::KindId(7)]) { w.site_at(options::SITE_NAMED_NODE_PLAIN_UNDERSCORE_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    if name.kind_in(&*w, &[::sittir_core::types::KindId(7)]) { w.site_at(options::SITE_NAMED_NODE_PLAIN_UNDERSCORE_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_named_node_group", ::sittir_core::types::ItemIndex(0), w, |w| named_node_group.render(w))?;
     w.site_at(options::SITE_NAMED_NODE_PLAIN_RPAREN_BEFORE);
     w.text(")")?;
@@ -5423,6 +5404,7 @@ fn render_named_node_supertyped<N: NamedNodeSupertypedFields + ?Sized>(node: &N,
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_supertype", ::sittir_core::types::ItemIndex(0), w, |w| supertype.render(w))?;
     w.text("/")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
+    if name.kind_in(&*w, &[::sittir_core::types::KindId(41)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_named_node_group", ::sittir_core::types::ItemIndex(0), w, |w| named_node_group.render(w))?;
     w.site_at(options::SITE_NAMED_NODE_SUPERTYPED_RPAREN_BEFORE);

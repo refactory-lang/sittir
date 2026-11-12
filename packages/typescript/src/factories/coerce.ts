@@ -18,7 +18,7 @@ import type {
 	ConfigSeat,
 	OptionalConfigSeat,
 	EmptyForm,
-	SpelledAffix,
+	CoercedSpelling,
 	WithSpelling
 } from '@sittir/types';
 import {
@@ -7984,27 +7984,55 @@ export function resolveNumberHex_content(value: T.NumberHex.LooseConfig['content
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
-export function coerceToNumberHex<const I extends T.NumberHex.Loose, const O extends T.NumberHex.Options = {}>(
+export function coerceToNumberHex<
+	const I extends T.NumberHex.Loose,
+	const O extends T.NumberHex.Options | undefined = T.NumberHex.Options | undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberHex.Loose>,
+	options: O
+): WithSpelling<
+	ReturnType<typeof F.buildNumberHex>,
+	'radixPrefix',
+	CoercedSpelling<I, O, 'radixPrefix', '0x' | '0X', '0x'>
+>;
+export function coerceToNumberHex<
+	const I extends T.NumberHex.Loose,
+	const _O extends T.NumberHex.Options | undefined = undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberHex.Loose>,
+	options?: undefined
+): WithSpelling<
+	ReturnType<typeof F.buildNumberHex>,
+	'radixPrefix',
+	CoercedSpelling<I, undefined, 'radixPrefix', '0x' | '0X', '0x'>
+>;
+export function coerceToNumberHex<
+	const I extends T.NumberHex.Loose,
+	const O extends T.NumberHex.Options | undefined = T.NumberHex.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberHex.Loose>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberHex>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+	CoercedSpelling<I, O | undefined, 'radixPrefix', '0x' | '0X', '0x'>
 >;
-export function coerceToNumberHex<const I extends T.NumberHex.Loose, const O extends T.NumberHex.Options = {}>(
+export function coerceToNumberHex<
+	const I extends T.NumberHex.Loose,
+	const O extends T.NumberHex.Options | undefined = T.NumberHex.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberHex>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+	CoercedSpelling<I, O, 'radixPrefix', '0x' | '0X', '0x'>
 > {
 	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildNumberHex>,
 			'radixPrefix',
-			O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+			CoercedSpelling<I, O, 'radixPrefix', '0x' | '0X', '0x'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0x', '0X'] as const, [''] as const) : undefined;
 	const _value = configFieldOr(
@@ -8015,11 +8043,11 @@ export function coerceToNumberHex<const I extends T.NumberHex.Loose, const O ext
 	);
 	return F.buildNumberHex(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K2, _K2),
-		_spelled === undefined ? options : { radixPrefix: _spelled.open, ...options }
+		_spelled === undefined ? options : { ...options, radixPrefix: options?.radixPrefix ?? _spelled.open }
 	) as WithSpelling<
 		ReturnType<typeof F.buildNumberHex>,
 		'radixPrefix',
-		O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+		CoercedSpelling<I, O, 'radixPrefix', '0x' | '0X', '0x'>
 	>;
 }
 
@@ -8206,27 +8234,55 @@ export function resolveNumberBinary_content(
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
-export function coerceToNumberBinary<const I extends T.NumberBinary.Loose, const O extends T.NumberBinary.Options = {}>(
+export function coerceToNumberBinary<
+	const I extends T.NumberBinary.Loose,
+	const O extends T.NumberBinary.Options | undefined = T.NumberBinary.Options | undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberBinary.Loose>,
+	options: O
+): WithSpelling<
+	ReturnType<typeof F.buildNumberBinary>,
+	'radixPrefix',
+	CoercedSpelling<I, O, 'radixPrefix', '0b' | '0B', '0b'>
+>;
+export function coerceToNumberBinary<
+	const I extends T.NumberBinary.Loose,
+	const _O extends T.NumberBinary.Options | undefined = undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberBinary.Loose>,
+	options?: undefined
+): WithSpelling<
+	ReturnType<typeof F.buildNumberBinary>,
+	'radixPrefix',
+	CoercedSpelling<I, undefined, 'radixPrefix', '0b' | '0B', '0b'>
+>;
+export function coerceToNumberBinary<
+	const I extends T.NumberBinary.Loose,
+	const O extends T.NumberBinary.Options | undefined = T.NumberBinary.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberBinary.Loose>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberBinary>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+	CoercedSpelling<I, O | undefined, 'radixPrefix', '0b' | '0B', '0b'>
 >;
-export function coerceToNumberBinary<const I extends T.NumberBinary.Loose, const O extends T.NumberBinary.Options = {}>(
+export function coerceToNumberBinary<
+	const I extends T.NumberBinary.Loose,
+	const O extends T.NumberBinary.Options | undefined = T.NumberBinary.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberBinary>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+	CoercedSpelling<I, O, 'radixPrefix', '0b' | '0B', '0b'>
 > {
 	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildNumberBinary>,
 			'radixPrefix',
-			O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+			CoercedSpelling<I, O, 'radixPrefix', '0b' | '0B', '0b'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0b', '0B'] as const, [''] as const) : undefined;
 	const _value = configFieldOr(
@@ -8237,11 +8293,11 @@ export function coerceToNumberBinary<const I extends T.NumberBinary.Loose, const
 	);
 	return F.buildNumberBinary(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K2, _K2),
-		_spelled === undefined ? options : { radixPrefix: _spelled.open, ...options }
+		_spelled === undefined ? options : { ...options, radixPrefix: options?.radixPrefix ?? _spelled.open }
 	) as WithSpelling<
 		ReturnType<typeof F.buildNumberBinary>,
 		'radixPrefix',
-		O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+		CoercedSpelling<I, O, 'radixPrefix', '0b' | '0B', '0b'>
 	>;
 }
 
@@ -8253,27 +8309,55 @@ export function resolveNumberOctal_content(
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
-export function coerceToNumberOctal<const I extends T.NumberOctal.Loose, const O extends T.NumberOctal.Options = {}>(
+export function coerceToNumberOctal<
+	const I extends T.NumberOctal.Loose,
+	const O extends T.NumberOctal.Options | undefined = T.NumberOctal.Options | undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberOctal.Loose>,
+	options: O
+): WithSpelling<
+	ReturnType<typeof F.buildNumberOctal>,
+	'radixPrefix',
+	CoercedSpelling<I, O, 'radixPrefix', '0o' | '0O', '0o'>
+>;
+export function coerceToNumberOctal<
+	const I extends T.NumberOctal.Loose,
+	const _O extends T.NumberOctal.Options | undefined = undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberOctal.Loose>,
+	options?: undefined
+): WithSpelling<
+	ReturnType<typeof F.buildNumberOctal>,
+	'radixPrefix',
+	CoercedSpelling<I, undefined, 'radixPrefix', '0o' | '0O', '0o'>
+>;
+export function coerceToNumberOctal<
+	const I extends T.NumberOctal.Loose,
+	const O extends T.NumberOctal.Options | undefined = T.NumberOctal.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberOctal.Loose>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberOctal>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+	CoercedSpelling<I, O | undefined, 'radixPrefix', '0o' | '0O', '0o'>
 >;
-export function coerceToNumberOctal<const I extends T.NumberOctal.Loose, const O extends T.NumberOctal.Options = {}>(
+export function coerceToNumberOctal<
+	const I extends T.NumberOctal.Loose,
+	const O extends T.NumberOctal.Options | undefined = T.NumberOctal.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberOctal>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+	CoercedSpelling<I, O, 'radixPrefix', '0o' | '0O', '0o'>
 > {
 	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildNumberOctal>,
 			'radixPrefix',
-			O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+			CoercedSpelling<I, O, 'radixPrefix', '0o' | '0O', '0o'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0o', '0O'] as const, [''] as const) : undefined;
 	const _value = configFieldOr(
@@ -8284,11 +8368,11 @@ export function coerceToNumberOctal<const I extends T.NumberOctal.Loose, const O
 	);
 	return F.buildNumberOctal(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K2, _K2),
-		_spelled === undefined ? options : { radixPrefix: _spelled.open, ...options }
+		_spelled === undefined ? options : { ...options, radixPrefix: options?.radixPrefix ?? _spelled.open }
 	) as WithSpelling<
 		ReturnType<typeof F.buildNumberOctal>,
 		'radixPrefix',
-		O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+		CoercedSpelling<I, O, 'radixPrefix', '0o' | '0O', '0o'>
 	>;
 }
 

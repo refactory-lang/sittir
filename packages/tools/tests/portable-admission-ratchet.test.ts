@@ -8,9 +8,9 @@ const MEMBERS: Readonly<Record<string, number>> = { python: 0, rust: 0, typescri
 const UNFORMED: Readonly<Record<string, number>> = { python: 0, rust: 0, typescript: 0 };
 
 const RAW: Readonly<Record<string, { readonly kind: number; readonly value: number }>> = {
-	python: { kind: 144, value: 2889 },
-	rust: { kind: 1411, value: 5895 },
-	typescript: { kind: 31, value: 5231 }
+	python: { kind: 144, value: 2744 },
+	rust: { kind: 1411, value: 5732 },
+	typescript: { kind: 31, value: 4475 }
 };
 
 const pinned = (name: string, count: number, ceiling: number, shown: string): void => {

@@ -793,53 +793,6 @@ pattern-replacing wrappers read its automatic-variant record.
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::VisibleExternalsConfig`
-
-```text
-/**
- * A function taking the grammar's `$` proxy and returning a record from
- * hidden (`_`-prefixed) external-scanner-symbol-name to a sittir DSL rule
- * body — the SAME value shape `renderAs:` accepts (`string(lit)`, `blank()`,
- * etc.).
- *
- * Unlike `renderAs:` (which inlines its literal at every reference site,
- * producing no CST node), `visibleExternals:` wraps EVERY `SYMBOL`
- * reference to a configured hidden name in a named visible alias
- * (`alias($._x, $.x)`, visible name = hidden name minus leading
- * underscores) under BOTH runtimes (tree-sitter CLI executing the bundled
- * grammar.js, and sittir's evaluate pipeline). Tree-sitter then compiles a
- * real parser kind for the visible name — a zero-width external token
- * (e.g. TypeScript's ASI `_automatic_semicolon`) materializes as an actual
- * CST node instead of vanishing into its referencing rule. The visible
- * kind's rule body (this config's value) becomes its sittir-side render
- * text — see `link.ts`'s `visibleExternals` registration.
- *
- * @example
- *   visibleExternals: ($) => ({
- *     _automatic_semicolon: string('\n'),
- *   })
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// VisibleExternalsConfig — materialize hidden external-scanner symbols as
-// named CST-visible aliases
-// ---------------------------------------------------------------------------
-```
-
-```text
-/**
- * Hidden (`_`-prefixed) external-scanner symbol → render body, PLUS a parser
- * rewrite: every `SYMBOL` reference to the key is wrapped in a named `ALIAS`
- * of the underscore-stripped name, in both grammar pipelines, through
- * {@link applyWireVisibleExternalsRewrite}, which wire runs under each. The parser then materializes real CST nodes
- * for the symbol (python `_newline` → visible `newline`). Use this when the
- * external must be visible; use {@link RenderAsConfig} when it only needs a
- * sittir-side body — the two keys carry independent facts and both stay.
- */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext`
 
 `ruleBodies` holds, per `rule()` name, the canonical text of its declared
@@ -1146,14 +1099,6 @@ their mint names (`declaredGroupMintName`).
 	 *  external scanner still produces the symbol). */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::visibleExternals`
-
-```text
-/** Hidden-external → sittir-side render body map, as `visibleExternals:`
-	 *  evaluated to it with enrich's whitespace bodies (`withEnrichedWhitespace`).
-	 *  See {@link VisibleExternalsConfig} for the full mechanism. */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::expectDiagnostics`
 
 ```text
@@ -1400,20 +1345,6 @@ The body patterns (`GroupsConfig`), with the same `$` typing as `rules`: each en
 	 */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::visibleExternals`
-
-```text
-/**
-	 * Hidden-external → sittir-side render body map. See
-	 * {@link VisibleExternalsConfig} for the full mechanism.
-	 *
-	 * @example
-	 *   visibleExternals: ($) => ({
-	 *     _automatic_semicolon: string('\n'),
-	 *   })
-	 */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::expectDiagnostics`
 
 ```text
@@ -1639,10 +1570,6 @@ The layer pass's handle (`WireLayer`), where wire's refusals and the lead entrie
 ### `packages/codegen/src/dsl/wire/wire.ts::WireLayer`
 
 What a layer pass hands wire: the layer's name and depth (1 for the authored layer, one more for each layer above it), the diagnostics list wire's refusals join, and the `narrow`, lead and rename entries wire queues for the whole-grammar phase, each in the order it evaluates them.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WireRefusal`
-
-A refusal wire records: its code, the kind it names, its message and its details.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::recordRefusal`
 
@@ -2306,18 +2233,6 @@ The lead entries the layer declares.
 
 The narrowing entries the layer declares.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireRefusal::code`
-
-The refusal's code.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WireRefusal::details`
-
-The refusal's extra details.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WireRefusal::message`
-
-The message the refusal carries.
-
 ### `packages/codegen/src/dsl/wire/wire.ts::wireAliasSite`
 
 Records an alias site in the wire context.
@@ -2333,3 +2248,23 @@ Whether a wire is applied inside a path edit.
 ### `packages/codegen/src/dsl/wire/wire.ts::wireIsShown`
 
 Whether a rule is shown under a display name.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::currentLift`
+
+The rule the wire pass is lifting now, or null outside a lift. Under a refused entry it is `'scoped'`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireGetFieldOwner`
+
+The owner kind of the field the wire pass is in, or null when no field is being wired.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireNotice::code`
+
+The refusal's code.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireNotice::details`
+
+The refusal's extra details.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireNotice::message`
+
+The message the refusal carries.

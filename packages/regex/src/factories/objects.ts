@@ -23,6 +23,7 @@ import {
 	applySetter,
 	objectLeading,
 	objectTrailing,
+	handleSave,
 	objectInner,
 	describeValue,
 	restItems,
@@ -44,7 +45,7 @@ export const _leafRe_buildUnicodePropertyValue = /^(?:(?:[a-zA-Z_0-9]+))$/u;
 export const _leafRe_buildControlEscape = /^(?:(?:(?:\\[bfnrtv0])|(?:\\x[0-9a-fA-F]{2})))$/u;
 export const _leafRe_buildControlLetterEscape = /^(?:(?:\\c[a-zA-Z]))$/u;
 export const _leafRe_buildGroupName = /^(?:(?:[A-Za-z_][A-Za-z0-9_]*))$/u;
-export const _leafRe_buildDecimalDigits = /^(?:(?:\d+))$/u;
+export const _leafRe_buildDecimalDigits = /^(?:(?:[0-9]+))$/u;
 export const _leafRe_buildCharacterClassEscapeText1 = /^(?:(?:\\[dDsSwW]))$/u;
 export const _leafRe_buildCharacterClassEscapeText2 = /^(?:(?:\\[pP]))$/u;
 export const _leafRe_buildUnicodePropertyName = _leafRe_buildUnicodePropertyValue;
@@ -66,6 +67,7 @@ export function buildPattern(value: Admit<T.Alternation | T.Term>): T.Pattern.Bo
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
+		$save: handleSave,
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing

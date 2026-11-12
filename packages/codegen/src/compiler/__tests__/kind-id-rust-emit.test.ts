@@ -64,7 +64,7 @@ function makeMinimalFixture(): {
 					}
 				}
 			},
-			sourceArtifact: 'parser.wasm'
+			sourceArtifact: 'parser.wasm', parser: null
 		}
 	};
 }
@@ -210,7 +210,7 @@ describe('emitKindIdRust', () => {
 					}
 				}
 			},
-			sourceArtifact: 'parser.wasm'
+			sourceArtifact: 'parser.wasm', parser: null
 		};
 
 		const linked = linkPredicted(raw);

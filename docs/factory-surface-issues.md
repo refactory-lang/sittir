@@ -219,6 +219,14 @@ Deliberately outside the contract:
 - Rule 2, bare-scalar-to-keyword/enum-member guessing. Retired: a scalar
   names nothing about which of several candidate keywords or enum members it
   means, so the ambiguity is the same shape as structural inference above.
+- Wrapping a bare value through a kind whose fold holds a fixed word that
+  tells it from its siblings. Rule 5's closure stops at such a kind (a folded
+  fielded member, not layout, as the fold stamps it), so a bare value never
+  gains the word in silence and the holder names the kind: rust's
+  `lineComment` takes no bare doc comment, `visibilityModifier`, `.pub` and
+  `.pub.scope` take no bare path (one used to insert `in`), and typescript's
+  `typeQueryCallExpression` takes its arguments directly (the user,
+  2026-11-08: "Approve both", then "Keep it general (Recommended)").
 - Default-arm hoisting for a kindless config object. A config names its kind
   unless the slot is single-kind (rule 3); only bare values hoist (rule 6).
 - Form selection. Naming an alternative (`ir.callExpression.call`) chooses a

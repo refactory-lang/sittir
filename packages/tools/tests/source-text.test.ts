@@ -2,6 +2,7 @@
 // read through the tree's native text call. A built or edited compound has
 // neither and has no source text: its rendered text is not source text.
 import { describe, expect, it } from 'vitest';
+import { sharedEngine } from '@sittir/common/testing';
 import { createEngine } from '@sittir/common';
 import { sourceTextOf } from '@sittir/common/utils';
 import { languageByName } from '../src/languages.ts';
@@ -15,7 +16,7 @@ const SOURCE = '// é\r\nfn first() {}\r\n';
 
 for (const nodeStorage of ['object', 'arena'] as const) {
 	describe(`a node's source text, ${nodeStorage} wire`, async () => {
-		const engine = await createEngine(await languageByName('rust'), { nodeStorage });
+		const engine = await sharedEngine(async () => createEngine(await languageByName('rust'), { nodeStorage }));
 		const root = engine.parse(SOURCE) as unknown as { statements(): FunctionItem[] };
 		const fn = root.statements()[0]!;
 

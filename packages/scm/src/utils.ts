@@ -30,7 +30,7 @@ export const triviaFacts = Object.freeze({
 	]),
 	namedUnits: new Set<number>([60]),
 	whitespace: Object.freeze({
-		run: /^(?:(?:(?:\s+))+)$/u,
+		run: /^(?:(?:(?:[\x09-\x0D\x20]+))+)$/u,
 		kindIdByText: Object.freeze({ '': 25, ' ': 26, '\t': 27, '\n': 28, '\n\n': 29, '\n\n\n': 30 })
 	})
 } satisfies TriviaFacts<TSKindId>);

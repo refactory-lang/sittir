@@ -7,6 +7,7 @@ import { AssembledBranch, AssembledEnum, AssembledKeyword, AssembledSupertype, A
 import { preference } from '../../../dsl/primitives/preference.ts';
 import { formatPreferencePath } from '../../../dsl/primitives/preference-path.ts';
 import { stampDisplay } from '../display-name.ts';
+import { FIXTURE_LINE_ENDINGS } from '../../../__tests__/helpers/node-map-fixtures.ts';
 
 const sym = (name: string, extra: object = {}): RenderRule =>
 	({ type: 'SYMBOL', name, nonterminal: true, ...extra }) as unknown as RenderRule;
@@ -33,7 +34,7 @@ function nodeMapOf(
 	opts: { whitespace?: boolean; externals?: string[]; supertypes?: Record<string, string[]>; slotKinds?: Record<string, string[]> } = {}
 ): NodeMap {
 	const nodes = new Map<string, unknown>();
-	const stub = (kind: string) => ({ kind, display: stampDisplay(kind, undefined, [], 'phantom'), lineEnds: [] });
+	const stub = (kind: string) => ({ kind, display: stampDisplay(kind, undefined, [], 'phantom'), endTerminals: [] });
 	for (const kind of Object.keys(rules)) nodes.set(kind, stub(kind));
 	const whitespace = ['_tight', '_space', '_newline', '_blankline', '_indent', '_dedent'];
 	if (opts.whitespace !== false) for (const w of whitespace) nodes.set(w, stub(w));
@@ -59,7 +60,8 @@ function nodeMapOf(
 		nodes,
 		normalizedRules: rules,
 		slotByRuleId,
-		externals: (opts.externals ?? []).map((name) => ({ type: 'SYMBOL' as const, name }))
+		externals: (opts.externals ?? []).map((name) => ({ type: 'SYMBOL' as const, name })),
+		lineEndings: FIXTURE_LINE_ENDINGS
 	} as unknown as NodeMap;
 }
 

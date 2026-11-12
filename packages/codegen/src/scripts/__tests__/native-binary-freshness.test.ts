@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, posix, relative, win32 } from 'node:path';
@@ -5,7 +6,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	type BuildSetting,
 	assertNativeBinaryFresh,
-	checkoutPath,
 	hostBinaryFreshnessFor,
 	hostBinaryName,
 	linkerMapOf,
@@ -17,6 +17,7 @@ import {
 	unstrippedReleaseBinary,
 	writeNativeBuildStamp
 } from '../native-binary-freshness.ts';
+import { posixRelative } from '../../util/files.ts';
 
 const TOOLCHAIN = 'rustc 1.90.0 (host: aarch64-apple-darwin)';
 const BINARY = hostBinaryName('rust');
@@ -236,8 +237,8 @@ describe('a binary built elsewhere', () => {
 
 describe('a path a stamp records from the checkout', () => {
 	it('is written with forward slashes on every host', () => {
-		expect(checkoutPath('C:\\repo', 'C:\\repo\\node_modules\\.cache\\sittir\\native-build\\rust\\x.node', win32)).toBe('node_modules/.cache/sittir/native-build/rust/x.node');
-		expect(checkoutPath('/repo', '/repo/node_modules/.cache/sittir/native-build/rust/x.node', posix)).toBe('node_modules/.cache/sittir/native-build/rust/x.node');
+		expect(posixRelative('C:\\repo', 'C:\\repo\\node_modules\\.cache\\sittir\\native-build\\rust\\x.node', win32)).toBe('node_modules/.cache/sittir/native-build/rust/x.node');
+		expect(posixRelative('/repo', '/repo/node_modules/.cache/sittir/native-build/rust/x.node', posix)).toBe('node_modules/.cache/sittir/native-build/rust/x.node');
 	});
 });
 
@@ -285,6 +286,19 @@ describe('a stripped release binary', () => {
 		expect(unstrippedReleaseBinary(root, 'rust', BINARY)).toBe(copy);
 		write(relative(root, map), 'another map');
 		expect(() => unstrippedReleaseBinary(root, 'rust', BINARY)).toThrow(`${BINARY}.map is not the linker map its build kept`);
+	});
+
+	it.runIf(process.platform === 'darwin')('finds the llvm tool the developer tools carry when the Rust toolchain has none', () => {
+		const bin = join(outer, 'bin');
+		mkdirSync(bin);
+		writeFileSync(join(bin, 'rustc'), '#!/bin/sh\ncase "$1" in --print) echo /nonexistent;; -vV) echo "host: aarch64-apple-darwin";; esac\n', { mode: 0o755 });
+		vi.stubEnv('PATH', `${bin}:${process.env.PATH}`);
+		vi.stubEnv('LLVM_NM', '');
+		try {
+			expect(llvmTool('llvm-nm', root)).toBe(execFileSync('xcrun', ['--find', 'llvm-nm'], { encoding: 'utf8' }).trim());
+		} finally {
+			vi.unstubAllEnvs();
+		}
 	});
 
 	it('strips with the llvm tool its variable names, when one is named', () => {

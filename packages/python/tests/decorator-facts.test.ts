@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { portableRuntime } from '@sittir/common/engine';
+import { sharedEngine } from '@sittir/common/testing';
 import type { NodeStorageOptions } from '@sittir/types';
 import python from '../src/index.ts';
 
@@ -14,7 +15,7 @@ const classOf = (...lines: readonly string[]): string => `class A:\n${lines.map(
 const block = (statement: string): Read => ({ $path: 'statement.block', statements: [statement] });
 const cache: Read = { $path: 'attribute.decorator', content: { $path: 'expression.member', object: 'functools', property: 'cache' } };
 
-const runtimes = new Map(await Promise.all(STORAGES.map(async ([name, storage]) => [name, await portableRuntime(await createEngine(python, { api: 'strict', ...storage }))] as const)));
+const runtimes = new Map(await Promise.all(STORAGES.map(async ([name, storage]) => [name, await portableRuntime(await sharedEngine(() => createEngine(python, { api: 'strict', ...storage })))] as const)));
 
 describe.each(STORAGES)('a decorator that states a fact is that fact, in %s', (name) => {
 	const runtime = runtimes.get(name)!;

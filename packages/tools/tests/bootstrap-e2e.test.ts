@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { grammarPackage, layerPath, type GrammarPackage } from '@sittir/codegen/grammars';
 import { transpileOverrides } from '../../codegen/src/transpile/transpile-overrides.ts';
 import { runTreeSitterGenerate } from '../../codegen/src/run-codegen.ts';
+import { buildParserWasm } from '../../codegen/src/transpile/compile-parser.ts';
 import { conflictResolutionsPath, ensureConflictResolutions } from '../../codegen/src/transpile/conflict-resolutions-file.ts';
 import type { ConflictResolutionsFile } from '../../codegen/src/dsl/conflict-resolutions.ts';
 import { loadPackageIdTables } from '../../codegen/src/compiler/generated-metadata.ts';
@@ -71,6 +72,7 @@ async function bootstrapEndToEnd(name: string): Promise<{ floors: Record<string,
 		const pkg = writePackage(join(root, 'packages', name), name);
 		transpileOverrides({ package: pkg });
 		await runTreeSitterGenerate(pkg);
+		buildParserWasm(pkg.dir);
 		const generatedIdTables = await loadPackageIdTables(pkg);
 		expect(generatedIdTables).toBeDefined();
 

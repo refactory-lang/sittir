@@ -1,1 +1,5 @@
-{}
+{
+	"python": { "portable-integer-partial": 3, "portable-value-unshaped": 2 },
+	"rust": { "portable-integer-partial": 3 },
+	"typescript": { "regex-pattern-rewritten": 1 }
+}

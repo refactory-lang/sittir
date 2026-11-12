@@ -2,6 +2,11 @@ import { describe, it, expect } from 'vitest';
 import { createEngine } from '../src/create-engine.ts';
 import { portable, portableGuardsOf } from '../src/portable/index.ts';
 import { createRenderHandle } from '../src/engine.ts';
+import { liveEngineCount } from '../src/engine-census.ts';
+
+const writesNoFile = (): never => {
+	throw new Error('a fake engine writes no file');
+};
 
 interface FakeRenderOptions {
 	readonly indent?: string;
@@ -12,7 +17,7 @@ type TableLoader = () => Promise<object>;
 function fakeLanguage(name = 'fake', loaders: { readonly default?: TableLoader; readonly strict?: TableLoader } = {}) {
 	let loads = 0;
 	const created: (FakeRenderOptions | undefined)[] = [];
-	const natives: { readonly disposed: boolean }[] = [];
+	const natives: { readonly disposed: boolean; dispose: () => void }[] = [];
 	const loose = {
 		leaf: (text: string) => ({ $type: 1, text }),
 		number: { bigint: (v: bigint) => ({ $type: 2, text: String(v) }) }
@@ -29,12 +34,17 @@ function fakeLanguage(name = 'fake', loaders: { readonly default?: TableLoader; 
 			strict: loaders.strict ?? (async () => strict)
 		},
 		trivia: { kindName: () => undefined, kinds: new Set<string>(), innerGaps: {} },
+		rootKinds: [1],
 		createNative: (opts?: { options?: FakeRenderOptions }) => {
 			created.push(opts?.options);
 			let disposed = false;
 			const native = {
 				render: (n: { text?: string }, call?: FakeRenderOptions) =>
-					createRenderHandle(() => `${call?.indent ?? opts?.options?.indent ?? ''}${n.text ?? ''}`),
+					createRenderHandle(
+						() => `${call?.indent ?? opts?.options?.indent ?? ''}${n.text ?? ''}`,
+						writesNoFile,
+						writesNoFile
+					),
 				parseAndRead: (s: string) => ({ root: { $type: 1, text: s }, tree: { source: s } }),
 				dispose: () => {
 					disposed = true;
@@ -167,6 +177,20 @@ describe('createEngine', () => {
 		expect(f.natives.map((n) => n.disposed)).toEqual([true]);
 	});
 
+	it('counts the engine closed even when its native dispose throws', async () => {
+		const f = fakeLanguage();
+		const before = liveEngineCount();
+		const e = await engineOf(undefined, f);
+		expect(liveEngineCount()).toBe(before + 1);
+		f.natives[0]!.dispose = () => {
+			throw new Error('native dispose failed');
+		};
+		expect(() => e.dispose()).toThrow('native dispose failed');
+		expect(liveEngineCount()).toBe(before);
+		expect(() => e.dispose()).toThrow('native dispose failed');
+		expect(liveEngineCount()).toBe(before);
+	});
+
 	it.each([false, true])('disposes its native engine when a using scope exits (throws: %s)', async (throws) => {
 		const f = fakeLanguage();
 		const leaveScope = async () => {
@@ -209,7 +233,7 @@ describe('createEngine', () => {
 		const rows = { table: { paths: { expression: { ids: [1], exact: true } }, entries: {}, fixedText: {} }, querySlots: {} };
 		Object.assign(hooks, { portable: rows });
 		const e = (await createEngine(f.language as never, { api: 'portable' } as never)) as unknown as Record<string, never>;
-		expect(Object.keys(e).sort()).toEqual(['is', 'kinds', 'language', 'options', 'portable', 'renderModuleHash', 'trivia']);
+		expect(Object.keys(e).sort()).toEqual(['is', 'kinds', 'language', 'options', 'portable', 'renderModuleHash', 'rootKinds', 'trivia']);
 		expect(e.portable).toBe(rows);
 		expect(e.kinds).toBe(portable.kinds);
 		expect(e.is).toBe(portableGuardsOf(f.language as never));
@@ -217,11 +241,9 @@ describe('createEngine', () => {
 		expect((e.is as unknown as { expression: (id: number) => boolean }).expression(1)).toBe(true);
 	});
 
-	it('rejects the file verbs it does not implement', async () => {
+	it('rejects the file verb it does not implement', async () => {
 		const e = await engineOf();
 		await expect(e.read('a')).rejects.toThrow('file verb "read" is not implemented');
-		expect(() => e.create('a', () => e.build.leaf('a'))).toThrow('file verb "create" is not implemented');
-		expect(() => e.write('a', e.build.leaf('a'))).toThrow('file verb "write" is not implemented');
 	});
 
 	it('does not expose the retired whole-file edit callback', async () => {

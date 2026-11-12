@@ -713,7 +713,7 @@ fn edited_record<T: Clone + 'static, N: HydrateNode>(prep: &mut RecordPrep<'_, T
         read.sides = None;
         read.changed = None;
         hydrated = Some(prep.trees.tree_mut(tree).ok_or_else(|| malformed("record tree", tree.0).into()).and_then(|arena| {
-            super::hydrate_at::<N>(cursor, read, coord.index, Some(kind), crate::read::Depth::ONE, &mut super::Hydration::new(arena)).map_err(|error| match error {
+            super::hydrate_at::<N>(cursor, read, coord.index, Some(kind), crate::read::Depth::ONE, arena).map_err(|error| match error {
                 super::HydrateError::Read(error) => unread(coord, &error),
                 super::HydrateError::Arena(error) => error.into(),
             })

@@ -1337,7 +1337,7 @@ export const build: PortableBuildTable = {
 									kinds: [],
 									text: true,
 									pattern: {
-										source: '^(?:(?:.*))$',
+										source: '^(?:(?:[^\\x0A]*))$',
 										flags: 'u'
 									}
 								}
@@ -10490,6 +10490,7 @@ export const build: PortableBuildTable = {
 						marker: 'marker',
 						exponentSign: 'exponentSign'
 					},
+					numericRequired: ['integer'],
 					members: [
 						{
 							name: 'integer',
@@ -10648,6 +10649,7 @@ export const build: PortableBuildTable = {
 						marker: 'marker',
 						exponentSign: 'exponentSign'
 					},
+					numericRequired: ['fraction'],
 					members: [
 						{
 							name: 'integer',
@@ -10805,6 +10807,7 @@ export const build: PortableBuildTable = {
 						marker: 'marker',
 						exponentSign: 'exponentSign'
 					},
+					numericRequired: ['integer', 'exponent', 'marker'],
 					members: [
 						{
 							name: 'integer',
@@ -10932,6 +10935,10 @@ export const build: PortableBuildTable = {
 				{
 					kind: 95,
 					builder: 'integerDecimal.plain',
+					digits: {
+						base: 10,
+						affix: ''
+					},
 					members: [],
 					presets: [],
 					flags: {},
@@ -10959,6 +10966,10 @@ export const build: PortableBuildTable = {
 				{
 					kind: 92,
 					builder: 'integerBinary',
+					digits: {
+						base: 2,
+						affix: '0b'
+					},
 					members: [
 						{
 							name: 'radixPrefix',
@@ -11021,6 +11032,10 @@ export const build: PortableBuildTable = {
 				{
 					kind: 90,
 					builder: 'integerHex',
+					digits: {
+						base: 16,
+						affix: '0x'
+					},
 					members: [
 						{
 							name: 'radixPrefix',
@@ -11096,6 +11111,10 @@ export const build: PortableBuildTable = {
 				{
 					kind: 91,
 					builder: 'integerOctal',
+					digits: {
+						base: 8,
+						affix: '0o'
+					},
 					members: [
 						{
 							name: 'radixPrefix',
@@ -11654,7 +11673,7 @@ export const build: PortableBuildTable = {
 									kinds: [],
 									text: true,
 									pattern: {
-										source: '^(?:(?:x[a-fA-F\\d]{2}))$',
+										source: '^(?:(?:x[a-fA-F0-9]{2}))$',
 										flags: 'u'
 									}
 								}
@@ -11771,7 +11790,7 @@ export const build: PortableBuildTable = {
 									kinds: [],
 									text: true,
 									pattern: {
-										source: '^(?:(?:\\d{1,3}))$',
+										source: '^(?:(?:[0-9]{1,3}))$',
 										flags: 'u'
 									}
 								}
@@ -11810,7 +11829,7 @@ export const build: PortableBuildTable = {
 									kinds: [],
 									text: true,
 									pattern: {
-										source: '^(?:(?:u[a-fA-F\\d]{4}))$',
+										source: '^(?:(?:u[a-fA-F0-9]{4}))$',
 										flags: 'u'
 									}
 								}
@@ -11849,7 +11868,7 @@ export const build: PortableBuildTable = {
 									kinds: [],
 									text: true,
 									pattern: {
-										source: '^(?:(?:U[a-fA-F\\d]{8}))$',
+										source: '^(?:(?:U[a-fA-F0-9]{8}))$',
 										flags: 'u'
 									}
 								}

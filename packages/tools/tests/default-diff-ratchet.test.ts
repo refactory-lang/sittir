@@ -1,8 +1,12 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { defaultDiff } from '../src/exercise/default-diff.ts';
+import { releaseTrackedEngines } from './helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('./helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 const PACKAGE = fileURLToPath(new URL('..', import.meta.url));
 const CEILINGS: Readonly<Record<string, number>> = JSON.parse(readFileSync(join(PACKAGE, 'default-diff-ceilings.json'), 'utf8'));

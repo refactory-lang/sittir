@@ -8,6 +8,7 @@ import type {
 	EngineOptions,
 	Interceptor,
 	ErrorNode,
+	FileChange,
 	Language,
 	LanguageAPI,
 	LanguageIdentity,
@@ -25,7 +26,8 @@ import type {
 	KindMembership,
 	StructureTable
 } from '@sittir/types';
-import { bindTree, foreignEngine, inEngine, nodeStorageOf, stampEngineStorage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
+import { engineClosed, engineOpened } from './engine-census.ts';
+import { bindTree, engineOf, foreignEngine, inEngine, nodeStorageOf, stampEngineStorage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { keepLayout } from './exemplars.ts';
 import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts';
 import { dataBytes, metricsEnabled, recordFfi } from './metrics.ts';
@@ -35,11 +37,14 @@ import type { TreeHandle } from './read.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { refuseReviver } from './json-refusal.ts';
-import { ARENA_FEATURE_REFUSED, createRenderHandle, nativeBuiltRecords } from './engine.ts';
+import { ARENA_FEATURE_REFUSED, createRenderHandle, nativeBuiltRecords, saverOf, type TextWriter } from './engine.ts';
+import { currentText, pendingFile, type FileVerb } from './pending.ts';
 import { portable, portableGuardsOf, registerPortableRows } from './portable/index.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered, writeLeafSites } from './utils.ts';
 
 type Middleware<Call, Result> = (call: Call, next: () => Result) => Result;
+
+type RenderCall<API extends LanguageAPI> = Parameters<NonNullable<Interceptor<API>['render']>>[0];
 
 function interceptorChain<Call, Result>(
 	hooks: readonly (Middleware<Call, Result> | undefined)[]
@@ -101,7 +106,7 @@ function nativeEngineOptions<API extends LanguageAPI>(
 	return { ...(options?.render === undefined ? {} : { options: options.render }), nodeStorage };
 }
 
-function unimplementedVerb(verb: 'read' | 'create' | 'write'): Error {
+function unimplementedVerb(verb: 'read'): Error {
 	return new Error(`file verb "${verb}" is not implemented`);
 }
 
@@ -110,6 +115,10 @@ function refuseWrite(): never {
 }
 
 type BuildCall = Parameters<NonNullable<Interceptor<LanguageAPI>['build']>>[0];
+
+function attempting<T>(handle: EngineHandle, run: () => T): T {
+	return handle.builtArena === undefined ? run() : handle.builtArena.attempt(run);
+}
 
 function scopedBuild<B, Node>(
 	build: B,
@@ -159,20 +168,27 @@ function scopedBuild<B, Node>(
 	return scope(build, []) as B;
 }
 
+function releasing(rendered: Rendered, release: () => void, writeText: TextWriter): Rendered {
+	return createRenderHandle(() => rendered.toString(), saverOf(rendered), writeText, () => {
+		rendered[Symbol.dispose]();
+		release();
+	});
+}
+
 function interceptedRender<Call>(
 	call: Call,
 	chain: Middleware<Call, string>,
 	rendered: Rendered,
-	materialize: () => string
+	materialize: () => string,
+	writeText: TextWriter
 ): Rendered {
-	const output = createRenderHandle(() => chain(call, materialize));
-	return {
-		...output,
-		[Symbol.dispose]() {
-			output[Symbol.dispose]();
-			rendered[Symbol.dispose]();
-		}
-	};
+	const output: Rendered = createRenderHandle(
+		() => chain(call, materialize),
+		(path, create) => writeText(path, output.toString(), create),
+		writeText,
+		() => rendered[Symbol.dispose]()
+	);
+	return output;
 }
 
 const builderScopes = new WeakMap<object, <T extends object>(table: T) => T>();
@@ -232,11 +248,13 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 	records: object | undefined
 ): Engine<API, M> {
 	const native = hooks.createNative(nativeEngineOptions(options, storage));
+	let open = true;
 	const identity: EngineIdentity<API> = Object.freeze({
 		language,
 		renderModuleHash: hooks.renderModuleHash,
 		options: options?.render,
 		trivia: hooks.trivia,
+		rootKinds: hooks.rootKinds,
 		portable: hooks.portable
 	});
 	stampEngineStorage(identity, storage);
@@ -253,6 +271,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 	const buildChain = interceptorChain(interceptors.map((hook) => hook.build?.bind(hook)));
 	const parseChain = interceptorChain(interceptors.map((hook) => hook.parse?.bind(hook)));
 	const renderChain = interceptorChain(interceptors.map((hook) => hook.render?.bind(hook)));
+	const fileHooks = interceptors.flatMap((hook) => (hook.file === undefined ? [] : [hook.file.bind(hook)]));
 	const build = scopedBuild(table, handle, buildChain) as BuildSurface<API, M>;
 	const materializeNative = (target: Parameters<typeof native.render>[0], rendered: Rendered): string => {
 		if (!metricsEnabled) return rendered.toString();
@@ -263,17 +282,68 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		recordFfi(language.name, kind, dataBytes(target), performance.now() - before, text.length);
 		return text;
 	};
+	const measured = (target: Parameters<typeof native.render>[0], rendered: Rendered): Rendered => {
+		if (metricsEnabled) materializeNative(target, rendered);
+		return rendered;
+	};
+	const renderCall = (target: RenderCall<API>['node'], renderOptions: API['options'] | undefined): RenderCall<API> => ({
+		node: target,
+		options: mergeRenderOptions(options?.render, renderOptions)
+	});
+	const renderInput = (target: RenderCall<API>['node'], renderOptions: API['options'] | undefined): Rendered => {
+		const foreign = foreignEngine(target, identity);
+		if (foreign !== undefined) {
+			throw new Error(`cannot render a ${foreign.language.name} node through a ${language.name} engine`);
+		}
+		const rendered = native.render(target, renderOptions);
+		return renderChain === undefined ? measured(target, rendered) : interceptedRender(renderCall(target, renderOptions), renderChain, rendered, () => materializeNative(target, rendered), writeText);
+	};
 	const parseAndBind = (source: string) => {
 		const tree = native.parseTree(source);
 		bindTree(tree, handle);
 		return tree;
 	};
+	const writeText: TextWriter = (path, text, create) => native.writeText(path, text, create);
 	const readAndBind = (source: string, parseOptions?: ParseOptions) => {
 		const read = native.parseAndRead(source, parseOptions);
 		bindTree(read.tree, handle);
 		return read;
 	};
 	const inLanguage = inLanguageOf(language);
+	const kindNameOf = (kind: number): string => hooks.trivia.kindName(kind as API['kindId']) ?? String(kind);
+	type RootInput = Parameters<Engine<API, M>['write']>[1];
+	const writable = (root: RootInput): RootInput => {
+		const owner = engineOf(root);
+		if (owner !== undefined && owner !== engine && owner !== identity) throw new Error(`cannot write a root another engine parsed or built; write it through that engine`);
+		const kind = (root as AnyUntypedNode).$type as number;
+		if (!hooks.rootKinds.includes(kind)) throw new Error(`cannot write ${kindNameOf(kind)} as a file: write and create take a ${hooks.rootKinds.map(kindNameOf).join(' or ')} root`);
+		return root;
+	};
+	const fileChangeOf = (path: string, rendered: Rendered): FileChange => Object.freeze({ path, before: currentText(path), after: rendered.toString() });
+	const pendingWrite = (path: string, verb: FileVerb, root: RootInput, release?: () => void): Pending =>
+		pendingFile(
+			path,
+			verb,
+			() => {
+				let rendered: Rendered | undefined;
+				const renderedNow = (): Rendered => (rendered ??= engine.render(writable(root)));
+				return {
+					diff: () => fileChangeOf(path, renderedNow()),
+					commit: () => {
+						saverOf(renderedNow())(path, verb === 'create');
+					},
+					[Symbol.dispose]: () => {
+						rendered?.[Symbol.dispose]();
+						release?.();
+					}
+				};
+			},
+			() => {
+				using rendered = engine.render(writable(root));
+				return fileChangeOf(path, rendered);
+			},
+			fileHooks
+		);
 	const queryHooks: QueryHooks = {
 		querySlots: hooks.querySlots,
 		queryFlags: hooks.queryFlags ?? {},
@@ -331,27 +401,16 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 			return Promise.reject(unimplementedVerb('read'));
 		},
 		render(node: RenderArgument<API, M>, renderOptions?: API['options']) {
-			const target = typeof node === 'function' ? node(build) : node;
-			const foreign = foreignEngine(target, identity);
-			if (foreign !== undefined) {
-				throw new Error(`cannot render a ${foreign.language.name} node through a ${language.name} engine`);
-			}
-			const rendered = native.render(target, renderOptions);
-			if (renderChain === undefined) {
-				if (metricsEnabled) materializeNative(target, rendered);
-				return rendered;
-			}
-			const call: Parameters<NonNullable<Interceptor<API>['render']>>[0] = {
-				node: target,
-				options: mergeRenderOptions(options?.render, renderOptions)
-			};
-			return interceptedRender(call, renderChain, rendered, () => materializeNative(target, rendered));
+			if (typeof node !== 'function') return renderInput(node, renderOptions);
+			const built = attempting(handle, () => node(build));
+			return releasing(renderInput(built, renderOptions), () => engine.release(built), writeText);
 		},
-		create(): Pending {
-			throw unimplementedVerb('create');
+		create(path, fn) {
+			const root = attempting(handle, () => fn(build));
+			return pendingWrite(path, 'create', root, () => engine.release(root));
 		},
-		write(): Pending {
-			throw unimplementedVerb('write');
+		write(path, root) {
+			return pendingWrite(path, 'write', root);
 		},
 		release(node) {
 			native.release(node);
@@ -362,6 +421,10 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		},
 		dispose() {
 			handle.current = identity;
+			if (open) {
+				open = false;
+				engineClosed();
+			}
 			native.dispose();
 		},
 		[Symbol.dispose]() {
@@ -380,13 +443,14 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		handle.builtArena = new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle, views, writeLeafSites);
 		handle.records = records;
 	}
+	engineOpened();
 	return frozen;
 }
 
 function assemblePortableEngine<API extends PortableLanguageAPI>(language: Language<API>, hooks: LanguageHooks<API>): PortableEngine<API> {
 	const rows = hooks.portable;
 	if (rows === undefined) throw new Error(`language "${language.name}" has no portable surface: its grammar has no bindings`);
-	const identity: EngineIdentity<API> = { language, renderModuleHash: hooks.renderModuleHash, options: undefined, trivia: hooks.trivia, portable: rows };
+	const identity: EngineIdentity<API> = { language, renderModuleHash: hooks.renderModuleHash, options: undefined, trivia: hooks.trivia, rootKinds: hooks.rootKinds, portable: rows };
 	return Object.freeze({ ...identity, kinds: portable.kinds as API['portable']['kinds'], is: portableGuardsOf(language) as API['portable']['is'] });
 }
 

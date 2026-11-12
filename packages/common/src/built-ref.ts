@@ -24,11 +24,15 @@ export function handleArenaOf(value: unknown): BuiltArena | undefined {
 	return arena !== undefined && isHandle(value) ? arena : undefined;
 }
 
+export function liveRecordAt(value: object, arena: BuiltArena): number | undefined {
+	const at = (value as { readonly $at?: unknown }).$at;
+	return typeof at === 'number' ? arena.liveAt(value, at) : undefined;
+}
 export function builtRefOf(value: unknown): BuiltRef | undefined {
 	const arena = handleArenaOf(value);
 	if (arena === undefined) return undefined;
-	const at = (value as { readonly $at?: unknown }).$at;
-	if (typeof at === 'number') return { arena, at: arena.liveAt(value as object, at) };
+	const at = liveRecordAt(value as object, arena);
+	if (at !== undefined) return { arena, at };
 	const text = (value as { readonly $entry?: BuiltText }).$entry;
 	return text === undefined ? undefined : { arena, text };
 }

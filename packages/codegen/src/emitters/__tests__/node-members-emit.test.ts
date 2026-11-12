@@ -115,3 +115,22 @@ describe('a wrapped node writes its members in its literal', () => {
 		expect(body).not.toMatch(/withMethods|defineProperty/);
 	});
 });
+
+describe('the grammar root saves itself, and a parsed root carries its errors', () => {
+	const members = (spec: { readonly root?: boolean; readonly parsed?: true }): readonly string[] => nodeMemberParts({ accessors: [], trivia: undefined, ...spec }).members;
+
+	it('a root has $save, parsed or built', () => {
+		expect(members({ root: true, parsed: true })).toContain('    $save: handleSave,');
+		expect(members({ root: true })).toContain('    $save: handleSave,');
+	});
+
+	it('only a parsed root has $errors', () => {
+		expect(members({ root: true, parsed: true }).some((line) => line.includes('$errors'))).toBe(true);
+		expect(members({ root: true }).some((line) => line.includes('$errors'))).toBe(false);
+	});
+
+	it('a node of another kind has neither', () => {
+		expect(members({ parsed: true }).some((line) => line.includes('$save') || line.includes('$errors'))).toBe(false);
+		expect(members({}).some((line) => line.includes('$save') || line.includes('$errors'))).toBe(false);
+	});
+});

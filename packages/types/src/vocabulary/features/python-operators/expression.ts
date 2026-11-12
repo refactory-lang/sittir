@@ -16,7 +16,7 @@ export namespace Expression {
 		export namespace Arithmetic {
 			export interface FloorDivide<G extends GrammarMap, K extends Under<'expression.binary.arithmetic.floor_divide'> = 'expression.binary.arithmetic.floor_divide'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '//';
+				readonly operator?: never;
 			}
 		}
 		export namespace Comparison {
@@ -44,13 +44,12 @@ export namespace Expression {
 				export interface Legacy<G extends GrammarMap, K extends Under<'expression.binary.comparison.not_equal.legacy'> = 'expression.binary.comparison.not_equal.legacy'> extends SubKindOf<V.Expression.Binary.Comparison.NotEqual<G, K>> {
 					// claimed by p
 					readonly $path: K;
-					readonly operator: '<>';
 				}
 			}
 		}
 		export interface MatrixMultiply<G extends GrammarMap, K extends Under<'expression.binary.matrix_multiply'> = 'expression.binary.matrix_multiply'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 			readonly $path: K;
-			readonly operator: '@';
+			readonly operator?: never;
 		}
 		export namespace Membership {
 			export interface NotIn<G extends GrammarMap, K extends Under<'expression.binary.membership.not_in'> = 'expression.binary.membership.not_in'> extends SubKindOf<V.Expression.Binary.Membership<G, K>> {

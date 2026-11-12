@@ -61,6 +61,7 @@ import {
 	rowWith,
 	handleTrivia,
 	handleRender,
+	handleSave,
 	handleToString,
 	handleEngine,
 	handleDispose,
@@ -101,9 +102,10 @@ function viewSlot<T>(
 	forms: number,
 	inline: number,
 	built: number,
-	aliasContent = false
+	aliasContent = false,
+	spellings?: Readonly<Record<string, string>>
 ): ParsedOfData<T> {
-	return childSlot(view, word, width, forms, inline, built, _wrap, aliasContent) as ParsedOfData<T>;
+	return childSlot(view, word, width, forms, inline, built, _wrap, aliasContent, spellings) as ParsedOfData<T>;
 }
 function viewSlots<T>(
 	view: RecordHandle,
@@ -133,6 +135,7 @@ export function wrapModule(data: T.Module, tree: TreeHandle): T.Module.Parsed {
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current),
+		$save: handleSave,
 		$errors: (data as { readonly $errors?: unknown }).$errors,
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
@@ -12818,6 +12821,7 @@ function viewModule(data: RecordPosition, tree: TreeHandle): T.Module.Parsed {
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		$errors: (data as { readonly $errors?: unknown }).$errors,
+		$save: handleSave,
 		statements: viewModule$statements,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -19606,80 +19610,77 @@ function viewTypeParamParamSpec(data: RecordPosition, tree: TreeHandle): T.TypeP
 }
 
 function viewStringStart$prefix(this: RecordHandle) {
-	return spelledMember(
-		viewSlot<
-			| 'r'
-			| 'R'
-			| 'b'
-			| 'B'
-			| 'f'
-			| 'F'
-			| 't'
-			| 'T'
-			| 'u'
-			| 'U'
-			| 'rb'
-			| 'rB'
-			| 'Rb'
-			| 'RB'
-			| 'br'
-			| 'bR'
-			| 'Br'
-			| 'BR'
-			| 'rf'
-			| 'rF'
-			| 'Rf'
-			| 'RF'
-			| 'fr'
-			| 'fR'
-			| 'Fr'
-			| 'FR'
-			| 'rt'
-			| 'rT'
-			| 'Rt'
-			| 'RT'
-			| 'tr'
-			| 'tR'
-			| 'Tr'
-			| 'TR'
-			| 'ur'
-			| 'uR'
-			| 'Ur'
-			| 'UR'
-			| undefined
-		>(this, 2, 2, 4, 0, 2),
-		{
-			R: 'r',
-			B: 'b',
-			F: 'f',
-			T: 't',
-			U: 'u',
-			rB: 'rb',
-			Rb: 'rb',
-			RB: 'rb',
-			br: 'rb',
-			bR: 'rb',
-			Br: 'rb',
-			BR: 'rb',
-			rF: 'rf',
-			Rf: 'rf',
-			RF: 'rf',
-			fr: 'rf',
-			fR: 'rf',
-			Fr: 'rf',
-			FR: 'rf',
-			rT: 'rt',
-			Rt: 'rt',
-			RT: 'rt',
-			tr: 'rt',
-			tR: 'rt',
-			Tr: 'rt',
-			TR: 'rt',
-			uR: 'ur',
-			Ur: 'ur',
-			UR: 'ur'
-		}
-	);
+	return viewSlot<
+		| 'r'
+		| 'R'
+		| 'b'
+		| 'B'
+		| 'f'
+		| 'F'
+		| 't'
+		| 'T'
+		| 'u'
+		| 'U'
+		| 'rb'
+		| 'rB'
+		| 'Rb'
+		| 'RB'
+		| 'br'
+		| 'bR'
+		| 'Br'
+		| 'BR'
+		| 'rf'
+		| 'rF'
+		| 'Rf'
+		| 'RF'
+		| 'fr'
+		| 'fR'
+		| 'Fr'
+		| 'FR'
+		| 'rt'
+		| 'rT'
+		| 'Rt'
+		| 'RT'
+		| 'tr'
+		| 'tR'
+		| 'Tr'
+		| 'TR'
+		| 'ur'
+		| 'uR'
+		| 'Ur'
+		| 'UR'
+		| undefined
+	>(this, 2, 2, 4, 0, 2, false, {
+		R: 'r',
+		B: 'b',
+		F: 'f',
+		T: 't',
+		U: 'u',
+		rB: 'rb',
+		Rb: 'rb',
+		RB: 'rb',
+		br: 'rb',
+		bR: 'rb',
+		Br: 'rb',
+		BR: 'rb',
+		rF: 'rf',
+		Rf: 'rf',
+		RF: 'rf',
+		fr: 'rf',
+		fR: 'rf',
+		Fr: 'rf',
+		FR: 'rf',
+		rT: 'rt',
+		Rt: 'rt',
+		RT: 'rt',
+		tr: 'rt',
+		tR: 'rt',
+		Tr: 'rt',
+		TR: 'rt',
+		uR: 'ur',
+		Ur: 'ur',
+		UR: 'ur'
+	});
 }
 function viewStringStart$quote(this: RecordHandle) {
 	return viewSlot<'"' | "'" | '"""' | "'''" | '`'>(this, 4, 2, 4, 0, 3);

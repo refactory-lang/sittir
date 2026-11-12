@@ -1,10 +1,14 @@
 import { readFileSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { BLANK_KIND_ID, snapshotOf } from '@sittir/common/utils';
 import { NODE_MODEL_FILE, nodeModelPath } from '@sittir/codegen/grammars';
 import type { QuerySlots } from '@sittir/types';
 import { languageByName } from '../src/languages.ts';
+import { releaseTrackedEngines } from './helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('./helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 interface ModelSlot {
 	readonly name: string;

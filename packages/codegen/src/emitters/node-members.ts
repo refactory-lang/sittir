@@ -9,6 +9,12 @@ export interface SetterEntry {
 	readonly name: string;
 	readonly params: string;
 	readonly body: string;
+	readonly reads?: readonly string[];
+}
+
+export interface HeldRead {
+	readonly local: string;
+	readonly line: string;
 }
 
 export interface TriviaPositions {
@@ -50,6 +56,7 @@ export interface NodeMemberSpec {
 }
 
 export const ROOT_ERRORS_LINE = '    $errors: (data as { readonly $errors?: unknown }).$errors,';
+export const ROOT_SAVE_LINE = '    $save: handleSave,';
 
 export function triviaPositionsOf(kind: string, nodeMap: NodeMap): TriviaPositions | undefined {
 	return nodeMap.nodes.get(kind)?.triviaInterior ? undefined : { inner: emptyForms(nodeMap).has(kind) };
@@ -84,7 +91,7 @@ function appliedSetter(entry: SetterEntry): string {
 	return `applySetter(args, (${entry.params}) => rebuilt(node, handle, () => ${entry.body}))`;
 }
 
-function withLines(name: string, kind: string, nodeType: string, prelude: readonly string[], setters: readonly SetterEntry[]): string[] {
+function withLines(name: string, kind: string, nodeType: string, prelude: readonly string[], setters: readonly SetterEntry[], caseLines: (entry: SetterEntry) => readonly string[] = () => []): string[] {
 	const unread = setters.length === 0 ? '_' : '';
 	return [
 		`function ${name}(${unread}node: ${nodeType}, setter: string, ${unread}args: readonly unknown[]): unknown {`,
@@ -93,7 +100,11 @@ function withLines(name: string, kind: string, nodeType: string, prelude: readon
 			: [
 					...prelude,
 					'  switch (setter) {',
-					...setters.flatMap((entry) => [`    case ${JSON.stringify(entry.name)}:`, `      return ${appliedSetter(entry)};`]),
+					...setters.flatMap((entry) => {
+						const lines = caseLines(entry);
+						const applied = `      return ${appliedSetter(entry)};`;
+						return lines.length === 0 ? [`    case ${JSON.stringify(entry.name)}:`, applied] : [`    case ${JSON.stringify(entry.name)}: {`, ...lines.map((line) => `    ${line}`), applied, '    }'];
+					}),
 					'  }'
 				]),
 		`  throw new Error(\`${kind} has no $with.\${setter}\`);`,
@@ -101,8 +112,11 @@ function withLines(name: string, kind: string, nodeType: string, prelude: readon
 	];
 }
 
-export function builtWithLines(name: string, kind: string, inputs: readonly string[], setters: readonly SetterEntry[]): string[] {
-	return withLines(name, kind, 'object', ['  const handle = handleOf(node as RecordHandle);', ...(inputs.length === 0 ? [] : ['  const inputs = builtInputs(node);', ...inputs])], setters);
+export function builtWithLines(name: string, kind: string, inputs: readonly HeldRead[], readers: readonly string[], setters: readonly SetterEntry[]): string[] {
+	return withLines(name, kind, 'object', ['  const handle = handleOf(node as RecordHandle);', ...readers], setters, (entry) => {
+		const read = inputs.filter(({ local }) => entry.reads === undefined || entry.reads.includes(local));
+		return read.length === 0 ? [] : ['  const inputs = builtInputs(node);', ...read.map(({ line }) => line)];
+	});
 }
 
 function sharedSetterLines(setters: SharedSetters): string[] {
@@ -145,7 +159,7 @@ export function nodeMemberParts(spec: NodeMemberSpec): NodeMemberParts {
 				]
 			: []),
 		'    $engine: handle && (() => handle.current),',
-		...(spec.root === true ? [ROOT_ERRORS_LINE] : []),
+		...(spec.root === true ? [ROOT_SAVE_LINE, ...(spec.parsed ? [ROOT_ERRORS_LINE] : [])] : []),
 		...(spec.tail ?? []),
 		...(spec.parsed ? ['    [TREE]: treeTokenOf(data) ?? null,'] : []),
 		`    [SOURCE]: ${spec.parsed ? 'treeTokenOf(data) === undefined ? Source.Factory : Source.Ts' : 'Source.Factory'},`,
@@ -169,10 +183,10 @@ export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): 
 		const slot = plan.slots.find((candidate) => candidate.slot === entry.name);
 		const elementSet = element === undefined ? base : `(...args: never[]) => elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})`;
 		if (slot !== undefined) {
-			return { name: entry.name, params: '...args: unknown[]', body: `listSlotWith(args, { ${slot.spec} }, ${elementSet})` };
+			return { name: entry.name, params: '...args: unknown[]', body: `listSlotWith(args, { ${slot.spec} }, ${elementSet})`, reads: entry.reads };
 		}
 		if (element !== undefined) {
-			return { name: entry.name, params: '...args: unknown[]', body: `elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})` };
+			return { name: entry.name, params: '...args: unknown[]', body: `elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})`, reads: entry.reads };
 		}
 		return entry;
 	});
@@ -185,7 +199,8 @@ export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): 
 			keyed.push({
 				name: key.name,
 				params: '...args: unknown[]',
-				body: `seatWith(${spec}, ${JSON.stringify(key.name)}, args, ${base}, () => ${readGroupName(hint.slot)}.call(node))`
+				body: `seatWith(${spec}, ${JSON.stringify(key.name)}, args, ${base}, () => ${readGroupName(hint.slot)}.call(node))`,
+				reads: seat.reads
 			});
 		}
 	}

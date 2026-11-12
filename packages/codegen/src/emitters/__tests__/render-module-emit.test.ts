@@ -13,13 +13,13 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { DEDENT_TEXT, INDENT_TEXT } from '../../dsl/primitives/spacing.ts';
 import { classifySlot, buildSupertypeNodeSet, type SlotClass } from '../node-common.ts';
-import { closeUsedSupertypes, emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
+import { closeUsedSupertypes, emitRenderModule, grammarRenderInputs, holderArmSeams, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
 import { PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
 import { emitReadyModel } from '../../__tests__/helpers/emit-ready-model.ts';
 import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { PATTERN, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { PATTERN, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { runTemplateEmitter } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { generatedFieldIds, type GeneratedKindEntry } from '../../dsl/symbol-table.ts';
@@ -99,8 +99,8 @@ let _rustTemplatesRs: string | undefined;
 let _typescriptNodeRs: string | undefined;
 /** The rust kind entries the cached emit was produced from. */
 let _rustKindEntries: ReturnType<typeof collectKindEntries> | undefined;
-/** The rust `options.rs` the cached emit produced beside its nodes. */
-let _rustOptionsRs: string | undefined;
+/** The `options.rs` each cached emit produced beside its nodes, by grammar. */
+const _optionsRs = new Map<string, string>();
 
 const _models = new Map<string, ReturnType<typeof buildModel>>();
 
@@ -128,13 +128,18 @@ async function getNodeRsForGrammar(grammar: 'rust' | 'typescript' | 'scm' | 'pyt
 		generatedIdTables,
 		{ ...grammarRenderInputs(grammar, { renderRules, renderAs: raw.renderAs, options: raw.options }), envelopePins: undefined }
 	);
-	if (grammar === 'rust') _rustOptionsRs = emit.optionsRs.contents;
+	_optionsRs.set(grammar, emit.optionsRs.contents);
 	return emit.nodeRs.contents;
 }
 
 async function getRustOptionsRs(): Promise<string> {
 	await getRustTemplatesRs();
-	return _rustOptionsRs!;
+	return _optionsRs.get('rust')!;
+}
+
+async function getTypescriptOptionsRs(): Promise<string> {
+	await getTypescriptNodeRs();
+	return _optionsRs.get('typescript')!;
 }
 
 async function getRustTemplatesRs(): Promise<string> {
@@ -375,16 +380,26 @@ describe('render options on nodes', () => {
 		expect(src).toMatch(/head: (Some\(options::SITE_\w+\)|None),/);
 	});
 
-	it('a literal arm of a per-slot child enum writes its owner-kind seam sites around the literal from the resolved options', async () => {
+	it("a literal arm's owner-kind seam sites are written by the slot's holder, gated by the arm's kind, and not by the arm", async () => {
 		const src = await getTypescriptNodeRs();
-		const enumSrc = src.slice(src.indexOf('pub enum LexicalDeclarationTerminatorNodeSlot {'));
+		const choice = extractStructBody(src, 'LexicalDeclarationNode').match(/pub terminator: Option<::sittir_core::SlotValue<(\w+)>>/)?.[1];
+		expect(choice).toBeDefined();
+		const enumSrc = src.slice(src.indexOf(`pub enum ${choice} {`));
 		expect(enumSrc.slice(0, enumSrc.indexOf('\n}\n'))).toMatch(/^    Semi,$/m);
-		const render = src.slice(
-			src.indexOf('impl ::sittir_core::render::Render for LexicalDeclarationTerminatorNodeSlot {')
+		expect(extractFnBody(src, 'render_lexical_declaration')).toMatch(
+			/if terminator\.kind_in\(&\*w, &\[::sittir_core::types::KindId\(\d+\)\]\) \{ w\.site_at\(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE\); \}\s*::sittir_core::layout::BodyLayout::render_unit\(node\.layout\(\), "_terminator", ::sittir_core::types::ItemIndex\(0\), w, \|w\| terminator\.render\(w\)\)\?;/
 		);
-		expect(render.slice(0, render.indexOf('\n}\n'))).toMatch(
-			/Semi => \{\s*w\.site_at\(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE\);\s*let written = render_semi\(w\);/
-		);
+		const render = src.slice(src.indexOf(`impl ::sittir_core::render::Render for ${choice} {`));
+		const arms = render.slice(0, render.indexOf('\n}\n'));
+		expect(arms).toMatch(/::Semi => render_semi\(w\),/);
+		expect(arms).not.toContain('w.site_at(');
+	});
+
+	it("a holder's choice slot whose enum recorded no arm seams fails at codegen instead of rendering without them", async () => {
+		const { nodeMap } = await modelFor('typescript');
+		const holder = nodeMap.nodes.get('lexical_declaration')!;
+		expect(() => holderArmSeams(new Map(), holder, 'terminator', { tag: 'union' })).toThrow(/lexical_declaration.*terminator/);
+		expect(holderArmSeams(new Map(), holder, 'kind', { tag: 'text' })).toBeUndefined();
 	});
 
 	it('the render entry prepares the tree through the context before dispatch, then releases it a level at a time', async () => {
@@ -768,6 +783,22 @@ describe('node read facts', () => {
 		expect(args('TypeIdentifierNode')).toBe('kind = kind::_TYPE_IDENTIFIER, display, content = content');
 	});
 
+	it('reads an own-text leaf’s slot by the affixes it is spelled with, checking it first when an external scanner lexes it', () => {
+		expect(args('EscapeSequenceSimpleNode')).toBe('kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\\\\\(?<content>(?:[^xu]))$", affixes = ("\\\\", "")');
+		expect(args('ShebangNode')).toMatch(/, affixes = \("#!", "\\n"\)$/);
+		const leaf = node('EscapeSequenceSimpleNode');
+		const scanned: ReadFactsCtx = { ...ctx, nodeMap: { ...ctx.nodeMap, externals: [...(ctx.nodeMap.externals ?? []), { type: SYMBOL, name: leaf.kind }] } };
+		expect(nodeArgs(leaf, ownId(leaf), scanned, (leaf as AbstractAssembledCompound).slots)).toMatch(/, affixes = \("\\\\", ""\), scanned$/);
+	});
+
+	it('refuses an own-text leaf whose interior is not its affixes around its one slot', () => {
+		const leaf = node('EscapeSequenceSimpleNode') as AssembledNode & { readonly renderRule: { readonly members: readonly unknown[] } };
+		const widened = Object.assign(Object.create(Object.getPrototypeOf(leaf) as object) as object, leaf, {
+			renderRule: { ...leaf.renderRule, members: [...leaf.renderRule.members, { type: STRING, value: '!' }] }
+		}) as AssembledNode;
+		expect(() => nodeArgs(widened, ownId(leaf), ctx, (widened as AbstractAssembledCompound).slots)).toThrow('own-text-interior-not-affixed');
+	});
+
 	it('refuses an envelope whose content is a unit, or a compound sharing its row', () => {
 		const envelope = node('TypeIdentifierNode');
 		const [content] = envelope.slots.flatMap((s) => slotKindNames(s));
@@ -903,7 +934,7 @@ describe('node attributes', () => {
 		const heldByBlankChoices = [...src.matchAll(/pub \w+: Option<::sittir_core::SlotValue<(\w+)>>,/g)].filter((m) => blankChoices.includes(m[1]!));
 		expect(blankOptions).toHaveLength(10);
 		expect(heldByBlankChoices).toHaveLength(blankOptions.length);
-		expect(blankChoices).toHaveLength(4);
+		expect(blankChoices).toHaveLength(2);
 	});
 });
 
@@ -1032,6 +1063,19 @@ describe('list storage', () => {
 		expect(rust).not.toMatch(/Option<Vec</);
 		expect(rust).toContain('pub decorator: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DecoratorNode>>');
 	}, 120_000);
+});
+
+describe('a token that writes a seam in place of text', () => {
+	it('stamps, by its kind id, the seam its render writes, for a source coordinate to write', async () => {
+		const { kindEntries } = await modelFor('typescript');
+		const seam = extractFnBody(await getTypescriptNodeRs(), 'render_automatic_semicolon').match(/w\.seam\(([^)]+)\)/)?.[1];
+		expect(seam).toBeDefined();
+		const options = await getTypescriptOptionsRs();
+		const table = options.slice(options.indexOf('pub static TOKEN_SEAMS: &[Option<::sittir_core::layout_kinds::LayoutKinds>] = &['));
+		const cells = table.slice(table.indexOf('= &[') + 4, table.indexOf('];')).split(',').map((cell) => cell.trim()).filter((cell) => cell !== '');
+		expect(cells[findKindEntry(kindEntries, 'automatic_semicolon')!.id]).toBe(`Some(${seam})`);
+		expect(options).toContain('token_seams: TOKEN_SEAMS,');
+	});
 });
 
 describe('closeUsedSupertypes', () => {
