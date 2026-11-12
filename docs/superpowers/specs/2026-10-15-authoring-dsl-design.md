@@ -56,6 +56,9 @@ Carried forward unchanged:
 Maintainer, 2026-10-19:
 - **`eof()`** is legal only as the last step of the start rule, outside any repetition. Last in the root it changes nothing, so the rule keeps `eof()` inert until a grammar needs more, and the terminator pattern is refused until then. Neither eof code can be expected (§13).
 
+User, 2026-11-07 (question box), "Narrow it out (Recommended)":
+- **Typescript's `typeof` takes a call only for `typeof import("m")`.** tsc rejects `typeof f()`, `typeof f().g` and `let y: typeof f()` (TS1005) and accepts `typeof o.a`, `typeof o["a"]` and `typeof f<string>`, so `_type_query_call_expression` is reauthored `accepts-invalid-syntax` with its function narrowed to `import`, and upstream's corpus entries for the rejected forms get corrected local entries.
+
 User, 2026-11-12 (question box):
 - **A token rule's reauthor refines upstream's token before enrich.** A `rules:` entry that reauthors a token rule, declared `reauthored` with a cause, applies to upstream's token at intake, so enrich splits the refined arms and the layer's `edits` name them as upstream's own (§1.3). This narrows the 2026-10-13 ruling that an authored rule is written in enrich's final form: that holds for every rule that is not a token. Python's `integer` and typescript's `number` gain their legacy octal arms this way.
 
