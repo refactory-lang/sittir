@@ -72,6 +72,8 @@
 
 ### Task 1: The one native writer, and every save through it
 
+**Status:** merged as #1178 (9063a1960), 2026-11-11.
+
 **Files:**
 - Create: `rust/crates/sittir-core/src/file_io.rs`, registered in `lib.rs`
 - Modify: `napi_engine.rs` (`render_to_file`, three new file siblings, and `write_text`)
@@ -97,7 +99,7 @@
   - `saverOf(rendered: Rendered): (path: string, create: boolean) => boolean`, read from a module-private `WeakMap`, so a `Rendered` gains no member. Task 3 commits through it.
   - `interceptedRender`'s handle saves its intercepted text through `writeText`.
 
-- [ ] **Step 1: Write the failing Rust tests** in `file_io.rs`:
+- [x] **Step 1: Write the failing Rust tests** in `file_io.rs`:
 
 ```rust
 #[test] fn an_unchanged_file_is_not_rewritten()        // same bytes → Ok(false); ino and mtime unchanged
@@ -113,15 +115,15 @@
 #[test] fn a_non_utf8_source_is_refused_by_path()      // read_source of [b'a', 0xff] → Err(Encoding { byte: 1, .. }); Display names the path
 ```
 
-- [ ] **Step 2:** Run `cargo test -p sittir-core --no-default-features file_io`. Expected: FAIL (no module).
-- [ ] **Step 3: Implement `file_io`.**
+- [x] **Step 2:** Run `cargo test -p sittir-core --no-default-features file_io`. Expected: FAIL (no module).
+- [x] **Step 3: Implement `file_io`.**
   - Read the current bytes when the file exists. Equal bytes under `Replace` return `Ok(false)` without writing.
   - Refuse a path whose metadata isn't a regular file before opening it, so a FIFO never blocks.
   - `Replace` opens the existing file (following a symlink), truncates it and writes the bytes. `CreateNew`, and `Replace` of a missing path, open with `create_new`, which refuses an existing file, and write in place. A failed create leaves what it wrote and says so in the error.
   - The write goes through one function generic over `Write`, so a test can make it fail partway. On a failed write, rewrite the original bytes and return the error, naming the path, and saying so if the restore failed too.
   - Never sync, and never create a directory.
-- [ ] **Step 4:** Run the Rust tests again. Expected: PASS.
-- [ ] **Step 5: Write the TypeScript tests** `render-save.test.ts`, as `describe.each(['object', 'arena'])` over a rust engine:
+- [x] **Step 4:** Run the Rust tests again. Expected: PASS.
+- [x] **Step 5: Write the TypeScript tests** `render-save.test.ts`, as `describe.each(['object', 'arena'])` over a rust engine:
 
 ```ts
 it('saves a parsed root as the bytes it renders')     // readFileSync(p, 'utf8') === root.toString()
@@ -134,15 +136,15 @@ it('refuses a missing directory, naming the path')    // toThrow(/no-such-dir/)
 it('an intercepted render saves the intercepted text') // intercept: [{ render: (c, next) => next() + '// x\n' }]: file === render(root).toString()
 ```
 
-- [ ] **Step 6:** Run `pnpm exec vitest run packages/common/tests/render-save.test.ts`. Expected: the "untouched" cases FAIL in both storages, since `writeFileSync` and `std::fs::write` both rewrite. The intercepted case passes today and pins that behavior.
-- [ ] **Step 7: Implement the napi siblings and the TypeScript side.**
+- [x] **Step 6:** Run `pnpm exec vitest run packages/common/tests/render-save.test.ts`. Expected: the "untouched" cases FAIL in both storages, since `writeFileSync` and `std::fs::write` both rewrite. The intercepted case passes today and pins that behavior.
+- [x] **Step 7: Implement the napi siblings and the TypeScript side.**
   - Each `*_to_file` renders as its text sibling does, then calls one helper, `save_rendered(path, text, create) -> napi::Result<bool>`, over `file_io::write_file`. `write_text` calls the same helper. The helper maps a `FileError` to a napi error carrying its `Display`.
   - `renderNativeNode` passes the matching saver for each of its four branches.
   - `createRenderHandle` drops the fallback and records its saver for `saverOf`, and `engine.ts` drops `node:fs`.
-- [ ] **Step 8:** Run `pnpm run regen:all`, then add the five new names to `ADDON_FUNCTIONS`.
-- [ ] **Step 9:** Run the render-save and native-typings tests. Expected: PASS.
-- [ ] **Step 10:** Run the three-way verification, cargo, clippy and the census.
-- [ ] **Step 11:** Commit `file_io.rs`, `lib.rs`, `napi_engine.rs`, `engine.ts`, `create-engine.ts`, both tests and the regenerated natives (pathspec). Message: `feat(core): one native writer, and every render's save through it`.
+- [x] **Step 8:** Run `pnpm run regen:all`, then add the five new names to `ADDON_FUNCTIONS`.
+- [x] **Step 9:** Run the render-save and native-typings tests. Expected: PASS.
+- [x] **Step 10:** Run the three-way verification, cargo, clippy and the census.
+- [x] **Step 11:** Commit `file_io.rs`, `lib.rs`, `napi_engine.rs`, `engine.ts`, `create-engine.ts`, both tests and the regenerated natives (pathspec). Message: `feat(core): one native writer, and every render's save through it`.
 
 ### Task 2: `parse` returns an object (after the arena tree drop)
 
@@ -170,6 +172,8 @@ it('a parse with errors carries them')    // errors.length > 0 for 'fn main( {';
 
 ### Task 3: `engine.write`, `engine.create`, `Pending` and the file interceptor
 
+**Status:** merged as #1184 (09acd9eb7), 2026-11-12.
+
 **Files:**
 - Modify: `packages/types/src/engine-api.ts` (`Pending`, new `FileWrite`, `Interceptor.file`, and `EngineIdentity` gains `rootKinds: readonly number[]` beside `trivia`)
 - Create: `packages/common/src/pending.ts`
@@ -186,7 +190,7 @@ it('a parse with errors carries them')    // errors.length > 0 for 'fn main( {';
   - `FileChange` is unchanged.
 - Produces (internal): `pendingFile(path: string, verb: 'create' | 'write', commit: () => void, diff: () => FileChange, chain: FileChain | undefined): Pending` in `pending.ts`.
 
-- [ ] **Step 1: Write the failing tests,** in both storages:
+- [x] **Step 1: Write the failing tests,** in both storages:
 
 ```ts
 it('write commits when awaited')                    // await engine.write(p, root); readFileSync(p,'utf8') === root.toString()
@@ -202,18 +206,20 @@ it('a file interceptor sees path and verb, and can skip the write') // never cal
 it('a write under a render interceptor writes the intercepted text') // file === engine.render(root).toString()
 ```
 
-- [ ] **Step 2:** Run `pnpm exec vitest run packages/common/tests/file-verbs.test.ts`. Expected: FAIL (`file verb "write" is not implemented`).
-- [ ] **Step 3: Implement.**
+- [x] **Step 2:** Run `pnpm exec vitest run packages/common/tests/file-verbs.test.ts`. Expected: FAIL (`file verb "write" is not implemented`).
+- [x] **Step 3: Implement.**
   - **The commit.** It starts on the first `then` or `[Symbol.asyncDispose]` and is held as one promise. It calls the file chain with `{ path, verb, diff }` when file interceptors are registered. `next` runs the saver.
   - **`diff()`.** It renders the root through `render` and reads `before` with `readFileSync`, or gives `undefined` for a missing file. The caller asked for that text.
   - **`create(path, fn)`.** It builds with `fn(build)` when called, so a builder that throws throws from `create`.
   - **The root check.** Read the stamped `rootKinds`, never a kind name.
   - `unimplementedVerb` keeps only its `'read'` use, until Task 5.
-- [ ] **Step 4:** Regenerate, then run the tests. Expected: PASS.
-- [ ] **Step 5:** Run `pnpm run type-check:tests` and the types package's `test-d` files, since `Pending` changed shape.
-- [ ] **Step 6:** Run the three-way verification, then commit (pathspec). Message: `feat(common): write and create commit through the native writer`.
+- [x] **Step 4:** Regenerate, then run the tests. Expected: PASS.
+- [x] **Step 5:** Run `pnpm run type-check:tests` and the types package's `test-d` files, since `Pending` changed shape.
+- [x] **Step 6:** Run the three-way verification, then commit (pathspec). Message: `feat(common): write and create commit through the native writer`.
 
 ### Task 4: `root.$save(path)`
+
+**Status:** merged as #1187 (1a7bd5ce9), 2026-11-12.
 
 **Files:**
 - Modify: `packages/types/src/engine-api.ts` (new `interface SavesFile { $save(path: string): Pending }`)
@@ -226,7 +232,7 @@ it('a write under a render interceptor writes the intercepted text') // file ===
 - Consumes: `engine.write` from Task 3.
 - Produces: `handleSave(this, path)`, which is `engineOf(this).write(path, this)`. It refuses with `NO_ENGINE` when `engineOf` finds none, as `handleRender` does. It's emitted on the root kind only.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
 
 ```ts
 it('a parsed root saves through write')   // both storages: await root.$save(p); file === root.toString()
@@ -235,10 +241,10 @@ it('only the root kind has $save')        // child.$save === undefined
 // test-d: expectTypeOf(root.$save).returns.toEqualTypeOf<Pending>(); // @ts-expect-error child.$save
 ```
 
-- [ ] **Step 2:** Run them. Expected: FAIL.
-- [ ] **Step 3: Implement.** Emit one member line, `$save: handleSave`, from the three emitters at their root flag.
-- [ ] **Step 4:** Run `pnpm run regen:all`, then the tests and `type-check:tests`. Expected: PASS.
-- [ ] **Step 5:** Run the three-way verification, then commit (pathspec, generated outputs included). Message: `feat(codegen): a root saves itself through engine.write`.
+- [x] **Step 2:** Run them. Expected: FAIL.
+- [x] **Step 3: Implement.** Emit one member line, `$save: handleSave`, from the three emitters at their root flag.
+- [x] **Step 4:** Run `pnpm run regen:all`, then the tests and `type-check:tests`. Expected: PASS.
+- [x] **Step 5:** Run the three-way verification, then commit (pathspec, generated outputs included). Message: `feat(codegen): a root saves itself through engine.write`.
 
 ### Task 5: `engine.read(path)` (after the arena tree drop)
 
@@ -275,7 +281,7 @@ it('rejects a path that is not a regular file without blocking') // a directory,
 
 ### Task 6: Query plans by handle, and walks in numbers
 
-**Parked.** The one-query-evaluator spec (`2026-10-08-one-query-evaluator.md`) deletes the native evaluator this task builds on and rules out an interim plan cache. This task waits until that work is scheduled, and is then either cut to walks in numbers or reconciled with that spec. Nothing else in this plan needs it; Task 7's guard lists these two crossings as remaining until then.
+**Status:** parked, 2026-11-12. The one-query-evaluator spec (`2026-10-08-one-query-evaluator.md`) deletes the native evaluator this task builds on and rules out an interim plan cache. This task waits until that work is scheduled, and is then either cut to walks in numbers or reconciled with that spec. Nothing else in this plan needs it; Task 7's guard lists these two crossings as remaining until then.
 
 **Files:**
 - Modify: `napi_engine.rs` (`descendants`, `plan_holds`, a new `compile_plan`, and `dispose`; `address_from_json` goes)

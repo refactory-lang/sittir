@@ -39,6 +39,8 @@ When adding a new diagnostic, implement it as `export async function run(opts: <
 ## Specs and branches
 
 - Specs and plans live under `docs/superpowers/specs/` and `docs/superpowers/plans/` as dated documents (`YYYY-MM-DD-<slug>.md`). The historical `specs/NNN-feature-name/` tree no longer exists.
+- **The plan file on master is the tracker.** A task's PR ticks that task's steps (`- [x]`) and adds a line under its heading: `**Status:** merged as #N (<merge sha>), <date>.` A parked, superseded or reworked task says so in its own status line. The superpowers ledger (`.superpowers/sdd/<plan>/progress.md`, git-ignored) holds in-progress detail only, and nothing in it is the record.
+- **Spec amendments and the maintainer's rulings go to master directly,** in the spec's Decided section and the plan task, quoting the ruling, in their own docs commit. They never ride a code branch. Fix every other spec or plan that builds on an overturned shape in the same commit.
 - Feature branches use short kebab-case names (older branches carry the historical `NNN-short-name` form).
 
 ## Quality gate context
