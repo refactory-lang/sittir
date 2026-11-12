@@ -23,18 +23,18 @@ export namespace Expression {
 	export namespace Binary {
 		export interface Coalesce<G extends GrammarMap, K extends Under<'expression.binary.coalesce'> = 'expression.binary.coalesce'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 			readonly $path: K;
-			readonly operator: '??';
+			readonly operator?: never;
 		}
 		export namespace Membership {
 			export interface Instanceof<G extends GrammarMap, K extends Under<'expression.binary.membership.instanceof'> = 'expression.binary.membership.instanceof'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: 'instanceof';
+				readonly operator?: never;
 			}
 		}
 		export namespace Shift {
 			export interface RightUnsigned<G extends GrammarMap, K extends Under<'expression.binary.shift.right_unsigned'> = 'expression.binary.shift.right_unsigned'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '>>>';
+				readonly operator?: never;
 			}
 		}
 	}

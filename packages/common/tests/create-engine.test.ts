@@ -4,6 +4,10 @@ import { portable, portableGuardsOf } from '../src/portable/index.ts';
 import { createRenderHandle } from '../src/engine.ts';
 import { liveEngineCount } from '../src/engine-census.ts';
 
+const writesNoFile = (): never => {
+	throw new Error('a fake engine writes no file');
+};
+
 interface FakeRenderOptions {
 	readonly indent?: string;
 }
@@ -35,7 +39,11 @@ function fakeLanguage(name = 'fake', loaders: { readonly default?: TableLoader; 
 			let disposed = false;
 			const native = {
 				render: (n: { text?: string }, call?: FakeRenderOptions) =>
-					createRenderHandle(() => `${call?.indent ?? opts?.options?.indent ?? ''}${n.text ?? ''}`),
+					createRenderHandle(
+						() => `${call?.indent ?? opts?.options?.indent ?? ''}${n.text ?? ''}`,
+						writesNoFile,
+						writesNoFile
+					),
 				parseAndRead: (s: string) => ({ root: { $type: 1, text: s }, tree: { source: s } }),
 				dispose: () => {
 					disposed = true;

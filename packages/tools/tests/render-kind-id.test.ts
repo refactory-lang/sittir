@@ -13,7 +13,7 @@ const cases: Record<string, { readonly renders: Record<string, string>; readonly
 describe('engine.render by kind id', () => {
 	for (const [grammar, { renders, refuses }] of Object.entries(cases)) {
 		it(`${grammar}: a fixed-literal kind renders from its kind id; a kind whose node carries its text throws naming the kind`, async () => {
-			const engine = await createEngine(await languageByName(grammar));
+			using engine = await createEngine(await languageByName(grammar));
 			const kinds = engine.kinds as Readonly<Record<string, number>>;
 			for (const [kind, text] of Object.entries(renders)) {
 				expect(engine.render(kinds[kind] as never).toString()).toBe(text);

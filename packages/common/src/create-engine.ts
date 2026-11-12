@@ -37,7 +37,7 @@ import { heldRootTree } from './tree-token.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { refuseReviver } from './json-refusal.ts';
-import { ARENA_FEATURE_REFUSED, createRenderHandle, nativeBuiltRecords } from './engine.ts';
+import { ARENA_FEATURE_REFUSED, createRenderHandle, nativeBuiltRecords, type TextWriter } from './engine.ts';
 import { portable, portableGuardsOf, registerPortableRows } from './portable/index.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered, writeLeafSites } from './utils.ts';
 
@@ -165,16 +165,16 @@ function interceptedRender<Call>(
 	call: Call,
 	chain: Middleware<Call, string>,
 	rendered: Rendered,
-	materialize: () => string
+	materialize: () => string,
+	writeText: TextWriter
 ): Rendered {
-	const output = createRenderHandle(() => chain(call, materialize));
-	return {
-		...output,
-		[Symbol.dispose]() {
-			output[Symbol.dispose]();
-			rendered[Symbol.dispose]();
-		}
-	};
+	const output: Rendered = createRenderHandle(
+		() => chain(call, materialize),
+		(path, create) => writeText(path, output.toString(), create),
+		writeText,
+		() => rendered[Symbol.dispose]()
+	);
+	return output;
 }
 
 const builderScopes = new WeakMap<object, <T extends object>(table: T) => T>();
@@ -356,7 +356,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 				node: target,
 				options: mergeRenderOptions(options?.render, renderOptions)
 			};
-			return interceptedRender(call, renderChain, rendered, () => materializeNative(target, rendered));
+			return interceptedRender(call, renderChain, rendered, () => materializeNative(target, rendered), (path, text, create) => native.writeText(path, text, create));
 		},
 		create(): Pending {
 			throw unimplementedVerb('create');

@@ -3,6 +3,10 @@ name: Build benchmark runtime
 on:
   workflow_call:
     inputs:
+      runner:
+        description: The runner label every job runs on, which benchmarks.yml sets once
+        type: string
+        required: true
       ref:
         description: The commit to build; empty builds the commit the run is for
         type: string
@@ -28,7 +32,7 @@ env:
 jobs:
   prepare:
     name: Compile shared TypeScript
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.runner }}
     timeout-minutes: 30
     outputs:
       prefix: ${{ steps.plan.outputs.prefix }}

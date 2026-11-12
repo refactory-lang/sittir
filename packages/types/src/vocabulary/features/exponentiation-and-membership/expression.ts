@@ -13,7 +13,7 @@ export namespace Expression {
 		export namespace Arithmetic {
 			export interface Exponent<G extends GrammarMap, K extends Under<'expression.binary.arithmetic.exponent'> = 'expression.binary.arithmetic.exponent'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: '**';
+				readonly operator?: never;
 			}
 		}
 		// @ts-expect-error expression.binary.membership: its operator fill is unknown, outside expression.binary's string.
@@ -35,7 +35,7 @@ export namespace Expression {
 		export namespace Membership {
 			export interface In<G extends GrammarMap, K extends Under<'expression.binary.membership.in'> = 'expression.binary.membership.in'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
-				readonly operator: 'in';
+				readonly operator?: never;
 			}
 		}
 	}

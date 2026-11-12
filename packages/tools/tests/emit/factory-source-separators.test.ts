@@ -15,7 +15,7 @@ async function rebuildAndRender(input: string, grammar: 'typescript' | 'rust' = 
 	writeFileSync(file, source);
 	try {
 		const mod = (await import(/* @vite-ignore */ pathToFileURL(file).href)) as { rebuild(): unknown };
-		const engine = await createEngine(await languageByName(grammar));
+		using engine = await createEngine(await languageByName(grammar));
 		return { source, rendered: engine.render(mod.rebuild() as never).toString() };
 	} finally {
 		rmSync(file, { force: true });

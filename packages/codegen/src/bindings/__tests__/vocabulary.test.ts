@@ -101,6 +101,37 @@ describe('readVocabulary', () => {
 		}
 	});
 
+	it("keeps a parent's member off a refinement that restates it only in a feature the composition lacks", async () => {
+		const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
+		const write = (file: string, lines: readonly string[]): void => {
+			mkdirSync(dirname(join(dir, file)), { recursive: true });
+			writeFileSync(join(dir, file), [...lines, ''].join('\n'));
+		};
+		write('literal.ts', [
+			'export interface Float<G, K = "literal.float"> {',
+			"\treadonly $path: K;",
+			'\treadonly integer?: string;',
+			'\treadonly fraction?: string;',
+			'}',
+			'export namespace Float {',
+			"\texport interface LeadingPoint<G, K = 'literal.float.leading_point'> extends SubKindOf<V.Float<G, K>, 'integer'> {",
+			"\t\treadonly $path: K;",
+			'\t}',
+			'}'
+		]);
+		write('features/leading-integers/index.ts', ["export type * from './literal.ts';", 'export interface LeadingIntegers {', "\treadonly 'leading-integers': true;", '}']);
+		write('features/leading-integers/literal.ts', ['export namespace Float {', '\texport interface LeadingPoint<G> {', '\t\treadonly integer?: string;', '\t}', '}']);
+		write('compositions.ts', ['export interface WithIntegers extends LeadingIntegers {}', 'export interface WithoutIntegers {}']);
+		try {
+			const vocabulary = await readVocabulary(dir);
+			expect([...vocabulary.composedAs('WithIntegers').members('literal.float.leading_point').keys()].sort()).toEqual(['fraction', 'integer']);
+			expect([...vocabulary.composedAs('WithoutIntegers').members('literal.float.leading_point').keys()]).toEqual(['fraction']);
+			expect([...vocabulary.composedAs('WithoutIntegers').members('literal.float').keys()]).toEqual(['integer', 'fraction']);
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	});
+
 	it('reads an interface or namespace however it is exported or declared', async () => {
 		const vocabulary = await vocabularyIn(
 			"export declare interface Declared<G, K = 'declared'> { readonly $path: K; }",

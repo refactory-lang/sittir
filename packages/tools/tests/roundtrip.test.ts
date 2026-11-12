@@ -1,6 +1,9 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, describe, expect, it, vi } from 'vitest';
 import * as common from '../src/validate/common.ts';
 import { buildFactoryNode, loadFactoryArtifacts, run } from '../src/exercise/roundtrip.ts';
+import { disposeNativeEngines } from '../src/validate/common.ts';
+
+afterAll(disposeNativeEngines);
 
 const KINDS = ['identifier', 'number_literal', 'direct_child', 'spread_child', 'rebuilt_direct', 'rebuilt_spread'];
 const id = (kind: string): number => KINDS.indexOf(kind) + 1;

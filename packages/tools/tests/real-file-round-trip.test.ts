@@ -48,7 +48,7 @@ describe('real repo files round-trip through parse -> render -> parse', () => {
 	for (const { file, grammar } of CASES) {
 		it(file, async () => {
 			const source = readFileSync(fileURLToPath(new URL(file, REPO_ROOT)), 'utf8');
-			const engine = await createEngine(await languageByName(grammar));
+			using engine = await createEngine(await languageByName(grammar));
 
 			const root = engine.parse(source) as unknown as Rendered;
 			const rendered = root.$render();

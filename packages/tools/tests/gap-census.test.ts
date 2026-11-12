@@ -1,5 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { createGapMeter, lossyShapeOf } from '../src/validate/gap-census.ts';
+import { disposeNativeEngines } from '../src/validate/common.ts';
+
+afterAll(disposeNativeEngines);
 
 describe('lossyShapeOf', () => {
 	const shape = (source: [string, string], rendered: [string, string]) =>

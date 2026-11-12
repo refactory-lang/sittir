@@ -32,3 +32,9 @@ runs:
         toolchain: ${{ steps.pin.outputs.channel }}
         targets: ${{ inputs.targets }}
         components: ${{ steps.pin.outputs.components }}
+    - name: Install lld where the image has none
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        # The engine's build.rs links every Linux target with -fuse-ld=lld, and the arm64 image ships no ld.lld.
+        command -v ld.lld >/dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq lld; }

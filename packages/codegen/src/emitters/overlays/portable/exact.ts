@@ -46,6 +46,7 @@ export interface ExactReads {
 	readonly viewed: readonly string[];
 	readonly textPaths: readonly string[];
 	readonly varies: (kind: string) => boolean;
+	readonly valueOf: (path: string, kind: string) => ValueRead | undefined;
 	readonly viewClassOf: (kind: string) => ViewClass;
 	readonly readsIn: (kinds: readonly string[]) => RouteReads;
 }
@@ -58,7 +59,9 @@ export interface RouteReads {
 
 export type ViewClass = 'text' | 'claimed' | 'refined' | 'never' | 'token' | 'varies' | 'container' | 'unmapped';
 
-export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest }: PortableTypedInput): ExactReads {
+export type ValueRead = 'text' | 'true' | 'false' | 'float' | 'integer' | 'bigint';
+
+export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest, table }: PortableTypedInput): ExactReads {
 	const typed = (kind: string): boolean => findKindEntry(kindEntries, kind) !== undefined;
 	const { model, vocabulary } = input;
 	const own = derive([input]);
@@ -116,6 +119,15 @@ export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest }: 
 		const node = nodeOf(kind);
 		return node !== undefined && node.modelType !== 'enum' && (node.pattern !== null || input.textTokens.has(kind)) && !fixedText.has(kind);
 	};
+	const valueOf = (path: string, kind: string): ValueRead | undefined => {
+		const id = findKindEntry(kindEntries, kind)?.id;
+		const arms = (table.paths[path]?.arms ?? []).filter((arm) => arm.kind === id);
+		const literal = arms.find((arm) => arm.literal !== undefined)?.literal;
+		if (literal !== undefined) return literal.value === undefined ? undefined : literal.value ? 'true' : 'false';
+		const scalar = arms.find((arm) => arm.scalar !== undefined)?.scalar;
+		if (scalar !== undefined) return scalar;
+		return varies(kind) ? 'text' : undefined;
+	};
 	const unclaimed = new Set(input.bindings.unclaimed.map((u) => u.kind));
 	const viewClassOf = (kind: string): ViewClass => {
 		if (textual(kind)) return 'text';
@@ -151,11 +163,11 @@ export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest }: 
 		visit(kinds);
 		return { paths: [...paths].sort(), texts: [...texts].sort(), unmapped: [...unmapped].sort() };
 	};
-	return { own, entries, readPathsOf, readPaths, readsByClaim, entriesFor, literalTextsOf, memberKindsOf, familyOf, token, textual, textTypeOf, claimersOf, viewed, textPaths, varies, viewClassOf, readsIn };
+	return { own, entries, readPathsOf, readPaths, readsByClaim, entriesFor, literalTextsOf, memberKindsOf, familyOf, token, textual, textTypeOf, claimersOf, viewed, textPaths, varies, valueOf, viewClassOf, readsIn };
 }
 
 export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exactReadsOf(input)): ExactSlots {
-	const { routes, input: grammarInput, kindEntries, table, presetCarried, flags } = input;
+	const { routes, input: grammarInput, kindEntries, table, presetCarried, totalIntegerReads, flags } = input;
 	const { model, vocabulary } = grammarInput;
 	const { readPaths, readsByClaim, entriesFor, readPathsOf, literalTextsOf, memberKindsOf, familyOf, readsIn } = reads;
 	const nodeOf = (kind: string): ModelNode | undefined => modelNode(model, kind);
@@ -205,7 +217,7 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 		if (held.some((k) => { const held = idOf(k); return held !== undefined && table.delimiters?.[held]?.readOnly !== undefined; })) out.push('readOnly');
 		const structural = arms.filter((arm) => arm.literal === undefined);
 		if ((entriesFor(kind) ?? []).some((entry) => presetCarried.has(entry.index))) out.push('preset');
-		if (structural.some((arm) => arm.scalar !== undefined)) out.push('scalar');
+		if (structural.some((arm) => arm.scalar !== undefined && (arm.scalar === 'float' || !totalIntegerReads.has(arm.kind)))) out.push('scalar');
 		const builtWhole = structural.length > 0 && structural.every((arm) => nullaryBuilt(table, arm));
 		const readsText = !builtWhole && (node.slots.length === 0 || (structural.length > 0 && structural.every((arm) => (arm.members.length === 0 && arm.seated !== undefined) || textBuilt(table, arm))));
 		if (structural.some((arm) => arm.content !== undefined) || (readsText && !structural.every((arm) => textBuilt(table, arm)))) out.push('text');

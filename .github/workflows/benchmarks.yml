@@ -1,5 +1,5 @@
 name: Arena benchmarks
-run-name: Arena benchmarks (${{ inputs.benchmark }}, paired node backends)
+run-name: Arena benchmarks (${{ inputs.benchmark == 'oxc-reference' && format('oxc-reference {0}', inputs.feature-ref) || (inputs.benchmark == 'paired-refs' || inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile') && format('{0} {1} vs {2}{3}', inputs.benchmark, inputs.feature-ref, inputs.master-ref, inputs.candidates && format(' + {0}', inputs.candidates) || '') || format('{0}, paired node backends', inputs.benchmark) }})
 
 on:
   workflow_dispatch:
@@ -8,11 +8,44 @@ on:
         description: Benchmark to run
         type: choice
         default: all
-        options: [all, corpus]
+        options: [all, corpus, paired-refs, probe, profile, waiting, parse-profile, oxc-reference]
       baseline:
-        description: A commit to measure beside this one in the same rounds. Empty takes the merge-base with master; none measures this one alone.
+        description: all and corpus. A commit to measure beside this one in the same rounds. Empty takes the merge-base with master; none measures this one alone.
         type: string
         default: ''
+      feature-ref:
+        description: paired-refs and probe, the feature branch or commit; oxc-reference, the one tree measured against oxfmt and oxlint.
+        type: string
+        default: feat/records
+      master-ref:
+        description: paired-refs and probe. The master branch or commit; the merge base is the third tree.
+        type: string
+        default: master
+      profile:
+        description: paired-refs, probe and oxc-reference. The cargo profile every addon is built with.
+        type: choice
+        default: release
+        options: [release, gate]
+      arena:
+        description: paired-refs and probe. Also measure the feature tree in arena storage.
+        type: boolean
+        default: true
+      grammars:
+        description: probe only. The grammars to probe, space-separated.
+        type: string
+        default: python regex typescript
+      candidates:
+        description: paired-refs and probe. More trees beside feature, space-separated name=ref, each also read in arena storage when arena is on.
+        type: string
+        default: ''
+      build-path:
+        description: paired-refs and probe. A commit whose change to the build driver every tree's addons are built with. A tree it applies to is patched, any other tree is built as it is, and every tree's stamps must agree. Empty builds each tree with its own.
+        type: string
+        default: ''
+      runner:
+        description: The runner label every benchmark job runs on.
+        type: string
+        default: ubuntu-24.04-arm
 
 permissions:
   contents: read
@@ -20,7 +53,8 @@ permissions:
 jobs:
   baseline:
     name: Resolve the baseline
-    runs-on: ubuntu-24.04
+    if: inputs.benchmark == 'all' || inputs.benchmark == 'corpus'
+    runs-on: ${{ inputs.runner }}
     outputs:
       commit: ${{ steps.resolve.outputs.commit }}
     steps:
@@ -41,7 +75,10 @@ jobs:
           echo "baseline: ${commit:-none}"
           echo "commit=$commit" >> "$GITHUB_OUTPUT"
   prepare:
+    if: inputs.benchmark == 'all' || inputs.benchmark == 'corpus'
     uses: ./.github/workflows/benchmark-build.yml
+    with:
+      runner: ${{ inputs.runner }}
   native:
     needs: prepare
     strategy:
@@ -50,6 +87,7 @@ jobs:
         grammar: ${{ fromJSON(needs.prepare.outputs.grammars) }}
     uses: ./.github/workflows/benchmark-native.yml
     with:
+      runner: ${{ inputs.runner }}
       grammar: ${{ matrix.grammar }}
       prefix: ${{ needs.prepare.outputs.prefix }}
   baseline-prepare:
@@ -57,6 +95,7 @@ jobs:
     if: needs.baseline.outputs.commit != ''
     uses: ./.github/workflows/benchmark-build.yml
     with:
+      runner: ${{ inputs.runner }}
       ref: ${{ needs.baseline.outputs.commit }}
       label: baseline
   baseline-native:
@@ -67,6 +106,7 @@ jobs:
         grammar: ${{ fromJSON(needs.baseline-prepare.outputs.grammars) }}
     uses: ./.github/workflows/benchmark-native.yml
     with:
+      runner: ${{ inputs.runner }}
       grammar: ${{ matrix.grammar }}
       prefix: ${{ needs.baseline-prepare.outputs.prefix }}
       ref: ${{ needs.baseline.outputs.commit }}
@@ -78,7 +118,39 @@ jobs:
       && (inputs.benchmark == 'all' || inputs.benchmark == 'corpus')
     uses: ./.github/workflows/benchmark-corpus.yml
     with:
+      runner: ${{ inputs.runner }}
       runtime-prefix: ${{ needs.prepare.outputs.prefix }}
       grammars: ${{ needs.prepare.outputs.grammars }}
       baseline: ${{ needs.baseline.outputs.commit }}
       baseline-prefix: ${{ needs.baseline-prepare.outputs.prefix }}
+  paired-refs:
+    if: inputs.benchmark == 'paired-refs'
+    uses: ./.github/workflows/benchmark-paired-refs.yml
+    with:
+      runner: ${{ inputs.runner }}
+      feature-ref: ${{ inputs.feature-ref }}
+      master-ref: ${{ inputs.master-ref }}
+      profile: ${{ inputs.profile }}
+      arena: ${{ inputs.arena }}
+      candidates: ${{ inputs.candidates }}
+      build-path: ${{ inputs.build-path }}
+  oxc-reference:
+    if: inputs.benchmark == 'oxc-reference'
+    uses: ./.github/workflows/benchmark-oxc-reference.yml
+    with:
+      runner: ${{ inputs.runner }}
+      sittir-ref: ${{ inputs.feature-ref }}
+      profile: ${{ inputs.profile }}
+  probe:
+    if: inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile'
+    uses: ./.github/workflows/benchmark-probe.yml
+    with:
+      runner: ${{ inputs.runner }}
+      script: ${{ inputs.benchmark == 'profile' && 'run-profile.py' || inputs.benchmark == 'waiting' && 'run-waiting.py' || inputs.benchmark == 'parse-profile' && 'run-parse-profile.py' || 'run-probe.py' }}
+      feature-ref: ${{ inputs.feature-ref }}
+      master-ref: ${{ inputs.master-ref }}
+      profile: ${{ inputs.profile }}
+      arena: ${{ inputs.arena }}
+      grammars: ${{ inputs.grammars }}
+      candidates: ${{ inputs.candidates }}
+      build-path: ${{ inputs.build-path }}

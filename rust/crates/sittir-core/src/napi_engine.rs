@@ -779,21 +779,31 @@ macro_rules! napi_engine {
             })
         }
 
+        /// `render`'s text written to `path` (`save_rendered`), answering
+        /// whether it wrote: `create` refuses a file at the path, and
+        /// otherwise a file already holding the text is left untouched.
         #[::napi_derive::napi(
-            ts_args_type = "engine: object, node: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null"
+            ts_args_type = "engine: object, node: object, path: string, create: boolean, treeId?: number | undefined | null, options?: object | undefined | null"
         )]
         pub fn render_to_file(
             engine: &::napi::bindgen_prelude::External<EngineCell>,
             env: ::napi::Env,
             node: $render_root,
             path: String,
+            create: bool,
             tree_id: Option<$crate::types::TreeId>,
             options: Option<$options>,
-        ) -> ::napi::Result<()> {
+        ) -> ::napi::Result<bool> {
             let rendered = render(engine, env, node, tree_id, options)?;
-            ::std::fs::write(&path, rendered.0).map_err(|e| {
-                ::napi::Error::from_reason(format!("render_to_file failed for {path}: {e}"))
-            })
+            $crate::napi_engine::save_rendered(&path, &rendered.0, create)
+        }
+
+        /// `text`, which a render interceptor produced in JavaScript,
+        /// written to `path` as a render's file sibling writes its text
+        /// (`save_rendered`), answering whether it wrote.
+        #[::napi_derive::napi]
+        pub fn write_text(path: String, text: String, create: bool) -> ::napi::Result<bool> {
+            $crate::napi_engine::save_rendered(&path, &text, create)
         }
 
         /// The options a render of a node of `tree` takes: `options` over
@@ -1106,6 +1116,15 @@ macro_rules! napi_engine {
                 })
             }
 
+            /// `render_record`'s text written to `path` (`save_rendered`),
+            /// answering whether it wrote.
+            #[::napi_derive::napi(ts_args_type = "engine: object, treeId: number, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object | undefined | null")]
+            #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
+            pub fn render_record_to_file(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, tree_id: $crate::types::TreeId, address: f64, leading: bool, trailing: bool, path: String, create: bool, options: Option<$options>) -> ::napi::Result<bool> {
+                let rendered = render_record(engine, env, tree_id, address, leading, trailing, options)?;
+                $crate::napi_engine::save_rendered(&path, &rendered.0, create)
+            }
+
             /// The built record at `address` of the built arena `owner`
             /// holds (`holdBuiltArena`) rendered as a render root whose
             /// `leading` and `trailing` edges have no neighbour, under
@@ -1127,6 +1146,15 @@ macro_rules! napi_engine {
                 let owner = engine_of(owner)?;
                 let at = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                 render_built_with(&engine, &env, &owner, tree_id, options, |arena, parses, trees, ctx| owner.render_built(arena, parses, at, $crate::slot::ChangedEdges { leading, trailing }, trees, ctx))
+            }
+
+            /// `render_built`'s text written to `path` (`save_rendered`),
+            /// answering whether it wrote.
+            #[::napi_derive::napi(ts_args_type = "engine: object, owner: object, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, treeId?: number | undefined | null, options?: object | undefined | null")]
+            #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
+            pub fn render_built_to_file(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, owner: &::napi::bindgen_prelude::External<EngineCell>, address: f64, leading: bool, trailing: bool, path: String, create: bool, tree_id: Option<$crate::types::TreeId>, options: Option<$options>) -> ::napi::Result<bool> {
+                let rendered = render_built(engine, env, owner, address, leading, trailing, tree_id, options)?;
+                $crate::napi_engine::save_rendered(&path, &rendered.0, create)
             }
 
             /// The lone built leaf of `kind` whose leaf entry the built
@@ -1154,6 +1182,27 @@ macro_rules! napi_engine {
                 let owner = engine_of(owner)?;
                 let kind = $crate::types::KindId(u16::try_from(kind).map_err(|_| ::napi::Error::from_reason(format!("kind {kind} is wider than a kind")))?);
                 render_built_with(&engine, &env, &owner, None, options, |arena, _, _, ctx| owner.render_built_leaf(arena, kind, $crate::arena::Address(entry), sides, $crate::slot::ChangedEdges { leading, trailing }, ctx))
+            }
+
+            /// `render_built_leaf`'s text written to `path`
+            /// (`save_rendered`), answering whether it wrote.
+            #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
+            #[::napi_derive::napi(ts_args_type = "engine: object, owner: object, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object | undefined | null")]
+            pub fn render_built_leaf_to_file(
+                engine: &::napi::bindgen_prelude::External<EngineCell>,
+                env: ::napi::Env,
+                owner: &::napi::bindgen_prelude::External<EngineCell>,
+                kind: u32,
+                entry: u32,
+                sides: Option<$crate::trivia::NodeTrivia<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+                leading: bool,
+                trailing: bool,
+                path: String,
+                create: bool,
+                options: Option<$options>,
+            ) -> ::napi::Result<bool> {
+                let rendered = render_built_leaf(engine, env, owner, kind, entry, sides, leading, trailing, options)?;
+                $crate::napi_engine::save_rendered(&path, &rendered.0, create)
             }
 
             /// A new chunk of `length` words of the built arena this
@@ -1435,6 +1484,16 @@ pub fn checked_index(value: f64, label: impl std::fmt::Display) -> napi::Result<
 pub fn checked_whole<T: TryFrom<u64>>(value: f64, label: impl std::fmt::Display) -> napi::Result<T> {
     let whole = checked_index(value, &label)?;
     T::try_from(whole).map_err(|_| napi::Error::from_reason(format!("{label} {whole} does not fit a {}", std::any::type_name::<T>())))
+}
+
+/// `text` written to `path` by the one writer (`file_io::write_file`): a new
+/// file when `create`, refusing a file at the path, and otherwise a
+/// replacement that leaves a file already holding `text` untouched. Answers
+/// whether it wrote; a refusal carries the writer's message, which names
+/// the path.
+pub fn save_rendered(path: &str, text: &str, create: bool) -> napi::Result<bool> {
+    let mode = if create { crate::file_io::WriteMode::CreateNew } else { crate::file_io::WriteMode::Replace };
+    crate::file_io::write_file(std::path::Path::new(path), text.as_bytes(), mode).map_err(|error| napi::Error::from_reason(error.to_string()))
 }
 
 /// A `where` plan from its JSON (`query::PlanSpec`), compiled; a pattern the

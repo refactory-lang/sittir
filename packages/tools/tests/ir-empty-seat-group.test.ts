@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import {
 	buildFactoryNodeFromReference,
 	buildReadHandle,
@@ -10,9 +10,12 @@ import {
 	materialize,
 	readNodeOf,
 	walkWrappedTree,
-	type TypedNode
+	type TypedNode,
+	disposeNativeEngines
 } from '../src/validate/common.ts';
 import { requireGrammarModule } from '../src/grammar-internals.ts';
+
+afterAll(disposeNativeEngines);
 
 async function irBuild(grammar: string, source: string, rootKind: string) {
 	const kindNameFromId = await loadStorageKindNameFromId(grammar);

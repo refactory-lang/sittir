@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
+import { sharedEngine } from '@sittir/common/testing';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../src/languages.ts';
 import { loadSlotAccessorOf, walkWrappedTree } from '../src/validate/common.ts';
 
-const rust = await createEngine(await languageByName('rust'));
-const typescript = await createEngine(await languageByName('typescript'));
-const python = await createEngine(await languageByName('python'));
+const rust = await sharedEngine(async () => createEngine(await languageByName('rust')));
+const typescript = await sharedEngine(async () => createEngine(await languageByName('typescript')));
+const python = await sharedEngine(async () => createEngine(await languageByName('python')));
 const rustSlots = await loadSlotAccessorOf('rust');
 
 interface Case {

@@ -7,7 +7,7 @@ import { isWordOrBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compil
 import { AbstractAssembledCompound, isFixedTextLeaf, isKindIdStored, separatorCandidateTexts } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import { bareInteriorText, numberInputType, numericLeafInputTypes, numericLeafShape, numericSlotShape } from './interior.ts';
+import { bareInteriorText, kindNumberShape, numberInputType, numericLeafInputTypes, numericLeafShape } from './interior.ts';
 import {
 	collectKindEntries,
 	collectCatalogKinds,
@@ -84,7 +84,6 @@ import {
 	fromBareInput,
 	bareValueSlot,
 	scalarLeafKinds,
-	lexedContentSlot,
 	canonicalSeparatedListField,
 	enumMemberDiscriminant,
 	pruneUnusedImports,
@@ -1365,8 +1364,7 @@ function emitNamespaceSugarBlock(
 	const looseWidened = widenedLooseConfig === looseConfig ? '' : ` | ${widenedLooseConfig}`;
 	const bareInterior = bareInteriorText(kind, node);
 	const bareText = bareInterior === undefined ? '' : ' | string';
-	const bareContent = lexedContentSlot(node);
-	const bareShape = (bareContent === undefined ? undefined : numericSlotShape(bareContent)) ?? numericLeafShape(kind, node) ?? bareInterior?.number;
+	const bareShape = kindNumberShape(kind, node);
 	const bareSlot = fromBareInput(node, nodeMap) === 'value' ? bareValueSlot(node, nodeMap) : undefined;
 	const bareEnvelope = bareSlot === undefined ? undefined : splicedEnvelopeType(bareSlot, nodeMap);
 	lines.push(

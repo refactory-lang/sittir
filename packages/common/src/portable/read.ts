@@ -1,10 +1,11 @@
 import type { ErrorRegion, PortableBuildArm, PortableBuildTable, PortableContainer, PortableDecimalParts, PortableMemberStep, PortablePreset, PortableSeat, PortableSlotStep } from '@sittir/types';
 import { nodeText, sidesOf, spanOf } from '../node-data.ts';
+import { integerValue } from '../number.ts';
 import { isErrorNode } from '../utils.ts';
 import { treeOf } from '../tree-token.ts';
 import { spelledMember } from '../spelled.ts';
 import { hasKind, type HoldingFact, type PortableClassifier } from './classify.ts';
-import { builtFlags, leafSeatOf, textBuilt, tokenText } from './facts.ts';
+import { builtFlags, leafSeatOf, numberMembers, textBuilt, tokenText } from './facts.ts';
 import { slotItems } from '../query-holds.ts';
 
 type Node = { readonly $type: number };
@@ -79,14 +80,9 @@ const fits = (seat: PortableSeat, value: unknown): boolean => {
 	return kind !== undefined && (seat.kinds.includes(kind) || (seat.kinds.length === 0 && seat.leaf !== undefined && nodeText(value) !== undefined));
 };
 
-const integerOf = (text: string): number | bigint | undefined => {
-	if (!/^(?:0[xXoObB]_?)?[0-9a-fA-F](?:_?[0-9a-fA-F])*$/.test(text)) return undefined;
-	try {
-		const big = BigInt(text.replaceAll('_', ''));
-		return big <= BigInt(Number.MAX_SAFE_INTEGER) ? Number(big) : big;
-	} catch {
-		return undefined;
-	}
+const integerOf = (arm: PortableBuildArm, text: string): number | bigint | undefined => {
+	const value = arm.digits === undefined ? undefined : integerValue(arm.digits.base, arm.digits.affix, text);
+	return value === undefined || arm.scalar === 'bigint' || value > BigInt(Number.MAX_SAFE_INTEGER) ? value : Number(value);
 };
 
 const floatOf = (text: string): number | undefined => {
@@ -199,24 +195,17 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		return { value, fitted: fitted !== false };
 	};
 	const memberValue = (node: Node, member: PortableMemberStep): unknown => routeValue(node, member)?.value;
-	const memberText = (node: Node, arm: PortableBuildArm, name: string): string | undefined => {
-		const member = arm.members.find((m) => m.name === name);
-		return member === undefined ? undefined : textOf(memberValue(node, member));
-	};
-	const decimalOf = (node: Node, arm: PortableBuildArm, parts: PortableDecimalParts): number | undefined => {
-		const part = (name: string | undefined): string | undefined => (name === undefined ? undefined : memberText(node, arm, name));
+	const slotText = (node: Node, key: string): string | undefined => textOf(accessed(node, key));
+	const decimalOf = (node: Node, parts: PortableDecimalParts): number | undefined => {
+		const part = (key: string | undefined): string | undefined => (key === undefined ? undefined : slotText(node, key));
 		const [integer, fraction, exponent, sign] = [part(parts.integer), part(parts.fraction), part(parts.exponent), part(parts.exponentSign)];
 		return floatOf(`${integer ?? '0'}.${fraction ?? '0'}${exponent === undefined ? '' : `e${sign ?? ''}${exponent}`}`);
 	};
-	const spelledBy = (arm: PortableBuildArm): readonly string[] =>
-		arm.numeric === undefined ? [] : typeof arm.numeric === 'string' ? [arm.numeric] : Object.values(arm.numeric);
 	const scalarOf = (node: Node, arm: PortableBuildArm): number | bigint | undefined => {
-		const others = arm.numeric === undefined ? [] : arm.members.filter((member) => !spelledBy(arm).includes(member.name));
-		if (others.some((member) => present(memberValue(node, member)))) return undefined;
-		if (typeof arm.numeric === 'object') return decimalOf(node, arm, arm.numeric);
-		const text = arm.numeric === undefined ? textOf(node) : memberText(node, arm, arm.numeric);
+		if (typeof arm.numeric === 'object') return decimalOf(node, arm.numeric);
+		const text = arm.numeric === undefined ? textOf(node) : slotText(node, arm.numeric);
 		if (text === undefined) return undefined;
-		return arm.scalar === 'float' ? floatOf(text) : integerOf(text);
+		return arm.scalar === 'float' ? floatOf(text) : integerOf(arm, text);
 	};
 	const armsAt = (path: string, kind: number): readonly PortableBuildArm[] => (table.paths[path]?.arms ?? []).filter((arm) => arm.kind === kind);
 	const canonicalOf = (token: unknown, facet: string, text: string): string => (hasKind(token) ? spelledMember(text, table.delimiters?.[token.$type]?.spellings?.[facet]) : text);
@@ -309,32 +298,37 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		if (literal !== undefined) return literal.value === undefined ? { $path: path } : { $path: path, $value: literal.value };
 		if (typeof value === 'number') return tokenText(value, seats) ?? value;
 		const node = value as Node;
-		for (const arm of arms) {
-			if (arm.scalar === undefined) continue;
-			const scalar = scalarOf(node, arm);
-			if (scalar !== undefined) return { $path: path, $value: scalar };
+		const scalar = arms.flatMap((arm) => {
+			if (arm.scalar === undefined) return [];
+			const read = scalarOf(node, arm);
+			return read === undefined ? [] : [{ arm, value: read }];
+		})[0];
+		if (scalar === undefined && arms.some((arm) => arm.scalar !== undefined)) return kept(node, { reason: 'scalar' }, carried);
+		const beside = scalar === undefined ? [] : scalar.arm.members.filter((member) => !numberMembers(scalar.arm).includes(member));
+		if (scalar !== undefined && !beside.some((member) => present(memberValue(node, member)))) return { $path: path, $value: scalar.value };
+		if (scalar === undefined) {
+			const content = arms.find((arm) => arm.content !== undefined)?.content;
+			if (content !== undefined) {
+				const spelled = textOf(accessed(node, content));
+				return spelled === undefined ? kept(node, { reason: 'text' }, carried) : { $path: path, $value: spelled };
+			}
+			const textAt = (text: string | undefined): unknown => (text === undefined ? undefined : spelledAs(kind, path, arms, text, seats)) ?? kept(node, { reason: 'text' }, carried);
+			const text = nodeText(node);
+			if (text !== undefined) return textAt(text);
+			if (arms.every((arm) => (arm.members.length === 0 && arm.seated !== undefined) || textBuilt(table, arm))) return textAt(textOf(node));
 		}
-		if (arms.some((arm) => arm.scalar !== undefined)) return kept(node, { reason: 'scalar' }, carried);
-		const content = arms.find((arm) => arm.content !== undefined)?.content;
-		if (content !== undefined) {
-			const spelled = textOf(accessed(node, content));
-			return spelled === undefined ? kept(node, { reason: 'text' }, carried) : { $path: path, $value: spelled };
-		}
-		const textAt = (text: string | undefined): unknown => (text === undefined ? undefined : spelledAs(kind, path, arms, text, seats)) ?? kept(node, { reason: 'text' }, carried);
-		const text = nodeText(node);
-		if (text !== undefined) return textAt(text);
-		if (arms.every((arm) => (arm.members.length === 0 && arm.seated !== undefined) || textBuilt(table, arm))) return textAt(textOf(node));
-		const buildable = new Set(arms.flatMap(builtFlags));
+		const readArms = scalar === undefined ? arms : [{ ...scalar.arm, members: beside }];
+		const buildable = new Set(readArms.flatMap(builtFlags));
 		const spelled = placed.flatMap(({ fact }) => fact.flag ?? []);
 		const unbuilt = [...new Set([...flagsOf(kind).filter((flag) => flagHolds(node, flag)), ...spelled])].filter((flag) => !buildable.has(flag));
 		if (unbuilt.length > 0) return kept(node, { reason: 'flags', flags: unbuilt }, carried);
 		const flags = [...buildable].filter((flag) => flagHolds(node, flag) || spelled.includes(flag));
 		Object.assign(touch(node), { path, flags });
 		const at = Object.fromEntries(placed.map(({ fact, index, spelling }) => [fact.name, spelling === undefined ? { index } : { index, spelling }]));
-		const structure: Record<string, unknown> = { $path: path, ...(flags.length === 0 ? {} : { $flags: flags }), ...(placed.length === 0 ? {} : { $at: at }) };
+		const structure: Record<string, unknown> = { $path: path, ...(flags.length === 0 ? {} : { $flags: flags }), ...(placed.length === 0 ? {} : { $at: at }), ...(scalar === undefined ? {} : { $value: scalar.value }) };
 		type Chosen = { readonly value: unknown; readonly member: PortableMemberStep; readonly fitted: boolean; readonly extra?: string };
 		const candidates = new Map<string, Chosen[]>();
-		for (const arm of arms)
+		for (const arm of readArms)
 			for (const member of arm.members) {
 				const found = routeValue(node, member);
 				if (found === undefined || found.value === null) continue;
@@ -352,7 +346,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 			if (chosen.size === names.size) break;
 			names = new Set(chosen.keys());
 		}
-		for (const name of new Set(arms.flatMap((arm) => arm.members.map((member) => member.name)))) {
+		for (const name of new Set(readArms.flatMap((arm) => arm.members.map((member) => member.name)))) {
 			const pick = chosen.get(name);
 			if (pick === undefined) continue;
 			if (pick.extra !== undefined) touch(node).extra ??= pick.extra;
@@ -363,11 +357,11 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 			return indices.size === 0 || !Array.isArray(items) ? items : items.filter((_, i) => !indices.has(i));
 		};
 		for (const { member, value } of held.get(node) ?? []) if (!(member.name in structure)) structure[member.name] = read(taken(member, value), carried, member.seats);
-		for (const member of arms.flatMap((arm) => arm.members)) if ((member.list ?? member.multiple) && !(member.name in structure)) structure[member.name] = [];
-		for (const test of arms.flatMap((arm) => arm.when)) if ('empty' in test) for (const name of test.empty) if (!(name in structure)) structure[name] = [];
-		closerContent(node, arms, structure);
+		for (const member of readArms.flatMap((arm) => arm.members)) if ((member.list ?? member.multiple) && !(member.name in structure)) structure[member.name] = [];
+		for (const test of readArms.flatMap((arm) => arm.when)) if ('empty' in test) for (const name of test.empty) if (!(name in structure)) structure[name] = [];
+		closerContent(node, readArms, structure);
 		for (const flag of flags) {
-			const template = arms.map((arm) => arm.flags[flag]?.template).find((found) => found !== undefined);
+			const template = readArms.map((arm) => arm.flags[flag]?.template).find((found) => found !== undefined);
 			const text = template === undefined ? undefined : structure[template.member];
 			if (template === undefined || typeof text !== 'string') continue;
 			const groups = new RegExp(template.match, 'u').exec(text)?.groups;

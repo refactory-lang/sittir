@@ -99,10 +99,13 @@ describe('the portable read', () => {
 		expect(roundTrip(source)).toBe(source);
 	});
 
-	it('reads an integer through its digit separators, and carries one whose value it cannot read', () => {
+	it('reads an integer through its digit separators wherever rust admits them, and its suffix beside its value', () => {
 		const read = readFirst('let x = 1_000 + 1_000u32;');
-		expect(read.value).toMatchObject({ left: { $path: 'literal.number.integer', $value: 1000 }, right: { $type: rust.kinds.IntegerLiteralDecimal } });
-		expect(roundTrip('let x = 1_000 + 1_000u32;')).toBe('let x = 1000 + 1_000u32;\n');
+		expect(read.value).toMatchObject({ left: { $path: 'literal.number.integer', $value: 1000 }, right: { $path: 'literal.number.integer', $value: 1000, suffix: 'u32' } });
+		expect(roundTrip('let x = 1_000 + 1_000u32;')).toBe('let x = 1000 + 1000u32;\n');
+		expect(readFirst('let x = 1_;').value).toEqual({ $path: 'literal.number.integer', $value: 1 });
+		expect(readFirst('let x = 1__0;').value).toEqual({ $path: 'literal.number.integer', $value: 10 });
+		expect(readFirst('let x = 0x_ff;').value).toEqual({ $path: 'literal.number.integer.hex', $value: 255 });
 	});
 
 	it('builds back a method call, and an enum whose variants take a tuple or a brace list', () => {

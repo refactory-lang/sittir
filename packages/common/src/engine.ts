@@ -1,4 +1,3 @@
-import { writeFileSync } from 'node:fs';
 import type {
 	AnyUntypedNode,
 	ByteSpan,
@@ -37,7 +36,13 @@ export interface RenderOptions<O extends object = RenderOptionValues> {
 	readonly options?: O;
 }
 
-export function createRenderHandle(renderText: () => string, saveImpl?: (path: string) => boolean): Rendered {
+export type RenderSaver = (path: string, create: boolean) => boolean;
+
+export type TextWriter = (path: string, text: string, create: boolean) => boolean;
+
+const savers = new WeakMap<Rendered, RenderSaver>();
+
+export function createRenderHandle(renderText: () => string, save: RenderSaver, writeText: TextWriter, release?: () => void): Rendered {
 	let cached: string | undefined;
 	let disposed = false;
 	function live(): void {
@@ -48,11 +53,13 @@ export function createRenderHandle(renderText: () => string, saveImpl?: (path: s
 		if (cached === undefined) cached = renderText();
 		return cached;
 	}
-	return {
+	const saver: RenderSaver = (path, create) => {
+		live();
+		return cached === undefined ? save(path, create) : writeText(path, cached, create);
+	};
+	const rendered: Rendered = {
 		save(path: string): void {
-			live();
-			if (saveImpl?.(path) === true) return;
-			writeFileSync(path, getText(), 'utf8');
+			saver(path, false);
 		},
 		toString(): string {
 			return getText();
@@ -65,8 +72,17 @@ export function createRenderHandle(renderText: () => string, saveImpl?: (path: s
 		[Symbol.dispose](): void {
 			disposed = true;
 			cached = undefined;
+			release?.();
 		}
 	};
+	savers.set(rendered, saver);
+	return rendered;
+}
+
+export function saverOf(rendered: Rendered): RenderSaver {
+	const saver = savers.get(rendered);
+	if (saver === undefined) throw new Error('saverOf: not a render an engine returned');
+	return saver;
 }
 
 function renderTreeOf(node: object): number | undefined {
@@ -258,6 +274,22 @@ export interface NativeEngineLike<TNode = unknown> {
 		trailing: boolean,
 		options?: object
 	): string;
+	/** {@link renderRecord}'s text written to `path`, answering whether it wrote. Present when the addon carries the record codec. */
+	renderRecordToFile?(treeId: number, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object): boolean;
+	/** {@link renderBuilt}'s text written to `path`, answering whether it wrote. Present when the addon carries the record codec. */
+	renderBuiltToFile?(owner: object, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, treeId?: number, options?: object): boolean;
+	/** {@link renderBuiltLeaf}'s text written to `path`, answering whether it wrote. Present when the addon carries the record codec. */
+	renderBuiltLeafToFile?(
+		owner: object,
+		kind: number,
+		entry: number,
+		sides: object | null,
+		leading: boolean,
+		trailing: boolean,
+		path: string,
+		create: boolean,
+		options?: object
+	): boolean;
 	builtTriviaSide?(address: number, side: TriviaSideName): unknown[] | null;
 	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[]): FreedParses;
 	builtUnitSides?(address: number): unknown[];
@@ -314,7 +346,10 @@ export interface NativeEngineLike<TNode = unknown> {
 	): string;
 	planHolds(addresses: string, plan: string): boolean[];
 	render(node: TNode, treeId?: number, options?: object): string;
-	renderToFile?(node: TNode, path: string, treeId?: number, options?: object): void;
+	/** {@link render}'s text written to `path`: a new file when `create`, refusing a file at the path, and otherwise a replacement that leaves a file already holding the text untouched. Answers whether it wrote. */
+	renderToFile(node: TNode, path: string, create: boolean, treeId?: number, options?: object): boolean;
+	/** `text` written to `path` as {@link renderToFile} writes a render's text, answering whether it wrote. */
+	writeText(path: string, text: string, create: boolean): boolean;
 	/** The binary's compile profile (`debug` | `release`); absent on a binary that predates the getter. */
 	readonly buildProfile?: string;
 	dispose(): void;
@@ -357,15 +392,19 @@ const TREE_FUNCTIONS = [
 	'backerParity',
 	'descendants',
 	'planHolds',
-	'externalBuffers'
+	'externalBuffers',
+	'writeText'
 ] as const satisfies readonly (keyof NativeEngineLike)[];
 
 const ENGINE_FUNCTIONS = [
 	'render',
 	'renderToFile',
 	'renderRecord',
+	'renderRecordToFile',
 	'renderBuilt',
+	'renderBuiltToFile',
 	'renderBuiltLeaf',
+	'renderBuiltLeafToFile',
 	'builtWords',
 	'builtBytes',
 	'builtBump',
@@ -511,6 +550,7 @@ export interface SittirEngine<
 > extends RenderEngine<O, IndentChar> {
 	readonly diagnostics: NativeEngineDiagnostics<TRoot>;
 	readonly builtRecords?: BuiltRecords;
+	writeText(path: string, text: string, create: boolean): boolean;
 }
 
 export type { ParsedRoot };
@@ -717,24 +757,37 @@ export function createNativeEngine<
 			return tree;
 		};
 
+		const writeText: TextWriter = (path, text, create) => engine.writeText(path, text, create);
+
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
 			const holdsTrees = (): unknown => node;
 			const built = typeof node === 'number' ? undefined : builtRefOf(node);
 			if (built !== undefined) {
 				const changed = rootEdges(node as object);
-				const { renderBuilt, renderBuiltLeaf } = engine;
-				if (renderBuilt === undefined || renderBuiltLeaf === undefined) throw new Error(ARENA_FEATURE_REFUSED);
+				const { renderBuilt, renderBuiltLeaf, renderBuiltToFile, renderBuiltLeafToFile } = engine;
+				if (renderBuilt === undefined || renderBuiltLeaf === undefined || renderBuiltToFile === undefined || renderBuiltLeafToFile === undefined)
+					throw new Error(ARENA_FEATURE_REFUSED);
 				const at = built.at;
 				if (at !== undefined) {
-					return createRenderHandle(() => {
+					const settled = (): number => {
 						built.arena.refuseRender(at);
 						built.arena.settle();
-						return renderBuilt.call(engine, built.arena.owner, at, changed.leading, changed.trailing, renderTreeOf(node as object), perCall);
-					});
+						return at;
+					};
+					return createRenderHandle(
+						() => renderBuilt.call(engine, built.arena.owner, settled(), changed.leading, changed.trailing, renderTreeOf(node as object), perCall),
+						(path, create) => renderBuiltToFile.call(engine, built.arena.owner, settled(), changed.leading, changed.trailing, path, create, renderTreeOf(node as object), perCall),
+						writeText
+					);
 				}
 				const kind = (node as AnyUntypedNode).$type as number;
-				return createRenderHandle(() => renderBuiltLeaf.call(engine, built.arena.owner, kind, built.arena.placeEntry(node as object, kind, built.text).at, leafWireSides(node as object) ?? null, changed.leading, changed.trailing, perCall));
+				const entry = (): number => built.arena.placeEntry(node as object, kind, built.text).at;
+				return createRenderHandle(
+					() => renderBuiltLeaf.call(engine, built.arena.owner, kind, entry(), leafWireSides(node as object) ?? null, changed.leading, changed.trailing, perCall),
+					(path, create) => renderBuiltLeafToFile.call(engine, built.arena.owner, kind, entry(), leafWireSides(node as object) ?? null, changed.leading, changed.trailing, path, create, perCall),
+					writeText
+				);
 			}
 			const record = typeof node === 'number' ? undefined : recordOf(node);
 			if (record !== undefined) {
@@ -743,13 +796,20 @@ export function createNativeEngine<
 				const treeId = tree.id;
 				if (tree.records === undefined || treeId === undefined)
 					throw new Error('a record view renders through the tree it was read from, which is gone');
-				const renderRecord = engine.renderRecord;
-				if (renderRecord === undefined)
+				const { renderRecord, renderRecordToFile } = engine;
+				if (renderRecord === undefined || renderRecordToFile === undefined)
 					throw new Error(ARENA_FEATURE_REFUSED);
-				return createRenderHandle(() => {
-					holdsTrees();
-					return renderRecord.call(engine, treeId, record, changed.leading, changed.trailing, perCall);
-				});
+				return createRenderHandle(
+					() => {
+						holdsTrees();
+						return renderRecord.call(engine, treeId, record, changed.leading, changed.trailing, perCall);
+					},
+					(path, create) => {
+						holdsTrees();
+						return renderRecordToFile.call(engine, treeId, record, changed.leading, changed.trailing, path, create, perCall);
+					},
+					writeText
+				);
 			}
 			const data = (typeof node === 'number' ? node : toNodeData(node, kindView)) as TNode;
 			const treeId = typeof node === 'number' ? undefined : renderTreeOf(node);
@@ -758,14 +818,11 @@ export function createNativeEngine<
 					holdsTrees();
 					return engine.render(data, treeId, perCall);
 				},
-				(path) => {
+				(path, create) => {
 					holdsTrees();
-					if (engine.renderToFile) {
-						engine.renderToFile(data, path, treeId, perCall);
-						return true;
-					}
-					return false;
-				}
+					return engine.renderToFile(data, path, create, treeId, perCall);
+				},
+				writeText
 			);
 		}
 
@@ -775,6 +832,8 @@ export function createNativeEngine<
 				render(node, opts) {
 					return renderNativeNode(node, opts);
 				},
+
+				writeText,
 
 				release(node) {
 					const arena = nodeArenaOf(node);
@@ -864,6 +923,9 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 		},
 		buildProfile: engine.diagnostics.buildProfile,
 		builtMemory: engine.diagnostics.builtMemory,
+		writeText(path, text, create) {
+			return engine.writeText(path, text, create);
+		},
 		release(node) {
 			engine.release(node);
 		},
