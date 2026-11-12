@@ -40,6 +40,7 @@ export const hooks: LanguageHooks<PythonAPI> = Object.freeze<LanguageHooks<Pytho
 	}),
 	records: () => import('./factories/records.js'),
 	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
+	rootKinds: Object.freeze([128]),
 	querySlots,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),

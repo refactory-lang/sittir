@@ -86,6 +86,8 @@ export interface EngineIdentity<API extends LanguageAPI = LanguageAPI> {
 	readonly renderModuleHash: string;
 	readonly options: API['options'] | undefined;
 	readonly trivia: TriviaFacts<API['kindId']>;
+	/** The kinds of the grammar's root, the nodes `write` and `create` take. */
+	readonly rootKinds: readonly number[];
 	/** The rows the language's portable classifications are read from, when its grammar has bindings. */
 	readonly portable?: PortableRows;
 }
@@ -248,6 +250,8 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	/** Loads the record builders, which an engine with record construction builds through. */
 	readonly records: () => Promise<object>;
 	readonly trivia: TriviaFacts<API['kindId']>;
+	/** The kinds of the grammar's root, stamped at generation. */
+	readonly rootKinds: readonly number[];
 	readonly querySlots: QuerySlots;
 	readonly queryFlags?: QueryFlags;
 	readonly querySlotFlags?: QuerySlotFlags;
@@ -304,7 +308,21 @@ export interface Rendered extends Disposable {
 	print(): string;
 }
 
-export interface Pending extends FileChange, PromiseLike<void>, AsyncDisposable {
+/**
+ * A write or create of one file that hasn't happened yet: awaiting it, or disposing of it, commits it once. It holds
+ * the path only; {@link diff} is the one way to its text.
+ */
+export interface Pending extends PromiseLike<void>, AsyncDisposable {
+	readonly path: string;
+	/** The file's text now, as `before` (`undefined` for a missing file), and the root's render now, as `after`. */
+	diff(): FileChange;
+}
+
+/** The write or create a file interceptor is handed, before it commits. */
+export interface FileWrite {
+	readonly path: string;
+	readonly verb: 'create' | 'write';
+	/** The file's text now, as `before` (`undefined` for a missing file), and the text the commit writes, as `after`. The commit renders once, so a write after this call writes exactly `after`. */
 	diff(): FileChange;
 }
 
@@ -400,14 +418,40 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	readonly query: <N extends API['node']>(node: N) => FacetOf<N>;
 	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
 	/**
-	 * Renders `node`, a node this engine built, parsed or edited, as source text.
+	 * Renders `node`, a node this engine built, parsed or edited, as source text. A node a build callback returns is
+	 * released when the handle is disposed, so a node kept from inside the callback is then a released record. If the
+	 * callback throws, what it built is released, and so is a node it placed into that. A scope the callback opened
+	 * and left open is closed when the callback ends, as `using` would close it.
 	 *
 	 * @throws When `node` was built by another engine, and when it is a built record that was released, as a commit
-	 * scope's close releases the records it did not keep.
+	 * scope's close releases the records it did not keep. What a build callback throws, and, in arena storage, a
+	 * build callback called while a build is running.
 	 */
 	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API, M> | SnapshotInput<API>>;
-	readonly create: (path: string, fn: (build: BuildSurface<API, M>) => API['root']) => Pending;
-	readonly write: (path: string, node: API['root']) => Pending;
+	/**
+	 * Builds a root with `fn`, a node of the grammar's root kind, built, parsed or edited, and returns the pending
+	 * creation of `path` holding its render. `fn` runs now, so a builder that throws throws from `create`. Nothing is
+	 * written until the result is awaited or disposed, and then once: as {@link write} commits, except that a file
+	 * already at `path` is refused, never replaced. Once the commit is done, written, refused or skipped by a file
+	 * interceptor, the root `fn` built is released: a node kept from inside `fn` is then a released record, which a
+	 * later read or render refuses, and so does the pending's `diff()`. If `fn` throws, what it built is released, and
+	 * so is a node it placed into that. A scope `fn` opened and left open is closed when `fn` ends, as `using` would
+	 * close it.
+	 *
+	 * @throws What `fn` throws, and, in arena storage, when called while a build is running.
+	 */
+	readonly create: (path: string, fn: (build: BuildSurface<API, M>) => RootInput<API>) => Pending;
+	/**
+	 * Returns the pending write of `root`, a node of the grammar's root kind, built, parsed or edited, to `path`. The
+	 * type admits only the root kind, as {@link Renderable} does. Nothing is written until the result is awaited or disposed (`await
+	 * using`); then the root is rendered as it is at that moment, through any render interceptor, and written once,
+	 * however often it is awaited. A result neither awaited nor disposed writes nothing. The write is the one
+	 * `Rendered.save` makes: in place, leaving a file that already holds the text untouched, and creating a missing one.
+	 *
+	 * The pending result rejects when `root` is not a node of the grammar's root kind (`rootKinds`), naming its kind,
+	 * when another engine parsed or built it, and when the file can't be written, naming the path.
+	 */
+	readonly write: (path: string, root: RootInput<API>) => Pending;
 	/**
 	 * Releases what a builder result holds, a `$with` result included, as its `[Symbol.dispose]` does. Under record
 	 * construction a result holds its record until it is placed into a parent or a side, and a built
@@ -473,6 +517,8 @@ export type Renderable<Kind extends number> = Admit<{ readonly $type: Kind }>;
 type Draft<API extends LanguageAPI> = Renderable<Extract<API['node']['$type'], number>>;
 
 type StoredInput<API extends LanguageAPI> = API['node'] | API['fixedTextKindId'];
+
+type RootInput<API extends LanguageAPI> = Renderable<Extract<API['root']['$type'], number>>;
 
 type RenderBuilder<API extends LanguageAPI, M extends ApiSurface = 'default'> = (build: BuildSurface<API, M>) => API['node'];
 
@@ -541,10 +587,14 @@ export interface Interceptor<API extends LanguageAPI> {
 	build?(call: { readonly path: readonly string[]; readonly args: readonly unknown[] }, next: () => API['node']): API['node'];
 	render?(call: { readonly node: RenderInput<API>; readonly options: API['options'] }, next: () => string): string;
 	parse?(call: { readonly source: string }, next: () => API['root']): API['root'];
-	file?(
-		change: FileChange & { readonly verb: 'create' | 'write' },
-		next: () => Promise<void>
-	): Promise<void>;
+	/**
+	 * Runs before a `write` or `create` commits; `next` runs the next file interceptor, or the write, once. An
+	 * interceptor that never calls it skips the write. The pending settles once everything a `next` started, at any
+	 * depth, has settled, whether or not its interceptor awaited it: it rejects with the outermost interceptor's error,
+	 * or else with the first failure among the interceptors and the write, so an interceptor can skip a write but
+	 * can't hide a failure of one it started. `next` and `change.diff()` are refused once nothing is in flight.
+	 */
+	file?(change: FileWrite, next: () => Promise<void>): Promise<void>;
 }
 
 export interface Project extends AsyncDisposable {
