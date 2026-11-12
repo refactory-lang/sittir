@@ -34,7 +34,7 @@ use render::{render_node_parts, AnyNode, RENDER_MODULE_HASH};
 use render::RenderRoot;
 
 #[cfg(feature = "napi-bindings")]
-const NATIVE_RENDER_NODE_ABI: u32 = 26;
+const NATIVE_RENDER_NODE_ABI: u32 = 27;
 
 #[derive(Clone, Copy, Default)]
 pub struct RustGrammar;

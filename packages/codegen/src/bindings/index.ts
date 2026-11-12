@@ -1,6 +1,5 @@
 export * from './facts.ts';
 export * from './derive.ts';
-export * from './flags.ts';
 export * from './names.ts';
 export * from './routes.ts';
 export * from './input.ts';

@@ -2270,9 +2270,9 @@ fn frames_of<T: crate::trivia::TriviaItem>(levels: Vec<[Vec<SideEntry<T>>; 3]>) 
 /// One tree as a render's source table: its own coordinates resolve, any
 /// other tree's do not.
 impl<G: EngineGrammar> SourceTable for Seating<'_, G> {
-    fn source_of(&self, tree_id: TreeId) -> Option<&Arc<str>> {
+    fn source_of(&self, tree_id: TreeId) -> Option<&str> {
         let tree = self.tree();
-        (tree_id == tree.tree_id).then_some(&tree.source)
+        (tree_id == tree.tree_id).then_some(&*tree.source)
     }
 
     fn breaks_spelled_lf(&self, tree_id: TreeId) -> bool {
@@ -2641,8 +2641,8 @@ impl<'t, G: EngineGrammar, H: std::hash::BuildHasher> ReadTrees<'t, G, H> {
 /// The live trees as the render context's source table: a handle's tag names
 /// the tree, and the tree owns the source its spans index into.
 impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for ReadTrees<'_, G, H> {
-    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
-        Some(&self.get(tree_id)?.source)
+    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
+        Some(&*self.get(tree_id)?.source)
     }
 
     fn breaks_spelled_lf(&self, tree_id: crate::types::TreeId) -> bool {

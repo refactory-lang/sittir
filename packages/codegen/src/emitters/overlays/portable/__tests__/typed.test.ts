@@ -11,7 +11,7 @@ beforeAll(async () => {
 }, 120_000);
 
 const factoryOf = (source: string, name: string): readonly string[] => {
-	const body = new RegExp(`function ${name}\\(n: T\\.FunctionItem\\.Parsed, set = 0\\): VocabViews\\["declaration\\.function"\\] \\{\\n\\treturn \\{ (.*) \\};\\n\\}`).exec(source);
+	const body = new RegExp(`function ${name}\\(n: T\\.FunctionItem\\.Parsed, set: readonly string\\[\\] = \\[\\]\\): VocabViews\\["declaration\\.function"\\] \\{\\n\\treturn \\{ (.*) \\};\\n\\}`).exec(source);
 	if (body?.[1] === undefined) throw new Error(`no factory ${name}`);
 	return body[1].split(', ');
 };
@@ -76,7 +76,7 @@ describe('emitPortableTyped', () => {
 		expect(typed.source).toContain(
 			`type ${held}$Held = Present<T.ConstItem.Parsed, { readonly visibilityModifier: [never, { readonly content: [TSKindId.VisibilityModifierPub, { readonly visibilityModifierPubScope: [never, { readonly content: [TSKindId.VisibilityModifierPubScopeInPath, {}]; }]; }]; }]; }>;`
 		);
-		expect(typed.source).toContain(`function ${held}(n: ${held}$Held, set = 0)`);
+		expect(typed.source).toContain(`function ${held}(n: ${held}$Held, set: readonly string[] = [])`);
 		expect(typed.source).toContain(
 			`function ${held}$scope(this: Held<${held}$Held>) {\n\treturn read(of(of(this[low].visibilityModifier().content(), TSKindId.VisibilityModifierPub).visibilityModifierPubScope().content(), TSKindId.VisibilityModifierPubScopeInPath).path());`
 		);

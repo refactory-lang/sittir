@@ -1,5 +1,4 @@
 import type * as V from '../../types/src/vocabulary/index.ts';
-import type { Flag } from '../../types/src/vocabulary/utils.ts';
 import type { PythonMap } from '../src/portable/map.ts';
 
 type Path = keyof V.Paths<PythonMap>;
@@ -14,7 +13,6 @@ declare const value: NonNullable<At<'declaration.constant'>['value']>;
 declare const type: NonNullable<At<'declaration.constant'>['type']>;
 declare const bound: NonNullable<At<'declaration.type_parameter'>['bounds']>[number];
 declare const parameterName: At<'declaration.type_parameter.variadic'>['name'];
-declare const flag: Flag;
 
 export const assigned: In<'declaration.constant'> = { $path: 'declaration.constant', name, value };
 export const annotated: In<'declaration.constant'> = { $path: 'declaration.constant', name, type };
@@ -26,12 +24,12 @@ export const variadic: In<'declaration.type_parameter.variadic'> = { $path: 'dec
 // @ts-expect-error a variadic type parameter takes no bounds
 export const boundedVariadic: In<'declaration.type_parameter.variadic'> = { $path: 'declaration.type_parameter.variadic', name: parameterName, bounds: [bound] };
 // @ts-expect-error a variadic type parameter is never const
-export const constVariadic: In<'declaration.type_parameter.variadic'> = { $path: 'declaration.type_parameter.variadic', name: parameterName, const: flag };
+export const constVariadic: In<'declaration.type_parameter.variadic'> = { $path: 'declaration.type_parameter.variadic', name: parameterName, $flags: ['const'] };
 export const parameters: In<'declaration.type_parameter.parameters'> = { $path: 'declaration.type_parameter.parameters', name: parameterName };
 // @ts-expect-error a parameter-list type parameter takes no bounds
 export const boundedParameters: In<'declaration.type_parameter.parameters'> = { $path: 'declaration.type_parameter.parameters', name: parameterName, bounds: [bound] };
 // @ts-expect-error a parameter-list type parameter is never const
-export const constParameters: In<'declaration.type_parameter.parameters'> = { $path: 'declaration.type_parameter.parameters', name: parameterName, const: flag };
+export const constParameters: In<'declaration.type_parameter.parameters'> = { $path: 'declaration.type_parameter.parameters', name: parameterName, $flags: ['const'] };
 
 export const textName: In<'declaration.constant'> = { $path: 'declaration.constant', name: 'x', value };
 

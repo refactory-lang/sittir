@@ -1,6 +1,5 @@
 import { createInterface } from 'node:readline';
 import { BindingsSyntaxError } from './facts.ts';
-import { flagsModuleInProcess } from './flags-module.ts';
 import { bindingPatternsInProcess, readBindingsInProcess, roundTripBindingsInProcess } from './pinned-reader.ts';
 import { exportedStringsInProcess } from './pinned-typescript.ts';
 import { vocabularyDeclaredInProcess, vocabularyFeatureIndexInProcess } from './pinned-vocabulary.ts';
@@ -10,7 +9,6 @@ const READS: { readonly [M in PinnedReaderMode]: (input: PinnedInput<M>) => Prom
 	facts: readBindingsInProcess,
 	patterns: bindingPatternsInProcess,
 	roundTrip: roundTripBindingsInProcess,
-	flagsModule: flagsModuleInProcess,
 	vocabularyDeclared: vocabularyDeclaredInProcess,
 	vocabularyFeatureIndex: vocabularyFeatureIndexInProcess,
 	exportedStrings: exportedStringsInProcess

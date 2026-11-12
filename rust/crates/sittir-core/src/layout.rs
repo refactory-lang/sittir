@@ -994,8 +994,8 @@ mod tests {
     fn a_coordinate_renders_between_its_sides_as_a_node_does() {
         struct Sources(std::sync::Arc<str>);
         impl crate::render::SourceTable for Sources {
-            fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&std::sync::Arc<str>> {
-                (tree_id == crate::types::TreeId(1)).then_some(&self.0)
+            fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
+                (tree_id == crate::types::TreeId(1)).then_some(&*self.0)
             }
             fn sides(&self, _: &crate::slot::NodeCoordinate, _: crate::render::Lent<'_>) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
                 Some(Box::new(NodeTrivia { leading: Some(leading(&["// top"])), trailing: Some(trailing(&["// bottom"], false)), inner: None }))

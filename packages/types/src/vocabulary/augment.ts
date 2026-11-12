@@ -6555,3 +6555,914 @@ declare module './map.ts' {
 		readonly 'type.unit': gate.In<G, features.SystemsTypes, V.Type.Unit<G>>;
 	}
 }
+
+declare module './utils.ts' {
+	interface FlagFeatures {
+		readonly 'clause.catch': { readonly group: object };
+		readonly 'clause.comprehension.for': { readonly async: features.AsyncContexts; readonly trailingComma: object };
+		readonly 'clause.export.specifier': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'clause.export.specifier.typeof': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'clause.import.specifier': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'clause.import.specifier.typeof': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'declaration.class': { readonly abstract: features.AbstractClasses };
+		readonly 'declaration.constructor': { readonly async: features.AsyncContexts };
+		readonly 'declaration.constructor.private': { readonly async: features.AsyncContexts };
+		readonly 'declaration.constructor.protected': { readonly async: features.AsyncContexts };
+		readonly 'declaration.constructor.public': { readonly async: features.AsyncContexts };
+		readonly 'declaration.enum': { readonly const: object };
+		readonly 'declaration.enum.private': { readonly const: object };
+		readonly 'declaration.enum.public': { readonly const: object };
+		readonly 'declaration.enum.public.internal': { readonly const: object };
+		readonly 'declaration.enum.public.parent': { readonly const: object };
+		readonly 'declaration.enum.public.restricted': { readonly const: object };
+		readonly 'declaration.extension': { readonly unsafe: features.UnsafeCode };
+		readonly 'declaration.extension.conformance': { readonly unsafe: features.UnsafeCode };
+		readonly 'declaration.field': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.field.private': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.field.protected': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.field.public': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.field.public.internal': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.field.public.parent': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.field.public.restricted': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.field.signature': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.field.signature.private': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.field.signature.protected': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.field.signature.public': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.function': {
+			readonly async: features.AsyncAwait;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: features.Specialization;
+			readonly generator: features.GeneratorFunctions;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.function.private': {
+			readonly async: features.AsyncAwait;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: features.Specialization;
+			readonly generator: features.GeneratorFunctions;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.function.public': {
+			readonly async: features.AsyncAwait;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: features.Specialization;
+			readonly generator: features.GeneratorFunctions;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.function.public.internal': {
+			readonly async: features.AsyncAwait;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: features.Specialization;
+			readonly generator: features.GeneratorFunctions;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.function.public.parent': {
+			readonly async: features.AsyncAwait;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: features.Specialization;
+			readonly generator: features.GeneratorFunctions;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.function.public.restricted': {
+			readonly async: features.AsyncAwait;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: features.Specialization;
+			readonly generator: features.GeneratorFunctions;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.function.signature': {
+			readonly async: features.AsyncFunctionSignatures;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: features.Specialization;
+			readonly generator: features.GeneratorFunctions;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.function.signature.private': {
+			readonly async: features.AsyncFunctionSignatures;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: features.Specialization;
+			readonly generator: features.GeneratorFunctions;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.function.signature.public': {
+			readonly async: features.AsyncFunctionSignatures;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: features.Specialization;
+			readonly generator: features.GeneratorFunctions;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.function.signature.public.internal': {
+			readonly async: features.AsyncFunctionSignatures;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: features.Specialization;
+			readonly generator: features.GeneratorFunctions;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.function.signature.public.parent': {
+			readonly async: features.AsyncFunctionSignatures;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: features.Specialization;
+			readonly generator: features.GeneratorFunctions;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.function.signature.public.restricted': {
+			readonly async: features.AsyncFunctionSignatures;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: features.Specialization;
+			readonly generator: features.GeneratorFunctions;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.interface.trait': { readonly unsafe: features.UnsafeCode };
+		readonly 'declaration.interface.trait.private': { readonly unsafe: features.UnsafeCode };
+		readonly 'declaration.interface.trait.public': { readonly unsafe: features.UnsafeCode };
+		readonly 'declaration.interface.trait.public.internal': { readonly unsafe: features.UnsafeCode };
+		readonly 'declaration.interface.trait.public.parent': { readonly unsafe: features.UnsafeCode };
+		readonly 'declaration.interface.trait.public.restricted': { readonly unsafe: features.UnsafeCode };
+		readonly 'declaration.method': {
+			readonly async: features.AsyncAwait;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.private': {
+			readonly async: features.AsyncAwait;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.protected': {
+			readonly async: features.AsyncAwait;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.public': {
+			readonly async: features.AsyncAwait;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.public.internal': {
+			readonly async: features.AsyncAwait;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.public.parent': {
+			readonly async: features.AsyncAwait;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.public.restricted': {
+			readonly async: features.AsyncAwait;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.signature': {
+			readonly async: features.AsyncLambdas;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.signature.abstract': {
+			readonly async: features.AsyncLambdas;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.signature.abstract.private': {
+			readonly async: features.AsyncLambdas;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.signature.abstract.protected': {
+			readonly async: features.AsyncLambdas;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.signature.abstract.public': {
+			readonly async: features.AsyncLambdas;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.signature.private': {
+			readonly async: features.AsyncLambdas;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.signature.protected': {
+			readonly async: features.AsyncLambdas;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.signature.public': {
+			readonly async: features.AsyncLambdas;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.signature.public.internal': {
+			readonly async: features.AsyncLambdas;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.signature.public.parent': {
+			readonly async: features.AsyncLambdas;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.signature.public.restricted': {
+			readonly async: features.AsyncLambdas;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.method.special': {
+			readonly async: features.AsyncAwait;
+			readonly computed: features.ComputedKeys;
+			readonly const: features.CompileTimeEvaluation;
+			readonly default: object;
+			readonly generator: features.GeneratorFunctions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.Encapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: object;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'declaration.module.foreign': { readonly unsafe: features.UnsafeCode };
+		readonly 'declaration.parameter': {
+			readonly mutable: features.RustDeclarations;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly readonly: features.ReadonlyMembers;
+		};
+		readonly 'declaration.parameter.default': {
+			readonly mutable: features.RustDeclarations;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly readonly: features.ReadonlyMembers;
+		};
+		readonly 'declaration.parameter.private': {
+			readonly mutable: features.RustDeclarations;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly readonly: features.ReadonlyMembers;
+		};
+		readonly 'declaration.parameter.protected': {
+			readonly mutable: features.RustDeclarations;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly readonly: features.ReadonlyMembers;
+		};
+		readonly 'declaration.parameter.public': {
+			readonly mutable: features.RustDeclarations;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly readonly: features.ReadonlyMembers;
+		};
+		readonly 'declaration.parameter.receiver': {
+			readonly mutable: features.RustDeclarations;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly readonly: features.ReadonlyMembers;
+			readonly reference: features.References;
+		};
+		readonly 'declaration.parameter.typed': {
+			readonly mutable: features.RustDeclarations;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly readonly: features.ReadonlyMembers;
+		};
+		readonly 'declaration.parameter.typed_default': {
+			readonly mutable: features.RustDeclarations;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly readonly: features.ReadonlyMembers;
+		};
+		readonly 'declaration.parameter.variadic': {
+			readonly mutable: features.RustDeclarations;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly readonly: features.ReadonlyMembers;
+		};
+		readonly 'declaration.property': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.getter': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.getter.private': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.getter.protected': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.getter.public': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.private': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.protected': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.public': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.setter': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.setter.private': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.setter.protected': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.setter.public': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.abstract': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.abstract.getter': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.abstract.getter.private': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.abstract.getter.protected': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.abstract.getter.public': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.abstract.setter': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.abstract.setter.private': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.abstract.setter.protected': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.abstract.setter.public': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.getter': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.getter.private': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.getter.protected': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.getter.public': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.setter': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.setter.private': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.setter.protected': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.property.signature.setter.public': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.signature.construct': { readonly abstract: features.AbstractClasses };
+		readonly 'declaration.signature.index': { readonly readonly: object };
+		readonly 'declaration.signature.index.mapped': { readonly readonly: object };
+		readonly 'declaration.type_parameter': { readonly const: object };
+		readonly 'declaration.variable': {
+			readonly byReference: features.References;
+			readonly definite: features.NonNullAssertions;
+			readonly mutable: features.RustDeclarations;
+			readonly static: features.StaticStorage;
+		};
+		readonly 'declaration.variable.constant': {
+			readonly byReference: features.References;
+			readonly definite: features.NonNullAssertions;
+			readonly mutable: features.RustDeclarations;
+			readonly static: features.StaticStorage;
+		};
+		readonly 'declaration.variable.pattern': {
+			readonly byReference: features.References;
+			readonly definite: features.NonNullAssertions;
+			readonly mutable: features.RustDeclarations;
+			readonly static: features.StaticStorage;
+		};
+		readonly 'declaration.variable.private': {
+			readonly byReference: features.References;
+			readonly definite: features.NonNullAssertions;
+			readonly mutable: features.RustDeclarations;
+			readonly static: features.StaticStorage;
+		};
+		readonly 'declaration.variable.public': {
+			readonly byReference: features.References;
+			readonly definite: features.NonNullAssertions;
+			readonly mutable: features.RustDeclarations;
+			readonly static: features.StaticStorage;
+		};
+		readonly 'declaration.variable.public.internal': {
+			readonly byReference: features.References;
+			readonly definite: features.NonNullAssertions;
+			readonly mutable: features.RustDeclarations;
+			readonly static: features.StaticStorage;
+		};
+		readonly 'declaration.variable.public.parent': {
+			readonly byReference: features.References;
+			readonly definite: features.NonNullAssertions;
+			readonly mutable: features.RustDeclarations;
+			readonly static: features.StaticStorage;
+		};
+		readonly 'declaration.variable.public.restricted': {
+			readonly byReference: features.References;
+			readonly definite: features.NonNullAssertions;
+			readonly mutable: features.RustDeclarations;
+			readonly static: features.StaticStorage;
+		};
+		readonly 'declaration.variable.reassignable': {
+			readonly byReference: features.References;
+			readonly definite: features.NonNullAssertions;
+			readonly mutable: features.RustDeclarations;
+			readonly static: features.StaticStorage;
+		};
+		readonly 'declaration.variable.reassignable.function_scoped': {
+			readonly byReference: features.References;
+			readonly definite: features.NonNullAssertions;
+			readonly mutable: features.RustDeclarations;
+			readonly static: features.StaticStorage;
+		};
+		readonly 'element.pair': { readonly computed: features.ComputedKeys };
+		readonly 'expression.assignment': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound.add': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound.and': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound.bitwise_and': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound.bitwise_or': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound.bitwise_xor': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound.coalesce': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound.divide': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound.exponent': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound.floor_divide': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound.matrix_multiply': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound.modulo': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound.multiply': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound.or': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound.shift_left': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound.shift_right': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.assignment.compound.shift_right_unsigned': {
+			readonly disposable: features.DisposableDeclarations;
+		};
+		readonly 'expression.assignment.compound.subtract': { readonly disposable: features.DisposableDeclarations };
+		readonly 'expression.block.async': { readonly move: object };
+		readonly 'expression.block.generator': { readonly move: object };
+		readonly 'expression.call': { readonly optionalChain: features.OptionalChaining };
+		readonly 'expression.call.construct': { readonly optionalChain: features.OptionalChaining };
+		readonly 'expression.call.construct.bare': { readonly optionalChain: features.OptionalChaining };
+		readonly 'expression.call.import': { readonly optionalChain: features.OptionalChaining };
+		readonly 'expression.call.macro': { readonly optionalChain: features.OptionalChaining };
+		readonly 'expression.call.member': { readonly optionalChain: features.OptionalChaining };
+		readonly 'expression.call.qualified': { readonly optionalChain: features.OptionalChaining };
+		readonly 'expression.call.template': { readonly optionalChain: features.OptionalChaining };
+		readonly 'expression.collection.tuple.bare': { readonly trailingComma: object };
+		readonly 'expression.function': {
+			readonly async: features.AsyncFunctionExpressions;
+			readonly generator: features.GeneratorFunctions;
+		};
+		readonly 'expression.interpolation': { readonly debug: object };
+		readonly 'expression.interpolation.conversion': { readonly debug: object };
+		readonly 'expression.interpolation.format': { readonly debug: object };
+		readonly 'expression.lambda': {
+			readonly async: features.AsyncLambdas;
+			readonly move: features.References;
+			readonly static: features.GeneratorBlocks;
+		};
+		readonly 'expression.member': {
+			readonly optionalChain: features.OptionalChaining;
+			readonly privateName: features.Encapsulation;
+		};
+		readonly 'expression.reference': { readonly exclusive: object; readonly raw: object; readonly writable: object };
+		readonly 'expression.subscript': { readonly optionalChain: features.OptionalChaining };
+		readonly 'expression.update': { readonly prefix: object };
+		readonly 'expression.update.decrement': { readonly prefix: object };
+		readonly 'expression.update.increment': { readonly prefix: object };
+		readonly 'literal.character': { readonly byte: object };
+		readonly 'pattern.complex': { readonly sign: object };
+		readonly 'pattern.complex.add': { readonly sign: object };
+		readonly 'pattern.complex.subtract': { readonly sign: object };
+		readonly 'pattern.object.pair': { readonly computed: features.ComputedKeys };
+		readonly 'pattern.reference.value': { readonly exclusive: object };
+		readonly 'pattern.struct.field': { readonly byReference: object; readonly mutable: object };
+		readonly 'pattern.tuple.bare': { readonly trailingComma: object };
+		readonly 'statement.export': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.export.all': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.export.default': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.import': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.import.alias': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.import.from': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.import.future': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.import.package': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.import.package.private': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.import.package.public': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.import.package.public.internal': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.import.package.public.parent': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.import.package.public.restricted': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.import.private': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.import.public': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.import.public.internal': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.import.public.parent': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.import.public.restricted': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.import.typeof': { readonly typeOnly: features.TypeOnlyImports };
+		readonly 'statement.loop.for_each': { readonly async: features.AsyncIteration };
+		readonly 'statement.print': { readonly trailingComma: object };
+		readonly 'statement.resource': { readonly async: features.AsyncContexts };
+		readonly 'type.function': { readonly unsafe: features.UnsafeCode };
+		readonly 'type.function.constructor': {
+			readonly abstract: features.AbstractClasses;
+			readonly unsafe: features.UnsafeCode;
+		};
+		readonly 'type.pointer': { readonly writable: features.References };
+		readonly 'type.primitive.integral': { readonly unsigned: object };
+		readonly 'type.primitive.integral.int128': { readonly unsigned: object };
+		readonly 'type.primitive.integral.int16': { readonly unsigned: object };
+		readonly 'type.primitive.integral.int32': { readonly unsigned: object };
+		readonly 'type.primitive.integral.int64': { readonly unsigned: object };
+		readonly 'type.primitive.integral.int8': { readonly unsigned: object };
+		readonly 'type.primitive.integral.size': { readonly unsigned: object };
+		readonly 'type.primitive.symbol': { readonly unique: object };
+		readonly 'type.reference': { readonly exclusive: features.References };
+	}
+}
