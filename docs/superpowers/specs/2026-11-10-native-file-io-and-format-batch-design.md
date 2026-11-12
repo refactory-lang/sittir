@@ -179,4 +179,4 @@ What it guarantees:
 7. `parse` returns an object, query plans go by handle, and a guard lists every remaining crossing.
 8. `Project` is out of scope.
 9. `SourcePath<G>` and `isSourcePath` are built here, with the batch, as the `styleFrom` design has them. `styleFrom` itself stays parked.
-10. With the build hook gone, master's two entry refusals stay: `engine.scope()`, and `render(fn)` or `create` while a build runs, each with a test whose input is a getter. There's no replay guard. The JSDoc says an input accessor that changes engine state during a build is unsupported.
+10. With the build hook gone, master's refusals while a build runs stay: the two at entry (`engine.scope()`, and `render(fn)` or `create`), and their exit twin (a scope's close). Each has a test whose input is a getter. There's no replay guard, and a rollback step stays only where a plain call reaches it. The JSDoc says an input accessor that changes engine state during a build is unsupported.
