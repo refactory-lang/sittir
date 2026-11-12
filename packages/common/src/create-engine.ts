@@ -295,6 +295,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		diagnostics: {
 			buildProfile: native.buildProfile,
 			builtMemory: native.builtMemory,
+			renderTemplates: (node) => native.renderTemplates(node),
 			parseTree: parseAndBind,
 			parseAndRead: readAndBind
 		},

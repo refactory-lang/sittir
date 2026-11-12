@@ -33,6 +33,16 @@ pub fn source_root<T>(root: super::CellAt, built: &dyn ArenaRead, arenas: &dyn R
     Ok(sources.renders_as_source(&coord).then_some(coord))
 }
 
+/// Whether the parsed node `coord` names, held by `cell`, renders through
+/// its record rather than as its source bytes: a write lies in its range
+/// (`SourceTable::edited_within`), or the render reads templates
+/// (`SourceTable::reads_templates`) and the node has a record, read or not,
+/// which a leaf and a unit never do.
+#[must_use]
+pub fn through_record(sources: &dyn SourceTable, coord: &NodeCoordinate, cell: Cell) -> bool {
+    sources.edited_within(coord) || (sources.reads_templates() && matches!(cell, Cell::Child { .. } | Cell::Coordinate { .. }))
+}
+
 /// The parsed trees' arenas a render reaches: the arena of each tree a record
 /// names.
 pub trait RecordArenas {
@@ -681,9 +691,10 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
 }
 
 impl<'a, T, V: RecordView<'a, T> + Render, const ADJACENT: bool> Render for RecordSlot<'a, T, V, ADJACENT> {
-    /// A parsed node renders as its source, unless a write set a side in its
-    /// rows or prepare gave it a derived delimiter facet: then it renders
-    /// through its record, which its prepare wrote when no read had.
+    /// A parsed node renders as its source, unless it renders through its
+    /// record (`through_record`) or prepare gave it a derived delimiter
+    /// facet: then it renders through its record, which its prepare wrote
+    /// when no read had.
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         match &self.cell {
             SlotCell::Absent => Err(RenderError::Record(ArenaError::MissingField(self.key))),
@@ -691,7 +702,7 @@ impl<'a, T, V: RecordView<'a, T> + Render, const ADJACENT: bool> Render for Reco
             SlotCell::Refused(refused) => Err(RenderError::Record(refused.clone())),
             &SlotCell::Parsed(row, cell) => {
                 let coord = self.coordinate(row).map_err(RenderError::Record)?;
-                if !self.ctx.sources.edited_within(&coord) && self.ctx.prepared.facet(self.site).is_none() {
+                if !through_record(self.ctx.sources, &coord, cell) && self.ctx.prepared.facet(self.site).is_none() {
                     return crate::slot::write_coordinate(&coord, ADJACENT, w);
                 }
                 self.edited(cell).map_err(RenderError::Record)?.render(w)

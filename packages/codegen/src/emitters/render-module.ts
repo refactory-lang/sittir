@@ -2860,6 +2860,9 @@ const PREPARE_SIG = `fn prepare(&mut self, ctx: &${PREPARE_MOD}::RenderContext<'
 const READ_COORDINATE = [
 	`    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {`,
 	`        Some(::sittir_core::read::read_coordinate(cursor, ctx))`,
+	`    }`,
+	`    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {`,
+	`        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()`,
 	`    }`
 ];
 

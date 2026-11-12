@@ -750,6 +750,7 @@ module.exports.RECORD_FLAG_LINK = nativeBinding.RECORD_FLAG_LINK
 module.exports.RECORD_HEADER_WORDS = nativeBinding.RECORD_HEADER_WORDS
 module.exports.releaseBuilt = nativeBinding.releaseBuilt
 module.exports.render = nativeBinding.render
+module.exports.renderAt = nativeBinding.renderAt
 module.exports.renderBuilt = nativeBinding.renderBuilt
 module.exports.renderBuiltLeaf = nativeBinding.renderBuiltLeaf
 module.exports.renderBuiltLeafToFile = nativeBinding.renderBuiltLeafToFile

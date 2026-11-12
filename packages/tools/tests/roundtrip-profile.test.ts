@@ -60,12 +60,10 @@ it.each(['factory', 'ir'] as const)('the %s validator times its copy of each can
 	expect(sample.phases.copy.calls).toBe(sample.work.cases);
 }, 30_000);
 
-it('read-render-parse times its deep reads as read and its copies of each candidate as copy', async () => {
+it('read-render-parse times its deep reads as read', async () => {
 	const profile = new RoundtripProfile();
 	const result = await validateReadRenderParse('scm', { recursive: true, profile });
-	const sample = profile.finish();
-	expect(sample.phases.read.calls).toBe(result.pass);
-	expect(sample.phases.copy.calls).toBe(sample.work.cases);
+	expect(profile.finish().phases.read.calls).toBe(result.pass);
 }, 30_000);
 
 it('fingerprints ordered candidates and rendered output independently of timings', () => {

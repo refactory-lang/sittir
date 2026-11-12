@@ -671,6 +671,44 @@ macro_rules! napi_engine {
             })
         }
 
+        /// The node at `index` of the live tree `treeId` rendered as `render`
+        /// renders the node a read of it gives: a render root whose
+        /// `leading` and `trailing` edges have no neighbour, under `options`
+        /// over the tree's layer over the engine's; `templates` renders it
+        /// and each node under it that has a record from its template, each
+        /// leaf and unit as its source (`render::ThroughTemplates`). Refuses a
+        /// tree that is not live, an index naming no node of it, and a node
+        /// whose read or render refuses.
+        #[::napi_derive::napi(ts_args_type = "engine: object, treeId: number, index: number, leading: boolean, trailing: boolean, options?: object | undefined | null, templates?: boolean | undefined | null", ts_return_type = "string")]
+        #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
+        pub fn render_at(
+            engine: &::napi::bindgen_prelude::External<EngineCell>,
+            env: ::napi::Env,
+            tree_id: $crate::types::TreeId,
+            index: $crate::types::NodeIndex,
+            leading: bool,
+            trailing: bool,
+            options: Option<$options>,
+            templates: Option<bool>,
+        ) -> ::napi::Result<$crate::boundary::RenderedText> {
+            let engine = engine_of(engine)?;
+            with_live_trees(&env, |trees| {
+                let parsed = trees.get(tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                $crate::napi_engine::check_node(parsed, index)?;
+                let table = render_options(&engine, Some(parsed), options)?;
+                let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| {
+                    let coord = $crate::render::SourceTable::row_coordinate(sources, tree_id, index).ok_or_else(|| format!("index {} names no node of tree {}", index.0, tree_id.0))?;
+                    let writes = Some(Box::new($crate::slot::CoordinateWrites { changed: $crate::slot::ChangedEdges { leading, trailing } }));
+                    let through = $crate::render::ThroughTemplates(sources);
+                    let sources: &dyn $crate::render::SourceTable = if templates == Some(true) { &through } else { sources };
+                    let ctx = $crate::prepare::RenderContext::new(&table, sources);
+                    $render_parts($crate::SlotValue::Coord($crate::slot::NodeCoordinate { writes, ..coord }), &ctx, None).map(|(_, canonical)| canonical).map_err(|e| e.to_string())
+                })
+                .map_err(|e| ::napi::Error::from_reason(format!("render_at failed: {e}")))?;
+                Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))
+            })
+        }
+
         /// `render`'s text written to `path` (`save_rendered`), answering
         /// whether it wrote: `create` refuses a file at the path, and
         /// otherwise a file already holding the text is left untouched.
@@ -990,19 +1028,32 @@ macro_rules! napi_engine {
             /// whose `leading` and `trailing` edges have no neighbour, as
             /// the node crossing as its coordinate marks them, under
             /// `options` over the tree's layer over the engine's, each
-            /// trivia entry's built record from its store's arena. Refuses
-            /// a tree that is not live, an address naming no record of its
-            /// arena, and a record whose render refuses.
-            #[::napi_derive::napi(ts_args_type = "engine: object, treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null", ts_return_type = "string")]
-            pub fn render_record(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, tree_id: $crate::types::TreeId, address: f64, leading: bool, trailing: bool, options: Option<$options>) -> ::napi::Result<$crate::boundary::RenderedText> {
+            /// trivia entry's built record from its store's arena;
+            /// `templates` renders it and every parsed node under it that
+            /// has a record from its template, each leaf and unit as its
+            /// source (`render::ThroughTemplates`). Refuses a tree that is
+            /// not live, an address naming no record of its arena, and a
+            /// record whose read or render refuses.
+            #[::napi_derive::napi(ts_args_type = "engine: object, treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null, templates?: boolean | undefined | null", ts_return_type = "string")]
+            #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
+            pub fn render_record(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, tree_id: $crate::types::TreeId, address: f64, leading: bool, trailing: bool, options: Option<$options>, templates: Option<bool>) -> ::napi::Result<$crate::boundary::RenderedText> {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
+                let changed = $crate::slot::ChangedEdges { leading, trailing };
                 with_live_trees(&env, |trees| {
                     let parsed = trees.get(tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                     let table = render_options(&engine, Some(parsed), options)?;
-                    let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_record(address, $crate::slot::ChangedEdges { leading, trailing }, &table, sources))))
-                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_record panicked")))?
-                        .map_err(|e| ::napi::Error::from_reason(format!("render_record failed: {e}")))?;
+                    let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| {
+                        ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| {
+                            if templates == Some(true) {
+                                parsed.render_record(address, changed, &table, &$crate::render::ThroughTemplates(sources))
+                            } else {
+                                parsed.render_record(address, changed, &table, sources)
+                            }
+                        }))
+                    })
+                    .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_record panicked")))?
+                    .map_err(|e| ::napi::Error::from_reason(format!("render_record failed: {e}")))?;
                     Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))
                 })
             }
@@ -1012,7 +1063,7 @@ macro_rules! napi_engine {
             #[::napi_derive::napi(ts_args_type = "engine: object, treeId: number, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object | undefined | null")]
             #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
             pub fn render_record_to_file(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, tree_id: $crate::types::TreeId, address: f64, leading: bool, trailing: bool, path: String, create: bool, options: Option<$options>) -> ::napi::Result<bool> {
-                let rendered = render_record(engine, env, tree_id, address, leading, trailing, options)?;
+                let rendered = render_record(engine, env, tree_id, address, leading, trailing, options, None)?;
                 $crate::napi_engine::save_rendered(&path, &rendered.0, create)
             }
 

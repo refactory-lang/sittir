@@ -665,10 +665,10 @@ impl<'r, T, N: PrepareRecord<T>, const ADJACENT: bool> ArmOf<RecordPrep<'r, T>> 
 }
 
 /// Prepares one slot item as a native slot prepares its value: a parsed node
-/// that holds no write takes its kind's edges at its site; one a write lies
-/// in prepares its record, as a native node read from it is prepared, with
-/// the seams its holder seated on it; any other value prepares through its
-/// type.
+/// that renders as its source takes its kind's edges at its site; one that
+/// renders through its record (`view::through_record`) prepares its record,
+/// as a native node read from it is prepared, with the seams its holder
+/// seated on it; any other value prepares through its type.
 fn prepare_item<T: Clone + 'static, N: PrepareRecord<T> + Prepare + HydrateNode>(prep: &mut RecordPrep<'_, T>, item: Item, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
     crate::stack::grown(|| prepare_item_in_place::<T, N>(prep, item, ctx))
 }
@@ -677,7 +677,7 @@ fn prepare_item_in_place<T: Clone + 'static, N: PrepareRecord<T> + Prepare + Hyd
     let Some(row) = item.row else { return N::prepare_record(prep, item.at, ctx) };
     let coord = prep.row_coordinate(item.at.tree, row)?;
     coord.resolve(ctx.sources)?;
-    if ctx.sources.edited_within(&coord) {
+    if super::view::through_record(ctx.sources, &coord, item.at.cell) {
         if let Some(record) = edited_record::<T, N>(prep, item, &coord, ctx)? {
             if let Some(seated) = prep.prepared.coordinate_edges(item.site) {
                 if N::takes_gaps(record.cell) {
@@ -870,14 +870,15 @@ where
     for<'a> N::Record<'a>: RecordView<'a, T> + Render,
 {
     /// Each present item as its holder's view renders it (`RecordSlot`): a
-    /// parsed node as its source unless a write or a derived facet lies in
-    /// it, any other value through its view.
+    /// parsed node as its source unless it renders through its record
+    /// (`view::through_record`) or a derived facet lies in it, any other
+    /// value through its view.
     fn render_slot(&self, prep: &RecordPrep<'r, T>, ctx: &RenderContext<'_>, w: &mut dyn RenderSink) -> RenderResult {
         let items = self.items(prep).map_err(RenderError::Record)?;
         for item in items.into_iter().flatten() {
             if let Some(row) = item.row {
                 let coord = Self::coordinate(prep, item, row).map_err(RenderError::Record)?;
-                if !ctx.sources.edited_within(&coord) && prep.prepared.facet(item.site).is_none() {
+                if !super::view::through_record(ctx.sources, &coord, item.at.cell) && prep.prepared.facet(item.site).is_none() {
                     crate::slot::write_coordinate(&coord, ADJACENT, w)?;
                     continue;
                 }
