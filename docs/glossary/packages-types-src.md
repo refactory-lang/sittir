@@ -810,9 +810,17 @@ The synonyms of the vocabulary's flags: each flag's alternative spellings.
 
 The synonyms the `Argument` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
 
+### `packages/types/src/vocabulary/argument.ts::Argument`
+
+The argument node: a call's argument, read through its `value` slot.
+
 ### `packages/types/src/vocabulary/clause.ts::ClauseSynonyms`
 
 The synonyms the `Clause` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
+
+### `packages/types/src/vocabulary/clause.ts::Clause`
+
+The base vocabulary type of clauses. Each feature adds its clause variants.
 
 ### `packages/types/src/vocabulary/declaration.ts::DeclarationSynonyms`
 
@@ -822,13 +830,25 @@ The synonyms the `Declaration` vocabulary resolves: each canonical kind mapped t
 
 The synonyms of a declaration's parameters.
 
+### `packages/types/src/vocabulary/declaration.ts::Declaration`
+
+The base vocabulary type of declarations. Each feature adds its declaration variants.
+
 ### `packages/types/src/vocabulary/element.ts::ElementSynonyms`
 
 The synonyms the `Element` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
 
+### `packages/types/src/vocabulary/element.ts::Element`
+
+The base vocabulary type of elements, the items a list holds. Each feature adds its element variants.
+
 ### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms`
 
 The synonyms the `Expression` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
+
+### `packages/types/src/vocabulary/expression.ts::Expression`
+
+The base vocabulary type of expressions. Each feature adds its expression variants.
 
 ### `packages/types/src/vocabulary/identifier.ts::IdentifierSynonyms`
 
@@ -1505,3 +1525,95 @@ The unicode string literal vocabulary entry.
 ### `packages/types/src/vocabulary/features/unicode-strings/literal.ts::Literal::String`
 
 The string member of the unicode literal.
+
+### `packages/types/src/vocabulary/attribute.ts::Attribute`
+
+The attribute node: an annotation on a declaration, read through its `content` slot.
+
+### `packages/types/src/vocabulary/comment.ts::Comment`
+
+The comment node: a comment in the source, read through its `content` slot.
+
+### `packages/types/src/vocabulary/compositions.ts::JavaScriptFeatures`
+
+JavaScript's features. TypeScript is these and its typing features.
+
+### `packages/types/src/vocabulary/compositions.ts::PythonFeatures`
+
+Python's features, those it spells by content included: accessors and operators by naming convention.
+
+### `packages/types/src/vocabulary/compositions.ts::RustFeatures`
+
+Rust's features, operator overloading through its traits included.
+
+### `packages/types/src/vocabulary/compositions.ts::TypeScriptFeatures`
+
+TypeScript's features: JavaScript's features, and its typing features.
+
+### `packages/types/src/vocabulary/features/annotated-lambdas/index.ts::AnnotatedLambdas`
+
+Annotated lambdas: the type a lambda returns.
+
+### `packages/types/src/vocabulary/features/annotated/index.ts::Annotated`
+
+Annotated typing: generic programming, type annotations and type aliases.
+
+### `packages/types/src/vocabulary/features/arbitrary-precision-integers/big-integer-radixes/index.ts::BigIntegerRadixes`
+
+Big integer radixes: arbitrary-precision integers written in binary, octal or hex.
+
+### `packages/types/src/vocabulary/features/arbitrary-precision-integers/index.ts::ArbitraryPrecisionIntegers`
+
+Arbitrary-precision integers: an integer type of no fixed width, and its literals.
+
+### `packages/types/src/vocabulary/features/arguments/index.ts::Arguments`
+
+Arguments: an argument read as its own node.
+
+### `packages/types/src/vocabulary/features/assertions/index.ts::Assertions`
+
+Assertions: a statement that fails when its condition does not hold, `assert`.
+
+### `packages/types/src/vocabulary/features/async-await/async-blocks/index.ts::AsyncBlocks`
+
+Asynchronous blocks: a block expression that evaluates to a future of its value.
+
+### `packages/types/src/vocabulary/features/async-await/async-contexts/index.ts::AsyncContexts`
+
+Asynchronous contexts: `async` on comprehensions, constructors and resource statements.
+
+### `packages/types/src/vocabulary/features/async-await/async-function-expressions/index.ts::AsyncFunctionExpressions`
+
+Asynchronous function expressions: an anonymous function that suspends at `await`.
+
+### `packages/types/src/vocabulary/features/async-await/async-function-signatures/index.ts::AsyncFunctionSignatures`
+
+Asynchronous function signatures: a function declared without a body that suspends at `await`.
+
+### `packages/types/src/vocabulary/features/async-await/async-iteration/index.ts::AsyncIteration`
+
+Asynchronous iteration: a loop that awaits each element of an asynchronous sequence.
+
+### `packages/types/src/vocabulary/features/async-await/async-lambdas/index.ts::AsyncLambdas`
+
+Asynchronous lambdas: a lambda or method signature that suspends at `await`.
+
+### `packages/types/src/vocabulary/features/async-await/index.ts::AsyncAwait`
+
+Asynchronous functions: a function suspends at `await` until the value it awaits is ready.
+
+### `packages/types/src/vocabulary/features/asynchronous/index.ts::Asynchronous`
+
+Asynchronous programming: asynchronous functions and coroutines.
+
+### `packages/types/src/vocabulary/features/attributes/argument.ts::Argument`
+
+Argument variants of attributes: an argument with an `attributes` slot.
+
+### `packages/types/src/vocabulary/features/attributes/index.ts::Attributes`
+
+Attributes: annotations on a declaration that are not evaluated.
+
+### `packages/types/src/vocabulary/features/block-comments/index.ts::BlockComments`
+
+Block comments: a comment between delimiters that can span lines.
