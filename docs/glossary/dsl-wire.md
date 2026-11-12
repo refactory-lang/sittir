@@ -2256,3 +2256,15 @@ The rule the wire pass is lifting now, or null outside a lift. Under a refused e
 ### `packages/codegen/src/dsl/wire/wire.ts::wireGetFieldOwner`
 
 The owner kind of the field the wire pass is in, or null when no field is being wired.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireNotice::code`
+
+The refusal's code.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireNotice::details`
+
+The refusal's extra details.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireNotice::message`
+
+The message the refusal carries.

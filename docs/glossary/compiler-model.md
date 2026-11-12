@@ -6311,6 +6311,11 @@ The spellings the gate admits.
 
 The token the gate is keyed on.
 
+### `packages/codegen/src/compiler/model/node-map.ts::literalLeafText`
+
+The fixed text of a literal leaf whatever its field: a non-optional string
+or a symbol carrying `literal`.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 
 Whether a render rule has a seam at the first or last edge of its arms.

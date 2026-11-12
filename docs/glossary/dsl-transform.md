@@ -1790,3 +1790,7 @@ Rebuilds a precedence wrapper with its original precedence value and kind, then
 uses the same property preservation operation as container and other wrapper
 reconstruction. Annotations and metadata survive both flat and path patches,
 including a hoisted rule whose annotation lives on a named precedence wrapper.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::peelPrecs`
+
+The precedence wrappers above a rule, outermost first, and the rule beneath them.

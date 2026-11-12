@@ -11375,6 +11375,11 @@ Consumes the `NodeMap` directly; `wrap` is the taxonomy-keyed dispatch namespace
 The `$type: TSKindId.<member> as const` line a wrap function's node literal starts with, so the wrapped node's `$type` is typed as its own kind's literal id. Empty without a kind catalog, where the node keeps the `$type` its data carries.
 
 
+
+
+Emits a kind's record view, when it has one (`recordStorageOf`), through the same emitter as its wrap. Returns whether it did, so the dispatch table names only kinds with a view.
+
+
 ### `packages/codegen/src/emitters/wrap.ts::SlotAccessorConfig`
 
 What `slotAccessorBody` needs to know about a slot beyond its model: the element type its accessor returns, whether the slot is required (an optional singular slot's accessor admits `undefined`), and its storage info (`resolveFieldStorageInfo`), which says whether the stored value is a node or a scalar.
@@ -14569,6 +14574,14 @@ The tail of a kind the record backend cannot build yet, because it has no record
 ### `packages/codegen/src/emitters/record-construction.ts::recordVerbatimPlaceOf`
 
 The place a verbatim record field occupies in a compound or list, or undefined when it has none.
+
+### `packages/codegen/src/emitters/record-construction.ts::leafAdoptLines`
+
+A text leaf's record tail: the leaf stays the object node its builder made, and the engine's arena gives it a header-only record and its interned text (`BuiltArena::adoptLeaf`), which a parent's cell names.
+
+### `packages/codegen/src/emitters/record-construction.ts::recordParts`
+
+A record builder's tail, after the prelude it shares with the object builder: the values that prelude stored, written as a record. It takes the engine's arena (`builtArenaOf`), checks the values when the engine verifies structure at run time (`verifyStored`), allocates the record at the layout's length, and writes each slot at its literal word offset through the shared stores. A list's chosen delimiters and separator go in its side record. The node it returns is the record's view (`BuiltArena::view`), bound to a row of the builder's `$with` setters and `$trivia` members (`builtRowLines`), so a `$with` rebuilds through the same record builder; then the builder's checks run on it. A kind without record places gets the refusal instead.
 
 ### `packages/codegen/src/emitters/factories.ts::sharedImportLine`
 

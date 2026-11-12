@@ -1703,6 +1703,13 @@ Builds the member list after a lead projection. A member the lead heads contribu
 
 Applies one lead effect to a facts record. The facts are rebound through the effect's variant map. Each claim is projected: a claim the receiver owns keeps only its head form, and a claim on a variant kind keeps its plain form and gains a head form. The indices are recorded, and members, containers and unclaimed facts for variant kinds are projected to match. Why: a lead composes the head's admits in the context of the field and the rest in the context of the item.
 
+### `packages/codegen/src/bindings/lead-facts.ts::headMembers`
+
+Projects a capture whose route crosses the list by appending its own selector to its `via` path and projecting both through `headPath`: a receiver capture lands on its new singular field, a rest capture crosses the receiver form, canonical group and original rest-list field, and the projected step above the capture is its parent. Every name comes from the realization record; no naming convention is reconstructed.
+
+
+Lead projection uses one `bindFacts` projection for the minted variants. Besides owned captures, it preserves explicit container declarations and unclaimed-kind declarations on their cloned owners, including the container's element, captured slots, and dropped layout. Without that projection a receiver wrapper loses its declared content route even though its parser shape is correct.
+
 ### `packages/codegen/src/bindings/pinned-memo.ts::read`
 
 Returns the value for an input in a mode, from an on-disk memo, and computes it only when no entry exists. The entry is keyed by the mode directory and the sha256 of the input, and it records the reader that produced it, so an entry written by a different reader is recomputed. Writes go beside the target and are renamed into place, so a reader never sees a partial entry. Why: pinned reads are stored on disk so that they survive across processes.

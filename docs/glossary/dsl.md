@@ -9197,6 +9197,14 @@ The alias storage a rule's metadata records.
 
 The field a rule reaches through another rule.
 
+### `packages/codegen/src/dsl/rule-patterns.ts::isTerminalRootRule`
+
+Whether a rule, under its PREC wrappers, is a PATTERN, a STRING or a token: a rule tree-sitter compiles to one lexical token of its own.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::unwrapPrecAndOptional`
+
+Strips `PREC*` and optional wrappers down to the node that decides an arm's slot topology.
+
 ### `packages/codegen/src/dsl/symbol-table.ts::CEnumEntry`
 
 One entry of the C enum table.
