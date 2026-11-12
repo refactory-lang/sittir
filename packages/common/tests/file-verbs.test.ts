@@ -483,8 +483,45 @@ describe.each(['object', 'arena'] as const)('a root built for a create or a rend
 				build.sourceFile({});
 			});
 			expect(call).toThrow('callback failed');
+			if (nodeStorage === 'arena') expect(() => escaped!.keep(engine.build.identifier('late'))).toThrow(/is closed/);
 			escaped![Symbol.dispose]();
 		}
+		expect(live(engine)).toBe(start);
+	});
+
+	it.each(['create', 'render'] as const)('a %s callback that disposes its engine and throws keeps its own error', async (verb) => {
+		const engine = await engineOf();
+		const call = failing(verb, engine, (build) => {
+			builtRoot(engine, build);
+			engine.scope();
+			engine.dispose();
+		});
+		expect(call).toThrow('callback failed');
+	});
+
+	it.each([
+		['render', 'render'],
+		['render', 'create'],
+		['create', 'render'],
+		['create', 'create']
+	] as const)('a %s callback that goes on after a failed inner %s callback left a scope open keeps its own root', async (outer, inner) => {
+		const engine = await engineOf();
+		const start = live(engine);
+		let escaped: Scope | undefined;
+		const make = (build: BuildSurface<RustAPI, 'default'>) => {
+			expect(failing(inner, engine, () => (escaped = engine.scope()))).toThrow('callback failed');
+			if (nodeStorage === 'arena') expect(() => escaped!.keep(build.identifier('late'))).toThrow(/is closed/);
+			return builtRoot(engine, build);
+		};
+		if (outer === 'create') {
+			await engine.create(join(directory, 'b.rs'), make);
+			expect(readFileSync(join(directory, 'b.rs'), 'utf8')).toBe('fn a() {}\n');
+		} else {
+			const rendered = engine.render(make);
+			expect(rendered.toString()).toBe('fn a() {}\n');
+			rendered[Symbol.dispose]();
+		}
+		escaped![Symbol.dispose]();
 		expect(live(engine)).toBe(start);
 	});
 

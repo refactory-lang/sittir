@@ -91,7 +91,6 @@ interface CommitMark {
 	readonly parked: number;
 	readonly kept: Set<unknown>;
 	closed: boolean;
-	settle: boolean | undefined;
 }
 const releasedRecord = (at: number): string => `the built node at ${at} was released: its record holds no count`;
 const encoder = new TextEncoder();
@@ -498,12 +497,12 @@ export class BuiltArena {
 	}
 
 	#settle(mark: CommitMark, keepAll: boolean): void {
-		mark.settle = keepAll;
-		if (this.#commits.at(-1) === mark) this.#close(mark, keepAll);
+		for (let top = this.#commits.at(-1); top !== undefined && top !== mark; top = this.#commits.at(-1)) this.#close(top, false);
+		this.#close(mark, keepAll);
 	}
 
 	#open(): CommitMark {
-		const mark: CommitMark = { id: ++this.#commitCount, minted: this.#mintedCount, parked: this.#parked.length, kept: new Set(), closed: false, settle: undefined };
+		const mark: CommitMark = { id: ++this.#commitCount, minted: this.#mintedCount, parked: this.#parked.length, kept: new Set(), closed: false };
 		this.#commits.push(mark);
 		return mark;
 	}
@@ -548,11 +547,6 @@ export class BuiltArena {
 	}
 
 	#close(mark: CommitMark, keepAll: boolean): void {
-		this.#closeMark(mark, keepAll);
-		for (let top = this.#commits.at(-1); top?.settle !== undefined; top = this.#commits.at(-1)) this.#closeMark(top, top.settle);
-	}
-
-	#closeMark(mark: CommitMark, keepAll: boolean): void {
 		if (mark.closed) return;
 		if (!isLive(this.#handle.current)) {
 			for (const open of this.#commits) open.closed = true;
