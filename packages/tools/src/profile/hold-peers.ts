@@ -51,7 +51,7 @@ interface HoldState extends Holding {
 
 const TABLE = ['-axo', 'pid=,ppid=,pgid=,pri=,lstart=,comm='];
 const ROW = /^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\S+\s+\S+\s+\d+\s+[\d:]+\s+\d+)\s+(.+?)\s*$/;
-const THROTTLED_PRIORITY = 4;
+export const THROTTLED_PRIORITY = 4;
 const O_EXLOCK = 0x20;
 const LOCK = constants.O_RDWR | constants.O_CREAT | constants.O_NONBLOCK | O_EXLOCK;
 const SIGNALS = ['SIGINT', 'SIGTERM', 'SIGHUP'] as const;
