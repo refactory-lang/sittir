@@ -954,6 +954,10 @@ The loader for the portable build table, when the language has one.
 
 Writes `text` to `path` through the native writer: a new file when `create`, which refuses a file already at the path and, when the write fails, leaves the partial file in place and says so; otherwise an in-place write that restores the file's original bytes when it fails. Answers whether it wrote.
 
+### `packages/types/src/engine-api.ts::SavesFile`
+
+A root that saves itself. `$save(path)` returns the pending write of the root through its engine: nothing is written until the result is awaited or disposed, and then it is written once.
+
 ### `packages/types/src/portable.ts::PortableRows::flags`
 
 The flag query for a portable row.

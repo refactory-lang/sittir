@@ -9558,6 +9558,10 @@ The factory imports the language hooks need, one line per module: the coercer mo
 	 *  emitter from the same table that types `wrapNode`. */
 ```
 
+### `packages/codegen/src/emitters/engine.ts::EmitApiConfig`
+
+The configuration an api emitter takes: `EmitEngineConfig`, plus `rootKinds`, the kind ids a parse's root can have.
+
 ### `packages/codegen/src/emitters/node-model.ts::module`
 
 Emits `node-model.json5`: a structural dump of the assembled `NodeMap` (each kind's model type, slots with per-value multiplicities, supertype subtypes, polymorph forms), so tools read a grammar's shape without re-running codegen. It writes each fact once: no field a reader derives from another (`node-model-read.ts`) and no field nothing reads. Nodes are sorted by kind so diffs are stable.
@@ -14668,6 +14672,10 @@ The options the render-module emitter takes, extending the render options.
 ### `packages/codegen/src/emitters/render-module.ts::VERBATIM_FIELD`
 
 The field name a verbatim value is stored under in a record.
+
+### `packages/codegen/src/emitters/render-module.ts::fixedTextSeam`
+
+The render seam a fixed text writes. An indent or dedent depth text gives the kinds its depth break breaks at; a whitespace-only text gives the layout kinds it names; any other text gives `undefined` and is written as text.
 
 ### `packages/codegen/src/emitters/shared.ts::EnumArm`
 

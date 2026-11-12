@@ -1018,6 +1018,9 @@ Text is interned: equal strings share one reference, and the string a builder wa
 
 The arena also owns the nodes that view its records. A compound record's node is a view from the language's view table, the same accessors a parsed record's view has, over the handle `tree`, whose `built` is this arena and whose trivia table is the engine's store of built records' sides, by address (`BuiltRecords`); the handle is bound to the engine, so a view made outside a builder call still finds its engine. Each node is held weakly by its record's address: a read of a child cell returns the node its builder returned while anything holds it, else a fresh view of the record. A parent's row holds the inputs of its rebuilds, which hold its children's nodes, so a reachable parent keeps its children's nodes.
 
+
+Closes the commits opened above a build's mark, then the mark itself, keeping every record of the mark when keepAll is set.
+
 ### `packages/common/src/built-arena.ts::BuiltArena::view`
 
 The node of the compound record its builder just wrote: a view of the record, which also records the record's length, a fact the builder knows as it allocates and `storeInline` needs to copy the record into a parent.
@@ -1090,9 +1093,21 @@ The arena whose record a node is the node of: the one its builder wrote it into,
 
 What a built arena is made with, from the engine that owns it: the cell format its records are written in, and the trivia table its records' sides live in, keyed by record address. The arena puts the table on its tree handle (`BuiltArena.tree`), so a built record's sides are read and written where a parsed node's are (`tableAt`), and the native render of a built record finds them in the same store (`renderBuilt`).
 
+### `packages/common/src/built-arena.ts::BuiltArena::attempt`
+
+Runs a build callback as one commit. A callback that throws settles its commit as not kept, giving back what it minted and parked, and rethrows; one that returns keeps its records. A build started inside another build's callback is refused.
+
 ### `packages/common/src/create-engine.ts::storedVerifierOf`
 
 The writer check a record builder runs before it writes (`EngineHandle.verifyStored`): the stored values checked against the kind's structure row, as `verifyStructure` checks an object node's. Only an engine in `verifyStructure: 'runtime'` mode has one. A built record's node is checked here, as it is written, so the walk after a build leaves it alone (`isBuiltNode`).
+
+### `packages/common/src/create-engine.ts::attempting`
+
+Runs a build through the engine's built arena's `attempt` when it has one, so a build that throws gives back what it wrote; otherwise runs the build directly.
+
+### `packages/common/src/create-engine.ts::releasing`
+
+A render handle whose text and save are the wrapped render's, written through `writeText`. Disposing it disposes the wrapped render, then calls `release`.
 
 ### `packages/common/src/verify-structure.ts::checkRow`
 
@@ -1129,6 +1144,10 @@ A view of a node's owner.
 ### `packages/common/src/utils.ts::preferredFacet`
 
 The token with the facet its preference names, or the token unchanged when no preference is given.
+
+### `packages/common/src/utils.ts::handleSave`
+
+The `$save` of a built or parsed node: the pending write of the node to `path` through the engine that holds it. It throws when the node has no engine, or when the engine is disposed.
 
 ### `packages/common/src/node-data.ts::mapSideEntries`
 
@@ -1401,3 +1420,17 @@ Reads a stored slot value back. The `BLANK_KIND_ID` marker becomes `null`, and a
 ### `packages/common/src/spelled.ts::spelledMember`
 
 The text in its spelled form: the spelling the text is declared under, or the text itself when no spelling is declared.
+
+### `packages/common/src/pending.ts::FileCommit`
+
+The open write of one file: `diff` describes the change, and `commit` applies it. It is disposable, and its scope ends with it.
+
+### `packages/common/src/pending.ts::currentText`
+
+The current text of a file, read as UTF-8, or `undefined` when no file exists at the path. It refuses a path that is not a regular file, and opens the file without blocking.
+
+### `packages/common/src/pending.ts::pendingFile`
+
+Creates the `Pending` of a file write: `open` makes its commit, `diff` describes its change, and `hooks` intercept the write in order. The write runs once, when the result is awaited or disposed. A hook's `next` and `diff` are valid only while its write is in flight.
+
+The thenable method of a pending write: it starts the write once and settles when the write is done, so awaiting a Pending performs it.
