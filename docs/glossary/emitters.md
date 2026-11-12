@@ -5493,92 +5493,6 @@ The kinds a field's dummy must build a stub from: none when `dummyValueForField`
 // numeric discriminant instead in that position.
 ```
 
-### `packages/codegen/src/emitters/test.ts::buildDummyStub`
-
-```text
-/**
- * Build a complete dummy stub literal for `kind`, recursing into required
- * fields whenever `kind` is `instanceof AbstractAssembledCompound` (branch,
- * envelope, polymorph, or list alike — no separate case for a hoisted kind).
- *
- * @remarks
- * Leaf/keyword/enum/token kinds are safe as flat `{ $type, $text, $named }`
- * stubs, stamped built (`dummyNodeLiteral`), which is what native's node
- * `FromNapiValue` expects for those shapes. Compound kinds additionally require every required
- * field to be present and correctly shaped — a flat stub is rejected with
- * "Missing field `_x`" by the native node. A hoisted kind (the
- * synthesized single-field wrapper kinds, e.g. `_match_arm_with_comma`) is
- * just an ordinary compound with `enrichment.hoisted` set — structurally a
- * one-field record like any other branch, its slots reachable via
- * `.slots` the same way. This function fills required fields
- * recursively for every compound shape, bounded by {@link MAX_DUMMY_DEPTH}
- * and a per-branch `visiting` set (cycle guard for self-referential
- * grammars).
- *
- * Every list slot the stub does not populate is `[]`, at the depth limit
- * too: an empty list is `[]`, and the node refuses a missing list key.
- *
- * When recursion bottoms out (depth limit or cycle) the stub still declares
- * `$type`/`$text`/`$named`, stamped built, but omits nested required single fields —
- * this may still fail construction for pathological kinds, matching the
- * existing "skip when no safe sample found" precedent elsewhere in this
- * emitter (see {@link pickSampleForPattern}) rather than guessing further.
- */
-```
-
-#### body
-
-```text
-// Canonical-hidden architecture (Option Y): an alias-promoted kind's own
-// fields live on the pre-promotion hidden node (`_<kind>`), not on a
-// separate model entry under the visible name — same fallback
-// `template-coverage.ts::validateTemplateCoverage` uses for the same
-// reason.
-```
-
-#### body
-
-```text
-// 'list' participates in this scan uniformly alongside
-// 'branch'/'envelope'/'polymorph' — see isSlotBearingCompound's doc
-// comment (shared.ts).
-```
-
-#### body
-
-```text
-// Nested stubs are raw object literals passed directly as
-// `UntypedNode` — NOT routed through the field's factory (which is
-// what translates a Config's `propertyName` into `_<storageKey>` at
-// runtime). Native's node `FromNapiValue` reads the storage
-// key straight off the object (`napi(js_name = "_pattern")`), so
-// the literal must use `storageKey` here, unlike the top-level
-// `emitBranchTest` config object (which legitimately uses
-// `propertyName` because it IS passed through `ir.<kind>(...)`).
-```
-
-#### body
-
-```text
-// The recursively-built required fields join the literal's own members
-// (`dummyNodeLiteral`'s `storage`), inside its stamp.
-```
-
-### `packages/codegen/src/emitters/test.ts::dummyTextForKind`
-
-```text
-/**
- * Returns a safe `$text` value for a stub node of the given kind.
- *
- * @remarks
- * Keyword kinds have a fixed text (e.g. `type`, `fn`, `async`) — using
- * a keyword stub with `$text: 'test'` fails node validation because
- * `assertTextIn` enforces the exact keyword string. For non-keyword kinds
- * (leaves, enums, branches), `'test'` is accepted since their validators
- * either have no text constraint or accept arbitrary strings.
- */
-```
-
 ### `packages/codegen/src/emitters/node-common.ts::classifySlot`
 
 ```text
@@ -9547,14 +9461,6 @@ Emits `querySlots`, the `querySlotRows` table as a frozen object keyed by kind i
 
 Emits `structure`, the factories emitter's structure table as a frozen object keyed by kind id. The language hooks carry it to the engine, where `verifyStructure: 'runtime'` checks each built node against its kind's row.
 
-### `packages/codegen/src/emitters/client-utils.ts::emitJsonFacts`
-
-Emits the grammar's `jsonFacts`, what its nodes are written to JSON by (`nodeJSON`) and revived by. Three of its members are the facts `utils.ts` already holds, referenced rather than copied: the kind names (`KIND_NAMES`), the slots by accessor (`querySlots`) and the layout trivia (`triviaFacts.layout`). The rest are emitted from the sources the rest of codegen uses: the leaves that store their text (`storedTextKinds`, the set the wraps give `wrapLeaf`), the units (`unitKindIds`, the keyword and punctuation kinds a slot holds as a kind id) and the blank arm's id (`BLANK_KIND_ID`), which JSON writes as `null`.
-
-### `packages/codegen/src/emitters/client-utils.ts::textEnvelopeContents`
-
-The alias envelopes built from their content's text (the `alias` form of `builtFromText`), each envelope's kind id paired with the kind id of the content leaf it holds. They become `jsonFacts.textEnvelopes`, which tells the reviver to build such an envelope from its content's text, so the envelope's own text check applies (a property name may be a word the content kind reserves), and only when the content is written as that kind. A content leaf with no kind id fails emission.
-
 ### `packages/codegen/src/emitters/emit.ts::module`
 
 ```text
@@ -9730,10 +9636,6 @@ A node reference writes its grammar kind as `name` only where it differs from th
 ### `packages/codegen/src/emitters/index-file.ts::emitIndex`
 
 The grammar's `index.ts`: the descriptor module (`emitDescriptor`) as the default export (`export * as default`), so `import rust from '@sittir/rust'` is that module's namespace, with its values and its types under one name, and the descriptor's types again by name. It depends on nothing but the file layout.
-
-### `packages/codegen/src/emitters/index-file.ts::emitArenaDescriptor`
-
-The grammar's `arena.ts` descriptor entry point. It reuses the regular descriptor's values and exported types, replacing only `createEngine` with a delegate that defaults `nodeStorage` to `arena` while honoring an explicit storage option. The delegate is typed by the descriptor's own signature (`Language<API>['createEngine']`), so it takes the builder mode as the descriptor does, and it adds the storage with `Object.assign`, which keeps the options' generic type where a spread would flatten the mode it selects. The language API name comes from `languageApiName`, and the frozen descriptor keeps the regular descriptor's guards, kind IDs and lazy loader.
 
 ### `packages/codegen/src/emitters/index-file.ts::emitDescriptor`
 
@@ -11485,10 +11387,6 @@ The body of one slot accessor. A scalar slot (one whose storage holds no node, `
 A record view's accessor reads the slot's cell at its place instead (`WrapStorage`): a presence bit through `recordFlag`, another scalar slot through `recordSlot` or `recordSlots`, and a node slot through `viewSlots` or `viewSlot`, and an alias envelope's content with the role `contentRole` gives the cell's value (`recordSlot`).
 
 
-### `packages/codegen/src/emitters/wrap.ts::fieldAccessorLines`
-
-One `name() { … }` accessor line per model slot of a field-carrying kind, each body from `slotAccessorBody`, with `aliasContent` passed through to it (true for an alias's own content). A group key that spells its own seat is an ordinary collision, not a skipped slot.
-
 
 ### `packages/codegen/src/emitters/wrap.ts::SlotModel`
 
@@ -11681,33 +11579,9 @@ Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfDat
 
 The value a parsed node's `$with` setter writes into its slot, through `admitSlot` under the wrap's engine handle, by the node's kind and the setter's name. The wrap's setters (`inlineSetters`) write every new value through it, so an edit of a parsed node refuses a child of another language as a builder does.
 
-### `packages/codegen/src/emitters/wrap.ts::WrapStorage`
-
-What a wrap reads a node's slots from: the read object node's storage keys (`object`, `OBJECT`), or a record, whose `places` map each slot's storage key to the canonical layout's stamped word, width, run stride or presence bit. These facts are consumed during generation; accessors receive literal numeric arguments and never consult a runtime layout table. One emitter writes both forms (`emitFieldCarryingWrap`, `emitSeparatedListWrap`); only the slot reads, the header and the members that need the node's data differ.
-
-### `packages/codegen/src/emitters/wrap.ts::OBJECT`
-
-The object form of `WrapStorage`: the wrap that reads a read object node's storage keys.
-
-### `packages/codegen/src/emitters/wrap.ts::recordStorageOf`
-
-The record form of a kind's wrap: each model slot's place (`recordPlacesOf`), the same places the kind's record builder writes. `undefined` when the kind has a group seat, whose readers read the group's stored data, when it has no record layout, or when a slot has no place there. Such a kind has no view: its stub reads as its row's object node (`WrapEmitter::finalize`).
-
-### `packages/codegen/src/emitters/wrap.ts::placeOf`
-
-The canonical layout place of the slot stored under `storageKey` in a record wrap. `recordStorageOf` gives every model slot a place, so a missing one is a codegen fault and is refused.
-
 ### `packages/codegen/src/emitters/wrap.ts::cellArgs`
 
 Formats the canonical place as literal numeric arguments. A scalar carries word, width and inline capacity; a list carries word, width, run stride and optional scalar fallback capacity. Slot accessors, list lengths and owner views share this formatting and never consult layout descriptors at runtime. Presence bits use the separate flag helper.
-
-### `packages/codegen/src/emitters/wrap.ts::wrapHeader`
-
-A wrap function's first line: the exported `wrap<Type>(data: T.<Type>, tree)` over read object data, or the module-private `view<Type>(data: RecordStub, tree)` over a record stub, which only `wrapNode` reaches, through `_viewTable`.
-
-### `packages/codegen/src/emitters/wrap.ts::view#1`
-
-Emits a kind's record view, when it has one (`recordStorageOf`), through the same emitter as its wrap. Returns whether it did, so the dispatch table names only kinds with a view.
 
 ### `packages/codegen/src/emitters/wrap.ts::listOptionSetters`
 
@@ -14114,12 +13988,6 @@ The one place a pattern guard's refusal is worded: `<label>: text does not match
 
 One `$with` setter of a node literal: its name, its parameter list and the rebuild expression it runs. The factory and wrap emitters collect these, and `seatedSetters` wraps the ones a seat changes.
 
-### `packages/codegen/src/emitters/node-members.ts::nodeMemberLines`
-
-The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot (`accessorRead`), the `$render` closure, `toString` (the same text, so a node interpolates into a template string and a pattern test of a node renders it), `toJSON` (the node's structure through `nodeJSON` and the grammar's `jsonFacts`, so `JSON.stringify` writes kind names and accessor-named slots rather than storage), the `$trivia` positions, `$query` and `$snapshot` when the literal is a parsed node's (`parsed`), and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `$query` is one closure that makes the query facet only when called (`queryOf`), so a node that is never queried pays only for the closure. `$snapshot` is the same: it calls `snapshotOf` on the node, and is `undefined` where `$query` is. A `$with` rebuild calls the same wrap with data `markEdited` stripped of its coordinates, so the member checks that the data still names its tree (`treeHandleOf`) and is `undefined` on a draft; `undefined` rather than absent keeps every node of a kind on one shape. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps; only the wraps pass `parsed`, because a built node holds no tree to query. A parsed leaf's members are written here too (the wraps' `wrapLeaf`, with `text` and no accessors).
-
-A record view passes `row`: it holds no storage keys to rebuild from, so its writes and reads that need the node's data go through the object node of its row, read once (`rowOf`). Each `$with` setter forwards its arguments by name (`rowWith`), each `$trivia` position forwards to the row's (`rowTrivia`), and `$query` and `$snapshot` take the row. A write therefore returns an object node, and the view itself is never edited.
-
 ### `packages/codegen/src/emitters/node-members.ts::StoredAccessor`
 
 One slot reader of a node literal: its name, the storage key it reads, and, for a built node's slot whose storage holds nodes, whether it hydrates one value or a list (`hydrates`). The factory emitter sets `hydrates` (`storedAccessor`); the wraps never do, since their accessors are written by `slotAccessorBody`.
@@ -14136,10 +14004,6 @@ A builder's reader for one slot: it hydrates when the slot's storage holds nodes
 
 The inner-trivia function a grammar's builder module imports: none when no kind has an inner side, `triviaInner` when some does. Unused imports would fail the lint of the generated file.
 
-### `packages/codegen/src/emitters/node-members.ts::withEntry`
-
-One `$with` setter line: the entry runs its rebuild through `rebuilt`, which scopes the rebuild in the node's engine and hands the node's trivia on to the result.
-
 ### `packages/codegen/src/emitters/factories.ts::narrowedStorageExpr`
 
 The storage of a refine form's narrowed slot: the kind id the narrowing literal names (a missing one fails at emit time), `true` for a keyword-presence slot. A strict builder reads no text, so the literal is resolved here once instead of being mapped at run time.
@@ -14147,10 +14011,6 @@ The storage of a refine form's narrowed slot: the kind id the narrowing literal 
 ### `packages/codegen/src/emitters/node-members.ts::seatedSetters`
 
 The setters of a node as its literal writes them, after its seats. A list slot's setter runs through `listSlotWith`, an elements slot's through `elementsWith`. Each key a group seat flattens onto the node gets a setter that runs `seatWith` over the seat's slot setter, and a key that spells its slot replaces that slot's own setter. A seat with no slot setter to wrap, a wrapped list owner among them, adds no keys.
-
-### `packages/codegen/src/emitters/node-members.ts::groupSeatParts`
-
-The lines a group seat adds to a node's builder: a reader of the seated group, hoisted before the literal because both the setters and the stored-reader member call it, and written by `readOf` from the seat's hint, which names the slot, its stored key and its group; a member per flattened key, `undefined` while the group is absent and a reader of the group's field while it is present; and the `STORED_SLOT_READERS` member. A reader exists only when it has a value, decided when the node is built, so a node with the group and a node without it differ in the value of these members and not in the shape of the node.
 
 ### `packages/codegen/src/emitters/node-members.ts::ownerViewParts`
 
@@ -14167,14 +14027,6 @@ Where a self list's length is counted from (`listSelfViewParts`): the expression
 ### `packages/codegen/src/emitters/node-members.ts::selfListOption`
 
 A self list's option `key` as its environment reads it: a factory's local `_key`, a wrap's read data under its storage key, or a record view's side record. A record holds only a list's delimiters setting (`recordDelimiter`), so a view's option other than `delimiter` is refused at codegen. Its `separator` is the tree's answer, which `defineListSeparator` defines after the literal, so no environment but the factory's reads it here.
-
-### `packages/codegen/src/emitters/node-members.ts::rowWithEntry`
-
-A record view's `$with` setter line: its arguments forwarded by the setter's name to its row's setter (`rowWith`), so a view writes as its object node writes and holds no setter body of its own.
-
-### `packages/codegen/src/emitters/node-members.ts::triviaMember`
-
-One `$trivia` position's line: a node's own side (`triviaSide`) or inner position (`triviaInner`), or, for a record view (`row`), its row's (`rowTrivia`).
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::kindConstName`
 
@@ -14420,10 +14272,6 @@ Whether a kind prints a layout field and its slots: a branch, an envelope, a lis
 
 Emits one `_delimited_<factory>` constant per delimited kind into the raw module: the kind and its kind id, the excluded characters as a `u`-flag class, the fixed delimiter texts, the parse-back host and the node kinds. The host is resolved here, once, from the grammar's `reparseHosts` block through the supertype closure; a trivia kind (an extra) falls back to the bare `$r` host, and any other kind with no host throws at generation time.
 
-### `packages/codegen/src/emitters/factories.ts::delimitedCheckLine`
-
-The `checkDelimited(handle, node, spec, [content slots], open, close)` call emitted before a delimited builder returns. The delimiter slots come from the stamped fact; every other slot is content.
-
 ### `packages/codegen/src/emitters/factories.ts::builderHandleLines`
 
 The lines every builder opens its node with: the engine handle in scope (`currentHandle`), then, for a builder with slots, its children's admission (`admitChildren`) under that handle, by each slot's config key and storage variable. A builder outside any engine admits without a check, having no language to compare. The field-carrying, refine-form, separated-list and text builders all take their handle here.
@@ -14459,10 +14307,6 @@ The storage members a separated list's interface declares for its options, one o
 ### `packages/codegen/src/emitters/test.ts::delimiterSamples`
 
 The sample text of every leaf that ends a delimited composite: the shortest text its pattern accepts, so the generated tests build a string with a matching start and end instead of `test` on both sides.
-
-### `packages/codegen/src/emitters/test.ts::dummyNodeLiteral`
-
-The literal of one dummy node in a generated test: its `$type`, `$text` and `$named`, then the storage members `buildDummyStub` filled (`storage`), wrapped in `stampBuilt(...)`. A dummy stands where a test passes a node, and only a stamped object is one; unstamped, the same literal is a config, which the builder coerces or refuses.
 
 ### `packages/codegen/src/emitters/reparse-hosts.ts::emitReparseHosts`
 
@@ -14590,28 +14434,6 @@ side record's address (0 for none). The presence words follow, then the cells.
 
 A presence word holds 32 presence bits, one word of the `u32` arena.
 
-### `packages/codegen/src/emitters/record-layout.ts::CELL_WORDS`
-
-The cell widths, one per form a slot holds:
-
-- `node`, 5: anything carried in a `SlotValue`, whose arms may all be units.
-  The widest forms take five words: a parsed record's untouched child (tag,
-  kind, index, byte start and end), a parsed leaf (tag, kind, byte span and
-  its row) and a built leaf (tag, kind, string-table offset and length, and
-  its own header-only record);
-- `text`, 4: a captured interior string (tag, kind 0, and a byte span or a
-  string-table offset and length);
-- `list`, 2: a run's packed address and its length, its items in cells of
-  their own width.
-
-A built record's untouched parsed child is a child cell (tag, kind, record
-address) naming a parsed record in that child's tree's own arena, written
-when a builder takes the child. So a slot's width never depends on which
-arena holds its record, and a parsed node stays identified by its tree and
-row.
-
-The derive checks each against the slot's type (`sittir_core::record`).
-
 ### `packages/codegen/src/emitters/record-layout.ts::RecordForm`
 
 What a slot needs in its record: a presence `bit`, or a `cell` of `width`
@@ -14655,10 +14477,6 @@ in the cell that holds it. A field added later lands by the same split.
 ### `packages/codegen/src/emitters/record-layout.ts::recordArgs`
 
 Formats the canonical place as the derive reads it: word and bit for a presence, otherwise word and width, with a list's run stride or a bounded scalar's inline capacity. All values are stamps, and the derive only checks their fit.
-
-### `packages/codegen/src/emitters/record-layout.ts::INLINE_HEADER_WORDS`
-
-The words before an embedded child's own record header: its inline tag and the child site's changed-edge flags. The native codec exports the same protocol width; the shared cell fixture and eager-generator check pin the two implementations.
 
 ### `packages/codegen/src/emitters/node-model-read.ts::module`
 
@@ -14744,33 +14562,13 @@ The text of `factories/raw.ts`, the module every other module imports builders f
 
 The builder modules' import from `@sittir/common/utils`; the record module adds the record stores to the object module's names.
 
-### `packages/codegen/src/emitters/record-construction.ts::recordTailLines`
-
-A record builder's tail, after the prelude it shares with the object builder: the values that prelude stored, written as a record. It takes the engine's arena (`builtArenaOf`), checks the values when the engine verifies structure at run time (`verifyStored`), allocates the record at the layout's length, and writes each slot at its literal word offset through the shared stores. A list's chosen delimiters and separator go in its side record. The node it returns is the record's view (`BuiltArena::view`), bound to a row of the builder's `$with` setters and `$trivia` members (`builtRowLines`), so a `$with` rebuilds through the same record builder; then the builder's checks run on it. A kind without record places gets the refusal instead.
-
 ### `packages/codegen/src/emitters/record-construction.ts::recordRefusalLines`
 
 The tail of a kind the record backend cannot build yet, because it has no record view to read its record back through: the builder refuses, naming the kind, rather than writing a record nothing reads.
 
-### `packages/codegen/src/emitters/record-construction.ts::leafAdoptLine`
-
-A text leaf's record tail: the leaf stays the object node its builder made, and the engine's arena gives it a header-only record and its interned text (`BuiltArena::adoptLeaf`), which a parent's cell names.
-
 ### `packages/codegen/src/emitters/record-construction.ts::recordVerbatimPlaceOf`
 
 The place a verbatim record field occupies in a compound or list, or undefined when it has none.
-
-### `packages/codegen/src/emitters/node-members.ts::builtRowLines`
-
-The row a built record's view writes through (`bindRow`): the `$with` setters and `$trivia` members an object node of the kind has, rendered by the same `withBlockLines` and `triviaBlockLines` the object literal's members use.
-
-### `packages/codegen/src/emitters/node-members.ts::withBlockLines`
-
-A node's `$with` member: one entry per setter, rendered by `withEntry` for a node that writes itself or `rowWithEntry` for a parsed view that writes through its row; nothing for a kind with no setters.
-
-### `packages/codegen/src/emitters/node-members.ts::triviaBlockLines`
-
-A node's `$trivia` member: its `leading` and `trailing` sides, and `inner` for a kind with inner positions, each writing through the node itself or, for a parsed view, through its row.
 
 ### `packages/codegen/src/emitters/factories.ts::sharedImportLine`
 
@@ -14797,14 +14595,6 @@ The `stored` kinds of `builtFromText`: the pattern leaves whose nodes hold their
 ### `packages/codegen/src/emitters/built-from-text.ts::BuiltFromText`
 
 The text-built kinds of one grammar, each classified into the form its builder takes: `fixed` (a keyword or punctuation leaf), `affixed` (a leaf with a prefix or suffix), `interior` (a node whose content is an interior region), `stored` (a leaf whose text is stored and matched by a pattern), and `alias` (an alias envelope over a leaf). `builtFromText` produces the list from the node map. The JSON facts record the text-built kinds as one fact, so the reviver can tell which kinds it builds from text.
-
-### `packages/codegen/src/emitters/client-utils.ts::registeredOptionRows`
-
-Each kind id that has registered slots, mapped to the slot property names its builder takes in its options argument, sorted by kind id. Kinds with no slots are left out. The rows become the `options` table of the emitted JSON facts.
-
-### `packages/codegen/src/emitters/client-utils.ts::spreadKindIds`
-
-The sorted kind ids whose factory shape is `elements` or `spread`, the kinds whose builder takes their repeated items as rest arguments after its options. The emitted JSON facts list these as the `spread` set.
 
 ### `packages/codegen/src/emitters/factories.ts::ElementConfigFact`
 

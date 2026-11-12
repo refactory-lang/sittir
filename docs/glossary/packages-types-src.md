@@ -498,25 +498,9 @@ The delimiter a query plan reads through, when it has one.
 
 The minimum count a query plan requires.
 
-### `packages/types/src/engine-api.ts::NodeJSON`
-
-The shape a node takes as JSON. `$type` is its kind name; `$text` is a leaf's text; each slot is keyed by its accessor name; and the comments on each side are written as `leadingComments`, `trailingComments` and `innerComments`. Its slots are written by accessor name rather than storage key, so the JSON reads the same whatever a slot's storage is.
-
-### `packages/types/src/engine-api.ts::NodeJSONFacts`
-
-Engine plumbing for the JSON writer and reviver, not part of the caller's surface. Each grammar's codegen emits one set of facts (its kind names, slots, layout and leaf kinds, text envelopes, units, blank value, spread kinds and registered options), and the writer and reviver read them instead of deriving the same facts from the grammar at run time.
-
 ### `packages/types/src/engine-api.ts::StructureRow`
 
 One kind's structure facts, as the generated types prove them, keyed by slot storage key. The two checks read different fields. On a built node, `verifyStructure` checks `required` (the slot holds a value), `nonEmpty` (the list holds an item) and `nodeOnly` (the slot holds a built node, never bare text). On a builder's input, `checkInput` checks `config` (the keys the kind declares) and `lists` (each list's `holes` and `arrival`). A kind with nothing to check has no row.
-
-### `packages/types/src/engine-api.ts::NodeJSON::$text`
-
-The node's text, for a leaf.
-
-### `packages/types/src/engine-api.ts::NodeJSON::$type`
-
-The node's kind name.
 
 ### `packages/types/src/engine-api.ts::NodeMethods::$render`
 
@@ -550,17 +534,9 @@ The kind ids a slot may hold.
 
 The text a slot must hold.
 
-### `packages/types/src/vocabulary/argument.ts::Argument::$kind`
-
-The discriminant of a `Argument` node: `'argument'`.
-
 ### `packages/types/src/vocabulary/argument.ts::ArgumentSynonyms::named`
 
 The synonym that stands for the canonical `named` in this vocabulary: 'keyword'.
-
-### `packages/types/src/vocabulary/clause.ts::Clause::$kind`
-
-The discriminant of a `Clause` node: `'clause'`.
 
 ### `packages/types/src/vocabulary/clause.ts::ClauseSynonyms::bounds`
 
@@ -589,14 +565,6 @@ The synonym that stands for the canonical `resource` in this vocabulary: 'using'
 ### `packages/types/src/vocabulary/clause.ts::ClauseSynonyms::wildcard`
 
 The synonym that stands for the canonical `wildcard` in this vocabulary: 'glob'.
-
-### `packages/types/src/vocabulary/context.ts::Unmapped::$unmapped`
-
-The marker of a kind with no vocabulary mapping.
-
-### `packages/types/src/vocabulary/declaration.ts::Declaration::$kind`
-
-The discriminant of a `Declaration` node: `'declaration'`.
 
 ### `packages/types/src/vocabulary/declaration.ts::DeclarationSynonyms::constructor`
 
@@ -642,10 +610,6 @@ The synonym that stands for the canonical `struct` in this vocabulary: 'record'.
 
 The synonym that stands for the canonical `type_alias` in this vocabulary: 'typedef' | 'typealias'.
 
-### `packages/types/src/vocabulary/element.ts::Element::$kind`
-
-The discriminant of a `Element` node: `'element'`.
-
 ### `packages/types/src/vocabulary/element.ts::ElementSynonyms::map`
 
 The synonym that stands for the canonical `map` in this vocabulary: 'dictionary' | 'dict'.
@@ -653,10 +617,6 @@ The synonym that stands for the canonical `map` in this vocabulary: 'dictionary'
 ### `packages/types/src/vocabulary/element.ts::ElementSynonyms::spread`
 
 The synonym that stands for the canonical `spread` in this vocabulary: 'splat' | 'unpack'.
-
-### `packages/types/src/vocabulary/expression.ts::Expression::$kind`
-
-The discriminant of a `Expression` node: `'expression'`.
 
 ### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms::coalesce`
 
@@ -742,10 +702,6 @@ The type-annotations declaration of the vocabulary.
 
 The constructor of the type-annotations declaration.
 
-### `packages/types/src/vocabulary/identifier.ts::Identifier::$kind`
-
-The discriminant of a `Identifier` node: `'identifier'`.
-
 ### `packages/types/src/vocabulary/identifier.ts::IdentifierSynonyms::receiver`
 
 The synonym that stands for the canonical `receiver` in this vocabulary: 'self' | 'this'.
@@ -753,10 +709,6 @@ The synonym that stands for the canonical `receiver` in this vocabulary: 'self' 
 ### `packages/types/src/vocabulary/identifier.ts::IdentifierSynonyms::super`
 
 The synonym that stands for the canonical `super` in this vocabulary: 'base'.
-
-### `packages/types/src/vocabulary/literal.ts::Literal::$kind`
-
-The discriminant of a `Literal` node: `'literal'`.
 
 ### `packages/types/src/vocabulary/literal.ts::LiteralSynonyms::character`
 
@@ -774,17 +726,9 @@ The synonym that stands for the canonical `multiline` in this vocabulary: 'tripl
 
 The synonym that stands for the canonical `null` in this vocabulary: 'none' | 'nil'.
 
-### `packages/types/src/vocabulary/modifier.ts::Modifier::$kind`
-
-The discriminant of a `Modifier` node: `'modifier'`.
-
 ### `packages/types/src/vocabulary/modifier.ts::ModifierSynonyms::internal`
 
 The synonym that stands for the canonical `internal` in this vocabulary: 'crate'.
-
-### `packages/types/src/vocabulary/pattern.ts::Pattern::$kind`
-
-The discriminant of a `Pattern` node: `'pattern'`.
 
 ### `packages/types/src/vocabulary/pattern.ts::PatternSynonyms::list`
 
@@ -801,10 +745,6 @@ The synonym that stands for the canonical `rest` in this vocabulary: 'splat' | '
 ### `packages/types/src/vocabulary/pattern.ts::PatternSynonyms::struct`
 
 The synonym that stands for the canonical `struct` in this vocabulary: 'record'.
-
-### `packages/types/src/vocabulary/statement.ts::Statement::$kind`
-
-The discriminant of a `Statement` node: `'statement'`.
 
 ### `packages/types/src/vocabulary/statement.ts::StatementSynonyms::empty`
 
@@ -825,10 +765,6 @@ The synonym that stands for the canonical `resource` in this vocabulary: 'using'
 ### `packages/types/src/vocabulary/statement.ts::StatementSynonyms::throw`
 
 The synonym that stands for the canonical `throw` in this vocabulary: 'raise'.
-
-### `packages/types/src/vocabulary/type.ts::Type::$kind`
-
-The discriminant of a `Type` node: `'type'`.
 
 ### `packages/types/src/vocabulary/type.ts::TypeSynonyms::boolean`
 
@@ -890,17 +826,9 @@ The synonyms of a declaration's parameters.
 
 The synonyms the `Element` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
 
-### `packages/types/src/vocabulary/element.ts::Legacy`
-
-The legacy form of the element not-equal comparison: a sub-kind of `NotEqual`, with the `$kind` `element.comparator.comparison.not_equal.legacy`, claimed by the `p` pattern.
-
 ### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms`
 
 The synonyms the `Expression` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
-
-### `packages/types/src/vocabulary/expression.ts::Legacy`
-
-The legacy form of the binary not-equal comparison: a sub-kind of `Binary.Comparison.NotEqual`, with the `$kind` `expression.binary.comparison.not_equal.legacy` and the operator `<>`.
 
 ### `packages/types/src/vocabulary/identifier.ts::IdentifierSynonyms`
 
@@ -941,10 +869,6 @@ The `Case` clause kind of the attributes feature.
 ### `packages/types/src/vocabulary/features/complex-numbers/pattern.ts::Pattern::Complex`
 
 The complex-number pattern kind.
-
-### `packages/types/src/vocabulary/features/match-expressions/pattern.ts::Pattern::Map`
-
-The map pattern kind.
 
 ### `packages/common/src/portable/flags.ts::Flags::Prefix`
 

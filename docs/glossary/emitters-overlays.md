@@ -277,10 +277,6 @@ The grammar's read routes: for each kind, the vocabulary entries it claims and t
 
 The grammar input the bindings were derived from, which supplies the model the reads are typed against.
 
-### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedInput::vocabulary`
-
-The vocabulary that names the kinds and members the typed module refers to.
-
 ### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedInput::nodeMap`
 
 The node map that gives each kind its type name and, through the kind entries, its kind id.
@@ -328,10 +324,6 @@ The file name the typed module is written under, in the `.sittir` directory.
 ### `packages/codegen/src/emitters/overlays/portable/typed.ts::PORTABLE_TYPED_TSCONFIG`
 
 The name of the tsconfig that type-checks the typed module on its own, beside it in the `.sittir` directory.
-
-### `packages/codegen/src/emitters/overlays/portable/typed.ts::PORTABLE_TYPED_TSCONFIG_TEXT`
-
-The text of that tsconfig. It extends the repository config, sets `noEmit` and the node types, and includes only the typed module.
 
 ### `packages/codegen/src/emitters/overlays/portable/typed.ts::emitPortableTyped`
 

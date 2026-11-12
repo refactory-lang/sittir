@@ -377,14 +377,6 @@ re-run disqualifies the same bare symbols the first run did.
 // Rebuild: inner seq → inner prec stack → repeat → outer prec stack
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::peelPrec`
-
-```text
-/** @internal — strip any number of prec/prec.left/prec.right/prec.dynamic
- *  wrappers and return the innermost rule. Returns the input unchanged
- *  when no prec wrapper is present. */
-```
-
 ### `packages/codegen/src/dsl/rule-patterns.ts::listSeparatorOfOptionalSeq`
 
 ```text
@@ -6228,14 +6220,6 @@ The displays some rule aliases the word rule to (`alias($.identifier, $.property
 
 The result of `mintInlineTextTokens`: the rewritten rules and the text-token rule names it minted.
 
-### `packages/codegen/src/dsl/rule-transforms.ts::peelPrec`
-
-The rule under any chain of PREC wrappers.
-
-### `packages/codegen/src/dsl/rule-transforms.ts::isTerminalRootRule`
-
-Whether a rule, under its PREC wrappers, is a PATTERN, a STRING or a token: a rule tree-sitter compiles to one lexical token of its own.
-
 ### `packages/codegen/src/dsl/rule-transforms.ts::isLiteralOnlyRule`
 
 Whether a rule, under PREC and token wrappers, is only literal text: a STRING, or a CHOICE or SEQ of literal-only members. A hidden rule of this shape has fixed text, so its content is never lost when the parser hides it.
@@ -7604,10 +7588,6 @@ Element supertype name → slot name, read from the rule origins. Wire reads it 
 ### `packages/codegen/src/dsl/enrich.ts::mintFieldRoutedArm`
 
 Mints a bare `field(name, ref)` arm of an element choice as its own visible kind and references it by a group-lift symbol. The naming parent is the element supertype, so the kind is `<supertype without the underscore>_<field>` through `visibleGroupSynthName`. With the structured arms minted by `mintStructuredChoiceArm` under the same parent, every element of the list is then a kind: one ordered union slot, and the field lives one level down on the minted kind. An authored `variant()` on the arm names the kind (`wireRenameLift`). An arm that matches the empty string is left alone.
-
-### `packages/codegen/src/dsl/choice-arm-partition.ts::unwrapPrecAndOptional`
-
-Strips `PREC*` and optional wrappers down to the node that decides an arm's slot topology.
 
 ### `packages/codegen/src/dsl/choice-arm-partition.ts::ArmStage::isFieldedSlot`
 

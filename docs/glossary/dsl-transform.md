@@ -82,16 +82,6 @@ can travel through it (see `descendThroughGroupLiftSymbol`).
 
 Travels through an enrich group-lift symbol by looking up its referenced rule body (`editGroupLift`). It applies the path to that body without consuming a segment, and records the patched body in the active wire context (`wireSetLiftBody`) when the edit matched. The symbol ref is returned unchanged. It throws `ApplyPathSkip` when the symbol has no name, or when its body is not found (no `wire()` context, or the name was pruned).
 
-### `packages/codegen/src/dsl/transform/transform-path.ts::isEnrichContentAlias`
-
-True when `rule` is an enrich-synthesized content-alias — an `ALIAS` node
-tagged `metadata.aliasSource === 'visible-group'`, the one field this test
-keys on. enrich wraps an inline-unsafe `optional(seq)` / bare `choice` in
-`alias(<content>, $.<name>)` to surface it as a visible CST kind;
-path-descent travels THROUGH it (see `descendThroughEnrichContentAlias`),
-unlike a normal aliased symbol (which keeps `descendThroughAlias`'s
-single-content / index-0 behaviour).
-
 ### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughEnrichContentAlias`
 
 ```text
@@ -1752,10 +1742,6 @@ A rule whose whole body is a token wrapper around a choice of plain strings is a
 ### `packages/codegen/src/dsl/transform/token-forms.ts::tokenOverArms`
 
 The choice of the token wrapper around each arm, under the precedence wrappers it was found beneath: the one distribution `distributeTokenForms` and `distributeLeafEnum` share.
-
-### `packages/codegen/src/dsl/transform/token-forms.ts::peelPrecs`
-
-The precedence wrappers above a rule, outermost first, and the rule beneath them.
 
 ### `packages/codegen/src/dsl/transform/token-forms.ts::factorSharedOptional`
 

@@ -3711,11 +3711,6 @@ the token's own `<token>_before` sites, so the member joins the token seam and
 the field name stays free of any collision with a token's. A registered slot
 that holds more than one literal spelling is not a literal slot.
 
-### `packages/codegen/src/compiler/model/render-rules.ts::literalLeafText`
-
-The fixed text of a literal leaf whatever its field: a non-optional string
-or a symbol carrying `literal`.
-
 ### `packages/codegen/src/compiler/model/render-rules.ts::armSeamName`
 
 The seam name a single literal arm of an enum contributes: its own anonymous
@@ -4548,20 +4543,6 @@ Slotless leaves carry no gaps. A merged literal such as rust `unit_expression` `
 
 One inner-comment position of a kind: the empty slot that keys it (or `interior`), the number of the kind's unconditional literal tokens before it, and `slots`, the storage keys of every slot that shares its span between the tokens that flank it. A built node of the kind is empty when nothing that owns sides is stored in those slots (`innerRegions`).
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::lineEnds`
-
-How this kind's text can end, read from its own rule: `open` for a pattern that accepts a line of arbitrary text but not text across a line break, `closed` for a literal or any other pattern, `empty` for an arm that may end with nothing, and `{ symbol }` for an arm that ends in another kind. A sequence ends as its last member does, falling back through members that can be empty; a choice ends as each of its arms. `lineTerminated` resolves the symbols through the node map.
-
-A pattern's reading is exact: `opensLineEnd` decides it from the pattern's automaton, so a narrow pattern such as `[a-z]*` reads `closed` because it does not accept every character of a line, not because a sample line missed it.
-
-### `packages/codegen/src/compiler/model/node-map.ts::LineEnd`
-
-One way a kind's text can end: `open`, `closed`, `dedent` (the dedent marker that closes an indentation level), `empty`, or the kind named by `symbol`.
-
-### `packages/codegen/src/compiler/model/node-map.ts::ruleLineEnds`
-
-`lineEnds` from the end terminals (`ruleEdgeTerminals`): the dedent marker (`DEDENT_TEXT`) is `dedent`, any other literal is `closed`, and a pattern is `open` exactly when `opensLineEnd` holds for it. A pattern the automaton cannot read stops codegen naming the kind and the pattern, so no pattern silently reads `closed`.
-
 ### `packages/codegen/src/compiler/model/node-map.ts::EdgeTerminal`
 
 What a rule can begin or end with: a `literal`, a `pattern`, another kind (`symbol`), or nothing (`empty`, which an empty literal also reads as).
@@ -4569,10 +4550,6 @@ What a rule can begin or end with: a `literal`, a `pattern`, another kind (`symb
 ### `packages/codegen/src/compiler/model/node-map.ts::EdgeCtx`
 
 Which end of a rule `ruleEdgeTerminals` reads: `start` or `end`.
-
-### `packages/codegen/src/compiler/model/node-map.ts::LineEndCtx`
-
-The kind whose rule `ruleLineEnds` classifies, which the unreadable-pattern error names.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::ruleEdgeTerminals`
 
@@ -4953,18 +4930,6 @@ Whether the set has no code points.
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet::size`
 
 The number of code points in the set.
-
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::DIGIT`
-
-`\d`: ASCII `0`–`9`, as JavaScript reads it under the `u` flag.
-
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::WORD`
-
-`\w`: ASCII letters, digits and `_`, as JavaScript reads it under the `u` flag.
-
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::DOT`
-
-`.`: every code point except the JavaScript line terminators (`\n`, `\r`, U+2028, U+2029).
 
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::propertySets`
 
