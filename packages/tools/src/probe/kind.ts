@@ -883,10 +883,8 @@ function spanOfNode(spans: SourceSpans, node: { readonly startIndex: number; rea
 
 /** The smallest parser node covering a byte span (see `findNodeCoveringRange`). */
 function findNodeCoveringSpan(root: any, spans: SourceSpans, span: ByteSpan): any | null {
-	const indices = spans.toIndices(span);
-	const covering = findNodeCoveringRange(root, indices.start, indices.end);
-	if (covering !== null) return covering;
-	return indices.start <= root.startIndex && indices.end >= root.endIndex ? root : null;
+	const { start, end } = spans.toIndices(span);
+	return findNodeCoveringRange(root, start, end) ?? (start <= root.startIndex && end >= root.endIndex ? root : null);
 }
 
 /**
