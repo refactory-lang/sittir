@@ -56,6 +56,9 @@ Carried forward unchanged:
 Maintainer, 2026-10-19:
 - **`eof()`** is legal only as the last step of the start rule, outside any repetition. Last in the root it changes nothing, so the rule keeps `eof()` inert until a grammar needs more, and the terminator pattern is refused until then. Neither eof code can be expected (§13).
 
+User, 2026-11-12 (question box):
+- **A token rule's reauthor refines upstream's token before enrich.** A `rules:` entry that reauthors a token rule, declared `reauthored` with a cause, applies to upstream's token at intake, so enrich splits the refined arms and the layer's `edits` name them as upstream's own (§1.3). This narrows the 2026-10-13 ruling that an authored rule is written in enrich's final form: that holds for every rule that is not a token. Python's `integer` and typescript's `number` gain their legacy octal arms this way.
+
 ## 1. Layers
 
 ### 1.1 The chain
@@ -115,6 +118,7 @@ The layer pass runs five steps. They are the same at every depth and in both run
 
 1. **Intake.**
    - Over an upstream base, which carries no layer record, enrich runs with the config's enrich inputs: `groups:` bodies, authored extras, and the field sites that `edits` names. This is today's sittir layer.
+   - Before that enrich, a `rules:` entry that reauthors a token rule refines upstream's token: its callback runs on upstream's body, and enrich runs over the refined body. Wire then passes the refined rule through with its declared cause. Every other `rules:` entry runs at evaluation (step 3), on the enriched base.
    - Over a completed layer, the layer takes the enrichment that its base's completion checked (step 5) and does not enrich again.
    - Over a completed layer, the config's enrich inputs reach no enrich. A rule that one of them would have changed is reported by this layer's own check.
 2. **Lowering.** Each `edits` entry becomes a verb application on its kind's rule.
