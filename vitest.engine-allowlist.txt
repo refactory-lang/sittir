@@ -246,14 +246,6 @@ packages/scm/tests/nodes.test.ts
 packages/scm/tests/parse-errors.test.ts
 packages/scm/tests/portable-rows.test.ts
 packages/scm/tests/query-leaf.test.ts
-packages/tools/src/__tests__/collect-baseline.test.ts
-packages/tools/src/validate/__tests__/read-render-parse-refusal.test.ts
-packages/tools/src/validate/__tests__/read-render-parse-throws.test.ts
-packages/tools/tests/factory-storage-child-throw.test.ts
-packages/tools/tests/portable/is.test.ts
-packages/tools/tests/roundtrip-profile.test.ts
-packages/tools/tests/validate-from.test.ts
-packages/tools/tests/validator-wrap-load-failure.test.ts
 packages/typescript/tests/acceptance.test.ts
 packages/typescript/tests/alias-envelope-identity.test.ts
 packages/typescript/tests/alias-envelope-rebuilt-alone.test.ts
