@@ -4,7 +4,8 @@ import { AssembledLeaf, AssembledPattern, AssembledSupertype, isFixedTextLeaf } 
 import { displayNameOf } from './display-name.ts';
 import { DEDENT_TEXT, DEPTH_KINDS, INDENT_TEXT, LAYOUT_SUPERTYPE, type Layout } from '../../dsl/primitives/spacing.ts';
 import { CharSet, leadingChars, patternDfa, trailingChars } from './pattern-automaton.ts';
-import { INDENT_MEMBERS, NEWLINE_ARMS, NEWLINE_MEMBER, SPACE_MEMBER, TIGHT_MEMBER, canonicalText } from '../../dsl/whitespace.ts';
+import { lineEndingsOf } from './line-endings.ts';
+import { INDENT_MEMBERS, NEWLINE_MEMBER, SPACE_MEMBER, TIGHT_MEMBER, canonicalText } from '../../dsl/whitespace.ts';
 
 export function declaresWhitespace(nodeMap: Pick<NodeMap, 'nodes'>): boolean {
 	return nodeMap.nodes.get(LAYOUT_SUPERTYPE) instanceof AssembledSupertype;
@@ -98,8 +99,7 @@ export function indentChars(nodeMap: NodeMap): readonly string[] {
 }
 
 export function newlineArms(nodeMap: NodeMap): readonly string[] {
-	if (!declaresWhitespace(nodeMap)) return [];
-	return new Set(layoutSymbolsOf(nodeMap).values()).has(NEWLINE_MEMBER) ? NEWLINE_ARMS : [];
+	return lineEndingsOf(nodeMap).arms;
 }
 
 export const PREFERRED_NEWLINE = canonicalText(NEWLINE_MEMBER);

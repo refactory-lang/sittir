@@ -18,7 +18,7 @@ import type {
 	ConfigSeat,
 	OptionalConfigSeat,
 	EmptyForm,
-	SpelledAffix,
+	CoercedSpelling,
 	WithSpelling
 } from '@sittir/types';
 import {
@@ -543,6 +543,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		364, 365, 366, 368, 377, 378, 379, 380, 381, 382, 392, 404, 423, 424, 503, 504
 	]),
 	type_predicate_annotation: new Set([351]),
+	type_query_call_expression: new Set([283]),
 	type_query: new Set([1, 278, 353, 354, 355, 356]),
 	index_type_query: new Set([
 		1, 40, 41, 42, 43, 44, 46, 78, 129, 144, 145, 146, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 278, 280,
@@ -876,6 +877,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	template_type: TSKindId.TemplateType,
 	template_literal_type: TSKindId.TemplateLiteralType,
 	type_predicate_annotation: TSKindId.TypePredicateAnnotation,
+	type_query_call_expression: TSKindId.TypeQueryCallExpression,
 	type_query: TSKindId.TypeQuery,
 	index_type_query: TSKindId.IndexTypeQuery,
 	literal_type: TSKindId.LiteralType,
@@ -951,6 +953,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	optional_type: 'type',
 	rest_type: 'type',
 	type_predicate_annotation: 'type_predicate',
+	type_query_call_expression: 'arguments',
 	index_type_query: 'primary_type',
 	flow_maybe_type: 'primary_type',
 	parenthesized_type: 'type',
@@ -1024,6 +1027,7 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'rest_type',
 	'template_type',
 	'type_predicate_annotation',
+	'type_query_call_expression',
 	'type_query',
 	'index_type_query',
 	'literal_type',
@@ -1183,6 +1187,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToTemplateLiteralType as (...args: unknown[]) => unknown)(...children);
 		case 'type_predicate_annotation':
 			return F.buildTypePredicateAnnotation(children[0] as Parameters<typeof F.buildTypePredicateAnnotation>[0]);
+		case 'type_query_call_expression':
+			return F.buildTypeQueryCallExpression(children[0] as Parameters<typeof F.buildTypeQueryCallExpression>[0]);
 		case 'type_query':
 			return F.buildTypeQuery(children[0] as Parameters<typeof F.buildTypeQuery>[0]);
 		case 'index_type_query':
@@ -6543,40 +6549,30 @@ export const coerceToTypeQuerySubscriptExpression: ConfigSeat<
 	});
 };
 
-export function resolveTypeQueryCallExpression_function(
-	value: T.TypeQueryCallExpression.LooseConfig['function']
-): Admit<T.TypeQueryCallExpression['_function']> {
-	return _keywordOr(value, [['import', TSKindId.Import] as const], () =>
-		coerceMixedEnumStorage(
-			_resolveKindEnum(value, [TSKindId.Import], () =>
-				_resolveOne<TSKindId.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
-					value,
-					_K60,
-					_K61
-				)
-			),
-			[['import', TSKindId.Import] as const]
-		)
-	);
-}
-
 export function resolveTypeQueryCallExpression_arguments(
-	value: T.TypeQueryCallExpression.LooseConfig['arguments']
+	value: T.TypeQueryCallExpression.LooseConfig['arguments'] | undefined
 ): Admit<T.TypeQueryCallExpression['_arguments']> {
 	return _resolveOneBranch<T.Arguments>(value, 'arguments');
 }
 
-export const coerceToTypeQueryCallExpression: ConfigSeat<
-	T.TypeQueryCallExpression.Loose,
+export const coerceToTypeQueryCallExpression: Seat<
+	T.Arguments.LooseArgs,
 	ReturnType<typeof F.buildTypeQueryCallExpression>
-> = (input: T.TypeQueryCallExpression.Loose): ReturnType<typeof F.buildTypeQueryCallExpression> => {
-	if (!_isLooseConfig<T.TypeQueryCallExpression.LooseConfig>(input))
+> &
+	OptionalConfigSeat<T.TypeQueryCallExpression.Loose, ReturnType<typeof F.buildTypeQueryCallExpression>> = (
+	...args: unknown[]
+): ReturnType<typeof F.buildTypeQueryCallExpression> => {
+	if (args.length > 1)
+		return F.buildTypeQueryCallExpression(coerceToArguments(...(args as Parameters<typeof coerceToArguments>)));
+	const input = args[0] as T.TypeQueryCallExpression.Loose | undefined;
+	if (input !== undefined && isNodeOfKind(input, TSKindId.TypeQueryCallExpression))
 		return input as unknown as ReturnType<typeof F.buildTypeQueryCallExpression>;
-	currentHandle()?.admit(TSKindId.TypeQueryCallExpression, [input]);
-	return F.buildTypeQueryCallExpression({
-		function: resolveTypeQueryCallExpression_function(input.function),
-		arguments: resolveTypeQueryCallExpression_arguments(input.arguments) ?? F.buildArguments()
-	});
+	return F.buildTypeQueryCallExpression(
+		_resolveOneBranch<T.Arguments>(
+			configFieldOr(input, 'arguments', () => input, TSKindId.TypeQueryCallExpression),
+			'arguments'
+		) ?? F.buildArguments()
+	);
 };
 
 export function resolveTypeQueryInstantiationExpression_function(
@@ -7988,27 +7984,55 @@ export function resolveNumberHex_content(value: T.NumberHex.LooseConfig['content
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
-export function coerceToNumberHex<const I extends T.NumberHex.Loose, const O extends T.NumberHex.Options = {}>(
+export function coerceToNumberHex<
+	const I extends T.NumberHex.Loose,
+	const O extends T.NumberHex.Options | undefined = T.NumberHex.Options | undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberHex.Loose>,
+	options: O
+): WithSpelling<
+	ReturnType<typeof F.buildNumberHex>,
+	'radixPrefix',
+	CoercedSpelling<I, O, 'radixPrefix', '0x' | '0X', '0x'>
+>;
+export function coerceToNumberHex<
+	const I extends T.NumberHex.Loose,
+	const _O extends T.NumberHex.Options | undefined = undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberHex.Loose>,
+	options?: undefined
+): WithSpelling<
+	ReturnType<typeof F.buildNumberHex>,
+	'radixPrefix',
+	CoercedSpelling<I, undefined, 'radixPrefix', '0x' | '0X', '0x'>
+>;
+export function coerceToNumberHex<
+	const I extends T.NumberHex.Loose,
+	const O extends T.NumberHex.Options | undefined = T.NumberHex.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberHex.Loose>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberHex>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+	CoercedSpelling<I, O | undefined, 'radixPrefix', '0x' | '0X', '0x'>
 >;
-export function coerceToNumberHex<const I extends T.NumberHex.Loose, const O extends T.NumberHex.Options = {}>(
+export function coerceToNumberHex<
+	const I extends T.NumberHex.Loose,
+	const O extends T.NumberHex.Options | undefined = T.NumberHex.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberHex>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+	CoercedSpelling<I, O, 'radixPrefix', '0x' | '0X', '0x'>
 > {
 	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildNumberHex>,
 			'radixPrefix',
-			O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+			CoercedSpelling<I, O, 'radixPrefix', '0x' | '0X', '0x'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0x', '0X'] as const, [''] as const) : undefined;
 	const _value = configFieldOr(
@@ -8019,11 +8043,11 @@ export function coerceToNumberHex<const I extends T.NumberHex.Loose, const O ext
 	);
 	return F.buildNumberHex(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K2, _K2),
-		_spelled === undefined ? options : { radixPrefix: _spelled.open, ...options }
+		_spelled === undefined ? options : { ...options, radixPrefix: options?.radixPrefix ?? _spelled.open }
 	) as WithSpelling<
 		ReturnType<typeof F.buildNumberHex>,
 		'radixPrefix',
-		O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+		CoercedSpelling<I, O, 'radixPrefix', '0x' | '0X', '0x'>
 	>;
 }
 
@@ -8210,27 +8234,55 @@ export function resolveNumberBinary_content(
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
-export function coerceToNumberBinary<const I extends T.NumberBinary.Loose, const O extends T.NumberBinary.Options = {}>(
+export function coerceToNumberBinary<
+	const I extends T.NumberBinary.Loose,
+	const O extends T.NumberBinary.Options | undefined = T.NumberBinary.Options | undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberBinary.Loose>,
+	options: O
+): WithSpelling<
+	ReturnType<typeof F.buildNumberBinary>,
+	'radixPrefix',
+	CoercedSpelling<I, O, 'radixPrefix', '0b' | '0B', '0b'>
+>;
+export function coerceToNumberBinary<
+	const I extends T.NumberBinary.Loose,
+	const _O extends T.NumberBinary.Options | undefined = undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberBinary.Loose>,
+	options?: undefined
+): WithSpelling<
+	ReturnType<typeof F.buildNumberBinary>,
+	'radixPrefix',
+	CoercedSpelling<I, undefined, 'radixPrefix', '0b' | '0B', '0b'>
+>;
+export function coerceToNumberBinary<
+	const I extends T.NumberBinary.Loose,
+	const O extends T.NumberBinary.Options | undefined = T.NumberBinary.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberBinary.Loose>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberBinary>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+	CoercedSpelling<I, O | undefined, 'radixPrefix', '0b' | '0B', '0b'>
 >;
-export function coerceToNumberBinary<const I extends T.NumberBinary.Loose, const O extends T.NumberBinary.Options = {}>(
+export function coerceToNumberBinary<
+	const I extends T.NumberBinary.Loose,
+	const O extends T.NumberBinary.Options | undefined = T.NumberBinary.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberBinary>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+	CoercedSpelling<I, O, 'radixPrefix', '0b' | '0B', '0b'>
 > {
 	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildNumberBinary>,
 			'radixPrefix',
-			O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+			CoercedSpelling<I, O, 'radixPrefix', '0b' | '0B', '0b'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0b', '0B'] as const, [''] as const) : undefined;
 	const _value = configFieldOr(
@@ -8241,11 +8293,11 @@ export function coerceToNumberBinary<const I extends T.NumberBinary.Loose, const
 	);
 	return F.buildNumberBinary(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K2, _K2),
-		_spelled === undefined ? options : { radixPrefix: _spelled.open, ...options }
+		_spelled === undefined ? options : { ...options, radixPrefix: options?.radixPrefix ?? _spelled.open }
 	) as WithSpelling<
 		ReturnType<typeof F.buildNumberBinary>,
 		'radixPrefix',
-		O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+		CoercedSpelling<I, O, 'radixPrefix', '0b' | '0B', '0b'>
 	>;
 }
 
@@ -8257,27 +8309,55 @@ export function resolveNumberOctal_content(
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
-export function coerceToNumberOctal<const I extends T.NumberOctal.Loose, const O extends T.NumberOctal.Options = {}>(
+export function coerceToNumberOctal<
+	const I extends T.NumberOctal.Loose,
+	const O extends T.NumberOctal.Options | undefined = T.NumberOctal.Options | undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberOctal.Loose>,
+	options: O
+): WithSpelling<
+	ReturnType<typeof F.buildNumberOctal>,
+	'radixPrefix',
+	CoercedSpelling<I, O, 'radixPrefix', '0o' | '0O', '0o'>
+>;
+export function coerceToNumberOctal<
+	const I extends T.NumberOctal.Loose,
+	const _O extends T.NumberOctal.Options | undefined = undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberOctal.Loose>,
+	options?: undefined
+): WithSpelling<
+	ReturnType<typeof F.buildNumberOctal>,
+	'radixPrefix',
+	CoercedSpelling<I, undefined, 'radixPrefix', '0o' | '0O', '0o'>
+>;
+export function coerceToNumberOctal<
+	const I extends T.NumberOctal.Loose,
+	const O extends T.NumberOctal.Options | undefined = T.NumberOctal.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.NumberOctal.Loose>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberOctal>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+	CoercedSpelling<I, O | undefined, 'radixPrefix', '0o' | '0O', '0o'>
 >;
-export function coerceToNumberOctal<const I extends T.NumberOctal.Loose, const O extends T.NumberOctal.Options = {}>(
+export function coerceToNumberOctal<
+	const I extends T.NumberOctal.Loose,
+	const O extends T.NumberOctal.Options | undefined = T.NumberOctal.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberOctal>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+	CoercedSpelling<I, O, 'radixPrefix', '0o' | '0O', '0o'>
 > {
 	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildNumberOctal>,
 			'radixPrefix',
-			O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+			CoercedSpelling<I, O, 'radixPrefix', '0o' | '0O', '0o'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0o', '0O'] as const, [''] as const) : undefined;
 	const _value = configFieldOr(
@@ -8288,11 +8368,11 @@ export function coerceToNumberOctal<const I extends T.NumberOctal.Loose, const O
 	);
 	return F.buildNumberOctal(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K2, _K2),
-		_spelled === undefined ? options : { radixPrefix: _spelled.open, ...options }
+		_spelled === undefined ? options : { ...options, radixPrefix: options?.radixPrefix ?? _spelled.open }
 	) as WithSpelling<
 		ReturnType<typeof F.buildNumberOctal>,
 		'radixPrefix',
-		O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+		CoercedSpelling<I, O, 'radixPrefix', '0o' | '0O', '0o'>
 	>;
 }
 

@@ -5,7 +5,7 @@ import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import type { ir as looseTable } from './ir.js';
 import type { ir as strictTable } from './ir-strict.js';
 import { isMember, membersOf, type is } from './is.js';
-import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from './portable.js';
+import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from './portable/index.js';
 import type { TSKindId } from './kinds.js';
 import type { FixedTextKindId, TypeKeyOf, NamespaceMap, RustNode, RustTypeMap } from './types.js';
 import type { IndentChar, Options } from './options.js';
@@ -47,6 +47,7 @@ export const hooks: LanguageHooks<RustAPI> = Object.freeze<LanguageHooks<RustAPI
 			{ open: '//', close: '', build: (text: string) => coerceToLineComment(text) }
 		])
 	}),
+	rootKinds: Object.freeze([176]),
 	querySlots,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),
@@ -54,7 +55,7 @@ export const hooks: LanguageHooks<RustAPI> = Object.freeze<LanguageHooks<RustAPI
 	wrap: (root, tree) => wrapNode(root as SourceFileRoot & ParsedRoot, tree as TreeHandle),
 	hydrate: (node, tree) => hydrate(node, tree as TreeHandle),
 	portable: rows,
-	portableBuild: () => import('./portable-build.js').then((m) => m.build),
+	portableBuild: () => import('./portable/build.js').then((m) => m.build),
 	queryFlags,
 	querySlotFlags
 });

@@ -50,7 +50,7 @@ describe('supertype node arm precedence', () => {
 		const generatedIdTables: GeneratedIdTables = { folds: new Map(),
 			kindIds: { identifier: 1, u8: 28, bool: 2, _t: 50, _prim: 51, param: 60 },
 			fieldIds: { type: 1 },
-			sourceArtifact: 'test'
+			sourceArtifact: 'test', parser: null
 		};
 		const emitted = emitRenderModule(
 			'rust',

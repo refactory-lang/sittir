@@ -1,14 +1,20 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { compileGrammar } from '../../codegen/src/compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../codegen/src/compiler/generated-metadata.ts';
 import { grammarPackage, type GrammarName } from '../../codegen/src/grammars.ts';
-import { loadNodeModel } from '../src/validate/common.ts';
+import { loadNodeModel, disposeNativeEngines } from '../src/validate/common.ts';
 import python from '../../python/src/index.ts';
 import regex from '../../regex/src/index.ts';
 import rust from '../../rust/src/index.ts';
 import scm from '../../scm/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
+import { releaseTrackedEngines } from './helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('./helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
+
+afterAll(disposeNativeEngines);
 
 const ENGINES = {
 	python: () => createEngine(python),

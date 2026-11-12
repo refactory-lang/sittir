@@ -22,7 +22,7 @@ const KNOWN: Readonly<Record<string, Readonly<Record<string, string>>>> = {
 describe.each(['python', 'regex', 'rust', 'scm', 'typescript'])('%s: inner-gap emptiness agrees with the parsed rule', (grammar) => {
 	it('gives every parsed node of an inner kind in the corpus the answer its tree gives', async () => {
 		const language = await languageByName(grammar);
-		const engine = await createEngine(language, { nodeStorage: 'object' });
+		using engine = await createEngine(language, { nodeStorage: 'object' });
 		const { hooks } = (await import(`@sittir/${grammar}/api`)) as { hooks: { trivia: TriviaFacts } };
 		const regions = hooks.trivia.innerRegions;
 		const accessorOf = await loadSlotAccessorOf(grammar);
@@ -49,11 +49,11 @@ describe.each(['python', 'regex', 'rust', 'scm', 'typescript'])('%s: inner-gap e
 
 describe.each(['python', 'regex', 'rust', 'scm', 'typescript'])('%s: the named units are the units the parser names', (grammar) => {
 	it('holds exactly the unit kind ids the parser marks named and visible', async () => {
-		const { lang } = await loadLanguageForGrammar(grammar);
+		const { language } = await loadLanguageForGrammar(grammar);
 		const { hooks } = (await import(`@sittir/${grammar}/api`)) as { hooks: { trivia: TriviaFacts } };
 		const kindId = await loadKindIdFromName(grammar);
 		const units = [...(await loadNodeModel(grammar)).unitKinds].map(kindId);
-		const parserNamed = units.filter((id) => lang.nodeTypeIsNamed(id) && lang.nodeTypeIsVisible(id)).sort((a, b) => a - b);
+		const parserNamed = units.filter((id) => language.nodeTypeIsNamed(id) && language.nodeTypeIsVisible(id)).sort((a, b) => a - b);
 		expect([...hooks.trivia.namedUnits].sort((a, b) => a - b)).toEqual(parserNamed);
 	});
 });

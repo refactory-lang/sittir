@@ -56,14 +56,6 @@ pub trait EngineGrammar: Copy {
     /// The grammar's option tables: each site's arms and the address an
     /// options object names it by.
     fn option_tables(self) -> &'static crate::options::OptionTables;
-    /// The sides of the unit children of the node the cursor is on, by slot
-    /// and item: the node read one level down by `ctx`
-    /// (`NodeLayout::units`). None for a grammar with no nodes. The cursor
-    /// was created at the tree's root.
-    fn read_units(self, cursor: &mut tree_sitter::TreeCursor<'_>, ctx: &mut crate::read::ReadCtx<'_>) -> Vec<crate::layout::UnitSides<Self::Trivia>> {
-        let _ = (cursor, ctx);
-        Vec::new()
-    }
     /// Renders the node the cursor is on, read by `ctx` `depth` levels
     /// down, from its templates under `render`, recording what it writes
     /// into `baseline` (`Lookups::recorded`); a recording render writes no
@@ -105,6 +97,12 @@ pub trait EngineGrammar: Copy {
     fn router(self, grammar: KindId, display: KindId) -> Option<crate::read::Router> {
         let _ = (grammar, display);
         None
+    }
+    /// Whether the read takes a node with these ids (`ReadNode::admits`);
+    /// every node for a grammar with no nodes.
+    fn admits(self, grammar: KindId, display: KindId) -> bool {
+        let _ = (grammar, display);
+        true
     }
     /// The id the read stores for the node `at`, found through `nodes`,
     /// when it stores the node as a unit (`ReadNode::unit_id`: an enum
@@ -151,7 +149,7 @@ fn node(nodes: &mut dyn Nodes<'_>, index: NodeIndex) -> Option<Kid> {
 /// when none does. A tree whose root holds no error answers at once;
 /// otherwise the node's ancestors are climbed, so the cost follows the
 /// node's depth, not how many siblings precede it.
-fn error_holding(nodes: &mut dyn Nodes<'_>, index: NodeIndex) -> Option<Kid> {
+pub(crate) fn error_holding(nodes: &mut dyn Nodes<'_>, index: NodeIndex) -> Option<Kid> {
     if !nodes.holds_error(NodeIndex::ROOT) {
         return None;
     }
@@ -229,18 +227,28 @@ pub struct Sibling {
 }
 
 /// What kind of region of a source did not parse: an ERROR node error
-/// recovery wrapped source in, or a MISSING node it inserted.
+/// recovery wrapped source in, or a MISSING node it inserted, with the node it
+/// was inserted into.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
-#[serde(rename_all = "lowercase")]
+#[serde(tag = "kind", rename_all = "lowercase")]
 pub enum ErrorRegionKind {
     Error,
-    Missing,
+    Missing { holder: ErrorHolder },
+}
+
+/// The node a MISSING token was inserted into: its span and the kind the
+/// grammar parsed it as (`read::grammar_id`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
+pub struct ErrorHolder {
+    pub span: Span,
+    pub kind: KindId,
 }
 
 /// One region of a source that did not parse, with its byte span. A MISSING
 /// region is empty: it marks where the parser inserted a token.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
 pub struct ErrorRegion {
+    #[serde(flatten)]
     pub kind: ErrorRegionKind,
     pub span: Span,
 }
@@ -252,14 +260,16 @@ pub struct ErrorRegion {
 #[must_use]
 pub fn error_regions(nodes: &mut dyn Nodes<'_>) -> Vec<ErrorRegion> {
     let mut regions = Vec::new();
-    let mut pending = vec![nodes.kid(NodeIndex::ROOT)];
-    while let Some(kid) = pending.pop() {
+    let mut pending: Vec<(Kid, Option<Kid>)> = vec![(nodes.kid(NodeIndex::ROOT), None)];
+    while let Some((kid, parent)) = pending.pop() {
         if kid.error() {
             regions.push(ErrorRegion { kind: ErrorRegionKind::Error, span: kid.span() });
         } else if nodes.missing(kid.index) {
-            regions.push(ErrorRegion { kind: ErrorRegionKind::Missing, span: kid.span() });
+            if let Some(parent) = parent {
+                regions.push(ErrorRegion { kind: ErrorRegionKind::Missing { holder: ErrorHolder { span: parent.span(), kind: parent.grammar } }, span: kid.span() });
+            }
         } else if nodes.holds_error(kid.index) {
-            pending.extend(nodes.kids(kid.index).iter().rev().copied());
+            pending.extend(nodes.kids(kid.index).iter().rev().map(|&child| (child, Some(kid))));
         }
     }
     regions
@@ -426,6 +436,9 @@ pub struct ParsedTree<G: EngineGrammar> {
     /// Whether the source spells every line break `\n`, holding no `\r`
     /// (`SourceTable::breaks_spelled_lf`).
     breaks_lf: bool,
+    /// How many nodes the tree holds, stamped at parse: the descendant
+    /// indexes that name one (`names`).
+    nodes: u32,
     /// Identity this tree stamps into every handle it mints. Distinct per
     /// parse, so a handle names the tree it belongs to and cannot be spent
     /// against another one.
@@ -650,6 +663,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             source,
             inferred,
             breaks_lf: _,
+            nodes: _,
             tree_id: _,
             lines,
             trivia,
@@ -712,7 +726,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     #[cfg(feature = "arena")]
     pub fn tree_arena(&self) -> std::sync::MutexGuard<'_, crate::arena::TreeArena> {
         self.arena
-            .get_or_init(|| std::sync::Mutex::new(crate::arena::TreeArena::new(G::KIND_BITS, crate::read::descendant_count(&self.tree().root_node()))))
+            .get_or_init(|| std::sync::Mutex::new(crate::arena::TreeArena::new(G::KIND_BITS, self.nodes)))
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner)
     }
@@ -731,6 +745,12 @@ impl<G: EngineGrammar> ParsedTree<G> {
     #[must_use]
     pub fn release_sides(&mut self) -> bool {
         self.store.release_rows(&self.sides.take())
+    }
+
+    /// Whether descendant `index` names a node of the tree.
+    #[must_use]
+    pub fn names(&self, index: NodeIndex) -> bool {
+        index.index() < self.nodes as usize
     }
 
     /// The parsed tree-sitter tree, each call counted in the tree's layout
@@ -793,11 +813,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
 
     /// The sides of the unit children of the node at `index`, by slot and
     /// item, as a render read seats them for a client that stores each unit
-    /// as its bare kind (`EngineGrammar::read_units`, `ReadCtx::inline_units`).
+    /// as its bare kind (`read::units_of`, `ReadCtx::inline_units`), found
+    /// through the tree's navigation.
     pub fn unit_sides(&self, index: crate::types::NodeIndex) -> Vec<crate::layout::UnitSides<G::Trivia>> {
-        let seating = self.seating();
-        let mut cursor = seating.cursor(index);
-        self.grammar.read_units(&mut cursor, &mut seating.ctx().inline_units().units_only())
+        self.with_seating(|seating| {
+            let items = seating.slot_items(index);
+            let Some(SlotItems { routed, .. }) = items.as_ref() else { return Vec::new() };
+            crate::read::units_of(routed, &seating.ctx().inline_units().units_only())
+        })
     }
 
     /// The `ERROR` holding the node at `index`, read as the bytes its
@@ -849,11 +872,11 @@ impl<G: EngineGrammar> ParsedTree<G> {
     pub fn read_node<T: crate::read::ReadNode>(&self, index: crate::types::NodeIndex, depth: crate::read::Depth) -> Option<Result<NodeRead<T>, crate::read::ReadError>> {
         let mut nodes = self.nodes();
         node(&mut nodes, index)?;
-        let mut cursor = self.reader_at(&mut nodes, index);
         let mut ctx = self.read_ctx().inline_items();
         if let Some(error) = error_holding(&mut nodes, index) {
             return Some(Ok(NodeRead::Error(self.error_at(&error, &ctx))));
         }
+        let mut cursor = self.reader_at(&mut nodes, index);
         Some(T::read(&mut cursor, &mut ctx, depth).map(NodeRead::Node))
     }
 
@@ -943,7 +966,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let start = lookups.nodes.kid(index).start;
         let from = lookups.leading_start(index).map_or(start, |leading| leading.min(start));
         let mut cursor = self.reader_at(&mut lookups.nodes, index);
-        let seating = Seating::with_layout(lookups);
+        let seating = Seating::with_layout(lookups, Lent::NONE);
         let mut ctx = self.read_ctx().with_sides(&seating).snapshot(self.snapshot_measure(index, from, holder)?);
         let read = T::read(&mut cursor, &mut ctx, crate::read::Depth::All)?;
         ctx.unmeasured().map_or(Ok(read), |byte| Err(crate::read::ReadError::Unmeasured { index, byte }))
@@ -1016,7 +1039,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// walked below `from` (every level when absent). An extra is trivia: the
     /// walk neither returns nor enters it. A depth member the parser issues
     /// (`SurfaceKinds::indent`, `dedent`) is the op that opens or closes a
-    /// level, not structure: the walk does not return it.
+    /// level, not structure: the walk does not return it. Nor does it return
+    /// a node the read does not take (`EngineGrammar::admits`), such as a
+    /// capture inside a token, which is part of its token; an `ERROR` it does.
     pub fn descendants(
         &self,
         from: Address,
@@ -1050,7 +1075,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         }
         let path = |levels: &[(Arc<[Kid]>, usize)]| levels.iter().map(|&(_, at)| ChildPosition(crate::types::narrow(at))).collect();
         while let Some(kid) = Self::advance(&mut nodes, start, &mut levels, depth) {
-            if !kid.named || kid.extra || surface.is_depth_member(kid.grammar) {
+            if !kid.named || kid.extra || surface.is_depth_member(kid.grammar) || !(kid.error() || self.grammar.admits(kid.grammar, kid.display)) {
                 continue;
             }
             let unit = self.grammar.unit_id(&mut nodes, &kid);
@@ -1192,22 +1217,40 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// locked for the call; else nothing.
     fn lending<R>(&self, f: impl FnOnce(&mut Lookups<'_, G>, Lent<'_>) -> R) -> R {
         let mut lookups = self.lookups();
+        let lends = lookups.reads_records();
+        self.lend(lends, |lent| f(&mut lookups, lent))
+    }
+
+    /// `f` of what a call outside a render lends when `lends`: the tree's
+    /// own arena, locked for the call; else nothing.
+    #[cfg_attr(not(feature = "arena"), allow(clippy::unused_self, unused_variables, reason = "only the arena build has an arena to lend"))]
+    fn lend<R>(&self, lends: bool, f: impl FnOnce(Lent<'_>) -> R) -> R {
         #[cfg(feature = "arena")]
-        if matches!(lookups.nodes, Navigation::Records(_)) {
+        if lends {
             let held = crate::arena::HeldArenas::of([(self.tree_id, self.tree_arena())]);
-            return f(&mut lookups, Lent::of(&held));
+            return f(Lent::of(&held));
         }
-        f(&mut lookups, Lent::NONE)
+        f(Lent::NONE)
+    }
+
+    /// `f` of this tree's sides and source table for one call (`Seating`),
+    /// lent what a call outside a render lends them (`lending`).
+    pub fn with_seating<R>(&self, f: impl FnOnce(&Seating<'_, G>) -> R) -> R {
+        let lookups = self.lookups();
+        let lends = lookups.reads_records();
+        self.lend(lends, |lent| f(&Seating::with_layout(lookups, lent)))
     }
 
     fn lookups_over<'t>(&'t self, nodes: Navigation<'t>) -> Lookups<'t, G> {
         Lookups { tree: self, nodes, record: None, aligned: HashMap::default() }
     }
 
-    /// This tree's sides and source table for one call (`Seating`).
+    /// This tree's sides and source table for one call (`Seating`), lent
+    /// nothing: a call that holds its tree's arena lends it with
+    /// `with_seating`.
     #[must_use]
     pub fn seating(&self) -> Seating<'_, G> {
-        Seating::with_layout(self.lookups())
+        Seating::with_layout(self.lookups(), Lent::NONE)
     }
 
     /// The source of the run at `at` among the table's runs, measured as
@@ -1676,8 +1719,20 @@ impl<G: EngineGrammar> Lookups<'_, G> {
     #[cfg(feature = "arena")]
     fn record_read<'l>(&self, index: NodeIndex, depth: crate::read::Depth, lent: Lent<'l>) -> Option<crate::arena::RecordRead<'l>> {
         let tree = self.tree.tree_id;
-        let arenas = lent.arenas().filter(|arenas| matches!(self.nodes, Navigation::Records(_)) && arenas.tree(tree).is_some())?;
+        let arenas = lent.arenas().filter(|arenas| self.reads_records() && arenas.tree(tree).is_some())?;
         Some(crate::arena::RecordRead { tree, index, depth, arenas })
+    }
+
+    /// Whether these lookups navigate the tree's rows
+    /// (`Navigation::Records`), which a call outside a render lends the
+    /// tree's arena for.
+    #[cfg_attr(not(feature = "arena"), allow(clippy::unused_self, reason = "only the arena build navigates rows"))]
+    fn reads_records(&self) -> bool {
+        #[cfg(feature = "arena")]
+        if matches!(self.nodes, Navigation::Records(_)) {
+            return true;
+        }
+        false
     }
 
     /// The lookups of the region around the node at `index`: the subtree of
@@ -2049,18 +2104,20 @@ impl<G: EngineGrammar> Lookups<'_, G> {
 pub struct Seating<'t, G: EngineGrammar> {
     lookups: std::cell::RefCell<Lookups<'t, G>>,
     layout: bool,
+    lent: Lent<'t>,
 }
 
 impl<'t, G: EngineGrammar> Seating<'t, G> {
-    /// The sides of `lookups`' tree with their layout and writes.
-    fn with_layout(lookups: Lookups<'t, G>) -> Self {
-        Self { lookups: std::cell::RefCell::new(lookups), layout: true }
+    /// The sides of `lookups`' tree with their layout and writes, each
+    /// lookup lent `lent`.
+    fn with_layout(lookups: Lookups<'t, G>, lent: Lent<'t>) -> Self {
+        Self { lookups: std::cell::RefCell::new(lookups), layout: true, lent }
     }
 
     /// The sides of `lookups`' tree as its source has them, without their
     /// layout or any write.
     fn without_layout(lookups: Lookups<'t, G>) -> Self {
-        Self { lookups: std::cell::RefCell::new(lookups), layout: false }
+        Self { lookups: std::cell::RefCell::new(lookups), layout: false, lent: Lent::NONE }
     }
 
     /// The tree these lookups are in.
@@ -2081,6 +2138,14 @@ impl<'t, G: EngineGrammar> Seating<'t, G> {
         self.tree().read_ctx().with_sides(self)
     }
 
+    /// The routed children of the node at `index` (`ParsedTree::slot_items`),
+    /// found through the lookups' own navigation.
+    fn slot_items(&self, index: NodeIndex) -> Arc<Option<SlotItems>> {
+        let mut lookups = self.lookups.borrow_mut();
+        let tree = lookups.tree;
+        tree.slot_items(&mut lookups.nodes, index)
+    }
+
     /// A cursor on the node at `index`, created at the tree's root: a copy
     /// of the lookups' own, moved there from where it stood.
     #[must_use]
@@ -2094,11 +2159,11 @@ impl<'t, G: EngineGrammar> Seating<'t, G> {
 impl<G: EngineGrammar> crate::read::SideLookup for Seating<'_, G> {
     fn side(&self, index: NodeIndex, side: TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any> {
         let mut lookups = self.lookups.borrow_mut();
-        Box::new(if self.layout { lookups.side_entries(index, side, edge_changed, Lent::NONE) } else { lookups.assigned(index, side, None) })
+        Box::new(if self.layout { lookups.side_entries(index, side, edge_changed, self.lent) } else { lookups.assigned(index, side, None) })
     }
 
     fn slots(&self, index: NodeIndex) -> Vec<crate::layout::SlotLayout> {
-        if self.layout { self.lookups.borrow_mut().slot_layouts(index, Lent::NONE) } else { Vec::new() }
+        if self.layout { self.lookups.borrow_mut().slot_layouts(index, self.lent) } else { Vec::new() }
     }
 
     fn end_children(&self, index: NodeIndex) -> Option<[Kid; 2]> {
@@ -2106,7 +2171,7 @@ impl<G: EngineGrammar> crate::read::SideLookup for Seating<'_, G> {
     }
 
     fn separator(&self, index: NodeIndex) -> Option<KindId> {
-        self.layout.then(|| self.lookups.borrow_mut().separator_before(index, Lent::NONE)).flatten()
+        self.layout.then(|| self.lookups.borrow_mut().separator_before(index, self.lent)).flatten()
     }
 
     fn leading_start(&self, index: NodeIndex) -> Option<u32> {
@@ -2305,6 +2370,7 @@ impl<G: EngineGrammar> Engine<G> {
         let read_options = inferred.over(&self.options);
         Ok(ParsedTree {
             grammar: self.grammar,
+            nodes: crate::read::descendant_count(&tree.root_node()),
             tree,
             source: Arc::from(source),
             inferred,

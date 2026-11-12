@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { queryFlags } from '../src/portable.ts';
+import { queryFlags } from '../src/portable/index.ts';
 import { TSKindId } from '../src/types.ts';
 import { hooks } from '../src/api.ts';
 import { slotItems } from '../../common/src/query-holds.ts';

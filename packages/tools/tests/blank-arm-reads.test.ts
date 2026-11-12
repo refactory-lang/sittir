@@ -1,11 +1,14 @@
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { BLANK_KIND_ID, snapshotOf } from '@sittir/common/utils';
-import { PACKAGES_DIR } from '@sittir/codegen/grammars';
+import { NODE_MODEL_FILE, nodeModelPath } from '@sittir/codegen/grammars';
 import type { QuerySlots } from '@sittir/types';
 import { languageByName } from '../src/languages.ts';
+import { releaseTrackedEngines } from './helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('./helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 interface ModelSlot {
 	readonly name: string;
@@ -18,7 +21,7 @@ interface ModelNode {
 }
 
 function blankArmSlots(grammar: string): string[] {
-	const model = JSON.parse(readFileSync(join(PACKAGES_DIR, grammar, 'src', 'node-model.json5'), 'utf-8')) as { readonly nodes: Record<string, ModelNode> };
+	const model = JSON.parse(readFileSync(nodeModelPath(grammar, NODE_MODEL_FILE), 'utf-8')) as { readonly nodes: Record<string, ModelNode> };
 	return Object.values(model.nodes)
 		.flatMap((node) =>
 			(node.slots ?? [])

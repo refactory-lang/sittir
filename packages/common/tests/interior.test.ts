@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { interiorPattern, lexedConfig, projectInterior, type TokenInterior } from '../src/interior.ts';
+import { interiorPattern, lexedConfig, projectInterior, spelledForm, type TokenInterior } from '../src/interior.ts';
 
 const CHAR: TokenInterior = {
 	regex: "^(?<b>b)?'(?<content>[^\\\\']|\\\\.)'$",
@@ -57,5 +57,18 @@ describe('lexedConfig', () => {
 	it('keys by config key and drops absent slots and false flags', () => {
 		expect(lexedConfig("'a'", CHAR, 'char_literal')).toEqual({ content: 'a' });
 		expect(lexedConfig("b'a'", CHAR, 'char_literal')).toEqual({ b: true, content: 'a' });
+	});
+});
+
+describe('spelledForm', () => {
+	it('reads the spelling a text opens with and the content after it', () => {
+		expect(spelledForm('0XFF', ['0x', '0X'], [''])).toEqual({ interior: 'FF', open: '0X', close: '' });
+		expect(spelledForm('FF', ['0x', '0X'], [''])).toBeUndefined();
+	});
+
+	it('reads the spelling a text closes with and the content before it', () => {
+		expect(spelledForm('10l', [''], ['L', 'l'])).toEqual({ interior: '10', open: '', close: 'l' });
+		expect(spelledForm('10L', [''], ['L', 'l'])).toEqual({ interior: '10', open: '', close: 'L' });
+		expect(spelledForm('10', [''], ['L', 'l'])).toBeUndefined();
 	});
 });

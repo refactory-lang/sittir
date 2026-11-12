@@ -10,6 +10,10 @@ import { factoryNode } from './support/factory-node.ts';
 import { withMembers as withMethods } from './support/members.ts';
 import { asRead, triviaFacts } from './support/fake-engine.ts';
 
+const writesNoFile = (): never => {
+	throw new Error('a fake engine writes no file');
+};
+
 interface Options {
 	readonly indent?: string;
 }
@@ -44,7 +48,11 @@ function fakeLanguage(name: string) {
 			const label = String.fromCharCode(65 + engines++);
 			return {
 				render: (n: AnyUntypedNode, call?: Options) =>
-					createRenderHandle(() => `${label}:${call?.indent ?? opts?.options?.indent ?? ''}:${n.$type}`),
+					createRenderHandle(
+						() => `${label}:${call?.indent ?? opts?.options?.indent ?? ''}:${n.$type}`,
+						writesNoFile,
+						writesNoFile
+					),
 				parseAndRead: () => {
 					const tree = { source: 'src' };
 					trees.push(tree);

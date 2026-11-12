@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import rust from '../src/index.ts';
 import { hooks } from '../src/api.ts';
-import { queryFlags } from '../src/portable.ts';
+import { queryFlags } from '../src/portable/index.ts';
 import { TSKindId } from '../src/types.ts';
 
 const rs = await createEngine(rust);

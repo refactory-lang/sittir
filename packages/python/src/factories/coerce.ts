@@ -18,7 +18,7 @@ import type {
 	ConfigSeat,
 	OptionalConfigSeat,
 	EmptyForm,
-	SpelledAffix,
+	CoercedSpelling,
 	WithSpelling
 } from '@sittir/types';
 import {
@@ -371,7 +371,6 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'expression_statement',
 	'_simple_pattern',
 	'parenthesized_expression',
-	'splat_type',
 	'splat_pattern_list',
 	'splat_pattern_dictionary',
 	'suite_empty',
@@ -493,7 +492,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		214, 220, 221, 222, 224, 227, 228, 229, 230, 231, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247,
 		248, 257, 268, 276, 303
 	]),
-	splat_type: new Set([1]),
+	splat_type: new Set([1, 228]),
 	list: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 168, 169, 176, 181, 201, 203, 207, 208, 209, 210, 213,
 		214, 220, 221, 222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 268, 276, 303
@@ -913,7 +912,6 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	list_pattern: 'patterns',
 	not_operator: 'expression',
 	pattern_list: 'pattern',
-	splat_type: 'identifier',
 	list: 'collection_elements',
 	set: 'collection_elements',
 	tuple: 'tuple_elements',
@@ -1704,7 +1702,8 @@ const _K33: readonly string[] = [
 	'constrained_type',
 	'member_type'
 ];
-const _K34: readonly string[] = [
+const _K34: readonly string[] = ['generic_type'];
+const _K35: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
@@ -1738,7 +1737,7 @@ const _K34: readonly string[] = [
 	'as_pattern',
 	'yield'
 ];
-const _K35: readonly string[] = [
+const _K36: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
@@ -1774,12 +1773,12 @@ const _K35: readonly string[] = [
 	'list_splat',
 	'parenthesized_list_splat'
 ];
-const _K36: readonly string[] = ['interpolation', 'string_content'];
-const _K37: readonly string[] = ['escape_interpolation', 'not_escape_sequence', 'string_fragment'];
-const _K38: readonly string[] = ['format_specifier_text'];
-const _K39: readonly string[] = ['format_expression'];
-const _K40: readonly string[] = ['pass_statement', 'break_statement', 'continue_statement'];
-const _K41: readonly string[] = [
+const _K37: readonly string[] = ['interpolation', 'string_content'];
+const _K38: readonly string[] = ['escape_interpolation', 'not_escape_sequence', 'string_fragment'];
+const _K39: readonly string[] = ['format_specifier_text'];
+const _K40: readonly string[] = ['format_expression'];
+const _K41: readonly string[] = ['pass_statement', 'break_statement', 'continue_statement'];
+const _K42: readonly string[] = [
 	'future_import_statement',
 	'import_statement',
 	'import_from_statement',
@@ -1794,7 +1793,7 @@ const _K41: readonly string[] = [
 	'exec_statement',
 	'type_alias_statement'
 ];
-const _K42: readonly string[] = [
+const _K43: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
@@ -1831,8 +1830,8 @@ const _K42: readonly string[] = [
 	'parenthesized_list_splat',
 	'keyword_argument'
 ];
-const _K43: readonly string[] = ['key_value_pattern', 'splat_pattern_list', 'splat_pattern_dictionary'];
-const _K44: readonly string[] = [
+const _K44: readonly string[] = ['key_value_pattern', 'splat_pattern_list', 'splat_pattern_dictionary'];
+const _K45: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
@@ -1866,10 +1865,10 @@ const _K44: readonly string[] = [
 	'as_pattern',
 	'slice'
 ];
-const _K45: readonly string[] = ['pair', 'dictionary_splat'];
-const _K46: readonly string[] = ['for_in_clause', 'if_clause'];
-const _K47: readonly string[] = ['except_clause_exception_as', 'except_clause_exception_list'];
-const _K48: readonly string[] = [
+const _K46: readonly string[] = ['pair', 'dictionary_splat'];
+const _K47: readonly string[] = ['for_in_clause', 'if_clause'];
+const _K48: readonly string[] = ['except_clause_exception_as', 'except_clause_exception_list'];
+const _K49: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
@@ -1908,7 +1907,7 @@ const _K48: readonly string[] = [
 	'assignment_type',
 	'assignment_typed'
 ];
-const _K49: readonly string[] = [
+const _K50: readonly string[] = [
 	'_simple_statements',
 	'if_statement',
 	'for_statement',
@@ -1921,7 +1920,7 @@ const _K49: readonly string[] = [
 	'decorated_definition_class_declaration',
 	'match_statement'
 ];
-const _K50: readonly string[] = ['class_definition', 'method_declaration', 'constructor_declaration'];
+const _K51: readonly string[] = ['class_definition', 'method_declaration', 'constructor_declaration'];
 
 export const coerceToModule: EmptyForm<
 	T.EmptyModule,
@@ -1941,9 +1940,9 @@ export const coerceToModule: EmptyForm<
 	return F.buildModule(...(_resolveMany<T.Statement>(_elems, _K0, _K1) as unknown as Parameters<typeof F.buildModule>));
 });
 
-export function resolveSimpleStatements_elements(
-	value: T.SimpleStatements.LooseConfig['elements']
-): Admit<T.SimpleStatements['_elements']> {
+export function resolveSimpleStatements_statements(
+	value: T.SimpleStatements.LooseConfig['statements']
+): Admit<T.SimpleStatements['_statements']> {
 	return _resolveOneBranch<T.SimpleStatementsElements>(value, 'simple_statements_elements');
 }
 
@@ -1963,7 +1962,7 @@ export const coerceToSimpleStatements: Seat<
 		return input as unknown as ReturnType<typeof F.buildSimpleStatements>;
 	return F.buildSimpleStatements(
 		_resolveOneBranch<T.SimpleStatementsElements>(
-			configFieldOr(input, 'elements', () => input, TSKindId.SimpleStatements),
+			configFieldOr(input, 'statements', () => input, TSKindId.SimpleStatements),
 			'simple_statements_elements'
 		)
 	);
@@ -4458,7 +4457,7 @@ export const coerceToType: ConfigSeat<T.Type.Loose, ReturnType<typeof F.buildTyp
 };
 
 export function resolveSplatType_type(value: T.SplatType.LooseConfig['type']): Admit<T.SplatType['_type']> {
-	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
+	return _resolveOne<T.Identifier | T.GenericType>(value, _K13, _K34);
 }
 
 export const coerceToSplatType: ConfigSeat<T.SplatType.Loose, ReturnType<typeof F.buildSplatType>> = (
@@ -4466,14 +4465,10 @@ export const coerceToSplatType: ConfigSeat<T.SplatType.Loose, ReturnType<typeof 
 ): ReturnType<typeof F.buildSplatType> => {
 	if (isNodeOfKind(input, TSKindId.SplatType)) return input as unknown as ReturnType<typeof F.buildSplatType>;
 	return F.buildSplatType(
-		_resolveOneLeaf<T.Identifier>(
-			configFieldOr(
-				input,
-				'type',
-				() => (typeof input === 'string' ? spelledInterior(input, '*', '') : input),
-				TSKindId.SplatType
-			),
-			'identifier'
+		_resolveOne<T.Identifier | T.GenericType>(
+			configFieldOr(input, 'type', () => input, TSKindId.SplatType),
+			_K13,
+			_K34
 		)
 	);
 };
@@ -4816,7 +4811,7 @@ export function resolveParenthesizedExpression_expression(
 	value: T.ParenthesizedExpression.LooseConfig['expression']
 ): Admit<T.ParenthesizedExpression['_expression']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression | T.Yield>(value, _K7, _K34)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression | T.Yield>(value, _K7, _K35)),
 		[]
 	);
 }
@@ -4834,7 +4829,7 @@ export const coerceToParenthesizedExpression: ConfigSeat<
 					_resolveOne<T.Expression | T.Yield>(
 						configFieldOr(input, 'expression', () => input, TSKindId.ParenthesizedExpression),
 						_K7,
-						_K34
+						_K35
 					)
 			),
 			[]
@@ -4865,7 +4860,7 @@ export const coerceToCollectionElements: Seat<
 			(els) =>
 				listStorage(
 					_resolveKindEnumItems(els, [], (_v) =>
-						_resolveMany<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(_v, _K7, _K35)
+						_resolveMany<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(_v, _K7, _K36)
 					),
 					(item) => coerceMixedEnumStorage(item, [])
 				),
@@ -5049,7 +5044,7 @@ export function resolveString_stringStart(
 }
 
 export function resolveString_contents(value: T.String.LooseConfig['contents']): Admit<T.String['_content']> {
-	return _resolveMany<T.Interpolation | T.StringContent>(value, _K0, _K36);
+	return _resolveMany<T.Interpolation | T.StringContent>(value, _K0, _K37);
 }
 
 export function resolveString_stringEnd(
@@ -5094,7 +5089,7 @@ export const coerceToStringContent: Seat<T.StringContent.LooseArgs, ReturnType<t
 			_resolveKindEnumItems(_elems, [TSKindId.NotEscapeSequence], (_v) =>
 				_resolveMany<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>(
 					_v,
-					_K37,
+					_K38,
 					_super_escape_sequence
 				)
 			),
@@ -5165,7 +5160,7 @@ export const coerceToFormatSpecifier: Seat<T.FormatSpecifier.LooseArgs, ReturnTy
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildFormatSpecifier(
-		...(_resolveMany<T.FormatSpecifierText | T.FormatExpression>(_elems, _K38, _K39) as unknown as Parameters<
+		...(_resolveMany<T.FormatSpecifierText | T.FormatExpression>(_elems, _K39, _K40) as unknown as Parameters<
 			typeof F.buildFormatSpecifier
 		>)
 	);
@@ -5278,7 +5273,7 @@ export const coerceToSimpleStatementsElements: Seat<
 			undefined,
 			(els) =>
 				listStorage(
-					_resolveKindEnumItems(els, [], (_v) => _resolveMany<T.SimpleStatement>(_v, _K40, _K41)),
+					_resolveKindEnumItems(els, [], (_v) => _resolveMany<T.SimpleStatement>(_v, _K41, _K42)),
 					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
@@ -5443,7 +5438,7 @@ export const coerceToArgumentListElements: Seat<
 						_resolveMany<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>(
 							_v,
 							_K7,
-							_K42
+							_K43
 						)
 					),
 					(item) => coerceMixedEnumStorage(item, [])
@@ -5539,7 +5534,7 @@ export const coerceToDictPatternElements: Seat<
 		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildDictPatternElements>;
 	return (F.buildDictPatternElements as (...args: unknown[]) => ReturnType<typeof F.buildDictPatternElements>)(
 		options,
-		...(_listElements(_rest, undefined, (els) => _resolveMany<T.KeyValuePattern | T.SplatPattern>(els, _K0, _K43), [
+		...(_listElements(_rest, undefined, (els) => _resolveMany<T.KeyValuePattern | T.SplatPattern>(els, _K0, _K44), [
 			'key_value_pattern',
 			'splat_pattern_list',
 			'splat_pattern_dictionary'
@@ -5568,7 +5563,7 @@ export const coerceToSubscripts: Seat<T.Subscripts.LooseArgs, ReturnType<typeof 
 			undefined,
 			(els) =>
 				listStorage(
-					_resolveKindEnumItems(els, [], (_v) => _resolveMany<T.Expression | T.Slice>(_v, _K7, _K44)),
+					_resolveKindEnumItems(els, [], (_v) => _resolveMany<T.Expression | T.Slice>(_v, _K7, _K45)),
 					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
@@ -5634,7 +5629,7 @@ export const coerceToDictionaryElements: Seat<
 		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildDictionaryElements>;
 	return (F.buildDictionaryElements as (...args: unknown[]) => ReturnType<typeof F.buildDictionaryElements>)(
 		options,
-		...(_listElements(_rest, undefined, (els) => _resolveMany<T.Pair | T.DictionarySplat>(els, _K0, _K45), [
+		...(_listElements(_rest, undefined, (els) => _resolveMany<T.Pair | T.DictionarySplat>(els, _K0, _K46), [
 			'pair',
 			'dictionary_splat'
 		]) as unknown as NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>)
@@ -5796,7 +5791,7 @@ export const coerceToTupleElements: Seat<T.TupleElements.LooseArgs, ReturnType<t
 			(els) =>
 				listStorage(
 					_resolveKindEnumItems(els, [], (_v) =>
-						_resolveMany<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(_v, _K7, _K35)
+						_resolveMany<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(_v, _K7, _K36)
 					),
 					(item) => coerceMixedEnumStorage(item, [])
 				),
@@ -6171,7 +6166,7 @@ export const coerceToComprehensionClauses: Seat<
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildComprehensionClauses(
-		...(_resolveMany<T.ForInClause | T.IfClause>(_elems, _K0, _K46) as unknown as Parameters<
+		...(_resolveMany<T.ForInClause | T.IfClause>(_elems, _K0, _K47) as unknown as Parameters<
 			typeof F.buildComprehensionClauses
 		>)
 	);
@@ -6183,27 +6178,55 @@ export function resolveIntegerHex_content(value: T.IntegerHex.LooseConfig['conte
 		: _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToIntegerHex<const I extends T.IntegerHex.Loose, const O extends T.IntegerHex.Options = {}>(
+export function coerceToIntegerHex<
+	const I extends T.IntegerHex.Loose,
+	const O extends T.IntegerHex.Options | undefined = T.IntegerHex.Options | undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.IntegerHex.Loose>,
+	options: O
+): WithSpelling<
+	ReturnType<typeof F.buildIntegerHex>,
+	'radixPrefix',
+	CoercedSpelling<I, O, 'radixPrefix', '0x' | '0X', '0x'>
+>;
+export function coerceToIntegerHex<
+	const I extends T.IntegerHex.Loose,
+	const _O extends T.IntegerHex.Options | undefined = undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.IntegerHex.Loose>,
+	options?: undefined
+): WithSpelling<
+	ReturnType<typeof F.buildIntegerHex>,
+	'radixPrefix',
+	CoercedSpelling<I, undefined, 'radixPrefix', '0x' | '0X', '0x'>
+>;
+export function coerceToIntegerHex<
+	const I extends T.IntegerHex.Loose,
+	const O extends T.IntegerHex.Options | undefined = T.IntegerHex.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.IntegerHex.Loose>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildIntegerHex>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+	CoercedSpelling<I, O | undefined, 'radixPrefix', '0x' | '0X', '0x'>
 >;
-export function coerceToIntegerHex<const I extends T.IntegerHex.Loose, const O extends T.IntegerHex.Options = {}>(
+export function coerceToIntegerHex<
+	const I extends T.IntegerHex.Loose,
+	const O extends T.IntegerHex.Options | undefined = T.IntegerHex.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildIntegerHex>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+	CoercedSpelling<I, O, 'radixPrefix', '0x' | '0X', '0x'>
 > {
 	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildIntegerHex>,
 			'radixPrefix',
-			O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+			CoercedSpelling<I, O, 'radixPrefix', '0x' | '0X', '0x'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0x', '0X'] as const, [''] as const) : undefined;
 	const _value = configFieldOr(
@@ -6214,11 +6237,11 @@ export function coerceToIntegerHex<const I extends T.IntegerHex.Loose, const O e
 	);
 	return F.buildIntegerHex(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0),
-		_spelled === undefined ? options : { radixPrefix: _spelled.open, ...options }
+		_spelled === undefined ? options : { ...options, radixPrefix: options?.radixPrefix ?? _spelled.open }
 	) as WithSpelling<
 		ReturnType<typeof F.buildIntegerHex>,
 		'radixPrefix',
-		O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+		CoercedSpelling<I, O, 'radixPrefix', '0x' | '0X', '0x'>
 	>;
 }
 
@@ -6230,27 +6253,55 @@ export function resolveIntegerOctal_content(
 		: _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToIntegerOctal<const I extends T.IntegerOctal.Loose, const O extends T.IntegerOctal.Options = {}>(
+export function coerceToIntegerOctal<
+	const I extends T.IntegerOctal.Loose,
+	const O extends T.IntegerOctal.Options | undefined = T.IntegerOctal.Options | undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.IntegerOctal.Loose>,
+	options: O
+): WithSpelling<
+	ReturnType<typeof F.buildIntegerOctal>,
+	'radixPrefix',
+	CoercedSpelling<I, O, 'radixPrefix', '0o' | '0O', '0o'>
+>;
+export function coerceToIntegerOctal<
+	const I extends T.IntegerOctal.Loose,
+	const _O extends T.IntegerOctal.Options | undefined = undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.IntegerOctal.Loose>,
+	options?: undefined
+): WithSpelling<
+	ReturnType<typeof F.buildIntegerOctal>,
+	'radixPrefix',
+	CoercedSpelling<I, undefined, 'radixPrefix', '0o' | '0O', '0o'>
+>;
+export function coerceToIntegerOctal<
+	const I extends T.IntegerOctal.Loose,
+	const O extends T.IntegerOctal.Options | undefined = T.IntegerOctal.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.IntegerOctal.Loose>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildIntegerOctal>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+	CoercedSpelling<I, O | undefined, 'radixPrefix', '0o' | '0O', '0o'>
 >;
-export function coerceToIntegerOctal<const I extends T.IntegerOctal.Loose, const O extends T.IntegerOctal.Options = {}>(
+export function coerceToIntegerOctal<
+	const I extends T.IntegerOctal.Loose,
+	const O extends T.IntegerOctal.Options | undefined = T.IntegerOctal.Options | undefined
+>(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildIntegerOctal>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+	CoercedSpelling<I, O, 'radixPrefix', '0o' | '0O', '0o'>
 > {
 	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildIntegerOctal>,
 			'radixPrefix',
-			O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+			CoercedSpelling<I, O, 'radixPrefix', '0o' | '0O', '0o'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0o', '0O'] as const, [''] as const) : undefined;
 	const _value = configFieldOr(
@@ -6261,11 +6312,11 @@ export function coerceToIntegerOctal<const I extends T.IntegerOctal.Loose, const
 	);
 	return F.buildIntegerOctal(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0),
-		_spelled === undefined ? options : { radixPrefix: _spelled.open, ...options }
+		_spelled === undefined ? options : { ...options, radixPrefix: options?.radixPrefix ?? _spelled.open }
 	) as WithSpelling<
 		ReturnType<typeof F.buildIntegerOctal>,
 		'radixPrefix',
-		O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+		CoercedSpelling<I, O, 'radixPrefix', '0o' | '0O', '0o'>
 	>;
 }
 
@@ -6279,31 +6330,53 @@ export function resolveIntegerBinary_content(
 
 export function coerceToIntegerBinary<
 	const I extends T.IntegerBinary.Loose,
-	const O extends T.IntegerBinary.Options = {}
+	const O extends T.IntegerBinary.Options | undefined = T.IntegerBinary.Options | undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.IntegerBinary.Loose>,
+	options: O
+): WithSpelling<
+	ReturnType<typeof F.buildIntegerBinary>,
+	'radixPrefix',
+	CoercedSpelling<I, O, 'radixPrefix', '0b' | '0B', '0b'>
+>;
+export function coerceToIntegerBinary<
+	const I extends T.IntegerBinary.Loose,
+	const _O extends T.IntegerBinary.Options | undefined = undefined
+>(
+	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.IntegerBinary.Loose>,
+	options?: undefined
+): WithSpelling<
+	ReturnType<typeof F.buildIntegerBinary>,
+	'radixPrefix',
+	CoercedSpelling<I, undefined, 'radixPrefix', '0b' | '0B', '0b'>
+>;
+export function coerceToIntegerBinary<
+	const I extends T.IntegerBinary.Loose,
+	const O extends T.IntegerBinary.Options | undefined = T.IntegerBinary.Options | undefined
 >(
 	input: I & NumericInput<I, true, { content: true }> & RefuseUndeclared<I, T.IntegerBinary.Loose>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildIntegerBinary>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+	CoercedSpelling<I, O | undefined, 'radixPrefix', '0b' | '0B', '0b'>
 >;
 export function coerceToIntegerBinary<
 	const I extends T.IntegerBinary.Loose,
-	const O extends T.IntegerBinary.Options = {}
+	const O extends T.IntegerBinary.Options | undefined = T.IntegerBinary.Options | undefined
 >(
 	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildIntegerBinary>,
 	'radixPrefix',
-	O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+	CoercedSpelling<I, O, 'radixPrefix', '0b' | '0B', '0b'>
 > {
 	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildIntegerBinary>,
 			'radixPrefix',
-			O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+			CoercedSpelling<I, O, 'radixPrefix', '0b' | '0B', '0b'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0b', '0B'] as const, [''] as const) : undefined;
 	const _value = configFieldOr(
@@ -6314,11 +6387,11 @@ export function coerceToIntegerBinary<
 	);
 	return F.buildIntegerBinary(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0),
-		_spelled === undefined ? options : { radixPrefix: _spelled.open, ...options }
+		_spelled === undefined ? options : { ...options, radixPrefix: options?.radixPrefix ?? _spelled.open }
 	) as WithSpelling<
 		ReturnType<typeof F.buildIntegerBinary>,
 		'radixPrefix',
-		O extends { radixPrefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+		CoercedSpelling<I, O, 'radixPrefix', '0b' | '0B', '0b'>
 	>;
 }
 
@@ -6786,7 +6859,7 @@ export const coerceToExceptClauseExceptionList: Seat<
 export function resolveExceptClauseException_content(
 	value: T.ExceptClauseException.LooseConfig['content']
 ): Admit<T.ExceptClauseException['_content']> {
-	return _resolveOne<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(value, _K0, _K47);
+	return _resolveOne<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(value, _K0, _K48);
 }
 
 export const coerceToExceptClauseException: ConfigSeat<
@@ -6799,7 +6872,7 @@ export const coerceToExceptClauseException: ConfigSeat<
 		_resolveOne<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(
 			configFieldOr(input, 'content', () => input, TSKindId.ExceptClauseException),
 			_K0,
-			_K47
+			_K48
 		)
 	);
 };
@@ -6891,7 +6964,7 @@ export function resolveAssignmentEq_name(value: T.AssignmentEq.LooseConfig['name
 export function resolveAssignmentEq_value(value: T.AssignmentEq.LooseConfig['value']): Admit<T.AssignmentEq['_value']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () =>
-			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield | T.Assignment>(value, _K7, _K48)
+			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield | T.Assignment>(value, _K7, _K49)
 		),
 		[]
 	);
@@ -7088,9 +7161,9 @@ export const coerceToWithClauseParen: Seat<T.WithClauseWithItems.LooseArgs, Retu
 	);
 };
 
-export function resolveSuiteInline_elements(
-	value: T.SuiteInline.LooseConfig['elements']
-): Admit<T.SuiteInline['_elements']> {
+export function resolveSuiteInline_statements(
+	value: T.SuiteInline.LooseConfig['statements']
+): Admit<T.SuiteInline['_statements']> {
 	return _resolveOneBranch<T.SimpleStatementsElements>(value, 'simple_statements_elements', [
 		TSKindId.SimpleStatements
 	]);
@@ -7108,7 +7181,7 @@ export const coerceToSuiteInline: Seat<T.SimpleStatementsElements.LooseArgs, Ret
 	if (isNodeOfKind(input, TSKindId.SuiteInline)) return input as unknown as ReturnType<typeof F.buildSuiteInline>;
 	return F.buildSuiteInline(
 		_resolveOneBranch<T.SimpleStatementsElements>(
-			configFieldOr(input, 'elements', () => input, TSKindId.SuiteInline),
+			configFieldOr(input, 'statements', () => input, TSKindId.SuiteInline),
 			'simple_statements_elements',
 			[TSKindId.SimpleStatements]
 		)
@@ -7426,7 +7499,7 @@ export const coerceToBlockClassDeclaration: Seat<
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildBlockClassDeclaration(
-		...(_resolveMany<T.StatementClassDefinition>(_elems, _K0, _K49) as unknown as Parameters<
+		...(_resolveMany<T.StatementClassDefinition>(_elems, _K0, _K50) as unknown as Parameters<
 			typeof F.buildBlockClassDeclaration
 		>)
 	);
@@ -7471,7 +7544,7 @@ export function resolveDecoratedDefinitionClassDeclaration_decorators(
 export function resolveDecoratedDefinitionClassDeclaration_definition(
 	value: T.DecoratedDefinitionClassDeclaration.LooseConfig['definition']
 ): Admit<T.DecoratedDefinitionClassDeclaration['_definition']> {
-	return _resolveOne<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>(value, _K0, _K50);
+	return _resolveOne<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>(value, _K0, _K51);
 }
 
 export const coerceToDecoratedDefinitionClassDeclaration: ConfigSeat<

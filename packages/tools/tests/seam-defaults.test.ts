@@ -1,5 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { defaultDiff } from '../src/exercise/default-diff.ts';
+import { releaseTrackedEngines } from './helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('./helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 const CASES: readonly (readonly [grammar: string, label: string, source: string])[] = [
 	['rust', 'a raw pointer type glues its qualifier', 'fn f(x: *const u8, y: *mut u8) {}\n'],

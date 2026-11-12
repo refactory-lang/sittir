@@ -35,8 +35,33 @@ export interface PortablePath {
 export interface PortableTable {
 	readonly paths: Readonly<Record<string, PortablePath>>;
 	readonly entries: Readonly<Record<number, readonly PortableReadEntry[]>>;
+	readonly facts?: Readonly<Record<number, readonly PortableFact[]>>;
 	readonly fixedText: Readonly<Record<number, string>>;
 	readonly literals: readonly number[];
+}
+
+/**
+ * A fact a node's container spells beside it, with one item of its `items` slot (a decorator beside the definition it decorates). It holds
+ * on the first item `test` holds on where, when `same` is set, the item's text at `same.item` equals the node's text at `same.node`. A
+ * holding fact reads the node as `path`, or sets `flag`; the read leaves its item out of the container's `member` and records where it sat
+ * under `name` in `$at`, with the text of the item's `spelled` slot as its spelling.
+ */
+export interface PortableFact {
+	readonly name: string;
+	readonly path?: string;
+	readonly flag?: string;
+	readonly container: number;
+	readonly member: string;
+	readonly items: SlotSubject;
+	readonly test: QueryPlan<QuerySubject>;
+	readonly spelled?: SlotSubject;
+	readonly same?: { readonly item: readonly PortableStep[]; readonly node: readonly PortableStep[] };
+}
+
+/** Where a read found a fact its container spells: the index of its item among the container's items, and the item's spelling as read. */
+export interface PortablePlace {
+	readonly index: number;
+	readonly spelling?: string;
 }
 
 /** What a bound grammar's engine reads portable classifications from: its {@link PortableTable}, the slots its conditions name, and each kind's flag plans. */
@@ -161,15 +186,48 @@ export interface PortablePreset {
 }
 
 /**
+ * A member spelled from named holes: `pattern` is the member's text with each hole written `${string}`, filled in order from the members
+ * `holes` names. A spelled text must match `match`, the claim's anchored regex, whose named groups read the holes back out of the text.
+ */
+export interface PortableTemplate {
+	readonly member: string;
+	readonly pattern: string;
+	readonly holes: readonly string[];
+	readonly match: string;
+}
+
+/**
+ * A fact a container spells beside the node the build builds: the name `$at` records it under, the flag it sets (a fact with none is its
+ * arm's path), the container member its item goes in, and the item each of its spellings builds, in the order the grammar's bindings declare
+ * them, the first being the one a structure that names no spelling builds. A spelling's `holes` name the structure's members it spells from,
+ * each by the keys that reach its place in the item.
+ */
+export interface PortableSpelledFact {
+	readonly name: string;
+	readonly flag?: string;
+	readonly member: string;
+	readonly spellings: readonly PortableSpelling[];
+}
+
+/** One spelling of a fact a container spells: the item it builds, and the members of the built structure it fills in. */
+export interface PortableSpelling {
+	readonly item: PortableStructure;
+	readonly holes?: Readonly<Record<string, readonly string[]>>;
+}
+
+/**
  * What setting a flag adds to a build, and what leaving it unset writes: where the flag's slot must hold one of two tokens, the other one.
  * A flag that reads a list's delimiter sets those delimiter flags (`delimiter`) on the arm's list builder, or, where the list sits at the
- * steps `list` from the arm's kind, on that list's builder; a build whose list there holds nothing refuses the flag.
+ * steps `list` from the arm's kind, on that list's builder; a build whose list there holds nothing refuses the flag. A flag spelled inside a
+ * member's text (`template`) spells that member from its holes when set, and reads them from it where it holds; a build that leaves the flag
+ * unset refuses a member text the flag's regex matches.
  */
 export interface PortableFlagStep {
 	readonly presets: readonly PortablePreset[];
 	readonly unset?: readonly PortablePreset[];
 	readonly delimiter?: number;
 	readonly list?: readonly PortableSlotStep[];
+	readonly template?: PortableTemplate;
 }
 
 /** A test a build arm passes for its input: a structure that states every `required` member and none of the `absent` ones, the members the path's other arms have and this one lacks (arms with fewer members come first); a structure whose `empty` list members are each left out or empty, for an arm whose kind holds only layout and reads with those lists empty; a flag stated or not; a member's value of one of `kinds`; a fixed literal's text; the boolean a binding declares its kind's value; or the form chosen at a supertype's variant site: the render options' choice at `<variant>/variant`, the `default` form when they make none. */
@@ -182,7 +240,7 @@ export type PortablePickTest =
 	| { readonly boolean: boolean }
 	| { readonly variant: string; readonly value: number; readonly default?: true };
 
-/** The member a config builder takes each part of a number's decimal spelling through: its digits before and after the point, its exponent's digits, the exponent marker and the exponent's sign. */
+/** The slot a config builder takes each part of a number's decimal spelling through: its digits before and after the point, its exponent's digits, the exponent marker and the exponent's sign. */
 export interface PortableDecimalParts {
 	readonly integer?: string;
 	readonly fraction?: string;
@@ -194,9 +252,10 @@ export interface PortableDecimalParts {
 /**
  * One way a vocabulary path builds: the kind and its builder, the tests that pick it, the holder slots it is picked in, and what it builds from the
  * structure. A fixed literal has no builder and builds as its kind id; a kind its holder's builder builds has none either, and says by `seated`
- * whether the holder takes its config or its sole value. `scalar` marks the one arm at the path that builds a number of that type; it takes the
- * number as its builder's input, or, where its builder takes a config, through `numeric`: the member that takes the number whole, or the member
- * that takes each part of its decimal spelling. A structure stating one of those members beside its `$value` refuses. A `template`
+ * whether the holder takes its config or its sole value. `scalar` marks the one arm at the path that builds a number of that type (`bigint` where the path's `$value` is a bigint, read and built as one); it takes the
+ * number as its builder's input, or, where its builder takes a config, through `numeric`: the slot of its kind that takes the number whole, or the slot
+ * that takes each part of its decimal spelling, of which `numericRequired` names the ones the kind always spells. An integer arm reads its number in the
+ * `digits` base after the `digits` affix. Its other members read and build beside the `$value`. A `template`
  * spells its member from the named holes. A `mounted` arm's builder is a mount that builds its holder, the kind
  * `mounted.holder`, with the arm's kind seated at `mounted.key`. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
  * holds) are the path's read tests, which a built node must pass. Where the arm's routes run through different forms of one slot, `owners`
@@ -206,15 +265,17 @@ export interface PortableDecimalParts {
  * path, with the `$value` its claim declares, never as its text. A `sole` arm builds a list its claim reads by its own separator: where the
  * `member` holds one item, the list is built with `delimiter`, the separator that makes one item that list. A `content` arm builds a lexed
  * identifier: it reads as its path with the text of its `content` slot as the `$value`, and builds by passing that text to its builder, which
- * writes the affix its path stands for.
+ * writes the affix its path stands for. The `facts` an arm's container spells, in the order the bindings declare them, are its path or flags it reads only through that container; a build puts each one's item in it.
  */
 export interface PortableBuildArm {
 	readonly kind: number;
 	readonly builder?: string;
 	readonly mounted?: PortableMount & { readonly holder: number };
 	readonly seated?: PortableCallShape;
-	readonly scalar?: 'integer' | 'float';
+	readonly scalar?: 'integer' | 'float' | 'bigint';
 	readonly numeric?: string | PortableDecimalParts;
+	readonly numericRequired?: readonly string[];
+	readonly digits?: { readonly base: 2 | 8 | 10 | 16; readonly affix: string };
 	readonly literal?: { readonly value?: boolean };
 	readonly when: readonly PortablePickTest[];
 	readonly holders?: readonly (readonly [holder: number, key: string])[];
@@ -223,7 +284,8 @@ export interface PortableBuildArm {
 	readonly owners?: readonly (readonly number[])[];
 	readonly presets: readonly PortablePreset[];
 	readonly flags: Readonly<Record<string, PortableFlagStep>>;
-	readonly template?: { readonly member: string; readonly pattern: string; readonly holes: readonly string[] };
+	readonly template?: PortableTemplate;
+	readonly facts?: readonly PortableSpelledFact[];
 	readonly sole?: { readonly member: string; readonly delimiter: number };
 	readonly content?: string;
 }
@@ -235,13 +297,14 @@ export interface PortableBuildPath {
 }
 
 /**
- * A structure the portable build builds: its vocabulary path, the flags it sets, the value of a scalar or a fixed literal, and its members by
- * name. A member is a structure, a list of them, text (built through its slot's default leaf), a kind id, a scalar, or a node, which is placed
+ * A structure the portable build builds: its vocabulary path, the flags it sets, where the facts its container spells sat (`$at`, by fact
+ * name), the value of a scalar or a fixed literal, and its members by name. A member is a structure, a list of them, text (built through its slot's default leaf), a kind id, a scalar, or a node, which is placed
  * as it is.
  */
 export interface PortableStructure {
 	readonly $path: string;
 	readonly $flags?: readonly string[];
+	readonly $at?: Readonly<Record<string, PortablePlace>>;
 	readonly $value?: string | number | bigint | boolean;
 	readonly [member: string]: unknown;
 }
@@ -270,7 +333,8 @@ export interface PortableDelimiterToken {
  * A bound grammar's portable build table: each strict builder's call shape by its key in the strict table, each vocabulary path's arms, at
  * a path with no arms of its own, the paths a `$value` builds through (`values`), and, by kind id, the accessors of the slots that can hold a
  * token read by its interior (`tokens`), and, by delimiter token kind id, its facets that carry meaning (`delimiters`): a delimiter's other
- * facets are spelled from its content, so reading none of them loses nothing.
+ * facets are spelled from its content, so reading none of them loses nothing. `features` names the vocabulary features the grammar composes,
+ * so a build naming a path of a feature it lacks refuses by that feature.
  */
 export interface PortableBuildTable {
 	readonly builders: Readonly<Record<string, PortableCallShape>>;
@@ -279,6 +343,7 @@ export interface PortableBuildTable {
 	readonly values?: Readonly<Record<string, PortableValueBuild>>;
 	readonly tokens?: Readonly<Record<number, readonly string[]>>;
 	readonly delimiters?: Readonly<Record<number, PortableDelimiterToken>>;
+	readonly features?: readonly string[];
 }
 
 /**

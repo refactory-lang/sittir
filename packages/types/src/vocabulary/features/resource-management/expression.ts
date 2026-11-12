@@ -1,7 +1,6 @@
-import type { GrammarContext } from '../../context.ts';
-import type { Flag } from '../../utils.ts';
+import type { GrammarMap } from '../../map.ts';
+import type { Under } from '../../utils.ts';
 export namespace Expression {
-	export interface Assignment<G extends GrammarContext<G>> {
-		readonly disposable?: Flag;
+	export interface Assignment<G extends GrammarMap, K extends Under<'expression.assignment'> = 'expression.assignment'> {
 	}
 }

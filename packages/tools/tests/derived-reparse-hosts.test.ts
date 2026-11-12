@@ -1,13 +1,16 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { applyHost } from '@sittir/common';
-import { findReparsedNodeAtOffset, hostlessReason, loadRenderReparseContext } from '../src/validate/read-render-parse.ts';
-import { loadLanguageForGrammar, loadNativeRender, wrapForReparse } from '../src/validate/common.ts';
+import { findReparsedNodeAtOffset, hostlessReason, loadRenderReparseContext, type RenderReparseContext } from '../src/validate/read-render-parse.ts';
+import { loadLanguageForGrammar, loadNativeRender, treeParser, wrapForReparse, disposeNativeEngines } from '../src/validate/common.ts';
 
-async function contextFor(grammar: 'python' | 'regex' | 'rust' | 'typescript') {
-	const { Parser, lang } = await loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
-	return loadRenderReparseContext(grammar, parser, await loadNativeRender(grammar));
+afterAll(disposeNativeEngines);
+
+async function contextFor(grammar: 'python' | 'regex' | 'rust' | 'typescript'): Promise<RenderReparseContext & Disposable> {
+	using owned = new DisposableStack();
+	const parser = owned.use(treeParser(await loadLanguageForGrammar(grammar)));
+	const ctx = await loadRenderReparseContext(grammar, parser, await loadNativeRender(grammar));
+	const held = owned.move();
+	return { ...ctx, [Symbol.dispose]: () => held.dispose() };
 }
 
 const hostFor = (grammar: string, kind: string, ctx: Awaited<ReturnType<typeof contextFor>>) =>
@@ -15,43 +18,43 @@ const hostFor = (grammar: string, kind: string, ctx: Awaited<ReturnType<typeof c
 
 describe('a kind with no declared host is hosted through a parent that is', () => {
 	it('python: statements reach the declared statement hosts, a match block a derived one', async () => {
-		const ctx = await contextFor('python');
+		using ctx = await contextFor('python');
 		for (const kind of ['return_statement', 'match_statement', 'match_block', 'block', 'suite_block']) {
 			expect(hostFor('python', kind, ctx), kind).not.toBeNull();
 		}
 	}, 120_000);
 
 	it('regex: a kind whose corpus holds zero-width instances is still hosted through its parent', async () => {
-		const ctx = await contextFor('regex');
+		using ctx = await contextFor('regex');
 		for (const kind of ['term_group', 'character_class', 'count_quantifier']) {
 			expect(hostFor('regex', kind, ctx), kind).not.toBeNull();
 		}
 	}, 120_000);
 
 	it('typescript: a kind only a parent contains has a host', async () => {
-		const ctx = await contextFor('typescript');
+		using ctx = await contextFor('typescript');
 		expect(hostFor('typescript', 'object_type_content', ctx)).not.toBeNull();
 	}, 120_000);
 
 	it('members of a supertype the parser inlines keep their host', async () => {
-		const python = await contextFor('python');
+		using python = await contextFor('python');
 		for (const kind of ['assert_statement', 'print_statement', 'import_statement', 'suite_inline']) {
 			expect(hostFor('python', kind, python), kind).not.toBeNull();
 		}
-		const rust = await contextFor('rust');
+		using rust = await contextFor('rust');
 		for (const kind of ['associated_type', 'function_signature_item']) {
 			expect(hostFor('rust', kind, rust), kind).not.toBeNull();
 		}
 	}, 120_000);
 
 	it('typescript: an alias display kind keeps its supertype host', async () => {
-		const ctx = await contextFor('typescript');
+		using ctx = await contextFor('typescript');
 		expect(ctx.kindToSupertypes.get('this_type')).toContain('primary_type');
 		expect(hostFor('typescript', 'this_type', ctx)).not.toBeNull();
 	}, 120_000);
 
 	it('a kind with no node of its own is excluded as hidden, not as hostless', async () => {
-		const ctx = await contextFor('python');
+		using ctx = await contextFor('python');
 		expect(hostlessReason('_simple_statements', '_simple_statements', ctx)).toBe('hidden-kind');
 		expect(hostFor('python', '_simple_statements', ctx)).toBeNull();
 		expect(hostlessReason('return_statement', 'return_statement', ctx)).toBe('no-reparse-wrapper');
@@ -59,13 +62,11 @@ describe('a kind with no declared host is hosted through a parent that is', () =
 });
 
 async function expectStorageHosts(grammar: 'python' | 'rust' | 'typescript', display: string, cases: readonly (readonly [string, string])[]) {
-	const ctx = await contextFor(grammar);
-	const { Parser, lang } = await loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
+	using ctx = await contextFor(grammar);
 	const ids = new Set<number>();
 	for (const [source, kind] of cases) {
-		const original = parser.parse(source)!.rootNode.descendantsOfType(display)[0]!;
+		using tree = ctx.parser.parse(source);
+		const original = tree.root.descendantsOfType(display)[0]!;
 		ids.add(original.grammarId);
 		const hosted = wrapForReparse(original.text, kind, grammar, ctx.kindToSupertypes, {
 			root: ctx.root,
@@ -73,9 +74,9 @@ async function expectStorageHosts(grammar: 'python' | 'rust' | 'typescript', dis
 			adoptedVariantKinds: ctx.adoptedVariantKinds
 		});
 		expect(hosted).not.toBeNull();
-		const reparsed = parser.parse(hosted!.text)!;
-		expect(reparsed.rootNode.hasError).toBe(false);
-		const found = findReparsedNodeAtOffset(reparsed, original.grammarId, hosted!);
+		using reparsed = ctx.parser.parse(hosted!.text);
+		expect(reparsed.root.hasError).toBe(false);
+		const found = findReparsedNodeAtOffset(reparsed.root, original.grammarId, hosted!);
 		expect(found, `${kind} (${original.grammarId}/${original.typeId}): ${hosted!.text}`).not.toBeNull();
 		expect(found!.toString()).toBe(original.toString());
 	}
@@ -112,35 +113,29 @@ describe('the reparsed node is found by grammar id', () => {
 	}, 120_000);
 
 	it('python: the named yield and the yield keyword it wraps are told apart', async () => {
-		const { Parser, lang } = await loadLanguageForGrammar('python');
-		const parser = new Parser();
-		parser.setLanguage(lang);
-		const tree = parser.parse('yield\n')!;
-		const named = tree.rootNode.descendantsOfType('yield').find((n) => n.isNamed)!;
+		using parser = treeParser(await loadLanguageForGrammar('python'));
+		using tree = parser.parse('yield\n');
+		const named = tree.root.descendantsOfType('yield').find((n) => n.isNamed)!;
 		const keyword = named.child(0)!;
 		expect(keyword.isNamed).toBe(false);
 		const hosted = { text: 'yield\n', offset: 0 };
-		expect(findReparsedNodeAtOffset(tree, named.grammarId, hosted)?.isNamed).toBe(true);
-		expect(findReparsedNodeAtOffset(tree, keyword.grammarId, hosted)?.isNamed).toBe(false);
+		expect(findReparsedNodeAtOffset(tree.root, named.grammarId, hosted)?.isNamed).toBe(true);
+		expect(findReparsedNodeAtOffset(tree.root, keyword.grammarId, hosted)?.isNamed).toBe(false);
 	}, 120_000);
 
 	it('python: a node that starts at the line break before the hole is found', async () => {
-		const { Parser, lang } = await loadLanguageForGrammar('python');
-		const parser = new Parser();
-		parser.setLanguage(lang);
+		using parser = treeParser(await loadLanguageForGrammar('python'));
 		const text = 'match x:\n    case 1:\n        pass\n';
-		const tree = parser.parse(text)!;
-		const block = tree.rootNode.descendantsOfType('match_block')[0]!;
+		using tree = parser.parse(text);
+		const block = tree.root.descendantsOfType('match_block')[0]!;
 		const offset = text.indexOf('case');
 		expect(block.startIndex).toBeLessThan(offset);
-		expect(findReparsedNodeAtOffset(tree, block.grammarId, { text, offset })).not.toBeNull();
-		expect(findReparsedNodeAtOffset(tree, 'match_block', { text, offset })?.type).toBe('match_block');
+		expect(findReparsedNodeAtOffset(tree.root, block.grammarId, { text, offset })).not.toBeNull();
+		expect(findReparsedNodeAtOffset(tree.root, 'match_block', { text, offset })?.type).toBe('match_block');
 	}, 120_000);
 
 	it('python: a multi-line string keeps its inside when the render is indented into a block', async () => {
-		const { Parser, lang } = await loadLanguageForGrammar('python');
-		const parser = new Parser();
-		parser.setLanguage(lang);
+		using parser = treeParser(await loadLanguageForGrammar('python'));
 		const rendered = 'x = 1\nreturn f"""\n{y}\n  tail"""';
 		const parse = (text: string) => parser.parse(text);
 		expect(applyHost('def f():\n    $r', rendered).text).toBe('def f():\n    x = 1\n    return f"""\n    {y}\n      tail"""');

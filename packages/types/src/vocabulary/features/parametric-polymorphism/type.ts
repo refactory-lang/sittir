@@ -1,21 +1,12 @@
-import type { GrammarContext } from '../../context.ts';
-import type * as V from '../../index.ts';
+import type { GrammarMap } from '../../map.ts';
+import type { Under } from '../../utils.ts';
 export namespace Type {
-	export interface Abstract<G extends GrammarContext<G>> {
-		readonly typeParameters?: (
-			| V.Identifier.Metavariable<G>
-			| V.Declaration.TypeParameter<G>
-			| V.Declaration.TypeParameter.Lifetime<G>
-			| V.Declaration.TypeParameter.Value<G>
-		)[];
+	export interface Abstract<G extends GrammarMap, K extends Under<'type.abstract'> = 'type.abstract'> {
 	}
-	export interface Function<G extends GrammarContext<G>> {
-		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
-		// t only
+	export interface Function<G extends GrammarMap, K extends Under<'type.function'> = 'type.function'> {
 	}
 	export namespace Function {
-		export interface Constructor<G extends GrammarContext<G>> {
-			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+		export interface Constructor<G extends GrammarMap, K extends Under<'type.function.constructor'> = 'type.function.constructor'> {
 		}
 	}
 }

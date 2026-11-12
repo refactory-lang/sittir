@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import type { PortableRows } from '@sittir/types';
-import { rows as python } from '../../python/src/portable.ts';
-import { rows as rust } from '../../rust/src/portable.ts';
-import { rows as typescript } from '../../typescript/src/portable.ts';
+import { rows as python } from '../../python/src/portable/index.ts';
+import { rows as rust } from '../../rust/src/portable/index.ts';
+import { rows as typescript } from '../../typescript/src/portable/index.ts';
 
 const PLACED_CEILING = {
 	python: { within: 0, up: 0 },

@@ -1,12 +1,20 @@
-import type { GrammarContext } from '../../../../context.ts';
-import type { SubKindOf } from '../../../../utils.ts';
+import type { GrammarMap, Slot } from '../../../../map.ts';
+import type { SubKindOf, Under } from '../../../../utils.ts';
 import type * as V from '../../../../index.ts';
 export namespace Expression {
 	export namespace Cast {
-		export interface NonNull<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Cast<G>> {
+		export interface NonNull<G extends GrammarMap, K extends Under<'expression.cast.non_null'> = 'expression.cast.non_null'> extends SubKindOf<V.Expression.Cast<G, K>> {
 			// claimed by t
-			readonly $kind: 'expression.cast.non_null';
-			readonly expression: G['slots']['expression.cast.non_null']['expression'];
+			readonly $path: K;
+			readonly expression: Slot<
+				G,
+				K,
+				'expression',
+				| V.Declaration.Module<G>
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+			>;
 		}
 	}
 }

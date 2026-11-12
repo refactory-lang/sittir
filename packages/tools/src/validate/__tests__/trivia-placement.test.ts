@@ -1,6 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { computeTriviaPlacementCensus, runTriviaPlacement } from '../trivia-placement.ts';
 import { ORPHANS, PROBES } from './helpers/trivia-sources.ts';
+import { releaseTrackedEngines } from '../../../tests/helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('../../../tests/helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 

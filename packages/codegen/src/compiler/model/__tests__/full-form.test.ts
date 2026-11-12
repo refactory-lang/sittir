@@ -36,10 +36,15 @@ describe('full form stamp', () => {
 		expect(fullFormOf(rust, 'block_comment')).toEqual({ open: { texts: ['/*'] }, close: { texts: ['*/'] } });
 	}, COMPILE_TIMEOUT);
 
-	it('records a spelling choice as alternatives of its slot', async () => {
-		expect(fullFormOf(await nodeMapOf('python'), 'integer_hex')).toEqual({
-			open: { texts: ['0x', '0X'], slot: 'radix_prefix' },
+	it('records a spelling choice as alternatives of its slot, and whether the text alone decides which', async () => {
+		const python = await nodeMapOf('python');
+		expect(fullFormOf(python, 'integer_hex')).toEqual({
+			open: { texts: ['0x', '0X'], slot: 'radix_prefix', decided: true },
 			close: { texts: [''] }
+		});
+		expect(fullFormOf(python, 'string_end')).toEqual({
+			open: { texts: [''] },
+			close: { texts: ['"', "'", '"""', "'''", '`'], slot: 'quote', decided: false }
 		});
 	}, COMPILE_TIMEOUT);
 

@@ -1,67 +1,34 @@
 import { compileAnchoredPattern } from '../../types/runtime-shapes.ts';
+import { pieces } from '../../util/pattern-pieces.ts';
 
 const LITERAL_IN_CLASS = '+.*?(){}|$/';
 
 export function stripUselessEscapes(pattern: string): string {
 	let out = '';
-	let i = 0;
-	let inClass = false;
-	let classStart = 0;
-	while (i < pattern.length) {
-		const c = pattern[i];
-		if (!inClass) {
-			if (c === '\\' && i + 1 < pattern.length) {
-				out += c + pattern[i + 1];
-				i += 2;
-				continue;
-			}
-			out += c;
-			i++;
-			if (c === '[') {
-				inClass = true;
-				classStart = out.length;
-			}
-			continue;
-		}
-		if (c === ']') {
-			inClass = false;
-			out += c;
-			i++;
-			continue;
-		}
-		if (c === '\\' && i + 1 < pattern.length) {
-			const next = pattern[i + 1];
-			if (next === '[') {
-				out += '[';
-				i += 2;
-				continue;
-			}
-			if (next === '^' && out.length > classStart) {
-				out += '^';
-				i += 2;
-				continue;
-			}
-			if (next !== undefined && LITERAL_IN_CLASS.includes(next)) {
-				out += next;
-				i += 2;
-				continue;
-			}
-			if (next === '-' && pattern[i + 2] === ']') {
-				out += '-';
-				i += 2;
-				continue;
-			}
-			out += c + next;
-			i += 2;
-			continue;
-		}
-		out += c;
-		i++;
-	}
+	for (const piece of pieces(pattern)) out += piece.kind === 'class' ? classWithoutUselessEscapes(piece.text) : piece.text;
 	try {
 		new RegExp(out, 'u');
 	} catch {
 		return pattern;
+	}
+	return out;
+}
+
+function classWithoutUselessEscapes(text: string): string {
+	let out = '[';
+	for (let i = 1; i < text.length; i++) {
+		const c = text[i]!;
+		const next = text[i + 1];
+		if (c !== '\\' || next === undefined) {
+			out += c;
+			continue;
+		}
+		i += 1;
+		if (next === '[') out += '[';
+		else if (next === '^' && out.length > 1) out += '^';
+		else if (LITERAL_IN_CLASS.includes(next)) out += next;
+		else if (next === '-' && text[i + 1] === ']') out += '-';
+		else out += c + next;
 	}
 	return out;
 }

@@ -26,6 +26,7 @@ import { isPreference, type PreferencePlaceholder } from '../primitives/preferen
 import { isGroupPlaceholder } from '../primitives/group.ts';
 import { isFlattenPlaceholder, type FlattenPlaceholder } from '../primitives/flatten.ts';
 import { isRegexPlaceholder, type RegexPlaceholder } from '../primitives/regex.ts';
+import { sameUpToGroups } from '../../util/pattern-pieces.ts';
 import { isLeadPlaceholder, type LeadPlaceholder } from '../primitives/lead.ts';
 import { isNarrowPlaceholder, type NarrowPlaceholder } from '../primitives/narrow.ts';
 import { isRenamePlaceholder, type RenamePlaceholder } from '../primitives/rename.ts';
@@ -63,6 +64,7 @@ import {
 	wireQueueNarrow,
 	wireQueueRename,
 	wireRefuse,
+	wireWarn,
 	wireAliasTargetIssue,
 	wireSiteFlipIssue,
 	wireBindingEffectCount,
@@ -887,6 +889,16 @@ function refuseFlippedSite({ before, after }: AliasEdit, key: string): void {
 	});
 }
 
+function warnRewrittenPattern(was: string, now: string, key: string): void {
+	const owner = wireGetCurrentRuleKind() ?? '';
+	wireWarn({
+		code: 'regex-pattern-rewritten',
+		ownerKind: owner,
+		message: `edits: '${owner}' at '${key}': regex() rewrites the pattern /${was}/ as /${now}/, which changes more than its groups; tree-sitter lexes the new pattern`,
+		details: { kind: owner, path: key, was, now }
+	});
+}
+
 function refuseSameSite(member: RuntimeRule, key: string): void {
 	if (!wireIsApplyingEntries() || !wireIsInlineWrite(member)) return;
 	const owner = wireGetCurrentRuleKind() ?? '';
@@ -927,9 +939,9 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 		return withAnnotations(originalMember, { flattened: true });
 	}
 	if (isRegexPlaceholder(patch)) {
-		if ((originalMember as { type?: string }).type !== 'PATTERN') {
-			throw new Error(`regex(): the patched member is a '${(originalMember as { type?: string }).type}', not a pattern`);
-		}
+		const { type, value } = originalMember as { type?: string; value?: string };
+		if (type !== 'PATTERN') throw new Error(`regex(): the patched member is a '${type}', not a pattern`);
+		if (!sameUpToGroups(value ?? '', patch.source)) warnRewrittenPattern(value ?? '', patch.source, key);
 		return { ...originalMember, value: patch.source } as RuntimeRule;
 	}
 	if (isVariantPlaceholder(patch)) {

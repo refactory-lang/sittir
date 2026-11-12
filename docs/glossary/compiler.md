@@ -1140,23 +1140,6 @@ The classification left after every structural check: an all-text subtree is `'p
 /** Depth-1 leaf label for {@link describeArmShape}. */
 ```
 
-### `packages/codegen/src/compiler/collect-slots.ts::mergeByName`
-
-```text
-/** Merge same-named slots within one arm (collapse duplicate field positions). */
-```
-
-#### body
-
-```text
-// Positional/kind-derived name: never silently merge with anything else
-// sharing that name, even another unnamed slot — that IS a genuine
-// storageName collision (two structurally distinct positions), and
-// downstream diagnostics (the compound constructor's storagename-collision
-// check) must see both entries to catch it. Merging here would union
-// their values and erase the fact they were ever distinct.
-```
-
 ### `packages/codegen/src/compiler/collect-slots.ts::mergeChoiceArms`
 
 ```text
@@ -4622,25 +4605,6 @@ The normalized and simplified grammars carry the same map through unchanged, as 
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::RawGrammar::visibleExternals`
-
-```text
-/**
-	 * Hidden-external → sittir-side render body map. Populated by
-	 * `visibleExternals:` in the override layer. Unlike `renderAs`, these
-	 * bodies are NOT inlined at reference sites — every `SYMBOL` reference
-	 * to a configured hidden name is instead wrapped in a named visible
-	 * alias (both at wire-evaluation and sittir-evaluation time), so the
-	 * external scanner symbol materializes as a real CST-visible kind.
-	 * `link.ts` registers each body under the alias's VISIBLE name (hidden
-	 * name minus leading underscores) as a real top-level IR rule.
-	 *
-	 * Record keys are the HIDDEN external symbol names (e.g.
-	 * `_automatic_semicolon`); values are the sittir-side Rule bodies
-	 * (e.g. `{ type: 'STRING', value: '\n' }`).
-	 */
-```
-
 ### `packages/codegen/src/compiler/types.ts::RawGrammar::expectDiagnostics`
 
 ```text
@@ -7623,6 +7587,10 @@ regex is not literal text, naming the kind and the pattern source; its message n
 Records the blocking `token-interior-unstructurable` for a named part inside an optional group beside an
 unnamed pattern; its message names the resolving patch.
 
+### `packages/codegen/src/compiler/token-interior.ts::stampSpellings`
+
+Stamps each rule a spelling set covers with the spellings of its members.
+
 ### `packages/codegen/src/compiler/link.ts::collectDisplayUnions`
 
 ```text
@@ -7803,10 +7771,6 @@ The choice counterpart of `factorChoiceArms` for arms of different lengths: when
 
 Rebuilds a leaf from its input and its built form: the built form's fields win, and the input's nonterminal survives when it had one. Flatten uses it when a leaf is reconstructed.
 
-### `packages/codegen/src/compiler/collect-slots.ts::retargetAliasedLiteral`
-
-A literal that is itself the slot (a STRING stamped `nonterminal: true` with `aliasedTo`) reads as the alias's kind: its value takes the alias target as `resolvedKind` and `parseKind`, so the slot is named for the node the parser produces (`lazy`, `class_character`) rather than for the literal's own token. A literal that is an arm of a choice keeps its literal kind; the choice's union slot is built from the arms and is unchanged.
-
 ### `packages/codegen/src/compiler/generated-metadata.ts::foldedSymbols`
 
 The raw symbols a parser folds onto another public symbol: the entries of `ts_symbol_map` whose two sides differ. A token the grammar writes twice gets a second raw symbol that the parser reports under the first one's id. The fold census test pins each grammar's count.
@@ -7964,6 +7928,10 @@ How a rule is classified.
 ### `packages/codegen/src/compiler/types.ts::SimplifiedGrammar::fixedNameLiterals`
 
 The fixed literals a simplified grammar's names take.
+
+### `packages/codegen/src/compiler/types.ts::RawGrammar::spellings`
+
+The spelling groups the raw grammar declares, by kind and field.
 
 ### `packages/codegen/src/compiler/generate.ts::GeneratedFiles::tableFiles`
 

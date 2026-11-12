@@ -7,6 +7,9 @@ import {
 	GRAMMAR_TYPECHECK_SCRIPT,
 	NATIVE_LOADER,
 	NATIVE_TYPINGS,
+	NODE_ENGINES,
+	PORTABLE_MAP_FILE,
+	PORTABLE_TS6_TYPE_TESTS,
 	PORTABLE_TYPE_TESTS,
 	nativePlatformPackage
 } from '@sittir/codegen/grammars';
@@ -41,6 +44,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 					url: 'https://github.com/refactory-lang/sittir.git',
 					directory: `packages/${v.name}`
 				},
+				engines: { node: NODE_ENGINES },
 				files: ['dist', `native/${NATIVE_LOADER}`, `native/${NATIVE_TYPINGS}`],
 				type: 'module',
 				main: './dist/index.js',
@@ -75,7 +79,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 				extends: '../../tsconfig.json',
 				compilerOptions: { types: ['node'] },
 				include: ['src', 'tests'],
-				exclude: ['node_modules', 'dist', PORTABLE_TYPE_TESTS]
+				exclude: ['node_modules', 'dist', PORTABLE_TYPE_TESTS, PORTABLE_TS6_TYPE_TESTS]
 			})
 		},
 		{
@@ -95,7 +99,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 				},
 				references: [{ path: '../types/tsconfig.build.json' }, { path: '../common/tsconfig.build.json' }],
 				include: ['src'],
-				exclude: ['node_modules', 'dist', 'tests']
+				exclude: ['node_modules', 'dist', 'tests', `src/${PORTABLE_MAP_FILE}`]
 			})
 		},
 		{

@@ -52,7 +52,7 @@ export const triviaFacts = Object.freeze({
 		54, 129, 174, 179, 196, 226, 254, 278, 279, 280, 281, 282, 326, 363, 394, 407, 415, 439, 440, 446, 503
 	]),
 	whitespace: Object.freeze({
-		run: /^(?:(?:(?:[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
+		run: /^(?:(?:(?:[\x09-\x0D\x20\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
 		kindIdByText: Object.freeze({ '': 181, ' ': 182, '\t': 183, '\n': 184, '\n\n': 185, '\n\n\n': 186 })
 	})
 } satisfies TriviaFacts<TSKindId>);
@@ -527,10 +527,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['optionalChain', 1, '?.', '_optional_chain', 415],
 		['index', 2, undefined, '_index']
 	],
-	355: [
-		['function', 0, undefined, '_function'],
-		['arguments', 1, undefined, '_arguments']
-	],
+	355: [['arguments', 0, undefined, '_arguments']],
 	356: [
 		['function', 0, undefined, '_function'],
 		['typeArguments', 1, undefined, '_type_arguments']
@@ -2643,19 +2640,9 @@ export const structure: StructureTable = Object.freeze({
 	},
 	355: {
 		kind: 'type_query_call_expression',
-		required: [
-			['_function', 'function'],
-			['_arguments', 'arguments']
-		],
-		single: [
-			['_function', 'TypeQueryCallExpression.function'],
-			['_arguments', 'TypeQueryCallExpression.arguments']
-		],
-		nodeOnly: [
-			['_function', 'TypeQueryCallExpression.function', 'buildIdentifier(…)'],
-			['_arguments', 'TypeQueryCallExpression.arguments', 'a built Arguments', [283]]
-		],
-		config: ['function', 'arguments']
+		required: [['_arguments', 'arguments']],
+		single: [['_arguments', 'TypeQueryCallExpression.arguments']],
+		nodeOnly: [['_arguments', 'TypeQueryCallExpression.arguments', 'a built Arguments', [283]]]
 	},
 	356: {
 		kind: 'type_query_instantiation_expression',

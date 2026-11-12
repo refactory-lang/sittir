@@ -841,3 +841,75 @@ Whether a value is a `rename` placeholder.
 ### `packages/codegen/src/dsl/primitives/rename.ts::rename`
 
 A rename entry: `kind: { '.': rename(to) }` renames the kind to `to` in the layer it sits in (`verbs/rename.ts::applyRename`). It applies only at `.`, the kind itself.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::spellings`
+
+Builds a spelling choice from members and their rules. Each member's closure is its spellings, and a spelling that two members both spell throws. The choice is recorded so the field walk can find its groups.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::spellingFieldsOf`
+
+Collects each kind's spelling groups by the field they sit in, walking every body's rule tree. Returns undefined when no kind has spellings. Throws when a spelling choice sits in no field.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::SpellingFields`
+
+The spelling groups of each kind, by field: a kind's field name maps to the groups its spelling choice holds.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::SpellingGroup`
+
+One member of a spelling choice: the member, every spelling it admits, and its read-only, single-line, interpolating and escape settings.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::SpellingGroup::escape`
+
+The escape text for the group's spellings, when the choice gives one.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::SpellingGroup::interpolating`
+
+Whether the group's spellings interpolate.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::SpellingGroup::member`
+
+The member the group spells.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::SpellingGroup::readOnly`
+
+Whether the group's member is read-only.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::SpellingGroup::singleLine`
+
+Whether the group's spellings are confined to one line.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::SpellingGroup::spellings`
+
+Every spelling the group admits: the member first, then its case and order variants.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::SpellingOptions`
+
+The options a `spellings` call takes: the escape text its members share.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::SpellingOptions::escape`
+
+The escape text every member of the choice carries.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::SpellingRule`
+
+The rule of one spelling member: whether its spellings vary in case or in order, and its read-only, single-line and interpolating flags.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::SpellingRule::case`
+
+Whether the member's spellings include every case variant of its characters.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::SpellingRule::interpolating`
+
+Whether the member's text interpolates.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::SpellingRule::order`
+
+Whether the member's spellings include every ordering of its characters.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::SpellingRule::readOnly`
+
+Whether the member is read-only.
+
+### `packages/codegen/src/dsl/primitives/spellings.ts::SpellingRule::singleLine`
+
+Whether the member is confined to one line.

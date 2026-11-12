@@ -2,12 +2,13 @@ import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { sharedEngine } from '@sittir/common/testing';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../src/languages.ts';
 import { dogfoodContract } from '../../../examples/helpers.ts';
 
-const py = await createEngine(await languageByName('python'));
-const rs = await createEngine(await languageByName('rust'));
+const py = await sharedEngine(async () => createEngine(await languageByName('python')));
+const rs = await sharedEngine(async () => createEngine(await languageByName('rust')));
 
 function targetFile(name: string, source: string): string {
 	const path = join(mkdtempSync(join(tmpdir(), 'dogfood-')), name);

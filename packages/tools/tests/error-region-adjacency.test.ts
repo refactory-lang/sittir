@@ -1,14 +1,19 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
+import { sharedEngine } from '@sittir/common/testing';
 import { createEngine } from '@sittir/common';
 import { ERROR_KIND_ID } from '@sittir/common/error-kind';
 import { isErrorNode } from '@sittir/common/utils';
 import python from '../../python/src/index.ts';
 import rust from '../../rust/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
+import { releaseTrackedEngines } from './helpers/track-engines.ts';
 
-const py = await createEngine(python);
-const ts = await createEngine(typescript);
-const rs = await createEngine(rust);
+vi.mock('@sittir/common', async (importOriginal) => (await import('./helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
+
+const py = await sharedEngine(() => createEngine(python));
+const ts = await sharedEngine(() => createEngine(typescript));
+const rs = await sharedEngine(() => createEngine(rust));
 const storages = { arena: await createEngine(rust, { nodeStorage: 'arena' }), object: await createEngine(rust, { nodeStorage: 'object' }) };
 
 describe('an ERROR region keeps the source bytes beside it wherever its owner renders from its template', () => {

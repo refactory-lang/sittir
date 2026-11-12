@@ -4,7 +4,7 @@ import { FULL_PIPELINE_TIMEOUT } from '../../../codegen/src/__tests__/helpers/ti
 import { Query } from 'web-tree-sitter';
 import { bindingPatterns } from '@sittir/codegen/bindings';
 import { deriveVocabulary } from '../../src/inventory/index.ts';
-import { loadLanguageForGrammar } from '../../src/validate/common.ts';
+import { loadLanguageForGrammar, treeParser } from '../../src/validate/common.ts';
 
 const forms = [
 	{
@@ -53,24 +53,20 @@ for (const form of forms) {
 					(p) => p.source.includes('@extends') && p.references.some((r) => r.kind === 'node' && r.name === form.owner)
 				);
 				expect(patterns).toHaveLength(1);
-				const { Parser, lang } = await loadLanguageForGrammar(form.grammar);
-				const parser = new Parser();
-				parser.setLanguage(lang);
-				const tree = parser.parse(source);
-				if (tree === null) throw new Error(`cannot parse ${source}`);
-				const query = new Query(lang, patterns[0]!.source);
+				const language = await loadLanguageForGrammar(form.grammar);
+				using parser = treeParser(language);
+				using tree = parser.parse(source);
+				const query = new Query(language.language, patterns[0]!.source);
 				try {
-					expect(tree.rootNode.hasError).toBe(false);
+					expect(tree.root.hasError).toBe(false);
 					expect(
 						query
-							.captures(tree.rootNode)
+							.captures(tree.root)
 							.filter((c) => c.name === 'extends')
 							.map((c) => c.node.text)
 					).toEqual(expected);
 				} finally {
 					query.delete();
-					tree.delete();
-					parser.delete();
 				}
 			});
 		}

@@ -974,7 +974,7 @@ describe('Assemble — assemble()', () => {
 
 describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 	function makeIdTables(kindIds: Record<string, GeneratedIdEntry>): GeneratedIdTables {
-		return { fieldIds: new Map(), folds: new Map(), kindIds, sourceArtifact: 'test' };
+		return { fieldIds: new Map(), folds: new Map(), kindIds, sourceArtifact: 'test', parser: null };
 	}
 
 	describe('provenance', () => {

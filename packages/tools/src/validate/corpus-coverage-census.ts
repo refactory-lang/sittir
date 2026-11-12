@@ -16,7 +16,7 @@
  */
 
 import { assertGrammar, stableGrammars } from '@sittir/codegen/grammars';
-import { loadCorpusEntries, loadLanguageForGrammar, collectKinds, type TSTree } from './common.ts';
+import { loadCorpusEntries, loadLanguageForGrammar, collectKinds, treeParser } from './common.ts';
 import { deriveRuleKinds } from './render-bodies.ts';
 
 export interface CorpusCoverageCensus {
@@ -28,16 +28,14 @@ export interface CorpusCoverageCensus {
 }
 
 export async function computeCorpusCoverageCensus(grammar: string): Promise<CorpusCoverageCensus> {
-	const { Parser, lang } = await loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
+	using parser = treeParser(await loadLanguageForGrammar(grammar));
 
 	const declaredKinds = deriveRuleKinds(grammar);
 	const exercisedKinds = new Set<string>();
 	for (const entry of loadCorpusEntries(grammar)) {
-		const tree = parser.parse(entry.source) as TSTree;
-		if (tree.rootNode.hasError) continue;
-		for (const kind of collectKinds(tree.rootNode)) exercisedKinds.add(kind);
+		using tree = parser.parse(entry.source);
+		if (tree.root.hasError) continue;
+		for (const kind of collectKinds(tree.root)) exercisedKinds.add(kind);
 	}
 
 	const zeroExposureKinds = [...declaredKinds].filter((k) => !exercisedKinds.has(k)).sort();

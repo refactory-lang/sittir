@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import type { TypescriptAPI } from '@sittir/typescript';
 import { readFileSync } from 'node:fs';
@@ -6,6 +6,10 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine } from '@sittir/common';
 import { GENERATED_REBUILDS } from '../../src/emit/dogfood-targets.ts';
 import { languageByName } from '../../src/languages.ts';
+import { releaseTrackedEngines } from '../helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('../helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 
@@ -41,7 +45,7 @@ describe('read then render is byte-exact', () => {
 	for (const [grammar, file] of READ_CASES) {
 		it(`${grammar}: a shallow and a deep read of ${file} both render its bytes`, async () => {
 			const source = readFileSync(ROOT + file, 'utf8');
-			const engine = await createEngine(await languageByName(grammar));
+			using engine = await createEngine(await languageByName(grammar));
 			const read = (deep: boolean) => (engine.parse(source, { depth: deep ? Infinity : 1 }) as unknown as { $render(): string }).$render();
 			expect(read(false)).toBe(source);
 			expect(read(true)).toBe(source);

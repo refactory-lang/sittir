@@ -7,4 +7,4 @@
 // (packages/regex/src/backend.ts) compares it against the TS-side copy to
 // detect a native binary built from older generated code.
 
-pub const RENDER_MODULE_HASH: &str = "d91564cd8b227563ab793ceb3aa11d29a11653fc51ade0af3406a18681f656e0";
+pub const RENDER_MODULE_HASH: &str = "5ed849afdb13ccc3d2fabdf7406574ec1ec573cfe0b8d2fee1af0288259bc0f7";

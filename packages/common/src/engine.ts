@@ -1,4 +1,3 @@
-import { writeFileSync } from 'node:fs';
 import type {
 	AnyUntypedNode,
 	ByteSpan,
@@ -19,7 +18,7 @@ import { mintTreeToken, registerTree } from './tree-token.ts';
 import type { RecordPosition } from './handle.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
-import { readStub, recordOf } from './record-view.ts';
+import { leafData, readStub, recordOf } from './record-view.ts';
 import { readOwnEntries, readOwnUnits, type BuiltRecords, type WritableWords } from './built-arena.ts';
 import { builtRefOf, handleArenaOf } from './built-ref.ts';
 import { nodeStorageOf } from './engine-scope.ts';
@@ -35,7 +34,13 @@ export interface RenderOptions<O extends object = RenderOptionValues> {
 	readonly options?: O;
 }
 
-export function createRenderHandle(renderText: () => string, saveImpl?: (path: string) => boolean): Rendered {
+export type RenderSaver = (path: string, create: boolean) => boolean;
+
+export type TextWriter = (path: string, text: string, create: boolean) => boolean;
+
+const savers = new WeakMap<Rendered, RenderSaver>();
+
+export function createRenderHandle(renderText: () => string, save: RenderSaver, writeText: TextWriter, release?: () => void): Rendered {
 	let cached: string | undefined;
 	let disposed = false;
 	function live(): void {
@@ -46,11 +51,13 @@ export function createRenderHandle(renderText: () => string, saveImpl?: (path: s
 		if (cached === undefined) cached = renderText();
 		return cached;
 	}
-	return {
+	const saver: RenderSaver = (path, create) => {
+		live();
+		return cached === undefined ? save(path, create) : writeText(path, cached, create);
+	};
+	const rendered: Rendered = {
 		save(path: string): void {
-			live();
-			if (saveImpl?.(path) === true) return;
-			writeFileSync(path, getText(), 'utf8');
+			saver(path, false);
 		},
 		toString(): string {
 			return getText();
@@ -61,10 +68,20 @@ export function createRenderHandle(renderText: () => string, saveImpl?: (path: s
 			return text;
 		},
 		[Symbol.dispose](): void {
+			if (disposed) return;
 			disposed = true;
 			cached = undefined;
+			release?.();
 		}
 	};
+	savers.set(rendered, saver);
+	return rendered;
+}
+
+export function saverOf(rendered: Rendered): RenderSaver {
+	const saver = savers.get(rendered);
+	if (saver === undefined) throw new Error('saverOf: not a render an engine returned');
+	return saver;
 }
 
 function renderTreeOf(node: object): number | undefined {
@@ -214,6 +231,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	/** The address of the record of the node at `index`, read `depth` levels down, `null` for a node with none. Present when the addon carries the record codec. */
 	readRecord?(treeId: number, index: number, depth?: number): number | null;
 	readRecordStub?(treeId: number, index: number, depth?: number): number[] | null;
+	readLeaf?(treeId: number, index: number): number[] | null;
 	/** Materializes parsed records to `depth` (default one, Infinity for all), including children of cached parents. Returns only an address; chunk copies are requested separately. Present when the addon carries the record codec. */
 	hydrateRecord?(treeId: number, index: number, depth?: number): number | null;
 	/** Chunk `n` of the tree's arena over its native memory, every word of it, with no copy; disposing the tree detaches it. Present when the addon carries the record codec. */
@@ -246,6 +264,22 @@ export interface NativeEngineLike<TNode = unknown> {
 		trailing: boolean,
 		options?: object
 	): string;
+	/** {@link renderRecord}'s text written to `path`, answering whether it wrote. Present when the addon carries the record codec. */
+	renderRecordToFile?(treeId: number, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object): boolean;
+	/** {@link renderBuilt}'s text written to `path`, answering whether it wrote. Present when the addon carries the record codec. */
+	renderBuiltToFile?(owner: object, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, treeId?: number, options?: object): boolean;
+	/** {@link renderBuiltLeaf}'s text written to `path`, answering whether it wrote. Present when the addon carries the record codec. */
+	renderBuiltLeafToFile?(
+		owner: object,
+		kind: number,
+		entry: number,
+		sides: object | null,
+		leading: boolean,
+		trailing: boolean,
+		path: string,
+		create: boolean,
+		options?: object
+	): boolean;
 	builtTriviaSide?(address: number, side: TriviaSideName): unknown[] | null;
 	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[]): void;
 	builtUnitSides?(address: number): unknown[];
@@ -302,7 +336,10 @@ export interface NativeEngineLike<TNode = unknown> {
 	): string;
 	planHolds(addresses: string, plan: string): boolean[];
 	render(node: TNode, treeId?: number, options?: object): string;
-	renderToFile?(node: TNode, path: string, treeId?: number, options?: object): void;
+	/** {@link render}'s text written to `path`: a new file when `create`, refusing a file at the path, and otherwise a replacement that leaves a file already holding the text untouched. Answers whether it wrote. */
+	renderToFile(node: TNode, path: string, create: boolean, treeId?: number, options?: object): boolean;
+	/** `text` written to `path` as {@link renderToFile} writes a render's text, answering whether it wrote. */
+	writeText(path: string, text: string, create: boolean): boolean;
 	/** The binary's compile profile (`debug` | `release`); absent on a binary that predates the getter. */
 	readonly buildProfile?: string;
 	dispose(): void;
@@ -333,6 +370,7 @@ const TREE_FUNCTIONS = [
 	'text',
 	'readRecord',
 	'readRecordStub',
+	'readLeaf',
 	'hydrateRecord',
 	'chunk',
 	'readCell',
@@ -344,15 +382,19 @@ const TREE_FUNCTIONS = [
 	'backerParity',
 	'descendants',
 	'planHolds',
-	'externalBuffers'
+	'externalBuffers',
+	'writeText'
 ] as const satisfies readonly (keyof NativeEngineLike)[];
 
 const ENGINE_FUNCTIONS = [
 	'render',
 	'renderToFile',
 	'renderRecord',
+	'renderRecordToFile',
 	'renderBuilt',
+	'renderBuiltToFile',
 	'renderBuiltLeaf',
+	'renderBuiltLeafToFile',
 	'builtWords',
 	'builtBytes',
 	'builtBump',
@@ -489,6 +531,7 @@ export interface SittirEngine<
 > extends RenderEngine<O, IndentChar> {
 	readonly diagnostics: NativeEngineDiagnostics<TRoot>;
 	readonly builtRecords?: BuiltRecords;
+	writeText(path: string, text: string, create: boolean): boolean;
 }
 
 export type { ParsedRoot };
@@ -517,8 +560,8 @@ const treeDisposalRegistry = new FinalizationRegistry<{
 }>(({ release, treeId }) => release(treeId));
 
 function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, format: CellFormat, readObjectAt: (index: number, depth: number) => TNode): RecordReader {
-	const { readRecord, readRecordStub, readCell, chunk, renderRecord, coordinate } = engine;
-	if (readRecord === undefined || readRecordStub === undefined || readCell === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
+	const { readRecord, readRecordStub, readLeaf, readCell, chunk, renderRecord, coordinate } = engine;
+	if (readRecord === undefined || readRecordStub === undefined || readLeaf === undefined || readCell === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
 		throw new Error(ARENA_FEATURE_REFUSED);
 	}
 	const chunks: ChunkWords[] = [];
@@ -527,6 +570,12 @@ function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, fo
 		format,
 		record: (at, depth) => readRecord.call(engine, treeId, at, depth) ?? undefined,
 		stub: (index, depth) => readRecordStub.call(engine, treeId, index, depth) ?? undefined,
+		leaf(index) {
+			const leaf = readLeaf.call(engine, treeId, index);
+			if (leaf === null) return undefined;
+			if (leaf.length === 1) return { form: 'unit', kind: leaf[0]!, row: index };
+			return { form: 'parsedLeaf', kind: leaf[0]!, span: { start: leaf[1]!, end: leaf[2]! }, row: index };
+		},
 		exported: (address) => chunks[chunkOf(address, format)],
 		cell: (holder, word, item, depth) => readCell.call(engine, treeId, holder, word, item, depth),
 		hydrate(index, depth) {
@@ -620,12 +669,20 @@ export function createNativeEngine<
 					? readObjectAt
 					: (index: number, depth: number): TNode => {
 							const facts = records.stub(index, depth);
-							if (facts === undefined) return readObjectAt(index, depth);
-							const stub = readStub(tree, facts);
-							holdReadTree(stub, liveToken);
-							return stub as TNode;
+							if (facts !== undefined) {
+								const stub = readStub(tree, facts);
+								holdReadTree(stub, liveToken);
+								return stub as TNode;
+							}
+							const leaf = records.leaf(index);
+							if (leaf === undefined) return readObjectAt(index, depth);
+							if (leaf.form === 'unit') return leaf.kind as TNode;
+							const node = leafData(tree, leaf.kind, leaf.span, leaf.row);
+							holdReadTree(node, liveToken);
+							return node as TNode;
 						};
 			const roots = new Map<number, unknown>();
+			const errors = Object.freeze(parsed.errors);
 			const tree: TreeHandle = {
 				id: parsed.treeId,
 				token: liveToken,
@@ -635,14 +692,13 @@ export function createNativeEngine<
 					if (index !== 0) return readAt(index, depth);
 					let cached = roots.get(depth);
 					if (cached === undefined) {
-						cached = Object.assign(readObject(readAt(0, depth), 'the root'), {
-							$errors: Object.freeze(parsed.errors)
-						});
+						cached = Object.assign(readObject(readAt(0, depth), 'the root'), { $errors: errors });
 						roots.set(depth, cached);
 					}
 					return cached;
 				},
 				options: parsed.options,
+				errors,
 				snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
 				triviaSide: (index, side) => readOwnEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
 				writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
@@ -672,24 +728,37 @@ export function createNativeEngine<
 			return tree;
 		};
 
+		const writeText: TextWriter = (path, text, create) => engine.writeText(path, text, create);
+
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
 			const holdsTrees = (): unknown => node;
 			const built = typeof node === 'number' ? undefined : builtRefOf(node);
 			if (built !== undefined) {
 				const changed = rootEdges(node as object);
-				const { renderBuilt, renderBuiltLeaf } = engine;
-				if (renderBuilt === undefined || renderBuiltLeaf === undefined) throw new Error(ARENA_FEATURE_REFUSED);
+				const { renderBuilt, renderBuiltLeaf, renderBuiltToFile, renderBuiltLeafToFile } = engine;
+				if (renderBuilt === undefined || renderBuiltLeaf === undefined || renderBuiltToFile === undefined || renderBuiltLeafToFile === undefined)
+					throw new Error(ARENA_FEATURE_REFUSED);
 				const at = built.at;
 				if (at !== undefined) {
-					return createRenderHandle(() => {
+					const settled = (): number => {
 						built.arena.refuseRender(at);
 						built.arena.settle();
-						return renderBuilt.call(engine, built.arena.owner, at, changed.leading, changed.trailing, renderTreeOf(node as object), perCall);
-					});
+						return at;
+					};
+					return createRenderHandle(
+						() => renderBuilt.call(engine, built.arena.owner, settled(), changed.leading, changed.trailing, renderTreeOf(node as object), perCall),
+						(path, create) => renderBuiltToFile.call(engine, built.arena.owner, settled(), changed.leading, changed.trailing, path, create, renderTreeOf(node as object), perCall),
+						writeText
+					);
 				}
 				const kind = (node as AnyUntypedNode).$type as number;
-				return createRenderHandle(() => renderBuiltLeaf.call(engine, built.arena.owner, kind, built.arena.placeEntry(node as object, kind, built.text).at, leafWireSides(node as object) ?? null, changed.leading, changed.trailing, perCall));
+				const entry = (): number => built.arena.placeEntry(node as object, kind, built.text).at;
+				return createRenderHandle(
+					() => renderBuiltLeaf.call(engine, built.arena.owner, kind, entry(), leafWireSides(node as object) ?? null, changed.leading, changed.trailing, perCall),
+					(path, create) => renderBuiltLeafToFile.call(engine, built.arena.owner, kind, entry(), leafWireSides(node as object) ?? null, changed.leading, changed.trailing, path, create, perCall),
+					writeText
+				);
 			}
 			const record = typeof node === 'number' ? undefined : recordOf(node);
 			if (record !== undefined) {
@@ -698,13 +767,20 @@ export function createNativeEngine<
 				const treeId = tree.id;
 				if (tree.records === undefined || treeId === undefined)
 					throw new Error('a record view renders through the tree it was read from, which is gone');
-				const renderRecord = engine.renderRecord;
-				if (renderRecord === undefined)
+				const { renderRecord, renderRecordToFile } = engine;
+				if (renderRecord === undefined || renderRecordToFile === undefined)
 					throw new Error(ARENA_FEATURE_REFUSED);
-				return createRenderHandle(() => {
-					holdsTrees();
-					return renderRecord.call(engine, treeId, record, changed.leading, changed.trailing, perCall);
-				});
+				return createRenderHandle(
+					() => {
+						holdsTrees();
+						return renderRecord.call(engine, treeId, record, changed.leading, changed.trailing, perCall);
+					},
+					(path, create) => {
+						holdsTrees();
+						return renderRecordToFile.call(engine, treeId, record, changed.leading, changed.trailing, path, create, perCall);
+					},
+					writeText
+				);
 			}
 			const data = (typeof node === 'number' ? node : toNodeData(node, kindView)) as TNode;
 			const treeId = typeof node === 'number' ? undefined : renderTreeOf(node);
@@ -713,14 +789,11 @@ export function createNativeEngine<
 					holdsTrees();
 					return engine.render(data, treeId, perCall);
 				},
-				(path) => {
+				(path, create) => {
 					holdsTrees();
-					if (engine.renderToFile) {
-						engine.renderToFile(data, path, treeId, perCall);
-						return true;
-					}
-					return false;
-				}
+					return engine.renderToFile(data, path, create, treeId, perCall);
+				},
+				writeText
 			);
 		}
 
@@ -730,6 +803,8 @@ export function createNativeEngine<
 				render(node, opts) {
 					return renderNativeNode(node, opts);
 				},
+
+				writeText,
 
 				release(node) {
 					const arena = handleArenaOf(node);
@@ -815,6 +890,9 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 		},
 		buildProfile: engine.diagnostics.buildProfile,
 		builtMemory: engine.diagnostics.builtMemory,
+		writeText(path, text, create) {
+			return engine.writeText(path, text, create);
+		},
 		release(node) {
 			engine.release(node);
 		},

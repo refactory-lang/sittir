@@ -1732,3 +1732,23 @@ The `REPEAT` tag that identifies a zero-or-more repeat in the discriminated unio
 ### `packages/codegen/src/types/rule.ts::TokenRule::immediate`
 
 Whether the token must match with no extras before it. Required in the link phase and optional in the evaluate phase.
+
+### `packages/codegen/src/types/rule.ts::StringRule::canonical`
+
+The canonical spelling of the string, when it differs from its value.
+
+### `packages/codegen/src/types/rule.ts::StringRule::escape`
+
+The escape text of the string, when it has one.
+
+### `packages/codegen/src/types/rule.ts::StringRule::interpolating`
+
+`true` when the string's text interpolates rather than being literal.
+
+### `packages/codegen/src/types/rule.ts::StringRule::readOnly`
+
+`true` when the string is read but never built.
+
+### `packages/codegen/src/types/rule.ts::StringRule::singleLine`
+
+`true` when the string is confined to one line.

@@ -1,60 +1,17 @@
-import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
+import type { GrammarMap, Slot } from './map.ts';
+import type { SubKindOf, Under } from './utils.ts';
 import type * as V from './index.ts';
-export interface Comment<G extends GrammarContext<G>> {
-	readonly $kind: 'comment';
-	readonly content?: G['slots']['comment']['content'];
+export interface Comment<G extends GrammarMap, K extends Under<'comment'> = 'comment'> {
+	readonly $path: K;
+	readonly content?: Slot<G, K, 'content', unknown>;
 	// prt only
 }
 
 export namespace Comment {
-	export interface Block<G extends GrammarContext<G>> extends SubKindOf<V.Comment<G>> {
-		// claimed by rt
-		readonly $kind: 'comment.block';
-		readonly content?: G['slots']['comment.block']['content'];
-		// r only
-	}
-	export namespace Block {
-		export interface Doc<G extends GrammarContext<G>> extends SubKindOf<V.Comment.Block<G>> {
-			// claimed by rt
-			readonly $kind: 'comment.block.doc';
-			readonly content?: G['slots']['comment.block.doc']['content'];
-			// r only
-		}
-		export namespace Doc {
-			export interface Inner<G extends GrammarContext<G>> extends SubKindOf<V.Comment.Block.Doc<G>> {
-				// claimed by r
-				readonly $kind: 'comment.block.doc.inner';
-				readonly content?: G['slots']['comment.block.doc.inner']['content'];
-			}
-		}
-	}
-	export interface Html<G extends GrammarContext<G>> extends SubKindOf<V.Comment<G>> {
-		// claimed by t
-		readonly $kind: 'comment.html';
-	}
-	export interface Line<G extends GrammarContext<G>> extends SubKindOf<V.Comment<G>> {
+	export interface Line<G extends GrammarMap, K extends Under<'comment.line'> = 'comment.line'> extends SubKindOf<V.Comment<G, K>> {
 		// claimed by prt
-		readonly $kind: 'comment.line';
-		readonly content: G['slots']['comment.line']['content'];
+		readonly $path: K;
+		readonly content: Slot<G, K, 'content', V.Comment.Text<G> | string>;
 		// pr only
-	}
-	export namespace Line {
-		export interface Doc<G extends GrammarContext<G>> extends SubKindOf<V.Comment.Line<G>> {
-			// claimed by r
-			readonly $kind: 'comment.line.doc';
-			readonly content: G['slots']['comment.line.doc']['content'];
-		}
-		export namespace Doc {
-			export interface Inner<G extends GrammarContext<G>> extends SubKindOf<V.Comment.Line.Doc<G>> {
-				// claimed by r
-				readonly $kind: 'comment.line.doc.inner';
-				readonly content: G['slots']['comment.line.doc.inner']['content'];
-			}
-		}
-	}
-	export interface Text<G extends GrammarContext<G>> extends SubKindOf<V.Comment<G>> {
-		// claimed by r
-		readonly $kind: 'comment.text';
 	}
 }

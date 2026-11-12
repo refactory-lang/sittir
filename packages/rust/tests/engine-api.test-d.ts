@@ -1,4 +1,4 @@
-import type { Engine, Types } from '@sittir/types';
+import type { Engine, Pending, Types } from '@sittir/types';
 import type { FunctionItem, RustAPI } from '@sittir/rust';
 import type { SourceFileTree } from '../src/wrap.ts';
 
@@ -54,3 +54,18 @@ void rust.createEngine({ render: { layout: { indent: '' } } });
 void rust.createEngine({ render: { layout: { indent: '\t' }, indnet: '\t' } });
 // @ts-expect-error a mistyped value
 void rust.createEngine({ render: { layout: { indent: 4 } } });
+
+export const writesParsed: Pending = rs.write('a.rs', rs.parse('fn f() {}\n'));
+export const writesBuilt: Pending = rs.write('a.rs', rs.build.sourceFile({}));
+export const createsBuilt: Pending = rs.create('a.rs', (build) => build.sourceFile({}));
+export const createsParsed: Pending = rs.create('a.rs', () => rs.parse('fn f() {}\n'));
+const parsedRoot = rs.parse('fn f() {}\n');
+export const writesEdited: Pending = rs.write('a.rs', parsedRoot.$with.statements(...parsedRoot.statements()));
+export const createsEdited: Pending = rs.create('a.rs', () => parsedRoot.$with.statements(...parsedRoot.statements()));
+export const createsBuiltEdited: Pending = rs.create('a.rs', (build) => build.sourceFile({}).$with.statements());
+// @ts-expect-error an edited node that isn't the root kind
+void rs.write('a.rs', rs.build.expressionStatement.withSemi(rs.build.identifier('a')).$with.expression(rs.build.identifier('b')));
+// @ts-expect-error write takes the grammar's root kind, parsed or built, not any node
+void rs.write('a.rs', rs.build.identifier('a'));
+// @ts-expect-error create's builder returns the grammar's root kind
+void rs.create('a.rs', (build) => build.identifier('a'));

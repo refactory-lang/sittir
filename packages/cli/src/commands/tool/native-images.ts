@@ -20,7 +20,7 @@ export const nativeImages: CommandModule = {
 			.option('--stamp', 'Report the engine stamp the image holds; fails, naming the image, unless it holds exactly one')
 			.addHelpText(
 				'after',
-				"\nWith none of the options, the defined and imported lists hold every symbol. llvm-nm and llvm-readobj come from $LLVM_NM and $LLVM_READOBJ, then the pinned Rust toolchain's llvm-tools."
+				"\nWith none of the options, the defined and imported lists hold every symbol. llvm-nm and llvm-readobj come from $LLVM_NM and $LLVM_READOBJ, then the pinned Rust toolchain's llvm-tools, then xcrun on macOS."
 			)
 			.action(async (images: string[], opts: { defined?: string; imported?: string; boundAtLoad?: string; stamp?: boolean; mapped?: string }, command: Command) => {
 				if ((opts.mapped === undefined) === (images.length === 0)) command.error('native-images takes image files or --mapped <script>, not both or neither');

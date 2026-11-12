@@ -1,10 +1,18 @@
-import type { GrammarContext } from '../../context.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Statement {
-	export interface Assert<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
+	export interface Assert<G extends GrammarMap, K extends Under<'statement.assert'> = 'statement.assert'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by p
-		readonly $kind: 'statement.assert';
-		readonly expressions: G['slots']['statement.assert']['expressions'][];
+		readonly $path: K;
+		readonly expressions: Slot<
+			G,
+			K,
+			'expressions',
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+		>[];
 	}
 }

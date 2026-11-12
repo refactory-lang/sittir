@@ -99,10 +99,13 @@ describe('the portable read', () => {
 		expect(roundTrip(source)).toBe(source);
 	});
 
-	it('reads an integer through its digit separators, and carries one whose value it cannot read', () => {
+	it('reads an integer through its digit separators wherever rust admits them, and its suffix beside its value', () => {
 		const read = readFirst('let x = 1_000 + 1_000u32;');
-		expect(read.value).toMatchObject({ left: { $path: 'literal.number.integer', $value: 1000 }, right: { $type: rust.kinds.IntegerLiteralDecimal } });
-		expect(roundTrip('let x = 1_000 + 1_000u32;')).toBe('let x = 1000 + 1_000u32;\n');
+		expect(read.value).toMatchObject({ left: { $path: 'literal.number.integer', $value: 1000 }, right: { $path: 'literal.number.integer', $value: 1000, suffix: 'u32' } });
+		expect(roundTrip('let x = 1_000 + 1_000u32;')).toBe('let x = 1000 + 1000u32;\n');
+		expect(readFirst('let x = 1_;').value).toEqual({ $path: 'literal.number.integer', $value: 1 });
+		expect(readFirst('let x = 1__0;').value).toEqual({ $path: 'literal.number.integer', $value: 10 });
+		expect(readFirst('let x = 0x_ff;').value).toEqual({ $path: 'literal.number.integer.hex', $value: 255 });
 	});
 
 	it('builds back a method call, and an enum whose variants take a tuple or a brace list', () => {
@@ -157,6 +160,30 @@ describe('the portable read', () => {
 		]);
 		expect(roundTrip('f(#[cfg(x)] a, b);')).toBe('f(#[cfg(x)] a, b);\n');
 		expect(roundTrip('f(a, b);')).toBe('f(a, b);\n');
+	});
+
+	it('reads an array or tuple element with attributes as an attributed element, one without as its expression, and builds both back', () => {
+		const attributed = { $path: 'element.attributed', attributes: [expect.objectContaining({ $path: 'attribute' })], value: expect.anything() };
+		const cases = [
+			['fn f() {\n    let a = [#[cfg(x)] 1, 2];\n}\n', 'expression.collection.list', [attributed, expect.anything()]],
+			['fn f() {\n    let a = [1, #[cfg(x)] 2];\n}\n', 'expression.collection.list', [expect.anything(), attributed]],
+			['fn f() {\n    let a = (#[cfg(x)] 1, 2);\n}\n', 'expression.collection.tuple', [attributed, expect.anything()]],
+			['fn f() {\n    let a = (1, #[cfg(x)] 2);\n}\n', 'expression.collection.tuple', [expect.anything(), attributed]]
+		] as const;
+		for (const [source, path, elements] of cases) {
+			const carries: unknown[] = [];
+			const read = runtime.read(runtime.engine.parse(source), (_, carry) => carries.push(carry)) as Read;
+			const body = (read.statements as readonly Read[])[0]!.body as Read;
+			const value = (body.statements as readonly Read[])[0]!.value as Read;
+			expect(value).toEqual({ $path: path, elements });
+			expect((value.elements as readonly unknown[]).filter((element) => (element as Read | undefined)?.$path === 'element.attributed')).toHaveLength(1);
+			expect(carries).toEqual([]);
+			expect(roundTrip(source)).toBe(source);
+		}
+		for (const source of ['fn f() {\n    let a = [1, 2];\n}\n', 'fn f() {\n    let a = (1, 2);\n}\n', 'fn f() {\n    let a = [1; 3];\n}\n'])
+			expect(roundTrip(source)).toBe(source);
+		for (const source of ['fn f() { let a = [#[a]]; }\n', 'fn f() { let a = [#[a] 1; 3]; }\n'])
+			expect([...runtime.engine.parse(source).$errors].length).toBeGreaterThan(0);
 	});
 
 	it('reads one extern as one value and builds it back, refuses to build a list of them, and keeps a function stating two whole', () => {

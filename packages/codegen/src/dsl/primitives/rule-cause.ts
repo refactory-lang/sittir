@@ -1,4 +1,4 @@
-export const WITNESSED_CAUSES = ['accepts-other-kind', 'semantic-gap', 'rejects-valid-syntax', 'accepts-invalid-syntax', 'ruled-narrowing'] as const;
+export const WITNESSED_CAUSES = ['accepts-other-kind', 'semantic-gap', 'rejects-valid-syntax', 'misreads-valid-syntax', 'accepts-invalid-syntax', 'ruled-narrowing'] as const;
 
 export type WitnessedCause = (typeof WITNESSED_CAUSES)[number];
 
@@ -16,6 +16,10 @@ export interface SemanticGapWitness extends OtherKindWitness {
 	readonly meaning: string;
 }
 
+export interface MisreadWitness extends OtherKindWitness {
+	readonly read: string;
+}
+
 export interface InvalidSyntaxWitness extends OtherKindWitness {
 	readonly production: string;
 }
@@ -30,6 +34,7 @@ interface CauseWitnesses {
 	readonly 'accepts-other-kind': OtherKindWitness;
 	readonly 'semantic-gap': SemanticGapWitness;
 	readonly 'rejects-valid-syntax': OtherKindWitness;
+	readonly 'misreads-valid-syntax': MisreadWitness;
 	readonly 'accepts-invalid-syntax': InvalidSyntaxWitness;
 	readonly 'ruled-narrowing': RuledNarrowingWitness;
 }

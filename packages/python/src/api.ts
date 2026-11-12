@@ -5,7 +5,7 @@ import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import type { ir as looseTable } from './ir.js';
 import type { ir as strictTable } from './ir-strict.js';
 import { isMember, membersOf, type is } from './is.js';
-import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from './portable.js';
+import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from './portable/index.js';
 import type { TSKindId } from './kinds.js';
 import type { FixedTextKindId, TypeKeyOf, NamespaceMap, PythonNode, PythonTypeMap } from './types.js';
 import type { IndentChar, Options } from './options.js';
@@ -40,6 +40,7 @@ export const hooks: LanguageHooks<PythonAPI> = Object.freeze<LanguageHooks<Pytho
 	}),
 	records: () => import('./factories/records.js'),
 	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
+	rootKinds: Object.freeze([128]),
 	querySlots,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),
@@ -47,7 +48,7 @@ export const hooks: LanguageHooks<PythonAPI> = Object.freeze<LanguageHooks<Pytho
 	wrap: (root, tree) => wrapNode(root as ModuleRoot & ParsedRoot, tree as TreeHandle),
 	hydrate: (node, tree) => hydrate(node, tree as TreeHandle),
 	portable: rows,
-	portableBuild: () => import('./portable-build.js').then((m) => m.build),
+	portableBuild: () => import('./portable/build.js').then((m) => m.build),
 	queryFlags,
 	querySlotFlags
 });

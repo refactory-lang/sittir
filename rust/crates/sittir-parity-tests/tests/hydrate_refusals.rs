@@ -6,7 +6,7 @@
 #![cfg(feature = "arena")]
 
 use sittir_core::tree_sitter;
-use sittir_core::arena::{hydrate_at, HydrateError, Hydration, TreeArena};
+use sittir_core::arena::{hydrate_at, HydrateError, TreeArena};
 use sittir_core::read::{descendant_count, index_of, Depth, ReadCtx, ReadError};
 use sittir_core::record::PARSED_KIND_BITS;
 use sittir_core::types::{NodeIndex, TreeId};
@@ -87,7 +87,7 @@ fn hydrate_first_function(source: &str) -> (Result<(), HydrateError>, NodeIndex,
     let mut ctx = ReadCtx::new(source, TreeId(1), |_| false);
     let mut arena = TreeArena::new(PARSED_KIND_BITS, descendant_count(&tree.root_node()));
     let before = arena.arena().mark();
-    let walked = hydrate_at::<Function>(&mut cursor, &mut ctx, function, None, Depth::All, &mut Hydration::new(&mut arena)).map(|_| ());
+    let walked = hydrate_at::<Function>(&mut cursor, &mut ctx, function, None, Depth::All, &mut arena).map(|_| ());
     (walked, index_of(&cursor), function, arena.arena().mark() == before)
 }
 

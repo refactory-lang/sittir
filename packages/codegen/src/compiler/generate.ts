@@ -16,6 +16,7 @@ import { grammarInput } from '../bindings/input.ts';
 import { emitPortable } from '../emitters/overlays/portable/index.ts';
 import type { PortableTypedOutput } from '../emitters/overlays/portable/typed.ts';
 import { emitApi, emitRenderEngine, spelledTriviaBuilders } from '../emitters/engine.ts';
+import { rootKindIds } from '../emitters/wrap.ts';
 import { emitBackend } from '../emitters/grammar-runtime.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
@@ -169,6 +170,10 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 									? `${path}: the claim on ${kinds[0]} names no kind the grammar's model has, so nothing reads as ${path} through it`
 								: code === 'portable-kind-armless'
 									? `${path}: ${kinds[0]} reads as a vocabulary path, but no arm builds it${(members ?? []).length === 0 ? '' : ` (nothing fills ${(members ?? []).join(', ')})`}, so every read carries it`
+								: code === 'portable-integer-partial'
+									? `${path}: ${kinds[0]}'s pattern admits integer text the portable read does not parse, so a read of it can carry the node`
+								: code === 'portable-value-unshaped'
+									? `${path}: its $value is a number, but ${kinds[0]} has no number shape, so no read or build of it carries one`
 								: `${path}: nothing picks among ${kinds.join(', ')}${holder === undefined ? ', and no holder slot admits them' : ` in ${holder}'s slot ${slot}`}`
 			})
 		);
@@ -192,6 +197,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 				grammar: cfg.grammar,
 				rootTypeName,
 				rootTreeTypeName,
+				rootKinds: rootKindIds(nodeMap),
 				commentCoercer: defaultTriviaForm(nodeMap)?.coercer,
 				spelledTrivia: spelledTriviaBuilders(nodeMap),
 				portable: portable !== undefined

@@ -1,22 +1,35 @@
-import type { GrammarContext } from '../../context.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Pattern {
-	export interface As<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
+	export interface As<G extends GrammarMap, K extends Under<'pattern.as'> = 'pattern.as'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by pr
-		readonly $kind: 'pattern.as';
-		readonly name: G['identifier'];
-		readonly pattern: G['slots']['pattern.as']['pattern'];
+		readonly $path: K;
+		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
+		readonly pattern: Slot<G, K, 'pattern', unknown>;
 	}
-	export interface Map<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
-		// claimed by p
-		readonly $kind: 'pattern.map';
-		readonly elements?: G['slots']['pattern.map']['elements'][];
-	}
-	export interface Or<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
+	export interface Or<G extends GrammarMap, K extends Under<'pattern.or'> = 'pattern.or'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by pr
-		readonly $kind: 'pattern.or';
-		readonly left?: G['slots']['pattern.or']['left'];
-		readonly right: G['slots']['pattern.or']['right'];
+		readonly $path: K;
+		readonly left?: Slot<
+			G,
+			K,
+			'left',
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+			| V.Type.Primitive<G>
+		>;
+		readonly right: Slot<
+			G,
+			K,
+			'right',
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
+			| V.Type.Primitive<G>
+		>;
 	}
 }

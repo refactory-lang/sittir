@@ -76,7 +76,7 @@ describe('link keeps the hoisted annotation on the rule', () => {
 			),
 			{
 				generatedIdTables: { fieldIds: new Map(), folds: new Map(),
-					sourceArtifact: 'test',
+					sourceArtifact: 'test', parser: null,
 					kindIds: {
 						g: {
 							id: 3,

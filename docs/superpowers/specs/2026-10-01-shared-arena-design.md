@@ -485,116 +485,51 @@ none either (ruling 14).
 
 ### Reclamation
 
-Under record construction, a built arena gives back its memory by chunk. A chunk is freed when no
-view of any record in it can be reached, and JavaScript's collector decides that. No node pays for
-it: nothing is registered, counted or weakly held per node.
+A built arena frees its records by count, in native code. Nothing on the JavaScript heap keeps a
+record alive, and the garbage collector frees none. The source of truth is `sittir-core`'s `arena`
+module and its `count` module.
 
-- **Views carry record liveness.** Every built record has a view, made when its builder places it.
-  A view keeps the views of the children its builder was given, in its slot cache (the parent keeps
-  its children, ruling 11). A `$with` copies the unchanged cells and carries the views of the
-  children they name into the new view's cache. So a record that a live record names has a live
-  view, and the reachability of views, which the collector already traces, is the liveness of
-  records. Prototype's probe found no record reached by a live cell that the live views did not
-  reach, under today's `$with`, which rebuilds from the seeded children. Copy-and-patch must carry
-  the views the same way (Verification 19).
-- **No chunk names another chunk's records.** Liveness never runs through cells. A chunk's cells
-  include those of records that later died, and a path copy names siblings the previous edit wrote,
-  usually in the previous chunk. So an edge per cell would make each chunk hold its predecessor, and
-  the open chunk would hold every chunk back to the first (prototype's reclamation probe: under
-  `$with` churn such edges freed nothing at any cap).
-- **A chunk has one life object.** The arena registers each chunk's life object once, when it opens
-  the chunk, with one `FinalizationRegistry` per arena, and keeps a `WeakRef` to it, one per chunk.
-  The life object holds only facts one hop away, which name no further chunk:
-  - the life objects of the string chunks its cells' texts lie in;
-  - the side nodes escaped from its records' sides;
-  - the parsed trees its records link.
-
-  String chunks have life objects too. They name nothing, so no chain forms through them.
-- **What holds a chunk.**
-  - A record view holds its chunk's life object. Like every field a generated literal on the build
-    path holds, it is never a computed key at the head of the literal, which would stop V8 cloning
-    the literal from its template (§ Leaves).
-  - The arena holds the open chunk it allocates into.
-  - A snapshot or a view that names a record holds that record's chunk. A detached snapshot is plain
-    data and holds nothing.
-
-  A built leaf holds no chunk. An unplaced leaf keeps its text as a string, and the text is
-  interned when the leaf is first placed, so the holder's chunk names the string chunk as any text
-  reference does. A leaf maker's literal therefore stays clonable.
-- **A record and its parts share a chunk.** A record's list runs, side records and parsed-leaf
-  records are allocated in the chunk its header goes to, so no part needs a hold of its own. When the
-  record and its parts don't fit in the open chunk, the arena opens the next chunk before writing the
-  first part.
-- **Edges are recorded at write, one hop only.** When a record is placed, a text reference into a
-  string chunk adds that chunk's life object to the writing chunk's set, once per pair of chunks.
-  Writing a side whose entries hold built records puts their nodes on the holder chunk's life object
-  as escaped side nodes, and their views hold their own chunks.
-- **A collected chunk is gone before its callback runs.** A finalization callback runs late, in a
-  later task and never inside a build, or not at all. So every lookup by address first dereferences
-  the `WeakRef` of the chunk the address names, and a chunk whose life object is gone counts as
-  freed:
-  - an interned text, which is interned again into the open chunk;
-  - `node(at)`, an escaped side node by its address;
-  - `words(at, …)` and `textOf(at, …)`, a record's words and a text's bytes;
-  - a record view made from an address (a side entry's `$record`, a copied leaf's record);
-  - a sided or unit-sided address, before the side read crosses to native code;
-  - a parsed tree a record links;
-  - each site a leaf writes its sides to.
-
-  A lookup that finds the chunk freed refuses, naming the address, except the interned text, which
-  is a miss, and a leaf's site, which is skipped.
-- **Escaped side nodes go with their holder.** An escaped side node is held by the life object of
-  its holder's chunk, not by the arena, and `node(at)` finds it through the holder a side read
-  starts from. A holder that dies takes its side nodes' hold with it.
-- **Freeing a chunk:**
-  1. The arena drops the chunk's words or bytes and the entries it keeps by address for that chunk:
-     the sided bits, the unit-sided addresses, and interned texts whose bytes lie in it.
-  2. One native call drops every written side whose place lies in the chunk: a built record's sides
-     by its address, and a unit's or built leaf's by its holder's address. The native store is
-     ordered by place, so this is one range removal.
-  3. The chunk's number goes to the free ring.
-- **The generation is in the address.** A chunk's number, the address's chunk bits, names its slot
-  and its generation together. Chunk numbers are handed out round-robin over the whole number space,
-  so a freed number comes back only after every other number has been used since it was freed. A
-  built leaf's site keeps its one packed number, with no second number per site and no allocation:
-  a stale site names a chunk number no live chunk has, so its write is skipped and the site
-  dropped, and a leaf never keeps its holder alive.
-  - **The bound.** Round-robin delays reuse; it doesn't prevent it. Suppose the arena allocates
-    about 2^32 words after a holder's chunk is freed, so its number comes back, and the leaf it held
-    was neither written nor placed in the meantime. Then the leaf's stale site names a live chunk,
-    and its next write replaces the sides at that place. The consequence is wrong sides on another
-    node, never memory outside the arena, since a side write is keyed by place and every read is
-    bounds-checked.
-  - The probe that sets the size cap also confirms that the chunk bits it leaves hold the number
-    space.
-- **A leaf's sites are pruned at placement.** A leaf object placed in many builds (a hoisted `self`
-  identifier) gains a site each time. So placement prunes, amortized: when the site list reaches
-  twice its length after the last prune, the sites whose chunk is freed are dropped. A leaf at one
-  site keeps its one packed number. Pruning also narrows the bound above.
-- **A range is reused only after its callback.** A chunk number enters the free ring only after its
-  callback has removed that range's sides, native and JavaScript, and its interned entries.
-- **Native keeps nothing after a call.** A render or a side read borrows the chunks it reads for
-  that call (§ Packed AST is definitive); no native structure holds a chunk between calls, and the
-  arena's chunk-holding call goes. Native code holds only the written sides. It attributes their
-  bytes to the chunk of their place, so the engine's diagnostics report, per arena:
-  - live chunks;
-  - words and bytes held;
-  - native side bytes, by chunk.
-- **No compaction.** Records are immutable and addresses are stable, so a live record keeps its
-  whole chunk. The pinning this allows falls with the size cap on a chunk, which sits below the
-  address limit. In prototype's probe of exact chunk-grain liveness (a chunk held while any
-  record in it is live, which is what view-carried liveness gives) under `$with` churn, pinning was:
-  - about 43× live words at a cap of 2^14 words for one live root (python and rust), against 75× at
+- **Chunks are native memory, lent to JavaScript.** Every chunk is native memory, zeroed when it's
+  allocated, one length for its life, and never moved. Builders write records and text through
+  external array buffers over the chunks (`builtWords`, `builtBytes`). An arena engine refuses, by
+  name when it's made, a runtime that doesn't allow external array buffers (`externalBuffers`), so
+  a write never lands in a copy.
+- **Every entry has a count.** Each allocation in a word chunk is an entry with a count: a record,
+  a run, a side record or a link record. The counts sit beside the chunk in its meta, never in its
+  words. A string chunk's meta counts the cells that name an entry in it.
+  - The handle a builder returns holds one count, marked owned.
+  - A placed record holds a count of each entry its cells name and of each string chunk its texts
+    lie in, so a child under two parents is held twice.
+  - A built record's written sides hold the records their entries name.
+  - Releasing a link record or a side record lets go of the parsed tree it names. How an arena
+    engine holds a parse is the arena-trees-from-records spec's § The arena holder.
+- **Release is explicit.** `engine.release(node)` and a built root's `[Symbol.dispose]` drop the
+  count its handle owns. An entry whose count reaches zero releases what it holds: the entries its
+  cells name, its cells' string chunks, its side record, and the records its sides hold. The
+  release runs on an explicit stack, so a deep tree can't overflow it. A root never released keeps
+  its records until its engine is disposed.
+- **A chunk is freed when it holds nothing live.** A sealed chunk left with no live entry is freed.
+  Native code detaches its buffers and reports its number, and JavaScript forgets it
+  (`Chunks.forget`), so no view reaches its memory.
+- **A read handle holds nothing.** A node view is an uncounted borrow, held weakly by its record's
+  address. A read of a child cell returns the node its builder returned while anything holds it,
+  else a fresh view of the record.
+- **Chunk numbers.** Word and string chunks take their numbers from one count, so a cell's chunk
+  tells its form, and chunk 0 is none. A freed chunk's number comes back only once every number
+  has been handed out.
+- **Sizes.** An arena's first word chunk holds 2^10 words, and each later shared chunk doubles, up
+  to 2^14 (`CHUNK_SHIFT`). An allocation larger than that gets a chunk of its own. String chunks
+  follow the same policy in bytes.
+- **Every word is untrusted.** A count that would go below zero, or an address no entry starts at,
+  refuses by name.
+- **No compaction.** Records never move, so one live entry keeps its whole chunk. Prototype's probe
+  of chunk-grain liveness under `$with` churn measured the pinning this allows:
+  - about 43× live words at 2^14 words a chunk for one live root (python and rust), against 75× at
     2^16 and about 300× at 2^20;
   - about 50× at 2^14 and 92× at 2^16 for a hundred roots, plateauing after 50k–70k edits.
 
-  Build time showed no effect of the cap. A render borrows only the chunks it visits, and holding
-  541 chunks instead of 18 cost about 15 ns a chunk per render (python, 100k edits). The cap is
-  2^14 words.
-- **Disposing an engine** frees its arena whole, as today.
-
-Retired: `holdBuiltArena` and the native chunk list it fills; the arena's address-keyed maps of
-escaped nodes and held trees, which move onto life objects.
+  Build time showed no effect of the cap.
+- **Disposing an engine** releases every chunk (`release_built`).
 
 ### Render
 
@@ -785,16 +720,13 @@ members in the builder's literal — changed all three, and the maintainer ruled
     and a read of the slot gives the leaf object its builder was given. A side written on a built
     leaf before it is placed, or after, renders beside it at every site that holds it, and a lone
     leaf renders its own sides. A parsed leaf a built record holds renders its row's sides.
-19. **The built arena reclaims.** Under `--expose-gc`, a loop that builds, renders and drops a tree
-    holds a live chunk count, JavaScript heap, external memory and native side bytes that stay flat
-    after warm-up, in every grammar.
-    - A tree kept alive keeps every record it reaches; its render is byte-identical before and after
-      collections that free the chunks around it.
-    - A side node of a dropped holder is freed with the holder.
-    - Under `$with` churn on kept roots, held words plateau (the probe's view-carried figures),
-      and no chunk is held only through a dead record's cells.
-    - Every record a live record's cell names is reached through the live views' slot caches, after
-      `$with` rebuilds and after copy-and-patch.
+19. **The built arena reclaims.** A loop that builds, renders and releases a tree keeps the built
+    arena's chunk bytes, count bytes and live entries (`builtMemory`) and the native side bytes
+    flat after warm-up, in every grammar.
+    - A tree kept unreleased keeps every record it reaches; its render is byte-identical before and
+      after the chunks around it are freed.
+    - A side entry's records are released with their holder.
+    - Under `$with` churn on kept roots, held words plateau.
     - A leaf kept after its holder is freed writes no side into the record that later reuses the
       address.
     - Building is no slower than before reclamation, measured by the build profile.

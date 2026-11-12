@@ -1,6 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../src/languages.ts';
+import { releaseTrackedEngines } from './helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('./helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 type Rendered = { $render(): unknown };
 type Builder = Record<string, (...args: unknown[]) => Rendered>;
@@ -18,7 +22,7 @@ async function enginesOf(grammar: string): Promise<Record<(typeof STORAGES)[numb
 const rendered = (node: Rendered): string => String(node.$render());
 
 const pythonString = (engine: Engine, source: string): Edited =>
-	(engine.parse(`${source}\n`) as { statements(): readonly { elements(): readonly { content(): Edited }[] }[] }).statements()[0]!.elements()[0]!.content();
+	(engine.parse(`${source}\n`) as { statements(): readonly { statements(): readonly { content(): Edited }[] }[] }).statements()[0]!.statements()[0]!.content();
 
 const rustRawString = (engine: Engine, source: string): Edited =>
 	(engine.parse(`const X: &str = ${source};\n`) as { statements(): readonly { value(): Edited }[] }).statements()[0]!.value();

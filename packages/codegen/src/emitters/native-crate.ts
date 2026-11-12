@@ -1,4 +1,4 @@
-import { NATIVE_NAPI_CONFIG, NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, nativePlatformPackage, nodeRangeOfNodeApi, type GrammarName } from '../grammars.ts';
+import { NATIVE_NAPI_CONFIG, NATIVE_TARGETS, NODE_ENGINES, grammarDisplayName, nativeBinaryName, nativePlatformPackage, type GrammarName } from '../grammars.ts';
 import { NATIVE_PROFILE_FLAGS, type NativeProfile } from '../scripts/native-binary-freshness.ts';
 import { TRIVIA_NODE } from './render-module.ts';
 
@@ -14,7 +14,7 @@ const json = (value: unknown): string => `${JSON.stringify(value, null, '\t')}\n
 const buildNative = (grammar: GrammarName, profile: NativeProfile): string =>
 	['tsx ../../../scripts/build-native.mts', grammar, ...NATIVE_PROFILE_FLAGS[profile]].join(' ');
 
-export function nativeCrateFiles(name: GrammarName, nodeApiLevel: number, parserName: string = name): NativeCrateFile[] {
+export function nativeCrateFiles(name: GrammarName, parserName: string = name): NativeCrateFile[] {
 	const v = { name, parserName, Name: grammarDisplayName(name) };
 	return [
 		{
@@ -169,7 +169,7 @@ fn rerun_if_changed_with_includes(
 					'build:gate': buildNative(v.name, 'gate')
 				},
 				devDependencies: { '@napi-rs/cli': 'catalog:' },
-				engines: { node: nodeRangeOfNodeApi(nodeApiLevel) }
+				engines: { node: NODE_ENGINES }
 			})
 		},
 		{
@@ -263,13 +263,6 @@ impl EngineGrammar for ${v.Name}Grammar {
         &<render::options::Sites as sittir_core::options::OptionSites>::TABLES
     }
 
-    fn read_units(self, cursor: &mut tree_sitter::TreeCursor<'_>, ctx: &mut sittir_core::read::ReadCtx<'_>) -> Vec<sittir_core::layout::UnitSides<Self::Trivia>> {
-        sittir_core::read::read_from::<AnyNode>(cursor, ctx, sittir_core::read::Depth::ONE)
-            .ok()
-            .and_then(|mut any| sittir_core::read::HasLayout::<Option<Box<sittir_core::layout::NodeLayout<Self::Trivia>>>>::take_layout(&mut any))
-            .map_or_else(Vec::new, |layout| layout.units)
-    }
-
     fn render_read(self, cursor: &mut tree_sitter::TreeCursor<'_>, depth: sittir_core::read::Depth, ctx: &mut sittir_core::read::ReadCtx<'_>, render: &sittir_core::prepare::RenderContext<'_>, baseline: &mut sittir_core::baseline::Baseline) -> std::result::Result<(), String> {
         let node = sittir_core::read::read_from::<AnyNode>(cursor, ctx, depth)
             .map_err(|refusal| refusal.describe(&|kind| self.kind_name(kind)))?;
@@ -282,6 +275,10 @@ impl EngineGrammar for ${v.Name}Grammar {
 
     fn router(self, grammar: sittir_core::types::KindId, display: sittir_core::types::KindId) -> Option<sittir_core::read::Router> {
         <AnyNode as sittir_core::read::ReadNode>::router(grammar, display)
+    }
+
+    fn admits(self, grammar: sittir_core::types::KindId, display: sittir_core::types::KindId) -> bool {
+        <AnyNode as sittir_core::read::ReadNode>::admits(grammar, display)
     }
 
     fn unit_id(self, nodes: &mut dyn sittir_core::nodes::Nodes<'_>, at: &sittir_core::nodes::Kid) -> Option<sittir_core::types::KindId> {

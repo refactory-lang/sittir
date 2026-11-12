@@ -1,11 +1,14 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
+import { sharedEngine } from '@sittir/common/testing';
 import type { AnyUntypedNode } from '@sittir/types';
 import { createEngine } from '@sittir/common';
 import rust from '../../rust/src/index.ts';
-import { kindViewOf, loadIsLeafKind, loadNativeEngine, loadSlotAccessorOf, materializeDetached, nativeLanguageEngineOf, parseNativeTree, readNodeOf } from '../src/validate/common.ts';
+import { kindViewOf, loadIsLeafKind, loadNativeEngine, loadSlotAccessorOf, materializeDetached, nativeLanguageEngineOf, parseNativeTree, readNodeOf, disposeNativeEngines } from '../src/validate/common.ts';
 import { selfContainedRenderInput } from '../src/validate/read-render-parse.ts';
 
-const parsed = await createEngine(rust);
+afterAll(disposeNativeEngines);
+
+const parsed = await sharedEngine(() => createEngine(rust));
 const K = parsed.kinds;
 const engine = await loadNativeEngine('rust');
 const native = await nativeLanguageEngineOf('rust');

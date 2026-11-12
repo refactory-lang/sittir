@@ -31,9 +31,13 @@ Thumbs.db
 #   - tree-sitter.json (tree-sitter metadata)
 #   - render-bodies.json (one render body per emitted kind — the validators' catalog)
 #   - resolutions.json (the derived conflict resolutions; each grammar.sittir.ts imports it)
+#   - node-model.json5 and node-model-portable.json5 (the assembled model and a
+#     bound grammar's portable routes, which tools, validators and tests read)
 #   - parser.wasm and src/ (the generated parser: parser.c, scanner.c, the
 #     tree_sitter headers, grammar.json, node-types.json), which the native
 #     crate's build.rs compiles — CI builds from these, it never regenerates
+#   - parser.json (the key of the src/ parser.wasm was built from; codegen
+#     refuses a parser.wasm whose key differs from its src/)
 #   - upstream.wasm and upstream.json (the upstream judge: the unmodified grammar
 #     sittir builds on, built by the same CLI, and the key it was built at)
 # To track a new .sittir artifact, add a `!` negation below (must ignore the
@@ -45,7 +49,10 @@ packages/*/.sittir/*
 !packages/*/.sittir/grammar-diagnostics.json
 !packages/*/.sittir/render-bodies.json
 !packages/*/.sittir/resolutions.json
+!packages/*/.sittir/node-model.json5
+!packages/*/.sittir/node-model-portable.json5
 !packages/*/.sittir/parser.wasm
+!packages/*/.sittir/parser.json
 !packages/*/.sittir/upstream.wasm
 !packages/*/.sittir/upstream.json
 !packages/*/.sittir/src/

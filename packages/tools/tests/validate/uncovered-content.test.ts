@@ -1,6 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { allGrammars } from '@sittir/codegen/grammars';
 import { computeUncoveredContentCensus } from '../../src/validate/uncovered-content.ts';
+import { disposeNativeEngines } from '../../src/validate/common.ts';
+
+afterAll(disposeNativeEngines);
 
 describe('uncovered-content census', () => {
 	for (const grammar of allGrammars()) {

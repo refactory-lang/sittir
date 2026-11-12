@@ -111,9 +111,9 @@ export const _leafRe_buildIntegerDecimalLong = /^(?:(?:(?:[0-9]+_?))+(?:[Ll]))$/
 export const _leafRe_buildIntegerDecimalImaginary = /^(?:(?:(?:[0-9]+_?))+(?:[jJ]))$/u;
 export const _leafRe_buildIntegerDecimalPlain = /^(?:(?:(?:[0-9]+_?))+)$/u;
 export const _leafRe_buildLineContinuationNewline = /^(?:\\(?:\r)?\n)$/u;
-export const _leafRe_buildStringFragment = /^(?:(?:[\s\S]+))$/u;
+export const _leafRe_buildStringFragment = /^(?:(?:[\x09-\x0D\x20\x00-\x08\x0E-\x1F\x21-\u{10FFFF}]+))$/u;
 export const _leafRe_buildEscapeInterpolation = /^(?:(?:\{\{|\}\}))$/u;
-export const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
+export const _slotRe_buildComment_content = /^(?:(?:[^\x0A]*))$/u;
 export const _slotRe_buildIntegerHex_radix_prefix = /^(?:0x|0X)$/u;
 export const _slotRe_buildIntegerHex_content = /^(?:(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$/u;
 export const _slotRe_buildIntegerOctal_radix_prefix = /^(?:0o|0O)$/u;
@@ -137,17 +137,17 @@ export const _slotRe_buildFloatScientific_marker = _slotRe_buildFloatPoint_marke
 export const _slotRe_buildFloatScientific_exponent_sign = _slotRe_buildFloatPoint_exponent_sign;
 export const _slotRe_buildFloatScientific_exponent = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatScientific_imaginary = _slotRe_buildFloatPoint_imaginary;
-export const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[a-fA-F\d]{4}))$/u;
-export const _slotRe_buildEscapeSequenceUnicodeWide_content = /^(?:(?:U[a-fA-F\d]{8}))$/u;
-export const _slotRe_buildEscapeSequenceHex_content = /^(?:(?:x[a-fA-F\d]{2}))$/u;
-export const _slotRe_buildEscapeSequenceOctal_content = /^(?:(?:\d{1,3}))$/u;
+export const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[a-fA-F0-9]{4}))$/u;
+export const _slotRe_buildEscapeSequenceUnicodeWide_content = /^(?:(?:U[a-fA-F0-9]{8}))$/u;
+export const _slotRe_buildEscapeSequenceHex_content = /^(?:(?:x[a-fA-F0-9]{2}))$/u;
+export const _slotRe_buildEscapeSequenceOctal_content = /^(?:(?:[0-9]{1,3}))$/u;
 export const _slotRe_buildEscapeSequenceLineBreak_content = /^(?:(?:\r?\n))$/u;
 export const _slotRe_buildEscapeSequenceSimple_content = /^(?:(?:['"abfrntv\\]))$/u;
 export const _slotRe_buildEscapeSequenceNamed_content = /^(?:(?:N\{[^}]+\}))$/u;
 export const _slotRe_buildStringStart_prefix =
 	/^(?:rb|rB|Rb|RB|br|bR|Br|BR|rf|rF|Rf|RF|fr|fR|Fr|FR|rt|rT|Rt|RT|tr|tR|Tr|TR|ur|uR|Ur|UR|r|R|b|B|f|F|t|T|u|U)$/u;
 export const _slotRe_buildStringStart_quote = /^(?:"""|'''|"|'|`)$/u;
-export const _slotRe_buildStringEnd_content = /^(?:(?:(?:\\[\s\S])*))$/u;
+export const _slotRe_buildStringEnd_content = /^(?:(?:(?:\\[\x09-\x0D\x20\x00-\x08\x0E-\x1F\x21-\u{10FFFF}])*))$/u;
 export const _slotRe_buildStringEnd_quote = _slotRe_buildStringStart_quote;
 
 export function buildModule(): T.EmptyModule;
@@ -219,17 +219,17 @@ export function buildSimpleStatements(...args: unknown[]) {
 			);
 }
 function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.SimpleStatements.Bound {
-	const _elements = hydrateStored(value);
-	const listView = ownerView(_elements, '_item');
-	if (listView.length === undefined) refuseReadStub('_elements');
+	const _statements = hydrateStored(value);
+	const listView = ownerView(_statements, '_item');
+	if (listView.length === undefined) refuseReadStub('_statements');
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, '_simple_statements', { elements: _elements });
+	if (handle !== undefined) admitChildren(handle, '_simple_statements', { statements: _statements });
 	const node = {
 		$type: TSKindId.SimpleStatements as const,
-		_elements,
+		_statements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () => hydrateStoredSlot(node, '_elements'),
+		statements: () => hydrateStoredSlot(node, '_statements'),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -271,7 +271,7 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { elements: buildSimpleStatements$with$elements, [RECEIVER]: node };
+	node.$with = { statements: buildSimpleStatements$with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.SimpleStatements.Bound;
@@ -280,7 +280,7 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 function buildSimpleStatements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	switch (setter) {
-		case 'elements':
+		case 'statements':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -293,8 +293,8 @@ function buildSimpleStatements$with(node: Held, setter: string, args: readonly u
 	}
 	throw new Error(`_simple_statements has no $with.${setter}`);
 }
-function buildSimpleStatements$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildSimpleStatements$with(receiverOf(this, '$with.elements'), 'elements', args);
+function buildSimpleStatements$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSimpleStatements$with(receiverOf(this, '$with.statements'), 'statements', args);
 }
 
 export function buildImportStatement<V extends Admit<T.Names>>(
@@ -5772,8 +5772,10 @@ function buildType$with$content(this: Received<Held>, ...args: unknown[]): unkno
 	return buildType$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function buildSplatType<V extends Admit<T.Identifier>>(value: V & RefuseUndeclared<V>): T.SplatType.Bound;
-export function buildSplatType(value: Admit<T.Identifier>): T.SplatType.Bound {
+export function buildSplatType<V extends Admit<T.Identifier | T.GenericType>>(
+	value: V & RefuseUndeclared<V>
+): T.SplatType.Bound;
+export function buildSplatType(value: Admit<T.Identifier | T.GenericType>): T.SplatType.Bound {
 	const _type = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'splat_type', { type: _type });
@@ -5801,7 +5803,9 @@ function buildSplatType$with(node: Held, setter: string, args: readonly unknown[
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'type':
-			return applySetter(args, (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildSplatType(value)));
+			return applySetter(args, (value: Admit<T.Identifier | T.GenericType>) =>
+				rebuilt(node, handle, () => buildSplatType(value))
+			);
 	}
 	throw new Error(`splat_type has no $with.${setter}`);
 }
@@ -12122,19 +12126,23 @@ export function buildSuiteInline(...args: unknown[]) {
 			);
 }
 function _buildSuiteInline(value: Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>): T.SuiteInline.Bound {
-	const _elements = hydrateStored(
-		admitSplicedEnvelope(value, [TSKindId.SimpleStatements, 'elements', 'simple_statements'], 'SuiteInline.elements')
+	const _statements = hydrateStored(
+		admitSplicedEnvelope(
+			value,
+			[TSKindId.SimpleStatements, 'statements', 'simple_statements'],
+			'SuiteInline.statements'
+		)
 	);
-	const listView = ownerView(_elements, '_item');
-	if (listView.length === undefined) refuseReadStub('_elements');
+	const listView = ownerView(_statements, '_item');
+	if (listView.length === undefined) refuseReadStub('_statements');
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'suite_inline', { elements: _elements });
+	if (handle !== undefined) admitChildren(handle, 'suite_inline', { statements: _statements });
 	const node = {
 		$type: TSKindId.SuiteInline as const,
-		_elements,
+		_statements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () => hydrateStoredSlot(node, '_elements'),
+		statements: () => hydrateStoredSlot(node, '_statements'),
 		length: listView.length,
 		at: LIST_METHODS.at,
 		concat: LIST_METHODS.concat,
@@ -12176,7 +12184,7 @@ function _buildSuiteInline(value: Admit<T.SimpleStatementsElements | Admit<T.Sim
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { elements: buildSuiteInline$with$elements, [RECEIVER]: node };
+	node.$with = { statements: buildSuiteInline$with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	holdListItems(node, heldItems(listView.list));
 	return node as unknown as T.SuiteInline.Bound;
@@ -12185,7 +12193,7 @@ function _buildSuiteInline(value: Admit<T.SimpleStatementsElements | Admit<T.Sim
 function buildSuiteInline$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	switch (setter) {
-		case 'elements':
+		case 'statements':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -12198,8 +12206,8 @@ function buildSuiteInline$with(node: Held, setter: string, args: readonly unknow
 	}
 	throw new Error(`suite_inline has no $with.${setter}`);
 }
-function buildSuiteInline$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildSuiteInline$with(receiverOf(this, '$with.elements'), 'elements', args);
+function buildSuiteInline$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSuiteInline$with(receiverOf(this, '$with.statements'), 'statements', args);
 }
 
 export function buildSuiteBlock<V extends Admit<T.Block>>(

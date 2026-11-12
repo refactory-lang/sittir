@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { grammarPackageDir, isGrammar } from '@sittir/codegen/grammars';
+import { PORTABLE_BUILD_FILE, grammarPackageDir, isGrammar } from '@sittir/codegen/grammars';
 import type { ReparseHosts } from '@sittir/common';
 import type { BackendStatusLike } from '@sittir/common/engine';
 import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
@@ -30,7 +30,7 @@ export interface GrammarModules {
 	'reparse-hosts.ts': { readonly REPARSE_HOSTS: ReparseHosts };
 	'utils.ts': { readonly triviaFacts: TriviaFacts; readonly querySlots: QuerySlots };
 	'backend.ts': { getActiveBackend(): BackendStatusLike };
-	'portable-build.ts': { readonly build: PortableBuildTable };
+	[PORTABLE_BUILD_FILE]: { readonly build: PortableBuildTable };
 }
 
 const DECLARED_EXPORTS = {
@@ -44,10 +44,10 @@ const DECLARED_EXPORTS = {
 	'reparse-hosts.ts': ['REPARSE_HOSTS'],
 	'utils.ts': ['triviaFacts', 'querySlots'],
 	'backend.ts': ['getActiveBackend'],
-	'portable-build.ts': ['build']
+	[PORTABLE_BUILD_FILE]: ['build']
 } as const satisfies { readonly [K in keyof GrammarModules]: readonly (keyof GrammarModules[K] & string)[] };
 
-export type GrammarFile = keyof GrammarModules | 'node-model.json5' | 'factories/objects.ts';
+export type GrammarFile = keyof GrammarModules | 'factories/objects.ts';
 
 export function grammarModulePath(grammar: string, file: GrammarFile): string | undefined {
 	if (!isGrammar(grammar)) return undefined;

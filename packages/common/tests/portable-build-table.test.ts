@@ -145,6 +145,13 @@ describe('the portable build table', () => {
 		expect(armOf('rust', 'declaration.macro', rust.kinds.MacroDefinitionParen).when).toContainEqual({ variant: 'macro_definition', value: rust.kinds.MacroDefinitionParen, default: true });
 	});
 
+	it('counts an arm that is the whole content of a forwarding variant envelope as that variant, so the declared default leads after the empty-list pick', () => {
+		const block = armsOf('python', 'statement.block');
+		expect(block.slice(0, 2).map((arm) => arm.kind)).toEqual([python.kinds.SuiteEmpty, python.kinds.Block]);
+		expect(block[1]!.when).toContainEqual({ variant: '_suite', value: python.kinds.Block, default: true });
+		expect(armOf('python', 'statement.block', python.kinds.SuiteInline).when).toContainEqual({ variant: '_suite', value: python.kinds.SuiteInline });
+	});
+
 	it('tells forms apart by the kinds a member holds, where the member reaches them through the containers its slot holds', () => {
 		expect(armOf('rust', 'pattern.struct', rust.kinds.StructPattern).when).toEqual([
 			{ member: 'type', kinds: [rust.kinds.ScopedTypeIdentifier, rust.kinds.TypeIdentifier] },
@@ -275,7 +282,7 @@ describe('the portable build table', () => {
 
 	it("writes the text a claim's predicate fixes, and spells a templated member from its holes", () => {
 		expect(armOf('python', 'declaration.constructor', python.kinds.MethodDeclaration).presets).toContainEqual({ steps: [{ key: 'name' }], text: '__init__', builder: 'identifier' });
-		expect(armOf('python', 'declaration.method.special', python.kinds.MethodDeclaration).template).toEqual({ member: 'name', pattern: '__${string}__', holes: ['stem'] });
+		expect(armOf('python', 'declaration.method.special', python.kinds.MethodDeclaration).template).toEqual({ member: 'name', pattern: '__${string}__', holes: ['stem'], match: '^__(?<stem>.*)__$' });
 	});
 
 	it("writes the other token where a flag's slot must hold one of two, when the flag is unset", () => {
@@ -291,35 +298,34 @@ describe('the portable build table', () => {
 		expect(tables.typescript.table.values?.['literal.number']).toBeUndefined();
 	});
 
-	it("tests a boolean arm by the value its binding declares, and names a config builder's numeric members", () => {
+	it("tests a boolean arm by the value its binding declares, and names a config builder's numeric slots", () => {
 		expect(armsOf('rust', 'literal.boolean').map((arm) => arm.when)).toEqual([[{ boolean: true }], [{ boolean: false }]]);
 		expect(armsOf('rust', 'literal.number.integer')[0]!.numeric).toBe('content');
 		expect(armsOf('python', 'literal.number.float')[0]!.numeric).toEqual({ integer: 'integer', fraction: 'fraction', exponent: 'exponent', marker: 'marker', exponentSign: 'exponentSign' });
 		expect(armsOf('python', 'literal.number.integer.hex')[0]!.numeric).toBeUndefined();
 	});
 
-	it("spells a number's decimal parts through the members its arm maps them to, whatever their names, and refuses a part it has no member for", async () => {
+	it("spells a number's decimal parts through its kind's slots, whatever its members are named, and refuses a part it has no slot for", async () => {
 		const engine = await createEngine(python, { api: 'strict' });
-		const withSign = (sign: string | undefined) => (arm: PortableBuildArm): PortableBuildArm => {
-			const parts = typeof arm.numeric === 'object' ? arm.numeric : undefined;
-			if (parts?.exponentSign === undefined) return arm;
-			const { exponentSign: old, ...rest } = parts;
-			return {
-				...arm,
-				members: arm.members.flatMap((member) => (member.name !== old ? [member] : sign === undefined ? [] : [{ ...member, name: sign }])),
-				numeric: sign === undefined ? rest : { ...rest, exponentSign: sign }
-			};
+		const signed = (arm: PortableBuildArm): string | undefined => (typeof arm.numeric === 'object' ? arm.numeric.exponentSign : undefined);
+		const renamed = (arm: PortableBuildArm): PortableBuildArm =>
+			signed(arm) === undefined ? arm : { ...arm, members: arm.members.map((member) => (member.steps[0]?.key === signed(arm) ? { ...member, name: 'signOfExponent' } : member)) };
+		const unsigned = (arm: PortableBuildArm): PortableBuildArm => {
+			if (typeof arm.numeric !== 'object' || arm.numeric.exponentSign === undefined) return arm;
+			const { exponentSign, ...rest } = arm.numeric;
+			return { ...arm, numeric: rest, members: arm.members.filter((member) => member.steps[0]?.key !== exponentSign) };
 		};
-		const builderWith = (sign: string | undefined) =>
+		const builderWith = (edit: (arm: PortableBuildArm) => PortableBuildArm) =>
 			portableBuilder({
 				language: 'python',
-				table: { ...tables.python.table, paths: Object.fromEntries(Object.entries(tables.python.table.paths).map(([path, at]) => [path, { ...at, arms: at.arms.map(withSign(sign)) }])) },
+				table: { ...tables.python.table, paths: Object.fromEntries(Object.entries(tables.python.table.paths).map(([path, at]) => [path, { ...at, arms: at.arms.map(edit) }])) },
 				builders: engine.build,
 				kindName: () => undefined,
-				readsAs: () => true
+				readsAs: () => true,
+				spellingOf: () => undefined
 			});
-		expect(String(engine.render(builderWith('signOfExponent')({ $path: 'literal.number.float', $value: 1e-7 }) as never))).toBe('1.0e-7');
-		expect(() => builderWith(undefined)({ $path: 'literal.number.float', $value: 1e-7 })).toThrow(/literal\.number\.float builds a kind \d+ in python, which cannot spell 1e-7/);
+		expect(String(engine.render(builderWith(renamed)({ $path: 'literal.number.float', $value: 1e-7 }) as never))).toBe('1.0e-7');
+		expect(() => builderWith(unsigned)({ $path: 'literal.number.float', $value: 1e-7 })).toThrow(/literal\.number\.float builds a kind \d+ in python, which cannot spell 1e-7/);
 	});
 
 	it('reaches a kind a flag presets only through the flag', () => {
@@ -329,12 +335,25 @@ describe('the portable build table', () => {
 		});
 	});
 
-	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: the pick leaves no codegen diagnostic', (grammar) => {
+	const expectedDiagnostics: Readonly<Record<keyof typeof languages, readonly string[]>> = {
+		python: [
+			'portable-integer-partial literal.number.integer.binary',
+			'portable-integer-partial literal.number.integer.hex',
+			'portable-integer-partial literal.number.integer.octal',
+			'portable-value-unshaped literal.number.integer.big',
+			'portable-value-unshaped literal.number.integer.imaginary'
+		],
+		rust: ['portable-integer-partial literal.number.integer.binary', 'portable-integer-partial literal.number.integer.hex', 'portable-integer-partial literal.number.integer.octal'],
+		typescript: []
+	};
+
+	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: the pick leaves no codegen diagnostic but the named integer reads', (grammar) => {
 		const diagnostics = JSON.parse(readFileSync(new URL(`../../${grammar}/.sittir/grammar-diagnostics.json`, import.meta.url), 'utf8')) as
 			| readonly { readonly code: string; readonly message: string }[]
 			| { readonly diagnostics: readonly { readonly code: string; readonly message: string }[] };
 		const entries = Array.isArray(diagnostics) ? diagnostics : (diagnostics as { readonly diagnostics: readonly { readonly code: string; readonly message: string }[] }).diagnostics;
-		expect(entries.filter(({ code }) => code.startsWith('portable-') && code !== 'portable-kind-armless').map(({ code, message }) => ({ code, message }))).toEqual([]);
+		const raised = entries.filter(({ code }) => code.startsWith('portable-') && code !== 'portable-kind-armless').map(({ code, message }) => `${code} ${message.split(':')[0]}`);
+		expect(raised.sort()).toEqual(expectedDiagnostics[grammar]);
 	});
 
 	it('writes the trailing separator on the one item of a list claimed by its own separator, and on no other list', () => {
@@ -368,7 +387,8 @@ describe('the portable build of a registered option', () => {
 			table: table(options),
 			builders: { holder: (...args: unknown[]) => (calls.push(args), { $type: 1 }) },
 			kindName: () => undefined,
-			readsAs: () => true
+			readsAs: () => true,
+			spellingOf: () => undefined
 		});
 		builder({ $path: 'statement.held', ...structure });
 		return calls;
@@ -415,7 +435,8 @@ describe("the portable build of a flag that is a member's list's trailing separa
 				items: (...args: unknown[]) => (calls.push(['items', args]), { $type: 2 })
 			},
 			kindName: () => undefined,
-			readsAs: () => true
+			readsAs: () => true,
+			spellingOf: () => undefined
 		});
 		builder({ $path: 'statement.held', ...structure } as never);
 		return calls;
@@ -474,7 +495,8 @@ describe('the portable build of an arm whose routes run through two forms of one
 				formB: (input: unknown) => (calls.push(['formB', input]), { $type: 3 })
 			},
 			kindName: () => undefined,
-			readsAs: () => true
+			readsAs: () => true,
+			spellingOf: () => undefined
 		});
 		builder({ $path: 'statement.held', ...structure } as never);
 		return calls;
@@ -535,7 +557,8 @@ describe('the portable build of a list whose last element takes a form of its ow
 				last: (input: unknown) => (calls.push(['last', input]), { $type: 3 })
 			},
 			kindName: (kind: number) => ({ 2: 'arm', 3: 'last_arm' })[kind],
-			readsAs: () => true
+			readsAs: () => true,
+			spellingOf: () => undefined
 		});
 		builder({ $path: 'statement.held', body } as never);
 		return calls;

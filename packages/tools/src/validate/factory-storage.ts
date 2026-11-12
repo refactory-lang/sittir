@@ -34,6 +34,7 @@ const { loadRawEntries } = await load('nodeTypesLoader');
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
+	treeParser,
 	buildReadHandle,
 	walkWrappedTree,
 	materializeBuildInput,
@@ -47,7 +48,6 @@ import {
 	dedupeMismatchesByContainment,
 	findSpanNode,
 	type TSNode,
-	type TSTree,
 	type TypedNode,
 	type IrSurface,
 	type ValidatorSkip,
@@ -460,9 +460,7 @@ export async function validateFactoryStorage(
 	backend: 'native' = 'native',
 	options: ValidateFactoryStorageOptions = {}
 ): Promise<FactoryStorageResult> {
-	const { Parser, lang } = await loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
+	using parser = treeParser(await loadLanguageForGrammar(grammar));
 
 	loadRawEntries(grammar);
 	const ruleKinds = deriveRuleKinds(grammar);
@@ -530,9 +528,9 @@ export async function validateFactoryStorage(
 		return failedRun(grammar, [...errors, { kind: '(read-tree-unavailable)', message: `[validate-factory-roundtrip] ${readPathFailure}` }]);
 
 	for (const entry of entries) {
-		const tree1 = parser.parse(entry.source) as TSTree;
+		using tree1 = parser.parse(entry.source);
 		const spans = sourceSpans(entry.source);
-		if (tree1.rootNode.hasError) {
+		if (tree1.root.hasError) {
 			excluded.push({ entry: entry.name, reason: 'parse-error', input: entry.source });
 			continue;
 		}
@@ -572,14 +570,14 @@ export async function validateFactoryStorage(
 				options.profile?.candidate(entry.name, entry.source, kind, cand.start, cand.end);
 
 				const indices = spans.toIndices(cand);
-				const node1 = findSpanNode(tree1.rootNode, indices.start, indices.end, kind, kindNameFromId);
+				const node1 = findSpanNode(tree1.root, indices.start, indices.end, kind, kindNameFromId);
 				const inputSource = node1 ? node1.text : spans.slice(cand);
 
 				// Canonical reference: what a real parse+read produces for
 				// this node, fully materialized (no lazy stubs).
 				// $text is handled per-node by the comparator itself (see
 				// isTextShapeNode) rather than stripped here.
-				const referenceData = measureRoundtrip(options.profile, 'read', () => materializeBuildInput(cand.node, accessorOf));
+				const referenceData = measureRoundtrip(options.profile, 'copy', () => materializeBuildInput(cand.node, accessorOf));
 
 				const cstNamedChildKinds = node1 ? namedChildKinds(node1) : [];
 
@@ -681,7 +679,7 @@ export async function validateFactoryStorage(
 							kind,
 							node1?.type ?? kind,
 							node1,
-							node1 !== null && node1.type === tree1.rootNode.type,
+							node1 !== null && node1.type === tree1.root.type,
 							renderReparseContext,
 							tolerance
 						);

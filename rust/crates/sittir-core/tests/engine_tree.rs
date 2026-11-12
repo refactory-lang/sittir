@@ -5,11 +5,11 @@
 use sittir_core::engine::node_at_index;
 use sittir_core::layout::LayoutWorkCounter;
 use sittir_core::nodes::{Nodes, TreeNodes};
-use sittir_core::read::{descendant_count, display_id, grammar_id};
+use sittir_core::read::{descendant_count, display_id, grammar_id, kind_named};
 use sittir_core::tree_sitter;
 use sittir_core::KindId;
 use sittir_core::types::{NodeIndex, Span};
-use sittir_core::{ErrorRegion, ErrorRegionKind};
+use sittir_core::{ErrorHolder, ErrorRegion, ErrorRegionKind};
 
 fn parse_tree(language: &tree_sitter::Language, source: &str) -> tree_sitter::Tree {
     let mut parser = tree_sitter::Parser::new();
@@ -81,12 +81,17 @@ fn region(kind: ErrorRegionKind, start: u32, end: u32) -> ErrorRegion {
     ErrorRegion { kind, span: Span { start, end } }
 }
 
+fn missing(language: &tree_sitter::Language, holder: &str, held: (u32, u32), at: u32) -> ErrorRegion {
+    let holder = ErrorHolder { span: Span { start: held.0, end: held.1 }, kind: kind_named(language, holder, true) };
+    region(ErrorRegionKind::Missing { holder }, at, at)
+}
+
 #[test]
-fn a_token_the_parser_inserted_is_an_empty_missing_region() {
-    assert_eq!(
-        regions_of(&tree_sitter_python::LANGUAGE.into(), "def f(:\n    pass\nx = 1\n"),
-        vec![region(ErrorRegionKind::Missing, 6, 6)]
-    );
+fn a_token_the_parser_inserted_is_an_empty_missing_region_naming_the_node_it_was_inserted_into() {
+    let python = tree_sitter_python::LANGUAGE.into();
+    assert_eq!(regions_of(&python, "def f(:\n    pass\nx = 1\n"), vec![missing(&python, "parameters", (5, 6), 6)]);
+    let rust = tree_sitter_rust::LANGUAGE.into();
+    assert_eq!(regions_of(&rust, "fn f() { let x = 1 }\n"), vec![missing(&rust, "let_declaration", (9, 18), 18)]);
 }
 
 #[test]

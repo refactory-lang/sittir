@@ -28,6 +28,7 @@ export function liveHandle(
 		renderModuleHash: 'hash',
 		options: undefined,
 		trivia: options.trivia ?? triviaFacts(),
+		rootKinds: [],
 		render: (node) => ({ toString: () => options.render?.(node) ?? '' }) as Rendered,
 		query: () => {
 			throw new Error('fake engine has no parsed trees');
