@@ -19,6 +19,8 @@ import {
 	unaffixed,
 	builtArenaOf,
 	builtInputs,
+	patchesByCopy,
+	setSlot,
 	storeCell,
 	storeFlag,
 	storeList,
@@ -550,18 +552,43 @@ function buildList$patch(source: object, config: T.List.Config): T.List.Bound {
 		return node as unknown as T.List.Bound;
 	});
 }
+function buildList$set(
+	source: object,
+	...[slot, input]: ['definitions', Partial<T.List.Config>] | ['elements', Partial<T.List.Config>]
+): T.List.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'definitions':
+			case 'elements':
+				return buildList$patch(source, { ...(inputs.config as T.List.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'definitions': {
+			const config = input;
+			const _definitions = listStorage<NonNullable<T.List['_definitions']>>(config.definitions);
+			return setSlot(source, TSKindId.List as const, 'list', 0, 'definitions', _definitions) as unknown as T.List.Bound;
+		}
+		case 'elements': {
+			const config = input;
+			const _elements = listStorage<NonNullable<T.List['_elements']>>(config.elements ?? []);
+			return setSlot(source, TSKindId.List as const, 'list', 1, 'elements', _elements) as unknown as T.List.Bound;
+		}
+	}
+}
 function withList(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.List.Config;
 	switch (setter) {
 		case 'definitions':
 			return applySetter(args, (...values: Admit<NonEmptyArray<T.Definition>>) =>
-				rebuilt(node, handle, () => buildList$patch(node, { ...config, definitions: restItems('definitions', values) }))
+				rebuilt(node, handle, () =>
+					buildList$set(node, 'definitions', { definitions: restItems('definitions', values) })
+				)
 			);
 		case 'elements':
 			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
-				rebuilt(node, handle, () => buildList$patch(node, { ...config, elements: restItems('elements', values) }))
+				rebuilt(node, handle, () => buildList$set(node, 'elements', { elements: restItems('elements', values) }))
 			);
 	}
 	throw new Error(`list has no $with.${setter}`);
@@ -606,10 +633,47 @@ function buildGrouping$patch(source: object, config: T.Grouping.Config): T.Group
 		return node as unknown as T.Grouping.Bound;
 	});
 }
+function buildGrouping$set(
+	source: object,
+	...[slot, input]: ['groupingGroups', Partial<T.Grouping.Config>] | ['elements', Partial<T.Grouping.Config>]
+): T.Grouping.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'groupingGroups':
+			case 'elements':
+				return buildGrouping$patch(source, { ...(inputs.config as T.Grouping.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'groupingGroups': {
+			const config = input;
+			const _grouping_group = listStorage<NonNullable<T.Grouping['_grouping_group']>>(config.groupingGroups);
+			return setSlot(
+				source,
+				TSKindId.Grouping as const,
+				'grouping',
+				0,
+				'groupingGroups',
+				_grouping_group
+			) as unknown as T.Grouping.Bound;
+		}
+		case 'elements': {
+			const config = input;
+			const _elements = listStorage<NonNullable<T.Grouping['_elements']>>(config.elements ?? []);
+			return setSlot(
+				source,
+				TSKindId.Grouping as const,
+				'grouping',
+				1,
+				'elements',
+				_elements
+			) as unknown as T.Grouping.Bound;
+		}
+	}
+}
 function withGrouping(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.Grouping.Config;
 	switch (setter) {
 		case 'groupingGroups':
 			return applySetter(args, (...args: unknown[]) =>
@@ -618,13 +682,13 @@ function withGrouping(node: object, setter: string, args: readonly unknown[]): u
 						args,
 						{ slot: 'groupingGroups', keys: ['groupExpression', 'anchor'], make: buildGroupingGroup },
 						(...values: Admit<NonEmptyArray<T.GroupingGroup>>) =>
-							buildGrouping$patch(node, { ...config, groupingGroups: restItems('groupingGroups', values) })
+							buildGrouping$set(node, 'groupingGroups', { groupingGroups: restItems('groupingGroups', values) })
 					)
 				)
 			);
 		case 'elements':
 			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
-				rebuilt(node, handle, () => buildGrouping$patch(node, { ...config, elements: restItems('elements', values) }))
+				rebuilt(node, handle, () => buildGrouping$set(node, 'elements', { elements: restItems('elements', values) }))
 			);
 	}
 	throw new Error(`grouping has no $with.${setter}`);
@@ -670,20 +734,55 @@ function buildMissingNode$patch(source: object, config: Partial<T.MissingNode.Co
 		return node as unknown as T.MissingNode.Bound;
 	});
 }
+function buildMissingNode$set(
+	source: object,
+	...[slot, input]: ['name', Partial<T.MissingNode.Config>] | ['elements', Partial<T.MissingNode.Config>]
+): T.MissingNode.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'name':
+			case 'elements':
+				return buildMissingNode$patch(source, { ...(inputs.config as T.MissingNode.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'name': {
+			const config = input;
+			const _name = config.name;
+			return setSlot(
+				source,
+				TSKindId.MissingNode as const,
+				'missing_node',
+				0,
+				'name',
+				_name
+			) as unknown as T.MissingNode.Bound;
+		}
+		case 'elements': {
+			const config = input;
+			const _elements = listStorage<NonNullable<T.MissingNode['_elements']>>(config.elements ?? []);
+			return setSlot(
+				source,
+				TSKindId.MissingNode as const,
+				'missing_node',
+				1,
+				'elements',
+				_elements
+			) as unknown as T.MissingNode.Bound;
+		}
+	}
+}
 function withMissingNode(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.MissingNode.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value?: Admit<T.Identifier | T.String>) =>
-				rebuilt(node, handle, () => buildMissingNode$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildMissingNode$set(node, 'name', { name: value }))
 			);
 		case 'elements':
 			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
-				rebuilt(node, handle, () =>
-					buildMissingNode$patch(node, { ...config, elements: restItems('elements', values) })
-				)
+				rebuilt(node, handle, () => buildMissingNode$set(node, 'elements', { elements: restItems('elements', values) }))
 			);
 	}
 	throw new Error(`missing_node has no $with.${setter}`);
@@ -726,19 +825,56 @@ function buildAnonymousNode$patch(source: object, config: T.AnonymousNode.Config
 		return node as unknown as T.AnonymousNode.Bound;
 	});
 }
+function buildAnonymousNode$set(
+	source: object,
+	...[slot, input]: ['name', Partial<T.AnonymousNode.Config>] | ['elements', Partial<T.AnonymousNode.Config>]
+): T.AnonymousNode.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'name':
+			case 'elements':
+				return buildAnonymousNode$patch(source, { ...(inputs.config as T.AnonymousNode.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'name': {
+			const config = input;
+			const _name = kindIdStorage<NonNullable<T.AnonymousNode['_name']>>(config.name);
+			return setSlot(
+				source,
+				TSKindId.AnonymousNode as const,
+				'anonymous_node',
+				0,
+				'name',
+				_name
+			) as unknown as T.AnonymousNode.Bound;
+		}
+		case 'elements': {
+			const config = input;
+			const _elements = listStorage<NonNullable<T.AnonymousNode['_elements']>>(config.elements ?? []);
+			return setSlot(
+				source,
+				TSKindId.AnonymousNode as const,
+				'anonymous_node',
+				1,
+				'elements',
+				_elements
+			) as unknown as T.AnonymousNode.Bound;
+		}
+	}
+}
 function withAnonymousNode(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.AnonymousNode.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<NonNullable<T.AnonymousNode.Config>['name']>) =>
-				rebuilt(node, handle, () => buildAnonymousNode$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildAnonymousNode$set(node, 'name', { name: value }))
 			);
 		case 'elements':
 			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
 				rebuilt(node, handle, () =>
-					buildAnonymousNode$patch(node, { ...config, elements: restItems('elements', values) })
+					buildAnonymousNode$set(node, 'elements', { elements: restItems('elements', values) })
 				)
 			);
 	}
@@ -784,18 +920,55 @@ function buildFieldDefinition$patch(source: object, config: T.FieldDefinition.Co
 		return node as unknown as T.FieldDefinition.Bound;
 	});
 }
+function buildFieldDefinition$set(
+	source: object,
+	...[slot, input]: ['name', Partial<T.FieldDefinition.Config>] | ['definition', Partial<T.FieldDefinition.Config>]
+): T.FieldDefinition.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'name':
+			case 'definition':
+				return buildFieldDefinition$patch(source, { ...(inputs.config as T.FieldDefinition.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'name': {
+			const config = input;
+			const _name = config.name;
+			return setSlot(
+				source,
+				TSKindId.FieldDefinition as const,
+				'field_definition',
+				0,
+				'name',
+				_name
+			) as unknown as T.FieldDefinition.Bound;
+		}
+		case 'definition': {
+			const config = input;
+			const _definition = config.definition;
+			return setSlot(
+				source,
+				TSKindId.FieldDefinition as const,
+				'field_definition',
+				1,
+				'definition',
+				_definition
+			) as unknown as T.FieldDefinition.Bound;
+		}
+	}
+}
 function withFieldDefinition(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.FieldDefinition.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildFieldDefinition$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildFieldDefinition$set(node, 'name', { name: value }))
 			);
 		case 'definition':
 			return applySetter(args, (value: Admit<T.Definition>) =>
-				rebuilt(node, handle, () => buildFieldDefinition$patch(node, { ...config, definition: value }))
+				rebuilt(node, handle, () => buildFieldDefinition$set(node, 'definition', { definition: value }))
 			);
 	}
 	throw new Error(`field_definition has no $with.${setter}`);
@@ -887,26 +1060,93 @@ function buildPredicate$patch(source: object, config: T.Predicate.Config): T.Pre
 		return node as unknown as T.Predicate.Bound;
 	});
 }
+function buildPredicate$set(
+	source: object,
+	...[slot, input]:
+		| ['prefix', Partial<T.Predicate.Config>]
+		| ['name', Partial<T.Predicate.Config>]
+		| ['type', Partial<T.Predicate.Config>]
+		| ['parameters', Partial<T.Predicate.Config>]
+): T.Predicate.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'prefix':
+			case 'name':
+			case 'type':
+			case 'parameters':
+				return buildPredicate$patch(source, { ...(inputs.config as T.Predicate.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'prefix': {
+			const config = input;
+			const _prefix = kindIdStorage<NonNullable<T.Predicate['_prefix']>>(config.prefix);
+			return setSlot(
+				source,
+				TSKindId.Predicate as const,
+				'predicate',
+				0,
+				'prefix',
+				_prefix
+			) as unknown as T.Predicate.Bound;
+		}
+		case 'name': {
+			const config = input;
+			const _name = config.name;
+			return setSlot(
+				source,
+				TSKindId.Predicate as const,
+				'predicate',
+				1,
+				'name',
+				_name
+			) as unknown as T.Predicate.Bound;
+		}
+		case 'type': {
+			const config = input;
+			const _type = kindIdStorage<NonNullable<T.Predicate['_type']>>(config.type);
+			return setSlot(
+				source,
+				TSKindId.Predicate as const,
+				'predicate',
+				2,
+				'type',
+				_type
+			) as unknown as T.Predicate.Bound;
+		}
+		case 'parameters': {
+			const config = input;
+			const _parameters = config.parameters;
+			return setSlot(
+				source,
+				TSKindId.Predicate as const,
+				'predicate',
+				3,
+				'parameters',
+				_parameters
+			) as unknown as T.Predicate.Bound;
+		}
+	}
+}
 function withPredicate(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.Predicate.Config;
 	switch (setter) {
 		case 'prefix':
 			return applySetter(args, (value: Admit<NonNullable<T.Predicate.Config>['prefix']>) =>
-				rebuilt(node, handle, () => buildPredicate$patch(node, { ...config, prefix: value }))
+				rebuilt(node, handle, () => buildPredicate$set(node, 'prefix', { prefix: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.ImmediateIdentifier>) =>
-				rebuilt(node, handle, () => buildPredicate$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildPredicate$set(node, 'name', { name: value }))
 			);
 		case 'type':
 			return applySetter(args, (value: Admit<NonNullable<T.Predicate.Config>['type']>) =>
-				rebuilt(node, handle, () => buildPredicate$patch(node, { ...config, type: value }))
+				rebuilt(node, handle, () => buildPredicate$set(node, 'type', { type: value }))
 			);
 		case 'parameters':
 			return applySetter(args, (value?: Admit<T.Parameters>) =>
-				rebuilt(node, handle, () => buildPredicate$patch(node, { ...config, parameters: value }))
+				rebuilt(node, handle, () => buildPredicate$set(node, 'parameters', { parameters: value }))
 			);
 	}
 	throw new Error(`predicate has no $with.${setter}`);
@@ -1000,18 +1240,55 @@ function buildGroupExpressionArm$patch(
 		return node as unknown as T.GroupExpressionArm.Bound;
 	});
 }
+function buildGroupExpressionArm$set(
+	source: object,
+	...[slot, input]: ['left', Partial<T.GroupExpressionArm.Config>] | ['right', Partial<T.GroupExpressionArm.Config>]
+): T.GroupExpressionArm.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'left':
+			case 'right':
+				return buildGroupExpressionArm$patch(source, { ...(inputs.config as T.GroupExpressionArm.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'left': {
+			const config = input;
+			const _left = config.left;
+			return setSlot(
+				source,
+				TSKindId.GroupExpressionArm as const,
+				'group_expression_arm',
+				0,
+				'left',
+				_left
+			) as unknown as T.GroupExpressionArm.Bound;
+		}
+		case 'right': {
+			const config = input;
+			const _right = config.right;
+			return setSlot(
+				source,
+				TSKindId.GroupExpressionArm as const,
+				'group_expression_arm',
+				1,
+				'right',
+				_right
+			) as unknown as T.GroupExpressionArm.Bound;
+		}
+	}
+}
 function withGroupExpressionArm(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.GroupExpressionArm.Config;
 	switch (setter) {
 		case 'left':
 			return applySetter(args, (value: Admit<T.Definition | T.GroupExpressionArm>) =>
-				rebuilt(node, handle, () => buildGroupExpressionArm$patch(node, { ...config, left: value }))
+				rebuilt(node, handle, () => buildGroupExpressionArm$set(node, 'left', { left: value }))
 			);
 		case 'right':
 			return applySetter(args, (value: Admit<T.Definition | T.GroupExpressionArm>) =>
-				rebuilt(node, handle, () => buildGroupExpressionArm$patch(node, { ...config, right: value }))
+				rebuilt(node, handle, () => buildGroupExpressionArm$set(node, 'right', { right: value }))
 			);
 	}
 	throw new Error(`group_expression_arm has no $with.${setter}`);
@@ -1059,18 +1336,60 @@ function buildNamedNodeExpressionArm$patch(
 		return node as unknown as T.NamedNodeExpressionArm.Bound;
 	});
 }
+function buildNamedNodeExpressionArm$set(
+	source: object,
+	...[slot, input]:
+		| ['left', Partial<T.NamedNodeExpressionArm.Config>]
+		| ['right', Partial<T.NamedNodeExpressionArm.Config>]
+): T.NamedNodeExpressionArm.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'left':
+			case 'right':
+				return buildNamedNodeExpressionArm$patch(source, {
+					...(inputs.config as T.NamedNodeExpressionArm.Config),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'left': {
+			const config = input;
+			const _left = config.left;
+			return setSlot(
+				source,
+				TSKindId.NamedNodeExpressionArm as const,
+				'named_node_expression_arm',
+				0,
+				'left',
+				_left
+			) as unknown as T.NamedNodeExpressionArm.Bound;
+		}
+		case 'right': {
+			const config = input;
+			const _right = config.right;
+			return setSlot(
+				source,
+				TSKindId.NamedNodeExpressionArm as const,
+				'named_node_expression_arm',
+				1,
+				'right',
+				_right
+			) as unknown as T.NamedNodeExpressionArm.Bound;
+		}
+	}
+}
 function withNamedNodeExpressionArm(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.NamedNodeExpressionArm.Config;
 	switch (setter) {
 		case 'left':
 			return applySetter(args, (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
-				rebuilt(node, handle, () => buildNamedNodeExpressionArm$patch(node, { ...config, left: value }))
+				rebuilt(node, handle, () => buildNamedNodeExpressionArm$set(node, 'left', { left: value }))
 			);
 		case 'right':
 			return applySetter(args, (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
-				rebuilt(node, handle, () => buildNamedNodeExpressionArm$patch(node, { ...config, right: value }))
+				rebuilt(node, handle, () => buildNamedNodeExpressionArm$set(node, 'right', { right: value }))
 			);
 	}
 	throw new Error(`named_node_expression_arm has no $with.${setter}`);
@@ -1114,18 +1433,55 @@ function buildGroupingGroup$patch(source: object, config: T.GroupingGroup.Config
 		return node as unknown as T.GroupingGroup.Bound;
 	});
 }
+function buildGroupingGroup$set(
+	source: object,
+	...[slot, input]: ['groupExpression', Partial<T.GroupingGroup.Config>] | ['anchor', Partial<T.GroupingGroup.Config>]
+): T.GroupingGroup.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'groupExpression':
+			case 'anchor':
+				return buildGroupingGroup$patch(source, { ...(inputs.config as T.GroupingGroup.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'groupExpression': {
+			const config = input;
+			const _group_expression = config.groupExpression;
+			return setSlot(
+				source,
+				TSKindId.GroupingGroup as const,
+				'grouping_group',
+				0,
+				'groupExpression',
+				_group_expression
+			) as unknown as T.GroupingGroup.Bound;
+		}
+		case 'anchor': {
+			const config = input;
+			const _anchor = strictBooleanStorage(config.anchor);
+			return setSlot(
+				source,
+				TSKindId.GroupingGroup as const,
+				'grouping_group',
+				1,
+				'anchor',
+				_anchor
+			) as unknown as T.GroupingGroup.Bound;
+		}
+	}
+}
 function withGroupingGroup(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.GroupingGroup.Config;
 	switch (setter) {
 		case 'groupExpression':
 			return applySetter(args, (value: Admit<T.Definition | T.GroupExpressionArm>) =>
-				rebuilt(node, handle, () => buildGroupingGroup$patch(node, { ...config, groupExpression: value }))
+				rebuilt(node, handle, () => buildGroupingGroup$set(node, 'groupExpression', { groupExpression: value }))
 			);
 		case 'anchor':
 			return applySetter(args, (value?: Admit<NonNullable<T.GroupingGroup.Config>['anchor']>) =>
-				rebuilt(node, handle, () => buildGroupingGroup$patch(node, { ...config, anchor: value }))
+				rebuilt(node, handle, () => buildGroupingGroup$set(node, 'anchor', { anchor: value }))
 			);
 	}
 	throw new Error(`grouping_group has no $with.${setter}`);
@@ -1211,23 +1567,76 @@ function buildNamedNodePlain$patch(source: object, config: T.NamedNodePlain.Conf
 		return node as unknown as T.NamedNodePlain.Bound;
 	});
 }
+function buildNamedNodePlain$set(
+	source: object,
+	...[slot, input]:
+		| ['name', Partial<T.NamedNodePlain.Config>]
+		| ['namedNodeGroup', Partial<T.NamedNodePlain.Config>]
+		| ['elements', Partial<T.NamedNodePlain.Config>]
+): T.NamedNodePlain.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'name':
+			case 'namedNodeGroup':
+			case 'elements':
+				return buildNamedNodePlain$patch(source, { ...(inputs.config as T.NamedNodePlain.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'name': {
+			const config = input;
+			const _name = kindIdStorage<NonNullable<T.NamedNodePlain['_name']>>(config.name);
+			return setSlot(
+				source,
+				TSKindId.NamedNodePlain as const,
+				'named_node_plain',
+				0,
+				'name',
+				_name
+			) as unknown as T.NamedNodePlain.Bound;
+		}
+		case 'namedNodeGroup': {
+			const config = input;
+			const _named_node_group = config.namedNodeGroup;
+			return setSlot(
+				source,
+				TSKindId.NamedNodePlain as const,
+				'named_node_plain',
+				1,
+				'namedNodeGroup',
+				_named_node_group
+			) as unknown as T.NamedNodePlain.Bound;
+		}
+		case 'elements': {
+			const config = input;
+			const _elements = listStorage<NonNullable<T.NamedNodePlain['_elements']>>(config.elements ?? []);
+			return setSlot(
+				source,
+				TSKindId.NamedNodePlain as const,
+				'named_node_plain',
+				2,
+				'elements',
+				_elements
+			) as unknown as T.NamedNodePlain.Bound;
+		}
+	}
+}
 function withNamedNodePlain(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.NamedNodePlain.Config;
 	switch (setter) {
 		case 'name':
 			return applySetter(args, (value: Admit<NonNullable<T.NamedNodePlain.Config>['name']>) =>
-				rebuilt(node, handle, () => buildNamedNodePlain$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildNamedNodePlain$set(node, 'name', { name: value }))
 			);
 		case 'namedNodeGroup':
 			return applySetter(args, (value?: Admit<T.NamedNodeGroup>) =>
-				rebuilt(node, handle, () => buildNamedNodePlain$patch(node, { ...config, namedNodeGroup: value }))
+				rebuilt(node, handle, () => buildNamedNodePlain$set(node, 'namedNodeGroup', { namedNodeGroup: value }))
 			);
 		case 'elements':
 			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
 				rebuilt(node, handle, () =>
-					buildNamedNodePlain$patch(node, { ...config, elements: restItems('elements', values) })
+					buildNamedNodePlain$set(node, 'elements', { elements: restItems('elements', values) })
 				)
 			);
 	}
@@ -1301,27 +1710,94 @@ function buildNamedNodeSupertyped$patch(
 		return node as unknown as T.NamedNodeSupertyped.Bound;
 	});
 }
+function buildNamedNodeSupertyped$set(
+	source: object,
+	...[slot, input]:
+		| ['supertype', Partial<T.NamedNodeSupertyped.Config>]
+		| ['name', Partial<T.NamedNodeSupertyped.Config>]
+		| ['namedNodeGroup', Partial<T.NamedNodeSupertyped.Config>]
+		| ['elements', Partial<T.NamedNodeSupertyped.Config>]
+): T.NamedNodeSupertyped.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'supertype':
+			case 'name':
+			case 'namedNodeGroup':
+			case 'elements':
+				return buildNamedNodeSupertyped$patch(source, { ...(inputs.config as T.NamedNodeSupertyped.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'supertype': {
+			const config = input;
+			const _supertype = config.supertype;
+			return setSlot(
+				source,
+				TSKindId.NamedNodeSupertyped as const,
+				'named_node_supertyped',
+				0,
+				'supertype',
+				_supertype
+			) as unknown as T.NamedNodeSupertyped.Bound;
+		}
+		case 'name': {
+			const config = input;
+			const _name = config.name;
+			return setSlot(
+				source,
+				TSKindId.NamedNodeSupertyped as const,
+				'named_node_supertyped',
+				1,
+				'name',
+				_name
+			) as unknown as T.NamedNodeSupertyped.Bound;
+		}
+		case 'namedNodeGroup': {
+			const config = input;
+			const _named_node_group = config.namedNodeGroup;
+			return setSlot(
+				source,
+				TSKindId.NamedNodeSupertyped as const,
+				'named_node_supertyped',
+				2,
+				'namedNodeGroup',
+				_named_node_group
+			) as unknown as T.NamedNodeSupertyped.Bound;
+		}
+		case 'elements': {
+			const config = input;
+			const _elements = listStorage<NonNullable<T.NamedNodeSupertyped['_elements']>>(config.elements ?? []);
+			return setSlot(
+				source,
+				TSKindId.NamedNodeSupertyped as const,
+				'named_node_supertyped',
+				3,
+				'elements',
+				_elements
+			) as unknown as T.NamedNodeSupertyped.Bound;
+		}
+	}
+}
 function withNamedNodeSupertyped(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.NamedNodeSupertyped.Config;
 	switch (setter) {
 		case 'supertype':
 			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildNamedNodeSupertyped$patch(node, { ...config, supertype: value }))
+				rebuilt(node, handle, () => buildNamedNodeSupertyped$set(node, 'supertype', { supertype: value }))
 			);
 		case 'name':
 			return applySetter(args, (value: Admit<T.ImmediateIdentifier | T.ImmediateString>) =>
-				rebuilt(node, handle, () => buildNamedNodeSupertyped$patch(node, { ...config, name: value }))
+				rebuilt(node, handle, () => buildNamedNodeSupertyped$set(node, 'name', { name: value }))
 			);
 		case 'namedNodeGroup':
 			return applySetter(args, (value?: Admit<T.NamedNodeGroup>) =>
-				rebuilt(node, handle, () => buildNamedNodeSupertyped$patch(node, { ...config, namedNodeGroup: value }))
+				rebuilt(node, handle, () => buildNamedNodeSupertyped$set(node, 'namedNodeGroup', { namedNodeGroup: value }))
 			);
 		case 'elements':
 			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
 				rebuilt(node, handle, () =>
-					buildNamedNodeSupertyped$patch(node, { ...config, elements: restItems('elements', values) })
+					buildNamedNodeSupertyped$set(node, 'elements', { elements: restItems('elements', values) })
 				)
 			);
 	}
@@ -1381,14 +1857,58 @@ function buildNamedNodeGroupChildren$patch(
 		return node as unknown as T.NamedNodeGroupChildren.Bound;
 	});
 }
+function buildNamedNodeGroupChildren$set(
+	source: object,
+	...[slot, input]:
+		| ['anchor', Partial<T.NamedNodeGroupChildren.Config>]
+		| ['namedNodeExpressions', Partial<T.NamedNodeGroupChildren.Config>]
+): T.NamedNodeGroupChildren.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'anchor':
+			case 'namedNodeExpressions':
+				return buildNamedNodeGroupChildren$patch(source, {
+					...(inputs.config as T.NamedNodeGroupChildren.Config),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'anchor': {
+			const config = input;
+			const _anchor = strictBooleanStorage(config.anchor);
+			return setSlot(
+				source,
+				TSKindId.NamedNodeGroupChildren as const,
+				'named_node_group_children',
+				0,
+				'anchor',
+				_anchor
+			) as unknown as T.NamedNodeGroupChildren.Bound;
+		}
+		case 'namedNodeExpressions': {
+			const config = input;
+			const _named_node_expressions = listStorage<NonNullable<T.NamedNodeGroupChildren['_named_node_expressions']>>(
+				config.namedNodeExpressions
+			);
+			return setSlot(
+				source,
+				TSKindId.NamedNodeGroupChildren as const,
+				'named_node_group_children',
+				1,
+				'namedNodeExpressions',
+				_named_node_expressions
+			) as unknown as T.NamedNodeGroupChildren.Bound;
+		}
+	}
+}
 function withNamedNodeGroupChildren(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.NamedNodeGroupChildren.Config;
 	switch (setter) {
 		case 'anchor':
 			return applySetter(args, (value?: Admit<NonNullable<T.NamedNodeGroupChildren.Config>['anchor']>) =>
-				rebuilt(node, handle, () => buildNamedNodeGroupChildren$patch(node, { ...config, anchor: value }))
+				rebuilt(node, handle, () => buildNamedNodeGroupChildren$set(node, 'anchor', { anchor: value }))
 			);
 		case 'namedNodeExpressions':
 			return applySetter(args, (...args: unknown[]) =>
@@ -1397,8 +1917,7 @@ function withNamedNodeGroupChildren(node: object, setter: string, args: readonly
 						args,
 						{ slot: 'namedNodeExpressions', keys: ['left', 'right'], make: buildNamedNodeExpressionArm },
 						(...values: Admit<NonEmptyArray<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>>) =>
-							buildNamedNodeGroupChildren$patch(node, {
-								...config,
+							buildNamedNodeGroupChildren$set(node, 'namedNodeExpressions', {
 								namedNodeExpressions: restItems('namedNodeExpressions', values)
 							})
 					)
@@ -1473,14 +1992,72 @@ function buildNamedNodeGroupAnchoredLast$patch(
 		return node as unknown as T.NamedNodeGroupAnchoredLast.Bound;
 	});
 }
+function buildNamedNodeGroupAnchoredLast$set(
+	source: object,
+	...[slot, input]:
+		| ['anchor', Partial<T.NamedNodeGroupAnchoredLast.Config>]
+		| ['namedNodeExpressions', Partial<T.NamedNodeGroupAnchoredLast.Config>]
+		| ['last', Partial<T.NamedNodeGroupAnchoredLast.Config>]
+): T.NamedNodeGroupAnchoredLast.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'anchor':
+			case 'namedNodeExpressions':
+			case 'last':
+				return buildNamedNodeGroupAnchoredLast$patch(source, {
+					...(inputs.config as T.NamedNodeGroupAnchoredLast.Config),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'anchor': {
+			const config = input;
+			const _anchor = strictBooleanStorage(config.anchor);
+			return setSlot(
+				source,
+				TSKindId.NamedNodeGroupAnchoredLast as const,
+				'named_node_group_anchored_last',
+				0,
+				'anchor',
+				_anchor
+			) as unknown as T.NamedNodeGroupAnchoredLast.Bound;
+		}
+		case 'namedNodeExpressions': {
+			const config = input;
+			const _named_node_expressions = listStorage<NonNullable<T.NamedNodeGroupAnchoredLast['_named_node_expressions']>>(
+				config.namedNodeExpressions ?? []
+			);
+			return setSlot(
+				source,
+				TSKindId.NamedNodeGroupAnchoredLast as const,
+				'named_node_group_anchored_last',
+				1,
+				'namedNodeExpressions',
+				_named_node_expressions
+			) as unknown as T.NamedNodeGroupAnchoredLast.Bound;
+		}
+		case 'last': {
+			const config = input;
+			const _last = config.last;
+			return setSlot(
+				source,
+				TSKindId.NamedNodeGroupAnchoredLast as const,
+				'named_node_group_anchored_last',
+				2,
+				'last',
+				_last
+			) as unknown as T.NamedNodeGroupAnchoredLast.Bound;
+		}
+	}
+}
 function withNamedNodeGroupAnchoredLast(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.NamedNodeGroupAnchoredLast.Config;
 	switch (setter) {
 		case 'anchor':
 			return applySetter(args, (value?: Admit<NonNullable<T.NamedNodeGroupAnchoredLast.Config>['anchor']>) =>
-				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast$patch(node, { ...config, anchor: value }))
+				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast$set(node, 'anchor', { anchor: value }))
 			);
 		case 'namedNodeExpressions':
 			return applySetter(args, (...args: unknown[]) =>
@@ -1489,8 +2066,7 @@ function withNamedNodeGroupAnchoredLast(node: object, setter: string, args: read
 						args,
 						{ slot: 'namedNodeExpressions', keys: ['left', 'right'], make: buildNamedNodeExpressionArm },
 						(...values: Admit<(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]>) =>
-							buildNamedNodeGroupAnchoredLast$patch(node, {
-								...config,
+							buildNamedNodeGroupAnchoredLast$set(node, 'namedNodeExpressions', {
 								namedNodeExpressions: restItems('namedNodeExpressions', values)
 							})
 					)
@@ -1498,7 +2074,7 @@ function withNamedNodeGroupAnchoredLast(node: object, setter: string, args: read
 			);
 		case 'last':
 			return applySetter(args, (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
-				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast$patch(node, { ...config, last: value }))
+				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast$set(node, 'last', { last: value }))
 			);
 	}
 	throw new Error(`named_node_group_anchored_last has no $with.${setter}`);
@@ -1673,5 +2249,75 @@ export const builtViews: BuiltViews = Object.freeze({
 		63: 3,
 		64: 3
 	}),
+	places: Object.freeze({
+		1: [[2, 2, 2, 4, 0, 0]],
+		11: [[2, 2, 2, 4, 0, 0]],
+		33: [[2, 2, 1, 1, 0, 3]],
+		39: [[2, 2, 3, 1, 0, 0]],
+		40: [[2, 2, 3, 8, 3, 0]],
+		41: [[2, 2, 3, 8, 3, 0]],
+		42: [[2, 2, 1, 1, 0, 3]],
+		43: [[2, 2, 1, 1, 0, 3]],
+		44: [
+			[2, 2, 1, 1, 0, 3],
+			[3, 3, 1, 1, 0, 3]
+		],
+		45: [
+			[2, 2, 1, 1, 0, 3],
+			[3, 3, 1, 1, 0, 3]
+		],
+		46: [
+			[2, 2, 6, 9, 5, 0],
+			[8, 3, 1, 1, 0, 3]
+		],
+		47: [
+			[2, 2, 6, 10, 5, 0],
+			[8, 3, 1, 1, 0, 3]
+		],
+		50: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 3, 1, 0, 0]
+		],
+		51: [[2, 2, 3, 1, 0, 0]],
+		52: [
+			[2, 2, 1, 2, 0, 0],
+			[3, 3, 3, 1, 0, 0],
+			[6, 4, 1, 2, 0, 0],
+			[7, 5, 3, 8, 3, 0]
+		],
+		54: [[2, 2, 1, 2, 0, 0]],
+		56: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 3, 1, 0, 0]
+		],
+		57: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 3, 1, 0, 0]
+		],
+		58: [
+			[3, 3, 3, 1, 0, 0],
+			[2, 0]
+		],
+		61: [
+			[2, 2, 4, 3, 0, 0],
+			[6, 3, 3, 1, 0, 0],
+			[9, 4, 1, 1, 0, 3]
+		],
+		62: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 6, 9, 5, 0],
+			[11, 4, 3, 1, 0, 0],
+			[14, 5, 1, 1, 0, 3]
+		],
+		63: [
+			[2, 0],
+			[3, 3, 1, 1, 0, 3]
+		],
+		64: [
+			[2, 0],
+			[3, 3, 1, 1, 0, 3],
+			[4, 4, 3, 1, 0, 0]
+		]
+	} as const),
 	leaves: Object.freeze({ 5: leafIdentifier, 6: leafImmediateIdentifier, 23: leafStringContentText })
 });

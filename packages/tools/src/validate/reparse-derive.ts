@@ -1,6 +1,6 @@
 import { applyHost, hostTemplateFor, lineStartsInsideTokens, type ReparseHosts } from '@sittir/common';
 import { load } from '../codegen-surface.ts';
-import type { TSNode, TSTree } from './common.ts';
+import type { ParsedTree, TSNode } from './common.ts';
 
 const { isParserHiddenName } = await load('rulePatterns');
 
@@ -10,7 +10,7 @@ const WRAPPER_MODEL_TYPES: ReadonlySet<string> = new Set(['list', 'alias', 'enve
 /** One corpus entry, parsed. */
 export interface DerivationTree {
 	readonly source: string;
-	readonly tree: TSTree;
+	readonly root: TSNode;
 }
 
 export interface DeriveHostsInput {
@@ -27,9 +27,9 @@ export interface DeriveHostsInput {
 	/** The model type of a kind: a list, alias or envelope kind holds its content as the node itself. */
 	readonly modelTypeOf: (kind: string) => string | undefined;
 	readonly corpus: readonly DerivationTree[];
-	readonly parse: (text: string) => TSTree;
+	readonly parse: (text: string) => ParsedTree;
 	/** The reparsed node with the source node's grammar id at the hole's offset, or null. */
-	readonly findAt: (tree: TSTree, source: TSNode, hosted: { text: string; offset: number }) => TSNode | null;
+	readonly findAt: (root: TSNode, source: TSNode, hosted: { text: string; offset: number }) => TSNode | null;
 	/** Whether the reparsed node is the source node, structurally. */
 	readonly same: (source: TSNode, reparsed: TSNode) => boolean;
 }
@@ -106,8 +106,8 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 		for (const id of input.kindIdsOf(name)) byId.set(id, [...(byId.get(id) ?? []), name]);
 	}
 	const storagesOfDisplay = new Map<string, Set<string>>();
-	for (const { tree } of input.corpus) {
-		for (const node of namedNodes(tree.rootNode)) {
+	for (const { root } of input.corpus) {
+		for (const node of namedNodes(root)) {
 			for (const storage of byId.get(node.grammarId) ?? []) {
 				if (storage === node.type || isParserHiddenName(storage)) continue;
 				const storages = storagesOfDisplay.get(node.type) ?? new Set<string>();
@@ -123,8 +123,8 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 		return [...new Set([node.type, ...own, ...shown])].filter((name) => !isParserHiddenName(name));
 	};
 	const occurrences = new Map<string, Occurrence[]>();
-	input.corpus.forEach(({ tree }, entry) => {
-		for (const node of namedNodes(tree.rootNode)) {
+	input.corpus.forEach(({ root }, entry) => {
+		for (const node of namedNodes(root)) {
 			for (const name of namesOf(node)) {
 				const list = occurrences.get(name) ?? [];
 				list.push({ entry, node });
@@ -154,9 +154,9 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 		samples.length > 0 &&
 		samples.every(({ text, node }) => {
 			const hosted = applyHost(template, text, input.parse);
-			const tree = input.parse(hosted.text);
-			if (tree.rootNode.hasError) return false;
-			const reparsed = input.findAt(tree, node, hosted);
+			using tree = input.parse(hosted.text);
+			if (tree.root.hasError) return false;
+			const reparsed = input.findAt(tree.root, node, hosted);
 			return reparsed !== null && input.same(node, reparsed);
 		});
 

@@ -1,12 +1,14 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { basename, dirname, join, normalize, posix, relative, sep } from 'node:path';
-import { addonFileName, hostPlatform, platformSuffix } from '@sittir/common/engine';
+import { dirname, join, normalize, relative } from 'node:path';
+import { addonFileName, hostPlatform, platformSuffix } from '@sittir/common/native-binding';
 import { moduleClosure } from './module-closure.ts';
 import { sha256File } from '../util/content-hash.ts';
 import { writeFileAtomic } from '../util/write-file-atomic.ts';
-import { NATIVE_NAPI_CONFIG, REPO_ROOT, grammarPackageDir, nativeBinaryName, nativeBindingRelDir, nativeCrateRelDir, type GrammarName } from '../grammars.ts';
+import { filesUnder, posixRelative } from '../util/files.ts';
+import { parserSourceFiles } from '../transpile/parser-sources.ts';
+import { NATIVE_NAPI_CONFIG, REPO_ROOT, grammarPackageDir, nativeBinaryName, nativeBindingRelDir, nativeCrateRelDir, sittirDirOf, type GrammarName } from '../grammars.ts';
 
 export type NativeProfile = 'release' | 'gate' | 'dev';
 
@@ -52,8 +54,6 @@ const BUILD_DRIVER = 'scripts/build-native.mts';
 const CARGO_CONFIG_NAMES = ['config.toml', 'config'];
 const BUILD_ENV =
 	/^(?:RUSTC|RUSTC_WRAPPER|RUSTC_WORKSPACE_WRAPPER|RUSTFLAGS|CARGO_ENCODED_RUSTFLAGS|CARGO_BUILD_(?!TARGET_DIR$).+|CARGO_PROFILE_.+|CARGO_TARGET_(?!DIR$).+|(?:HOST_|TARGET_)?(?:CC|CXX|AR|CFLAGS|CXXFLAGS|CPPFLAGS|ARFLAGS)(?:_.+)?|CRATE_CC_NO_DEFAULTS|SDKROOT|MACOSX_DEPLOYMENT_TARGET)$/;
-const SCANNER_SOURCES = ['scanner.c', 'scanner.cc'];
-const QUOTED_INCLUDE = /^\s*#include "([^"]+)"/;
 
 const toolchains = new Map<string, string>();
 
@@ -80,20 +80,21 @@ export function llvmTool(name: LlvmTool, repoRoot: string = REPO_ROOT): string {
 	const sysroot = execFileSync('rustc', ['--print', 'sysroot'], { cwd: repoRoot, encoding: 'utf8' }).trim();
 	const tool = join(sysroot, 'lib', 'rustlib', rustHost(repoRoot), 'bin', process.platform === 'win32' ? `${name}.exe` : name);
 	if (existsSync(tool)) return tool;
-	throw new Error(`${name} is not in the Rust toolchain: add its llvm-tools component (rustup component add llvm-tools), or name one in ${variable}`);
+	const developer = process.platform === 'darwin' ? developerTool(name) : undefined;
+	if (developer !== undefined) return developer;
+	throw new Error(
+		`${name} is not in the Rust toolchain${process.platform === 'darwin' ? ' or the developer tools xcrun finds' : ''}: add its llvm-tools component (rustup component add llvm-tools), or name one in ${variable}`
+	);
 }
 
-function walk(path: string, out: string[]): void {
-	if (!existsSync(path)) return;
-	const stat = statSync(path);
-	if (stat.isFile()) {
-		if (basename(path) !== '.DS_Store') out.push(path);
-		return;
-	}
-	if (stat.isDirectory()) {
-		for (const name of readdirSync(path)) walk(join(path, name), out);
+function developerTool(name: LlvmTool): string | undefined {
+	try {
+		return execFileSync('xcrun', ['--find', name], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+	} catch {
+		return undefined;
 	}
 }
+
 
 function crateClosure(repoRoot: string, crateRel: string): string[] {
 	const seen = new Set<string>();
@@ -115,35 +116,16 @@ export function hostBinaryName(grammar: string): string {
 	return addonFileName(nativeBinaryName(grammar as GrammarName), platformSuffix(hostPlatform()));
 }
 
-function quotedIncludeClosure(file: string, seen: Set<string>): void {
-	if (seen.has(file)) return;
-	seen.add(file);
-	for (const line of readFileSync(file, 'utf8').split('\n')) {
-		const header = QUOTED_INCLUDE.exec(line)?.[1];
-		if (header !== undefined && existsSync(join(dirname(file), header))) quotedIncludeClosure(join(dirname(file), header), seen);
-	}
-}
-
-export function checkoutPath(repoRoot: string, file: string, flavor: Pick<typeof posix, 'relative' | 'sep'> = { relative, sep }): string {
-	return flavor.relative(repoRoot, file).split(flavor.sep).join(posix.sep);
-}
-
 export function nativeInputs(repoRoot: string, grammar: string): Record<string, string> {
-	const parserSources = join(repoRoot, relative(REPO_ROOT, grammarPackageDir(grammar)), '.sittir/src');
+	const parserSources = join(sittirDirOf({ dir: join(repoRoot, relative(REPO_ROOT, grammarPackageDir(grammar))) }), 'src');
 	const roots = [
 		...WORKSPACE_INPUTS,
 		...crateClosure(repoRoot, nativeCrateRelDir(grammar)).flatMap(crateInputs),
 		...moduleClosure(repoRoot, [BUILD_DRIVER])
 	];
-	const files: string[] = [];
-	for (const root of roots) walk(join(repoRoot, root), files);
-	walk(parserSources, files);
-	const scannerIncludes = new Set<string>();
-	for (const scanner of SCANNER_SOURCES.map((name) => join(parserSources, name)).filter((path) => existsSync(path))) {
-		quotedIncludeClosure(scanner, scannerIncludes);
-	}
+	const files = [...roots.flatMap((root) => filesUnder(join(repoRoot, root))), ...parserSourceFiles(parserSources)];
 	const inputs: Record<string, string> = {};
-	for (const file of [...new Set([...files, ...scannerIncludes])].sort()) inputs[checkoutPath(repoRoot, file)] = sha256File(file);
+	for (const file of [...new Set(files)].sort()) inputs[posixRelative(repoRoot, file)] = sha256File(file);
 	return inputs;
 }
 
@@ -160,7 +142,7 @@ function cargoConfigFiles(repoRoot: string, grammar: string, env: NodeJS.Process
 export function nativeBuildConfig(repoRoot: string, grammar: string, env: NodeJS.ProcessEnv): Record<string, string> {
 	const config: Record<string, string> = {};
 	for (const name of Object.keys(env).filter((name) => BUILD_ENV.test(name)).sort()) config[name] = env[name] ?? '';
-	for (const file of cargoConfigFiles(repoRoot, grammar, env)) config[checkoutPath(repoRoot, file)] = sha256File(file);
+	for (const file of cargoConfigFiles(repoRoot, grammar, env)) config[posixRelative(repoRoot, file)] = sha256File(file);
 	return config;
 }
 
@@ -193,8 +175,8 @@ export function writeNativeBuildStamp(repoRoot: string, grammar: string, profile
 	const stamp: NativeBuildStamp = {
 		profile,
 		binarySha256: sha256File(join(repoRoot, nativeBindingRelDir(grammar), binary)),
-		...(unstripped === undefined ? {} : { unstripped: { path: checkoutPath(repoRoot, unstripped), sha256: sha256File(unstripped) } }),
-		...(linkerMap === undefined ? {} : { linkerMap: { path: checkoutPath(repoRoot, linkerMap), sha256: sha256File(linkerMap) } }),
+		...(unstripped === undefined ? {} : { unstripped: { path: posixRelative(repoRoot, unstripped), sha256: sha256File(unstripped) } }),
+		...(linkerMap === undefined ? {} : { linkerMap: { path: posixRelative(repoRoot, linkerMap), sha256: sha256File(linkerMap) } }),
 		...built
 	};
 	writeFileAtomic(stampPath(repoRoot, grammar, binary), JSON.stringify(stamp, null, 2) + '\n');

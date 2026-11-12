@@ -18,9 +18,9 @@ describe('nativeTargetRows', () => {
 		expect(Object.fromEntries(nativeTargetRows().map(({ target, runner, container }) => [target, container === undefined ? runner : `${runner} ${container}`]))).toEqual({
 			'aarch64-apple-darwin': 'macos-15',
 			'x86_64-unknown-linux-gnu': 'ubuntu-22.04',
-			'x86_64-unknown-linux-musl': 'ubuntu-24.04 node:22-alpine',
+			'x86_64-unknown-linux-musl': 'ubuntu-24.04 node:24-alpine',
 			'aarch64-unknown-linux-gnu': 'ubuntu-24.04-arm',
-			'aarch64-unknown-linux-musl': 'ubuntu-24.04-arm node:22-alpine',
+			'aarch64-unknown-linux-musl': 'ubuntu-24.04-arm node:24-alpine',
 			'x86_64-pc-windows-msvc': 'windows-2022'
 		});
 	});

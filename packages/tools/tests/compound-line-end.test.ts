@@ -15,7 +15,7 @@ const COMPOUNDS: Readonly<Record<string, string>> = {
 describe('a compound statement ends its line when another statement is written after it', () => {
 	for (const [name, source] of Object.entries(COMPOUNDS)) {
 		it(name, async () => {
-			const engine = await createEngine(await languageByName('python'));
+			using engine = await createEngine(await languageByName('python'));
 			const parse = (text: string) => engine.parse(text);
 			const compound = parse(source).statements().at(0);
 			const simple = parse('x = 1\n').statements().at(0);

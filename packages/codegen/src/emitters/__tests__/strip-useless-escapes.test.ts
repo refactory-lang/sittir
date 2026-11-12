@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { stripUselessEscapes } from '../../compiler/model/leaf-pattern.ts';
+import { anchoredLeafRegex, stripUselessEscapes } from '../../compiler/model/leaf-pattern.ts';
 
 const accepts = (source: string, text: string): boolean => new RegExp(`^(?:${source})$`, 'u').test(text);
 
@@ -27,5 +27,15 @@ describe('stripUselessEscapes', () => {
 
 	it('leaves an escaped bracket outside a class alone', () => {
 		expect(stripUselessEscapes('\\[a\\]')).toBe('\\[a\\]');
+	});
+});
+
+describe('anchoredLeafRegex', () => {
+	it("reads a leaf pattern's classes and dot as tree-sitter lexes them", () => {
+		const leaf = (pattern: string) => anchoredLeafRegex('leaf', pattern)!;
+		expect(leaf('\\s+').test('\u00a0')).toBe(false);
+		expect(leaf('[^\\s]+').test('\u00a0\u0085')).toBe(true);
+		expect(leaf('#.*').test('#a\rb\u2028')).toBe(true);
+		expect(leaf('#.*').test('#a\nb')).toBe(false);
 	});
 });

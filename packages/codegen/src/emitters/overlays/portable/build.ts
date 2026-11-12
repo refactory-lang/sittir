@@ -8,6 +8,7 @@ import type {
 	PortableDelimiterToken,
 	PortableMount,
 	PortableFlagStep,
+	PortableSpelledFact,
 	PortableKeyedMount,
 	PortableMemberStep,
 	PortableMountCall,
@@ -15,6 +16,7 @@ import type {
 	PortablePreset,
 	PortableSeat,
 	PortableSlotStep,
+	PortableTemplate,
 	PortableValueBuild,
 	QueryPlan
 } from '@sittir/types';
@@ -22,8 +24,12 @@ import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics
 import { Delimiter } from '@sittir/common/delimiter';
 import type { ChildTest, GrammarRoutes, MemberRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
 import { concreteKinds, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reachedBy, shownSlots, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
-import type { ModelMount, ModelSlot, SlotModel } from '../../../bindings/facts.ts';
+import type { PortableFactRecord } from './read-tests.ts';
+import { portableSpelledFactOf } from './spelled-facts.ts';
+import type { ModelMount, ModelSlot, SlotModel, TemplateFact } from '../../../bindings/facts.ts';
+import type { VocabularyScalar } from '../../../bindings/vocabulary.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
+import { forwardedTargetKind } from '../../shared.ts';
 import { SEQ, STRING } from '../../../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../../../types/rule.ts';
 import {
@@ -47,7 +53,7 @@ import {
 } from '../../../compiler/model/node-map.ts';
 import { buildFactoryMap } from '../../factory-map.ts';
 import { slotResolverKinds, transparentEnvelopeTextLeaves } from '../../from.ts';
-import { interiorSlotGuards, numberShapes, numericSlotKeys } from '../../interior.ts';
+import { interiorSlotGuards, kindNumberShape, numericSlotShape, readsEveryInteger, slotPattern, spellsItsBase, wholeTextPattern, wholeTextShape, type NumberShape } from '../../interior.ts';
 import { leafReDeclaration } from '../../factories.ts';
 import { findKindEntry, fixedTextKinds, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { membershipKindsOf } from '../../membership.ts';
@@ -60,9 +66,18 @@ export type PickDiagnosticCode =
 	| 'portable-owner-undecided'
 	| 'portable-token-ambiguous'
 	| 'portable-claim-unplaced'
-	| 'portable-kind-armless';
+	| 'portable-kind-armless'
+	| 'portable-value-unshaped'
+	| 'portable-integer-partial';
 
 const FORM_PRODUCT_LIMIT = 8;
+
+type ArmScalar = NonNullable<PortableBuildArm['scalar']>;
+
+const ARM_SCALARS = ['integer', 'float', 'bigint'] as const satisfies readonly ArmScalar[];
+
+const armScalar = (shape: NumberShape | undefined, value: VocabularyScalar | undefined): ArmScalar | undefined =>
+	shape === undefined || value === undefined ? undefined : value === 'bigint' ? 'bigint' : shape.base === 'float' ? 'float' : 'integer';
 
 const DECIMAL_PARTS = ['integer', 'fraction', 'exponent', 'marker', 'exponentSign'] as const satisfies readonly (keyof PortableDecimalParts)[];
 
@@ -82,11 +97,17 @@ export interface PortableBuildInput {
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly flagPlans: ReadonlyMap<string, ReadonlyMap<string, QueryPlan | null>>;
+	readonly features: readonly string[];
+	readonly factOf: (entry: ReadEntry) => PortableFactRecord | undefined;
+	readonly declaresFlag: (path: string, flag: string) => boolean;
+	readonly valueScalarOf: (path: string) => VocabularyScalar | undefined;
 }
 
 export interface PortableBuildOutput {
 	readonly table: PortableBuildTable;
 	readonly diagnostics: readonly PickDiagnostic[];
+	readonly presetCarried: ReadonlySet<number>;
+	readonly totalIntegerReads: ReadonlySet<number>;
 }
 
 interface RoutedFill {
@@ -104,11 +125,14 @@ interface Arm {
 	readonly tested: ReadonlySet<string>;
 	readonly text: string | undefined;
 	readonly value: boolean | undefined;
-	readonly scalar: 'integer' | 'float' | undefined;
+	readonly scalar: ArmScalar | undefined;
 	readonly complete: boolean;
 	readonly builds: string;
+	readonly chosen: boolean;
 	readonly site?: readonly [holder: number, key: string];
 }
+
+const portableTemplate = (template: TemplateFact): PortableTemplate => ({ member: template.target, pattern: template.template, holes: template.holes, match: template.match });
 
 const routeSteps = (member: PortableMemberStep): readonly PortableSlotStep[] => member.steps.filter((step) => step.flatten !== true);
 
@@ -184,26 +208,37 @@ const sortedIds = (ids: Iterable<number>): readonly number[] => [...new Set(ids)
 const disjoint = (sets: readonly ReadonlySet<number>[]): boolean =>
 	sets.every((a, i) => sets.every((b, j) => i === j || [...a].every((id) => !b.has(id))));
 
-export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPlans }: PortableBuildInput): PortableBuildOutput {
+export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPlans, features, factOf, declaresFlag, valueScalarOf }: PortableBuildInput): PortableBuildOutput {
 	const typeOf = (kind: string): number | undefined => findKindEntry(kindEntries, kind)?.id;
 	const shapes = buildFactoryMap(nodeMap, kindEntries).factoryShapes;
 	const fixedText = new Map(fixedTextKinds(nodeMap, kindEntries));
-	const numeric = numberShapes(nodeMap);
 	const builders = new Map<string, PortableCallShape>();
 	const optionKeys = new Map<string, readonly string[]>();
 	const nodeOf = (kind: string): AssembledNode | undefined => nodeMap.nodes.get(modelNode(model, kind)?.kind ?? kind);
 	const slotOf = (owner: string, slot: string): AssembledNonterminal | undefined => nodeOf(owner)?.slots.find((s) => s.name === slot);
 	const storageName = (kind: string): string => modelNode(model, kind)?.kind ?? kind;
-	const flagOnly: ReadonlySet<string> = new Set(
-		[...routes.members.values()].flatMap((members) => members.flatMap((route) => (route.flag === true && route.route === 'kind' ? [storageName(route.kind)] : [])))
-	);
+	const flagSites = new Map<string, Set<string> | 'any'>();
+	for (const members of routes.members.values())
+		for (const route of members) {
+			if (route.flag !== true || route.route !== 'kind') continue;
+			const kind = storageName(route.kind);
+			const step = route.path?.at(-1);
+			const known = flagSites.get(kind);
+			if (step === undefined || known === 'any') flagSites.set(kind, 'any');
+			else (known ?? flagSites.set(kind, new Set()).get(kind) as Set<string>).add(`${storageName(step.owner)} ${step.slot}`);
+		}
+	const flagOnly: ReadonlySet<string> = new Set(flagSites.keys());
 	const flagContent = (kind: string): string | undefined => {
 		const node = nodeOf(kind);
 		return flagOnly.has(storageName(kind)) && node instanceof AssembledLexedPattern ? lexedContentSlot(node)?.propertyName : undefined;
 	};
-	const contentsOf = (kinds: ReadonlySet<string>): Readonly<Record<number, string>> | undefined => {
-		const entries = [...kinds].flatMap((kind) => {
-			const key = flagContent(kind);
+	const flaggedAt = (kind: string, seat: Seat): boolean => {
+		const sites = flagSites.get(storageName(kind));
+		return sites === 'any' || sites?.has(`${storageName(seat.holder.kind)} ${seat.slot.name}`) === true;
+	};
+	const contentsOf = (seat: Seat): Readonly<Record<number, string>> | undefined => {
+		const entries = [...seat.kinds].flatMap((kind) => {
+			const key = flaggedAt(kind, seat) ? flagContent(kind) : undefined;
 			const id = typeOf(kind);
 			return key === undefined || id === undefined ? [] : [[id, key] as const];
 		});
@@ -212,6 +247,11 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	const literals = valueTokensOf(routes, fixedText);
 	const declaredValues = new Map<string, boolean>();
 	for (const [kind, entries] of routes.readEntries) for (const { claim } of entries) if (claim.value !== undefined) declaredValues.set(kind, claim.value);
+	const kindValueScalars = new Map<string, VocabularyScalar>();
+	for (const [kind, entries] of routes.readEntries) {
+		const scalars = entries.flatMap((entry) => valueScalarOf(entry.vocab) ?? []);
+		if (scalars.length > 0) kindValueScalars.set(kind, scalars.includes('bigint') ? 'bigint' : 'number');
+	}
 	const register = (key: string, shape: PortableCallShape): string => {
 		const known = builders.get(key);
 		if (known !== undefined && known !== shape) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${key} takes both ${known} and ${shape} input` });
@@ -393,7 +433,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const tokens = tokensOf(seat);
 		const interior = interiorSlotGuards(seat.holder.kind, seat.holder).find(({ slot }) => slot === seat.slot.name);
 		const guard = leaf === undefined ? interior?.regex : leaf.pattern;
-		const contents = contentsOf(seat.kinds);
+		const contents = contentsOf(seat);
 		return {
 		at: [seat.holder.kindId!, seat.key],
 		kinds: sortedIds([...seat.kinds].flatMap((kind) => typeOf(kind) ?? [])),
@@ -421,7 +461,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const reached = [...leafKinds, ...branchKinds].filter((kind) => nodeOf(kind)?.kindId === undefined || admitted.has(kind));
 		const leaves = [...new Set(reached.flatMap(textLeavesOf))].filter((kind) => {
 			const node = nodeOf(kind);
-			return node instanceof AssembledPattern && !numeric.has(kind) && !fixedText.has(kind);
+			return node instanceof AssembledPattern && kindNumberShape(kind, node) === undefined && !fixedText.has(kind);
 		});
 		const plain = leaves.length > 1 ? leaves.filter((kind) => nodeOf(kind)?.variantOf === undefined) : leaves;
 		const leaf = plain.length === 1 ? builderOf(plain[0]!) : undefined;
@@ -625,6 +665,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	};
 	const product = <T,>(lists: readonly (readonly T[])[]): T[][] => lists.reduce<T[][]>((acc, list) => acc.flatMap((head) => list.map((item) => [...head, item])), [[]]);
 	const formDiagnostics: PickDiagnostic[] = [];
+	const totalIntegerReads = new Set<number>();
+	const partialIntegerReads = new Set<number>();
 	const unfilledBy = new Map<string, Set<string>>();
 
 	interface RefinedForm {
@@ -795,9 +837,22 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const builds = storageName(kind);
 		const builtId = id;
 		const seated = builder === undefined && !fixedText.has(node.kind) ? shapes[node.kind] : undefined;
-		const shape = numeric.get(kind);
+		const shape = kindNumberShape(node.kind, node);
 		const combos = product(bareFormSlotsOf(kind, claimed).map(({ slot, forms, bare }) => [...bare, null].map((choice) => ({ slot, forms, bare, choice }))));
 		if (combos.length > FORM_PRODUCT_LIMIT) formDiagnostics.push({ code: 'portable-form-product', path: entry.vocab, kinds: [kind], arms: combos.length });
+		const spelledHere = [...(routes.readEntries.get(kind) ?? [])]
+			.sort((a, b) => a.index - b.index)
+			.flatMap((other) => {
+				const fact = factOf(other);
+				return fact === undefined ? [] : [{ fact, entry: other }];
+			});
+		const spelledFact = (name: string): PortableSpelledFact => {
+			const group = spelledHere.filter(({ fact }) => fact.name === name);
+			return portableSpelledFactOf(group[0]!.fact, group.map(({ entry }) => entry), model, routes);
+		};
+		const spelledFacts = [
+			...new Set(spelledHere.flatMap(({ fact }) => (fact.path === entry.vocab || (fact.flag !== undefined && declaresFlag(entry.vocab, fact.flag)) ? [fact.name] : [])))
+		].map(spelledFact);
 		const arms = combos.flatMap((combo): Arm[] => {
 			const keeps = (site: Site): boolean =>
 				combo.every(({ slot, forms, bare, choice }) => {
@@ -838,6 +893,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				return { ...member, member: { ...member.member, ...(requires.length === 0 ? {} : { requires }) } };
 			});
 			const presets = placed.map(({ preset }) => preset);
+			const claimedPresets = new Set(claimed.map(({ preset }) => preset));
 			const deepest = presets.filter((preset) => !presets.some((other) => other !== preset && keys(other).startsWith(`${keys(preset)}.`)));
 			const flagSteps: Record<string, PortableFlagStep> = {};
 			for (const flag of flags) {
@@ -845,6 +901,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				const unset = [...(flagSteps[flag.name]?.unset ?? []), ...(other === undefined ? [] : [other])];
 				flagSteps[flag.name] = { presets: [...(flagSteps[flag.name]?.presets ?? []), flag.preset], ...(unset.length === 0 ? {} : { unset }) };
 			}
+			for (const spelled of (routes.readEntries.get(kind) ?? []).filter((other) => other.vocab === entry.vocab && other.claim.flag !== undefined && other.template !== undefined))
+				flagSteps[spelled.claim.flag!] = { ...(flagSteps[spelled.claim.flag!] ?? { presets: [] }), template: portableTemplate(spelled.template!) };
 			for (const route of entry.members) {
 				if (route.route !== 'delimiter') continue;
 				const list = route.path === undefined ? undefined : (stepsOf(route.path) ?? refuseList(route.name, entry.vocab));
@@ -901,16 +959,42 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			]);
 			const memberKinds = new Map<string, ReadonlySet<number>>();
 			for (const { member, seats } of completed) if (!memberKinds.has(member.name)) memberKinds.set(member.name, valueIds(seats));
-			const numericKeys = shape !== undefined && builder !== undefined && builders.get(builder) === 'config' ? numericSlotKeys(node) : [];
-			const memberAt = (key: string): string | undefined => completed.find(({ member }) => member.steps.length === 1 && member.steps[0]!.key === key)?.member.name;
-			const whole = numericKeys.length === 1 ? memberAt(numericKeys[0]!) : undefined;
-			if (numericKeys.length === 1 && whole === undefined) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${kind} takes its number at ${numericKeys[0]}, which no member of ${entry.vocab} reaches` });
+			const valueScalar = valueScalarOf(entry.vocab);
+			const scalar = armScalar(shape, valueScalar === undefined ? undefined : (kindValueScalars.get(kind) ?? valueScalar));
+			if (valueScalar !== undefined && shape === undefined) formDiagnostics.push({ code: 'portable-value-unshaped', path: entry.vocab, kinds: [kind] });
+			const contentSlot = lexedContentSlot(node);
+			const spellsAlone = (slot: AssembledNonterminal): boolean => {
+				const slotShape = numericSlotShape(slot);
+				return slotShape !== undefined && spellsItsBase(slotShape);
+			};
+			const numericSlots =
+				scalar === undefined || builder === undefined
+					? []
+					: builders.get(builder) === 'config'
+						? node.slots.filter(spellsAlone)
+						: contentSlot !== undefined && spellsAlone(contentSlot)
+							? [contentSlot]
+							: [];
+			const numericKeys = numericSlots.map((slot) => slot.propertyName);
 			const partless = numericKeys.length > 1 ? numericKeys.filter((key) => !DECIMAL_PARTS.some((part) => part === key)) : [];
 			if (partless.length > 0) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${kind}'s numeric slots ${partless.join(', ')} are no part of a decimal spelling` });
-			const parts: PortableDecimalParts = Object.fromEntries(DECIMAL_PARTS.flatMap((part) => (memberAt(part) === undefined ? [] : [[part, memberAt(part)!]])));
-			const numeric: PortableBuildArm['numeric'] = numericKeys.length === 0 ? undefined : (whole ?? parts);
+			const partSlots = numericKeys.length > 1 ? DECIMAL_PARTS.flatMap((part) => node.slots.find((slot) => slot.propertyName === part) ?? []) : [];
+			const numeric: PortableBuildArm['numeric'] =
+				numericKeys.length === 0 ? undefined : numericKeys.length === 1 ? numericKeys[0] : Object.fromEntries(partSlots.map((slot) => [slot.propertyName, slot.propertyName]));
+			const numericRequired = partSlots.filter((slot) => isRequired(slot)).map((slot) => slot.propertyName);
+			const read =
+				numericKeys.length === 0 ? { shape: wholeTextShape(kind, node), pattern: wholeTextPattern(node) } : numericKeys.length === 1 ? { shape: numericSlotShape(numericSlots[0]!), pattern: slotPattern(numericSlots[0]!) } : undefined;
+			const readShape = scalar === 'integer' || scalar === 'bigint' ? read?.shape : undefined;
+			const digits = readShape === undefined || readShape.base === 'float' ? undefined : { base: readShape.base, affix: readShape.prefix };
+			if (scalar === 'integer' || scalar === 'bigint') {
+				if (readShape !== undefined && readsEveryInteger(read?.pattern, readShape)) totalIntegerReads.add(builtId);
+				else if (!partialIntegerReads.has(builtId)) {
+					partialIntegerReads.add(builtId);
+					formDiagnostics.push({ code: 'portable-integer-partial', path: entry.vocab, kinds: [kind] });
+				}
+			}
 			const armMembers = completed.map(({ member }) => member);
-			const content = node instanceof AssembledLexedPattern && armMembers.length === 0 && shape === undefined && builder !== undefined && builders.get(builder) === 'direct' ? lexedContentSlot(node)?.propertyName : undefined;
+			const content = node instanceof AssembledLexedPattern && armMembers.length === 0 && shape === undefined && builder !== undefined && builders.get(builder) === 'direct' ? contentSlot?.propertyName : undefined;
 			const owners = ownersOf(armMembers);
 			for (const [i, a] of owners.entries())
 				for (const b of owners.slice(i + 1)) {
@@ -925,9 +1009,10 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					required,
 					tested: new Set([...tested].filter((name) => survivors.some((member) => member.name === name))),
 					builds,
+					chosen: deepest.some((preset) => !claimedPresets.has(preset)),
 					text: fixedText.get(kind),
 					value: declaredValues.get(kind),
-					scalar: shape === undefined ? undefined : shape.base === 'float' ? 'float' : 'integer',
+					scalar,
 					complete: shape?.base !== 'float' || shape.complete,
 					arm: {
 						kind: builtId,
@@ -935,13 +1020,16 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						...(mount === undefined ? {} : { mounted: mount.mounted }),
 						...(seated === undefined ? {} : { seated }),
 						...(numeric === undefined ? {} : { numeric }),
+						...(numericRequired.length === 0 ? {} : { numericRequired }),
+						...(digits === undefined ? {} : { digits }),
 						...(literals.has(kind) ? { literal: declaredValues.has(kind) ? { value: declaredValues.get(kind)! } : {} } : {}),
 						members: armMembers,
 						...emptiedOf(armMembers),
 						...(owners.length > 1 ? { owners } : {}),
 						presets: deepest,
 						flags: flagSteps,
-						...(entry.template === undefined ? {} : { template: { member: entry.template.target, pattern: entry.template.template, holes: entry.template.holes } }),
+						...(entry.template === undefined || entry.claim.flag !== undefined ? {} : { template: portableTemplate(entry.template) }),
+						...(spelledFacts.length === 0 ? {} : { facts: spelledFacts }),
 						...soleOf(entry, armMembers),
 						...(content === undefined ? {} : { content })
 					}
@@ -1021,6 +1109,11 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				})
 	);
 	const storageOf = (arm: Arm): string => storageName(arm.kind);
+	const variantOf = (arm: Arm): string => {
+		const envelopes = arm.site !== undefined ? [] : [...new Set(holderSlots.filter(({ kinds }) => kinds.has(arm.builds)).map(({ holder }) => holder))];
+		const [envelope] = envelopes;
+		return envelopes.length === 1 && variantChain(envelope!.kind).length > 0 && forwardedTargetKind(envelope!, nodeMap) === arm.builds ? envelope!.kind : storageOf(arm);
+	};
 	const isLeaf = (arm: Arm): boolean => textLeaf(arm.kind);
 	type Part = readonly [test: PortablePickTest | undefined, arms: readonly Arm[]];
 	let holders = new Map<Arm, (readonly [number, string])[]>();
@@ -1072,10 +1165,10 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			return [true, false].map((set): Part => [{ flag, set }, group.filter((arm) => implied(arm, flag) === set)]);
 		},
 		(group) => {
-			const found = grammarDefault(group.map(storageOf));
+			const found = grammarDefault(group.map(variantOf));
 			if (found === undefined) return undefined;
-			const ordered = [...group].sort((a, b) => Number(storageOf(b) === found.kind) - Number(storageOf(a) === found.kind));
-			return ordered.map((arm): Part => [{ variant: found.supertype.kind, value: arm.arm.kind, ...(storageOf(arm) === found.kind ? { default: true as const } : {}) }, [arm]]);
+			const ordered = [...group].sort((a, b) => Number(variantOf(b) === found.kind) - Number(variantOf(a) === found.kind));
+			return ordered.map((arm): Part => [{ variant: found.supertype.kind, value: arm.arm.kind, ...(variantOf(arm) === found.kind ? { default: true as const } : {}) }, [arm]]);
 		},
 		(group) => {
 			const names = (arm: Arm): string[] => arm.arm.members.map((m) => m.name).sort();
@@ -1131,6 +1224,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		}
 	];
 	const paths: Record<string, PortableBuildPath> = {};
+	const presetCarried = new Set<number>();
 	const decided = new Map<string, Record<keyof PortableValueBuild, string | undefined>>();
 	for (const [path, arms] of [...byPath].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
 		const tests = new Map<Arm, PortablePickTest[]>(arms.map((arm) => [arm, []]));
@@ -1166,9 +1260,15 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			if (!leaves && group.every((arm) => admittedAt(arm).length === 0)) diagnostics.push({ code: 'portable-pick-undecided', path, kinds: group.map((arm) => arm.kind) });
 			return group;
 		};
-		const ordered = decide(arms);
-		const scalarArms = new Map<Arm, 'integer' | 'float'>();
-		for (const scalar of ['integer', 'float'] as const) {
+		const memberNames = (arm: Arm): readonly string[] => arm.arm.members.map((member) => member.name);
+		const stated = new Set(arms.flatMap(memberNames));
+		const listed = new Set(arms.flatMap((arm) => arm.arm.members.filter((member) => member.list ?? member.multiple).map((member) => member.name)));
+		const missingOf = (arm: Arm): string[] => [...stated].filter((name) => !memberNames(arm).includes(name)).sort();
+		const emptyOf = (arm: Arm): string[] => (arm.text === undefined && arm.entry.empty === true ? missingOf(arm).filter((name) => listed.has(name)) : []);
+		const decidedOrder = decide(arms);
+		const ordered = [...decidedOrder.filter((arm) => emptyOf(arm).length > 0), ...decidedOrder.filter((arm) => emptyOf(arm).length === 0)];
+		const scalarArms = new Map<Arm, ArmScalar>();
+		for (const scalar of ARM_SCALARS) {
 			const pool = ordered.filter((arm) => arm.scalar === scalar);
 			if (pool.length === 0) continue;
 			const complete = pool.filter((arm) => arm.complete);
@@ -1179,21 +1279,17 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			else scalarArms.set(chosen, scalar);
 		}
 		const kindOf = (arm: Arm | undefined): string | undefined => (arm === undefined ? undefined : storageOf(arm));
-		const takes = (scalar: 'integer' | 'float'): string | undefined => kindOf([...scalarArms].find(([, taken]) => taken === scalar)?.[0]);
+		const takes = (scalar: ArmScalar): string | undefined => kindOf([...scalarArms].find(([, taken]) => taken === scalar)?.[0]);
 		decided.set(path, {
-			integer: takes('integer'),
+			integer: takes('integer') ?? takes('bigint'),
 			float: takes('float'),
 			true: kindOf(arms.find((arm) => arm.value === true)),
 			false: kindOf(arms.find((arm) => arm.value === false))
 		});
-		const memberNames = (arm: Arm): readonly string[] => arm.arm.members.map((member) => member.name);
-		const stated = new Set(arms.flatMap(memberNames));
-		const listed = new Set(arms.flatMap((arm) => arm.arm.members.filter((member) => member.list ?? member.multiple).map((member) => member.name)));
 		for (const arm of arms) {
 			if (arm.text !== undefined) continue;
-			const missing = [...stated].filter((name) => !memberNames(arm).includes(name)).sort();
-			const empty = arm.entry.empty === true ? missing.filter((name) => listed.has(name)) : [];
-			const lacking = missing.filter((name) => !empty.includes(name));
+			const empty = emptyOf(arm);
+			const lacking = missingOf(arm).filter((name) => !empty.includes(name));
 			const own = tests.get(arm)!;
 			const presence = own.find((test): test is Extract<PortablePickTest, { readonly absent: readonly string[] }> => 'absent' in test);
 			const required = [...new Set([...(presence === undefined ? [] : presence.required), ...arm.required])].sort();
@@ -1201,6 +1297,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const emptied = empty.length === 0 ? kept : [...kept, { empty }];
 			tests.set(arm, lacking.length === 0 && required.length === 0 ? emptied : [...emptied, { absent: lacking, required }]);
 		}
+		for (const arm of ordered) if (arm.chosen) presetCarried.add(arm.entry.index);
 		paths[path] = {
 			root: root && ordered.some((arm) => !holders.has(arm)),
 			arms: ordered.map(
@@ -1261,9 +1358,12 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			paths,
 			...(Object.keys(values).length === 0 ? {} : { values }),
 			...(tokens.length === 0 ? {} : { tokens: Object.fromEntries(tokens) }),
-			...(delimiters.length === 0 ? {} : { delimiters: Object.fromEntries(delimiters) })
+			...(delimiters.length === 0 ? {} : { delimiters: Object.fromEntries(delimiters) }),
+			features
 		},
-		diagnostics
+		diagnostics,
+		presetCarried,
+		totalIntegerReads
 	};
 }
 
@@ -1310,8 +1410,8 @@ function valueBuilds(
 	);
 }
 
-export function emitPortableBuild(input: PortableBuildInput): { readonly source: string; readonly diagnostics: readonly PickDiagnostic[]; readonly table: PortableBuildTable } {
-	const { table, diagnostics } = portableBuildTable(input);
+export function emitPortableBuild(input: PortableBuildInput): PortableBuildOutput & { readonly source: string } {
+	const { table, diagnostics, presetCarried, totalIntegerReads } = portableBuildTable(input);
 	return {
 		source: [
 			'// Auto-generated by @sittir/codegen — do not edit',
@@ -1322,6 +1422,8 @@ export function emitPortableBuild(input: PortableBuildInput): { readonly source:
 			''
 		].join('\n'),
 		diagnostics,
-		table
+		table,
+		presetCarried,
+		totalIntegerReads
 	};
 }

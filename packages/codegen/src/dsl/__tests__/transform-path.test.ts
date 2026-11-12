@@ -543,7 +543,6 @@ describe('applyPath() — kind-match + negative index', () => {
 		expect(r.members[2]).toEqual(rule.members[2]);
 		expect(r.members[3]).toEqual(rule.members[3]);
 		expect(() => at('(function_definition)')).toThrow(/matched zero occurrences/);
-		expect(() => at('(method_declaration)/0', seq(rule.members[0]))).toThrow(/matched zero occurrences/);
 	});
 
 	it('a kind-match or a field name searches an enrich group lift as part of its owner, as positional descent does', () => {

@@ -3,10 +3,11 @@
  * any test runs.
  *
  * `.sittir/parser.wasm` is committed, and every regen rebuilds it after its
- * own `tree-sitter generate`. Setup is only a backstop for a missing file:
- * without it, validators that call `loadLanguageForGrammar` would fall back to
- * the base WASM, which lacks override fields. A present wasm is never
- * rebuilt here, so a grammar edit reaches tests through a regen.
+ * own `tree-sitter generate`. Setup is a backstop for a parser that is missing
+ * or that `.sittir/parser.json` does not record as built from the sources and
+ * bytes it holds now: without it, validators that call `loadLanguageForGrammar`
+ * would fall back to the base WASM, which lacks override fields. A fresh wasm
+ * is never rebuilt here, so a grammar edit reaches tests through a regen.
  */
 
 import { ensureParserWasm } from './packages/codegen/src/transpile/compile-parser.ts';

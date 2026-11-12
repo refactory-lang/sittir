@@ -598,15 +598,6 @@ upstream derives are judged against the upstream rules. Only
 `'accepts-invalid-syntax'` and `'ruled-narrowing'` also read the authored rules, to show the authored
 body no longer derives the excluded form.
 
-### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeRejectedWitnesses`
-
-Judges a rule declared `reauthored('rejects-valid-syntax', witnesses, body)`. The
-claim is that the upstream rule named by each witness's `kind` does not derive
-that witness's `form`, the form of a source text upstream's parser rejects. A
-missing witness, a `kind` upstream does not declare, or an upstream rule that
-already derives the form is a `rule-cause-mismatch`. The rule being reauthored must still
-be an upstream rule, which `judgeReauthored` checks first.
-
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeNarrowingWitnesses`
 
 Judges the witnesses of a narrowing cause, `'accepts-invalid-syntax'` or

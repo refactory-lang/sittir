@@ -2,7 +2,7 @@ import type { PortableCondition, QueryPlan, QuerySubject, SlotFlagRefusal, SlotF
 import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
 import type { MemberRoute, SlotStep } from '../../../bindings/routes.ts';
 import type { AssembledNode, AssembledNonterminal } from '../../../compiler/model/node-map.ts';
-import { keywordTestOf, type PresenceKeywordOf, type SlotSubjectOf } from './read-tests.ts';
+import { keywordTestOf, loweredPlan, type PresenceKeywordOf, type SlotSubjectOf } from './read-tests.ts';
 
 export interface ClaimFlag {
 	readonly flag: string;
@@ -76,8 +76,7 @@ export function flagPlansOf(input: FlagPlansInput): Map<string, QueryPlan | null
 		const last = route.path.at(-1) ?? refuse(route.name, 'its route has no step');
 		return into(route.path.slice(0, -1), leafOf(route, last));
 	};
-	const conditionPlan = (condition: PortableCondition): QueryPlan<QuerySubject> =>
-		condition.via.reduceRight<QueryPlan<QuerySubject>>((of, step) => ({ op: 'child', slots: step.slots, ...(step.anchor === undefined ? {} : { anchor: step.anchor }), of }), condition.plan);
+	const conditionPlan = (condition: PortableCondition): QueryPlan<QuerySubject> => loweredPlan(condition.via, condition.plan);
 	const alternatives = new Map<string, QueryPlan[]>();
 	const add = (flag: string, plan: QueryPlan): void => {
 		const known = alternatives.get(flag) ?? alternatives.set(flag, []).get(flag)!;

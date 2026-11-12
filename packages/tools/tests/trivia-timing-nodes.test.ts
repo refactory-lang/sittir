@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
+import { sharedEngine } from '@sittir/common/testing';
 import { createEngine } from '@sittir/common';
 import python from '../../python/src/index.ts';
 import { loadSlotAccessorOf, wrappedNodesOf } from '../src/validate/common.ts';
 
-const py = await createEngine(python);
+const py = await sharedEngine(() => createEngine(python));
 
 describe('the trivia timing walk', () => {
 	// A repeated slot is read by its plural accessor (`decorated_definition`'s

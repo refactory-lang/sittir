@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { loadLanguageForGrammar } from '../validate/common.ts';
+import { loadLanguageForGrammar, treeParser } from '../validate/common.ts';
 import { astStructuralDiff } from '../validate/read-render-parse.ts';
 
 export interface AstDiffOptions {
@@ -9,15 +9,10 @@ export interface AstDiffOptions {
 }
 
 export async function run(opts: AstDiffOptions): Promise<number> {
-	const { Parser, lang } = await loadLanguageForGrammar(opts.grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
-	const root = (path: string) => {
-		const tree = parser.parse(readFileSync(path, 'utf8'));
-		if (tree === null) throw new Error(`${path}: tree-sitter returned no tree`);
-		return tree.rootNode;
-	};
-	const diff = astStructuralDiff(root(opts.a), root(opts.b));
+	using parser = treeParser(await loadLanguageForGrammar(opts.grammar));
+	using a = parser.parse(readFileSync(opts.a, 'utf8'));
+	using b = parser.parse(readFileSync(opts.b, 'utf8'));
+	const diff = astStructuralDiff(a.root, b.root);
 	console.log(diff === null ? 'AST identical' : `AST differs: ${diff}`);
 	return diff === null ? 0 : 1;
 }

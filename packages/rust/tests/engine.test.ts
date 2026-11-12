@@ -101,7 +101,7 @@ describe('engine', () => {
 	});
 
 	it('native render handle save delegates to engine-side renderToFile', async () => {
-		const renderToFile = vi.fn();
+		const renderToFile = vi.fn((_node: Record<string, unknown>, _path: string, _create: boolean) => true);
 		const render = vi.fn((_node: Record<string, unknown>) => 'fn main() {}');
 		vi.doMock('../src/backend.js', () => ({
 			getActiveBackend: () => ({
@@ -113,7 +113,7 @@ describe('engine', () => {
 						dispose(): void {}
 					},
 					render: (_engine: object, node: Record<string, unknown>): string => render(node),
-					renderToFile: (_engine: object, untypedNode: Record<string, unknown>, path: string): void => renderToFile(untypedNode, path)
+					renderToFile: (_engine: object, untypedNode: Record<string, unknown>, path: string, create: boolean): boolean => renderToFile(untypedNode, path, create)
 				}
 			})
 		}));
@@ -126,7 +126,8 @@ describe('engine', () => {
 		expect(render).not.toHaveBeenCalled();
 		expect(renderToFile).toHaveBeenCalledWith(
 			expect.objectContaining({ $type: TSKindId.Identifier }),
-			'/tmp/sittir-rust-render.txt'
+			'/tmp/sittir-rust-render.txt',
+			false
 		);
 	});
 });

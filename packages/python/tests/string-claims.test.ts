@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { NODE_MODEL_FILE, nodeModelPath } from '../../codegen/src/grammars.ts';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { portableRuntime } from '@sittir/common/engine';
@@ -8,7 +9,7 @@ import python from '../src/index.ts';
 type Spelling = { readonly value: string; readonly canonical?: string; readonly readOnly?: true };
 type ModelNode = { readonly kind: string; readonly slots?: readonly { readonly name: string; readonly values?: readonly Spelling[] }[] };
 
-const model = JSON.parse(readFileSync(new URL('../src/node-model.json5', import.meta.url), 'utf8')) as { readonly nodes: readonly ModelNode[] };
+const model = JSON.parse(readFileSync(nodeModelPath('python', NODE_MODEL_FILE), 'utf8')) as { readonly nodes: readonly ModelNode[] };
 const spellingsOf = (slot: string): readonly Spelling[] =>
 	model.nodes.find((node) => node.kind === 'string_start')!.slots!.find((s) => s.name === slot)!.values!;
 const prefixes = spellingsOf('prefix');
@@ -23,7 +24,7 @@ const py = await createEngine(python);
 
 type ReadString = { prefix(): string | undefined; readonly $with: { contents(...items: unknown[]): unknown } };
 const stringOf = (source: string): ReadString =>
-	(py.parse(`${source}\n`) as unknown as { statements(): readonly { elements(): readonly { content(): ReadString }[] }[] }).statements()[0]!.elements()[0]!.content();
+	(py.parse(`${source}\n`) as unknown as { statements(): readonly { statements(): readonly { content(): ReadString }[] }[] }).statements()[0]!.statements()[0]!.content();
 const claimsOf = (source: string): readonly string[] => stringPaths.filter((path) => guard(path)(stringOf(source)));
 
 describe('the string claims and the prefix enum agree', () => {
@@ -81,7 +82,7 @@ describe('the string claims and the prefix enum agree', () => {
 			const engine = await createEngine(python, { api: 'strict' });
 			const source = `${spelling}"y"\n`;
 			const tree = engine.parse(source);
-			const string = (tree as unknown as { statements(): readonly { elements(): readonly { content(): ReadString }[] }[] }).statements()[0]!.elements()[0]!.content();
+			const string = (tree as unknown as { statements(): readonly { statements(): readonly { content(): ReadString }[] }[] }).statements()[0]!.statements()[0]!.content();
 			expect(string.prefix()).toBeUndefined();
 			expect(String(engine.render(tree))).toBe(source);
 			expect(String(engine.render(string.$with.contents(engine.build.stringContent(engine.build.stringFragment('z'))) as never))).toBe(`${spelling}"z"`);

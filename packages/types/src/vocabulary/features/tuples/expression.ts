@@ -1,21 +1,25 @@
-import type { GrammarContext } from '../../context.ts';
-import type { Flag, SubKindOf } from '../../utils.ts';
+import type { GrammarMap, Slot } from '../../map.ts';
+import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
 	export namespace Collection {
-		export interface Tuple<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
+		export interface Tuple<G extends GrammarMap, K extends Under<'expression.collection.tuple'> = 'expression.collection.tuple'> extends SubKindOf<V.Expression.Collection<G, K>> {
 			// claimed by pr
-			readonly $kind: 'expression.collection.tuple';
-			readonly elements?: G['slots']['expression.collection.tuple']['elements'][];
-		}
-		export namespace Tuple {
-			export interface Bare<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection.Tuple<G>> {
-				// claimed by p
-				readonly $kind: 'expression.collection.tuple.bare';
-				readonly trailingComma?: Flag;
-			}
+			readonly $path: K;
+			readonly elements?: Slot<
+				G,
+				K,
+				'elements',
+				| V.Element.Attributed<G>
+				| V.Element.Spread<G>
+				| V.Element.Spread.Parenthesized<G>
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+				| V.Pattern.Any<G>
+				| V.Statement.Any<G>
+				| V.Type.Primitive<G>
+			>[];
 		}
 	}
-	// claimed by r
-	export type Unit<G extends GrammarContext<G>> = G['texts']['expression.unit'];
 }

@@ -4327,7 +4327,7 @@ fn prepare_control_letter_escape<N: ControlLetterEscapePrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IDENTITY_ESCAPE, folded = [kind::BSLASH_DASH], interior = "^\\\\(?<content>(?:[^kdDsSpPwWbfnrtv0-9]))$", words = 6, built_words = 4, fields = IdentityEscapeFields, prepare = IdentityEscapePrepare, view = IdentityEscapeNodeRecord, prepare_fn = prepare_identity_escape)]
+#[node(kind = kind::IDENTITY_ESCAPE, folded = [kind::BSLASH_DASH], interior = "^\\\\(?<content>(?:[^kdDsSpPwWbfnrtv0-9]))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = IdentityEscapeFields, prepare = IdentityEscapePrepare, view = IdentityEscapeNodeRecord, prepare_fn = prepare_identity_escape)]
 pub struct IdentityEscapeNode {
     #[wire(key = "$_layout")]
     #[layout]

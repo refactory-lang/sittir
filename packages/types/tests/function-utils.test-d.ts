@@ -58,6 +58,35 @@ type _t3b = Expect<Equal<ArgsOf<typeof allRest>, string[] | number[]>>;
 declare function tupleRest(...args: [text: string] | [options: { readonly o: 1 }, ...texts: string[]]): unknown;
 type _t3c = Expect<Equal<ArgsOf<typeof tupleRest>, [text: string] | [options: { readonly o: 1 }, ...texts: string[]]>>;
 
+// A list another list strictly covers is dropped: these overloads spread as their optional-options list.
+declare function covered(input: string, options: { readonly o: 1 } | undefined): unknown;
+declare function covered(input: string, options?: undefined): unknown;
+declare function covered(input: string, options?: { readonly o: 1 }): unknown;
+type _t3d = Expect<Equal<ArgsOf<typeof covered>, [input: string, options?: { readonly o: 1 }]>>;
+export const spreadCovered = (...args: ArgsOf<typeof covered>) => covered(...args);
+
+// Lists that cover each other take the same calls, and both stay.
+declare function equivalent(input: string): unknown;
+declare function equivalent(input: string & {}): unknown;
+type _t3e = Expect<Equal<ArgsOf<typeof equivalent>, [input: string] | [input: string & {}]>>;
+
+type IsNeverArgs<A> = [A] extends [never] ? true : false;
+
+// An any covers nothing it is not: overloads whose lists assignability alone would collapse keep every call.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare function anyAndNumber(input: string, options: any): unknown;
+declare function anyAndNumber(input: unknown, options: number): unknown;
+export const keepsAnyCall: ArgsOf<typeof anyAndNumber> = ['x', 'allowed'];
+export const keepsNumberCall: ArgsOf<typeof anyAndNumber> = [1, 2];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare function anyCycle(a: string, b: any, c: unknown): unknown;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare function anyCycle(a: unknown, b: string, c: any): unknown;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare function anyCycle(a: any, b: unknown, c: string): unknown;
+type _t3f = Expect<Equal<IsNeverArgs<ArgsOf<typeof anyCycle>>, false>>;
+export const keepsEachCycleCall: ArgsOf<typeof anyCycle>[] = [['a', 1, 2], [1, 'b', 2], [1, 2, 'c']];
+
 // ---------------------------------------------------------------------------
 // 4. ArgsOf<F> — a genuinely multi-parameter overload arm keeps its tuple
 //    shape, each parameter its own tuple slot.

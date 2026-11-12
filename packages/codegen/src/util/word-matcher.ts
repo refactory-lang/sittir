@@ -1,5 +1,6 @@
-import { CHOICE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule } from '../types/rule.ts';
+import { compileAnchoredPattern, isPrecWrapperType, isTokenWrapperType } from '../types/runtime-shapes.ts';
 
 export function compileWordMatcher(
 	word: string | null | undefined,
@@ -10,16 +11,8 @@ export function compileWordMatcher(
 	if (!wordRule) return undefined;
 	const src = ruleToRegexSource(wordRule);
 	if (src === null) return undefined;
-	const full = `^(?:${src})$`;
-	try {
-		return new RegExp(full, 'u');
-	} catch {
-		try {
-			return new RegExp(full);
-		} catch {
-			return undefined;
-		}
-	}
+	const compiled = compileAnchoredPattern(src);
+	return 'regex' in compiled ? compiled.regex : undefined;
 }
 
 export function matchesWordShape(value: string, wordMatcher: RegExp | undefined): boolean {
@@ -54,13 +47,14 @@ export function ruleToRegexSource(rule: AnyRule): string | null {
 		content?: AnyRule;
 		members?: readonly AnyRule[];
 	};
+	if (isTokenWrapperType(rule.type) || isPrecWrapperType(rule.type) || rule.type === FIELD || rule.type === ALIAS) {
+		return shaped.content ? ruleToRegexSource(shaped.content) : null;
+	}
 	switch (rule.type) {
 		case PATTERN:
 			return shaped.value ?? null;
 		case STRING:
 			return shaped.value === undefined ? null : escapeRegexLiteral(shaped.value);
-		case TOKEN:
-			return shaped.content ? ruleToRegexSource(shaped.content) : null;
 		case SEQ: {
 			const parts: string[] = [];
 			for (const m of shaped.members ?? []) {

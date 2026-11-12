@@ -16,6 +16,7 @@ pub mod codec;
 pub mod delimiters;
 pub mod engine;
 pub mod error_read;
+pub mod file_io;
 pub mod heap;
 pub mod layout;
 pub mod layout_kinds;
@@ -113,4 +114,4 @@ pub use render::{
 pub use prepare::{Prepare, RenderContext};
 pub use slot::{NodeCoordinate, SlotValue};
 // ParsedTree is the owned parse result.
-pub use engine::{decode_handle, error_regions, panic_msg, ErrorRegion, ErrorRegionKind, ParsedTree};
+pub use engine::{decode_handle, error_regions, panic_msg, ErrorHolder, ErrorRegion, ErrorRegionKind, ParsedTree};

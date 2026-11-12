@@ -53,6 +53,7 @@ export interface NodeModelNode {
 	readonly variantOf?: string;
 	readonly splitFrom?: string;
 	readonly aliasStorage?: string;
+	readonly textLeavesThrough?: readonly string[];
 	readonly interiorPart?: string;
 	readonly shownAs?: readonly string[];
 	readonly trailingDelimiter?: ListDelimiter;
@@ -114,6 +115,7 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 			splitFrom: n.splitFrom ?? null,
 			aliasStorage: n.aliasStorage ?? null,
 			interiorPart: n.interiorPart ?? null,
+			textLeavesThrough: n.textLeavesThrough ?? [],
 			shownAs: n.shownAs ?? [],
 			...(n.modelType === 'list' && n.trailingDelimiter !== undefined
 				? { list: { trailing: n.trailingDelimiter, ...(n.separator === undefined ? {} : { separator: n.separator }), ...(n.singleElementNeedsTrailing === true ? { singleElementNeedsTrailing: true as const } : {}) } }

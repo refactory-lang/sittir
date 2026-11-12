@@ -9,7 +9,7 @@ const objects = await createEngine(python, { nodeStorage: 'object' });
 const contentOf = (source: string, engine: typeof py = py) => {
 	const statement = engine.parse(source).statements()[0]!;
 	if (!py.is.simpleStatements(statement)) throw new Error('not a simple statement');
-	const element = statement.elements()[0]!;
+	const element = statement.statements()[0]!;
 	if (!py.is.expressionStatement(element)) throw new Error('not an expression statement');
 	return element.content();
 };

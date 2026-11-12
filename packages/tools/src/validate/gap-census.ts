@@ -9,6 +9,7 @@ import {
 	type CorpusEntry,
 	loadKindNameFromId,
 	loadLanguageForGrammar,
+	treeParser,
 	loadNativeEngine,
 	loadSlotAccessorOf,
 	slotValuesOf as storedValuesOf,
@@ -253,30 +254,22 @@ export interface EntryMeasure {
 	readonly locateFailures: number;
 }
 
-export type GapMeter = (name: string, source: string) => EntryMeasure;
+export interface GapMeter extends Disposable {
+	measure(name: string, source: string): EntryMeasure;
+}
 
 const UNMEASURED: Omit<EntryMeasure, 'status'> = { gaps: 0, commented: 0, skipped: 0, exact: 0, unmatched: 0, lossy: [], uncovered: [], rebuildFailures: [], locateFailures: 0 };
 
 export async function createGapMeter(grammar: string): Promise<GapMeter> {
 	const engine = await loadNativeEngine(grammar);
-	const { Parser, lang } = await loadLanguageForGrammar(grammar);
+	const language = await loadLanguageForGrammar(grammar);
 	const kindName = await loadKindNameFromId(grammar);
 	const accessorOf = await loadSlotAccessorOf(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
-	return (name, source) => {
-		const parsed = parser.parse(source);
-		if (parsed === null) return { ...UNMEASURED, status: 'unparsed' };
-		if (parsed.rootNode.hasError) {
-			parsed.delete();
-			return { ...UNMEASURED, status: 'unparsed' };
-		}
-		let scan: GapScan;
-		try {
-			scan = scanListGaps(parsed.rootNode, source);
-		} finally {
-			parsed.delete();
-		}
+	const parser = treeParser(language);
+	const measure = (name: string, source: string): EntryMeasure => {
+		using parsed = parser.parse(source);
+		if (parsed.root.hasError) return { ...UNMEASURED, status: 'unparsed' };
+		const scan = scanListGaps(parsed.root, source);
 		const byOffsets = new Map(scan.gaps.map((gap) => [gap.key, gap]));
 		const spans = sourceSpans(source);
 		const textOf = spanSlicer(source);
@@ -328,6 +321,7 @@ export async function createGapMeter(grammar: string): Promise<GapMeter> {
 		const uncovered = scan.gaps.filter((gap) => !seen.has(gap.key)).map((gap) => `${gap.parent}.${gap.field}`);
 		return { status: 'measured', gaps: scan.gaps.length, commented: scan.commented, skipped: scan.skipped, exact, unmatched, lossy, uncovered, rebuildFailures, locateFailures };
 	};
+	return { measure, [Symbol.dispose]: () => parser[Symbol.dispose]() };
 }
 
 const LEAD_CHARS = 12;
@@ -399,14 +393,14 @@ function splitAtSeparator(gap: string, separator: string): { lead: string; trail
 }
 
 export async function computeGapCensus(grammar: string, sources?: readonly CorpusEntry[]): Promise<GapCensus> {
-	const meter = await createGapMeter(grammar);
+	using meter = await createGapMeter(grammar);
 	const entries = sources ?? loadCorpusEntries(grammar);
 	const lossy: LossyRow[] = [];
 	const uncoveredBy: Record<string, number> = {};
 	const byShape = emptyByShape();
 	const total = { unparsed: 0, unrendered: 0, gaps: 0, commented: 0, skipped: 0, exact: 0, unmatched: 0, uncovered: 0, rebuildFailed: 0, locateFailed: 0 };
 	for (const entry of entries) {
-		const measure = meter(entry.name, entry.source);
+		const measure = meter.measure(entry.name, entry.source);
 		if (measure.status !== 'measured') {
 			total[measure.status] += 1;
 			continue;

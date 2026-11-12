@@ -502,14 +502,6 @@ The bound name of a vocabulary path: its segments reversed, subkind first, keepi
 
 A vocabulary member's field name: its camelCase name in snake case, so every slot a member reaches is named by the member.
 
-### `packages/codegen/src/bindings/grammar-bindings.ts::isLift`
-
-A group lift at the patch stage: the symbol enrich's group lift leaves in a rule, unless it is a variant's arm (a rule of its own at the patch stage).
-
-### `packages/codegen/src/bindings/grammar-bindings.ts::isGroupAlias`
-
-The alias enrich wraps a visible group in.
-
 ### `packages/codegen/src/bindings/grammar-bindings.ts::FieldRequest`
 
 A field edit the derivation asks bind for: a rename of an existing field or a wrap of an unfielded child.
@@ -517,10 +509,6 @@ A field edit the derivation asks bind for: a rename of an existing field or a wr
 ### `packages/codegen/src/bindings/grammar-bindings.ts::SINGLE`
 
 The rule types with one `content` child, which the patch walk descends at path index `0`.
-
-### `packages/codegen/src/bindings/grammar-bindings.ts::metaOf`
-
-A rule's `metadata` record, or an empty one.
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::fieldOfReference`
 
@@ -601,10 +589,6 @@ Requests grouped by each host rule they apply in, in request order.
 ### `packages/codegen/src/bindings/grammar-bindings.ts::pathText`
 
 A walk path as a patch key: its indices joined by `/`, or `.` for the root.
-
-### `packages/codegen/src/bindings/grammar-bindings.ts::unwrappedPrec`
-
-A rule below its precedence wrappers.
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::pathMode`
 
@@ -1101,6 +1085,10 @@ The process's store of pinned reads (`pinnedMemo`), made on the first read: in `
 
 The directory under the pinned build's directory that holds the stored pinned reads.
 
+### `packages/codegen/src/bindings/read.ts::CHILD_ENTRY`
+
+The path of the child module the pinned reader runs in: `pinned-reader.child.ts`, resolved beside this file.
+
 ### `packages/codegen/src/bindings/facts.ts::bindingsPathIn`
 
 The `bindings.scm` of the grammar package in a directory. The one spelling of the file's name; compile and generate reach it through the package they were given.
@@ -1205,17 +1193,9 @@ What a read entry's own tests guarantee about the slots they reach, as `membersO
 
 An entry's guarantees: whether a build path's steps to an only node all hold (`holds`), and whether a step's slot holds other than exactly one node (`many`).
 
-### `packages/codegen/src/bindings/routes.ts::stepKey`
-
-A `SlotStep` as a set key: its owner, slot and anchor.
-
 ### `packages/codegen/src/bindings/routes.ts::DeepMember`
 
 A member fact reached through a child: a `presence` or a `nested` member.
-
-### `packages/codegen/src/bindings/routes.ts::deepRouteOf`
-
-A deep member's route on a kind, with the build path back through its `via` steps (`viaPath`) to the slot that holds it, `undefined` when some step has no slot or holds many with no anchor.
 
 ### `packages/codegen/src/bindings/routes.ts::membersOf`
 
@@ -1404,10 +1384,6 @@ A name and every grammar kind the parser shows by it at an alias site (`ModelNod
 ### `packages/codegen/src/bindings/routes.ts::matchedKinds`
 
 The concrete kinds a pattern naming these kinds matches: each name's `shownKinds`, each expanded to its concrete kinds.
-
-### `packages/codegen/src/bindings/routes.ts::reaches`
-
-Whether a kind is, or is shown by the name of (`ModelNode.shownAs`), or is reached through supertype arms from, another kind.
 
 ### `packages/codegen/src/bindings/routes.ts::holdsNodes`
 
@@ -1676,13 +1652,6 @@ retaining constraints except the kind tests proved by the lead itself. Minted
 visible variants receive their source's applicable claims without changing
 ordinary alias builder policy.
 
-### `packages/codegen/src/bindings/lead-facts.ts::headMember`
-
-Projects a capture whose route crosses the list by appending its own selector to its `via` path and projecting both through `headPath`: a receiver capture lands on its new singular field, a rest capture crosses the receiver form, canonical group and original rest-list field, and the projected step above the capture is its parent. Every name comes from the realization record; no naming convention is reconstructed.
-
-
-Lead projection uses one `bindFacts` projection for the minted variants. Besides owned captures, it preserves explicit container declarations and unclaimed-kind declarations on their cloned owners, including the container's element, captured slots, and dropped layout. Without that projection a receiver wrapper loses its declared content route even though its parser shape is correct.
-
 ### `packages/codegen/src/bindings/pinned-memo.ts::module`
 
 Pinned reads kept on disk. A pinned read is a function of the pinned build, its mode, its input and the workspace code the child runs, so while all four are unchanged a stored answer stands in for the child's, and a process that finds every read stored never starts the child. The entries live in the pinned build's directory, which the pin sha names, so a new pin starts with none and the old pin's go with its directory.
@@ -1733,6 +1702,13 @@ Builds the member list after a lead projection. A member the lead heads contribu
 ### `packages/codegen/src/bindings/lead-facts.ts::projectLead`
 
 Applies one lead effect to a facts record. The facts are rebound through the effect's variant map. Each claim is projected: a claim the receiver owns keeps only its head form, and a claim on a variant kind keeps its plain form and gains a head form. The indices are recorded, and members, containers and unclaimed facts for variant kinds are projected to match. Why: a lead composes the head's admits in the context of the field and the rest in the context of the item.
+
+### `packages/codegen/src/bindings/lead-facts.ts::headMembers`
+
+Projects a capture whose route crosses the list by appending its own selector to its `via` path and projecting both through `headPath`: a receiver capture lands on its new singular field, a rest capture crosses the receiver form, canonical group and original rest-list field, and the projected step above the capture is its parent. Every name comes from the realization record; no naming convention is reconstructed.
+
+
+Lead projection uses one `bindFacts` projection for the minted variants. Besides owned captures, it preserves explicit container declarations and unclaimed-kind declarations on their cloned owners, including the container's element, captured slots, and dropped layout. Without that projection a receiver wrapper loses its declared content route even though its parser shape is correct.
 
 ### `packages/codegen/src/bindings/pinned-memo.ts::read`
 
@@ -1938,6 +1914,10 @@ Where a vocabulary is read from.
 
 The synonyms the vocabulary source declares.
 
+### `packages/codegen/src/bindings/vocabulary.ts::VocabularyMember::excluded`
+
+`true` on a vocabulary member excluded from the vocabulary's own reads.
+
 ### `packages/codegen/src/bindings/facts.ts::ModelNode::unit`
 
 Whether the model node is a unit.
@@ -1978,6 +1958,30 @@ The nested calls of the mount, by name.
 
 The seat of a node-model value: the call shape its builder takes.
 
+### `packages/codegen/src/bindings/input.ts::NodeModelNode::defaultSubtype`
+
+The subtype the node defaults to, when it has one.
+
+### `packages/codegen/src/bindings/input.ts::NodeModelNode::layout`
+
+`true` when the node is a layout node.
+
+### `packages/codegen/src/bindings/input.ts::NodeModelNode::seated`
+
+`true` when the node is seated.
+
+### `packages/codegen/src/bindings/input.ts::NodeModelNode::separator`
+
+The separator token of the node's list, when the list has one.
+
+### `packages/codegen/src/bindings/input.ts::NodeModelNode::singleElementNeedsTrailing`
+
+`true` when a list node with one element still takes a trailing separator.
+
+### `packages/codegen/src/bindings/input.ts::NodeModelNode::trailingDelimiter`
+
+The trailing delimiter of the node's list: `mandatory`, `optional`, or `none`.
+
 ### `packages/codegen/src/bindings/routes.ts::ContainerUnwrap::slot`
 
 The slot a container unwraps through.
@@ -2014,6 +2018,86 @@ The members of a container's captures, with the envelope targets they reach. A c
 
 The container members the unwrap reads, one per capture, each with its name and slot.
 
+### `packages/codegen/src/bindings/routes.ts::ContainerDataMember`
+
+A member of a container: its name, the model slot it reads, and whether it is a list.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerDataMember::list`
+
+Whether the member is a list.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerDataMember::name`
+
+The member's name.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerDataMember::slot`
+
+The model slot the member reads.
+
+### `packages/codegen/src/bindings/routes.ts::GrammarRoutes::claims`
+
+The refined claims the grammar's routes resolved, each as a `RefinedClaim`.
+
+### `packages/codegen/src/bindings/routes.ts::Guaranteed::absent`
+
+Whether a path is guaranteed absent: the guarantee that no value sits at it.
+
+### `packages/codegen/src/bindings/routes.ts::holdsCapture`
+
+Whether some form the capture's owner holds has the captured slot.
+
+### `packages/codegen/src/bindings/routes.ts::holdsContainer`
+
+Whether every selector of a container is held by the container's kind. A container with a selector no held form reaches is not held.
+
+### `packages/codegen/src/bindings/routes.ts::layoutDefaultsOf`
+
+The layout default for each seated variant with no read entry of its own: the default subtype of its parent variant, where every slot of the variant is a layout slot.
+
+### `packages/codegen/src/bindings/routes.ts::listItems`
+
+The item slot of a list node: the one slot that holds nodes and is multiple. Throws when the list's items sit in more than one slot.
+
+### `packages/codegen/src/bindings/routes.ts::MemberRoute::delimiter`
+
+The delimiter of a `delimiter` route.
+
+### `packages/codegen/src/bindings/routes.ts::MemberRoute::items`
+
+The step to a `delimiter` route's items, when they sit at a path of their own.
+
+### `packages/codegen/src/bindings/routes.ts::MountHolder`
+
+A kind whose slot mounts another kind: the holder kind and the name of the mounting slot.
+
+### `packages/codegen/src/bindings/routes.ts::MountHolder::holder`
+
+The kind whose slot mounts the kind.
+
+### `packages/codegen/src/bindings/routes.ts::MountHolder::slot`
+
+The name of the slot that mounts the kind.
+
+### `packages/codegen/src/bindings/routes.ts::mountHoldersOf`
+
+The holders that mount a kind. The table is built once per model and cached on it.
+
+### `packages/codegen/src/bindings/routes.ts::ReadEntry::absent`
+
+The slot names that must be absent for the entry to match.
+
+### `packages/codegen/src/bindings/routes.ts::ReadEntry::empty`
+
+`true` when the entry matches an empty container.
+
+### `packages/codegen/src/bindings/routes.ts::ReadEntry::present`
+
+The slot names that must be present for the entry to match.
+
+### `packages/codegen/src/bindings/routes.ts::ReadEntry::separated`
+
+`true` when the entry's items are separated by the list's separator.
+
 ### `packages/codegen/src/bindings/vocabulary-paths.ts::vocabularyFlagPaths`
 
 The flag paths of a vocabulary: each path with its segment and flag.
@@ -2025,3 +2109,51 @@ The slot's flattened member names, when it flattens.
 ### `packages/codegen/src/bindings/facts.ts::ModelSlot::tuples`
 
 The slot's tuple member names, when it has tuples.
+
+### `packages/codegen/src/bindings/facts.ts::ListDelimiter`
+
+A list's delimiter: `mandatory`, `optional`, or `none`.
+
+### `packages/codegen/src/bindings/facts.ts::ModelList`
+
+A list's facts: its trailing delimiter, its separator, and whether a single element still takes a trailing separator.
+
+### `packages/codegen/src/bindings/facts.ts::ModelList::separator`
+
+The list's separator token, when it has one.
+
+### `packages/codegen/src/bindings/facts.ts::ModelList::singleElementNeedsTrailing`
+
+`true` when a list with one element still takes a trailing separator.
+
+### `packages/codegen/src/bindings/facts.ts::ModelList::trailing`
+
+The list's trailing delimiter: `mandatory`, `optional`, or `none`.
+
+### `packages/codegen/src/bindings/facts.ts::ModelNode::defaultSubtype`
+
+The subtype the kind defaults to, or null when it has none.
+
+### `packages/codegen/src/bindings/facts.ts::ModelNode::layout`
+
+Whether the node is a layout node.
+
+### `packages/codegen/src/bindings/facts.ts::ModelNode::list`
+
+The list facts of a list node. Present only on a list.
+
+### `packages/codegen/src/bindings/facts.ts::ModelNode::seated`
+
+Whether the node is seated.
+
+### `packages/codegen/src/bindings/facts.ts::RefinedClaim::mountedIn`
+
+The holder kind a claim is mounted under, or null when the claim is not mounted.
+
+### `packages/codegen/src/bindings/facts.ts::MemberFact::tested`
+
+Whether the member's claim is tested, rather than left untested by the read.
+
+### `packages/codegen/src/bindings/facts.ts::ContainerCapture::tested`
+
+Whether the capture is tested by the container's read.

@@ -13,8 +13,11 @@ import {
 	type AssembledNode
 } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { lexedContentSlot, slotLiteralValues, type LooseRefusal } from './shared.ts';
+import { lexedContentSlot, ownTextLeaf, slotLiteralValues, type LooseRefusal } from './shared.ts';
 import { anchoredLeafRegex, regexLiteral } from '../compiler/model/leaf-pattern.ts';
+import { includesNonEmpty, patternDfa } from '../compiler/model/pattern-automaton.ts';
+import { integerSpelling } from '@sittir/common/portable/utils';
+import { asLexed, withoutCaptures } from '../util/pattern-pieces.ts';
 
 export type InteriorEntry =
 	| { readonly lit: string }
@@ -51,7 +54,7 @@ export function interiorEntryPattern(entry: InteriorEntry): string {
 	if ('enum' in entry) {
 		return `(?<${entry.enum}>${interiorEnumArms(entry.values)})${entry.optional ? '?' : ''}`;
 	}
-	return `(?<${entry.slot}>${entry.pattern})${entry.optional === true ? '?' : ''}`;
+	return `(?<${entry.slot}>${withoutCaptures(asLexed(entry.pattern))})${entry.optional === true ? '?' : ''}`;
 }
 
 function interiorNodePattern(node: InteriorNode): string {
@@ -180,7 +183,47 @@ export function interiorOf(node: AssembledNode): NodeInterior | undefined {
 					? [{ name: entry.enum, propertyName: propertyNameOf(entry.enum) }]
 					: [{ name: entry.slot, propertyName: propertyNameOf(entry.slot) }]
 	);
-	return { entries, regex: `^${tree.map(interiorNodePattern).join('')}$`, slots };
+	return { entries, regex: `^${interiorBody(tree)}$`, slots };
+}
+
+const interiorBody = (tree: readonly InteriorNode[]): string => tree.map(interiorNodePattern).join('');
+
+export function wholeTextPattern(node: AssembledNode): string | undefined {
+	if (node instanceof AssembledPattern) return node.textPattern;
+	const tree = interiorTreeOf(node);
+	return tree === undefined ? undefined : interiorBody(tree);
+}
+
+export interface AffixedInterior {
+	readonly open: string;
+	readonly close: string;
+}
+
+export function affixedInterior(node: AssembledNode): AffixedInterior | undefined {
+	const own = ownTextLeaf(node);
+	const tree = own === undefined ? undefined : interiorTreeOf(node);
+	if (own === undefined || tree === undefined) return undefined;
+	const expected: readonly InteriorNode[] = [
+		...(own.open === '' ? [] : [{ lit: own.open }]),
+		{ slot: own.slot.name, pattern: '' },
+		...(own.close === '' ? [] : [{ lit: own.close }])
+	];
+	const fits =
+		tree.length === expected.length &&
+		tree.every((entry, i) => {
+			const want = expected[i]!;
+			if ('lit' in want) return 'lit' in entry && entry.lit === want.lit;
+			return 'slot' in want && 'slot' in entry && entry.slot === want.slot && entry.optional !== true;
+		});
+	if (!fits) {
+		throw emitShapeFailure({
+			code: 'own-text-interior-not-affixed',
+			ownerKind: node.kind,
+			message: `token interior: '${node.kind}' is an own-text leaf spelled ${JSON.stringify(own.open)}…${JSON.stringify(own.close)}, but its interior is not those affixes around its one required slot, so the slot cannot be read by them`,
+			details: { open: own.open, close: own.close }
+		});
+	}
+	return { open: own.open, close: own.close };
 }
 
 export function optionalGroupPeers(node: AssembledNode, slotName: string): readonly string[] | undefined {
@@ -257,11 +300,15 @@ function leafGuard(kind: string, node: AssembledNode): RegExp | undefined {
 	return node instanceof AssembledPattern ? anchoredLeafRegex(kind, node.textPattern) : undefined;
 }
 
+export function wholeTextShape(kind: string, node: AssembledNode): NumberShape | undefined {
+	const guard = leafGuard(kind, node);
+	return guard === undefined ? undefined : numberShape(guard);
+}
+
 export function numberShapes(nodeMap: NodeMap): ReadonlyMap<string, NumberShape> {
 	const out = new Map<string, NumberShape>();
 	for (const [kind, node] of nodeMap.nodes) {
-		const guard = leafGuard(kind, node);
-		const shape = guard === undefined ? undefined : numberShape(guard);
+		const shape = wholeTextShape(kind, node);
 		if (shape !== undefined) out.set(kind, shape);
 	}
 	return out;
@@ -288,10 +335,24 @@ export function numberShapeOfPattern(label: string, pattern: string): NumberShap
 }
 
 export function numericSlotShape(slot: AssembledNonterminal): NumberShape | undefined {
-	if (slot.values.length === 0 || !slot.values.every(isPatternValue)) return undefined;
-	const patterns = new Set(slot.values.map((value) => value.pattern));
-	if (patterns.size !== 1) return undefined;
-	return numberShapeOfPattern(slot.name, [...patterns][0]!);
+	const pattern = slotPattern(slot);
+	return pattern === undefined ? undefined : numberShapeOfPattern(slot.name, pattern);
+}
+
+export function spellsItsBase(shape: NumberShape): boolean {
+	return shape.base === 'float' || shape.base === 10 || shape.prefix !== '';
+}
+
+export function slotPattern(slot: AssembledNonterminal): string | undefined {
+	const patterns = new Set(slot.values.flatMap((value) => (isPatternValue(value) ? [value.pattern] : [])));
+	return patterns.size === 1 && slot.values.every(isPatternValue) ? [...patterns][0] : undefined;
+}
+
+export function readsEveryInteger(pattern: string | undefined, shape: NumberShape): boolean {
+	if (pattern === undefined || shape.base === 'float') return false;
+	const admitted = patternDfa(pattern);
+	const read = patternDfa(integerSpelling(shape.base, shape.prefix));
+	return admitted !== undefined && read !== undefined && includesNonEmpty(admitted, read);
 }
 
 export function numericSlotKeys(node: AssembledNode): readonly string[] {
@@ -312,6 +373,11 @@ export function bareInteriorText(kind: string, node: AssembledNode): BareInterio
 	const interior = interiorOf(node);
 	if (interior === undefined) return undefined;
 	return { number: numberShape(interiorGuard(interior)) };
+}
+
+export function kindNumberShape(kind: string, node: AssembledNode): NumberShape | undefined {
+	const content = lexedContentSlot(node);
+	return (content === undefined ? undefined : numericSlotShape(content)) ?? numericLeafShape(kind, node) ?? bareInteriorText(kind, node)?.number;
 }
 
 export function numberTextArgs(shape: NumberShape): string {

@@ -14,7 +14,8 @@ import type * as T from '../src/types.ts';
 export type StrictRowsThatTakeTheirOwnNode = Expect<
 	SameKinds<
 		TakesOwnNode<T.TypeKeyOf, T.NamespaceMap, 'BuildArgs'>,
-		  'awaitExpression'
+		  'arrayExpressionList'
+		| 'awaitExpression'
 		| 'delimTokenTreeBrace'
 		| 'delimTokenTreeBracket'
 		| 'delimTokenTreeParen'
@@ -40,6 +41,7 @@ export type StrictRowsThatTakeTheirOwnNode = Expect<
 		| 'tokenTreePatternBracket'
 		| 'tokenTreePatternParen'
 		| 'tryExpression'
+		| 'tupleExpression'
 		| 'tuplePattern'
 		| 'tupleType'
 		| 'useList'

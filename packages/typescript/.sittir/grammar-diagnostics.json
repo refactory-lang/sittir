@@ -1,6 +1,21 @@
 [
   {
     "scope": "grammar",
+    "code": "regex-pattern-rewritten",
+    "severity": "warning",
+    "canProceed": true,
+    "grammar": "typescript",
+    "ownerKind": "comment",
+    "message": "edits: 'comment' at '1/0/1': regex() rewrites the pattern /[^*]*\\*+([^/*][^*]*\\*+)*/ as /([^*]|\\*+[^*\\/])*\\**/, which changes more than its groups; tree-sitter lexes the new pattern",
+    "details": {
+      "kind": "comment",
+      "path": "1/0/1",
+      "was": "[^*]*\\*+([^/*][^*]*\\*+)*",
+      "now": "([^*]|\\*+[^*\\/])*\\**"
+    }
+  },
+  {
+    "scope": "grammar",
     "grammar": "typescript",
     "code": "rule-reauthored-without-cause",
     "severity": "error",

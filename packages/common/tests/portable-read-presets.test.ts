@@ -10,6 +10,7 @@ const table = await (await rust.load()).portableBuild!();
 const classify = classifierOf(rows);
 const read = portableReader({
 	table,
+	factsOf: () => [],
 	classify: (value) => (hasKind(value) && value.$type === rust.kinds.StringLiteral ? 'literal.string' : classify(value)),
 	flagHolds: (value, flag) => flagHolds(rows, value, flag),
 	flagsOf: (kind) => Object.keys(rows.flags[kind] ?? {}),

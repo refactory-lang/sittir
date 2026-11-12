@@ -736,6 +736,12 @@ export function supertypesOf(grammar: GrammarRecord): ReadonlySet<string> {
 	return listedNames(grammar.supertypes);
 }
 
+export function nodelessNamesOf(grammar: { readonly supertypes?: unknown; readonly inline?: unknown }): (name: string) => boolean {
+	const supertypes = listedNames(grammar.supertypes);
+	const inlined = listedNames(grammar.inline);
+	return (name) => isParserHiddenName(name) || supertypes.has(name) || inlined.has(name);
+}
+
 function ownSymbolNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
 	if (Array.isArray(rule)) for (const r of rule) ownSymbolNames(r, out);
 	else if (isRecord(rule) && !(rule.type === 'ALIAS' && rule.named === true)) {
@@ -864,7 +870,7 @@ export function ruleListParts(rules: readonly RuleListEntry[]): RuleListParts {
 	return parts;
 }
 
-export function nodelessExtrasRun(extras: readonly RuleListEntry[], rules: Readonly<Record<string, AnyRule>>): RegExp | undefined {
+export function nodelessExtrasSource(extras: readonly RuleListEntry[], rules: Readonly<Record<string, AnyRule>>): string | undefined {
 	const { names, literals, patterns } = ruleListParts(extras);
 	const symbolSources = names.filter(isParserHiddenName).flatMap((name) => {
 		const rule = rules[name];
@@ -872,8 +878,13 @@ export function nodelessExtrasRun(extras: readonly RuleListEntry[], rules: Reado
 		return source === null ? [] : [source];
 	});
 	const sources = [...patterns, ...literals.map(escapeRegexLiteral), ...symbolSources];
-	if (sources.length === 0) return undefined;
-	const compiled = compileAnchoredPattern(`(?:${sources.map((source) => `(?:${source})`).join('|')})+`);
+	return sources.length === 0 ? undefined : `(?:${sources.map((source) => `(?:${source})`).join('|')})+`;
+}
+
+export function nodelessExtrasRun(extras: readonly RuleListEntry[], rules: Readonly<Record<string, AnyRule>>): RegExp | undefined {
+	const source = nodelessExtrasSource(extras, rules);
+	if (source === undefined) return undefined;
+	const compiled = compileAnchoredPattern(source);
 	if ('error' in compiled) throw new Error(`extras: the lexical extras do not compile as a JavaScript RegExp: ${compiled.error.message}`);
 	return compiled.regex;
 }

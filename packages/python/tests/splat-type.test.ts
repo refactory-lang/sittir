@@ -19,7 +19,7 @@ describe('a starred type is the rest type, and only * stars a type, as CPython r
 
 	it('reads a starred parameter annotation as type.rest', () => {
 		expect(readOf('def f(*args: *Ts): pass\n')).toBe(
-			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","parameters":[{"$path":"declaration.parameter.typed","name":{"$path":"pattern.rest","pattern":"args"},"type":{"$path":"type","content":{"$path":"type.rest","type":"Ts"}}}],"body":"pass"}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","parameters":[{"$path":"declaration.parameter.typed","name":{"$path":"pattern.rest","pattern":"args"},"type":{"$path":"type","content":{"$path":"type.rest","type":"Ts"}}}],"body":{"$path":"statement.block","statements":["pass"]}}]}'
 		);
 	});
 

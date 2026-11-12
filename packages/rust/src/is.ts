@@ -837,9 +837,6 @@ export interface IsGuards {
 	argumentsElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArgumentsElements };
-	expressions<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Expressions };
 	fieldInitializerListElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FieldInitializerListElements };
@@ -855,6 +852,15 @@ export interface IsGuards {
 	useWildcardGroup<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UseWildcardGroup };
+	attributedElement<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedElement };
+	arrayExpressionListElements<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArrayExpressionListElements };
+	tupleExpressionElements<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TupleExpressionElements };
 	integerLiteralDecimal<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLiteralDecimal };
@@ -894,12 +900,6 @@ export interface IsGuards {
 	escapeSequenceHex<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceHex };
-	arrayExpressionSemi<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArrayExpressionSemi };
-	arrayExpressionList<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArrayExpressionList };
 	attributeInput<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributeInput };
@@ -1081,9 +1081,9 @@ export interface IsGuards {
 	attributedTypeParameter<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedTypeParameter };
-	attributedArgument<T extends { readonly $type: number } | number>(
+	argument<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedArgument };
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Argument };
 	attributedOrderedField<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedOrderedField };
@@ -1093,6 +1093,12 @@ export interface IsGuards {
 	matchBlockArms<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlockArms };
+	arrayExpressionSemi<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArrayExpressionSemi };
+	arrayExpressionList<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArrayExpressionList };
 	rawStringLiteralStart<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringLiteralStart };
@@ -1105,12 +1111,6 @@ export interface IsGuards {
 	extensionDeclarationBody<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExtensionDeclarationBody };
-	argument<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Argument };
-	arrayExpressionListElements<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArrayExpressionListElements };
 	receiverParameterDeclaration<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReceiverParameterDeclaration };
@@ -1619,13 +1619,13 @@ const _supertype_type_ids = new Set<number>([
 const _supertype_pointerType_ids = new Set<number>([388, 389]);
 const _supertype_expression_ids = new Set<number>([
 	263, 267, 371, 372, 373, 374, 268, 270, 271, 272, 273, 276, 274, 275, 332, 333, 147, 148, 149, 150, 145, 146, 116,
-	117, 141, 142, 143, 144, 162, 1, 124, 245, 307, 308, 366, 367, 280, 259, 281, 304, 305, 306, 127, 369, 370, 279, 282,
+	117, 141, 142, 143, 144, 162, 1, 124, 245, 307, 308, 435, 436, 280, 259, 281, 304, 305, 306, 127, 369, 370, 279, 282,
 	309, 310, 311, 312, 313, 287, 292, 297, 298, 299, 300, 390, 391, 392, 393
 ]);
 const _supertype_delimTokenTree_ids = new Set<number>([411, 412, 413]);
 const _supertype_rangeExpression_ids = new Set<number>([390, 391, 392, 393]);
 const _supertype_referenceExpression_ids = new Set<number>([371, 372, 373, 374]);
-const _supertype_arrayExpression_ids = new Set<number>([366, 367]);
+const _supertype_arrayExpression_ids = new Set<number>([435, 436]);
 const _supertype_matchArm_ids = new Set<number>([397, 398]);
 const _supertype_closureExpression_ids = new Set<number>([369, 370]);
 const _supertype_pattern_ids = new Set<number>([
@@ -1965,19 +1965,21 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_UseBoundsElements_guard = _g(TSKindId.UseBoundsElements);
 	const _kind_TypeArgumentsElements_guard = _g(TSKindId.TypeArgumentsElements);
 	const _kind_ArgumentsElements_guard = _g(TSKindId.ArgumentsElements);
-	const _kind_Expressions_guard = _g(TSKindId.Expressions);
 	const _kind_FieldInitializerListElements_guard = _g(TSKindId.FieldInitializerListElements);
 	const _kind_TuplePatternElements_guard = _g(TSKindId.TuplePatternElements);
 	const _kind_Patterns_guard = _g(TSKindId.Patterns);
 	const _kind_StructPatternElements_guard = _g(TSKindId.StructPatternElements);
 	const _kind_UseWildcardGroup_guard = _g(TSKindId.UseWildcardGroup);
+	const _kind_AttributedElement_guard = _g(TSKindId.AttributedElement);
+	const _kind_ArrayExpressionListElements_guard = _g(TSKindId.ArrayExpressionListElements);
+	const _kind_TupleExpressionElements_guard = _g(TSKindId.TupleExpressionElements);
 	const _kind_ImplItemPositiveClause_guard = _g(TSKindId.ImplItemPositiveClause);
 	const _kind_ImplItemNegativeClause_guard = _g(TSKindId.ImplItemNegativeClause);
 	const _kind_AttributedFieldDeclaration_guard = _g(TSKindId.AttributedFieldDeclaration);
 	const _kind_AttributedEnumVariant_guard = _g(TSKindId.AttributedEnumVariant);
 	const _kind_AttributedParameter_guard = _g(TSKindId.AttributedParameter);
 	const _kind_AttributedTypeParameter_guard = _g(TSKindId.AttributedTypeParameter);
-	const _kind_AttributedArgument_guard = _g(TSKindId.AttributedArgument);
+	const _kind_Argument_guard = _g(TSKindId.Argument);
 	const _kind_AttributedOrderedField_guard = _g(TSKindId.AttributedOrderedField);
 	const _kind_TypeArgument_guard = _g(TSKindId.TypeArgument);
 	const _kind_MatchBlockArms_guard = _g(TSKindId.MatchBlockArms);
@@ -1985,8 +1987,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_RawStringLiteralEnd_guard = _g(TSKindId.RawStringLiteralEnd);
 	const _kind_TraitInterfaceDeclarationBody_guard = _g(TSKindId.TraitInterfaceDeclarationBody);
 	const _kind_ExtensionDeclarationBody_guard = _g(TSKindId.ExtensionDeclarationBody);
-	const _kind_Argument_guard = _g(TSKindId.Argument);
-	const _kind_ArrayExpressionListElements_guard = _g(TSKindId.ArrayExpressionListElements);
 	const _kind_ReceiverParameterDeclaration_guard = _g(TSKindId.ReceiverParameterDeclaration);
 	const _kind_AttributedParameterReceiver_guard = _g(TSKindId.AttributedParameterReceiver);
 	const _kind_ParametersElementsReceiver_guard = _g(TSKindId.ParametersElementsReceiver);
@@ -2161,7 +2161,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		lineComment: _form_LineComment_guard,
 		blockComment: _form_BlockComment_guard
 	});
-	const _supertype_charLiteralEscaped_guard = _vg(_mg(365), {
+	const _supertype_charLiteralEscaped_guard = _vg(_mg(367), {
 		simple: _kind_CharLiteralEscapedSimple_guard,
 		unicodeFixed: _kind_CharLiteralEscapedUnicodeFixed_guard,
 		unicodeBraced: _kind_CharLiteralEscapedUnicodeBraced_guard,
@@ -2335,12 +2335,14 @@ export function guardsWith(test: KindTest): IsGuards {
 		useBoundsElements: _kind_UseBoundsElements_guard,
 		typeArgumentsElements: _kind_TypeArgumentsElements_guard,
 		argumentsElements: _kind_ArgumentsElements_guard,
-		expressions: _kind_Expressions_guard,
 		fieldInitializerListElements: _kind_FieldInitializerListElements_guard,
 		tuplePatternElements: _kind_TuplePatternElements_guard,
 		patterns: _kind_Patterns_guard,
 		structPatternElements: _kind_StructPatternElements_guard,
 		useWildcardGroup: _kind_UseWildcardGroup_guard,
+		attributedElement: _kind_AttributedElement_guard,
+		arrayExpressionListElements: _kind_ArrayExpressionListElements_guard,
+		tupleExpressionElements: _kind_TupleExpressionElements_guard,
 		integerLiteralDecimal: _kind_IntegerLiteralDecimal_guard,
 		integerLiteralHex: _kind_IntegerLiteralHex_guard,
 		integerLiteralBinary: _kind_IntegerLiteralBinary_guard,
@@ -2354,8 +2356,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		escapeSequenceUnicodeFixed: _kind_EscapeSequenceUnicodeFixed_guard,
 		escapeSequenceUnicodeBraced: _kind_EscapeSequenceUnicodeBraced_guard,
 		escapeSequenceHex: _kind_EscapeSequenceHex_guard,
-		arrayExpressionSemi: _kind_ArrayExpressionSemi_guard,
-		arrayExpressionList: _kind_ArrayExpressionList_guard,
 		attributeInput: _kind_AttributeInput_guard,
 		closureExpressionBlock: _kind_ClosureExpressionBlock_guard,
 		closureExpressionExpr: _kind_ClosureExpressionExpr_guard,
@@ -2415,16 +2415,16 @@ export function guardsWith(test: KindTest): IsGuards {
 		attributedEnumVariant: _kind_AttributedEnumVariant_guard,
 		attributedParameter: _kind_AttributedParameter_guard,
 		attributedTypeParameter: _kind_AttributedTypeParameter_guard,
-		attributedArgument: _kind_AttributedArgument_guard,
+		argument: _kind_Argument_guard,
 		attributedOrderedField: _kind_AttributedOrderedField_guard,
 		typeArgument: _kind_TypeArgument_guard,
 		matchBlockArms: _kind_MatchBlockArms_guard,
+		arrayExpressionSemi: _kind_ArrayExpressionSemi_guard,
+		arrayExpressionList: _kind_ArrayExpressionList_guard,
 		rawStringLiteralStart: _kind_RawStringLiteralStart_guard,
 		rawStringLiteralEnd: _kind_RawStringLiteralEnd_guard,
 		traitInterfaceDeclarationBody: _kind_TraitInterfaceDeclarationBody_guard,
 		extensionDeclarationBody: _kind_ExtensionDeclarationBody_guard,
-		argument: _kind_Argument_guard,
-		arrayExpressionListElements: _kind_ArrayExpressionListElements_guard,
 		receiverParameterDeclaration: _kind_ReceiverParameterDeclaration_guard,
 		attributedParameterReceiver: _kind_AttributedParameterReceiver_guard,
 		parametersElementsReceiver: _kind_ParametersElementsReceiver_guard,

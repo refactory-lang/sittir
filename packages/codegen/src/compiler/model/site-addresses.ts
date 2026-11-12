@@ -9,6 +9,7 @@ import {
 import { findEntryForKindName, type KindEntryLike } from '../../dsl/symbol-table.ts';
 import type { NodeMap } from '../types.ts';
 import { displayNameOf } from './display-name.ts';
+import { writtenWordOf } from './node-map.ts';
 import type { AddressLabel, PathDeclaration } from '../../dsl/wire/options-block.ts';
 import type { SupertypeMembers } from './supertype-members.ts';
 import type { SeamOrigin } from '../../types/rule.ts';
@@ -71,7 +72,9 @@ export function pathOf(site: SiteAddressInput, kindEntries: readonly KindEntryLi
 	if (spacing?.at === 'seam') {
 		const side: PreferenceSegment = { kind: 'name', name: spacing.side };
 		if (spacing.token === own) return [kind, side];
-		const text = anonTokenText(kindEntries, spacing.token);
+		const named = anonTokenText(kindEntries, spacing.token);
+		const word = writtenWordOf(site.kind, { nodes: nodeMap.nodes, field: spacing.token });
+		const text = word === undefined || word === named ? named : undefined;
 		return text === undefined
 			? [kind, { kind: 'fieldName', name: spacing.token }, side]
 			: [kind, { kind: 'literal', text }, side];

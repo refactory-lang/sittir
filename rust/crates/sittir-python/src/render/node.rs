@@ -2924,7 +2924,7 @@ impl ::sittir_core::render::Render for WithClauseNodeRecord<'_> {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp, view = SuiteNodeRecord)]
 pub enum SuiteNode {
-    #[kind(kind::SUITE_INLINE)]
+    #[kind(kind::SUITE_INLINE, kind::BLOCK)]
     SuiteInline(SuiteInlineNode),
     #[kind(kind::SUITE_BLOCK)]
     SuiteBlock(SuiteBlockNode),
@@ -4481,7 +4481,7 @@ impl ::sittir_core::render::Render for StatementClassDefinitionNodeRecord<'_> {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp, view = SuiteClassDefinitionNodeRecord)]
 pub enum SuiteClassDefinitionNode {
-    #[kind(kind::SUITE_INLINE)]
+    #[kind(kind::SUITE_INLINE, kind::BLOCK)]
     SuiteInline(SuiteInlineNode),
     #[kind(kind::_SUITE_BLOCK_CLASS_DECLARATION)]
     SuiteBlockClassDeclaration(SuiteBlockClassDeclarationNode),
@@ -10133,6 +10133,100 @@ impl ::sittir_core::render::Render for TypeContentNodeSlotRecord<'_> {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice, stamp = stamp, view = SplatTypeTypeNodeSlotRecord)]
+pub enum SplatTypeTypeNodeSlot {
+    #[kind(kind::IDENTIFIER, folded(kind::__INIT_U_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
+    Identifier(IdentifierNode),
+    #[kind(kind::GENERIC_TYPE)]
+    GenericType(GenericTypeNode),
+    #[node(verbatim)]
+    Verbatim(VerbatimNode),
+}
+
+impl ::sittir_core::prepare::Prepare for SplatTypeTypeNodeSlot {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+        match self {
+            SplatTypeTypeNodeSlot::Identifier(t) => t.prepare(ctx),
+            SplatTypeTypeNodeSlot::GenericType(t) => t.prepare(ctx),
+            SplatTypeTypeNodeSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            SplatTypeTypeNodeSlot::Identifier(t) => t.gap_edges(),
+            SplatTypeTypeNodeSlot::GenericType(t) => t.gap_edges(),
+            SplatTypeTypeNodeSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            SplatTypeTypeNodeSlot::Identifier(t) => t.snapshot_edge(),
+            SplatTypeTypeNodeSlot::GenericType(t) => t.snapshot_edge(),
+            SplatTypeTypeNodeSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            SplatTypeTypeNodeSlot::Identifier(t) => t.source_coordinate(),
+            SplatTypeTypeNodeSlot::GenericType(t) => t.source_coordinate(),
+            SplatTypeTypeNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        match self {
+            SplatTypeTypeNodeSlot::Identifier(t) => t.source_separator(ctx),
+            SplatTypeTypeNodeSlot::GenericType(t) => t.source_separator(ctx),
+            SplatTypeTypeNodeSlot::Verbatim(t) => t.source_separator(ctx),
+        }
+    }
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(cursor, ctx))
+    }
+}
+
+impl ::sittir_core::view::KindOf for SplatTypeTypeNodeSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::GenericType(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for SplatTypeTypeNodeSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            SplatTypeTypeNodeSlot::Identifier(inner) => inner.render(w),
+            SplatTypeTypeNodeSlot::GenericType(inner) => inner.render(w),
+            SplatTypeTypeNodeSlot::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for SplatTypeTypeNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::GenericType(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for SplatTypeTypeNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            SplatTypeTypeNodeSlotRecord::Identifier(inner) => inner.render(w),
+            SplatTypeTypeNodeSlotRecord::GenericType(inner) => inner.render(w),
+            SplatTypeTypeNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp, view = ParenthesizedExpressionExpressionNodeSlotRecord)]
 pub enum ParenthesizedExpressionExpressionNodeSlot {
     #[kind(kind::COMPARISON_OPERATOR)]
@@ -14105,9 +14199,9 @@ pub struct SimpleStatementsNode {
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
-    pub elements: ::sittir_core::SlotValue<SimpleStatementsElementsNode>,
+    #[wire(key = "_statements")]
+    #[slot(field = field::STATEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    pub statements: ::sittir_core::SlotValue<SimpleStatementsElementsNode>,
 }
 
 impl ::sittir_core::view::KindOf for SimpleStatementsNode {
@@ -14168,7 +14262,7 @@ fn prepare_simple_statements<N: SimpleStatementsPrepare + ?Sized>(node: &mut N, 
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(130), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.statements, overlay, ctx)?;
     Ok(())
 }
 
@@ -20879,7 +20973,7 @@ fn prepare_type<N: TypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SPLAT_TYPE, layout = [kind::STAR | kind::STAR2], words = 5, built_words = 3, fields = SplatTypeFields, prepare = SplatTypePrepare, view = SplatTypeNodeRecord, prepare_fn = prepare_splat_type)]
+#[node(kind = kind::SPLAT_TYPE, layout = [kind::STAR | kind::STAR2], words = 13, built_words = 3, fields = SplatTypeFields, prepare = SplatTypePrepare, view = SplatTypeNodeRecord, prepare_fn = prepare_splat_type)]
 pub struct SplatTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20887,8 +20981,8 @@ pub struct SplatTypeNode {
     #[height]
     height: u16,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE, word = 2, width = 3, forms = 1, built = 2)]
-    pub type_: ::sittir_core::SlotValue<IdentifierNode>,
+    #[slot(field = field::TYPE, word = 2, width = 11, inline = 10, forms = 9, built = 2)]
+    pub type_: ::sittir_core::SlotValue<SplatTypeTypeNodeSlot>,
 }
 
 impl ::sittir_core::view::KindOf for SplatTypeNode {
@@ -23272,7 +23366,7 @@ fn prepare_await<N: AwaitPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMMENT, interior = "^#(?<content>(?:.*))$", words = 6, built_words = 4, fields = CommentFields, prepare = CommentPrepare, view = CommentNodeRecord, prepare_fn = prepare_comment)]
+#[node(kind = kind::COMMENT, interior = "^#(?<content>(?:[^\\x0A]*))$", affixes = ("#", ""), scanned, words = 6, built_words = 4, fields = CommentFields, prepare = CommentPrepare, view = CommentNodeRecord, prepare_fn = prepare_comment)]
 pub struct CommentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26281,7 +26375,7 @@ fn prepare_float_scientific<N: FloatScientificPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$", words = 6, built_words = 4, fields = EscapeSequenceUnicodeFixedFields, prepare = EscapeSequenceUnicodeFixedPrepare, view = EscapeSequenceUnicodeFixedNodeRecord, prepare_fn = prepare_escape_sequence_unicode_fixed)]
+#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[a-fA-F0-9]{4}))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceUnicodeFixedFields, prepare = EscapeSequenceUnicodeFixedPrepare, view = EscapeSequenceUnicodeFixedNodeRecord, prepare_fn = prepare_escape_sequence_unicode_fixed)]
 pub struct EscapeSequenceUnicodeFixedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26355,7 +26449,7 @@ fn prepare_escape_sequence_unicode_fixed<N: EscapeSequenceUnicodeFixedPrepare + 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_WIDE, interior = "^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$", words = 6, built_words = 4, fields = EscapeSequenceUnicodeWideFields, prepare = EscapeSequenceUnicodeWidePrepare, view = EscapeSequenceUnicodeWideNodeRecord, prepare_fn = prepare_escape_sequence_unicode_wide)]
+#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_WIDE, interior = "^\\\\(?<content>(?:U[a-fA-F0-9]{8}))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceUnicodeWideFields, prepare = EscapeSequenceUnicodeWidePrepare, view = EscapeSequenceUnicodeWideNodeRecord, prepare_fn = prepare_escape_sequence_unicode_wide)]
 pub struct EscapeSequenceUnicodeWideNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26429,7 +26523,7 @@ fn prepare_escape_sequence_unicode_wide<N: EscapeSequenceUnicodeWidePrepare + ?S
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[a-fA-F\\d]{2}))$", words = 6, built_words = 4, fields = EscapeSequenceHexFields, prepare = EscapeSequenceHexPrepare, view = EscapeSequenceHexNodeRecord, prepare_fn = prepare_escape_sequence_hex)]
+#[node(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[a-fA-F0-9]{2}))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceHexFields, prepare = EscapeSequenceHexPrepare, view = EscapeSequenceHexNodeRecord, prepare_fn = prepare_escape_sequence_hex)]
 pub struct EscapeSequenceHexNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26503,7 +26597,7 @@ fn prepare_escape_sequence_hex<N: EscapeSequenceHexPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_OCTAL, interior = "^\\\\(?<content>(?:\\d{1,3}))$", words = 6, built_words = 4, fields = EscapeSequenceOctalFields, prepare = EscapeSequenceOctalPrepare, view = EscapeSequenceOctalNodeRecord, prepare_fn = prepare_escape_sequence_octal)]
+#[node(kind = kind::ESCAPE_SEQUENCE_OCTAL, interior = "^\\\\(?<content>(?:[0-9]{1,3}))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceOctalFields, prepare = EscapeSequenceOctalPrepare, view = EscapeSequenceOctalNodeRecord, prepare_fn = prepare_escape_sequence_octal)]
 pub struct EscapeSequenceOctalNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26577,7 +26671,7 @@ fn prepare_escape_sequence_octal<N: EscapeSequenceOctalPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_LINE_BREAK, interior = "^\\\\(?<content>(?:\\r?\\n))$", words = 6, built_words = 4, fields = EscapeSequenceLineBreakFields, prepare = EscapeSequenceLineBreakPrepare, view = EscapeSequenceLineBreakNodeRecord, prepare_fn = prepare_escape_sequence_line_break)]
+#[node(kind = kind::ESCAPE_SEQUENCE_LINE_BREAK, interior = "^\\\\(?<content>(?:\\r?\\n))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceLineBreakFields, prepare = EscapeSequenceLineBreakPrepare, view = EscapeSequenceLineBreakNodeRecord, prepare_fn = prepare_escape_sequence_line_break)]
 pub struct EscapeSequenceLineBreakNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26651,7 +26745,7 @@ fn prepare_escape_sequence_line_break<N: EscapeSequenceLineBreakPrepare + ?Sized
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:['\"abfrntv\\\\]))$", words = 6, built_words = 4, fields = EscapeSequenceSimpleFields, prepare = EscapeSequenceSimplePrepare, view = EscapeSequenceSimpleNodeRecord, prepare_fn = prepare_escape_sequence_simple)]
+#[node(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:['\"abfrntv\\\\]))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceSimpleFields, prepare = EscapeSequenceSimplePrepare, view = EscapeSequenceSimpleNodeRecord, prepare_fn = prepare_escape_sequence_simple)]
 pub struct EscapeSequenceSimpleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26725,7 +26819,7 @@ fn prepare_escape_sequence_simple<N: EscapeSequenceSimplePrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_NAMED, interior = "^\\\\(?<content>(?:N\\{[^}]+\\}))$", words = 6, built_words = 4, fields = EscapeSequenceNamedFields, prepare = EscapeSequenceNamedPrepare, view = EscapeSequenceNamedNodeRecord, prepare_fn = prepare_escape_sequence_named)]
+#[node(kind = kind::ESCAPE_SEQUENCE_NAMED, interior = "^\\\\(?<content>(?:N\\{[^}]+\\}))$", affixes = ("\\", ""), words = 6, built_words = 4, fields = EscapeSequenceNamedFields, prepare = EscapeSequenceNamedPrepare, view = EscapeSequenceNamedNodeRecord, prepare_fn = prepare_escape_sequence_named)]
 pub struct EscapeSequenceNamedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27781,9 +27875,9 @@ pub struct SuiteInlineNode {
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
-    pub elements: ::sittir_core::SlotValue<SimpleStatementsElementsNode>,
+    #[wire(key = "_statements")]
+    #[slot(field = field::STATEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    pub statements: ::sittir_core::SlotValue<SimpleStatementsElementsNode>,
 }
 
 impl ::sittir_core::view::KindOf for SuiteInlineNode {
@@ -27844,7 +27938,7 @@ fn prepare_suite_inline<N: SuiteInlinePrepare + ?Sized>(node: &mut N, overlay: &
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(299), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.statements, overlay, ctx)?;
     Ok(())
 }
 
@@ -28619,7 +28713,7 @@ fn prepare_escape_interpolation<N: EscapeInterpolationPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_END, interior = "^(?<content>(?:(?:\\\\[\\s\\S])*))(?<quote>\"\"\"|'''|\"|'|`)$", words = 8, built_words = 5, fields = StringEndFields, prepare = StringEndPrepare, view = StringEndNodeRecord, prepare_fn = prepare_string_end, facet = quote)]
+#[node(kind = kind::STRING_END, interior = "^(?<content>(?:(?:\\\\[\\x09-\\x0D\\x20\\x00-\\x08\\x0E-\\x1F\\x21-\\u{10FFFF}])*))(?<quote>\"\"\"|'''|\"|'|`)$", words = 8, built_words = 5, fields = StringEndFields, prepare = StringEndPrepare, view = StringEndNodeRecord, prepare_fn = prepare_string_end, facet = quote)]
 pub struct StringEndNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33374,6 +33468,15 @@ impl ::sittir_core::prepare::SeatTarget for TypeContentNodeSlot {
     }
 }
 
+impl ::sittir_core::prepare::SeatTarget for SplatTypeTypeNodeSlot {
+    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
+        match self {
+            Self::GenericType(t) => t.seat_target(table, ctx),
+            Self::Identifier { .. } | Self::Verbatim { .. } => None,
+        }
+    }
+}
+
 impl ::sittir_core::prepare::SeatTarget for ParenthesizedExpressionExpressionNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
@@ -33746,9 +33849,9 @@ fn render_module<N: ModuleFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::
 }
 
 fn render_simple_statements<N: SimpleStatementsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let elements = node.elements();
+    let statements = node.statements();
     w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_statements", ::sittir_core::types::ItemIndex(0), w, |w| statements.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE);
     w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -36098,9 +36201,9 @@ fn render_with_clause_paren<N: WithClauseParenFields + ?Sized>(node: &N, w: &mut
 }
 
 fn render_suite_inline<N: SuiteInlineFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let elements = node.elements();
+    let statements = node.statements();
     w.edge(::sittir_core::types::KindId(299), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_statements", ::sittir_core::types::ItemIndex(0), w, |w| statements.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE);
     w.edge(::sittir_core::types::KindId(299), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -38738,7 +38841,7 @@ const _: () = assert!(::core::mem::size_of::<WithStatementNode>() <= 256, "WithS
 const _: () = assert!(::core::mem::size_of::<YieldFromClauseNode>() <= 256, "YieldFromClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldNode>() <= 256, "YieldNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_nodes!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, TypeParamNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, CaseClausePatternNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsElementsNodeSlot, DictionaryElementsItemNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, SplatPatternListPatternNodeSlot, SplatPatternDictionaryPatternNodeSlot, AssignmentEqValueNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, MatchBlockNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TypeParamsNode, TypeParamsItemsNode, TuplePatternElementsNode, CasePatternListNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, SplatPatternListNode, SplatPatternDictionaryNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, TypeParamTypeVarNode, TypeParamTypeVarTupleNode, TypeParamParamSpecNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, PipeNode, LbraceNode, RbraceNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, UnderscoreNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);
+::sittir_core::grammar_nodes!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, TypeParamNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, CaseClausePatternNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeTypeNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsElementsNodeSlot, DictionaryElementsItemNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, SplatPatternListPatternNodeSlot, SplatPatternDictionaryPatternNodeSlot, AssignmentEqValueNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, MatchBlockNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TypeParamsNode, TypeParamsItemsNode, TuplePatternElementsNode, CasePatternListNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, SplatPatternListNode, SplatPatternDictionaryNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, TypeParamTypeVarNode, TypeParamTypeVarTupleNode, TypeParamParamSpecNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, PipeNode, LbraceNode, RbraceNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, UnderscoreNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AliasedImportNode>() == 152, "AliasedImportNode is not the 152 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -39310,7 +39413,9 @@ const _: () = assert!(::core::mem::size_of::<SplatPatternListNode>() == 64, "Spl
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SplatPatternListPatternNodeSlot>() == 40, "SplatPatternListPatternNodeSlot is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SplatTypeNode>() == 56, "SplatTypeNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<SplatTypeNode>() == 136, "SplatTypeNode is not the 136 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<SplatTypeTypeNodeSlot>() == 120, "SplatTypeTypeNodeSlot is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<StarEqNode>() == 0, "StarEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

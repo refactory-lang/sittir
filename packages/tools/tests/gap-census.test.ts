@@ -1,5 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { createGapMeter, lossyShapeOf } from '../src/validate/gap-census.ts';
+import { disposeNativeEngines } from '../src/validate/common.ts';
+
+afterAll(disposeNativeEngines);
 
 describe('lossyShapeOf', () => {
 	const shape = (source: [string, string], rendered: [string, string]) =>
@@ -19,8 +22,8 @@ describe('lossyShapeOf', () => {
 
 describe('gap census on a real grammar', () => {
 	it('measures a rebuilt list against the gaps its source spelled', async () => {
-		const meter = await createGapMeter('typescript');
-		const measure = meter('probe', 'f(a ,  b,\tc);\n');
+		using meter = await createGapMeter('typescript');
+		const measure = meter.measure('probe', 'f(a ,  b,\tc);\n');
 		expect(measure.status).toBe('measured');
 		expect(measure.gaps).toBe(2);
 		expect(measure.lossy.map((row) => [row.shape, row.source, row.rendered])).toEqual([
@@ -29,8 +32,8 @@ describe('gap census on a real grammar', () => {
 	}, 120_000);
 
 	it('keeps a gap that holds a comment out of the list gaps', async () => {
-		const meter = await createGapMeter('typescript');
-		const measure = meter('probe', 'f(a /* c */, b);\n');
+		using meter = await createGapMeter('typescript');
+		const measure = meter.measure('probe', 'f(a /* c */, b);\n');
 		expect(measure.commented).toBe(1);
 		expect(measure.gaps).toBe(0);
 	}, 120_000);

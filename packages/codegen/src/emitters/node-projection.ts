@@ -21,7 +21,8 @@ import { kindConstants } from './kind-id-rust.ts';
 import { fieldConstName } from './field-id-rust.ts';
 import { queryRoutesOf } from './client-utils.ts';
 import { canonicalSeparatedListField, fieldTypeComponents, isTextLeaf, slotDropKindIds, slotKindNames } from './shared.ts';
-import { interiorOf } from './interior.ts';
+import { affixedInterior, interiorOf } from './interior.ts';
+import { ruleListParts } from '../dsl/rule-patterns.ts';
 import { rustStringLiteral } from './render-body.ts';
 import { STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../types/rule.ts';
@@ -320,7 +321,12 @@ export function nodeArgs(
 		return fixed === undefined ? `${kind}, text` : `${kind}, text = ${rustStringLiteral(fixed)}`;
 	}
 	const interior = interiorOf(node);
-	if (interior !== undefined) return `${kind}, interior = ${rustStringLiteral(interior.regex)}`;
+	if (interior !== undefined) {
+		const affixed = affixedInterior(node);
+		if (affixed === undefined) return `${kind}, interior = ${rustStringLiteral(interior.regex)}`;
+		const scanned = ruleListParts(ctx.nodeMap.externals ?? []).names.includes(node.kind);
+		return `${kind}, interior = ${rustStringLiteral(interior.regex)}, affixes = (${rustStringLiteral(affixed.open)}, ${rustStringLiteral(affixed.close)})${scanned ? ', scanned' : ''}`;
+	}
 	const args = [kind];
 	if (ctx.listOwners.has(node.kind)) args.push('min_depth = 2');
 	const layout = node instanceof AbstractAssembledCompound ? layoutTokenIds(node, ctx, slots) : [];

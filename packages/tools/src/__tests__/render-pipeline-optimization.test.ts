@@ -402,7 +402,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 				}
 			},
 			fieldIds: { name: 1 },
-			sourceArtifact: 'parser.wasm'
+			sourceArtifact: 'parser.wasm', parser: null
 		};
 
 		const emitted = emitRenderModule('rust', files, withGeneratedIdTables((kindEntries) => makeMinimalNodeMap(kindEntries)).nodeMap, generatedIdTables);
@@ -466,7 +466,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 					}
 				}
 			},
-			sourceArtifact: 'parser.wasm'
+			sourceArtifact: 'parser.wasm', parser: null
 		};
 
 		const emitted = emitRenderModule(

@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
+import { sharedEngine } from '@sittir/common/testing';
 import { createEngine } from '@sittir/common';
 import rust from '../../rust/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
 
-const rs = await createEngine(rust);
-const ts = await createEngine(typescript);
+const rs = await sharedEngine(() => createEngine(rust));
+const ts = await sharedEngine(() => createEngine(typescript));
 
 /** The array a rust `let` statement binds, in the source's statement `at`. */
 function rustArray(source: string, at = 0) {

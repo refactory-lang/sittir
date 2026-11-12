@@ -18,7 +18,7 @@ describe('a parsed list', () => {
 		read.mockClear();
 		const [line] = root.statements();
 		if (line === undefined || !py.is.simpleStatements(line)) throw new Error('expected one line of simple statements');
-		expect(line.elements()).toHaveLength(3);
+		expect(line.statements()).toHaveLength(3);
 		expect(read).toHaveBeenCalledTimes(1);
 	});
 
@@ -26,10 +26,10 @@ describe('a parsed list', () => {
 		const root = py.parse('a = 1; b = 2\n');
 		const [line] = root.statements();
 		if (line === undefined || !py.is.simpleStatements(line)) throw new Error('expected one line of simple statements');
-		const [first] = line.elements();
+		const [first] = line.statements();
 		read.mockClear();
 		expect(root.statements()[0]).toBe(line);
-		expect(line.elements()[0]).toBe(first);
+		expect(line.statements()[0]).toBe(first);
 		expect(read).not.toHaveBeenCalled();
 	});
 });

@@ -27,6 +27,32 @@ import {
 	wire
 } from '../codegen/src/dsl/dsl-authoring.ts';
 
+const ARRAY_PRODUCTION =
+	'Rust reference ArrayExpression: `[` ArrayElements? `]`; ArrayElements: Expression ( `,` Expression )* `,`? | Expression `;` Expression. Outer attributes go only before an element of the comma form, never before the closing bracket or the repeated operand';
+
+const ARRAY_ATTRIBUTE_WITNESSES = [
+	{
+		text: 'fn f() { let a = [#[a]]; }\n',
+		form: ['[', { symbol: 'attribute_item' }, ']'],
+		kind: 'array_expression',
+		production: ARRAY_PRODUCTION
+	},
+	{
+		text: 'fn f() { let a = [#[a] 1; 3]; }\n',
+		form: ['[', { symbol: 'attribute_item' }, { symbol: '_expression' }, ';', { symbol: '_expression' }, ']'],
+		kind: 'array_expression',
+		production: ARRAY_PRODUCTION
+	}
+] as const;
+
+const TUPLE_ATTRIBUTE_WITNESSES = [
+	{
+		text: 'fn f() { let a = (1, #[a] 2); }\n',
+		form: ['(', { symbol: '_expression' }, ',', { symbol: 'attribute_item' }, { symbol: '_expression' }, ')'],
+		kind: 'tuple_expression'
+	}
+] as const;
+
 export default grammar(enrich(base), wire({
 	resolutions,
 	name: 'rust',
@@ -46,7 +72,7 @@ export default grammar(enrich(base), wire({
 				choice($.metavariable, $.type_parameter, $.lifetime_parameter, $.const_parameter)
 			),
 
-		attributed_argument: ($) => seq(repeat($.attribute_item), $._expression),
+		argument: ($) => seq(repeat($.attribute_item), $._expression),
 
 		attributed_ordered_field: ($) =>
 			seq(repeat($.attribute_item), optional($.visibility_modifier), field('type', $._type)),
@@ -196,9 +222,8 @@ export default grammar(enrich(base), wire({
 			'field_declaration_list/"}"/before': 'body/after',
 			'enum_variant_list/"{"/after': 'body/before',
 			'enum_variant_list/"}"/before': 'body/after',
-			'array_expression_list/attributes:/separator': 'gap/separator',
-			'array_expression_semi/attributes:/separator': 'gap/separator',
-			'attributed_argument/attribute_item:/separator': 'gap/separator',
+			'argument/attribute_item:/separator': 'gap/separator',
+			'attributed_element/attribute_item:/separator': 'gap/separator',
 			'attributed_enum_variant/attribute_item:/separator': 'gap/separator',
 			'attributed_field_declaration/attribute_item:/separator': 'gap/separator',
 			'attributed_ordered_field/attribute_item:/separator': 'gap/separator',
@@ -211,17 +236,12 @@ export default grammar(enrich(base), wire({
 			'match_block_arms/arms:/separator': 'gap/separator',
 			'shorthand_field_initializer/attributes:/separator': 'gap/separator',
 			'token_repetition/tokens:/separator': 'gap/separator',
-			'token_repetition_pattern/token_patterns:/separator': 'gap/separator',
-			'tuple_expression/attributes:/separator': 'gap/separator'
+			'token_repetition_pattern/token_patterns:/separator': 'gap/separator'
 		}
 	},
 
 	edits: {
 		comment: { 0: arm.default },
-		// See docs/rust-grammar-sittir-glossary.md::tuple_expression
-		tuple_expression: {
-			1: field('attributes')
-		},
 		bracketed_type: { 1: field('type') },
 		else_clause: { 1: field('body') },
 		generic_pattern: { 0: field('name') },
@@ -319,11 +339,6 @@ export default grammar(enrich(base), wire({
 			2: field('body')
 		},
 
-		array_expression: [
-			{ 1: field('attributes'), '2/0/0': field('element') },
-			{ '2/1': arm.default },
-			{ '2/0': variant('semi'), '2/1': variant('list') }
-		],
 
 		attribute: [{ 0: field('path') }, { '1/0': variant('input') }, { 1: field('input') }],
 
@@ -683,6 +698,31 @@ export default grammar(enrich(base), wire({
 		),
 
 		_range_expression_bare: vocabulary(($) => '..'),
+
+		attributed_element: vocabulary(($) => seq(repeat1($.attribute_item), field('expression', $._expression))),
+
+		_array_expression_list_elements: vocabulary(($) => {
+			const item = field('item', choice($.attributed_element, $._expression));
+			return seq(item, repeat(seq(',', item)), optional(','));
+		}),
+		array_expression: reauthored('accepts-invalid-syntax', ARRAY_ATTRIBUTE_WITNESSES, ($) =>
+			seq(
+				'[',
+				choice(
+					variant('semi', seq(field('element', $._expression), ';', field('length', $._expression))),
+					variant('list', seq(optional(field('elements', alias($._array_expression_list_elements, $.array_expression_list_elements)))), { default: true })
+				),
+				']'
+			)
+		),
+
+		_tuple_expression_elements: vocabulary(($) => {
+			const item = field('item', choice($.attributed_element, $._expression));
+			return seq(seq(item, ','), repeat(seq(item, ',')), optional(item));
+		}),
+		tuple_expression: reauthored('rejects-valid-syntax', TUPLE_ATTRIBUTE_WITNESSES, ($) =>
+			seq('(', field('elements', alias($._tuple_expression_elements, $.tuple_expression_elements)), ')')
+		),
 
 		reference_expression: reauthored('ambiguity', ($) =>
 			prec(

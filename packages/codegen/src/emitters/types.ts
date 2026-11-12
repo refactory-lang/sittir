@@ -4,10 +4,10 @@ import { findOwnKindEntry, modelKindOfEntry, treeNameOf } from '../dsl/symbol-ta
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isWordOrBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
-import { isFixedTextLeaf, isKindIdStored, separatorCandidateTexts } from '../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, isFixedTextLeaf, isKindIdStored, separatorCandidateTexts } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import { bareInteriorText, numberInputType, numericLeafInputTypes, numericLeafShape, numericSlotShape } from './interior.ts';
+import { bareInteriorText, kindNumberShape, numberInputType, numericLeafInputTypes, numericLeafShape } from './interior.ts';
 import {
 	collectKindEntries,
 	collectCatalogKinds,
@@ -84,7 +84,6 @@ import {
 	fromBareInput,
 	bareValueSlot,
 	scalarLeafKinds,
-	lexedContentSlot,
 	canonicalSeparatedListField,
 	enumMemberDiscriminant,
 	pruneUnusedImports,
@@ -896,6 +895,7 @@ function assertNoCamelCaseCollisions(nodeKinds: string[]): void {
 interface CoercerRowArgs {
 	readonly bare: string | undefined;
 	readonly kind: string;
+	readonly heldBare: boolean;
 }
 
 function coercerRowArgs(
@@ -915,7 +915,8 @@ function coercerRowArgs(
 				return undefined;
 		}
 	})();
-	return { bare, kind: kindIdOrNever(kind, nodeMap, kindEntries) };
+	const heldBare = !(node instanceof AbstractAssembledCompound && node.foldsFixedWord);
+	return { bare, kind: kindIdOrNever(kind, nodeMap, kindEntries), heldBare };
 }
 
 function emitNamespaceInterfaceLine(
@@ -944,7 +945,7 @@ function emitNamespaceInterfaceLine(
 		`  ${coercer?.bare ?? 'never'},`,
 		`  ${coercer?.kind ?? 'never'},`,
 		`  ${typeName}.Parsed,`,
-		`  ${emptyTypeName ?? 'never'}`,
+		...(coercer?.bare !== undefined && !coercer.heldBare ? [`  ${emptyTypeName ?? 'never'},`, '  never'] : [`  ${emptyTypeName ?? 'never'}`]),
 		'> {',
 		`  readonly BuildArgs: ${typeName}.BuildArgs;`,
 		`  readonly LooseArgs: ${typeName}.LooseArgs;`,
@@ -1363,8 +1364,7 @@ function emitNamespaceSugarBlock(
 	const looseWidened = widenedLooseConfig === looseConfig ? '' : ` | ${widenedLooseConfig}`;
 	const bareInterior = bareInteriorText(kind, node);
 	const bareText = bareInterior === undefined ? '' : ' | string';
-	const bareContent = lexedContentSlot(node);
-	const bareShape = (bareContent === undefined ? undefined : numericSlotShape(bareContent)) ?? numericLeafShape(kind, node) ?? bareInterior?.number;
+	const bareShape = kindNumberShape(kind, node);
 	const bareSlot = fromBareInput(node, nodeMap) === 'value' ? bareValueSlot(node, nodeMap) : undefined;
 	const bareEnvelope = bareSlot === undefined ? undefined : splicedEnvelopeType(bareSlot, nodeMap);
 	lines.push(

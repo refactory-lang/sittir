@@ -33,10 +33,20 @@
 			"import": "./dist/engine-boundary.js",
 			"default": "./dist/engine-boundary.js"
 		},
+		"./native-binding": {
+			"types": "./dist/native-binding.d.ts",
+			"import": "./dist/native-binding.js",
+			"default": "./dist/native-binding.js"
+		},
 		"./blank-arm": {
 			"types": "./src/blank-arm.ts",
 			"import": "./src/blank-arm.ts",
 			"default": "./src/blank-arm.ts"
+		},
+		"./testing": {
+			"types": "./src/testing.ts",
+			"import": "./src/testing.ts",
+			"default": "./src/testing.ts"
 		},
 		"./delimiter": {
 			"types": "./src/delimiter.ts",
@@ -58,11 +68,19 @@
 			"import": "./dist/portable/index.js",
 			"default": "./dist/portable/index.js"
 		},
+		"./portable/utils": {
+			"types": "./dist/portable/utils.d.ts",
+			"import": "./dist/portable/utils.js",
+			"default": "./dist/portable/utils.js"
+		},
 		"./utils": {
 			"types": "./dist/utils.d.ts",
 			"import": "./dist/utils.js",
 			"default": "./dist/utils.js"
 		}
+	},
+	"engines": {
+		"node": ">=24.12.0"
 	},
 	"scripts": {
 		"build": "tsrs --build tsconfig.build.json",

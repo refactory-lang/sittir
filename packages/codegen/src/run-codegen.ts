@@ -26,7 +26,7 @@ import { generateWithDerivedConflicts } from './transpile/conflict-driver.ts';
 import { assertGrammarRuntimeFloor } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { manifestPath, recordNativeBuild, recordedGeneration, sourceFingerprint, writeManifestForGrammar, type SourceFingerprint } from './scripts/generated-manifest.ts';
-import { GRAMMAR_ENTRY, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, workspaceNodeApiLevel, type GrammarPackage } from './grammars.ts';
+import { GRAMMAR_ENTRY, NODE_MODEL_FILE, PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE, PORTABLE_NODE_MODEL_FILE, PORTABLE_SURFACE_FILE, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, type GrammarPackage } from './grammars.ts';
 import { conflictResolutionsPath } from './transpile/conflict-resolutions-file.ts';
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
@@ -34,8 +34,7 @@ import { formatEmitDiff } from './scripts/emit-diff.ts';
 import { clearNapiTypedefs } from './scripts/napi-typedefs.ts';
 import { WORKSPACE_CHECK, runWorkspaceCheck } from './scripts/workspace-check.ts';
 import { compareOrdinal } from './emitters/shared.ts';
-import { PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, PORTABLE_TYPED_TSCONFIG_TEXT } from './emitters/overlays/portable/typed.ts';
-
+import { PORTABLE_TYPED_FILE, PORTABLE_TYPE_TEST_LANES, portableTsconfigText, type PortableTypedOutput } from './emitters/overlays/portable/typed.ts';
 export interface CodegenOptions {
 	grammar: string;
 	outputDir: string;
@@ -50,7 +49,6 @@ export interface CodegenOptions {
 	workspaceCheck?: boolean;
 	noEmitDiff?: boolean;
 	allowDiagnostics?: string[];
-	nodeApiLevel?: number;
 }
 
 export async function formatSource(path: string, content: string): Promise<string> {
@@ -72,13 +70,15 @@ export async function writeFile(path: string, content: string): Promise<void> {
 	writeFileSync(path, finalContent, 'utf8');
 }
 
-export async function writePortableTyped(sittirDir: string, source: string | undefined): Promise<void> {
+export async function writePortableTyped(sittirDir: string, typed: PortableTypedOutput | undefined): Promise<void> {
 	const module = join(sittirDir, PORTABLE_TYPED_FILE);
-	const tsconfig = join(sittirDir, PORTABLE_TYPED_TSCONFIG);
-	if (source === undefined) for (const path of [module, tsconfig]) rmSync(path, { force: true });
+	const tsconfigs = Object.entries(PORTABLE_TYPE_TEST_LANES).map(([name, tests]) => [join(sittirDir, name), portableTsconfigText(tests)] as const);
+	const map = join(dirname(sittirDir), 'src', PORTABLE_MAP_FILE);
+	if (typed === undefined) for (const path of [module, ...tsconfigs.map(([path]) => path), map]) rmSync(path, { force: true });
 	else {
-		await writeFile(module, source);
-		await writeFile(tsconfig, PORTABLE_TYPED_TSCONFIG_TEXT);
+		await writeFile(module, typed.source);
+		for (const [path, text] of tsconfigs) await writeFile(path, text);
+		await writeFile(map, typed.map);
 	}
 }
 
@@ -234,13 +234,8 @@ async function withInternalCodegenRun<T>(fn: () => Promise<T>): Promise<T> {
 	}
 }
 
-function runNodeApiLevel({ all, nodeApiLevel }: CodegenOptions): number | undefined {
-	return all === true ? (nodeApiLevel ?? workspaceNodeApiLevel()) : undefined;
-}
-
 export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
-	const nodeApiLevel = runNodeApiLevel(opts);
-	return withInternalCodegenRun(() => runCodegenInternal(opts, nodeApiLevel));
+	return withInternalCodegenRun(() => runCodegenInternal(opts));
 }
 
 function refuseUnlessAllowed(diagnostics: readonly GrammarDiagnostic[], allowDiagnostics: ReadonlySet<string>): void {
@@ -250,7 +245,7 @@ function refuseUnlessAllowed(diagnostics: readonly GrammarDiagnostic[], allowDia
 	if (blocked.length > 0) throw new GrammarDiagnosticError(blocked, diagnostics);
 }
 
-async function runCodegenInternal(opts: CodegenOptions, nodeApiLevel: number | undefined, read: SourceFingerprint = sourceFingerprint(opts.grammar)): Promise<NodeMap> {
+async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint = sourceFingerprint(opts.grammar)): Promise<NodeMap> {
 	const { grammar, outputDir, all, testsDir, noEmitDiff, buildNative, nativeDebug, workspaceCheck } = opts;
 
 	if (!outputDir) {
@@ -292,6 +287,7 @@ async function runCodegenInternal(opts: CodegenOptions, nodeApiLevel: number | u
 	}
 
 	const outDir = outputDir;
+	const sittirDir = sittirDirOf({ dir: dirname(outDir) });
 
 	await writeFile(join(outDir, 'render-engine.ts'), result.renderEngine);
 	await writeFile(join(outDir, 'api.ts'), result.api);
@@ -321,7 +317,7 @@ async function runCodegenInternal(opts: CodegenOptions, nodeApiLevel: number | u
 	await writeFile(join(outDir, 'index.ts'), result.index);
 
 	writeFileSync(
-		join(dirname(outDir), '.sittir', 'render-bodies.json'),
+		join(sittirDir, 'render-bodies.json'),
 		JSON.stringify(
 			Object.fromEntries([...result.templates.bodies].sort(([a], [b]) => compareOrdinal(a, b))),
 			null,
@@ -342,7 +338,7 @@ async function runCodegenInternal(opts: CodegenOptions, nodeApiLevel: number | u
 				`origin: ${census.preferenceOrigin} preference, ${census.literalDefaultOrigin} literal-default, ${census.wordDefaultOrigin} word-default, ${census.cascadeOrigin} cascade, ${census.fallbackOrigin} fallback`
 		);
 		writeFileSync(
-			join(dirname(outDir), '.sittir', 'seam-census.json'),
+			join(sittirDir, 'seam-census.json'),
 			JSON.stringify(
 				{
 					total,
@@ -364,26 +360,26 @@ async function runCodegenInternal(opts: CodegenOptions, nodeApiLevel: number | u
 		);
 	}
 
-	await writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
-	if (result.portableNodeModel === undefined) rmSync(join(outDir, 'node-model-portable.json5'), { force: true });
-	else await writeFile(join(outDir, 'node-model-portable.json5'), result.portableNodeModel);
-	if (result.portable === undefined) rmSync(join(outDir, 'portable.ts'), { force: true });
-	else await writeFile(join(outDir, 'portable.ts'), result.portable);
-	if (result.portableBuild === undefined) rmSync(join(outDir, 'portable-build.ts'), { force: true });
-	else await writeFile(join(outDir, 'portable-build.ts'), result.portableBuild);
-	await writePortableTyped(join(dirname(outDir), '.sittir'), result.portableTyped?.source);
+	await writeFile(join(sittirDir, NODE_MODEL_FILE), result.nodeModel);
+	if (result.portableNodeModel === undefined) rmSync(join(sittirDir, PORTABLE_NODE_MODEL_FILE), { force: true });
+	else await writeFile(join(sittirDir, PORTABLE_NODE_MODEL_FILE), result.portableNodeModel);
+	if (result.portable === undefined) rmSync(join(outDir, PORTABLE_SURFACE_FILE), { force: true });
+	else await writeFile(join(outDir, PORTABLE_SURFACE_FILE), result.portable);
+	if (result.portableBuild === undefined) rmSync(join(outDir, PORTABLE_BUILD_FILE), { force: true });
+	else await writeFile(join(outDir, PORTABLE_BUILD_FILE), result.portableBuild);
+	await writePortableTyped(sittirDir, result.portableTyped);
 
 	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
 	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);
 
 	await writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 
-	const shouldEmitRustRender = nodeApiLevel !== undefined && isGrammar(grammar);
+	const shouldEmitRustRender = all === true && isGrammar(grammar);
 
 	if (shouldEmitRustRender) {
 		const crateDir = nativeCrateDir(grammar);
 		const scaffoldCrate = !existsSync(join(crateDir, 'Cargo.toml'));
-		for (const file of nativeCrateFiles(grammar, nodeApiLevel, parserNameOf(grammarPackage(grammar)))) await writeFile(join(crateDir, file.path), file.contents);
+		for (const file of nativeCrateFiles(grammar, parserNameOf(grammarPackage(grammar)))) await writeFile(join(crateDir, file.path), file.contents);
 		if (scaffoldCrate) {
 			console.log(`  → scaffolded native crate ${nativeCrateRelDir(grammar)}`);
 			execSync('pnpm install --prefer-offline', { stdio: 'inherit', cwd: process.cwd() });
@@ -492,11 +488,10 @@ export async function runNativeOnly(opts: CodegenOptions): Promise<void> {
 }
 
 export async function runFullRegen(opts: CodegenOptions): Promise<NodeMap> {
-	const nodeApiLevel = runNodeApiLevel(opts);
-	return withInternalCodegenRun(() => runFullRegenInternal(opts, nodeApiLevel));
+	return withInternalCodegenRun(() => runFullRegenInternal(opts));
 }
 
-async function runFullRegenInternal(opts: CodegenOptions, nodeApiLevel: number | undefined): Promise<NodeMap> {
+async function runFullRegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	const { grammar, skipTsChain, transpile, tsGenerate } = opts;
 	const read = sourceFingerprint(grammar);
 
@@ -509,5 +504,5 @@ async function runFullRegenInternal(opts: CodegenOptions, nodeApiLevel: number |
 		await compileParsers(grammar, pkg);
 	}
 
-	return runCodegenInternal(opts, nodeApiLevel, read);
+	return runCodegenInternal(opts, read);
 }

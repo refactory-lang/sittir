@@ -49,7 +49,7 @@ describe('a built string takes the quote its content derives', () => {
 type ReadString = { prefix(): string | undefined; contents(): readonly unknown[]; stringEnd(): { content(): string | undefined } };
 
 const readString = (source: string): ReadString =>
-	(py.parse(`${source}\n`) as unknown as { statements(): readonly { elements(): readonly { content(): ReadString }[] }[] }).statements()[0]!.elements()[0]!.content();
+	(py.parse(`${source}\n`) as unknown as { statements(): readonly { statements(): readonly { content(): ReadString }[] }[] }).statements()[0]!.statements()[0]!.content();
 
 const contentOf = (string: ReadString): string => string.contents().map(String).join('') + (string.stringEnd().content() ?? '');
 

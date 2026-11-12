@@ -1,20 +1,23 @@
-import type { GrammarContext } from '../../../context.ts';
-import type { Flag, SubKindOf } from '../../../utils.ts';
+import type { GrammarMap, Slot } from '../../../map.ts';
+import type { SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
-	export interface Class<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
+	export interface Class<G extends GrammarMap, K extends Under<'declaration.class'> = 'declaration.class'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by pt
-		readonly $kind: 'declaration.class';
-		readonly body: G['slots']['declaration.class']['body'] | G['slots']['declaration.class']['body'][];
-		readonly doc?: V.Literal.String<G>;
+		readonly $path: K;
+		readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>> | Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>>[];
+		readonly doc?: Slot<G, K, 'doc', V.Literal.String.Any<G>>;
 		// p only
-		readonly name: G['identifier'];
+		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 	}
-	export interface Constructor<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
+	export interface Constructor<G extends GrammarMap, K extends Under<'declaration.constructor'> = 'declaration.constructor'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by pt
-		readonly $kind: 'declaration.constructor';
-		readonly body: V.Statement.Block<G>;
-		readonly parameters: (
+		readonly $path: K;
+		readonly body: Slot<G, K, 'body', V.Statement.Block<G> | V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
+		readonly parameters: Slot<
+			G,
+			K,
+			'parameters',
 			| V.Declaration.Parameter<G>
 			| V.Declaration.Parameter.Default<G>
 			| V.Declaration.Parameter.Private<G>
@@ -23,18 +26,19 @@ export namespace Declaration {
 			| V.Declaration.Parameter.Receiver<G>
 			| V.Declaration.Parameter.Typed<G>
 			| V.Declaration.Parameter.TypedDefault<G>
-		)[];
+			| V.Identifier.Any<G>
+			| V.Pattern.Rest<G>
+			| V.Pattern.Rest.Map<G>
+			| V.Pattern.Tuple<G>
+			| string
+		>[];
 	}
-	export interface Field<G extends GrammarContext<G>> {
-		readonly static?: Flag;
-		// t only
+	export interface Field<G extends GrammarMap, K extends Under<'declaration.field'> = 'declaration.field'> {
 	}
 	export namespace Field {
-		export interface Signature<G extends GrammarContext<G>> {
-			readonly static?: Flag;
+		export interface Signature<G extends GrammarMap, K extends Under<'declaration.field.signature'> = 'declaration.field.signature'> {
 		}
 	}
-	export interface Property<G extends GrammarContext<G>> {
-		readonly static?: Flag;
+	export interface Property<G extends GrammarMap, K extends Under<'declaration.property'> = 'declaration.property'> {
 	}
 }

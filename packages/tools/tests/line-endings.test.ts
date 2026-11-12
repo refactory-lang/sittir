@@ -2,10 +2,12 @@
 // is rendered from a CRLF copy of every entry: under the default the render is
 // its LF twin, under '\r\n' every break is CRLF and nothing else differs, and
 // the CRLF render parses back to a tree that renders as the same LF text.
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../src/languages.ts';
-import { loadCorpusEntries } from '../src/validate/common.ts';
+import { loadCorpusEntries, loadLanguageForGrammar, treeParser, disposeNativeEngines } from '../src/validate/common.ts';
+
+afterAll(disposeNativeEngines);
 
 const LONE_BREAK = /(?<!\r)\n|\r(?!\n)/;
 const toCrlf = (text: string): string => text.replace(/\r?\n/g, '\r\n');
@@ -115,7 +117,7 @@ describe.each([
 		const plain = await createEngine(language);
 		const twin = plain.render(plain.parse(source.replace(/\r/g, '\n')) as never).toString();
 		expect(twin.endsWith('\n')).toBe(true);
-		for (const ending of ['\n', '\r\n', '\r'] as const) {
+		for (const ending of ['\n', '\r\n'] as const) {
 			const engine = await createEngine(language, { render: { layout: { newline: ending } } });
 			expect(engine.render(plain.parse(source) as never).toString()).toBe(twin.replace(/\n/g, ending));
 		}
@@ -212,5 +214,40 @@ describe('a comment that swallows the carriage return of its CRLF break', () => 
 		expect(out).not.toContain('# note\r\r');
 		expect(out).not.toMatch(LONE_BREAK);
 		expect(out.replace(/\r\n/g, '\n')).toBe(plain.render(lfBuilt).toString());
+	});
+});
+
+describe.each([
+	['rust', '// c\nfn f() {}\nfn g() {}\n', ['\n', '\r\n']],
+	['typescript', '#!/usr/bin/env node\n// c\nconst a = 1\nlet b = 2\n', ['\n', '\r\n']],
+	['python', '# c\nx = 1\ny = 2\n', ['\n', '\r\n']],
+	['scm', '; c\n(a)\n(b)\n', ['\n', '\r\n']],
+	['regex', 'a\nb', ['\n', '\r\n']]
+] as const)('the line endings %s admits', (name, source, admitted) => {
+	const endings = (async () => {
+		const language = await languageByName(name as string);
+		const accepted = await Promise.all(
+			(['\n', '\r\n', '\r'] as const).map(async (newline) => {
+				const engine = await createEngine(language, { render: { layout: { newline } } } as never).catch(() => undefined);
+				return engine === undefined ? [] : [[newline, engine as never as { parse(text: string): never; render(node: never): { toString(): string } }] as const];
+			})
+		);
+		return accepted.flat();
+	})();
+	const tree = async (text: string): Promise<string> => {
+		using parser = treeParser(await loadLanguageForGrammar(name));
+		using parsed = parser.parse(text);
+		return parsed.root.toString();
+	};
+
+	it('are the arms its parser reads as a line break', async () => {
+		expect((await endings).map(([newline]) => newline)).toEqual(admitted);
+	});
+
+	it('render a source as text its parser reads as it reads the source', async () => {
+		const expected = await tree(source);
+		for (const [newline, engine] of await endings) {
+			expect(await tree(engine.render(engine.parse(source)).toString()), JSON.stringify(newline)).toBe(expected);
+		}
 	});
 });

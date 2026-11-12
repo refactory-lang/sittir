@@ -6,6 +6,7 @@ import type { RuleListEntry } from '../dsl/rule-patterns.ts';
 import type { GeneratedIdTables, PredictedKinds } from '../dsl/symbol-table.ts';
 import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
+import type { LineEndings } from './model/line-endings.ts';
 import type { SCCAnalysis } from './scc.ts';
 import type { VariantChild } from './variant-structural.ts';
 
@@ -204,6 +205,7 @@ export interface LinkedGrammar {
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;
+	readonly lineEndings: LineEndings;
 	readonly word: string | null;
 	readonly reserved?: ReservedWordsets;
 	readonly relaxedLiterals?: readonly string[];
@@ -243,6 +245,7 @@ export interface NormalizedGrammar {
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;
+	readonly lineEndings?: LineEndings;
 	readonly displayUnions?: DisplayUnions;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly leafTextPatterns?: ReadonlyMap<string, string>;
@@ -281,6 +284,7 @@ export interface SimplifiedGrammar {
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;
+	readonly lineEndings: LineEndings;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 	readonly splicedNames: ReadonlySet<string>;
 	readonly generatedIdTables: GeneratedIdTables;
@@ -327,6 +331,7 @@ export interface NodeMap {
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;
+	readonly lineEndings?: LineEndings;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 	scc?: SCCAnalysis;
 	irSurface?: IrSurface;

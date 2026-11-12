@@ -24766,14 +24766,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "plugin",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "plugin",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(plugin) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(plugin = null);"
   },
   {
     "expectedOutput": "\nclass Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T>;\n\n  public readonly async bar?<T>();\n  private static bar();\n  private static async bar(): T;\n}\n",
@@ -37314,14 +37314,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "a",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "a",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(a) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(a = null);"
   },
   {
     "expectedOutput": "b",
@@ -37343,14 +37343,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "b",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "b",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(b) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(b = null);"
   },
   {
     "expectedOutput": "c",
@@ -37372,14 +37372,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "c",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "c",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(c) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(c = null);"
   },
   {
     "expectedOutput": "{ return a; }",
@@ -69663,14 +69663,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "amount",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "amount",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(amount) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(amount = null);"
   },
   {
     "expectedOutput": "interestRate",
@@ -69695,14 +69695,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "interestRate",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "interestRate",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(interestRate) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(interestRate = null);"
   },
   {
     "expectedOutput": "duration",
@@ -69727,14 +69727,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "duration",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "duration",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(duration) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(duration = null);"
   },
   {
     "expectedOutput": "amount",
@@ -69759,14 +69759,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "amount",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "amount",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(amount) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(amount = null);"
   },
   {
     "expectedOutput": "interestRate",
@@ -69791,14 +69791,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "interestRate",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "interestRate",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(interestRate) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(interestRate = null);"
   },
   {
     "expectedOutput": "duration",
@@ -69823,14 +69823,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "duration",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "duration",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(duration) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(duration = null);"
   },
   {
     "expectedOutput": "module",
@@ -74456,14 +74456,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "bar",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "bar",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(bar) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(bar = null);"
   },
   {
     "expectedOutput": "bar",
@@ -74485,14 +74485,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "bar",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "bar",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(bar) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(bar = null);"
   },
   {
     "expectedOutput": "bar",
@@ -74514,14 +74514,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "bar",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "bar",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(bar) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(bar = null);"
   },
   {
     "expectedOutput": ": baz",
@@ -80429,14 +80429,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "string",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "string",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(string) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(string = null);"
   },
   {
     "expectedOutput": "length: number",
@@ -81783,14 +81783,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "string",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "string",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(string) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(string = null);"
   },
   {
     "expectedOutput": "[index:string] : number",
@@ -86325,14 +86325,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "p1",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "p1",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(p1) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(p1 = null);"
   },
   {
     "expectedOutput": "p2",
@@ -86354,14 +86354,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)))",
+    "expectedReparseTree": "(lhs_expression (identifier))",
     "expectedSourceOut": "p2",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "_lhs_expression",
     "sourceIn": "p2",
-    "wrappedOffset": 12,
-    "wrappedText": "function _f(p2) {}"
+    "wrappedOffset": 1,
+    "wrappedText": "(p2 = null);"
   },
   {
     "expectedOutput": "\nconst symFoo: unique symbol = Symbol(\"foo\");\nconst symBar: symbol = Symbol.for(\"bar\");\n",
@@ -111957,8 +111957,7 @@
                     ]
                   }
                 ]
-              },
-              "_function": 196
+              }
             }
           }
         },
@@ -112425,8 +112424,7 @@
                 ]
               }
             ]
-          },
-          "_function": 196
+          }
         }
       }
     },
@@ -113722,8 +113720,7 @@
               ]
             }
           ]
-        },
-        "_function": 196
+        }
       }
     },
     "kind": "render",
@@ -113887,8 +113884,7 @@
             ]
           }
         ]
-      },
-      "_function": 196
+      }
     },
     "kind": "render",
     "options": {

@@ -156,6 +156,10 @@ The absolute path of every codegen module the surface can load (`MODULES`), so w
 
 What `compileGrammar` returns, as the tools see it through the codegen surface.
 
+### `packages/tools/src/codegen-surface.ts::DelimiterFacetRole`
+
+The delimiter facet role type, re-exported for the tools surface.
+
 ### `packages/tools/src/regen.ts::inPool`
 
 Runs `run` over `items` with at most `limit` running at once, keeping the results in item order.
@@ -429,3 +433,15 @@ The number of round-trip entries that carried something past the structure.
 ### `packages/tools/src/history.ts::ValidationRun::portableConformance`
 
 The total of the grammar's portable conformance errors, recorded for the validation run when the grammar has a typed module.
+
+### `packages/tools/src/history.ts::ValidationRun::builtRenderParseSpellingNormalized`
+
+The count of built-render parses that matched only after spelling normalization.
+
+### `packages/tools/src/history.ts::ValidationRun::readRenderParseShallowSpellingNormalized`
+
+The count of shallow read-render-parse matches that needed spelling normalization.
+
+### `packages/tools/src/history.ts::ValidationRun::readRenderParseSpellingNormalized`
+
+The count of read-render-parse matches that needed spelling normalization.

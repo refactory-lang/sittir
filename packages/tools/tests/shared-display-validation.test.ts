@@ -1,8 +1,11 @@
-import { expect, it, vi } from 'vitest';
+import { afterAll, expect, it, vi } from 'vitest';
 import { _fromMap } from '../../python/src/factories/coerce.ts';
 import { TSKindId } from '../../python/src/types.ts';
 import { validateFrom } from '../src/validate/from.ts';
 import { validateTemplateCoverage } from '../src/validate/template-coverage.ts';
+import { disposeNativeEngines } from '../src/validate/common.ts';
+
+afterAll(disposeNativeEngines);
 
 it('keeps both physical Python lambda factories in the from validation universe', async () => {
 	const ordinary = vi.spyOn(_fromMap, 'lambda');

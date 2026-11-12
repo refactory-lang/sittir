@@ -32,6 +32,7 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<Mod
 	splitFrom: null,
 	aliasStorage: null,
 	interiorPart: null,
+	textLeavesThrough: [],
 	shownAs: [],
 	...extra
 });
@@ -315,6 +316,31 @@ describe('resolveRoutes', () => {
 			'declaration.function'
 		]);
 		expect(routes.readEntries.get('binary')?.map((e) => e.vocab)).toEqual(['expression.binary.add', 'expression.binary']);
+	});
+
+	it("tries a predicate claim ahead of the claim whose path names the kind, and every other claim after it", async () => {
+		const routes = resolveRoutes(
+			await grammar(['(binary operator: "+") @expression.add', '(binary) @binary', '((binary left: (expr) @_l) @expression.sum (#eq? @_l "x"))'].join('\n'))
+		);
+		expect(routes.readEntries.get('binary')?.map((e) => e.vocab)).toEqual(['expression.sum', 'binary', 'expression.add']);
+	});
+
+	it("routes no member through a slot the entry's own test capture spells, and keeps a member capture the predicate tests", async () => {
+		const routes = resolveRoutes(
+			await grammar(['(function_definition) @declaration.function', '((function_definition name: (identifier) @_n) @declaration.main (#eq? @_n "main"))'].join('\n'))
+		);
+		const membersAt = (vocab: string) => routes.readEntries.get('function_definition')?.find((e) => e.vocab === vocab)?.members.map((m) => m.name);
+		expect(membersAt('declaration.main')).not.toContain('name');
+		expect(membersAt('declaration.function')).toContain('name');
+	});
+
+	it('routes no inherited capture whose path the entry\'s own capture reaches beneath', async () => {
+		const routes = resolveRoutes(
+			await grammar(['(outer) @statement.outer', '(outer mid: (middle inner: (_) @inner))', '(outer mid: (middle inner: (binary left: (expr) @left))) @statement.left'].join('\n'))
+		);
+		const membersAt = (vocab: string) => routes.readEntries.get('outer')?.find((e) => e.vocab === vocab)?.members.map((m) => m.name);
+		expect(membersAt('statement.left')).toEqual(['left']);
+		expect(membersAt('statement.outer')).toEqual(['inner']);
 	});
 
 	it('enters a placed wildcard claim on every concrete kind its holder admits there, in the ruled order', async () => {
@@ -657,6 +683,45 @@ describe("keptKinds over a supertype the slot holds", () => {
 		);
 	});
 
+	it("names a slot by a claim's capture only for the paths that inherit the claim or declare the member", async () => {
+		const declaring: Vocabulary = {
+			...EMPTY_VOCABULARY,
+			kinds: new Map([['declaration.constant', {} as never]]),
+			members: (path) => new Map(path === 'declaration.constant' ? [['value', { optional: false, flag: false }]] : [])
+		};
+		const bindings = [
+			'(binary right: (_) @value) @declaration.variable',
+			'((binary left: (_) @_left) @declaration.method (#eq? @_left "m"))',
+			'((binary left: (_) @_left) @declaration.constant (#eq? @_left "K"))'
+		];
+		const routes = resolveRoutes({ ...(await grammar(bindings.join('\n'))), vocabulary: declaring });
+		const named = (vocab: string): string | undefined =>
+			routes.readEntries
+				.get('binary')
+				?.find((entry) => entry.vocab === vocab)
+				?.members.find((member) => member.route === 'slot' && member.slot.name === 'right')?.name;
+		expect(['declaration.variable', 'declaration.method', 'declaration.constant'].map(named)).toEqual(['value', 'right', 'value']);
+	});
+
+	it("names a slot by its own claim's capture over a name its path only declares, in whichever order the bindings list them", async () => {
+		const declaring: Vocabulary = {
+			...EMPTY_VOCABULARY,
+			kinds: new Map([['declaration.constant', {} as never]]),
+			members: (path) =>
+				new Map(path === 'declaration.constant' ? [['value', { optional: false, flag: false }], ['result', { optional: false, flag: false }]] : [])
+		};
+		const lines = ['(binary right: (_) @value) @declaration.variable', '((binary left: (_) @_left right: (_) @result) @declaration.constant (#eq? @_left "K"))'];
+		for (const bindings of [lines, [...lines].reverse()]) {
+			const routes = resolveRoutes({ ...(await grammar(bindings.join('\n'))), vocabulary: declaring });
+			const named = (vocab: string): string | undefined =>
+				routes.readEntries
+					.get('binary')
+					?.find((entry) => entry.vocab === vocab)
+					?.members.find((member) => member.route === 'slot' && member.slot.name === 'right')?.name;
+			expect(['declaration.variable', 'declaration.constant'].map(named)).toEqual(['value', 'result']);
+		}
+	});
+
 	it("gives an alias envelope of a structured kind the stored kind's members, each routed through its content", async () => {
 		const model = new Map(MODEL.map((n) => [n.kind, n]));
 		model.set('wrapped', node('wrapped', [slot('content', ['binary'])], { modelType: 'alias' }));
@@ -840,6 +905,31 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const member = resolveRoutes(await grammar('(outer (middle (binary) @argument))'));
 		expect(member.readEntries.has('binary')).toBe(false);
 		await expect(grammar('((outer (middle (binary) @argument)) (#set! claim other))')).rejects.toThrow(/#set! claim names @other, which the pattern does not capture/);
+	});
+
+	it('enters a placed claim on the forms of its kind that its holder admits, and on no split copy another kind holds', async () => {
+		const input = await grammar('((outer (middle (binary) @argument)) (#set! claim argument))');
+		const held = node('binary_held', MODEL.find((n) => n.kind === 'binary')!.slots, { splitFrom: 'binary' });
+		const elsewhere = node('binary_elsewhere', MODEL.find((n) => n.kind === 'binary')!.slots, { splitFrom: 'binary' });
+		const middle = node('middle', [slot('inner', ['binary', 'binary_held'])]);
+		const other = node('other_holder', [slot('inner', ['binary_elsewhere'])]);
+		const model = new Map([...input.model, ...[held, elsewhere, middle, other].map((n) => [n.kind, n] as const)]);
+		const placed = { ...input, model };
+		const routes = resolveRoutes(placed);
+		expect(['binary', 'binary_held', 'binary_elsewhere'].map((kind) => routes.readEntries.get(kind)?.map((e) => e.vocab))).toEqual([['argument'], ['argument'], undefined]);
+		expect(unenteredForms(placed, routes)).toEqual([]);
+	});
+
+	it('enters a placed claim on a split copy that only a copy shown as its holder holds', async () => {
+		const input = await grammar('((outer (middle (binary) @argument)) (#set! claim argument))');
+		const copied = node('binary_copied', MODEL.find((n) => n.kind === 'binary')!.slots, { splitFrom: 'binary' });
+		const middle = node('middle', [slot('inner', ['binary'])]);
+		const middleCopy = node('_middle_copy', [slot('inner', ['binary_copied'])], { shownAs: ['middle'] });
+		const model = new Map([...input.model, ...[copied, middle, middleCopy].map((n) => [n.kind, n] as const)]);
+		const placed = { ...input, model };
+		const routes = resolveRoutes(placed);
+		expect(['binary', 'binary_copied'].map((kind) => routes.readEntries.get(kind)?.map((e) => e.vocab))).toEqual([['argument'], ['argument']]);
+		expect(unenteredForms(placed, routes)).toEqual([]);
 	});
 
 	it('stamps a declared container whose only claims are refinements as refined: it names no path of its own, and reads through its element where no claim holds', async () => {
@@ -1369,7 +1459,7 @@ describe('flag captures', () => {
 		return built;
 	};
 	const VOCABULARY = vocabulary({
-		'declaration.method': { generator: true },
+		'declaration.method': { generator: true, privateName: true },
 		'declaration.method.getter': {},
 		'declaration.parameter': { mutable: true },
 		'statement.loop.for_each': { async: true },
@@ -1386,6 +1476,15 @@ describe('flag captures', () => {
 		layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 	});
 	const membersOf = async (bindings: string, kind: string) => resolveRoutes(await flagged(bindings)).members.get(kind);
+
+	it("keeps a flag claim's template on the flag claim's own entry, never on the plain claim of its path", async () => {
+		const routes = resolveRoutes(
+			await flagged(['(method) @declaration.method', '((method name: (identifier) @name) @declaration.method.privateName (#match? @name "^__(?<name>.*[^_]_?)$"))'].join('\n'))
+		);
+		const entries = routes.readEntries.get('method') ?? [];
+		expect(entries.find((entry) => entry.claim.flag === 'privateName')?.template).toMatchObject({ target: 'name', template: '__${string}', holes: ['name'], match: '^__(?<name>.*[^_]_?)$' });
+		expect(entries.find((entry) => entry.claim.flag === undefined)?.template).toBeUndefined();
+	});
 
 	it('routes a flag captured on a token in a slot to that token\'s presence, not to the slot', async () => {
 		expect(await membersOf(['(method) @declaration.method', '(method accessor_kind: "*" @generator)'].join('\n'), 'method')).toEqual([

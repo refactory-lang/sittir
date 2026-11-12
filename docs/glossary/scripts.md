@@ -123,20 +123,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `packages/codegen/src/scripts/generated-manifest.ts::isJunkFile`
-
-```text
-/**
- * OS/editor junk that can appear anywhere under a generated root (e.g.
- * Finder drops `.DS_Store` into any directory it has opened) but is never
- * part of codegen's own output. Tracking it would record a machine-local
- * path that's absent on a clean checkout, failing verification for no
- * codegen-related reason — same class of problem `isManifestExcluded`
- * solves for `test-fixtures.json`, but this one is skipped at the walk
- * itself since it was never a real generated file to begin with.
- */
-```
-
 ### `packages/codegen/src/scripts/generated-manifest.ts::gitVisiblePaths`
 
 The repo-relative paths git tracks or would track: `git ls-files --cached --others --exclude-standard`. A generated file that codegen has just written is untracked until someone runs `git add`; counting only tracked files left it out of the manifest on the first `gen` and put it in on the second. Untracked-but-not-ignored files count, ignored ones never do. Whether a generated artifact belongs in the repository is git's fact, not something a filename pattern can be trusted to reproduce, so this raises instead of degrading when git cannot be consulted: a manifest built from a guess verifies clean locally and fails on a clean checkout.
@@ -218,11 +204,7 @@ Throws when any present binary is stale, with each one's reason. No-op when no b
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::nativeInputs`
 
-Every file a grammar's native build compiles from or is driven by, by repo-relative path, with its SHA-256: the workspace `Cargo.toml`, `Cargo.lock`, `rust-toolchain.toml` and `pnpm-lock.yaml` (the installed napi CLI); the `Cargo.toml`, `package.json` (napi configuration and build scripts), `build.rs`, `src/` and `templates/` of the grammar's crate and of every crate it reaches through path dependencies (`crateClosure`: sittir-core and the node macros today); the build driver and every module it runs (`moduleClosure` of `BUILD_DRIVER`); the grammar's generated parser (`.sittir/src`), which the crate's `build.rs` compiles; and every file its scanners include, however far outside `.sittir/src` (`quotedIncludeClosure`; TypeScript's scanner includes the shared `packages/typescript/common/scanner.h`). A file added or removed changes the map as an edit does.
-
-### `packages/codegen/src/scripts/native-binary-freshness.ts::quotedIncludeClosure`
-
-Adds `file` and, transitively, every existing file it names in a line starting `#include "…"`, resolved against the including file's directory. It is the rule the generated crate's `build.rs` uses to tell cargo what to rebuild on, so the stamp sees every header the build does. System includes (`<…>`) are not followed.
+Every file a grammar's native build compiles from or is driven by, by repo-relative path, with its SHA-256: the workspace `Cargo.toml`, `Cargo.lock`, `rust-toolchain.toml` and `pnpm-lock.yaml` (the installed napi CLI); the `Cargo.toml`, `package.json` (napi configuration and build scripts), `build.rs`, `src/` and `templates/` of the grammar's crate and of every crate it reaches through path dependencies (`crateClosure`: sittir-core and the node macros today); the build driver and every module it runs (`moduleClosure` of `BUILD_DRIVER`); the grammar's generated parser (`.sittir/src`), which the crate's `build.rs` compiles; and every file its scanners include, however far outside `.sittir/src` (`parserSourceFiles`, which follows `quotedIncludesOf`; TypeScript's scanner includes the shared `packages/typescript/common/scanner.h`). A file added or removed changes the map as an edit does.
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::writeNativeBuildStamp`
 
