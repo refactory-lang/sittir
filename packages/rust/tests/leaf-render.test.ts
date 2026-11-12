@@ -29,7 +29,7 @@ describe('every leaf renders itself (C1.1–C1.3)', () => {
 	});
 
 	it('C1.3: a parsed leaf keeps its kind, its tree token and its trivia, and is still admitted by a strict slot', () => {
-		const leaf = parsedName();
+		const leaf = functionItem(verifying, 'fn f() {}').name();
 		expect(leaf.$type).toBe(rs.kinds.Identifier);
 		expect((leaf as unknown as { $trivia: unknown }).$trivia).toBeDefined();
 		const fn = functionItem(verifying, 'fn g() {}');

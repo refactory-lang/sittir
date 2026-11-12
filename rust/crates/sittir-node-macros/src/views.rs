@@ -301,12 +301,12 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                             #(#inits)*
                         })
                     }
-                    ::sittir_core::arena::Cell::LinkedLeaf { kind, at: record, tree, row, end, span, changed } if #accepts => {
-                        let leaf = ::sittir_core::arena::Sides { tree, index: row, end, span };
+                    ::sittir_core::arena::Cell::LinkedLeaf { kind, at: record, slot, row, end, span, changed } if #accepts => {
+                        let leaf = ::sittir_core::arena::Sides { slot, index: row, end, span };
                         let place = ::sittir_core::arena::linked_leaf_place(ctx, record, leaf, site)?;
                         ::core::result::Result::Ok(Self {
                             __layout: ::sittir_core::arena::RecordLayout::new(ctx, place, site, ::sittir_core::options::Edges::default(), changed, ::core::option::Option::Some(leaf)),
-                            #text: ctx.linked(tree)?.source_text(span)?,
+                            #text: ctx.linked(slot)?.source_text(span)?,
                             #(#inits)*
                         })
                     }
@@ -756,8 +756,8 @@ mod tests {
         assert!(has(&out, "let place = ::sittir_core::arena::leaf_place(ctx, row, site)?;"));
         assert!(has(&out, "text: ctx.source_text(span)?,"));
         assert!(has(&out, "let place = ::sittir_core::arena::built_leaf_place(site)?;"));
-        assert!(has(&out, "::sittir_core::arena::Cell::LinkedLeaf { kind, at: record, tree, row, end, span, changed } if (kind == kind::IDENTIFIER) =>"));
-        assert!(has(&out, "text: ctx.linked(tree)?.source_text(span)?,"));
+        assert!(has(&out, "::sittir_core::arena::Cell::LinkedLeaf { kind, at: record, slot, row, end, span, changed } if (kind == kind::IDENTIFIER) =>"));
+        assert!(has(&out, "text: ctx.linked(slot)?.source_text(span)?,"));
         assert!(has(&out, "text: ctx.string(text)?,"));
         assert!(has(&out, "fn text(&self) -> &str { self.text }"));
     }

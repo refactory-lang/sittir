@@ -7,21 +7,23 @@ import type {
 	NativeEngineOptions,
 	NativeLanguageEngine,
 	NativeParseResult,
+	NodeStorage,
 	ParsedRead,
 	ParsedRoot,
 	ParseOptions,
 	Rendered
 } from '@sittir/types';
-import { decodeTree, readObject, type ChunkWords, type RecordReader, type TreeHandle, type TriviaSideName } from './read.ts';
+import { decodeTree, readObject, readOrRelease, type ChunkWords, type RecordReader, type TreeHandle, type TriviaSideName } from './read.ts';
 import { holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
 import type { RecordPosition } from './handle.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
 import { leafData, readStub, recordOf } from './record-view.ts';
-import { readOwnEntries, readOwnUnits, type BuiltRecords, type WritableWords } from './built-arena.ts';
-import { builtRefOf, handleArenaOf } from './built-ref.ts';
-import { nodeStorageOf } from './engine-scope.ts';
+import { readOwnEntries, readOwnUnits, type BuiltRecords, type FreedParses, type WritableWords } from './built-arena.ts';
+import { builtRefOf } from './built-ref.ts';
+import { nodeArenaOf } from './handle.ts';
+import { nodeStorageOf, treeBuiltArena } from './engine-scope.ts';
 import { leafWireSides } from './utils.ts';
 
 export const ARENA_FEATURE_REFUSED = 'arena node storage needs an addon built with the `arena` feature';
@@ -88,6 +90,10 @@ function renderTreeOf(node: object): number | undefined {
 	return handle === undefined ? undefined : decodeTree(handle);
 }
 
+function forgetIn(tree: TreeHandle, freed: FreedParses): void {
+	treeBuiltArena(tree)?.forgetParses(freed);
+}
+
 /** The level count a read takes: one by default. */
 function depthOf(options: ParseOptions | undefined): number {
 	return options?.depth ?? 1;
@@ -142,8 +148,9 @@ export interface NativeEngineLike<TNode = unknown> {
 	/**
 	 * Parse `source` and keep its tree.
 	 *
-	 * @returns JSON `{ treeId, options, errors }`: the id {@link read} and `disposeTree` take, the
-	 *   tree's layer of the render options (`NativeParseResult.options`), and the parse's error regions.
+	 * @returns JSON `{ treeId, slot, options, errors }`: the id {@link read} and `disposeTree` take, the
+	 *   slot of the engine arena's held-parse table that holds the parse in arena storage, the tree's
+	 *   layer of the render options (`NativeParseResult.options`), and the parse's error regions.
 	 */
 	parse(source: string): string;
 	/**
@@ -172,11 +179,11 @@ export interface NativeEngineLike<TNode = unknown> {
 	 */
 	triviaSide(treeId: number, index: number, side: TriviaSideName): ReadOutput[];
 	/**
-	 * Replaces `side` of the node at descendant `index` of tree `treeId` with `entries`.
+	 * Replaces `side` of the node at descendant `index` of tree `treeId` with `entries`, and answers each parse the replaced entries' release frees, as {@link releaseBuilt} does.
 	 *
 	 * @throws as {@link triviaSide} does.
 	 */
-	writeTriviaSide(treeId: number, index: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	writeTriviaSide(treeId: number, index: number, side: TriviaSideName, entries: readonly unknown[]): FreedParses;
 	/**
 	 * The sides of the unit children of the node at descendant `index` of tree `treeId`, which their
 	 * slots store as bare kinds: each `{ slot, item, leading?, trailing?, inner? }`, by its slot's
@@ -243,8 +250,12 @@ export interface NativeEngineLike<TNode = unknown> {
 	builtBytes?(length: number): { chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] };
 	/** One more count of the built entry at `address`, whose count saturated. Present when the addon carries the record codec. */
 	builtBump?(address: number): void;
-	/** Releases a count of the built entry at `address` of form `held`, the count its builder's handle holds when `owned`; answers the trees released link and side records named. Present when the addon carries the record codec. */
-	releaseBuilt?(address: number, held: number, owned: boolean): number[];
+	/** Releases a count of the built entry at `address` of form `held`, the count its builder's handle holds when `owned`; answers each parse that leaves unheld, freed with its tree, as its slot then its tree id. Present when the addon carries the record codec. */
+	releaseBuilt?(address: number, held: number, owned: boolean): FreedParses;
+	/** Counts the parse `treeId` in slot `slot` of the engine arena's held-parse table once more, for a built record naming it. Refuses a slot that holds no parse of that id. Present when the addon carries the record codec. */
+	holdParse?(slot: number, treeId: number): void;
+	/** Drops the root's count of the parse `treeId` in slot `slot`, a no-op when the slot holds no parse of that id; answers each parse that leaves unheld as {@link releaseBuilt} does. Present when the addon carries the record codec. */
+	releaseParse?(slot: number, treeId: number): FreedParses;
 	/** The bytes the built arena's chunks take, and of them its counts'. Present when the addon carries the record codec. */
 	builtMemory?(): { chunks: number; counts: number; live: number };
 	/** Refuses, by name, a runtime that does not allow external array buffers. Present when the addon carries the record codec. */
@@ -280,12 +291,12 @@ export interface NativeEngineLike<TNode = unknown> {
 		options?: object
 	): boolean;
 	builtTriviaSide?(address: number, side: TriviaSideName): unknown[] | null;
-	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[]): FreedParses;
 	builtUnitSides?(address: number): unknown[];
-	writeBuiltUnitSides?(address: number, units: readonly unknown[]): void;
-	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void;
+	writeBuiltUnitSides?(address: number, units: readonly unknown[]): FreedParses;
+	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): FreedParses;
 	builtLeafSide?(holder: number, word: number, item: number, side: TriviaSideName): unknown[] | null;
-	copyBuiltSites?(from: number, to: number, skip: readonly number[]): void;
+	copyBuiltSites?(from: number, to: number, skip: readonly number[]): FreedParses;
 	/**
 	 * The siblings that hold sides beside each node at descendant `indexes` of tree `treeId`, eight words a node: the
 	 * previous sibling, then the next, each as 1, its kind, its start and its end, or as four zeros for none.
@@ -398,6 +409,8 @@ const ENGINE_FUNCTIONS = [
 	'builtBytes',
 	'builtBump',
 	'releaseBuilt',
+	'holdParse',
+	'releaseParse',
 	'builtMemory',
 	'builtTriviaSide',
 	'writeBuiltTriviaSide',
@@ -408,13 +421,19 @@ const ENGINE_FUNCTIONS = [
 	'copyBuiltSites'
 ] as const satisfies readonly (keyof NativeEngineLike)[];
 
+/** What a native `SittirEngine` is made with: its options, and how it stores its nodes, absent for `'object'`. */
+export interface NativeEngineArgs {
+	readonly options?: object;
+	readonly nodeStorage?: NodeStorage;
+}
+
 type TreeFunction = (typeof TREE_FUNCTIONS)[number];
 type EngineFunction = (typeof ENGINE_FUNCTIONS)[number];
 type OnHandle<F> = F extends (...args: infer A) => infer R ? { call(handle: EngineHandle, ...args: A): R }['call'] : never;
 
 export type NativeModuleLike<TNode = unknown, TEngine extends NativeEngineInstance = NativeEngineInstance> = {
-	SittirEngine: new (options?: { options?: object }) => TEngine;
-	/** Release one parsed tree of this language. Driven by GC — see `treeDisposalRegistry`. An id that names no tree is ignored. */
+	SittirEngine: new (options?: NativeEngineArgs) => TEngine;
+	/** Release one parsed tree of this language. Driven by GC for a tree of object storage — see `treeDisposalRegistry`. An id that names no tree is ignored; a parse an arena engine holds is refused, since its root's release or its engine's dispose frees it. */
 	disposeTree(treeId: number): void;
 	/** Trees of this language still held on this thread. Diagnostics only. */
 	liveTreeCount(): number;
@@ -428,7 +447,7 @@ export type NativeModuleLike<TNode = unknown, TEngine extends NativeEngineInstan
  * A new engine of `native`, as {@link NativeEngineLike}: its module's tree functions as they are, and its engine
  * functions bound to the engine's handle.
  */
-export function nativeEngineOf<TNode, TEngine extends NativeEngineInstance>(native: NativeModuleLike<TNode, TEngine>, options?: { options?: object }): NativeEngineLike<TNode> {
+export function nativeEngineOf<TNode, TEngine extends NativeEngineInstance>(native: NativeModuleLike<TNode, TEngine>, options?: NativeEngineArgs): NativeEngineLike<TNode> {
 	const instance = new native.SittirEngine(options);
 	const { handle } = instance;
 	const engine: Record<string, unknown> = {
@@ -499,10 +518,11 @@ export interface RenderEngine<O extends object = RenderOptionValues, IndentChar 
 	render<const I extends string = string>(node: AnyUntypedNode | number, options?: RenderOptions<O & IndentOption<I, IndentChar>>): Rendered;
 	/**
 	 * Releases `node`, as its `[Symbol.dispose]` does: the record of a node this engine's builders returned and has not
-	 * been placed since, and with it each record only it held. Any other node is left as it is.
+	 * been placed since, and with it each record only it held; or, once, the hold the root of a parse in arena storage
+	 * has of its parse. Any other node is left as it is.
 	 *
 	 * @param node - A node this engine built, read, or neither.
-	 * @throws For a node another engine built.
+	 * @throws For a node another engine built or parsed.
 	 */
 	release(node: object): void;
 	dispose(): void;
@@ -543,7 +563,7 @@ export type ParseAndReadResult<TRoot extends AnyUntypedNode = AnyUntypedNode> = 
  * Reads are lazy, so a tree has to outlive the call that parsed it: every
  * unhydrated child holds a handle the native side must still be able to
  * answer. Nothing on the JS side knows when the last of those handles is
- * gone — but the garbage collector does. Each tree gets a token that its
+ * gone — but the garbage collector does. Each tree of object storage gets a token that its
  * `read` closure captures and that every parsed object a read returns holds
  * (`holdTree`), so the token stays reachable exactly as long as the tree
  * handle or any object naming the tree; when the token is collected, the
@@ -641,7 +661,7 @@ export function createNativeEngine<
 	}
 
 	try {
-		const engine = nativeEngineOf(status.native, options?.options === undefined ? undefined : { options: options.options });
+		const engine = nativeEngineOf(status.native, options?.options === undefined ? { nodeStorage } : { options: options.options, nodeStorage });
 		if (nodeStorage === 'arena') {
 			if (engine.externalBuffers === undefined) throw new Error(ARENA_FEATURE_REFUSED);
 			engine.externalBuffers();
@@ -653,10 +673,12 @@ export function createNativeEngine<
 		const parseTree = (source: string): TreeHandle => {
 			const parsed = JSON.parse(engine.parse(source)) as NativeParseResult;
 			const liveToken = mintTreeToken(parsed.treeId);
-			treeDisposalRegistry.register(liveToken, {
-				release: status.native.disposeTree,
-				treeId: parsed.treeId
-			});
+			if (parsed.slot === null) {
+				treeDisposalRegistry.register(liveToken, {
+					release: status.native.disposeTree,
+					treeId: parsed.treeId
+				});
+			}
 			const readObjectAt = (index: number, depth: number): TNode => {
 				const node = engine.read(parsed.treeId, index, depth);
 				holdReadTree(node, liveToken);
@@ -682,8 +704,16 @@ export function createNativeEngine<
 						};
 			const roots = new Map<number, unknown>();
 			const errors = Object.freeze(parsed.errors);
+			const { slot } = parsed;
+			let rootReleased = false;
+			const releaseRoot = (): void => {
+				if (rootReleased || slot === null) return;
+				rootReleased = true;
+				forgetIn(tree, engine.releaseParse!(slot, parsed.treeId));
+			};
 			const tree: TreeHandle = {
 				id: parsed.treeId,
+				...(slot === null ? {} : { slot, releaseRoot }),
 				token: liveToken,
 				text: (span) => engine.text(parsed.treeId, span),
 				...(records === undefined ? {} : { records }),
@@ -700,7 +730,7 @@ export function createNativeEngine<
 				errors,
 				snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
 				triviaSide: (index, side) => readOwnEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
-				writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
+				writeTriviaSide: (index, side, entries) => forgetIn(tree, engine.writeTriviaSide(parsed.treeId, index, side, entries)),
 				unitSides: (index) => readOwnUnits(tree, engine.unitSides(parsed.treeId, index), liveToken),
 				slotLayouts: (index) => engine.slotLayouts(parsed.treeId, index),
 				slotSeparator: (index) => engine.slotSeparator(parsed.treeId, index) ?? undefined,
@@ -806,10 +836,10 @@ export function createNativeEngine<
 				writeText,
 
 				release(node) {
-					const arena = handleArenaOf(node);
+					const arena = nodeArenaOf(node);
 					if (arena === undefined) return;
-					if (arena.owner !== engine.handle) throw new Error('an engine releases only the nodes its own builders returned');
-					arena.releaseHandle(node);
+					if (arena.owner !== engine.handle) throw new Error('an engine releases only the nodes its own builders returned or its own parses read');
+					arena.releaseNode(node);
 				},
 
 				dispose() {
@@ -822,7 +852,7 @@ export function createNativeEngine<
 					parseTree,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const tree = parseTree(source);
-						return { tree, root: tree.read!(0, depthOf(parseOptions)) as TRoot & ParsedRoot };
+						return readOrRelease([tree], () => ({ tree, root: tree.read!(0, depthOf(parseOptions)) as TRoot & ParsedRoot }), () => tree);
 					}
 				}
 			}
@@ -839,10 +869,12 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
-	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, builtBump, releaseBuilt } = engine;
+	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, builtBump, releaseBuilt, holdParse, releaseParse } = engine;
 	if (
 		builtBump === undefined ||
 		releaseBuilt === undefined ||
+		holdParse === undefined ||
+		releaseParse === undefined ||
 		builtTriviaSide === undefined ||
 		writeBuiltTriviaSide === undefined ||
 		builtUnitSides === undefined ||
@@ -862,6 +894,8 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		bytes: (length) => builtBytes.call(engine, length),
 		bump: (at) => builtBump.call(engine, at),
 		release: (at, held, owned) => releaseBuilt.call(engine, at, held, owned),
+		holdParse: (slot, treeId) => holdParse.call(engine, slot, treeId),
+		releaseParse: (slot, treeId) => releaseParse.call(engine, slot, treeId),
 		trivia: {
 			triviaSide: (at, side) => builtTriviaSide.call(engine, at, side) ?? undefined,
 			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries),

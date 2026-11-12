@@ -26,6 +26,7 @@ import { nativeLoadFailure, recordLoadedEngine } from '@sittir/common/engine';
 import type {
 	JsBackendStatusLike,
 	NativeBackendStatusLike,
+	NativeEngineArgs,
 	NativeEngineInstance,
 	NativeModuleLike
 } from '@sittir/common/engine';
@@ -62,7 +63,7 @@ export interface NativeEngine extends NativeEngineInstance {
 }
 
 export interface NativeModule extends NativeModuleLike<unknown, NativeEngine> {
-	SittirEngine: new (options?: { options?: object }) => NativeEngine;
+	SittirEngine: new (options?: NativeEngineArgs) => NativeEngine;
 }
 
 /**

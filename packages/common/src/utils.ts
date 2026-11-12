@@ -3,7 +3,7 @@ import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
 import { carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
-import { admitSlot, builtArenaOf as handleBuiltArena, currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle } from './engine-scope.ts';
+import { admitSlot, builtArenaOf as handleBuiltArena, currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle, type LiveEngine } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { registered, wrapRegistered, type Role } from './identity.ts';
@@ -13,10 +13,10 @@ import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { spelledMember } from './spelled.ts';
 import { snapshotOf } from './snapshot.ts';
-import { cacheOf, chosenSeparatorOf, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
+import { cacheOf, chosenSeparatorOf, recordOf, recordSlot, recordSlots, rowOf, rowTrivia, storedSlotValues } from './record-view.ts';
 import { HANDLE, isRecordPosition, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
-import { builtRecordOf, holdSideEntries, isBuiltNode, patchCell, patchFlag, patchList, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
+import { builtRecordOf, holdSideEntries, isBuiltNode, patchCell, patchFlag, patchList, refuseObjectSideEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { BLANK_KIND_ID, blankArmRead, blankArmStored } from './blank-arm.ts';
@@ -58,8 +58,12 @@ export function renderText(handle: EngineHandle | undefined, node: object): stri
 }
 
 export function queryOf(handle: EngineHandle, node: object): object {
+	return liveQuerier(handle).query(node);
+}
+
+function liveQuerier(handle: EngineHandle): LiveEngine {
 	if (!isLive(handle.current)) throw new Error('query: engine disposed; parse the source again with a live engine');
-	return handle.current.query(node);
+	return handle.current;
 }
 
 type Positioned = { readonly $tree: TreeHandle };
@@ -68,10 +72,11 @@ export function handleOf(node: Positioned): EngineHandle | undefined {
 	return treeEngineHandle(node.$tree);
 }
 
-export function handleQuery(node: Positioned, row: object): object {
+export function handleQuery(node: RecordPosition, wrap: (data: object, tree: TreeHandle) => unknown): object {
 	const handle = handleOf(node);
 	if (handle === undefined) throw new Error(NO_ENGINE);
-	return queryOf(handle, row);
+	const engine = liveQuerier(handle);
+	return engine.query(rowOf(node, wrap));
 }
 
 export function handleRender(this: Positioned): string {
@@ -196,7 +201,7 @@ export function writeTrivia(node: object, trivia: NodeTrivia): void {
 	}
 	const at = tableAt(node);
 	if (at === undefined) {
-		refuseBuiltEntries(trivia);
+		refuseObjectSideEntries(trivia);
 		const own = triviaOf(node);
 		setTriviaOf(node as AnyUntypedNode, own === undefined ? trivia : { ...own, ...trivia });
 		return;
@@ -241,7 +246,7 @@ function writeSites(arena: BuiltArena, sites: readonly number[], trivia: NodeTri
 export function writeUnitSides(node: object, units: readonly UnitSidesData[]): void {
 	const built = builtRefOf(node);
 	if (built?.at === undefined) {
-		for (const unit of units) refuseBuiltEntries(unit);
+		for (const unit of units) refuseObjectSideEntries(unit);
 		setUnitSides(node, units);
 		return;
 	}
@@ -908,6 +913,7 @@ export function hydrateStoredSlots(node: object, key: string): readonly unknown[
 
 export { numberRefusal, numberText, type NumberBase } from './number.ts';
 export {
+	coordinateOf,
 	decodeIndex,
 	decodeTree,
 	encodeHandle,
@@ -921,7 +927,7 @@ export { admitChildren, admitSlot, builtArenaOf, currentHandle, dispatched, inEn
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toNodeData, toDetachedNodeData, PLAIN_KINDS, coordinateOf, spanOf, sourceTextOf, nodeText, hasNodeText, textOf, sideOf, sidesOf, writtenSides, carryPlace, type NodeDataLayout, type KindView, markEdited, detachCoordinate, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf } from './node-data.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, sourceTextOf, nodeText, hasNodeText, textOf, sideOf, sidesOf, writtenSides, carryPlace, type NodeDataLayout, type KindView, markEdited, detachCoordinate, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf } from './node-data.ts';
 export { TREE, holdTreeOn, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { SOURCE, sourceOf } from './source-stamp.ts';
 export { snapshotOf } from './snapshot.ts';
@@ -960,7 +966,7 @@ export {
 	storedSlotValues,
 	type RefusedSlot
 } from './record-view.ts';
-export { HANDLE, handleDispose, INPUT, isLeafHandle, isRecordPosition, OPTIONS, READ_TREE, RECEIVER, receiverOf, releaseNothing, type Held, type LeafHandle, type LeafMaker, type LeafSite, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
+export { HANDLE, handleDispose, INPUT, isLeafHandle, isRecordPosition, OPTIONS, READ_TREE, RECEIVER, receiverOf, releaseReadNode, type Held, type LeafHandle, type LeafMaker, type LeafSite, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 
 export { BuiltArena, builtRecordOf, isBuiltNode, patchCell, patchFlag, patchList, patchListOptions, storeCell, storeFlag, storeList, storeListOptions, type BuiltDraft, type BuiltPlace, type BuiltText, type BuiltViews, type BuiltWith } from './built-arena.ts';
 export { LEAF_SITES } from './built-ref.ts';

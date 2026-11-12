@@ -17,9 +17,9 @@ describe('a node built over parsed children', () => {
 		expect(params.$render()).toBe('(input: &str)');
 	});
 
-	it('is rendered by the calling engine, with its options, whichever engine parsed its children', async () => {
-		const tabs = await createEngine(rust, { render: { layout: { indent: '\t' } } });
-		const spaces = await createEngine(rust, { render: { layout: { indent: '  ' } } });
+	it('is rendered by the calling engine, with its options, whichever engine parsed its children, in object storage', async () => {
+		const tabs = await createEngine(rust, { nodeStorage: 'object', render: { layout: { indent: '\t' } } });
+		const spaces = await createEngine(rust, { nodeStorage: 'object', render: { layout: { indent: '  ' } } });
 		const fn = spaces.parse(SOURCE).statements()[1] as any;
 		const block = tabs.build.block({
 			statements: [tabs.build.expressionStatement(tabs.build.identifier('a')), ...fn.body().statements()]
@@ -29,10 +29,20 @@ describe('a node built over parsed children', () => {
 		expect(block.$render()).toBe(expected);
 	});
 
-	it('renders when its parsed children come from several engines', async () => {
-		const first = await createEngine(rust);
-		const second = await createEngine(rust);
-		const third = await createEngine(rust);
+	it('is rendered by the calling engine, with its options, when another engine built it over its own parse, in arena storage', async () => {
+		using tabs = await createEngine(rust, { nodeStorage: 'arena', render: { layout: { indent: '\t' } } });
+		using spaces = await createEngine(rust, { nodeStorage: 'arena', render: { layout: { indent: '  ' } } });
+		const fn = spaces.parse(SOURCE).statements()[1] as any;
+		const block = spaces.build.block({
+			statements: [spaces.build.expressionStatement(spaces.build.identifier('a')), ...fn.body().statements()]
+		});
+		expect(tabs.render(block).toString()).toBe('{\n\ta;\n\t// keep me\n\tprintln!("{}",   input);\n}');
+	});
+
+	it('renders when its parsed children come from several engines, in object storage', async () => {
+		const first = await createEngine(rust, { nodeStorage: 'object' });
+		const second = await createEngine(rust, { nodeStorage: 'object' });
+		const third = await createEngine(rust, { nodeStorage: 'object' });
 		const one = (first.parse(SOURCE).statements()[1] as any).body().statements();
 		const two = (second.parse('fn g() {\n    b;\n}\n').statements()[0] as any).body().statements();
 		const block = third.build.block({ statements: [...one, ...two] });

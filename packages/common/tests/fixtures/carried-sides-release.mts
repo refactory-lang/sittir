@@ -55,8 +55,8 @@ for (const nodeStorage of ['object', 'record'] as const) {
 	const held = native.liveTreeCount() - base;
 	const rendered = attempt(() => engine.render(collected as never).toString());
 	const released = edit();
-	native.disposeTree(tree);
-	report[nodeStorage] = { rendered, held, released: attempt(() => engine.render(released as never).toString()) };
+	const disposed = attempt(() => (native.disposeTree(tree), 'disposed'));
+	report[nodeStorage] = { rendered, held, disposed, released: attempt(() => engine.render(released as never).toString()) };
 	engine.dispose();
 }
 console.log(JSON.stringify(report));

@@ -18,12 +18,13 @@ import { nativeLoadFailure, recordLoadedEngine } from '@sittir/common/engine';
 import type {
 	JsBackendStatusLike,
 	NativeBackendStatusLike,
+	NativeEngineArgs,
 	NativeEngineInstance,
 	NativeModuleLike
 } from '@sittir/common/engine';
 import { RENDER_MODULE_HASH } from './hash.js';
 
-const NATIVE_RENDER_NODE_ABI = 26;
+const NATIVE_RENDER_NODE_ABI = 27;
 
 /** Which backend is currently serving render/read/splice. */
 export type BackendName = 'native' | 'js';
@@ -54,7 +55,7 @@ export interface NativeEngine extends NativeEngineInstance {
 }
 
 export interface NativeModule extends NativeModuleLike<unknown, NativeEngine> {
-	SittirEngine: new (options?: { options?: object }) => NativeEngine;
+	SittirEngine: new (options?: NativeEngineArgs) => NativeEngine;
 }
 
 /**

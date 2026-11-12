@@ -1,6 +1,6 @@
 import type { BuiltArena } from './built-arena.ts';
 import type { CellFormat, RecordCell } from './record-cell.ts';
-import type { ByteSpan, ErrorRegion, NodeCoordinate } from '@sittir/types';
+import type { ByteSpan, ErrorRegion, NodeCoordinate, NodeLayout } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
 import type { TreeToken } from './tree-token.ts';
 
@@ -13,6 +13,10 @@ export interface TreeHandle {
 	text?(span: ByteSpan): string;
 	/** The native tree `read` reads: the tree id every coordinate read from it packs. */
 	id?: number;
+	/** In arena storage, the slot of its engine arena's held-parse table that holds the parse, counted by its root until the root is released. */
+	slot?: number;
+	/** In arena storage, drops the root's count of the parse, once however often it is called: the parse is freed with its tree when no built record names it. */
+	releaseRoot?(): void;
 	/** The node at descendant `index` read into its native node, `depth` levels down (one when absent, `Infinity` for all); index 0 is the root. A unit variant's native node is its kind id. */
 	read?(index: number, depth?: number): unknown;
 	/** The tree's layer of the render options (`NativeParseResult.options`). */
@@ -113,6 +117,30 @@ export function readNode(tree: TreeHandle, coordinate: NodeCoordinate, depth?: n
 	const owner = decodeTree(coordinate.$treeHandle);
 	if (owner !== tree.id) throw new Error(`readNode: the coordinate names another tree (${owner}), not this one (${String(tree.id)})`);
 	return tree.read(decodeIndex(coordinate.$treeHandle), depth);
+}
+
+/** The coordinate a read node came from (`$_layout.at`), or the node itself when it is a coordinate. */
+export function coordinateOf(node: object): NodeCoordinate | undefined {
+	if (isCoordinate(node)) return node;
+	const at = (node as { readonly $_layout?: NodeLayout }).$_layout?.at;
+	return at !== undefined && isCoordinate(at) ? at : undefined;
+}
+
+/**
+ * What `read` answers of the parses `trees` holds, releasing the root of each whose root does not reach its caller: every one when `read` throws, and otherwise every one but the tree `returned` names of the answer. A parse whose root never reaches its caller holds nothing.
+ */
+export function readOrRelease<T>(trees: readonly TreeHandle[], read: () => T, returned: (answer: T) => TreeHandle | undefined): T {
+	let answer: T;
+	let kept: TreeHandle | undefined;
+	try {
+		answer = read();
+		kept = returned(answer);
+	} catch (error) {
+		for (const tree of trees) tree.releaseRoot?.();
+		throw error;
+	}
+	for (const tree of trees) if (tree !== kept) tree.releaseRoot?.();
+	return answer;
 }
 
 /**

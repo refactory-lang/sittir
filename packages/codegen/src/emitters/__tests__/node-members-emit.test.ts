@@ -106,7 +106,7 @@ describe('a wrapped node writes its members in its literal', () => {
 		const body = functionBody(wrap, 'wrapCallExpression');
 		expect(body).toContain('const handle = currentHandle();');
 		expect(body).toContain('$render: () => renderText(handle, node),');
-		expect(body).toContain('[HANDLE]: handle,\n    [INPUT]: data,\n    [READ_TREE]: tree,\n    [Symbol.dispose]: releaseNothing');
+		expect(body).toContain('[HANDLE]: handle,\n    [INPUT]: data,\n    [READ_TREE]: tree,\n    [Symbol.dispose]: releaseReadNode');
 		const setter = functionBody(wrap, 'wrapCallExpression$with');
 		expect(setter).toContain('const data = node[INPUT] as T.CallExpression;');
 		expect(setter).toContain('const tree = node[READ_TREE] as TreeHandle;');

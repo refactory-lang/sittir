@@ -10,7 +10,7 @@ use crate::options::{EdgeArm, Edges};
 use crate::points::{Point, PointSpan};
 use crate::slot::ChangedEdges;
 use crate::spacing::SeamStrength;
-use crate::types::{Delimiter, KindId, NodeIndex, Span, TreeId};
+use crate::types::{Delimiter, KindId, NodeIndex, ParseSlot, Span, TreeId};
 
 /// The fields a reader of a record finds before a list's delimiters
 /// setting, in the order the side record holds them after its mask word:
@@ -62,21 +62,22 @@ pub struct Row {
     pub span: Span,
 }
 
-/// The node a built node was rebuilt from: its tree, its subtree's rows and
-/// its byte span.
+/// The node a built node was rebuilt from: its parse's slot, its subtree's
+/// rows and its byte span.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Sides {
-    pub tree: TreeId,
+    pub slot: ParseSlot,
     pub index: NodeIndex,
     pub end: NodeIndex,
     pub span: Span,
 }
 
 impl Sides {
-    /// The node's coordinate in its tree.
+    /// The node's coordinate in `tree`, the tree of the parse its slot
+    /// holds.
     #[must_use]
-    pub fn coordinate(self) -> crate::slot::NodeCoordinate {
-        crate::slot::NodeCoordinate::new(self.tree, self.index, self.end, self.span)
+    pub fn coordinate(self, tree: TreeId) -> crate::slot::NodeCoordinate {
+        crate::slot::NodeCoordinate::new(tree, self.index, self.end, self.span)
     }
 }
 
@@ -259,7 +260,7 @@ impl SideRecord {
         }
         if let Some(sides) = self.sides {
             flags |= mask::SIDES;
-            words(&[sides.tree.0, sides.index.0, sides.end.0, sides.span.start, sides.span.end]);
+            words(&[sides.slot.0, sides.index.0, sides.end.0, sides.span.start, sides.span.end]);
         }
         if self.changed.leading {
             flags |= mask::CHANGED_LEADING;
@@ -330,11 +331,11 @@ impl SideRecord {
             record.span = Some(PointSpan { start: Point { row: start_row, column: start_column }, end: Point { row: end_row, column: end_column } });
         }
         if has(mask::SIDES) {
-            let [tree, index, end, start, stop]: [u32; field::SIDES_WORDS as usize] = fields.array()?;
+            let [slot, index, end, start, stop]: [u32; field::SIDES_WORDS as usize] = fields.array()?;
             if start > stop {
                 return Err(malformed("side record span end", stop));
             }
-            record.sides = Some(Sides { tree: TreeId(tree), index: NodeIndex(index), end: NodeIndex(end), span: Span { start, end: stop } });
+            record.sides = Some(Sides { slot: ParseSlot(slot), index: NodeIndex(index), end: NodeIndex(end), span: Span { start, end: stop } });
         }
         if has(mask::SEPARATOR) {
             let [separator]: [u32; field::SEPARATOR_WORDS as usize] = fields.array()?;
@@ -393,7 +394,7 @@ mod tests {
                 after: Some(EdgeArm { arm: KindId(31), strength: Some(SeamStrength::Trivia) }),
             }),
             span: Some(PointSpan { start: Point { row: 1, column: 2 }, end: Point { row: 3, column: 0 } }),
-            sides: Some(Sides { tree: TreeId(2), index: NodeIndex(5), end: NodeIndex(6), span: Span { start: 10, end: 14 } }),
+            sides: Some(Sides { slot: ParseSlot(2), index: NodeIndex(5), end: NodeIndex(6), span: Span { start: 10, end: 14 } }),
             changed: ChangedEdges { leading: true, trailing: false },
             separator: Some(KindId(7)),
             delimiter: Some(Delimiter::TRAILING),
@@ -481,7 +482,7 @@ mod tests {
             at: Some(Row { index: NodeIndex(4), end: NodeIndex(9), span: Span { start: 3, end: 8 } }),
             edges: Some(Edges { before: None, after: Some(EdgeArm { arm: KindId(31), strength: None }) }),
             span: Some(PointSpan { start: Point { row: 1, column: 2 }, end: Point { row: 3, column: 0 } }),
-            sides: Some(Sides { tree: TreeId(2), index: NodeIndex(5), end: NodeIndex(6), span: Span { start: 10, end: 14 } }),
+            sides: Some(Sides { slot: ParseSlot(2), index: NodeIndex(5), end: NodeIndex(6), span: Span { start: 10, end: 14 } }),
             separator: Some(KindId(7)),
             delimiter: Some(Delimiter::TRAILING),
             ..SideRecord::default()

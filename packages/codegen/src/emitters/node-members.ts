@@ -164,7 +164,7 @@ export function nodeMemberParts(spec: NodeMemberSpec): NodeMemberParts {
 		`    [SOURCE]: ${spec.parsed ? 'treeTokenOf(data) === undefined ? Source.Factory : Source.Ts' : 'Source.Factory'},`,
 		...(sets || spec.trivia !== undefined ? ['    [HANDLE]: handle,'] : []),
 		...(sets ? setters.held.map((field) => `    [${field.key}]: ${field.local},`) : []),
-		'    [Symbol.dispose]: releaseNothing'
+		'    [Symbol.dispose]: releaseReadNode'
 	);
 	const after = [
 		...(setters === undefined ? [] : [receivedMembers('$with', setters.entries.map((entry) => `${entry.name}: ${sharedSetterName(setters.prefix, entry)}`))]),

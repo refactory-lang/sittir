@@ -2,9 +2,11 @@
 // for each storage, whether what the rust addon's live trees hold natively
 // and what their reports have told V8 agree while trees are parsed, rendered
 // and edited, and whether both return to where they started once every tree
-// is released: one by `disposeTree`, the rest by collection once the engine
-// that parsed and edited them is disposed and unreachable. A child process,
-// because a collection can only be forced under `--expose-gc`.
+// is released: one by `disposeTree` in object storage, and in arena storage
+// by releasing its root and the edit that holds it; the rest, in object storage, by
+// collection once the engine that parsed and edited them is disposed and
+// unreachable, and in arena storage by that engine's dispose. A child
+// process, because a collection can only be forced under `--expose-gc`.
 import { createEngine } from '../../src/index.ts';
 import { treeOf } from '../../src/tree-token.ts';
 import { getActiveBackend } from '../../../rust/src/backend.ts';
@@ -42,7 +44,8 @@ async function run(nodeStorage: 'object' | 'record'): Promise<{ during: Memory; 
 	const [first] = held;
 	if (first === undefined) throw new Error('no sources');
 	const during = native.treeMemory();
-	native.disposeTree(treeOf(first[0])!.id!);
+	if (nodeStorage === 'object') native.disposeTree(treeOf(first[0])!.id!);
+	else for (const node of first) engine.release(node as never);
 	const disposed = native.treeMemory();
 	engine.dispose();
 	return { during, disposed, engineGone: native.treeMemory() };
@@ -58,7 +61,7 @@ for (const nodeStorage of ['object', 'record'] as const) {
 		grew: during.counted > start.counted,
 		agrees: agrees(during),
 		disposeTree: disposed.trees === during.trees - 1 && disposed.counted < during.counted && agrees(disposed),
-		engineDispose: engineGone.trees === disposed.trees && agrees(engineGone),
+		engineDispose: engineGone.trees === (nodeStorage === 'object' ? disposed.trees : start.trees) && agrees(engineGone),
 		back: end.trees === start.trees && end.counted === start.counted && end.reported === start.reported
 	};
 }

@@ -1,5 +1,5 @@
 import type { AnyUntypedNode, ByteSpan, NodeLayout, NodeTrivia, NodeCoordinate, TriviaEntry } from '@sittir/types';
-import { decodeIndex, isCoordinate, type TreeHandle, type TriviaSideName } from './read.ts';
+import { coordinateOf, decodeIndex, isCoordinate, type TreeHandle, type TriviaSideName } from './read.ts';
 import { assertHoldsTree, carryTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
 import { builtRefOf, siteOf } from './built-ref.ts';
@@ -9,13 +9,6 @@ import { storedSlotValues } from './record-view.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-/** The coordinate a read node came from (`$_layout.at`), or the node itself when it is a coordinate. */
-export function coordinateOf(node: object): NodeCoordinate | undefined {
-	if (isCoordinate(node)) return node;
-	const at = (node as { readonly $_layout?: NodeLayout }).$_layout?.at;
-	return at !== undefined && isCoordinate(at) ? at : undefined;
 }
 
 /**

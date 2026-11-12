@@ -215,6 +215,12 @@ id_newtype! {
 }
 
 id_newtype! {
+    /// An arena parse's slot in its engine's held-parse table: what a built
+    /// record that names the parse holds in place of its tree.
+    ParseSlot(u32)
+}
+
+id_newtype! {
     /// A node of a tree: its position in the tree's preorder, the
     /// `TreeCursor::descendant_index` of the node from the root.
     NodeIndex(u32)

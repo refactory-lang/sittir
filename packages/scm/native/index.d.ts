@@ -115,18 +115,21 @@ export declare class SittirEngine {
   get buildProfile(): string
   findAndRead(source: string, pattern: string): string
   /**
-   * Parse `source` and keep its tree. As JSON `{ treeId, options,
-   * errors }`: the id `read` and `disposeTree` take, the tree's
-   * layer of the render options (`ParsedTree::inferred_options`),
-   * and its error regions.
+   * Parse `source` and keep its tree. As JSON `{ treeId, slot,
+   * options, errors }`: the id `read` and `disposeTree` take; in
+   * arena storage the slot of the engine arena's held-parse table
+   * that holds the parse, counted by its root, else `null`; the
+   * tree's layer of the render options
+   * (`ParsedTree::inferred_options`); and its error regions.
    */
   parse(source: string): string
   /**
    * Release the engine: it frees its built arena's chunks and
    * detaches every buffer over them (`builtWords`, `builtBytes`),
-   * so a record they hold no longer renders as a trivia entry. The
-   * trees it parsed stay in the addon's table, since they belong to
-   * whoever still names them.
+   * so a record they hold no longer renders as a trivia entry. In
+   * arena storage it drops every parse it holds, however counted,
+   * its tree with it; an object tree stays in the addon's table
+   * for its finalizer.
    */
   dispose(): void
 }
@@ -269,9 +272,10 @@ export declare function coordinate(treeId: TreeId, index: NodeIndex): Array<numb
  * r" Writes the sides of every unit and leaf site of the built
  * r" record at `from` at the same site of the record at `to`,
  * r" except a site at a word `skip` names. Refuses address 0
- * r" as either record.
+ * r" as either record. Answers each parse the release of a
+ * r" replaced side freed, as `writeTriviaSide` does.
  */
-export declare function copyBuiltSites(engine: object, from: number, to: number, skip: Array<number>): void
+export declare function copyBuiltSites(engine: object, from: number, to: number, skip: number[]): Array<number>
 
 /**
  * r" The flag of a built entry's count byte the handle its
@@ -302,7 +306,9 @@ export declare function descendants(from: string, kinds: Array<import('../src/ty
  * Called from the boundary's `FinalizationRegistry` once JavaScript
  * has collected the last object naming it. Unknown ids are not an
  * error — a tree can only be dropped once, and the registry has no
- * way to know whether it already was.
+ * way to know whether it already was. Refuses a parse an arena
+ * engine holds, which no finalizer is registered for: its root's
+ * release or its engine's dispose frees it.
  */
 export declare function disposeTree(treeId: number): void
 
@@ -322,6 +328,13 @@ export interface EngineOptions {
    * engine's table — the engine's own table never changes.
    */
   options?: object
+  /**
+   * How the engine's nodes are stored: `'arena'` holds each parse
+   * in the engine arena's held-parse table, counted by its root
+   * and by each built record that names it; `'object'`, or none,
+   * leaves each tree to the boundary's finalizer.
+   */
+  nodeStorage?: 'arena' | 'object'
 }
 
 /** The engine image this process mapped (`sittir_engine::loaded`). */
@@ -361,6 +374,14 @@ export declare const HELD_RUN: number
 export declare const HELD_SIDE: number
 
 export declare const HELD_TEXT: number
+
+/**
+ * r" Counts the parse `treeId` once more in slot `slot` of this
+ * r" engine's held-parse table, for a built record that names it.
+ * r" Refuses a slot that holds no parse of that id: one released,
+ * r" or one another engine parsed.
+ */
+export declare function holdParse(engine: object, slot: ParseSlot, treeId: TreeId): void
 
 /**
  * r" Materializes the node at `index` in the live tree `treeId`
@@ -424,6 +445,9 @@ export declare function liveTreeCount(): number
 
 /** A node index as JavaScript holds it: a whole number. */
 export type NodeIndex = number
+
+/** A held-parse slot as JavaScript holds it: a whole number. */
+export type ParseSlot = number
 
 /**
  * Whether each node `addresses` names (a JSON array of
@@ -511,12 +535,23 @@ export declare const RECORD_HEADER_WORDS: number
  * r" the count its builder's handle holds, a no-op when it holds
  * r" none. An entry whose count reaches zero releases what it
  * r" holds, and a chunk left holding nothing live is freed and
- * r" its buffers detached. Answers the tree of each link record
- * r" and side record released since the last call. Refuses a
- * r" count below zero, an address no entry starts at, and an
- * r" engine already disposed.
+ * r" its buffers detached. A link record or side record drops its
+ * r" count of the parse it names, and a parse no holder counts
+ * r" any more is dropped with its tree. Answers each parse
+ * r" dropped, as its slot then its tree id. Refuses a count below
+ * r" zero, an address no entry starts at, and an engine already
+ * r" disposed.
  */
 export declare function releaseBuilt(engine: object, address: number, held: number, owned: boolean): Array<number>
+
+/**
+ * r" Drops the root's count of the parse `treeId` in slot `slot` of
+ * r" this engine's held-parse table; a slot that no longer holds
+ * r" that parse is left as it is. A parse no holder counts any
+ * r" more is dropped with its tree. Answers each parse dropped,
+ * r" as its slot then its tree id.
+ */
+export declare function releaseParse(engine: object, slot: ParseSlot, treeId: TreeId): Array<number>
 
 /**
  * Render a typed node object (napi-native, numeric `$type`).
@@ -726,17 +761,19 @@ export declare function unitSides(treeId: TreeId, index: NodeIndex): object[]
  * r" `renderBuilt` then writes; a built record among them
  * r" renders as `writeTriviaSide` says. Refuses a list whose
  * r" length is not a multiple of three, holder 0 and any other
- * r" side, before writing any site.
+ * r" side, before writing any site. Answers each parse freed as
+ * r" `writeTriviaSide` does.
  */
-export declare function writeBuiltLeafSide(engine: object, sites: number[], side: string, entries: object[]): void
+export declare function writeBuiltLeafSide(engine: object, sites: number[], side: string, entries: object[]): Array<number>
 
 /**
  * r" Replace `side` of the built record at `address` with
  * r" `entries`, which `renderBuilt` then writes; a built record
- * r" among them renders as `writeTriviaSide` says. Refuses as
- * r" `builtTriviaSide` does.
+ * r" among them renders as `writeTriviaSide` says, and each parse
+ * r" freed is answered as it says. Refuses as `builtTriviaSide`
+ * r" does.
  */
-export declare function writeBuiltTriviaSide(engine: object, address: number, side: string, entries: object[]): void
+export declare function writeBuiltTriviaSide(engine: object, address: number, side: string, entries: object[]): Array<number>
 
 /**
  * r" The units the record at `address` in the arena this engine
@@ -745,9 +782,10 @@ export declare function writeBuiltTriviaSide(engine: object, address: number, si
  * r" side it had; `renderBuilt` then writes them, and a built
  * r" record among them renders as `writeTriviaSide` says.
  * r" Refuses as `builtUnitSides` does, and a slot the record's
- * r" kind has no cell for.
+ * r" kind has no cell for. Answers each parse freed as
+ * r" `writeTriviaSide` does.
  */
-export declare function writeBuiltUnitSides(engine: object, address: number, units: object[]): void
+export declare function writeBuiltUnitSides(engine: object, address: number, units: object[]): Array<number>
 
 /**
  * `text`, which a render interceptor produced in JavaScript,
@@ -760,6 +798,8 @@ export declare function writeText(path: string, text: string, create: boolean): 
  * Replace `side` of the node at `index` of the live tree `treeId`
  * with `entries`. A built record among them (`{ $type, $record }`)
  * is a record of this engine's built arena, and renders from it
- * wherever the side renders. Refuses as `triviaSide` does.
+ * wherever the side renders. Answers each parse the replaced
+ * entries' release freed, as its slot then its tree id. Refuses as
+ * `triviaSide` does.
  */
-export declare function writeTriviaSide(treeId: number, index: number, side: string, entries: object[]): void
+export declare function writeTriviaSide(treeId: number, index: number, side: string, entries: object[]): Array<number>

@@ -18,7 +18,11 @@ use sittir_core::read::{read_at, Depth, ReadNode};
 use sittir_core::render::RenderError;
 use sittir_core::slot::ChangedEdges;
 use sittir_core::trivia_store::TriviaStore;
-use sittir_core::types::NodeIndex;
+use sittir_core::types::{NodeIndex, ParseSlot};
+
+/// The slot the parse of the one tree a test reads is held in, which the
+/// built records it writes name it by.
+const SLOT: ParseSlot = ParseSlot(0);
 use sittir_core::SlotValue;
 use sittir_parity_tests::{edit_in_place, load_fixtures, ParityFixture};
 
@@ -71,7 +75,7 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + Record
         let seating = tree.seating();
         let ctx = RenderContext::new(options, &seating);
         twice(|| {
-            let mut arenas = HeldArenas::of([(tree.tree_id(), tree.tree_arena())]);
+            let mut arenas = HeldArenas::named([(SLOT, tree.tree_id(), tree.tree_arena())]);
             (self.record)(root, &mut arenas, built, tree.store(), &ctx, None).map_err(|e| format!("record: {e}"))
         })
     }
@@ -395,7 +399,8 @@ fn built_record<G: RecordGrammar, N: WriteCell<G::Trivia> + HydrateNode + Record
             None => Ok(Linked::Leaf(tree.source()[coord.span.range()].to_owned())),
         }
     };
-    let word = node.write_cell(&mut RecordSink::built(&mut built, tree.store(), &mut link)).expect("a built record");
+    let parses = [(tree.tree_id(), SLOT)];
+    let word = node.write_cell(&mut RecordSink::built(&mut built, tree.store(), &mut link, &parses)).expect("a built record");
     let cell = Cell::decode_built(word, &built, G::KIND_BITS).expect("a built root");
     (built, CellAt { cell, tree: None, site: None }, linked)
 }

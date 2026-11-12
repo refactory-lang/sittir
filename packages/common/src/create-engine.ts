@@ -32,7 +32,8 @@ import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts'
 import { dataBytes, metricsEnabled, recordFfi } from './metrics.ts';
 import { checkInput, checkRow, verifyStructure } from './verify-structure.ts';
 import { BuiltArena, type BuiltViews } from './built-arena.ts';
-import type { TreeHandle } from './read.ts';
+import { readOrRelease, type TreeHandle } from './read.ts';
+import { heldRootTree } from './tree-token.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { refuseReviver } from './json-refusal.ts';
@@ -313,12 +314,20 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 			);
 		}) as Engine<API, M>['isEmptyNode'],
 		parse(source, parseOptions) {
+			const made: TreeHandle[] = [];
 			const run = (): API['root'] => {
 				const { root, tree } = readAndBind(source, parseOptions);
-				if (parseOptions?.errors === 'throw' && root.$errors.length > 0) throw new ParseErrors(root.$errors);
-				return wrapRegistered(root, tree, hooks.wrap);
+				made.push(tree);
+				return readOrRelease(
+					[tree],
+					() => {
+						if (parseOptions?.errors === 'throw' && root.$errors.length > 0) throw new ParseErrors(root.$errors);
+						return wrapRegistered(root, tree, hooks.wrap);
+					},
+					() => tree
+				);
 			};
-			return parseChain === undefined ? run() : parseChain({ source }, run);
+			return readOrRelease(made, () => (parseChain === undefined ? run() : parseChain({ source }, run)), heldRootTree);
 		},
 		query: ((node: object) => {
 			if (handle.current !== engine)

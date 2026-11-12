@@ -12,7 +12,7 @@ use crate::slot::{ChangedEdges, NodeCoordinate};
 use crate::trivia::{NodeTrivia, TriviaSeam};
 use super::PrepPlace;
 use crate::trivia_store::{Place, Site, TriviaStore};
-use crate::types::{ItemIndex, KindId, NodeIndex, Span, TreeId};
+use crate::types::{ItemIndex, KindId, NodeIndex, ParseSlot, Span, TreeId};
 use crate::view::{KindOf, KindTest, Slot};
 
 /// The coordinate a render's root record renders as: its row's, for a
@@ -34,9 +34,10 @@ pub fn source_root<T>(root: super::CellAt, built: &dyn ArenaRead, arenas: &dyn R
 }
 
 /// The parsed trees' arenas a render reaches: the arena of each tree a record
-/// names.
+/// names, and the tree of each parse slot a built record names.
 pub trait RecordArenas {
     fn tree(&self, tree: TreeId) -> Option<&TreeArena>;
+    fn parse(&self, slot: ParseSlot) -> Option<TreeId>;
 }
 
 /// What a record's view reads through: the arena its record is in and, for
@@ -94,13 +95,24 @@ impl<'a, T> RecordCtx<'a, T> {
         }
     }
 
-    /// The context of `tree`'s arena, which a link from this one names.
+    /// The context of the arena of the parse in `slot`, which a link from
+    /// this one names.
     ///
     /// # Errors
     ///
-    /// `ArenaError::Malformed` when the render reaches no arena of `tree`.
-    pub fn linked(self, tree: TreeId) -> Result<Self, ArenaError> {
-        Self::parsed(tree, self.arenas, self.sources, self.store, self.prepared, self.bits)
+    /// `ArenaError::Malformed` when the render holds no parse in `slot`, or
+    /// reaches no arena of its tree.
+    pub fn linked(self, slot: ParseSlot) -> Result<Self, ArenaError> {
+        Self::parsed(self.parse_of(slot)?, self.arenas, self.sources, self.store, self.prepared, self.bits)
+    }
+
+    /// The tree of the parse in `slot`, which a built record names.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` when the render holds no parse in `slot`.
+    pub fn parse_of(self, slot: ParseSlot) -> Result<TreeId, ArenaError> {
+        self.arenas.parse(slot).ok_or(malformed("parse slot", slot.0))
     }
 
     #[must_use]
@@ -206,7 +218,7 @@ impl<'a, T> RecordCtx<'a, T> {
         match cell {
             Cell::ParsedLeaf { span, .. } | Cell::ParsedText { span } => self.source_text(span),
             Cell::BuiltLeaf { text, .. } | Cell::BuiltText { text } => self.string(text),
-            Cell::LinkedLeaf { tree, span, .. } => self.linked(tree)?.source_text(span),
+            Cell::LinkedLeaf { slot, span, .. } => self.linked(slot)?.source_text(span),
             _ => Err(malformed("text cell", 0)),
         }
     }
@@ -239,7 +251,7 @@ impl<'a, T> RecordCtx<'a, T> {
         Ok(match cell {
             Cell::Coordinate { kind, index, .. } => here(index, kind),
             Cell::ParsedLeaf { kind, row, .. } | Cell::Unit { kind, row: Some(row) } => here(row, kind),
-            Cell::LinkedLeaf { kind, tree, row, changed, .. } => Some(ParsedRow { tree, row, kind, changed }),
+            Cell::LinkedLeaf { kind, slot, row, changed, .. } => Some(ParsedRow { tree: self.parse_of(slot)?, row, kind, changed }),
             Cell::Child { kind, at, link, changed } => {
                 let Some((ctx, side)) = self.child_side(at, kind, link)? else { return Ok(None) };
                 match row_of(ctx, at, &side)? {
@@ -270,9 +282,9 @@ impl<'a, T> RecordCtx<'a, T> {
     /// The context a child cell's record is read in, its own arena or the
     /// tree its link names, and the record's side record; `None` for a built
     /// record.
-    fn child_side(self, at: Address, kind: KindId, link: Option<TreeId>) -> Result<Option<(Self, super::SideRecord)>, ArenaError> {
+    fn child_side(self, at: Address, kind: KindId, link: Option<ParseSlot>) -> Result<Option<(Self, super::SideRecord)>, ArenaError> {
         let ctx = match link {
-            Some(tree) => self.linked(tree)?,
+            Some(slot) => self.linked(slot)?,
             None => self,
         };
         if ctx.tree.is_none() {
@@ -387,7 +399,7 @@ impl<'a, T> RecordLayout<'a, T> {
         }
         match self.place.row() {
             Some((tree, row)) => self.ctx.row_node(tree, row).map(Some),
-            None => Ok(self.rebuilt_from.map(Sides::coordinate)),
+            None => self.rebuilt_from.map(|from| Ok(from.coordinate(self.ctx.parse_of(from.slot)?))).transpose(),
         }
     }
 
@@ -553,7 +565,7 @@ pub fn linked_leaf_place<T>(ctx: RecordCtx<'_, T>, record: Address, leaf: Sides,
     let header = ctx.words(at, crate::record::HEADER_WORDS)?;
     let rebuilt_from = if header[1] == Address::NONE.0 { None } else { super::SideRecord::read(ctx.arena, Address(header[1]))?.sides };
     Ok(match rebuilt_from {
-        Some(from) if from.tree == leaf.tree && from.index == leaf.index => PrepPlace::Content(Site { holder, word, item }),
+        Some(from) if from.slot == leaf.slot && from.index == leaf.index => PrepPlace::Content(Site { holder, word, item }),
         _ => own,
     })
 }
@@ -831,6 +843,10 @@ mod tests {
     struct NoTrees;
     impl RecordArenas for NoTrees {
         fn tree(&self, _: TreeId) -> Option<&TreeArena> {
+            None
+        }
+
+        fn parse(&self, _: ParseSlot) -> Option<TreeId> {
             None
         }
     }

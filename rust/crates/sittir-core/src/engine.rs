@@ -744,7 +744,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// none.
     #[must_use]
     pub fn release_sides(&mut self) -> bool {
-        self.store.release_rows(&self.sides.take())
+        self.store.release_rows(&self.sides.take(), self.tree_id)
     }
 
     /// Whether descendant `index` names a node of the tree.
@@ -1415,10 +1415,10 @@ impl<G: EngineGrammar> ParsedTree<G> {
     #[cfg(feature = "arena")]
     pub fn write_trivia_side(&mut self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), String> {
         let entries = crate::trivia_store::kept(entries);
-        self.store.hold(&entries).map_err(|e| e.to_string())?;
+        self.store.hold(&entries, Some(self.tree_id)).map_err(|e| e.to_string())?;
         let replaced = self.sides.insert(index, side, entries);
         self.grew();
-        self.store.release_entries(replaced.as_deref().unwrap_or_default()).map_err(|e| e.to_string())
+        self.store.release_entries(replaced.as_deref().unwrap_or_default(), Some(self.tree_id)).map_err(|e| e.to_string())
     }
 
     /// Replace `side` of the node at `index` with `entries`, and mark the

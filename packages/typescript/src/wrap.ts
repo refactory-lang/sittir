@@ -34,7 +34,7 @@ import {
 	rebuilt,
 	renderText,
 	refuseJSON,
-	releaseNothing,
+	releaseReadNode,
 	SOURCE,
 	Source,
 	TREE,
@@ -144,7 +144,7 @@ export function wrapProgram(data: T.Program, tree: TreeHandle): T.Program.Parsed
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { shebang: wrapProgram$with$shebang, statements: wrapProgram$with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -201,7 +201,7 @@ export function wrapHashBangLine(data: T.HashBangLine, tree: TreeHandle): T.Hash
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapHashBangLine$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -246,7 +246,7 @@ export function wrapNamespaceExport(data: T.NamespaceExport, tree: TreeHandle): 
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { moduleExportName: wrapNamespaceExport$with$moduleExportName, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -337,7 +337,7 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle): T.Expo
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { exportSpecifiers: wrapExportClause$with$exportSpecifiers, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -400,7 +400,7 @@ export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle): 
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		typeKeyword: wrapExportSpecifier$with$typeKeyword,
@@ -480,7 +480,7 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): 
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		typeKeyword: wrapImportStatement$with$typeKeyword,
@@ -570,7 +570,7 @@ export function wrapImportClause(data: T.ImportClause, tree: TreeHandle): T.Impo
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapImportClause$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -615,7 +615,7 @@ export function wrapNamespaceImport(data: T.NamespaceImport, tree: TreeHandle): 
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: wrapNamespaceImport$with$name, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -698,7 +698,7 @@ export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle): T.Name
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { importSpecifiers: wrapNamedImports$with$importSpecifiers, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -758,7 +758,7 @@ export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle): 
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		attributeKind: wrapImportAttribute$with$attributeKind,
@@ -822,7 +822,7 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		expression: wrapExpressionStatement$with$expression,
@@ -889,7 +889,7 @@ export function wrapVariableDeclaration(data: T.VariableDeclaration, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		declarators: wrapVariableDeclaration$with$declarators,
@@ -962,7 +962,7 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		kind: wrapLexicalDeclaration$with$kind,
@@ -1045,7 +1045,7 @@ export function wrapUsingDeclaration(data: T.UsingDeclaration, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		kind: wrapUsingDeclaration$with$kind,
@@ -1130,7 +1130,7 @@ export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle): T.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		statements: wrapStatementBlock$with$statements,
@@ -1197,7 +1197,7 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle): T.ElseClau
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { body: wrapElseClause$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1248,7 +1248,7 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle): T.IfStat
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		condition: wrapIfStatement$with$condition,
@@ -1319,7 +1319,7 @@ export function wrapSwitchStatement(data: T.SwitchStatement, tree: TreeHandle): 
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { value: wrapSwitchStatement$with$value, body: wrapSwitchStatement$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1384,7 +1384,7 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForS
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		initializer: wrapForStatement$with$initializer,
@@ -1471,7 +1471,7 @@ export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle): T.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		async: wrapForInStatement$with$async,
@@ -1542,7 +1542,7 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle): T.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { condition: wrapWhileStatement$with$condition, body: wrapWhileStatement$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1605,7 +1605,7 @@ export function wrapDoStatement(data: T.DoStatement, tree: TreeHandle): T.DoStat
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		body: wrapDoStatement$with$body,
@@ -1682,7 +1682,7 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle): T.TryS
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		body: wrapTryStatement$with$body,
@@ -1753,7 +1753,7 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle): T.Wi
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { object: wrapWithStatement$with$object, body: wrapWithStatement$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1810,7 +1810,7 @@ export function wrapBreakStatement(data: T.BreakStatement, tree: TreeHandle): T.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		label: wrapBreakStatement$with$label,
@@ -1874,7 +1874,7 @@ export function wrapContinueStatement(data: T.ContinueStatement, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		label: wrapContinueStatement$with$label,
@@ -1935,7 +1935,7 @@ export function wrapDebuggerStatement(data: T.DebuggerStatement, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { terminator: wrapDebuggerStatement$with$terminator, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -1986,7 +1986,7 @@ export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle): 
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		expression: wrapReturnStatement$with$expression,
@@ -2053,7 +2053,7 @@ export function wrapThrowStatement(data: T.ThrowStatement, tree: TreeHandle): T.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		expression: wrapThrowStatement$with$expression,
@@ -2120,7 +2120,7 @@ export function wrapLabeledStatement(data: T.LabeledStatement, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { label: wrapLabeledStatement$with$label, body: wrapLabeledStatement$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -2174,7 +2174,7 @@ export function wrapSwitchBody(data: T.SwitchBody, tree: TreeHandle): T.SwitchBo
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { cases: wrapSwitchBody$with$cases, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -2225,7 +2225,7 @@ export function wrapSwitchCase(data: T.SwitchCase, tree: TreeHandle): T.SwitchCa
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { value: wrapSwitchCase$with$value, bodies: wrapSwitchCase$with$bodies, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -2282,7 +2282,7 @@ export function wrapSwitchDefault(data: T.SwitchDefault, tree: TreeHandle): T.Sw
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { bodies: wrapSwitchDefault$with$bodies, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -2341,7 +2341,7 @@ export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle): T.CatchC
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		catchClauseGroup: wrapCatchClause$with$catchClauseGroup,
@@ -2460,7 +2460,7 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle): T.Fi
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { body: wrapFinallyClause$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -2505,7 +2505,7 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle): 
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: wrapYieldExpression$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -2557,7 +2557,7 @@ export function wrapObject(data: T.Object, tree: TreeHandle): T.Object.Parsed {
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { properties: wrapObject$with$properties, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -2607,7 +2607,7 @@ export function wrapObjectPattern(data: T.ObjectPattern, tree: TreeHandle): T.Ob
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { properties: wrapObjectPattern$with$properties, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -2661,7 +2661,7 @@ export function wrapAssignmentPattern(data: T.AssignmentPattern, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { left: wrapAssignmentPattern$with$left, right: wrapAssignmentPattern$with$right, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -2721,7 +2721,7 @@ export function wrapObjectAssignmentPattern(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		left: wrapObjectAssignmentPattern$with$left,
@@ -2785,7 +2785,7 @@ export function wrapArray(data: T.Array, tree: TreeHandle): T.Array.Parsed {
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: wrapArray$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -2833,7 +2833,7 @@ export function wrapArrayPattern(data: T.ArrayPattern, tree: TreeHandle): T.Arra
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: wrapArrayPattern$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -2884,7 +2884,7 @@ export function wrapNestedIdentifier(data: T.NestedIdentifier, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		qualifier: wrapNestedIdentifier$with$qualifier,
@@ -2957,7 +2957,7 @@ export function wrapClass(data: T.Class, tree: TreeHandle): T.Class.Parsed {
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: wrapClass$with$decorators,
@@ -3064,7 +3064,7 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: wrapClassDeclaration$with$decorators,
@@ -3182,7 +3182,7 @@ export function wrapClassHeritage(data: T.ClassHeritage, tree: TreeHandle): T.Cl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapClassHeritage$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -3246,7 +3246,7 @@ export function wrapFunctionExpression(data: T.FunctionExpression, tree: TreeHan
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		async: wrapFunctionExpression$with$async,
@@ -3383,7 +3383,7 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		async: wrapFunctionDeclaration$with$async,
@@ -3539,7 +3539,7 @@ export function wrapGeneratorFunction(data: T.GeneratorFunction, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		async: wrapGeneratorFunction$with$async,
@@ -3676,7 +3676,7 @@ export function wrapGeneratorFunctionDeclaration(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		async: wrapGeneratorFunctionDeclaration$with$async,
@@ -3822,7 +3822,7 @@ export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle): T.Ar
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		async: wrapArrowFunction$with$async,
@@ -3896,7 +3896,7 @@ export function wrapNewExpression(data: T.NewExpression, tree: TreeHandle): T.Ne
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		function: wrapNewExpression$with$function,
@@ -3972,7 +3972,7 @@ export function wrapAwaitExpression(data: T.AwaitExpression, tree: TreeHandle): 
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: wrapAwaitExpression$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -4026,7 +4026,7 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		object: wrapMemberExpression$with$object,
@@ -4106,7 +4106,7 @@ export function wrapSubscriptExpression(data: T.SubscriptExpression, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		object: wrapSubscriptExpression$with$object,
@@ -4191,7 +4191,7 @@ export function wrapLhsExpression(data: T.LhsExpression, tree: TreeHandle): T.Lh
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapLhsExpression$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -4245,7 +4245,7 @@ export function wrapAssignmentExpression(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		disposable: wrapAssignmentExpression$with$disposable,
@@ -4333,7 +4333,7 @@ export function wrapAugmentedAssignmentExpression(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		left: wrapAugmentedAssignmentExpression$with$left,
@@ -4410,7 +4410,7 @@ export function wrapSpreadElement(data: T.SpreadElement, tree: TreeHandle): T.Sp
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: wrapSpreadElement$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -4464,7 +4464,7 @@ export function wrapTernaryExpression(data: T.TernaryExpression, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		condition: wrapTernaryExpression$with$condition,
@@ -4550,7 +4550,7 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		left: wrapBinaryExpression$with$left,
@@ -4640,7 +4640,7 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle): 
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		operator: wrapUnaryExpression$with$operator,
@@ -4704,7 +4704,7 @@ export function wrapSequenceExpression(data: T.SequenceExpression, tree: TreeHan
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expressions: wrapSequenceExpression$with$expressions, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -4755,7 +4755,7 @@ export function wrapEscapeSequence(data: T.EscapeSequence, tree: TreeHandle): T.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapEscapeSequence$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -4800,7 +4800,7 @@ export function wrapTemplateString(data: T.TemplateString, tree: TreeHandle): T.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: wrapTemplateString$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -4851,7 +4851,7 @@ export function wrapTemplateSubstitution(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: wrapTemplateSubstitution$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -4902,7 +4902,7 @@ export function wrapRegex(data: T.Regex, tree: TreeHandle): T.Regex.Parsed {
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { pattern: wrapRegex$with$pattern, flags: wrapRegex$with$flags, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -4959,7 +4959,7 @@ export function wrapPrivatePropertyIdentifier(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapPrivatePropertyIdentifier$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5007,7 +5007,7 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: wrapArguments$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -5057,7 +5057,7 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle): T.Decorator.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapDecorator$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5108,7 +5108,7 @@ export function wrapDecoratorMemberExpression(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		object: wrapDecoratorMemberExpression$with$object,
@@ -5181,7 +5181,7 @@ export function wrapDecoratorCallExpression(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		function: wrapDecoratorCallExpression$with$function,
@@ -5266,7 +5266,7 @@ export function wrapClassBody(data: T.ClassBody, tree: TreeHandle): T.ClassBody.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { members: wrapClassBody$with$members, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -5318,7 +5318,7 @@ export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: wrapFormalParameters$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -5369,7 +5369,7 @@ export function wrapClassStaticBlock(data: T.ClassStaticBlock, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		terminator: wrapClassStaticBlock$with$terminator,
@@ -5438,7 +5438,7 @@ export function wrapRestPattern(data: T.RestPattern, tree: TreeHandle): T.RestPa
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { lhsExpression: wrapRestPattern$with$lhsExpression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5503,7 +5503,7 @@ export function wrapPair(data: T.Pair, tree: TreeHandle): T.Pair.Parsed {
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { key: wrapPair$with$key, value: wrapPair$with$value, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5558,7 +5558,7 @@ export function wrapPairPattern(data: T.PairPattern, tree: TreeHandle): T.PairPa
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { key: wrapPairPattern$with$key, value: wrapPairPattern$with$value, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5615,7 +5615,7 @@ export function wrapComputedPropertyName(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: wrapComputedPropertyName$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5663,7 +5663,7 @@ export function wrapNonNullExpression(data: T.NonNullExpression, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: wrapNonNullExpression$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5730,7 +5730,7 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		async: wrapFunctionSignature$with$async,
@@ -5852,7 +5852,7 @@ export function wrapDecoratorParenthesizedExpression(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: wrapDecoratorParenthesizedExpression$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5903,7 +5903,7 @@ export function wrapTypeAssertion(data: T.TypeAssertion, tree: TreeHandle): T.Ty
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		typeArguments: wrapTypeAssertion$with$typeArguments,
@@ -5975,7 +5975,7 @@ export function wrapAsExpression(data: T.AsExpression, tree: TreeHandle): T.AsEx
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: wrapAsExpression$with$expression, type: wrapAsExpression$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6032,7 +6032,7 @@ export function wrapSatisfiesExpression(data: T.SatisfiesExpression, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		expression: wrapSatisfiesExpression$with$expression,
@@ -6102,7 +6102,7 @@ export function wrapInstantiationExpression(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		function: wrapInstantiationExpression$with$function,
@@ -6177,7 +6177,7 @@ export function wrapImportRequireClause(data: T.ImportRequireClause, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: wrapImportRequireClause$with$name,
@@ -6241,7 +6241,7 @@ export function wrapExtendsClause(data: T.ExtendsClause, tree: TreeHandle): T.Ex
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { types: wrapExtendsClause$with$types, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6292,7 +6292,7 @@ export function wrapExtendsClauseSingle(data: T.ExtendsClauseSingle, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		value: wrapExtendsClauseSingle$with$value,
@@ -6361,7 +6361,7 @@ export function wrapImplementsClause(data: T.ImplementsClause, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { types: wrapImplementsClause$with$types, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6413,7 +6413,7 @@ export function wrapAmbientDeclaration(data: T.AmbientDeclaration, tree: TreeHan
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapAmbientDeclaration$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6476,7 +6476,7 @@ export function wrapAbstractClassDeclaration(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: wrapAbstractClassDeclaration$with$decorators,
@@ -6593,7 +6593,7 @@ export function wrapModule(data: T.Module, tree: TreeHandle): T.Module.Parsed {
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: wrapModule$with$name, body: wrapModule$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6650,7 +6650,7 @@ export function wrapInternalModule(data: T.InternalModule, tree: TreeHandle): T.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: wrapInternalModule$with$name, body: wrapInternalModule$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6710,7 +6710,7 @@ export function wrapImportAlias(data: T.ImportAlias, tree: TreeHandle): T.Import
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: wrapImportAlias$with$name,
@@ -6784,7 +6784,7 @@ export function wrapNestedTypeIdentifier(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		qualifier: wrapNestedTypeIdentifier$with$qualifier,
@@ -6860,7 +6860,7 @@ export function wrapInterfaceDeclaration(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: wrapInterfaceDeclaration$with$name,
@@ -6958,7 +6958,7 @@ export function wrapExtendsTypeClause(data: T.ExtendsTypeClause, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { types: wrapExtendsTypeClause$with$types, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -7012,7 +7012,7 @@ export function wrapEnumDeclaration(data: T.EnumDeclaration, tree: TreeHandle): 
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		const: wrapEnumDeclaration$with$const,
@@ -7123,7 +7123,7 @@ export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle): T.EnumBody.Par
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: wrapEnumBody$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -7182,7 +7182,7 @@ export function wrapEnumAssignment(data: T.EnumAssignment, tree: TreeHandle): T.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: wrapEnumAssignment$with$name, value: wrapEnumAssignment$with$value, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -7248,7 +7248,7 @@ export function wrapTypeAliasDeclaration(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: wrapTypeAliasDeclaration$with$name,
@@ -7364,7 +7364,7 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: wrapRequiredParameter$with$decorators,
@@ -7508,7 +7508,7 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: wrapOptionalParameter$with$decorators,
@@ -7637,7 +7637,7 @@ export function wrapOmittingTypeAnnotation(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: wrapOmittingTypeAnnotation$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -7688,7 +7688,7 @@ export function wrapAddingTypeAnnotation(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: wrapAddingTypeAnnotation$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -7739,7 +7739,7 @@ export function wrapOptingTypeAnnotation(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: wrapOptingTypeAnnotation$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -7787,7 +7787,7 @@ export function wrapTypeAnnotation(data: T.TypeAnnotation, tree: TreeHandle): T.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: wrapTypeAnnotation$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -7840,7 +7840,7 @@ export function wrapTypeQueryMemberExpressionInTypeAnnotation(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		object: wrapTypeQueryMemberExpressionInTypeAnnotation$with$object,
@@ -7923,7 +7923,7 @@ export function wrapTypeQueryCallExpressionInTypeAnnotation(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		function: wrapTypeQueryCallExpressionInTypeAnnotation$with$function,
@@ -7997,7 +7997,7 @@ export function wrapAsserts(data: T.Asserts, tree: TreeHandle): T.Asserts.Parsed
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { value: wrapAsserts$with$value, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8042,7 +8042,7 @@ export function wrapAssertsAnnotation(data: T.AssertsAnnotation, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { asserts: wrapAssertsAnnotation$with$asserts, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8093,7 +8093,7 @@ export function wrapTupleParameter(data: T.TupleParameter, tree: TreeHandle): T.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: wrapTupleParameter$with$name, type: wrapTupleParameter$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8153,7 +8153,7 @@ export function wrapOptionalTupleParameter(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: wrapOptionalTupleParameter$with$name,
@@ -8217,7 +8217,7 @@ export function wrapOptionalType(data: T.OptionalType, tree: TreeHandle): T.Opti
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: wrapOptionalType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8262,7 +8262,7 @@ export function wrapRestType(data: T.RestType, tree: TreeHandle): T.RestType.Par
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: wrapRestType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8316,7 +8316,7 @@ export function wrapConstructorType(data: T.ConstructorType, tree: TreeHandle): 
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		abstract: wrapConstructorType$with$abstract,
@@ -8408,7 +8408,7 @@ export function wrapTemplateType(data: T.TemplateType, tree: TreeHandle): T.Temp
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: wrapTemplateType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8453,7 +8453,7 @@ export function wrapTemplateLiteralType(data: T.TemplateLiteralType, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: wrapTemplateLiteralType$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8507,7 +8507,7 @@ export function wrapInferType(data: T.InferType, tree: TreeHandle): T.InferType.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: wrapInferType$with$name, type: wrapInferType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8570,7 +8570,7 @@ export function wrapConditionalType(data: T.ConditionalType, tree: TreeHandle): 
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		left: wrapConditionalType$with$left,
@@ -8657,7 +8657,7 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: wrapGenericType$with$name, typeArguments: wrapGenericType$with$typeArguments, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8735,7 +8735,7 @@ export function wrapTypePredicate(data: T.TypePredicate, tree: TreeHandle): T.Ty
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: wrapTypePredicate$with$name, type: wrapTypePredicate$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8792,7 +8792,7 @@ export function wrapTypePredicateAnnotation(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { typePredicate: wrapTypePredicateAnnotation$with$typePredicate, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -8855,7 +8855,7 @@ export function wrapTypeQueryMemberExpression(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		object: wrapTypeQueryMemberExpression$with$object,
@@ -8960,7 +8960,7 @@ export function wrapTypeQuerySubscriptExpression(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		object: wrapTypeQuerySubscriptExpression$with$object,
@@ -9043,7 +9043,7 @@ export function wrapTypeQueryCallExpression(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { arguments: wrapTypeQueryCallExpression$with$arguments, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -9101,7 +9101,7 @@ export function wrapTypeQueryInstantiationExpression(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		function: wrapTypeQueryInstantiationExpression$with$function,
@@ -9180,7 +9180,7 @@ export function wrapTypeQuery(data: T.TypeQuery, tree: TreeHandle): T.TypeQuery.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: wrapTypeQuery$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -9225,7 +9225,7 @@ export function wrapIndexTypeQuery(data: T.IndexTypeQuery, tree: TreeHandle): T.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: wrapIndexTypeQuery$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -9273,7 +9273,7 @@ export function wrapLookupType(data: T.LookupType, tree: TreeHandle): T.LookupTy
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: wrapLookupType$with$type, indexType: wrapLookupType$with$indexType, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -9333,7 +9333,7 @@ export function wrapMappedTypeClause(data: T.MappedTypeClause, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: wrapMappedTypeClause$with$name,
@@ -9409,7 +9409,7 @@ export function wrapLiteralType(data: T.LiteralType, tree: TreeHandle): T.Litera
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapLiteralType$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -9454,7 +9454,7 @@ export function wrapFlowMaybeType(data: T.FlowMaybeType, tree: TreeHandle): T.Fl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: wrapFlowMaybeType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -9499,7 +9499,7 @@ export function wrapParenthesizedType(data: T.ParenthesizedType, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: wrapParenthesizedType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -9582,7 +9582,7 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { types: wrapTypeArguments$with$types, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -9642,7 +9642,7 @@ export function wrapObjectType(data: T.ObjectType, tree: TreeHandle): T.ObjectTy
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		opening: wrapObjectType$with$opening,
@@ -9725,7 +9725,7 @@ export function wrapCallSignature(data: T.CallSignature, tree: TreeHandle): T.Ca
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		typeParameters: wrapCallSignature$with$typeParameters,
@@ -9827,7 +9827,7 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: wrapPropertySignature$with$accessibilityModifier,
@@ -9996,7 +9996,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: wrapTypeParameters$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -10062,7 +10062,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		const: wrapTypeParameter$with$const,
@@ -10143,7 +10143,7 @@ export function wrapDefaultType(data: T.DefaultType, tree: TreeHandle): T.Defaul
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: wrapDefaultType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -10191,7 +10191,7 @@ export function wrapConstraint(data: T.Constraint, tree: TreeHandle): T.Constrai
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { operator: wrapConstraint$with$operator, bounds: wrapConstraint$with$bounds, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -10254,7 +10254,7 @@ export function wrapConstructSignature(data: T.ConstructSignature, tree: TreeHan
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		abstract: wrapConstructSignature$with$abstract,
@@ -10346,7 +10346,7 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle): T.ArrayType.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: wrapArrayType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -10429,7 +10429,7 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { tupleTypeMembers: wrapTupleType$with$tupleTypeMembers, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -10486,7 +10486,7 @@ export function wrapReadonlyType(data: T.ReadonlyType, tree: TreeHandle): T.Read
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: wrapReadonlyType$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -10534,7 +10534,7 @@ export function wrapUnionType(data: T.UnionType, tree: TreeHandle): T.UnionType.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { left: wrapUnionType$with$left, right: wrapUnionType$with$right, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -10591,7 +10591,7 @@ export function wrapIntersectionType(data: T.IntersectionType, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { left: wrapIntersectionType$with$left, right: wrapIntersectionType$with$right, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -10651,7 +10651,7 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.Func
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		typeParameters: wrapFunctionType$with$typeParameters,
@@ -10772,7 +10772,7 @@ export function wrapExportSpecifiers(data: T.ExportSpecifiers, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		items: wrapExportSpecifiers$with$items,
@@ -10869,7 +10869,7 @@ export function wrapImportSpecifiers(data: T.ImportSpecifiers, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		items: wrapImportSpecifiers$with$items,
@@ -10969,7 +10969,7 @@ export function wrapFormalParametersElements(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		items: wrapFormalParametersElements$with$items,
@@ -11034,7 +11034,7 @@ export function wrapEnumBodyElementName(data: T.EnumBodyElementName, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { name: wrapEnumBodyElementName$with$name, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -11119,7 +11119,7 @@ export function wrapEnumBodyElements(data: T.EnumBodyElements, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		items: wrapEnumBodyElements$with$items,
@@ -11216,7 +11216,7 @@ export function wrapTypes(data: T.Types, tree: TreeHandle): T.Types.Parsed {
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { items: wrapTypes$with$items, delimiter: wrapTypes$with$delimiter, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -11314,7 +11314,7 @@ export function wrapTypeParametersElements(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		items: wrapTypeParametersElements$with$items,
@@ -11415,7 +11415,7 @@ export function wrapTupleTypeMembers(data: T.TupleTypeMembers, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		items: wrapTupleTypeMembers$with$items,
@@ -11475,7 +11475,7 @@ export function wrapImportClauseGroup(data: T.ImportClauseGroup, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapImportClauseGroup$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -11526,7 +11526,7 @@ export function wrapCatchClauseGroup(data: T.CatchClauseGroup, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		parameter: wrapCatchClauseGroup$with$parameter,
@@ -11594,7 +11594,7 @@ export function wrapGetAccessorSignature(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { type: wrapGetAccessorSignature$with$type, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -11645,7 +11645,7 @@ export function wrapAmbientDeclarationGlobal(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { body: wrapAmbientDeclarationGlobal$with$body, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -11702,7 +11702,7 @@ export function wrapAmbientDeclarationModule(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: wrapAmbientDeclarationModule$with$name,
@@ -11827,7 +11827,7 @@ export function wrapObjectTypeContent(data: T.ObjectTypeContent, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		items: wrapObjectTypeContent$with$items,
@@ -11917,7 +11917,7 @@ export function wrapExportStatementNamespaceExport(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: wrapExportStatementNamespaceExport$with$name,
@@ -11987,7 +11987,7 @@ export function wrapExportStatementEqualsExport(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		value: wrapExportStatementEqualsExport$with$value,
@@ -12050,7 +12050,7 @@ export function wrapCommentLine(data: T.CommentLine, tree: TreeHandle): T.Commen
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapCommentLine$with$content, [RECEIVER]: node };
 	return node as unknown as T.CommentLine.Parsed;
@@ -12093,7 +12093,7 @@ export function wrapCommentBlock(data: T.CommentBlock, tree: TreeHandle): T.Comm
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapCommentBlock$with$content, [RECEIVER]: node };
 	return node as unknown as T.CommentBlock.Parsed;
@@ -12145,7 +12145,7 @@ export function wrapLiteralTypeNegativeNumber(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { value: wrapLiteralTypeNegativeNumber$with$value, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -12196,7 +12196,7 @@ export function wrapNumberHex(data: T.NumberHex, tree: TreeHandle): T.NumberHex.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { radixPrefix: wrapNumberHex$with$radixPrefix, content: wrapNumberHex$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -12262,7 +12262,7 @@ export function wrapNumberFloatPoint(data: T.NumberFloatPoint, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		integer: wrapNumberFloatPoint$with$integer,
@@ -12377,7 +12377,7 @@ export function wrapNumberFloatLeadingPoint(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		fraction: wrapNumberFloatLeadingPoint$with$fraction,
@@ -12479,7 +12479,7 @@ export function wrapNumberFloatScientific(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		integer: wrapNumberFloatScientific$with$integer,
@@ -12572,7 +12572,7 @@ export function wrapNumberBinary(data: T.NumberBinary, tree: TreeHandle): T.Numb
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		radixPrefix: wrapNumberBinary$with$radixPrefix,
@@ -12636,7 +12636,7 @@ export function wrapNumberOctal(data: T.NumberOctal, tree: TreeHandle): T.Number
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		radixPrefix: wrapNumberOctal$with$radixPrefix,
@@ -12697,7 +12697,7 @@ export function wrapNumberBigintHex(data: T.NumberBigintHex, tree: TreeHandle): 
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapNumberBigintHex$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -12745,7 +12745,7 @@ export function wrapNumberBigintBinary(data: T.NumberBigintBinary, tree: TreeHan
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapNumberBigintBinary$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -12793,7 +12793,7 @@ export function wrapNumberBigintOctal(data: T.NumberBigintOctal, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapNumberBigintOctal$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -12841,7 +12841,7 @@ export function wrapNumberBigintDecimal(data: T.NumberBigintDecimal, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapNumberBigintDecimal$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -12892,7 +12892,7 @@ export function wrapBinaryExpressionIn(data: T.BinaryExpressionIn, tree: TreeHan
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { left: wrapBinaryExpressionIn$with$left, right: wrapBinaryExpressionIn$with$right, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -12961,7 +12961,7 @@ export function wrapClassBodyMemberMethod(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: wrapClassBodyMemberMethod$with$decorators,
@@ -13053,7 +13053,7 @@ export function wrapClassBodyMemberMethodSig(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		methodSignature: wrapClassBodyMemberMethodSig$with$methodSignature,
@@ -13130,7 +13130,7 @@ export function wrapClassBodyMemberDeclaration(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		member: wrapClassBodyMemberDeclaration$with$member,
@@ -13210,7 +13210,7 @@ export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		sign: wrapIndexSignatureColon$with$sign,
@@ -13329,7 +13329,7 @@ export function wrapIndexSignatureMappedTypeClause(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		sign: wrapIndexSignatureMappedTypeClause$with$sign,
@@ -13428,7 +13428,7 @@ export function wrapImportStatementClauseFrom(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		importClause: wrapImportStatementClauseFrom$with$importClause,
@@ -13495,7 +13495,7 @@ export function wrapYieldExpressionDelegate(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { expression: wrapYieldExpressionDelegate$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -13546,7 +13546,7 @@ export function wrapImportSpecifierName(data: T.ImportSpecifierName, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		typeKeyword: wrapImportSpecifierName$with$typeKeyword,
@@ -13616,7 +13616,7 @@ export function wrapImportSpecifierAs(data: T.ImportSpecifierAs, tree: TreeHandl
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		typeKeyword: wrapImportSpecifierAs$with$typeKeyword,
@@ -13696,7 +13696,7 @@ export function wrapParenthesizedExpressionTyped(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		expression: wrapParenthesizedExpressionTyped$with$expression,
@@ -13763,7 +13763,7 @@ export function wrapParenthesizedExpressionSequence(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { sequenceExpression: wrapParenthesizedExpressionSequence$with$sequenceExpression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -13827,7 +13827,7 @@ export function wrapCallExpressionCall(data: T.CallExpressionCall, tree: TreeHan
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		function: wrapCallExpressionCall$with$function,
@@ -13915,7 +13915,7 @@ export function wrapCallExpressionTemplateCall(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		function: wrapCallExpressionTemplateCall$with$function,
@@ -13988,7 +13988,7 @@ export function wrapCallExpressionMember(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		function: wrapCallExpressionMember$with$function,
@@ -14070,7 +14070,7 @@ export function wrapStringDouble(data: T.StringDouble, tree: TreeHandle): T.Stri
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: wrapStringDouble$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -14118,7 +14118,7 @@ export function wrapStringSingle(data: T.StringSingle, tree: TreeHandle): T.Stri
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: wrapStringSingle$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -14172,7 +14172,7 @@ export function wrapUpdateExpressionPostfix(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		argument: wrapUpdateExpressionPostfix$with$argument,
@@ -14242,7 +14242,7 @@ export function wrapUpdateExpressionPrefix(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		operator: wrapUpdateExpressionPrefix$with$operator,
@@ -14309,7 +14309,7 @@ export function wrapArrowFunctionParameter(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { parameter: wrapArrowFunctionParameter$with$parameter, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -14363,7 +14363,7 @@ export function wrapClassHeritageExtendsClause(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		extendsClause: wrapClassHeritageExtendsClause$with$extendsClause,
@@ -14439,7 +14439,7 @@ export function wrapImportClauseDefaultImport(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		identifier: wrapImportClauseDefaultImport$with$identifier,
@@ -14519,7 +14519,7 @@ export function wrapExportStatementDefaultFrom(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		typeOnly: wrapExportStatementDefaultFrom$with$typeOnly,
@@ -14602,7 +14602,7 @@ export function wrapExportStatementDefaultDeclaration(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: wrapExportStatementDefaultDeclaration$with$decorators,
@@ -14677,7 +14677,7 @@ export function wrapExportStatementDefaultFromStarFrom(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { source: wrapExportStatementDefaultFromStarFrom$with$source, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -14731,7 +14731,7 @@ export function wrapExportStatementDefaultFromNsFrom(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		namespaceExport: wrapExportStatementDefaultFromNsFrom$with$namespaceExport,
@@ -14804,7 +14804,7 @@ export function wrapExportStatementDefaultFromClauseFrom(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		exportClause: wrapExportStatementDefaultFromClauseFrom$with$exportClause,
@@ -14879,7 +14879,7 @@ export function wrapExportStatementDefaultDeclarationDefaultKw(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapExportStatementDefaultDeclarationDefaultKw$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -14943,7 +14943,7 @@ export function wrapExportStatementDefaultDeclarationDefaultKwValue(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		value: wrapExportStatementDefaultDeclarationDefaultKwValue$with$value,
@@ -15043,7 +15043,7 @@ export function wrapVariableDeclaratorPlain(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: wrapVariableDeclaratorPlain$with$name,
@@ -15126,7 +15126,7 @@ export function wrapVariableDeclaratorDefinite(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		name: wrapVariableDeclaratorDefinite$with$name,
@@ -15196,7 +15196,7 @@ export function wrapForHeaderLhs(data: T.ForHeaderLhs, tree: TreeHandle): T.ForH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		left: wrapForHeaderLhs$with$left,
@@ -15273,7 +15273,7 @@ export function wrapForHeaderVarKind(data: T.ForHeaderVarKind, tree: TreeHandle)
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		left: wrapForHeaderVarKind$with$left,
@@ -15369,7 +15369,7 @@ export function wrapForHeaderLetConstKind(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		kind: wrapForHeaderLetConstKind$with$kind,
@@ -15487,7 +15487,7 @@ export function wrapForHeaderUsingKind(data: T.ForHeaderUsingKind, tree: TreeHan
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		kind: wrapForHeaderUsingKind$with$kind,
@@ -15596,7 +15596,7 @@ export function wrapFormalParametersSetAccessorSignature(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: wrapFormalParametersSetAccessorSignature$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -15650,7 +15650,7 @@ export function wrapFormalParametersElementsSetAccessorSignature(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { item: wrapFormalParametersElementsSetAccessorSignature$with$item, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -15720,7 +15720,7 @@ export function wrapSetterParameter(data: T.SetterParameter, tree: TreeHandle): 
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: wrapSetterParameter$with$decorators,
@@ -15878,7 +15878,7 @@ export function wrapMethodDefinitionPlain(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: wrapMethodDefinitionPlain$with$accessibilityModifier,
@@ -16107,7 +16107,7 @@ export function wrapMethodDefinitionGetter(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: wrapMethodDefinitionGetter$with$accessibilityModifier,
@@ -16250,7 +16250,7 @@ export function wrapMethodDefinitionSetter(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: wrapMethodDefinitionSetter$with$accessibilityModifier,
@@ -16412,7 +16412,7 @@ export function wrapMethodSignaturePlain(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: wrapMethodSignaturePlain$with$accessibilityModifier,
@@ -16625,7 +16625,7 @@ export function wrapMethodSignatureGetter(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: wrapMethodSignatureGetter$with$accessibilityModifier,
@@ -16748,7 +16748,7 @@ export function wrapMethodSignatureSetter(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: wrapMethodSignatureSetter$with$accessibilityModifier,
@@ -16884,7 +16884,7 @@ export function wrapAbstractMethodSignaturePlain(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: wrapAbstractMethodSignaturePlain$with$accessibilityModifier,
@@ -17062,7 +17062,7 @@ export function wrapAbstractMethodSignatureGetter(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: wrapAbstractMethodSignatureGetter$with$accessibilityModifier,
@@ -17176,7 +17176,7 @@ export function wrapAbstractMethodSignatureSetter(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: wrapAbstractMethodSignatureSetter$with$accessibilityModifier,
@@ -17311,7 +17311,7 @@ export function wrapPublicFieldDefinitionPlain(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: wrapPublicFieldDefinitionPlain$with$decorators,
@@ -17528,7 +17528,7 @@ export function wrapPublicFieldDefinitionAccessor(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: wrapPublicFieldDefinitionAccessor$with$decorators,
@@ -17697,7 +17697,7 @@ export function wrapConstructorDeclaration(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		accessibilityModifier: wrapConstructorDeclaration$with$accessibilityModifier,
@@ -17799,7 +17799,7 @@ export function wrapReceiverParameterDeclaration(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		decorators: wrapReceiverParameterDeclaration$with$decorators,
@@ -17938,7 +17938,7 @@ export function wrapFormalParametersElementsReceiver(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		receiver: wrapFormalParametersElementsReceiver$with$receiver,
@@ -18070,7 +18070,7 @@ export function wrapFormalParametersElementsReceiverGroup(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { elements: wrapFormalParametersElementsReceiverGroup$with$elements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -18139,7 +18139,7 @@ export function wrapStatementIdentifier(data: T.StatementIdentifier, tree: TreeH
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapStatementIdentifier$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -18195,7 +18195,7 @@ export function wrapShorthandPropertyIdentifier(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapShorthandPropertyIdentifier$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -18251,7 +18251,7 @@ export function wrapShorthandPropertyIdentifierPattern(
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapShorthandPropertyIdentifierPattern$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -18304,7 +18304,7 @@ export function wrapPropertyIdentifier(data: T.PropertyIdentifier, tree: TreeHan
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapPropertyIdentifier$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -18357,7 +18357,7 @@ export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle): T.
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = { content: wrapTypeIdentifier$with$content, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -18408,7 +18408,7 @@ export function wrapInterfaceBody(data: T.InterfaceBody, tree: TreeHandle): T.In
 		[HANDLE]: handle,
 		[INPUT]: data,
 		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$with = {
 		opening: wrapInterfaceBody$with$opening,
@@ -27537,7 +27537,7 @@ function viewInterfaceBody(data: RecordPosition, tree: TreeHandle): T.InterfaceB
 }
 
 function $handleQuery(this: RecordPosition): object {
-	return handleQuery(this, rowOf(this, _wrap));
+	return handleQuery(this, _wrap);
 }
 function $handleSnapshot(this: RecordPosition): unknown {
 	return snapshotOf(rowOf(this, _wrap));
@@ -27902,7 +27902,7 @@ function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): object {
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
 		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node;
@@ -27921,7 +27921,7 @@ function wrapInteriorLeaf(data: _UntypedNode, _tree: TreeHandle): object {
 		$engine: handle && (() => handle.current),
 		[TREE]: treeTokenOf(data) ?? null,
 		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[Symbol.dispose]: releaseNothing
+		[Symbol.dispose]: releaseReadNode
 	};
 	return node;
 }

@@ -17,7 +17,8 @@ import {
 	wordOf,
 	type RecordCell
 } from './record-cell.ts';
-import { aliasContentOf, asReadOutput, carryReadTree, coordinateOf, isStorageKey, type ReadOutput } from './node-data.ts';
+import { aliasContentOf, asReadOutput, carryReadTree, isStorageKey, type ReadOutput } from './node-data.ts';
+import { coordinateOf } from './read.ts';
 import { isRecordPosition, type RecordHandle, type RecordPosition } from './handle.ts';
 
 export function positionWords(position: RecordPosition): ChunkWords | undefined {
@@ -206,8 +207,8 @@ function cellData(holder: RecordPosition, cell: RecordCell, word: number, item: 
 			return tree.text?.(cell.span);
 		case 'child':
 			if (tree.built !== undefined) return cell.link === undefined ? tree.built.node(cell.at) : tree.built.linked(cell.link, cell.at);
-			if (cell.link !== undefined && cell.link !== idOf(tree))
-				throw new Error(`a parsed record names a record of tree ${cell.link}`);
+			if (cell.link !== undefined && cell.link !== tree.slot)
+				throw new Error(`a parsed record names a record of the parse in slot ${cell.link}`);
 			return recordStub(tree, cell.at);
 		case 'unit':
 			return cell.kind;

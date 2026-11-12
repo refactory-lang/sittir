@@ -6,7 +6,7 @@ const source = 'fn a() {}\nfn b() {}';
 const crlfSource = source.replaceAll('\n', '\r\n');
 
 describe.each(['object', 'arena'] as const)('rendering a %s node through another engine', (nodeStorage) => {
-	it.each([false, true])('uses the rendering engine defaults after parser disposal: %s', async (disposeParser) => {
+	it.each(nodeStorage === 'object' ? [false, true] : [false])('uses the rendering engine defaults after parser disposal: %s', async (disposeParser) => {
 		const parser = await createEngine(rust, { nodeStorage });
 		const renderer = await createEngine(rust, { render: { layout: { newline: '\r\n' } } });
 		try {
@@ -18,5 +18,15 @@ describe.each(['object', 'arena'] as const)('rendering a %s node through another
 			parser.dispose();
 			renderer.dispose();
 		}
+	});
+});
+
+describe('rendering an arena node through another engine after its parser is disposed', () => {
+	it('refuses, since the parser freed the parse', async () => {
+		using renderer = await createEngine(rust, { nodeStorage: 'arena' });
+		const parser = await createEngine(rust, { nodeStorage: 'arena' });
+		const root = parser.parse(source);
+		parser.dispose();
+		expect(() => renderer.render(root).toString()).toThrow(/not live/);
 	});
 });

@@ -26,7 +26,7 @@ use super::cell::{flag, header_of, CellWord};
 use super::memory::ChunkMem;
 use super::side::SideRecord;
 use super::{Address, ArenaError, ArenaRead, BuiltChunk, BuiltChunks, RecordShape, ARENA_RELEASED};
-use crate::types::{KindId, TreeId};
+use crate::types::{KindId, ParseSlot};
 
 /// The flag of a count the handle a builder returned holds.
 pub const OWNED: u8 = 0x80;
@@ -305,22 +305,31 @@ impl BuiltChunks {
     /// What reaching its count refuses, and `ArenaError::Malformed` for a
     /// record whose count is gone.
     pub fn adopt(&mut self, at: Address) -> Result<(), ArenaError> {
+        self.adoptable(at)?;
         let byte = self.table(at.chunk())?.count(at.word())?;
         if *byte & OWNED != 0 {
             *byte &= !OWNED;
-            return Ok(());
+        } else if *byte & SATURATED == SATURATED {
+            *self.overflow.entry(at.0).or_insert(0) += 1;
+        } else {
+            *byte += 1;
         }
-        match *byte & SATURATED {
-            0 => Err(malformed("released record", at.0)),
-            SATURATED => {
-                *self.overflow.entry(at.0).or_insert(0) += 1;
-                Ok(())
-            }
-            _ => {
-                *byte += 1;
-                Ok(())
-            }
+        Ok(())
+    }
+
+    /// Refuses as `adopt` does, taking no count: the record at `at` has a
+    /// count its builder's handle holds, or one to add to.
+    ///
+    /// # Errors
+    ///
+    /// What reaching its count refuses, and `ArenaError::Malformed` for a
+    /// record whose count is gone.
+    pub fn adoptable(&mut self, at: Address) -> Result<(), ArenaError> {
+        let byte = *self.table(at.chunk())?.count(at.word())?;
+        if byte & OWNED == 0 && byte & SATURATED == 0 {
+            return Err(malformed("released record", at.0));
         }
+        Ok(())
     }
 
     /// Releases a count of `held`: with `owned`, the count the handle a
@@ -413,8 +422,8 @@ impl BuiltChunks {
                 let header = self.word(at)?;
                 match header_of(header, self.kind_bits) {
                     (_, flag::LINK) => {
-                        let tree = self.word(at.offset(2).ok_or(malformed("link record", at.0))?)?;
-                        self.trees.push(TreeId(tree));
+                        let slot = self.word(at.offset(2).ok_or(malformed("link record", at.0))?)?;
+                        self.release_parse(ParseSlot(slot));
                     }
                     (kind, 0) => self.release_record(at, kind, stack, sides)?,
                     (_, flags) => return Err(malformed("record flags", flags)),
@@ -429,7 +438,7 @@ impl BuiltChunks {
             }
             Held::Side(at) => {
                 if let Some(sides) = SideRecord::read(self, at)?.sides {
-                    self.trees.push(sides.tree);
+                    self.release_parse(sides.slot);
                 }
             }
             Held::Text(at) => return Err(malformed("text entry on the release stack", at.0)),
@@ -545,7 +554,8 @@ impl BuiltChunks {
 mod tests {
     use super::*;
     use crate::arena::cell::with_kind;
-    use crate::arena::{CellShape, ChunkMem};
+    use crate::arena::{CellShape, ChunkMem, HeldParse};
+    use crate::types::TreeId;
     use crate::record::form;
 
     const PAIR: KindId = KindId(5);
@@ -688,11 +698,15 @@ mod tests {
     }
 
     #[test]
-    fn a_released_link_record_answers_its_tree() {
+    fn a_released_link_record_drops_its_count_of_the_parse_it_names() {
         let mut built = Builder::new();
-        let link = built.place(&[with_kind(LEAF, BITS).expect("a kind") | flag::LINK << BITS, 0, 4, 1, 2, 0, 0, 3], 1);
+        let slot = built.arena.held_mut().hold(HeldParse(TreeId(9)));
+        built.arena.held_mut().retain(slot, TreeId(9)).expect("a held parse is named");
+        let link = built.place(&[with_kind(LEAF, BITS).expect("a kind") | flag::LINK << BITS, 0, slot.0, 1, 2, 0, 0, 3], 1);
         built.release(link, false).expect("released");
-        assert_eq!(built.arena.take_trees(), vec![TreeId(4)]);
+        assert!(built.arena.take_freed_parses().is_empty(), "the root's count holds the parse");
+        built.arena.release_root(slot, TreeId(9));
+        assert_eq!(built.arena.take_freed_parses(), vec![(slot, HeldParse(TreeId(9)))]);
     }
 
     #[test]

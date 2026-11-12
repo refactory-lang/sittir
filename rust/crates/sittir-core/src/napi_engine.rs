@@ -95,6 +95,12 @@ macro_rules! napi_engine {
             /// engine's table — the engine's own table never changes.
             #[napi(ts_type = "object")]
             pub options: Option<$options>,
+            /// How the engine's nodes are stored: `'arena'` holds each parse
+            /// in the engine arena's held-parse table, counted by its root
+            /// and by each built record that names it; `'object'`, or none,
+            /// leaves each tree to the boundary's finalizer.
+            #[napi(ts_type = "'arena' | 'object'")]
+            pub node_storage: Option<String>,
         }
 
         ::std::thread_local! {
@@ -118,9 +124,11 @@ macro_rules! napi_engine {
         /// Called from the boundary's `FinalizationRegistry` once JavaScript
         /// has collected the last object naming it. Unknown ids are not an
         /// error — a tree can only be dropped once, and the registry has no
-        /// way to know whether it already was.
+        /// way to know whether it already was. Refuses a parse an arena
+        /// engine holds, which no finalizer is registered for: its root's
+        /// release or its engine's dispose frees it.
         #[::napi_derive::napi]
-        pub fn dispose_tree(env: ::napi::Env, tree_id: f64) {
+        pub fn dispose_tree(env: ::napi::Env, tree_id: f64) -> ::napi::Result<()> {
             // Checked for the same reason `with_live_node` checks its ids:
             // `as` saturates, so `NaN` and every negative arrive as 0 —
             // and 0 is the first tree, so an unchecked cast would let a
@@ -129,19 +137,68 @@ macro_rules! napi_engine {
             // where nothing is positioned to handle a throw, and
             // disposing an id that names no tree is already a no-op.
             let Ok(tree_id) = $crate::napi_engine::checked_index(tree_id, "treeId") else {
-                return;
+                return Ok(());
             };
             let Ok(tree_id) = u32::try_from(tree_id).map($crate::types::TreeId) else {
-                return;
+                return Ok(());
             };
+            let held = LIVE_TREES.with(|trees| trees.borrow().get(&tree_id).is_some_and(|tree| $crate::napi_engine::holds_parse(tree.store(), tree_id)));
+            if held {
+                return Err(::napi::Error::from_reason(format!("tree {} is a parse its engine holds: its root's release or its engine's dispose frees it, not disposeTree", tree_id.0)));
+            }
+            drop_tree(&env, tree_id);
+            Ok(())
+        }
+
+        /// Drops the live tree `tree_id` (`drop_live_tree`), then the tree
+        /// of each parse its release frees (`drop_freed_parses`), and
+        /// answers each parse freed as `drop_freed_parses` does.
+        fn drop_tree(env: &::napi::Env, tree_id: $crate::types::TreeId) -> Vec<u32> {
+            drop_live_tree(env, tree_id).map_or_else(Vec::new, |store| drop_freed_parses(env, &store))
+        }
+
+        /// Drops the live tree `tree_id`, detaching every buffer over its
+        /// arena's chunks, and answers the store its sides wrote to; an id
+        /// that names no live tree is a no-op.
+        fn drop_live_tree(env: &::napi::Env, tree_id: $crate::types::TreeId) -> Option<$crate::trivia_store::TriviaStore<<$grammar as $crate::engine::EngineGrammar>::Trivia>> {
             if let Some(mut buffers) = TREE_BUFFERS.with(|buffers| buffers.borrow_mut().remove(&tree_id)) {
-                if let Ok(change) = buffers.detach(&env) {
+                if let Ok(change) = buffers.detach(env) {
                     TREES_REPORTED.with(|total| total.set(total.get() + change));
                 }
             }
-            if let Some(tree) = LIVE_TREES.with(|trees| trees.borrow_mut().remove(&tree_id)) {
-                let _ = $crate::napi_engine::dispose(&env, tree);
+            let tree = LIVE_TREES.with(|trees| trees.borrow_mut().remove(&tree_id))?;
+            let store = tree.store().clone();
+            let _ = $crate::napi_engine::dispose(env, tree);
+            Some(store)
+        }
+
+        /// Drops the tree of each parse `store`'s arena freed, and of each
+        /// parse a dropped tree's release frees in turn, until none is
+        /// left: a tree's written sides name built records, whose release
+        /// can free a parse they link. Answers each parse freed as its slot
+        /// then its tree id, so a holder of a slot's parse forgets it only
+        /// while the slot still names that parse.
+        fn drop_freed_parses(env: &::napi::Env, store: &$crate::trivia_store::TriviaStore<<$grammar as $crate::engine::EngineGrammar>::Trivia>) -> Vec<u32> {
+            let mut parses = Vec::new();
+            loop {
+                let freed = $crate::napi_engine::take_freed_parses(store);
+                if freed.is_empty() {
+                    return parses;
+                }
+                for (slot, tree_id) in freed {
+                    parses.extend([slot.0, tree_id.0]);
+                    drop_live_tree(env, tree_id);
+                }
             }
+        }
+
+        /// Settles `store` (`settle`), then drops the tree of each parse
+        /// the call freed (`drop_freed_parses`), and answers each parse
+        /// freed as `drop_freed_parses` does: every call that can release a
+        /// built record ends here.
+        fn settled(env: &::napi::Env, store: &$crate::trivia_store::TriviaStore<<$grammar as $crate::engine::EngineGrammar>::Trivia>) -> ::napi::Result<Vec<u32>> {
+            $crate::napi_engine::settle(env, store)?;
+            Ok(drop_freed_parses(env, store))
         }
 
         /// Runs `f` on the live tree `tree_id`, refusing a tree that is not
@@ -242,6 +299,10 @@ macro_rules! napi_engine {
         #[::napi_derive::napi]
         pub type TreeId = u32;
 
+        /// A held-parse slot as JavaScript holds it: a whole number.
+        #[::napi_derive::napi]
+        pub type ParseSlot = u32;
+
         /// A node index as JavaScript holds it: a whole number.
         #[::napi_derive::napi]
         pub type NodeIndex = u32;
@@ -277,7 +338,14 @@ macro_rules! napi_engine {
         impl SittirEngine {
             #[::napi_derive::napi(constructor)]
             pub fn new(options: Option<EngineOptions>) -> ::napi::Result<Self> {
-                let table = match options.and_then(|opts| opts.options) {
+                let (options, storage) = options.map_or((None, None), |opts| (opts.options, opts.node_storage));
+                let holds_parses = match storage.as_deref() {
+                    None | Some("object") => false,
+                    Some("arena") if cfg!(feature = "arena") => true,
+                    Some("arena") => return Err(::napi::Error::from_reason("this engine was built without arena storage")),
+                    Some(other) => return Err(::napi::Error::from_reason(format!("no node storage {other:?}: it is 'arena' or 'object'"))),
+                };
+                let table = match options {
                     Some(opts) => {
                         opts.resolve(&$defaults()).map_err(::napi::Error::from_reason)?
                     }
@@ -289,6 +357,12 @@ macro_rules! napi_engine {
                     $crate::napi_engine::engine_store::<$grammar>(),
                 )
                 .map_err(::napi::Error::from_reason)?;
+                #[cfg(feature = "arena")]
+                if holds_parses {
+                    engine.written().built_mut().hold_parses();
+                }
+                #[cfg(not(feature = "arena"))]
+                let _ = holds_parses;
                 Ok(Self { engine: ::std::rc::Rc::new(::std::cell::RefCell::new(engine)) })
             }
 
@@ -336,10 +410,12 @@ macro_rules! napi_engine {
                     .map_err(::napi::Error::from_reason)
             }
 
-            /// Parse `source` and keep its tree. As JSON `{ treeId, options,
-            /// errors }`: the id `read` and `disposeTree` take, the tree's
-            /// layer of the render options (`ParsedTree::inferred_options`),
-            /// and its error regions.
+            /// Parse `source` and keep its tree. As JSON `{ treeId, slot,
+            /// options, errors }`: the id `read` and `disposeTree` take; in
+            /// arena storage the slot of the engine arena's held-parse table
+            /// that holds the parse, counted by its root, else `null`; the
+            /// tree's layer of the render options
+            /// (`ParsedTree::inferred_options`); and its error regions.
             #[::napi_derive::napi]
             pub fn parse(&mut self, env: ::napi::Env, source: String) -> ::napi::Result<String> {
                 let claim = $crate::engine::claim_tree_id().ok_or_else(|| {
@@ -352,8 +428,10 @@ macro_rules! napi_engine {
                     .map_err(|_| ::napi::Error::from_reason("the engine is in use"))?
                     .parse(&source, claim)
                     .map_err(::napi::Error::from_reason)?;
+                let slot = self.hold(tree_id)?;
                 let json = ::serde_json::json!({
                     "treeId": tree_id,
+                    "slot": slot,
                     "options": parsed.inferred_options(),
                     "errors": parsed.error_regions(),
                 })
@@ -365,12 +443,40 @@ macro_rules! napi_engine {
 
             /// Release the engine: it frees its built arena's chunks and
             /// detaches every buffer over them (`builtWords`, `builtBytes`),
-            /// so a record they hold no longer renders as a trivia entry. The
-            /// trees it parsed stay in the addon's table, since they belong to
-            /// whoever still names them.
+            /// so a record they hold no longer renders as a trivia entry. In
+            /// arena storage it drops every parse it holds, however counted,
+            /// its tree with it; an object tree stays in the addon's table
+            /// for its finalizer.
             #[::napi_derive::napi]
             pub fn dispose(&mut self, env: ::napi::Env) -> ::napi::Result<()> {
-                $crate::napi_engine::release_built(&env, engine_of(&self.engine)?.written())
+                let engine = engine_of(&self.engine)?;
+                drop_freed_parses(&env, engine.written());
+                #[cfg(feature = "arena")]
+                {
+                    let parses = engine.written().built_mut().held_mut().drain();
+                    for parse in parses {
+                        drop_tree(&env, $crate::arena::Held::id(&parse));
+                    }
+                }
+                $crate::napi_engine::release_built(&env, engine.written())
+            }
+        }
+
+        impl SittirEngine {
+            /// Holds the parse `tree_id` in the engine arena's held-parse
+            /// table when the engine stores its nodes in the arena, counted
+            /// by its root, and answers its slot.
+            fn hold(&self, tree_id: $crate::types::TreeId) -> ::napi::Result<Option<u32>> {
+                #[cfg(feature = "arena")]
+                {
+                    let engine = engine_of(&self.engine)?;
+                    let mut built = engine.written().built_mut();
+                    if built.holds_parses() {
+                        return Ok(Some(built.held_mut().hold($crate::arena::HeldParse(tree_id)).0));
+                    }
+                }
+                let _ = tree_id;
+                Ok(None)
             }
         }
 
@@ -460,7 +566,9 @@ macro_rules! napi_engine {
         /// Replace `side` of the node at `index` of the live tree `treeId`
         /// with `entries`. A built record among them (`{ $type, $record }`)
         /// is a record of this engine's built arena, and renders from it
-        /// wherever the side renders. Refuses as `triviaSide` does.
+        /// wherever the side renders. Answers each parse the replaced
+        /// entries' release freed, as its slot then its tree id. Refuses as
+        /// `triviaSide` does.
         #[::napi_derive::napi(ts_args_type = "treeId: number, index: number, side: string, entries: object[]")]
         pub fn write_trivia_side(
             env: ::napi::Env,
@@ -468,13 +576,13 @@ macro_rules! napi_engine {
             index: $crate::types::NodeIndex,
             side: String,
             entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
-        ) -> ::napi::Result<()> {
+        ) -> ::napi::Result<Vec<u32>> {
             let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
             let store = with_live_node(&env, tree_id, index, |parsed, index| {
                 parsed.write_trivia_side(index, side, entries).map_err(::napi::Error::from_reason)?;
                 Ok(parsed.store().clone())
             })?;
-            $crate::napi_engine::settle(&env, &store)
+            settled(&env, &store)
         }
 
         /// Whether a write replaced a side of a node under the node at
@@ -843,6 +951,7 @@ macro_rules! napi_engine {
                 options: Option<$options>,
                 render: impl FnOnce(
                     &dyn $crate::arena::ArenaRead,
+                    &$crate::arena::HeldParses<$crate::arena::HeldParse>,
                     &$crate::engine::ReadTrees<'_, $grammar>,
                     &$crate::prepare::RenderContext<'_>,
                 ) -> Result<String, $crate::render::RenderError>,
@@ -851,9 +960,9 @@ macro_rules! napi_engine {
                 let arena = chunks.readable().map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 with_live_trees(env, |trees| {
                     let table = render_options(engine, tree_id.and_then(|id| trees.get(id)), options)?;
-                    let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| {
+                    let canonical = $crate::napi_engine::entry_sources_holding(engine.grammar(), trees, owner.written(), &chunks, |sources| {
                         let ctx = $crate::prepare::RenderContext::new(&table, sources);
-                        ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| render(arena, trees, &ctx)))
+                        ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| render(arena, chunks.held(), trees, &ctx)))
                     })
                         .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
                         .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))?;
@@ -1036,7 +1145,7 @@ macro_rules! napi_engine {
                 let engine = engine_of(engine)?;
                 let owner = engine_of(owner)?;
                 let at = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
-                render_built_with(&engine, &env, &owner, tree_id, options, |arena, trees, ctx| owner.render_built(arena, at, $crate::slot::ChangedEdges { leading, trailing }, trees, ctx))
+                render_built_with(&engine, &env, &owner, tree_id, options, |arena, parses, trees, ctx| owner.render_built(arena, parses, at, $crate::slot::ChangedEdges { leading, trailing }, trees, ctx))
             }
 
             /// `render_built`'s text written to `path` (`save_rendered`),
@@ -1072,7 +1181,7 @@ macro_rules! napi_engine {
                 let engine = engine_of(engine)?;
                 let owner = engine_of(owner)?;
                 let kind = $crate::types::KindId(u16::try_from(kind).map_err(|_| ::napi::Error::from_reason(format!("kind {kind} is wider than a kind")))?);
-                render_built_with(&engine, &env, &owner, None, options, |arena, _, ctx| owner.render_built_leaf(arena, kind, $crate::arena::Address(entry), sides, $crate::slot::ChangedEdges { leading, trailing }, ctx))
+                render_built_with(&engine, &env, &owner, None, options, |arena, _, _, ctx| owner.render_built_leaf(arena, kind, $crate::arena::Address(entry), sides, $crate::slot::ChangedEdges { leading, trailing }, ctx))
             }
 
             /// `render_built_leaf`'s text written to `path`
@@ -1140,20 +1249,42 @@ macro_rules! napi_engine {
             /// the count its builder's handle holds, a no-op when it holds
             /// none. An entry whose count reaches zero releases what it
             /// holds, and a chunk left holding nothing live is freed and
-            /// its buffers detached. Answers the tree of each link record
-            /// and side record released since the last call. Refuses a
-            /// count below zero, an address no entry starts at, and an
-            /// engine already disposed.
+            /// its buffers detached. A link record or side record drops its
+            /// count of the parse it names, and a parse no holder counts
+            /// any more is dropped with its tree. Answers each parse
+            /// dropped, as its slot then its tree id. Refuses a count below
+            /// zero, an address no entry starts at, and an engine already
+            /// disposed.
             #[::napi_derive::napi]
             pub fn release_built(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, address: f64, held: u32, owned: bool) -> ::napi::Result<Vec<u32>> {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                 let held = $crate::arena::count::Held::of(held, address).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 let released = engine.written().release(held, owned).map_err(|e| ::napi::Error::from_reason(e.to_string()));
-                $crate::napi_engine::settle(&env, engine.written())?;
+                let freed = settled(&env, engine.written())?;
                 released?;
-                let trees = engine.written().built_mut().take_trees();
-                Ok(trees.into_iter().map(|tree| tree.0).collect())
+                Ok(freed)
+            }
+
+            /// Counts the parse `treeId` once more in slot `slot` of this
+            /// engine's held-parse table, for a built record that names it.
+            /// Refuses a slot that holds no parse of that id: one released,
+            /// or one another engine parsed.
+            #[::napi_derive::napi]
+            pub fn hold_parse(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, slot: $crate::types::ParseSlot, tree_id: $crate::types::TreeId) -> ::napi::Result<()> {
+                engine_of(engine)?.written().built_mut().held_mut().retain(slot, tree_id).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+            }
+
+            /// Drops the root's count of the parse `treeId` in slot `slot` of
+            /// this engine's held-parse table; a slot that no longer holds
+            /// that parse is left as it is. A parse no holder counts any
+            /// more is dropped with its tree. Answers each parse dropped,
+            /// as its slot then its tree id.
+            #[::napi_derive::napi]
+            pub fn release_parse(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, slot: $crate::types::ParseSlot, tree_id: $crate::types::TreeId) -> ::napi::Result<Vec<u32>> {
+                let engine = engine_of(engine)?;
+                engine.written().built_mut().release_root(slot, tree_id);
+                Ok(drop_freed_parses(&env, engine.written()))
             }
 
             /// The bytes the built arena's chunks take, and of them the
@@ -1199,13 +1330,15 @@ macro_rules! napi_engine {
             /// Writes the sides of every unit and leaf site of the built
             /// record at `from` at the same site of the record at `to`,
             /// except a site at a word `skip` names. Refuses address 0
-            /// as either record.
-            #[::napi_derive::napi]
-            pub fn copy_built_sites(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, from: f64, to: f64, skip: Vec<u32>) -> ::napi::Result<()> {
+            /// as either record. Answers each parse the release of a
+            /// replaced side freed, as `writeTriviaSide` does.
+            #[::napi_derive::napi(ts_args_type = "engine: object, from: number, to: number, skip: number[]")]
+            pub fn copy_built_sites(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, from: f64, to: f64, skip: Vec<u32>) -> ::napi::Result<Vec<u32>> {
                 let engine = engine_of(engine)?;
                 let from = $crate::arena::Address($crate::napi_engine::checked_whole(from, "from")?);
                 let to = $crate::arena::Address($crate::napi_engine::checked_whole(to, "to")?);
-                engine.copy_built_sites(from, to, &skip).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                engine.copy_built_sites(from, to, &skip).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                settled(&env, engine.written())
             }
 
             /// Replace `side` of the built leaf at each site `sites` names,
@@ -1213,7 +1346,8 @@ macro_rules! napi_engine {
             /// `renderBuilt` then writes; a built record among them
             /// renders as `writeTriviaSide` says. Refuses a list whose
             /// length is not a multiple of three, holder 0 and any other
-            /// side, before writing any site.
+            /// side, before writing any site. Answers each parse freed as
+            /// `writeTriviaSide` does.
             #[::napi_derive::napi(ts_args_type = "engine: object, sites: number[], side: string, entries: object[]")]
             pub fn write_built_leaf_side(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
@@ -1221,7 +1355,7 @@ macro_rules! napi_engine {
                 sites: Vec<u32>,
                 side: String,
                 entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
-            ) -> ::napi::Result<()> {
+            ) -> ::napi::Result<Vec<u32>> {
                 let engine = engine_of(engine)?;
                 if sites.len() % 3 != 0 {
                     return Err(::napi::Error::from_reason(format!("a leaf's sites are holder, word and item triples, not {} numbers", sites.len())));
@@ -1229,7 +1363,7 @@ macro_rules! napi_engine {
                 let sites: Vec<_> = sites.chunks_exact(3).map(|site| $crate::trivia_store::Site { holder: $crate::arena::Address(site[0]), word: site[1], item: $crate::types::ItemIndex(site[2]) }).collect();
                 let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
                 engine.write_built_leaf_side(&sites, side, &entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                $crate::napi_engine::settle(&env, engine.written())
+                settled(&env, engine.written())
             }
 
             /// The sides writes gave each unit the record at `address` in
@@ -1251,24 +1385,26 @@ macro_rules! napi_engine {
             /// side it had; `renderBuilt` then writes them, and a built
             /// record among them renders as `writeTriviaSide` says.
             /// Refuses as `builtUnitSides` does, and a slot the record's
-            /// kind has no cell for.
+            /// kind has no cell for. Answers each parse freed as
+            /// `writeTriviaSide` does.
             #[::napi_derive::napi(ts_args_type = "engine: object, address: number, units: object[]")]
             pub fn write_built_unit_sides(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
                 env: ::napi::Env,
                 address: f64,
                 units: Vec<$crate::layout::UnitSides<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
-            ) -> ::napi::Result<()> {
+            ) -> ::napi::Result<Vec<u32>> {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                 engine.write_built_unit_sides(address, units).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                $crate::napi_engine::settle(&env, engine.written())
+                settled(&env, engine.written())
             }
 
             /// Replace `side` of the built record at `address` with
             /// `entries`, which `renderBuilt` then writes; a built record
-            /// among them renders as `writeTriviaSide` says. Refuses as
-            /// `builtTriviaSide` does.
+            /// among them renders as `writeTriviaSide` says, and each parse
+            /// freed is answered as it says. Refuses as `builtTriviaSide`
+            /// does.
             #[::napi_derive::napi(ts_args_type = "engine: object, address: number, side: string, entries: object[]")]
             pub fn write_built_trivia_side(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
@@ -1276,12 +1412,12 @@ macro_rules! napi_engine {
                 address: f64,
                 side: String,
                 entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
-            ) -> ::napi::Result<()> {
+            ) -> ::napi::Result<Vec<u32>> {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                 let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
                 engine.write_built_trivia_side(address, side, entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                $crate::napi_engine::settle(&env, engine.written())
+                settled(&env, engine.written())
             }
 
             /// The coordinate a read of the live tree `treeId` names the node
@@ -1901,6 +2037,37 @@ pub fn settle<T>(_env: &napi::Env, _store: &crate::trivia_store::TriviaStore<T>)
     Ok(())
 }
 
+/// Takes the parses the built arena `store` holds freed since the last
+/// call, each as the slot it was held in and its tree id.
+#[cfg(feature = "arena")]
+#[must_use]
+pub fn take_freed_parses<T>(store: &crate::trivia_store::TriviaStore<T>) -> Vec<(crate::types::ParseSlot, crate::types::TreeId)> {
+    let freed = store.built_mut().take_freed_parses();
+    freed.into_iter().map(|(slot, parse)| (slot, crate::arena::Held::id(&parse))).collect()
+}
+
+/// Without the arena no parse is held, so none is freed.
+#[cfg(not(feature = "arena"))]
+#[must_use]
+pub fn take_freed_parses<T>(_store: &crate::trivia_store::TriviaStore<T>) -> Vec<(crate::types::ParseSlot, crate::types::TreeId)> {
+    Vec::new()
+}
+
+/// Whether the built arena `store` holds the parse `tree_id` in a slot of
+/// its held-parse table.
+#[cfg(feature = "arena")]
+#[must_use]
+pub fn holds_parse<T>(store: &crate::trivia_store::TriviaStore<T>, tree_id: crate::types::TreeId) -> bool {
+    store.built().held().holds(tree_id)
+}
+
+/// Without the arena no parse is held.
+#[cfg(not(feature = "arena"))]
+#[must_use]
+pub fn holds_parse<T>(_store: &crate::trivia_store::TriviaStore<T>, _tree_id: crate::types::TreeId) -> bool {
+    false
+}
+
 /// Drops `tree`, then settles its store (`settle`) when that freed what a
 /// view into the store's buffers may read: a built record a side of the
 /// tree held (`ParsedTree::release_sides`), or the tree's arena.
@@ -1975,6 +2142,10 @@ pub fn release_built<T>(_env: &napi::Env, _store: &crate::trivia_store::TriviaSt
 struct ArenaSources<'a, 't, G: crate::engine::EngineGrammar, H> {
     grammar: G,
     trees: &'a crate::engine::ReadTrees<'t, G, H>,
+    /// The built arena the render reads, and a store that answers from it:
+    /// an entry of any store sharing it renders from this read, never
+    /// reading the arena again.
+    built: Option<(&'a crate::trivia_store::TriviaStore<G::Trivia>, &'a crate::arena::BuiltChunks)>,
 }
 
 #[cfg(feature = "arena")]
@@ -2054,7 +2225,7 @@ where
         crate::render::SourceTable::read_node(self.trees, tree, index, read)
     }
 
-    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, lent: crate::render::Lent<'_>, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
         use crate::boundary::DecodesKind;
         use crate::render::RenderError;
         if !G::Trivia::decodes(record.kind) {
@@ -2063,9 +2234,12 @@ where
         let store = held
             .downcast_ref::<crate::trivia_store::TriviaStore<G::Trivia>>()
             .ok_or(RenderError::Record(crate::arena::ArenaError::Unwritable("a trivia entry's store is another grammar's")))?;
+        if let Some((_, built)) = self.built.filter(|&(holder, _)| holder.shares_built(store)) {
+            return crate::arena::render_record_entry(self.grammar, built, record, store, self.trees, &crate::prepare::RenderContext { options, sources: self, lent }, w);
+        }
         let built = store.built();
-        let arena = built.readable().map_err(RenderError::Record)?;
-        crate::arena::render_record_entry(self.grammar, arena, record, store, self.trees, &crate::prepare::RenderContext::new(options, self), w)
+        let sources = ArenaSources { grammar: self.grammar, trees: self.trees, built: Some((store, &*built)) };
+        crate::arena::render_record_entry(self.grammar, &built, record, store, self.trees, &crate::prepare::RenderContext { options, sources: &sources, lent }, w)
     }
 }
 
@@ -2081,7 +2255,25 @@ pub fn entry_sources<G: crate::arena::RecordGrammar, H: std::hash::BuildHasher, 
 where
     G::Trivia: crate::boundary::DecodesKind,
 {
-    f(&ArenaSources { grammar, trees })
+    f(&ArenaSources { grammar, trees, built: None })
+}
+
+/// `f` over the table a render of `store`'s built arena renders through,
+/// which reads that arena as `built`: the live `trees`, which render each
+/// trivia entry of a store sharing the arena from `built`, and any other's
+/// from its own store's arena (`ArenaSources`).
+#[cfg(feature = "arena")]
+pub fn entry_sources_holding<G: crate::arena::RecordGrammar, H: std::hash::BuildHasher, R>(
+    grammar: G,
+    trees: &crate::engine::ReadTrees<'_, G, H>,
+    store: &crate::trivia_store::TriviaStore<G::Trivia>,
+    built: &crate::arena::BuiltChunks,
+    f: impl FnOnce(&dyn crate::render::SourceTable) -> R,
+) -> R
+where
+    G::Trivia: crate::boundary::DecodesKind,
+{
+    f(&ArenaSources { grammar, trees, built: Some((store, built)) })
 }
 
 /// `f` over the table a call renders through: the live `trees`; without the

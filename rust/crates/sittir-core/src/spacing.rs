@@ -1359,7 +1359,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     fn render_record_entry(&mut self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any) -> crate::render::RenderResult {
         let unreachable = || crate::render::RenderError::Record(crate::render::NO_ARENA);
         let (sources, options) = (self.sources.ok_or_else(unreachable)?, self.options.ok_or_else(unreachable)?);
-        sources.render_record_entry(record, held, options, self)
+        sources.render_record_entry(record, held, options, self.lent, self)
     }
 
     fn end_lines_after(&mut self, coord: &crate::slot::NodeCoordinate) {

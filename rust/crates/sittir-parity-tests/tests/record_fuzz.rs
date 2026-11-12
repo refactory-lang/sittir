@@ -84,7 +84,7 @@ impl<T: Clone + sittir_core::heap::HeapBytes> Built<T> {
         let mut arena = BuiltChunks::new(G::KIND_BITS, G::shape);
         let store = TriviaStore::new();
         let mut link = |_: &sittir_core::slot::NodeCoordinate| -> Result<Linked, sittir_core::arena::ArenaError> { Err(sittir_core::arena::ArenaError::Unwritable("a coordinate in a snapshot")) };
-        let word = node.write_cell(&mut RecordSink::built(&mut arena, &store, &mut link)).ok()?;
+        let word = node.write_cell(&mut RecordSink::built(&mut arena, &store, &mut link, &[])).ok()?;
         let cell = Cell::decode_built(word, &arena, G::KIND_BITS).ok()?;
         matches!(cell, Cell::Child { .. }).then(|| Self { image: Image::of(&arena), bits: G::KIND_BITS, store, root: CellAt { cell, tree: None, site: None } })
     }

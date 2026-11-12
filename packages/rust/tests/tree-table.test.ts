@@ -1,7 +1,8 @@
 // The live trees of a language are held in one table, owned by the grammar's
 // addon and not by an engine: every engine of the language resolves every
-// tree, a tree outlives the engine that parsed it, and release is a function
-// of the addon.
+// tree, and release is a function of the addon. A tree of object storage
+// outlives the engine that parsed it; an arena engine drops its parses when
+// it is disposed.
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { Worker } from 'node:worker_threads';
@@ -32,6 +33,20 @@ describe('the live tree table of a language', () => {
 		expect(b.read(first, 0)).toBeDefined();
 		native.disposeTree(first);
 		native.disposeTree(second);
+		expect(native.liveTreeCount()).toBe(before);
+	});
+
+	it('drops the trees an arena engine parsed when that engine is disposed, however they are counted', () => {
+		const native = addon();
+		const before = native.liveTreeCount();
+		const { holdParse } = native;
+		if (holdParse === undefined) throw new Error('the addon carries no record codec');
+		const a = new native.SittirEngine({ nodeStorage: 'arena' });
+		const { treeId, slot } = JSON.parse(a.parse('fn held() {}')) as { treeId: number; slot: number };
+		holdParse(a.handle, slot, treeId);
+		a.parse('fn rooted() {}');
+		expect(native.liveTreeCount()).toBe(before + 2);
+		a.dispose();
 		expect(native.liveTreeCount()).toBe(before);
 	});
 
@@ -100,14 +115,15 @@ describe('the native memory the live trees report to V8', () => {
 	}, 60_000);
 });
 
-describe('rendering parts parsed by other engines of the language', () => {
+describe('rendering parts parsed by other engines of the language, in object storage', () => {
 	type Named = { name(): never; $with: { name(value: unknown): never }; $render(): string };
 	const itemOf = (engine: { parse(source: string): { statements(): readonly unknown[] } }, source: string) =>
 		engine.parse(source).statements()[0] as Named;
+	const objects = () => createEngine(rust, { nodeStorage: 'object' });
 
 	it('renders a node built around a part another engine parsed, through either engine', async () => {
-		const a = await createEngine(rust);
-		const b = await createEngine(rust);
+		const a = await objects();
+		const b = await objects();
 		const mixed = a.build.binaryExpression({
 			left: itemOf(b, 'fn f() {}\n').name(),
 			operator: '+',
@@ -118,14 +134,14 @@ describe('rendering parts parsed by other engines of the language', () => {
 	});
 
 	it('renders a parsed node edited to hold a part another engine parsed', async () => {
-		const a = await createEngine(rust);
-		const b = await createEngine(rust);
+		const a = await objects();
+		const b = await objects();
 		const edited = itemOf(a, 'fn g() {}\n').$with.name(itemOf(b, 'fn f() {}\n').name());
 		expect(String(a.render(edited))).toBe('fn f() {}');
 	});
 
 	it('renders parts of several engines in one node', async () => {
-		const [a, b, c] = await Promise.all([createEngine(rust), createEngine(rust), createEngine(rust)]);
+		const [a, b, c] = await Promise.all([objects(), objects(), objects()]);
 		const both = a.build.binaryExpression({
 			left: itemOf(b, 'fn f() {}\n').name(),
 			operator: '+',
@@ -136,8 +152,8 @@ describe('rendering parts parsed by other engines of the language', () => {
 	});
 
 	it('renders a node whose parsing engine is disposed, while its own $render still refuses', async () => {
-		const a = await createEngine(rust);
-		const b = await createEngine(rust);
+		const a = await objects();
+		const b = await objects();
 		const item = itemOf(b, 'fn real() {}');
 		b.dispose();
 		expect(String(a.render(item as never))).toBe('fn real() {}');
