@@ -523,7 +523,7 @@ export async function probe(
 	if (opts.range) {
 		targetNode = findNodeCoveringSpan(tree.root, sourceSpans(source), opts.range);
 		if (!targetNode) throw new Error(`probe-kind: no node covers range ${opts.range.start}–${opts.range.end}`);
-		isRoot = false;
+		isRoot = targetNode.id === tree.root.id;
 	} else if (opts.kind) {
 		targetNode = findFirstByKind(tree.root, opts.kind);
 		if (!targetNode) throw new Error(`probe-kind: no node of kind '${opts.kind}' found`);
@@ -668,7 +668,7 @@ export async function probeTrace(
 	if (opts.range) {
 		targetNode = findNodeCoveringSpan(tree.root, sourceSpans(source), opts.range);
 		if (!targetNode) throw new Error(`probe-kind: no node covers range ${opts.range.start}–${opts.range.end}`);
-		isRoot = false;
+		isRoot = targetNode.id === tree.root.id;
 	} else if (opts.kind) {
 		targetNode = findFirstByKind(tree.root, opts.kind);
 		if (!targetNode) throw new Error(`probe-kind: no node of kind '${opts.kind}' found`);
@@ -884,7 +884,9 @@ function spanOfNode(spans: SourceSpans, node: { readonly startIndex: number; rea
 /** The smallest parser node covering a byte span (see `findNodeCoveringRange`). */
 function findNodeCoveringSpan(root: any, spans: SourceSpans, span: ByteSpan): any | null {
 	const indices = spans.toIndices(span);
-	return findNodeCoveringRange(root, indices.start, indices.end);
+	const covering = findNodeCoveringRange(root, indices.start, indices.end);
+	if (covering !== null) return covering;
+	return indices.start <= root.startIndex && indices.end >= root.endIndex ? root : null;
 }
 
 /**
