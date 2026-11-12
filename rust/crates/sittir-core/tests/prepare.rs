@@ -553,6 +553,30 @@ fn the_roots_edges_are_written_at_both_ends_of_its_render() {
 }
 
 #[test]
+fn a_node_of_the_root_kind_inside_another_meets_its_neighbours_as_any_node() {
+    let group = |nested: bool| {
+        root_render(ROOT_FLAGS, |w| {
+            w.open_frame(None);
+            w.text("(").unwrap();
+            w.seam(LayoutKinds::NEWLINE);
+            if nested {
+                w.open_frame(None);
+            }
+            w.edge(KindId(3), Side::Before, None);
+            w.text("b").unwrap();
+            w.edge(KindId(3), Side::After, None);
+            if nested {
+                w.close_frame();
+            }
+            w.text(")").unwrap();
+            w.close_frame();
+        })
+    };
+    assert_eq!(group(true), "(\nb\n)");
+    assert_eq!(group(false), "(b\n)");
+}
+
+#[test]
 fn a_root_edge_decides_its_gap_and_only_a_terminated_break_floors_it() {
     let replaced = root_render(ROOT_FLAGS, |w| {
         w.text("a").unwrap();

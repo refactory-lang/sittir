@@ -1039,7 +1039,10 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 
     /// The grammar root's edge: the render's own flank at its start or its
     /// end, which decides its gap outright instead of merging with the node
-    /// edges it meets there, and which a later mark never replaces. A seam a
+    /// edges it meets there, and which a later mark never replaces. Only the
+    /// render's outermost node takes it (`edge`, at most one frame open): a
+    /// node of the root kind nested inside another, such as a regex group's
+    /// pattern, meets its neighbours as any edge does. A seam a
     /// lexed token's own pattern spells (`SeamToken::Lexeme`) floors it, a
     /// document's end included: that whitespace lies inside the token's span,
     /// so no gap after the token stands for it. So does a line-terminated
@@ -1292,7 +1295,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let Some(seam) = options.edge_arm(kind, side, stamped, None) else {
             return;
         };
-        if options.kind_has(kind, crate::options::KindFlags::ROOT) {
+        if options.kind_has(kind, crate::options::KindFlags::ROOT) && self.frames.len() <= 1 {
             self.root_edge(side, seam.arm, seam.strength);
         } else {
             self.seam_arm(seam);
