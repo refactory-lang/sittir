@@ -6,7 +6,7 @@ import { concreteKinds, guaranteedBy, modelNode, readsList, type ContainerUnwrap
 import type { PortableBuildTable, PortableCondition } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { hasCatalogEntry, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from '../../kind-discriminant.ts';
-import { exactReadsOf, exactSlotsOf, type ExactSlots } from './exact.ts';
+import { exactReadsOf, exactSlotsOf, type ExactSlots, type ValueRead } from './exact.ts';
 import { emitGrammarMap, grammarMapName, unmappedKindsBlock, unmappedName, type UnformedTest } from './grammar-map.ts';
 
 export interface PortableTypedInput {
@@ -17,6 +17,7 @@ export interface PortableTypedInput {
 	readonly readTest: (entry: ReadEntry) => readonly PortableCondition[];
 	readonly table: PortableBuildTable;
 	readonly presetCarried: ReadonlySet<number>;
+	readonly totalIntegerReads: ReadonlySet<number>;
 	readonly flags: ReadonlyMap<string, readonly string[]>;
 }
 
@@ -134,15 +135,42 @@ const PRELUDE = [
 	'',
 	'function value(this: Held<unknown>): string {',
 	'\treturn textOf(this[low]);',
+	'}',
+	'',
+	'declare function floatOf(node: unknown): number;',
+	'declare function integerOf(node: unknown): number | bigint;',
+	'declare function bigintOf(node: unknown): bigint;',
+	'',
+	'function trueValue(): true {',
+	'\treturn true;',
+	'}',
+	'',
+	'function falseValue(): false {',
+	'\treturn false;',
+	'}',
+	'',
+	'function floatValue(this: Held<unknown>): number {',
+	'\treturn floatOf(this[low]);',
+	'}',
+	'',
+	'function integerValue(this: Held<unknown>): number | bigint {',
+	'\treturn integerOf(this[low]);',
+	'}',
+	'',
+	'function bigintValue(this: Held<unknown>): bigint {',
+	'\treturn bigintOf(this[low]);',
 	'}'
 ];
+
+const VALUE_READERS: Readonly<Record<ValueRead, string>> = { text: 'value', true: 'trueValue', false: 'falseValue', float: 'floatValue', integer: 'integerValue', bigint: 'bigintValue' };
 
 export function emitPortableTyped(typedInput: PortableTypedInput): PortableTypedOutput {
 	const { routes, input, nodeMap, kindEntries } = typedInput;
 	const { model, vocabulary } = input;
 	const reads = exactReadsOf(typedInput);
 	const exact = exactSlotsOf(typedInput, reads);
-	const { entries, readPathsOf, entriesFor, token, textual, claimersOf, viewed, varies, viewClassOf } = reads;
+	const { entries, readPathsOf, entriesFor, token, textual, claimersOf, viewed, valueOf, viewClassOf } = reads;
+	const leafAt = (path: string): boolean => (claimersOf.get(path) ?? []).every((kind) => valueOf(path, kind) === 'text');
 	const tokenTypeOf = reads.textTypeOf;
 	const map = grammarMapName(input.grammar);
 	const unemitted: PortableTypedUnemitted[] = [];
@@ -221,8 +249,7 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 
 	emit('export interface VocabViews {');
 	for (const path of viewed) {
-		const leaf = (claimersOf.get(path) ?? []).every(varies);
-		emit(`\t${q(path)}: ViewForm<${interfaceOf(path)}>${leaf ? ' & PortableLeaf' : ''};`);
+		emit(`\t${q(path)}: ViewForm<${interfaceOf(path)}>${leafAt(path) ? ' & PortableLeaf' : ''};`);
 	}
 	emit('}', '');
 
@@ -392,7 +419,8 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 				written.add(member);
 			}
 			for (const [member, facts] of declared) if (!facts.flag && facts.optional && !written.has(member)) fields.push(`${member}: none`);
-			if (varies(kind) && (claimersOf.get(entry.vocab) ?? []).every(varies)) fields.push('$value: value');
+			const value = valueOf(entry.vocab, kind);
+			if (value !== undefined && (value !== 'text' || leafAt(entry.vocab))) fields.push(`$value: ${VALUE_READERS[value]}`);
 			emit(
 				`function ${name}(n: ${held}, set = 0): VocabViews[${q(entry.vocab)}] {`,
 				`\treturn { $type: kindOf(n)${fields.map((f) => `, ${f}`).join('')}, [low]: n, [flags]: set };`,

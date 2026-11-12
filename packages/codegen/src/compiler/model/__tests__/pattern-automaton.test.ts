@@ -5,7 +5,7 @@ import { allGrammars, grammarPackage, sittirDirOf } from '../../../grammars.ts';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { anchoredLeafRegex } from '../leaf-pattern.ts';
-import { admitsInside, armsThrough, CharSet, dfaAccepts, endsWithLineBreak, includesNonEmpty, leadingChars, lineBreaksOf, opensLineEnd, patternDfa, requiresNonSpace, shortestAccepted, type PatternDfa } from '../pattern-automaton.ts';
+import { acceptsSomeEndingWith, acceptsSomeStartingWith, admitsInside, armsThrough, CharSet, dfaAccepts, endsWithLineBreak, includesNonEmpty, leadingChars, lineBreaksOf, opensLineEnd, patternDfa, requiresNonSpace, shortestAccepted, type PatternDfa } from '../pattern-automaton.ts';
 import { lineTerminated, lineTerminatedKinds, triviaKinds } from '../trivia.ts';
 
 type NodeMap = Awaited<ReturnType<typeof compileGrammar>>['nodeMap'];
@@ -243,5 +243,27 @@ describe('includesNonEmpty', () => {
 		expect(includesNonEmpty(dfa('(?:\\\\[\\s\\S])*'), dfa('\\\\[nt]'))).toBe(false);
 		expect(includesNonEmpty(dfa('a[bc]'), dfa('ab'))).toBe(false);
 		expect(includesNonEmpty(dfa('ab*c'), dfa('ab{0,3}c'))).toBe(false);
+	});
+});
+
+describe('acceptsSomeStartingWith and acceptsSomeEndingWith', () => {
+	const dfa = (pattern: string) => patternDfa(pattern)!;
+
+	it('finds an accepted text that begins or ends with the given text', () => {
+		expect(acceptsSomeStartingWith(dfa('[0-9a-f]+'), 'f')).toBe(true);
+		expect(acceptsSomeStartingWith(dfa('[0-9a-f]+'), '0x')).toBe(false);
+		expect(acceptsSomeEndingWith(dfa('[0-9a-f]+'), 'f')).toBe(true);
+		expect(acceptsSomeEndingWith(dfa('(?:[0-9]+_?)+'), 'L')).toBe(false);
+	});
+
+	it('counts the text itself as an accepted text that begins and ends with it', () => {
+		expect(acceptsSomeStartingWith(dfa('ab'), 'ab')).toBe(true);
+		expect(acceptsSomeEndingWith(dfa('ab'), 'ab')).toBe(true);
+		expect(acceptsSomeStartingWith(dfa('ab'), 'abc')).toBe(false);
+	});
+
+	it('finds the text anywhere a run of the pattern can stop', () => {
+		expect(acceptsSomeEndingWith(dfa('a(?:b|cL)'), 'L')).toBe(true);
+		expect(acceptsSomeEndingWith(dfa('a(?:b|cL)c'), 'L')).toBe(false);
 	});
 });

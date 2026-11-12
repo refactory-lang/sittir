@@ -64,9 +64,10 @@ export namespace Literal {
 				readonly content: Slot<G, K, 'content', unknown>;
 			}
 		}
-		export interface Negative<G extends GrammarMap, K extends Under<'literal.number.negative'> = 'literal.number.negative'> extends SubKindOf<V.Literal.Number<G, K>> {
+		export interface Negative<G extends GrammarMap, K extends Under<'literal.number.negative'> = 'literal.number.negative'> extends SubKindOf<V.Literal.Number<G, K>, '$value'> {
 			// claimed by prt
 			readonly $path: K;
+			readonly $value?: never;
 			readonly value: Slot<
 				G,
 				K,
