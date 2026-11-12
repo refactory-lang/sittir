@@ -380,4 +380,30 @@ describe.each(['object', 'arena'] as const)('a root built for a create or a rend
 		rendered[Symbol.dispose]();
 		expectReleased(engine, kept);
 	});
+
+	it.each(['create', 'render'] as const)('a %s whose build callback throws releases what the callback built, and only that', async (verb) => {
+		const engine = await engineOf();
+		const live = (): number => engine.diagnostics.builtMemory?.()?.live ?? 0;
+		const outer = engine.build.expressionStatement.withSemi(engine.build.identifier('a'));
+		const held = live();
+		const failing = (build: BuildSurface<RustAPI, 'default'>): never => {
+			build.sourceFile({ statements: [outer] } as never);
+			build.identifier('stray');
+			throw new Error('callback failed');
+		};
+		for (let round = 0; round < 3; round++)
+			expect(() => (verb === 'create' ? engine.create(join(directory, 'a.rs'), failing) : engine.render(failing))).toThrow('callback failed');
+		expect(live()).toBe(held);
+		expect(engine.render(outer).toString()).toBe('a;');
+		expect(existsSync(join(directory, 'a.rs'))).toBe(false);
+	});
+
+	it.skipIf(nodeStorage === 'object')('a build callback is a build, so engine.scope() opens before it, not inside it', async () => {
+		const engine = await engineOf();
+		expect(() => engine.render(() => engine.scope() as never)).toThrow(/open the scope before the build/);
+		using scope = engine.scope();
+		const rendered = engine.render((build) => scope.keep(builtRoot(engine, build)));
+		expect(rendered.toString()).toBe('fn a() {}\n');
+		rendered[Symbol.dispose]();
+	});
 });
