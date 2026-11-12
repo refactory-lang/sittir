@@ -48,7 +48,7 @@ The maintainer settled tree lifetime on 2026-11-10 and 2026-11-12. A proposal st
 - **"Cross node reuse is not unique to the parsed nodes."** A built node linking a parsed node is the same relation as a built node linking a built node, or a side entry naming a record from elsewhere. One node-level mechanism covers every case, and it is node work, not this design's.
 - **Node memory is out of scope:** "We don't need to free our nodes - we just need to get rid of the tree." For when nodes come up, the recorded direction is that released node buffers are reused and memory returns at the engine's dispose.
 - **A link to another engine's nodes is refused** in arena storage, as a cross-engine side entry is.
-- **A snapshot is canonical** (2026-11-12: "Canonical: renders ur\"a\""). A detached snapshot holds a spelled slot's canonical member and no source spelling, so a snapshot of python `UR"a"` renders `ur"a"`. Both storages read the canonical member, per the 2026-11-09 ruling that spelling is its own channel, so object storage's read of a spelled slot follows it too.
+- **A snapshot is canonical** (2026-11-12: "Canonical: renders `ur"a"`"). A detached snapshot holds a spelled slot's canonical member and no source spelling, so a snapshot of python `UR"a"` renders `ur"a"`. Both storages read the canonical member, per the 2026-11-09 ruling that spelling is its own channel, so object storage's read of a spelled slot follows it too.
 
 ## What lives after an arena parse call
 
