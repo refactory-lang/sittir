@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { sharedEngine } from '@sittir/common/testing';
 import { editedRender } from '../../common/tests/support/edited-render.ts';
 import python from '../src/index.ts';
 
 const engines = {
-	arena: await createEngine(python, { nodeStorage: 'arena' }),
-	object: await createEngine(python, { nodeStorage: 'object' })
+	arena: await sharedEngine(() => createEngine(python, { nodeStorage: 'arena' })),
+	object: await sharedEngine(() => createEngine(python, { nodeStorage: 'object' }))
 };
 
 describe.each(Object.keys(engines) as (keyof typeof engines)[])('a block edged by zero-width indent, dedent and newline tokens renders on source when the code around it is edited (%s storage)', (storage) => {
