@@ -177,7 +177,7 @@
 - [x] **Step 4: Run the three-way verification** in both storages, then a byte-identical render over all of matter.js and next.js in arena storage, through the validators' corpus mode.
 - [x] **Step 5: Commit:** `feat(arena): render, queries and edits read records, not the tree`.
 
-**Follow-up, the lent arena's second read:** `render_built_with` holds the built store's read for the whole render, and `ArenaSources::render_record_entry` takes that read again on the same thread, which deadlocks once a writer queues between the two. One JS thread never queues one, so it can't fail today. The fix is ported in place in `napi_engine`, on its own PR, with no failing test first and no new items (the maintainer, 2026-11-12: "Port without a test"). The code is napi-only and can't be tested where it sits.
+**Follow-up, the lent arena's second read:** `render_built_with` holds the built store's read for the whole render, and `ArenaSources::render_record_entry` takes that read again on the same thread, which deadlocks once a writer queues between the two. One JS thread never queues one, so it can't fail today. The fix is ported in place in `napi_engine`, inside Task 6's PR (the maintainer, 2026-11-12: "Fold into Task 6's PR"; until Task 6 an arena render still reads a linked node's source through the live-tree table, so the tree-free signature isn't possible sooner), with no failing test first (the maintainer, 2026-11-12: "Port without a test"). It adds one internal pub function, `sittir_core::napi_engine::entry_sources_holding`, because the render expands inside each grammar crate and must hand core the arena it already holds. That function takes no tree (the maintainer, 2026-11-12: "Yes but it can't reference the tree"). The code is napi-only and can't be tested where it sits.
 
 ### Task 5b: Leaf, ERROR and unit reads take no tree
 
@@ -256,6 +256,7 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 **Files:**
 - Modify: `napi_engine.rs` and `engine.rs`. In arena storage, `parse` hydrates the whole tree in the same call, then drops the `tree_sitter::Tree`, the placement scratch and the read caches before it returns. Only the nodes and the source text remain.
 - Modify: `arena/built_image.rs`. The LINK record names a node, not a tree, and stays 8 words.
+- Modify: `napi_engine.rs`, the lent arena's second read (see Task 5's follow-up and the spec's Tree lifetime section). `render_built_with` hands the arena it holds to `entry_sources_holding`, so `ArenaSources::render_record_entry` doesn't take `store.built()` again. `TriviaStore::shares_built` is `pub(crate)`. No failing test first, on the maintainer's word.
 - Remove the branches Task 5 keeps for trees read part-way: `edited_record`'s coordinate branch and the baseline measured through the tree. Every arena tree is now read whole at parse.
 - Modify: `packages/common/src/{read,record-view,handle,engine,create-engine,built-arena}.ts`. An arena root holds no `Tree` object and no reference to a tree. The arena's `#trees` and its `holdTree` calls go.
 - Modify: `packages/tools/src/validate/layout-runs.ts` and `packages/tools/src/profile/native-hydration.ts`, which release their roots.
@@ -264,6 +265,7 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 **Interfaces:**
 - Consumes: Tasks 5, 5b and 5c. Arena parses leave the live-tree table here.
 - Produces: the census below, as the PR body's first table. Its placement of each field fixes the names later tasks use.
+- Produces: `sittir_core::napi_engine::entry_sources_holding(grammar, store, built, f) -> R`, arena only, internal pub, taking no tree (API row approved by the maintainer, 2026-11-12).
 
 - [ ] **Step 1: The census, before code.** List every field of `ParsedTree` (`engine.rs`) and `TreeArena` (`arena/rows.rs`). Place each in one bin: node data; source text; recomputed from those on demand (with its cost and its readers); or dropped inside the read call. A field that isn't per-tree moves to the engine (grammar, the built-arena `store`) or to the call (the work counters, per Task 10). Say what lazy trivia placement reads after the call. A field that fits none of these goes to brainstorm, which takes it to the maintainer, before any code is written.
 - [ ] **Step 2: Failing tests:**
