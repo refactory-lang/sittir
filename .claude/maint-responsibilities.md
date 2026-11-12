@@ -38,6 +38,7 @@ Bookkeeping edits are docs commits to master: pathspec commits, pushed by litera
 - Fast-forward the main checkout to `origin/master`, only if it's clean.
 - Tell the owners of open branches that overlap the merged files to merge master. Don't nudge during a gate.
 - **Worktree teardown:** the owner removes its own tree. Maint verifies, then runs `git worktree prune` and `infigraph worktree clean`, first as a preview and then with `--apply`, only for trees confirmed finished and with no live process (`lsof +D`). Never touch another peer's tree without its word.
+- `infigraph worktree clean` takes no tree argument, and it lists a clean tree checked out at a commit another ref contains as finished, which is also how a peer's base measurement looks. Run `--apply` only when the dry run lists nothing but trees whose owners said yes.
 
 ## 4. Resources and peer health
 
