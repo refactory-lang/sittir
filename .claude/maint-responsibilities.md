@@ -23,6 +23,12 @@ Bookkeeping edits are docs commits to master: pathspec commits, pushed by litera
 - **Merging,** on the maintainer's word only, given directly or relayed by brainstorm:
   - pin the head (`gh pr merge N --merge --match-head-commit <sha>`), no `--delete-branch`, and keep the remote branch;
   - re-verify first: head unchanged, MERGEABLE, required checks green, 0 open threads, and the task status line (section 1).
+- **A provable flake doesn't block a merge the maintainer approved** ("If something is provably a flake we can merge it", 2026-11-12). The proof needs all three:
+  1. the failing test passes at the same head, in another leg of the same run or in a re-run;
+  2. it failed by timeout or a runner fault, not by an assertion or a wrong value;
+  3. the PR's diff doesn't touch the test's file.
+
+  Post the proof as a PR comment (test name, both job links, the error line), then merge pinned. Use `--admin` only when branch protection refuses the red check. Report it to brainstorm. Anything short of all three is red, and it goes to the Owner line.
 - **Master's health:** master's CI, including push-only checks such as the glossary key ratchet. Report red to the owner of that check (docs for the glossary ratchet) and to brainstorm.
 
 ## 3. After each merge
