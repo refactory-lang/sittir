@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
+import type { NativeModuleLike } from './engine.ts';
 
 /** Where a grammar package's native binaries are found, and how they are named. */
 export interface NativeBindingSpec {
@@ -119,12 +120,12 @@ export function engineStampOf(image: string): string {
 	return [...stamps][0]!;
 }
 
-export function recordLoadedEngine(native: { engineStamp?(): { stamp: string; path?: string | null } }): void {
+export function recordLoadedEngine(native: Partial<Pick<NativeModuleLike, 'engineStamp'>>): void {
 	const registry = globalThis as Record<symbol, unknown>;
 	if (registry[LOADED_ENGINE] !== undefined || typeof native.engineStamp !== 'function') return;
 	try {
 		const { stamp, path } = native.engineStamp();
-		registry[LOADED_ENGINE] = Object.freeze(path === undefined || path === null ? { stamp } : { stamp, path });
+		registry[LOADED_ENGINE] = Object.freeze(path === undefined ? { stamp } : { stamp, path });
 	} catch {
 		return;
 	}

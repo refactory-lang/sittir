@@ -422,7 +422,7 @@ export type NativeModuleLike<TNode = unknown, TEngine extends NativeEngineInstan
 	/** What this language's live trees hold natively and what their reports have told V8, in bytes. Diagnostics only. */
 	treeMemory(): { readonly trees: number; readonly counted: number; readonly reported: number };
 	/** The engine image this process mapped: its stamp and the file it was loaded from. Diagnostics only. */
-	engineStamp(): { readonly stamp: string; readonly path?: string | null };
+	engineStamp(): { readonly stamp: string; readonly path?: string };
 } & Pick<NativeEngineLike<TNode>, TreeFunction> & { readonly [F in EngineFunction]?: OnHandle<NonNullable<NativeEngineLike<TNode>[F]>> };
 
 /**
