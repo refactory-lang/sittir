@@ -21,6 +21,7 @@ import type {
 	HoldsTrivia,
 	HoldsTree,
 	HoldsSource,
+	SavesFile,
 	TriviaSetter,
 	GrammarInnerTrivia,
 	SlotHint,
@@ -19749,11 +19750,12 @@ export type LooseArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseA
 // <TypeName>.Config / .Bound / .Parsed / .Loose alongside using <TypeName> as a type.
 export namespace SourceFile {
 	export type Config = ConfigFor<TSKindId.SourceFile>;
-	export interface Bound extends BoundOf<T.SourceFile, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.SourceFile, BoundByKindId>, NodeMethodsOf, HoldsSource, SavesFile {
 		readonly $type: T.SourceFile['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.SourceFile, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed
+		extends ParsedOf<T.SourceFile, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree, SavesFile {
 		readonly $type: T.SourceFile['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<

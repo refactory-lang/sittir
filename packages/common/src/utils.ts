@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, Pending, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
 import { carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
 import { Source } from './source.ts';
@@ -29,6 +29,7 @@ export type { ErrorNode };
 type Scoped = <R>(fn: () => R) => R;
 
 const NO_ENGINE = 'node has no engine; render it with engine.render(node)';
+const NO_SAVE_ENGINE = 'node has no engine; write it with engine.write(path, node)';
 
 /**
  * The items a list setter was called with.
@@ -78,6 +79,12 @@ export function handleRender(this: Positioned): string {
 	return renderText(handleOf(this), this);
 }
 
+export function handleSave(this: object, path: string): Pending {
+	const engine = engineOf(this);
+	if (engine === undefined) throw new Error(NO_SAVE_ENGINE);
+	if (!isLive(engine)) throw new Error('engine disposed; write it through a live engine');
+	return engine.write(path, this as AnyUntypedNode);
+}
 export function handleToString(this: { $render(): string }): string {
 	return this.$render();
 }

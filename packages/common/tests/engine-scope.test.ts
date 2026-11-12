@@ -23,6 +23,9 @@ function handleOf(label: string): EngineHandle {
 		render: () => Object.assign(() => label, { toString: () => label }) as never,
 		query: () => {
 			throw new Error('type-only');
+		},
+		write: () => {
+			throw new Error('type-only');
 		}
 	};
 	return { current: live, settle: (node) => node, admit: () => undefined };
