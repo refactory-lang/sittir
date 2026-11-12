@@ -1,4 +1,4 @@
-import { type BindingPattern, bindingPatterns } from '@sittir/codegen/bindings';
+import { type BindingPattern, BindingsSyntaxError, bindingPatterns } from '@sittir/codegen/bindings';
 import { grammarPackage } from '@sittir/codegen/grammars';
 import type { Language } from 'web-tree-sitter';
 import { evaluateGrammar, load } from '../codegen-surface.ts';
@@ -69,7 +69,14 @@ export async function bindingIssues(grammar: string, text: string): Promise<Bind
 	const minted = await mintedFrom(grammar);
 	const { Query } = await import('web-tree-sitter');
 	const issues: BindingIssue[] = [];
-	for (const pattern of await bindingPatterns(text)) {
+	let patterns: BindingPattern[];
+	try {
+		patterns = await bindingPatterns(text);
+	} catch (e) {
+		if (e instanceof BindingsSyntaxError) return e.lines.map((line) => ({ line, message: 'does not parse' }));
+		throw e;
+	}
+	for (const pattern of patterns) {
 		const unknown = new Set<string>();
 		for (const ref of pattern.references) {
 			const { kind } = ref;
