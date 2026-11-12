@@ -590,7 +590,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 			else setPlaced(owner, placed.key ?? key, placed, path);
 			return placed.delimited === true;
 		};
-		const spelledParts = (spelling: string, parts: PortableDecimalParts, arm: PortableBuildArm): ReadonlyMap<string, string> | undefined => {
+		const spelledParts = (spelling: string, parts: PortableDecimalParts): ReadonlyMap<string, string> | undefined => {
 			const [, integer, fraction, sign, exponent] = /^(\d+)(?:\.(\d+))?(?:e([+-])(\d+))?$/.exec(spelling) ?? [];
 			if (integer === undefined) return undefined;
 			const out = new Map<string, string>();
@@ -598,21 +598,30 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 			else if (integer !== '0') return undefined;
 			if (parts.fraction !== undefined) out.set(parts.fraction, fraction ?? '0');
 			else if (fraction !== undefined) return undefined;
-			const required = parts.exponent !== undefined && (arm.numericRequired ?? []).includes(parts.exponent);
-			const written = exponent ?? (required ? '0' : undefined);
-			if (written === undefined) return out;
+			if (exponent === undefined) return out;
 			if (parts.exponent === undefined) return undefined;
-			out.set(parts.exponent, written);
+			out.set(parts.exponent, exponent);
 			if (parts.marker !== undefined) out.set(parts.marker, 'e');
 			if (sign !== '-') return out;
 			if (parts.exponentSign === undefined) return undefined;
 			out.set(parts.exponentSign, '-');
 			return out;
 		};
+		const integerMantissa = (value: number | bigint): string | undefined => {
+			const [, whole, fraction = '', exponent = '0'] = /^(\d+)(?:\.(\d+))?(?:e([+-]\d+))?$/.exec(typeof value === 'number' ? value.toExponential() : String(value)) ?? [];
+			if (whole === undefined) return undefined;
+			const digits = `${whole}${fraction}`;
+			const significant = digits.replace(/0+$/, '') || '0';
+			const power = Number(exponent) - fraction.length + digits.length - significant.length;
+			return `${significant}e${power < 0 ? '-' : '+'}${Math.abs(power)}`;
+		};
 		const decimalParts = (value: number | bigint, parts: PortableDecimalParts, arm: PortableBuildArm, path: string): ReadonlyMap<string, string> => {
-			const spellings = [String(value), ...(typeof value === 'number' && parts.exponent !== undefined ? [value.toExponential()] : [])];
+			const scientific = parts.exponent !== undefined && (arm.numericRequired ?? []).includes(parts.exponent);
+			const spellings = scientific
+				? [integerMantissa(value)]
+				: [String(value), ...(typeof value === 'number' && parts.exponent !== undefined ? [value.toExponential()] : [])];
 			for (const spelling of spellings) {
-				const out = spelledParts(spelling, parts, arm);
+				const out = spelling === undefined ? undefined : spelledParts(spelling, parts);
 				if (out !== undefined) return out;
 			}
 			throw new Error(`portable build: ${path} builds a ${nameOf(arm.kind)} in ${language}, which cannot spell ${spelledValue(value)}`);
