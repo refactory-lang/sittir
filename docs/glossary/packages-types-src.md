@@ -346,10 +346,6 @@ A builder's own public overloads are generic, and a generic parameter gives no c
 
 The marker a vocabulary interface declares a yes/no fact with: `readonly static?: Flag`. `Flag` is a unique symbol, so no value satisfies the marker and a structure can only leave it out. A flag is a name carried in the node's `$flags`, tested by `is` and set by a builder step or a structure's `$flags`, never a member. A `boolean` member is data, as a python complex pattern's `sign` is. The inventory reads the marker, and the generator emits its guard and step.
 
-### `packages/common/src/portable/flags.ts::Flags`
-
-The flags' bits, one per flag name the vocabulary declares, in name order: `Flags.Static | Flags.Async` combines two flags and `&` tests one, as a native bitflag does. The bindings inventory writes the module from the `Flag` declarations (`bindings-inventory --write`) and `--check` holds it to them, so it is never edited. It is the vocabulary's one run-time value; an `enum` is not erasable syntax, which the vocabulary may use because nothing the grammar executes imports it.
-
 ### `packages/types/src/keyword-presence.ts::BooleanKeyword`
 
 The brand on a keyword-presence slot's boolean storage, carrying the keyword's text. It lives in its own module so the query types read it (`IsBooleanKeyword`) without importing the package index.
@@ -889,10 +885,6 @@ The `Case` clause kind of the attributes feature.
 ### `packages/types/src/vocabulary/features/complex-numbers/pattern.ts::Pattern::Complex`
 
 The complex-number pattern kind.
-
-### `packages/common/src/portable/flags.ts::Flags::Prefix`
-
-The prefix flag bit (`1 << 19`).
 
 ### `packages/types/src/vocabulary/identifier.ts::Identifier::Qualified`
 
