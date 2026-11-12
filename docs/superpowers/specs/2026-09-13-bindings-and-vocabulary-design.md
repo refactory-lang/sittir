@@ -2,6 +2,12 @@
 
 **Status:** Design spec. Supersedes the earlier "Role Interfaces & `roles.scm`" design.
 
+## Decided by the maintainer
+
+The maintainer's rulings this spec carries, quoted. A proposal starts from them and doesn't reopen them. The section named after each gives the detail.
+
+- **"Retire the bit word (Recommended)"** (2026-11-10). A node's flags are a set of names, typed per path. There's no bit word and no `Flags` enum, so the vocabulary has no cap on how many flags it declares. With no cap, two presence facts written as `boolean` data become flags: `pattern.complex.sign` and `declaration.parameter.receiver.reference`. See §3.3, §5 and §9, and the binding-generator spec §2.
+
 ## 1. Two APIs, and the map between them
 
 sittir has two construction surfaces. The low-level surface is shaped by each grammar. The portable surface is shaped by the vocabulary, which is the same for every language. The bindings say how one grammar realizes the vocabulary, and the generator turns them into **the map**: the only artifact the bindings produce.
