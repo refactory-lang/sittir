@@ -338,9 +338,9 @@ export interface NativeEngineLike<TNode = unknown> {
 		depth?: number | null
 	): string;
 	planHolds(addresses: string, plan: string): boolean[];
-	render(node: TNode, treeId?: number, options?: object): string;
+	render(node: WireNode, treeId?: number, options?: object): string;
 	/** {@link render}'s text written to `path`: a new file when `create`, refusing a file at the path, and otherwise a replacement that leaves a file already holding the text untouched. Answers whether it wrote. */
-	renderToFile(node: TNode, path: string, create: boolean, treeId?: number, options?: object): boolean;
+	renderToFile(node: WireNode, path: string, create: boolean, treeId?: number, options?: object): boolean;
 	/** `text` written to `path` as {@link renderToFile} writes a render's text, answering whether it wrote. */
 	writeText(path: string, text: string, create: boolean): boolean;
 	/** The profile build-native built the binary with; `undefined` for a binary build-native didn't build. */
@@ -785,7 +785,7 @@ export function createNativeEngine<
 					writeText
 				);
 			}
-			const data = (typeof node === 'number' ? node : toNodeData(node, kindView)) as TNode;
+			const data = typeof node === 'number' ? node : toNodeData(node, kindView);
 			const treeId = typeof node === 'number' ? undefined : renderTreeOf(node);
 			return createRenderHandle(
 				() => {

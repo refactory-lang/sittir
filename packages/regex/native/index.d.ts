@@ -525,7 +525,7 @@ export declare function releaseBuilt(engine: object, address: number, held: numb
  * engine's. `treeId` is the tree the node was read from; a built
  * node belongs to no tree and renders by the engine's options.
  */
-export declare function render(engine: object, node: object, treeId?: number | undefined | null, options?: object | undefined | null): string
+export declare function render(engine: object, node: import('@sittir/types').WireNode, treeId?: number | undefined | null, options?: object | undefined | null): string
 
 /**
  * r" The built record at `address` of the built arena `owner`
@@ -592,7 +592,7 @@ export declare function renderRecordToFile(engine: object, treeId: number, addre
  * whether it wrote: `create` refuses a file at the path, and
  * otherwise a file already holding the text is left untouched.
  */
-export declare function renderToFile(engine: object, node: object, path: string, create: boolean, treeId?: number | undefined | null, options?: object | undefined | null): boolean
+export declare function renderToFile(engine: object, node: import('@sittir/types').WireNode, path: string, create: boolean, treeId?: number | undefined | null, options?: object | undefined | null): boolean
 
 /**
  * The separator before the node at `index` of the live tree

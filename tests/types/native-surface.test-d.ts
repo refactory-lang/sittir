@@ -12,22 +12,28 @@ import type * as Scm from '../../packages/scm/native/index.js';
 import type * as TypeScript from '../../packages/typescript/native/index.js';
 
 type Declared = NativeModuleLike<object>;
-type Exact<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false;
-type Unbranded<R> = R extends readonly (infer E)[]
-	? UnbrandedItem<E>[]
-	: [R] extends [ReadOutput]
-		? object
-		: Exact<R, ChunkWords> extends true
-			? Uint32Array
-			: R extends { readonly side: TriviaSideName }
-				? { readonly [K in keyof R]: K extends 'side' ? string : R[K] }
-				: R;
-type UnbrandedItem<E> = E extends ReadOutput ? object : E extends UnitSidesWire<ReadOutput> ? UnitSidesWire : Unbranded<E>;
+type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
+type Wire<R> = R extends readonly (infer E)[]
+	? readonly Wire<E>[]
+	: R extends number
+		? number
+		: [R] extends [ReadOutput]
+			? object
+			: Equal<R, ChunkWords> extends true
+				? Uint32Array
+				: R extends ArrayBufferView
+					? R
+					: object extends R
+						? R
+						: R extends object
+							? { -readonly [K in keyof R]: K extends 'side' ? (R[K] extends TriviaSideName ? string : Wire<R[K]>) : Wire<R[K]> }
+							: R;
+type Same<A, B> = Equal<Wire<A>, Wire<B>>;
 type Taking<F> = F extends (...args: infer A) => unknown ? (...args: A) => unknown : F;
 type ReadonlyArg<T> = T extends (infer E)[] ? readonly E[] : T;
 type Accepting<F> = F extends (...args: infer A) => unknown ? (...args: { [I in keyof A]: ReadonlyArg<A[I]> }) => unknown : F;
 type Admits<Generated, Declaration> = Accepting<Generated> extends Taking<Declaration> ? true : false;
-type ReturnsExactly<Generated, Declaration> = Exact<Ret<Generated>, Unbranded<Ret<Declaration>>>;
+type ReturnsExactly<Generated, Declaration> = Same<Ret<Generated>, Ret<Declaration>>;
 type Member<M> = keyof Declared & keyof M;
 type Arity<F> = F extends (...args: infer A) => unknown ? A['length'] : never;
 
@@ -40,28 +46,49 @@ type Drift<M> = {
 };
 type NoDrift = { readonly missing: never; readonly parameters: never; readonly returns: never; readonly arity: never; readonly engine: never };
 
-type Sided<T> = { readonly [K in keyof T]: K extends 'side' ? TriviaSideName : T[K] };
 type Ret<F> = F extends (...args: never) => infer R ? R : never;
+type NodeOf<F> = F extends (...args: infer A) => unknown ? A[1] : never;
+type ItemOf<T> = T extends readonly (infer E)[] ? E : never;
 type SpanOf<F> = F extends (treeId: never, span: infer S) => unknown ? S : never;
 type ProfileOf<C> = C extends abstract new (...args: never) => { readonly buildProfile: infer P } ? P : never;
-type Shaped = Record<'SittirEngine' | 'readMany' | 'layoutWork' | 'layoutBaseline' | 'storedLayout' | 'backerParity' | 'treeMemory' | 'engineStamp' | 'builtWords' | 'builtBytes' | 'builtMemory' | 'text', unknown>;
+type Renders<Read, Render, RenderToFile> = [Read] extends [NodeOf<Render> & NodeOf<RenderToFile>] ? true : false;
+type Shaped = Record<
+	| 'SittirEngine'
+	| 'read'
+	| 'snapshot'
+	| 'readMany'
+	| 'render'
+	| 'renderToFile'
+	| 'layoutWork'
+	| 'layoutBaseline'
+	| 'storedLayout'
+	| 'backerParity'
+	| 'treeMemory'
+	| 'engineStamp'
+	| 'builtWords'
+	| 'builtBytes'
+	| 'builtMemory'
+	| 'text',
+	unknown
+>;
 type Shapes<M extends Shaped> = {
-	readonly layoutWork: Readonly<Ret<M['layoutWork']>>;
-	readonly baselineRun: Sided<Ret<M['layoutBaseline']> extends readonly (infer E)[] ? E : never>;
-	readonly storedLayout: Readonly<Ret<M['storedLayout']>>;
-	readonly backerParity: Readonly<Ret<M['backerParity']>>;
-	readonly treeMemory: Readonly<Ret<M['treeMemory']>>;
-	readonly engineStamp: Readonly<Ret<M['engineStamp']>>;
+	readonly layoutWork: Ret<M['layoutWork']>;
+	readonly baselineRuns: Ret<M['layoutBaseline']>;
+	readonly storedLayout: Ret<M['storedLayout']>;
+	readonly backerParity: Ret<M['backerParity']>;
+	readonly treeMemory: Ret<M['treeMemory']>;
+	readonly engineStamp: Ret<M['engineStamp']>;
 	readonly builtWords: Ret<M['builtWords']>;
 	readonly builtBytes: Ret<M['builtBytes']>;
 	readonly builtMemory: Ret<M['builtMemory']>;
-	readonly span: Readonly<SpanOf<M['text']>>;
+	readonly span: SpanOf<M['text']>;
 	readonly buildProfile: ProfileOf<M['SittirEngine']>;
 	readonly readMany: Ret<M['readMany']>;
+	readonly readsRender: Renders<Ret<M['read']> | Ret<M['snapshot']> | ItemOf<Ret<M['readMany']>>, M['render'], M['renderToFile']>;
 };
 type DeclaredShapes = {
 	readonly layoutWork: LayoutWork;
-	readonly baselineRun: BaselineRun;
+	readonly baselineRuns: readonly BaselineRun[];
 	readonly storedLayout: StoredLayout;
 	readonly backerParity: BackerParity;
 	readonly treeMemory: ReturnType<Declared['treeMemory']>;
@@ -72,16 +99,10 @@ type DeclaredShapes = {
 	readonly span: ByteSpan;
 	readonly buildProfile: EngineDiagnostics['buildProfile'];
 	readonly readMany: WireNode[] | Uint32Array;
+	readonly readsRender: true;
 };
-type Wire = 'read' | 'snapshot' | 'triviaSide' | 'unitSides' | 'slotLayouts' | 'builtTriviaSide' | 'builtLeafSide' | 'builtUnitSides';
-type DeclaredWire = { readonly [K in Wire]: Unbranded<Ret<Declared[K]>> };
-type ObjectOnlyUnit = Omit<UnitSidesWire, keyof NodeTrivia> & TriviaSides<object>;
-
-expectTypeOf<Admits<(profile: 'release') => void, (profile: string) => void>>().toEqualTypeOf<false>();
-expectTypeOf<ReturnsExactly<() => object, () => WireNode>>().toEqualTypeOf<false>();
-expectTypeOf<ReturnsExactly<() => ObjectOnlyUnit[], () => UnitSidesWire[]>>().toEqualTypeOf<false>();
-
-expectTypeOf<DeclaredWire>().toEqualTypeOf<{
+type Misshaped<M extends Shaped> = { [K in keyof DeclaredShapes]-?: Same<Shapes<M>[K], DeclaredShapes[K]> extends true ? never : K }[keyof DeclaredShapes];
+type WireTypes = {
 	readonly read: WireNode;
 	readonly snapshot: WireNode;
 	readonly triviaSide: WireNode[];
@@ -90,7 +111,20 @@ expectTypeOf<DeclaredWire>().toEqualTypeOf<{
 	readonly builtTriviaSide: WireNode[] | null;
 	readonly builtLeafSide: WireNode[] | null;
 	readonly builtUnitSides: UnitSidesWire[];
-}>();
+};
+type Misdeclared = { [K in keyof WireTypes]-?: Same<Ret<Declared[K]>, WireTypes[K]> extends true ? never : K }[keyof WireTypes];
+type ObjectOnlyUnit<Node extends object> = Omit<UnitSidesWire<Node>, keyof NodeTrivia> & TriviaSides<Node>;
+
+expectTypeOf<Admits<(profile: 'release') => void, (profile: string) => void>>().toEqualTypeOf<false>();
+expectTypeOf<ReturnsExactly<() => UnitSidesWire[], () => UnitSidesWire<ReadOutput>[]>>().toEqualTypeOf<true>();
+expectTypeOf<ReturnsExactly<() => object, () => WireNode>>().toEqualTypeOf<false>();
+expectTypeOf<ReturnsExactly<() => ObjectOnlyUnit<object>[], () => UnitSidesWire[]>>().toEqualTypeOf<false>();
+expectTypeOf<ReturnsExactly<() => UnitSidesWire[], () => ObjectOnlyUnit<ReadOutput>[]>>().toEqualTypeOf<false>();
+expectTypeOf<ReturnsExactly<() => { slot: string; item: number }[], () => UnitSidesWire[]>>().toEqualTypeOf<false>();
+expectTypeOf<ReturnsExactly<() => { slot: string }[], () => SlotLayoutWire[]>>().toEqualTypeOf<false>();
+
+expectTypeOf<Misdeclared>().toEqualTypeOf<never>();
+expectTypeOf<Renders<Ret<Declared['read']> | Ret<Declared['snapshot']>, NonNullable<Declared['render']>, NonNullable<Declared['renderToFile']>>>().toEqualTypeOf<true>();
 
 expectTypeOf<Drift<typeof Python>>().toEqualTypeOf<NoDrift>();
 expectTypeOf<Drift<typeof Regex>>().toEqualTypeOf<NoDrift>();
@@ -98,8 +132,8 @@ expectTypeOf<Drift<typeof Rust>>().toEqualTypeOf<NoDrift>();
 expectTypeOf<Drift<typeof Scm>>().toEqualTypeOf<NoDrift>();
 expectTypeOf<Drift<typeof TypeScript>>().toEqualTypeOf<NoDrift>();
 
-expectTypeOf<Shapes<typeof Python>>().toEqualTypeOf<DeclaredShapes>();
-expectTypeOf<Shapes<typeof Regex>>().toEqualTypeOf<DeclaredShapes>();
-expectTypeOf<Shapes<typeof Rust>>().toEqualTypeOf<DeclaredShapes>();
-expectTypeOf<Shapes<typeof Scm>>().toEqualTypeOf<DeclaredShapes>();
-expectTypeOf<Shapes<typeof TypeScript>>().toEqualTypeOf<DeclaredShapes>();
+expectTypeOf<Misshaped<typeof Python>>().toEqualTypeOf<never>();
+expectTypeOf<Misshaped<typeof Regex>>().toEqualTypeOf<never>();
+expectTypeOf<Misshaped<typeof Rust>>().toEqualTypeOf<never>();
+expectTypeOf<Misshaped<typeof Scm>>().toEqualTypeOf<never>();
+expectTypeOf<Misshaped<typeof TypeScript>>().toEqualTypeOf<never>();

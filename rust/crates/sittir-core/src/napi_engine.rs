@@ -645,7 +645,7 @@ macro_rules! napi_engine {
         /// engine's. `treeId` is the tree the node was read from; a built
         /// node belongs to no tree and renders by the engine's options.
         #[::napi_derive::napi(
-            ts_args_type = "engine: object, node: object, treeId?: number | undefined | null, options?: object | undefined | null",
+            ts_args_type = "engine: object, node: import('@sittir/types').WireNode, treeId?: number | undefined | null, options?: object | undefined | null",
             ts_return_type = "string"
         )]
         pub fn render(
@@ -674,7 +674,7 @@ macro_rules! napi_engine {
         /// whether it wrote: `create` refuses a file at the path, and
         /// otherwise a file already holding the text is left untouched.
         #[::napi_derive::napi(
-            ts_args_type = "engine: object, node: object, path: string, create: boolean, treeId?: number | undefined | null, options?: object | undefined | null"
+            ts_args_type = "engine: object, node: import('@sittir/types').WireNode, path: string, create: boolean, treeId?: number | undefined | null, options?: object | undefined | null"
         )]
         pub fn render_to_file(
             engine: &::napi::bindgen_prelude::External<EngineCell>,
