@@ -282,6 +282,7 @@ export interface NativeLanguageEngine<API extends LanguageAPI> {
 	parseAndRead: EngineDiagnostics<AnyUntypedNode>['parseAndRead'];
 	readonly buildProfile?: EngineDiagnostics['buildProfile'];
 	readonly builtMemory?: EngineDiagnostics['builtMemory'];
+	renderTemplates: EngineDiagnostics['renderTemplates'];
 	/** `text` written to `path` by the native writer that saves a render: a new file when `create`, and otherwise a replacement that leaves a file already holding `text` untouched. Answers whether it wrote. */
 	writeText(path: string, text: string, create: boolean): boolean;
 	release(node: object): void;
@@ -307,6 +308,15 @@ export interface EngineDiagnostics<TRoot = unknown, TTree extends object = objec
 	 * it holds that are not yet released. `undefined` when the engine does not build into an arena.
 	 */
 	readonly builtMemory?: () => { readonly chunks: number; readonly counts: number; readonly live: number } | undefined;
+	/**
+	 * Renders a parsed node as `render` renders it, but with the node and every node under it that has a record
+	 * written from its template, never from its source bytes; each leaf and unit still writes its source bytes.
+	 *
+	 * @param node - A node read from a live tree of this engine, as it was read.
+	 * @returns The node's text, its line endings spelled as `render` spells them.
+	 * @throws For a node built or edited, a node whose tree is gone, and a node whose read or render refuses.
+	 */
+	renderTemplates(node: AnyUntypedNode): string;
 	/** Parses and retains a tree without reading any of it. */
 	parseTree(source: string): TTree;
 	/** Parses and retains a tree, and reads its root to `options.depth`. */

@@ -235,6 +235,7 @@
 (keyword_pattern value: (_) @pattern) @pattern.struct.field
 (wildcard_pattern) @pattern.wildcard
 (complex_pattern) @pattern.complex
+(complex_pattern sign: _ @sign)
 (complex_pattern operator: "+") @pattern.complex.add
 (complex_pattern operator: "-") @pattern.complex.subtract
 (case_tuple_pattern) @pattern.tuple

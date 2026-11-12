@@ -131,7 +131,7 @@ pub fn edit_in_place<G: sittir_core::engine::EngineGrammar>(tree: &mut sittir_co
 pub struct NoSources;
 
 impl sittir_core::render::SourceTable for NoSources {
-    fn source_of(&self, _tree_id: sittir_core::types::TreeId) -> Option<&std::sync::Arc<str>> {
+    fn source_of(&self, _tree_id: sittir_core::types::TreeId) -> Option<&str> {
         None
     }
 }

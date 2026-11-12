@@ -530,6 +530,19 @@ pub trait Prepare {
         let _ = (cursor, ctx);
         None
     }
+
+    /// Whether a node with these ids reads into this type as a node with a
+    /// record: one whose read routes its children (`read::ReadNode::router`),
+    /// not a text leaf or a unit, which its holder names by its span. `false`
+    /// for a value no read produces.
+    #[must_use]
+    fn reads_record(grammar: KindId, display: KindId) -> bool
+    where
+        Self: Sized,
+    {
+        let _ = (grammar, display);
+        false
+    }
 }
 
 impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
@@ -629,15 +642,22 @@ pub fn seat_read_node(edges: &mut Edges, seated: CoordinateEdges) {
 }
 
 /// The node a coordinate names, read one level into `T` when a write lies in
-/// its range (`SourceTable::edited_within`), its changed edges carried into
-/// the read (`ReadCtx::with_changed`); `None` when no write lies there, or
-/// when `T` reads nothing.
+/// its range (`SourceTable::edited_within`), or when the render reads
+/// templates (`SourceTable::reads_templates`) and `T` reads the node as one
+/// with a record (`Prepare::reads_record`), its changed edges carried into
+/// the read (`ReadCtx::with_changed`); `None` for any other, or when `T`
+/// reads nothing.
 pub(crate) fn read_edited<T: Prepare>(coord: &NodeCoordinate, ctx: &RenderContext<'_>) -> Result<Option<T>, CoordinateError> {
-    if !ctx.sources.edited_within(coord) {
+    let edited = ctx.sources.edited_within(coord);
+    if !edited && !ctx.sources.reads_templates() {
         return Ok(None);
     }
     let mut node = None;
     ctx.sources.read_node(coord.tree, coord.index, &mut |cursor, read| {
+        let at = cursor.node();
+        if !edited && !T::reads_record(crate::read::grammar_id(&at), crate::read::display_id(&at)) {
+            return;
+        }
         read.changed = Some((coord.index, coord.changed()));
         node = T::read_coordinate(cursor, read);
     });
@@ -701,6 +721,10 @@ impl<T: Prepare> Prepare for Box<T> {
         T::read_coordinate(cursor, ctx).map(|read| read.map(Box::new))
     }
 
+    fn reads_record(grammar: KindId, display: KindId) -> bool {
+        T::reads_record(grammar, display)
+    }
+
     fn snapshot_edge(&self) -> Option<SnapshotEdge> {
         (**self).snapshot_edge()
     }
@@ -741,8 +765,8 @@ mod tests {
 
     struct Sources(HashMap<crate::types::TreeId, Arc<str>>);
     impl SourceTable for Sources {
-        fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
-            self.0.get(&tree_id)
+        fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
+            self.0.get(&tree_id).map(|source| &**source)
         }
     }
 
@@ -787,7 +811,7 @@ mod tests {
     /// A table that holds trees: the list a flank names ends in a child of kind `last`, or the table cannot answer.
     struct ListTrees(Option<KindId>);
     impl SourceTable for ListTrees {
-        fn source_of(&self, _: crate::types::TreeId) -> Option<&Arc<str>> {
+        fn source_of(&self, _: crate::types::TreeId) -> Option<&str> {
             None
         }
         fn last_list_child_kind(&self, _: crate::types::TreeId, _: Span, _: crate::types::KindId) -> Option<crate::types::KindId> {

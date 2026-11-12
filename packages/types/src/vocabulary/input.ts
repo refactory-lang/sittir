@@ -1,5 +1,5 @@
 import type { Formed, GrammarMap, Paths, Read } from './map.ts';
-import type { Missing } from './utils.ts';
+import type { Missing, NamedFlags } from './utils.ts';
 
 type Extra<G extends GrammarMap, P> = P extends keyof G['inputs'] ? G['inputs'][P] : never;
 
@@ -11,7 +11,7 @@ type MemberInput<T, G extends GrammarMap> = T extends readonly unknown[]
 
 type Inputs<R, G extends GrammarMap> = { readonly [M in keyof R]: MemberInput<R[M], G> };
 
-export type InputOf<R, G extends GrammarMap> = Inputs<Formed<G, R>, G>;
+export type InputOf<R, G extends GrammarMap> = Inputs<NamedFlags<G, Formed<G, R>>, G>;
 
 type TextReads<G extends GrammarMap> = {
 	readonly [P in keyof G['overrides']]: G['overrides'][P] extends { readonly $text: infer T } ? T : never;

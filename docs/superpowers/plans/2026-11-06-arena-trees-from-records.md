@@ -222,9 +222,18 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 - Test: `packages/common/tests/snapshot.test.ts` and the snapshot census.
 
 **Interfaces:**
-- Consumes: Task 5b's `holder_cell`, for leaves inside a snapshot.
+- Consumes: Task 5b's `read::units_of`, for unit sides inside a snapshot (the native walk), and `ParsedTree::read_leaf` through `RecordReader.leaf`, for a bare coordinate the JS walk hydrates.
 - Produces: `ParsedTree::snapshot_layouts(&self, root: NodeIndex, holder: Option<u32>)`, which returns each row's snapshot layout as `(row, layout)` pairs in preorder, plus the root's flanks word. It walks rows over `Nodes` with no typed read, holding at `Children` and `Interior` routers, and reuses master's snapshot-mode layout code. Over napi, `snapshotLayouts(treeId, index, holderByte)` replaces `snapshot` (maintainer, 2026-11-12, "Approve"). A layout is needed, not only a span, because a side's ERROR entry reaches JavaScript with no row and the root's edge runs are dropped natively.
 - Output change (maintainer, 2026-11-12, "Canonical: renders `ur"a"`"): a snapshot holds a spelled slot's canonical member, so python `UR"a"` snapshots render `ur"a"`. Object storage's read of a spelled slot moves to the canonical member as well, so both storages give the same snapshot. Both changes go in the PR as API rows.
+- Object storage's canonical read: `storedSlotValues` on an object node applies its kind's spellings from its `querySlots` row. `QuerySlotEntry` gains an optional seventh element, `spellings?: Readonly<Record<string, string>>`, beside `blank` (the maintainer, 2026-11-12, "Approve both"). It is emitted from `spelledReadOf`, the derivation record views' accessors already pass to `viewSlot(…, spellings)`. The rows are read only when a node stores a string under a storage key. Object data keeps the source spelling, so `$with` and render keep it ("set to the same value keeps the spelling").
+- Census (maintainer, 2026-11-12, "Grant 46 → 48"): the python snapshot census gains two entries, "Strings" (`UR'bye'` snapshots as `ur'bye'`) and "Template Strings" (`tr"…"` as `rt"…"`), and (maintainer, 2026-11-12, "Grant Raw strings") a third, "Raw strings" (`fr"…"` as `rf"…"`). All three follow from the canonical ruling. The rewrite also drops the 16 entries that render fixes since the census was last written (2026-10-11) left matching. Against master's own snapshots, which give 29 entries, the pin lands at 32. The other grammars' censuses aren't rewritten.
+- API rows (maintainer, 2026-11-12, "Approve all 6"):
+  - `Router::Children` carries its kind's routes (`KindRoutes`), and `Router::Envelope` its content's router;
+  - `ParsedTree::snapshot_layouts_seated` is public, for tests;
+  - `ReadCtx::hold(&Kid, &[Kid])` replaces `hold(&TreeCursor)`, so the typed read no longer holds;
+  - `ParsedTree::snapshot`, `snapshot_node` and `snapshot_error` are removed;
+  - in `@sittir/common/utils`, `handleQuery` becomes a method record views call on themselves, and `handleSnapshot` is new;
+  - `napi_engine::answered` is public, shared by read and `snapshotLayouts`.
 
 - [ ] **Step 1: Failing tests:**
   - `a_parsed_snapshot_takes_no_tree`: an arena snapshot makes 0 tree reads, and so does `$query()` on an arena record view;

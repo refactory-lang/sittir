@@ -12,8 +12,8 @@ import type {
 	ParseOptions,
 	Rendered
 } from '@sittir/types';
-import { decodeTree, readObject, type ChunkWords, type RecordReader, type TreeHandle, type TriviaSideName } from './read.ts';
-import { holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
+import { decodeIndex, decodeTree, readObject, type ChunkWords, type RecordReader, type TreeHandle, type TriviaSideName } from './read.ts';
+import { coordinateOf, holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
 import type { RecordPosition } from './handle.ts';
 import type { DescendantBatch } from './query.ts';
@@ -82,6 +82,12 @@ export function saverOf(rendered: Rendered): RenderSaver {
 	const saver = savers.get(rendered);
 	if (saver === undefined) throw new Error('saverOf: not a render an engine returned');
 	return saver;
+}
+
+function recordTreeOf(view: RecordPosition): number {
+	const tree = view.$tree;
+	if (tree.records === undefined || tree.id === undefined) throw new Error('a record view renders through the tree it was read from, which is gone');
+	return tree.id;
 }
 
 function renderTreeOf(node: object): number | undefined {
@@ -252,8 +258,8 @@ export interface NativeEngineLike<TNode = unknown> {
 	externalBuffers?(): void;
 	/** The kind and subtree end, as `[kind, end]`, a read of tree `treeId` names the node at `index` by. Present when the addon carries the record codec. */
 	coordinate?(treeId: number, index: number): number[];
-	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour. Present when the addon carries the record codec. */
-	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object): string;
+	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour; `templates` renders it and every parsed node under it that has a record from its template, each leaf and unit as its source. Present when the addon carries the record codec. */
+	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object, templates?: boolean): string;
 	renderBuilt?(owner: object, address: number, leading: boolean, trailing: boolean, treeId?: number, options?: object): string;
 	renderBuiltLeaf?(
 		owner: object,
@@ -336,6 +342,8 @@ export interface NativeEngineLike<TNode = unknown> {
 	): string;
 	planHolds(addresses: string, plan: string): boolean[];
 	render(node: TNode, treeId?: number, options?: object): string;
+	/** The node at descendant `index` of tree `treeId` rendered as a render root whose `leading` and `trailing` edges have no neighbour, as {@link render} renders the node a read of it gives; `templates` renders it and every node under it that has a record from its template, each leaf and unit as its source. */
+	renderAt(treeId: number, index: number, leading: boolean, trailing: boolean, options?: object, templates?: boolean): string;
 	/** {@link render}'s text written to `path`: a new file when `create`, refusing a file at the path, and otherwise a replacement that leaves a file already holding the text untouched. Answers whether it wrote. */
 	renderToFile(node: TNode, path: string, create: boolean, treeId?: number, options?: object): boolean;
 	/** `text` written to `path` as {@link renderToFile} writes a render's text, answering whether it wrote. */
@@ -388,6 +396,7 @@ const TREE_FUNCTIONS = [
 
 const ENGINE_FUNCTIONS = [
 	'render',
+	'renderAt',
 	'renderToFile',
 	'renderRecord',
 	'renderRecordToFile',
@@ -730,6 +739,17 @@ export function createNativeEngine<
 
 		const writeText: TextWriter = (path, text, create) => engine.writeText(path, text, create);
 
+		function renderTemplates(node: AnyUntypedNode): string {
+			const record = builtRefOf(node) === undefined ? recordOf(node) : undefined;
+			const at = record === undefined ? coordinateOf(node) : undefined;
+			if (record === undefined && at === undefined) throw new Error('renderTemplates renders a node as a read gave it, and this one was built or edited');
+			const changed = rootEdges(node);
+			if (at !== undefined) return engine.renderAt(decodeTree(at.$treeHandle), decodeIndex(at.$treeHandle), changed.leading, changed.trailing, undefined, true);
+			const { renderRecord } = engine;
+			if (renderRecord === undefined) throw new Error(ARENA_FEATURE_REFUSED);
+			return renderRecord.call(engine, recordTreeOf(node as unknown as RecordPosition), record!, changed.leading, changed.trailing, undefined, true);
+		}
+
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
 			const holdsTrees = (): unknown => node;
@@ -763,10 +783,7 @@ export function createNativeEngine<
 			const record = typeof node === 'number' ? undefined : recordOf(node);
 			if (record !== undefined) {
 				const changed = rootEdges(node as object);
-				const tree = (node as RecordPosition).$tree;
-				const treeId = tree.id;
-				if (tree.records === undefined || treeId === undefined)
-					throw new Error('a record view renders through the tree it was read from, which is gone');
+				const treeId = recordTreeOf(node as RecordPosition);
 				const { renderRecord, renderRecordToFile } = engine;
 				if (renderRecord === undefined || renderRecordToFile === undefined)
 					throw new Error(ARENA_FEATURE_REFUSED);
@@ -820,6 +837,7 @@ export function createNativeEngine<
 				diagnostics: {
 					buildProfile: engine.buildProfile,
 					builtMemory: () => (cellFormat === undefined ? undefined : engine.builtMemory?.()),
+					renderTemplates,
 					parseTree,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const tree = parseTree(source);
@@ -890,6 +908,9 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 		},
 		buildProfile: engine.diagnostics.buildProfile,
 		builtMemory: engine.diagnostics.builtMemory,
+		renderTemplates(node) {
+			return engine.diagnostics.renderTemplates(node);
+		},
 		writeText(path, text, create) {
 			return engine.writeText(path, text, create);
 		},

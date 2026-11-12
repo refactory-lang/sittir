@@ -4165,6 +4165,7 @@ export const queryFlags: QueryFlags = Object.freeze({
 			]
 		}
 	},
+	[TSKindId.ComplexPattern]: { sign: { op: 'present', slots: { '192': 0 } } },
 	[TSKindId.ConstructorDeclaration]: { async: { op: 'present', slots: { '307': 0 } } },
 	[TSKindId.ExceptClause]: { group: { op: 'present', slots: { '160': 0 } } },
 	[TSKindId.ExpressionList]: {
@@ -4267,6 +4268,10 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	179: { expression: { privateName: { types: [], kinds: [221] } } },
 	180: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
 	181: { elements: { privateName: { types: [], kinds: [221] } } },
+	184: { content: { sign: { types: [], kinds: [192] } } },
+	186: { left: { sign: { types: [], kinds: [192] } }, right: { sign: { types: [], kinds: [192] } } },
+	188: { key: { sign: { types: [], kinds: [192] } } },
+	189: { pattern: { sign: { types: [], kinds: [192] } } },
 	194: { items: { privateName: { types: [], kinds: [221] } } },
 	199: { default: { privateName: { types: [], kinds: [221] } } },
 	200: { default: { privateName: { types: [], kinds: [221] } } },
@@ -4359,6 +4364,9 @@ declare module '../types.js' {
 	}
 	interface CasePatternList {
 		readonly __flags__?: 'trailingComma';
+	}
+	interface ComplexPattern {
+		readonly __flags__?: 'sign';
 	}
 	interface ConstructorDeclaration {
 		readonly __flags__?: 'async';
@@ -4476,6 +4484,18 @@ declare module '../types.js' {
 	}
 	interface ExpressionList {
 		readonly __slotFlags__?: { readonly elements: 'privateName' };
+	}
+	interface SimplePattern {
+		readonly __slotFlags__?: { readonly content: 'sign' };
+	}
+	interface UnionPattern {
+		readonly __slotFlags__?: { readonly left: 'sign'; readonly right: 'sign' };
+	}
+	interface KeyValuePattern {
+		readonly __slotFlags__?: { readonly key: 'sign' };
+	}
+	interface KeywordPattern {
+		readonly __slotFlags__?: { readonly pattern: 'sign' };
 	}
 	interface Patterns {
 		readonly __slotFlags__?: { readonly items: 'privateName' };

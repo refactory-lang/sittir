@@ -463,8 +463,8 @@ mod tests {
 
     struct Sources(HashMap<crate::types::TreeId, Arc<str>>);
     impl SourceTable for Sources {
-        fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
-            self.0.get(&tree_id)
+        fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
+            self.0.get(&tree_id).map(|source| &**source)
         }
     }
 
@@ -513,7 +513,7 @@ mod tests {
 
     struct Kinded(Sources);
     impl SourceTable for Kinded {
-        fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
+        fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
             self.0.source_of(tree_id)
         }
         fn kind_of(&self, _: &NodeCoordinate) -> Option<crate::types::KindId> {

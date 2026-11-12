@@ -463,6 +463,14 @@ describe('the generated files', () => {
 				"\t\treadonly 'declaration.method.getter': gate.In<G, features.Methods, V.Declaration.Method.Getter<G>>;",
 				'\t}',
 				'}',
+				'',
+				"declare module './utils.ts' {",
+				'\tinterface FlagFeatures {',
+				"\t\treadonly 'declaration.function': { readonly async: features.AsyncAwait };",
+				"\t\treadonly 'declaration.method': { readonly static: object };",
+				"\t\treadonly 'declaration.method.getter': { readonly static: object };",
+				'\t}',
+				'}',
 				''
 			].join('\n')
 		);

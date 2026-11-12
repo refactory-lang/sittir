@@ -19,7 +19,7 @@ Bookkeeping edits are docs commits to master: pathspec commits, pushed by litera
 
 - **Every open PR, each pass:** required checks, review threads (Copilot's included) and conflicts.
   - **Red:** tell the Owner line's session, naming the failing test and its first error, not just the job.
-  - **Green with no open threads:** tell brainstorm `#N green on <sha>`.
+  - **Green with no open threads:** tell brainstorm `#N green on <sha>`, only once Copilot has reviewed the PR. A PR Copilot never reviewed has no threads because nobody read it. Tell its owner to request the review instead.
 - **Merging,** on the maintainer's word only, given directly or relayed by brainstorm:
   - pin the head (`gh pr merge N --merge --match-head-commit <sha>`), no `--delete-branch`, and keep the remote branch;
   - re-verify first: head unchanged, MERGEABLE, required checks green, 0 open threads, and the task status line (section 1).
