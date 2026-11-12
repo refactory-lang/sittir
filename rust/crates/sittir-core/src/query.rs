@@ -274,7 +274,7 @@ fn slot_hits<'s>(nodes: &mut dyn Nodes<'_>, at: &Kid, ctx: &QueryCtx<'s>, slots:
     };
     let text = |kid: &Kid| ctx.source.get(kid.span().range()).unwrap_or("");
     match router {
-        Router::Children(route, unit) => {
+        Router::Children(route, unit, _) => {
             let mut routed = true;
             for child in nodes.kids(at.index).iter() {
                 match route(child) {
@@ -295,7 +295,7 @@ fn slot_hits<'s>(nodes: &mut dyn Nodes<'_>, at: &Kid, ctx: &QueryCtx<'s>, slots:
             }
             true
         }
-        Router::Envelope { wraps_hidden, unit } => {
+        Router::Envelope { wraps_hidden, unit, .. } => {
             if slot != crate::types::SlotId(0) {
                 return false;
             }
@@ -377,8 +377,8 @@ mod tests {
     fn router(at: &Kid) -> Option<Router> {
         match crate::read::kind_name(language(), at.display).unwrap_or("") {
             "integer_literal" => Some(Router::Interior(&INTEGER, &["digits", "suffix"])),
-            "type_identifier" => Some(Router::Envelope { wraps_hidden: false, unit: |_, _| None }),
-            kind => TABLES.iter().position(|(name, ..)| *name == kind).map(|t| Router::Children(ROUTES[t], UNITS[t])),
+            "type_identifier" => Some(Router::Envelope { wraps_hidden: false, unit: |_, _| None, inner: |_, _| None }),
+            kind => TABLES.iter().position(|(name, ..)| *name == kind).map(|t| Router::Children(ROUTES[t], UNITS[t], |_, _| None)),
         }
     }
 

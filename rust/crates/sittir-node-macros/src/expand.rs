@@ -739,7 +739,6 @@ fn pass(min_depth: u32) -> TokenStream {
         let depth = if ctx.starts() { depth.at_least(#min_depth) } else { depth };
         let index = __rt::index_of(cursor);
         let __at = ctx.at_of(cursor);
-        ctx.hold(cursor);
         let children = __rt::survey(cursor);
         let routes = children
             .iter()
@@ -768,8 +767,8 @@ fn common_inits(fields: &[Field<'_>], skip: Option<&Ident>, units: bool) -> Vec<
         .filter_map(|field| {
             let name = field.ident;
             match field.role {
-                Role::Layout if units => Some(quote!(#name: Some(ctx.layout_with_units(index, __at, true, __units)),)),
-                Role::Layout => Some(quote!(#name: Some(ctx.layout(index, __at, true)),)),
+                Role::Layout if units => Some(quote!(#name: Some(ctx.layout_with_units(index, __at, false, __units)),)),
+                Role::Layout => Some(quote!(#name: Some(ctx.layout(index, __at, false)),)),
                 Role::Space(_) | Role::Text => Some(quote!(#name: ::core::default::Default::default(),)),
                 Role::Kind => Some(quote!(#name: __stored_kind(&__node),)),
                 _ => None,
@@ -834,10 +833,10 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr, affixes:
     let spans = match layout {
         Some(layout) => {
             inits.push(quote!(#layout: Some(__layout),));
-            opaque.push(quote!(#layout: Some(ctx.layout(index, __at, true)),));
+            opaque.push(quote!(#layout: Some(ctx.layout(index, __at, false)),));
             quote! {
                 let base = ::sittir_core::types::Span::of(&cursor.node()).start;
-                let mut __layout = ctx.layout(index, __at, true);
+                let mut __layout = ctx.layout(index, __at, false);
                 __layout.captures = ::std::vec![#(__rt::capture_span(&captures, #captures, base)),*];
             }
         }
@@ -952,7 +951,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], height:
     Ok(Body {
         routes: quote! {
             fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
-                <Self as __rt::ReadNode>::admits(grammar, display).then_some(__rt::Router::Envelope { wraps_hidden: #wraps_hidden, unit: <#inner as __rt::ReadNode>::unit_id })
+                <Self as __rt::ReadNode>::admits(grammar, display).then_some(__rt::Router::Envelope { wraps_hidden: #wraps_hidden, unit: <#inner as __rt::ReadNode>::unit_id, inner: <#inner as __rt::ReadNode>::router })
             }
         },
         items: quote!(),
@@ -1114,7 +1113,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
                 ::core::option::Option::Some(__rt::Routed { children, routes, keys: &[#(#keys),*], elided: __ELIDED })
             }
             fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
-                <Self as __rt::ReadNode>::admits(grammar, display).then_some(__rt::Router::Children(__route, __unit))
+                <Self as __rt::ReadNode>::admits(grammar, display).then_some(__rt::Router::Children(__route, __unit, <Self as __rt::ReadNode>::routes))
             }
             #delimiter
         },

@@ -415,6 +415,10 @@ impl<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a> BodyLayout<'a> for Optio
     }
 }
 
+/// A snapshot's layouts (`ParsedTree::snapshot_layouts`): each node's row and
+/// its layout, in preorder, crossing as `[row, layout]` pairs.
+pub type SnapshotLayouts<T> = Vec<(crate::types::NodeIndex, Box<NodeLayout<T>>)>;
+
 impl<T> Default for NodeLayout<T> {
     fn default() -> Self {
         Self {

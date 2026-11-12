@@ -12,7 +12,6 @@ use sittir_core::prepare::RenderContext;
 use sittir_core::read::ReadNode;
 use sittir_core::render::RenderError;
 use sittir_core::trivia_store::TriviaStore;
-use sittir_core::types::NodeIndex;
 use sittir_parity_tests::{load_fixtures, ParityFixture};
 
 /// A seeded generator of words, so a failure reproduces.
@@ -80,7 +79,7 @@ struct Built<T> {
 
 impl<T: Clone + sittir_core::heap::HeapBytes> Built<T> {
     fn of<G: RecordGrammar<Trivia = T>, N: ReadNode + WriteCell<T>>(tree: &ParsedTree<G>) -> Option<Self> {
-        let node: N = tree.snapshot(NodeIndex::ROOT, None).ok()?;
+        let node: N = sittir_parity_tests::plain_read(tree).ok()?;
         let mut arena = BuiltChunks::new(G::KIND_BITS, G::shape);
         let store = TriviaStore::new();
         let mut link = |_: &sittir_core::slot::NodeCoordinate| -> Result<Linked, sittir_core::arena::ArenaError> { Err(sittir_core::arena::ArenaError::Unwritable("a coordinate in a snapshot")) };

@@ -1,6 +1,7 @@
 import type { ByteSpan, NodeCoordinate, QuerySlotEntry } from '@sittir/types';
 import { decodeIndex, encodeHandle, type ChunkWords, type RecordReader, type RecordWords, type TreeHandle } from './read.ts';
 import { blankArmStored } from './blank-arm.ts';
+import { spelledMember } from './spelled.ts';
 import { builtRefOf } from './built-ref.ts';
 import { undoIfFillFails } from './list-fills.ts';
 import { treeOf } from './tree-token.ts';
@@ -363,5 +364,9 @@ export function storedSlotValues(
 	refused?: (slot: RefusedSlot) => void
 ): [storageKey: string, value: unknown][] {
 	if (recordOf(node) !== undefined) return slotValuesOf(node, slotsOf((node as { readonly $type: number }).$type), refused);
-	return Object.entries(node).filter(([key]) => isStorageKey(key));
+	const stored = Object.entries(node).filter(([key]) => isStorageKey(key));
+	const kind = (node as { readonly $type?: unknown }).$type;
+	if (typeof kind !== 'number' || !stored.some(([, value]) => typeof value === 'string')) return stored;
+	const spellings = new Map(slotsOf(kind).flatMap((row) => (row[6] === undefined ? [] : [[row[3], row[6]] as const])));
+	return spellings.size === 0 ? stored : stored.map(([key, value]) => [key, spelledMember(value, spellings.get(key))]);
 }
