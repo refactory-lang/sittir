@@ -192,7 +192,7 @@
   - Flag steps: a presence flag presets its token's kind id, and a kind flag presets its kind.
   - `when`, tried in order, with the first passing arm taken:
     1. fixed text;
-    2. scalar type, which groups the arms: the one arm per scalar type that builds a number (the variant's or the bindings default) is marked by `scalar`, outside `when`;
+    2. scalar type, which groups the arms: the one arm per scalar type that builds a number (the variant's or the bindings default) is marked by `scalar`, outside `when`. Amended 2026-11-12 (user): every number arm reads its own `scalar`, and the path's `builds` names, per scalar type, the arm that builds a `$value`, among the arms that spell every value of the type (binding generator spec §2.4);
     3. the variant default, which is the supertype's `optionDefaultSubtype ?? defaultVariantSubtype`, found by walking up `variantOf`;
     4. the flag the form implies (its plan is `ALWAYS`);
     5. presence, by `required`; arms one input could satisfy stay together;

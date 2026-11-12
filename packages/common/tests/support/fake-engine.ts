@@ -28,9 +28,13 @@ export function liveHandle(
 		renderModuleHash: 'hash',
 		options: undefined,
 		trivia: options.trivia ?? triviaFacts(),
+		rootKinds: [],
 		render: (node) => ({ toString: () => options.render?.(node) ?? '' }) as Rendered,
 		query: () => {
 			throw new Error('fake engine has no parsed trees');
+		},
+		write: () => {
+			throw new Error('fake engine writes no files');
 		}
 	};
 	return { current: live, settle: (node) => node, admit: () => undefined };

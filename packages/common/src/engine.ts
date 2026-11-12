@@ -68,6 +68,7 @@ export function createRenderHandle(renderText: () => string, save: RenderSaver, 
 			return text;
 		},
 		[Symbol.dispose](): void {
+			if (disposed) return;
 			disposed = true;
 			cached = undefined;
 			release?.();

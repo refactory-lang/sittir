@@ -6,7 +6,8 @@ afterAll(disposeNativeEngines);
 
 const mocked: string[] = [];
 
-afterEach(() => {
+afterEach(async () => {
+	await (await import('../src/validate/common.ts')).disposeNativeEngines();
 	for (const path of mocked.splice(0)) vi.doUnmock(path);
 	vi.resetModules();
 });

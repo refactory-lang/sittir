@@ -23,6 +23,7 @@ import {
 	applySetter,
 	objectLeading,
 	objectTrailing,
+	handleSave,
 	objectInner,
 	describeValue,
 	restItems,
@@ -66,6 +67,7 @@ export function buildPattern(value: Admit<T.Alternation | T.Term>): T.Pattern.Bo
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
 		$engine: handle && (() => handle.current),
+		$save: handleSave,
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing

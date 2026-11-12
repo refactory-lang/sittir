@@ -96,7 +96,7 @@ jobs:
           ARENA: ${{ inputs.arena }}
         run: |
           versions=(base="$RUNNER_TEMP/trees/base" master="$RUNNER_TEMP/trees/master" feature="$RUNNER_TEMP/trees/feature")
-          if [[ $ARENA == true ]]; then versions+=(feature-arena="$RUNNER_TEMP/trees/feature@arena"); fi
+          if [[ $ARENA == true ]]; then versions+=(base-arena="$RUNNER_TEMP/trees/base@arena" feature-arena="$RUNNER_TEMP/trees/feature@arena"); fi
           for tree in $(jq -r '.candidates | keys_unsorted[]' "$RUNNER_TEMP/paired-refs/refs.json"); do
             versions+=("$tree=$RUNNER_TEMP/trees/$tree")
             if [[ $ARENA == true ]]; then versions+=("$tree-arena=$RUNNER_TEMP/trees/$tree@arena"); fi

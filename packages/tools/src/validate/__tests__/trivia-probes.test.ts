@@ -1,9 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../../languages.ts';
 import { loadLanguageForGrammar, treeParser } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 import { ORPHANS, PROBES } from './helpers/trivia-sources.ts';
+import { releaseTrackedEngines } from '../../../tests/helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('../../../tests/helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 async function sourceRenderer(grammar: string): Promise<(source: string, deep: boolean) => string> {
 	const engine = await createEngine(await languageByName(grammar));

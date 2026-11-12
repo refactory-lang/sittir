@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { isCoordinate, sideOf } from '@sittir/common/utils';
 import {
 	buildFactoryNodeFromReference,
@@ -14,6 +14,10 @@ import {
 	type ReadNodeLike
 } from '../common.ts';
 import { requireGrammarModule } from '../../grammar-internals.ts';
+import { releaseTrackedEngines } from '../../../tests/helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('../../../tests/helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 /** Comments on their own lines: at a file's edges, between statements and in a childless node, laid out by the layout runs their sides carry. */
 const OWN_LINE: Record<string, readonly string[]> = {

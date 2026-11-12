@@ -6312,12 +6312,7 @@ impl ::sittir_core::render::Render for NamespaceExportModuleExportNameNodeSlot {
             NamespaceExportModuleExportNameNodeSlot::Identifier(inner) => inner.render(w),
             NamespaceExportModuleExportNameNodeSlot::StringDouble(inner) => inner.render(w),
             NamespaceExportModuleExportNameNodeSlot::StringSingle(inner) => inner.render(w),
-            NamespaceExportModuleExportNameNodeSlot::DefaultKeyword => {
-                w.site_at(options::SITE_NAMESPACE_EXPORT_DEFAULT_KEYWORD_BEFORE);
-                let written = render_default_keyword(w);
-                written?;
-                Ok(())
-            }
+            NamespaceExportModuleExportNameNodeSlot::DefaultKeyword => render_default_keyword(w),
             NamespaceExportModuleExportNameNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -6342,12 +6337,7 @@ impl ::sittir_core::render::Render for NamespaceExportModuleExportNameNodeSlotRe
             NamespaceExportModuleExportNameNodeSlotRecord::Identifier(inner) => inner.render(w),
             NamespaceExportModuleExportNameNodeSlotRecord::StringDouble(inner) => inner.render(w),
             NamespaceExportModuleExportNameNodeSlotRecord::StringSingle(inner) => inner.render(w),
-            NamespaceExportModuleExportNameNodeSlotRecord::DefaultKeyword => {
-                w.site_at(options::SITE_NAMESPACE_EXPORT_DEFAULT_KEYWORD_BEFORE);
-                let written = render_default_keyword(w);
-                written?;
-                Ok(())
-            }
+            NamespaceExportModuleExportNameNodeSlotRecord::DefaultKeyword => render_default_keyword(w),
             NamespaceExportModuleExportNameNodeSlotRecord::Verbatim(inner) => inner.render(w),
         }
     }
@@ -6390,203 +6380,8 @@ impl ::sittir_core::view::KindOf for ExportSpecifierTypeKeywordNodeSlot {
 impl ::sittir_core::render::Render for ExportSpecifierTypeKeywordNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExportSpecifierTypeKeywordNodeSlot::TypeKeyword => {
-                let written = render_type_keyword(w);
-                written?;
-                w.site_at(options::SITE_EXPORT_SPECIFIER_TYPE_KEYWORD_AFTER);
-                Ok(())
-            }
-            ExportSpecifierTypeKeywordNodeSlot::TypeofKeyword => {
-                let written = render_typeof_keyword(w);
-                written?;
-                w.site_at(options::SITE_EXPORT_SPECIFIER_TYPEOF_KEYWORD_AFTER);
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp, view = ExportSpecifierNameNodeSlotRecord)]
-pub enum ExportSpecifierNameNodeSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::CONSTRUCTOR_KEYWORD), folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
-    Identifier(IdentifierNode),
-    #[kind(kind::STRING_DOUBLE)]
-    StringDouble(StringDoubleNode),
-    #[kind(kind::STRING_SINGLE)]
-    StringSingle(StringSingleNode),
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[node(verbatim)]
-    Verbatim(VerbatimNode),
-}
-
-impl ::sittir_core::prepare::Prepare for ExportSpecifierNameNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ExportSpecifierNameNodeSlot::Identifier(t) => t.prepare(ctx),
-            ExportSpecifierNameNodeSlot::StringDouble(t) => t.prepare(ctx),
-            ExportSpecifierNameNodeSlot::StringSingle(t) => t.prepare(ctx),
-            ExportSpecifierNameNodeSlot::DefaultKeyword => Ok(()),
-            ExportSpecifierNameNodeSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            ExportSpecifierNameNodeSlot::Identifier(t) => t.gap_edges(),
-            ExportSpecifierNameNodeSlot::StringDouble(t) => t.gap_edges(),
-            ExportSpecifierNameNodeSlot::StringSingle(t) => t.gap_edges(),
-            ExportSpecifierNameNodeSlot::DefaultKeyword => None,
-            ExportSpecifierNameNodeSlot::Verbatim(t) => t.gap_edges(),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            ExportSpecifierNameNodeSlot::Identifier(t) => t.snapshot_edge(),
-            ExportSpecifierNameNodeSlot::StringDouble(t) => t.snapshot_edge(),
-            ExportSpecifierNameNodeSlot::StringSingle(t) => t.snapshot_edge(),
-            ExportSpecifierNameNodeSlot::DefaultKeyword => None,
-            ExportSpecifierNameNodeSlot::Verbatim(t) => t.snapshot_edge(),
-        }
-    }
-    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
-        match self {
-            ExportSpecifierNameNodeSlot::Identifier(t) => t.source_coordinate(),
-            ExportSpecifierNameNodeSlot::StringDouble(t) => t.source_coordinate(),
-            ExportSpecifierNameNodeSlot::StringSingle(t) => t.source_coordinate(),
-            ExportSpecifierNameNodeSlot::DefaultKeyword => None,
-            ExportSpecifierNameNodeSlot::Verbatim(t) => t.source_coordinate(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            ExportSpecifierNameNodeSlot::Identifier(t) => t.source_separator(ctx),
-            ExportSpecifierNameNodeSlot::StringDouble(t) => t.source_separator(ctx),
-            ExportSpecifierNameNodeSlot::StringSingle(t) => t.source_separator(ctx),
-            ExportSpecifierNameNodeSlot::DefaultKeyword => None,
-            ExportSpecifierNameNodeSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ExportSpecifierNameNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::StringDouble(inner) => inner.kind_in(kinds),
-            Self::StringSingle(inner) => inner.kind_in(kinds),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ExportSpecifierNameNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ExportSpecifierNameNodeSlot::Identifier(inner) => inner.render(w),
-            ExportSpecifierNameNodeSlot::StringDouble(inner) => inner.render(w),
-            ExportSpecifierNameNodeSlot::StringSingle(inner) => inner.render(w),
-            ExportSpecifierNameNodeSlot::DefaultKeyword => {
-                w.site_at(options::SITE_EXPORT_SPECIFIER_DEFAULT_KEYWORD_BEFORE);
-                let written = render_default_keyword(w);
-                written?;
-                w.site_at(options::SITE_EXPORT_SPECIFIER_DEFAULT_KEYWORD_AFTER);
-                Ok(())
-            }
-            ExportSpecifierNameNodeSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for ExportSpecifierNameNodeSlotRecord<'_> {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::StringDouble(inner) => inner.kind_in(kinds),
-            Self::StringSingle(inner) => inner.kind_in(kinds),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ExportSpecifierNameNodeSlotRecord<'_> {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ExportSpecifierNameNodeSlotRecord::Identifier(inner) => inner.render(w),
-            ExportSpecifierNameNodeSlotRecord::StringDouble(inner) => inner.render(w),
-            ExportSpecifierNameNodeSlotRecord::StringSingle(inner) => inner.render(w),
-            ExportSpecifierNameNodeSlotRecord::DefaultKeyword => {
-                w.site_at(options::SITE_EXPORT_SPECIFIER_DEFAULT_KEYWORD_BEFORE);
-                let written = render_default_keyword(w);
-                written?;
-                w.site_at(options::SITE_EXPORT_SPECIFIER_DEFAULT_KEYWORD_AFTER);
-                Ok(())
-            }
-            ExportSpecifierNameNodeSlotRecord::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum ImportStatementTypeKeywordNodeSlot {
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::TYPEOF_KEYWORD)]
-    TypeofKeyword,
-}
-
-impl ::sittir_core::prepare::Prepare for ImportStatementTypeKeywordNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ImportStatementTypeKeywordNodeSlot::TypeKeyword => Ok(()),
-            ImportStatementTypeKeywordNodeSlot::TypeofKeyword => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ImportStatementTypeKeywordNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
-            Self::TypeofKeyword => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ImportStatementTypeKeywordNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ImportStatementTypeKeywordNodeSlot::TypeKeyword => {
-                w.site_at(options::SITE_IMPORT_STATEMENT_TYPE_KEYWORD_BEFORE);
-                let written = render_type_keyword(w);
-                written?;
-                w.site_at(options::SITE_IMPORT_STATEMENT_TYPE_KEYWORD_AFTER);
-                Ok(())
-            }
-            ImportStatementTypeKeywordNodeSlot::TypeofKeyword => {
-                w.site_at(options::SITE_IMPORT_STATEMENT_TYPEOF_KEYWORD_BEFORE);
-                let written = render_typeof_keyword(w);
-                written?;
-                w.site_at(options::SITE_IMPORT_STATEMENT_TYPEOF_KEYWORD_AFTER);
-                Ok(())
-            }
+            ExportSpecifierTypeKeywordNodeSlot::TypeKeyword => render_type_keyword(w),
+            ExportSpecifierTypeKeywordNodeSlot::TypeofKeyword => render_typeof_keyword(w),
         }
     }
 }
@@ -6736,12 +6531,7 @@ impl ::sittir_core::render::Render for ImportStatementTerminatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             ImportStatementTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            ImportStatementTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_IMPORT_STATEMENT_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
+            ImportStatementTerminatorNodeSlot::Semi => render_semi(w),
         }
     }
 }
@@ -6879,18 +6669,8 @@ impl ::sittir_core::view::KindOf for ImportAttributeAttributeKindNodeSlot {
 impl ::sittir_core::render::Render for ImportAttributeAttributeKindNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ImportAttributeAttributeKindNodeSlot::WithKeyword => {
-                w.site_at(options::SITE_IMPORT_ATTRIBUTE_WITH_KEYWORD_BEFORE);
-                let written = render_with_keyword(w);
-                written?;
-                Ok(())
-            }
-            ImportAttributeAttributeKindNodeSlot::AssertKeyword => {
-                w.site_at(options::SITE_IMPORT_ATTRIBUTE_ASSERT_KEYWORD_BEFORE);
-                let written = render_assert_keyword(w);
-                written?;
-                Ok(())
-            }
+            ImportAttributeAttributeKindNodeSlot::WithKeyword => render_with_keyword(w),
+            ImportAttributeAttributeKindNodeSlot::AssertKeyword => render_assert_keyword(w),
         }
     }
 }
@@ -7574,100 +7354,6 @@ impl ::sittir_core::render::Render for ExpressionStatementExpressionNodeSlotReco
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
-pub enum ExpressionStatementTerminatorNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-}
-
-impl ::sittir_core::prepare::Prepare for ExpressionStatementTerminatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ExpressionStatementTerminatorNodeSlot::AutomaticSemicolon => Ok(()),
-            ExpressionStatementTerminatorNodeSlot::Semi => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ExpressionStatementTerminatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ExpressionStatementTerminatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ExpressionStatementTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            ExpressionStatementTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_EXPRESSION_STATEMENT_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum VariableDeclarationTerminatorNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-}
-
-impl ::sittir_core::prepare::Prepare for VariableDeclarationTerminatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            VariableDeclarationTerminatorNodeSlot::AutomaticSemicolon => Ok(()),
-            VariableDeclarationTerminatorNodeSlot::Semi => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for VariableDeclarationTerminatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for VariableDeclarationTerminatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            VariableDeclarationTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            VariableDeclarationTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_VARIABLE_DECLARATION_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
 pub enum LexicalDeclarationKindNodeSlot {
     #[kind(kind::LET_KEYWORD)]
     LetKeyword,
@@ -7702,65 +7388,8 @@ impl ::sittir_core::view::KindOf for LexicalDeclarationKindNodeSlot {
 impl ::sittir_core::render::Render for LexicalDeclarationKindNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LexicalDeclarationKindNodeSlot::LetKeyword => {
-                w.site_at(options::SITE_LEXICAL_DECLARATION_LET_KEYWORD_BEFORE);
-                let written = render_let_keyword(w);
-                written?;
-                Ok(())
-            }
-            LexicalDeclarationKindNodeSlot::ConstKeyword => {
-                w.site_at(options::SITE_LEXICAL_DECLARATION_CONST_KEYWORD_BEFORE);
-                let written = render_const_keyword(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum LexicalDeclarationTerminatorNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-}
-
-impl ::sittir_core::prepare::Prepare for LexicalDeclarationTerminatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            LexicalDeclarationTerminatorNodeSlot::AutomaticSemicolon => Ok(()),
-            LexicalDeclarationTerminatorNodeSlot::Semi => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for LexicalDeclarationTerminatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for LexicalDeclarationTerminatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            LexicalDeclarationTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            LexicalDeclarationTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
+            LexicalDeclarationKindNodeSlot::LetKeyword => render_let_keyword(w),
+            LexicalDeclarationKindNodeSlot::ConstKeyword => render_const_keyword(w),
         }
     }
 }
@@ -7801,60 +7430,8 @@ impl ::sittir_core::view::KindOf for UsingDeclarationKindNodeSlot {
 impl ::sittir_core::render::Render for UsingDeclarationKindNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UsingDeclarationKindNodeSlot::UsingKeyword => {
-                let written = render_using_keyword(w);
-                written?;
-                w.site_at(options::SITE_USING_DECLARATION_USING_KEYWORD_AFTER);
-                Ok(())
-            }
+            UsingDeclarationKindNodeSlot::UsingKeyword => render_using_keyword(w),
             UsingDeclarationKindNodeSlot::UsingDeclarationArm => render_using_declaration_arm(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum UsingDeclarationAutomaticSemicolonNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-}
-
-impl ::sittir_core::prepare::Prepare for UsingDeclarationAutomaticSemicolonNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            UsingDeclarationAutomaticSemicolonNodeSlot::AutomaticSemicolon => Ok(()),
-            UsingDeclarationAutomaticSemicolonNodeSlot::Semi => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for UsingDeclarationAutomaticSemicolonNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for UsingDeclarationAutomaticSemicolonNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            UsingDeclarationAutomaticSemicolonNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            UsingDeclarationAutomaticSemicolonNodeSlot::Semi => {
-                w.site_at(options::SITE_USING_DECLARATION_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
         }
     }
 }
@@ -8474,13 +8051,7 @@ impl ::sittir_core::render::Render for ForStatementInitializerNodeSlot {
             ForStatementInitializerNodeSlot::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(282), edges, w, render_null),
             ForStatementInitializerNodeSlot::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(439), edges, w, render_meta_property_new_target),
             ForStatementInitializerNodeSlot::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(440), edges, w, render_meta_property_import_meta),
-            ForStatementInitializerNodeSlot::EmptyStatement(edges) => {
-                w.site_at(options::SITE_FOR_STATEMENT_SEMI_BEFORE);
-                let written = ::sittir_core::render::render_edged(::sittir_core::types::KindId(226), edges, w, render_empty_statement);
-                written?;
-                w.site_at(options::SITE_FOR_STATEMENT_SEMI_AFTER);
-                Ok(())
-            }
+            ForStatementInitializerNodeSlot::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(226), edges, w, render_empty_statement),
             ForStatementInitializerNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -8611,13 +8182,7 @@ impl ::sittir_core::render::Render for ForStatementInitializerNodeSlotRecord<'_>
             ForStatementInitializerNodeSlotRecord::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(282), edges, w, render_null),
             ForStatementInitializerNodeSlotRecord::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(439), edges, w, render_meta_property_new_target),
             ForStatementInitializerNodeSlotRecord::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(440), edges, w, render_meta_property_import_meta),
-            ForStatementInitializerNodeSlotRecord::EmptyStatement(edges) => {
-                w.site_at(options::SITE_FOR_STATEMENT_SEMI_BEFORE);
-                let written = ::sittir_core::render::render_edged(::sittir_core::types::KindId(226), edges, w, render_empty_statement);
-                written?;
-                w.site_at(options::SITE_FOR_STATEMENT_SEMI_AFTER);
-                Ok(())
-            }
+            ForStatementInitializerNodeSlotRecord::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(226), edges, w, render_empty_statement),
             ForStatementInitializerNodeSlotRecord::Verbatim(inner) => inner.render(w),
         }
     }
@@ -9179,13 +8744,7 @@ impl ::sittir_core::render::Render for ForStatementConditionNodeSlot {
             ForStatementConditionNodeSlot::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(282), edges, w, render_null),
             ForStatementConditionNodeSlot::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(439), edges, w, render_meta_property_new_target),
             ForStatementConditionNodeSlot::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(440), edges, w, render_meta_property_import_meta),
-            ForStatementConditionNodeSlot::EmptyStatement(edges) => {
-                w.site_at(options::SITE_FOR_STATEMENT_SEMI_BEFORE);
-                let written = ::sittir_core::render::render_edged(::sittir_core::types::KindId(226), edges, w, render_empty_statement);
-                written?;
-                w.site_at(options::SITE_FOR_STATEMENT_SEMI_AFTER);
-                Ok(())
-            }
+            ForStatementConditionNodeSlot::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(226), edges, w, render_empty_statement),
             ForStatementConditionNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -9312,13 +8871,7 @@ impl ::sittir_core::render::Render for ForStatementConditionNodeSlotRecord<'_> {
             ForStatementConditionNodeSlotRecord::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(282), edges, w, render_null),
             ForStatementConditionNodeSlotRecord::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(439), edges, w, render_meta_property_new_target),
             ForStatementConditionNodeSlotRecord::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(440), edges, w, render_meta_property_import_meta),
-            ForStatementConditionNodeSlotRecord::EmptyStatement(edges) => {
-                w.site_at(options::SITE_FOR_STATEMENT_SEMI_BEFORE);
-                let written = ::sittir_core::render::render_edged(::sittir_core::types::KindId(226), edges, w, render_empty_statement);
-                written?;
-                w.site_at(options::SITE_FOR_STATEMENT_SEMI_AFTER);
-                Ok(())
-            }
+            ForStatementConditionNodeSlotRecord::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(226), edges, w, render_empty_statement),
             ForStatementConditionNodeSlotRecord::Verbatim(inner) => inner.render(w),
         }
     }
@@ -9366,248 +8919,8 @@ impl ::sittir_core::render::Render for DoStatementTerminatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             DoStatementTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            DoStatementTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_DO_STATEMENT_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
+            DoStatementTerminatorNodeSlot::Semi => render_semi(w),
             DoStatementTerminatorNodeSlot::Blank => Ok(()),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum BreakStatementTerminatorNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-}
-
-impl ::sittir_core::prepare::Prepare for BreakStatementTerminatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            BreakStatementTerminatorNodeSlot::AutomaticSemicolon => Ok(()),
-            BreakStatementTerminatorNodeSlot::Semi => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for BreakStatementTerminatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for BreakStatementTerminatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            BreakStatementTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            BreakStatementTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_BREAK_STATEMENT_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum ContinueStatementTerminatorNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-}
-
-impl ::sittir_core::prepare::Prepare for ContinueStatementTerminatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ContinueStatementTerminatorNodeSlot::AutomaticSemicolon => Ok(()),
-            ContinueStatementTerminatorNodeSlot::Semi => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ContinueStatementTerminatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ContinueStatementTerminatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ContinueStatementTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            ContinueStatementTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_CONTINUE_STATEMENT_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum DebuggerStatementTerminatorNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-}
-
-impl ::sittir_core::prepare::Prepare for DebuggerStatementTerminatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            DebuggerStatementTerminatorNodeSlot::AutomaticSemicolon => Ok(()),
-            DebuggerStatementTerminatorNodeSlot::Semi => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for DebuggerStatementTerminatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for DebuggerStatementTerminatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            DebuggerStatementTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            DebuggerStatementTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_DEBUGGER_STATEMENT_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum ReturnStatementTerminatorNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-}
-
-impl ::sittir_core::prepare::Prepare for ReturnStatementTerminatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ReturnStatementTerminatorNodeSlot::AutomaticSemicolon => Ok(()),
-            ReturnStatementTerminatorNodeSlot::Semi => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ReturnStatementTerminatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ReturnStatementTerminatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ReturnStatementTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            ReturnStatementTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_RETURN_STATEMENT_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum ThrowStatementTerminatorNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-}
-
-impl ::sittir_core::prepare::Prepare for ThrowStatementTerminatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ThrowStatementTerminatorNodeSlot::AutomaticSemicolon => Ok(()),
-            ThrowStatementTerminatorNodeSlot::Semi => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ThrowStatementTerminatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ThrowStatementTerminatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ThrowStatementTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            ThrowStatementTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_THROW_STATEMENT_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
         }
     }
 }
@@ -13240,20 +12553,8 @@ impl ::sittir_core::view::KindOf for MemberExpressionOperatorNodeSlot {
 impl ::sittir_core::render::Render for MemberExpressionOperatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            MemberExpressionOperatorNodeSlot::Dot => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_DOT_BEFORE);
-                let written = render_dot(w);
-                written?;
-                w.site_at(options::SITE_MEMBER_EXPRESSION_DOT_AFTER);
-                Ok(())
-            }
-            MemberExpressionOperatorNodeSlot::OptionalChain => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_QMARK_DOT_BEFORE);
-                let written = render_optional_chain(w);
-                written?;
-                w.site_at(options::SITE_MEMBER_EXPRESSION_QMARK_DOT_AFTER);
-                Ok(())
-            }
+            MemberExpressionOperatorNodeSlot::Dot => render_dot(w),
+            MemberExpressionOperatorNodeSlot::OptionalChain => render_optional_chain(w),
         }
     }
 }
@@ -14716,48 +14017,13 @@ impl ::sittir_core::view::KindOf for UnaryExpressionOperatorNodeSlot {
 impl ::sittir_core::render::Render for UnaryExpressionOperatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UnaryExpressionOperatorNodeSlot::Bang => {
-                w.site_at(options::SITE_UNARY_EXPRESSION_BANG_BEFORE);
-                let written = render_bang(w);
-                written?;
-                Ok(())
-            }
-            UnaryExpressionOperatorNodeSlot::Tilde => {
-                w.site_at(options::SITE_UNARY_EXPRESSION_TILDE_BEFORE);
-                let written = render_tilde(w);
-                written?;
-                Ok(())
-            }
-            UnaryExpressionOperatorNodeSlot::Dash => {
-                w.site_at(options::SITE_UNARY_EXPRESSION_DASH_BEFORE);
-                let written = render_dash(w);
-                written?;
-                Ok(())
-            }
-            UnaryExpressionOperatorNodeSlot::Plus => {
-                w.site_at(options::SITE_UNARY_EXPRESSION_PLUS_BEFORE);
-                let written = render_plus(w);
-                written?;
-                Ok(())
-            }
-            UnaryExpressionOperatorNodeSlot::TypeofKeyword => {
-                w.site_at(options::SITE_UNARY_EXPRESSION_TYPEOF_KEYWORD_BEFORE);
-                let written = render_typeof_keyword(w);
-                written?;
-                Ok(())
-            }
-            UnaryExpressionOperatorNodeSlot::VoidKeyword => {
-                w.site_at(options::SITE_UNARY_EXPRESSION_VOID_KEYWORD_BEFORE);
-                let written = render_void_keyword(w);
-                written?;
-                Ok(())
-            }
-            UnaryExpressionOperatorNodeSlot::DeleteKeyword => {
-                w.site_at(options::SITE_UNARY_EXPRESSION_DELETE_KEYWORD_BEFORE);
-                let written = render_delete_keyword(w);
-                written?;
-                Ok(())
-            }
+            UnaryExpressionOperatorNodeSlot::Bang => render_bang(w),
+            UnaryExpressionOperatorNodeSlot::Tilde => render_tilde(w),
+            UnaryExpressionOperatorNodeSlot::Dash => render_dash(w),
+            UnaryExpressionOperatorNodeSlot::Plus => render_plus(w),
+            UnaryExpressionOperatorNodeSlot::TypeofKeyword => render_typeof_keyword(w),
+            UnaryExpressionOperatorNodeSlot::VoidKeyword => render_void_keyword(w),
+            UnaryExpressionOperatorNodeSlot::DeleteKeyword => render_delete_keyword(w),
         }
     }
 }
@@ -15573,12 +14839,7 @@ impl ::sittir_core::render::Render for FunctionSignatureTerminatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             FunctionSignatureTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            FunctionSignatureTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_FUNCTION_SIGNATURE_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
+            FunctionSignatureTerminatorNodeSlot::Semi => render_semi(w),
             FunctionSignatureTerminatorNodeSlot::FunctionSignatureAutomaticSemicolon => render_function_signature_automatic_semicolon(w),
         }
     }
@@ -15970,12 +15231,7 @@ impl ::sittir_core::render::Render for AsExpressionTypeNodeSlot {
             AsExpressionTypeNodeSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.render(w),
             AsExpressionTypeNodeSlot::ThisType => render_this_type(w),
             AsExpressionTypeNodeSlot::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(363), edges, w, render_existential_type),
-            AsExpressionTypeNodeSlot::ConstKeyword => {
-                w.site_at(options::SITE_AS_EXPRESSION_CONST_KEYWORD_BEFORE);
-                let written = render_const_keyword(w);
-                written?;
-                Ok(())
-            }
+            AsExpressionTypeNodeSlot::ConstKeyword => render_const_keyword(w),
         }
     }
 }
@@ -16042,12 +15298,7 @@ impl ::sittir_core::render::Render for AsExpressionTypeNodeSlotRecord<'_> {
             AsExpressionTypeNodeSlotRecord::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.render(w),
             AsExpressionTypeNodeSlotRecord::ThisType => render_this_type(w),
             AsExpressionTypeNodeSlotRecord::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(363), edges, w, render_existential_type),
-            AsExpressionTypeNodeSlotRecord::ConstKeyword => {
-                w.site_at(options::SITE_AS_EXPRESSION_CONST_KEYWORD_BEFORE);
-                let written = render_const_keyword(w);
-                written?;
-                Ok(())
-            }
+            AsExpressionTypeNodeSlotRecord::ConstKeyword => render_const_keyword(w),
         }
     }
 }
@@ -16424,53 +15675,6 @@ impl ::sittir_core::render::Render for ModuleNameNodeSlotRecord<'_> {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum ImportAliasTerminatorNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-}
-
-impl ::sittir_core::prepare::Prepare for ImportAliasTerminatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ImportAliasTerminatorNodeSlot::AutomaticSemicolon => Ok(()),
-            ImportAliasTerminatorNodeSlot::Semi => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ImportAliasTerminatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ImportAliasTerminatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ImportAliasTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            ImportAliasTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_IMPORT_ALIAS_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp, view = ExtendsTypeClauseTypeNodeSlotRecord)]
 pub enum ExtendsTypeClauseTypeNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
@@ -16565,53 +15769,6 @@ impl ::sittir_core::render::Render for ExtendsTypeClauseTypeNodeSlotRecord<'_> {
         }
     }
 }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum TypeAliasDeclarationTerminatorNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-}
-
-impl ::sittir_core::prepare::Prepare for TypeAliasDeclarationTerminatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            TypeAliasDeclarationTerminatorNodeSlot::AutomaticSemicolon => Ok(()),
-            TypeAliasDeclarationTerminatorNodeSlot::Semi => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for TypeAliasDeclarationTerminatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for TypeAliasDeclarationTerminatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            TypeAliasDeclarationTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            TypeAliasDeclarationTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_TYPE_ALIAS_DECLARATION_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
@@ -17845,20 +17002,8 @@ impl ::sittir_core::view::KindOf for TypeQueryMemberExpressionOperatorNodeSlot {
 impl ::sittir_core::render::Render for TypeQueryMemberExpressionOperatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TypeQueryMemberExpressionOperatorNodeSlot::Dot => {
-                w.site_at(options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_DOT_BEFORE);
-                let written = render_dot(w);
-                written?;
-                w.site_at(options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_DOT_AFTER);
-                Ok(())
-            }
-            TypeQueryMemberExpressionOperatorNodeSlot::QmarkDot => {
-                w.site_at(options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_QMARK_DOT_BEFORE);
-                let written = render_qmark_dot(w);
-                written?;
-                w.site_at(options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_QMARK_DOT_AFTER);
-                Ok(())
-            }
+            TypeQueryMemberExpressionOperatorNodeSlot::Dot => render_dot(w),
+            TypeQueryMemberExpressionOperatorNodeSlot::QmarkDot => render_qmark_dot(w),
         }
     }
 }
@@ -18666,18 +17811,8 @@ impl ::sittir_core::view::KindOf for ObjectTypeOpeningNodeSlot {
 impl ::sittir_core::render::Render for ObjectTypeOpeningNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ObjectTypeOpeningNodeSlot::Lbrace => {
-                w.site_at(options::SITE_OBJECT_TYPE_LBRACE_BEFORE);
-                let written = render_lbrace(w);
-                written?;
-                Ok(())
-            }
-            ObjectTypeOpeningNodeSlot::LbracePipe => {
-                w.site_at(options::SITE_OBJECT_TYPE_LBRACE_PIPE_BEFORE);
-                let written = render_lbrace_pipe(w);
-                written?;
-                Ok(())
-            }
+            ObjectTypeOpeningNodeSlot::Lbrace => render_lbrace(w),
+            ObjectTypeOpeningNodeSlot::LbracePipe => render_lbrace_pipe(w),
         }
     }
 }
@@ -18718,18 +17853,8 @@ impl ::sittir_core::view::KindOf for ObjectTypeClosingNodeSlot {
 impl ::sittir_core::render::Render for ObjectTypeClosingNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ObjectTypeClosingNodeSlot::Rbrace => {
-                let written = render_rbrace(w);
-                written?;
-                w.site_at(options::SITE_OBJECT_TYPE_RBRACE_AFTER);
-                Ok(())
-            }
-            ObjectTypeClosingNodeSlot::PipeRbrace => {
-                let written = render_pipe_rbrace(w);
-                written?;
-                w.site_at(options::SITE_OBJECT_TYPE_PIPE_RBRACE_AFTER);
-                Ok(())
-            }
+            ObjectTypeClosingNodeSlot::Rbrace => render_rbrace(w),
+            ObjectTypeClosingNodeSlot::PipeRbrace => render_pipe_rbrace(w),
         }
     }
 }
@@ -18770,20 +17895,8 @@ impl ::sittir_core::view::KindOf for ConstraintOperatorNodeSlot {
 impl ::sittir_core::render::Render for ConstraintOperatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ConstraintOperatorNodeSlot::ExtendsKeyword => {
-                w.site_at(options::SITE_CONSTRAINT_EXTENDS_KEYWORD_BEFORE);
-                let written = render_extends_keyword(w);
-                written?;
-                w.site_at(options::SITE_CONSTRAINT_EXTENDS_KEYWORD_AFTER);
-                Ok(())
-            }
-            ConstraintOperatorNodeSlot::Colon => {
-                w.site_at(options::SITE_CONSTRAINT_COLON_BEFORE);
-                let written = render_colon(w);
-                written?;
-                w.site_at(options::SITE_CONSTRAINT_COLON_AFTER);
-                Ok(())
-            }
+            ConstraintOperatorNodeSlot::ExtendsKeyword => render_extends_keyword(w),
+            ConstraintOperatorNodeSlot::Colon => render_colon(w),
         }
     }
 }
@@ -19815,58 +18928,6 @@ impl ::sittir_core::render::Render for CatchClauseGroupParameterNodeSlotRecord<'
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum AmbientDeclarationModuleTerminatorNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-    #[node(blank)]
-    Blank,
-}
-
-impl ::sittir_core::prepare::Prepare for AmbientDeclarationModuleTerminatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            AmbientDeclarationModuleTerminatorNodeSlot::AutomaticSemicolon => Ok(()),
-            AmbientDeclarationModuleTerminatorNodeSlot::Semi => Ok(()),
-            AmbientDeclarationModuleTerminatorNodeSlot::Blank => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for AmbientDeclarationModuleTerminatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-            Self::Blank => false,
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for AmbientDeclarationModuleTerminatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            AmbientDeclarationModuleTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            AmbientDeclarationModuleTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_AMBIENT_DECLARATION_MODULE_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
-            AmbientDeclarationModuleTerminatorNodeSlot::Blank => Ok(()),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp, view = ObjectTypeContentItemNodeSlotRecord)]
 pub enum ObjectTypeContentItemNodeSlot {
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM)]
@@ -20060,100 +19121,6 @@ impl ::sittir_core::render::Render for ObjectTypeContentItemNodeSlotRecord<'_> {
         }
     }
 }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum ExportStatementNamespaceExportTerminatorNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-}
-
-impl ::sittir_core::prepare::Prepare for ExportStatementNamespaceExportTerminatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ExportStatementNamespaceExportTerminatorNodeSlot::AutomaticSemicolon => Ok(()),
-            ExportStatementNamespaceExportTerminatorNodeSlot::Semi => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ExportStatementNamespaceExportTerminatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ExportStatementNamespaceExportTerminatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ExportStatementNamespaceExportTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            ExportStatementNamespaceExportTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum ExportStatementEqualsExportTerminatorNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-}
-
-impl ::sittir_core::prepare::Prepare for ExportStatementEqualsExportTerminatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ExportStatementEqualsExportTerminatorNodeSlot::AutomaticSemicolon => Ok(()),
-            ExportStatementEqualsExportTerminatorNodeSlot::Semi => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ExportStatementEqualsExportTerminatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ExportStatementEqualsExportTerminatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ExportStatementEqualsExportTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            ExportStatementEqualsExportTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
@@ -20835,58 +19802,6 @@ impl ::sittir_core::render::Render for BinaryExpressionInLeftNodeSlotRecord<'_> 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
-pub enum ClassBodyMemberMethodTerminatorNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-    #[node(blank)]
-    Blank,
-}
-
-impl ::sittir_core::prepare::Prepare for ClassBodyMemberMethodTerminatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ClassBodyMemberMethodTerminatorNodeSlot::AutomaticSemicolon => Ok(()),
-            ClassBodyMemberMethodTerminatorNodeSlot::Semi => Ok(()),
-            ClassBodyMemberMethodTerminatorNodeSlot::Blank => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ClassBodyMemberMethodTerminatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-            Self::Blank => false,
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ClassBodyMemberMethodTerminatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ClassBodyMemberMethodTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            ClassBodyMemberMethodTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_CLASS_BODY_MEMBER_METHOD_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
-            ClassBodyMemberMethodTerminatorNodeSlot::Blank => Ok(()),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
 pub enum ClassBodyMemberMethodSigTerminatorNodeSlot {
     #[kind(kind::_FUNCTION_SIGNATURE_AUTOMATIC_SEMICOLON)]
     FunctionSignatureAutomaticSemicolon,
@@ -20922,12 +19837,7 @@ impl ::sittir_core::render::Render for ClassBodyMemberMethodSigTerminatorNodeSlo
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             ClassBodyMemberMethodSigTerminatorNodeSlot::FunctionSignatureAutomaticSemicolon => render_function_signature_automatic_semicolon(w),
-            ClassBodyMemberMethodSigTerminatorNodeSlot::Comma => {
-                w.site_at(options::SITE_CLASS_BODY_MEMBER_METHOD_SIG_COMMA_BEFORE);
-                let written = render_comma(w);
-                written?;
-                Ok(())
-            }
+            ClassBodyMemberMethodSigTerminatorNodeSlot::Comma => render_comma(w),
         }
     }
 }
@@ -21147,18 +20057,8 @@ impl ::sittir_core::render::Render for ClassBodyMemberDeclarationTerminatorNodeS
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             ClassBodyMemberDeclarationTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            ClassBodyMemberDeclarationTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_CLASS_BODY_MEMBER_DECLARATION_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
-            ClassBodyMemberDeclarationTerminatorNodeSlot::Comma => {
-                w.site_at(options::SITE_CLASS_BODY_MEMBER_DECLARATION_COMMA_BEFORE);
-                let written = render_comma(w);
-                written?;
-                Ok(())
-            }
+            ClassBodyMemberDeclarationTerminatorNodeSlot::Semi => render_semi(w),
+            ClassBodyMemberDeclarationTerminatorNodeSlot::Comma => render_comma(w),
         }
     }
 }
@@ -21308,241 +20208,6 @@ impl ::sittir_core::render::Render for IndexSignatureColonTypeNodeSlotRecord<'_>
             IndexSignatureColonTypeNodeSlotRecord::OmittingTypeAnnotation(inner) => inner.render(w),
             IndexSignatureColonTypeNodeSlotRecord::AddingTypeAnnotation(inner) => inner.render(w),
             IndexSignatureColonTypeNodeSlotRecord::OptingTypeAnnotation(inner) => inner.render(w),
-        }
-    }
-}
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum ImportSpecifierNameTypeKeywordNodeSlot {
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::TYPEOF_KEYWORD)]
-    TypeofKeyword,
-}
-
-impl ::sittir_core::prepare::Prepare for ImportSpecifierNameTypeKeywordNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ImportSpecifierNameTypeKeywordNodeSlot::TypeKeyword => Ok(()),
-            ImportSpecifierNameTypeKeywordNodeSlot::TypeofKeyword => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ImportSpecifierNameTypeKeywordNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
-            Self::TypeofKeyword => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ImportSpecifierNameTypeKeywordNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ImportSpecifierNameTypeKeywordNodeSlot::TypeKeyword => {
-                let written = render_type_keyword(w);
-                written?;
-                w.site_at(options::SITE_IMPORT_SPECIFIER_NAME_TYPE_KEYWORD_AFTER);
-                Ok(())
-            }
-            ImportSpecifierNameTypeKeywordNodeSlot::TypeofKeyword => {
-                let written = render_typeof_keyword(w);
-                written?;
-                w.site_at(options::SITE_IMPORT_SPECIFIER_NAME_TYPEOF_KEYWORD_AFTER);
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum ImportSpecifierAsTypeKeywordNodeSlot {
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::TYPEOF_KEYWORD)]
-    TypeofKeyword,
-}
-
-impl ::sittir_core::prepare::Prepare for ImportSpecifierAsTypeKeywordNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ImportSpecifierAsTypeKeywordNodeSlot::TypeKeyword => Ok(()),
-            ImportSpecifierAsTypeKeywordNodeSlot::TypeofKeyword => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ImportSpecifierAsTypeKeywordNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
-            Self::TypeofKeyword => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ImportSpecifierAsTypeKeywordNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ImportSpecifierAsTypeKeywordNodeSlot::TypeKeyword => {
-                let written = render_type_keyword(w);
-                written?;
-                w.site_at(options::SITE_IMPORT_SPECIFIER_AS_TYPE_KEYWORD_AFTER);
-                Ok(())
-            }
-            ImportSpecifierAsTypeKeywordNodeSlot::TypeofKeyword => {
-                let written = render_typeof_keyword(w);
-                written?;
-                w.site_at(options::SITE_IMPORT_SPECIFIER_AS_TYPEOF_KEYWORD_AFTER);
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp, view = ImportSpecifierAsNameNodeSlotRecord)]
-pub enum ImportSpecifierAsNameNodeSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::CONSTRUCTOR_KEYWORD), folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
-    Identifier(IdentifierNode),
-    #[kind(kind::STRING_DOUBLE)]
-    StringDouble(StringDoubleNode),
-    #[kind(kind::STRING_SINGLE)]
-    StringSingle(StringSingleNode),
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[node(verbatim)]
-    Verbatim(VerbatimNode),
-}
-
-impl ::sittir_core::prepare::Prepare for ImportSpecifierAsNameNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ImportSpecifierAsNameNodeSlot::Identifier(t) => t.prepare(ctx),
-            ImportSpecifierAsNameNodeSlot::StringDouble(t) => t.prepare(ctx),
-            ImportSpecifierAsNameNodeSlot::StringSingle(t) => t.prepare(ctx),
-            ImportSpecifierAsNameNodeSlot::DefaultKeyword => Ok(()),
-            ImportSpecifierAsNameNodeSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            ImportSpecifierAsNameNodeSlot::Identifier(t) => t.gap_edges(),
-            ImportSpecifierAsNameNodeSlot::StringDouble(t) => t.gap_edges(),
-            ImportSpecifierAsNameNodeSlot::StringSingle(t) => t.gap_edges(),
-            ImportSpecifierAsNameNodeSlot::DefaultKeyword => None,
-            ImportSpecifierAsNameNodeSlot::Verbatim(t) => t.gap_edges(),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            ImportSpecifierAsNameNodeSlot::Identifier(t) => t.snapshot_edge(),
-            ImportSpecifierAsNameNodeSlot::StringDouble(t) => t.snapshot_edge(),
-            ImportSpecifierAsNameNodeSlot::StringSingle(t) => t.snapshot_edge(),
-            ImportSpecifierAsNameNodeSlot::DefaultKeyword => None,
-            ImportSpecifierAsNameNodeSlot::Verbatim(t) => t.snapshot_edge(),
-        }
-    }
-    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
-        match self {
-            ImportSpecifierAsNameNodeSlot::Identifier(t) => t.source_coordinate(),
-            ImportSpecifierAsNameNodeSlot::StringDouble(t) => t.source_coordinate(),
-            ImportSpecifierAsNameNodeSlot::StringSingle(t) => t.source_coordinate(),
-            ImportSpecifierAsNameNodeSlot::DefaultKeyword => None,
-            ImportSpecifierAsNameNodeSlot::Verbatim(t) => t.source_coordinate(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            ImportSpecifierAsNameNodeSlot::Identifier(t) => t.source_separator(ctx),
-            ImportSpecifierAsNameNodeSlot::StringDouble(t) => t.source_separator(ctx),
-            ImportSpecifierAsNameNodeSlot::StringSingle(t) => t.source_separator(ctx),
-            ImportSpecifierAsNameNodeSlot::DefaultKeyword => None,
-            ImportSpecifierAsNameNodeSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ImportSpecifierAsNameNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::StringDouble(inner) => inner.kind_in(kinds),
-            Self::StringSingle(inner) => inner.kind_in(kinds),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ImportSpecifierAsNameNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ImportSpecifierAsNameNodeSlot::Identifier(inner) => inner.render(w),
-            ImportSpecifierAsNameNodeSlot::StringDouble(inner) => inner.render(w),
-            ImportSpecifierAsNameNodeSlot::StringSingle(inner) => inner.render(w),
-            ImportSpecifierAsNameNodeSlot::DefaultKeyword => {
-                w.site_at(options::SITE_IMPORT_SPECIFIER_AS_DEFAULT_KEYWORD_BEFORE);
-                let written = render_default_keyword(w);
-                written?;
-                w.site_at(options::SITE_IMPORT_SPECIFIER_AS_DEFAULT_KEYWORD_AFTER);
-                Ok(())
-            }
-            ImportSpecifierAsNameNodeSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for ImportSpecifierAsNameNodeSlotRecord<'_> {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::StringDouble(inner) => inner.kind_in(kinds),
-            Self::StringSingle(inner) => inner.kind_in(kinds),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ImportSpecifierAsNameNodeSlotRecord<'_> {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ImportSpecifierAsNameNodeSlotRecord::Identifier(inner) => inner.render(w),
-            ImportSpecifierAsNameNodeSlotRecord::StringDouble(inner) => inner.render(w),
-            ImportSpecifierAsNameNodeSlotRecord::StringSingle(inner) => inner.render(w),
-            ImportSpecifierAsNameNodeSlotRecord::DefaultKeyword => {
-                w.site_at(options::SITE_IMPORT_SPECIFIER_AS_DEFAULT_KEYWORD_BEFORE);
-                let written = render_default_keyword(w);
-                written?;
-                w.site_at(options::SITE_IMPORT_SPECIFIER_AS_DEFAULT_KEYWORD_AFTER);
-                Ok(())
-            }
-            ImportSpecifierAsNameNodeSlotRecord::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -22290,117 +20955,8 @@ impl ::sittir_core::view::KindOf for UpdateExpressionPostfixOperatorNodeSlot {
 impl ::sittir_core::render::Render for UpdateExpressionPostfixOperatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UpdateExpressionPostfixOperatorNodeSlot::PlusPlus => {
-                let written = render_plus_plus(w);
-                written?;
-                w.site_at(options::SITE_UPDATE_EXPRESSION_POSTFIX_PLUS_PLUS_AFTER);
-                Ok(())
-            }
-            UpdateExpressionPostfixOperatorNodeSlot::DashDash => {
-                let written = render_dash_dash(w);
-                written?;
-                w.site_at(options::SITE_UPDATE_EXPRESSION_POSTFIX_DASH_DASH_AFTER);
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum UpdateExpressionPrefixOperatorNodeSlot {
-    #[kind(kind::PLUS_PLUS)]
-    PlusPlus,
-    #[kind(kind::DASH_DASH)]
-    DashDash,
-}
-
-impl ::sittir_core::prepare::Prepare for UpdateExpressionPrefixOperatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            UpdateExpressionPrefixOperatorNodeSlot::PlusPlus => Ok(()),
-            UpdateExpressionPrefixOperatorNodeSlot::DashDash => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for UpdateExpressionPrefixOperatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::PlusPlus => [::sittir_core::types::KindId(170)].iter().any(|k| kinds.contains(k)),
-            Self::DashDash => [::sittir_core::types::KindId(171)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for UpdateExpressionPrefixOperatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            UpdateExpressionPrefixOperatorNodeSlot::PlusPlus => {
-                w.site_at(options::SITE_UPDATE_EXPRESSION_PREFIX_PLUS_PLUS_BEFORE);
-                let written = render_plus_plus(w);
-                written?;
-                Ok(())
-            }
-            UpdateExpressionPrefixOperatorNodeSlot::DashDash => {
-                w.site_at(options::SITE_UPDATE_EXPRESSION_PREFIX_DASH_DASH_BEFORE);
-                let written = render_dash_dash(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum ExportStatementDefaultFromTerminatorNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-}
-
-impl ::sittir_core::prepare::Prepare for ExportStatementDefaultFromTerminatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ExportStatementDefaultFromTerminatorNodeSlot::AutomaticSemicolon => Ok(()),
-            ExportStatementDefaultFromTerminatorNodeSlot::Semi => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ExportStatementDefaultFromTerminatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ExportStatementDefaultFromTerminatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ExportStatementDefaultFromTerminatorNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            ExportStatementDefaultFromTerminatorNodeSlot::Semi => {
-                w.site_at(options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
+            UpdateExpressionPostfixOperatorNodeSlot::PlusPlus => render_plus_plus(w),
+            UpdateExpressionPostfixOperatorNodeSlot::DashDash => render_dash_dash(w),
         }
     }
 }
@@ -22983,53 +21539,6 @@ impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationDefaultK
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonNodeSlot {
-    #[kind(kind::_AUTOMATIC_SEMICOLON)]
-    AutomaticSemicolon,
-    #[kind(kind::SEMI)]
-    Semi,
-}
-
-impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonNodeSlot::AutomaticSemicolon => Ok(()),
-            ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonNodeSlot::Semi => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AutomaticSemicolon => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
-            Self::Semi => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonNodeSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonNodeSlot::Semi => {
-                w.site_at(options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_SEMI_BEFORE);
-                let written = render_semi(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp, view = ForHeaderLhsLeftNodeSlotRecord)]
 pub enum ForHeaderLhsLeftNodeSlot {
     #[kind(kind::_LHS_EXPRESSION, kind::LHS_EXPRESSION)]
@@ -23164,96 +21673,6 @@ impl ::sittir_core::render::Render for ForHeaderLhsOperatorNodeSlot {
         match self {
             ForHeaderLhsOperatorNodeSlot::InKeyword => render_in_keyword(w),
             ForHeaderLhsOperatorNodeSlot::OfKeyword => render_of_keyword(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum ForHeaderLetConstKindKindNodeSlot {
-    #[kind(kind::LET_KEYWORD)]
-    LetKeyword,
-    #[kind(kind::CONST_KEYWORD)]
-    ConstKeyword,
-}
-
-impl ::sittir_core::prepare::Prepare for ForHeaderLetConstKindKindNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ForHeaderLetConstKindKindNodeSlot::LetKeyword => Ok(()),
-            ForHeaderLetConstKindKindNodeSlot::ConstKeyword => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ForHeaderLetConstKindKindNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::LetKeyword => [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k)),
-            Self::ConstKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ForHeaderLetConstKindKindNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ForHeaderLetConstKindKindNodeSlot::LetKeyword => render_let_keyword(w),
-            ForHeaderLetConstKindKindNodeSlot::ConstKeyword => render_const_keyword(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum ForHeaderUsingKindKindNodeSlot {
-    #[kind(kind::USING_KEYWORD)]
-    UsingKeyword,
-    #[kind(kind::USING_DECLARATION_ARM)]
-    UsingDeclarationArm,
-}
-
-impl ::sittir_core::prepare::Prepare for ForHeaderUsingKindKindNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            ForHeaderUsingKindKindNodeSlot::UsingKeyword => Ok(()),
-            ForHeaderUsingKindKindNodeSlot::UsingDeclarationArm => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for ForHeaderUsingKindKindNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::UsingKeyword => [::sittir_core::types::KindId(16)].iter().any(|k| kinds.contains(k)),
-            Self::UsingDeclarationArm => [::sittir_core::types::KindId(394)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for ForHeaderUsingKindKindNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ForHeaderUsingKindKindNodeSlot::UsingKeyword => {
-                w.site_at(options::SITE_FOR_HEADER_USING_KIND_USING_KEYWORD_BEFORE);
-                let written = render_using_keyword(w);
-                written?;
-                w.site_at(options::SITE_FOR_HEADER_USING_KIND_USING_KEYWORD_AFTER);
-                Ok(())
-            }
-            ForHeaderUsingKindKindNodeSlot::UsingDeclarationArm => render_using_declaration_arm(w),
         }
     }
 }
@@ -23728,10 +22147,10 @@ pub struct ExportSpecifierNode {
     pub type_keyword: Option<::sittir_core::SlotValue<ExportSpecifierTypeKeywordNodeSlot>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 3, width = 4, inline = 3, forms = 11, built = 3)]
-    pub name: ::sittir_core::SlotValue<ExportSpecifierNameNodeSlot>,
+    pub name: ::sittir_core::SlotValue<NamespaceExportModuleExportNameNodeSlot>,
     #[wire(key = "_alias")]
     #[slot(field = field::ALIAS, word = 7, width = 4, inline = 3, forms = 11, built = 4)]
-    pub alias: Option<::sittir_core::SlotValue<ExportSpecifierNameNodeSlot>>,
+    pub alias: Option<::sittir_core::SlotValue<NamespaceExportModuleExportNameNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ExportSpecifierNode {
@@ -23842,7 +22261,7 @@ pub struct ImportStatementNode {
     height: u16,
     #[wire(key = "_type_keyword")]
     #[slot(field = field::TYPE_KEYWORD, word = 2, width = 1, forms = 2, built = 2)]
-    pub type_keyword: Option<::sittir_core::SlotValue<ImportStatementTypeKeywordNodeSlot>>,
+    pub type_keyword: Option<::sittir_core::SlotValue<ExportSpecifierTypeKeywordNodeSlot>>,
     #[wire(key = "_from_clause")]
     #[slot(field = field::FROM_CLAUSE, word = 3, width = 19, inline = 19, forms = 8, built = 3)]
     pub from_clause: ::sittir_core::SlotValue<ImportStatementFromClauseNodeSlot>,
@@ -24251,7 +22670,7 @@ pub struct ExpressionStatementNode {
     pub expression: ::sittir_core::SlotValue<ExpressionStatementExpressionNodeSlot>,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 6, width = 1, forms = 2, built = 3, defaulted)]
-    pub terminator: Option<::sittir_core::SlotValue<ExpressionStatementTerminatorNodeSlot>>,
+    pub terminator: Option<::sittir_core::SlotValue<ImportStatementTerminatorNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ExpressionStatementNode {
@@ -24334,7 +22753,7 @@ pub struct VariableDeclarationNode {
     pub declarators: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<VariableDeclaratorNode>>,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 3, width = 1, forms = 2, built = 3, defaulted)]
-    pub terminator: Option<::sittir_core::SlotValue<VariableDeclarationTerminatorNodeSlot>>,
+    pub terminator: Option<::sittir_core::SlotValue<ImportStatementTerminatorNodeSlot>>,
     #[wire(key = "_declarators_separator_space_before")]
     #[space(slot = 2, side = before, site = options::SITE_VARIABLE_DECLARATION_DECLARATORS_SEPARATOR_SPACE_BEFORE)]
     pub declarators_separator_space_before: Option<KindId>,
@@ -24430,7 +22849,7 @@ pub struct LexicalDeclarationNode {
     pub declarators: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<VariableDeclaratorNode>>,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 4, width = 1, forms = 2, built = 4, defaulted)]
-    pub terminator: Option<::sittir_core::SlotValue<LexicalDeclarationTerminatorNodeSlot>>,
+    pub terminator: Option<::sittir_core::SlotValue<ImportStatementTerminatorNodeSlot>>,
     #[wire(key = "_declarators_separator_space_before")]
     #[space(slot = 3, side = before, site = options::SITE_LEXICAL_DECLARATION_DECLARATORS_SEPARATOR_SPACE_BEFORE)]
     pub declarators_separator_space_before: Option<KindId>,
@@ -24527,7 +22946,7 @@ pub struct UsingDeclarationNode {
     pub variable_declarator: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<VariableDeclaratorNode>>,
     #[wire(key = "_automatic_semicolon")]
     #[slot(word = 4, width = 1, forms = 2, built = 4, defaulted)]
-    pub automatic_semicolon: Option<::sittir_core::SlotValue<UsingDeclarationAutomaticSemicolonNodeSlot>>,
+    pub automatic_semicolon: Option<::sittir_core::SlotValue<ImportStatementTerminatorNodeSlot>>,
     #[wire(key = "_variable_declarator_separator_space_before")]
     #[space(slot = 3, side = before, site = options::SITE_USING_DECLARATION_VARIABLE_DECLARATOR_SEPARATOR_SPACE_BEFORE)]
     pub variable_declarator_separator_space_before: Option<KindId>,
@@ -25468,7 +23887,7 @@ pub struct BreakStatementNode {
     pub label: Option<::sittir_core::SlotValue<StatementIdentifierNode>>,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 7, width = 1, forms = 2, built = 3, defaulted)]
-    pub terminator: Option<::sittir_core::SlotValue<BreakStatementTerminatorNodeSlot>>,
+    pub terminator: Option<::sittir_core::SlotValue<ImportStatementTerminatorNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for BreakStatementNode {
@@ -25551,7 +23970,7 @@ pub struct ContinueStatementNode {
     pub label: Option<::sittir_core::SlotValue<StatementIdentifierNode>>,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 7, width = 1, forms = 2, built = 3, defaulted)]
-    pub terminator: Option<::sittir_core::SlotValue<ContinueStatementTerminatorNodeSlot>>,
+    pub terminator: Option<::sittir_core::SlotValue<ImportStatementTerminatorNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ContinueStatementNode {
@@ -25631,7 +24050,7 @@ pub struct DebuggerStatementNode {
     height: u16,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 2, width = 1, forms = 2, built = 2, defaulted)]
-    pub terminator: Option<::sittir_core::SlotValue<DebuggerStatementTerminatorNodeSlot>>,
+    pub terminator: Option<::sittir_core::SlotValue<ImportStatementTerminatorNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for DebuggerStatementNode {
@@ -25713,7 +24132,7 @@ pub struct ReturnStatementNode {
     pub expression: Option<::sittir_core::SlotValue<ExpressionStatementExpressionNodeSlot>>,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 6, width = 1, forms = 2, built = 3, defaulted)]
-    pub terminator: Option<::sittir_core::SlotValue<ReturnStatementTerminatorNodeSlot>>,
+    pub terminator: Option<::sittir_core::SlotValue<ImportStatementTerminatorNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ReturnStatementNode {
@@ -25796,7 +24215,7 @@ pub struct ThrowStatementNode {
     pub expression: ::sittir_core::SlotValue<ExpressionStatementExpressionNodeSlot>,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 6, width = 1, forms = 2, built = 3, defaulted)]
-    pub terminator: Option<::sittir_core::SlotValue<ThrowStatementTerminatorNodeSlot>>,
+    pub terminator: Option<::sittir_core::SlotValue<ImportStatementTerminatorNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ThrowStatementNode {
@@ -32176,7 +30595,7 @@ pub struct ImportAliasNode {
     pub value: ::sittir_core::SlotValue<NestedIdentifierQualifierNodeSlot>,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 8, width = 1, forms = 2, built = 4, defaulted)]
-    pub terminator: Option<::sittir_core::SlotValue<ImportAliasTerminatorNodeSlot>>,
+    pub terminator: Option<::sittir_core::SlotValue<ImportStatementTerminatorNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ImportAliasNode {
@@ -32771,7 +31190,7 @@ pub struct TypeAliasDeclarationNode {
     pub value: ::sittir_core::SlotValue<TypeNode>,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 16, width = 1, forms = 2, built = 5, defaulted)]
-    pub terminator: Option<::sittir_core::SlotValue<TypeAliasDeclarationTerminatorNodeSlot>>,
+    pub terminator: Option<::sittir_core::SlotValue<ImportStatementTerminatorNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for TypeAliasDeclarationNode {
@@ -38098,7 +36517,7 @@ pub struct AmbientDeclarationModuleNode {
     pub type_: ::sittir_core::SlotValue<TypeNode>,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 11, width = 1, forms = 18, built = 4, defaulted)]
-    pub terminator: Option<::sittir_core::SlotValue<AmbientDeclarationModuleTerminatorNodeSlot>>,
+    pub terminator: Option<::sittir_core::SlotValue<DoStatementTerminatorNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for AmbientDeclarationModuleNode {
@@ -38286,7 +36705,7 @@ pub struct ExportStatementNamespaceExportNode {
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 5, width = 1, forms = 2, built = 3, defaulted)]
-    pub terminator: Option<::sittir_core::SlotValue<ExportStatementNamespaceExportTerminatorNodeSlot>>,
+    pub terminator: Option<::sittir_core::SlotValue<ImportStatementTerminatorNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ExportStatementNamespaceExportNode {
@@ -38369,7 +36788,7 @@ pub struct ExportStatementEqualsExportNode {
     pub value: ::sittir_core::SlotValue<ExpressionNode>,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 6, width = 1, forms = 2, built = 3, defaulted)]
-    pub terminator: Option<::sittir_core::SlotValue<ExportStatementEqualsExportTerminatorNodeSlot>>,
+    pub terminator: Option<::sittir_core::SlotValue<ImportStatementTerminatorNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ExportStatementEqualsExportNode {
@@ -39708,7 +38127,7 @@ pub struct ClassBodyMemberMethodNode {
     pub method_definition: ::sittir_core::SlotValue<MethodDefinitionClassBodyMemberMethodNode>,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 42, width = 1, forms = 18, built = 4, defaulted)]
-    pub terminator: Option<::sittir_core::SlotValue<ClassBodyMemberMethodTerminatorNodeSlot>>,
+    pub terminator: Option<::sittir_core::SlotValue<DoStatementTerminatorNodeSlot>>,
     #[wire(key = "_decorator_separator_space")]
     #[space(slot = 2, side = after, site = options::SITE_CLASS_BODY_MEMBER_METHOD_DECORATOR_SEPARATOR_SPACE)]
     pub decorator_separator_space: Option<KindId>,
@@ -40334,7 +38753,7 @@ pub struct ImportSpecifierNameNode {
     height: u16,
     #[wire(key = "_type_keyword")]
     #[slot(field = field::TYPE_KEYWORD, word = 2, width = 1, forms = 2, built = 2)]
-    pub type_keyword: Option<::sittir_core::SlotValue<ImportSpecifierNameTypeKeywordNodeSlot>>,
+    pub type_keyword: Option<::sittir_core::SlotValue<ExportSpecifierTypeKeywordNodeSlot>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 3, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
@@ -40416,10 +38835,10 @@ pub struct ImportSpecifierAsNode {
     height: u16,
     #[wire(key = "_type_keyword")]
     #[slot(field = field::TYPE_KEYWORD, word = 2, width = 1, forms = 2, built = 2)]
-    pub type_keyword: Option<::sittir_core::SlotValue<ImportSpecifierAsTypeKeywordNodeSlot>>,
+    pub type_keyword: Option<::sittir_core::SlotValue<ExportSpecifierTypeKeywordNodeSlot>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 3, width = 4, inline = 3, forms = 11, built = 3)]
-    pub name: ::sittir_core::SlotValue<ImportSpecifierAsNameNodeSlot>,
+    pub name: ::sittir_core::SlotValue<NamespaceExportModuleExportNameNodeSlot>,
     #[wire(key = "_alias")]
     #[slot(field = field::ALIAS, word = 7, width = 3, forms = 1, built = 4)]
     pub alias: ::sittir_core::SlotValue<IdentifierNode>,
@@ -41156,7 +39575,7 @@ pub struct UpdateExpressionPrefixNode {
     height: u16,
     #[wire(key = "_operator")]
     #[slot(field = field::OPERATOR, word = 2, width = 1, forms = 2, built = 2)]
-    pub operator: ::sittir_core::SlotValue<UpdateExpressionPrefixOperatorNodeSlot>,
+    pub operator: ::sittir_core::SlotValue<UpdateExpressionPostfixOperatorNodeSlot>,
     #[wire(key = "_argument")]
     #[slot(field = field::ARGUMENT, word = 3, width = 4, forms = 3, built = 3)]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionNode>>,
@@ -41485,7 +39904,7 @@ pub struct ExportStatementDefaultFromNode {
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultFromContentNodeSlot>,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 14, width = 1, forms = 2, built = 4, defaulted)]
-    pub terminator: Option<::sittir_core::SlotValue<ExportStatementDefaultFromTerminatorNodeSlot>>,
+    pub terminator: Option<::sittir_core::SlotValue<ImportStatementTerminatorNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ExportStatementDefaultFromNode {
@@ -41976,7 +40395,7 @@ pub struct ExportStatementDefaultDeclarationDefaultKwValueNode {
     pub value: ::sittir_core::SlotValue<ExpressionNode>,
     #[wire(key = "_automatic_semicolon")]
     #[slot(word = 6, width = 1, forms = 2, built = 3, defaulted)]
-    pub automatic_semicolon: Option<::sittir_core::SlotValue<ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonNodeSlot>>,
+    pub automatic_semicolon: Option<::sittir_core::SlotValue<ImportStatementTerminatorNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ExportStatementDefaultDeclarationDefaultKwValueNode {
@@ -42512,7 +40931,7 @@ pub struct ForHeaderLetConstKindNode {
     height: u16,
     #[wire(key = "_kind")]
     #[slot(field = field::KIND, word = 2, width = 1, forms = 2, built = 2)]
-    pub kind: ::sittir_core::SlotValue<ForHeaderLetConstKindKindNodeSlot>,
+    pub kind: ::sittir_core::SlotValue<LexicalDeclarationKindNodeSlot>,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT, word = 3, width = 4, inline = 3, forms = 9, built = 3)]
     pub left: ::sittir_core::SlotValue<CatchClauseGroupParameterNodeSlot>,
@@ -42607,7 +41026,7 @@ pub struct ForHeaderUsingKindNode {
     height: u16,
     #[wire(key = "_kind")]
     #[slot(field = field::KIND, word = 2, width = 1, forms = 2, built = 2)]
-    pub kind: ::sittir_core::SlotValue<ForHeaderUsingKindKindNodeSlot>,
+    pub kind: ::sittir_core::SlotValue<UsingDeclarationKindNodeSlot>,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT, word = 3, width = 4, inline = 3, forms = 9, built = 3)]
     pub left: ::sittir_core::SlotValue<CatchClauseGroupParameterNodeSlot>,
@@ -51669,16 +50088,6 @@ impl ::sittir_core::prepare::SeatTarget for NamespaceExportModuleExportNameNodeS
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for ExportSpecifierNameNodeSlot {
-    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        match self {
-            Self::StringDouble(t) => t.seat_target(table, ctx),
-            Self::StringSingle(t) => t.seat_target(table, ctx),
-            Self::Identifier { .. } | Self::DefaultKeyword { .. } | Self::Verbatim { .. } => None,
-        }
-    }
-}
-
 impl ::sittir_core::prepare::SeatTarget for ImportStatementFromClauseNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
@@ -52544,16 +50953,6 @@ impl ::sittir_core::prepare::SeatTarget for ClassBodyMemberDeclarationMemberNode
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for ImportSpecifierAsNameNodeSlot {
-    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        match self {
-            Self::StringDouble(t) => t.seat_target(table, ctx),
-            Self::StringSingle(t) => t.seat_target(table, ctx),
-            Self::Identifier { .. } | Self::DefaultKeyword { .. } | Self::Verbatim { .. } => None,
-        }
-    }
-}
-
 impl ::sittir_core::prepare::SeatTarget for CallExpressionTemplateCallFunctionNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
@@ -52843,6 +51242,7 @@ fn render_namespace_export<N: NamespaceExportFields + ?Sized>(node: &N, w: &mut 
     w.site_at(options::SITE_NAMESPACE_EXPORT_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_NAMESPACE_EXPORT_AS_KEYWORD_AFTER);
+    if module_export_name.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_NAMESPACE_EXPORT_DEFAULT_KEYWORD_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_module_export_name", ::sittir_core::types::ItemIndex(0), w, |w| module_export_name.render(w))?;
     w.edge(::sittir_core::types::KindId(191), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -52867,12 +51267,18 @@ fn render_export_specifier<N: ExportSpecifierFields + ?Sized>(node: &N, w: &mut 
     let type_keyword = View::new(node.type_keyword(), "{}");
     w.edge(::sittir_core::types::KindId(193), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type_keyword", ::sittir_core::types::ItemIndex(0), w, |w| type_keyword.render(w))?;
+    if type_keyword.kind_in(&*w, &[::sittir_core::types::KindId(7)]) { w.site_at(options::SITE_EXPORT_SPECIFIER_TYPE_KEYWORD_AFTER); }
+    if type_keyword.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_EXPORT_SPECIFIER_TYPEOF_KEYWORD_AFTER); }
+    if name.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_EXPORT_SPECIFIER_DEFAULT_KEYWORD_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    if name.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_EXPORT_SPECIFIER_DEFAULT_KEYWORD_AFTER); }
     if alias.is_present() {
         w.site_at(options::SITE_EXPORT_SPECIFIER_AS_KEYWORD_BEFORE);
         w.text("as")?;
         w.site_at(options::SITE_EXPORT_SPECIFIER_AS_KEYWORD_AFTER);
+        if alias.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_EXPORT_SPECIFIER_DEFAULT_KEYWORD_BEFORE); }
         ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_alias", ::sittir_core::types::ItemIndex(0), w, |w| alias.render(w))?;
+        if alias.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_EXPORT_SPECIFIER_DEFAULT_KEYWORD_AFTER); }
     }
     w.edge(::sittir_core::types::KindId(193), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -52886,9 +51292,14 @@ fn render_import_statement<N: ImportStatementFields + ?Sized>(node: &N, w: &mut 
     w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("import")?;
     w.site_at(options::SITE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER);
+    if type_keyword.kind_in(&*w, &[::sittir_core::types::KindId(7)]) { w.site_at(options::SITE_IMPORT_STATEMENT_TYPE_KEYWORD_BEFORE); }
+    if type_keyword.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_IMPORT_STATEMENT_TYPEOF_KEYWORD_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type_keyword", ::sittir_core::types::ItemIndex(0), w, |w| type_keyword.render(w))?;
+    if type_keyword.kind_in(&*w, &[::sittir_core::types::KindId(7)]) { w.site_at(options::SITE_IMPORT_STATEMENT_TYPE_KEYWORD_AFTER); }
+    if type_keyword.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_IMPORT_STATEMENT_TYPEOF_KEYWORD_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_from_clause", ::sittir_core::types::ItemIndex(0), w, |w| from_clause.render(w))?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_import_attribute", ::sittir_core::types::ItemIndex(0), w, |w| import_attribute.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_IMPORT_STATEMENT_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -52930,6 +51341,8 @@ fn render_import_attribute<N: ImportAttributeFields + ?Sized>(node: &N, w: &mut 
     let attribute_kind = node.attribute_kind();
     let object = node.object();
     w.edge(::sittir_core::types::KindId(203), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    if attribute_kind.kind_in(&*w, &[::sittir_core::types::KindId(12)]) { w.site_at(options::SITE_IMPORT_ATTRIBUTE_WITH_KEYWORD_BEFORE); }
+    if attribute_kind.kind_in(&*w, &[::sittir_core::types::KindId(13)]) { w.site_at(options::SITE_IMPORT_ATTRIBUTE_ASSERT_KEYWORD_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_attribute_kind", ::sittir_core::types::ItemIndex(0), w, |w| attribute_kind.render(w))?;
     w.site_at(options::SITE_IMPORT_ATTRIBUTE_ATTRIBUTE_KIND_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_object", ::sittir_core::types::ItemIndex(0), w, |w| object.render(w))?;
@@ -52942,6 +51355,7 @@ fn render_expression_statement<N: ExpressionStatementFields + ?Sized>(node: &N, 
     let terminator = View::new(node.terminator(), "{}");
     w.edge(::sittir_core::types::KindId(205), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_EXPRESSION_STATEMENT_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(205), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -52966,6 +51380,7 @@ fn render_variable_declaration<N: VariableDeclarationFields + ?Sized>(node: &N, 
     w.text("var")?;
     w.site_at(options::SITE_VARIABLE_DECLARATION_VAR_KEYWORD_AFTER);
     declarators.render(w)?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_VARIABLE_DECLARATION_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(206), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -52988,9 +51403,12 @@ fn render_lexical_declaration<N: LexicalDeclarationFields + ?Sized>(node: &N, w:
     let kind = node.kind();
     let terminator = View::new(node.terminator(), "{}");
     w.edge(::sittir_core::types::KindId(207), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    if kind.kind_in(&*w, &[::sittir_core::types::KindId(53)]) { w.site_at(options::SITE_LEXICAL_DECLARATION_LET_KEYWORD_BEFORE); }
+    if kind.kind_in(&*w, &[::sittir_core::types::KindId(68)]) { w.site_at(options::SITE_LEXICAL_DECLARATION_CONST_KEYWORD_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_kind", ::sittir_core::types::ItemIndex(0), w, |w| kind.render(w))?;
     w.site_at(options::SITE_LEXICAL_DECLARATION_KIND_AFTER);
     declarators.render(w)?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(207), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -53014,7 +51432,9 @@ fn render_using_declaration<N: UsingDeclarationFields + ?Sized>(node: &N, w: &mu
     };
     w.edge(::sittir_core::types::KindId(208), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_kind", ::sittir_core::types::ItemIndex(0), w, |w| kind.render(w))?;
+    if kind.kind_in(&*w, &[::sittir_core::types::KindId(16)]) { w.site_at(options::SITE_USING_DECLARATION_USING_KEYWORD_AFTER); }
     variable_declarator.render(w)?;
+    if automatic_semicolon.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_USING_DECLARATION_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_automatic_semicolon", ::sittir_core::types::ItemIndex(0), w, |w| automatic_semicolon.render(w))?;
     w.edge(::sittir_core::types::KindId(208), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -53095,13 +51515,17 @@ fn render_for_statement<N: ForStatementFields + ?Sized>(node: &N, w: &mut dyn ::
     w.site_at(options::SITE_FOR_STATEMENT_LPAREN_BEFORE);
     w.text("(")?;
     w.site_at(options::SITE_FOR_STATEMENT_LPAREN_AFTER);
+    if initializer.kind_in(&*w, &[::sittir_core::types::KindId(22), ::sittir_core::types::KindId(226)]) { w.site_at(options::SITE_FOR_STATEMENT_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_initializer", ::sittir_core::types::ItemIndex(0), w, |w| initializer.render(w))?;
+    if initializer.kind_in(&*w, &[::sittir_core::types::KindId(22), ::sittir_core::types::KindId(226)]) { w.site_at(options::SITE_FOR_STATEMENT_SEMI_AFTER); }
     if initializer.kind_in(&*w, &[::sittir_core::types::KindId(1), ::sittir_core::types::KindId(129), ::sittir_core::types::KindId(155), ::sittir_core::types::KindId(156), ::sittir_core::types::KindId(157), ::sittir_core::types::KindId(158), ::sittir_core::types::KindId(159), ::sittir_core::types::KindId(160), ::sittir_core::types::KindId(161), ::sittir_core::types::KindId(162), ::sittir_core::types::KindId(163), ::sittir_core::types::KindId(164), ::sittir_core::types::KindId(165), ::sittir_core::types::KindId(234), ::sittir_core::types::KindId(236), ::sittir_core::types::KindId(237), ::sittir_core::types::KindId(241), ::sittir_core::types::KindId(244), ::sittir_core::types::KindId(247), ::sittir_core::types::KindId(249), ::sittir_core::types::KindId(251), ::sittir_core::types::KindId(256), ::sittir_core::types::KindId(257), ::sittir_core::types::KindId(258), ::sittir_core::types::KindId(259), ::sittir_core::types::KindId(261), ::sittir_core::types::KindId(263), ::sittir_core::types::KindId(267), ::sittir_core::types::KindId(268), ::sittir_core::types::KindId(269), ::sittir_core::types::KindId(271), ::sittir_core::types::KindId(273), ::sittir_core::types::KindId(275), ::sittir_core::types::KindId(278), ::sittir_core::types::KindId(279), ::sittir_core::types::KindId(280), ::sittir_core::types::KindId(281), ::sittir_core::types::KindId(282), ::sittir_core::types::KindId(299), ::sittir_core::types::KindId(304), ::sittir_core::types::KindId(305), ::sittir_core::types::KindId(306), ::sittir_core::types::KindId(307), ::sittir_core::types::KindId(315), ::sittir_core::types::KindId(418), ::sittir_core::types::KindId(419), ::sittir_core::types::KindId(420), ::sittir_core::types::KindId(421), ::sittir_core::types::KindId(422), ::sittir_core::types::KindId(423), ::sittir_core::types::KindId(424), ::sittir_core::types::KindId(425), ::sittir_core::types::KindId(426), ::sittir_core::types::KindId(439), ::sittir_core::types::KindId(440)]) {
         w.site_at(options::SITE_FOR_STATEMENT_SEMI_BEFORE);
         w.text(";")?;
         w.site_at(options::SITE_FOR_STATEMENT_SEMI_AFTER);
     }
+    if condition.kind_in(&*w, &[::sittir_core::types::KindId(22), ::sittir_core::types::KindId(226)]) { w.site_at(options::SITE_FOR_STATEMENT_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_condition", ::sittir_core::types::ItemIndex(0), w, |w| condition.render(w))?;
+    if condition.kind_in(&*w, &[::sittir_core::types::KindId(22), ::sittir_core::types::KindId(226)]) { w.site_at(options::SITE_FOR_STATEMENT_SEMI_AFTER); }
     if condition.kind_in(&*w, &[::sittir_core::types::KindId(1), ::sittir_core::types::KindId(129), ::sittir_core::types::KindId(155), ::sittir_core::types::KindId(156), ::sittir_core::types::KindId(157), ::sittir_core::types::KindId(158), ::sittir_core::types::KindId(159), ::sittir_core::types::KindId(160), ::sittir_core::types::KindId(161), ::sittir_core::types::KindId(162), ::sittir_core::types::KindId(163), ::sittir_core::types::KindId(164), ::sittir_core::types::KindId(165), ::sittir_core::types::KindId(234), ::sittir_core::types::KindId(236), ::sittir_core::types::KindId(237), ::sittir_core::types::KindId(241), ::sittir_core::types::KindId(244), ::sittir_core::types::KindId(247), ::sittir_core::types::KindId(249), ::sittir_core::types::KindId(251), ::sittir_core::types::KindId(256), ::sittir_core::types::KindId(257), ::sittir_core::types::KindId(258), ::sittir_core::types::KindId(259), ::sittir_core::types::KindId(261), ::sittir_core::types::KindId(263), ::sittir_core::types::KindId(267), ::sittir_core::types::KindId(268), ::sittir_core::types::KindId(269), ::sittir_core::types::KindId(271), ::sittir_core::types::KindId(273), ::sittir_core::types::KindId(275), ::sittir_core::types::KindId(278), ::sittir_core::types::KindId(279), ::sittir_core::types::KindId(280), ::sittir_core::types::KindId(281), ::sittir_core::types::KindId(282), ::sittir_core::types::KindId(299), ::sittir_core::types::KindId(304), ::sittir_core::types::KindId(305), ::sittir_core::types::KindId(306), ::sittir_core::types::KindId(307), ::sittir_core::types::KindId(315), ::sittir_core::types::KindId(418), ::sittir_core::types::KindId(419), ::sittir_core::types::KindId(420), ::sittir_core::types::KindId(421), ::sittir_core::types::KindId(422), ::sittir_core::types::KindId(423), ::sittir_core::types::KindId(424), ::sittir_core::types::KindId(425), ::sittir_core::types::KindId(426), ::sittir_core::types::KindId(439), ::sittir_core::types::KindId(440)]) {
         w.site_at(options::SITE_FOR_STATEMENT_SEMI_BEFORE);
         w.text(";")?;
@@ -53158,6 +51582,7 @@ fn render_do_statement<N: DoStatementFields + ?Sized>(node: &N, w: &mut dyn ::si
     w.text("while")?;
     w.site_at(options::SITE_DO_STATEMENT_WHILE_KEYWORD_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_condition", ::sittir_core::types::ItemIndex(0), w, |w| condition.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_DO_STATEMENT_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(218), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -53196,6 +51621,7 @@ fn render_break_statement<N: BreakStatementFields + ?Sized>(node: &N, w: &mut dy
     w.text("break")?;
     w.site_at(options::SITE_BREAK_STATEMENT_BREAK_KEYWORD_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_label", ::sittir_core::types::ItemIndex(0), w, |w| label.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_BREAK_STATEMENT_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -53208,6 +51634,7 @@ fn render_continue_statement<N: ContinueStatementFields + ?Sized>(node: &N, w: &
     w.text("continue")?;
     w.site_at(options::SITE_CONTINUE_STATEMENT_CONTINUE_KEYWORD_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_label", ::sittir_core::types::ItemIndex(0), w, |w| label.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_CONTINUE_STATEMENT_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -53218,6 +51645,7 @@ fn render_debugger_statement<N: DebuggerStatementFields + ?Sized>(node: &N, w: &
     w.edge(::sittir_core::types::KindId(223), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("debugger")?;
     w.site_at(options::SITE_DEBUGGER_STATEMENT_DEBUGGER_KEYWORD_AFTER);
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_DEBUGGER_STATEMENT_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(223), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -53230,6 +51658,7 @@ fn render_return_statement<N: ReturnStatementFields + ?Sized>(node: &N, w: &mut 
     w.text("return")?;
     w.site_at(options::SITE_RETURN_STATEMENT_RETURN_KEYWORD_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_RETURN_STATEMENT_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(224), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -53242,6 +51671,7 @@ fn render_throw_statement<N: ThrowStatementFields + ?Sized>(node: &N, w: &mut dy
     w.text("throw")?;
     w.site_at(options::SITE_THROW_STATEMENT_THROW_KEYWORD_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_THROW_STATEMENT_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(225), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -53732,7 +52162,11 @@ fn render_member_expression<N: MemberExpressionFields + ?Sized>(node: &N, w: &mu
     let property = node.property();
     w.edge(::sittir_core::types::KindId(258), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_object", ::sittir_core::types::ItemIndex(0), w, |w| object.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(63)]) { w.site_at(options::SITE_MEMBER_EXPRESSION_DOT_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(67), ::sittir_core::types::KindId(254)]) { w.site_at(options::SITE_MEMBER_EXPRESSION_QMARK_DOT_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(63)]) { w.site_at(options::SITE_MEMBER_EXPRESSION_DOT_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(67), ::sittir_core::types::KindId(254)]) { w.site_at(options::SITE_MEMBER_EXPRESSION_QMARK_DOT_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_property", ::sittir_core::types::ItemIndex(0), w, |w| property.render(w))?;
     w.edge(::sittir_core::types::KindId(258), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -53853,6 +52287,13 @@ fn render_unary_expression<N: UnaryExpressionFields + ?Sized>(node: &N, w: &mut 
     let argument = node.argument();
     let operator = node.operator();
     w.edge(::sittir_core::types::KindId(269), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(117)]) { w.site_at(options::SITE_UNARY_EXPRESSION_BANG_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(118)]) { w.site_at(options::SITE_UNARY_EXPRESSION_TILDE_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(104)]) { w.site_at(options::SITE_UNARY_EXPRESSION_DASH_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(103)]) { w.site_at(options::SITE_UNARY_EXPRESSION_PLUS_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_UNARY_EXPRESSION_TYPEOF_KEYWORD_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(78)]) { w.site_at(options::SITE_UNARY_EXPRESSION_VOID_KEYWORD_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(69)]) { w.site_at(options::SITE_UNARY_EXPRESSION_DELETE_KEYWORD_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(8), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(78)]) {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::SEPARATING);
@@ -54156,6 +52597,7 @@ fn render_function_signature<N: FunctionSignatureFields + ?Sized>(node: &N, w: &
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type_parameters", ::sittir_core::types::ItemIndex(0), w, |w| type_parameters.render(w))?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_parameters", ::sittir_core::types::ItemIndex(0), w, |w| parameters.render(w))?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_return_type", ::sittir_core::types::ItemIndex(0), w, |w| return_type.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_FUNCTION_SIGNATURE_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(302), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -54191,6 +52633,7 @@ fn render_as_expression<N: AsExpressionFields + ?Sized>(node: &N, w: &mut dyn ::
     w.site_at(options::SITE_AS_EXPRESSION_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_AS_EXPRESSION_AS_KEYWORD_AFTER);
+    if type_.kind_in(&*w, &[::sittir_core::types::KindId(68)]) { w.site_at(options::SITE_AS_EXPRESSION_CONST_KEYWORD_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
     w.edge(::sittir_core::types::KindId(305), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -54374,6 +52817,7 @@ fn render_import_alias<N: ImportAliasFields + ?Sized>(node: &N, w: &mut dyn ::si
     w.text("=")?;
     w.site_at(options::SITE_IMPORT_ALIAS_EQ_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_IMPORT_ALIAS_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(317), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -54488,6 +52932,7 @@ fn render_type_alias_declaration<N: TypeAliasDeclarationFields + ?Sized>(node: &
     w.text("=")?;
     w.site_at(options::SITE_TYPE_ALIAS_DECLARATION_EQ_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_TYPE_ALIAS_DECLARATION_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(324), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -54851,7 +53296,11 @@ fn render_type_query_member_expression<N: TypeQueryMemberExpressionFields + ?Siz
     let property = node.property();
     w.edge(::sittir_core::types::KindId(353), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_object", ::sittir_core::types::ItemIndex(0), w, |w| object.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(63)]) { w.site_at(options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_DOT_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(67)]) { w.site_at(options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_QMARK_DOT_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(63)]) { w.site_at(options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_DOT_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(67)]) { w.site_at(options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_QMARK_DOT_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_property", ::sittir_core::types::ItemIndex(0), w, |w| property.render(w))?;
     w.edge(::sittir_core::types::KindId(353), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -55002,11 +53451,15 @@ fn render_object_type<N: ObjectTypeFields + ?Sized>(node: &N, w: &mut dyn ::sitt
     let members = View::new(node.members(), "{}");
     let opening = node.opening();
     w.edge(::sittir_core::types::KindId(368), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    if opening.kind_in(&*w, &[::sittir_core::types::KindId(5)]) { w.site_at(options::SITE_OBJECT_TYPE_LBRACE_BEFORE); }
+    if opening.kind_in(&*w, &[::sittir_core::types::KindId(147)]) { w.site_at(options::SITE_OBJECT_TYPE_LBRACE_PIPE_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_opening", ::sittir_core::types::ItemIndex(0), w, |w| opening.render(w))?;
     w.site_at(options::SITE_OBJECT_TYPE_OPENING_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_members", ::sittir_core::types::ItemIndex(0), w, |w| members.render(w))?;
     w.site_at(options::SITE_OBJECT_TYPE_CLOSING_BEFORE);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_closing", ::sittir_core::types::ItemIndex(0), w, |w| closing.render(w))?;
+    if closing.kind_in(&*w, &[::sittir_core::types::KindId(6)]) { w.site_at(options::SITE_OBJECT_TYPE_RBRACE_AFTER); }
+    if closing.kind_in(&*w, &[::sittir_core::types::KindId(148)]) { w.site_at(options::SITE_OBJECT_TYPE_PIPE_RBRACE_AFTER); }
     w.edge(::sittir_core::types::KindId(368), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -55105,7 +53558,11 @@ fn render_constraint<N: ConstraintFields + ?Sized>(node: &N, w: &mut dyn ::sitti
     let bounds = node.bounds();
     let operator = View::new(node.operator(), "{}");
     w.edge(::sittir_core::types::KindId(374), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(70)]) { w.site_at(options::SITE_CONSTRAINT_EXTENDS_KEYWORD_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(55)]) { w.site_at(options::SITE_CONSTRAINT_COLON_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(70)]) { w.site_at(options::SITE_CONSTRAINT_EXTENDS_KEYWORD_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(55)]) { w.site_at(options::SITE_CONSTRAINT_COLON_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_bounds", ::sittir_core::types::ItemIndex(0), w, |w| bounds.render(w))?;
     w.edge(::sittir_core::types::KindId(374), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -55408,6 +53865,7 @@ fn render_ambient_declaration_module<N: AmbientDeclarationModuleFields + ?Sized>
     w.text(":")?;
     w.site_at(options::SITE_AMBIENT_DECLARATION_MODULE_COLON_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_AMBIENT_DECLARATION_MODULE_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(399), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -55447,6 +53905,7 @@ fn render_export_statement_namespace_export<N: ExportStatementNamespaceExportFie
     w.text("namespace")?;
     w.site_at(options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_NAMESPACE_KEYWORD_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(402), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -55462,6 +53921,7 @@ fn render_export_statement_equals_export<N: ExportStatementEqualsExportFields + 
     w.text("=")?;
     w.site_at(options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EQ_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(403), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -55662,6 +54122,7 @@ fn render_class_body_member_method<N: ClassBodyMemberMethodFields + ?Sized>(node
     w.edge(::sittir_core::types::KindId(408), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     decorator.render(w)?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_method_definition", ::sittir_core::types::ItemIndex(0), w, |w| method_definition.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_CLASS_BODY_MEMBER_METHOD_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(408), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -55672,6 +54133,7 @@ fn render_class_body_member_method_sig<N: ClassBodyMemberMethodSigFields + ?Size
     let terminator = View::new(node.terminator(), "{}");
     w.edge(::sittir_core::types::KindId(409), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_method_signature", ::sittir_core::types::ItemIndex(0), w, |w| method_signature.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(15)]) { w.site_at(options::SITE_CLASS_BODY_MEMBER_METHOD_SIG_COMMA_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(409), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -55682,6 +54144,8 @@ fn render_class_body_member_declaration<N: ClassBodyMemberDeclarationFields + ?S
     let terminator = View::new(node.terminator(), "{}");
     w.edge(::sittir_core::types::KindId(410), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_member", ::sittir_core::types::ItemIndex(0), w, |w| member.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_CLASS_BODY_MEMBER_DECLARATION_SEMI_BEFORE); }
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(15)]) { w.site_at(options::SITE_CLASS_BODY_MEMBER_DECLARATION_COMMA_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(410), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -55774,6 +54238,8 @@ fn render_import_specifier_name<N: ImportSpecifierNameFields + ?Sized>(node: &N,
     let type_keyword = View::new(node.type_keyword(), "{}");
     w.edge(::sittir_core::types::KindId(416), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type_keyword", ::sittir_core::types::ItemIndex(0), w, |w| type_keyword.render(w))?;
+    if type_keyword.kind_in(&*w, &[::sittir_core::types::KindId(7)]) { w.site_at(options::SITE_IMPORT_SPECIFIER_NAME_TYPE_KEYWORD_AFTER); }
+    if type_keyword.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_IMPORT_SPECIFIER_NAME_TYPEOF_KEYWORD_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.edge(::sittir_core::types::KindId(416), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -55785,7 +54251,11 @@ fn render_import_specifier_as<N: ImportSpecifierAsFields + ?Sized>(node: &N, w: 
     let type_keyword = View::new(node.type_keyword(), "{}");
     w.edge(::sittir_core::types::KindId(417), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type_keyword", ::sittir_core::types::ItemIndex(0), w, |w| type_keyword.render(w))?;
+    if type_keyword.kind_in(&*w, &[::sittir_core::types::KindId(7)]) { w.site_at(options::SITE_IMPORT_SPECIFIER_AS_TYPE_KEYWORD_AFTER); }
+    if type_keyword.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_IMPORT_SPECIFIER_AS_TYPEOF_KEYWORD_AFTER); }
+    if name.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_IMPORT_SPECIFIER_AS_DEFAULT_KEYWORD_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    if name.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_IMPORT_SPECIFIER_AS_DEFAULT_KEYWORD_AFTER); }
     w.site_at(options::SITE_IMPORT_SPECIFIER_AS_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_IMPORT_SPECIFIER_AS_AS_KEYWORD_AFTER);
@@ -55908,6 +54378,8 @@ fn render_update_expression_postfix<N: UpdateExpressionPostfixFields + ?Sized>(n
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_argument", ::sittir_core::types::ItemIndex(0), w, |w| argument.render(w))?;
     w.site_at(options::SITE_UPDATE_EXPRESSION_POSTFIX_OPERATOR_BEFORE);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(170)]) { w.site_at(options::SITE_UPDATE_EXPRESSION_POSTFIX_PLUS_PLUS_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(171)]) { w.site_at(options::SITE_UPDATE_EXPRESSION_POSTFIX_DASH_DASH_AFTER); }
     w.edge(::sittir_core::types::KindId(425), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -55916,6 +54388,8 @@ fn render_update_expression_prefix<N: UpdateExpressionPrefixFields + ?Sized>(nod
     let argument = node.argument();
     let operator = node.operator();
     w.edge(::sittir_core::types::KindId(426), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(170)]) { w.site_at(options::SITE_UPDATE_EXPRESSION_PREFIX_PLUS_PLUS_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(171)]) { w.site_at(options::SITE_UPDATE_EXPRESSION_PREFIX_DASH_DASH_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     w.site_at(options::SITE_UPDATE_EXPRESSION_PREFIX_OPERATOR_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_argument", ::sittir_core::types::ItemIndex(0), w, |w| argument.render(w))?;
@@ -55962,6 +54436,7 @@ fn render_export_statement_default_from<N: ExportStatementDefaultFromFields + ?S
         w.site_at(options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_TYPE_ONLY_AFTER);
     }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    if terminator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(430), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -56048,6 +54523,7 @@ fn render_export_statement_default_declaration_default_kw_value<N: ExportStateme
     let value = node.value();
     w.edge(::sittir_core::types::KindId(436), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    if automatic_semicolon.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_automatic_semicolon", ::sittir_core::types::ItemIndex(0), w, |w| automatic_semicolon.render(w))?;
     w.edge(::sittir_core::types::KindId(436), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -56162,7 +54638,9 @@ fn render_for_header_using_kind<N: ForHeaderUsingKindFields + ?Sized>(node: &N, 
     w.edge(::sittir_core::types::KindId(444), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_FOR_HEADER_USING_KIND_LPAREN_AFTER);
+    if kind.kind_in(&*w, &[::sittir_core::types::KindId(16)]) { w.site_at(options::SITE_FOR_HEADER_USING_KIND_USING_KEYWORD_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_kind", ::sittir_core::types::ItemIndex(0), w, |w| kind.render(w))?;
+    if kind.kind_in(&*w, &[::sittir_core::types::KindId(16)]) { w.site_at(options::SITE_FOR_HEADER_USING_KIND_USING_KEYWORD_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;
     w.site_at(options::SITE_FOR_HEADER_USING_KIND_OPERATOR_BEFORE);
@@ -60224,7 +58702,7 @@ const _: () = assert!(::core::mem::size_of::<WithStatementNode>() <= 256, "WithS
 const _: () = assert!(::core::mem::size_of::<YieldExpressionDelegateNode>() <= 256, "YieldExpressionDelegateNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionNode>() <= 256, "YieldExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_nodes!(TriviaNode; AnyNode, ExportStatementNode, DeclarationNode, ImportSpecifierNode, StatementNode, VariableDeclaratorNode, ForHeaderNode, ParenthesizedExpressionNode, ExpressionNode, PrimaryExpressionNode, CallExpressionNode, UpdateExpressionNode, StringNode, NumberNode, MetaPropertyNode, PatternNode, MethodSignatureNode, TypeNode, PrimaryTypeNode, ClassBodyMemberNode, EnumBodyElementNode, ExportStatementDefaultNode, NumberBigintNode, MethodDefinitionClassBodyMemberMethodNode, NamespaceExportModuleExportNameNodeSlot, ExportSpecifierTypeKeywordNodeSlot, ExportSpecifierNameNodeSlot, ImportStatementTypeKeywordNodeSlot, ImportStatementFromClauseNodeSlot, ImportStatementTerminatorNodeSlot, ImportClauseContentNodeSlot, ImportAttributeAttributeKindNodeSlot, ExpressionStatementExpressionNodeSlot, ExpressionStatementTerminatorNodeSlot, VariableDeclarationTerminatorNodeSlot, LexicalDeclarationKindNodeSlot, LexicalDeclarationTerminatorNodeSlot, UsingDeclarationKindNodeSlot, UsingDeclarationAutomaticSemicolonNodeSlot, StatementBlockTerminatorNodeSlot, ForStatementInitializerNodeSlot, ForStatementConditionNodeSlot, DoStatementTerminatorNodeSlot, BreakStatementTerminatorNodeSlot, ContinueStatementTerminatorNodeSlot, DebuggerStatementTerminatorNodeSlot, ReturnStatementTerminatorNodeSlot, ThrowStatementTerminatorNodeSlot, SwitchBodyCasesNodeSlot, YieldExpressionExpressionNodeSlot, ObjectPropertiesNodeSlot, ObjectPatternPropertiesNodeSlot, ObjectAssignmentPatternLeftNodeSlot, ArrayElementsNodeSlot, ArrayPatternElementsNodeSlot, NestedIdentifierQualifierNodeSlot, ClassHeritageContentNodeSlot, FunctionExpressionReturnTypeNodeSlot, ArrowFunctionBodyNodeSlot, ArrowFunctionContentNodeSlot, MemberExpressionObjectNodeSlot, MemberExpressionOperatorNodeSlot, MemberExpressionPropertyNodeSlot, SubscriptExpressionObjectNodeSlot, LhsExpressionContentNodeSlot, AssignmentExpressionLeftNodeSlot, AugmentedAssignmentExpressionLeftNodeSlot, AugmentedAssignmentExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, UnaryExpressionOperatorNodeSlot, TemplateStringElementsNodeSlot, DecoratorContentNodeSlot, DecoratorMemberExpressionObjectNodeSlot, DecoratorCallExpressionFunctionNodeSlot, FormalParametersElementsNodeSlot, PairKeyNodeSlot, FunctionSignatureTerminatorNodeSlot, DecoratorParenthesizedExpressionExpressionNodeSlot, AsExpressionTypeNodeSlot, AmbientDeclarationContentNodeSlot, ModuleNameNodeSlot, ImportAliasTerminatorNodeSlot, ExtendsTypeClauseTypeNodeSlot, TypeAliasDeclarationTerminatorNodeSlot, OptionalParameterNameNodeSlot, TypeQueryMemberExpressionInTypeAnnotationObjectNodeSlot, TypeQueryCallExpressionInTypeAnnotationFunctionNodeSlot, AssertsValueNodeSlot, TupleParameterNameNodeSlot, TemplateTypeTypeNodeSlot, TemplateLiteralTypeElementsNodeSlot, GenericTypeNameNodeSlot, TypePredicateNameNodeSlot, TypeQueryMemberExpressionObjectNodeSlot, TypeQueryMemberExpressionOperatorNodeSlot, TypeQuerySubscriptExpressionIndexNodeSlot, TypeQueryInstantiationExpressionFunctionNodeSlot, TypeQueryExpressionNodeSlot, LiteralTypeContentNodeSlot, ObjectTypeOpeningNodeSlot, ObjectTypeClosingNodeSlot, ConstraintOperatorNodeSlot, FunctionTypeReturnTypeNodeSlot, FormalParametersElementsItemNodeSlot, TupleTypeMembersItemNodeSlot, ImportClauseGroupContentNodeSlot, CatchClauseGroupParameterNodeSlot, AmbientDeclarationModuleTerminatorNodeSlot, ObjectTypeContentItemNodeSlot, ExportStatementNamespaceExportTerminatorNodeSlot, ExportStatementEqualsExportTerminatorNodeSlot, BinaryExpressionInLeftNodeSlot, ClassBodyMemberMethodTerminatorNodeSlot, ClassBodyMemberMethodSigTerminatorNodeSlot, ClassBodyMemberDeclarationMemberNodeSlot, ClassBodyMemberDeclarationTerminatorNodeSlot, IndexSignatureColonSignNodeSlot, IndexSignatureColonTypeNodeSlot, ImportSpecifierNameTypeKeywordNodeSlot, ImportSpecifierAsTypeKeywordNodeSlot, ImportSpecifierAsNameNodeSlot, CallExpressionTemplateCallFunctionNodeSlot, StringDoubleElementsNodeSlot, StringSingleElementsNodeSlot, UpdateExpressionPostfixOperatorNodeSlot, UpdateExpressionPrefixOperatorNodeSlot, ExportStatementDefaultFromTerminatorNodeSlot, ExportStatementDefaultFromContentNodeSlot, ExportStatementDefaultDeclarationContentNodeSlot, ExportStatementDefaultDeclarationDefaultKwContentNodeSlot, ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonNodeSlot, ForHeaderLhsLeftNodeSlot, ForHeaderLhsOperatorNodeSlot, ForHeaderLetConstKindKindNodeSlot, ForHeaderUsingKindKindNodeSlot, SetterParameterPatternNodeSlot, PublicFieldDefinitionPlainOptionalityNodeSlot, ProgramNode, HashBangLineNode, NamespaceExportNode, ExportClauseNode, ExportSpecifierNode, ImportNode, ImportStatementNode, ImportClauseNode, NamespaceImportNode, NamedImportsNode, ImportAttributeNode, ExpressionStatementNode, VariableDeclarationNode, LexicalDeclarationNode, UsingDeclarationNode, StatementBlockNode, ElseClauseNode, IfStatementNode, SwitchStatementNode, ForStatementNode, ForInStatementNode, WhileStatementNode, DoStatementNode, TryStatementNode, WithStatementNode, BreakStatementNode, ContinueStatementNode, DebuggerStatementNode, ReturnStatementNode, ThrowStatementNode, EmptyStatementNode, LabeledStatementNode, SwitchBodyNode, SwitchCaseNode, SwitchDefaultNode, CatchClauseNode, FinallyClauseNode, YieldExpressionNode, ObjectNode, ObjectPatternNode, AssignmentPatternNode, ObjectAssignmentPatternNode, ArrayNode, ArrayPatternNode, NestedIdentifierNode, ClassNode, ClassDeclarationNode, ClassHeritageNode, FunctionExpressionNode, FunctionDeclarationNode, GeneratorFunctionNode, GeneratorFunctionDeclarationNode, ArrowFunctionNode, OptionalChainNode, NewExpressionNode, AwaitExpressionNode, MemberExpressionNode, SubscriptExpressionNode, LhsExpressionNode, AssignmentExpressionNode, AugmentedAssignmentExpressionNode, SpreadElementNode, TernaryExpressionNode, BinaryExpressionNode, UnaryExpressionNode, SequenceExpressionNode, UnescapedDoubleStringFragmentNode, UnescapedSingleStringFragmentNode, EscapeSequenceNode, TemplateStringNode, TemplateSubstitutionNode, RegexNode, RegexPatternNode, RegexFlagsNode, IdentifierNode, PrivatePropertyIdentifierNode, ThisNode, SuperNode, TrueNode, FalseNode, NullNode, UndefinedNode, ArgumentsNode, DecoratorNode, DecoratorMemberExpressionNode, DecoratorCallExpressionNode, ClassBodyNode, FormalParametersNode, ClassStaticBlockNode, RestPatternNode, PairNode, PairPatternNode, ComputedPropertyNameNode, NonNullExpressionNode, FunctionSignatureNode, DecoratorParenthesizedExpressionNode, TypeAssertionNode, AsExpressionNode, SatisfiesExpressionNode, InstantiationExpressionNode, ImportRequireClauseNode, ExtendsClauseNode, ExtendsClauseSingleNode, ImplementsClauseNode, AmbientDeclarationNode, AbstractClassDeclarationNode, ModuleNode, InternalModuleNode, ImportAliasNode, NestedTypeIdentifierNode, InterfaceDeclarationNode, ExtendsTypeClauseNode, EnumDeclarationNode, EnumBodyNode, EnumAssignmentNode, TypeAliasDeclarationNode, AccessibilityModifierEnum, OverrideModifierNode, RequiredParameterNode, OptionalParameterNode, OmittingTypeAnnotationNode, AddingTypeAnnotationNode, OptingTypeAnnotationNode, TypeAnnotationNode, TypeQueryMemberExpressionInTypeAnnotationNode, TypeQueryCallExpressionInTypeAnnotationNode, AssertsNode, AssertsAnnotationNode, TupleParameterNode, OptionalTupleParameterNode, OptionalTypeNode, RestTypeNode, ConstructorTypeNode, TemplateTypeNode, TemplateLiteralTypeNode, InferTypeNode, ConditionalTypeNode, GenericTypeNode, TypePredicateNode, TypePredicateAnnotationNode, TypeQueryMemberExpressionNode, TypeQuerySubscriptExpressionNode, TypeQueryCallExpressionNode, TypeQueryInstantiationExpressionNode, TypeQueryNode, IndexTypeQueryNode, LookupTypeNode, MappedTypeClauseNode, LiteralTypeNode, ExistentialTypeNode, FlowMaybeTypeNode, ParenthesizedTypeNode, PredefinedTypeEnum, TypeArgumentsNode, ObjectTypeNode, CallSignatureNode, PropertySignatureNode, TypeParametersNode, TypeParameterNode, DefaultTypeNode, ConstraintNode, ConstructSignatureNode, ArrayTypeNode, TupleTypeNode, ReadonlyTypeNode, UnionTypeNode, IntersectionTypeNode, FunctionTypeNode, ExportSpecifiersNode, ImportSpecifiersNode, FormalParametersElementsNode, EnumBodyElementNameNode, EnumBodyElementsNode, TypesNode, TypeParametersElementsNode, TupleTypeMembersNode, ImportClauseGroupNode, UsingDeclarationArmNode, CatchClauseGroupNode, GetAccessorSignatureNode, AmbientDeclarationGlobalNode, AmbientDeclarationModuleNode, ObjectTypeContentNode, ExportStatementNamespaceExportNode, ExportStatementEqualsExportNode, CommentLineNode, CommentBlockNode, LiteralTypeNegativeNumberNode, NumberHexNode, NumberFloatPointNode, NumberFloatLeadingPointNode, NumberFloatScientificNode, NumberDecimalNode, NumberBinaryNode, NumberOctalNode, NumberBigintHexNode, NumberBigintBinaryNode, NumberBigintOctalNode, NumberBigintDecimalNode, BinaryExpressionInNode, EmptyMemberNode, ClassBodyMemberMethodNode, ClassBodyMemberMethodSigNode, ClassBodyMemberDeclarationNode, IndexSignatureColonNode, IndexSignatureMappedTypeClauseNode, ImportStatementClauseFromNode, YieldExpressionDelegateNode, OptionalChainMarkerNode, ImportSpecifierNameNode, ImportSpecifierAsNode, ParenthesizedExpressionTypedNode, ParenthesizedExpressionSequenceNode, CallExpressionCallNode, CallExpressionTemplateCallNode, CallExpressionMemberNode, StringDoubleNode, StringSingleNode, UpdateExpressionPostfixNode, UpdateExpressionPrefixNode, ArrowFunctionParameterNode, ClassHeritageExtendsClauseNode, ImportClauseDefaultImportNode, ExportStatementDefaultFromNode, ExportStatementDefaultDeclarationNode, ExportStatementDefaultFromStarFromNode, ExportStatementDefaultFromNsFromNode, ExportStatementDefaultFromClauseFromNode, ExportStatementDefaultDeclarationDefaultKwNode, ExportStatementDefaultDeclarationDefaultKwValueNode, VariableDeclaratorPlainNode, VariableDeclaratorDefiniteNode, MetaPropertyNewTargetNode, MetaPropertyImportMetaNode, ForHeaderLhsNode, ForHeaderVarKindNode, ForHeaderLetConstKindNode, ForHeaderUsingKindNode, FormalParametersGetAccessorSignatureNode, FormalParametersSetAccessorSignatureNode, FormalParametersElementsSetAccessorSignatureNode, SetterParameterNode, MethodDefinitionPlainNode, MethodDefinitionGetterNode, MethodDefinitionSetterNode, MethodSignaturePlainNode, MethodSignatureGetterNode, MethodSignatureSetterNode, AbstractMethodSignaturePlainNode, AbstractMethodSignatureGetterNode, AbstractMethodSignatureSetterNode, PublicFieldDefinitionPlainNode, PublicFieldDefinitionAccessorNode, HtmlCommentNode, JsxTextNode, TemplateCharsNode, AutomaticSemicolonNode, FunctionSignatureAutomaticSemicolonNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, ConstructorDeclarationNode, ReceiverParameterDeclarationNode, FormalParametersElementsReceiverNode, FormalParametersElementsReceiverGroupNode, TernaryQmarkNode, ErrorRecoveryNode, StatementIdentifierNode, ShorthandPropertyIdentifierNode, ShorthandPropertyIdentifierPatternNode, PropertyIdentifierNode, TypeIdentifierNode, ThisTypeNode, StarNode, AsKeywordNode, DefaultKeywordNode, LbraceNode, RbraceNode, TypeKeywordNode, TypeofKeywordNode, ImportKeywordNode, SemiNode, WithKeywordNode, AssertKeywordNode, VarKeywordNode, LetKeywordNode, ConstKeywordNode, UsingKeywordNode, ElseKeywordNode, IfKeywordNode, SwitchKeywordNode, ForKeywordNode, LparenNode, RparenNode, AwaitKeywordNode, WhileKeywordNode, DoKeywordNode, TryKeywordNode, BreakKeywordNode, ContinueKeywordNode, DebuggerKeywordNode, ReturnKeywordNode, ThrowKeywordNode, ColonNode, CaseKeywordNode, CatchKeywordNode, FinallyKeywordNode, YieldKeywordNode, EqNode, LbrackNode, RbrackNode, DotNode, ClassKeywordNode, AsyncKeywordNode, FunctionKeywordNode, EqGtNode, QmarkDotNode, NewKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, CaretEqNode, AmpEqNode, PipeEqNode, GtGtEqNode, GtGtGtEqNode, LtLtEqNode, StarStarEqNode, AmpAmpEqNode, PipePipeEqNode, QmarkQmarkEqNode, DotDotDotNode, QmarkNode, AmpAmpNode, PipePipeNode, GtGtNode, GtGtGtNode, LtLtNode, AmpNode, CaretNode, PipeNode, PlusNode, DashNode, SlashNode, PercentNode, StarStarNode, LtNode, LtEqNode, EqEqNode, EqEqEqNode, BangEqNode, BangEqEqNode, GtEqNode, GtNode, QmarkQmarkNode, InstanceofKeywordNode, BangNode, TildeNode, VoidKeywordNode, DeleteKeywordNode, BquoteNode, DollarLbraceNode, ThisKeywordNode, SuperKeywordNode, TrueKeywordNode, FalseKeywordNode, NullKeywordNode, AtNode, StaticKeywordNode, SatisfiesKeywordNode, RequireKeywordNode, ExtendsKeywordNode, ImplementsKeywordNode, DeclareKeywordNode, AbstractKeywordNode, ModuleKeywordNode, NamespaceKeywordNode, InterfaceKeywordNode, EnumKeywordNode, PublicKeywordNode, PrivateKeywordNode, ProtectedKeywordNode, OverrideKeywordNode, ReadonlyKeywordNode, DashQmarkColonNode, PlusQmarkColonNode, QmarkColonNode, AssertsKeywordNode, InferKeywordNode, IsKeywordNode, KeyofKeywordNode, InKeywordNode, AnyKeywordNode, NumberKeywordNode, BooleanKeywordNode, StringKeywordNode, SymbolKeywordNode, UniqueNode, UnknownKeywordNode, NeverKeywordNode, ObjectKeywordNode, LbracePipeNode, PipeRbraceNode, CommaNode, GlobalKeywordNode, ExportKeywordNode, FromKeywordNode, DquoteNode, SquoteNode, PlusPlusNode, DashDashNode, TargetKeywordNode, MetaKeywordNode, OfKeywordNode, GetKeywordNode, SetKeywordNode, AccessorKeywordNode, ConstructorKeywordNode, TriviaNode);
+::sittir_core::grammar_nodes!(TriviaNode; AnyNode, ExportStatementNode, DeclarationNode, ImportSpecifierNode, StatementNode, VariableDeclaratorNode, ForHeaderNode, ParenthesizedExpressionNode, ExpressionNode, PrimaryExpressionNode, CallExpressionNode, UpdateExpressionNode, StringNode, NumberNode, MetaPropertyNode, PatternNode, MethodSignatureNode, TypeNode, PrimaryTypeNode, ClassBodyMemberNode, EnumBodyElementNode, ExportStatementDefaultNode, NumberBigintNode, MethodDefinitionClassBodyMemberMethodNode, NamespaceExportModuleExportNameNodeSlot, ExportSpecifierTypeKeywordNodeSlot, ImportStatementFromClauseNodeSlot, ImportStatementTerminatorNodeSlot, ImportClauseContentNodeSlot, ImportAttributeAttributeKindNodeSlot, ExpressionStatementExpressionNodeSlot, LexicalDeclarationKindNodeSlot, UsingDeclarationKindNodeSlot, StatementBlockTerminatorNodeSlot, ForStatementInitializerNodeSlot, ForStatementConditionNodeSlot, DoStatementTerminatorNodeSlot, SwitchBodyCasesNodeSlot, YieldExpressionExpressionNodeSlot, ObjectPropertiesNodeSlot, ObjectPatternPropertiesNodeSlot, ObjectAssignmentPatternLeftNodeSlot, ArrayElementsNodeSlot, ArrayPatternElementsNodeSlot, NestedIdentifierQualifierNodeSlot, ClassHeritageContentNodeSlot, FunctionExpressionReturnTypeNodeSlot, ArrowFunctionBodyNodeSlot, ArrowFunctionContentNodeSlot, MemberExpressionObjectNodeSlot, MemberExpressionOperatorNodeSlot, MemberExpressionPropertyNodeSlot, SubscriptExpressionObjectNodeSlot, LhsExpressionContentNodeSlot, AssignmentExpressionLeftNodeSlot, AugmentedAssignmentExpressionLeftNodeSlot, AugmentedAssignmentExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, UnaryExpressionOperatorNodeSlot, TemplateStringElementsNodeSlot, DecoratorContentNodeSlot, DecoratorMemberExpressionObjectNodeSlot, DecoratorCallExpressionFunctionNodeSlot, FormalParametersElementsNodeSlot, PairKeyNodeSlot, FunctionSignatureTerminatorNodeSlot, DecoratorParenthesizedExpressionExpressionNodeSlot, AsExpressionTypeNodeSlot, AmbientDeclarationContentNodeSlot, ModuleNameNodeSlot, ExtendsTypeClauseTypeNodeSlot, OptionalParameterNameNodeSlot, TypeQueryMemberExpressionInTypeAnnotationObjectNodeSlot, TypeQueryCallExpressionInTypeAnnotationFunctionNodeSlot, AssertsValueNodeSlot, TupleParameterNameNodeSlot, TemplateTypeTypeNodeSlot, TemplateLiteralTypeElementsNodeSlot, GenericTypeNameNodeSlot, TypePredicateNameNodeSlot, TypeQueryMemberExpressionObjectNodeSlot, TypeQueryMemberExpressionOperatorNodeSlot, TypeQuerySubscriptExpressionIndexNodeSlot, TypeQueryInstantiationExpressionFunctionNodeSlot, TypeQueryExpressionNodeSlot, LiteralTypeContentNodeSlot, ObjectTypeOpeningNodeSlot, ObjectTypeClosingNodeSlot, ConstraintOperatorNodeSlot, FunctionTypeReturnTypeNodeSlot, FormalParametersElementsItemNodeSlot, TupleTypeMembersItemNodeSlot, ImportClauseGroupContentNodeSlot, CatchClauseGroupParameterNodeSlot, ObjectTypeContentItemNodeSlot, BinaryExpressionInLeftNodeSlot, ClassBodyMemberMethodSigTerminatorNodeSlot, ClassBodyMemberDeclarationMemberNodeSlot, ClassBodyMemberDeclarationTerminatorNodeSlot, IndexSignatureColonSignNodeSlot, IndexSignatureColonTypeNodeSlot, CallExpressionTemplateCallFunctionNodeSlot, StringDoubleElementsNodeSlot, StringSingleElementsNodeSlot, UpdateExpressionPostfixOperatorNodeSlot, ExportStatementDefaultFromContentNodeSlot, ExportStatementDefaultDeclarationContentNodeSlot, ExportStatementDefaultDeclarationDefaultKwContentNodeSlot, ForHeaderLhsLeftNodeSlot, ForHeaderLhsOperatorNodeSlot, SetterParameterPatternNodeSlot, PublicFieldDefinitionPlainOptionalityNodeSlot, ProgramNode, HashBangLineNode, NamespaceExportNode, ExportClauseNode, ExportSpecifierNode, ImportNode, ImportStatementNode, ImportClauseNode, NamespaceImportNode, NamedImportsNode, ImportAttributeNode, ExpressionStatementNode, VariableDeclarationNode, LexicalDeclarationNode, UsingDeclarationNode, StatementBlockNode, ElseClauseNode, IfStatementNode, SwitchStatementNode, ForStatementNode, ForInStatementNode, WhileStatementNode, DoStatementNode, TryStatementNode, WithStatementNode, BreakStatementNode, ContinueStatementNode, DebuggerStatementNode, ReturnStatementNode, ThrowStatementNode, EmptyStatementNode, LabeledStatementNode, SwitchBodyNode, SwitchCaseNode, SwitchDefaultNode, CatchClauseNode, FinallyClauseNode, YieldExpressionNode, ObjectNode, ObjectPatternNode, AssignmentPatternNode, ObjectAssignmentPatternNode, ArrayNode, ArrayPatternNode, NestedIdentifierNode, ClassNode, ClassDeclarationNode, ClassHeritageNode, FunctionExpressionNode, FunctionDeclarationNode, GeneratorFunctionNode, GeneratorFunctionDeclarationNode, ArrowFunctionNode, OptionalChainNode, NewExpressionNode, AwaitExpressionNode, MemberExpressionNode, SubscriptExpressionNode, LhsExpressionNode, AssignmentExpressionNode, AugmentedAssignmentExpressionNode, SpreadElementNode, TernaryExpressionNode, BinaryExpressionNode, UnaryExpressionNode, SequenceExpressionNode, UnescapedDoubleStringFragmentNode, UnescapedSingleStringFragmentNode, EscapeSequenceNode, TemplateStringNode, TemplateSubstitutionNode, RegexNode, RegexPatternNode, RegexFlagsNode, IdentifierNode, PrivatePropertyIdentifierNode, ThisNode, SuperNode, TrueNode, FalseNode, NullNode, UndefinedNode, ArgumentsNode, DecoratorNode, DecoratorMemberExpressionNode, DecoratorCallExpressionNode, ClassBodyNode, FormalParametersNode, ClassStaticBlockNode, RestPatternNode, PairNode, PairPatternNode, ComputedPropertyNameNode, NonNullExpressionNode, FunctionSignatureNode, DecoratorParenthesizedExpressionNode, TypeAssertionNode, AsExpressionNode, SatisfiesExpressionNode, InstantiationExpressionNode, ImportRequireClauseNode, ExtendsClauseNode, ExtendsClauseSingleNode, ImplementsClauseNode, AmbientDeclarationNode, AbstractClassDeclarationNode, ModuleNode, InternalModuleNode, ImportAliasNode, NestedTypeIdentifierNode, InterfaceDeclarationNode, ExtendsTypeClauseNode, EnumDeclarationNode, EnumBodyNode, EnumAssignmentNode, TypeAliasDeclarationNode, AccessibilityModifierEnum, OverrideModifierNode, RequiredParameterNode, OptionalParameterNode, OmittingTypeAnnotationNode, AddingTypeAnnotationNode, OptingTypeAnnotationNode, TypeAnnotationNode, TypeQueryMemberExpressionInTypeAnnotationNode, TypeQueryCallExpressionInTypeAnnotationNode, AssertsNode, AssertsAnnotationNode, TupleParameterNode, OptionalTupleParameterNode, OptionalTypeNode, RestTypeNode, ConstructorTypeNode, TemplateTypeNode, TemplateLiteralTypeNode, InferTypeNode, ConditionalTypeNode, GenericTypeNode, TypePredicateNode, TypePredicateAnnotationNode, TypeQueryMemberExpressionNode, TypeQuerySubscriptExpressionNode, TypeQueryCallExpressionNode, TypeQueryInstantiationExpressionNode, TypeQueryNode, IndexTypeQueryNode, LookupTypeNode, MappedTypeClauseNode, LiteralTypeNode, ExistentialTypeNode, FlowMaybeTypeNode, ParenthesizedTypeNode, PredefinedTypeEnum, TypeArgumentsNode, ObjectTypeNode, CallSignatureNode, PropertySignatureNode, TypeParametersNode, TypeParameterNode, DefaultTypeNode, ConstraintNode, ConstructSignatureNode, ArrayTypeNode, TupleTypeNode, ReadonlyTypeNode, UnionTypeNode, IntersectionTypeNode, FunctionTypeNode, ExportSpecifiersNode, ImportSpecifiersNode, FormalParametersElementsNode, EnumBodyElementNameNode, EnumBodyElementsNode, TypesNode, TypeParametersElementsNode, TupleTypeMembersNode, ImportClauseGroupNode, UsingDeclarationArmNode, CatchClauseGroupNode, GetAccessorSignatureNode, AmbientDeclarationGlobalNode, AmbientDeclarationModuleNode, ObjectTypeContentNode, ExportStatementNamespaceExportNode, ExportStatementEqualsExportNode, CommentLineNode, CommentBlockNode, LiteralTypeNegativeNumberNode, NumberHexNode, NumberFloatPointNode, NumberFloatLeadingPointNode, NumberFloatScientificNode, NumberDecimalNode, NumberBinaryNode, NumberOctalNode, NumberBigintHexNode, NumberBigintBinaryNode, NumberBigintOctalNode, NumberBigintDecimalNode, BinaryExpressionInNode, EmptyMemberNode, ClassBodyMemberMethodNode, ClassBodyMemberMethodSigNode, ClassBodyMemberDeclarationNode, IndexSignatureColonNode, IndexSignatureMappedTypeClauseNode, ImportStatementClauseFromNode, YieldExpressionDelegateNode, OptionalChainMarkerNode, ImportSpecifierNameNode, ImportSpecifierAsNode, ParenthesizedExpressionTypedNode, ParenthesizedExpressionSequenceNode, CallExpressionCallNode, CallExpressionTemplateCallNode, CallExpressionMemberNode, StringDoubleNode, StringSingleNode, UpdateExpressionPostfixNode, UpdateExpressionPrefixNode, ArrowFunctionParameterNode, ClassHeritageExtendsClauseNode, ImportClauseDefaultImportNode, ExportStatementDefaultFromNode, ExportStatementDefaultDeclarationNode, ExportStatementDefaultFromStarFromNode, ExportStatementDefaultFromNsFromNode, ExportStatementDefaultFromClauseFromNode, ExportStatementDefaultDeclarationDefaultKwNode, ExportStatementDefaultDeclarationDefaultKwValueNode, VariableDeclaratorPlainNode, VariableDeclaratorDefiniteNode, MetaPropertyNewTargetNode, MetaPropertyImportMetaNode, ForHeaderLhsNode, ForHeaderVarKindNode, ForHeaderLetConstKindNode, ForHeaderUsingKindNode, FormalParametersGetAccessorSignatureNode, FormalParametersSetAccessorSignatureNode, FormalParametersElementsSetAccessorSignatureNode, SetterParameterNode, MethodDefinitionPlainNode, MethodDefinitionGetterNode, MethodDefinitionSetterNode, MethodSignaturePlainNode, MethodSignatureGetterNode, MethodSignatureSetterNode, AbstractMethodSignaturePlainNode, AbstractMethodSignatureGetterNode, AbstractMethodSignatureSetterNode, PublicFieldDefinitionPlainNode, PublicFieldDefinitionAccessorNode, HtmlCommentNode, JsxTextNode, TemplateCharsNode, AutomaticSemicolonNode, FunctionSignatureAutomaticSemicolonNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, ConstructorDeclarationNode, ReceiverParameterDeclarationNode, FormalParametersElementsReceiverNode, FormalParametersElementsReceiverGroupNode, TernaryQmarkNode, ErrorRecoveryNode, StatementIdentifierNode, ShorthandPropertyIdentifierNode, ShorthandPropertyIdentifierPatternNode, PropertyIdentifierNode, TypeIdentifierNode, ThisTypeNode, StarNode, AsKeywordNode, DefaultKeywordNode, LbraceNode, RbraceNode, TypeKeywordNode, TypeofKeywordNode, ImportKeywordNode, SemiNode, WithKeywordNode, AssertKeywordNode, VarKeywordNode, LetKeywordNode, ConstKeywordNode, UsingKeywordNode, ElseKeywordNode, IfKeywordNode, SwitchKeywordNode, ForKeywordNode, LparenNode, RparenNode, AwaitKeywordNode, WhileKeywordNode, DoKeywordNode, TryKeywordNode, BreakKeywordNode, ContinueKeywordNode, DebuggerKeywordNode, ReturnKeywordNode, ThrowKeywordNode, ColonNode, CaseKeywordNode, CatchKeywordNode, FinallyKeywordNode, YieldKeywordNode, EqNode, LbrackNode, RbrackNode, DotNode, ClassKeywordNode, AsyncKeywordNode, FunctionKeywordNode, EqGtNode, QmarkDotNode, NewKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, CaretEqNode, AmpEqNode, PipeEqNode, GtGtEqNode, GtGtGtEqNode, LtLtEqNode, StarStarEqNode, AmpAmpEqNode, PipePipeEqNode, QmarkQmarkEqNode, DotDotDotNode, QmarkNode, AmpAmpNode, PipePipeNode, GtGtNode, GtGtGtNode, LtLtNode, AmpNode, CaretNode, PipeNode, PlusNode, DashNode, SlashNode, PercentNode, StarStarNode, LtNode, LtEqNode, EqEqNode, EqEqEqNode, BangEqNode, BangEqEqNode, GtEqNode, GtNode, QmarkQmarkNode, InstanceofKeywordNode, BangNode, TildeNode, VoidKeywordNode, DeleteKeywordNode, BquoteNode, DollarLbraceNode, ThisKeywordNode, SuperKeywordNode, TrueKeywordNode, FalseKeywordNode, NullKeywordNode, AtNode, StaticKeywordNode, SatisfiesKeywordNode, RequireKeywordNode, ExtendsKeywordNode, ImplementsKeywordNode, DeclareKeywordNode, AbstractKeywordNode, ModuleKeywordNode, NamespaceKeywordNode, InterfaceKeywordNode, EnumKeywordNode, PublicKeywordNode, PrivateKeywordNode, ProtectedKeywordNode, OverrideKeywordNode, ReadonlyKeywordNode, DashQmarkColonNode, PlusQmarkColonNode, QmarkColonNode, AssertsKeywordNode, InferKeywordNode, IsKeywordNode, KeyofKeywordNode, InKeywordNode, AnyKeywordNode, NumberKeywordNode, BooleanKeywordNode, StringKeywordNode, SymbolKeywordNode, UniqueNode, UnknownKeywordNode, NeverKeywordNode, ObjectKeywordNode, LbracePipeNode, PipeRbraceNode, CommaNode, GlobalKeywordNode, ExportKeywordNode, FromKeywordNode, DquoteNode, SquoteNode, PlusPlusNode, DashDashNode, TargetKeywordNode, MetaKeywordNode, OfKeywordNode, GetKeywordNode, SetKeywordNode, AccessorKeywordNode, ConstructorKeywordNode, TriviaNode);
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AbstractClassDeclarationNode>() == 336, "AbstractClassDeclarationNode is not the 336 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -60247,8 +58725,6 @@ const _: () = assert!(::core::mem::size_of::<AmbientDeclarationContentNodeSlot>(
 const _: () = assert!(::core::mem::size_of::<AmbientDeclarationGlobalNode>() == 96, "AmbientDeclarationGlobalNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AmbientDeclarationModuleNode>() == 336, "AmbientDeclarationModuleNode is not the 336 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<AmbientDeclarationModuleTerminatorNodeSlot>() == 1, "AmbientDeclarationModuleTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AmbientDeclarationNode>() == 56, "AmbientDeclarationNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -60346,8 +58822,6 @@ const _: () = assert!(::core::mem::size_of::<BreakKeywordNode>() == 0, "BreakKey
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<BreakStatementNode>() == 112, "BreakStatementNode is not the 112 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<BreakStatementTerminatorNodeSlot>() == 1, "BreakStatementTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<CallExpressionCallNode>() == 168, "CallExpressionCallNode is not the 168 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<CallExpressionMemberNode>() == 168, "CallExpressionMemberNode is not the 168 bytes the byte rule in boxed-payloads.ts sizes it");
@@ -60385,8 +58859,6 @@ const _: () = assert!(::core::mem::size_of::<ClassBodyMemberMethodNode>() == 272
 const _: () = assert!(::core::mem::size_of::<ClassBodyMemberMethodSigNode>() == 96, "ClassBodyMemberMethodSigNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ClassBodyMemberMethodSigTerminatorNodeSlot>() == 1, "ClassBodyMemberMethodSigTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ClassBodyMemberMethodTerminatorNodeSlot>() == 1, "ClassBodyMemberMethodTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ClassBodyMemberNode>() == 136, "ClassBodyMemberNode is not the 136 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -60436,8 +58908,6 @@ const _: () = assert!(::core::mem::size_of::<ContinueKeywordNode>() == 0, "Conti
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ContinueStatementNode>() == 112, "ContinueStatementNode is not the 112 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ContinueStatementTerminatorNodeSlot>() == 1, "ContinueStatementTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<DashDashNode>() == 0, "DashDashNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<DashEqNode>() == 0, "DashEqNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
@@ -60449,8 +58919,6 @@ const _: () = assert!(::core::mem::size_of::<DashQmarkColonNode>() == 0, "DashQm
 const _: () = assert!(::core::mem::size_of::<DebuggerKeywordNode>() == 0, "DebuggerKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<DebuggerStatementNode>() == 56, "DebuggerStatementNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<DebuggerStatementTerminatorNodeSlot>() == 1, "DebuggerStatementTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<DeclarationNode>() == 216, "DeclarationNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -60536,8 +59004,6 @@ const _: () = assert!(::core::mem::size_of::<ExportClauseNode>() == 64, "ExportC
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExportKeywordNode>() == 0, "ExportKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExportSpecifierNameNodeSlot>() == 48, "ExportSpecifierNameNodeSlot is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExportSpecifierNode>() == 152, "ExportSpecifierNode is not the 152 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExportSpecifierTypeKeywordNodeSlot>() == 1, "ExportSpecifierTypeKeywordNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
@@ -60549,8 +59015,6 @@ const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationCo
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwContentNodeSlot>() == 216, "ExportStatementDefaultDeclarationDefaultKwContentNodeSlot is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwNode>() == 232, "ExportStatementDefaultDeclarationDefaultKwNode is not the 232 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonNodeSlot>() == 1, "ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwValueNode>() == 264, "ExportStatementDefaultDeclarationDefaultKwValueNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -60566,17 +59030,11 @@ const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultFromNsFromNod
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultFromStarFromNode>() == 64, "ExportStatementDefaultFromStarFromNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultFromTerminatorNodeSlot>() == 1, "ExportStatementDefaultFromTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultNode>() == 192, "ExportStatementDefaultNode is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExportStatementEqualsExportNode>() == 264, "ExportStatementEqualsExportNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExportStatementEqualsExportTerminatorNodeSlot>() == 1, "ExportStatementEqualsExportTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExportStatementNamespaceExportNode>() == 96, "ExportStatementNamespaceExportNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExportStatementNamespaceExportTerminatorNodeSlot>() == 1, "ExportStatementNamespaceExportTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExportStatementNode>() == 192, "ExportStatementNode is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -60585,8 +59043,6 @@ const _: () = assert!(::core::mem::size_of::<ExpressionNode>() == 208, "Expressi
 const _: () = assert!(::core::mem::size_of::<ExpressionStatementExpressionNodeSlot>() == 208, "ExpressionStatementExpressionNodeSlot is not the 208 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExpressionStatementNode>() == 264, "ExpressionStatementNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExpressionStatementTerminatorNodeSlot>() == 1, "ExpressionStatementTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExtendsClauseNode>() == 48, "ExtendsClauseNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -60608,8 +59064,6 @@ const _: () = assert!(::core::mem::size_of::<FinallyKeywordNode>() == 0, "Finall
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<FlowMaybeTypeNode>() == 56, "FlowMaybeTypeNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ForHeaderLetConstKindKindNodeSlot>() == 1, "ForHeaderLetConstKindKindNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ForHeaderLetConstKindNode>() == 400, "ForHeaderLetConstKindNode is not the 400 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ForHeaderLhsLeftNodeSlot>() == 96, "ForHeaderLhsLeftNodeSlot is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
@@ -60619,8 +59073,6 @@ const _: () = assert!(::core::mem::size_of::<ForHeaderLhsNode>() == 360, "ForHea
 const _: () = assert!(::core::mem::size_of::<ForHeaderLhsOperatorNodeSlot>() == 1, "ForHeaderLhsOperatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ForHeaderNode>() == 16, "ForHeaderNode is not the 16 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ForHeaderUsingKindKindNodeSlot>() == 1, "ForHeaderUsingKindKindNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ForHeaderUsingKindNode>() == 400, "ForHeaderUsingKindNode is not the 400 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -60716,8 +59168,6 @@ const _: () = assert!(::core::mem::size_of::<ImplementsKeywordNode>() == 0, "Imp
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ImportAliasNode>() == 208, "ImportAliasNode is not the 208 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ImportAliasTerminatorNodeSlot>() == 1, "ImportAliasTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ImportAttributeAttributeKindNodeSlot>() == 1, "ImportAttributeAttributeKindNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ImportAttributeNode>() == 104, "ImportAttributeNode is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
@@ -60738,15 +59188,9 @@ const _: () = assert!(::core::mem::size_of::<ImportNode>() == 0, "ImportNode is 
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ImportRequireClauseNode>() == 104, "ImportRequireClauseNode is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ImportSpecifierAsNameNodeSlot>() == 48, "ImportSpecifierAsNameNodeSlot is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ImportSpecifierAsNode>() == 144, "ImportSpecifierAsNode is not the 144 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ImportSpecifierAsTypeKeywordNodeSlot>() == 1, "ImportSpecifierAsTypeKeywordNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ImportSpecifierNameNode>() == 96, "ImportSpecifierNameNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ImportSpecifierNameTypeKeywordNodeSlot>() == 1, "ImportSpecifierNameTypeKeywordNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ImportSpecifierNode>() == 144, "ImportSpecifierNode is not the 144 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -60759,8 +59203,6 @@ const _: () = assert!(::core::mem::size_of::<ImportStatementFromClauseNodeSlot>(
 const _: () = assert!(::core::mem::size_of::<ImportStatementNode>() == 416, "ImportStatementNode is not the 416 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ImportStatementTerminatorNodeSlot>() == 1, "ImportStatementTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ImportStatementTypeKeywordNodeSlot>() == 1, "ImportStatementTypeKeywordNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<InKeywordNode>() == 0, "InKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -60811,8 +59253,6 @@ const _: () = assert!(::core::mem::size_of::<LetKeywordNode>() == 0, "LetKeyword
 const _: () = assert!(::core::mem::size_of::<LexicalDeclarationKindNodeSlot>() == 1, "LexicalDeclarationKindNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<LexicalDeclarationNode>() == 128, "LexicalDeclarationNode is not the 128 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<LexicalDeclarationTerminatorNodeSlot>() == 1, "LexicalDeclarationTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<LhsExpressionContentNodeSlot>() == 160, "LhsExpressionContentNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -61082,8 +59522,6 @@ const _: () = assert!(::core::mem::size_of::<ReturnKeywordNode>() == 0, "ReturnK
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ReturnStatementNode>() == 264, "ReturnStatementNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ReturnStatementTerminatorNodeSlot>() == 1, "ReturnStatementTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<RparenNode>() == 0, "RparenNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SatisfiesExpressionNode>() == 96, "SatisfiesExpressionNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
@@ -61200,8 +59638,6 @@ const _: () = assert!(::core::mem::size_of::<ThrowKeywordNode>() == 0, "ThrowKey
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ThrowStatementNode>() == 264, "ThrowStatementNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ThrowStatementTerminatorNodeSlot>() == 1, "ThrowStatementTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TightNode>() == 0, "TightNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TildeNode>() == 0, "TildeNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
@@ -61227,8 +59663,6 @@ const _: () = assert!(::core::mem::size_of::<TupleTypeMembersNode>() == 48, "Tup
 const _: () = assert!(::core::mem::size_of::<TupleTypeNode>() == 64, "TupleTypeNode is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TypeAliasDeclarationNode>() == 400, "TypeAliasDeclarationNode is not the 400 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<TypeAliasDeclarationTerminatorNodeSlot>() == 1, "TypeAliasDeclarationTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TypeAnnotationNode>() == 56, "TypeAnnotationNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -61310,11 +59744,7 @@ const _: () = assert!(::core::mem::size_of::<UpdateExpressionPostfixOperatorNode
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<UpdateExpressionPrefixNode>() == 96, "UpdateExpressionPrefixNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<UpdateExpressionPrefixOperatorNodeSlot>() == 1, "UpdateExpressionPrefixOperatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<UsingDeclarationArmNode>() == 0, "UsingDeclarationArmNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<UsingDeclarationAutomaticSemicolonNodeSlot>() == 1, "UsingDeclarationAutomaticSemicolonNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<UsingDeclarationKindNodeSlot>() == 1, "UsingDeclarationKindNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -61325,8 +59755,6 @@ const _: () = assert!(::core::mem::size_of::<UsingKeywordNode>() == 0, "UsingKey
 const _: () = assert!(::core::mem::size_of::<VarKeywordNode>() == 0, "VarKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<VariableDeclarationNode>() == 88, "VariableDeclarationNode is not the 88 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<VariableDeclarationTerminatorNodeSlot>() == 1, "VariableDeclarationTerminatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<VariableDeclaratorDefiniteNode>() == 112, "VariableDeclaratorDefiniteNode is not the 112 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

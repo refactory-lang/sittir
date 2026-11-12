@@ -34,7 +34,7 @@ empty.mkdir(exist_ok=True)
 (empty / 'empty.ts').write_text('')
 env = dict(os.environ, NODE_ENV='production')
 node = lambda *args: subprocess.run(['node', *args], check=True, capture_output=True, text=True, cwd=tree, env=env).stdout.strip()
-cpu = node('-p', "require('node:os').cpus()[0].model")
+cpu = node('--input-type=module', '-e', f"import {{ cpuModel }} from {json.dumps((here.parent.parent / 'arena-benchmark-cpu.mjs').as_uri())}; console.log(cpuModel())")
 nodeVersion = node('--version')
 oxlintPackage = json.loads(node('-e', "const r=require('node:module').createRequire(process.cwd()+'/package.json');const p=r.resolve('oxlint/package.json');console.log(JSON.stringify({dir:require('node:path').dirname(p),version:require(p).version}))"))
 oxlint = [str(Path(oxlintPackage['dir']) / 'bin' / 'oxlint')]

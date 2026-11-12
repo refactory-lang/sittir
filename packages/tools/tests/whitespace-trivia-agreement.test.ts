@@ -1,7 +1,11 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { spanOf } from '@sittir/common/utils';
 import { createEngine } from '@sittir/common';
 import type { Engine, LanguageAPI } from '@sittir/types';
+import { releaseTrackedEngines } from './helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('./helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 /**
  * The text a loose trivia string is read by (`triviaFacts.whitespace`) and the

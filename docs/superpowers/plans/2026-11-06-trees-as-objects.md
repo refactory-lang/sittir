@@ -122,7 +122,7 @@
 
 ### Task 4: Arena storage holds its trees in counted slots
 
-**Held (the user, 2026-11-06).** Arena storage is moving to hydrate a tree whole at parse and drop tree-sitter's tree, so what an arena parse keeps is its source buffer. Task 6 of `docs/superpowers/plans/2026-11-06-arena-trees-from-records.md` replaces it, with counted held-parse slots. Tasks 1–3, 5 and 6 go ahead without it, and arena storage keeps Task 2's interim `Tree` object until then. Don't start this task.
+**Held (the user, 2026-11-06).** Arena storage is moving to hydrate a tree whole at parse and drop tree-sitter's tree, so what an arena parse keeps is its source buffer. Task 6 of `docs/superpowers/plans/2026-11-06-arena-trees-from-records.md` replaces it. That task drops the tree inside the read call and keeps no per-tree slot (the arena spec's Tree lifetime section), so this task's counted slots are not built. Tasks 1–3, 5 and 6 go ahead without it, and arena storage keeps Task 2's interim `Tree` object until then. Don't start this task.
 
 **Files:**
 - Modify: core `arena/built_image.rs` (the LINK record's tree word becomes a slot) and the arena's store (a new held-tree table).

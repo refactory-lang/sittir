@@ -1,5 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { emitFactorySourceText } from '../../src/emit/factory-source.ts';
+import { releaseTrackedEngines } from '../helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('../helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 describe('emitFactorySourceText (real rust grammar)', () => {
 	it('prints a strict module for a one-function file', async () => {

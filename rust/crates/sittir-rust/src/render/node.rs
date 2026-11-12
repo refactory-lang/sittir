@@ -7346,24 +7346,9 @@ impl ::sittir_core::view::KindOf for TokenRepetitionPatternOperatorNodeSlot {
 impl ::sittir_core::render::Render for TokenRepetitionPatternOperatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TokenRepetitionPatternOperatorNodeSlot::Plus => {
-                let written = render_plus(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_PLUS_AFTER);
-                Ok(())
-            }
-            TokenRepetitionPatternOperatorNodeSlot::Star => {
-                let written = render_star(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_STAR_AFTER);
-                Ok(())
-            }
-            TokenRepetitionPatternOperatorNodeSlot::Qmark => {
-                let written = render_qmark(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_QMARK_AFTER);
-                Ok(())
-            }
+            TokenRepetitionPatternOperatorNodeSlot::Plus => render_plus(w),
+            TokenRepetitionPatternOperatorNodeSlot::Star => render_star(w),
+            TokenRepetitionPatternOperatorNodeSlot::Qmark => render_qmark(w),
         }
     }
 }
@@ -7496,68 +7481,6 @@ impl ::sittir_core::render::Render for TokenRepetitionTokensNodeSlotRecord<'_> {
         }
     }
 }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum TokenRepetitionOperatorNodeSlot {
-    #[kind(kind::PLUS)]
-    Plus,
-    #[kind(kind::STAR)]
-    Star,
-    #[kind(kind::QMARK)]
-    Qmark,
-}
-
-impl ::sittir_core::prepare::Prepare for TokenRepetitionOperatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            TokenRepetitionOperatorNodeSlot::Plus => Ok(()),
-            TokenRepetitionOperatorNodeSlot::Star => Ok(()),
-            TokenRepetitionOperatorNodeSlot::Qmark => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::view::KindOf for TokenRepetitionOperatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Plus => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
-            Self::Star => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
-            Self::Qmark => [::sittir_core::types::KindId(10)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for TokenRepetitionOperatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            TokenRepetitionOperatorNodeSlot::Plus => {
-                let written = render_plus(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_REPETITION_PLUS_AFTER);
-                Ok(())
-            }
-            TokenRepetitionOperatorNodeSlot::Star => {
-                let written = render_star(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_REPETITION_STAR_AFTER);
-                Ok(())
-            }
-            TokenRepetitionOperatorNodeSlot::Qmark => {
-                let written = render_qmark(w);
-                written?;
-                w.site_at(options::SITE_TOKEN_REPETITION_QMARK_AFTER);
-                Ok(())
-            }
-        }
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
@@ -11367,24 +11290,9 @@ impl ::sittir_core::view::KindOf for UnaryExpressionOperatorNodeSlot {
 impl ::sittir_core::render::Render for UnaryExpressionOperatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UnaryExpressionOperatorNodeSlot::Dash => {
-                w.site_at(options::SITE_UNARY_EXPRESSION_DASH_BEFORE);
-                let written = render_dash(w);
-                written?;
-                Ok(())
-            }
-            UnaryExpressionOperatorNodeSlot::Star => {
-                w.site_at(options::SITE_UNARY_EXPRESSION_STAR_BEFORE);
-                let written = render_star(w);
-                written?;
-                Ok(())
-            }
-            UnaryExpressionOperatorNodeSlot::Bang => {
-                w.site_at(options::SITE_UNARY_EXPRESSION_BANG_BEFORE);
-                let written = render_bang(w);
-                written?;
-                Ok(())
-            }
+            UnaryExpressionOperatorNodeSlot::Dash => render_dash(w),
+            UnaryExpressionOperatorNodeSlot::Star => render_star(w),
+            UnaryExpressionOperatorNodeSlot::Bang => render_bang(w),
         }
     }
 }
@@ -15020,12 +14928,7 @@ impl ::sittir_core::view::KindOf for LastMatchArmTrailingCommaNodeSlot {
 impl ::sittir_core::render::Render for LastMatchArmTrailingCommaNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LastMatchArmTrailingCommaNodeSlot::Comma => {
-                w.site_at(options::SITE_LAST_MATCH_ARM_COMMA_BEFORE);
-                let written = render_comma(w);
-                written?;
-                Ok(())
-            }
+            LastMatchArmTrailingCommaNodeSlot::Comma => render_comma(w),
             LastMatchArmTrailingCommaNodeSlot::Blank => Ok(()),
         }
     }
@@ -15753,8 +15656,8 @@ impl ::sittir_core::render::Render for LineCommentContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             LineCommentContentNodeSlot::LineCommentExtraSlashes(inner) => inner.render(w),
-            LineCommentContentNodeSlot::LineCommentDocOuter(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            LineCommentContentNodeSlot::LineCommentDocInner(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            LineCommentContentNodeSlot::LineCommentDocOuter(inner) => inner.render(w),
+            LineCommentContentNodeSlot::LineCommentDocInner(inner) => inner.render(w),
             LineCommentContentNodeSlot::LineCommentRegular(inner) => inner.render(w),
             LineCommentContentNodeSlot::Verbatim(inner) => inner.render(w),
         }
@@ -15778,8 +15681,8 @@ impl ::sittir_core::render::Render for LineCommentContentNodeSlotRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             LineCommentContentNodeSlotRecord::LineCommentExtraSlashes(inner) => inner.render(w),
-            LineCommentContentNodeSlotRecord::LineCommentDocOuter(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            LineCommentContentNodeSlotRecord::LineCommentDocInner(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            LineCommentContentNodeSlotRecord::LineCommentDocOuter(inner) => inner.render(w),
+            LineCommentContentNodeSlotRecord::LineCommentDocInner(inner) => inner.render(w),
             LineCommentContentNodeSlotRecord::LineCommentRegular(inner) => inner.render(w),
             LineCommentContentNodeSlotRecord::Verbatim(inner) => inner.render(w),
         }
@@ -15863,8 +15766,8 @@ impl ::sittir_core::view::KindOf for BlockCommentContentNodeSlot {
 impl ::sittir_core::render::Render for BlockCommentContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            BlockCommentContentNodeSlot::BlockCommentDocOuter(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            BlockCommentContentNodeSlot::BlockCommentDocInner(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            BlockCommentContentNodeSlot::BlockCommentDocOuter(inner) => inner.render(w),
+            BlockCommentContentNodeSlot::BlockCommentDocInner(inner) => inner.render(w),
             BlockCommentContentNodeSlot::BlockCommentRegular(inner) => inner.render(w),
             BlockCommentContentNodeSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
@@ -15886,8 +15789,8 @@ impl ::sittir_core::view::KindOf for BlockCommentContentNodeSlotRecord<'_> {
 impl ::sittir_core::render::Render for BlockCommentContentNodeSlotRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            BlockCommentContentNodeSlotRecord::BlockCommentDocOuter(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            BlockCommentContentNodeSlotRecord::BlockCommentDocInner(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            BlockCommentContentNodeSlotRecord::BlockCommentDocOuter(inner) => inner.render(w),
+            BlockCommentContentNodeSlotRecord::BlockCommentDocInner(inner) => inner.render(w),
             BlockCommentContentNodeSlotRecord::BlockCommentRegular(inner) => inner.render(w),
             BlockCommentContentNodeSlotRecord::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
@@ -18019,12 +17922,7 @@ impl ::sittir_core::render::Render for ClosureExpressionExprBodyNodeSlot {
             ClosureExpressionExprBodyNodeSlot::RangeExpressionBare(inner) => inner.render(w),
             ClosureExpressionExprBodyNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_self),
             ClosureExpressionExprBodyNodeSlot::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
-            ClosureExpressionExprBodyNodeSlot::Underscore => {
-                w.site_at(options::SITE_CLOSURE_EXPRESSION_EXPR_UNDERSCORE_BEFORE);
-                let written = render_underscore(w);
-                written?;
-                Ok(())
-            }
+            ClosureExpressionExprBodyNodeSlot::Underscore => render_underscore(w),
             ClosureExpressionExprBodyNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -18165,12 +18063,7 @@ impl ::sittir_core::render::Render for ClosureExpressionExprBodyNodeSlotRecord<'
             ClosureExpressionExprBodyNodeSlotRecord::RangeExpressionBare(inner) => inner.render(w),
             ClosureExpressionExprBodyNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_self),
             ClosureExpressionExprBodyNodeSlotRecord::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
-            ClosureExpressionExprBodyNodeSlotRecord::Underscore => {
-                w.site_at(options::SITE_CLOSURE_EXPRESSION_EXPR_UNDERSCORE_BEFORE);
-                let written = render_underscore(w);
-                written?;
-                Ok(())
-            }
+            ClosureExpressionExprBodyNodeSlotRecord::Underscore => render_underscore(w),
             ClosureExpressionExprBodyNodeSlotRecord::Verbatim(inner) => inner.render(w),
         }
     }
@@ -19165,20 +19058,8 @@ impl ::sittir_core::view::KindOf for RangePatternPrefixOperatorNodeSlot {
 impl ::sittir_core::render::Render for RangePatternPrefixOperatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            RangePatternPrefixOperatorNodeSlot::DotDotEq => {
-                w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_EQ_BEFORE);
-                let written = render_dot_dot_eq(w);
-                written?;
-                w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_EQ_AFTER);
-                Ok(())
-            }
-            RangePatternPrefixOperatorNodeSlot::DotDot => {
-                w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_BEFORE);
-                let written = render_dot_dot(w);
-                written?;
-                w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_AFTER);
-                Ok(())
-            }
+            RangePatternPrefixOperatorNodeSlot::DotDotEq => render_dot_dot_eq(w),
+            RangePatternPrefixOperatorNodeSlot::DotDot => render_dot_dot(w),
         }
     }
 }
@@ -19223,27 +19104,9 @@ impl ::sittir_core::view::KindOf for RangePatternWithLeftWithRightOperatorNodeSl
 impl ::sittir_core::render::Render for RangePatternWithLeftWithRightOperatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            RangePatternWithLeftWithRightOperatorNodeSlot::DotDotDot => {
-                w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_DOT_BEFORE);
-                let written = render_dot_dot_dot(w);
-                written?;
-                w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_DOT_AFTER);
-                Ok(())
-            }
-            RangePatternWithLeftWithRightOperatorNodeSlot::DotDotEq => {
-                w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_EQ_BEFORE);
-                let written = render_dot_dot_eq(w);
-                written?;
-                w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_EQ_AFTER);
-                Ok(())
-            }
-            RangePatternWithLeftWithRightOperatorNodeSlot::DotDot => {
-                w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_BEFORE);
-                let written = render_dot_dot(w);
-                written?;
-                w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_AFTER);
-                Ok(())
-            }
+            RangePatternWithLeftWithRightOperatorNodeSlot::DotDotDot => render_dot_dot_dot(w),
+            RangePatternWithLeftWithRightOperatorNodeSlot::DotDotEq => render_dot_dot_eq(w),
+            RangePatternWithLeftWithRightOperatorNodeSlot::DotDot => render_dot_dot(w),
         }
     }
 }
@@ -19309,12 +19172,7 @@ impl ::sittir_core::render::Render for RangePatternWithLeftContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             RangePatternWithLeftContentNodeSlot::RangePatternWithLeftWithRight(inner) => inner.render(w),
-            RangePatternWithLeftContentNodeSlot::RangePatternWithLeftBare => {
-                w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_DOT_DOT_BEFORE);
-                let written = render_range_pattern_with_left_bare(w);
-                written?;
-                Ok(())
-            }
+            RangePatternWithLeftContentNodeSlot::RangePatternWithLeftBare => render_range_pattern_with_left_bare(w),
         }
     }
 }
@@ -19333,12 +19191,7 @@ impl ::sittir_core::render::Render for RangePatternWithLeftContentNodeSlotRecord
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             RangePatternWithLeftContentNodeSlotRecord::RangePatternWithLeftWithRight(inner) => inner.render(w),
-            RangePatternWithLeftContentNodeSlotRecord::RangePatternWithLeftBare => {
-                w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_DOT_DOT_BEFORE);
-                let written = render_range_pattern_with_left_bare(w);
-                written?;
-                Ok(())
-            }
+            RangePatternWithLeftContentNodeSlotRecord::RangePatternWithLeftBare => render_range_pattern_with_left_bare(w),
         }
     }
 }
@@ -19578,12 +19431,7 @@ impl ::sittir_core::render::Render for AttributedParameterContentNodeSlot {
             AttributedParameterContentNodeSlot::PrimitiveType(inner) => inner.render(w),
             AttributedParameterContentNodeSlot::UnitType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(244), edges, w, render_unit_type),
             AttributedParameterContentNodeSlot::NeverType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(254), edges, w, render_never_type),
-            AttributedParameterContentNodeSlot::Underscore => {
-                w.site_at(options::SITE_ATTRIBUTED_PARAMETER_UNDERSCORE_BEFORE);
-                let written = render_underscore(w);
-                written?;
-                Ok(())
-            }
+            AttributedParameterContentNodeSlot::Underscore => render_underscore(w),
         }
     }
 }
@@ -19640,12 +19488,7 @@ impl ::sittir_core::render::Render for AttributedParameterContentNodeSlotRecord<
             AttributedParameterContentNodeSlotRecord::PrimitiveType(inner) => inner.render(w),
             AttributedParameterContentNodeSlotRecord::UnitType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(244), edges, w, render_unit_type),
             AttributedParameterContentNodeSlotRecord::NeverType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(254), edges, w, render_never_type),
-            AttributedParameterContentNodeSlotRecord::Underscore => {
-                w.site_at(options::SITE_ATTRIBUTED_PARAMETER_UNDERSCORE_BEFORE);
-                let written = render_underscore(w);
-                written?;
-                Ok(())
-            }
+            AttributedParameterContentNodeSlotRecord::Underscore => render_underscore(w),
         }
     }
 }
@@ -20995,7 +20838,7 @@ pub struct TokenRepetitionNode {
     pub separator: Option<::sittir_core::SlotValue<TokenRepetitionPatternTextNode>>,
     #[wire(key = "_operator")]
     #[slot(field = field::OPERATOR, word = 6, width = 1, forms = 2, built = 4)]
-    pub operator: ::sittir_core::SlotValue<TokenRepetitionOperatorNodeSlot>,
+    pub operator: ::sittir_core::SlotValue<TokenRepetitionPatternOperatorNodeSlot>,
     #[wire(key = "_tokens_separator_space")]
     #[space(slot = 2, side = after, site = options::SITE_TOKEN_REPETITION_TOKENS_SEPARATOR_SPACE)]
     pub tokens_separator_space: Option<KindId>,
@@ -49624,6 +49467,9 @@ fn render_token_repetition_pattern<N: TokenRepetitionPatternFields + ?Sized>(nod
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_separator", ::sittir_core::types::ItemIndex(0), w, |w| separator.render(w))?;
     w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_OPERATOR_BEFORE);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_PLUS_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_STAR_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(10)]) { w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_QMARK_AFTER); }
     w.edge(::sittir_core::types::KindId(185), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -49661,6 +49507,9 @@ fn render_token_repetition<N: TokenRepetitionFields + ?Sized>(node: &N, w: &mut 
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_separator", ::sittir_core::types::ItemIndex(0), w, |w| separator.render(w))?;
     w.site_at(options::SITE_TOKEN_REPETITION_OPERATOR_BEFORE);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_TOKEN_REPETITION_PLUS_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_TOKEN_REPETITION_STAR_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(10)]) { w.site_at(options::SITE_TOKEN_REPETITION_QMARK_AFTER); }
     w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -50701,6 +50550,9 @@ fn render_unary_expression<N: UnaryExpressionFields + ?Sized>(node: &N, w: &mut 
     let argument = node.argument();
     let operator = node.operator();
     w.edge(::sittir_core::types::KindId(267), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(75)]) { w.site_at(options::SITE_UNARY_EXPRESSION_DASH_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_UNARY_EXPRESSION_STAR_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(29)]) { w.site_at(options::SITE_UNARY_EXPRESSION_BANG_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_argument", ::sittir_core::types::ItemIndex(0), w, |w| argument.render(w))?;
@@ -51034,6 +50886,7 @@ fn render_last_match_arm<N: LastMatchArmFields + ?Sized>(node: &N, w: &mut dyn :
     w.text("=>")?;
     w.site_at(options::SITE_LAST_MATCH_ARM_EQ_GT_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    if trailing_comma.kind_in(&*w, &[::sittir_core::types::KindId(130)]) { w.site_at(options::SITE_LAST_MATCH_ARM_COMMA_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_trailing_comma", ::sittir_core::types::ItemIndex(0), w, |w| trailing_comma.render(w))?;
     w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -51483,6 +51336,8 @@ fn render_line_comment<N: LineCommentFields + ?Sized>(node: &N, w: &mut dyn ::si
     let content = node.content();
     w.edge(::sittir_core::types::KindId(337), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("//")?;
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(400)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(401)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     w.edge(::sittir_core::types::KindId(337), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -51492,6 +51347,8 @@ fn render_block_comment<N: BlockCommentFields + ?Sized>(node: &N, w: &mut dyn ::
     let content = View::new(node.content(), "{}");
     w.edge(::sittir_core::types::KindId(340), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("/*")?;
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(402)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(403)]) { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     w.text("*/")?;
     w.edge(::sittir_core::types::KindId(340), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -52175,6 +52032,7 @@ fn render_closure_expression_expr<N: ClosureExpressionExprFields + ?Sized>(node:
         w.site_at(options::SITE_CLOSURE_EXPRESSION_EXPR_MOVE_AFTER);
     }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_parameters", ::sittir_core::types::ItemIndex(0), w, |w| parameters.render(w))?;
+    if body.kind_in(&*w, &[::sittir_core::types::KindId(136)]) { w.site_at(options::SITE_CLOSURE_EXPRESSION_EXPR_UNDERSCORE_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
     w.edge(::sittir_core::types::KindId(370), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -52939,7 +52797,11 @@ fn render_range_pattern_prefix<N: RangePatternPrefixFields + ?Sized>(node: &N, w
     let operator = node.operator();
     let right = node.right();
     w.edge(::sittir_core::types::KindId(419), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(137)]) { w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_EQ_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(100)]) { w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(137)]) { w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_EQ_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(100)]) { w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
     w.edge(::sittir_core::types::KindId(419), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -52949,7 +52811,13 @@ fn render_range_pattern_with_left_with_right<N: RangePatternWithLeftWithRightFie
     let operator = node.operator();
     let right = node.right();
     w.edge(::sittir_core::types::KindId(420), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(48)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_DOT_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(137)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_EQ_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(100)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(48)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_DOT_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(137)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_EQ_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(100)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
     w.edge(::sittir_core::types::KindId(420), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -52960,6 +52828,7 @@ fn render_range_pattern_with_left<N: RangePatternWithLeftFields + ?Sized>(node: 
     let left = node.left();
     w.edge(::sittir_core::types::KindId(422), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(100), ::sittir_core::types::KindId(421)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_DOT_DOT_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     w.edge(::sittir_core::types::KindId(422), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -53071,6 +52940,7 @@ fn render_attributed_parameter<N: AttributedParameterFields + ?Sized>(node: &N, 
     let content = node.content();
     w.edge(::sittir_core::types::KindId(429), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_attribute_item", ::sittir_core::types::ItemIndex(0), w, |w| attribute_item.render(w))?;
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(136)]) { w.site_at(options::SITE_ATTRIBUTED_PARAMETER_UNDERSCORE_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     w.edge(::sittir_core::types::KindId(429), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -56857,7 +56727,7 @@ const _: () = assert!(::core::mem::size_of::<WherePredicatesNode>() <= 256, "Whe
 const _: () = assert!(::core::mem::size_of::<WhileExpressionNode>() <= 256, "WhileExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionNode>() <= 256, "YieldExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_nodes!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, DeclarationStatementTraitItemNode, DeclarationStatementImplItemBodyNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, TokenRepetitionOperatorNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierQualifierNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot, ScopedTypeIdentifierQualifierNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerFieldNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ArrayExpressionListElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingBodyNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixOperatorNodeSlot, RangePatternWithLeftWithRightOperatorNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, MatchBlockArmsArmsNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, AttributedElementNode, ArrayExpressionListElementsNode, TupleExpressionElementsNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, ArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, ArrayExpressionSemiNode, ArrayExpressionListNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, TraitInterfaceDeclarationBodyNode, ExtensionDeclarationBodyNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, ErrorSentinelNode, SelfModuleNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ClosureParameterNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, StringCloseNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);
+::sittir_core::grammar_nodes!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, DeclarationStatementTraitItemNode, DeclarationStatementImplItemBodyNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierQualifierNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot, ScopedTypeIdentifierQualifierNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerFieldNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ArrayExpressionListElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingBodyNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixOperatorNodeSlot, RangePatternWithLeftWithRightOperatorNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, MatchBlockArmsArmsNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, AttributedElementNode, ArrayExpressionListElementsNode, TupleExpressionElementsNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, ArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, ArrayExpressionSemiNode, ArrayExpressionListNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, TraitInterfaceDeclarationBodyNode, ExtensionDeclarationBodyNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, ErrorSentinelNode, SelfModuleNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ClosureParameterNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, StringCloseNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AbstractTypeNode>() == 120, "AbstractTypeNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -57686,8 +57556,6 @@ const _: () = assert!(::core::mem::size_of::<TokenBindingPatternNode>() == 112, 
 const _: () = assert!(::core::mem::size_of::<TokenKeywordsEnum>() == 1, "TokenKeywordsEnum is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TokenRepetitionNode>() == 120, "TokenRepetitionNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<TokenRepetitionOperatorNodeSlot>() == 1, "TokenRepetitionOperatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TokenRepetitionPatternNode>() == 120, "TokenRepetitionPatternNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

@@ -615,10 +615,6 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 
 The node's kind id (`TSKindId`); a reader resolves it to a kind name through the grammar's `kindNameFromId`.
 
-### `packages/tools/src/validate/common.ts::isAnonTokenPassthrough`
-
-Whether a child is an anonymous token object (`$named === false`). `resolveChild` passes one through unchanged only when it is given no tree, where the child is the read node itself. Building from a tree, it refuses one: stored data holds a token as its kind id, so a token object reaching a builder input is a fault, never an input.
-
 ### `packages/tools/src/validate/common.ts::resolveAliasedKind`
 
 ```text
@@ -1643,10 +1639,6 @@ The kinds whose factory forwards its arguments, as loaded from the node model.
 
 The layout of a node read for validation.
 
-### `packages/tools/src/validate/common.ts::ReadNodeLike::$named`
-
-Whether the node read is a named node.
-
 ### `packages/tools/src/validate/common.ts::ReadNodeLike::$text`
 
 The node's text, or a thunk that produces it.
@@ -1762,14 +1754,6 @@ The storage kinds a display covers, across the families.
 ### `packages/tools/src/validate/common.ts::createStrictNativeEngine`
 
 Creates the strict native engine for a grammar.
-
-### `packages/tools/src/validate/common.ts::LoadedNodeModel::slotBlankArms`
-
-For each kind that has blank-arm slots, the set of those slots' storage keys. Kinds with none have no entry.
-
-### `packages/tools/src/validate/common.ts::KindSlots::blankArms`
-
-The storage keys of this kind's slots that have a blank arm. The set is empty when none do.
 
 ### `packages/tools/src/validate/common.ts::DelimiterFacet`
 

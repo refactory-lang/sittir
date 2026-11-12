@@ -4605,25 +4605,6 @@ The normalized and simplified grammars carry the same map through unchanged, as 
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::RawGrammar::visibleExternals`
-
-```text
-/**
-	 * Hidden-external → sittir-side render body map. Populated by
-	 * `visibleExternals:` in the override layer. Unlike `renderAs`, these
-	 * bodies are NOT inlined at reference sites — every `SYMBOL` reference
-	 * to a configured hidden name is instead wrapped in a named visible
-	 * alias (both at wire-evaluation and sittir-evaluation time), so the
-	 * external scanner symbol materializes as a real CST-visible kind.
-	 * `link.ts` registers each body under the alias's VISIBLE name (hidden
-	 * name minus leading underscores) as a real top-level IR rule.
-	 *
-	 * Record keys are the HIDDEN external symbol names (e.g.
-	 * `_automatic_semicolon`); values are the sittir-side Rule bodies
-	 * (e.g. `{ type: 'STRING', value: '\n' }`).
-	 */
-```
-
 ### `packages/codegen/src/compiler/types.ts::RawGrammar::expectDiagnostics`
 
 ```text
@@ -7789,10 +7770,6 @@ The choice counterpart of `factorChoiceArms` for arms of different lengths: when
 ### `packages/codegen/src/compiler/flatten.ts::rebuiltLeaf`
 
 Rebuilds a leaf from its input and its built form: the built form's fields win, and the input's nonterminal survives when it had one. Flatten uses it when a leaf is reconstructed.
-
-### `packages/codegen/src/compiler/collect-slots.ts::retargetAliasedLiteral`
-
-A literal that is itself the slot (a STRING stamped `nonterminal: true` with `aliasedTo`) reads as the alias's kind: its value takes the alias target as `resolvedKind` and `parseKind`, so the slot is named for the node the parser produces (`lazy`, `class_character`) rather than for the literal's own token. A literal that is an arm of a choice keeps its literal kind; the choice's union slot is built from the arms and is unchanged.
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::foldedSymbols`
 

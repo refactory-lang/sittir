@@ -1,4 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
+import { disposeNativeEngines } from '../common.ts';
+
+afterAll(disposeNativeEngines);
 
 const INJECTED = 'injected detached-data failure';
 

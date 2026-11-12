@@ -8,7 +8,7 @@
 - A navigation interface gives a node's facts (`Kid`), its children in order and its parent.
 - The tree backer reads tree-sitter's tree with one cursor that moves locally. The record backer reads records, token spans and node rows.
 - Trivia placement, the `SourceTable` methods and the engine's tree functions run once, over the interface, in both storages.
-- The arena holds each parse in a counted held-parse slot.
+- In arena storage, a parsed tree lives only inside the read call. Afterwards, only the nodes and the source text remain.
 
 **Tech stack:** Rust (`sittir-core`, `sittir-node-macros`), the TypeScript engine in `packages/common`, and the tools' validators and benchmarks.
 
@@ -27,7 +27,8 @@
 ## Global Constraints
 
 - **Worktree and branches:** prototype's one worktree, `scratchpad/wt-2c-census`, with a new branch per task from `origin/master`. No other worktrees. Pathspec commits (`git commit -- <paths>`). No force, stash, amend, rebase, revert or abort. Push by literal sha.
-- **The tree-holders plan's object half is deferred** (the maintainer, 2026-11-08). Arena parses move from the live-tree table straight into the engine's held-parse table. No `TreeCell` or interim `Tree` object comes first.
+- **Tree lifetime is settled** (the spec's Decided and Tree lifetime sections). The tree's scope is the read call. Only the source text and the nodes outlive it. The root holds no reference to a tree, and node memory is out of scope. A proposal starts from these rulings and doesn't reopen them.
+- **The tree-holders plan's object half is deferred** (the maintainer, 2026-11-08). Arena parses leave the live-tree table, and no held-parse table replaces it. No `TreeCell` or interim `Tree` object comes first.
 - **Native threads, when added,** are scoped threads that borrow immutable published data: rows, the source and written records. Each returns its scratch to the borrow's owner. Nothing is reference-counted to cross a thread.
 - **Object storage's speed is not a gate** (the maintainer: "as long as it doesn't affect arenas and the public api"). Its correctness is a gate: rows, renders and records. So is the public API.
 - **No napi or V8 call runs off the JavaScript thread, or on a grown stack segment.** Render stays a recursive descent.
@@ -46,7 +47,7 @@
 2. **Zero-width tokens:** python's indent and dedent, typescript's automatic semicolons. They keep their index, appear in children, and count in `depth_move` the same in both backers. Owned by Task 4.
 3. **Multi-byte UTF-8 sources and multi-line tokens.** Spans stay byte offsets, `line_starts_inside_tokens` gives the same lines, and columns come from the line table, not from byte counts. Owned by Tasks 3 and 4.
 4. **A deeply nested source hydrated at parse.** 10,000 levels hydrate without overflow, with no napi call on a grown segment. Owned by Task 6.
-5. **A built node that links parsed nodes from a released parse root.** The parse stays held until the link goes, and a stale read handle is refused by name, never reading a reused slot. Owned by Task 6.
+5. **A built node that links parsed nodes, rendered after the parsed root is released.** Expected: it renders byte-identical to its render before the release. Owned by Task 6.
 6. **A second call into the same engine while one is running,** for example from a finalizer or a callback that reaches the engine. Expected: refused by name, with no deadlock and no aliasing `&mut`. Owned by Task 9.
 7. **A JavaScript view of a built chunk kept past the chunk's free.** Expected: the view is detached (`byteLength` 0) before the memory goes, never a read of freed memory. Owned by Task 12.
 
@@ -54,9 +55,11 @@
 
 ### Task 1: The single cursor pass
 
-In flight as its own PR (prototype). Goldens from master, then the pass, with records word-identical. This plan starts after it merges.
+**Status:** merged as #1123 (3fd7db513), 2026-11-07. Goldens from master, then the pass, with records word-identical.
 
 ### Task 2: The navigation interface, its tree backer, and the placer on it
+
+**Status:** merged as #1135 (16114e186), 2026-11-07.
 
 **Files:**
 - Create: `rust/crates/sittir-core/src/nodes.rs` (the interface, `Kid`, and the tree backer).
@@ -70,15 +73,17 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
   - `pub(crate) trait Nodes<'t> { fn text(&self) -> &'t str; fn kid(&mut self, index: NodeIndex) -> Kid; fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]>; fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex>; }`;
   - `pub(crate) struct TreeNodes<'t>`, built from `&'t tree_sitter::Tree` and the source, which holds one cursor.
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   - `tree_nodes_match_the_tree`: for every node of one fixture tree per grammar, `kid` and `kids` equal what `Kid::of` and a fresh child walk give today, and `parent` equals the cursor's parent;
   - `tree_nodes_never_descend_from_the_root_in_a_sweep`: a preorder sweep of `kids` over a fixture makes 0 root-down moves, through a test-only counter.
-- [ ] **Step 2:** Run them. They fail (no `nodes` module).
-- [ ] **Step 3: Implement.** The tree backer moves its cursor from where it last stood: to a child, a sibling, or up to a common ancestor. It descends from the root only when the target isn't under its current path.
-- [ ] **Step 4: Run the three-way verification** in both storages. Placement parity, lazy against eager, stays 0 on every grammar and on matter.js.
-- [ ] **Step 5: Commit:** `refactor(core): trivia placement reads its tree through a navigation interface`.
+- [x] **Step 2:** Run them. They fail (no `nodes` module).
+- [x] **Step 3: Implement.** The tree backer moves its cursor from where it last stood: to a child, a sibling, or up to a common ancestor. It descends from the root only when the target isn't under its current path.
+- [x] **Step 4: Run the three-way verification** in both storages. Placement parity, lazy against eager, stays 0 on every grammar and on matter.js.
+- [x] **Step 5: Commit:** `refactor(core): trivia placement reads its tree through a navigation interface`.
 
 ### Task 3: The `SourceTable` methods and the engine's tree functions on the interface
+
+**Status:** merged as #1137 (b140d66e2), 2026-11-08.
 
 **Files:**
 - Modify: `engine.rs`. The `SourceTable` implementations for `ParsedTree`, `ReadTrees` and `WithoutLayout`, plus `cursor_at`, `row_coordinate`, `line_starts_inside_tokens`, `last_list_child`, `edge_child`, `frame_levels` and `Lookups::baseline_gap`. Each reads through a `TreeNodes`.
@@ -97,15 +102,17 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
   - One `TreeNodes` per tree per render call lives in `ReadTrees`, and `Lookups` moves its cursor. Each engine tree function makes one per call.
   - After this task, no function outside `nodes.rs` moves a tree-sitter cursor except the reader, on a cursor `TreeNodes` lends (`over`). The reader is the hydrate pass, the generated reads, `survey` and `read_units`.
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   - `a_codemod_render_descends_from_the_root_as_often_over_80_functions_as_over_20`: rendering the codemod case (one rename, one argument set, one statement inserted, as prototype's render profile) makes the same number of root-down moves at either size, through the Task 2 counter, and no more than the count this task lands at. That count is a ceiling that only goes down. On master it grows with the root's width (29 at 20 functions, 89 at 80). The moves left are one per engine call JavaScript makes during `$render()`, plus one per native render pass that restarts at the file's start;
   - `line_starts_inside_a_multiline_token_hold`: a typescript template string and a python triple-quoted string spanning lines, with a multi-byte character before each, give the same line starts as today (Review Focus 3).
-- [ ] **Step 2:** Run them. They fail.
-- [ ] **Step 3: Implement.** Logic is unchanged. Only the way each function reaches a node changes.
-- [ ] **Step 4: Run the three-way verification** in both storages, and rerun prototype's render profile cases 2 and 3 locally to confirm the cursor share drops. Run Task 1's deep-read bench before and after: the fold must not slow the hydrate pass beyond noise. CI numbers come in Task 7.
-- [ ] **Step 5: Commit:** `refactor(core): the source table and tree functions read through the navigation interface`.
+- [x] **Step 2:** Run them. They fail.
+- [x] **Step 3: Implement.** Logic is unchanged. Only the way each function reaches a node changes.
+- [x] **Step 4: Run the three-way verification** in both storages, and rerun prototype's render profile cases 2 and 3 locally to confirm the cursor share drops. Run Task 1's deep-read bench before and after: the fold must not slow the hydrate pass beyond noise. CI numbers come in Task 7.
+- [x] **Step 5: Commit:** `refactor(core): the source table and tree functions read through the navigation interface`.
 
 ### Task 4: Token spans and node rows in arena records, and the record backer
+
+**Status:** merged as #1138 (2dac82347), 2026-11-08.
 
 **Files:**
 - Modify: the hydrate derive (`sittir-node-macros/src/hydrate.rs`) and `arena/hydrate.rs`. Every node of the tree gets a row, records included. That covers anonymous tokens, extras, named units and flags, named children a template writes, and the nodes inside a subtree the hydrate pass doesn't enter: a leaf's interior, an `ERROR`'s children, an extra's children. Such a subtree is walked once for its rows while the tree is still held.
@@ -127,7 +134,7 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
   - A record node's row repeats the bytes its side record also holds. Both are written once, by the hydrate pass, and never change.
   - Records stay word-identical.
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   - `record_nodes_match_tree_nodes`: for every node of each fixture tree in all five grammars, the two backers give equal `kid`, `kids` and `parent`. The fixtures include:
     - (Review Focus 1) a file with an ERROR node and a MISSING token per grammar;
     - (Review Focus 2) python nested blocks, which have indent and dedent, and typescript statements ending by automatic semicolon;
@@ -135,12 +142,14 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
   - `records_and_spans_cover_every_byte`: the spike's coverage check as a test. No uncovered byte, no overlap, no token-text mismatch;
   - `record_words_are_unchanged`: Task 1's goldens still pass, because spans and rows sit beside the records;
   - `depth_members_match_the_walk`: for every subtree of the fixtures, the recorded members give the same `between` as `DepthMembers::of`.
-- [ ] **Step 2:** Run them. They fail.
-- [ ] **Step 3: Implement.** Spans and rows are written during the hydrate pass. The tree is still kept.
-- [ ] **Step 4: Run `sittir tool backer-parity`** on matter.js 2078d664893d and next.js 4e5335a00314. 0 differing nodes. Then run the three-way verification in both storages.
-- [ ] **Step 5: Commit:** `feat(arena): records keep token spans and node rows, read through a record backer`.
+- [x] **Step 2:** Run them. They fail.
+- [x] **Step 3: Implement.** Spans and rows are written during the hydrate pass. The tree is still kept.
+- [x] **Step 4: Run `sittir tool backer-parity`** on matter.js 2078d664893d and next.js 4e5335a00314. 0 differing nodes. Then run the three-way verification in both storages.
+- [x] **Step 5: Commit:** `feat(arena): records keep token spans and node rows, read through a record backer`.
 
 ### Task 5: Arena render, queries and edits read records; baseline gaps are stamped
+
+**Status:** merged as #1141 (f44d193b2), 2026-11-08. #1142 (e6ea02d86, 2026-11-09) fixed the render slowdown it caused (`Nodes::edge`).
 
 **Files:**
 - Modify: `napi_engine.rs` (`ArenaSources`), `arena/view.rs` (`source_root`, `RecordCtx::row_coordinate`) and `arena/prep.rs` (`edited_record`, `RecordPrep::row_coordinate`). In arena storage these read `RecordNodes`. `edited_record` takes the node's existing record and stops re-hydrating.
@@ -158,17 +167,19 @@ In flight as its own PR (prototype). Goldens from master, then the pass, with re
 - Consumes: Task 4's `RecordNodes`.
 - Produces: in arena storage, `SourceTable::read_ctx` answers `None` after a full hydration, and nothing on the render, query or edit paths asks for the tree.
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   - `arena_render_reads_no_tree`: after a full hydration, rendering the untouched, rebuilt and codemod cases in arena storage makes 0 tree accesses, counted by `LayoutWork::tree_reads` in the one function that hands out a `ParsedTree`'s tree;
   - baseline parity: for every layout run of the fixtures and both corpora, the gap measured from the record equals the gap measured through the tree;
   - `a_baseline_gap_is_measured_once`: rendering one tree twice measures each layout run's baseline once;
   - `an_edit_does_not_rehydrate`: an edited render in arena storage writes no record into the `TreeArena`.
-- [ ] **Step 2:** Run them. They fail.
-- [ ] **Step 3: Implement.**
-- [ ] **Step 4: Run the three-way verification** in both storages, then a byte-identical render over all of matter.js and next.js in arena storage, through the validators' corpus mode.
-- [ ] **Step 5: Commit:** `feat(arena): render, queries and edits read records, not the tree`.
+- [x] **Step 2:** Run them. They fail.
+- [x] **Step 3: Implement.**
+- [x] **Step 4: Run the three-way verification** in both storages, then a byte-identical render over all of matter.js and next.js in arena storage, through the validators' corpus mode.
+- [x] **Step 5: Commit:** `feat(arena): render, queries and edits read records, not the tree`.
 
 ### Task 5b: Leaf, ERROR and unit reads take no tree
+
+**Status:** merged as #1164 (3c2f22bee), 2026-11-10.
 
 Task 5 planned these reads on records, but its no-tree test covered render, queries and edits only. Three arena calls still run the typed reader over a tree cursor: `$snapshot()` (Task 5c), the unit sides edits carry, and the object read of a node with no record (a parsed leaf, or ERROR).
 
@@ -188,17 +199,17 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
   - `backer_parity` also checks each node's unit sides and leaf read against the stamped coordinate, so `sittir tool backer-parity` covers the corpora;
   - the no-tree count is the existing `LayoutWork::tree_reads`, because every path to the tree passes `ParsedTree::tree()`.
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   - `leaf_error_and_unit_reads_take_no_tree`: after a full hydration in arena storage, these make 0 tree reads:
     - `readNode` on an ERROR;
     - `readObjectAt` on an identifier query item and a number literal with parts;
     - the unit sides of a codemod edit;
   - parity, over every node of the fixtures and both corpora in all three grammars: arena leaf reads and unit sides equal object storage's;
   - `a_list_item_is_numbered_once`: a list with a hole gives each unit the same item number from the list read and the units walk.
-- [ ] **Step 2:** Run them. They fail.
-- [ ] **Step 3: Implement.**
-- [ ] **Step 4: Run the three-way verification** in both storages. Records stay word-identical.
-- [ ] **Step 5: Commit:** `feat(arena): leaf, ERROR and unit reads consume records, not the tree`.
+- [x] **Step 2:** Run them. They fail.
+- [x] **Step 3: Implement.**
+- [x] **Step 4: Run the three-way verification** in both storages. Records stay word-identical.
+- [x] **Step 5: Commit:** `feat(arena): leaf, ERROR and unit reads consume records, not the tree`.
 
 ### Task 5c: One snapshot rule for every storage
 
@@ -224,39 +235,36 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 - [ ] **Step 4: Run the three-way verification** in both storages. Object storage's snapshot speed is not a gate. Its output is.
 - [ ] **Step 5: Commit:** `feat(snapshot): one snapshot rule for built and parsed nodes in both storages`.
 
-### Task 6: Hydrate at parse, drop the tree, and hold each parse in a counted slot
+### Task 6: Hydrate at parse and drop the tree inside the read call
+
+**Status:** open as #1183, which builds the held-parse slots this task no longer has. It is reworked to this task's shape, census first.
+
+This is tree lifetime only, as the spec's Tree lifetime section rules. It adds no per-tree owner, slot, table or count, and it designs no node release.
 
 **Files:**
-- Modify: `napi_engine.rs` and `engine.rs`. In arena storage, `parse` hydrates the whole tree in the same call, then drops the `tree_sitter::Tree`. The parse's `TreeArena`, token spans, rows, source buffer and placed sides go into the engine arena's held-parse table. Root release drops the root's count.
-- Modify: `arena/built_image.rs`. The LINK record's tree word names a held-parse slot.
+- Modify: `napi_engine.rs` and `engine.rs`. In arena storage, `parse` hydrates the whole tree in the same call, then drops the `tree_sitter::Tree`, the placement scratch and the read caches before it returns. Only the nodes and the source text remain.
+- Modify: `arena/built_image.rs`. The LINK record names a node, not a tree, and stays 8 words.
 - Remove the branches Task 5 keeps for trees read part-way: `edited_record`'s coordinate branch and the baseline measured through the tree. Every arena tree is now read whole at parse.
-- Modify: `packages/common/src/{read,record-view,handle,engine,create-engine,built-arena}.ts`. An arena `TreeHandle` carries the slot and the parse id, and holds no `Tree` object. `handleDispose` on a parse root releases the root's count. The arena's `#trees` and its `holdTree` calls go.
+- Modify: `packages/common/src/{read,record-view,handle,engine,create-engine,built-arena}.ts`. An arena root holds no `Tree` object and no reference to a tree. The arena's `#trees` and its `holdTree` calls go.
 - Modify: `packages/tools/src/validate/layout-runs.ts` and `packages/tools/src/profile/native-hydration.ts`, which release their roots.
-- Test: `rust/crates/sittir-core/tests/arena_held_parses.rs` and `packages/common/tests/arena-held-parses.test.ts`.
+- Test: `rust/crates/sittir-core/tests/arena_tree_lifetime.rs` and `packages/common/tests/arena-tree-lifetime.test.ts`.
 
 **Interfaces:**
-- Consumes: Tasks 5, 5b and 5c. The tree drop lands after both 5b and 5c. HeldParses, the LINK slot word and link counting don't need them. Arena parses leave the live-tree table here.
-- Produces:
-  - `pub struct HeldParse`, owning its `TreeArena`, token spans, rows, source (`Box<str>`) and placed sides as direct fields, none wrapped in `Arc`, `Rc`, `Mutex`, `RwLock` or an atomic. What those values hold inside becomes plain in Tasks 11 and 12.
-  - `HeldParses`, a field of the engine, reached only through the engine's borrow. Counts are plain `u32`s.
-  - `HeldParses::hold(&mut self, parse: HeldParse) -> u32`;
-  - `HeldParses::release(&mut self, slot: u32)`;
-  - `HeldParses::get(&self, slot: u32) -> &HeldParse`, for a counted holder;
-  - `HeldParses::borrowed(&self, slot: u32, parse: TreeId) -> Result<&HeldParse, ParseReleased>`, for every read-handle call. `ParseReleased` names the parse's id;
-  - a slot is reused only when its count is 0.
+- Consumes: Tasks 5, 5b and 5c. Arena parses leave the live-tree table here.
+- Produces: the census below, as the PR body's first table. Its placement of each field fixes the names later tasks use.
 
-- [ ] **Step 1: Failing tests:**
-  - a parse in arena storage leaves no live `tree_sitter::Tree`, through a test-only count;
-  - 100 parses, each released, leave the table empty. 100 never released are freed at the engine's dispose;
-  - (Review Focus 5) a built node linking a parsed node keeps its parse after the root's release, and releasing the built node frees it. A read handle kept past its parse's release is refused by `ParseReleased`, and after a new parse reuses the slot it's still refused and never reads the new parse;
-  - 10,000 hold/release cycles over 3 parses never leave a live link's slot at count 0, checked under the debug checks;
+- [ ] **Step 1: The census, before code.** List every field of `ParsedTree` (`engine.rs`) and `TreeArena` (`arena/rows.rs`). Place each in one bin: node data; source text; recomputed from those on demand (with its cost and its readers); or dropped inside the read call. A field that isn't per-tree moves to the engine (grammar, the built-arena `store`) or to the call (the work counters, per Task 10). Say what lazy trivia placement reads after the call. A field that fits none of these goes to brainstorm, which takes it to the maintainer, before any code is written.
+- [ ] **Step 2: Failing tests:**
+  - a parse in arena storage leaves no live `tree_sitter::Tree` after `parse` returns, through a test-only count;
+  - after `parse` returns, arena storage holds no per-tree value besides the nodes' data and the source text, through the same test-only accounting;
+  - (Review Focus 5) a built node linking a parsed node renders byte-identical after the parsed root's release;
   - (Review Focus 4) a 10,000-level nested source in each grammar hydrates at parse with no overflow, and the parse call makes no napi call on a grown segment;
   - the LINK record is still 8 words, asserted on `size_of` and in the JavaScript twin;
   - no `Tree` instance is made in arena storage.
-- [ ] **Step 2:** Run them. They fail.
-- [ ] **Step 3: Implement.**
-- [ ] **Step 4: Run the three-way verification** in arena storage, plus Task 4's parity on the corpora and Task 5's corpus render with the tree dropped.
-- [ ] **Step 5: Commit:** `feat(arena): an arena parse hydrates at parse, drops its tree, and is held in a counted slot`.
+- [ ] **Step 3:** Run them. They fail.
+- [ ] **Step 4: Implement.**
+- [ ] **Step 5: Run the three-way verification** in arena storage, plus Task 4's parity on the corpora and Task 5's corpus render with the tree dropped.
+- [ ] **Step 6: Commit:** `feat(arena): an arena parse hydrates at parse and drops its tree inside the read call`.
 
 ### Task 7: The measurements
 
@@ -271,6 +279,8 @@ Run on Task 6's branch before its PR is opened. Tasks 2–5 carry the standard C
 
 ### Task 8: The lock-free census
 
+**Status:** merged as #1174 (3e825bf8f), 2026-11-10.
+
 A ratchet that every later task lowers. Each of Tasks 9–12 starts by lowering its files' ceilings, so its first test fails.
 
 **Files:**
@@ -279,12 +289,12 @@ A ratchet that every later task lowers. Each of Tasks 9–12 starts by lowering 
 **Interfaces:**
 - Produces: `const CEILINGS: &[(&str, u32)]`. This holds each `src/` file's count of uses of `Mutex`, `RwLock`, `OnceLock`, `LazyLock`, `Arc`, `Weak`, `Rc`, `RefCell` and `std::sync::atomic`, keyed by its path under `rust/crates/sittir-core/src/`. It lists every file whose count isn't 0.
 
-- [ ] **Step 1: Write `lock_free_census_matches_its_ceilings`.** It scans `src/**/*.rs`, skipping comments, `#[cfg(test)]` modules and string literals, and compares each file's count with its ceiling.
+- [x] **Step 1: Write `lock_free_census_matches_its_ceilings`.** It scans `src/**/*.rs`, skipping comments, `#[cfg(test)]` modules and string literals, and compares each file's count with its ceiling.
   - A file over its ceiling fails, naming the file, its count and the uses found.
   - A file under its ceiling also fails, asking for the ceiling to be lowered. The ceiling equals the count; it never exceeds it.
   - A file missing from `CEILINGS` has a ceiling of 0.
-- [ ] **Step 2:** Fill in `CEILINGS` from the run at the task's base. Run `cargo test -p sittir-core --test lock_free_census`. It passes.
-- [ ] **Step 3: Commit:** `test(core): a census of locks, atomics and shared owners, ratcheted per file`.
+- [x] **Step 2:** Fill in `CEILINGS` from the run at the task's base. Run `cargo test -p sittir-core --test lock_free_census`. It passes.
+- [x] **Step 3: Commit:** `test(core): a census of locks, atomics and shared owners, ratcheted per file`.
 
 ### Task 9: The engine owns its state; one borrow per call
 
@@ -356,7 +366,7 @@ A ratchet that every later task lowers. Each of Tasks 9–12 starts by lowering 
 **Files:**
 - Modify: `engine.rs`, `arena.rs`, `arena/*.rs` and `napi_engine.rs`.
   - Arena storage's records, slots, items and gaps, its arena, lines and depth members: no `Mutex`, `OnceLock` or atomic. Lazily built values are `Option` fields.
-  - Task 5's rows `Arc`: the held parse owns the rows, and `RecordNodes` borrows them.
+  - Task 5's rows `Arc`: the rows are node data the engine owns, and `RecordNodes` borrows them.
   - The source: owned as `Box<str>`, read as `&str`. `SourceTable::source_of` returns `Option<&str>`.
   - Cached `Arc` values (`Record`, `NodeSlots`, `SlotItems`) become owned values that lookups borrow.
 - Modify: `arena.rs`, `arena/memory.rs`, `arena/count.rs` and `napi_engine.rs` (`external_view`, `release_share`, `Buffers`).

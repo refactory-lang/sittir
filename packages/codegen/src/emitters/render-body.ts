@@ -589,6 +589,26 @@ export interface RustBodyPrinter {
 	readonly innerGap?: (name: string) => boolean;
 	readonly optional?: (name: string) => boolean;
 	readonly unitSlot?: (name: string) => string | undefined;
+	readonly armSeams?: (name: string) => readonly ArmSeams[] | undefined;
+}
+
+export interface ArmSeams {
+	readonly kinds: string;
+	readonly before?: string;
+	readonly immediate: boolean;
+	readonly after?: string;
+}
+
+function armSeamLines(field: string, arms: readonly ArmSeams[], side: 'before' | 'after'): string[] {
+	return arms.flatMap((arm) => {
+		const writes =
+			side === 'before'
+				? [...(arm.before === undefined ? [] : [`w.site_at(options::${arm.before});`]), ...(arm.immediate ? [`w.seam(${TIGHT_KINDS});`] : [])]
+				: arm.after === undefined
+					? []
+					: [`w.site_at(options::${arm.after});`];
+		return writes.length === 0 ? [] : [`if ${field}.kind_in(&*w, ${arm.kinds}) { ${writes.join(' ')} }`];
+	});
 }
 
 export function escapeBraces(value: string): string {
@@ -699,11 +719,13 @@ function printStatements(
 				flush();
 				seatGap(node.name);
 				const unit = printer.unitSlot?.(node.name);
-				lines.push(
+				const field = printer.field(node.name);
+				const arms = printer.armSeams?.(node.name) ?? [];
+				const render =
 					unit === undefined
-						? `${pad}${printer.field(node.name)}.render(w)?;`
-						: `${pad}::sittir_core::layout::BodyLayout::render_unit(node.layout(), ${JSON.stringify(unit)}, ::sittir_core::types::ItemIndex(0), w, |w| ${printer.field(node.name)}.render(w))?;`
-				);
+						? `${field}.render(w)?;`
+						: `::sittir_core::layout::BodyLayout::render_unit(node.layout(), ${JSON.stringify(unit)}, ::sittir_core::types::ItemIndex(0), w, |w| ${field}.render(w))?;`;
+				lines.push(...[...armSeamLines(field, arms, 'before'), render, ...armSeamLines(field, arms, 'after')].map((line) => `${pad}${line}`));
 				break;
 			}
 			case 'seam': {

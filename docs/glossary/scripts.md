@@ -123,20 +123,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `packages/codegen/src/scripts/generated-manifest.ts::isJunkFile`
-
-```text
-/**
- * OS/editor junk that can appear anywhere under a generated root (e.g.
- * Finder drops `.DS_Store` into any directory it has opened) but is never
- * part of codegen's own output. Tracking it would record a machine-local
- * path that's absent on a clean checkout, failing verification for no
- * codegen-related reason — same class of problem `isManifestExcluded`
- * solves for `test-fixtures.json`, but this one is skipped at the walk
- * itself since it was never a real generated file to begin with.
- */
-```
-
 ### `packages/codegen/src/scripts/generated-manifest.ts::gitVisiblePaths`
 
 The repo-relative paths git tracks or would track: `git ls-files --cached --others --exclude-standard`. A generated file that codegen has just written is untracked until someone runs `git add`; counting only tracked files left it out of the manifest on the first `gen` and put it in on the second. Untracked-but-not-ignored files count, ignored ones never do. Whether a generated artifact belongs in the repository is git's fact, not something a filename pattern can be trusted to reproduce, so this raises instead of degrading when git cannot be consulted: a manifest built from a guess verifies clean locally and fails on a clean checkout.
