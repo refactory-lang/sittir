@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { verifyManifestForGrammar } from '../../../codegen/src/scripts/generated-manifest.ts';
 import { isNode, SOURCE, Source, sourceOf } from '@sittir/common/utils';
 import {
@@ -9,8 +9,11 @@ import {
 	slotAccessorOf,
 	walkWrappedTree,
 	type AccessorThrowRecord,
-	type TypedNode
+	type TypedNode,
+	disposeNativeEngines
 } from '../validate/common.ts';
+
+afterAll(disposeNativeEngines);
 
 const accessorOf = slotAccessorOf({ 1: [['value', 0, undefined, '_value'], ['items', 1, undefined, '_items'], ['statements', 2, undefined, '_statements']] }, { listSeparators: {} }, (id) => (id === 1 ? 'node' : 'leaf'));
 

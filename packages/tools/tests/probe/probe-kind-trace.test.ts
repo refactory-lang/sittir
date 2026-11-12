@@ -1,6 +1,8 @@
-import { describe, expect, it } from 'vitest';
-import { materializeDetached, slotAccessorOf, type TypedNode } from '../../src/validate/common.ts';
+import { afterAll, describe, expect, it } from 'vitest';
+import { materializeDetached, slotAccessorOf, type TypedNode, disposeNativeEngines } from '../../src/validate/common.ts';
 import { probeTrace, resolveNativeTraceUntypedNode } from '../../src/probe/kind.ts';
+
+afterAll(disposeNativeEngines);
 
 const accessorOf = slotAccessorOf({ 1: [['value', 0, undefined, '_value'], ['items', 1, undefined, '_items'], ['statements', 2, undefined, '_statements']] }, { listSeparators: {} }, (id) => (id === 1 ? 'node' : 'leaf'));
 

@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
+import { sharedEngine } from '@sittir/common/testing';
 import python from '../../python/src/index.ts';
 import { createEngine } from '@sittir/common';
 import { loadSlotAccessorOf } from '../src/validate/common.ts';
 
-const py = await createEngine(python, { nodeStorage: 'object' });
-const pyStrict = await createEngine(python, { api: 'strict', nodeStorage: 'object' });
+const py = await sharedEngine(() => createEngine(python, { nodeStorage: 'object' }));
+const pyStrict = await sharedEngine(() => createEngine(python, { api: 'strict', nodeStorage: 'object' }));
 const pythonSlots = await loadSlotAccessorOf('python');
 
 function shapeOf(node: unknown): unknown {

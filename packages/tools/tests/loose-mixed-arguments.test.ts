@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
+import { sharedEngine } from '@sittir/common/testing';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../src/languages.ts';
 
-const rust = await createEngine(await languageByName('rust'));
-const python = await createEngine(await languageByName('python'));
+const rust = await sharedEngine(async () => createEngine(await languageByName('rust')));
+const python = await sharedEngine(async () => createEngine(await languageByName('python')));
 
 const rustParameters = () => {
 	const fn = rust.parse('fn process(input: &str, b: u8) {}\n').statements()[0]!;

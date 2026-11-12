@@ -10,7 +10,7 @@ const unbuildable = async (grammar: string): Promise<{ covered: number; failures
 	const { AbstractAssembledCompound } = await load('modelNodeMap');
 	const nodeMap = await compileNodeMap(grammar);
 	const raw = await requireGrammarModule(grammar, 'factories/raw.ts');
-	const engine = await createEngine(await languageByName(grammar));
+	using engine = await createEngine(await languageByName(grammar));
 	let covered = 0;
 	const failures: string[] = [];
 	for (const node of nodeMap.nodes.values()) {

@@ -59,7 +59,7 @@ function sliceBytes(source: Buffer, span: { readonly start: number; readonly end
 }
 
 export async function rewriteWithInline(source: string): Promise<{ readonly output: string; readonly insertions: number }> {
-	const rs = await createEngine(await languageByName('rust'));
+	using rs = await createEngine(await languageByName('rust'));
 	const bytes = Buffer.from(source, 'utf8');
 	const root = rs.parse(source);
 	const inline = rs.parse('#[inline]\nfn f() {}\n').statements()[0];
