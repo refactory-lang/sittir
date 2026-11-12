@@ -97,6 +97,8 @@
 
 ### Task 1: `Flags` moves to common
 
+**Status:** merged as #985 (cd61da79a), 2026-10-27 (the `Flags` enum was later retired by #1165, 942c12939).
+
 **Files:**
 - Modify: `packages/codegen/src/bindings/flags.ts` (`FLAGS_PATH` becomes `join(PACKAGES_DIR, 'common', 'src', 'portable', 'flags.ts')`), `packages/tools/src/inventory/index.ts` (the writer and `--check` read the new path)
 - Delete: `packages/types/src/vocabulary/flags.ts`
@@ -106,19 +108,21 @@
 **Interfaces:**
 - Produces: `Flags` from `@sittir/common/portable`. Its members and bits are byte-identical to today's (29 flags, `Prefix = 1 << 19`).
 
-- [ ] **Step 1:** Write the failing test `packages/common/tests/portable-flags.test.ts`:
+- [x] **Step 1:** Write the failing test `packages/common/tests/portable-flags.test.ts`:
   - `Flags.Async === 1 << 1`;
   - `Flags.Prefix === 1 << 19`;
   - `Object.keys(Flags).filter((k) => isNaN(Number(k))).length === 29`.
-- [ ] **Step 2:** `pnpm vitest run packages/common/tests/portable-flags.test.ts`. Expected: FAIL (no export).
-- [ ] **Step 3:** Move the writer's path, run `tool bindings-inventory --write`, and delete the old file. Its folder reads every top-level file as a vocabulary source, so the removal leaves the vocabulary unchanged.
-- [ ] **Step 4:**
+- [x] **Step 2:** `pnpm vitest run packages/common/tests/portable-flags.test.ts`. Expected: FAIL (no export).
+- [x] **Step 3:** Move the writer's path, run `tool bindings-inventory --write`, and delete the old file. Its folder reads every top-level file as a vocabulary source, so the removal leaves the vocabulary unchanged.
+- [x] **Step 4:**
   - Rerun the test. Expected: PASS.
   - `tool bindings-inventory --check`. Expected: clean.
   - `pnpm run type-check`. Expected: 0 errors.
-- [ ] **Step 5:** Pathspec commit.
+- [x] **Step 5:** Pathspec commit.
 
 ### Task 2: Flag guards on the internal tree
+
+**Status:** merged as #985 (cd61da79a), 2026-10-27.
 
 **Files:**
 - Modify: `packages/codegen/src/bindings/vocabulary-paths.ts`. `emitVocabularyPaths` also writes `export const vocabularyFlags = Object.freeze([...] as const)`: one `[path, flag]` per vocabulary path and each flag `vocabulary.members(path)` declares, the flag spelled `snake(flag)`, sorted by `path.flag`.
@@ -134,20 +138,20 @@
 - Consumes: `readsAs`, `holds`, `portableTrees`.
 - Produces: `vocabularyFlags`, `flagHolds`, `planSubjects`, `portableRuntimeTree`.
 
-- [ ] **Step 1:** Write the failing tests, `packages/rust/tests/portable-flag-guards.test.ts`:
+- [x] **Step 1:** Write the failing tests, `packages/rust/tests/portable-flag-guards.test.ts`:
   - `is.declaration.function.async(fnOf('async fn f() {}'))` is true;
   - the same guard on `fn f() {}` is false;
   - `is.declaration.function.public.async` holds for `pub async fn f() {}` and not for `async fn f() {}`;
   - `is.declaration.function.const` on a python `def f(): pass` node, from a python engine's runtime tree, is false and does not throw (Review Focus 4);
   - `Object.keys(portable.is.declaration.function)` has no `async` key: the public tree is unchanged;
   - for every `[path, flag]` in `vocabularyFlags`, the runtime tree has a function at `path.flag`.
-- [ ] **Step 2:** Run them. Expected: FAIL.
-- [ ] **Step 3:** Implement the files above. `flagHolds` answers false for a kind with no row, no plan or a `null` plan (the census counts 0 null plans).
-- [ ] **Step 4:** Regenerate the five grammars.
+- [x] **Step 2:** Run them. Expected: FAIL.
+- [x] **Step 3:** Implement the files above. `flagHolds` answers false for a kind with no row, no plan or a `null` plan (the census counts 0 null plans).
+- [x] **Step 4:** Regenerate the five grammars.
   - The tests pass.
   - Validation history: `+0 −0` in every grammar.
   - Only the path list and the bound grammars' `portable.ts` change (`rows` gains `flags`).
-- [ ] **Step 5:** Pathspec commit with the regenerated files. Open PR (a).
+- [x] **Step 5:** Pathspec commit with the regenerated files. Open PR (a).
 
 ### Task 3: The build table and the pick
 
@@ -219,7 +223,7 @@
 - Consumes: `resolveRoutes`, `flagPlansOf`'s plans, `membershipKindsOf`, `slotResolverKinds`, `buildFactoryMap`'s shapes, `numberSignatures`, the stamped `builderPath`, `defaultVariantSubtype` and `optionDefaultArm`.
 - Produces: `PortableBuildTable` per grammar through `hooks.portableBuild`; `emitPortableBuild`; `portableBuildTable`.
 
-- [ ] **Step 1:** Write the failing tests over the generated rust, python and typescript tables:
+- [x] **Step 1:** Write the failing tests over the generated rust, python and typescript tables:
   - Every builder an arm, a step or a leaf names resolves to a function in the strict table, and `builders` gives its shape.
   - `paths['declaration.struct']`: the brace and tuple arms are told apart by `{ member: 'body', kinds }` (the field lists), and the unit arm by `absent` holding `body`.
   - `paths['expression.binary.arithmetic.add'].arms[0].presets` is `[{ steps: [{ key: 'operator' }], kind: kinds.Plus }]`.
@@ -239,16 +243,18 @@
   - typescript's sequence form carries `{ absent: ['type'], required: [] }`, so a structure with a type reaches the typed form.
   - typescript's `identifier` has no `private_property_identifier` arm, and `expression.member`'s `privateName` flag presets `privatePropertyIdentifier`.
   - rust's `element.macro.token_tree` builds `token_tree_paren` by default, and `element.macro.token_tree.bracket` builds `token_tree_bracket`.
-- [ ] **Step 2:** Run them. Expected: FAIL.
-- [ ] **Step 3:** Implement the files above.
-- [ ] **Step 4:** Regenerate the five grammars.
+- [x] **Step 2:** Run them. Expected: FAIL.
+- [x] **Step 3:** Implement the files above.
+- [x] **Step 4:** Regenerate the five grammars.
   - The tests pass.
   - Validation history is compared row by row, with the row diff read first: rust's `static` presence claim moves the `static` token from kind id 36 to 128, shifting the ids between by one.
   - The import-graph test passes: the descriptor loads no build table.
   - **Stop rule:** if any grammar reports a pick diagnostic, stop before committing and send brainstorm the list (path, kinds, the holder slot). Do not raise the ceiling.
-- [ ] **Step 5:** Pathspec commits, in order: the default directive; the vocabulary; the bindings, with the directive's named form (the commit hook checks regenerated outputs against the whole tree, so the named form lands with its first claims); then the emitter with the regenerated files. Open the PR.
+- [x] **Step 5:** Pathspec commits, in order: the default directive; the vocabulary; the bindings, with the directive's named form (the commit hook checks regenerated outputs against the whole tree, so the named form lands with its first claims); then the emitter with the regenerated files. Open the PR.
 
 ### Task 4: `build` through the strict table
+
+**Status:** merged as #990 (afab48337), 2026-10-28.
 
 **Files:**
 - Modify: `packages/types/src/portable.ts`, adding:
@@ -286,7 +292,7 @@
 - Consumes: `PortableBuildTable`, `hooks.portableBuild`, the strict table.
 - Produces: `portableRuntime`, `PortableRuntime { engine; is; build(structure: PortableStructure): unknown }`, `portableBuilder`.
 
-- [ ] **Step 1:** Write the failing tests. Each renders through `runtime.engine.render`:
+- [x] **Step 1:** Write the failing tests. Each renders through `runtime.engine.render`:
   - `{ $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } }` renders `fn f() {}`;
   - the same with `$flags: ['async']` renders `async fn f() {}`;
   - `$path: 'declaration.function.public'` renders `pub fn f() {}`;
@@ -301,12 +307,14 @@
     - `keyed`: typescript's `a => x` and `a in b`, and python's `except E as e: pass`;
     - `child`: rust's `pub(crate) fn f() {}`;
     - nested under `keyed`: `export default x` and python's `except E, F: pass`.
-- [ ] **Step 2:** Run them. Expected: FAIL.
-- [ ] **Step 3:** Implement.
-- [ ] **Step 4:** Regenerate. The combinators stay byte-identical, and the node models gain only the seat fields. Rerun the tests, then the suite. Expected: PASS.
-- [ ] **Step 5:** Pathspec commits: the table, then the runtime. Open PR (c).
+- [x] **Step 2:** Run them. Expected: FAIL.
+- [x] **Step 3:** Implement.
+- [x] **Step 4:** Regenerate. The combinators stay byte-identical, and the node models gain only the seat fields. Rerun the tests, then the suite. Expected: PASS.
+- [x] **Step 5:** Pathspec commits: the table, then the runtime. Open PR (c).
 
 ### Task 5: The scalar adaptation
+
+**Status:** merged as #993 (8cf1b7b7b), 2026-10-28.
 
 **Files:**
 - Modify: `packages/common/src/portable/build.ts` (the `scalar` arm and the `$value` hand-off)
@@ -325,7 +333,7 @@ The rules:
   - a form with one numeric slot takes it there (rust's integers' `content`, and the hex, binary and octal `content` of python and typescript);
   - **split floats (brainstorm, 2026-10-27, option (a)):** a form whose members are `integer`, `fraction` and `exponent` (python's and typescript's point, leading-point and scientific forms) takes it split by the form's `numberShape`. numberShape is the stamped source, so the split adds no derivation. Refusing the value would refuse a natural input. A numeric leaf builder would break the rule that leaf builders take strings only.
 
-- [ ] **Step 1:** Write the failing tests:
+- [x] **Step 1:** Write the failing tests:
   - rust:
     - `{ $path: 'literal.number', $value: 42 }` renders `42`;
     - `$value: 1.5` renders `1.5`;
@@ -339,12 +347,14 @@ The rules:
     - `literal.number.float` with `$value: 2` renders `2.0`;
     - `literal.number.float` with `$value: 1.5` renders `1.5`, and `literal.number.float.scientific` with `$value: 1e21` renders in the scientific form;
   - typescript: `{ $path: 'literal.number', $value: 1.5 }` renders `1.5`, through `number_float_point`.
-- [ ] **Step 2:** Run them. Expected: FAIL.
-- [ ] **Step 3:** Implement.
-- [ ] **Step 4:** Rerun the tests, then the suite. Expected: PASS.
-- [ ] **Step 5:** Pathspec commit. Open PR (c2), stacked on (c).
+- [x] **Step 2:** Run them. Expected: FAIL.
+- [x] **Step 3:** Implement.
+- [x] **Step 4:** Rerun the tests, then the suite. Expected: PASS.
+- [x] **Step 5:** Pathspec commit. Open PR (c2), stacked on (c).
 
 ### Task 6: The member reader and the round-trip lane
+
+**Status:** merged as #996 (7471447a2), 2026-10-28.
 
 **Files:**
 - Modify: `packages/common/src/portable/runtime.ts`. `PortableRuntime.read(node: { readonly $type: number }): PortableStructure | unknown`:
@@ -371,20 +381,22 @@ The rules:
 - Consumes: `portableRuntime` (Tasks 4–5), `classifierOf`, `flagHolds`. The lane runs once per storage and construction pair the validation run names.
 - Produces: `PortableRuntime.read`; the lane and its history fields.
 
-- [ ] **Step 1:** Write the failing tests:
+- [x] **Step 1:** Write the failing tests:
   - `read(fnOf('pub async fn f(a: u8) {}'))` has `$path: 'declaration.function.public'`, `$flags: ['async']`, a `name` of `'f'` and one parameter structure;
   - `build(read(n))` renders the same text for that function, for `a + b`, for `|a, mut b, _| a` and for `struct S { x: u8 }`;
   - a member holding an unclaimed kind reads as that node (`read(...).x === node.x()`), and builds back to the same text;
   - the lane test, on a two-entry fixture corpus, gives `total` 2 and both entries pass.
-- [ ] **Step 2:** Run them. Expected: FAIL.
-- [ ] **Step 3:** Implement.
-- [ ] **Step 4:** `pnpm run validate:native`.
+- [x] **Step 2:** Run them. Expected: FAIL.
+- [x] **Step 3:** Implement.
+- [x] **Step 4:** `pnpm run validate:native`.
   - Every existing row is `+0 −0`.
   - The lane's row is new, for rust, python and typescript, and is recorded as its baseline.
   - The PR body lists its failures by path.
-- [ ] **Step 5:** Pathspec commit with the history row. Open PR (d).
+- [x] **Step 5:** Pathspec commit with the history row. Open PR (d).
 
 ### Task 7: The vocabulary-typed module and its ratchet
+
+**Status:** merged as #1005 (e349be1fd), 2026-10-30.
 
 **Files:**
 - Create: `packages/codegen/src/emitters/overlays/portable/typed.ts`, with `emitPortableTyped(routes: GrammarRoutes, vocabulary: Vocabulary, nodeMap: NodeMap): string`. It promotes `docs/superpowers/probes/2026-10-06-binding-generator/generate.mts` and emits:
@@ -402,18 +414,18 @@ The rules:
 - Consumes: `resolveRoutes`, `readVocabulary`, the build table types.
 - Produces: the typed module and its count, the ratchet the export waits on.
 
-- [ ] **Step 1:** Write the failing tests:
+- [x] **Step 1:** Write the failing tests:
   - the emitter's output for rust declares `VocabViews['declaration.function']`, whose literal has `$type` as its only data member;
   - `portable-conformance --grammar rust` prints a count per cause and a total;
   - the ratchet test reads that total.
-- [ ] **Step 2:** Run them. Expected: FAIL.
-- [ ] **Step 3:** Implement. Record each grammar's first count as its ceiling in the ratchet.
-- [ ] **Step 4:**
+- [x] **Step 2:** Run them. Expected: FAIL.
+- [x] **Step 3:** Implement. Record each grammar's first count as its ceiling in the ratchet.
+- [x] **Step 4:**
   - Regenerate.
   - Validation history is `+0 −0`, and the lane's row is unchanged.
   - The workspace type-check is unaffected, since the module is outside every package's include.
   - The tsc-backed tests pass.
-- [ ] **Step 5:** Pathspec commit with the generated modules. Open PR (e).
+- [x] **Step 5:** Pathspec commit with the generated modules. Open PR (e).
 
 ## Not in this stack
 
