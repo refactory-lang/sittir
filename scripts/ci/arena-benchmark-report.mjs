@@ -6,6 +6,7 @@ import os from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
+import { cpu } from './arena-benchmark-cpu.mjs';
 
 const MEMORY_FIELDS = ['heapUsed', 'heapTotal', 'external', 'arrayBuffers', 'rss'];
 const REVISIONS = ['branch', 'baseline'];
@@ -60,6 +61,7 @@ function section(paths) {
 }
 
 export function capture() {
+	const host = cpu();
 	const grammars = command('pnpm', ['exec', 'tsx', 'packages/tools/src/scripts/list-grammars.ts', 'stable']).split(
 		/\s+/
 	);
@@ -93,9 +95,10 @@ export function capture() {
 			platform: process.platform,
 			arch: process.arch,
 			release: os.release(),
-			cpu: os.cpus()[0]?.model,
+			cpu: host.model,
 			cores: os.cpus().length,
-			memory: os.totalmem()
+			memory: os.totalmem(),
+			caches: host.caches
 		},
 		runner: {
 			os: process.env.RUNNER_OS,

@@ -1,0 +1,125 @@
+name: oxc speed reference
+
+on:
+  workflow_call:
+    inputs:
+      runner:
+        description: The runner label every job runs on, which benchmarks.yml sets once
+        type: string
+        required: true
+      sittir-ref:
+        type: string
+        required: true
+      profile:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_NET_RETRY: '10'
+  CARGO_HTTP_MULTIPLEXING: 'false'
+
+jobs:
+  measure:
+    name: sittir against oxfmt and oxlint, copy ${{ matrix.copy }} (${{ inputs.runner }})
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        copy: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '26.12.0'
+          cache: pnpm
+      - uses: ./.github/actions/rust-toolchain
+        with:
+          components: llvm-tools
+      - name: Resolve the commit
+        shell: bash
+        env:
+          FEATURE_REF: ${{ inputs.sittir-ref }}
+          MASTER_REF: ${{ inputs.sittir-ref }}
+          PROFILE: ${{ inputs.profile }}
+          ARENA: 'true'
+          CANDIDATES: ''
+          BUILD_PATH: ''
+        run: |
+          mkdir -p "$RUNNER_TEMP/trees"
+          scripts/ci/paired-refs/resolve-refs.sh "$RUNNER_TEMP/oxc-reference"
+      - name: Build sittir
+        shell: bash
+        run: scripts/ci/paired-refs/build-tree.sh feature "$RUNNER_TEMP/oxc-reference" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/oxc-reference/build-feature.log"
+      - name: Fingerprint the built tree
+        shell: bash
+        run: (cd "$RUNNER_TEMP/trees/feature" && node "$GITHUB_WORKSPACE/scripts/ci/arena-benchmark-report.mjs" capture "$RUNNER_TEMP/oxc-reference/before-feature.json")
+      - name: Fetch the pinned corpora (read only, nothing run from them)
+        shell: bash
+        run: python3 -I scripts/ci/paired-refs/reference/fetch-corpora.py "$RUNNER_TEMP/oxc-reference/corpora"
+      - name: Admit the files both parsers accept
+        shell: bash
+        env:
+          NODE_ENV: production
+        run: node scripts/ci/paired-refs/reference/admit.mjs "$RUNNER_TEMP/trees/feature" "$RUNNER_TEMP/oxc-reference/corpora"
+      - name: Build the tree-sitter walk probe on sittir's TypeScript parser
+        shell: bash
+        env:
+          SITTIR_TS_SRC: ${{ runner.temp }}/trees/feature/packages/typescript/.sittir/src
+          CARGO_TARGET_DIR: ${{ runner.temp }}/ts-walk-target
+        run: cargo build --release --manifest-path scripts/ci/paired-refs/reference/ts-walk/Cargo.toml
+      - name: Measure sittir, oxfmt, oxlint and the walk probe in alternating fresh processes
+        shell: bash
+        env:
+          TS_WALK: ${{ runner.temp }}/ts-walk-target/release/ts-walk
+        run: python3 scripts/ci/paired-refs/reference/run.py "$RUNNER_TEMP/oxc-reference/runs" "$RUNNER_TEMP/trees/feature" "$RUNNER_TEMP/oxc-reference/corpora" 2>&1 | tee "$RUNNER_TEMP/oxc-reference/run.log"
+      - name: Check the tree did not change during measurement
+        shell: bash
+        run: |
+          (cd "$RUNNER_TEMP/trees/feature" && node "$GITHUB_WORKSPACE/scripts/ci/arena-benchmark-report.mjs" capture "$RUNNER_TEMP/oxc-reference/after-feature.json")
+          node scripts/ci/arena-benchmark-report.mjs verify "$RUNNER_TEMP/oxc-reference/before-feature.json" "$RUNNER_TEMP/oxc-reference/after-feature.json"
+      - name: Summarize this copy
+        shell: bash
+        run: python3 scripts/ci/paired-refs/reference/summarize.py "$RUNNER_TEMP/oxc-reference/summary.md" "$RUNNER_TEMP/oxc-reference"
+      - name: Upload samples, manifests and fingerprints (not the corpus sources)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oxc-reference-${{ github.run_id }}-${{ github.run_attempt }}-copy-${{ matrix.copy }}
+          path: |
+            ${{ runner.temp }}/oxc-reference/
+            !${{ runner.temp }}/oxc-reference/corpora/*/**
+          retention-days: 30
+          if-no-files-found: warn
+
+  summarize:
+    name: Per-CPU medians over every copy
+    needs: measure
+    if: always()
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: oxc-reference-${{ github.run_id }}-${{ github.run_attempt }}-copy-*
+          path: ${{ runner.temp }}/copies
+      - name: Summarize every copy that finished
+        shell: bash
+        run: |
+          copies=()
+          for d in "$RUNNER_TEMP"/copies/*/; do [[ -f $d/runs/complete.json ]] && copies+=("$d"); done
+          mkdir -p "$RUNNER_TEMP/summary"
+          python3 scripts/ci/paired-refs/reference/summarize.py "$RUNNER_TEMP/summary/summary.md" "${copies[@]}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: oxc-reference-summary-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/summary/
+          retention-days: 30
+          if-no-files-found: warn
