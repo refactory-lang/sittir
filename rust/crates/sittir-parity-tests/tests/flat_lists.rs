@@ -6,13 +6,12 @@
 //! list twice as long takes twice the steps (`LayoutWork::gap_items`).
 
 use sittir_core::engine::{EngineGrammar, ParsedTree};
-use sittir_core::read::ReadNode;
 use sittir_core::types::NodeIndex;
 use sittir_parity_tests::{on_deep_stack, parsed};
 
 /// The gap steps a snapshot of `tree`'s root took.
-fn gap_items<G: EngineGrammar, N: ReadNode>(tree: &ParsedTree<G>) -> u32 {
-    tree.snapshot::<N>(NodeIndex::ROOT, None).expect("a snapshot");
+fn gap_items<G: EngineGrammar>(tree: &ParsedTree<G>) -> u32 {
+    tree.snapshot_layouts(NodeIndex::ROOT, None).expect("a root").expect("a snapshot");
     tree.layout_work().gap_items
 }
 
@@ -21,13 +20,13 @@ fn a_snapshot_of_a_flat_list_of_unit_kinds_takes_the_same_gap_steps_for_each_mem
     let python = [100, 200, 400].map(|members| {
         on_deep_stack(move || {
             let tree = parsed(sittir_python::PythonGrammar, sittir_python::render::options::defaults(), &format!("x = [{}]\n", vec!["True"; members].join(", ")));
-            gap_items::<_, sittir_python::render::AnyNode>(&tree)
+            gap_items(&tree)
         })
     });
     let typescript = [100, 200, 400].map(|members| {
         on_deep_stack(move || {
             let tree = parsed(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults(), &format!("type T = [{}];\n", vec!["number"; members].join(", ")));
-            gap_items::<_, sittir_typescript::render::AnyNode>(&tree)
+            gap_items(&tree)
         })
     });
     for (name, [one, two, four]) in [("python [True, …]", python), ("typescript [number, …]", typescript)] {

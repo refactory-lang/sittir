@@ -425,19 +425,19 @@ macro_rules! napi_engine {
             with_live_node(&env, tree_id, index, |parsed, index| Ok(parsed.separator_before(index)))
         }
 
-        /// A snapshot of the node at `index` of the live tree `treeId`: the
-        /// node read at every depth into plain data with no tree, each
-        /// node with its span (`$_layout.span`) from the native node that
-        /// holds it and each placed extra with its text, the node itself
-        /// measured from the byte `holderByte`, or, when absent, from where
-        /// it or its leading side begins, whichever is first. Refuses as
-        /// `read` does, and a `holderByte` after the first byte the snapshot
-        /// measures.
-        #[::napi_derive::napi(ts_return_type = "object")]
-        pub fn snapshot(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, holder_byte: Option<f64>) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
+        /// A snapshot's layout of the node at `index` of the live tree
+        /// `treeId` and of each node under it that a read gives a layout, as
+        /// `[row, layout]` pairs in preorder (`ParsedTree::snapshot_layouts`):
+        /// each with its span (`span`) from the native node that holds it and
+        /// each placed extra and `ERROR` as its text, the node itself measured
+        /// from the byte `holderByte`, or, when absent, from where it or its
+        /// leading side begins, whichever is first. Refuses as `read` does,
+        /// and a `holderByte` after the first byte the snapshot measures.
+        #[::napi_derive::napi(ts_return_type = "[number, object][]")]
+        pub fn snapshot_layouts(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, holder_byte: Option<f64>) -> ::napi::Result<$crate::layout::SnapshotLayouts<<$grammar as $crate::engine::EngineGrammar>::Trivia>> {
             let holder_byte = holder_byte.map(|byte| $crate::napi_engine::checked_whole::<u32>(byte, "holderByte")).transpose()?;
             with_live_tree(&env, tree_id, |parsed| {
-                $crate::napi_engine::node_or_error(parsed, index, "snapshot panicked", || parsed.snapshot_node::<$any>(index, holder_byte))
+                $crate::napi_engine::answered(parsed, index, "snapshot panicked", || parsed.snapshot_layouts(index, holder_byte))
             })
         }
 
@@ -1527,11 +1527,9 @@ pub fn no_node<G: crate::engine::EngineGrammar>(parsed: &crate::ParsedTree<G>, i
     napi::Error::from_reason(format!("index {index} names no node of tree {}", parsed.tree_id()))
 }
 
-/// What `read` and `snapshot` answer for the node at `index` of `parsed`,
-/// from `read` (`ParsedTree::read_node`, `ParsedTree::snapshot_node`): the
-/// node, or the `ERROR` holding it. Refuses an index naming no node of the
-/// tree, a read that panicked (`what`), and a node the model has no route
-/// for, naming the kind, the child and the index.
+/// What `read` answers for the node at `index` of `parsed`
+/// (`ParsedTree::read_node`): the node, or the `ERROR` holding it, refused as
+/// `answered` refuses.
 ///
 /// # Errors
 ///
@@ -1542,12 +1540,27 @@ pub fn node_or_error<G: crate::engine::EngineGrammar, T>(
     what: &str,
     read: impl FnOnce() -> Option<Result<crate::engine::NodeRead<T>, crate::read::ReadError>>,
 ) -> napi::Result<napi::Either<T, crate::ErrorRead>> {
-    let read = std::panic::catch_unwind(std::panic::AssertUnwindSafe(read)).map_err(|payload| napi::Error::from_reason(crate::panic_msg(&*payload, what)))?;
-    match read.ok_or_else(|| no_node(parsed, index))? {
-        Ok(crate::engine::NodeRead::Node(node)) => Ok(napi::Either::A(node)),
-        Ok(crate::engine::NodeRead::Error(error)) => Ok(napi::Either::B(error)),
-        Err(refusal) => Err(napi::Error::from_reason(refusal.describe(&|kind| parsed.grammar().kind_name(kind)))),
-    }
+    Ok(match answered(parsed, index, what, read)? {
+        crate::engine::NodeRead::Node(node) => napi::Either::A(node),
+        crate::engine::NodeRead::Error(error) => napi::Either::B(error),
+    })
+}
+
+/// What `answer` gives for the node at `index` of `parsed`. Refuses an index
+/// naming no node of the tree, an answer that panicked (`what`), and a node
+/// the model refuses, naming the kind, the child and the index.
+///
+/// # Errors
+///
+/// Those refusals.
+pub fn answered<G: crate::engine::EngineGrammar, T>(
+    parsed: &crate::ParsedTree<G>,
+    index: crate::types::NodeIndex,
+    what: &str,
+    answer: impl FnOnce() -> Option<Result<T, crate::read::ReadError>>,
+) -> napi::Result<T> {
+    let answer = std::panic::catch_unwind(std::panic::AssertUnwindSafe(answer)).map_err(|payload| napi::Error::from_reason(crate::panic_msg(&*payload, what)))?;
+    answer.ok_or_else(|| no_node(parsed, index))?.map_err(|refusal| napi::Error::from_reason(refusal.describe(&|kind| parsed.grammar().kind_name(kind))))
 }
 
 /// The refusal for an address into a tree this thread does not hold.

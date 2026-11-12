@@ -679,16 +679,16 @@ export declare function slotLayouts(treeId: TreeId, index: NodeIndex): object[]
 export declare function slotSeparator(treeId: TreeId, index: NodeIndex): import('../src/types.ts').TSKindId | null
 
 /**
- * A snapshot of the node at `index` of the live tree `treeId`: the
- * node read at every depth into plain data with no tree, each
- * node with its span (`$_layout.span`) from the native node that
- * holds it and each placed extra with its text, the node itself
- * measured from the byte `holderByte`, or, when absent, from where
- * it or its leading side begins, whichever is first. Refuses as
- * `read` does, and a `holderByte` after the first byte the snapshot
- * measures.
+ * A snapshot's layout of the node at `index` of the live tree
+ * `treeId` and of each node under it that a read gives a layout, as
+ * `[row, layout]` pairs in preorder (`ParsedTree::snapshot_layouts`):
+ * each with its span (`span`) from the native node that holds it and
+ * each placed extra and `ERROR` as its text, the node itself measured
+ * from the byte `holderByte`, or, when absent, from where it or its
+ * leading side begins, whichever is first. Refuses as `read` does,
+ * and a `holderByte` after the first byte the snapshot measures.
  */
-export declare function snapshot(treeId: TreeId, index: NodeIndex, holderByte?: number | undefined | null): object
+export declare function snapshotLayouts(treeId: TreeId, index: NodeIndex, holderByte?: number | undefined | null): [number, object][]
 
 /**
  * How much of its layout the live tree `treeId` stores apart from

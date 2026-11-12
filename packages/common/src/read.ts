@@ -20,8 +20,8 @@ export interface TreeHandle {
 	/** The parse's ERROR and MISSING regions (`NativeParseResult.errors`); absent for a tree no parse produced. */
 	errors?: readonly ErrorRegion[];
 	query?: TreeQuery;
-	/** A snapshot of the node at descendant `index`, measured from the byte `holderByte`, or from where it or its leading side begins (`snapshotOf`). */
-	snapshot?(index: number, holderByte?: number): unknown;
+	/** A snapshot's layout of the node at descendant `index` and of each node under it a read gives a layout, as `[row, layout]` pairs, measured from the byte `holderByte`, or from where it or its leading side begins (`snapshotOf`). */
+	snapshotLayouts?(index: number, holderByte?: number): readonly (readonly [number, object])[];
 	/** The entries of `side` of the node at descendant `index`: the ones a write gave it, else the ones the tree's trivia table assigns it. */
 	triviaSide?(index: number, side: TriviaSideName): unknown[] | undefined;
 	/** Replaces `side` of the node at descendant `index` with `entries`. */

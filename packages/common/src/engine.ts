@@ -162,14 +162,16 @@ export interface NativeEngineLike<TNode = unknown> {
 	 */
 	read(treeId: number, index: number, depth?: number): TNode & ReadOutput;
 	/**
-	 * A snapshot of the node at descendant `index` of tree `treeId`: the node read at every depth into
-	 * plain data that names no tree, each node with its span (`$_layout.span`) measured from the start of
-	 * the native node that holds it, each placed extra with its text, and the node itself measured from the
-	 * byte `holderByte`, or, when absent, from where it or its leading side begins, whichever is first.
+	 * A snapshot's layout of the node at descendant `index` of tree `treeId` and of each node under it
+	 * that a read gives a layout, as `[row, layout]` pairs in preorder: each layout with its span
+	 * (`span`) measured from the start of the native node that holds it and each placed extra and
+	 * `ERROR` as its text, the node itself measured from the byte `holderByte`, or, when absent, from
+	 * where it or its leading side begins, whichever is first. When an `ERROR` holds the node, the one
+	 * pair is that `ERROR`'s.
 	 *
 	 * @throws as {@link read} does, and when `holderByte` lies after the first byte the snapshot measures.
 	 */
-	snapshot(treeId: number, index: number, holderByte?: number | null): TNode;
+	snapshotLayouts(treeId: number, index: number, holderByte?: number | null): readonly (readonly [number, object])[];
 	/**
 	 * The entries of `side` of the node at descendant `index` of tree `treeId`: the ones a write gave it,
 	 * else the ones the tree's trivia table assigns it. An extra is its coordinate, an `ERROR` its kind
@@ -366,7 +368,7 @@ export interface NativeEngineInstance {
 
 const TREE_FUNCTIONS = [
 	'read',
-	'snapshot',
+	'snapshotLayouts',
 	'triviaSide',
 	'writeTriviaSide',
 	'unitSides',
@@ -708,7 +710,7 @@ export function createNativeEngine<
 				},
 				options: parsed.options,
 				errors,
-				snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
+				snapshotLayouts: (index, holderByte) => engine.snapshotLayouts(parsed.treeId, index, holderByte),
 				triviaSide: (index, side) => readOwnEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
 				writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
 				unitSides: (index) => readOwnUnits(tree, engine.unitSides(parsed.treeId, index), liveToken),

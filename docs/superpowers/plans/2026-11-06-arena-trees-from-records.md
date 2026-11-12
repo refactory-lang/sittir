@@ -215,6 +215,8 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 
 ### Task 5c: One snapshot rule for every storage
 
+**Status:** open as #1193.
+
 **Files:**
 - Modify: `packages/common/src/snapshot.ts`. A parsed node's snapshot is the node-surface walk (`copyStep`) that built nodes already take, in both storages.
 - Modify: `engine.rs` (`SnapshotCtx::span_of`) and `napi_engine.rs`. One native call measures, over `Nodes`, each node's span in a subtree from its holder, with today's `unmeasured` refusal. The walk attaches those spans. A side entry's text and span come through `Nodes`.
@@ -237,15 +239,15 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
   - in `@sittir/common/utils`, `handleQuery` becomes a method record views call on themselves, and `handleSnapshot` is new;
   - `napi_engine::answered` is public, shared by read and `snapshotLayouts`.
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   - `a_parsed_snapshot_takes_no_tree`: an arena snapshot makes 0 tree reads, and so does `$query()` on an arena record view;
   - snapshots equal master's, for every node of the fixtures and both corpora, in both storages and all three grammars;
   - a snapshot of a node holding an ERROR side or a MISSING token equals master's, and an unmeasurable holder is still refused as `unmeasured`;
   - `an_alias_content_snapshots_as_itself`: a parsed alias content's snapshot carries the content's own `$type` and text, not its envelope's, though the two share a row. A snapshot is the node as read, detached. This is the one place output differs from master's, and the PR lists it.
-- [ ] **Step 2:** Run them. They fail.
-- [ ] **Step 3: Implement.**
-- [ ] **Step 4: Run the three-way verification** in both storages. Object storage's snapshot speed is not a gate. Its output is.
-- [ ] **Step 5: Commit:** `feat(snapshot): one snapshot rule for built and parsed nodes in both storages`.
+- [x] **Step 2:** Run them. They fail.
+- [x] **Step 3: Implement.**
+- [x] **Step 4: Run the three-way verification** in both storages. Object storage's snapshot speed is not a gate. Its output is.
+- [x] **Step 5: Commit:** `feat(snapshot): one snapshot rule for built and parsed nodes in both storages`.
 
 ### Task 6: Hydrate at parse and drop the tree inside the read call
 
