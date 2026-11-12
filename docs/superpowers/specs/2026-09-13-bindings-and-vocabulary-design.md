@@ -24,6 +24,7 @@ The maintainer's rulings this spec carries, quoted. A proposal starts from them 
 - **"name the number's slots"** (2026-11-12). See §3.3 and the binding-generator spec §2.4.
 - **A supertype claim's read routes only the members its path declares, with no exception** (2026-11-12). See the binding-generator spec §2.2.
 - **"Integer mantissa"** (2026-11-12). See the binding-generator spec §2.4.
+- **"Approve all 15"** (2026-11-12), the number-literal API rows. Among them, a leading-point build writes its digits after the point and its scale in the exponent (500 builds `.5e3`). See the binding-generator spec §2.4.
 
 ## 1. Two APIs, and the map between them
 
