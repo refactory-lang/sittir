@@ -848,8 +848,8 @@ mod tests {
 
     struct Sources(HashMap<TreeId, Arc<str>>);
     impl SourceTable for Sources {
-        fn source_of(&self, tree: TreeId) -> Option<&Arc<str>> {
-            self.0.get(&tree)
+        fn source_of(&self, tree: TreeId) -> Option<&str> {
+            self.0.get(&tree).map(|source| &**source)
         }
     }
 

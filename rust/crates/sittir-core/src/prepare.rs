@@ -765,8 +765,8 @@ mod tests {
 
     struct Sources(HashMap<crate::types::TreeId, Arc<str>>);
     impl SourceTable for Sources {
-        fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
-            self.0.get(&tree_id)
+        fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
+            self.0.get(&tree_id).map(|source| &**source)
         }
     }
 
@@ -811,7 +811,7 @@ mod tests {
     /// A table that holds trees: the list a flank names ends in a child of kind `last`, or the table cannot answer.
     struct ListTrees(Option<KindId>);
     impl SourceTable for ListTrees {
-        fn source_of(&self, _: crate::types::TreeId) -> Option<&Arc<str>> {
+        fn source_of(&self, _: crate::types::TreeId) -> Option<&str> {
             None
         }
         fn last_list_child_kind(&self, _: crate::types::TreeId, _: Span, _: crate::types::KindId) -> Option<crate::types::KindId> {

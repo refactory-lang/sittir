@@ -2266,9 +2266,9 @@ mod sink_tests {
     }
 
     impl crate::render::SourceTable for Moves {
-        fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&std::sync::Arc<str>> {
+        fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
             let _ = tree_id;
-            Some(&self.source)
+            Some(&*self.source)
         }
 
         fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {

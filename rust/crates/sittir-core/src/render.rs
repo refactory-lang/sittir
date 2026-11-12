@@ -6,7 +6,6 @@
 
 use crate::tree_sitter;
 use std::fmt;
-use std::sync::Arc;
 
 use crate::spacing::{SpacingWriter, WordMatcher};
 use crate::types::KindId;
@@ -164,7 +163,7 @@ impl<'a> Lent<'a> {
 
 /// The live trees a render may slice, keyed by the tag a handle carries.
 pub trait SourceTable {
-    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>>;
+    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str>;
 
     /// Whether the source of `tree_id` spells every line break `\n`, holding
     /// no `\r`, as its parse found: a slice of it enters the writer as it is.
@@ -351,7 +350,7 @@ pub trait SourceTable {
 pub struct ThroughTemplates<'a>(pub &'a dyn SourceTable);
 
 impl SourceTable for ThroughTemplates<'_> {
-    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
+    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
         self.0.source_of(tree_id)
     }
 

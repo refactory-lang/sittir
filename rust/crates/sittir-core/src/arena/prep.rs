@@ -1003,7 +1003,6 @@ mod tests {
     use super::*;
     use crate::arena::Arena;
     use std::cell::Cell as Counter;
-    use std::sync::Arc;
 
     struct CountedArena {
         arena: Arena,
@@ -1024,7 +1023,7 @@ mod tests {
     struct NoSources;
 
     impl SourceTable for NoSources {
-        fn source_of(&self, _: TreeId) -> Option<&Arc<str>> { None }
+        fn source_of(&self, _: TreeId) -> Option<&str> { None }
     }
 
     #[test]

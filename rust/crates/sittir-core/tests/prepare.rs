@@ -10,8 +10,8 @@ use sittir_core::{NodeCoordinate, SlotValue};
 
 struct Sources(HashMap<sittir_core::types::TreeId, Arc<str>>);
 impl SourceTable for Sources {
-    fn source_of(&self, tree_id: sittir_core::types::TreeId) -> Option<&Arc<str>> {
-        self.0.get(&tree_id)
+    fn source_of(&self, tree_id: sittir_core::types::TreeId) -> Option<&str> {
+        self.0.get(&tree_id).map(|source| &**source)
     }
 }
 

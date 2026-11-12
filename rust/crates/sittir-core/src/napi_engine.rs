@@ -2033,7 +2033,7 @@ impl<G: crate::arena::RecordGrammar, H: std::hash::BuildHasher> crate::render::S
 where
     G::Trivia: crate::boundary::DecodesKind,
 {
-    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&std::sync::Arc<str>> {
+    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
         self.trees.source_of(tree_id)
     }
 
