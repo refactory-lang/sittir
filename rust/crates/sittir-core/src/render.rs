@@ -569,6 +569,13 @@ pub trait RenderSink {
     /// kind is a whitespace token and survives the end of a render; a set is
     /// dropped there.
     fn seam(&mut self, kinds: crate::layout_kinds::LayoutKinds);
+    /// Whitespace a lexed token's own pattern spells, inside the token's
+    /// span: a whitespace token's seam that the root's gap at a render's
+    /// flank replaces only with a wider one. A sink that knows no root
+    /// writes it as `seam`.
+    fn lexeme_seam(&mut self, kinds: crate::layout_kinds::LayoutKinds) {
+        self.seam(kinds);
+    }
     /// A whitespace trivia entry: its kind replaces whatever seam the gap it
     /// sits in would otherwise get. A line continuation carries the source
     /// text it was read with. A sink that knows no strengths writes it as a
@@ -752,15 +759,15 @@ pub trait RenderSink {
     fn seat_trailing(&mut self) -> RenderResult;
 }
 
-/// A seam set aside from the sink: its text, the strength it holds, whether
-/// a whitespace token wrote it, and whether a list flank wrote it.
+/// A seam set aside from the sink: its text, the strength it holds, the
+/// whitespace token that wrote it, if any, and whether a list flank wrote it.
 #[derive(Debug, Clone)]
 pub struct HeldSeam {
     pub kinds: crate::layout_kinds::LayoutKinds,
     pub pick: crate::layout_kinds::LayoutKinds,
     pub cont: String,
     pub strength: crate::spacing::SeamStrength,
-    pub token: bool,
+    pub token: Option<crate::spacing::SeamToken>,
     pub flank: bool,
     pub root: bool,
 }

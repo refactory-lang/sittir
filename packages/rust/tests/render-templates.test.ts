@@ -41,6 +41,13 @@ describe('a render from templates', () => {
 describe.each(storages)('a render from templates in %s storage', (storage) => {
 	const engine = engines[storage];
 
+	it.each(['#!x\n', '\n#!/usr/bin/env -S cargo +nightly -Zscript\n', '#!x\n  '])(
+		'keeps the line break that ends a shebang at the end of the document %j',
+		(source) => {
+			expect(engine.diagnostics.renderTemplates(engine.parse(source))).toBe(source.trimEnd() + '\n');
+		}
+	);
+
 	it('refuses a built node', () => {
 		expect(() => engine.diagnostics.renderTemplates(engine.build.identifier('a'))).toThrow(/as a read gave it/);
 	});
