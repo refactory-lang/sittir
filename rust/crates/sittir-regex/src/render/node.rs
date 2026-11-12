@@ -934,71 +934,8 @@ impl ::sittir_core::view::KindOf for LookaheadAssertionOperatorNodeSlot {
 impl ::sittir_core::render::Render for LookaheadAssertionOperatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LookaheadAssertionOperatorNodeSlot::Eq => {
-                w.site_at(options::SITE_LOOKAHEAD_ASSERTION_EQ_BEFORE);
-                let written = render_eq(w);
-                written?;
-                w.site_at(options::SITE_LOOKAHEAD_ASSERTION_EQ_AFTER);
-                Ok(())
-            }
-            LookaheadAssertionOperatorNodeSlot::Bang => {
-                w.site_at(options::SITE_LOOKAHEAD_ASSERTION_BANG_BEFORE);
-                let written = render_bang(w);
-                written?;
-                w.site_at(options::SITE_LOOKAHEAD_ASSERTION_BANG_AFTER);
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum LookbehindAssertionOperatorNodeSlot {
-    #[kind(kind::EQ)]
-    Eq,
-    #[kind(kind::BANG)]
-    Bang,
-}
-
-impl ::sittir_core::prepare::Prepare for LookbehindAssertionOperatorNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        match self {
-            LookbehindAssertionOperatorNodeSlot::Eq => Ok(()),
-            LookbehindAssertionOperatorNodeSlot::Bang => Ok(()),
-        }
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-}
-
-impl ::sittir_core::view::KindOf for LookbehindAssertionOperatorNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Eq => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
-            Self::Bang => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for LookbehindAssertionOperatorNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            LookbehindAssertionOperatorNodeSlot::Eq => {
-                w.site_at(options::SITE_LOOKBEHIND_ASSERTION_EQ_BEFORE);
-                let written = render_eq(w);
-                written?;
-                w.site_at(options::SITE_LOOKBEHIND_ASSERTION_EQ_AFTER);
-                Ok(())
-            }
-            LookbehindAssertionOperatorNodeSlot::Bang => {
-                w.site_at(options::SITE_LOOKBEHIND_ASSERTION_BANG_BEFORE);
-                let written = render_bang(w);
-                written?;
-                w.site_at(options::SITE_LOOKBEHIND_ASSERTION_BANG_AFTER);
-                Ok(())
-            }
+            LookaheadAssertionOperatorNodeSlot::Eq => render_eq(w),
+            LookaheadAssertionOperatorNodeSlot::Bang => render_bang(w),
         }
     }
 }
@@ -1236,13 +1173,7 @@ impl ::sittir_core::render::Render for ClassRangeStartNodeSlot {
             ClassRangeStartNodeSlot::ClassCharacter(inner) => inner.render(w),
             ClassRangeStartNodeSlot::CharacterClassEscape(inner) => inner.render(w),
             ClassRangeStartNodeSlot::ControlEscape(inner) => inner.render(w),
-            ClassRangeStartNodeSlot::Dash => {
-                w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE);
-                let written = render_dash(w);
-                written?;
-                w.site_at(options::SITE_CLASS_RANGE_DASH_AFTER);
-                Ok(())
-            }
+            ClassRangeStartNodeSlot::Dash => render_dash(w),
             ClassRangeStartNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -1267,13 +1198,7 @@ impl ::sittir_core::render::Render for ClassRangeStartNodeSlotRecord<'_> {
             ClassRangeStartNodeSlotRecord::ClassCharacter(inner) => inner.render(w),
             ClassRangeStartNodeSlotRecord::CharacterClassEscape(inner) => inner.render(w),
             ClassRangeStartNodeSlotRecord::ControlEscape(inner) => inner.render(w),
-            ClassRangeStartNodeSlotRecord::Dash => {
-                w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE);
-                let written = render_dash(w);
-                written?;
-                w.site_at(options::SITE_CLASS_RANGE_DASH_AFTER);
-                Ok(())
-            }
+            ClassRangeStartNodeSlotRecord::Dash => render_dash(w),
             ClassRangeStartNodeSlotRecord::Verbatim(inner) => inner.render(w),
         }
     }
@@ -1313,20 +1238,8 @@ impl ::sittir_core::view::KindOf for NamedCapturingGroupOperatorNodeSlot {
 impl ::sittir_core::render::Render for NamedCapturingGroupOperatorNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            NamedCapturingGroupOperatorNodeSlot::LparenQmarkLt => {
-                w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_BEFORE);
-                let written = render_lparen_qmark_lt(w);
-                written?;
-                w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER);
-                Ok(())
-            }
-            NamedCapturingGroupOperatorNodeSlot::LparenQmarkPLt => {
-                w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_BEFORE);
-                let written = render_lparen_qmark_plt(w);
-                written?;
-                w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER);
-                Ok(())
-            }
+            NamedCapturingGroupOperatorNodeSlot::LparenQmarkLt => render_lparen_qmark_lt(w),
+            NamedCapturingGroupOperatorNodeSlot::LparenQmarkPLt => render_lparen_qmark_plt(w),
         }
     }
 }
@@ -1877,36 +1790,11 @@ impl ::sittir_core::render::Render for TermGroupContentNodeSlot {
             TermGroupContentNodeSlot::InlineFlagsGroupEnable(inner) => inner.render(w),
             TermGroupContentNodeSlot::InlineFlagsGroupToggle(inner) => inner.render(w),
             TermGroupContentNodeSlot::InlineFlagsGroupDisable(inner) => inner.render(w),
-            TermGroupContentNodeSlot::StartAssertion => {
-                let written = render_start_assertion(w);
-                written?;
-                w.site_at(options::SITE_TERM_GROUP_CARET_AFTER);
-                Ok(())
-            }
-            TermGroupContentNodeSlot::EndAssertion => {
-                let written = render_end_assertion(w);
-                written?;
-                w.site_at(options::SITE_TERM_GROUP_END_ASSERTION_AFTER);
-                Ok(())
-            }
-            TermGroupContentNodeSlot::BoundaryAssertion => {
-                let written = render_boundary_assertion(w);
-                written?;
-                w.site_at(options::SITE_TERM_GROUP_BOUNDARY_ASSERTION_AFTER);
-                Ok(())
-            }
-            TermGroupContentNodeSlot::NonBoundaryAssertion => {
-                let written = render_non_boundary_assertion(w);
-                written?;
-                w.site_at(options::SITE_TERM_GROUP_NON_BOUNDARY_ASSERTION_AFTER);
-                Ok(())
-            }
-            TermGroupContentNodeSlot::AnyCharacter => {
-                let written = render_any_character(w);
-                written?;
-                w.site_at(options::SITE_TERM_GROUP_ANY_CHARACTER_AFTER);
-                Ok(())
-            }
+            TermGroupContentNodeSlot::StartAssertion => render_start_assertion(w),
+            TermGroupContentNodeSlot::EndAssertion => render_end_assertion(w),
+            TermGroupContentNodeSlot::BoundaryAssertion => render_boundary_assertion(w),
+            TermGroupContentNodeSlot::NonBoundaryAssertion => render_non_boundary_assertion(w),
+            TermGroupContentNodeSlot::AnyCharacter => render_any_character(w),
             TermGroupContentNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -1963,36 +1851,11 @@ impl ::sittir_core::render::Render for TermGroupContentNodeSlotRecord<'_> {
             TermGroupContentNodeSlotRecord::InlineFlagsGroupEnable(inner) => inner.render(w),
             TermGroupContentNodeSlotRecord::InlineFlagsGroupToggle(inner) => inner.render(w),
             TermGroupContentNodeSlotRecord::InlineFlagsGroupDisable(inner) => inner.render(w),
-            TermGroupContentNodeSlotRecord::StartAssertion => {
-                let written = render_start_assertion(w);
-                written?;
-                w.site_at(options::SITE_TERM_GROUP_CARET_AFTER);
-                Ok(())
-            }
-            TermGroupContentNodeSlotRecord::EndAssertion => {
-                let written = render_end_assertion(w);
-                written?;
-                w.site_at(options::SITE_TERM_GROUP_END_ASSERTION_AFTER);
-                Ok(())
-            }
-            TermGroupContentNodeSlotRecord::BoundaryAssertion => {
-                let written = render_boundary_assertion(w);
-                written?;
-                w.site_at(options::SITE_TERM_GROUP_BOUNDARY_ASSERTION_AFTER);
-                Ok(())
-            }
-            TermGroupContentNodeSlotRecord::NonBoundaryAssertion => {
-                let written = render_non_boundary_assertion(w);
-                written?;
-                w.site_at(options::SITE_TERM_GROUP_NON_BOUNDARY_ASSERTION_AFTER);
-                Ok(())
-            }
-            TermGroupContentNodeSlotRecord::AnyCharacter => {
-                let written = render_any_character(w);
-                written?;
-                w.site_at(options::SITE_TERM_GROUP_ANY_CHARACTER_AFTER);
-                Ok(())
-            }
+            TermGroupContentNodeSlotRecord::StartAssertion => render_start_assertion(w),
+            TermGroupContentNodeSlotRecord::EndAssertion => render_end_assertion(w),
+            TermGroupContentNodeSlotRecord::BoundaryAssertion => render_boundary_assertion(w),
+            TermGroupContentNodeSlotRecord::NonBoundaryAssertion => render_non_boundary_assertion(w),
+            TermGroupContentNodeSlotRecord::AnyCharacter => render_any_character(w),
             TermGroupContentNodeSlotRecord::Verbatim(inner) => inner.render(w),
         }
     }
@@ -2547,7 +2410,7 @@ pub struct LookbehindAssertionNode {
     height: u16,
     #[wire(key = "_operator")]
     #[slot(word = 2, width = 1, forms = 2, built = 2)]
-    pub operator: ::sittir_core::SlotValue<LookbehindAssertionOperatorNodeSlot>,
+    pub operator: ::sittir_core::SlotValue<LookaheadAssertionOperatorNodeSlot>,
     #[wire(key = "_pattern")]
     #[slot(word = 3, width = 5, inline = 5, forms = 8, built = 3)]
     pub pattern: ::sittir_core::SlotValue<PatternNode>,
@@ -6284,7 +6147,11 @@ fn render_lookahead_assertion<N: LookaheadAssertionFields + ?Sized>(node: &N, w:
     w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(?")?;
     w.site_at(options::SITE_LOOKAHEAD_ASSERTION_LPAREN_QMARK_AFTER);
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_LOOKAHEAD_ASSERTION_EQ_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_LOOKAHEAD_ASSERTION_BANG_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_LOOKAHEAD_ASSERTION_EQ_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_LOOKAHEAD_ASSERTION_BANG_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.site_at(options::SITE_LOOKAHEAD_ASSERTION_RPAREN_BEFORE);
     w.text(")")?;
@@ -6298,7 +6165,11 @@ fn render_lookbehind_assertion<N: LookbehindAssertionFields + ?Sized>(node: &N, 
     w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(?<")?;
     w.site_at(options::SITE_LOOKBEHIND_ASSERTION_LPAREN_QMARK_LT_AFTER);
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_LOOKBEHIND_ASSERTION_EQ_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_LOOKBEHIND_ASSERTION_BANG_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_LOOKBEHIND_ASSERTION_EQ_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_LOOKBEHIND_ASSERTION_BANG_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.site_at(options::SITE_LOOKBEHIND_ASSERTION_RPAREN_BEFORE);
     w.text(")")?;
@@ -6365,11 +6236,15 @@ fn render_class_range<N: ClassRangeFields + ?Sized>(node: &N, w: &mut dyn ::sitt
     let end = node.end();
     let start = node.start();
     w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    if start.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_start", ::sittir_core::types::ItemIndex(0), w, |w| start.render(w))?;
+    if start.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_CLASS_RANGE_DASH_AFTER); }
     w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE);
     w.text("-")?;
     w.site_at(options::SITE_CLASS_RANGE_DASH_AFTER);
+    if end.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_end", ::sittir_core::types::ItemIndex(0), w, |w| end.render(w))?;
+    if end.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_CLASS_RANGE_DASH_AFTER); }
     w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -6396,7 +6271,11 @@ fn render_named_capturing_group<N: NamedCapturingGroupFields + ?Sized>(node: &N,
     let operator = node.operator();
     let pattern = node.pattern();
     w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(11)]) { w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_BEFORE); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(11)]) { w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER); }
+    if operator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_group_name", ::sittir_core::types::ItemIndex(0), w, |w| group_name.render(w))?;
     w.site_at(options::SITE_NAMED_CAPTURING_GROUP_GT_BEFORE);
     w.text(">")?;
@@ -6565,6 +6444,11 @@ fn render_term_group<N: TermGroupFields + ?Sized>(node: &N, w: &mut dyn ::sittir
     let quantifier = View::new(node.quantifier(), "{}");
     w.edge(::sittir_core::types::KindId(78), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(3), ::sittir_core::types::KindId(54)]) { w.site_at(options::SITE_TERM_GROUP_CARET_AFTER); }
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(4)]) { w.site_at(options::SITE_TERM_GROUP_END_ASSERTION_AFTER); }
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(5)]) { w.site_at(options::SITE_TERM_GROUP_BOUNDARY_ASSERTION_AFTER); }
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(6)]) { w.site_at(options::SITE_TERM_GROUP_NON_BOUNDARY_ASSERTION_AFTER); }
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(2)]) { w.site_at(options::SITE_TERM_GROUP_ANY_CHARACTER_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_quantifier", ::sittir_core::types::ItemIndex(0), w, |w| quantifier.render(w))?;
     w.edge(::sittir_core::types::KindId(78), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -7345,7 +7229,7 @@ const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionNode>
 const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueNode>() <= 256, "UnicodePropertyValueNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ZeroOrMoreNode>() <= 256, "ZeroOrMoreNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_nodes!(TriviaNode; AnyNode, PatternContentNodeSlot, LookaroundAssertionContentNodeSlot, LookaheadAssertionOperatorNodeSlot, LookbehindAssertionOperatorNodeSlot, CharacterClassClassAtomsNodeSlot, ClassRangeStartNodeSlot, NamedCapturingGroupOperatorNodeSlot, CountQuantifierContentNodeSlot, CharacterClassEscapeContentNodeSlot, TermGroupQuantifierNodeSlot, TermGroupContentNodeSlot, PatternNode, AlternationNode, TermNode, AnyCharacterNode, StartAssertionNode, EndAssertionNode, BoundaryAssertionNode, NonBoundaryAssertionNode, LookaroundAssertionNode, LookaheadAssertionNode, LookbehindAssertionNode, PatternCharacterNode, CharacterClassNode, PosixCharacterClassNode, PosixClassNameNode, ClassRangeNode, ClassCharacterNode, AnonymousCapturingGroupNode, NamedCapturingGroupNode, NonCapturingGroupNode, FlagsNode, ZeroOrMoreNode, OneOrMoreNode, OptionalNode, CountQuantifierNode, BackreferenceEscapeNode, NamedGroupBackreferenceNode, DecimalEscapeNode, CharacterClassEscapeNode, UnicodeCharacterEscapeNode, UnicodePropertyValueExpressionNode, UnicodePropertyValueNode, ControlEscapeNode, ControlLetterEscapeNode, IdentityEscapeNode, GroupNameNode, DecimalDigitsNode, LazyNode, TermGroupNode, CountQuantifierGroupNode, CountQuantifierArmNode, CharacterClassEscapeArmNode, UnicodePropertyValueExpressionGroupNode, CharacterClassEscapeText1Node, CharacterClassEscapeText2Node, NegationNode, InlineFlagsGroupEnableNode, InlineFlagsGroupToggleNode, InlineFlagsGroupDisableNode, TightNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, CaretNode, LparenQmarkNode, EqNode, BangNode, RparenNode, LparenQmarkLtNode, LbrackNode, DashNode, BslashDashNode, RbrackNode, LbrackColonNode, ColonRbrackNode, LparenNode, LparenQmarkPLtNode, GtNode, LparenQmarkColonNode, StarNode, PlusNode, QmarkNode, LbraceNode, RbraceNode, BslashkNode, LtNode, LparenQmarkPEqNode, CommaNode, ColonNode, TriviaNode);
+::sittir_core::grammar_nodes!(TriviaNode; AnyNode, PatternContentNodeSlot, LookaroundAssertionContentNodeSlot, LookaheadAssertionOperatorNodeSlot, CharacterClassClassAtomsNodeSlot, ClassRangeStartNodeSlot, NamedCapturingGroupOperatorNodeSlot, CountQuantifierContentNodeSlot, CharacterClassEscapeContentNodeSlot, TermGroupQuantifierNodeSlot, TermGroupContentNodeSlot, PatternNode, AlternationNode, TermNode, AnyCharacterNode, StartAssertionNode, EndAssertionNode, BoundaryAssertionNode, NonBoundaryAssertionNode, LookaroundAssertionNode, LookaheadAssertionNode, LookbehindAssertionNode, PatternCharacterNode, CharacterClassNode, PosixCharacterClassNode, PosixClassNameNode, ClassRangeNode, ClassCharacterNode, AnonymousCapturingGroupNode, NamedCapturingGroupNode, NonCapturingGroupNode, FlagsNode, ZeroOrMoreNode, OneOrMoreNode, OptionalNode, CountQuantifierNode, BackreferenceEscapeNode, NamedGroupBackreferenceNode, DecimalEscapeNode, CharacterClassEscapeNode, UnicodeCharacterEscapeNode, UnicodePropertyValueExpressionNode, UnicodePropertyValueNode, ControlEscapeNode, ControlLetterEscapeNode, IdentityEscapeNode, GroupNameNode, DecimalDigitsNode, LazyNode, TermGroupNode, CountQuantifierGroupNode, CountQuantifierArmNode, CharacterClassEscapeArmNode, UnicodePropertyValueExpressionGroupNode, CharacterClassEscapeText1Node, CharacterClassEscapeText2Node, NegationNode, InlineFlagsGroupEnableNode, InlineFlagsGroupToggleNode, InlineFlagsGroupDisableNode, TightNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, CaretNode, LparenQmarkNode, EqNode, BangNode, RparenNode, LparenQmarkLtNode, LbrackNode, DashNode, BslashDashNode, RbrackNode, LbrackColonNode, ColonRbrackNode, LparenNode, LparenQmarkPLtNode, GtNode, LparenQmarkColonNode, StarNode, PlusNode, QmarkNode, LbraceNode, RbraceNode, BslashkNode, LtNode, LparenQmarkPEqNode, CommaNode, ColonNode, TriviaNode);
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AlternationNode>() == 48, "AlternationNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -7450,8 +7334,6 @@ const _: () = assert!(::core::mem::size_of::<LookaroundAssertionContentNodeSlot>
 const _: () = assert!(::core::mem::size_of::<LookaroundAssertionNode>() == 144, "LookaroundAssertionNode is not the 144 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<LookbehindAssertionNode>() == 120, "LookbehindAssertionNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<LookbehindAssertionOperatorNodeSlot>() == 1, "LookbehindAssertionOperatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<LparenNode>() == 0, "LparenNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

@@ -5,4 +5,4 @@
 // runtime for the native backend to be picked. A mismatch means the native
 // binary predates the last regeneration.
 
-export const RENDER_MODULE_HASH = '841cc158e95523b4e077ea889590a88cf9ef8b13535e1047125ea92e01c83a11';
+export const RENDER_MODULE_HASH = '90ab50d4acf265c9a38c13637f18f5be98911955e1a91944a8fa8da98d395727';

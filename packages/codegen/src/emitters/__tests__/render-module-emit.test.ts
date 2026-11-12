@@ -13,7 +13,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { DEDENT_TEXT, INDENT_TEXT } from '../../dsl/primitives/spacing.ts';
 import { classifySlot, buildSupertypeNodeSet, type SlotClass } from '../node-common.ts';
-import { closeUsedSupertypes, emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
+import { closeUsedSupertypes, emitRenderModule, grammarRenderInputs, holderArmSeams, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
 import { PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
@@ -380,16 +380,26 @@ describe('render options on nodes', () => {
 		expect(src).toMatch(/head: (Some\(options::SITE_\w+\)|None),/);
 	});
 
-	it('a literal arm of a per-slot child enum writes its owner-kind seam sites around the literal from the resolved options', async () => {
+	it("a literal arm's owner-kind seam sites are written by the slot's holder, gated by the arm's kind, and not by the arm", async () => {
 		const src = await getTypescriptNodeRs();
-		const enumSrc = src.slice(src.indexOf('pub enum LexicalDeclarationTerminatorNodeSlot {'));
+		const choice = extractStructBody(src, 'LexicalDeclarationNode').match(/pub terminator: Option<::sittir_core::SlotValue<(\w+)>>/)?.[1];
+		expect(choice).toBeDefined();
+		const enumSrc = src.slice(src.indexOf(`pub enum ${choice} {`));
 		expect(enumSrc.slice(0, enumSrc.indexOf('\n}\n'))).toMatch(/^    Semi,$/m);
-		const render = src.slice(
-			src.indexOf('impl ::sittir_core::render::Render for LexicalDeclarationTerminatorNodeSlot {')
+		expect(extractFnBody(src, 'render_lexical_declaration')).toMatch(
+			/if terminator\.kind_in\(&\*w, &\[::sittir_core::types::KindId\(\d+\)\]\) \{ w\.site_at\(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE\); \}\s*::sittir_core::layout::BodyLayout::render_unit\(node\.layout\(\), "_terminator", ::sittir_core::types::ItemIndex\(0\), w, \|w\| terminator\.render\(w\)\)\?;/
 		);
-		expect(render.slice(0, render.indexOf('\n}\n'))).toMatch(
-			/Semi => \{\s*w\.site_at\(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE\);\s*let written = render_semi\(w\);/
-		);
+		const render = src.slice(src.indexOf(`impl ::sittir_core::render::Render for ${choice} {`));
+		const arms = render.slice(0, render.indexOf('\n}\n'));
+		expect(arms).toMatch(/::Semi => render_semi\(w\),/);
+		expect(arms).not.toContain('w.site_at(');
+	});
+
+	it("a holder's choice slot whose enum recorded no arm seams fails at codegen instead of rendering without them", async () => {
+		const { nodeMap } = await modelFor('typescript');
+		const holder = nodeMap.nodes.get('lexical_declaration')!;
+		expect(() => holderArmSeams(new Map(), holder, 'terminator', { tag: 'union' })).toThrow(/lexical_declaration.*terminator/);
+		expect(holderArmSeams(new Map(), holder, 'kind', { tag: 'text' })).toBeUndefined();
 	});
 
 	it('the render entry prepares the tree through the context before dispatch, then releases it a level at a time', async () => {
@@ -924,7 +934,7 @@ describe('node attributes', () => {
 		const heldByBlankChoices = [...src.matchAll(/pub \w+: Option<::sittir_core::SlotValue<(\w+)>>,/g)].filter((m) => blankChoices.includes(m[1]!));
 		expect(blankOptions).toHaveLength(10);
 		expect(heldByBlankChoices).toHaveLength(blankOptions.length);
-		expect(blankChoices).toHaveLength(4);
+		expect(blankChoices).toHaveLength(2);
 	});
 });
 

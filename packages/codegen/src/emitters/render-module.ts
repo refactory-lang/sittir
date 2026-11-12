@@ -148,6 +148,7 @@ import {
 	rustStringLiteral,
 	isWhitespaceOnly,
 	templateOf,
+	type ArmSeams,
 	type Body,
 	type Flanks,
 	type ViewKind
@@ -624,13 +625,14 @@ function renderTypedDispatch(
 	kindIdByKind: ReadonlyMap<string, number>,
 	plan: RenderPlan,
 	kindEntries: readonly KindEntryLike[],
-	boxedPayloads: readonly string[]
+	boxedPayloads: readonly string[],
+	armSeams: ReadonlyMap<string, readonly ArmSeams[]>
 ): string[] {
 	const structsByKind = new Map(structs.map((s) => [s.kind, s]));
 	const lines: string[] = [];
 
 	for (const node of payloadNodes) {
-		if (layoutNodeOf(node) === node) lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap, kindIdByKind, plan));
+		if (layoutNodeOf(node) === node) lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap, kindIdByKind, plan, armSeams));
 	}
 	for (const literal of fixed.values()) lines.push(...renderFixedLiteralFn(literal));
 
@@ -715,7 +717,8 @@ function renderTypedKindFn(
 	meta: MetaData,
 	nodeMap: NodeMap,
 	kindIdByKind: ReadonlyMap<string, number>,
-	plan: RenderPlan
+	plan: RenderPlan,
+	armSeams: ReadonlyMap<string, readonly ArmSeams[]>
 ): string[] {
 	switch (node.modelType) {
 		case 'branch':
@@ -726,7 +729,7 @@ function renderTypedKindFn(
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan);
+			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan, armSeams);
 		}
 		case 'polymorph':
 		case 'alias': {
@@ -735,7 +738,7 @@ function renderTypedKindFn(
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan);
+			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan, armSeams);
 		}
 		case 'pattern':
 		case 'keyword':
@@ -806,7 +809,8 @@ function renderTypedBranchFn(
 	meta: MetaData,
 	nodeMap: NodeMap,
 	kindIdByKind: ReadonlyMap<string, number>,
-	plan: RenderPlan
+	plan: RenderPlan,
+	armSeams: ReadonlyMap<string, readonly ArmSeams[]>
 ): string[] {
 	return [
 		`fn ${rustTypedRenderFnName(node.typeName)}<N: ${rustNodeFieldsTraitName(node)} + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
@@ -817,7 +821,8 @@ function renderTypedBranchFn(
 			renderSlotModelOf(node),
 			node,
 			kindIdByKind,
-			plan
+			plan,
+			armSeams
 		),
 		`}`,
 		''
@@ -843,18 +848,17 @@ function buildTypedTemplateBody(
 	struct: EmittedStruct,
 	separator: string,
 	nodeMap: NodeMap,
-	slotModel: RenderSlotModel | undefined = undefined,
-	node: AssembledNode | undefined,
+	slotModel: RenderSlotModel,
+	node: AssembledNode,
 	kindIdByKind: ReadonlyMap<string, number>,
-	plan: RenderPlan
+	plan: RenderPlan,
+	armSeams: ReadonlyMap<string, readonly ArmSeams[]>
 ): string[] {
 	const lines: string[] = [];
 	const sepLiteral = JSON.stringify(separator);
 
 	const shapeByName = new Map<string, NodeSlotShape>();
-	if (nodeMap !== undefined && slotModel !== undefined) {
-		for (const f of [...slotModel.named, ...slotModel.unnamed]) shapeByName.set(f.name, nodeSlotShapeOf(f, nodeMap));
-	}
+	for (const f of [...slotModel.named, ...slotModel.unnamed]) shapeByName.set(f.name, nodeSlotShapeOf(f, nodeMap));
 
 	const bound = new Set<string>();
 	const bind = (ident: string, expr: string): void => {
@@ -952,7 +956,7 @@ function buildTypedTemplateBody(
 	}
 
 	const seamFieldNames = new Set(
-		(node === undefined ? [] : synthesizedSpacingSites(plan, node).filter((s) => s.spacing.at === 'seam')).map((site) =>
+		synthesizedSpacingSites(plan, node).filter((s) => s.spacing.at === 'seam').map((site) =>
 			rustFieldIdent(site.fieldIdent)
 		)
 	);
@@ -985,6 +989,10 @@ function buildTypedTemplateBody(
 				const f = struct.fields.find((field) => rustFieldIdent(field.name) === rustFieldIdent(name));
 				if (f === undefined || !f.hasNodeField || f.view === 'list' || f.multiple || shapeByName.get(f.name)?.tag === 'presence') return undefined;
 				return slotWireKey(f.storageName);
+			},
+			armSeams: (name) => {
+				const f = struct.fields.find((field) => rustFieldIdent(field.name) === rustFieldIdent(name));
+				return f === undefined ? undefined : holderArmSeams(armSeams, node, f.name, shapeByName.get(f.name));
 			},
 			innerGap: (name) => node instanceof AbstractAssembledCompound && node.innerSite?.key === name
 		})
@@ -1023,10 +1031,7 @@ function rustKindIdSlice(
 			`render body for '${ownerKind}' gates a literal on kinds [${names.join(', ')}], none of which has a kind id`
 		);
 	}
-	return `&[${[...ids]
-		.sort((a, b) => a - b)
-		.map((id) => `::sittir_core::types::KindId(${id})`)
-		.join(', ')}]`;
+	return rustKindIds([...ids]);
 }
 
 function libRsContents(lang: GrammarName): string {
@@ -1389,6 +1394,7 @@ interface ReadPrint {
 	readonly printedEnums: Set<string>;
 	readonly admitted: Map<string, number[]>;
 	readonly blankChoices: Set<string>;
+	readonly armSeams: Map<string, readonly ArmSeams[]>;
 	readonly variants: Map<string, readonly string[]>;
 	readonly choicePayloads: Set<string>;
 	readonly boxedPayloads: readonly string[];
@@ -1422,6 +1428,7 @@ function readPrintOf(
 		admitted: new Map(),
 		nodes: new Set(),
 		blankChoices: new Set(),
+		armSeams: new Map(),
 		variants: new Map(),
 		choicePayloads: new Set(),
 		records: new Map()
@@ -1580,7 +1587,8 @@ function renderNodeSupport(
 				kidByKind,
 				plan,
 				kindEntries,
-				read.boxedPayloads
+				read.boxedPayloads,
+				read.armSeams
 			),
 			...renderNodeEntry(),
 			'',
@@ -2282,6 +2290,20 @@ function shareIdenticalChoices(
 	return { emitted, names, folded };
 }
 
+export function holderArmSeams(
+	recorded: ReadonlyMap<string, readonly ArmSeams[]>,
+	holder: AssembledNode,
+	fieldName: string,
+	shape: NodeSlotShape | undefined
+): readonly ArmSeams[] | undefined {
+	if (shape?.tag !== 'union') return undefined;
+	const arms = recorded.get(choiceKey(holder.typeName, fieldName));
+	if (arms === undefined) {
+		throw new Error(`render body for '${holder.kind}' renders choice slot '${fieldName}', but its choice recorded no arm seams`);
+	}
+	return arms;
+}
+
 function choiceNameOf(choices: ChoiceNames, typeName: string, fieldName: string): string {
 	const name = choices.get(choiceKey(typeName, fieldName));
 	if (name === undefined) {
@@ -2374,10 +2396,11 @@ function choiceUnitsOf(
 	return units;
 }
 
-function choiceUnitArm(enumName: string, unit: ChoiceUnit): string[] {
+function choiceUnitArm(enumName: string, unit: ChoiceUnit, seamed: boolean): string[] {
 	const call = fixedRenderCall(unit.fixed);
-	const write = unit.siteImmediate ? `{ w.seam(${TIGHT_KINDS}); ${call} }` : call;
 	const pattern = fixedPattern(`${enumName}::${unit.fixed.variant}`, unit.fixed, 'edges');
+	if (!seamed) return [`            ${pattern} => ${call},`];
+	const write = unit.siteImmediate ? `{ w.seam(${TIGHT_KINDS}); ${call} }` : call;
 	return unit.seams === undefined ? [`            ${pattern} => ${write},`] : literalSeamedArm(pattern, write, unit.seams);
 }
 
@@ -2393,6 +2416,17 @@ function literalSeamedArm(pattern: string, write: string, seams: LiteralArmSeams
 		'                Ok(())',
 		'            }'
 	];
+}
+
+function rustKindIdList(ids: readonly number[]): string {
+	return `[${[...new Set(ids)]
+		.sort((a, b) => a - b)
+		.map((id) => `::sittir_core::types::KindId(${id})`)
+		.join(', ')}]`;
+}
+
+function rustKindIds(ids: readonly number[]): string {
+	return `&${rustKindIdList(ids)}`;
 }
 
 function unitKindIdsOf(
@@ -2488,6 +2522,19 @@ function emitPerSlotChildEnum(
 	}
 
 	const altIds = new Map(modelSlot === undefined ? [] : kindEnumAltIdPairs(modelSlot, nodeMap));
+	const unitArmSeams = [...units].flatMap(([variant, unit]): ArmSeams[] => {
+		if (unit.seams === undefined && !unit.siteImmediate) return [];
+		const claimed = claimedBy.get(variant) ?? [];
+		const ids = [...(unit.fixed.ownId === undefined ? [] : [unit.fixed.ownId]), ...claimed, ...alternatesOf(claimed, altIds)];
+		return [{ kinds: rustKindIds(ids), before: unit.seams?.before, immediate: unit.siteImmediate, after: unit.seams?.after }];
+	});
+	const nodeArmSeams = nodeKinds.flatMap(({ kind, node }): ArmSeams[] =>
+		node instanceof AssembledLeaf || !isLeftImmediateKind(kind, nodeMap)
+			? []
+			: [{ kinds: rustKindIds([...(claimedBy.get(rustTypeIdent(node.typeName)) ?? []), ...acceptedIdsOf(kind, node)]), immediate: true }]
+	);
+	const holderSeams = modelSlot !== undefined && !isMultiple(modelSlot);
+	read.armSeams.set(choiceKey(entry.typeName, entry.fieldName), holderSeams ? [...nodeArmSeams, ...unitArmSeams] : []);
 	const viewed = nodeKinds.length > 0 || admitsVerbatim;
 	lines.push(...nodeDeclaration(read, NODE_DERIVE, viewed ? `${CHOICE_ARGS}, ${viewArg(enumName)}` : CHOICE_ARGS, 'enum', enumName));
 	for (const { node } of nodeKinds) {
@@ -2544,10 +2591,10 @@ function emitPerSlotChildEnum(
 			const variant = rustTypeIdent(node.typeName);
 			const call = `${payloadExpr(subject, isBoxed(node))}.render(w)`;
 			const arm =
-				!(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap) ? `{ w.seam(${TIGHT_KINDS}); ${call} }` : call;
+				!holderSeams && !(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap) ? `{ w.seam(${TIGHT_KINDS}); ${call} }` : call;
 			out.push(`            ${subject.path}::${variant}(inner) => ${arm},`);
 		}
-		for (const unit of units.values()) out.push(...choiceUnitArm(subject.path, unit));
+		for (const unit of units.values()) out.push(...choiceUnitArm(subject.path, unit, !holderSeams));
 		if (blank) out.push(`            ${subject.path}::${BLANK_VARIANT} => Ok(()),`);
 		if (admitsVerbatim) out.push(`            ${verbatimRenderArm(subject.path, entry.verbatimImmediate)}`);
 		out.push(`        }`, `    }`, `}`);
@@ -3550,13 +3597,8 @@ function kindOfImplLines(
 	verbatimIds: readonly number[] | undefined,
 	ownIds?: readonly number[]
 ): string[] {
-	const idList = (ids: readonly number[]): string =>
-		`[${[...new Set(ids)]
-			.sort((a, b) => a - b)
-			.map((id) => `::sittir_core::types::KindId(${id})`)
-			.join(', ')}]`;
 	const containsAny = (ids: readonly number[]): string =>
-		ids.length === 0 ? 'false' : `${idList(ids)}.iter().any(|k| kinds.contains(k))`;
+		ids.length === 0 ? 'false' : `${rustKindIdList(ids)}.iter().any(|k| kinds.contains(k))`;
 	const lines = [
 		`impl ::sittir_core::view::KindOf for ${typeName} {`,
 		`    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {`
