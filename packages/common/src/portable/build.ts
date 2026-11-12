@@ -607,19 +607,25 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 			out.set(parts.exponentSign, '-');
 			return out;
 		};
-		const integerMantissa = (value: number | bigint): string | undefined => {
+		const significandOf = (value: number | bigint): { readonly digits: string; readonly power: number } | undefined => {
 			const [, whole, fraction = '', exponent = '0'] = /^(\d+)(?:\.(\d+))?(?:e([+-]\d+))?$/.exec(typeof value === 'number' ? value.toExponential() : String(value)) ?? [];
 			if (whole === undefined) return undefined;
-			const digits = `${whole}${fraction}`;
-			const significant = digits.replace(/0+$/, '') || '0';
-			const power = Number(exponent) - fraction.length + digits.length - significant.length;
-			return `${significant}e${power < 0 ? '-' : '+'}${Math.abs(power)}`;
+			const written = `${whole}${fraction}`;
+			const digits = written.replace(/0+$/, '') || '0';
+			return { digits, power: Number(exponent) - fraction.length + written.length - digits.length };
 		};
+		const exponentSpelling = (mantissa: string, power: number): string => `${mantissa}e${power < 0 ? '-' : '+'}${Math.abs(power)}`;
 		const decimalParts = (value: number | bigint, parts: PortableDecimalParts, arm: PortableBuildArm, path: string): ReadonlyMap<string, string> => {
 			const scientific = parts.exponent !== undefined && (arm.numericRequired ?? []).includes(parts.exponent);
+			const significand = significandOf(value);
 			const spellings = scientific
-				? [integerMantissa(value)]
-				: [String(value), ...(typeof value === 'number' && parts.exponent !== undefined ? [value.toExponential()] : [])];
+				? [significand && exponentSpelling(significand.digits, significand.power)]
+				: [
+						String(value),
+						...(typeof value === 'number' && parts.exponent !== undefined
+							? [value.toExponential(), significand && exponentSpelling(`0.${significand.digits}`, significand.power + significand.digits.length)]
+							: [])
+					];
 			for (const spelling of spellings) {
 				const out = spelling === undefined ? undefined : spelledParts(spelling, parts);
 				if (out !== undefined) return out;
