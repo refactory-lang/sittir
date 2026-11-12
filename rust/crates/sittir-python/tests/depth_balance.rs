@@ -4,7 +4,6 @@
 
 use sittir_core::prepare::RenderContext;
 use sittir_core::render::SourceTable;
-use std::sync::Arc;
 
 use sittir_python::render::options;
 use sittir_python::render::node::{
@@ -13,7 +12,7 @@ use sittir_python::render::node::{
 
 struct NoSources;
 impl SourceTable for NoSources {
-    fn source_of(&self, _tree_id: sittir_core::types::TreeId) -> Option<&Arc<str>> {
+    fn source_of(&self, _tree_id: sittir_core::types::TreeId) -> Option<&str> {
         None
     }
 }

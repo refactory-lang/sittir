@@ -26897,7 +26897,7 @@ export const build: PortableBuildTable = {
 					},
 					when: [
 						{
-							absent: ['lifetime', 'reference'],
+							absent: ['lifetime'],
 							required: ['type']
 						}
 					],
@@ -26975,7 +26975,7 @@ export const build: PortableBuildTable = {
 					},
 					when: [
 						{
-							absent: ['lifetime', 'reference'],
+							absent: ['lifetime'],
 							required: ['type']
 						}
 					],
@@ -26985,26 +26985,6 @@ export const build: PortableBuildTable = {
 					kind: 231,
 					builder: 'selfParameter',
 					members: [
-						{
-							name: 'reference',
-							steps: [
-								{
-									key: 'reference',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [231, 'reference'],
-									kinds: [54],
-									tokens: {
-										'&': 54
-									}
-								}
-							]
-						},
 						{
 							name: 'lifetime',
 							steps: [
@@ -27025,6 +27005,19 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {
+						reference: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'reference',
+											optional: true
+										}
+									],
+									kind: 54
+								}
+							]
+						},
 						mutable: {
 							presets: [
 								{

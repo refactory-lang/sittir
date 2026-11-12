@@ -6,7 +6,6 @@ import { createInterface } from 'node:readline';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { bootstrapDir } from '../bootstrap/bootstrap.ts';
 import { REPO_ROOT } from '../grammars.ts';
-import type { FlagMember } from './flags.ts';
 import { type PinnedMemo, pinnedMemo, readerDigest } from './pinned-memo.ts';
 import { type BindingFacts, type BindingPattern, type BindingsRoundTrip, BindingsSyntaxError } from './facts.ts';
 import type { Declared, FeatureIndex } from './vocabulary.ts';
@@ -17,7 +16,6 @@ export interface PinnedReaderModes {
 	readonly facts: { readonly input: string; readonly output: BindingFacts };
 	readonly patterns: { readonly input: string; readonly output: BindingPattern[] };
 	readonly roundTrip: { readonly input: string; readonly output: BindingsRoundTrip };
-	readonly flagsModule: { readonly input: readonly FlagMember[]; readonly output: string };
 	readonly vocabularyDeclared: { readonly input: string; readonly output: Declared[] };
 	readonly vocabularyFeatureIndex: { readonly input: string; readonly output: FeatureIndex };
 	readonly exportedStrings: { readonly input: string; readonly output: Readonly<Record<string, string>> };

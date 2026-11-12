@@ -6,7 +6,6 @@
 
 use crate::tree_sitter;
 use std::fmt;
-use std::sync::Arc;
 
 use crate::spacing::{SpacingWriter, WordMatcher};
 use crate::types::KindId;
@@ -164,7 +163,7 @@ impl<'a> Lent<'a> {
 
 /// The live trees a render may slice, keyed by the tag a handle carries.
 pub trait SourceTable {
-    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>>;
+    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str>;
 
     /// Whether the source of `tree_id` spells every line break `\n`, holding
     /// no `\r`, as its parse found: a slice of it enters the writer as it is.
@@ -292,6 +291,15 @@ pub trait SourceTable {
         false
     }
 
+    /// Whether a render through this table reads each parsed node it meets
+    /// that has a record and renders it from its template, as it does a node
+    /// a write lies in (`edited_within`); a leaf or a unit still writes its
+    /// source bytes. Only a table a render reads templates through on purpose
+    /// (`ThroughTemplates`) answers yes.
+    fn reads_templates(&self) -> bool {
+        false
+    }
+
     /// The seat of the node a coordinate names, through the wrappers it is
     /// (`ResolvedOptions::seat_wrappers`): for each node held by the one
     /// before it, from the coordinate's own, the first that `seat` gives a
@@ -332,6 +340,95 @@ pub trait SourceTable {
     fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, w: &mut dyn RenderSink) -> RenderResult {
         let _ = (record, held, options, w);
         Err(RenderError::Record(NO_ARENA))
+    }
+}
+
+/// The table `0`, read by a render that renders each parsed node with a
+/// record from its template (`SourceTable::reads_templates`): no node
+/// renders as its source bytes (`SourceTable::renders_as_source`), and
+/// every other answer is `0`'s.
+pub struct ThroughTemplates<'a>(pub &'a dyn SourceTable);
+
+impl SourceTable for ThroughTemplates<'_> {
+    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
+        self.0.source_of(tree_id)
+    }
+
+    fn breaks_spelled_lf(&self, tree_id: crate::types::TreeId) -> bool {
+        self.0.breaks_spelled_lf(tree_id)
+    }
+
+    fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
+        self.0.kind_of(coord)
+    }
+
+    fn for_each_descendant(&self, coord: &crate::slot::NodeCoordinate, visit: &mut dyn FnMut(KindId, &str) -> bool) {
+        self.0.for_each_descendant(coord, visit);
+    }
+
+    fn line_starts_inside_tokens(&self, coord: &crate::slot::NodeCoordinate) -> Vec<u32> {
+        self.0.line_starts_inside_tokens(coord)
+    }
+
+    fn last_list_child_kind(&self, tree: crate::types::TreeId, span: crate::types::Span, kind: KindId) -> Option<KindId> {
+        self.0.last_list_child_kind(tree, span, kind)
+    }
+
+    fn for_each_edge_level(&self, coord: &crate::slot::NodeCoordinate, side: crate::options::Side, f: &mut dyn FnMut(EdgeLevel)) {
+        self.0.for_each_edge_level(coord, side, f);
+    }
+
+    fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {
+        self.0.depth_move(coord)
+    }
+
+    fn sides(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        self.0.sides(coord, lent)
+    }
+
+    fn frames(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> crate::trivia::Frames {
+        self.0.frames(coord, lent)
+    }
+
+    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Vec<crate::layout::SlotLayout> {
+        self.0.slot_layouts(coord, lent)
+    }
+
+    fn separator_before(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Option<KindId> {
+        self.0.separator_before(coord, lent)
+    }
+
+    fn framed_span(&self, coord: &crate::slot::NodeCoordinate) -> crate::types::Span {
+        self.0.framed_span(coord)
+    }
+
+    fn edited_within(&self, coord: &crate::slot::NodeCoordinate) -> bool {
+        self.0.edited_within(coord)
+    }
+
+    fn renders_as_source(&self, _: &crate::slot::NodeCoordinate) -> bool {
+        false
+    }
+
+    fn reads_templates(&self) -> bool {
+        true
+    }
+
+    fn seat_through(&self, coord: &crate::slot::NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
+        self.0.seat_through(coord, wrappers, seat)
+    }
+
+    fn row_coordinate(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex) -> Option<crate::slot::NodeCoordinate> {
+        self.0.row_coordinate(tree, index)
+    }
+
+    fn read_node(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex, read: &mut dyn FnMut(&mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
+        self.0.read_node(tree, index, read)
+    }
+
+    #[cfg(feature = "arena")]
+    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, w: &mut dyn RenderSink) -> RenderResult {
+        self.0.render_record_entry(record, held, options, w)
     }
 }
 
@@ -471,6 +568,13 @@ pub trait RenderSink {
     /// kind is a whitespace token and survives the end of a render; a set is
     /// dropped there.
     fn seam(&mut self, kinds: crate::layout_kinds::LayoutKinds);
+    /// Whitespace a lexed token's own pattern spells, inside the token's
+    /// span: a whitespace token's seam that the root's gap at a render's
+    /// flank replaces only with a wider one. A sink that knows no root
+    /// writes it as `seam`.
+    fn lexeme_seam(&mut self, kinds: crate::layout_kinds::LayoutKinds) {
+        self.seam(kinds);
+    }
     /// A whitespace trivia entry: its kind replaces whatever seam the gap it
     /// sits in would otherwise get. A line continuation carries the source
     /// text it was read with. A sink that knows no strengths writes it as a
@@ -654,15 +758,15 @@ pub trait RenderSink {
     fn seat_trailing(&mut self) -> RenderResult;
 }
 
-/// A seam set aside from the sink: its text, the strength it holds, whether
-/// a whitespace token wrote it, and whether a list flank wrote it.
+/// A seam set aside from the sink: its text, the strength it holds, the
+/// whitespace token that wrote it, if any, and whether a list flank wrote it.
 #[derive(Debug, Clone)]
 pub struct HeldSeam {
     pub kinds: crate::layout_kinds::LayoutKinds,
     pub pick: crate::layout_kinds::LayoutKinds,
     pub cont: String,
     pub strength: crate::spacing::SeamStrength,
-    pub token: bool,
+    pub token: Option<crate::spacing::SeamToken>,
     pub flank: bool,
     pub root: bool,
 }

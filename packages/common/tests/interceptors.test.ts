@@ -18,43 +18,31 @@ async function engineOf(options?: EngineOptions<RustAPI>): Promise<Engine<RustAP
 }
 
 describe('engine middleware', () => {
-	it('composes hooks in registration order and scopes nested builders', async () => {
+	it('composes hooks in registration order', async () => {
 		const events: string[] = [];
 		const middleware = (label: string): Interceptor<RustAPI> => ({
-			build(call, next) {
-				events.push(`${label}:before:${call.path.join('.')}`);
-				const node = next();
-				events.push(`${label}:after:${call.path.join('.')}`);
-				return node;
+			render(_call, next) {
+				events.push(`${label}:before`);
+				const text = next();
+				events.push(`${label}:after`);
+				return `${label}(${text})`;
 			}
 		});
 		const engine = await createEngine(rust, { api: 'strict', intercept: [middleware('outer'), {}, middleware('inner')] });
 		engines.push(engine);
 		const node = engine.build.integerLiteral.decimal({ content: 255 });
-		expect(events).toEqual([
-			'outer:before:integerLiteral.decimal',
-			'inner:before:integerLiteral.decimal',
-			'inner:after:integerLiteral.decimal',
-			'outer:after:integerLiteral.decimal'
-		]);
+		expect(engine.render(node).toString()).toBe('outer(inner(255))');
+		expect(events).toEqual(['outer:before', 'inner:before', 'inner:after', 'outer:after']);
+	});
+
+	it('keeps each builder of the build table one function, and the table read-only', async () => {
+		const engine = await createEngine(rust, { api: 'strict' });
+		engines.push(engine);
+		const node = engine.build.integerLiteral.decimal({ content: 255 });
 		expect(engine.isFactoryNode(node)).toBe(true);
 		expect(node.$render()).toBe('255');
 		expect(engine.build.integerLiteral.decimal).toBe(engine.build.integerLiteral.decimal);
 		expect(() => Reflect.set(engine.build, 'identifier', () => node)).toThrow('read-only');
-	});
-
-	it('lets a build hook substitute a node without running the builder', async () => {
-		const build = await (await rust.load()).tables.default();
-		const hook: Interceptor<RustAPI> = {
-			build(call) {
-				expect(call.args).toEqual(['original']);
-				return build.identifier('replacement');
-			}
-		};
-		const engine = await engineOf({ intercept: [hook] });
-		const node = engine.build.identifier('original');
-		expect(engine.isFactoryNode(node)).toBe(true);
-		expect(node.$render()).toBe('replacement');
 	});
 
 	it('observes the wrapped parse once and preserves errors and lazy children', async () => {
@@ -126,15 +114,11 @@ describe('engine middleware', () => {
 		expect(calls[0]!.options).toEqual({ layout: { indent: '  ', newline: '\r\n' } });
 	});
 
-	it('runs build callbacks and node render methods through the same hooks', async () => {
+	it('runs build callbacks and node render methods through the same render hook', async () => {
 		const events: string[] = [];
 		const engine = await engineOf({
 			intercept: [
 				{
-					build(call, next) {
-						events.push(call.path.join('.'));
-						return next();
-					},
 					render(_call, next) {
 						events.push('render');
 						return next().toUpperCase();
@@ -144,7 +128,7 @@ describe('engine middleware', () => {
 		});
 		expect(engine.render((build) => build.identifier('one')).toString()).toBe('ONE');
 		expect(engine.build.identifier('two').$render()).toBe('TWO');
-		expect(events).toEqual(['identifier', 'render', 'identifier', 'render']);
+		expect(events).toEqual(['render', 'render']);
 	});
 
 	it('propagates hook errors and leaves other engines unaffected', async () => {
@@ -152,9 +136,6 @@ describe('engine middleware', () => {
 		const intercepted = await engineOf({
 			intercept: [
 				{
-					build() {
-						throw cause;
-					},
 					parse() {
 						throw cause;
 					},
@@ -165,7 +146,7 @@ describe('engine middleware', () => {
 			]
 		});
 		const plain = await engineOf();
-		expect(() => intercepted.build.identifier('x')).toThrow(cause);
+		expect(intercepted.build.identifier('x').$type).toBe(plain.build.identifier('x').$type);
 		expect(() => intercepted.parse('')).toThrow(cause);
 		using rendered = intercepted.render(plain.build.identifier('x'));
 		expect(() => rendered.toString()).toThrow(cause);
@@ -180,42 +161,6 @@ describe('engine middleware', () => {
 		expect(() => rendered.toString()).toThrow('rendered text disposed');
 	});
 
-
-	it('reports the actual access path when two builders share a function', async () => {
-		type LooseTable = RustAPI['build']['default'];
-		interface AliasedAPI extends RustAPI {
-			readonly build: RustAPI['build'] & { readonly default: LooseTable & { readonly alias: LooseTable['identifier'] } };
-		}
-		const hooks = await rust.load();
-		const loose = await hooks.tables.default();
-		const language: Language<AliasedAPI> = {
-			name: 'rust',
-			fileTypes: rust.fileTypes,
-			is: rust.is,
-			kinds: rust.kinds,
-			createEngine: <const R extends AliasedAPI['options'], const M extends BuilderMode>(options?: CreateEngineOptions<AliasedAPI, R, M>) => createEngine<AliasedAPI, R, M>(language, options),
-			load: async () => ({ ...hooks, tables: { ...hooks.tables, default: async () => ({ ...loose, alias: loose.identifier }) } })
-		};
-		const recorded: string[] = [];
-		const engine = await createEngine(language, {
-			intercept: [
-				{
-					build(call, next) {
-						recorded.push(call.path.join('.'));
-						return next();
-					}
-				}
-			]
-		});
-		try {
-			expect(engine.build.alias('a').$render()).toBe('a');
-			expect(engine.build.identifier('b').$render()).toBe('b');
-			expect(engine.build.alias).toBe(engine.build.alias);
-			expect(recorded).toEqual(['alias', 'identifier']);
-		} finally {
-			engine.dispose();
-		}
-	});
 
 	it('permits a parse short circuit and snapshots the registered hook list', async () => {
 		const plain = await engineOf();

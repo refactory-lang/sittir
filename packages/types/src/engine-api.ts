@@ -282,6 +282,7 @@ export interface NativeLanguageEngine<API extends LanguageAPI> {
 	parseAndRead: EngineDiagnostics<AnyUntypedNode>['parseAndRead'];
 	readonly buildProfile?: EngineDiagnostics['buildProfile'];
 	readonly builtMemory?: EngineDiagnostics['builtMemory'];
+	renderTemplates: EngineDiagnostics['renderTemplates'];
 	/** `text` written to `path` by the native writer that saves a render: a new file when `create`, and otherwise a replacement that leaves a file already holding `text` untouched. Answers whether it wrote. */
 	writeText(path: string, text: string, create: boolean): boolean;
 	release(node: object): void;
@@ -307,6 +308,15 @@ export interface EngineDiagnostics<TRoot = unknown, TTree extends object = objec
 	 * it holds that are not yet released. `undefined` when the engine does not build into an arena.
 	 */
 	readonly builtMemory?: () => { readonly chunks: number; readonly counts: number; readonly live: number } | undefined;
+	/**
+	 * Renders a parsed node as `render` renders it, but with the node and every node under it that has a record
+	 * written from its template, never from its source bytes; each leaf and unit still writes its source bytes.
+	 *
+	 * @param node - A node read from a live tree of this engine, as it was read.
+	 * @returns The node's text, its line endings spelled as `render` spells them.
+	 * @throws For a node built or edited, a node whose tree is gone, and a node whose read or render refuses.
+	 */
+	renderTemplates(node: AnyUntypedNode): string;
 	/** Parses and retains a tree without reading any of it. */
 	parseTree(source: string): TTree;
 	/** Parses and retains a tree, and reads its root to `options.depth`. */
@@ -383,6 +393,13 @@ export type EmptyFormOf<Entries, N> = N extends unknown
 
 export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = 'default'>
 	extends EngineIdentity<API>, Disposable {
+	/**
+	 * The builders of this engine's mode, each returning a node this engine built. A builder reads its input while it
+	 * builds, so an accessor on that input (a getter, or a proxy's trap) runs inside the build. An accessor may build
+	 * further input, but one that releases or keeps a node or writes a side is unsupported: in arena storage a build's
+	 * refusal can't account for it. In arena storage, opening or closing a scope, or calling `render` or `create` with a
+	 * build callback, from inside a build throws.
+	 */
 	readonly build: BuildSurface<API, M>;
 	readonly is: API['is'];
 	readonly kinds: API['kinds'];
@@ -482,8 +499,8 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	 * own scope's nodes. Parsed trees are left alone. Under object construction a scope holds nothing, so its close
 	 * does nothing and its `keep` returns what it is given.
 	 *
-	 * @throws When the engine is disposed, and under record construction while a build is running, as inside a build
-	 * interceptor.
+	 * @throws When the engine is disposed, and under record construction while a build is running, as from an
+	 * accessor on a builder's input.
 	 */
 	readonly scope: () => CommitScope;
 	/** Releases the native engine; `using` invokes the same cleanup at scope exit. */
@@ -595,7 +612,6 @@ export interface EngineSettings<API extends LanguageAPI> {
 }
 
 export interface Interceptor<API extends LanguageAPI> {
-	build?(call: { readonly path: readonly string[]; readonly args: readonly unknown[] }, next: () => API['node']): API['node'];
 	render?(call: { readonly node: RenderInput<API>; readonly options: API['options'] }, next: () => string): string;
 	parse?(call: { readonly source: string }, next: () => API['root']): API['root'];
 	/**

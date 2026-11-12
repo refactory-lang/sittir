@@ -2608,17 +2608,6 @@
       ],
       "members": [
         {
-          "name": "sign",
-          "route": "slot",
-          "slot": "sign",
-          "path": [
-            {
-              "owner": "complex_pattern",
-              "slot": "sign"
-            }
-          ]
-        },
-        {
           "name": "real",
           "route": "slot",
           "slot": "real",
@@ -2639,6 +2628,19 @@
               "slot": "imaginary"
             }
           ]
+        },
+        {
+          "name": "sign",
+          "route": "presence",
+          "via": [],
+          "token": "-",
+          "path": [
+            {
+              "owner": "complex_pattern",
+              "slot": "sign"
+            }
+          ],
+          "flag": true
         }
       ]
     },

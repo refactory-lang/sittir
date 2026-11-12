@@ -483,30 +483,31 @@ describe.each(['object', 'arena'] as const)('a root built for a create or a rend
 		expect(live(engine)).toBe(start);
 	});
 
-	it('a build callback inside a running build is refused in arena storage, as engine.scope() is', async () => {
+	it('a build callback an input getter calls inside a running build is refused in arena storage, as engine.scope() is', async () => {
 		const seen: string[] = [];
-		const engine: Engine<RustAPI> = await createEngine(rust, {
-			nodeStorage,
-			intercept: [
-				{
-					build(call, next) {
-						if (call.path[0] === 'expressionStatement') {
-							const rendered = engine.render((build) => build.identifier('seen'));
+		const engine: Engine<RustAPI> = await createEngine(rust, { nodeStorage });
+		engines.push(engine);
+		const { build } = engine;
+		const built = () =>
+			engine
+				.render(
+					build.binaryExpression({
+						left: build.identifier('a'),
+						operator: '+',
+						get right() {
+							const rendered = engine.render((inner) => inner.identifier('seen'));
 							seen.push(rendered.toString());
 							rendered[Symbol.dispose]();
+							return build.identifier('b');
 						}
-						return next();
-					}
-				}
-			]
-		});
-		engines.push(engine);
-		const built = () => engine.render(engine.build.expressionStatement.withSemi(engine.build.identifier('a'))).toString();
+					})
+				)
+				.toString();
 		if (nodeStorage === 'arena') {
 			expect(built).toThrow(/build callback .*while a build is running/);
 			expect(seen).toEqual([]);
 		} else {
-			expect(built()).toBe('a;');
+			expect(built()).toBe('a + b');
 			expect(seen).toEqual(['seen']);
 		}
 	});

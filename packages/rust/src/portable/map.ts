@@ -11809,7 +11809,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
-			readonly $forms: V.Form<'type', 'lifetime' | 'reference'> | V.Form<never, 'type'>;
+			readonly $forms: V.Form<'type', 'lifetime'> | V.Form<never, 'type'>;
 		};
 		readonly 'declaration.parameter.variadic': {
 			readonly attributes:

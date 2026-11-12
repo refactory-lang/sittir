@@ -15431,17 +15431,6 @@
       ],
       "members": [
         {
-          "name": "reference",
-          "route": "slot",
-          "slot": "reference",
-          "path": [
-            {
-              "owner": "self_parameter",
-              "slot": "reference"
-            }
-          ]
-        },
-        {
           "name": "lifetime",
           "route": "slot",
           "slot": "lifetime",
@@ -15451,6 +15440,19 @@
               "slot": "lifetime"
             }
           ]
+        },
+        {
+          "name": "reference",
+          "route": "presence",
+          "via": [],
+          "token": "&",
+          "path": [
+            {
+              "owner": "self_parameter",
+              "slot": "reference"
+            }
+          ],
+          "flag": true
         },
         {
           "name": "mutable",
