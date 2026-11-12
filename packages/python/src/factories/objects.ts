@@ -107,19 +107,29 @@ export const _leafRe_buildImportPrefix = /^(?:(?:\.)+)$/u;
 export const _leafRe_buildTypeConversion = /^(?:(?:![a-z]))$/u;
 export const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
 export const _leafRe_buildFormatSpecifierText = /^(?:(?:[^{}\n]+))$/u;
-export const _leafRe_buildIntegerDecimalLong = /^(?:(?:(?:[0-9]+_?))+(?:[Ll]))$/u;
 export const _leafRe_buildIntegerDecimalImaginary = /^(?:(?:(?:[0-9]+_?))+(?:[jJ]))$/u;
 export const _leafRe_buildIntegerDecimalPlain = /^(?:(?:(?:[0-9]+_?))+)$/u;
 export const _leafRe_buildLineContinuationNewline = /^(?:\\(?:\r)?\n)$/u;
 export const _leafRe_buildStringFragment = /^(?:(?:[\x09-\x0D\x20\x00-\x08\x0E-\x1F\x21-\u{10FFFF}]+))$/u;
 export const _leafRe_buildEscapeInterpolation = /^(?:(?:\{\{|\}\}))$/u;
 export const _slotRe_buildComment_content = /^(?:(?:[^\x0A]*))$/u;
-export const _slotRe_buildIntegerHex_radix_prefix = /^(?:0x|0X)$/u;
-export const _slotRe_buildIntegerHex_content = /^(?:(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$/u;
-export const _slotRe_buildIntegerOctal_radix_prefix = /^(?:0o|0O)$/u;
-export const _slotRe_buildIntegerOctal_content = /^(?:(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$/u;
-export const _slotRe_buildIntegerBinary_radix_prefix = /^(?:0b|0B)$/u;
-export const _slotRe_buildIntegerBinary_content = /^(?:(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$/u;
+export const _slotRe_buildIntegerHexLong_radix_prefix = /^(?:0x|0X)$/u;
+export const _slotRe_buildIntegerHexLong_content = /^(?:(?:(?:_?[A-Fa-f0-9]+))+)$/u;
+export const _slotRe_buildIntegerHexLong_marker = /^(?:L|l)$/u;
+export const _slotRe_buildIntegerHexPlain_radix_prefix = _slotRe_buildIntegerHexLong_radix_prefix;
+export const _slotRe_buildIntegerHexPlain_content = _slotRe_buildIntegerHexLong_content;
+export const _slotRe_buildIntegerOctalLong_radix_prefix = /^(?:0o|0O)$/u;
+export const _slotRe_buildIntegerOctalLong_content = /^(?:(?:(?:_?[0-7]+))+)$/u;
+export const _slotRe_buildIntegerOctalLong_marker = _slotRe_buildIntegerHexLong_marker;
+export const _slotRe_buildIntegerOctalPlain_radix_prefix = _slotRe_buildIntegerOctalLong_radix_prefix;
+export const _slotRe_buildIntegerOctalPlain_content = _slotRe_buildIntegerOctalLong_content;
+export const _slotRe_buildIntegerBinaryLong_radix_prefix = /^(?:0b|0B)$/u;
+export const _slotRe_buildIntegerBinaryLong_content = /^(?:(?:(?:_?[0-1]+))+)$/u;
+export const _slotRe_buildIntegerBinaryLong_marker = _slotRe_buildIntegerHexLong_marker;
+export const _slotRe_buildIntegerBinaryPlain_radix_prefix = _slotRe_buildIntegerBinaryLong_radix_prefix;
+export const _slotRe_buildIntegerBinaryPlain_content = _slotRe_buildIntegerBinaryLong_content;
+export const _slotRe_buildIntegerDecimalLong_content = _leafRe_buildIntegerDecimalPlain;
+export const _slotRe_buildIntegerDecimalLong_marker = _slotRe_buildIntegerHexLong_marker;
 export const _slotRe_buildFloatPoint_integer = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatPoint_fraction = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatPoint_marker = /^(?:e|E)$/u;
@@ -4681,8 +4691,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				213, 207, 208, 214, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 69, 70, 71, 210, 221, 222, 224,
-				233, 238, 236, 239, 234, 240, 235, 242, 241, 63, 201, 246, 143, 203
+				216, 210, 211, 217, 260, 212, 1, 251, 250, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 69, 70, 71, 213,
+				224, 225, 227, 236, 241, 239, 242, 237, 243, 238, 245, 244, 63, 204, 249, 146, 206
 			],
 			(v: unknown) => buildAsPatternTarget(v as never)
 		]
@@ -10206,34 +10216,42 @@ function buildComprehensionClauses$with$contents(this: Received<Held>, ...args: 
 	return buildComprehensionClauses$with(receiverOf(this, '$with.contents'), 'contents', args);
 }
 
-export function buildIntegerHex<const N extends string | number | bigint>(
+export function buildIntegerHexLong<const N extends string | number | bigint>(
 	value: Admit<string | (N & NumericLiteral<N, true>)>,
-	options?: T.IntegerHex.Options
-): T.IntegerHex.Bound;
-export function buildIntegerHex(
+	options?: T.IntegerHexLong.Options
+): T.IntegerHexLong.Bound;
+export function buildIntegerHexLong(
 	value: Admit<string | number | bigint>,
-	options?: T.IntegerHex.Options
-): T.IntegerHex.Bound {
+	options?: T.IntegerHexLong.Options
+): T.IntegerHexLong.Bound {
 	const _radix_prefix = options?.radixPrefix ?? '0x';
 	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
-		throw new Error(`integer_hex.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
-	if (_radix_prefix !== undefined && !_slotRe_buildIntegerHex_radix_prefix.test(_radix_prefix))
-		throw new Error(`integer_hex.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+		throw new Error(`integer_hex_long.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerHexLong_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_hex_long.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
 	const _content = numberText(16, '', value);
 	if (typeof _content !== 'string')
-		throw new Error(`integer_hex.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildIntegerHex_content.test(_content))
-		throw new Error(`integer_hex.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`integer_hex_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerHexLong_content.test(_content))
+		throw new Error(`integer_hex_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_hex_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerHexLong_marker.test(_marker))
+		throw new Error(`integer_hex_long.marker: text does not match pattern: ${describeValue(_marker)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'integer_hex', { radixPrefix: _radix_prefix, content: _content });
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_hex_long', { radixPrefix: _radix_prefix, content: _content, marker: _marker });
 	const node = {
-		$type: TSKindId.IntegerHex as const,
+		$type: TSKindId.IntegerHexLong as const,
 		_radix_prefix,
 		_content,
+		_marker,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		radixPrefix: () => hydrateStoredSlot(node, '_radix_prefix'),
 		content: () => hydrateStoredSlot(node, '_content'),
+		marker: () => hydrateStoredSlot(node, '_marker'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -10246,59 +10264,68 @@ export function buildIntegerHex(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		radixPrefix: buildIntegerHex$with$radixPrefix,
-		content: buildIntegerHex$with$content,
+		radixPrefix: buildIntegerHexLong$with$radixPrefix,
+		content: buildIntegerHexLong$with$content,
+		marker: buildIntegerHexLong$with$marker,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.IntegerHex.Bound;
+	return node as unknown as T.IntegerHexLong.Bound;
 }
 
-function buildIntegerHex$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function buildIntegerHexLong$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const value = node[INPUT] as Admit<string | number | bigint>;
-	const options = node[OPTIONS] as T.IntegerHex.Options;
+	const options = node[OPTIONS] as T.IntegerHexLong.Options;
 	switch (setter) {
 		case 'radixPrefix':
 			return applySetter(args, (spelling: '0x' | '0X') =>
-				rebuilt(node, handle, () => buildIntegerHex(value, { ...options, radixPrefix: spelling }))
+				rebuilt(node, handle, () => buildIntegerHexLong(value, { ...options, radixPrefix: spelling }))
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildIntegerHex(value, options))
+				rebuilt(node, handle, () => buildIntegerHexLong(value, options))
+			);
+		case 'marker':
+			return applySetter(args, (spelling: 'L' | 'l') =>
+				rebuilt(node, handle, () => buildIntegerHexLong(value, { ...options, marker: spelling }))
 			);
 	}
-	throw new Error(`integer_hex has no $with.${setter}`);
+	throw new Error(`integer_hex_long has no $with.${setter}`);
 }
-function buildIntegerHex$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildIntegerHex$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+function buildIntegerHexLong$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerHexLong$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
 }
-function buildIntegerHex$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildIntegerHex$with(receiverOf(this, '$with.content'), 'content', args);
+function buildIntegerHexLong$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerHexLong$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function buildIntegerHexLong$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerHexLong$with(receiverOf(this, '$with.marker'), 'marker', args);
 }
 
-export function buildIntegerOctal<const N extends string | number | bigint>(
+export function buildIntegerHexPlain<const N extends string | number | bigint>(
 	value: Admit<string | (N & NumericLiteral<N, true>)>,
-	options?: T.IntegerOctal.Options
-): T.IntegerOctal.Bound;
-export function buildIntegerOctal(
+	options?: T.IntegerHexPlain.Options
+): T.IntegerHexPlain.Bound;
+export function buildIntegerHexPlain(
 	value: Admit<string | number | bigint>,
-	options?: T.IntegerOctal.Options
-): T.IntegerOctal.Bound {
-	const _radix_prefix = options?.radixPrefix ?? '0o';
+	options?: T.IntegerHexPlain.Options
+): T.IntegerHexPlain.Bound {
+	const _radix_prefix = options?.radixPrefix ?? '0x';
 	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
-		throw new Error(`integer_octal.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
-	if (_radix_prefix !== undefined && !_slotRe_buildIntegerOctal_radix_prefix.test(_radix_prefix))
-		throw new Error(`integer_octal.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
-	const _content = numberText(8, '', value);
+		throw new Error(`integer_hex_plain.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerHexPlain_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_hex_plain.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+	const _content = numberText(16, '', value);
 	if (typeof _content !== 'string')
-		throw new Error(`integer_octal.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildIntegerOctal_content.test(_content))
-		throw new Error(`integer_octal.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`integer_hex_plain.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerHexPlain_content.test(_content))
+		throw new Error(`integer_hex_plain.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'integer_octal', { radixPrefix: _radix_prefix, content: _content });
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_hex_plain', { radixPrefix: _radix_prefix, content: _content });
 	const node = {
-		$type: TSKindId.IntegerOctal as const,
+		$type: TSKindId.IntegerHexPlain as const,
 		_radix_prefix,
 		_content,
 		$_layout: undefined,
@@ -10317,59 +10344,147 @@ export function buildIntegerOctal(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		radixPrefix: buildIntegerOctal$with$radixPrefix,
-		content: buildIntegerOctal$with$content,
+		radixPrefix: buildIntegerHexPlain$with$radixPrefix,
+		content: buildIntegerHexPlain$with$content,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.IntegerOctal.Bound;
+	return node as unknown as T.IntegerHexPlain.Bound;
 }
 
-function buildIntegerOctal$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function buildIntegerHexPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const value = node[INPUT] as Admit<string | number | bigint>;
-	const options = node[OPTIONS] as T.IntegerOctal.Options;
+	const options = node[OPTIONS] as T.IntegerHexPlain.Options;
+	switch (setter) {
+		case 'radixPrefix':
+			return applySetter(args, (spelling: '0x' | '0X') =>
+				rebuilt(node, handle, () => buildIntegerHexPlain(value, { ...options, radixPrefix: spelling }))
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerHexPlain(value, options))
+			);
+	}
+	throw new Error(`integer_hex_plain has no $with.${setter}`);
+}
+function buildIntegerHexPlain$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerHexPlain$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+}
+function buildIntegerHexPlain$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerHexPlain$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
+export function buildIntegerOctalLong<const N extends string | number | bigint>(
+	value: Admit<string | (N & NumericLiteral<N, true>)>,
+	options?: T.IntegerOctalLong.Options
+): T.IntegerOctalLong.Bound;
+export function buildIntegerOctalLong(
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerOctalLong.Options
+): T.IntegerOctalLong.Bound {
+	const _radix_prefix = options?.radixPrefix ?? '0o';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_octal_long.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerOctalLong_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_octal_long.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+	const _content = numberText(8, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_octal_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerOctalLong_content.test(_content))
+		throw new Error(`integer_octal_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_octal_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerOctalLong_marker.test(_marker))
+		throw new Error(`integer_octal_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_octal_long', { radixPrefix: _radix_prefix, content: _content, marker: _marker });
+	const node = {
+		$type: TSKindId.IntegerOctalLong as const,
+		_radix_prefix,
+		_content,
+		_marker,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		radixPrefix: () => hydrateStoredSlot(node, '_radix_prefix'),
+		content: () => hydrateStoredSlot(node, '_content'),
+		marker: () => hydrateStoredSlot(node, '_marker'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		radixPrefix: buildIntegerOctalLong$with$radixPrefix,
+		content: buildIntegerOctalLong$with$content,
+		marker: buildIntegerOctalLong$with$marker,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerOctalLong.Bound;
+}
+
+function buildIntegerOctalLong$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<string | number | bigint>;
+	const options = node[OPTIONS] as T.IntegerOctalLong.Options;
 	switch (setter) {
 		case 'radixPrefix':
 			return applySetter(args, (spelling: '0o' | '0O') =>
-				rebuilt(node, handle, () => buildIntegerOctal(value, { ...options, radixPrefix: spelling }))
+				rebuilt(node, handle, () => buildIntegerOctalLong(value, { ...options, radixPrefix: spelling }))
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildIntegerOctal(value, options))
+				rebuilt(node, handle, () => buildIntegerOctalLong(value, options))
+			);
+		case 'marker':
+			return applySetter(args, (spelling: 'L' | 'l') =>
+				rebuilt(node, handle, () => buildIntegerOctalLong(value, { ...options, marker: spelling }))
 			);
 	}
-	throw new Error(`integer_octal has no $with.${setter}`);
+	throw new Error(`integer_octal_long has no $with.${setter}`);
 }
-function buildIntegerOctal$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildIntegerOctal$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+function buildIntegerOctalLong$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerOctalLong$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
 }
-function buildIntegerOctal$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildIntegerOctal$with(receiverOf(this, '$with.content'), 'content', args);
+function buildIntegerOctalLong$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerOctalLong$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function buildIntegerOctalLong$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerOctalLong$with(receiverOf(this, '$with.marker'), 'marker', args);
 }
 
-export function buildIntegerBinary<const N extends string | number | bigint>(
+export function buildIntegerOctalPlain<const N extends string | number | bigint>(
 	value: Admit<string | (N & NumericLiteral<N, true>)>,
-	options?: T.IntegerBinary.Options
-): T.IntegerBinary.Bound;
-export function buildIntegerBinary(
+	options?: T.IntegerOctalPlain.Options
+): T.IntegerOctalPlain.Bound;
+export function buildIntegerOctalPlain(
 	value: Admit<string | number | bigint>,
-	options?: T.IntegerBinary.Options
-): T.IntegerBinary.Bound {
-	const _radix_prefix = options?.radixPrefix ?? '0b';
+	options?: T.IntegerOctalPlain.Options
+): T.IntegerOctalPlain.Bound {
+	const _radix_prefix = options?.radixPrefix ?? '0o';
 	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
-		throw new Error(`integer_binary.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
-	if (_radix_prefix !== undefined && !_slotRe_buildIntegerBinary_radix_prefix.test(_radix_prefix))
-		throw new Error(`integer_binary.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
-	const _content = numberText(2, '', value);
+		throw new Error(`integer_octal_plain.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerOctalPlain_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_octal_plain.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+	const _content = numberText(8, '', value);
 	if (typeof _content !== 'string')
-		throw new Error(`integer_binary.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildIntegerBinary_content.test(_content))
-		throw new Error(`integer_binary.content: text does not match pattern: ${describeValue(_content)}`);
+		throw new Error(`integer_octal_plain.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerOctalPlain_content.test(_content))
+		throw new Error(`integer_octal_plain.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'integer_binary', { radixPrefix: _radix_prefix, content: _content });
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_octal_plain', { radixPrefix: _radix_prefix, content: _content });
 	const node = {
-		$type: TSKindId.IntegerBinary as const,
+		$type: TSKindId.IntegerOctalPlain as const,
 		_radix_prefix,
 		_content,
 		$_layout: undefined,
@@ -10388,47 +10503,73 @@ export function buildIntegerBinary(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		radixPrefix: buildIntegerBinary$with$radixPrefix,
-		content: buildIntegerBinary$with$content,
+		radixPrefix: buildIntegerOctalPlain$with$radixPrefix,
+		content: buildIntegerOctalPlain$with$content,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.IntegerBinary.Bound;
+	return node as unknown as T.IntegerOctalPlain.Bound;
 }
 
-function buildIntegerBinary$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function buildIntegerOctalPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const value = node[INPUT] as Admit<string | number | bigint>;
-	const options = node[OPTIONS] as T.IntegerBinary.Options;
+	const options = node[OPTIONS] as T.IntegerOctalPlain.Options;
 	switch (setter) {
 		case 'radixPrefix':
-			return applySetter(args, (spelling: '0b' | '0B') =>
-				rebuilt(node, handle, () => buildIntegerBinary(value, { ...options, radixPrefix: spelling }))
+			return applySetter(args, (spelling: '0o' | '0O') =>
+				rebuilt(node, handle, () => buildIntegerOctalPlain(value, { ...options, radixPrefix: spelling }))
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildIntegerBinary(value, options))
+				rebuilt(node, handle, () => buildIntegerOctalPlain(value, options))
 			);
 	}
-	throw new Error(`integer_binary has no $with.${setter}`);
+	throw new Error(`integer_octal_plain has no $with.${setter}`);
 }
-function buildIntegerBinary$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildIntegerBinary$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+function buildIntegerOctalPlain$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerOctalPlain$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
 }
-function buildIntegerBinary$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildIntegerBinary$with(receiverOf(this, '$with.content'), 'content', args);
+function buildIntegerOctalPlain$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerOctalPlain$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Bound {
-	if (typeof text !== 'string') throw new Error(`integer_decimal_long: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`integer_decimal_long: text must be non-empty`);
-	if (!_leafRe_buildIntegerDecimalLong.test(text))
-		throw new Error(`integer_decimal_long: text does not match pattern: ${describeValue(text)}`);
+export function buildIntegerBinaryLong<const N extends string | number | bigint>(
+	value: Admit<string | (N & NumericLiteral<N, true>)>,
+	options?: T.IntegerBinaryLong.Options
+): T.IntegerBinaryLong.Bound;
+export function buildIntegerBinaryLong(
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerBinaryLong.Options
+): T.IntegerBinaryLong.Bound {
+	const _radix_prefix = options?.radixPrefix ?? '0b';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_binary_long.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerBinaryLong_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_binary_long.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+	const _content = numberText(2, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_binary_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerBinaryLong_content.test(_content))
+		throw new Error(`integer_binary_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_binary_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerBinaryLong_marker.test(_marker))
+		throw new Error(`integer_binary_long.marker: text does not match pattern: ${describeValue(_marker)}`);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_binary_long', { radixPrefix: _radix_prefix, content: _content, marker: _marker });
 	const node = {
-		$type: TSKindId.IntegerDecimalLong as const,
+		$type: TSKindId.IntegerBinaryLong as const,
+		_radix_prefix,
+		_content,
+		_marker,
 		$_layout: undefined,
-		$text: () => text,
+		$with: undefined as unknown as object,
+		radixPrefix: () => hydrateStoredSlot(node, '_radix_prefix'),
+		content: () => hydrateStoredSlot(node, '_content'),
+		marker: () => hydrateStoredSlot(node, '_marker'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -10436,10 +10577,191 @@ export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Boun
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		radixPrefix: buildIntegerBinaryLong$with$radixPrefix,
+		content: buildIntegerBinaryLong$with$content,
+		marker: buildIntegerBinaryLong$with$marker,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerBinaryLong.Bound;
+}
+
+function buildIntegerBinaryLong$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<string | number | bigint>;
+	const options = node[OPTIONS] as T.IntegerBinaryLong.Options;
+	switch (setter) {
+		case 'radixPrefix':
+			return applySetter(args, (spelling: '0b' | '0B') =>
+				rebuilt(node, handle, () => buildIntegerBinaryLong(value, { ...options, radixPrefix: spelling }))
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerBinaryLong(value, options))
+			);
+		case 'marker':
+			return applySetter(args, (spelling: 'L' | 'l') =>
+				rebuilt(node, handle, () => buildIntegerBinaryLong(value, { ...options, marker: spelling }))
+			);
+	}
+	throw new Error(`integer_binary_long has no $with.${setter}`);
+}
+function buildIntegerBinaryLong$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerBinaryLong$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+}
+function buildIntegerBinaryLong$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerBinaryLong$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function buildIntegerBinaryLong$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerBinaryLong$with(receiverOf(this, '$with.marker'), 'marker', args);
+}
+
+export function buildIntegerBinaryPlain<const N extends string | number | bigint>(
+	value: Admit<string | (N & NumericLiteral<N, true>)>,
+	options?: T.IntegerBinaryPlain.Options
+): T.IntegerBinaryPlain.Bound;
+export function buildIntegerBinaryPlain(
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerBinaryPlain.Options
+): T.IntegerBinaryPlain.Bound {
+	const _radix_prefix = options?.radixPrefix ?? '0b';
+	if (_radix_prefix !== undefined && typeof _radix_prefix !== 'string')
+		throw new Error(`integer_binary_plain.radix_prefix: text must be a string: ${describeValue(_radix_prefix)}`);
+	if (_radix_prefix !== undefined && !_slotRe_buildIntegerBinaryPlain_radix_prefix.test(_radix_prefix))
+		throw new Error(`integer_binary_plain.radix_prefix: text does not match pattern: ${describeValue(_radix_prefix)}`);
+	const _content = numberText(2, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_binary_plain.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerBinaryPlain_content.test(_content))
+		throw new Error(`integer_binary_plain.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'integer_binary_plain', { radixPrefix: _radix_prefix, content: _content });
+	const node = {
+		$type: TSKindId.IntegerBinaryPlain as const,
+		_radix_prefix,
+		_content,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		radixPrefix: () => hydrateStoredSlot(node, '_radix_prefix'),
+		content: () => hydrateStoredSlot(node, '_content'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		radixPrefix: buildIntegerBinaryPlain$with$radixPrefix,
+		content: buildIntegerBinaryPlain$with$content,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerBinaryPlain.Bound;
+}
+
+function buildIntegerBinaryPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<string | number | bigint>;
+	const options = node[OPTIONS] as T.IntegerBinaryPlain.Options;
+	switch (setter) {
+		case 'radixPrefix':
+			return applySetter(args, (spelling: '0b' | '0B') =>
+				rebuilt(node, handle, () => buildIntegerBinaryPlain(value, { ...options, radixPrefix: spelling }))
+			);
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerBinaryPlain(value, options))
+			);
+	}
+	throw new Error(`integer_binary_plain has no $with.${setter}`);
+}
+function buildIntegerBinaryPlain$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerBinaryPlain$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+}
+function buildIntegerBinaryPlain$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerBinaryPlain$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
+export function buildIntegerDecimalLong<const N extends string | number | bigint>(
+	value: Admit<string | (N & NumericLiteral<N, true>)>,
+	options?: T.IntegerDecimalLong.Options
+): T.IntegerDecimalLong.Bound;
+export function buildIntegerDecimalLong(
+	value: Admit<string | number | bigint>,
+	options?: T.IntegerDecimalLong.Options
+): T.IntegerDecimalLong.Bound {
+	const _content = numberText(10, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`integer_decimal_long.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerDecimalLong_content.test(_content))
+		throw new Error(`integer_decimal_long.content: text does not match pattern: ${describeValue(_content)}`);
+	const _marker = options?.marker ?? 'L';
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`integer_decimal_long.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildIntegerDecimalLong_marker.test(_marker))
+		throw new Error(`integer_decimal_long.marker: text does not match pattern: ${describeValue(_marker)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_decimal_long', { content: _content, marker: _marker });
+	const node = {
+		$type: TSKindId.IntegerDecimalLong as const,
+		_content,
+		_marker,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		content: () => hydrateStoredSlot(node, '_content'),
+		marker: () => hydrateStoredSlot(node, '_marker'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: buildIntegerDecimalLong$with$content,
+		marker: buildIntegerDecimalLong$with$marker,
+		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IntegerDecimalLong.Bound;
+}
+
+function buildIntegerDecimalLong$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<string | number | bigint>;
+	const options = node[OPTIONS] as T.IntegerDecimalLong.Options;
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildIntegerDecimalLong(value, options))
+			);
+		case 'marker':
+			return applySetter(args, (spelling: 'L' | 'l') =>
+				rebuilt(node, handle, () => buildIntegerDecimalLong(value, { ...options, marker: spelling }))
+			);
+	}
+	throw new Error(`integer_decimal_long has no $with.${setter}`);
+}
+function buildIntegerDecimalLong$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerDecimalLong$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function buildIntegerDecimalLong$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildIntegerDecimalLong$with(receiverOf(this, '$with.marker'), 'marker', args);
 }
 
 export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImaginary.Bound {
@@ -13634,10 +13956,13 @@ export type FluentKindMap = {
 	wildcard_pattern: T.WildcardPattern;
 	parenthesized_import_list: T.ParenthesizedImportList.Bound;
 	comprehension_clauses: T.ComprehensionClauses.Bound;
-	integer_hex: T.IntegerHex.Bound;
-	integer_octal: T.IntegerOctal.Bound;
-	integer_binary: T.IntegerBinary.Bound;
-	integer_decimal_long: T.IntegerDecimalLong;
+	integer_hex_long: T.IntegerHexLong.Bound;
+	integer_hex_plain: T.IntegerHexPlain.Bound;
+	integer_octal_long: T.IntegerOctalLong.Bound;
+	integer_octal_plain: T.IntegerOctalPlain.Bound;
+	integer_binary_long: T.IntegerBinaryLong.Bound;
+	integer_binary_plain: T.IntegerBinaryPlain.Bound;
+	integer_decimal_long: T.IntegerDecimalLong.Bound;
 	integer_decimal_imaginary: T.IntegerDecimalImaginary;
 	integer_decimal_plain: T.IntegerDecimalPlain;
 	float_point: T.FloatPoint.Bound;
@@ -13843,9 +14168,12 @@ export const _factoryMap = {
 	wildcard_pattern: buildWildcardPattern,
 	parenthesized_import_list: buildParenthesizedImportList,
 	comprehension_clauses: buildComprehensionClauses,
-	integer_hex: buildIntegerHex,
-	integer_octal: buildIntegerOctal,
-	integer_binary: buildIntegerBinary,
+	integer_hex_long: buildIntegerHexLong,
+	integer_hex_plain: buildIntegerHexPlain,
+	integer_octal_long: buildIntegerOctalLong,
+	integer_octal_plain: buildIntegerOctalPlain,
+	integer_binary_long: buildIntegerBinaryLong,
+	integer_binary_plain: buildIntegerBinaryPlain,
 	integer_decimal_long: buildIntegerDecimalLong,
 	integer_decimal_imaginary: buildIntegerDecimalImaginary,
 	integer_decimal_plain: buildIntegerDecimalPlain,

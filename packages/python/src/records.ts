@@ -471,28 +471,58 @@ export const records = {
 		import_list: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
 	},
 	ComprehensionClausesNode: { words: 3, builtWords: 3, content: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
-	IntegerHexNode: {
+	IntegerHexLongNode: {
+		words: 10,
+		builtWords: 6,
+		radix_prefix: { word: 2, width: 2, forms: 4, built: 2 },
+		content: { word: 4, width: 2, forms: 4, built: 3 },
+		marker: { word: 6, width: 2, forms: 4, built: 4 },
+		verbatim: { word: 8, width: 2, forms: 4, built: 5 }
+	},
+	IntegerHexPlainNode: {
 		words: 8,
 		builtWords: 5,
 		radix_prefix: { word: 2, width: 2, forms: 4, built: 2 },
 		content: { word: 4, width: 2, forms: 4, built: 3 },
 		verbatim: { word: 6, width: 2, forms: 4, built: 4 }
 	},
-	IntegerOctalNode: {
+	IntegerOctalLongNode: {
+		words: 10,
+		builtWords: 6,
+		radix_prefix: { word: 2, width: 2, forms: 4, built: 2 },
+		content: { word: 4, width: 2, forms: 4, built: 3 },
+		marker: { word: 6, width: 2, forms: 4, built: 4 },
+		verbatim: { word: 8, width: 2, forms: 4, built: 5 }
+	},
+	IntegerOctalPlainNode: {
 		words: 8,
 		builtWords: 5,
 		radix_prefix: { word: 2, width: 2, forms: 4, built: 2 },
 		content: { word: 4, width: 2, forms: 4, built: 3 },
 		verbatim: { word: 6, width: 2, forms: 4, built: 4 }
 	},
-	IntegerBinaryNode: {
+	IntegerBinaryLongNode: {
+		words: 10,
+		builtWords: 6,
+		radix_prefix: { word: 2, width: 2, forms: 4, built: 2 },
+		content: { word: 4, width: 2, forms: 4, built: 3 },
+		marker: { word: 6, width: 2, forms: 4, built: 4 },
+		verbatim: { word: 8, width: 2, forms: 4, built: 5 }
+	},
+	IntegerBinaryPlainNode: {
 		words: 8,
 		builtWords: 5,
 		radix_prefix: { word: 2, width: 2, forms: 4, built: 2 },
 		content: { word: 4, width: 2, forms: 4, built: 3 },
 		verbatim: { word: 6, width: 2, forms: 4, built: 4 }
 	},
-	IntegerDecimalLongNode: { words: 2, builtWords: 2 },
+	IntegerDecimalLongNode: {
+		words: 8,
+		builtWords: 5,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		marker: { word: 4, width: 2, forms: 4, built: 3 },
+		verbatim: { word: 6, width: 2, forms: 4, built: 4 }
+	},
 	IntegerDecimalImaginaryNode: { words: 2, builtWords: 2 },
 	IntegerDecimalPlainNode: { words: 2, builtWords: 2 },
 	FloatPointNode: {

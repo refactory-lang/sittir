@@ -68,22 +68,53 @@ export const TOKEN_INTERIORS = {
 			{ name: 'imaginary', propertyName: 'imaginary' }
 		]
 	},
-	integer_binary: {
-		regex: '^(?<radix_prefix>0b|0B)(?<content>(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$',
+	integer_binary_long: {
+		regex: '^(?<radix_prefix>0b|0B)(?<content>(?:(?:_?[0-1]+))+)(?<marker>L|l)$',
+		slots: [
+			{ name: 'radix_prefix', propertyName: 'radixPrefix' },
+			{ name: 'content', propertyName: 'content' },
+			{ name: 'marker', propertyName: 'marker' }
+		]
+	},
+	integer_binary_plain: {
+		regex: '^(?<radix_prefix>0b|0B)(?<content>(?:(?:_?[0-1]+))+)$',
 		slots: [
 			{ name: 'radix_prefix', propertyName: 'radixPrefix' },
 			{ name: 'content', propertyName: 'content' }
 		]
 	},
-	integer_hex: {
-		regex: '^(?<radix_prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$',
+	integer_decimal_long: {
+		regex: '^(?<content>(?:(?:[0-9]+_?))+)(?<marker>L|l)$',
+		slots: [
+			{ name: 'content', propertyName: 'content' },
+			{ name: 'marker', propertyName: 'marker' }
+		]
+	},
+	integer_hex_long: {
+		regex: '^(?<radix_prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+)(?<marker>L|l)$',
+		slots: [
+			{ name: 'radix_prefix', propertyName: 'radixPrefix' },
+			{ name: 'content', propertyName: 'content' },
+			{ name: 'marker', propertyName: 'marker' }
+		]
+	},
+	integer_hex_plain: {
+		regex: '^(?<radix_prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+)$',
 		slots: [
 			{ name: 'radix_prefix', propertyName: 'radixPrefix' },
 			{ name: 'content', propertyName: 'content' }
 		]
 	},
-	integer_octal: {
-		regex: '^(?<radix_prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$',
+	integer_octal_long: {
+		regex: '^(?<radix_prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+)(?<marker>L|l)$',
+		slots: [
+			{ name: 'radix_prefix', propertyName: 'radixPrefix' },
+			{ name: 'content', propertyName: 'content' },
+			{ name: 'marker', propertyName: 'marker' }
+		]
+	},
+	integer_octal_plain: {
+		regex: '^(?<radix_prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+)$',
 		slots: [
 			{ name: 'radix_prefix', propertyName: 'radixPrefix' },
 			{ name: 'content', propertyName: 'content' }

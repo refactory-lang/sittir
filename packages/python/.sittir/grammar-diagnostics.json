@@ -563,14 +563,6 @@
     "code": "portable-value-unshaped",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.big: its $value is a number, but integer_decimal_long has no number shape, so no read or build of it carries one"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-value-unshaped",
-    "severity": "warning",
-    "canProceed": true,
     "message": "literal.number.integer.imaginary: its $value is a number, but integer_decimal_imaginary has no number shape, so no read or build of it carries one"
   },
   {
@@ -579,7 +571,7 @@
     "code": "portable-integer-partial",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.hex: integer_hex's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
+    "message": "literal.number.integer.big.hex: integer_hex_long's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
   },
   {
     "scope": "grammar",
@@ -587,7 +579,7 @@
     "code": "portable-integer-partial",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.binary: integer_binary's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
+    "message": "literal.number.integer.big.binary: integer_binary_long's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
   },
   {
     "scope": "grammar",
@@ -595,6 +587,6 @@
     "code": "portable-integer-partial",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.octal: integer_octal's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
+    "message": "literal.number.integer.big.octal: integer_octal_long's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
   }
 ]

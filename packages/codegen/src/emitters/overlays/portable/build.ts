@@ -463,7 +463,11 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const node = nodeOf(kind);
 			return node instanceof AssembledPattern && kindNumberShape(kind, node) === undefined && !fixedText.has(kind);
 		});
-		const plain = leaves.length > 1 ? leaves.filter((kind) => nodeOf(kind)?.variantOf === undefined) : leaves;
+		const formAlone = (kind: string): boolean => {
+			const parent = nodeOf(kind)?.variantOf;
+			return parent === undefined || !reached.some((other) => other !== kind && nodeOf(other)?.variantOf === parent);
+		};
+		const plain = leaves.length > 1 ? leaves.filter((kind) => nodeOf(kind)?.variantOf === undefined) : leaves.filter(formAlone);
 		const leaf = plain.length === 1 ? builderOf(plain[0]!) : undefined;
 		if (leaf === undefined) return undefined;
 		const texts = sortedIds([...new Set([plain[0]!, ...reached.filter((kind) => textLeavesOf(kind).includes(plain[0]!))])].flatMap((kind) => typeOf(kind) ?? []));

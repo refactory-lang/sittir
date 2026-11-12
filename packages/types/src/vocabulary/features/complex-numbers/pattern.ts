@@ -13,6 +13,9 @@ export namespace Pattern {
 			| V.Literal.Number.Float.Any<G>
 			| V.Literal.Number.Integer<G>
 			| V.Literal.Number.Integer.Big<G>
+			| V.Literal.Number.Integer.Big.Binary<G>
+			| V.Literal.Number.Integer.Big.Hex<G>
+			| V.Literal.Number.Integer.Big.Octal<G>
 			| V.Literal.Number.Integer.Binary<G>
 			| V.Literal.Number.Integer.Hex<G>
 			| V.Literal.Number.Integer.Imaginary<G>
@@ -26,6 +29,9 @@ export namespace Pattern {
 			| V.Literal.Number.Float.Any<G>
 			| V.Literal.Number.Integer<G>
 			| V.Literal.Number.Integer.Big<G>
+			| V.Literal.Number.Integer.Big.Binary<G>
+			| V.Literal.Number.Integer.Big.Hex<G>
+			| V.Literal.Number.Integer.Big.Octal<G>
 			| V.Literal.Number.Integer.Binary<G>
 			| V.Literal.Number.Integer.Hex<G>
 			| V.Literal.Number.Integer.Imaginary<G>

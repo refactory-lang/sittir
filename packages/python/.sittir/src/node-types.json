@@ -226,6 +226,20 @@
     ]
   },
   {
+    "type": "integer_binary",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "integer_binary_long",
+        "named": true
+      },
+      {
+        "type": "integer_binary_plain",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "integer_decimal",
     "named": true,
     "subtypes": [
@@ -239,6 +253,34 @@
       },
       {
         "type": "integer_decimal_plain",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "integer_hex",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "integer_hex_long",
+        "named": true
+      },
+      {
+        "type": "integer_hex_plain",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "integer_octal",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "integer_octal_long",
+        "named": true
+      },
+      {
+        "type": "integer_octal_plain",
         "named": true
       }
     ]
@@ -5429,7 +5471,11 @@
     "named": true
   },
   {
-    "type": "integer_binary",
+    "type": "integer_binary_long",
+    "named": true
+  },
+  {
+    "type": "integer_binary_plain",
     "named": true
   },
   {
@@ -5445,11 +5491,19 @@
     "named": true
   },
   {
-    "type": "integer_hex",
+    "type": "integer_hex_long",
     "named": true
   },
   {
-    "type": "integer_octal",
+    "type": "integer_hex_plain",
+    "named": true
+  },
+  {
+    "type": "integer_octal_long",
+    "named": true
+  },
+  {
+    "type": "integer_octal_plain",
     "named": true
   },
   {

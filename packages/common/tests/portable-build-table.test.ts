@@ -337,10 +337,9 @@ describe('the portable build table', () => {
 
 	const expectedDiagnostics: Readonly<Record<keyof typeof languages, readonly string[]>> = {
 		python: [
-			'portable-integer-partial literal.number.integer.binary',
-			'portable-integer-partial literal.number.integer.hex',
-			'portable-integer-partial literal.number.integer.octal',
-			'portable-value-unshaped literal.number.integer.big',
+			'portable-integer-partial literal.number.integer.big.binary',
+			'portable-integer-partial literal.number.integer.big.hex',
+			'portable-integer-partial literal.number.integer.big.octal',
 			'portable-value-unshaped literal.number.integer.imaginary'
 		],
 		rust: ['portable-integer-partial literal.number.integer.binary', 'portable-integer-partial literal.number.integer.hex', 'portable-integer-partial literal.number.integer.octal'],
