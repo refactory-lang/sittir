@@ -281,6 +281,8 @@ it('rejects a path that is not a regular file without blocking') // a directory,
 
 ### Task 6: Query plans by handle, and walks in numbers
 
+**Parked.** The one-query-evaluator spec (`2026-10-08-one-query-evaluator.md`) deletes the native evaluator this task builds on and rules out an interim plan cache. This task waits until that work is scheduled, and is then either cut to walks in numbers or reconciled with that spec. Nothing else in this plan needs it; Task 7's guard lists these two crossings as remaining until then.
+
 **Files:**
 - Modify: `napi_engine.rs` (`descendants`, `plan_holds`, a new `compile_plan`, and `dispose`; `address_from_json` goes)
 - Modify: `rust/crates/sittir-core/src/engine.rs`. `Engine` owns the compiled plans behind `EngineCell`'s existing borrow, with no new counted name.
