@@ -482,13 +482,32 @@ export class BuiltArena {
 		this.#undosCount = from;
 	}
 
-	commit(): CommitScope {
-		if (this.#scopes > 0) throw new Error('engine.scope() called while a build is running: open the scope before the build');
+	attempt<T>(build: () => T): T {
+		if (this.#scopes > 0) return build();
+		const mark = this.#open();
+		let built: T;
+		try {
+			built = build();
+		} catch (error) {
+			this.#close(mark, false);
+			throw error;
+		}
+		this.#close(mark, true);
+		return built;
+	}
+
+	#open(): CommitMark {
 		const mark: CommitMark = { id: ++this.#commitCount, minted: this.#mintedCount, parked: this.#parked.length, kept: new Set(), closed: false };
 		this.#commits.push(mark);
+		return mark;
+	}
+
+	commit(): CommitScope {
+		if (this.#scopes > 0) throw new Error('engine.scope() called while a build is running: open the scope before the build');
+		const mark = this.#open();
 		return {
 			keep: <N extends object>(node: N): N => this.#keep(mark, node),
-			[Symbol.dispose]: () => this.#close(mark)
+			[Symbol.dispose]: () => this.#close(mark, false)
 		};
 	}
 
@@ -522,7 +541,7 @@ export class BuiltArena {
 		return (counts[index]! & this.format.countOwned) !== 0 && (counts[index]! & this.format.countSaturated) !== 0;
 	}
 
-	#close(mark: CommitMark): void {
+	#close(mark: CommitMark, keepAll: boolean): void {
 		if (mark.closed) return;
 		if (!isLive(this.#handle.current)) {
 			for (const open of this.#commits) open.closed = true;
@@ -534,6 +553,12 @@ export class BuiltArena {
 		if (this.#scopes > 0) throw new Error(`commit scope ${mark.id} closed while a build is running`);
 		this.#commits.pop();
 		mark.closed = true;
+		if (keepAll) {
+			if (this.#commits.length > 0) return;
+			this.#forgetMinted(mark.minted);
+			this.#parked.length = mark.parked;
+			return;
+		}
 		const keptAt: number[] = [];
 		const keptWords: WritableWords[] = [];
 		for (let n = mark.minted; n < this.#mintedCount; n++) {

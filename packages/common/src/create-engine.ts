@@ -116,8 +116,8 @@ function refuseWrite(): never {
 
 type BuildCall = Parameters<NonNullable<Interceptor<LanguageAPI>['build']>>[0];
 
-function inBuildScope<T>(handle: EngineHandle, run: () => T): T {
-	return handle.builtArena === undefined ? run() : handle.builtArena.scope(run);
+function attempting<T>(handle: EngineHandle, run: () => T): T {
+	return handle.builtArena === undefined ? run() : handle.builtArena.attempt(run);
 }
 
 function scopedBuild<B, Node>(
@@ -153,7 +153,7 @@ function scopedBuild<B, Node>(
 					if (typeof value !== 'function') throw new TypeError('builder is not callable');
 					const run = (): Node => Reflect.apply(value, self, args);
 					const built = (): Node => handle.settle(intercept === undefined ? run() : intercept({ path, args }, run));
-					return inBuildScope(handle, built);
+					return handle.builtArena === undefined ? built() : handle.builtArena.scope(built);
 				}),
 			set: refuseWrite,
 			defineProperty: refuseWrite,
@@ -401,11 +401,11 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		},
 		render(node: RenderArgument<API, M>, renderOptions?: API['options']) {
 			if (typeof node !== 'function') return renderInput(node, renderOptions);
-			const built = inBuildScope(handle, () => node(build));
+			const built = attempting(handle, () => node(build));
 			return releasing(renderInput(built, renderOptions), () => engine.release(built), writeText);
 		},
 		create(path, fn) {
-			const root = inBuildScope(handle, () => fn(build));
+			const root = attempting(handle, () => fn(build));
 			return pendingWrite(path, 'create', root, () => engine.release(root));
 		},
 		write(path, root) {
