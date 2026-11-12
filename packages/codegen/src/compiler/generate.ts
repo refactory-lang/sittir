@@ -16,6 +16,7 @@ import { grammarInput } from '../bindings/input.ts';
 import { emitPortable } from '../emitters/overlays/portable/index.ts';
 import type { PortableTypedOutput } from '../emitters/overlays/portable/typed.ts';
 import { emitApi, emitRenderEngine, spelledTriviaBuilders } from '../emitters/engine.ts';
+import { rootKindIds } from '../emitters/wrap.ts';
 import { emitBackend } from '../emitters/grammar-runtime.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
@@ -196,6 +197,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 				grammar: cfg.grammar,
 				rootTypeName,
 				rootTreeTypeName,
+				rootKinds: rootKindIds(nodeMap),
 				commentCoercer: defaultTriviaForm(nodeMap)?.coercer,
 				spelledTrivia: spelledTriviaBuilders(nodeMap),
 				portable: portable !== undefined

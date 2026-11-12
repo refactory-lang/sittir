@@ -1,4 +1,4 @@
-import { afterAll, describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { chunkOf } from '@sittir/common/engine';
 import { coordinateOf, decodeIndex, isCoordinate, nodeText, recordOf, treeOf } from '@sittir/common/utils';
@@ -17,6 +17,10 @@ import {
 	type TypedNode,
 	disposeNativeEngines
 } from '../src/validate/common.ts';
+import { releaseTrackedEngines } from './helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('./helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 afterAll(disposeNativeEngines);
 

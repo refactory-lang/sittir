@@ -180,12 +180,6 @@ describe('engine middleware', () => {
 		expect(() => rendered.toString()).toThrow('rendered text disposed');
 	});
 
-	it('retains the file-verb refusal while file hooks are reserved', async () => {
-		const hook = vi.fn(async (_change, next: () => Promise<void>) => next());
-		const engine = await engineOf({ intercept: [{ file: hook }] });
-		expect(() => engine.write('out.rs', engine.parse(''))).toThrow('not implemented');
-		expect(hook).not.toHaveBeenCalled();
-	});
 
 	it('reports the actual access path when two builders share a function', async () => {
 		type LooseTable = RustAPI['build']['default'];

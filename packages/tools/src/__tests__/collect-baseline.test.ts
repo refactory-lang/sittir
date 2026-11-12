@@ -75,7 +75,8 @@ describe('collect-baseline', () => {
 		expect(result.backend).toBe('native');
 	});
 
-	afterEach(() => {
+	afterEach(async () => {
+		await (await import('../validate/common.ts')).disposeNativeEngines();
 		vi.restoreAllMocks();
 		vi.resetModules();
 		delete process.env.SITTIR_BACKEND;

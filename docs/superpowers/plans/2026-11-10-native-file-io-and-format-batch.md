@@ -266,7 +266,10 @@ it('rejects an unreadable path, naming it')       // rejects /missing\.rs/
 it('rejects a file that is not UTF-8, naming it') // with no interceptor, and with a parse interceptor: both reject /not valid UTF-8/ and name p
 it('gives a parse interceptor the source')        // intercept: [{ parse(call, next) { seen = call.source; return next(); } }]; seen === text
 it("a read that throws holds nothing")            // errors: 'throw' on a source with errors rejects ParseErrors, and the engine's held-parse count is back to its value before
+it('rejects a path that is not a regular file without blocking') // a directory, and on unix a FIFO with no writer: rejects /not a regular file/ and names p, within a timeout, on both routes
 ```
+
+`file_io::read_source` reads with `fs::read` as Task 1 shipped it, so a FIFO blocks it. Before this task exposes it, it refuses a path whose metadata isn't a regular file before opening it, as `write_file` does, with its own Rust test beside `a_path_that_is_not_a_regular_file_is_refused`.
 
 - [ ] **Step 2:** Run them. Expected: FAIL.
 - [ ] **Step 3: Implement.**

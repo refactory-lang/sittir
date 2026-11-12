@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine, hostTemplateFor, applyHost } from '@sittir/common';
 import { spanOf } from '@sittir/common/utils';
 import { requireGrammarModule } from '../src/grammar-internals.ts';
@@ -6,6 +6,10 @@ import { compileGrammar } from '../../codegen/src/compiler/compile.ts';
 import { grammarPackage } from '@sittir/codegen/grammars';
 import { AbstractAssembledCompound, AssembledPattern, AssembledSupertype } from '../../codegen/src/compiler/model/node-map.ts';
 import { patternDfa, shortestAccepted } from '../../codegen/src/compiler/model/pattern-automaton.ts';
+import { releaseTrackedEngines } from './helpers/track-engines.ts';
+
+vi.mock('@sittir/common', async (importOriginal) => (await import('./helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
+afterAll(releaseTrackedEngines);
 
 const pascal = (kind: string) => kind.replace(/(^|_)([a-z])/g, (_m, _s, c: string) => c.toUpperCase());
 
