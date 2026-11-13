@@ -4,8 +4,8 @@ import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSyn
 import { tmpdir } from 'node:os';
 import { dirname, join, posix, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { bindingGrammars } from '@sittir/codegen/bindings';
-import { bindingIssues } from '../../src/inventory/bindings.ts';
+import { BindingsSyntaxError, bindingGrammars } from '@sittir/codegen/bindings';
+import { bindingIssues, compileQuery } from '../../src/inventory/bindings.ts';
 import {
 	VOCABULARY_DIR,
 	compileBindings,
@@ -44,6 +44,15 @@ describe('bindingIssues', () => {
 			{ line: 3, message: 'unknown node no_such_kind' },
 			{ line: 4, message: 'unknown field no_such_field' }
 		]);
+	}, FULL_PIPELINE_TIMEOUT);
+	it.each([
+		['an extra closing parenthesis after a pattern', '(module) @file\n(identifier) @identifier)\n(string) @string', 2],
+		['an extra closing parenthesis closing the file', '(module) @file\n((identifier) @identifier))', 2],
+		['an extra opening parenthesis', '(module) @file\n(((identifier) @identifier)\n(string) @string', 2]
+	])('reports %s with its line and fails the compile', async (_name, text, line) => {
+		const issues = await bindingIssues('python', text);
+		expect(issues.map((issue) => issue.line)).toContain(line);
+		await expect(compileQuery('python', text)).rejects.toThrow(BindingsSyntaxError);
 	}, FULL_PIPELINE_TIMEOUT);
 	it('reads a minted name as whichever of its source kinds fits where it stands', async () => {
 		expect(await bindingIssues('rust', ['(generic_function function: (qualified_identifier))', '(generic_type type: (qualified_identifier))'].join('\n'))).toEqual([]);

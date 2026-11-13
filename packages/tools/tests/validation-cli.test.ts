@@ -67,14 +67,14 @@ vi.mock('../src/portable/conformance.ts', () => ({
 	portableConformance: vi.fn().mockResolvedValue(undefined)
 }));
 
-// Mock cachedNativeEngineProfile so debug-profile-skip tests can control it
+// Mock cachedNativeEngineProfile so the profile-skip tests can control it
 // independently of the (also mocked) run.ts collectors. Partial mock — other
 // common.ts exports (e.g. adaptNode) are used transitively by index.ts.
 vi.mock('../src/validate/common.ts', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('../src/validate/common.ts')>();
 	return {
 		...actual,
-		cachedNativeEngineProfile: vi.fn().mockReturnValue(undefined)
+		cachedNativeEngineProfile: vi.fn().mockReturnValue('gate')
 	};
 });
 
@@ -256,13 +256,16 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 		logSpy.mockRestore();
 	});
 
-	it('skips appendHistory when the native engine is a debug build', async () => {
-		vi.mocked(cachedNativeEngineProfile).mockReturnValueOnce('debug');
+	it.each([
+		['a dev build', 'dev'],
+		['an unstamped build', undefined]
+	] as const)('skips appendHistory when the native engine is %s', async (build, profile) => {
+		vi.mocked(cachedNativeEngineProfile).mockReturnValueOnce(profile);
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 		await runCountsCli(['rust']);
 		expect(vi.mocked(appendHistory)).not.toHaveBeenCalled();
 		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
-		expect(allOutput).toMatch(/DEBUG build.*skipping validation-history record/);
+		expect(allOutput).toContain(`native engine for rust is ${build} — skipping validation-history record.`);
 		logSpy.mockRestore();
 	});
 });
