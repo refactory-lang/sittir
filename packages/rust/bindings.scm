@@ -292,8 +292,11 @@
 
 ; ── expression ─────────────────────────────────────────────────────────────────
 (call_expression) @expression.call
+(call_expression function: (generic_function function: (_) @function type_arguments: (_) @typeArguments))
 (call_expression function: (field_expression) @function) @expression.call.field
+(call_expression function: (generic_function function: (field_expression))) @expression.call.field
 (call_expression function: (scoped_identifier) @function) @expression.call.scoped
+(call_expression function: (generic_function function: (qualified_identifier))) @expression.call.scoped
 (macro_invocation macro: (_) @function arguments: (delim_token_tree) @arguments) @expression.call.macro
 (binary_expression) @expression.binary
 (binary_expression operator: "+") @expression.binary.arithmetic.add

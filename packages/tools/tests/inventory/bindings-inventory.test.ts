@@ -54,6 +54,16 @@ describe('bindingIssues', () => {
 		expect(issues.map((issue) => issue.line)).toContain(line);
 		await expect(compileQuery('python', text)).rejects.toThrow(BindingsSyntaxError);
 	}, FULL_PIPELINE_TIMEOUT);
+	it('reads a minted name as whichever of its source kinds fits where it stands', async () => {
+		expect(await bindingIssues('rust', ['(generic_function function: (qualified_identifier))', '(generic_type type: (qualified_identifier))'].join('\n'))).toEqual([]);
+	}, FULL_PIPELINE_TIMEOUT);
+	it('reads each minted name by where it stands, however many the pattern holds', async () => {
+		const items = `(source_file ${Array.from({ length: 5 }, () => '(type_item type: (qualified_identifier name: (type_identifier)))').join(' ')})`;
+		expect(await bindingIssues('rust', items)).toEqual([]);
+		const issues = await bindingIssues('rust', `(qualified_identifier ${Array.from({ length: 5 }, () => '(qualified_identifier)').join(' ')} (string_literal))`);
+		expect(issues.map((issue) => issue.line)).toEqual([1]);
+		expect(issues[0]?.message).toMatch(/^Bad pattern structure/);
+	}, FULL_PIPELINE_TIMEOUT);
 });
 
 describe('compileBindings', () => {
@@ -178,8 +188,10 @@ describe('deriveVocabulary', () => {
 		expect(ambient?.get('content')?.kinds.has('statement.block')).toBe(true);
 		expect(levelMembers(d, 'declaration.ambient').get('content')?.optional).toBe(false);
 		expect([...(d.members.get('statement.labeled')?.keys() ?? [])].sort()).toEqual(['body', 'label']);
-		for (const v of ['statement.expression', 'statement.return', 'statement.block', 'statement.if'])
+		for (const v of ['statement.expression', 'statement.return', 'statement.if'])
 			expect(d.members.get(v)?.get('label')?.grammars.has('typescript') ?? false, v).toBe(false);
+		for (const v of ['statement.block', 'statement.loop.counted', 'statement.loop.for_each', 'statement.loop.while', 'statement.loop.do_while'])
+			expect(d.members.get(v)?.get('label')?.grammars.has('typescript') ?? false, v).toBe(true);
 	});
 	it('lifts a capture nested inside a container child onto the claimed kind', () => {
 		const cls = levelMembers(d, 'declaration.class');

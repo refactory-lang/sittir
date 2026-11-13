@@ -7837,14 +7837,34 @@
       ]
     },
     "labeled_statement": {
-      "vocab": "statement.labeled",
       "read": [
         {
           "vocab": "statement.labeled",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "not",
+                "of": {
+                  "op": "is",
+                  "types": [
+                    219,
+                    216,
+                    215,
+                    211,
+                    218
+                  ],
+                  "slots": {
+                    "228": 1
+                  }
+                }
+              }
+            }
+          ]
         }
       ],
       "members": [
@@ -7870,7 +7890,38 @@
             }
           ]
         }
-      ]
+      ],
+      "container": {
+        "slot": "body",
+        "kinds": [
+          "for_statement",
+          "for_in_statement",
+          "while_statement",
+          "do_statement",
+          "statement_block"
+        ],
+        "terminals": [],
+        "list": false,
+        "named": true,
+        "members": [
+          {
+            "name": "label",
+            "slot": {
+              "name": "label",
+              "propertyName": "label",
+              "required": true,
+              "multiple": false,
+              "storage": "verbatim",
+              "kinds": [
+                "statement_identifier"
+              ],
+              "terminals": []
+            },
+            "list": false
+          }
+        ],
+        "refined": true
+      }
     },
     "lexical_declaration": {
       "vocab": "declaration.variable",

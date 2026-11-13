@@ -1816,6 +1816,7 @@ export interface DelimiterFacets {
 	readonly close: string;
 	readonly arms: readonly DelimiterArm[];
 	readonly run?: string;
+	readonly maxRun?: number;
 	readonly closeLead: string;
 	readonly escape?: string;
 }

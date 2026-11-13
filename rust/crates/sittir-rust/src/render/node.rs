@@ -30791,7 +30791,7 @@ fn prepare_raw_string_literal<N: RawStringLiteralPrepare + ?Sized>(node: &mut N,
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.raw_string_literal_start, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.string_content, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.raw_string_literal_end, overlay, ctx)?;
-    ::sittir_core::delimiters::fill(&mut parts.raw_string_literal_start, &mut parts.raw_string_literal_end, overlay, &::sittir_core::delimiters::DelimiterSpec { kind: "raw_string_literal", arms: &[], run: Some('#'), close_lead: "\"", escape: None, id: ::sittir_core::types::KindId(333), free_text: &[], excluded: &[], opened: &[], gate: None, whitespace: &options::WHITESPACE }, ctx, |overlay: &N::Overlay, w: &mut dyn ::sittir_core::render::RenderSink| { ::sittir_core::prepare::RenderSlot::render_slot(&parts.string_content, overlay, ctx, w)?; Ok(()) })?;
+    ::sittir_core::delimiters::fill(&mut parts.raw_string_literal_start, &mut parts.raw_string_literal_end, overlay, &::sittir_core::delimiters::DelimiterSpec { kind: "raw_string_literal", arms: &[], run: Some('#'), max_run: Some(255), close_lead: "\"", escape: None, id: ::sittir_core::types::KindId(333), free_text: &[], excluded: &[], opened: &[], gate: None, whitespace: &options::WHITESPACE }, ctx, |overlay: &N::Overlay, w: &mut dyn ::sittir_core::render::RenderSink| { ::sittir_core::prepare::RenderSlot::render_slot(&parts.string_content, overlay, ctx, w)?; Ok(()) })?;
     Ok(())
 }
 
@@ -41133,7 +41133,7 @@ impl ::sittir_core::render::Render for InnerDocCommentMarkerNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_RAW_STRING_LITERAL_START, interior = "^(?<prefix>br|cr|r)(?<hashes>(?:#*))\"$", words = 8, built_words = 5, fields = RawStringLiteralStartFields, prepare = RawStringLiteralStartPrepare, view = RawStringLiteralStartNodeRecord, prepare_fn = prepare_raw_string_literal_start, facet = hashes)]
+#[node(kind = kind::_RAW_STRING_LITERAL_START, interior = "^(?<prefix>br|cr|r)(?<hashes>(?:#{0,255}))\"$", words = 8, built_words = 5, fields = RawStringLiteralStartFields, prepare = RawStringLiteralStartPrepare, view = RawStringLiteralStartNodeRecord, prepare_fn = prepare_raw_string_literal_start, facet = hashes)]
 pub struct RawStringLiteralStartNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -41230,7 +41230,7 @@ impl ::sittir_core::delimiters::DelimiterToken for RawStringLiteralStartNodeReco
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_RAW_STRING_LITERAL_END, interior = "^\"(?<hashes>(?:#*))$", words = 6, built_words = 4, fields = RawStringLiteralEndFields, prepare = RawStringLiteralEndPrepare, view = RawStringLiteralEndNodeRecord, prepare_fn = prepare_raw_string_literal_end, facet = hashes)]
+#[node(kind = kind::_RAW_STRING_LITERAL_END, interior = "^\"(?<hashes>(?:#{0,255}))$", words = 6, built_words = 4, fields = RawStringLiteralEndFields, prepare = RawStringLiteralEndPrepare, view = RawStringLiteralEndNodeRecord, prepare_fn = prepare_raw_string_literal_end, facet = hashes)]
 pub struct RawStringLiteralEndNode {
     #[wire(key = "$_layout")]
     #[layout]

@@ -3280,21 +3280,15 @@ declare module './expression.ts' {
 			>;
 			readonly typeArguments?: gate.In<
 				G,
-				features.GenericExpressions,
-				genericExpressions.Expression.Call<G, K>['typeArguments']
+				features.GenericSignatures,
+				genericSignatures.Expression.Call<G, K>['typeArguments']
 			>;
 		}
 		namespace Call {
 			interface Construct<
 				G extends GrammarMap,
 				K extends gate.Under<'expression.call.construct'> = 'expression.call.construct'
-			> extends javascriptClasses.Expression.Call.Construct<G, K> {
-				readonly typeArguments?: gate.In<
-					G,
-					features.GenericExpressions,
-					genericExpressions.Expression.Call.Construct<G, K>['typeArguments']
-				>;
-			}
+			> extends javascriptClasses.Expression.Call.Construct<G, K> {}
 			namespace Construct {
 				interface Bare<
 					G extends GrammarMap,
@@ -3313,8 +3307,8 @@ declare module './expression.ts' {
 			> {
 				readonly typeArguments?: gate.In<
 					G,
-					features.GenericExpressions,
-					genericExpressions.Expression.Call.Member<G, K>['typeArguments']
+					features.GenericSignatures,
+					genericSignatures.Expression.Call.Member<G, K>['typeArguments']
 				>;
 			}
 			interface Qualified<

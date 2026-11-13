@@ -2136,6 +2136,86 @@
               "plan": {
                 "op": "is",
                 "types": [
+                  245
+                ],
+                "slots": {
+                  "276": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "276": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  308
+                ],
+                "slots": {
+                  "245": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.call.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  245
+                ],
+                "slots": {
+                  "276": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "276": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  263
+                ],
+                "slots": {
+                  "245": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.call.member",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
                   308
                 ],
                 "slots": {
@@ -2172,6 +2252,9 @@
           "name": "function",
           "route": "slot",
           "slot": "function",
+          "except": [
+            "generic_function"
+          ],
           "path": [
             {
               "owner": "call_expression",
@@ -2198,6 +2281,56 @@
             {
               "owner": "call_expression",
               "slot": "arguments"
+            }
+          ]
+        },
+        {
+          "name": "function",
+          "route": "nested",
+          "via": [
+            {
+              "field": "function",
+              "kind": "generic_function",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "generic_function",
+          "slot": "function",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "call_expression",
+              "slot": "function"
+            },
+            {
+              "owner": "generic_function",
+              "slot": "function"
+            }
+          ]
+        },
+        {
+          "name": "typeArguments",
+          "route": "nested",
+          "via": [
+            {
+              "field": "function",
+              "kind": "generic_function",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "generic_function",
+          "slot": "type_arguments",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "call_expression",
+              "slot": "function"
+            },
+            {
+              "owner": "generic_function",
+              "slot": "type_arguments"
             }
           ]
         }
