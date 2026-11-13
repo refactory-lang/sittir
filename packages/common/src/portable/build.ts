@@ -777,9 +777,10 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 				if (routes.length === 0) throw new Error(`portable build: ${structure.$path}: ${nameOf(arm.kind)} has no member ${name}`);
 				return [name, routes] as const;
 			});
-			const present = (other: string): boolean => structure[other] !== undefined || values.has(other) || (structure.$flags ?? []).includes(other);
+			const silent = (name: string): boolean => arm.owners !== undefined && emptyList(values.get(name)) && !(arm.empty ?? []).includes(name);
+			const present = (other: string): boolean => !silent(other) && (structure[other] !== undefined || values.has(other) || (structure.$flags ?? []).includes(other));
 			const unmet = (route: PortableMemberStep): readonly (readonly string[])[] => (route.requires ?? []).filter((group) => !group.some(present));
-			const owner = ownerFor(arm, values, unmet, structure.$path);
+			const owner = ownerFor(arm, new Map([...values].filter(([name]) => !silent(name))), unmet, structure.$path);
 			const delimitedFlags = new Set<string>();
 			const filledFlags = new Set<string>();
 			for (const [name, all] of [...routed].sort(([, a], [, b]) => a.length - b.length)) {
