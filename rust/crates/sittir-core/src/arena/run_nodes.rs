@@ -22,6 +22,24 @@ pub enum NodeSite {
     Row { holder: Address, entry: u32 },
 }
 
+impl NodeSite {
+    /// The name the node kept here keeps past a call.
+    #[must_use]
+    pub fn name(self) -> crate::types::NodeName {
+        match self {
+            NodeSite::Record(at) => crate::types::NodeName { node: crate::types::NodeId(at.0), row: None },
+            NodeSite::Row { holder, entry } => crate::types::NodeName { node: crate::types::NodeId(holder.0), row: Some(entry) },
+        }
+    }
+
+    /// Where the node `name` names is kept.
+    #[must_use]
+    pub fn named(name: crate::types::NodeName) -> Self {
+        let holder = Address(name.node.0);
+        name.row.map_or(NodeSite::Record(holder), |entry| NodeSite::Row { holder, entry })
+    }
+}
+
 /// A node's parent as a navigation knows it: not looked up yet, none (a
 /// source's root), or the node.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -45,6 +63,7 @@ struct Table {
     ids: HashMap<NodeSite, NodeIndex, crate::heap::IndexState>,
     sides: HashMap<Address, usize, crate::heap::IndexState>,
     read: Vec<SideRecord>,
+    shared: HashMap<Address, Vec<Address>, crate::heap::IndexState>,
     refused: Option<ArenaError>,
 }
 
@@ -82,21 +101,28 @@ fn malformed(what: &'static str, at: Address) -> ArenaError {
 }
 
 impl<'t> RunNodes<'t> {
-    /// Navigation of the source whose root's record is at `root`, its bytes
-    /// indexing `text`, over `table`, which holds that source's nodes alone:
-    /// the root is its first.
+    /// Navigation of the source the record at `record` was read from, its
+    /// bytes indexing `text`, over `table`, which holds that source's nodes
+    /// alone: the source's root, which the parents of `record` lead to, is
+    /// its first.
     ///
     /// # Errors
     ///
-    /// What reading the root's record refuses.
-    pub fn new(arena: &'t dyn ArenaRead, text: &'t str, root: Address, table: &'t RunTable) -> Result<Self, ArenaError> {
+    /// What reading the record or a record above it refuses.
+    pub fn holding(arena: &'t dyn ArenaRead, text: &'t str, record: Address, table: &'t RunTable) -> Result<Self, ArenaError> {
         let nodes = Self { arena, text, table };
-        nodes.answering(|walk| walk.record(root, Parent::Root))?;
+        nodes.answering(|walk| {
+            let mut root = record;
+            while let Some(parent) = walk.side(root)?.parent {
+                root = parent;
+            }
+            walk.record(root, Parent::Root)
+        })?;
         Ok(nodes)
     }
 
     /// Navigation over `table`, which a navigation of the source rooted
-    /// (`new`).
+    /// (`holding`).
     #[must_use]
     pub fn over(arena: &'t dyn ArenaRead, text: &'t str, table: &'t RunTable) -> Self {
         Self { arena, text, table }
@@ -231,10 +257,42 @@ impl Walk<'_> {
     fn node_record(&mut self, mut at: Address) -> Result<Address, ArenaError> {
         loop {
             let Some(parent) = self.side(at)?.parent else { return Ok(at) };
-            if !self.side(parent)?.run.contains(&RunEntry::Record { at, shared: true }) {
+            if !self.shares(parent, at)? {
                 return Ok(at);
             }
             at = parent;
+        }
+    }
+
+    /// Whether the record at `content` is a content the record at `holder`
+    /// reads from its own node: the contents its run marks shared, found
+    /// once.
+    fn shares(&mut self, holder: Address, content: Address) -> Result<bool, ArenaError> {
+        if !self.table.shared.contains_key(&holder) {
+            let contents = self
+                .side(holder)?
+                .run
+                .iter()
+                .filter_map(|entry| match *entry {
+                    RunEntry::Record { at, shared: true } => Some(at),
+                    _ => None,
+                })
+                .collect();
+            self.table.shared.insert(holder, contents);
+        }
+        Ok(self.table.shared.get(&holder).is_some_and(|contents| contents.contains(&content)))
+    }
+
+    /// Whether the node whose record is at `at` has no children: its run
+    /// holds none, nor does a content it shares its node with.
+    fn childless(&mut self, at: Address) -> Result<bool, ArenaError> {
+        let mut entry = 0;
+        loop {
+            match self.side(at)?.run.get(entry).copied() {
+                None => return Ok(true),
+                Some(RunEntry::Record { at: content, shared: true }) if self.childless(content)? => entry += 1,
+                Some(_) => return Ok(false),
+            }
         }
     }
 
@@ -258,7 +316,7 @@ impl Walk<'_> {
         let side = self.side(at)?;
         let facts = side.node.ok_or(malformed("parsed record facts", at))?;
         let span = side.at.ok_or(malformed("parsed record row", at))?.span;
-        let childless = self.entries(at)?.is_empty();
+        let childless = self.childless(at)?;
         Ok(self.meet(NodeSite::Record(at), facts, span, childless, parent))
     }
 

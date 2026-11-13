@@ -320,7 +320,7 @@ impl RecordKey {
     /// The record's side record; the default for a parsed leaf.
     fn side<T>(&self, prep: &RecordPrep<'_, T>) -> Result<super::SideRecord, ArenaError> {
         if self.side_at == Address::NONE { return Ok(super::SideRecord::default()) }
-        super::SideRecord::read(prep.view(self.tree)?.arena(), self.side_at)
+        prep.view(self.tree)?.side(self.side_at)
     }
 }
 

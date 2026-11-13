@@ -370,6 +370,11 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		}) as Engine<API, M>['isEmptyNode'],
 		parse(source, parseOptions) {
 			const run = (): API['root'] => {
+				if (handle.builtArena !== undefined) {
+					const parsed = handle.builtArena.parse(source) as API['root'];
+					if (parseOptions?.errors === 'throw' && parsed.$errors.length > 0) throw new ParseErrors(parsed.$errors);
+					return parsed;
+				}
 				const { root, tree } = readAndBind(source, parseOptions);
 				if (parseOptions?.errors === 'throw' && root.$errors.length > 0) throw new ParseErrors(root.$errors);
 				return wrapRegistered(root, tree, hooks.wrap);

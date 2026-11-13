@@ -220,6 +220,48 @@ id_newtype! {
     NodeId(u32)
 }
 
+/// A node's name past a call, where its records outlive its tree: its own
+/// record `node`, or, with a `row`, the entry `row` of the run of the record
+/// `node`, for a node kept as a row with no record of its own. On the wire,
+/// `{ $node, $row? }`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+pub struct NodeName {
+    #[serde(rename = "$node")]
+    pub node: NodeId,
+    #[serde(rename = "$row", default, skip_serializing_if = "Option::is_none")]
+    pub row: Option<u32>,
+}
+
+impl NodeName {
+    /// The rows a record's run holds at most, for a name to have a key.
+    const RUN_ROWS: u32 = 1 << 19;
+
+    /// The name as one number, which JavaScript keys a node by: a record's
+    /// address, or, for a row, a negative number its record's address and
+    /// the row make; none for a row past what a key holds.
+    #[must_use]
+    pub fn key(self) -> Option<f64> {
+        match self.row {
+            None => Some(f64::from(self.node.0)),
+            Some(row) if row < Self::RUN_ROWS => Some(-(f64::from(self.node.0) * f64::from(Self::RUN_ROWS) + f64::from(row) + 1.0)),
+            Some(_) => None,
+        }
+    }
+
+    /// The name `key` spells (`key`); none for a number that is no key.
+    #[must_use]
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss, reason = "each value is checked whole and in range before it is narrowed")]
+    pub fn from_key(key: f64) -> Option<Self> {
+        let whole = |value: f64| (value.fract() == 0.0 && (0.0..=f64::from(u32::MAX)).contains(&value)).then_some(value as u32);
+        if key >= 0.0 {
+            return whole(key).map(|node| Self { node: NodeId(node), row: None });
+        }
+        let rest = -key - 1.0;
+        let rows = f64::from(Self::RUN_ROWS);
+        Some(Self { node: NodeId(whole((rest / rows).floor())?), row: Some(whole(rest % rows)?) })
+    }
+}
+
 id_newtype! {
     /// A node of a tree: its position in the tree's preorder, the
     /// `TreeCursor::descendant_index` of the node from the root.

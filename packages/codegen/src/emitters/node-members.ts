@@ -154,8 +154,8 @@ export function nodeMemberParts(spec: NodeMemberSpec): NodeMemberParts {
 		...(spec.trivia === undefined ? [] : ['    $trivia: undefined as unknown as object,']),
 		...(spec.parsed
 			? [
-					'    $query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,',
-					'    $snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,'
+					'    $query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,',
+					'    $snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,'
 				]
 			: []),
 		'    $engine: handle && (() => handle.current),',

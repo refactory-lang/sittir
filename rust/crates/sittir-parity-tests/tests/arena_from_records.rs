@@ -161,7 +161,7 @@ impl<G: RecordGrammar, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode 
             }
         };
         let built = engine.written().built();
-        engine.render_at(&built, at, ChangedEdges::default(), &(self.options)(), false).expect("a record render")
+        engine.render_at(&built, at, ChangedEdges::default(), &(self.options)(), false, |_| Ok(())).expect("a record render")
     }
 
     /// The rebuilt root's record rendered (`rebuilt_root`), and the rebuilt

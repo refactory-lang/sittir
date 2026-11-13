@@ -468,6 +468,23 @@ export declare function read(treeId: TreeId, index: NodeIndex, depth?: number | 
 export declare function readCell(treeId: TreeId, holder: number, word: number, item: number, depth?: number | undefined | null): number
 
 /**
+ * r" `descendants` for a node a read left records of in the built
+ * r" arena: `from` names it past the call (JSON, see
+ * r" `query::NamedAddress`), and the batch names each node it
+ * r" finds and its start the same way (`query::NamedBatch`), as
+ * r" JSON `{ items, resume, origin }`. Refuses an engine already
+ * r" disposed, a name no read's record holds, and a plan whose
+ * r" pattern the native matcher cannot compile.
+ */
+export declare function readDescendants(engine: object, from: string, kinds: Array<import('../src/types.ts').TSKindId> | undefined | null, resume: Array<ChildPosition> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
+
+/** r" `editedWithin` for the node a read left that the key `node` names. */
+export declare function readEditedWithin(engine: object, node: number, ownSides: boolean): boolean
+
+/** r" `isEmpty` for the node a read left that the key `node` names. */
+export declare function readIsEmpty(engine: object, node: number): boolean
+
+/**
  * r" The node at `index` of the live tree `treeId` that has no
  * r" record, read from its holder's cell or its row
  * r" (`ParsedTree::read_leaf`): `[kind, start, end]` for a leaf,
@@ -487,6 +504,15 @@ export declare function readLeaf(treeId: TreeId, index: NodeIndex): Array<number
  * r" refuses, and any other wire.
  */
 export declare function readMany(treeId: TreeId, indexes: Array<NodeIndex>, depth: number | undefined | null, wire: string): Array<object> | Uint32Array
+
+/**
+ * r" `planHolds` for nodes a read left records of in the built
+ * r" arena: `addresses` (a JSON array of `query::NamedAddress`,
+ * r" all of one source) names each past the call. Refuses an
+ * r" engine already disposed, a name no read's record holds, and
+ * r" a plan whose pattern the native matcher cannot compile.
+ */
+export declare function readPlanHolds(engine: object, addresses: string, plan: string): Array<boolean>
 
 /**
  * r" The record wire: a node's record named by its tree and its
@@ -509,13 +535,76 @@ export declare function readRecord(treeId: TreeId, index: NodeIndex, depth?: num
 export declare function readRecordStub(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): Array<number> | null
 
 /**
+ * r" `renderAt` for the node a read left in the built arena that
+ * r" the key `node` names: rendered as a render root whose
+ * r" `leading` and `trailing` edges have no neighbour, under
+ * r" `options` over the layer its source's read inferred over the
+ * r" engine's, from the arena alone; `templates` as `renderAt`.
+ * r" Refuses an engine already disposed, a number that is no key,
+ * r" a name no read's record holds, and a node whose render
+ * r" refuses.
+ */
+export declare function readRenderAt(engine: object, node: number, leading: boolean, trailing: boolean, options?: object | undefined | null, templates?: boolean | undefined | null): string
+
+/** r" `separatorBefore` for the node a read left that the key `node` names. */
+export declare function readSeparatorBefore(engine: object, node: number): import('../src/types.ts').TSKindId | null
+
+/**
+ * r" `siblings` for the nodes reads left that the keys `nodes`
+ * r" name, in order, eight words a node, each from its own source.
+ * r" Refuses an engine already disposed, a number that is no key
+ * r" and a name no read's record holds.
+ */
+export declare function readSiblings(engine: object, nodes: Array<number>): Array<number>
+
+/** r" `slotLayouts` for the node a read left that the key `node` names. */
+export declare function readSlotLayouts(engine: object, node: number): object[]
+
+/** r" `slotSeparator` for the node a read left that the key `node` names. */
+export declare function readSlotSeparator(engine: object, node: number): import('../src/types.ts').TSKindId | null
+
+/**
+ * r" `snapshotLayouts` for the node a read left that the key
+ * r" `node` names, as `[key, layout]` pairs in preorder, each
+ * r" node by its key (`NodeName::key`). Refuses as
+ * r" `with_read_node` and as `snapshotLayouts`.
+ */
+export declare function readSnapshotLayouts(engine: object, node: number, holderByte?: number | undefined | null): [number, object][]
+
+/**
+ * r" The address of the source entry each node a read left that
+ * r" the keys `nodes` name was read from, in order. Refuses an
+ * r" engine already disposed and a number that is no key.
+ */
+export declare function readSources(engine: object, nodes: Array<number>): Array<number>
+
+/**
+ * r" The text bytes `start` to `end` cover in the source the
+ * r" record at `node` of the built arena was read from: one string
+ * r" of that span's characters, so the source itself never
+ * r" crosses. Refuses a record no read wrote, an engine already
+ * r" disposed, and a span that is not one of the source's.
+ */
+export declare function readText(engine: object, node: number, start: number, end: number): string
+
+/**
+ * r" `triviaSide` for the node a read left that the key `node`
+ * r" names. Refuses as `with_read_node`, and any other side.
+ */
+export declare function readTriviaSide(engine: object, node: number, side: string): object[]
+
+/** r" `unitSides` for the node a read left that the key `node` names. */
+export declare function readUnitSides(engine: object, node: number): object[]
+
+/**
  * r" Chunk `chunk` of the built arena, which a read wrote its
  * r" records into: a `Uint32Array` over its native memory, every
- * r" word of it, with no copy. Disposing the engine detaches it.
- * r" Refuses a chunk no read wrote, an engine already disposed,
- * r" and a runtime that does not allow external array buffers.
+ * r" word of it, with no copy; null for a chunk no read wrote.
+ * r" Disposing the engine detaches it. Refuses an engine already
+ * r" disposed and a runtime that does not allow external array
+ * r" buffers.
  */
-export declare function readWords(engine: object, chunk: number): Uint32Array
+export declare function readWords(engine: object, chunk: number): Uint32Array | null
 
 /** r" The flag above a link record's kind field (`arena::cell::flag`). */
 export declare const RECORD_FLAG_LINK: number
@@ -562,22 +651,21 @@ export declare function render(engine: object, node: object, treeId?: number | u
 export declare function renderAt(engine: object, treeId: number, index: number, leading: boolean, trailing: boolean, options?: object | undefined | null, templates?: boolean | undefined | null): string
 
 /**
- * r" The built record at `address` of the built arena `owner`
- * r" holds (`holdBuiltArena`) rendered as a render root whose
- * r" `leading` and `trailing` edges have no neighbour, under
- * r" `options` over the layer of the tree `treeId` names, the
- * r" tree the root was rebuilt from, over this engine's, with
- * r" the sides `owner` holds:
- * r" the engine that built the arena, which its records' side
- * r" writes went to. The arena's chunks are borrowed for this
- * r" call; the records the root reaches are admitted, and the
- * r" parsed trees they link held for the render
- * r" (`Engine::render_built`). Refuses an arena `owner` no
- * r" longer holds, an address naming no record its words admit,
- * r" a linked tree that is not live, and a record whose render
+ * r" The record at `address` of the built arena `owner` holds, a
+ * r" built one or one a read left, rendered as a render root whose
+ * r" `leading` and `trailing` edges have no neighbour, from the
+ * r" arena alone (`Engine::render_at`), with the sides `owner`
+ * r" holds: the engine that built the arena, which its records'
+ * r" side writes went to. Its options are `options` over the layer
+ * r" a source's read inferred over this engine's: the source of
+ * r" the record itself when a read left it, else of the record at
+ * r" `source`, the one the root was rebuilt from; a root of no
+ * r" source takes `options` over the engine's. Its line endings
+ * r" are spelled. Refuses an address naming no record its words
+ * r" admit, a `source` no read wrote, and a record whose render
  * r" refuses.
  */
-export declare function renderBuilt(engine: object, owner: object, address: number, leading: boolean, trailing: boolean, treeId?: number | undefined | null, options?: object | undefined | null): string
+export declare function renderBuilt(engine: object, owner: object, address: number, leading: boolean, trailing: boolean, source?: number | undefined | null, options?: object | undefined | null): string
 
 /**
  * r" The lone built leaf of `kind` whose leaf entry the built
@@ -601,7 +689,7 @@ export declare function renderBuiltLeafToFile(engine: object, owner: object, kin
  * r" `render_built`'s text written to `path` (`save_rendered`),
  * r" answering whether it wrote.
  */
-export declare function renderBuiltToFile(engine: object, owner: object, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, treeId?: number | undefined | null, options?: object | undefined | null): boolean
+export declare function renderBuiltToFile(engine: object, owner: object, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, source?: number | undefined | null, options?: object | undefined | null): boolean
 
 /**
  * r" The record at `address` of the live tree `treeId` rendered, as
@@ -784,6 +872,14 @@ export declare function writeBuiltTriviaSide(engine: object, address: number, si
  * r" kind has no cell for.
  */
 export declare function writeBuiltUnitSides(engine: object, address: number, units: object[]): void
+
+/**
+ * r" Replaces `side` of the node a read left that the key `node`
+ * r" names with `entries`, which its render then writes. Refuses
+ * r" an engine already disposed, a number that is no key, a name
+ * r" whose record names no source, and any other side.
+ */
+export declare function writeReadTriviaSide(engine: object, node: number, side: string, entries: object[]): void
 
 /**
  * `text`, which a render interceptor produced in JavaScript,

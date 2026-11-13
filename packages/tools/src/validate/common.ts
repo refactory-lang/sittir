@@ -926,7 +926,7 @@ export function materializeShallow(
 		if (Array.isArray(value)) return value.map(asCoordinate);
 		if (!hasNumericType(value)) return value;
 		const at = coordinateOf(value);
-		return at !== undefined && at.$treeHandle !== ownRow ? holdingTreeOf(value, at) : materializeValue(value, accessorOf, onAccessorThrow, undefined, token);
+		return at?.$treeHandle !== undefined && at.$treeHandle !== ownRow ? holdingTreeOf(value, at) : materializeValue(value, accessorOf, onAccessorThrow, undefined, token);
 	};
 	return materializeValue(root, accessorOf, onAccessorThrow, asCoordinate, token) as AnyUntypedNode;
 }
@@ -1601,8 +1601,8 @@ function buildWithFactory(
 export function tableSides(source: ReadNodeLike, accessorOf: SlotAccessorOf, build: (read: unknown) => unknown): NodeTrivia | undefined {
 	const entries = (side: TriviaSideName): readonly TriviaEntry[] =>
 		sideOf(source as object, side).flatMap((entry): TriviaEntry[] => {
-			if (!isCoordinate(entry)) return isNode(entry) || typeof entry === 'number' ? [entry] : [];
-			const comment = hydrateTriviaEntry(entry);
+			if (!isCoordinate(entry) && !(isNode(entry) && coordinateOf(entry) !== undefined)) return isNode(entry) || typeof entry === 'number' ? [entry] : [];
+			const comment = isCoordinate(entry) ? hydrateTriviaEntry(entry) : entry;
 			const built = build(materializeHoldingTree(comment, accessorOf));
 			if (!isNode(built)) throw new Error(`ir lane: a comment built to ${JSON.stringify(built)}, not a node`);
 			return [built];

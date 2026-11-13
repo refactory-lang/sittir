@@ -98,7 +98,7 @@ describe.each(GRAMMARS)('line endings on the $name corpus', ({ name, root, multi
 			.map((entry) => toCrlf(entry.source))
 			.find((text) => engines.plain.parse(text).$errors.length === 0);
 		if (source === undefined) throw new Error('no corpus entry');
-		const parsed = engines.plain.parse(source) as unknown as { statements(): readonly never[] };
+		const parsed = engines.crlf.parse(source) as unknown as { statements(): readonly never[] };
 		const built = engines.crlf.build[root]!({
 			statements: [...parsed.statements(), engines.crlf.build['expressionStatement']!(engines.crlf.build['identifier']!('z'))]
 		});

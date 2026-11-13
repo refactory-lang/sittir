@@ -24,6 +24,13 @@ pub trait ArenaRead {
         false
     }
 
+    /// Whether `at` lies in a chunk a read wrote (`read_chunk`): where a
+    /// record a read left is, its own entry or one embedded in its
+    /// holder's.
+    fn read_record(&self, at: Address) -> bool {
+        self.read_chunk(at.chunk())
+    }
+
     /// Whether `at` is where a read wrote an entry of its records
     /// (`read_chunk`).
     fn read_entry(&self, at: Address) -> bool {

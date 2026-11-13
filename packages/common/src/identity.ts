@@ -1,4 +1,4 @@
-import { treeHandleOf } from './node-data.ts';
+import { coordinateIndex, coordinateOf } from './node-data.ts';
 import { decodeIndex, decodeTree, type TreeHandle } from './read.ts';
 import { undoIfFillFails } from './list-fills.ts';
 
@@ -40,9 +40,10 @@ export function register(tree: TreeHandle, index: number, role: Role, wrapper: o
  * registered.
  */
 export function wrapRegistered<T>(value: object, tree: TreeHandle, wrap: (value: object, tree: TreeHandle) => T, role: Role = 'node'): T {
-	const handle = treeHandleOf(value);
-	if (handle === undefined || decodeTree(handle) !== tree.id) return wrap(value, tree);
-	const index = decodeIndex(handle);
+	const at = coordinateOf(value);
+	const named = at !== undefined && '$node' in at;
+	if (at === undefined || (named ? tree.built === undefined : decodeTree(at.$treeHandle) !== tree.id)) return wrap(value, tree);
+	const index = coordinateIndex(at);
 	const known = registered(tree, index, role);
 	if (known !== undefined) return known as T;
 	const wrapper = wrap(value, tree);

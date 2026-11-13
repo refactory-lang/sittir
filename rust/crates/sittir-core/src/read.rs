@@ -194,9 +194,9 @@ pub struct ReadCtx<'s> {
 /// The names the nodes of a read keep past a call, where its records
 /// outlive its tree.
 pub trait NodeNames {
-    /// The name of the node the call knows by `index`; none for a node with
-    /// no record.
-    fn name(&self, index: NodeIndex) -> Option<crate::types::NodeId>;
+    /// The name of the node the call knows by `index`; none for an index
+    /// the call gave no node.
+    fn name(&self, index: NodeIndex) -> Option<crate::types::NodeName>;
 }
 
 impl std::fmt::Debug for ReadCtx<'_> {

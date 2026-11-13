@@ -17,7 +17,8 @@ import type {
 import { inTreeEngine } from './engine-scope.ts';
 import type { TreeHandle } from './read.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
-import { hydrateWith, nodeAddressOf, type NodeAddress } from './utils.ts';
+import { handleArenaOf } from './built-ref.ts';
+import { coordinateAddress, hydrateWith, nodeAddressOf, type NodeAddress } from './utils.ts';
 import { refuse, slotItems } from './query-holds.ts';
 import { portablePathOf, readsAs } from './portable/classify.ts';
 import { kindOf, type KindTest } from './language.ts';
@@ -34,7 +35,7 @@ export interface DescendantWalk {
 export interface DescendantBatch {
 	readonly items: readonly (NodeCoordinate | number)[];
 	readonly resume: readonly number[] | null;
-	readonly origin: number;
+	readonly origin: NodeAddress;
 }
 
 export interface TreeQuery {
@@ -59,9 +60,9 @@ const NO_TREE =
 	'query: this node holds no parsed tree (a built node, a $with draft, or a copy that lost its tree); $commit() it, then $query()';
 
 export function queryFacet(node: object, hooks: QueryHooks): object {
-	const tree = treeOf(node);
+	const tree = treeOf(node) ?? handleArenaOf(node)?.tree;
 	const from = nodeAddressOf(node as AnyUntypedNode);
-	if (treeTokenOf(node) === undefined || tree?.query === undefined || from === undefined) throw new Error(NO_TREE);
+	if (tree?.query === undefined || from === undefined) throw new Error(NO_TREE);
 	const kind = (node as AnyUntypedNode).$type;
 	const context: Context = { tree, query: tree.query, hooks };
 	return new Proxy<Facet>({ node, kind: typeof kind === 'number' ? kind : -1, from, context }, FACET);
@@ -388,7 +389,7 @@ function* batches(
 		});
 		yield batch.items.map((item) => (typeof item === 'number' ? entryOfItem(item) : entryOfCoordinate(item, tree, hooks)));
 		if (batch.resume === null) return;
-		from = { handle: batch.origin };
+		from = batch.origin;
 		resume = batch.resume;
 	}
 }
@@ -458,7 +459,7 @@ function entryOfItem(item: unknown): Entry {
 function entryOfCoordinate(coordinate: NodeCoordinate, tree: TreeHandle, hooks: QueryHooks): Entry {
 	return {
 		kind: coordinate.$type,
-		address: { handle: coordinate.$treeHandle },
+		address: coordinateAddress(coordinate),
 		hydrate: () => inTreeEngine(tree, () => hydrateWith(coordinate, tree, hooks.wrap))
 	};
 }

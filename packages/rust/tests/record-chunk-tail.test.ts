@@ -1,7 +1,6 @@
 // A parsed tree's chunk crosses once, as its native memory: a later read's
 // records, and the cells it rewrites to name them, appear in the same array.
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createEngine } from '@sittir/common';
+import { describe, expect, it } from 'vitest';
 import { nativeEngineOf } from '@sittir/common/engine';
 import { getActiveBackend } from '../src/backend.js';
 
@@ -32,48 +31,5 @@ describe("a parsed tree's chunk", () => {
 		status.disposeTree(treeId);
 		expect(chunk.length).toBe(0);
 		native.dispose();
-	});
-});
-
-describe('an arena tree read deeper', () => {
-	afterEach(() => {
-		vi.doUnmock('../src/backend.js');
-		vi.resetModules();
-	});
-
-	it('asks for each chunk once', async () => {
-		const requests: number[] = [];
-		vi.doMock('../src/backend.js', async (importOriginal) => {
-			const real = await importOriginal<typeof import('../src/backend.js')>();
-			const status = real.getActiveBackend();
-			if (status.name !== 'native') return real;
-			const { chunk } = status.native;
-			if (chunk === undefined) return real;
-			const counted = {
-				...status,
-				native: {
-					...status.native,
-					chunk: (treeId: number, n: number) => {
-						requests.push(n);
-						return chunk(treeId, n);
-					}
-				}
-			};
-			return { ...real, getActiveBackend: () => counted };
-		});
-		const rust = (await import('../src/index.ts')).default;
-		const rs = await createEngine(rust);
-		const root = rs.parse(SOURCE);
-		const rendered: string[] = [];
-		for (const statement of root.statements()) {
-			if (!rs.is.functionItem(statement)) throw new Error('not a function item');
-			const body = statement.body();
-			rendered.push(rs.render(statement.name()).toString(), rs.render(statement.parameters()).toString());
-			for (const inner of body.statements()) rendered.push(rs.render(inner).toString());
-		}
-		expect(rendered).toEqual(['f', '(a: u8)', 'let b = a + 1;', 'g', '(c: &str)', 'println!("{}", c);']);
-		expect(requests.length).toBeGreaterThan(0);
-		expect(new Set(requests).size).toBe(requests.length);
-		rs.dispose();
 	});
 });

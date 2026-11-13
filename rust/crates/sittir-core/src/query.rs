@@ -70,6 +70,54 @@ impl Address {
     }
 }
 
+/// A node as a query names it where its records outlive its tree: by its
+/// own name, or by a parent's name and a child's position under it.
+#[derive(serde::Deserialize, Clone, Copy, Debug)]
+#[serde(untagged)]
+pub enum NamedAddress {
+    Own(crate::types::NodeName),
+    Child { parent: crate::types::NodeName, index: crate::types::ChildPosition },
+}
+
+impl NamedAddress {
+    /// The name the address holds: the node's own, or its parent's.
+    #[must_use]
+    pub fn name(&self) -> crate::types::NodeName {
+        match *self {
+            NamedAddress::Own(name) | NamedAddress::Child { parent: name, .. } => name,
+        }
+    }
+}
+
+/// A `DescendantBatch` whose nodes are named past the call: each item's
+/// coordinate and the walk's start by name (`NodeName`).
+#[derive(serde::Serialize)]
+pub struct NamedBatch {
+    pub items: Vec<NamedItem>,
+    pub resume: Option<Vec<crate::types::ChildPosition>>,
+    pub origin: crate::types::NodeName,
+}
+
+/// A `QueryItem` whose node is named past the call.
+#[derive(serde::Serialize, Debug, Clone, Copy, PartialEq, Eq)]
+#[serde(untagged)]
+pub enum NamedItem {
+    Node(NamedCoordinate),
+    Unit(crate::types::KindId),
+}
+
+/// A node a walk found, as it crosses where its records outlive its tree:
+/// `{ $node, $row?, $span, $type }`.
+#[derive(serde::Serialize, Debug, Clone, Copy, PartialEq, Eq)]
+pub struct NamedCoordinate {
+    #[serde(flatten)]
+    pub name: crate::types::NodeName,
+    #[serde(rename = "$span")]
+    pub span: Span,
+    #[serde(rename = "$type")]
+    pub kind: crate::types::KindId,
+}
+
 /// A slot by its number in each kind that has it, keyed by the kind a
 /// coordinate of the node carries (`ReadCtx::node_kind`). The number is the
 /// slot field's position among the kind's node slots, the numbering

@@ -49,7 +49,7 @@ use crate::types::{KindId, TreeId};
 
 pub use admit::{admit, CellShape, RecordCells, RecordShape};
 pub use borrowed::{ArenaRead, BorrowedArena};
-pub use built::render_record_entry;
+pub use built::{render_entry_at, render_record_entry};
 pub use built_write::{BuiltWriter, ReadWriter};
 pub use cell::{flag, header_of, kind_field, parsed_tag, with_kind, Cell, CellWord, ListCell, LINK_WORDS};
 pub use hydrate::{hydrate_at, hydrate_error, hydrate_whole, parsed_side, row_of as hydrated_row, Draft, Embed, HydrateError, HydrateInto, HydrateNode, HydrateSlot, Hydrated, Hydration, Walk};
@@ -761,15 +761,17 @@ impl BuiltChunks {
         self.chunks.iter().flatten().map(BuiltChunk::byte_len).sum()
     }
 
-    /// The entries the word chunks hold that are not yet released.
+    /// The entries builders wrote into the word chunks that are not yet
+    /// released. A read's entries, which stay until the arena is dropped,
+    /// are not counted.
     #[must_use]
     pub fn live_entries(&self) -> usize {
         self.chunks
             .iter()
             .flatten()
             .map(|chunk| match chunk {
-                BuiltChunk::Words { counts, .. } => counts.live() as usize,
-                BuiltChunk::Bytes { .. } => 0,
+                BuiltChunk::Words { counts, read: false, .. } => counts.live() as usize,
+                BuiltChunk::Words { read: true, .. } | BuiltChunk::Bytes { .. } => 0,
             })
             .sum()
     }

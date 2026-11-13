@@ -106,6 +106,49 @@ impl<'a, T> RecordCtx<'a, T> {
         Ok(Self { arena, tree: Some(tree), runs, arenas, sources, store, prepared, bits })
     }
 
+    /// The side record at `at`, the default for address 0, the node it was
+    /// rebuilt from named as this call does: a node a read left
+    /// (`Sides::named`) by its source as its tree and the id the call gives
+    /// it.
+    ///
+    /// # Errors
+    ///
+    /// What reading the side record refuses, and `ArenaError::Malformed`
+    /// for a name its source's records hold no node of.
+    pub fn side(self, at: Address) -> Result<super::SideRecord, ArenaError> {
+        if at == Address::NONE {
+            return Ok(super::SideRecord::default());
+        }
+        let mut side = super::SideRecord::read(self.arena, at)?;
+        if let Some((from, name)) = side.sides.and_then(|from| Some((from, from.name()?))) {
+            let holder = Address(name.node.0);
+            let tree = TreeId(super::RunNodes::source_of(self.arena, holder)?.0);
+            let index = match name.row {
+                None => self.sources.record_row(tree, holder),
+                Some(entry) => self.sources.cell_row(tree, holder, entry + 2),
+            }
+            .ok_or(malformed("rebuilt-from name", holder.0))?;
+            let end = self.sources.row_coordinate(tree, index).ok_or(malformed("rebuilt-from name", holder.0))?.end;
+            side.sides = Some(Sides { tree, index, end, span: from.span });
+        }
+        Ok(side)
+    }
+
+    /// The cell the built word `word` holds, naming a node a read left with
+    /// no record of its own as this call does: its source as its tree, and
+    /// the id the call gives the row its link names in its holder's run.
+    fn built_cell(self, word: u32) -> Result<Cell, ArenaError> {
+        match Cell::decode_built(CellWord(word), self.arena, self.bits)? {
+            Cell::ReadLeaf { kind, at, holder, row: cell, span, changed } => {
+                let tree = TreeId(super::RunNodes::source_of(self.arena, holder)?.0);
+                let row = self.sources.cell_row(tree, holder, cell).ok_or(malformed("link row", cell))?;
+                let end = self.sources.row_coordinate(tree, row).ok_or(malformed("link row", cell))?.end;
+                Ok(Cell::LinkedLeaf { kind, at, tree, row, end, span, changed })
+            }
+            cell => Ok(cell),
+        }
+    }
+
     /// `cell`, which the record at `holder` holds, naming its node as this
     /// call does: a leaf or a unit of records that outlive their tree by the
     /// id the call gives the node its row names in `holder`'s run.
@@ -152,7 +195,7 @@ impl<'a, T> RecordCtx<'a, T> {
     pub fn child(self, at: Address, link: Option<TreeId>) -> Result<Self, ArenaError> {
         match link {
             Some(tree) => self.linked(tree),
-            None if self.tree.is_none() && self.arena.read_entry(at) => self.linked(TreeId(super::RunNodes::source_of(self.arena, at)?.0)),
+            None if self.tree.is_none() && self.arena.read_record(at) => self.linked(TreeId(super::RunNodes::source_of(self.arena, at)?.0)),
             None => Ok(self),
         }
     }
@@ -179,7 +222,7 @@ impl<'a, T> RecordCtx<'a, T> {
     pub fn slot_cell(self, words: &[u32], at: Address, shape: CellShape) -> Result<Cell, ArenaError> {
         if self.tree.is_none() {
             let word = *words.get(shape.built as usize).ok_or(malformed("cell word", shape.built))?;
-            return Cell::decode_built(CellWord(word), self.arena, self.bits);
+            return self.built_cell(word);
         }
         let cell = words.get(shape.word as usize..(shape.word + shape.width) as usize).ok_or(malformed("cell word", shape.word))?;
         self.named(at, Cell::decode_parsed(cell, at.offset(shape.word).unwrap_or(Address::NONE), shape, self.bits)?)
@@ -200,7 +243,7 @@ impl<'a, T> RecordCtx<'a, T> {
     /// `holder` holds: its run's `item` words.
     pub(super) fn item_cell(self, item: &[u32], holder: Address, shape: CellShape) -> Result<Cell, ArenaError> {
         if self.tree.is_none() {
-            return Cell::decode_built(CellWord(*item.first().ok_or(malformed("cell width", 0))?), self.arena, self.bits);
+            return self.built_cell(*item.first().ok_or(malformed("cell width", 0))?);
         }
         self.named(holder, Cell::decode_parsed(item, Address::NONE, shape, self.bits)?)
     }
@@ -542,8 +585,7 @@ pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) 
     if ctx.tree.is_some_and(|tree| if ctx.runs { !ctx.arena.read_chunk(at.chunk()) } else { ctx.arenas.tree(tree).is_none_or(|arena| !arena.contains_record(at)) }) {
         return Err(malformed("record address", at.0));
     }
-    let side = if words[1] == Address::NONE.0 { super::SideRecord::default() } else { super::SideRecord::read(ctx.arena, Address(words[1]))? };
-    Ok((words, side))
+    Ok((words, ctx.side(Address(words[1]))?))
 }
 
 /// The cells of the parsed record at `at` in `arena`, as its kind's shape,
@@ -630,7 +672,7 @@ pub fn linked_leaf_place<T>(ctx: RecordCtx<'_, T>, record: Address, leaf: Sides,
     let own: PrepPlace = Place::Record(record).into();
     let Some(Site { holder: PrepPlace::Stored(holder @ Place::Record(at)), word, item }) = site else { return Ok(own) };
     let header = ctx.words(at, crate::record::HEADER_WORDS)?;
-    let rebuilt_from = if header[1] == Address::NONE.0 { None } else { super::SideRecord::read(ctx.arena, Address(header[1]))?.sides };
+    let rebuilt_from = ctx.side(Address(header[1]))?.sides;
     Ok(match rebuilt_from {
         Some(from) if from.tree == leaf.tree && from.index == leaf.index => PrepPlace::Content(Site { holder, word, item }),
         _ => own,

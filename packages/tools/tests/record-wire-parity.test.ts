@@ -1,13 +1,13 @@
 import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
-import { chunkOf } from '@sittir/common/engine';
-import { coordinateOf, decodeIndex, isCoordinate, nodeText, recordOf, treeOf } from '@sittir/common/utils';
+import { cellFormatOf, chunkOf } from '@sittir/common/engine';
+import { coordinateOf, isCoordinate, nodeText, recordOf } from '@sittir/common/utils';
 import { stableGrammars } from '@sittir/codegen/grammars';
 import type { NodeCoordinate } from '@sittir/types';
 import regex from '../../regex/src/index.ts';
 import rust from '../../rust/src/index.ts';
 import { languageByName } from '../src/languages.ts';
-import { layoutWorkOf } from '../src/validate/layout-runs.ts';
+import { nativeBackendOf } from '../src/validate/layout-runs.ts';
 import {
 	loadCorpusEntries,
 	loadSlotAccessorOf,
@@ -24,8 +24,7 @@ afterAll(releaseTrackedEngines);
 
 afterAll(disposeNativeEngines);
 
-const placeOf = (at: NodeCoordinate | undefined) =>
-	at && { row: decodeIndex(at.$treeHandle), end: at.$end, span: at.$span, kind: at.$type };
+const placeOf = (at: NodeCoordinate | undefined) => at && { span: at.$span, kind: at.$type };
 
 /** What the public surface says of a read value: each node's kind, text and coordinate, and its slots as the slot readers read them. */
 function surfaceOf(value: unknown, accessorOf: SlotAccessorOf): unknown {
@@ -145,16 +144,16 @@ describe('a read on the arena wire says what the object wire says', () => {
 });
 
 describe('a node a query finds on the arena wire', () => {
-	it('is read from its records with no tree read: a parsed leaf and a number literal with parts', async () => {
+	it('is read from its records with no tree live: a parsed leaf and a number literal with parts', async () => {
 		using arena = await createEngine(rust, { nodeStorage: 'arena' });
-		const work = await layoutWorkOf('rust');
+		const native = await nativeBackendOf('rust');
+		const before = native.liveTreeCount();
 		const root = arena.parse('fn f() { let x = 0x1Fu8; g(x) }\n', { depth: Infinity });
 		const facet = facetOf(root);
-		const before = work(root).treeReads;
 		const found = [...facet.$descendants];
 		expect(found.map(nodeText)).toContain('x');
 		expect(found.map((node) => (node as { readonly $type?: unknown }).$type)).toContain(arena.kinds.IntegerLiteralHex);
-		expect(work(root).treeReads).toBe(before);
+		expect(native.liveTreeCount()).toBe(before);
 		arena.dispose();
 	});
 });
@@ -184,13 +183,13 @@ describe('a query finds only the nodes a read takes', () => {
 	}
 });
 
-describe('an arena view held across a later read', () => {
-	it('reads its own record after a read adds a chunk, as a second view of the record does', async () => {
+describe('an arena view of a parse that fills several chunks', () => {
+	it('reads its own record, in a chunk before the last, as a second view of the record does', async () => {
 		const { arena, accessorOf } = await engines('python');
 		const source = Array.from({ length: 4000 }, (_, n) => `def f${n}(a, b):\n    return a + b * ${n}\n`).join('');
 		const root = arena.parse(source, { depth: 1 }) as unknown as { statements(): readonly object[] };
-		const format = treeOf(root)?.records?.format;
-		if (format === undefined) throw new Error('an arena read names a tree read as records');
+		const format = cellFormatOf(await nativeBackendOf('python'));
+		if (format === undefined) throw new Error('the native addon was built without the arena feature');
 		const held = root.statements()[0]!;
 		const before = surfaceOf(held, accessorOf);
 		const chunks = wrappedNodesOf(root, accessorOf).flatMap((node) => {

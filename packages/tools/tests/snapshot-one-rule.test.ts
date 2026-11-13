@@ -6,7 +6,7 @@ import python from '../../python/src/index.ts';
 import rust from '../../rust/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
 import { languageByName } from '../src/languages.ts';
-import { layoutWorkOf } from '../src/validate/layout-runs.ts';
+import { nativeBackendOf } from '../src/validate/layout-runs.ts';
 import { disposeNativeEngines, loadCorpusEntries } from '../src/validate/common.ts';
 
 afterAll(disposeNativeEngines);
@@ -28,24 +28,21 @@ const kindIn = (root: object, kind: number): Queried => {
 };
 
 describe('a parsed snapshot takes no tree', () => {
-	it.each(['rust', 'typescript', 'python'])('%s: in arena storage, no fixture node snapshot and no record view $query() reads the tree', async (grammar) => {
+	it.each(['rust', 'typescript', 'python'])('%s: in arena storage, every fixture node snapshots and every record view answers $query() with no tree live', async (grammar) => {
 		using engine = await createEngine(await languageByName(grammar), { nodeStorage: 'arena' });
-		const work = await layoutWorkOf(grammar);
-		const reading: { entry: string; snapshots: number; queries: number }[] = [];
+		const native = await nativeBackendOf(grammar);
+		const live = native.liveTreeCount();
+		let viewed = 0;
 		for (const { name, source } of loadCorpusEntries(grammar)) {
 			const root = engine.parse(source, WHOLE) as object;
 			const nodes = [root as Queried, ...descendantsOf(root)];
-			const before = work(root).treeReads;
 			for (const node of nodes) snapshotOf(node);
-			const snapshots = work(root).treeReads - before;
 			const views = nodes.filter((node) => recordOf(node) !== undefined);
-			const beforeQueries = work(root).treeReads;
 			for (const view of views) view.$query?.();
-			const queries = work(root).treeReads - beforeQueries;
-			if (snapshots !== 0 || queries !== 0 || views.length === 0) reading.push({ entry: name, snapshots, queries });
+			viewed += views.length;
+			expect(native.liveTreeCount(), name).toBe(live);
 		}
-		expect(reading.filter(({ snapshots, queries }) => snapshots !== 0 || queries !== 0)).toEqual([]);
-		expect(reading.length).toBeLessThan(loadCorpusEntries(grammar).length);
+		expect(viewed).toBeGreaterThan(0);
 	}, 120_000);
 });
 

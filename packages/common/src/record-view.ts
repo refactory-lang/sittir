@@ -4,9 +4,9 @@ import { blankArmStored } from './blank-arm.ts';
 import { spelledMember } from './spelled.ts';
 import { builtRefOf } from './built-ref.ts';
 import { undoIfFillFails } from './list-fills.ts';
-import { treeOf } from './tree-token.ts';
+import { holdTreeOn, treeOf } from './tree-token.ts';
 import { treeBuiltArena, treeSlotTable, treeStructureTable } from './engine-scope.ts';
-import { decodeBuiltCell } from './built-arena.ts';
+import { decodeBuiltCell, type BuiltArena } from './built-arena.ts';
 import { builderInputs, type BuilderInputs } from './builder-inputs.ts';
 import {
 	decodeListCell,
@@ -14,11 +14,12 @@ import {
 	decodeSideDelimiter,
 	decodeSideRow,
 	decodeSideSeparatorKind,
+	headerKind,
 	sideListSettingOffset,
 	wordOf,
 	type RecordCell
 } from './record-cell.ts';
-import { aliasContentOf, asReadOutput, carryReadTree, coordinateOf, isStorageKey, type ReadOutput } from './node-data.ts';
+import { aliasContentOf, asReadOutput, carryReadTree, coordinateOf, holdReadTree, isStorageKey, type ReadOutput } from './node-data.ts';
 import { isRecordPosition, type RecordHandle, type RecordPosition } from './handle.ts';
 
 export function positionWords(position: RecordPosition): ChunkWords | undefined {
@@ -127,6 +128,26 @@ export function readStub(tree: TreeHandle, [at, kind, row, end, start, spanEnd, 
 	return asReadOutput(positionAt(tree, at!, kind!, rowAt(tree, row!, end!, { start: start!, end: spanEnd! }, rowKind!)));
 }
 
+/** The header kind of the record a read left at `at` of the built arena `tree`, with the span and the coordinate's kind its side record stamps. */
+function readRow(tree: TreeHandle, at: number): { readonly kind: number; readonly span: ByteSpan; readonly stamped: number } {
+	const records = recordsOf(tree);
+	const { words, start } = wordsAt(records, at, 2);
+	const kind = headerKind(words[start]!, records.format.kindBits);
+	const side = words[start + 1]!;
+	if (side === 0) throw new Error(`a read's record of kind ${kind} names no side record, so no span`);
+	const sides = sideWordsAt(records, side);
+	const row = decodeSideRow(sides.words, sides.start, records.format);
+	if (row === undefined) throw new Error(`the side record of a read's record of kind ${kind} holds no span`);
+	if (row.end !== 0) throw new Error(`the side record of a read's record of kind ${kind} names a row of a tree`);
+	return { kind, span: row.span, stamped: row.index };
+}
+
+/** The record a read left at `at` of the built arena `tree` is, as a position: its kind, and its coordinate, which names it by its address. */
+export function readPosition(tree: TreeHandle, at: number): RecordPosition {
+	const { kind, span, stamped } = readRow(tree, at);
+	return positionAt(tree, at, kind, { $node: at, $span: span, $type: stamped } as unknown as NodeCoordinate);
+}
+
 function positionAt(tree: TreeHandle, at: number, kind: number, coordinate: NodeCoordinate): RecordPosition {
 	return { $type: kind, $tree: tree, $at: at, $_layout: { at: coordinate } };
 }
@@ -158,11 +179,12 @@ export function rowOf(node: RecordPosition, wrap: (data: object, tree: TreeHandl
 	return row;
 }
 
-/** The read data of the row a record position names, read as an object (`RecordReader.object`). */
+/** The read data of the row a record position names, read as an object (`RecordReader.object`); for a read's record in the built arena, whose kind has no view, its kind and source text. */
 export function rowData(stub: RecordPosition): unknown {
 	const at = coordinateOf(stub);
 	if (at === undefined) throw new Error('a record view names no row');
 	const kind = stub.$type;
+	if (stub.$tree.built !== undefined) return readLeaf(stub.$tree.built, stub.$at, kind, at.$span, undefined);
 	let row = parsedRecordsOf(stub.$tree).object(decodeIndex(at.$treeHandle), 1);
 	while (row !== null && typeof row === 'object') {
 		if ((row as { readonly $type?: number }).$type === kind) return row;
@@ -194,6 +216,14 @@ export function leafData(tree: TreeHandle, kind: number, span: ByteSpan, row: nu
 	return asReadOutput({ $type: kind, $text: () => text(span), $_layout: { at: coordinateAt(tree, row, span) } });
 }
 
+/** The row `row` of the run of the read's record at `holder`, a node with no record of its own, as read data: its kind, its text, which the arena answers each time it is asked, and its coordinate, which names it by its holder and row. */
+export function readLeaf(arena: BuiltArena, holder: number, kind: number, span: ByteSpan, row: number | undefined): ReadOutput {
+	const at = row === undefined ? { $node: holder, $span: span, $type: readRow(arena.tree, holder).stamped } : { $node: holder, $row: row, $span: span, $type: kind };
+	const leaf = asReadOutput({ $type: kind, $text: () => arena.readText(holder, span), $_layout: { at: at as unknown as NodeCoordinate } });
+	holdReadTree(leaf, arena.token);
+	return leaf;
+}
+
 function cellData(holder: RecordPosition, cell: RecordCell, word: number, item: number): unknown {
 	const tree = holder.$tree;
 	switch (cell.form) {
@@ -202,9 +232,9 @@ function cellData(holder: RecordPosition, cell: RecordCell, word: number, item: 
 		case 'coordinate':
 			return recordStub(tree, parsedRecordsOf(tree).cell(holder.$at, word, item));
 		case 'parsedLeaf':
-			return carryReadTree(holder, leafData(tree, cell.kind, cell.span, cell.row));
+			return tree.built === undefined ? carryReadTree(holder, leafData(tree, cell.kind, cell.span, cell.row)) : readLeaf(tree.built, holder.$at, cell.kind, cell.span, cell.row === 1 ? undefined : cell.row - 2);
 		case 'parsedText':
-			return tree.text?.(cell.span);
+			return tree.built === undefined ? tree.text?.(cell.span) : tree.built.readText(holder.$at, cell.span);
 		case 'child':
 			if (tree.built !== undefined) return cell.link === undefined ? tree.built.node(cell.at) : tree.built.linked(cell.link, cell.at);
 			if (cell.link !== undefined && cell.link !== idOf(tree))
@@ -233,8 +263,13 @@ export function recordPresent(holder: RecordPosition, word: number, width: numbe
 	return slotCell(holder, word, width, forms, inline, built).form !== 'absent';
 }
 
-function slotCell(holder: RecordPosition, word: number, width: number, forms: number, inline: number, built: number): RecordCell {
+function builtLayout(holder: RecordPosition): BuiltArena | undefined {
 	const arena = holder.$tree.built;
+	return arena === undefined || arena.reads(holder.$at) ? undefined : arena;
+}
+
+function slotCell(holder: RecordPosition, word: number, width: number, forms: number, inline: number, built: number): RecordCell {
+	const arena = builtLayout(holder);
 	if (arena !== undefined) {
 		const { words, start } = holderWords(holder, built + 1);
 		return decodeBuiltCell(arena, words[start + built]!);
@@ -245,7 +280,7 @@ function slotCell(holder: RecordPosition, word: number, width: number, forms: nu
 
 /** The list one word of a holder names: the built cell `built` of a built record, else the parsed cell at `word`. */
 function listOf(holder: RecordPosition, word: number, built: number): { readonly records: RecordWords; readonly run: number; readonly len: number } {
-	const arena = holder.$tree.built;
+	const arena = builtLayout(holder);
 	const at = arena === undefined ? word : built;
 	const { words, start, records } = holderWords(holder, at + 1);
 	const runs = arena ?? records;
@@ -263,7 +298,7 @@ export function recordSlots(holder: RecordPosition, word: number, width: number,
 		const value = recordSlot(holder, word, width, forms, inline, built);
 		return value === undefined ? [] : [mapped(value)];
 	}
-	const arena = holder.$tree.built;
+	const arena = builtLayout(holder);
 	const list = listOf(holder, word, built);
 	if (list.len === 0) return [];
 	if (arena !== undefined) {

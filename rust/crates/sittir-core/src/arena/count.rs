@@ -389,6 +389,7 @@ impl BuiltChunks {
             return Ok(());
         }
         match self.chunks.get_mut(at.chunk() as usize) {
+            Some(Some(BuiltChunk::Words { read: true, .. })) => Ok(()),
             Some(Some(BuiltChunk::Words { .. })) => self.drop_count(Held::Record(at), stack),
             Some(Some(BuiltChunk::Bytes { cells, .. })) => {
                 // SAFETY: as `CountTable::bytes`.
@@ -648,6 +649,17 @@ mod tests {
         assert!(!built.arena.released(shared), "the second root still holds the shared leaf, through its cell and its list");
         built.release(second, true).expect("released");
         assert!([second, list, shared].into_iter().all(|at| built.arena.released(at)));
+    }
+
+    #[test]
+    fn releasing_a_root_leaves_a_read_s_record_it_holds_as_it_is() {
+        let mut built = Builder::new();
+        let chunk = built.arena.alloc_read_words(64).expect("a read's chunk");
+        let read = Address::new(chunk, 0).expect("an address");
+        let root = built.place(&[with_kind(PAIR, BITS).expect("a kind"), 0, read.0 << 2, 0], OWNED | 1);
+        built.release(root, true).expect("a read's record takes no release");
+        assert!(built.arena.released(root));
+        assert!(built.arena.read_chunk(chunk), "the read's chunk is still the arena's");
     }
 
     #[test]

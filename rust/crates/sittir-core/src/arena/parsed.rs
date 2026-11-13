@@ -390,7 +390,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
                 Some(root) => {
                     let mut agree = vec![false; rows.len() as usize];
                     let table = super::RunTable::default();
-                    let mut runs = super::RunNodes::new(&whole, self.source(), root, &table).map_err(|refusal| refusal.to_string())?;
+                    let mut runs = super::RunNodes::holding(&whole, self.source(), root, &table).map_err(|refusal| refusal.to_string())?;
                     let mut records = RecordNodes::over(rows, self.source());
                     let kinds = grammar.surface_kinds();
                     let members = crate::trivia_table::DepthMembers::scanned(records.preorder(), kinds);

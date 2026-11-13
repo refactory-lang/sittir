@@ -2,9 +2,10 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { addressOf, cellFormatOf, nativeEngineOf } from '@sittir/common/engine';
-import { snapshotOf, treeHandleOf, treeOf, writeTrivia } from '@sittir/common/utils';
+import { snapshotOf, treeOf, writeTrivia } from '@sittir/common/utils';
 import { sideEntryOf } from '../../common/src/built-arena.ts';
 import { builtRefOf, leafSitesOf } from '../../common/src/built-ref.ts';
+import { coordinateIndex } from '../../common/src/node-data.ts';
 import { getActiveBackend } from '../src/backend.js';
 import rust from '../src/index.ts';
 import { TSKindId } from '../src/kinds.ts';
@@ -226,14 +227,15 @@ describe('a built arena rendered natively', () => {
 			const engine = await recordEngine();
 			const block = (engine.parse('fn f() {\n    ;\n    x();\n}\n').statements()[0] as unknown as { body(): object }).body();
 			const tree = treeOf(block)!;
-			const holderRow = treeHandleOf(block)! % 2 ** 32;
+			const holder = (block as { readonly $at: number }).$at;
+			const row = (n: number): number => coordinateIndex({ $node: holder, $row: n, $span: { start: 0, end: 0 }, $type: 0 } as never);
 			const comments = [1, 2, 3].map(() => engine.build.blockComment(engine.build.blockCommentRegular(' c ')));
 			const unit = comments.findIndex((comment, n) => {
-				tree.writeTriviaSide!(holderRow + n + 1, 'leading', [writtenEntry(comment)]);
-				return (tree.unitSides!(holderRow) as readonly unknown[]).length > 0 || (tree.writeTriviaSide!(holderRow + n + 1, 'leading', []), false);
+				tree.writeTriviaSide!(row(n), 'leading', [writtenEntry(comment)]);
+				return (tree.unitSides!(holder) as readonly unknown[]).length > 0 || (tree.writeTriviaSide!(row(n), 'leading', []), false);
 			});
 			expect(unit).not.toBe(-1);
-			expect((tree.unitSides!(holderRow) as readonly { leading: readonly unknown[] }[])[0]!.leading).toEqual([comments[unit]]);
+			expect((tree.unitSides!(holder) as readonly { leading: readonly unknown[] }[])[0]!.leading).toEqual([comments[unit]]);
 			expect(JSON.stringify(snapshotOf(block))).toContain('" c "');
 		});
 	});
@@ -249,16 +251,4 @@ describe('a built arena rendered natively', () => {
 		});
 		expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({ before: '/* its builder */ x;', after: '/* its builder */ x;' });
 	}, 60_000);
-
-	it('refuses a record that links a parsed tree that is not live, naming the tree', async () => {
-		const records = await rust.createEngine();
-		const parsed = records.parse('fn f() { g(); }').statements()[0] as unknown as { body(): unknown };
-		const b = records.build;
-		const fn = b.functionItem({ name: b.identifier('h'), parameters: b.parameters(), body: parsed.body() as never });
-		const id = treeOf(parsed as object)?.id;
-		if (id === undefined) throw new Error('a parsed tree has an id');
-		addon().disposeTree(id);
-		expect(() => records.render(fn).toString()).toThrow(new RegExp(`names tree ${id}, which is not live`));
-		records.dispose();
-	});
 });

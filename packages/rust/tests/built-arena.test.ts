@@ -21,6 +21,16 @@ const NO_SIDES: SideStore = {
 	leafSide: () => undefined,
 	copySites: () => undefined
 };
+const noRead = (): never => {
+	throw new Error('no read wrote into this arena');
+};
+const NO_READS: Pick<Records, 'read' | 'parse' | 'text' | 'query' | 'reads'> = {
+	read: () => undefined,
+	parse: noRead,
+	text: noRead,
+	query: { descendants: noRead, planHolds: noRead },
+	reads: { snapshotLayouts: noRead, triviaSide: noRead, writeTriviaSide: noRead, unitSides: noRead, slotLayouts: noRead, slotSeparator: noRead, separatorBefore: noRead, editedWithin: noRead, isEmpty: noRead, siblings: noRead, sources: noRead }
+};
 type Views = ConstructorParameters<typeof BuiltArena>[3];
 type WriteLeafSites = ConstructorParameters<typeof BuiltArena>[4];
 const NO_VIEWS: Views = { withs: {}, words: {}, cells: {}, places: {}, leaves: {} };
@@ -40,7 +50,7 @@ function chunksOf() {
 
 const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = NO_VIEWS, leafSites: WriteLeafSites = () => undefined): BuiltArena =>
 	new BuiltArena(
-		{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunksOf(), bump: () => undefined, release: () => [], trivia },
+		{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunksOf(), bump: () => undefined, release: () => [], ...NO_READS, trivia },
 		(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
 		{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 		views,
@@ -154,7 +164,7 @@ describe('a built arena', () => {
 		let next = 0;
 		const words = (length: number) => ({ chunk: 1, data: new Uint32Array(length), meta: new Uint8Array(metaBytes(length)), freed: next++ === 0 ? [] : [1] });
 		const arena = new BuiltArena(
-			{ format: format!, owner: {}, kinds: PLAIN_KINDS, words, bytes: chunksOf().bytes, bump: () => undefined, release: (at: number) => (released.push(at), []), trivia: NO_SIDES },
+			{ format: format!, owner: {}, kinds: PLAIN_KINDS, words, bytes: chunksOf().bytes, bump: () => undefined, release: (at: number) => (released.push(at), []), ...NO_READS, trivia: NO_SIDES },
 			(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
 			{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 			NO_VIEWS,

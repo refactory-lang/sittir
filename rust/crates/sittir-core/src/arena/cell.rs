@@ -95,6 +95,13 @@ pub enum Cell {
     /// is its source's, and the edges whose neighbour this holder changed.
     /// Its sides are its row's.
     LinkedLeaf { kind: KindId, at: Address, tree: TreeId, row: NodeIndex, end: NodeIndex, span: Span, changed: ChangedEdges },
+    /// A node a read left with no record of its own, which a built record
+    /// holds through the link record at `at`: the cell row `row` of the
+    /// read's record at `holder` (1 for the content that shares the record's
+    /// own row, an entry of its run plus 2 otherwise), its byte span, whose
+    /// text is its source's, and the edges whose neighbour this holder
+    /// changed. Its sides are its row's.
+    ReadLeaf { kind: KindId, at: Address, holder: Address, row: u32, span: Span, changed: ChangedEdges },
     /// A captured interior string of a built node: its text in the string table.
     BuiltText { text: StringRef },
 }
@@ -177,7 +184,7 @@ impl Cell {
         match self {
             Cell::Absent => None,
             Cell::ParsedText { .. } | Cell::BuiltText { .. } => Some(KindId::BLANK),
-            Cell::Coordinate { kind, .. } | Cell::ParsedLeaf { kind, .. } | Cell::Child { kind, .. } | Cell::Unit { kind, .. } | Cell::BuiltLeaf { kind, .. } | Cell::LinkedLeaf { kind, .. } => Some(kind),
+            Cell::Coordinate { kind, .. } | Cell::ParsedLeaf { kind, .. } | Cell::Child { kind, .. } | Cell::Unit { kind, .. } | Cell::BuiltLeaf { kind, .. } | Cell::LinkedLeaf { kind, .. } | Cell::ReadLeaf { kind, .. } => Some(kind),
         }
     }
 
@@ -488,9 +495,10 @@ fn linked(arena: &dyn ArenaRead, at: Address, kind: KindId, changed: ChangedEdge
         return Err(malformed("link record side", words[1]));
     }
     let tree = TreeId(words[2]);
-    match words[5] {
-        0 => Ok(Cell::LinkedLeaf { kind, at, tree, row: NodeIndex(words[3]), end: NodeIndex(words[4]), span: span(words[6], words[7])?, changed }),
-        parsed => Ok(Cell::Child { kind, at: record(parsed)?, link: Some(tree), changed }),
+    match (words[5], words[4]) {
+        (0, 0) => Ok(Cell::ReadLeaf { kind, at, holder: record(words[2])?, row: words[3], span: span(words[6], words[7])?, changed }),
+        (0, end) => Ok(Cell::LinkedLeaf { kind, at, tree, row: NodeIndex(words[3]), end: NodeIndex(end), span: span(words[6], words[7])?, changed }),
+        (parsed, _) => Ok(Cell::Child { kind, at: record(parsed)?, link: Some(tree), changed }),
     }
 }
 

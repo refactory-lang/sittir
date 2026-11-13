@@ -155,7 +155,14 @@ pub struct Hydration<'a> {
     /// records outlive their tree: each one's record, the descendant index
     /// its subtree ends at, and its row.
     errors: Vec<(Draft, u32, Row)>,
+    /// How the read stamps a coordinate's kind (`read::stamp`), where the
+    /// records outlive their tree and each keeps its coordinate's.
+    stamp: Option<Stamp>,
 }
+
+/// The two answers `read::stamp` takes of a grammar: whether a display kind
+/// shows, and whether a grammar kind relaxes to a display kind.
+type Stamp = (fn(KindId) -> bool, fn(KindId, KindId) -> bool);
 
 /// What a hydration writes into: the space its records take, and, for a
 /// tree that keeps them, each node's row and the records no cell names by
@@ -311,7 +318,7 @@ impl<'a> Hydration<'a> {
     /// A hydration of `tree`'s rows whose walks hold no extra: `hydrate_at`
     /// makes the one a walk writes records through.
     pub(crate) fn new(tree: &'a mut dyn HydrateInto) -> Self {
-        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new() }
+        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new(), stamp: None }
     }
 
     /// The levels a node of `kind` opens (1), closes (-1) or neither, as
@@ -627,7 +634,14 @@ impl<'a> Hydration<'a> {
                 if let Some(holder) = holder {
                     holder.name(run.index, draft.at, run.depth, run.own);
                 }
-                &SideRecord { parent, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: run.entries, ..side.clone() }
+                let at = match (side.at, run.facts) {
+                    (Some(row), Some(facts)) if self.tree.rows_by_run() => {
+                        let kind = self.stamp.map_or(facts.kind, |(shows, relaxes)| crate::read::stamp(facts.kind, facts.display(), shows, relaxes));
+                        Some(Row::named(kind, row.span))
+                    }
+                    (at, _) => at,
+                };
+                &SideRecord { at, parent, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: run.entries, ..side.clone() }
             }
             None => side,
         };
@@ -892,7 +906,7 @@ pub fn hydrate_error(cursor: &mut TreeCursor<'_>, source: Option<Address>, kinds
 }
 
 fn hydrate_into<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, (source, kinds): (Option<Address>, Option<crate::trivia_table::SurfaceKinds>), into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
-    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, kinds, ..Hydration::new(into) };
+    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, kinds, stamp: Some((ctx.shows, ctx.relaxes)), ..Hydration::new(into) };
     crate::read::goto(cursor, index);
     records.meet(cursor)?;
     ctx.begin_read();

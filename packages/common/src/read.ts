@@ -41,6 +41,8 @@ export interface TreeHandle {
 	/** Whether the node at descendant `index` is empty: no child of it has width. */
 	isEmpty?(index: number): boolean;
 	siblings?(indexes: readonly number[]): readonly number[];
+	/** The source each node at `indexes` was read from, for a handle whose nodes come from more than one parse (`BuiltArena.tree`): two nodes are of one parse when theirs are equal. Absent for a tree, whose nodes are all its own parse's. */
+	sources?(indexes: readonly number[]): readonly number[];
 	/** The tree's records, when its engine reads nodes as records (`nodeStorage: 'arena'`). */
 	records?: RecordReader;
 	/** The built arena whose records this handle's views read, for the handle a built arena reads through (`BuiltArena.tree`). */
@@ -99,7 +101,7 @@ export function decodeTree(handle: number): number {
 
 /** Whether `value` is a coordinate: a node past the read's depth, named by its tree and index. A native node never carries `$treeHandle` itself; its own coordinate is nested in `$_layout.at`. */
 export function isCoordinate(value: unknown): value is NodeCoordinate {
-	return value !== null && typeof value === 'object' && '$treeHandle' in value && '$span' in value;
+	return value !== null && typeof value === 'object' && ('$treeHandle' in value || '$node' in value) && '$span' in value;
 }
 
 /**
@@ -109,6 +111,8 @@ export function isCoordinate(value: unknown): value is NodeCoordinate {
  * @throws when the tree has no native read, or the coordinate names another tree.
  */
 export function readNode(tree: TreeHandle, coordinate: NodeCoordinate, depth?: number): unknown {
+	const named = coordinate as unknown as { readonly $node?: number; readonly $row?: number; readonly $span: NodeCoordinate['$span']; readonly $type: number };
+	if (named.$node !== undefined && tree.built !== undefined) return tree.built.named({ ...named, $node: named.$node });
 	if (tree.read === undefined) throw new Error('readNode: this tree has no native read');
 	const owner = decodeTree(coordinate.$treeHandle);
 	if (owner !== tree.id) throw new Error(`readNode: the coordinate names another tree (${owner}), not this one (${String(tree.id)})`);

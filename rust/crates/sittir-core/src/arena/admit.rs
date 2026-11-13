@@ -140,9 +140,10 @@ pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<R
         SideRecord::read(arena, Address(words[1]))?;
         for_each_built_cell(arena, at, record, bits, |cell| {
             match cell {
-                Cell::Child { at: child, link: None, .. } if arena.read_entry(child) => linked.push(TreeId(super::RunNodes::source_of(arena, child)?.0)),
+                Cell::Child { at: child, link: None, .. } if arena.read_record(child) => linked.push(TreeId(super::RunNodes::source_of(arena, child)?.0)),
                 Cell::Child { kind, at: child, link: None, .. } => pending.push(Step::Enter(child, kind)),
                 Cell::Child { link: Some(tree), .. } | Cell::LinkedLeaf { tree, .. } => linked.push(tree),
+                Cell::ReadLeaf { holder, .. } => linked.push(TreeId(super::RunNodes::source_of(arena, holder)?.0)),
                 Cell::BuiltLeaf { kind, text, .. } => {
                     shape(kind).ok_or(malformed("built leaf kind", u32::from(kind.0)))?;
                     arena.text(text)?;

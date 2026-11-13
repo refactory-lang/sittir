@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, Pending, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
-import { carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
+import { carryRead, carryPlace, coordinateIndex, coordinateOf, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { admitSlot, builtArenaOf as handleBuiltArena, currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle } from './engine-scope.ts';
@@ -14,7 +14,7 @@ import { spelledForm } from './interior.ts';
 import { spelledMember } from './spelled.ts';
 import { snapshotOf } from './snapshot.ts';
 import { cacheOf, chosenSeparatorOf, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
-import { HANDLE, isRecordPosition, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
+import { HANDLE, isParsedPosition, isRecordPosition, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
 import { builtRecordOf, holdSideEntries, isBuiltNode, patchCell, patchFlag, patchList, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
@@ -170,8 +170,8 @@ function releaseBuilt(node: object): void {
 
 export function isEmptyNode(node: AnyUntypedNode): boolean {
 	const tree = treeOf(node);
-	const handle = treeHandleOf(node);
-	if (tree?.isEmpty !== undefined && handle !== undefined) return tree.isEmpty(decodeIndex(handle));
+	const index = indexOf(node);
+	if (tree?.isEmpty !== undefined && index !== undefined) return tree.isEmpty(index);
 	const facts = engineOf(node)?.trivia;
 	return storesNothingIn(node, typeof node.$type === 'number' ? facts?.innerRegions.get(node.$type) : undefined, facts?.namedUnits);
 }
@@ -321,7 +321,9 @@ function sourcedRecord<R extends object>(source: object, built: R, own: boolean)
 	const ref = builtRefOf(built);
 	const from = placeOf(source);
 	const tree = from === undefined ? undefined : treeOfToken(from.token);
-	if (ref?.at === undefined || from === undefined || tree?.id === undefined) return built;
+	if (ref?.at === undefined || from === undefined) return built;
+	if (tree?.built === ref.arena) return ref.arena.rebuiltFromRead(built, from.index, from.span, own) as R;
+	if (tree?.id === undefined) return built;
 	return ref.arena.rebuiltFrom(built, tree as TreeHandle & { readonly id: number }, from.token, decodeIndex(from.treeHandle), from.end, from.span, own) as R;
 }
 
@@ -348,7 +350,7 @@ export function patchesByCopy(source: object): boolean {
 	const handle = currentHandle();
 	if (handle === undefined || handle.verifyStored !== undefined || handle.builtArena === undefined) return false;
 	if (builtRecordOf(source, handle.builtArena) !== undefined) return true;
-	return isRecordPosition(source) && source.$tree.built === undefined && source.$tree.records !== undefined;
+	return isParsedPosition(source) && (source.$tree.records ?? source.$tree.built) !== undefined;
 }
 
 export function setSlot(source: object, kind: number, kindName: string, at: number, accessor: string, value: unknown): object {
@@ -405,14 +407,20 @@ function carrySides(held: object, fresh: object): void {
 }
 
 /** How a query names a read node: the handle its coordinate names it by. */
-export interface NodeAddress {
-	readonly handle: number;
-}
+export type NodeAddress = { readonly handle: number } | { readonly $node: number; readonly $row?: number };
 
 /** The address a query names `node` by; `undefined` for a node no read gave. */
 export function nodeAddressOf(node: AnyUntypedNode): NodeAddress | undefined {
+	const named = coordinateOf(node);
+	if (named !== undefined) return coordinateAddress(named);
 	const handle = sourceHandleOf(node);
 	return handle === undefined ? undefined : { handle };
+}
+
+export function coordinateAddress(coordinate: NodeCoordinate): NodeAddress {
+	const { $node, $row } = coordinate as { readonly $node?: number; readonly $row?: number };
+	if ($node === undefined) return { handle: coordinate.$treeHandle };
+	return $row === undefined ? { $node } : { $node, $row };
 }
 
 /** `node.$trivia.leading(...)` and `.trailing(...)`: set the position and return the node, or read it with no items. */
@@ -833,6 +841,7 @@ export type WrapNode = (data: object, tree: TreeHandle) => unknown;
 export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapNode, depth?: number, role: Role = 'node'): unknown {
 	if (value === null || typeof value !== 'object' || Array.isArray(value)) return value;
 	if (isCoordinate(value)) {
+		if (tree.built !== undefined && '$node' in value) return registered(tree, coordinateIndex(value), role) ?? hydrateWith(tree.built.named(value as never), tree, wrap, undefined, role);
 		const known = decodeTree(value.$treeHandle) === tree.id ? registered(tree, decodeIndex(value.$treeHandle), role) : undefined;
 		return known ?? hydrateWith(readNode(tree, value, depth), tree, wrap, undefined, role);
 	}
@@ -932,7 +941,7 @@ export { admitChildren, admitSlot, builtArenaOf, currentHandle, dispatched, inEn
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toNodeData, toDetachedNodeData, PLAIN_KINDS, coordinateOf, spanOf, sourceTextOf, nodeText, hasNodeText, textOf, sideOf, sidesOf, writtenSides, carryPlace, type NodeDataLayout, type KindView, markEdited, detachCoordinate, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf } from './node-data.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, coordinateOf, indexOf, spanOf, sourceTextOf, nodeText, hasNodeText, textOf, sideOf, sidesOf, writtenSides, carryPlace, type NodeDataLayout, type KindView, markEdited, detachCoordinate, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf } from './node-data.ts';
 export { TREE, holdTreeOn, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { SOURCE, sourceOf } from './source-stamp.ts';
 export { snapshotOf } from './snapshot.ts';

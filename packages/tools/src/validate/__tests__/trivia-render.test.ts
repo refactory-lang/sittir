@@ -10,8 +10,8 @@ import { releaseTrackedEngines } from '../../../tests/helpers/track-engines.ts';
 vi.mock('@sittir/common', async (importOriginal) => (await import('../../../tests/helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
 afterAll(releaseTrackedEngines);
 
-const rust = await createEngine(await languageByName('rust'));
-const typescript = await createEngine(await languageByName('typescript'));
+const rust = await createEngine(await languageByName('rust'), { nodeStorage: 'object' });
+const typescript = await createEngine(await languageByName('typescript'), { nodeStorage: 'object' });
 
 afterAll(() => {
 	rust.dispose();
