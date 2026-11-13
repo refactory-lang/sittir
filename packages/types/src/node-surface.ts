@@ -189,11 +189,13 @@ type MemberRefusals<V, Declared, Signed extends boolean, Depth extends readonly 
 		: V extends NodeMarker
 			? never
 			: OpenedRefusals<V, Declared, Signed, Depth, Path>
-	: V extends object
-		? [keyof V] extends [never]
-			? never
-			: OpenedRefusals<V, Declared, Signed, Depth, Path>
-		: NegativeRefusals<V, Declared, Signed, Path>;
+	: V extends string | number | bigint | boolean
+		? NegativeRefusals<V, Declared, Signed, Path>
+		: V extends object
+			? [keyof V] extends [never]
+				? never
+				: OpenedRefusals<V, Declared, Signed, Depth, Path>
+			: NegativeRefusals<V, Declared, Signed, Path>;
 
 type NegativeRefusals<V, Declared, Signed extends boolean, Path extends string> = [Declared] extends [never]
 	? never
