@@ -423,3 +423,49 @@ fn a_call_s_tree_is_made_from_a_record_and_never_from_its_source_alone() {
     assert!(trees.tree(id).is_some(), "the id finds the tree the call made");
     assert!(trees.tree_holding(TreeId(id.0 + 4), deepest).is_none(), "a record makes the tree of its own source alone");
 }
+
+/// How many nodes with no record of their own the records of `name`'s
+/// fixtures keep in a slot, each found from its site and its site from its
+/// row.
+fn sites_and_rows_agree<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> usize {
+    use sittir_core::arena::site::{row_sites, site_row};
+    use sittir_core::arena::NodeSite;
+    let mut kept = 0;
+    for source in fixture_sources(name) {
+        let mut engine = Engine::new(grammar, options()).expect("an engine");
+        let Some(root) = engine.parse_records::<N>(&source).expect("a parse").root else { continue };
+        let built = engine.written().built();
+        let tree = sittir_core::engine::ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
+        let mut records = Vec::new();
+        tree.nodes().walk(NodeIndex::ROOT, &mut |step, kid| {
+            if step == Step::Meet && !kid.error() {
+                if let Some(NodeSite::Record(at)) = tree.name_at(kid.index).map(NodeSite::named) {
+                    records.push(at);
+                }
+            }
+            Visit::Enter
+        });
+        for holder in records {
+            let sites = row_sites(&*built, holder, G::shape, G::KIND_BITS).unwrap_or_else(|refusal| panic!("{name} {source:?}: the sites of the record at {}: {refusal}", holder.0));
+            for (row, site) in sites {
+                assert_eq!(site_row(&*built, holder, G::shape, G::KIND_BITS, site), Ok(row), "{name} {source:?}: {site:?} of the record at {}", holder.0);
+                let named = if row == 1 { NodeSite::Record(holder) } else { NodeSite::Row { holder, entry: row - 2 } };
+                assert!(tree.index_at(named).is_some(), "{name} {source:?}: row {row} of the record at {} is a node of its run", holder.0);
+                kept += 1;
+            }
+        }
+    }
+    kept
+}
+
+#[test]
+fn a_slot_s_site_and_its_node_s_row_are_found_from_each_other() {
+    let kept = [
+        sites_and_rows_agree::<_, sittir_python::render::AnyNode>("python", sittir_python::PythonGrammar, sittir_python::render::options::defaults),
+        sites_and_rows_agree::<_, sittir_regex::render::AnyNode>("regex", sittir_regex::RegexGrammar, sittir_regex::render::options::defaults),
+        sites_and_rows_agree::<_, sittir_rust::render::AnyNode>("rust", sittir_rust::RustGrammar, sittir_rust::render::options::defaults),
+        sites_and_rows_agree::<_, sittir_scm::render::AnyNode>("scm", sittir_scm::ScmGrammar, sittir_scm::render::options::defaults),
+        sites_and_rows_agree::<_, sittir_typescript::render::AnyNode>("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults),
+    ];
+    assert!(kept.iter().all(|&kept| kept > 0), "every grammar keeps some node in a slot with no record of its own: {kept:?}");
+}

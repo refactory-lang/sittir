@@ -3021,6 +3021,16 @@ impl<'a, G: EngineGrammar> SourceTrees<'a, G> {
 #[cfg(feature = "arena")]
 impl<'a, G: crate::arena::RecordGrammar> Trees<G, Records<'a>> for SourceTrees<'a, G> {
     fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, table: &dyn SourceTable, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+        use crate::arena::ArenaRead;
+        if self.built.read_record(record.at) && G::shape(record.kind).is_none() {
+            let unread = || -> Result<&str, crate::arena::ArenaError> {
+                let header = self.built.words(record.at, crate::record::HEADER_WORDS)?;
+                let span = crate::arena::SideRecord::read(self.built, crate::arena::Address(header[1]))?.at.ok_or(crate::arena::ArenaError::Malformed { what: "parsed record row", word: record.at.0 })?.span;
+                let source = crate::arena::source::Source::read(self.built, crate::arena::RunNodes::source_of(self.built, record.at)?)?;
+                source.text.get(span.range()).ok_or(crate::arena::ArenaError::Malformed { what: "cell span end", word: span.end })
+            };
+            return w.text(unread().map_err(crate::render::RenderError::Record)?);
+        }
         (self.admit)(record.kind).map_err(crate::render::RenderError::Record)?;
         let store = held
             .downcast_ref::<crate::trivia_store::TriviaStore<G::Trivia>>()

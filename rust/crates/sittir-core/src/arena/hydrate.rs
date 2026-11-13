@@ -151,9 +151,10 @@ pub struct Hydration<'a> {
     /// The grammar's depth members, when the walk stamps each record's
     /// depth move.
     kinds: Option<crate::trivia_table::SurfaceKinds>,
-    /// The `ERROR` nodes the walk is under, outermost first, where the
-    /// records outlive their tree: each one's record, the descendant index
-    /// its subtree ends at, and its row.
+    /// The nodes the walk is under whose records the hydration writes
+    /// itself, an `ERROR` or an extra no reader reads, outermost first,
+    /// where the records outlive their tree: each one's record, the
+    /// descendant index its subtree ends at, and its row.
     errors: Vec<(Draft, u32, Row)>,
     /// How the read stamps a coordinate's kind (`read::stamp`), where the
     /// records outlive their tree and each keeps its coordinate's.
@@ -338,7 +339,11 @@ impl<'a> Hydration<'a> {
     /// no cell names an extra, so its tree holds the record. Whether the walk
     /// entered the extra, writing every row under it; not for a leaf extra,
     /// an `ERROR`, an extra its tree already holds, or a hydration whose
-    /// walks hold none, whose rows the walk writes itself.
+    /// walks hold none, whose rows the walk writes itself. Where the
+    /// records outlive their tree, an extra no reader reads as a record
+    /// gets one the hydration writes itself, as an `ERROR` does: a header of
+    /// its kind, and the rows under it as its run, so a side's node is
+    /// always a record.
     ///
     /// # Errors
     ///
@@ -348,7 +353,13 @@ impl<'a> Hydration<'a> {
         if !kid.extra || kid.error() || self.tree.held(kid.index).is_some() {
             return Ok(false);
         }
-        walk(cursor, ctx, self, kid)
+        let read = walk(cursor, ctx, self, kid)?;
+        if !read && self.tree.rows_by_run() && self.met_at == Some(kid.index) {
+            self.entering = self.met.map(|facts| (kid.index, facts));
+            let draft = self.open_record(ctx.stamped_kind(kid.grammar, kid.display), HEADER_WORDS, None)?;
+            self.errors.push((draft, kid.index.get() + kid.count, Row { index: kid.index, end: kid.index + kid.count, span: kid.span() }));
+        }
+        Ok(read)
     }
 
     /// Whether the walk of a node with a record, read at `depth` (`None` past

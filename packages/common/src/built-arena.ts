@@ -1344,11 +1344,17 @@ export function sideEntryOf(entry: object, arena: BuiltArena | undefined, holder
 	refuseForeignEntry(entry, holder);
 	if (arena === undefined && isBuiltNode(entry)) throw new Error(NO_RECORDS);
 	const built = recordRefOf(entry);
-	if (built === undefined) return readCoordinateOf(entry);
+	if (built === undefined) return unreadRecordOf(entry, arena) ?? readCoordinateOf(entry);
 	if (built.arena !== arena) throw new Error(OTHER_ENGINE_RECORD);
 	built.arena.refuseReleased(built.at);
 	built.arena.settle();
 	return { $type: (entry as { readonly $type: number }).$type, $record: built.at };
+}
+
+function unreadRecordOf(entry: object, arena: BuiltArena | undefined): BuiltEntry | undefined {
+	const at = coordinateOf(entry) as { readonly $node?: number; readonly $row?: number } | undefined;
+	if (arena === undefined || at?.$node === undefined || at.$row !== undefined || treeOf(entry)?.built !== arena) return undefined;
+	return { $type: (entry as { readonly $type: number }).$type, $record: at.$node };
 }
 
 export function refuseForeignEntry(entry: object, holder: EngineIdentity | undefined): void {
