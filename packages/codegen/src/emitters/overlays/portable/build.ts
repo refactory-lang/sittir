@@ -397,7 +397,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					if (mount !== undefined && mounted === undefined && mount.mounted.call !== 'child')
 						throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${kind} in ${owner}'s ${slot.name} builds through ${mount.builder}, which takes ${mount.mounted.call} input inside another container` });
 					const next = outer === undefined ? [...within, container] : [...within.slice(0, -1), container];
-					const named = unwrap!.named === true ? new Set(unwrap!.kinds.map(storageName)) : undefined;
+					const named = unwrap!.named === true ? new Set([...unwrap!.kinds, ...concreteKinds(model, unwrap!.kinds)].map(storageName)) : undefined;
 					nested.push(...seatsOf(visible ? node : holder, visible ? element.propertyName : key, kind, element, next, [...entered, kind], unwrap!.list, final, named));
 				} else if (node instanceof AssembledSupertype) {
 					if (node.kindId !== undefined && admitted(kind)) kinds.add(kind);
