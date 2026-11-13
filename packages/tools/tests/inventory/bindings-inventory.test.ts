@@ -57,6 +57,10 @@ describe('bindingIssues', () => {
 	it('reads a minted name as whichever of its source kinds fits where it stands', async () => {
 		expect(await bindingIssues('rust', ['(generic_function function: (qualified_identifier))', '(generic_type type: (qualified_identifier))'].join('\n'))).toEqual([]);
 	}, FULL_PIPELINE_TIMEOUT);
+	it('tries a bounded number of readings, and says so when none of them compiles', async () => {
+		const many = `(qualified_identifier ${Array.from({ length: 5 }, () => '(qualified_identifier)').join(' ')} (string_literal))`;
+		expect(await bindingIssues('rust', many)).toEqual([{ line: 1, message: 'none of the first 64 of the 729 readings of its minted names compiles' }]);
+	}, FULL_PIPELINE_TIMEOUT);
 });
 
 describe('compileBindings', () => {
