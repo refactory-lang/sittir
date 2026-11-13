@@ -2465,10 +2465,51 @@ impl<G: EngineGrammar> Engine<G> {
         })
     }
 
+    /// Parses `source` and reads the whole tree as `N` into the engine's
+    /// built arena, in one walk, then drops the tree: what is left is the
+    /// source's entry and the records, each naming that entry.
+    ///
+    /// # Errors
+    ///
+    /// The parser's failure, and what the read or the arena refuses.
+    #[cfg(feature = "arena")]
+    pub fn parse_records<N: crate::arena::HydrateNode>(&mut self, source: &str) -> Result<ParsedRecords, String> {
+        let tree = self.parser.parse(source, None).ok_or_else(|| {
+            let snippet: String = source.chars().take(80).collect();
+            format!("parse failed (source: {snippet:?})")
+        })?;
+        let (whitespace, _) = self.grammar.whitespace();
+        let root = tree.root_node();
+        let inferred = crate::options::InferredOptions::infer(source, crate::read::grammar_id(&root), &self.options, self.grammar.option_tables(), whitespace);
+        let work = crate::layout::LayoutWorkCounter::default();
+        let errors = error_regions(&mut TreeNodes::new(&tree, source, &work));
+        let grammar = self.grammar;
+        let mut built = self.written.built_mut();
+        let entry = built.write_source(&crate::arena::source::Source { text: source, breaks_lf: !source.contains('\r'), inferred }).map_err(|refusal| refusal.to_string())?;
+        let root = if root.is_error() {
+            None
+        } else {
+            let mut ctx = crate::read::ReadCtx::new(source, crate::types::TreeId(0), grammar.shows()).with_relaxes(grammar.relaxes());
+            crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), &mut crate::arena::ReadWriter::new(&mut built)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?
+        };
+        Ok(ParsedRecords { root, source: entry, errors })
+    }
+
     pub fn find_and_read(&mut self, _source: String, _pattern: String) -> Result<String, String> {
         Err("find_and_read not yet implemented — ast-grep-core integration pending".to_string())
     }
 
+}
+
+/// What an arena parse leaves: the root's record, none for a source that
+/// parses to an `ERROR` alone, the source's entry, and the parse's `ERROR`
+/// and `MISSING` regions.
+#[cfg(feature = "arena")]
+#[derive(Debug)]
+pub struct ParsedRecords {
+    pub root: Option<crate::arena::Address>,
+    pub source: crate::arena::Address,
+    pub errors: Vec<ErrorRegion>,
 }
 
 /// `trees`, borrowed to change: refused by name while a read holds them,

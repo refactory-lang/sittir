@@ -326,7 +326,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             let grammar = self.grammar();
             let root = match self.read_error(NodeIndex::ROOT) {
                 Some(_) => None,
-                None => super::hydrate_whole::<N>(&mut self.tree().walk(), &mut self.read_ctx(), &mut super::ReadWriter::new(&mut whole)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?,
+                None => super::hydrate_whole::<N>(&mut self.tree().walk(), &mut self.read_ctx(), None, &mut super::ReadWriter::new(&mut whole)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?,
             };
             let arena = self.tree_arena();
             let rows = arena.node_rows().ok_or("the whole read left a node with no row")?;

@@ -146,6 +146,8 @@ pub struct Hydration<'a> {
     entering: Option<(NodeIndex, NodeFacts)>,
     /// The descendant index of the node the last `meet` met.
     met_at: Option<NodeIndex>,
+    /// The entry of the source the records are read from, which each names.
+    source: Option<Address>,
 }
 
 /// What a hydration writes into: the space its records take, and, for a
@@ -272,7 +274,7 @@ impl<'a> Hydration<'a> {
     /// A hydration of `tree`'s rows whose walks hold no extra: `hydrate_at`
     /// makes the one a walk writes records through.
     pub(crate) fn new(tree: &'a mut dyn HydrateInto) -> Self {
-        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None }
+        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None }
     }
 
     /// Tells the hydration the node `at` the walk about to draft a record
@@ -511,7 +513,7 @@ impl<'a> Hydration<'a> {
                 if let Some(holder) = holder {
                     holder.name(run.index, draft.at);
                 }
-                &SideRecord { parent, node: run.facts, run: run.entries, ..side.clone() }
+                &SideRecord { parent, node: run.facts, source: self.source.map(|source| source.0), run: run.entries, ..side.clone() }
             }
             None => side,
         };
@@ -740,7 +742,7 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 /// What the hydration refuses.
 pub fn hydrate_at<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, tree: &mut TreeArena) -> Result<Option<Address>, HydrateError> {
     let mark = tree.mark();
-    let walked = hydrate_into::<N>(cursor, ctx, index, stamped, depth, tree);
+    let walked = hydrate_into::<N>(cursor, ctx, index, stamped, depth, None, tree);
     if walked.is_err() {
         tree.rewind(mark);
     }
@@ -748,17 +750,18 @@ pub fn hydrate_at<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx
 }
 
 /// The whole tree `cursor` walks, read as `N`, its records written into
-/// `into` in one walk: the root's record, `None` when it has none.
+/// `into` in one walk, each naming the entry `source` of the source they
+/// are read from: the root's record, `None` when it has none.
 ///
 /// # Errors
 ///
 /// What the hydration refuses; what it wrote before stays written.
-pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
-    hydrate_into::<N>(cursor, ctx, NodeIndex::ROOT, None, Depth::All, into)
+pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: Option<Address>, into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
+    hydrate_into::<N>(cursor, ctx, NodeIndex::ROOT, None, Depth::All, source, into)
 }
 
-fn hydrate_into<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
-    let records = &mut Hydration { extras: Some(extra_walk::<N>), ..Hydration::new(into) };
+fn hydrate_into<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, source: Option<Address>, into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
+    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, ..Hydration::new(into) };
     crate::read::goto(cursor, index);
     records.meet(cursor)?;
     ctx.begin_read();
