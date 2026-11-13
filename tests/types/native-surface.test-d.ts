@@ -18,7 +18,7 @@ import type * as TypeScript from '../../packages/typescript/native/index.js';
 
 type Declared = NativeModuleLike<object>;
 type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
-type KindIdAsNumber<R, Kind> = [Kind] extends [never] ? R : [Kind] extends [Extract<R, Kind>] ? Exclude<R, Kind> | number : R;
+type KindIdAsNumber<R, Kind> = [Kind] extends [never] ? R : Equal<Extract<R, number>, Kind> extends true ? Exclude<R, number> | number : R;
 type Wire<R> = R extends readonly unknown[]
 	? { -readonly [I in keyof R]: Wire<R[I]> }
 	: Equal<R, ReadOutput> extends true
@@ -121,6 +121,7 @@ type GeneratedRun = ItemOf<Ret<typeof Rust.layoutBaseline>>;
 type LeadingOnly<Run> = Omit<Run, 'side'> & { readonly side: 'leading' };
 type NoBreaks<Run> = Omit<Run, 'breaks'> & { readonly breaks?: 0 };
 type CounterAsKindId = Omit<typeof Rust, 'treeMemory'> & { treeMemory(): { trees: number; counted: RustKindId; reported: number } };
+type MixedKindIds<K extends KindIdReturns> = Omit<typeof Rust, K> & { readonly [P in K]: (...args: Parameters<(typeof Rust)[P]>) => RustKindId | PythonKindId | null };
 
 expectTypeOf<Admits<(profile: 'release') => void, (profile: string) => void>>().toEqualTypeOf<false>();
 expectTypeOf<Admits<(indexes: [number, number]) => void, (indexes: readonly number[]) => void>>().toEqualTypeOf<false>();
@@ -144,6 +145,8 @@ expectTypeOf<ReturnsExactly<() => RustKindId | null, () => 0 | null, RustKindId>
 expectTypeOf<ReturnsExactly<() => PythonKindId | null, () => number | null, RustKindId>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => RustKindId | null, () => RustKindId | null, RustKindId>>().toEqualTypeOf<false>();
 expectTypeOf<Drift<CounterAsKindId, RustKindId>['returns']>().toEqualTypeOf<'treeMemory'>();
+expectTypeOf<Drift<MixedKindIds<'slotSeparator'>, RustKindId>['returns']>().toEqualTypeOf<'slotSeparator'>();
+expectTypeOf<Drift<MixedKindIds<'separatorBefore'>, RustKindId>['returns']>().toEqualTypeOf<'separatorBefore'>();
 expectTypeOf<ReturnsExactly<() => [number, object][], () => readonly (readonly [number, object])[]>>().toEqualTypeOf<true>();
 expectTypeOf<ReturnsExactly<() => [number, object][], () => readonly (readonly [object, number])[]>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => [...number[], object], () => WireNode[]>>().toEqualTypeOf<false>();
