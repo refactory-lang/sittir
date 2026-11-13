@@ -6,14 +6,11 @@
 //! the ids go with the navigation. The source's root is id 0; an id says
 //! nothing of where its node lies among the others.
 
-use std::cell::RefCell;
 use std::collections::HashMap;
-use std::rc::Rc;
-use std::sync::Arc;
 
 use super::side::{NodeFacts, RunEntry};
 use super::{Address, ArenaError, ArenaRead, SideRecord};
-use crate::nodes::{Kid, Nodes};
+use crate::nodes::{Kid, Kids, Nodes};
 use crate::options::Side;
 use crate::types::{NodeIndex, Span};
 
@@ -39,23 +36,23 @@ struct Met {
     kid: Kid,
     facts: NodeFacts,
     parent: Parent,
-    kids: Option<Arc<[Kid]>>,
+    kids: Option<Kids>,
 }
 
 #[derive(Default)]
 struct Table {
     met: Vec<Met>,
     ids: HashMap<NodeSite, NodeIndex, crate::heap::IndexState>,
-    sides: HashMap<Address, Rc<SideRecord>, crate::heap::IndexState>,
+    sides: HashMap<Address, usize, crate::heap::IndexState>,
+    read: Vec<SideRecord>,
     refused: Option<ArenaError>,
 }
 
 /// Navigation over the parsed records of one source, in `arena`.
-#[derive(Clone)]
 pub struct RunNodes<'t> {
     arena: &'t dyn ArenaRead,
     text: &'t str,
-    table: Rc<RefCell<Table>>,
+    table: Table,
 }
 
 fn malformed(what: &'static str, at: Address) -> ArenaError {
@@ -70,7 +67,7 @@ impl<'t> RunNodes<'t> {
     ///
     /// What reading the root's record refuses.
     pub fn new(arena: &'t dyn ArenaRead, text: &'t str, root: Address) -> Result<Self, ArenaError> {
-        let nodes = Self { arena, text, table: Rc::default() };
+        let mut nodes = Self { arena, text, table: Table::default() };
         nodes.record(root, Parent::Root)?;
         Ok(nodes)
     }
@@ -95,13 +92,13 @@ impl<'t> RunNodes<'t> {
     /// answering for read as leaves.
     #[must_use]
     pub fn refused(&self) -> Option<ArenaError> {
-        self.table.borrow().refused.clone()
+        self.table.refused.clone()
     }
 
     /// Where the node `index` names is kept.
     #[must_use]
     pub fn site(&self, index: NodeIndex) -> Option<NodeSite> {
-        self.table.borrow().met.get(index.0 as usize).map(|met| met.site)
+        self.table.met.get(index.0 as usize).map(|met| met.site)
     }
 
     /// The id of the node whose record is at `at`.
@@ -109,36 +106,38 @@ impl<'t> RunNodes<'t> {
     /// # Errors
     ///
     /// What reading the record refuses.
-    pub fn index_of(&self, at: Address) -> Result<NodeIndex, ArenaError> {
+    pub fn index_of(&mut self, at: Address) -> Result<NodeIndex, ArenaError> {
         self.record(at, Parent::Unknown)
     }
 
-    fn side(&self, at: Address) -> Result<Rc<SideRecord>, ArenaError> {
-        if let Some(side) = self.table.borrow().sides.get(&at) {
-            return Ok(Rc::clone(side));
-        }
-        let header = self.arena.words(at, crate::record::HEADER_WORDS)?;
-        let side = Rc::new(SideRecord::read(self.arena, Address(header[1]))?);
-        self.table.borrow_mut().sides.insert(at, Rc::clone(&side));
-        Ok(side)
+    /// The side record of the record at `at`, read once.
+    fn side(&mut self, at: Address) -> Result<&SideRecord, ArenaError> {
+        let read = if let Some(&read) = self.table.sides.get(&at) {
+            read
+        } else {
+            let header = self.arena.words(at, crate::record::HEADER_WORDS)?;
+            let side = SideRecord::read(self.arena, Address(header[1]))?;
+            self.table.read.push(side);
+            self.table.sides.insert(at, self.table.read.len() - 1);
+            self.table.read.len() - 1
+        };
+        Ok(&self.table.read[read])
     }
 
     /// The record that is the node of the record at `at`: itself, or, for a
     /// content read from its envelope's own node, its envelope's.
-    fn node_record(&self, mut at: Address) -> Result<Address, ArenaError> {
+    fn node_record(&mut self, mut at: Address) -> Result<Address, ArenaError> {
         loop {
-            let side = self.side(at)?;
-            let Some(parent) = side.parent else { return Ok(at) };
-            let shared = self.side(parent)?.run.contains(&RunEntry::Record { at, shared: true });
-            if !shared {
+            let Some(parent) = self.side(at)?.parent else { return Ok(at) };
+            if !self.side(parent)?.run.contains(&RunEntry::Record { at, shared: true }) {
                 return Ok(at);
             }
             at = parent;
         }
     }
 
-    fn meet(&self, site: NodeSite, facts: NodeFacts, span: Span, childless: bool, parent: Parent) -> NodeIndex {
-        let mut table = self.table.borrow_mut();
+    fn meet(&mut self, site: NodeSite, facts: NodeFacts, span: Span, childless: bool, parent: Parent) -> NodeIndex {
+        let table = &mut self.table;
         if let Some(&index) = table.ids.get(&site) {
             if table.met[index.0 as usize].parent == Parent::Unknown {
                 table.met[index.0 as usize].parent = parent;
@@ -152,7 +151,7 @@ impl<'t> RunNodes<'t> {
         index
     }
 
-    fn record(&self, at: Address, parent: Parent) -> Result<NodeIndex, ArenaError> {
+    fn record(&mut self, at: Address, parent: Parent) -> Result<NodeIndex, ArenaError> {
         let at = self.node_record(at)?;
         let side = self.side(at)?;
         let facts = side.node.ok_or(malformed("parsed record facts", at))?;
@@ -164,16 +163,15 @@ impl<'t> RunNodes<'t> {
     /// The entries of the children of the node whose record is at `at`,
     /// each with the record whose run holds it and its place there: its
     /// own run's, a shared content's in place of the content.
-    fn entries(&self, at: Address) -> Result<Vec<(Address, u32, RunEntry)>, ArenaError> {
+    fn entries(&mut self, at: Address) -> Result<Vec<(Address, u32, RunEntry)>, ArenaError> {
         let mut out = Vec::new();
         self.entries_into(at, &mut out)?;
         Ok(out)
     }
 
-    fn entries_into(&self, at: Address, out: &mut Vec<(Address, u32, RunEntry)>) -> Result<(), ArenaError> {
-        let side = self.side(at)?;
+    fn entries_into(&mut self, at: Address, out: &mut Vec<(Address, u32, RunEntry)>) -> Result<(), ArenaError> {
         let mut entry = 0;
-        while let Some(&found) = side.run.get(entry) {
+        while let Some(&found) = self.side(at)?.run.get(entry) {
             match found {
                 RunEntry::Record { at: content, shared: true } => self.entries_into(content, out)?,
                 found => out.push((at, crate::types::narrow(entry), found)),
@@ -188,7 +186,7 @@ impl<'t> RunNodes<'t> {
 
     /// The entries inside the row at `entry` of the run of `holder`, one
     /// level down.
-    fn inside(&self, holder: Address, entry: u32) -> Result<Vec<(Address, u32, RunEntry)>, ArenaError> {
+    fn inside(&mut self, holder: Address, entry: u32) -> Result<Vec<(Address, u32, RunEntry)>, ArenaError> {
         let side = self.side(holder)?;
         let Some(&RunEntry::Row { inner, .. }) = side.run.get(entry as usize) else { return Err(malformed("run row", holder)) };
         let (mut at, end) = (entry as usize + 1, entry as usize + 1 + inner as usize);
@@ -204,7 +202,7 @@ impl<'t> RunNodes<'t> {
         Ok(out)
     }
 
-    fn kids_of(&self, index: NodeIndex) -> Result<Arc<[Kid]>, ArenaError> {
+    fn kids_of(&mut self, index: NodeIndex) -> Result<Kids, ArenaError> {
         let site = self.site(index).ok_or(ArenaError::Malformed { what: "node id", word: index.0 })?;
         let entries = match site {
             NodeSite::Record(at) => self.entries(at)?,
@@ -216,17 +214,14 @@ impl<'t> RunNodes<'t> {
                 RunEntry::Record { at, .. } => self.record(at, Parent::Node(index))?,
                 RunEntry::Row { facts, span, inner } => self.meet(NodeSite::Row { holder, entry }, facts, span, inner == 0, Parent::Node(index)),
             };
-            kids.push(self.table.borrow().met[kid.0 as usize].kid);
+            kids.push(self.table.met[kid.0 as usize].kid);
         }
         Ok(kids.into())
     }
 
-    fn parent_of(&self, index: NodeIndex) -> Result<Option<NodeIndex>, ArenaError> {
-        let (site, known) = {
-            let table = self.table.borrow();
-            let met = table.met.get(index.0 as usize).ok_or(ArenaError::Malformed { what: "node id", word: index.0 })?;
-            (met.site, met.parent)
-        };
+    fn parent_of(&mut self, index: NodeIndex) -> Result<Option<NodeIndex>, ArenaError> {
+        let met = self.table.met.get(index.0 as usize).ok_or(ArenaError::Malformed { what: "node id", word: index.0 })?;
+        let (site, known) = (met.site, met.parent);
         match known {
             Parent::Root => return Ok(None),
             Parent::Node(parent) => return Ok(Some(parent)),
@@ -237,19 +232,19 @@ impl<'t> RunNodes<'t> {
             Some(parent) => Some(self.record(parent, Parent::Unknown)?),
             None => None,
         };
-        self.table.borrow_mut().met[index.0 as usize].parent = parent.map_or(Parent::Root, Parent::Node);
+        self.table.met[index.0 as usize].parent = parent.map_or(Parent::Root, Parent::Node);
         Ok(parent)
     }
 
-    fn answer<T>(&self, answered: Result<T, ArenaError>, otherwise: T) -> T {
+    fn answer<T>(&mut self, answered: Result<T, ArenaError>, otherwise: T) -> T {
         answered.unwrap_or_else(|refusal| {
-            self.table.borrow_mut().refused.get_or_insert(refusal);
+            self.table.refused.get_or_insert(refusal);
             otherwise
         })
     }
 
     fn facts(&self, index: NodeIndex) -> Option<NodeFacts> {
-        self.table.borrow().met.get(index.0 as usize).map(|met| met.facts)
+        self.table.met.get(index.0 as usize).map(|met| met.facts)
     }
 }
 
@@ -259,18 +254,19 @@ impl<'t> Nodes<'t> for RunNodes<'t> {
     }
 
     fn kid(&mut self, index: NodeIndex) -> Kid {
-        let known = self.table.borrow().met.get(index.0 as usize).map(|met| met.kid);
+        let known = self.table.met.get(index.0 as usize).map(|met| met.kid);
         let unknown = Kid { index, start: 0, end: 0, count: 1, grammar: crate::types::KindId::ERROR, display: crate::types::KindId::ERROR, field: None, named: false, extra: false };
         self.answer(known.ok_or(ArenaError::Malformed { what: "node id", word: index.0 }), unknown)
     }
 
-    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
-        if let Some(kids) = self.table.borrow().met.get(index.0 as usize).and_then(|met| met.kids.clone()) {
+    fn kids(&mut self, index: NodeIndex) -> Kids {
+        if let Some(kids) = self.table.met.get(index.0 as usize).and_then(|met| met.kids.clone()) {
             return kids;
         }
-        let kids = self.answer(self.kids_of(index), Arc::from([]));
-        if let Some(met) = self.table.borrow_mut().met.get_mut(index.0 as usize) {
-            met.kids = Some(Arc::clone(&kids));
+        let kids = self.kids_of(index);
+        let kids = self.answer(kids, Kids::from([]));
+        if let Some(met) = self.table.met.get_mut(index.0 as usize) {
+            met.kids = Some(Kids::clone(&kids));
         }
         kids
     }
@@ -284,7 +280,8 @@ impl<'t> Nodes<'t> for RunNodes<'t> {
     }
 
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
-        self.answer(self.parent_of(index), None)
+        let parent = self.parent_of(index);
+        self.answer(parent, None)
     }
 
     fn missing(&mut self, index: NodeIndex) -> bool {

@@ -28,7 +28,7 @@ const CEILINGS: &[(&str, u32)] = &[
     ("heap.rs", 3),
     ("layout.rs", 33),
     ("napi_engine.rs", 13),
-    ("nodes.rs", 6),
+    ("nodes.rs", 2),
     ("read.rs", 5),
     ("trivia_store.rs", 32),
     ("trivia_table/place.rs", 52),

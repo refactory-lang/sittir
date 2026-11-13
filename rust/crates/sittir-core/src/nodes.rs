@@ -103,6 +103,9 @@ impl Kid {
     }
 }
 
+/// A node's children, in order: one list, shared by each holder of it.
+pub type Kids = Arc<[Kid]>;
+
 /// Where a walk is (`Nodes::walk`): at a node it meets, or leaving a node
 /// it entered, once that node's children are walked.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -143,7 +146,7 @@ pub trait Nodes<'t> {
     /// The node at `index`.
     fn kid(&mut self, index: NodeIndex) -> Kid;
     /// The children of the node at `index`, in order.
-    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]>;
+    fn kids(&mut self, index: NodeIndex) -> Kids;
     /// The first child of the node at `index` (`Side::Before`) or its last
     /// (`Side::After`), `None` for a node with no children, found without
     /// listing them.
@@ -161,7 +164,7 @@ pub trait Nodes<'t> {
     /// Walks the subtree of the node at `from` in preorder, telling `visit`
     /// each node it meets and each node it leaves.
     fn walk(&mut self, from: NodeIndex, visit: &mut dyn FnMut(Step, &Kid) -> Visit) {
-        let mut entered: Vec<(Kid, Arc<[Kid]>, usize)> = Vec::new();
+        let mut entered: Vec<(Kid, Kids, usize)> = Vec::new();
         let mut next = Some(self.kid(from));
         loop {
             if let Some(kid) = next.take() {
@@ -313,7 +316,7 @@ impl<'t> Nodes<'t> for TreeNodes<'t> {
         node.has_error() || shown_as_error(crate::read::display_id(&node))
     }
 
-    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
+    fn kids(&mut self, index: NodeIndex) -> Kids {
         let cursor = self.reader(index);
         let mut kids = Vec::new();
         if cursor.goto_first_child() {
@@ -440,7 +443,7 @@ impl<'t> Nodes<'t> for RecordNodes<'t> {
         self.rows.kid(index)
     }
 
-    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
+    fn kids(&mut self, index: NodeIndex) -> Kids {
         let end = self.rows.subtree_end(index);
         let mut kids = Vec::new();
         let mut at = index + 1;
@@ -553,7 +556,7 @@ impl<'t> Nodes<'t> for Navigation<'t> {
         self.nodes().kid(index)
     }
 
-    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
+    fn kids(&mut self, index: NodeIndex) -> Kids {
         self.nodes().kids(index)
     }
 
