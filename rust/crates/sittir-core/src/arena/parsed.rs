@@ -332,14 +332,28 @@ impl<G: EngineGrammar> ParsedTree<G> {
             let rows = arena.node_rows().ok_or("the whole read left a node with no row")?;
             match root {
                 Some(root) => {
-                    let runs = whole.run_preorder(root).map_err(|refusal| refusal.to_string())?;
-                    let agrees = |index: NodeIndex, &(kid, missing, holds_error): &(crate::nodes::Kid, bool, bool)| {
-                        let row = rows.kid(index);
-                        let kid = if index == NodeIndex::ROOT { crate::nodes::Kid { start: row.start, end: row.end, ..kid } } else { kid };
-                        kid == row && missing == rows.missing(index) && holds_error == rows.holds_error(index)
-                    };
-                    let mut agree: Vec<bool> = (0..).map(NodeIndex).zip(&runs).map(|(index, run)| agrees(index, run)).collect();
-                    agree.resize(rows.len() as usize, false);
+                    let mut agree = vec![false; rows.len() as usize];
+                    let mut runs = super::RunNodes::new(whole.arena(), self.source(), root).map_err(|refusal| refusal.to_string())?;
+                    let mut records = RecordNodes::over(rows, self.source());
+                    let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT)];
+                    while let Some((run, row)) = pending.pop() {
+                        let (met, kept) = (runs.kid(run), records.kid(row));
+                        let root = row == NodeIndex::ROOT;
+                        let (met_kids, kept_kids) = (runs.kids(run), records.kids(row));
+                        let same = crate::nodes::Kid { index: kept.index, count: kept.count, start: if root { kept.start } else { met.start }, end: if root { kept.end } else { met.end }, ..met } == kept
+                            && met.leaf() == kept.leaf()
+                            && runs.missing(run) == records.missing(row)
+                            && runs.holds_error(run) == records.holds_error(row)
+                            && met_kids.len() == kept_kids.len()
+                            && met_kids.iter().all(|kid| runs.parent(kid.index) == Some(run))
+                            && runs.edge(run, crate::options::Side::Before).map(|kid| kid.index) == met_kids.first().map(|kid| kid.index)
+                            && runs.edge(run, crate::options::Side::After).map(|kid| kid.index) == met_kids.last().map(|kid| kid.index);
+                        agree[row.0 as usize] = same;
+                        pending.extend(met_kids.iter().zip(kept_kids.iter()).map(|(met, kept)| (met.index, kept.index)));
+                    }
+                    if let Some(refusal) = runs.refused() {
+                        return Err(refusal.to_string());
+                    }
                     Some(agree)
                 }
                 None => None,
