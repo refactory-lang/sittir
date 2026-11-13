@@ -297,10 +297,7 @@ impl RecordKey {
         let view = prep.view(at.tree)?;
         match at.cell {
             Cell::Child { kind, at: record, link, changed } if claims(kind) => {
-                let view = match link {
-                    Some(tree) => view.linked(tree)?,
-                    None => view,
-                };
+                let view = view.child(record, link)?;
                 let (words, side) = record_of(view, record, HEADER_WORDS, kind)?;
                 let place = place_of(view, record, &side)?;
                 Ok(Self { tree: view.tree(), at: Some(record), side_at: Address(words[1]), place, changed: super::held_changed(at.site.is_some(), changed, &side) })

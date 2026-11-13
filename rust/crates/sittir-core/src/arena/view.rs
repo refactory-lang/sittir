@@ -140,6 +140,23 @@ impl<'a, T> RecordCtx<'a, T> {
         Self::parsed(tree, self.arenas, self.sources, self.store, self.prepared, self.bits)
     }
 
+    /// The context the record a child cell names at `at` is read in: the
+    /// arena of the tree its `link` names; the source of a record a read
+    /// left, which a built record's cell names as it names a built one;
+    /// else this one.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` when the render reaches no arena of the tree,
+    /// and what reading a read's record for its source refuses.
+    pub fn child(self, at: Address, link: Option<TreeId>) -> Result<Self, ArenaError> {
+        match link {
+            Some(tree) => self.linked(tree),
+            None if self.tree.is_none() && self.arena.read_entry(at) => self.linked(TreeId(super::RunNodes::source_of(self.arena, at)?.0)),
+            None => Ok(self),
+        }
+    }
+
     #[must_use]
     pub fn arena(self) -> &'a dyn ArenaRead {
         self.arena
@@ -313,10 +330,7 @@ impl<'a, T> RecordCtx<'a, T> {
     /// tree its link names, and the record's side record; `None` for a built
     /// record.
     fn child_side(self, at: Address, kind: KindId, link: Option<TreeId>) -> Result<Option<(Self, super::SideRecord)>, ArenaError> {
-        let ctx = match link {
-            Some(tree) => self.linked(tree)?,
-            None => self,
-        };
+        let ctx = self.child(at, link)?;
         if ctx.tree.is_none() {
             return Ok(None);
         }

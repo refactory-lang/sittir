@@ -322,10 +322,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             quote! {
                 let (ctx, at, held, kind) = match cell {
                     ::sittir_core::arena::Cell::Child { kind, at, link, changed } if #accepts => (
-                        match link {
-                            ::core::option::Option::Some(tree) => ctx.linked(tree)?,
-                            ::core::option::Option::None => ctx,
-                        },
+                        ctx.child(at, link)?,
                         at,
                         changed,
                         kind,
@@ -585,7 +582,7 @@ mod tests {
         assert!(has(&out, "impl ::sittir_core::arena::HasRecord for BlockNode { type Record<'a> = BlockNodeRecord<'a>; }"));
         assert!(has(&out, "fn claims(kind: ::sittir_core::types::KindId) -> bool { (kind == kind::BLOCK) }"));
         assert!(has(&out, "let (words, side) = ::sittir_core::arena::record_of(ctx, at, if ctx.tree().is_none() { 5u32 } else { 7u32 }, kind)?;"));
-        assert!(has(&out, "match link { ::core::option::Option::Some(tree) => ctx.linked(tree)?, ::core::option::Option::None => ctx, }, at, changed,"));
+        assert!(has(&out, "ctx.child(at, link)?, at, changed,"));
         assert!(has(&out, "let layout = ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), ::sittir_core::arena::held_changed(site.is_some(), held, &side), side.sides);"));
         assert!(has(&out, "__layout: layout, __words: words, __at: at,"));
         assert!(has(&out, "r#async: (words[2usize] >> 3u32) & 1 != 0,"));

@@ -137,7 +137,7 @@ impl<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells> Renders<G, N> {
         let options = engine.options().clone();
         let Some(root) = engine.parse_records::<N>(source)?.root else { return Ok(None) };
         let built = engine.written().built();
-        engine.render_parsed(&built, root, ChangedEdges::default(), &options, true).map(Some).map_err(|e| e.to_string())
+        engine.render_at(&built, root, ChangedEdges::default(), &options, true).map(Some).map_err(|e| e.to_string())
     }
 
     /// Whether `source` renders alike from its templates in both storages,

@@ -2,7 +2,6 @@
 //! native writer, so they are admitted as they cross in (`admit`), and the
 //! parsed trees its cells link are held for the render.
 
-use std::hash::BuildHasher;
 
 use super::{admit, Address, ArenaError, ArenaRead, Cell, CellAt, CellWord, HeldArenas, RecordGrammar};
 use crate::engine::{encode_handle, Engine, EngineGrammar, ReadTrees};
@@ -129,43 +128,42 @@ impl<G: RecordGrammar> Engine<G> {
     /// `RenderError::Record` for an address naming no record and for words
     /// `admit` refuses, `RenderError::Coordinate` for a linked tree `trees`
     /// does not hold, else what the record's render refuses.
-    pub fn render_built<H: BuildHasher>(
+    pub fn render_built(
         &self,
         arena: &dyn ArenaRead,
         at: Address,
         changed: ChangedEdges,
-        trees: &ReadTrees<'_, G, H>,
+        trees: &ReadTrees<'_, G>,
         ctx: &RenderContext<'_>,
     ) -> Result<String, RenderError> {
-        let (root, mut held) = admitted_root::<G, H>(arena, at, changed, trees)?;
+        let (root, mut held) = admitted_root::<G>(arena, at, changed, trees)?;
         G::render_record(self.grammar(), root, &mut held, arena, self.written(), ctx, None)
     }
-
-    /// The parsed record at `at` of `built`, this engine's built arena,
-    /// which a read left there with no tree (`Engine::parse_records`),
-    /// rendered as a render root whose `changed` edges have no neighbour,
-    /// under `options`, its line endings unspelled: as its source where no
-    /// write lies in it, and, with `templates`, each node that has a record
-    /// from its template (`ThroughTemplates`). The call reads the record's
-    /// source through a tree of its own over the records
-    /// (`ParsedTree::over_records`).
+    /// The record at `at` of the engine's built arena `built`, a built one
+    /// or one a read left, rendered under `options` as a render root whose
+    /// `changed` edges have no neighbour, its line endings unspelled, from
+    /// the arena alone: a built
+    /// record is admitted first, and the tree over each source the render
+    /// reaches is made for the call; through the sources' templates when
+    /// `templates`.
     ///
     /// # Errors
     ///
-    /// `RenderError::Record` for an address no read wrote a record at, else
-    /// what the record's render refuses.
-    pub fn render_parsed(&self, built: &super::BuiltChunks, at: Address, changed: ChangedEdges, options: &crate::options::ResolvedOptions, templates: bool) -> Result<String, RenderError> {
-        if !built.read_entry(at) {
-            return Err(RenderError::Record(ArenaError::Malformed { what: "record address", word: at.0 }));
-        }
+    /// `RenderError::Record` for an address naming no record and for words
+    /// `admit` refuses, else what the record's render refuses.
+    pub fn render_at(&self, built: &super::BuiltChunks, at: Address, changed: ChangedEdges, options: &crate::options::ResolvedOptions, templates: bool) -> Result<String, RenderError> {
         let kind = built.header_kind(at, G::KIND_BITS).map_err(RenderError::Record)?;
-        let tree = crate::engine::ParsedTree::over_records(self, built, at).map_err(RenderError::Record)?;
-        let id = tree.tree_id();
-        let trees: std::collections::HashMap<_, _, crate::heap::IndexState> = [(id, tree)].into_iter().collect();
-        let read = ReadTrees::new(&trees);
+        let tree = if built.read_entry(at) {
+            Some(crate::types::TreeId(super::RunNodes::source_of(built, at).map_err(RenderError::Record)?.0))
+        } else {
+            admit(built, at, G::shape, G::KIND_BITS).map_err(RenderError::Record)?;
+            None
+        };
+        let trees = crate::engine::SourceTrees::new(self, built);
+        let read = ReadTrees::over(&trees);
         let through = crate::render::ThroughTemplates(&read);
         let sources: &dyn crate::render::SourceTable = if templates { &through } else { &read };
-        let root = CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree: Some(id), site: None };
+        let root = CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree, site: None };
         let mut held = HeldArenas::of([]).with_reads(built);
         G::render_record(self.grammar(), root, &mut held, built, self.written(), &RenderContext::new(options, sources), None)
     }
@@ -220,27 +218,27 @@ fn admitted_leaf<G: RecordGrammar>(arena: &dyn ArenaRead, kind: KindId, entry: A
 ///
 /// `RenderError::Record` for a record whose header names a kind other than
 /// its entry's and for words `admit` refuses, else what the render refuses.
-pub fn render_record_entry<G: RecordGrammar, H: BuildHasher>(
+pub fn render_record_entry<G: RecordGrammar>(
     grammar: G,
     arena: &dyn ArenaRead,
     record: BuiltEntry,
     store: &TriviaStore<G::Trivia>,
-    trees: &ReadTrees<'_, G, H>,
+    trees: &ReadTrees<'_, G>,
     ctx: &RenderContext<'_>,
     w: &mut dyn RenderSink,
 ) -> RenderResult {
     if arena.header_kind(record.at, G::KIND_BITS).map_err(RenderError::Record)? != record.kind {
         return Err(RenderError::Record(ArenaError::Malformed { what: "trivia entry kind", word: u32::from(record.kind.0) }));
     }
-    let (root, mut held) = admitted_root::<G, H>(arena, record.at, ChangedEdges::default(), trees)?;
+    let (root, mut held) = admitted_root::<G>(arena, record.at, ChangedEdges::default(), trees)?;
     G::render_entry(grammar, root, &mut held, arena, store, ctx, w)
 }
 
-fn admitted_root<'t, G: RecordGrammar, H: BuildHasher>(
+fn admitted_root<'t, G: RecordGrammar>(
     arena: &dyn ArenaRead,
     at: Address,
     changed: ChangedEdges,
-    trees: &ReadTrees<'t, G, H>,
+    trees: &ReadTrees<'t, G>,
 ) -> Result<(CellAt, HeldArenas<'t>), RenderError> {
     let kind = arena.header_kind(at, G::KIND_BITS).map_err(RenderError::Record)?;
     let linked = admit(arena, at, G::shape, G::KIND_BITS).map_err(RenderError::Record)?;

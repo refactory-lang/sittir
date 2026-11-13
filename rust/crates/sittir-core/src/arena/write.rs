@@ -133,9 +133,10 @@ impl<T: Clone + HeapBytes> WriteCell<T> for VerbatimNode {
     }
 }
 
-/// The cell of an untouched node a coordinate names: a link record naming
-/// its row and its record in its tree's arena, with the edges whose
-/// neighbour the holder changed.
+/// The cell of an untouched node a coordinate names, with the edges whose
+/// neighbour the holder changed: its record itself when a read left it in
+/// the arena the sink writes, else a link record naming its row and its
+/// record in its tree's arena.
 ///
 /// # Errors
 ///
@@ -145,6 +146,7 @@ pub fn coordinate_cell<T: Clone + HeapBytes>(sink: &mut RecordSink<'_, T>, coord
     let kind = coord.kind.ok_or(ArenaError::Unwritable("a coordinate with no stamped kind"))?;
     let changed = coord.changed();
     match (sink.link)(coord)? {
+        Linked::Record(record) if sink.writer.hold_read(record)? => CellWord::of(record, changed),
         Linked::Record(record) => CellWord::of(sink.writer.link(kind, coord.tree, coord.index, coord.end, record, coord.span)?, changed),
         Linked::Leaf(_) => Err(ArenaError::Unwritable("a parsed leaf in a built record, which a link record names and only a builder writes")),
     }

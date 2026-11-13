@@ -2906,22 +2906,84 @@ fn align(items: &[SourceItem], written: &[crate::baseline::Item], steps: &mut u6
     matched
 }
 
+/// The trees a call's lookups find by id.
+pub trait Trees<G: EngineGrammar, B: Backing = tree_sitter::Tree> {
+    /// The tree `id` names; none for an id that names none.
+    fn tree(&self, id: TreeId) -> Option<&ParsedTree<G, B>>;
+}
+
+impl<G: EngineGrammar, B: Backing, H: std::hash::BuildHasher> Trees<G, B> for HashMap<TreeId, ParsedTree<G, B>, H> {
+    fn tree(&self, id: TreeId) -> Option<&ParsedTree<G, B>> {
+        self.get(&id)
+    }
+}
+
+/// The trees over the records reads left in an engine's built arena, each
+/// made when a call first names its source (`ParsedTree::over_source`) and
+/// kept until the call ends.
+#[cfg(feature = "arena")]
+pub struct SourceTrees<'a, G: EngineGrammar> {
+    engine: &'a Engine<G>,
+    built: &'a crate::arena::BuiltChunks,
+    made: Made<'a, G>,
+}
+
+/// A tree a call made and the ones made after it, each where it was made.
+#[cfg(feature = "arena")]
+struct Made<'a, G: EngineGrammar>(std::cell::OnceCell<Box<MadeTree<'a, G>>>);
+
+#[cfg(feature = "arena")]
+type MadeTree<'a, G> = (ParsedTree<G, Records<'a>>, Made<'a, G>);
+
+#[cfg(feature = "arena")]
+impl<'a, G: EngineGrammar> SourceTrees<'a, G> {
+    /// The trees over the records in `built`, read through `engine`; none
+    /// made yet.
+    #[must_use]
+    pub fn new(engine: &'a Engine<G>, built: &'a crate::arena::BuiltChunks) -> Self {
+        Self { engine, built, made: Made(std::cell::OnceCell::new()) }
+    }
+}
+
+#[cfg(feature = "arena")]
+impl<'a, G: EngineGrammar> Trees<G, Records<'a>> for SourceTrees<'a, G> {
+    fn tree(&self, id: TreeId) -> Option<&ParsedTree<G, Records<'a>>> {
+        let mut at = &self.made;
+        loop {
+            match at.0.get() {
+                Some(made) if made.0.tree_id == id => return Some(&made.0),
+                Some(made) => at = &made.1,
+                None => {
+                    let tree = ParsedTree::over_source(self.engine, self.built, id).ok()?;
+                    return Some(&at.0.get_or_init(|| Box::new((tree, Made(std::cell::OnceCell::new())))).0);
+                }
+            }
+        }
+    }
+}
+
 /// The live trees one call renders through, each tree a lookup hands out
 /// noted, so the call can report the trees it read (`ReadTrees::read`): a
 /// tree grows during a render only through a lookup of it. Each tree read
 /// keeps one `Seating` for the call, so its lookups move one cursor.
-pub struct ReadTrees<'t, G: EngineGrammar, H = crate::heap::IndexState, B: Backing = tree_sitter::Tree> {
-    trees: &'t HashMap<crate::types::TreeId, ParsedTree<G, B>, H>,
+pub struct ReadTrees<'t, G: EngineGrammar, B: Backing = tree_sitter::Tree> {
+    trees: &'t dyn Trees<G, B>,
     read: std::cell::RefCell<Vec<Seated<'t, G, B>>>,
 }
 
 /// A tree a call read and the one `Seating` the call keeps for it.
 type Seated<'t, G, B> = (TreeId, std::rc::Rc<Seating<'t, G, B>>);
 
-impl<'t, G: EngineGrammar, H: std::hash::BuildHasher, B: Backing> ReadTrees<'t, G, H, B> {
+impl<'t, G: EngineGrammar, B: Backing> ReadTrees<'t, G, B> {
     /// The live `trees`, none read yet.
     #[must_use]
-    pub fn new(trees: &'t HashMap<crate::types::TreeId, ParsedTree<G, B>, H>) -> Self {
+    pub fn new<H: std::hash::BuildHasher>(trees: &'t HashMap<crate::types::TreeId, ParsedTree<G, B>, H>) -> Self {
+        Self::over(trees)
+    }
+
+    /// The trees `trees` finds, none read yet.
+    #[must_use]
+    pub fn over(trees: &'t dyn Trees<G, B>) -> Self {
         Self { trees, read: std::cell::RefCell::default() }
     }
 
@@ -2934,7 +2996,7 @@ impl<'t, G: EngineGrammar, H: std::hash::BuildHasher, B: Backing> ReadTrees<'t, 
     /// The call's lookups in the live tree `tree`, made on its first read
     /// and noted, or `None` when it is not live.
     fn seating(&self, tree: TreeId) -> Option<std::rc::Rc<Seating<'t, G, B>>> {
-        let parsed = self.trees.get(&tree)?;
+        let parsed = self.trees.tree(tree)?;
         let mut read = self.read.borrow_mut();
         if let Some((_, seating)) = read.iter().find(|(id, _)| *id == tree) {
             return Some(std::rc::Rc::clone(seating));
@@ -2953,7 +3015,7 @@ impl<'t, G: EngineGrammar, H: std::hash::BuildHasher, B: Backing> ReadTrees<'t, 
 
 /// The live trees as the render context's source table: a handle's tag names
 /// the tree, and the tree owns the source its spans index into.
-impl<G: EngineGrammar, H: std::hash::BuildHasher, B: Backing> SourceTable for ReadTrees<'_, G, H, B> {
+impl<G: EngineGrammar, B: Backing> SourceTable for ReadTrees<'_, G, B> {
     fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
         Some(&*self.get(tree_id)?.source)
     }

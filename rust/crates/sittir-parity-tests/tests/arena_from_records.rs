@@ -36,6 +36,9 @@ struct Case<G: EngineGrammar, N> {
     native: NativeRender<N>,
     record: RecordRender<G::Trivia>,
     rebuild: fn(&mut N),
+    /// The root, read, made a built node of its own: it keeps the children
+    /// it was read with and no layout.
+    bare: fn(&mut N),
     source: &'static str,
     edited: &'static str,
 }
@@ -107,6 +110,60 @@ impl<G: RecordGrammar, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode 
         Rendered { text, work: since(tree.layout_work(), before) }
     }
 
+    /// The case's root read one level and made a built node (`bare`).
+    fn bare_root(&self, tree: &ParsedTree<G>) -> N {
+        let mut node: N = tree.read(NodeIndex::ROOT, Depth::ONE).expect("the root reads");
+        (self.bare)(&mut node);
+        node
+    }
+
+    /// The bare root written as a built record that links its children's
+    /// records in its tree's arena, and rendered over the tree.
+    fn bare_over_tree(&self) -> String {
+        let tree = parsed(self.grammar, (self.options)(), self.source);
+        let (built, root) = built_record(&tree, &self.bare_root(&tree));
+        self.render_built(&tree, &built, root).text
+    }
+
+    /// The bare root written into the arena of an engine that read the
+    /// case's source and kept no tree, its cells naming the records the read
+    /// left, and rendered from that arena alone.
+    fn bare_over_read(&self) -> String {
+        use sittir_core::arena::NodeSite;
+        use sittir_core::trivia_store::Place;
+        let tree = parsed(self.grammar, (self.options)(), self.source);
+        let node = self.bare_root(&tree);
+        let mut engine = sittir_core::engine::Engine::new(self.grammar, (self.options)()).expect("an engine");
+        let read = engine.parse_records::<N>(self.source).expect("a parse").root.expect("a root");
+        let records: std::collections::HashMap<NodeIndex, Address> = {
+            let built = engine.written().built();
+            let over = ParsedTree::over_records(&engine, &built, read).expect("a tree over the records");
+            let (mut ours, mut theirs) = (over.nodes(), tree.nodes());
+            let mut records = std::collections::HashMap::new();
+            let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT)];
+            while let Some((run, row)) = pending.pop() {
+                if let Some(Place::Read { site: NodeSite::Record(at), .. }) = over.place(run) {
+                    records.insert(row, at);
+                }
+                let (met, kept) = (ours.kids(run), theirs.kids(row));
+                pending.extend(met.iter().zip(kept.iter()).map(|(met, kept)| (met.index, kept.index)));
+            }
+            records
+        };
+        let at = {
+            let mut link = |coord: &NodeCoordinate| records.get(&coord.index).map(|&at| Linked::Record(at)).ok_or(sittir_core::arena::ArenaError::Unwritable("a child with no record"));
+            let store = engine.written().clone();
+            let mut built = engine.written().built_mut();
+            let word = node.write_cell(&mut RecordSink::built(&mut built, &store, &mut link)).expect("a built record");
+            match Cell::decode_built(word, &*built, G::KIND_BITS) {
+                Ok(Cell::Child { at, .. }) => at,
+                other => panic!("a built root: {other:?}"),
+            }
+        };
+        let built = engine.written().built();
+        engine.render_at(&built, at, ChangedEdges::default(), &(self.options)(), false).expect("a record render")
+    }
+
     /// The rebuilt root's record rendered (`rebuilt_root`), and the rebuilt
     /// root's native render after it, which it matches.
     fn rebuilt(&self, tree: &ParsedTree<G>) -> (Rendered, String) {
@@ -174,6 +231,10 @@ fn rust() -> Case<sittir_rust::RustGrammar, sittir_rust::render::AnyNode> {
             let sittir_rust::render::AnyNode::SourceFile(file) = node else { panic!("the root is a file") };
             rebuilt_layout(&mut file.layout);
         },
+        bare: |node| {
+            let sittir_rust::render::AnyNode::SourceFile(file) = node else { panic!("the root is a file") };
+            file.layout = None;
+        },
         source: "// a file\nfn f(a: i32,  b: i32) -> i32 {\n    // leading\n    let x = g(a, b);\n    if x > 0 {\n        h(x, /* inside */ 1);\n    }\n    x\n}\n\nstruct S { a: i32, b: u8 }\n",
         edited: "expression_statement:0",
     }
@@ -190,6 +251,10 @@ fn python() -> Case<sittir_python::PythonGrammar, sittir_python::render::AnyNode
             let sittir_python::render::AnyNode::Module(module) = node else { panic!("the root is a module") };
             rebuilt_layout(&mut module.layout);
         },
+        bare: |node| {
+            let sittir_python::render::AnyNode::Module(module) = node else { panic!("the root is a module") };
+            module.layout = None;
+        },
         source: "class C:\n    # comment\n    def f(self, a,  b):\n        if a:\n            return [a, b]\n        return None\n\n\ndef g():\n    while x:\n        y(1, 2)\n",
         edited: "expression_statement:0",
     }
@@ -205,6 +270,10 @@ fn typescript() -> Case<sittir_typescript::TypeScriptGrammar, sittir_typescript:
         rebuild: |node| {
             let sittir_typescript::render::AnyNode::Program(program) = node else { panic!("the root is a program") };
             rebuilt_layout(&mut program.layout);
+        },
+        bare: |node| {
+            let sittir_typescript::render::AnyNode::Program(program) = node else { panic!("the root is a program") };
+            program.layout = None;
         },
         source: "const a = [1, 2,  3]\nfunction f(x: number, y: number) {\n  // note\n  if (x) {\n    g(x, y)\n  }\n  return { x, y }\n}\nclass K {\n  m() { return 1 }\n}\n",
         edited: "expression_statement:0",
@@ -556,4 +625,17 @@ fn a_node_of_a_record_kind_no_written_record_names_is_no_leaf() {
     assert_eq!(tree.backer_parity::<Ts>().expect("a census").differing, 0, "the typed read takes a method name's envelope as a node with a slot");
     let name = nth_of_kind(&tree, "property_identifier:0");
     assert_eq!(tree.read_leaf::<Ts>(name), Ok(None), "a method name's envelope is no leaf before a read writes its record");
+}
+
+fn holds_a_read<G: RecordGrammar, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells>(case: &Case<G, N>, held: &str) {
+    let over_tree = case.bare_over_tree();
+    assert!(over_tree.contains(held), "{}: the built root renders the children it holds: {over_tree:?}", case.name);
+    assert_eq!(case.bare_over_read(), over_tree, "{}", case.name);
+}
+
+#[test]
+fn a_built_record_renders_the_same_over_a_read_s_records_as_over_its_tree() {
+    holds_a_read(&rust(), "let x = g(a, b);");
+    holds_a_read(&python(), "return [a, b]");
+    holds_a_read(&typescript(), "return { x, y }");
 }

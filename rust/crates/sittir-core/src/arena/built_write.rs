@@ -158,6 +158,21 @@ impl<'a> BuiltWriter<'a> {
         ListCell::word(self.place(&words, 1)?)
     }
 
+    /// Holds the record at `at` once more, for a cell that names it, when a
+    /// read left it: a built record names it as it names a built child.
+    /// False, holding nothing, for any other address.
+    ///
+    /// # Errors
+    ///
+    /// What reaching the record's count refuses.
+    pub fn hold_read(&mut self, at: Address) -> Result<bool, ArenaError> {
+        if !super::ArenaRead::read_entry(&*self.chunks, at) {
+            return Ok(false);
+        }
+        self.chunks.adopt(at)?;
+        Ok(true)
+    }
+
     /// The link record naming the parsed node of `kind` at `row` of `tree`,
     /// held by the cell naming it: its subtree's end, its record there and
     /// its byte span.

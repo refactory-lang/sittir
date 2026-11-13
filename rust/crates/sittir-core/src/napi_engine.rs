@@ -2036,13 +2036,13 @@ pub fn release_built<T>(_env: &napi::Env, _store: &crate::trivia_store::TriviaSt
 /// (`BuiltChunks`), with this table as its context's, so the entries inside
 /// it render here too.
 #[cfg(feature = "arena")]
-struct ArenaSources<'a, 't, G: crate::engine::EngineGrammar, H> {
+struct ArenaSources<'a, 't, G: crate::engine::EngineGrammar> {
     grammar: G,
-    trees: &'a crate::engine::ReadTrees<'t, G, H>,
+    trees: &'a crate::engine::ReadTrees<'t, G>,
 }
 
 #[cfg(feature = "arena")]
-impl<G: crate::arena::RecordGrammar, H: std::hash::BuildHasher> crate::render::SourceTable for ArenaSources<'_, '_, G, H>
+impl<G: crate::arena::RecordGrammar> crate::render::SourceTable for ArenaSources<'_, '_, G>
 where
     G::Trivia: crate::boundary::DecodesKind,
 {
@@ -2137,9 +2137,9 @@ where
 /// render each trivia entry's built record from its store's arena
 /// (`ArenaSources`).
 #[cfg(feature = "arena")]
-pub fn entry_sources<G: crate::arena::RecordGrammar, H: std::hash::BuildHasher, R>(
+pub fn entry_sources<G: crate::arena::RecordGrammar, R>(
     grammar: G,
-    trees: &crate::engine::ReadTrees<'_, G, H>,
+    trees: &crate::engine::ReadTrees<'_, G>,
     f: impl FnOnce(&dyn crate::render::SourceTable) -> R,
 ) -> R
 where
@@ -2151,9 +2151,9 @@ where
 /// `f` over the table a call renders through: the live `trees`; without the
 /// arena no trivia entry names a built record.
 #[cfg(not(feature = "arena"))]
-pub fn entry_sources<G: crate::engine::EngineGrammar, H: std::hash::BuildHasher, R>(
+pub fn entry_sources<G: crate::engine::EngineGrammar, R>(
     _grammar: G,
-    trees: &crate::engine::ReadTrees<'_, G, H>,
+    trees: &crate::engine::ReadTrees<'_, G>,
     f: impl FnOnce(&dyn crate::render::SourceTable) -> R,
 ) -> R {
     f(trees)
