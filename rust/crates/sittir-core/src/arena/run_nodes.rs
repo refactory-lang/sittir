@@ -16,7 +16,7 @@ use crate::types::{NodeIndex, Span};
 
 /// Where a node is kept: its own record, or the entry of its row in the run
 /// of the record `holder`.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NodeSite {
     Record(Address),
     Row { holder: Address, entry: u32 },
@@ -129,6 +129,18 @@ impl<'t> RunNodes<'t> {
     /// `ArenaError::Malformed` for row 0 and for an entry that is no row.
     pub fn row_index(&mut self, holder: Address, row: u32) -> Result<NodeIndex, ArenaError> {
         self.answering(|walk| walk.row_index(holder, row))
+    }
+
+    /// The id of the node kept at `site`; none, with the refusal noted
+    /// (`refused`), for a site no record of the arena holds.
+    pub fn index_at(&mut self, site: NodeSite) -> Option<NodeIndex> {
+        self.answering(|walk| {
+            let met = match site {
+                NodeSite::Record(at) => walk.record(at, Parent::Unknown),
+                NodeSite::Row { holder, entry } => walk.row_index(holder, entry + 2),
+            };
+            walk.answer(met.map(Some), None)
+        })
     }
 
     /// The levels the node at `index` opens net of those it closes, by the

@@ -36,6 +36,10 @@ pub enum Place {
     /// keyed apart from the holder's units, which a write replaces together.
     #[cfg(feature = "arena")]
     Leaf(Site<crate::arena::Address>),
+    /// A node of a read whose tree is gone: the source it was read from, as
+    /// the tree its coordinates name, and where its records keep it.
+    #[cfg(feature = "arena")]
+    Read { tree: TreeId, site: crate::arena::NodeSite },
 }
 
 #[cfg(feature = "arena")]
@@ -177,7 +181,9 @@ fn row_bytes<K, V: HeapBytes>(value: &V) -> usize {
 /// A built node's entries live as long as the engine's built arena, which
 /// only appends, so no record's address is reused while its entries are
 /// here. A parsed tree's written rows are its own
-/// (`ParsedTree::write_trivia_side`).
+/// (`ParsedTree::write_trivia_side`); a read whose tree is gone left its
+/// nodes in the built arena, and their written sides are here
+/// (`Place::Read`).
 #[derive(Debug)]
 pub struct TriviaStore<T> {
     sides: Arc<RwLock<SideRows<Place, T>>>,
@@ -336,6 +342,21 @@ impl<T: Clone> TriviaStore<T> {
         let side = |side| sides.get(place, side).map(|entries| self.answered(entries));
         let trivia = crate::trivia::NodeTrivia { leading: side(TriviaSide::Leading), trailing: side(TriviaSide::Trailing), inner: side(TriviaSide::Inner) };
         (trivia.leading.is_some() || trivia.trailing.is_some() || trivia.inner.is_some()).then_some(trivia)
+    }
+
+    /// Each side a write gave a node read from the source `tree` names, by
+    /// where the read's records keep the node.
+    #[cfg(feature = "arena")]
+    #[must_use]
+    pub fn written(&self, tree: TreeId) -> Vec<(crate::arena::NodeSite, TriviaSide)> {
+        let first = (Place::Read { tree, site: crate::arena::NodeSite::Record(crate::arena::Address(0)) }, TriviaSide::Leading);
+        self.read()
+            .range(first..)
+            .map_while(|(&(place, side), _)| match place {
+                Place::Read { tree: of, site } if of == tree => Some((site, side)),
+                _ => None,
+            })
+            .collect()
     }
 
     /// The sides writes gave each built unit `holder`'s record holds, by the

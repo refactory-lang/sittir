@@ -515,6 +515,14 @@ pub trait Backing: Sized {
     /// lends.
     #[cfg(feature = "arena")]
     fn arenas<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<&dyn crate::arena::RecordArenas>;
+
+    /// Where the engine's store keeps the written sides of the node at
+    /// `index`; none for a tree that keeps its written sides itself.
+    fn place<G: EngineGrammar>(tree: &ParsedTree<G, Self>, index: NodeIndex) -> Option<crate::trivia_store::Place>;
+
+    /// Each side a write gave a node of `tree`, where the engine's store
+    /// keeps them; none for a tree that keeps its written sides itself.
+    fn written<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<Vec<(NodeIndex, TriviaSide)>>;
 }
 
 impl Backing for tree_sitter::Tree {
@@ -542,6 +550,13 @@ impl Backing for tree_sitter::Tree {
 
     #[cfg(feature = "arena")]
     fn arenas<G: EngineGrammar>(_: &ParsedTree<G, Self>) -> Option<&dyn crate::arena::RecordArenas> {
+        None
+    }
+    fn place<G: EngineGrammar>(_: &ParsedTree<G, Self>, _: NodeIndex) -> Option<crate::trivia_store::Place> {
+        None
+    }
+
+    fn written<G: EngineGrammar>(_: &ParsedTree<G, Self>) -> Option<Vec<(NodeIndex, TriviaSide)>> {
         None
     }
 }
@@ -574,6 +589,16 @@ impl<'a> Backing for Records<'a> {
 
     fn arenas<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<&dyn crate::arena::RecordArenas> {
         Some(&tree.tree.held)
+    }
+
+    fn place<G: EngineGrammar>(tree: &ParsedTree<G, Self>, index: NodeIndex) -> Option<crate::trivia_store::Place> {
+        let site = crate::arena::RunNodes::over(tree.tree.built, tree.source, &tree.tree.table).site(index)?;
+        Some(crate::trivia_store::Place::Read { tree: tree.tree_id, site })
+    }
+
+    fn written<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<Vec<(NodeIndex, TriviaSide)>> {
+        let mut runs = crate::arena::RunNodes::over(tree.tree.built, tree.source, &tree.tree.table);
+        Some(tree.store.written(tree.tree_id).into_iter().filter_map(|(site, side)| Some((runs.index_at(site)?, side))).collect())
     }
 }
 
@@ -1604,6 +1629,9 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
         &self.store
     }
 
+}
+
+impl<G: EngineGrammar> ParsedTree<G> {
     /// Replace `side` of the node at `index` with `entries`, holding the
     /// built records among them (`TriviaStore::hold`) and releasing those the
     /// side held, and mark the tree grown: its rows count in its native
@@ -1635,22 +1663,51 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
         self.grew();
         Ok(())
     }
+}
 
+impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     /// Whether a write replaced a side of a node under the node at `index`:
     /// of a descendant, or of the node's own `inner`, and of its own leading
     /// and trailing too when `own_sides` is set. It walks the written rows
     /// alone (`TriviaStore::edit_walks`).
     pub fn edited_within(&self, index: crate::types::NodeIndex, own_sides: bool) -> bool {
-        let Some(kid) = node(&mut self.nodes(), index) else { return false };
-        self.edited_in(index, index + kid.count, own_sides)
+        self.edited_under(&mut self.nodes(), index, own_sides)
     }
 
-    /// Whether a write replaced a side of a node among those at `start..end`
-    /// (`edited_within`).
-    fn edited_in(&self, start: NodeIndex, end: NodeIndex, own_sides: bool) -> bool {
-        let (edited, walked) = self.sides.edited_within(start, end, own_sides);
+    /// `edited_within`, through `nodes`: the tree's own written rows by the
+    /// node's range, or the sides the engine's store holds for the tree,
+    /// each by its node's ancestors.
+    fn edited_under(&self, nodes: &mut dyn Nodes<'_>, index: NodeIndex, own_sides: bool) -> bool {
+        let (edited, walked) = match B::written(self) {
+            None => node(nodes, index).map_or((false, 0), |kid| self.sides.edited_within(index, index + kid.count, own_sides)),
+            Some(written) => {
+                let mut walked = 0;
+                let edited = written.into_iter().any(|(mut at, side)| {
+                    walked += 1;
+                    if at == index {
+                        return own_sides || side == TriviaSide::Inner;
+                    }
+                    while let Some(parent) = nodes.parent(at) {
+                        if parent == index {
+                            return true;
+                        }
+                        at = parent;
+                    }
+                    false
+                });
+                (edited, walked)
+            }
+        };
         self.store.walked(walked);
         edited
+    }
+
+    /// Where the engine's store keeps the written sides of the node at
+    /// `index`; none for a tree that keeps its written sides itself, and
+    /// for a node the tree does not hold.
+    #[must_use]
+    pub fn place(&self, index: crate::types::NodeIndex) -> Option<crate::trivia_store::Place> {
+        B::place(self, index)
     }
 }
 
@@ -2069,8 +2126,12 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     /// layout when `layout`).
     fn seated(&mut self, index: NodeIndex, side: TriviaSide, layout: Option<Lent<'_>>) -> Vec<SideEntry<G::Trivia>> {
         let tree = self.tree;
-        match tree.sides.get(index, side) {
-            Some(written) => tree.store.answered(written).into_iter().map(SideEntry::Written).collect(),
+        let written = match B::place(tree, index) {
+            Some(place) => tree.store.side(place, side),
+            None => tree.sides.get(index, side).map(|written| tree.store.answered(written)),
+        };
+        match written {
+            Some(written) => written.into_iter().map(SideEntry::Written).collect(),
             None => self.assigned(index, side, layout),
         }
     }
@@ -2216,7 +2277,7 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     /// Whether a write replaced a side of a node under the node at `index`
     /// or of its own `inner` (`ParsedTree::edited_within`).
     fn edited_within(&mut self, index: NodeIndex) -> bool {
-        self.kid(index).is_some_and(|kid| self.tree.edited_in(index, index + kid.count, false))
+        self.tree.edited_under(&mut self.nodes, index, false)
     }
 
     /// What `SourceTable::kind_of` answers for a coordinate of the tree.

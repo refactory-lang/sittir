@@ -152,3 +152,46 @@ fn a_node_s_sides_read_from_its_records_as_from_its_tree() {
     .concat();
     assert!(apart.is_empty(), "{} sources:\n{}", apart.len(), apart.iter().take(8).cloned().collect::<Vec<_>>().join("\n"));
 }
+
+/// The node `path` leads to from the root of `nodes`, each step a child's
+/// position among its parent's.
+fn at_path(nodes: &mut dyn Nodes<'_>, path: &[usize]) -> NodeIndex {
+    path.iter().fold(NodeIndex::ROOT, |at, &position| nodes.kids(at)[position].index)
+}
+
+#[test]
+fn a_side_written_to_a_read_s_node_is_read_by_every_later_call() {
+    use sittir_core::engine::ParsedTree;
+    use sittir_core::trivia_table::TriviaSide;
+    let source = "fn f() {\n    // why\n    a\n}\n\nfn g() {}\n";
+    let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
+    let root = engine.parse_records::<sittir_rust::render::AnyNode>(source).expect("a parse").root.expect("a root");
+    let (path, side, place) = {
+        let built = engine.written().built();
+        let records = ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
+        let mut nodes = records.nodes();
+        let mut pending = vec![Vec::new()];
+        let mut found = None;
+        while let Some(path) = pending.pop() {
+            let at = at_path(&mut nodes, &path);
+            if let Some(side) = [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].into_iter().find(|&side| !records.side_entries(at, side, false).is_empty()) {
+                found = Some((path, side, records.place(at).expect("a place in the store")));
+                break;
+            }
+            pending.extend((0..nodes.kids(at).len()).map(|position| [path.as_slice(), &[position]].concat()));
+        }
+        found.expect("a side that holds the comment")
+    };
+    assert_eq!(path.first(), Some(&0), "the comment lies in the first function");
+    engine.written().write_held_side(place, side, Vec::new()).expect("a write");
+    let built = engine.written().built();
+    let records = ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
+    let mut nodes = records.nodes();
+    let (at, first, second) = (at_path(&mut nodes, &path), at_path(&mut nodes, &[0]), at_path(&mut nodes, &[1]));
+    assert!(records.side_entries(at, side, false).is_empty(), "the written side is the one read");
+    assert!(records.edited_within(NodeIndex::ROOT, false));
+    assert!(records.edited_within(first, false) || first == at);
+    assert!(records.edited_within(at, true));
+    assert_eq!(records.edited_within(at, false), side == TriviaSide::Inner, "a node's own leading and trailing are not within it");
+    assert!(!records.edited_within(second, true), "the second function holds no write");
+}
