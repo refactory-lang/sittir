@@ -34313,6 +34313,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'pattern'>;
 		};
 		readonly 'statement.block': {
+			readonly label: V.Read<TypeScriptMap, 'identifier.label'>;
 			readonly statements:
 				| V.Read<TypeScriptMap, 'declaration.ambient'>
 				| V.Read<TypeScriptMap, 'declaration.class'>
@@ -34426,6 +34427,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'statement.block.static': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
+			readonly label: V.Read<TypeScriptMap, 'identifier.label'>;
 			readonly statements:
 				| V.Read<TypeScriptMap, 'declaration.ambient'>
 				| V.Read<TypeScriptMap, 'declaration.class'>
@@ -36154,6 +36156,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly label: V.Read<TypeScriptMap, 'identifier.label'>;
 			readonly $forms: V.Form<'body' | 'condition' | 'initializer'>;
 		};
 		readonly 'statement.loop.do_while': {
@@ -36268,6 +36271,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
 			readonly condition: V.Read<TypeScriptMap, 'expression.parenthesized'> | T.ParenthesizedExpressionTyped.Parsed;
+			readonly label: V.Read<TypeScriptMap, 'identifier.label'>;
 			readonly $forms: V.Form<'body' | 'condition'>;
 		};
 		readonly 'statement.loop.for_each': {
@@ -36386,6 +36390,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Unmapped<'typescript:for_header_lhs'>
 				| V.Unmapped<'typescript:for_header_using_kind'>
 				| V.Unmapped<'typescript:for_header_var_kind'>;
+			readonly label: V.Read<TypeScriptMap, 'identifier.label'>;
 			readonly $forms: V.Form<'body' | 'header'>;
 		};
 		readonly 'statement.loop.while': {
@@ -36500,6 +36505,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
 			readonly condition: V.Read<TypeScriptMap, 'expression.parenthesized'> | T.ParenthesizedExpressionTyped.Parsed;
+			readonly label: V.Read<TypeScriptMap, 'identifier.label'>;
 			readonly $forms: V.Form<'body' | 'condition'>;
 		};
 		readonly 'statement.return': {

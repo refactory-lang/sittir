@@ -202,26 +202,8 @@ interface SynthesizeRenderModuleBundleConfig extends RenderOptionsInputs {
 }
 
 function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig): RenderModuleBundle {
-	const {
-		grammar,
-		nodeMap,
-		generatedIdTables,
-		templates,
-		renderRules,
-		renderAs,
-		options,
-		sites,
-		addresses
-	} = config;
-	return {
-		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
-			renderRules,
-			renderAs,
-			options,
-			sites,
-			addresses
-		})
-	};
+	const { grammar, nodeMap, generatedIdTables, templates, ...inputs } = config;
+	return { emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, inputs) };
 }
 
 export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, EmittedTemplates> {
@@ -231,16 +213,11 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 	readonly #options: RenderOptionsInputs;
 
 	constructor(config: RenderModuleEmitterConfig) {
-		this.#grammar = config.grammar;
-		this.#nodeMap = config.nodeMap;
-		this.#generatedIdTables = config.generatedIdTables;
-		this.#options = {
-			renderRules: config.renderRules,
-			renderAs: config.renderAs,
-			options: config.options,
-			sites: config.sites,
-			addresses: config.addresses
-		};
+		const { grammar, nodeMap, generatedIdTables, ...inputs } = config;
+		this.#grammar = grammar;
+		this.#nodeMap = nodeMap;
+		this.#generatedIdTables = generatedIdTables;
+		this.#options = inputs;
 	}
 
 	emitLeaf(_node: AssembledPattern | AssembledKeyword | AssembledPunctuation | AssembledEnum): void {}
@@ -3870,7 +3847,7 @@ function delimiterFill(node: AssembledNode, kindEntries: readonly KindEnumEntry[
 	const { open, close, content } = delimitedSlotsOf(node);
 	const renders = content.map((slot) => `${PREPARE_MOD}::RenderSlot::render_slot(&parts.${rustFieldIdent(slot.storageName)}, overlay, ctx, w)?;`);
 	const arms = facts.arms.map((arm) => `::sittir_core::delimiters::DelimiterArm { text: ${rustStr(arm.text)}, single_line: ${arm.singleLine} }`);
-	const spec = `::sittir_core::delimiters::DelimiterSpec { kind: ${rustStr(node.kind)}, arms: &[${arms.join(', ')}], run: ${rustChar(facts.run)}, close_lead: ${rustStr(facts.closeLead)}, escape: ${rustChar(facts.escape)}, id: ::sittir_core::types::KindId(${kindId(node.kind, 'own kind')}), free_text: &[${freeText.join(', ')}], excluded: &[${excluded.join(', ')}], opened: &[${opened.join(', ')}], gate: ${gate}, whitespace: &options::WHITESPACE }`;
+	const spec = `::sittir_core::delimiters::DelimiterSpec { kind: ${rustStr(node.kind)}, arms: &[${arms.join(', ')}], run: ${rustChar(facts.run)}, max_run: ${facts.maxRun === undefined ? 'None' : `Some(${facts.maxRun})`}, close_lead: ${rustStr(facts.closeLead)}, escape: ${rustChar(facts.escape)}, id: ::sittir_core::types::KindId(${kindId(node.kind, 'own kind')}), free_text: &[${freeText.join(', ')}], excluded: &[${excluded.join(', ')}], opened: &[${opened.join(', ')}], gate: ${gate}, whitespace: &options::WHITESPACE }`;
 	return [
 		`    ::sittir_core::delimiters::fill(&mut parts.${rustFieldIdent(open.storageName)}, &mut parts.${rustFieldIdent(close.storageName)}, overlay, &${spec}, ctx, |overlay: &N::Overlay, w: &mut dyn ::sittir_core::render::RenderSink| { ${[...renders, 'Ok(())'].join(' ')} })?;`
 	];

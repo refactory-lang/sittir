@@ -217,6 +217,11 @@
 (debugger_statement) @statement.debugger
 (empty_statement) @statement.empty
 (labeled_statement) @statement.labeled
+(labeled_statement label: (_) @label body: (for_statement) @element)
+(labeled_statement label: (_) @label body: (for_in_statement) @element)
+(labeled_statement label: (_) @label body: (while_statement) @element)
+(labeled_statement label: (_) @label body: (do_statement) @element)
+(labeled_statement label: (_) @label body: (statement_block) @element)
 (with_statement) @statement.scope
 
 ; ── clause ─────────────────────────────────────────────────────────────────────

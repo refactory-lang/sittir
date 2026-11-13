@@ -164,12 +164,14 @@ export interface PortableSeat {
  * of one value reads one value from a slot that holds many. It is absent for a member the vocabulary does not declare.
  * A route that enters a kind the arm does not make `requires` other members to fill that kind's required slots: each group names the members
  * any one of which fills one slot, so the route is taken only when every group has a member present. `reads` lists the kinds the member
- * reads from its slot where its binding captures only some of what the slot holds; a read keeps only values of those kinds.
+ * reads from its slot where its binding captures only some of what the slot holds; a read keeps only values of those kinds. A `nonEmpty` route's
+ * slot holds at least one element, so an empty list neither builds through it nor fills a slot it `requires`.
  */
 export interface PortableMemberStep {
 	readonly name: string;
 	readonly steps: readonly PortableSlotStep[];
 	readonly multiple: boolean;
+	readonly nonEmpty?: true;
 	readonly list?: boolean;
 	readonly seats: readonly PortableSeat[];
 	readonly requires?: readonly (readonly string[])[];

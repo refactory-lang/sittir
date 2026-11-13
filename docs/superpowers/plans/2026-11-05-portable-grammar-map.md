@@ -304,5 +304,5 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 ## Notes
 
 - Marker-only features with no paths or members, held trivially: OperatorOverloading, ManifestTyping, Elisions and Overloading.
-- Call type arguments and loop labels each have two vocabulary shapes, tracked in an issue. Task 5 moves the members as ruled.
+- A call holds its type arguments and a loop or block its label, in every grammar that has them (the user, 2026-11-12: "On the call" and "On the loop").
 - The PR shape (one PR, or one per task) is the maintainer's call when Task 1 comes back. The tasks are ordered so each one leaves every gate green on its own.

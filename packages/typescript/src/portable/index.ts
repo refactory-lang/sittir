@@ -4897,7 +4897,7 @@ const table: PortableTable = {
 				TSKindId.WhileStatement,
 				TSKindId.WithStatement
 			],
-			exact: true
+			exact: false
 		},
 		'statement.block': { ids: [TSKindId.ClassStaticBlock, TSKindId.StatementBlock], exact: true },
 		'statement.block.static': { ids: [TSKindId.ClassStaticBlock], exact: true },
@@ -4923,7 +4923,7 @@ const table: PortableTable = {
 		'statement.import': { ids: [TSKindId.ImportAlias, TSKindId.ImportStatement], exact: true },
 		'statement.import.alias': { ids: [TSKindId.ImportAlias], exact: true },
 		'statement.import.typeof': { ids: [TSKindId.ImportStatement], exact: false },
-		'statement.labeled': { ids: [TSKindId.LabeledStatement], exact: true },
+		'statement.labeled': { ids: [TSKindId.LabeledStatement], exact: false },
 		'statement.loop': {
 			ids: [TSKindId.DoStatement, TSKindId.ForInStatement, TSKindId.ForStatement, TSKindId.WhileStatement],
 			exact: true
@@ -5512,7 +5512,19 @@ const table: PortableTable = {
 		],
 		[TSKindId.InternalModule]: [{ path: 'declaration.module', within: [], test: [] }],
 		[TSKindId.IntersectionType]: [{ path: 'type.intersection', within: [], test: [] }],
-		[TSKindId.LabeledStatement]: [{ path: 'statement.labeled', within: [], test: [] }],
+		[TSKindId.LabeledStatement]: [
+			{
+				path: 'statement.labeled',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'not', of: { op: 'is', types: [219, 216, 215, 211, 218], slots: { '228': 1 } } }
+					}
+				]
+			}
+		],
 		[TSKindId.LexicalDeclaration]: [
 			{
 				path: 'declaration.variable.constant',

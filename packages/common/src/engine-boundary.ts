@@ -40,5 +40,6 @@ export type {
 	ParsedRoot
 } from './engine.ts';
 export { builtFlags, nullaryBuilt, portablePathHasFacts, readableEntries, textBuilt } from './portable/facts.ts';
+export { holds } from './query-holds.ts';
 export { portableRuntime, portableRuntimeTree, type PortableRuntime } from './portable/runtime.ts';
 export type { PortableCarry, PortableCarried } from './portable/read.ts';
