@@ -185,6 +185,18 @@ pub struct ReadCtx<'s> {
     /// walk of that child takes its ids, row and span from here rather than
     /// asking the tree again (`ReadCtx::current`).
     pub at: Option<Kid>,
+    /// The names of the nodes of a read whose records outlive its tree
+    /// (`ReadCtx::with_names`): each coordinate the read makes carries its
+    /// node's.
+    pub names: Option<&'s dyn NodeNames>,
+}
+
+/// The names the nodes of a read keep past a call, where its records
+/// outlive its tree.
+pub trait NodeNames {
+    /// The name of the node the call knows by `index`; none for a node with
+    /// no record.
+    fn name(&self, index: NodeIndex) -> Option<crate::types::NodeId>;
 }
 
 impl std::fmt::Debug for ReadCtx<'_> {
@@ -334,7 +346,13 @@ pub enum Origin {
 
 impl<'s> ReadCtx<'s> {
     pub fn new(source: &'s str, tree_id: crate::types::TreeId, shows: fn(KindId) -> bool) -> Self {
-        Self { source, tree_id, shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false, inline_items: false, units_only: false, start: true, at: None }
+        Self { source, tree_id, shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false, inline_items: false, units_only: false, start: true, at: None, names: None }
+    }
+
+    /// The read names each node its coordinates name by `names`.
+    #[must_use]
+    pub fn with_names(self, names: Option<&'s dyn NodeNames>) -> Self {
+        Self { names, ..self }
     }
 
     /// This context, reading a relaxed keyword as the word rule it displays.
@@ -648,7 +666,7 @@ impl<'s> ReadCtx<'s> {
     /// coordinate render must keep.
     fn coordinate_at(&self, index: NodeIndex, count: u32, span: Span, grammar: KindId, display: KindId) -> NodeCoordinate {
         let span = if index == NodeIndex::ROOT { Span::whole(self.source) } else { span };
-        NodeCoordinate { kind: Some(self.stamped_kind(grammar, display)), ..NodeCoordinate::new(self.tree_id, index, index + count, span) }
+        NodeCoordinate { kind: Some(self.stamped_kind(grammar, display)), ..NodeCoordinate::new(self.tree_id, index, index + count, span) }.named(self.names.and_then(|names| names.name(index)))
     }
 
     /// The source text a node spans.

@@ -215,6 +215,12 @@ id_newtype! {
 }
 
 id_newtype! {
+    /// A node's name where its records outlive its tree: the address of
+    /// its record in its engine's built arena.
+    NodeId(u32)
+}
+
+id_newtype! {
     /// A node of a tree: its position in the tree's preorder, the
     /// `TreeCursor::descendant_index` of the node from the root.
     NodeIndex(u32)

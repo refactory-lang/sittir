@@ -595,7 +595,7 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<KindId> {
         match self {
             SlotValue::Node(t) => t.source_separator(ctx),
-            SlotValue::Coord(coord) if coord.writes.as_ref().is_some_and(|writes| writes.changed.leading) => None,
+            SlotValue::Coord(coord) if coord.changed().leading => None,
             SlotValue::Coord(coord) => ctx.sources.separator_before(coord, ctx.lent),
         }
     }

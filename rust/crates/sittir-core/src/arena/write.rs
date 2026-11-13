@@ -338,12 +338,11 @@ mod tests {
     use crate::arena::{ArenaRead, Cell, ListCell};
     use crate::layout::SlotLayout;
     use crate::options::{EdgeArm, Edges};
-    use crate::slot::CoordinateWrites;
     use crate::trivia::{TriviaEntry, TriviaText};
     use crate::types::{NodeIndex, Span, TreeId};
 
     fn coordinate(index: u32, end: u32) -> NodeCoordinate {
-        NodeCoordinate { tree: TreeId(3), index: NodeIndex(index), end: NodeIndex(end), span: Span { start: 4, end: 9 }, kind: Some(KindId(5)), edges: None, writes: None }
+        NodeCoordinate { tree: TreeId(3), index: NodeIndex(index), end: NodeIndex(end), span: Span { start: 4, end: 9 }, kind: Some(KindId(5)), edges: None, carried: None }
     }
 
     fn layout() -> NodeLayout<TriviaText> {
@@ -555,7 +554,7 @@ mod tests {
         let linked = Address::new(0, 1).expect("an address");
         let mut link = |coord: &NodeCoordinate| Ok(if coord.index == NodeIndex(5) { Linked::Record(linked) } else { Linked::Leaf("y".to_owned()) });
         let changed = ChangedEdges { leading: true, trailing: false };
-        let moved = |index| NodeCoordinate { writes: Some(Box::new(CoordinateWrites { changed })), ..at(index, index + 1) };
+        let moved = |index| at(index, index + 1).with_changed(changed);
         let node = pair(None, SlotValue::Coord(moved(5)), Vec::new());
         let cell = node.write_cell(&mut RecordSink::built(&mut chunks, &store, &mut link)).expect("written");
         let (_, _, _, left, _) = pair_record(&chunks, cell);

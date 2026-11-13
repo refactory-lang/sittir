@@ -53,6 +53,15 @@ struct Table {
 #[derive(Default)]
 pub struct RunTable(crate::engine::PerCall<Table>);
 
+impl RunTable {
+    /// Where the node `index` names is kept; none for an id no navigation
+    /// gave.
+    #[must_use]
+    pub fn site(&self, index: NodeIndex) -> Option<NodeSite> {
+        self.0.with(|table| table.met.get(index.0 as usize).map(|met| met.site))
+    }
+}
+
 /// Navigation over the parsed records of one source, in `arena`, naming
 /// each node by its id in `table`.
 #[derive(Clone, Copy)]
@@ -107,7 +116,7 @@ impl<'t> RunNodes<'t> {
     /// Where the node `index` names is kept.
     #[must_use]
     pub fn site(&self, index: NodeIndex) -> Option<NodeSite> {
-        self.answering(|walk| walk.site(index))
+        self.table.site(index)
     }
 
     /// The id of the node whose record is at `at`.

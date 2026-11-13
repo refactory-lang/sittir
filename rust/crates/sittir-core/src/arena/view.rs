@@ -345,8 +345,7 @@ impl<'a, T> RecordCtx<'a, T> {
     ///
     /// What `row_node` refuses.
     pub fn row_coordinate(self, row: ParsedRow) -> Result<NodeCoordinate, ArenaError> {
-        let writes = (row.changed != ChangedEdges::default()).then(|| Box::new(crate::slot::CoordinateWrites { changed: row.changed }));
-        Ok(NodeCoordinate { writes, ..self.row_node(row.tree, row.row)? })
+        Ok(self.row_node(row.tree, row.row)?.with_changed(row.changed))
     }
 
     /// The coordinate of the node at `row` of `tree` a read of it names

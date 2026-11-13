@@ -69,7 +69,7 @@ fn a_tree_counts_its_depth_members_from_its_first_depth_move() {
         span: sittir_core::types::Span::of(&root),
         kind: None,
         edges: None,
-        writes: None,
+        carried: None,
     };
     let table = DepthMembers::of(&mut tree.nodes(), sittir_python::render::kind_ids::SURFACE_KINDS).heap_bytes();
     assert_ne!(table, 0, "the source has depth members");

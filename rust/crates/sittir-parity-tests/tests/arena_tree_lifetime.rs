@@ -92,15 +92,16 @@ fn a_link_record_takes_eight_words() {
 }
 
 /// `text` with the id each `NodeIndex(…)` and `TreeId(…)` in it holds
-/// blanked: a records tree and a parsed tree name the same node apart.
+/// blanked, and with no coordinate naming its node past the call: a records
+/// tree and a parsed tree name the same node apart.
 fn unnamed(text: &str) -> String {
     let mut out = String::new();
     let mut rest = text;
-    while let Some(at) = ["NodeIndex(", "TreeId("].iter().filter_map(|open| rest.find(open).map(|at| at + open.len())).min() {
+    while let Some(at) = ["NodeIndex(", "TreeId(", "NodeId("].iter().filter_map(|open| rest.find(open).map(|at| at + open.len())).min() {
         out.push_str(&rest[..at]);
         rest = rest[at..].trim_start_matches(|c: char| c.is_ascii_digit());
     }
-    out + rest
+    (out + rest).replace("carried: Some(CoordinateCarried { changed: ChangedEdges { leading: false, trailing: false }, node: Some(NodeId()) })", "carried: None")
 }
 
 /// Each node of `source` whose sides its records answer apart from its
@@ -291,4 +292,47 @@ fn a_source_that_parses_to_an_error_alone_has_its_error_s_record_for_a_root() {
     let held = spans(tree.nodes().kids(NodeIndex::ROOT));
     assert_ne!(held.len(), 0, "the error holds what it could not read");
     assert_eq!(spans(nodes.kids(NodeIndex::ROOT)), held, "the root's children are the tree's");
+}
+
+/// The first coordinate a side of a node of `tree` holds, with the id of
+/// the node it names.
+fn held_coordinate<G: EngineGrammar, B: sittir_core::engine::Backing>(tree: &sittir_core::engine::ParsedTree<G, B>) -> (sittir_core::slot::NodeCoordinate, NodeIndex) {
+    use sittir_core::trivia::TriviaEntry;
+    use sittir_core::trivia_table::TriviaSide;
+    use sittir_core::SlotValue;
+    let mut nodes = tree.nodes();
+    let mut met = Vec::new();
+    nodes.walk(NodeIndex::ROOT, &mut |step, kid| {
+        if step == Step::Meet {
+            met.push(*kid);
+        }
+        Visit::Enter
+    });
+    let held = met.iter().find_map(|kid| {
+        [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].into_iter().flat_map(|side| tree.side_entries(kid.index, side, false)).find_map(|entry| match entry.into_entry() {
+            TriviaEntry::Value(SlotValue::Coord(coord)) => Some(coord),
+            _ => None,
+        })
+    });
+    let coord = held.expect("a side that holds a coordinate");
+    let named = met.iter().find(|kid| kid.extra && kid.span() == coord.span).expect("the node the coordinate names");
+    (coord, named.index)
+}
+
+#[test]
+fn a_coordinate_of_a_read_s_node_names_its_record() {
+    use sittir_core::arena::NodeSite;
+    use sittir_core::trivia_store::Place;
+    let source = "// lead\nfn f() {}\n";
+    let (grammar, options) = (sittir_rust::RustGrammar, sittir_rust::render::options::defaults);
+    let (kept, _) = held_coordinate(&parsed(grammar, options(), source));
+    assert_eq!(kept.node(), None, "a tree's coordinate names its node by its tree and index");
+    let mut engine = Engine::new(grammar, options()).expect("an engine");
+    let root = engine.parse_records::<sittir_rust::render::AnyNode>(source).expect("a parse").root.expect("a root");
+    let built = engine.written().built();
+    let records = sittir_core::engine::ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
+    let (coord, index) = held_coordinate(&records);
+    let Some(Place::Read { site: NodeSite::Record(at), .. }) = records.place(index) else { panic!("a comment has a record") };
+    assert_eq!(coord.node(), Some(sittir_core::types::NodeId(at.0)));
+    assert_eq!((coord.span, coord.kind), (kept.span, kept.kind));
 }

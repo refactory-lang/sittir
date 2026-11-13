@@ -698,11 +698,10 @@ macro_rules! napi_engine {
                 let table = render_options(&engine, Some(parsed), options)?;
                 let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| {
                     let coord = $crate::render::SourceTable::row_coordinate(sources, tree_id, index).ok_or_else(|| format!("index {} names no node of tree {}", index.0, tree_id.0))?;
-                    let writes = Some(Box::new($crate::slot::CoordinateWrites { changed: $crate::slot::ChangedEdges { leading, trailing } }));
                     let through = $crate::render::ThroughTemplates(sources);
                     let sources: &dyn $crate::render::SourceTable = if templates == Some(true) { &through } else { sources };
                     let ctx = $crate::prepare::RenderContext::new(&table, sources);
-                    $render_parts($crate::SlotValue::Coord($crate::slot::NodeCoordinate { writes, ..coord }), &ctx, None).map(|(_, canonical)| canonical).map_err(|e| e.to_string())
+                    $render_parts($crate::SlotValue::Coord(coord.with_changed($crate::slot::ChangedEdges { leading, trailing })), &ctx, None).map(|(_, canonical)| canonical).map_err(|e| e.to_string())
                 })
                 .map_err(|e| ::napi::Error::from_reason(format!("render_at failed: {e}")))?;
                 Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))

@@ -523,6 +523,10 @@ pub trait Backing: Sized {
     /// Each side a write gave a node of `tree`, where the engine's store
     /// keeps them; none for a tree that keeps its written sides itself.
     fn written<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<Vec<(NodeIndex, TriviaSide)>>;
+
+    /// The names `tree`'s nodes keep past a call; none for a tree whose
+    /// nodes are named by its id and their indexes.
+    fn names<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<&dyn crate::read::NodeNames>;
 }
 
 impl Backing for tree_sitter::Tree {
@@ -557,6 +561,10 @@ impl Backing for tree_sitter::Tree {
     }
 
     fn written<G: EngineGrammar>(_: &ParsedTree<G, Self>) -> Option<Vec<(NodeIndex, TriviaSide)>> {
+        None
+    }
+
+    fn names<G: EngineGrammar>(_: &ParsedTree<G, Self>) -> Option<&dyn crate::read::NodeNames> {
         None
     }
 }
@@ -599,6 +607,20 @@ impl<'a> Backing for Records<'a> {
     fn written<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<Vec<(NodeIndex, TriviaSide)>> {
         let mut runs = crate::arena::RunNodes::over(tree.tree.built, tree.source, &tree.tree.table);
         Some(tree.store.written(tree.tree_id).into_iter().filter_map(|(site, side)| Some((runs.index_at(site)?, side))).collect())
+    }
+
+    fn names<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<&dyn crate::read::NodeNames> {
+        Some(&tree.tree)
+    }
+}
+
+#[cfg(feature = "arena")]
+impl crate::read::NodeNames for Records<'_> {
+    fn name(&self, index: NodeIndex) -> Option<crate::types::NodeId> {
+        match self.table.site(index)? {
+            crate::arena::NodeSite::Record(at) => Some(crate::types::NodeId(at.0)),
+            crate::arena::NodeSite::Row { .. } => None,
+        }
     }
 }
 
@@ -1048,7 +1070,7 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     }
 
     pub(crate) fn read_ctx(&self) -> crate::read::ReadCtx<'_> {
-        crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows()).with_relaxes(self.grammar.relaxes())
+        crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows()).with_relaxes(self.grammar.relaxes()).with_names(B::names(self))
     }
 
     /// The coordinate a read of this tree names the node at `index` by
