@@ -5,7 +5,7 @@
 //! in the engine's store of written sides ([`crate::trivia_store`]), and a
 //! parsed node's assigned sides in its tree's trivia table.
 
-use super::{Address, Arena, ArenaError, ArenaRead};
+use super::{Address, ArenaError, ArenaRead, RecordSpace};
 use crate::options::{EdgeArm, Edges};
 use crate::points::{Point, PointSpan};
 use crate::slot::ChangedEdges;
@@ -361,7 +361,7 @@ impl SideRecord {
     /// Writes the side record in place in `arena`, its slots' token runs
     /// first, and answers its address: `Address::NONE` when it holds
     /// nothing.
-    pub fn write_in(&self, arena: &mut Arena) -> Result<Address, ArenaError> {
+    pub fn write_in(&self, arena: &mut dyn RecordSpace) -> Result<Address, ArenaError> {
         if self.is_empty() {
             return Ok(Address::NONE);
         }

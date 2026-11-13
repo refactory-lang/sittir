@@ -24,7 +24,7 @@
 //! included.
 
 use super::side::{NodeFacts, RunEntry};
-use super::{Address, ArenaError, Cell, CellShape, ListCell, Row, SideRecord, TreeArena};
+use super::{Address, ArenaError, Cell, CellShape, ListCell, RecordSpace, Row, SideRecord, TreeArena};
 use crate::read::{Depth, Elided, ReadCtx, ReadError, ReadNode, ReadSlot, SlotSite};
 use crate::record::{stored, Stored, HEADER_WORDS};
 use crate::slot::SlotValue;
@@ -134,7 +134,7 @@ type ExtraWalk = fn(&mut TreeCursor<'_>, &mut ReadCtx<'_>, &mut Hydration<'_>, &
 /// Where a hydration writes: the tree's arena, and how its walks read the
 /// extras they meet (`Hydration::extra`).
 pub struct Hydration<'a> {
-    tree: &'a mut TreeArena,
+    tree: &'a mut dyn HydrateInto,
     extras: Option<ExtraWalk>,
     /// The records whose walks are open, outermost first, each with the
     /// run of its children as its walk has met them.
@@ -147,6 +147,39 @@ pub struct Hydration<'a> {
     /// The descendant index of the node the last `meet` met.
     met_at: Option<NodeIndex>,
 }
+
+/// What a hydration writes into: the space its records take, and, for a
+/// tree that keeps them, each node's row and the records no cell names by
+/// their rows.
+pub trait HydrateInto: RecordSpace {
+    /// Writes the row of `kid`, `missing` as its tree answers.
+    ///
+    /// # Errors
+    ///
+    /// What the rows refuse.
+    fn write_row(&mut self, _kid: &crate::nodes::Kid, _missing: bool) -> Result<(), ArenaError> {
+        Ok(())
+    }
+
+    /// Holds the record at `at` for the node at `row`, which no cell names.
+    ///
+    /// # Errors
+    ///
+    /// What the holder refuses.
+    fn hold(&mut self, _row: NodeIndex, _at: Address) -> Result<(), ArenaError> {
+        Ok(())
+    }
+
+    /// The record held for the node at `row`.
+    fn held(&self, _row: NodeIndex) -> Option<Address> {
+        None
+    }
+
+    /// Notes the record written at `at`.
+    fn keep_record(&mut self, _at: Address) {}
+}
+
+impl HydrateInto for super::ReadWriter<'_> {}
 
 /// A record whose walk is open: where it is, the node it is of, and the run
 /// of its children so far. `rows` holds the rows still open, each by its
@@ -238,7 +271,7 @@ pub enum Walk {
 impl<'a> Hydration<'a> {
     /// A hydration of `tree`'s rows whose walks hold no extra: `hydrate_at`
     /// makes the one a walk writes records through.
-    pub(crate) fn new(tree: &'a mut TreeArena) -> Self {
+    pub(crate) fn new(tree: &'a mut dyn HydrateInto) -> Self {
         Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None }
     }
 
@@ -287,7 +320,7 @@ impl<'a> Hydration<'a> {
             return Ok(None);
         }
         let cell = holder.place(shape.word, shape.width)?;
-        let payload = Cell::inline_payload(self.tree.arena().words(cell, shape.width)?, shape)?;
+        let payload = Cell::inline_payload(self.tree.words(cell, shape.width)?, shape)?;
         let at = cell.offset(u32::try_from(payload.start).map_err(|_| ArenaError::Full)?).ok_or(ArenaError::Malformed { what: "inline record address", word: shape.word })?;
         Ok(Some(Embed { at, words: shape.inline }))
     }
@@ -304,13 +337,13 @@ impl<'a> Hydration<'a> {
         if words < HEADER_WORDS || kind == KindId::BLANK || kind == KindId::ERROR {
             return Err(ArenaError::Malformed { what: "record header", word: u32::from(kind.0) }.into());
         }
-        let header = super::with_kind(kind, self.tree.arena().kind_bits())?;
+        let header = super::with_kind(kind, self.tree.kind_bits())?;
         let at = match inline {
             Some(embed) if words > embed.words => return Err(ArenaError::Malformed { what: "inline cell width", word: embed.words }.into()),
             Some(embed) => embed.at,
-            None => self.tree.arena_mut().alloc(words)?,
+            None => self.tree.alloc(words)?,
         };
-        self.tree.arena_mut().words_mut(at, 1)?[0] = header;
+        self.tree.words_mut(at, 1)?[0] = header;
         let entering = self.entering.take().or_else(|| self.met_at.zip(self.met));
         self.open.push(OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), entries: Vec::new(), rows: Vec::new(), last: None, early: Vec::new() });
         Ok(Draft { at, words })
@@ -323,8 +356,8 @@ impl<'a> Hydration<'a> {
     ///
     /// What encoding the cell refuses, and a cell past the record's words.
     pub fn cell(&mut self, draft: Draft, shape: CellShape, value: Option<Hydrated>) -> Result<(), HydrateError> {
-        let bits = self.tree.arena().kind_bits();
-        let out = self.tree.arena_mut().words_mut(draft.place(shape.word, shape.width)?, shape.width)?;
+        let bits = self.tree.kind_bits();
+        let out = self.tree.words_mut(draft.place(shape.word, shape.width)?, shape.width)?;
         match value {
             Some(Hydrated::Embedded) => Cell::inline_tag(out, shape)?,
             value => value.map_or(Ok(Cell::Absent), |value| value.cell())?.encode_parsed(out, shape, bits)?,
@@ -348,15 +381,14 @@ impl<'a> Hydration<'a> {
         let width = shape.run.ok_or(ArenaError::Malformed { what: "list run width", word: shape.word })?;
         let words = len.checked_mul(width).and_then(|cells| cells.checked_add(1)).ok_or(ArenaError::Full)?;
         let cell = draft.place(shape.word, 1)?;
-        let bits = self.tree.arena().kind_bits();
-        let arena = self.tree.arena_mut();
-        let run = arena.alloc(words)?;
-        let out = arena.words_mut(run, words)?;
+        let bits = self.tree.kind_bits();
+        let run = self.tree.alloc(words)?;
+        let out = self.tree.words_mut(run, words)?;
         out[0] = len;
         for (item, out) in items.zip(out[1..].chunks_exact_mut(width as usize)) {
             item.map_or(Ok(Cell::Absent), |item| item.cell())?.encode_parsed(out, shape, bits)?;
         }
-        arena.words_mut(cell, 1)?[0] = ListCell::word(run)?.0;
+        self.tree.words_mut(cell, 1)?[0] = ListCell::word(run)?.0;
         Ok(())
     }
 
@@ -454,7 +486,7 @@ impl<'a> Hydration<'a> {
     /// A word past the record's.
     pub fn flag(&mut self, draft: Draft, word: u32, bit: u32, present: bool) -> Result<(), HydrateError> {
         if present {
-            self.tree.arena_mut().words_mut(draft.place(word, 1)?, 1)?[0] |= 1 << bit;
+            self.tree.words_mut(draft.place(word, 1)?, 1)?[0] |= 1 << bit;
         }
         Ok(())
     }
@@ -483,9 +515,9 @@ impl<'a> Hydration<'a> {
             }
             None => side,
         };
-        let side = side.write_in(self.tree.arena_mut())?;
+        let side = side.write_in(&mut *self.tree)?;
         if side != Address::NONE {
-            self.tree.arena_mut().words_mut(draft.place(1, 1)?, 1)?[0] = side.0;
+            self.tree.words_mut(draft.place(1, 1)?, 1)?[0] = side.0;
         }
         self.tree.keep_record(draft.at);
         Ok(if inline.is_some() { Hydrated::Embedded } else { Hydrated::Record { kind, at: draft.at } })
@@ -707,24 +739,38 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 ///
 /// What the hydration refuses.
 pub fn hydrate_at<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, tree: &mut TreeArena) -> Result<Option<Address>, HydrateError> {
-    let records = &mut Hydration { extras: Some(extra_walk::<N>), ..Hydration::new(tree) };
+    let mark = tree.mark();
+    let walked = hydrate_into::<N>(cursor, ctx, index, stamped, depth, tree);
+    if walked.is_err() {
+        tree.rewind(mark);
+    }
+    walked
+}
+
+/// The whole tree `cursor` walks, read as `N`, its records written into
+/// `into` in one walk: the root's record, `None` when it has none.
+///
+/// # Errors
+///
+/// What the hydration refuses; what it wrote before stays written.
+pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
+    hydrate_into::<N>(cursor, ctx, NodeIndex::ROOT, None, Depth::All, into)
+}
+
+fn hydrate_into<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
+    let records = &mut Hydration { extras: Some(extra_walk::<N>), ..Hydration::new(into) };
     crate::read::goto(cursor, index);
     records.meet(cursor)?;
     ctx.begin_read();
     ctx.at = None;
-    let mark = records.tree.mark();
     let walked = match stamped {
         Some(kind) => N::hydrate_stamped(kind, cursor, ctx, Some(depth), records, None),
         None => N::hydrate(cursor, ctx, Some(depth), records, None),
     };
-    match walked {
-        Ok(Hydrated::Record { at, .. }) => Ok(Some(at)),
-        Ok(_) => Ok(None),
-        Err(refusal) => {
-            records.tree.rewind(mark);
-            Err(refusal)
-        }
-    }
+    Ok(match walked? {
+        Hydrated::Record { at, .. } => Some(at),
+        _ => None,
+    })
 }
 
 #[cfg(test)]

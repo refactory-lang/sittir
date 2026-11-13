@@ -322,18 +322,18 @@ impl<G: EngineGrammar> ParsedTree<G> {
                 .collect::<Vec<_>>()
         };
         let runs = {
-            let mut whole = TreeArena::new(G::KIND_BITS, crate::read::descendant_count(&self.tree().root_node()));
+            let mut whole = super::BuiltChunks::new(G::KIND_BITS, N::shape);
             let grammar = self.grammar();
             let root = match self.read_error(NodeIndex::ROOT) {
                 Some(_) => None,
-                None => super::hydrate_at::<N>(&mut self.tree().walk(), &mut self.read_ctx(), NodeIndex::ROOT, None, Depth::All, &mut whole).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?,
+                None => super::hydrate_whole::<N>(&mut self.tree().walk(), &mut self.read_ctx(), &mut super::ReadWriter::new(&mut whole)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?,
             };
             let arena = self.tree_arena();
             let rows = arena.node_rows().ok_or("the whole read left a node with no row")?;
             match root {
                 Some(root) => {
                     let mut agree = vec![false; rows.len() as usize];
-                    let mut runs = super::RunNodes::new(whole.arena(), self.source(), root).map_err(|refusal| refusal.to_string())?;
+                    let mut runs = super::RunNodes::new(&whole, self.source(), root).map_err(|refusal| refusal.to_string())?;
                     let mut records = RecordNodes::over(rows, self.source());
                     let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT)];
                     while let Some((run, row)) = pending.pop() {

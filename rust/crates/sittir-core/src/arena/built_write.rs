@@ -26,6 +26,62 @@ impl<T: ChunkUnit> Open<T> {
     }
 }
 
+/// Writes a read's records into chunks of a built arena the read takes
+/// whole: each entry reserved in the chunk the read has open, with a count
+/// of one, and lent to be written in place. The builders' own open chunk is
+/// left as it is.
+pub struct ReadWriter<'a> {
+    chunks: &'a mut BuiltChunks,
+    open: Option<Open<u32>>,
+}
+
+impl<'a> ReadWriter<'a> {
+    /// A writer taking fresh chunks of `chunks`.
+    pub fn new(chunks: &'a mut BuiltChunks) -> Self {
+        Self { chunks, open: None }
+    }
+}
+
+impl super::ArenaRead for ReadWriter<'_> {
+    fn chunk(&self, n: u32) -> Option<&[u32]> {
+        super::ArenaRead::chunk(&*self.chunks, n)
+    }
+
+    fn string_chunk(&self, n: u32) -> Option<&[u8]> {
+        super::ArenaRead::string_chunk(&*self.chunks, n)
+    }
+}
+
+impl super::RecordSpace for ReadWriter<'_> {
+    fn kind_bits(&self) -> u32 {
+        self.chunks.kind_bits
+    }
+
+    fn alloc(&mut self, words: u32) -> Result<Address, ArenaError> {
+        if !self.open.as_ref().is_some_and(|open| open.fits(words)) {
+            let (chunk, mem) = self.chunks.alloc_read_words(words.max(CHUNK_WORDS))?;
+            self.open = Some(Open { chunk, mem, used: 0 });
+        }
+        let open = self.open.as_mut().ok_or(ArenaError::Full)?;
+        let at = Address::new(open.chunk, open.used).ok_or(ArenaError::Full)?;
+        open.used += words;
+        self.chunks.place(at, 1)?;
+        Ok(at)
+    }
+
+    fn words_mut(&mut self, at: Address, len: u32) -> Result<&mut [u32], ArenaError> {
+        let out = ArenaError::OutOfBounds { chunk: at.chunk(), word: at.word(), len };
+        let mem = self.chunks.words_mem(at.chunk()).ok_or(out.clone())?;
+        let (start, end) = (at.word() as usize, at.word() as usize + len as usize);
+        if end > mem.len() {
+            return Err(out);
+        }
+        // SAFETY: the writer holds the store's mutable borrow, so no other
+        // slice of the chunk is live, and a native call runs no JavaScript.
+        Ok(unsafe { &mut mem.slice_mut()[start..end] })
+    }
+}
+
 /// Writes entries into a built arena's chunks: records, runs, side records
 /// and link records into word chunks, leaf entries into string chunks.
 pub struct BuiltWriter<'a> {

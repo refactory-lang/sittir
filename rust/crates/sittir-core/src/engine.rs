@@ -849,7 +849,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let mut arena = self.tree_arena();
         if error.index == crate::types::NodeIndex::ROOT && !arena.has_row(error.index) {
             let grammar = self.grammar;
-            crate::arena::Hydration::new(&mut arena).meet_whole(&mut self.tree().walk()).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
+            crate::arena::Hydration::new(&mut *arena).meet_whole(&mut self.tree().walk()).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
         }
         Ok(true)
     }

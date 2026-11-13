@@ -220,6 +220,52 @@ fn display_of(aliases: &[(NodeIndex, KindId)], index: NodeIndex, word: u32) -> K
 
 /// What a tree's arena holds: its chunks' written words, its record starts
 /// and its held rows, each in order.
+impl super::ArenaRead for TreeArena {
+    fn chunk(&self, n: u32) -> Option<&[u32]> {
+        self.arena.chunk(n)
+    }
+
+    fn string_chunk(&self, n: u32) -> Option<&[u8]> {
+        super::ArenaRead::string_chunk(&self.arena, n)
+    }
+}
+
+impl super::RecordSpace for TreeArena {
+    fn kind_bits(&self) -> u32 {
+        self.arena.kind_bits()
+    }
+
+    fn alloc(&mut self, words: u32) -> Result<Address, ArenaError> {
+        self.arena_mut().alloc(words)
+    }
+
+    fn words_mut(&mut self, at: Address, len: u32) -> Result<&mut [u32], ArenaError> {
+        self.arena_mut().words_mut(at, len)
+    }
+
+    fn push(&mut self, words: &[u32]) -> Result<Address, ArenaError> {
+        self.arena_mut().push(words)
+    }
+}
+
+impl super::HydrateInto for TreeArena {
+    fn write_row(&mut self, kid: &Kid, missing: bool) -> Result<(), ArenaError> {
+        TreeArena::write_row(self, kid, missing)
+    }
+
+    fn hold(&mut self, row: NodeIndex, at: Address) -> Result<(), ArenaError> {
+        TreeArena::hold(self, row, at)
+    }
+
+    fn held(&self, row: NodeIndex) -> Option<Address> {
+        TreeArena::held(self, row)
+    }
+
+    fn keep_record(&mut self, at: Address) {
+        TreeArena::keep_record(self, at);
+    }
+}
+
 #[cfg(test)]
 #[derive(Debug, PartialEq, Eq)]
 pub(super) struct Snapshot {

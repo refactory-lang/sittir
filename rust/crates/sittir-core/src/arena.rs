@@ -49,9 +49,9 @@ use crate::types::{KindId, TreeId};
 pub use admit::{admit, CellShape, RecordCells, RecordShape};
 pub use borrowed::{ArenaRead, BorrowedArena};
 pub use built::render_record_entry;
-pub use built_write::BuiltWriter;
+pub use built_write::{BuiltWriter, ReadWriter};
 pub use cell::{flag, header_of, kind_field, parsed_tag, with_kind, Cell, CellWord, ListCell, LINK_WORDS};
-pub use hydrate::{hydrate_at, parsed_side, row_of as hydrated_row, Draft, Embed, HydrateError, HydrateNode, HydrateSlot, Hydrated, Hydration, Walk};
+pub use hydrate::{hydrate_at, hydrate_whole, parsed_side, row_of as hydrated_row, Draft, Embed, HydrateError, HydrateInto, HydrateNode, HydrateSlot, Hydrated, Hydration, Walk};
 pub use memory::{ChunkMem, ChunkUnit};
 pub use parsed::{render_record_read, BackerParity, LeafRead, RecordGrammar, RecordRead, Recording};
 pub use reach::{deepen, reach, read_cell, written};
@@ -507,6 +507,57 @@ impl Arena {
     }
 }
 
+/// Where a parsed tree's records are written: an arena that reserves the
+/// words of one entry and lends them to be written in place.
+pub trait RecordSpace: ArenaRead {
+    /// The bits a record's header keeps its kind in.
+    fn kind_bits(&self) -> u32;
+
+    /// `words` words of one entry, zeroed, at a fresh address.
+    ///
+    /// # Errors
+    ///
+    /// What the arena refuses a new chunk for.
+    fn alloc(&mut self, words: u32) -> Result<Address, ArenaError>;
+
+    /// The `len` words at `at`, to write.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::OutOfBounds` for words the arena does not hold.
+    fn words_mut(&mut self, at: Address, len: u32) -> Result<&mut [u32], ArenaError>;
+
+    /// `words` as one entry at a fresh address.
+    ///
+    /// # Errors
+    ///
+    /// As `alloc`.
+    fn push(&mut self, words: &[u32]) -> Result<Address, ArenaError> {
+        let len = u32::try_from(words.len()).map_err(|_| ArenaError::Full)?;
+        let at = self.alloc(len)?;
+        self.words_mut(at, len)?.copy_from_slice(words);
+        Ok(at)
+    }
+}
+
+impl RecordSpace for Arena {
+    fn kind_bits(&self) -> u32 {
+        Arena::kind_bits(self)
+    }
+
+    fn alloc(&mut self, words: u32) -> Result<Address, ArenaError> {
+        Arena::alloc(self, words)
+    }
+
+    fn words_mut(&mut self, at: Address, len: u32) -> Result<&mut [u32], ArenaError> {
+        Arena::words_mut(self, at, len)
+    }
+
+    fn push(&mut self, words: &[u32]) -> Result<Address, ArenaError> {
+        Arena::push(self, words)
+    }
+}
+
 impl ArenaRead for Arena {
     fn chunk(&self, n: u32) -> Option<&[u32]> {
         self.chunk(n)
@@ -604,6 +655,27 @@ impl BuiltChunks {
             _ => None,
         });
         Ok(NewChunk { chunk, mem, meta, sealed })
+    }
+
+    /// A new words chunk of `len` words for a read's records, zeroed: its
+    /// number and its memory. The chunk the builders write stays open.
+    ///
+    /// # Errors
+    ///
+    /// As `alloc_words`.
+    pub fn alloc_read_words(&mut self, len: u32) -> Result<(u32, Arc<ChunkMem<u32>>), ArenaError> {
+        let chunk = self.number(len)?;
+        let mem = ChunkMem::zeroed(len as usize);
+        self.chunks[chunk as usize] = Some(BuiltChunk::Words { mem: Arc::clone(&mem), counts: count::CountTable::new(len) });
+        Ok((chunk, mem))
+    }
+
+    /// The memory of the words chunk `chunk`.
+    pub(crate) fn words_mem(&self, chunk: u32) -> Option<&Arc<ChunkMem<u32>>> {
+        match self.chunks.get(chunk as usize) {
+            Some(Some(BuiltChunk::Words { mem, .. })) => Some(mem),
+            _ => None,
+        }
     }
 
     /// A new string chunk of `len` bytes, zeroed: its number, its memory
