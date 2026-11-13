@@ -13,13 +13,11 @@ import type {
 	ParseOptions,
 	Rendered
 } from '@sittir/types';
-import { decodeIndex, decodeTree, readObject, type ChunkWords, type RecordReader, type TreeHandle, type TriviaSideName } from './read.ts';
+import { decodeIndex, decodeTree, readObject, type ChunkWords, type TreeHandle, type TriviaSideName } from './read.ts';
 import { coordinateIndex, coordinateOf, holdReadTree, keyName, placeOf, rootEdges, sourceHandleOf, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
 import { mintTreeToken, registerTree, treeOfToken } from './tree-token.ts';
-import type { RecordPosition } from './handle.ts';
 import type { DescendantBatch, TreeQuery } from './query.ts';
-import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
-import { leafData, readStub, recordOf } from './record-view.ts';
+import { cellFormatOf, type CellFormat } from './record-cell.ts';
 import { readOwnEntries, readOwnUnits, type BuiltRecords, type ParsedRecords, type WritableWords } from './built-arena.ts';
 import { builtRefOf, handleArenaOf } from './built-ref.ts';
 import { nodeStorageOf } from './engine-scope.ts';
@@ -83,12 +81,6 @@ export function saverOf(rendered: Rendered): RenderSaver {
 	const saver = savers.get(rendered);
 	if (saver === undefined) throw new Error('saverOf: not a render an engine returned');
 	return saver;
-}
-
-function recordTreeOf(view: RecordPosition): number {
-	const tree = view.$tree;
-	if (tree.records === undefined || tree.id === undefined) throw new Error('a record view renders through the tree it was read from, which is gone');
-	return tree.id;
 }
 
 function sourceRecordOf(node: object): number | undefined {
@@ -628,53 +620,6 @@ const treeDisposalRegistry = new FinalizationRegistry<{
 	readonly treeId: number;
 }>(({ release, treeId }) => release(treeId));
 
-function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, format: CellFormat, readObjectAt: (index: number, depth: number) => TNode): RecordReader {
-	const { readRecord, readRecordStub, readLeaf, readCell, chunk, renderRecord, coordinate } = engine;
-	if (readRecord === undefined || readRecordStub === undefined || readLeaf === undefined || readCell === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
-		throw new Error(ARENA_FEATURE_REFUSED);
-	}
-	const chunks: ChunkWords[] = [];
-	const coordinates = new Map<number, { readonly kind: number; readonly end: number }>();
-	return {
-		format,
-		record: (at, depth) => readRecord.call(engine, treeId, at, depth) ?? undefined,
-		stub: (index, depth) => readRecordStub.call(engine, treeId, index, depth) ?? undefined,
-		leaf(index) {
-			const leaf = readLeaf.call(engine, treeId, index);
-			if (leaf === null) return undefined;
-			if (leaf.length === 1) return { form: 'unit', kind: leaf[0]!, row: index };
-			return { form: 'parsedLeaf', kind: leaf[0]!, span: { start: leaf[1]!, end: leaf[2]! }, row: index };
-		},
-		exported: (address) => chunks[chunkOf(address, format)],
-		cell: (holder, word, item, depth) => readCell.call(engine, treeId, holder, word, item, depth),
-		hydrate(index, depth) {
-			if (engine.hydrateRecord === undefined)
-				throw new Error('native record hydration needs an addon with hydrateRecord');
-			return engine.hydrateRecord(treeId, index, depth) ?? undefined;
-		},
-		render: (address, leading, trailing) => renderRecord.call(engine, treeId, address, leading, trailing),
-		object: (index, depth = 1) => readObjectAt(index, depth),
-		words(address, length) {
-			const n = chunkOf(address, format);
-			const end = wordOf(address, format) + length;
-			let words = chunks[n];
-			if (words === undefined || words.length < end) words = chunks[n] = chunk.call(engine, treeId, n);
-			if (words.length < end) throw new Error(`tree ${treeId}'s chunk ${n} holds ${words.length} words, short of a record that ends at word ${end}`);
-			return words;
-		},
-		coordinate(index) {
-			let at = coordinates.get(index);
-			if (at === undefined) {
-				const [kind, end] = coordinate.call(engine, treeId, index);
-				if (kind === undefined || end === undefined) throw new Error(`tree ${treeId}'s coordinate of node ${index} is not a kind and an end`);
-				at = { kind, end };
-				coordinates.set(index, at);
-			}
-			return at;
-		}
-	};
-}
-
 /**
  * Tagged-union result for `createNativeEngine` — mirrors the
  * `loadNativeEngineForGrammar` pattern in
@@ -732,36 +677,17 @@ export function createNativeEngine<
 				holdReadTree(node, liveToken);
 				return node;
 			};
-			const records = cellFormat === undefined ? undefined : recordReader(engine, parsed.treeId, cellFormat, readObjectAt);
-			const readAt =
-				records === undefined
-					? readObjectAt
-					: (index: number, depth: number): TNode => {
-							const facts = records.stub(index, depth);
-							if (facts !== undefined) {
-								const stub = readStub(tree, facts);
-								holdReadTree(stub, liveToken);
-								return stub as TNode;
-							}
-							const leaf = records.leaf(index);
-							if (leaf === undefined) return readObjectAt(index, depth);
-							if (leaf.form === 'unit') return leaf.kind as TNode;
-							const node = leafData(tree, leaf.kind, leaf.span, leaf.row);
-							holdReadTree(node, liveToken);
-							return node as TNode;
-						};
 			const roots = new Map<number, unknown>();
 			const errors = Object.freeze(parsed.errors);
 			const tree: TreeHandle = {
 				id: parsed.treeId,
 				token: liveToken,
 				text: (span) => engine.text(parsed.treeId, span),
-				...(records === undefined ? {} : { records }),
 				read: (index, depth = 1) => {
-					if (index !== 0) return readAt(index, depth);
+					if (index !== 0) return readObjectAt(index, depth);
 					let cached = roots.get(depth);
 					if (cached === undefined) {
-						cached = Object.assign(readObject(readAt(0, depth), 'the root'), { $errors: errors });
+						cached = Object.assign(readObject(readObjectAt(0, depth), 'the root'), { $errors: errors });
 						roots.set(depth, cached);
 					}
 					return cached;
@@ -794,16 +720,11 @@ export function createNativeEngine<
 		}
 
 		function renderTemplates(node: AnyUntypedNode): string {
-			const record = builtRefOf(node) === undefined ? recordOf(node) : undefined;
-			const at = record === undefined ? coordinateOf(node) : undefined;
-			if (record === undefined && at === undefined) throw new Error('renderTemplates renders a node as a read gave it, and this one was built or edited');
+			const at = coordinateOf(node);
+			if (at === undefined) throw new Error('renderTemplates renders a node as a read gave it, and this one was built or edited');
 			const changed = rootEdges(node);
-			const named = coordinateOf(node);
-			if (named !== undefined && '$node' in named) return readRendered(node, named, undefined, true);
-			if (at !== undefined) return engine.renderAt(decodeTree(at.$treeHandle), decodeIndex(at.$treeHandle), changed.leading, changed.trailing, undefined, true);
-			const { renderRecord } = engine;
-			if (renderRecord === undefined) throw new Error(ARENA_FEATURE_REFUSED);
-			return renderRecord.call(engine, recordTreeOf(node as unknown as RecordPosition), record!, changed.leading, changed.trailing, undefined, true);
+			if ('$node' in at) return readRendered(node, at, undefined, true);
+			return engine.renderAt(decodeTree(at.$treeHandle), decodeIndex(at.$treeHandle), changed.leading, changed.trailing, undefined, true);
 		}
 
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
@@ -833,25 +754,6 @@ export function createNativeEngine<
 				return createRenderHandle(
 					() => renderBuiltLeaf.call(engine, built.arena.owner, kind, entry(), leafWireSides(node as object) ?? null, changed.leading, changed.trailing, perCall),
 					(path, create) => renderBuiltLeafToFile.call(engine, built.arena.owner, kind, entry(), leafWireSides(node as object) ?? null, changed.leading, changed.trailing, path, create, perCall),
-					writeText
-				);
-			}
-			const record = typeof node === 'number' ? undefined : recordOf(node);
-			if (record !== undefined) {
-				const changed = rootEdges(node as object);
-				const treeId = recordTreeOf(node as RecordPosition);
-				const { renderRecord, renderRecordToFile } = engine;
-				if (renderRecord === undefined || renderRecordToFile === undefined)
-					throw new Error(ARENA_FEATURE_REFUSED);
-				return createRenderHandle(
-					() => {
-						holdsTrees();
-						return renderRecord.call(engine, treeId, record, changed.leading, changed.trailing, perCall);
-					},
-					(path, create) => {
-						holdsTrees();
-						return renderRecordToFile.call(engine, treeId, record, changed.leading, changed.trailing, path, create, perCall);
-					},
 					writeText
 				);
 			}

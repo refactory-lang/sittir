@@ -326,7 +326,7 @@ describe('a built arena', () => {
 		expect(() => arena.record(8)).toThrow(/no width/);
 	});
 
-	it('copies a record rebuilt from a parsed node, naming that node beside its list settings, and copies its sites natively', () => {
+	it('copies a record rebuilt from a node a read left, naming it by its holder and packed site beside its list settings, and copies its sites natively', () => {
 		const copied: [number, number, readonly number[]][] = [];
 		const leafSided: number[][] = [];
 		const arena = arenaOf(
@@ -341,14 +341,14 @@ describe('a built arena', () => {
 		storeListOptions(arena, record, 3, 6);
 		const node = arena.view(record);
 		const at = builtRecordOf(node, arena)!;
-		const copy = arena.rebuiltFrom(node, { id: 7 } as never, {} as never, 21, 25, { start: 40, end: 52 }, false);
+		const copy = arena.rebuiltFromRead(node, -(7 * 2 ** 23 + 3 * 2 ** 7 + 21), { start: 40, end: 52 }, false);
 		const copiedAt = builtRecordOf(copy, arena)!;
 		expect(copiedAt).not.toBe(at);
 		const [kind, side, ...cells] = placed(arena, copy, 13);
 		expect([kind, ...cells]).toEqual([9, ...placed(arena, node, 13).slice(2)]);
 		expect(Array.from(arena.words(side!, 8).subarray(wordOf(side!, format!), wordOf(side!, format!) + 8))).toEqual([
 			format!.sideSides.bit | format!.sideDelimiter | format!.sideSeparatorKind,
-			7, 21, 25, 40, 52,
+			7, 3 * 2 ** 7 + 21, 0, 40, 52,
 			3, 6
 		]);
 		expect(leafSitesOf(leaf)).toEqual([at, 11, 0]);

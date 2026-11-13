@@ -1,5 +1,5 @@
 import type { BuiltArena } from './built-arena.ts';
-import type { CellFormat, CellSite, RecordCell } from './record-cell.ts';
+import type { CellFormat, CellSite } from './record-cell.ts';
 import type { ByteSpan, ErrorRegion, NodeCoordinate } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
 import type { TreeToken } from './tree-token.ts';
@@ -43,8 +43,6 @@ export interface TreeHandle {
 	siblings?(indexes: readonly number[]): readonly number[];
 	/** The source each node at `indexes` was read from, for a handle whose nodes come from more than one parse (`BuiltArena.tree`): two nodes are of one parse when theirs are equal. Absent for a tree, whose nodes are all its own parse's. */
 	sources?(indexes: readonly number[]): readonly number[];
-	/** The tree's records, when its engine reads nodes as records (`nodeStorage: 'arena'`). */
-	records?: RecordReader;
 	/** The built arena whose records this handle's views read, for the handle a built arena reads through (`BuiltArena.tree`). */
 	built?: BuiltArena;
 	token?: TreeToken;
@@ -61,25 +59,6 @@ export interface RecordWords {
 	readonly format: CellFormat;
 	/** The words of the chunk `address` lies in, holding at least `length` words from it. */
 	words(address: number, length: number): ChunkWords;
-}
-
-/** What a record view reads its tree's records through. */
-export interface RecordReader extends RecordWords {
-	/** The address of the record of the node at descendant `index`, read `depth` levels down (one when absent); `undefined` for a node with none, a leaf or an `ERROR` node. */
-	record(index: number, depth?: number): number | undefined;
-	stub(index: number, depth?: number): readonly number[] | undefined;
-	leaf(index: number): Extract<RecordCell, { readonly form: 'parsedLeaf' | 'unit' }> | undefined;
-	exported(address: number): ChunkWords | undefined;
-	/** The address of the record the parsed cell at `word`, item `item`, of the record at `holder` names: on the first read through the cell, written `depth` levels down (one when absent), and the cell rewritten to name it. */
-	cell(holder: number, word: number, item: number, depth?: number): number;
-	/** Materializes records to `depth`, including beneath cached parents, without exporting their words. */
-	hydrate(index: number, depth?: number): number | undefined;
-	/** Renders a native record address without exporting its words. The edge flags follow the native render-root convention. */
-	render(address: number, leading: boolean, trailing: boolean): string;
-	/** The node at descendant `index` read as an object, `depth` levels down (one when absent): the row a view's writes, queries and snapshots read once. */
-	object(index: number, depth?: number): unknown;
-	/** The kind and subtree end a read names the node at descendant `index` by: the coordinate the read stamps (the addon's `coordinate`), so a cell's view and the object wire name one coordinate. */
-	coordinate(index: number): { readonly kind: number; readonly end: number };
 }
 
 const INDEX_RANGE = 2 ** 32;

@@ -325,7 +325,7 @@ function sourcedRecord<R extends object>(source: object, built: R, own: boolean)
 	if (ref?.at === undefined || from === undefined) return built;
 	if (tree?.built === ref.arena) return ref.arena.rebuiltFromRead(built, from.index, from.span, own) as R;
 	if (tree?.id === undefined) return built;
-	return ref.arena.rebuiltFrom(built, tree as TreeHandle & { readonly id: number }, from.token, decodeIndex(from.treeHandle), from.end, from.span, own) as R;
+	throw new Error(`a built record is rebuilt only from a node its own engine parsed, not from a node of tree ${tree.id}`);
 }
 
 /**
@@ -351,7 +351,7 @@ export function patchesByCopy(source: object): boolean {
 	const handle = currentHandle();
 	if (handle === undefined || handle.verifyStored !== undefined || handle.builtArena === undefined) return false;
 	if (builtRecordOf(source, handle.builtArena) !== undefined) return true;
-	return isParsedPosition(source) && (source.$tree.records ?? source.$tree.built) !== undefined;
+	return isParsedPosition(source) && source.$tree.built !== undefined;
 }
 
 export function setSlot(source: object, kind: number, kindName: string, at: number, accessor: string, value: unknown): object {
