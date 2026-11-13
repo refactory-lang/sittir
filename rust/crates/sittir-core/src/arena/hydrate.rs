@@ -148,6 +148,9 @@ pub struct Hydration<'a> {
     met_at: Option<NodeIndex>,
     /// The entry of the source the records are read from, which each names.
     source: Option<Address>,
+    /// The grammar's depth members, when the walk stamps each record's
+    /// depth move.
+    kinds: Option<crate::trivia_table::SurfaceKinds>,
 }
 
 /// What a hydration writes into: the space its records take, and, for a
@@ -196,6 +199,10 @@ struct OpenRun {
     rows: Vec<(usize, u32)>,
     last: Option<(NodeIndex, usize)>,
     early: Vec<(NodeIndex, Address)>,
+    /// The levels the node's own kind and the nodes met under it open net
+    /// of those they close, and the node's own share of that.
+    depth: i32,
+    own: i32,
 }
 
 impl OpenRun {
@@ -216,7 +223,7 @@ impl OpenRun {
 
     /// Adds the node `kid` the walk met, with `facts`: the record its walk
     /// already wrote, else its row.
-    fn meet(&mut self, kid: &crate::nodes::Kid, facts: NodeFacts) {
+    fn meet(&mut self, kid: &crate::nodes::Kid, facts: NodeFacts, depth: i32) {
         self.close_to(kid.index.get());
         if self.index == Some(kid.index) {
             return;
@@ -230,20 +237,31 @@ impl OpenRun {
         self.entries.push(RunEntry::Row { facts, span: kid.span(), inner: 0 });
         self.rows.push((entry, kid.index.get() + kid.count));
         self.last = Some((kid.index, entry));
+        self.depth += depth;
     }
 
     /// Names the record at `at` of the child at `index`, whose walk ended:
     /// in place of its row when the walk met it last, as a content of the
     /// record's own node when it is that node, else kept until the walk
     /// meets it.
-    fn name(&mut self, index: Option<NodeIndex>, at: Address) {
+    /// `depth` is the child's depth move and `own` its own kind's share,
+    /// which this run counted already when it met the child or is the same
+    /// node.
+    fn name(&mut self, index: Option<NodeIndex>, at: Address, depth: i32, own: i32) {
         match (index, self.last) {
-            (Some(index), _) if self.index == Some(index) => self.entries.push(RunEntry::Record { at, shared: true }),
+            (Some(index), _) if self.index == Some(index) => {
+                self.entries.push(RunEntry::Record { at, shared: true });
+                self.depth += depth - own;
+            }
             (Some(index), Some((last, entry))) if last == index && entry + 1 == self.entries.len() => {
                 self.rows.pop_if(|&mut (open, _)| open == entry);
                 self.entries[entry] = RunEntry::Record { at, shared: false };
+                self.depth += depth - own;
             }
-            (Some(index), _) => self.early.push((index, at)),
+            (Some(index), _) => {
+                self.early.push((index, at));
+                self.depth += depth;
+            }
             (None, _) => {}
         }
     }
@@ -274,7 +292,13 @@ impl<'a> Hydration<'a> {
     /// A hydration of `tree`'s rows whose walks hold no extra: `hydrate_at`
     /// makes the one a walk writes records through.
     pub(crate) fn new(tree: &'a mut dyn HydrateInto) -> Self {
-        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None }
+        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None }
+    }
+
+    /// The levels a node of `kind` opens (1), closes (-1) or neither, as
+    /// the grammar's depth members go; 0 for a walk that stamps none.
+    fn depth_of(&self, kind: KindId) -> i32 {
+        self.kinds.map_or(0, |kinds| i32::from(kind == kinds.indent && kinds.is_depth_member(kind)) - i32::from(kind == kinds.dedent && kinds.is_depth_member(kind)))
     }
 
     /// Tells the hydration the node `at` the walk about to draft a record
@@ -347,7 +371,8 @@ impl<'a> Hydration<'a> {
         };
         self.tree.words_mut(at, 1)?[0] = header;
         let entering = self.entering.take().or_else(|| self.met_at.zip(self.met));
-        self.open.push(OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), entries: Vec::new(), rows: Vec::new(), last: None, early: Vec::new() });
+        let own = entering.map_or(0, |(_, facts)| self.depth_of(facts.kind));
+        self.open.push(OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), entries: Vec::new(), rows: Vec::new(), last: None, early: Vec::new(), depth: own, own });
         Ok(Draft { at, words })
     }
 
@@ -405,8 +430,9 @@ impl<'a> Hydration<'a> {
         let kid = crate::nodes::Kid::of(&node, crate::read::index_of(cursor), crate::read::field_id(cursor));
         self.tree.write_row(&kid, node.is_missing())?;
         let facts = facts_of(&kid, &node);
+        let depth = self.depth_of(kid.grammar);
         if let Some(open) = self.open.last_mut() {
-            open.meet(&kid, facts);
+            open.meet(&kid, facts, depth);
         }
         self.met = Some(facts);
         self.met_at = Some(kid.index);
@@ -511,9 +537,9 @@ impl<'a> Hydration<'a> {
                 let holder = self.open.last_mut();
                 let parent = holder.as_ref().map(|holder| holder.at);
                 if let Some(holder) = holder {
-                    holder.name(run.index, draft.at);
+                    holder.name(run.index, draft.at, run.depth, run.own);
                 }
-                &SideRecord { parent, node: run.facts, source: self.source.map(|source| source.0), run: run.entries, ..side.clone() }
+                &SideRecord { parent, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: run.entries, ..side.clone() }
             }
             None => side,
         };
@@ -742,7 +768,7 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 /// What the hydration refuses.
 pub fn hydrate_at<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, tree: &mut TreeArena) -> Result<Option<Address>, HydrateError> {
     let mark = tree.mark();
-    let walked = hydrate_into::<N>(cursor, ctx, index, stamped, depth, None, tree);
+    let walked = hydrate_into::<N>(cursor, ctx, index, stamped, depth, (None, None), tree);
     if walked.is_err() {
         tree.rewind(mark);
     }
@@ -751,17 +777,18 @@ pub fn hydrate_at<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx
 
 /// The whole tree `cursor` walks, read as `N`, its records written into
 /// `into` in one walk, each naming the entry `source` of the source they
-/// are read from: the root's record, `None` when it has none.
+/// are read from and stamped with its depth move, by the depth members of
+/// `kinds`: the root's record, `None` when it has none.
 ///
 /// # Errors
 ///
 /// What the hydration refuses; what it wrote before stays written.
-pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: Option<Address>, into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
-    hydrate_into::<N>(cursor, ctx, NodeIndex::ROOT, None, Depth::All, source, into)
+pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
+    hydrate_into::<N>(cursor, ctx, NodeIndex::ROOT, None, Depth::All, (source, Some(kinds)), into)
 }
 
-fn hydrate_into<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, source: Option<Address>, into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
-    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, ..Hydration::new(into) };
+fn hydrate_into<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, (source, kinds): (Option<Address>, Option<crate::trivia_table::SurfaceKinds>), into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
+    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, kinds, ..Hydration::new(into) };
     crate::read::goto(cursor, index);
     records.meet(cursor)?;
     ctx.begin_read();

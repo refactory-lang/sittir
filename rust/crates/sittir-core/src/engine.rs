@@ -2490,7 +2490,7 @@ impl<G: EngineGrammar> Engine<G> {
             None
         } else {
             let mut ctx = crate::read::ReadCtx::new(source, crate::types::TreeId(0), grammar.shows()).with_relaxes(grammar.relaxes());
-            crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), &mut crate::arena::ReadWriter::new(&mut built)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?
+            crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), &mut crate::arena::ReadWriter::new(&mut built)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?
         };
         Ok(ParsedRecords { root, source: entry, errors })
     }

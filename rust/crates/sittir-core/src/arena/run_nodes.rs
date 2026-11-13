@@ -236,6 +236,33 @@ impl<'t> RunNodes<'t> {
         Ok(parent)
     }
 
+    /// The levels the node at `index` opens net of those it closes, by the
+    /// depth members of `kinds`: its record's stamp, or, for a node with no
+    /// record, its own kind's and those of the rows inside it.
+    ///
+    /// # Errors
+    ///
+    /// What reading its record or its holder's refuses.
+    pub fn depth_move(&mut self, index: NodeIndex, kinds: crate::trivia_table::SurfaceKinds) -> Result<i32, ArenaError> {
+        let of = |kind: crate::types::KindId| i32::from(kinds.is_depth_member(kind) && kind == kinds.indent) - i32::from(kinds.is_depth_member(kind) && kind == kinds.dedent);
+        match self.site(index).ok_or(ArenaError::Malformed { what: "node id", word: index.0 })? {
+            NodeSite::Record(at) => Ok(self.side(at)?.depth),
+            NodeSite::Row { holder, entry } => {
+                let run = &self.side(holder)?.run;
+                let Some(&RunEntry::Row { facts, inner, .. }) = run.get(entry as usize) else { return Err(malformed("run row", holder)) };
+                let inside = run.get(entry as usize + 1..entry as usize + 1 + inner as usize).ok_or(malformed("run row entries", holder))?;
+                Ok(of(facts.kind)
+                    + inside
+                        .iter()
+                        .map(|entry| match entry {
+                            RunEntry::Row { facts, .. } => of(facts.kind),
+                            RunEntry::Record { .. } => 0,
+                        })
+                        .sum::<i32>())
+            }
+        }
+    }
+
     fn answer<T>(&mut self, answered: Result<T, ArenaError>, otherwise: T) -> T {
         answered.unwrap_or_else(|refusal| {
             self.table.refused.get_or_insert(refusal);

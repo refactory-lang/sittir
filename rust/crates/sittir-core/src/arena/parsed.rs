@@ -326,7 +326,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             let grammar = self.grammar();
             let root = match self.read_error(NodeIndex::ROOT) {
                 Some(_) => None,
-                None => super::hydrate_whole::<N>(&mut self.tree().walk(), &mut self.read_ctx(), None, &mut super::ReadWriter::new(&mut whole)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?,
+                None => super::hydrate_whole::<N>(&mut self.tree().walk(), &mut self.read_ctx(), None, grammar.surface_kinds(), &mut super::ReadWriter::new(&mut whole)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?,
             };
             let arena = self.tree_arena();
             let rows = arena.node_rows().ok_or("the whole read left a node with no row")?;
@@ -335,6 +335,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
                     let mut agree = vec![false; rows.len() as usize];
                     let mut runs = super::RunNodes::new(&whole, self.source(), root).map_err(|refusal| refusal.to_string())?;
                     let mut records = RecordNodes::over(rows, self.source());
+                    let kinds = grammar.surface_kinds();
+                    let members = crate::trivia_table::DepthMembers::scanned(records.preorder(), kinds);
                     let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT)];
                     while let Some((run, row)) = pending.pop() {
                         let (met, kept) = (runs.kid(run), records.kid(row));
@@ -344,6 +346,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
                             && met.leaf() == kept.leaf()
                             && runs.missing(run) == records.missing(row)
                             && runs.holds_error(run) == records.holds_error(row)
+                            && runs.depth_move(run, kinds) == Ok(members.between(row, row + kept.count))
                             && met_kids.len() == kept_kids.len()
                             && met_kids.iter().all(|kid| runs.parent(kid.index) == Some(run))
                             && runs.edge(run, crate::options::Side::Before).map(|kid| kid.index) == met_kids.first().map(|kid| kid.index)
