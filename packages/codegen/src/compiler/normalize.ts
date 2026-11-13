@@ -398,7 +398,8 @@ export function fanOutSeqChoices(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 					members: branches,
 					...(rule.id !== undefined ? { id: rule.id } : {})
 				},
-				choice
+				choice,
+				rule
 			);
 		}
 		case CHOICE: {
