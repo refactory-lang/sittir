@@ -1557,8 +1557,14 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
         let count = |n: usize| u32::try_from(n).unwrap_or(u32::MAX);
         let runs = self.placed_trivia().runs();
         self.lending(|lookups, lent| {
-            let nodes = (0..lookups.nodes.kid(NodeIndex::ROOT).count).map(NodeIndex::new);
-            let slots = nodes.map(|index| lookups.node_slots(index, lent)).fold((0, 0), |(layouts, separators), slots| {
+            let mut nodes = Vec::new();
+            lookups.nodes.walk(NodeIndex::ROOT, &mut |step, kid| {
+                if step == Step::Meet {
+                    nodes.push(kid.index);
+                }
+                Visit::Enter
+            });
+            let slots = nodes.into_iter().map(|index| lookups.node_slots(index, lent)).fold((0, 0), |(layouts, separators), slots| {
                 (layouts + slots.layouts.iter().filter(|layout| !layout.is_empty()).count(), separators + slots.separators.len())
             });
             crate::layout::StoredLayout {

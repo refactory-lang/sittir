@@ -195,3 +195,43 @@ fn a_side_written_to_a_read_s_node_is_read_by_every_later_call() {
     assert_eq!(records.edited_within(at, false), side == TriviaSide::Inner, "a node's own leading and trailing are not within it");
     assert!(!records.edited_within(second, true), "the second function holds no write");
 }
+
+/// The sources of `name`'s fixtures that parse with no error whose records
+/// store another layout than their tree does, and how many of the sources
+/// store any.
+fn layouts_apart<G: EngineGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> (Vec<String>, usize) {
+    let mut storing = 0;
+    let apart = fixture_sources(name)
+        .iter()
+        .filter_map(|source| {
+            let tree = parsed(grammar, options(), source);
+            if tree.nodes().holds_error(NodeIndex::ROOT) {
+                return None;
+            }
+            let kept = tree.stored_layout();
+            let mut engine = Engine::new(grammar, options()).expect("an engine");
+            let root = engine.parse_records::<N>(source).expect("a parse").root?;
+            let built = engine.written().built();
+            let stored = sittir_core::engine::ParsedTree::over_records(&engine, &built, root).expect("a tree over the records").stored_layout();
+            storing += usize::from(kept != sittir_core::layout::StoredLayout::default());
+            (stored != kept).then(|| format!("{name} {source:?}: records {stored:?}, tree {kept:?}"))
+        })
+        .collect();
+    (apart, storing)
+}
+
+#[test]
+fn a_read_s_records_store_the_layout_its_tree_does() {
+    let (apart, storing): (Vec<_>, Vec<_>) = [
+        layouts_apart::<_, sittir_python::render::AnyNode>("python", sittir_python::PythonGrammar, sittir_python::render::options::defaults),
+        layouts_apart::<_, sittir_regex::render::AnyNode>("regex", sittir_regex::RegexGrammar, sittir_regex::render::options::defaults),
+        layouts_apart::<_, sittir_rust::render::AnyNode>("rust", sittir_rust::RustGrammar, sittir_rust::render::options::defaults),
+        layouts_apart::<_, sittir_scm::render::AnyNode>("scm", sittir_scm::ScmGrammar, sittir_scm::render::options::defaults),
+        layouts_apart::<_, sittir_typescript::render::AnyNode>("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults),
+    ]
+    .into_iter()
+    .unzip();
+    let apart = apart.concat();
+    assert!(storing.iter().sum::<usize>() > 0, "some fixture stores a layout apart from its options");
+    assert!(apart.is_empty(), "{} sources:\n{}", apart.len(), apart.iter().take(8).cloned().collect::<Vec<_>>().join("\n"));
+}
