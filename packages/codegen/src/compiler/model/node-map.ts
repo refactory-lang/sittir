@@ -1825,6 +1825,7 @@ export interface FreeTextGate {
 	readonly token: string;
 	readonly facet: string;
 	readonly spellings: readonly string[];
+	readonly members: readonly string[];
 }
 
 export interface FreeText {

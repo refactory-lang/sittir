@@ -16,8 +16,9 @@ export interface PortableTypedInput {
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly readTest: (entry: ReadEntry) => readonly PortableCondition[];
 	readonly table: PortableBuildTable;
-	readonly presetCarried: ReadonlySet<number>;
+	readonly presetCarried: ReadonlySet<ReadEntry>;
 	readonly totalIntegerReads: ReadonlySet<number>;
+	readonly freeTextClosedBy: ReadonlyMap<ReadEntry, readonly string[]>;
 	readonly flags: ReadonlyMap<string, readonly string[]>;
 }
 
