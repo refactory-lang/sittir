@@ -681,6 +681,17 @@ impl BuiltChunks {
         }
     }
 
+    /// The memory of the words chunk `chunk` a read wrote, shared with the
+    /// buffer JavaScript reads it through; none for any other chunk.
+    #[cfg(feature = "napi-bindings")]
+    pub(crate) fn read_mem(&self, chunk: u32) -> Option<Arc<ChunkMem<u32>>> {
+        match self.chunks.get(chunk as usize) {
+            Some(Some(BuiltChunk::Words { mem, read: true, .. })) => Some(mem),
+            _ => None,
+        }
+        .cloned()
+    }
+
     /// A new string chunk of `len` bytes, zeroed: its number, its memory
     /// and its meta, its cell count.
     ///

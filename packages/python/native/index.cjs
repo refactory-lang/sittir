@@ -747,6 +747,7 @@ module.exports.readLeaf = nativeBinding.readLeaf
 module.exports.readMany = nativeBinding.readMany
 module.exports.readRecord = nativeBinding.readRecord
 module.exports.readRecordStub = nativeBinding.readRecordStub
+module.exports.readWords = nativeBinding.readWords
 module.exports.RECORD_FLAG_LINK = nativeBinding.RECORD_FLAG_LINK
 module.exports.RECORD_HEADER_WORDS = nativeBinding.RECORD_HEADER_WORDS
 module.exports.releaseBuilt = nativeBinding.releaseBuilt

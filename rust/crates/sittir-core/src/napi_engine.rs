@@ -1124,6 +1124,18 @@ macro_rules! napi_engine {
                 Ok((Some($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline))), None))
             }
 
+            /// Chunk `chunk` of the built arena, which a read wrote its
+            /// records into: a `Uint32Array` over its native memory, every
+            /// word of it, with no copy. Disposing the engine detaches it.
+            /// Refuses a chunk no read wrote, an engine already disposed,
+            /// and a runtime that does not allow external array buffers.
+            #[::napi_derive::napi(ts_return_type = "Uint32Array")]
+            pub fn read_words(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, chunk: f64) -> ::napi::Result<$crate::napi_engine::Made> {
+                let engine = engine_of(engine)?;
+                let chunk: u32 = $crate::napi_engine::checked_whole(chunk, "chunk")?;
+                $crate::napi_engine::read_chunk(&env, engine.written(), chunk)
+            }
+
             /// Parse `source` with `engine` and keep no tree: the read
             /// leaves the source's text and every node's record in the
             /// engine's built arena (`Engine::parse_records`). As JSON
@@ -1133,12 +1145,13 @@ macro_rules! napi_engine {
             /// options; and its error regions. Refuses an engine in use, a
             /// parse that fails, and what the read or the arena refuses.
             #[::napi_derive::napi]
-            pub fn parse_records(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, source: String) -> ::napi::Result<String> {
+            pub fn parse_records(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, source: String) -> ::napi::Result<String> {
                 let parsed = engine
                     .try_borrow_mut()
                     .map_err(|_| ::napi::Error::from_reason("the engine is in use"))?
                     .parse_records::<$any>(&source)
                     .map_err(::napi::Error::from_reason)?;
+                $crate::napi_engine::report_built(&env, engine_of(engine)?.written())?;
                 Ok(::serde_json::json!({
                     "root": parsed.root.map(|at| at.0),
                     "source": parsed.source.0,
@@ -2189,6 +2202,30 @@ where
         let arena = built.readable().map_err(RenderError::Record)?;
         crate::arena::render_record_entry(self.grammar, arena, record, store, self.trees, &crate::prepare::RenderContext::new(options, self), w)
     }
+}
+
+/// The buffer JavaScript reads chunk `chunk` of `store`'s built arena
+/// through, when a read wrote the chunk.
+///
+/// # Errors
+///
+/// A chunk no read wrote, and what making the buffer refuses.
+#[cfg(feature = "arena")]
+pub fn read_chunk<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore<T>, chunk: u32) -> napi::Result<Made> {
+    let mut buffers = store.buffers();
+    let mem = store.built().read_mem(chunk);
+    buffers.view::<u32>(env, false, chunk, || mem)?.ok_or_else(|| napi::Error::from_reason(format!("no read wrote chunk {chunk} of the built arena")))
+}
+
+/// Reports to V8 what `store`'s built arena holds natively now, and detaches
+/// the buffers of the chunks freed since the last report.
+///
+/// # Errors
+///
+/// What detaching a buffer or the report refuses.
+#[cfg(feature = "arena")]
+pub fn report_built<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore<T>) -> napi::Result<()> {
+    settle_buffers(*env, &mut store.buffers(), store)
 }
 
 /// `f` over the table a call renders through: the live `trees`, which also

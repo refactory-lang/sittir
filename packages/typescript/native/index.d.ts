@@ -508,6 +508,15 @@ export declare function readRecord(treeId: TreeId, index: NodeIndex, depth?: num
  */
 export declare function readRecordStub(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): Array<number> | null
 
+/**
+ * r" Chunk `chunk` of the built arena, which a read wrote its
+ * r" records into: a `Uint32Array` over its native memory, every
+ * r" word of it, with no copy. Disposing the engine detaches it.
+ * r" Refuses a chunk no read wrote, an engine already disposed,
+ * r" and a runtime that does not allow external array buffers.
+ */
+export declare function readWords(engine: object, chunk: number): Uint32Array
+
 /** r" The flag above a link record's kind field (`arena::cell::flag`). */
 export declare const RECORD_FLAG_LINK: number
 

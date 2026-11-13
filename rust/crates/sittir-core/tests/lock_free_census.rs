@@ -18,7 +18,7 @@ const COUNTED: &[&str] = &[
 ];
 
 const CEILINGS: &[(&str, u32)] = &[
-    ("arena.rs", 14),
+    ("arena.rs", 15),
     ("arena/built_write.rs", 2),
     ("arena/count.rs", 5),
     ("arena/memory.rs", 4),
