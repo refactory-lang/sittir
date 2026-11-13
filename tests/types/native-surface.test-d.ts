@@ -25,7 +25,7 @@ type WireOf<R> = R extends readonly [unknown, ...unknown[]]
 	? { -readonly [I in keyof R]: Wire<R[I]> }
 	: R extends readonly (infer E)[]
 		? readonly Wire<E>[]
-		: [R] extends [ReadOutput]
+		: Equal<R, ReadOutput> extends true
 			? object
 			: Equal<R, ChunkWords> extends true
 				? Uint32Array
@@ -126,6 +126,9 @@ type NoBreaks<Run> = Omit<Run, 'breaks'> & { readonly breaks?: 0 };
 
 expectTypeOf<Admits<(profile: 'release') => void, (profile: string) => void>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => UnitSidesWire[], () => UnitSidesWire<ReadOutput>[]>>().toEqualTypeOf<true>();
+expectTypeOf<ReturnsExactly<() => object, () => ReadOutput>>().toEqualTypeOf<true>();
+expectTypeOf<ReturnsExactly<() => object, () => ReadOutput & { readonly extra: string }>>().toEqualTypeOf<false>();
+expectTypeOf<ReturnsExactly<() => ReadOutput & { readonly extra: string }, () => object>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => object, () => WireNode>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => ObjectOnlyUnit<object>[], () => UnitSidesWire[]>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => UnitSidesWire[], () => ObjectOnlyUnit<ReadOutput>[]>>().toEqualTypeOf<false>();
