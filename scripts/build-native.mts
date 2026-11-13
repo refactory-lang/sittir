@@ -27,7 +27,10 @@
 // A release stamps the engine with the commit it is built from
 // (`SITTIR_ENGINE_COMMIT`, from `git rev-parse HEAD`). Every other build
 // leaves the variable as the environment has it, so the engine reads `local`
-// and a new commit doesn't rebuild every crate above the engine. The `.node`
+// and a new commit doesn't rebuild every crate above the engine. Every build
+// passes the profile it builds as `SITTIR_BUILD_PROFILE`, which the binary
+// reports as its build profile; each profile builds into its own directory,
+// so the value never changes under a crate already built. The `.node`
 // and the engine copy each hold their stamp in their bytes; the build reads
 // both from the shipped (stripped, signed) images and refuses by name unless
 // they agree with each other and with the workspace's engine version. Cargo
@@ -178,7 +181,7 @@ run(
 	['exec', 'napi', 'build', '--config-path', NATIVE_NAPI_CONFIG, '--platform', '--features', 'arena', ...flags, '--output-dir', outDir, '--js', NATIVE_LOADER, '--dts', NATIVE_TYPINGS],
 	crateDir,
 	process.platform === 'win32',
-	nativeBuildEnv(triple, release ? { ...process.env, SITTIR_ENGINE_COMMIT: gitHead() } : process.env, linkerMap === undefined ? [] : ['-C link-arg=/MAP'])
+	nativeBuildEnv(triple, { ...process.env, SITTIR_BUILD_PROFILE: profile, ...(release ? { SITTIR_ENGINE_COMMIT: gitHead() } : {}) }, linkerMap === undefined ? [] : ['-C link-arg=/MAP'])
 );
 if (linkerMap !== undefined) {
 	const written = writtenLinkerMap(metadata, crateDir, cargoOut);

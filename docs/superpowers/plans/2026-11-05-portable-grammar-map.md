@@ -62,24 +62,28 @@
 
 ### Task 1: Proposals for review (docs only, no code)
 
+**Status:** done as f9421082e (2026-11-05, docs to master).
+
 **Files:**
 - Create: `docs/superpowers/notes/2026-11-05-portable-features-proposal.md`
 
 **Interfaces:**
 - Produces: the approved feature tree, package list and Python mapping that Tasks 5 and 7 implement. No other task starts its content moves before approval.
 
-- [ ] **Step 1: The feature tree.** Starting from design's inventory (`feature-gap-inventory.txt`), write it out:
+- [x] **Step 1: The feature tree.** Starting from design's inventory (`feature-gap-inventory.txt`), write it out:
   - each sub-feature that's split out, with its folder under `packages/types/src/vocabulary/features/`, its paths and members, and the parent it extends;
   - each grammar's held set after the split.
 
   It covers Visibility on both axes, struct patterns as Structs' parent, the moves for call type arguments and loop labels, and every lacked cluster from the inventory (TypeAnnotations, Modules, Destructuring, ParametricPolymorphism, BoundedQuantification, StringInterpolation, RawStrings, ResourceManagement, python Classes and Accessors).
 
   Features form a graph, not a tree: a feature extends any number of features at any depth. A piece that needs two pieces extends both, and its folder is only where its files live.
-- [ ] **Step 2: Standard packages.** Propose the first packages (object-oriented, c-like, and any others the compositions suggest), each as a feature with no content of its own that extends the features it combines, with each grammar's membership.
-- [ ] **Step 3: The Python mapping.** For Visibility (`_x`, `__x`), Accessors (`@property`), AbstractClasses (`ABC`, `@abstractmethod`), ExplicitOverrides (`@override`) and NullableTypes (`X | None`, `Optional[X]`), give each claim and the vocabulary fact it states. Flag any construct Python doesn't state.
-- [ ] **Step 4: Commit the note to master** (docs only), and send it to brainstorm. Brainstorm takes it to the maintainer. Wait for approval.
+- [x] **Step 2: Standard packages.** Propose the first packages (object-oriented, c-like, and any others the compositions suggest), each as a feature with no content of its own that extends the features it combines, with each grammar's membership.
+- [x] **Step 3: The Python mapping.** For Visibility (`_x`, `__x`), Accessors (`@property`), AbstractClasses (`ABC`, `@abstractmethod`), ExplicitOverrides (`@override`) and NullableTypes (`X | None`, `Optional[X]`), give each claim and the vocabulary fact it states. Flag any construct Python doesn't state.
+- [x] **Step 4: Commit the note to master** (docs only), and send it to brainstorm. Brainstorm takes it to the maintainer. Wait for approval.
 
 ### Task 2: Measure first: exact slot sets and the admission census
+
+**Status:** merged as #1158 (0bae3a468), 2026-11-09.
 
 The admission census (`tool portable-admission`) owns both counts. It already reads each grammar's typed module with the type checker. The conformance lane doesn't change.
 
@@ -118,7 +122,7 @@ The admission census (`tool portable-admission`) owns both counts. It already re
   - **Site-level over-admission includes role-armed sites.** The rule that excluded role arms is removed. `roleArmed` stays as the site count that ties to 352.
   - `excessOf(admitted: ReadonlySet<string>, exact: ExactSet): readonly string[]`: the pure comparison that the report and the fixture test share.
 
-- [ ] **Step 1: The failing tests.**
+- [x] **Step 1: The failing tests.**
   - `exact.test.ts`:
     - `exactSlotsOf` puts an unclaimed kind in `unmapped` and not in `raw`;
     - a kind with a flag no arm builds is a raw arm with reason `flags`, and `rawGroupOf(['flags'])` is `'kind'`;
@@ -128,19 +132,21 @@ The admission census (`tool portable-admission`) owns both counts. It already re
     - `members` per grammar at its measured ceiling, with python above 0, since today's over-admission is real;
     - `raw` per grammar and group at its measured ceiling;
     - the existing ceilings, with `overAdmitting` re-measured once role-armed sites count.
-- [ ] **Step 2: Run them:** `pnpm exec vitest run packages/codegen/src/emitters/overlays/portable/__tests__/exact.test.ts packages/tools/tests/portable-admission.test.ts`. They fail because `exactSlotsOf` and `excessOf` don't exist.
-- [ ] **Step 3: Implement.**
+- [x] **Step 2: Run them:** `pnpm exec vitest run packages/codegen/src/emitters/overlays/portable/__tests__/exact.test.ts packages/tools/tests/portable-admission.test.ts`. They fail because `exactSlotsOf` and `excessOf` don't exist.
+- [x] **Step 3: Implement.**
   - Move the set logic into `exact.ts`.
   - Point `contextOf` and `slotArmOf` at it, and switch `PortableTypedInput` to `table`.
   - Extend `portableAdmission` with `members` and `raw`, and drop the role-arm exclusion.
-- [ ] **Step 4: Verify.**
+- [x] **Step 4: Verify.**
   - The refactor leaves every `portable.typed.ts` byte-identical (python, rust, typescript), since raw arms are counted here and typed in a later task.
   - The conformance diagnostics haven't moved (87/82/133).
   - Run `pnpm exec tsx packages/cli/src/cli.ts tool portable-admission` and record `members` and `raw` per grammar, and the site counts.
   - Set the ratchet ceilings at the measured values. They only shrink.
-- [ ] **Step 5: Commit** (`feat(tools): the admission census counts over-admitting members and raw-node arms against exact slot sets`), with the counts in the message.
+- [x] **Step 5: Commit** (`feat(tools): the admission census counts over-admitting members and raw-node arms against exact slot sets`), with the counts in the message.
 
 ### Task 3: Defaults on members, `Slot`, the grammar map and the fit constraint
+
+**Status:** merged as #1158 (0bae3a468), 2026-11-09.
 
 **Files:**
 - Create: `packages/types/src/vocabulary/map.ts`
@@ -178,6 +184,8 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 
 ### Task 4: Input interfaces derived from read; requiredness in input overrides
 
+**Status:** merged as #1158 (0bae3a468), 2026-11-09.
+
 **Files:**
 - Create: `packages/types/src/vocabulary/input.ts`
 - Modify: `packages/types/src/vocabulary/map.ts` (`inputs`), `grammar-map.ts` (input overrides)
@@ -204,6 +212,8 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 
 ### Task 5: Path gating by feature, sub-feature moves and the claims guard
 
+**Status:** merged as #1158 (0bae3a468), 2026-11-09 (Task 5's follow-up in #1171, 59c6947a1).
+
 **Files:**
 - Modify: the feature-merge generator behind `vocabulary-features --write`, and `augment.ts` (generated by it)
 - Modify: the feature folders, as the approved Task 1 tree says
@@ -226,6 +236,8 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 - [x] **Step 6: Three-way verification** across all grammars, plus the guard at 0, then commit.
 
 ### Task 6: The typed engine surface, honest raw reads and tokens as text
+
+**Status:** partly done: tokens read as text and ReadOf/InputOf exist (#1158); the typed read/build signatures, API['portable']['map'], ReadByKind and their tests are not started.
 
 **Files:**
 - Modify: `PortableRuntime<API>` (`build`, `read`) in `@sittir/types`, and `portableRuntime` in `packages/common/src/portable/`
@@ -252,6 +264,8 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 - [ ] **Step 5: Commit.**
 
 ### Task 7: Standard packages and `PortableEngine<C>`
+
+**Status:** partly done: the c-like and object-oriented packages landed in #1158; PortableEngine<C> is not started.
 
 **Files:**
 - Create: the approved packages, each a feature folder under `packages/types/src/vocabulary/features/` with no content of its own
@@ -304,5 +318,5 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 ## Notes
 
 - Marker-only features with no paths or members, held trivially: OperatorOverloading, ManifestTyping, Elisions and Overloading.
-- Call type arguments and loop labels each have two vocabulary shapes, tracked in an issue. Task 5 moves the members as ruled.
+- A call holds its type arguments and a loop or block its label, in every grammar that has them (the user, 2026-11-12: "On the call" and "On the loop").
 - The PR shape (one PR, or one per task) is the maintainer's call when Task 1 comes back. The tasks are ordered so each one leaves every gate green on its own.

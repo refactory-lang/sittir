@@ -85,6 +85,9 @@ export type {
 	CSTNode,
 	NodeTrivia,
 	TriviaEntry,
+	WireNode,
+	UnitSidesWire,
+	SlotLayoutWire,
 	NativeParseResult,
 	GrammarTriviaEntry,
 	TriviaSetter,
@@ -300,6 +303,22 @@ export type OmitRegistered<T, K extends PropertyKey> = T extends unknown
 	: never;
 /** A config that names none of `T`'s keys. */
 export type NoneOf<T> = { [K in keyof T]?: never };
+/**
+ * A config whose `Facet` decides what its `List` holds: a facet in `Opens` admits the whole list, and any other facet, or
+ * none, admits the list without the kinds `Opened`. A member of `T` that has no such facet is kept as it is.
+ */
+export type GatedList<T, Facet extends string, Opens, List extends string, Opened> = T extends unknown
+	? Facet extends keyof T
+		?
+				| (Omit<T, Facet> & { readonly [K in Facet]: Opens })
+				| (Omit<T, Facet | List> & { readonly [K in Facet]?: Exclude<NonNullable<T[Facet]>, Opens> } & {
+						readonly [K in List]?: WithoutKinds<NonNullable<T[List & keyof T]>, Opened>;
+				  })
+		: T
+	: never;
+type WithoutKinds<V, Kinds> = V extends readonly unknown[]
+	? { readonly [I in keyof V]: Exclude<V[I], { readonly $type: Kinds }> }
+	: Exclude<V, { readonly $type: Kinds }>;
 /**
  * `P` naming none of the group `G`'s keys: a flattened group is present as a
  * whole or absent as a whole. A built node is not a config and passes as it

@@ -310,16 +310,15 @@ macro_rules! napi_engine {
                 $abi
             }
 
-            /// Compile profile baked into this binary — `"debug"` or `"release"`.
-            /// Validators refuse debug binaries (known segfault class) unless
-            /// `SITTIR_ALLOW_DEBUG_VALIDATE=1`; the binary self-reporting makes
-            /// the gate immune to stale env assumptions.
-            #[::napi_derive::napi(getter)]
-            pub fn build_profile(&self) -> &'static str {
-                if cfg!(debug_assertions) {
-                    "debug"
-                } else {
-                    "release"
+            /// The profile build-native built this binary with, from the
+            /// `SITTIR_BUILD_PROFILE` it passes the build; `undefined` for a
+            /// binary build-native didn't build.
+            #[::napi_derive::napi(getter, ts_return_type = "import('@sittir/types').EngineDiagnostics['buildProfile']")]
+            pub fn build_profile(&self) -> ::napi::bindgen_prelude::Either<&'static str, ::napi::bindgen_prelude::Undefined> {
+                const PROFILE: Option<&str> = $crate::boundary::build_profile(option_env!("SITTIR_BUILD_PROFILE"));
+                match PROFILE {
+                    Some(profile) => ::napi::bindgen_prelude::Either::A(profile),
+                    None => ::napi::bindgen_prelude::Either::B(()),
                 }
             }
 
@@ -380,7 +379,7 @@ macro_rules! napi_engine {
         /// Refuses a tree that is not live, an index past its last node,
         /// and a node the model has no route for, naming the kind, the
         /// child and the index.
-        #[::napi_derive::napi(ts_return_type = "object")]
+        #[::napi_derive::napi(ts_return_type = "import('@sittir/types').WireNode")]
         pub fn read(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, depth: Option<f64>) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
             let depth = $crate::napi_engine::depth_from_wire(depth)?;
             with_live_tree(&env, tree_id, |parsed| {
@@ -392,7 +391,7 @@ macro_rules! napi_engine {
         /// live tree `treeId`, which their slots store as bare kinds: each
         /// `{ slot, item, leading?, trailing?, inner? }`, by its slot's wire
         /// key and its item in that slot. Refuses as `triviaSide` does.
-        #[::napi_derive::napi(ts_return_type = "object[]")]
+        #[::napi_derive::napi(ts_return_type = "import('@sittir/types').UnitSidesWire[]")]
         pub fn unit_sides(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex) -> ::napi::Result<Vec<$crate::layout::UnitSides<<$grammar as $crate::engine::EngineGrammar>::Trivia>>> {
             with_live_node(&env, tree_id, index, |parsed, index| Ok(parsed.unit_sides(index)))
         }
@@ -401,7 +400,7 @@ macro_rules! napi_engine {
         /// the live tree `treeId` that stores any: each `{ slot, before?,
         /// after?, separator? }`, by its slot's wire key. Refuses as
         /// `triviaSide` does.
-        #[::napi_derive::napi(ts_return_type = "object[]")]
+        #[::napi_derive::napi(ts_return_type = "import('@sittir/types').SlotLayoutWire[]")]
         pub fn slot_layouts(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex) -> ::napi::Result<Vec<$crate::layout::SlotLayout>> {
             with_live_node(&env, tree_id, index, |parsed, index| Ok(parsed.slot_layouts(index)))
         }
@@ -446,7 +445,7 @@ macro_rules! napi_engine {
         /// it, else the ones the tree's trivia placement assigns it. Refuses a
         /// tree that is not live, an index naming no node of it, and any
         /// other side.
-        #[::napi_derive::napi(ts_return_type = "object[]")]
+        #[::napi_derive::napi(ts_return_type = "import('@sittir/types').WireNode[]")]
         pub fn trivia_side(
             env: ::napi::Env,
             tree_id: $crate::types::TreeId,
@@ -461,7 +460,7 @@ macro_rules! napi_engine {
         /// with `entries`. A built record among them (`{ $type, $record }`)
         /// is a record of this engine's built arena, and renders from it
         /// wherever the side renders. Refuses as `triviaSide` does.
-        #[::napi_derive::napi(ts_args_type = "treeId: number, index: number, side: string, entries: object[]")]
+        #[::napi_derive::napi(ts_args_type = "treeId: number, index: number, side: string, entries: import('@sittir/types').WireNode[]")]
         pub fn write_trivia_side(
             env: ::napi::Env,
             tree_id: $crate::types::TreeId,
@@ -646,7 +645,7 @@ macro_rules! napi_engine {
         /// engine's. `treeId` is the tree the node was read from; a built
         /// node belongs to no tree and renders by the engine's options.
         #[::napi_derive::napi(
-            ts_args_type = "engine: object, node: object, treeId?: number | undefined | null, options?: object | undefined | null",
+            ts_args_type = "engine: object, node: import('@sittir/types').WireNode, treeId?: number | undefined | null, options?: object | undefined | null",
             ts_return_type = "string"
         )]
         pub fn render(
@@ -712,7 +711,7 @@ macro_rules! napi_engine {
         /// whether it wrote: `create` refuses a file at the path, and
         /// otherwise a file already holding the text is left untouched.
         #[::napi_derive::napi(
-            ts_args_type = "engine: object, node: object, path: string, create: boolean, treeId?: number | undefined | null, options?: object | undefined | null"
+            ts_args_type = "engine: object, node: import('@sittir/types').WireNode, path: string, create: boolean, treeId?: number | undefined | null, options?: object | undefined | null"
         )]
         pub fn render_to_file(
             engine: &::napi::bindgen_prelude::External<EngineCell>,
@@ -1000,7 +999,7 @@ macro_rules! napi_engine {
             /// answers it, 0 for a node with no record, in one
             /// `Uint32Array`. Refuses as `read` does at the first index it
             /// refuses, and any other wire.
-            #[::napi_derive::napi(ts_return_type = "Array<object> | Uint32Array")]
+            #[::napi_derive::napi(ts_return_type = "import('@sittir/types').WireNode[] | Uint32Array")]
             pub fn read_many(
                 env: ::napi::Env,
                 tree_id: $crate::types::TreeId,
@@ -1493,7 +1492,7 @@ macro_rules! napi_engine {
             /// The entries a write gave `side` (`leading`, `trailing` or
             /// `inner`) of the built record at `address`, or `null` when
             /// no write did. Refuses address 0 and any other side.
-            #[::napi_derive::napi(ts_return_type = "object[] | null")]
+            #[::napi_derive::napi(ts_return_type = "import('@sittir/types').WireNode[] | null")]
             pub fn built_trivia_side(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, address: f64, side: String) -> ::napi::Result<Option<Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>>> {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
@@ -1505,7 +1504,7 @@ macro_rules! napi_engine {
             /// `inner`) of the built leaf at the site `holder`, `word`,
             /// `item`, or `null` when no write did. Refuses holder 0 and
             /// any other side.
-            #[::napi_derive::napi(ts_return_type = "object[] | null")]
+            #[::napi_derive::napi(ts_return_type = "import('@sittir/types').WireNode[] | null")]
             pub fn built_leaf_side(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, holder: f64, word: u32, item: u32, side: String) -> ::napi::Result<Option<Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>>> {
                 let engine = engine_of(engine)?;
                 let holder = $crate::arena::Address($crate::napi_engine::checked_whole(holder, "holder")?);
@@ -1532,7 +1531,7 @@ macro_rules! napi_engine {
             /// renders as `writeTriviaSide` says. Refuses a list whose
             /// length is not a multiple of three, holder 0 and any other
             /// side, before writing any site.
-            #[::napi_derive::napi(ts_args_type = "engine: object, sites: number[], side: string, entries: object[]")]
+            #[::napi_derive::napi(ts_args_type = "engine: object, sites: number[], side: string, entries: import('@sittir/types').WireNode[]")]
             pub fn write_built_leaf_side(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
                 env: ::napi::Env,
@@ -1554,7 +1553,7 @@ macro_rules! napi_engine {
             /// the arena this engine built holds: `{ slot, item, leading?,
             /// trailing?, inner? }`. Refuses an arena this engine no
             /// longer holds and an address naming no record in it.
-            #[::napi_derive::napi(ts_args_type = "engine: object, address: number", ts_return_type = "object[]")]
+            #[::napi_derive::napi(ts_args_type = "engine: object, address: number", ts_return_type = "import('@sittir/types').UnitSidesWire[]")]
             pub fn built_unit_sides(engine: &::napi::bindgen_prelude::External<EngineCell>, address: f64) -> ::napi::Result<Vec<$crate::layout::UnitSides<<$grammar as $crate::engine::EngineGrammar>::Trivia>>> {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
@@ -1570,7 +1569,7 @@ macro_rules! napi_engine {
             /// record among them renders as `writeTriviaSide` says.
             /// Refuses as `builtUnitSides` does, and a slot the record's
             /// kind has no cell for.
-            #[::napi_derive::napi(ts_args_type = "engine: object, address: number, units: object[]")]
+            #[::napi_derive::napi(ts_args_type = "engine: object, address: number, units: import('@sittir/types').UnitSidesWire[]")]
             pub fn write_built_unit_sides(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
                 env: ::napi::Env,
@@ -1587,7 +1586,7 @@ macro_rules! napi_engine {
             /// `entries`, which `renderBuilt` then writes; a built record
             /// among them renders as `writeTriviaSide` says. Refuses as
             /// `builtTriviaSide` does.
-            #[::napi_derive::napi(ts_args_type = "engine: object, address: number, side: string, entries: object[]")]
+            #[::napi_derive::napi(ts_args_type = "engine: object, address: number, side: string, entries: import('@sittir/types').WireNode[]")]
             pub fn write_built_trivia_side(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
                 env: ::napi::Env,

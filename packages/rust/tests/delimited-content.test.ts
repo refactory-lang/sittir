@@ -20,6 +20,13 @@ describe('a built raw string takes the shortest hash run its content fits', () =
 	});
 });
 
+describe('a built raw string whose content needs more hashes than Rust allows', () => {
+	it('derives the longest legal run and refuses one more', () => {
+		expect(raw('r', `"${'#'.repeat(254)}`)).toBe(`r${'#'.repeat(255)}"${'"'}${'#'.repeat(254)}"${'#'.repeat(255)}`);
+		expect(() => raw('r', `"${'#'.repeat(255)}`)).toThrow(/at most 255/);
+	});
+});
+
 describe('a read raw string keeps the hashes it was read with while its content fits them', () => {
 	it.each(['fn f() { let x = r##"a"##; }\n', 'fn f() { let x = br#"a"b"#; }\n'])('round-trips %j', (source) => {
 		expect(rs.render(rs.parse(source)).toString()).toBe(source);

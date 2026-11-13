@@ -13,7 +13,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { DEDENT_TEXT, INDENT_TEXT } from '../../dsl/primitives/spacing.ts';
 import { classifySlot, buildSupertypeNodeSet, type SlotClass } from '../node-common.ts';
-import { closeUsedSupertypes, emitRenderModule, grammarRenderInputs, holderArmSeams, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
+import { closeUsedSupertypes, emitRenderModule, grammarRenderInputs, RenderModuleEmitter, holderArmSeams, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
 import { PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
@@ -1028,6 +1028,14 @@ describe('the envelope pin gate is wired to the real pipeline', () => {
 		expect(() => emitRenderModule('typescript', templates, nodeMap, generatedIdTables, { ...inputs, envelopePins: stale })).toThrow(
 			/typescript GoneNodeSlot\.Variant pins an enum codegen does not print/
 		);
+	}, 120_000);
+
+	it('refuses a stale pin handed to the render-module emitter, the way a generation hands it', async () => {
+		const { raw, nodeMap, generatedIdTables, templates, renderRules } = await modelFor('typescript');
+		const inputs = grammarRenderInputs('typescript', { renderRules, renderAs: raw.renderAs, options: raw.options });
+		const stale = { ...inputs.envelopePins, 'GoneNodeSlot.Variant': { display: '_property_identifier', extras: [] } };
+		const emitter = new RenderModuleEmitter({ grammar: 'typescript', nodeMap, generatedIdTables, ...inputs, envelopePins: stale });
+		expect(() => emitter.finalize(templates)).toThrow(/typescript GoneNodeSlot\.Variant pins an enum codegen does not print/);
 	}, 120_000);
 });
 

@@ -4,8 +4,8 @@ import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSyn
 import { tmpdir } from 'node:os';
 import { dirname, join, posix, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { bindingGrammars } from '@sittir/codegen/bindings';
-import { bindingIssues } from '../../src/inventory/bindings.ts';
+import { BindingsSyntaxError, bindingGrammars } from '@sittir/codegen/bindings';
+import { bindingIssues, compileQuery } from '../../src/inventory/bindings.ts';
 import {
 	VOCABULARY_DIR,
 	compileBindings,
@@ -44,6 +44,25 @@ describe('bindingIssues', () => {
 			{ line: 3, message: 'unknown node no_such_kind' },
 			{ line: 4, message: 'unknown field no_such_field' }
 		]);
+	}, FULL_PIPELINE_TIMEOUT);
+	it.each([
+		['an extra closing parenthesis after a pattern', '(module) @file\n(identifier) @identifier)\n(string) @string', 2],
+		['an extra closing parenthesis closing the file', '(module) @file\n((identifier) @identifier))', 2],
+		['an extra opening parenthesis', '(module) @file\n(((identifier) @identifier)\n(string) @string', 2]
+	])('reports %s with its line and fails the compile', async (_name, text, line) => {
+		const issues = await bindingIssues('python', text);
+		expect(issues.map((issue) => issue.line)).toContain(line);
+		await expect(compileQuery('python', text)).rejects.toThrow(BindingsSyntaxError);
+	}, FULL_PIPELINE_TIMEOUT);
+	it('reads a minted name as whichever of its source kinds fits where it stands', async () => {
+		expect(await bindingIssues('rust', ['(generic_function function: (qualified_identifier))', '(generic_type type: (qualified_identifier))'].join('\n'))).toEqual([]);
+	}, FULL_PIPELINE_TIMEOUT);
+	it('reads each minted name by where it stands, however many the pattern holds', async () => {
+		const items = `(source_file ${Array.from({ length: 5 }, () => '(type_item type: (qualified_identifier name: (type_identifier)))').join(' ')})`;
+		expect(await bindingIssues('rust', items)).toEqual([]);
+		const issues = await bindingIssues('rust', `(qualified_identifier ${Array.from({ length: 5 }, () => '(qualified_identifier)').join(' ')} (string_literal))`);
+		expect(issues.map((issue) => issue.line)).toEqual([1]);
+		expect(issues[0]?.message).toMatch(/^Bad pattern structure/);
 	}, FULL_PIPELINE_TIMEOUT);
 });
 
@@ -169,8 +188,10 @@ describe('deriveVocabulary', () => {
 		expect(ambient?.get('content')?.kinds.has('statement.block')).toBe(true);
 		expect(levelMembers(d, 'declaration.ambient').get('content')?.optional).toBe(false);
 		expect([...(d.members.get('statement.labeled')?.keys() ?? [])].sort()).toEqual(['body', 'label']);
-		for (const v of ['statement.expression', 'statement.return', 'statement.block', 'statement.if'])
+		for (const v of ['statement.expression', 'statement.return', 'statement.if'])
 			expect(d.members.get(v)?.get('label')?.grammars.has('typescript') ?? false, v).toBe(false);
+		for (const v of ['statement.block', 'statement.loop.counted', 'statement.loop.for_each', 'statement.loop.while', 'statement.loop.do_while'])
+			expect(d.members.get(v)?.get('label')?.grammars.has('typescript') ?? false, v).toBe(true);
 	});
 	it('lifts a capture nested inside a container child onto the claimed kind', () => {
 		const cls = levelMembers(d, 'declaration.class');

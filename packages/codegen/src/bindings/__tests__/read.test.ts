@@ -324,6 +324,16 @@ describe('readBindings', () => {
 		await expect(readBindings('(identifier) @identifier\n(call [ (identifier) (number)')).rejects.toThrow(/line 2/);
 	});
 
+	it.each([
+		['an extra closing parenthesis after a pattern', '(identifier) @identifier\n(number) @number)\n(string) @string', 'line 2'],
+		['an extra closing parenthesis closing the file', '(identifier) @identifier\n((number) @number))', 'line 2'],
+		['an extra opening parenthesis', '(identifier) @identifier\n(((number) @number)\n(string) @string', 'line']
+	])('refuses %s, naming the line, in the facts and the patterns alike', async (_name, text, where) => {
+		await expect(readBindings(text)).rejects.toThrow(BindingsSyntaxError);
+		await expect(bindingPatterns(text)).rejects.toThrow(BindingsSyntaxError);
+		await expect(bindingPatterns(text)).rejects.toThrow(where);
+	});
+
 	it('marks each step a member descends through with the anchor that pins it to its parent\'s first child', async () => {
 		const { members } = await readBindings(
 			'(function_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))'

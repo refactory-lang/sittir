@@ -79,13 +79,19 @@ function armsOf(owner: string, facet: AssembledNonterminal): readonly DelimiterA
 	return [...preferred, ...arms.filter((arm) => arm.text !== facet.optionDefaultArm)];
 }
 
-function runOf(owner: string, facet: AssembledNonterminal): string | undefined {
+interface Run {
+	readonly char: string;
+	readonly max?: number;
+}
+
+function runOf(owner: string, facet: AssembledNonterminal): Run | undefined {
 	if (facet.delimiterRole !== 'run') return undefined;
 	const pattern = facet.values.find(isPatternValue)?.pattern;
-	const match = pattern === undefined ? undefined : /^(?:\(\?:(\\?[^\\])\*\)|(\\?[^\\])\*)$/u.exec(pattern);
-	const run = match?.[1] ?? match?.[2];
+	const body = pattern === undefined ? undefined : (/^\(\?:(.*)\)$/u.exec(pattern)?.[1] ?? pattern);
+	const match = body === undefined ? undefined : /^(\\?[^\\])(?:\*|\{0,(\d+)\})$/u.exec(body);
+	const run = match?.[1];
 	if (run === undefined) throw emitShapeFailure({ code: 'delimiter-run-not-repeated', message: `delimiters: '${owner}''s run '${facet.name}' is not one character repeated (${pattern})` });
-	return run.length === 2 ? run[1] : run;
+	return { char: run.length === 2 ? run[1]! : run, ...(match?.[2] === undefined ? {} : { max: Number(match[2]) }) };
 }
 
 function membersOf(rule: RenderRule): readonly RenderRule[] {
@@ -123,9 +129,15 @@ function gateOf(open: AssembledLexedPattern): FreeTextGate | undefined {
 	const gates = open.slots.filter((slot) => slot.delimiterRole === 'input' && slot.values.some((value) => value.interpolating === true));
 	if (gates.length > 1) throw emitShapeFailure({ code: 'delimiter-gate-ambiguous', message: `delimiters: '${open.kind}' gates its free text on ${gates.length} facets, where one may` });
 	const facet = gates[0];
+	const opening = facet?.values.filter((value) => value.interpolating === true) ?? [];
 	return facet === undefined
 		? undefined
-		: { token: open.kind, facet: facet.name, spellings: facet.values.filter((value) => value.interpolating === true).map((value) => value.value!) };
+		: {
+				token: open.kind,
+				facet: facet.name,
+				spellings: opening.map((value) => value.value!),
+				members: [...new Set(opening.map((value) => value.canonical ?? value.value!))]
+			};
 }
 
 function stampContentLeaves(node: AbstractAssembledCompound, close: AssembledLexedPattern, nodes: Nodes): void {
@@ -148,7 +160,8 @@ function factsOf(node: AbstractAssembledCompound, open: AssembledLexedPattern, c
 		open: openSlot.name,
 		close: closeSlot.name,
 		arms: armsOf(node.kind, facet),
-		...(run === undefined ? {} : { run }),
+		...(run === undefined ? {} : { run: run.char }),
+		...(run?.max === undefined ? {} : { maxRun: run.max }),
 		closeLead: leadOf(close, mirror),
 		...(escape === undefined ? {} : { escape })
 	};

@@ -26,6 +26,8 @@ pub struct DelimiterSpec {
     pub arms: &'static [DelimiterArm],
     /// The character a run delimiter repeats; `None` for an enumerated one.
     pub run: Option<char>,
+    /// The longest run the delimiter may take; `None` when it has no bound.
+    pub max_run: Option<usize>,
     /// The closer's fixed text before its derived facet.
     pub close_lead: &'static str,
     /// The character that pairs with the one after it inside the content.
@@ -163,6 +165,20 @@ fn fits(spec: &DelimiterSpec, content: &str, facet: &str) -> bool {
     !closes_early(content, &format!("{}{facet}", spec.close_lead), spec.escape)
 }
 
+fn required_run(content: &str, lead: &str, run: char, escape: Option<char>) -> usize {
+    let mut chars = content.char_indices();
+    let mut longest: Option<usize> = None;
+    while let Some((at, char)) = chars.next() {
+        if Some(char) == escape {
+            chars.next();
+        } else if content[at..].starts_with(lead) {
+            let held = content[at + lead.len()..].chars().take_while(|&c| c == run).count();
+            longest = Some(longest.map_or(held, |longest| longest.max(held)));
+        }
+    }
+    longest.map_or(0, |held| held + 1)
+}
+
 /// The delimiter facet the content takes: the carried one while it still
 /// fits, else the first arm that fits, or the shortest run.
 pub fn choose(spec: &DelimiterSpec, content: &str, carried: Option<&str>) -> Result<String, DelimiterRefusal> {
@@ -170,9 +186,12 @@ pub fn choose(spec: &DelimiterSpec, content: &str, carried: Option<&str>) -> Res
         return Ok(carried.to_owned());
     }
     if let Some(run) = spec.run {
-        return (0..=content.chars().count() + 1)
-            .map(|n| run.to_string().repeat(n))
-            .find(|facet| fits(spec, content, facet))
+        let needed = required_run(content, spec.close_lead, run, spec.escape);
+        if let Some(max) = spec.max_run.filter(|&max| needed > max) {
+            return Err(DelimiterRefusal { kind: spec.kind, reason: format!("no delimiter fits its content: it needs a run of {needed} `{run}`, at most {max} are allowed") });
+        }
+        return Some(run.to_string().repeat(needed))
+            .filter(|facet| fits(spec, content, facet))
             .ok_or_else(|| DelimiterRefusal { kind: spec.kind, reason: format!("no delimiter fits its content: every run of `{run}` closes inside it") });
     }
     spec.arms
@@ -319,6 +338,7 @@ mod tests {
             DelimiterArm { text: "'''", single_line: false },
         ],
         run: None,
+        max_run: None,
         close_lead: "",
         escape: Some('\\'),
         id: KindId(0),
@@ -330,7 +350,7 @@ mod tests {
     };
 
     const RAW: DelimiterSpec =
-        DelimiterSpec { kind: "raw_string_literal", arms: &[], run: Some('#'), close_lead: "\"", escape: None, id: KindId(0), free_text: &[], excluded: &[], opened: &[], gate: None, whitespace: &WHITESPACE };
+        DelimiterSpec { kind: "raw_string_literal", arms: &[], run: Some('#'), max_run: None, close_lead: "\"", escape: None, id: KindId(0), free_text: &[], excluded: &[], opened: &[], gate: None, whitespace: &WHITESPACE };
 
     #[test]
     fn the_preferred_arm_takes_content_it_fits() {
@@ -385,6 +405,40 @@ mod tests {
         assert_eq!(choose(&RAW, "abc", None).unwrap(), "");
         assert_eq!(choose(&RAW, "a\"b", None).unwrap(), "#");
         assert_eq!(choose(&RAW, "a\"#b", None).unwrap(), "##");
+    }
+
+    fn shortest_run_by_trial(spec: &DelimiterSpec, content: &str) -> Option<String> {
+        let run = spec.run?;
+        (0..=content.chars().count() + 1).map(|n| run.to_string().repeat(n)).find(|facet| fits(spec, content, facet))
+    }
+
+    #[test]
+    fn the_run_agrees_with_trying_every_length_over_every_short_content() {
+        let alphabet = ['"', '#', 'a'];
+        let mut contents = vec![String::new()];
+        for _ in 0..7 {
+            let longer: Vec<String> = contents.iter().flat_map(|prefix| alphabet.iter().map(move |c| format!("{prefix}{c}"))).collect();
+            contents.extend(longer);
+        }
+        for content in &contents {
+            assert_eq!(choose(&RAW, content, None).ok(), shortest_run_by_trial(&RAW, content), "{content:?}");
+        }
+    }
+
+    #[test]
+    fn a_run_over_content_holding_one_long_hash_run_is_found_in_one_pass() {
+        let content = format!("\"{}", "#".repeat(1_000_000));
+        assert_eq!(choose(&RAW, &content, None).unwrap(), "#".repeat(1_000_001));
+    }
+
+    const BOUNDED: DelimiterSpec = DelimiterSpec { max_run: Some(3), ..RAW };
+
+    #[test]
+    fn a_run_over_the_legal_maximum_is_refused_naming_the_kind() {
+        assert_eq!(choose(&BOUNDED, "a\"##b", None).unwrap(), "###");
+        let refusal = choose(&BOUNDED, "a\"###b", None).unwrap_err();
+        assert_eq!(refusal.kind, "raw_string_literal");
+        assert!(refusal.reason.contains("at most 3"), "{}", refusal.reason);
     }
 
     #[test]

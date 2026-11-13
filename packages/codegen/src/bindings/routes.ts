@@ -99,6 +99,7 @@ export interface ContainerUnwrap {
 	readonly list: boolean;
 	readonly members?: readonly ContainerDataMember[];
 	readonly refined?: true;
+	readonly named?: true;
 }
 
 export interface ContainerDataMember {
@@ -295,7 +296,8 @@ const untested = (entry: ReadEntry): boolean =>
 	entry.pins.length === 0 && entry.present.length === 0 && entry.children.length === 0 && entry.claim.predicates.length === 0 && entry.separated !== true;
 
 function containerOf(input: GrammarInput, node: ModelNode): ContainerUnwrap | undefined {
-	const declared = declaredContainersOf(input, node)[0];
+	const containers = declaredContainersOf(input, node);
+	const declared = containers[0];
 	if (declared === undefined && node.modelType === 'list') {
 		const items = node.slots.find((slot) => slot.multiple);
 		return items === undefined ? undefined : { slot: items.name, kinds: node.elementKinds, terminals: [], list: true };
@@ -306,14 +308,36 @@ function containerOf(input: GrammarInput, node: ModelNode): ContainerUnwrap | un
 		: TRANSPARENT_MODEL_TYPES.has(node.modelType) && content.length === 1
 			? content[0]
 			: undefined;
+	const named = namedElementsOf(containers);
 	return element !== undefined && holdsNodes(element)
-		? { slot: element.name, kinds: element.kinds, terminals: element.terminals, list: element.multiple }
+		? named === undefined
+			? { slot: element.name, kinds: element.kinds, terminals: element.terminals, list: element.multiple }
+			: { slot: element.name, kinds: named, terminals: [], list: element.multiple, named: true as const }
 		: undefined;
 }
 
+function elementExclusionsOf(input: GrammarInput, kind: string, claim: ClaimFact): ChildTest[] {
+	const node = modelNode(input.model, kind);
+	if (node === undefined) return [];
+	const unwrap = containerOf(input, node);
+	const element = declaredContainersOf(input, node)[0]?.element;
+	if (unwrap?.named !== true || element === undefined) return [];
+	const tested = claim.children.some((child) => 'subject' in child && child.subject.up === 0 && child.subject.down[0] !== undefined && slotFor(input.model, node.slots, child.subject.down[0])?.name === unwrap.slot);
+	return tested ? [] : [{ subject: { up: 0, down: [{ ...element, kind: null }] }, excludes: concreteKinds(input.model, unwrap.kinds) }];
+}
+
+function declaredContainersIn(model: SlotModel, declared: readonly ContainerFact[], kind: string): readonly ContainerFact[] {
+	const containers = declared.filter((c) => holdsContainer(model, c));
+	return [...containers.filter((c) => c.kind === kind), ...containers.filter((c) => c.kind !== kind && formsOf(model, c.kind).includes(kind))];
+}
+
 function declaredContainersOf(input: GrammarInput, node: ModelNode): readonly ContainerFact[] {
-	const containers = input.bindings.containers.filter((c) => holdsContainer(input.model, c));
-	return [...containers.filter((c) => c.kind === node.kind), ...containers.filter((c) => c.kind !== node.kind && formsOf(input.model, c.kind).includes(node.kind))];
+	return declaredContainersIn(input.model, input.bindings.containers, node.kind);
+}
+
+function namedElementsOf(containers: readonly ContainerFact[]): readonly string[] | undefined {
+	const named = containers.flatMap(({ element }) => (element.field !== null && element.kind !== null && element.kind !== WILDCARD ? [element.kind] : []));
+	return containers.length > 0 && named.length === containers.length ? [...new Set(named)] : undefined;
 }
 
 function containerDataMembers(input: GrammarInput, node: ModelNode, vocabOf: ReadonlyMap<string, string>): NonNullable<ContainerUnwrap['members']> {
@@ -1216,7 +1240,8 @@ export function refinedContainers(model: SlotModel, reads: ClaimReads, container
 	return new Set(
 		[...reads].flatMap(([kind, at]) => {
 			const plain = plainRead(model, kind);
-			return declared.has(kind) && !at.some((read) => read.claim.toplevel && plain(read)) ? [kind] : [];
+			const named = namedElementsOf(declaredContainersIn(model, containers, kind)) !== undefined;
+			return declared.has(kind) && (named || !at.some((read) => read.claim.toplevel && plain(read))) ? [kind] : [];
 		})
 	);
 }
@@ -1386,7 +1411,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 						pins: pinsOf(input.model, kind, claim, slotNamesOf(kind)),
 						absent: absentSlotsOf(input.model, kind, claim),
 						present: [],
-						children: claimChildTests(input.model, kind, claim),
+						children: [...claimChildTests(input.model, kind, claim), ...elementExclusionsOf(input, kind, claim)],
 						template: claim.template,
 						members: [],
 						...(separatedBy(input.model, kind, claim) ? { separated: true as const } : {}),

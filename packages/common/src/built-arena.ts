@@ -1,4 +1,4 @@
-import type { CommitScope, EngineIdentity, NodeCoordinate, NodeTrivia } from '@sittir/types';
+import type { CommitScope, EngineIdentity, NodeCoordinate, NodeTrivia, UnitSidesWire, WireNode } from '@sittir/types';
 import { bindTree, engineOf, isLive, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered } from './identity.ts';
 import { asReadOutput, type ChangedEdges, coordinateOf, holdReadCoordinate, holdReadTree, isRead, type KindView, listEdges, keyName, type ReadOutput, triviaOf } from './node-data.ts';
@@ -74,12 +74,12 @@ export interface BuiltRecords {
 	readonly query: TreeQuery;
 	readonly reads: ReadNodes;
 	readonly trivia: {
-		triviaSide(at: number, side: TriviaSideName): unknown[] | undefined;
-		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly unknown[]): void;
-		unitSides(at: number): unknown[];
-		writeUnitSides(at: number, units: readonly unknown[]): void;
-		writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void;
-		leafSide(holder: number, word: number, item: number, side: TriviaSideName): unknown[] | undefined;
+		triviaSide(at: number, side: TriviaSideName): WireNode[] | undefined;
+		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly WireNode[]): void;
+		unitSides(at: number): UnitSidesWire[];
+		writeUnitSides(at: number, units: readonly UnitSidesWire[]): void;
+		writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly WireNode[]): void;
+		leafSide(holder: number, word: number, item: number, side: TriviaSideName): WireNode[] | undefined;
 		copySites(from: number, to: number, skip: readonly number[]): void;
 	};
 }
@@ -1048,7 +1048,7 @@ export class BuiltArena {
 	}
 
 	/** Replaces `side` of the built leaf at each site `sites` names, `[holder, word, item]` after another, with `entries`. */
-	writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void {
+	writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly WireNode[]): void {
 		this.#trivia.writeLeafSide(sites, side, entries);
 		for (let n = 0; n < sites.length; n += 3) (this.#leafSited[chunkOf(sites[n]!, this.format)] ??= new Set()).add(sites[n]!);
 	}
@@ -1200,11 +1200,11 @@ function isReadName(entry: unknown): entry is ReadName {
 	return typeof entry === 'object' && entry !== null && typeof (entry as { readonly $node?: unknown }).$node === 'number';
 }
 
-export function builtEntries(entries: readonly unknown[], table: object): unknown[] {
+export function builtEntries(entries: readonly WireNode[], table: object): WireNode[] {
 	const built = (table as Partial<TreeHandle>).built;
-	const node = (entry: unknown): object | undefined =>
+	const node = (entry: WireNode): object | undefined =>
 		isBuiltEntry(entry) ? builtEntryNode(entry, table) : built === undefined ? undefined : isTextData(entry) ? built.textNode(entry) : isReadName(entry) ? (built.named(entry) as object) : undefined;
-	if (!entries.some((entry) => isBuiltEntry(entry) || (built !== undefined && (isTextData(entry) || isReadName(entry))))) return entries as unknown[];
+	if (!entries.some((entry) => isBuiltEntry(entry) || (built !== undefined && (isTextData(entry) || isReadName(entry))))) return entries as WireNode[];
 	return entries.map((entry) => node(entry) ?? entry);
 }
 
@@ -1214,15 +1214,15 @@ function isTextData(entry: unknown): entry is TextData {
 	return typeof entry === 'object' && entry !== null && typeof (entry as Partial<TextData>).$type === 'number' && typeof (entry as Partial<TextData>).$text === 'string';
 }
 
-export function readEntries(table: object, entries: readonly unknown[]): unknown[] {
+export function readEntries(table: object, entries: readonly WireNode[]): WireNode[] {
 	for (const entry of entries) if (isCoordinate(entry) && !isReadName(entry)) readCoordinate(table, entry);
 	return builtEntries(entries, table);
 }
 
-export function readOwnEntries(table: object, entries: readonly ReadOutput[], own: TreeToken): unknown[] {
+export function readOwnEntries(table: object, entries: readonly WireNode<ReadOutput>[], own: TreeToken): WireNode[] {
 	for (const entry of entries) {
 		if (isCoordinate(entry)) readCoordinate(table, entry, own);
-		else if (!isBuiltEntry(entry)) holdReadTree(entry, own);
+		else if (typeof entry === 'object' && !isBuiltEntry(entry)) holdReadTree(entry, own);
 	}
 	return builtEntries(entries, table);
 }
@@ -1233,12 +1233,12 @@ export function readCoordinate(table: object, coordinate: NodeCoordinate, own?: 
 	return coordinate;
 }
 
-export function readUnits(table: object, units: readonly unknown[]): unknown[] {
-	return units.map((unit) => ({ ...(unit as object), ...mapTriviaEntries(unit as TriviaSides<unknown>, (entries) => readEntries(table, entries)) }));
+export function readUnits(table: object, units: readonly UnitSidesWire[]): UnitSidesWire[] {
+	return units.map((unit) => ({ ...unit, ...mapTriviaEntries(unit, (entries) => readEntries(table, entries)) }));
 }
 
-export function readOwnUnits(table: object, units: readonly ReadOutput[], own: TreeToken): unknown[] {
-	return units.map((unit) => ({ ...unit, ...mapTriviaEntries(unit as TriviaSides<ReadOutput>, (entries) => readOwnEntries(table, entries, own)) }));
+export function readOwnUnits(table: object, units: readonly UnitSidesWire<ReadOutput>[], own: TreeToken): UnitSidesWire[] {
+	return units.map((unit) => ({ ...unit, ...mapTriviaEntries(unit, (entries) => readOwnEntries(table, entries, own)) }));
 }
 
 function heldTree(table: object, treeId: number, own: TreeToken | undefined): TreeToken | undefined {

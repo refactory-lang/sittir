@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, ByteSpan, ErrorRegion, NodeLayout, NodeTrivia, NodeCoordinate, TriviaEntry } from '@sittir/types';
+import type { AnyUntypedNode, ByteSpan, ErrorRegion, NodeLayout, NodeTrivia, NodeCoordinate, TriviaEntry, UnitSidesWire } from '@sittir/types';
 import type { CellSite } from './record-cell.ts';
 import { decodeIndex, isCoordinate, type TreeHandle, type TriviaSideName } from './read.ts';
 import { assertHoldsTree, carryTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
@@ -385,7 +385,7 @@ function sourceTree(source: SourceIdentity): TreeHandle | undefined {
  * store's, else the ones it holds, else its tree's for a parsed node, else those of the node it
  * was rebuilt from (`placeOf`); `undefined` when none answers.
  */
-export function unitSidesOf(node: object): readonly unknown[] | undefined {
+export function unitSidesOf(node: object): readonly UnitSidesWire[] | undefined {
 	const built = builtRefOf(node);
 	if (built !== undefined) return built.at === undefined ? undefined : built.arena.tree.unitSides(built.at);
 	const held = heldUnitSides(node);
@@ -444,32 +444,26 @@ export function slotSeparatorOf(node: object): number | undefined {
 	return source === undefined ? undefined : from?.slotSeparator?.(source.index);
 }
 
-/** One unit child's sides as a tree gives them (`NodeLayout.units`): its slot's wire key and its item there. */
-export interface UnitSidesData extends TriviaSides<unknown> {
-	readonly slot: string;
-	readonly item: number;
+export function heldUnitSides(node: object): readonly UnitSidesWire[] | undefined {
+	return (node as { readonly $_layout?: NodeDataLayout }).$_layout?.units as readonly UnitSidesWire[] | undefined;
 }
 
-export function heldUnitSides(node: object): readonly UnitSidesData[] | undefined {
-	return (node as { readonly $_layout?: NodeDataLayout }).$_layout?.units as readonly UnitSidesData[] | undefined;
-}
-
-export function setUnitSides(node: object, units: readonly UnitSidesData[]): void {
+export function setUnitSides(node: object, units: readonly UnitSidesWire[]): void {
 	const record = node as { $_layout?: NodeDataLayout };
 	record.$_layout = { ...record.$_layout, units };
 }
 
-function carriedUnitSides(node: object, index: number, tree: TreeHandle): readonly unknown[] | undefined {
-	const units = tree.unitSides?.(index) as readonly UnitSidesData[] | undefined;
+function carriedUnitSides(node: object, index: number, tree: TreeHandle): readonly UnitSidesWire[] | undefined {
+	const units = tree.unitSides?.(index);
 	if (units === undefined || units.length === 0) return units;
 	const read = tree.read?.(index, 1);
 	return isRecord(read) ? realignedUnits(units, hydrateOn(tree, read) as object, node) : undefined;
 }
 
-export function realignedUnits(units: readonly UnitSidesData[], before: object, after: object): UnitSidesData[] {
+export function realignedUnits(units: readonly UnitSidesWire[], before: object, after: object): UnitSidesWire[] {
 	const moved = new Map<string, ReadonlyMap<number, number>>();
 	const [itemsBefore, itemsAfter] = [slotItemsOf(before), slotItemsOf(after)];
-	const carried: UnitSidesData[] = [];
+	const carried: UnitSidesWire[] = [];
 	for (const unit of units) {
 		let aligned = moved.get(unit.slot);
 		if (aligned === undefined) {

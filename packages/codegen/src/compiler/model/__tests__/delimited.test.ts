@@ -69,7 +69,7 @@ describe('the derived delimiters of a composite', () => {
 		});
 		expect(await facetsOf('rust', 'raw_string_literal')).toEqual({
 			delimited: undefined,
-			facets: { open: 'raw_string_literal_start', close: 'raw_string_literal_end', arms: [], run: '#', closeLead: '"' }
+			facets: { open: 'raw_string_literal_start', close: 'raw_string_literal_end', arms: [], run: '#', maxRun: 255, closeLead: '"' }
 		});
 	}, COMPILE_TIMEOUT);
 });

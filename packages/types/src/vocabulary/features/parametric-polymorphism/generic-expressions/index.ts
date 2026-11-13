@@ -8,7 +8,7 @@ import type { JavaScriptExpressions } from '../../javascript-expressions/index.t
 import type { JavaScriptClasses } from '../../methods/classes/javascript-classes/index.ts';
 import type { GenericSignatures } from '../generic-signatures/index.ts';
 
-/** Generic expressions: type arguments on calls and `new`, and type parameters on expressions and signatures. */
+/** Generic expressions: type parameters on expressions and signatures. */
 export interface GenericExpressions extends ParametricPolymorphism, JavaScriptExpressions, JavaScriptClasses, GenericSignatures {
 	readonly 'generic-expressions': true;
 }

@@ -107,12 +107,11 @@ export declare class SittirEngine {
   get renderModuleHash(): string
   get nativeRenderNodeAbi(): number
   /**
-   * Compile profile baked into this binary — `"debug"` or `"release"`.
-   * Validators refuse debug binaries (known segfault class) unless
-   * `SITTIR_ALLOW_DEBUG_VALIDATE=1`; the binary self-reporting makes
-   * the gate immune to stale env assumptions.
+   * The profile build-native built this binary with, from the
+   * `SITTIR_BUILD_PROFILE` it passes the build; `undefined` for a
+   * binary build-native didn't build.
    */
-  get buildProfile(): string
+  get buildProfile(): import('@sittir/types').EngineDiagnostics['buildProfile']
   findAndRead(source: string, pattern: string): string
   /**
    * Parse `source` and keep its tree. As JSON `{ treeId, options,
@@ -166,7 +165,7 @@ export declare function builtBytes(engine: object, length: number): { chunk: num
  * r" `item`, or `null` when no write did. Refuses holder 0 and
  * r" any other side.
  */
-export declare function builtLeafSide(engine: object, holder: number, word: number, item: number, side: string): object[] | null
+export declare function builtLeafSide(engine: object, holder: number, word: number, item: number, side: string): import('@sittir/types').WireNode[] | null
 
 /**
  * r" The bytes the built arena's chunks take, and of them the
@@ -179,7 +178,7 @@ export declare function builtMemory(engine: object): { chunks: number; counts: n
  * r" `inner`) of the built record at `address`, or `null` when
  * r" no write did. Refuses address 0 and any other side.
  */
-export declare function builtTriviaSide(engine: object, address: number, side: string): object[] | null
+export declare function builtTriviaSide(engine: object, address: number, side: string): import('@sittir/types').WireNode[] | null
 
 /**
  * r" The sides writes gave each unit the record at `address` in
@@ -187,7 +186,7 @@ export declare function builtTriviaSide(engine: object, address: number, side: s
  * r" trailing?, inner? }`. Refuses an arena this engine no
  * r" longer holds and an address naming no record in it.
  */
-export declare function builtUnitSides(engine: object, address: number): object[]
+export declare function builtUnitSides(engine: object, address: number): import('@sittir/types').UnitSidesWire[]
 
 /**
  * r" A new chunk of `length` words of the built arena this
@@ -454,7 +453,7 @@ export declare function planHolds(addresses: string, plan: string): Array<boolea
  * and a node the model has no route for, naming the kind, the
  * child and the index.
  */
-export declare function read(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): object
+export declare function read(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): import('@sittir/types').WireNode
 
 /**
  * r" The address of the record the parsed cell at `word`, item
@@ -503,7 +502,7 @@ export declare function readLeaf(treeId: TreeId, index: NodeIndex): Array<number
  * r" `Uint32Array`. Refuses as `read` does at the first index it
  * r" refuses, and any other wire.
  */
-export declare function readMany(treeId: TreeId, indexes: Array<NodeIndex>, depth: number | undefined | null, wire: string): Array<object> | Uint32Array
+export declare function readMany(treeId: TreeId, indexes: Array<NodeIndex>, depth: number | undefined | null, wire: string): import('@sittir/types').WireNode[] | Uint32Array
 
 /**
  * r" `planHolds` for nodes a read left records of in the built
@@ -636,7 +635,7 @@ export declare function releaseBuilt(engine: object, address: number, held: numb
  * engine's. `treeId` is the tree the node was read from; a built
  * node belongs to no tree and renders by the engine's options.
  */
-export declare function render(engine: object, node: object, treeId?: number | undefined | null, options?: object | undefined | null): string
+export declare function render(engine: object, node: import('@sittir/types').WireNode, treeId?: number | undefined | null, options?: object | undefined | null): string
 
 /**
  * The node at `index` of the live tree `treeId` rendered as `render`
@@ -717,7 +716,7 @@ export declare function renderRecordToFile(engine: object, treeId: number, addre
  * whether it wrote: `create` refuses a file at the path, and
  * otherwise a file already holding the text is left untouched.
  */
-export declare function renderToFile(engine: object, node: object, path: string, create: boolean, treeId?: number | undefined | null, options?: object | undefined | null): boolean
+export declare function renderToFile(engine: object, node: import('@sittir/types').WireNode, path: string, create: boolean, treeId?: number | undefined | null, options?: object | undefined | null): boolean
 
 /**
  * The separator before the node at `index` of the live tree
@@ -776,7 +775,7 @@ export declare const SIDE_WORDS_SPAN: number
  * after?, separator? }`, by its slot's wire key. Refuses as
  * `triviaSide` does.
  */
-export declare function slotLayouts(treeId: TreeId, index: NodeIndex): object[]
+export declare function slotLayouts(treeId: TreeId, index: NodeIndex): import('@sittir/types').SlotLayoutWire[]
 
 /**
  * The separator the list at `index` of the live tree `treeId`
@@ -834,7 +833,7 @@ export declare function treeMemory(): { trees: number; counted: number; reported
  * tree that is not live, an index naming no node of it, and any
  * other side.
  */
-export declare function triviaSide(treeId: TreeId, index: NodeIndex, side: string): object[]
+export declare function triviaSide(treeId: TreeId, index: NodeIndex, side: string): import('@sittir/types').WireNode[]
 
 /**
  * The sides of the unit children of the node at `index` of the
@@ -842,7 +841,7 @@ export declare function triviaSide(treeId: TreeId, index: NodeIndex, side: strin
  * `{ slot, item, leading?, trailing?, inner? }`, by its slot's wire
  * key and its item in that slot. Refuses as `triviaSide` does.
  */
-export declare function unitSides(treeId: TreeId, index: NodeIndex): object[]
+export declare function unitSides(treeId: TreeId, index: NodeIndex): import('@sittir/types').UnitSidesWire[]
 
 /**
  * r" Replace `side` of the built leaf at each site `sites` names,
@@ -852,7 +851,7 @@ export declare function unitSides(treeId: TreeId, index: NodeIndex): object[]
  * r" length is not a multiple of three, holder 0 and any other
  * r" side, before writing any site.
  */
-export declare function writeBuiltLeafSide(engine: object, sites: number[], side: string, entries: object[]): void
+export declare function writeBuiltLeafSide(engine: object, sites: number[], side: string, entries: import('@sittir/types').WireNode[]): void
 
 /**
  * r" Replace `side` of the built record at `address` with
@@ -860,7 +859,7 @@ export declare function writeBuiltLeafSide(engine: object, sites: number[], side
  * r" among them renders as `writeTriviaSide` says. Refuses as
  * r" `builtTriviaSide` does.
  */
-export declare function writeBuiltTriviaSide(engine: object, address: number, side: string, entries: object[]): void
+export declare function writeBuiltTriviaSide(engine: object, address: number, side: string, entries: import('@sittir/types').WireNode[]): void
 
 /**
  * r" The units the record at `address` in the arena this engine
@@ -871,7 +870,7 @@ export declare function writeBuiltTriviaSide(engine: object, address: number, si
  * r" Refuses as `builtUnitSides` does, and a slot the record's
  * r" kind has no cell for.
  */
-export declare function writeBuiltUnitSides(engine: object, address: number, units: object[]): void
+export declare function writeBuiltUnitSides(engine: object, address: number, units: import('@sittir/types').UnitSidesWire[]): void
 
 /**
  * r" Replaces `side` of the node a read left that the key `node`
@@ -894,4 +893,4 @@ export declare function writeText(path: string, text: string, create: boolean): 
  * is a record of this engine's built arena, and renders from it
  * wherever the side renders. Refuses as `triviaSide` does.
  */
-export declare function writeTriviaSide(treeId: number, index: number, side: string, entries: object[]): void
+export declare function writeTriviaSide(treeId: number, index: number, side: string, entries: import('@sittir/types').WireNode[]): void

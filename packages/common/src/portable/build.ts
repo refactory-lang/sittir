@@ -657,7 +657,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 			throw new Error(`portable build: ${path}: ${name} builds only beside ${[...new Set(routes.map((route) => unmet(route).map((group) => group.join(' or ')).join(' and ')))].join(', or beside ')}`);
 		};
 		const fitsShape = (route: PortableMemberStep, value: unknown): boolean =>
-			Array.isArray(value) ? listFits(route, value) : !route.multiple && seatsIn(route.seats.filter((seat) => seat.many !== true || route.list === false), value);
+			Array.isArray(value) ? (value.length > 0 || route.nonEmpty !== true) && listFits(route, value) : !route.multiple && seatsIn(route.seats.filter((seat) => seat.many !== true || route.list === false), value);
 		const ownerFor = (
 			arm: PortableBuildArm,
 			values: ReadonlyMap<string, unknown>,
@@ -777,7 +777,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 				if (routes.length === 0) throw new Error(`portable build: ${structure.$path}: ${nameOf(arm.kind)} has no member ${name}`);
 				return [name, routes] as const;
 			});
-			const present = (other: string): boolean => structure[other] !== undefined || values.has(other) || (structure.$flags ?? []).includes(other);
+			const unfilled = (name: string): boolean => emptyList(values.get(name)) && routesOf(arm, name).every((route) => route.nonEmpty === true);
+			const present = (other: string): boolean => !unfilled(other) && (structure[other] !== undefined || values.has(other) || (structure.$flags ?? []).includes(other));
 			const unmet = (route: PortableMemberStep): readonly (readonly string[])[] => (route.requires ?? []).filter((group) => !group.some(present));
 			const owner = ownerFor(arm, values, unmet, structure.$path);
 			const delimitedFlags = new Set<string>();

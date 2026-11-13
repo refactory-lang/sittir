@@ -5,7 +5,7 @@ import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { PORTABLE_SURFACE_FILE, moduleSpecifier } from '../../../grammars.ts';
 import type { GrammarRoutes, ReadEntry } from '../../../bindings/routes.ts';
 import type { SlotFlag } from './flags.ts';
-import type { PortableFactRecord } from './read-tests.ts';
+import { tableReadEntries, type PortableFactRecord } from './read-tests.ts';
 import { descendants, namespaceTree, type NamespaceNode } from './namespaces.ts';
 
 export interface PortableSurfaceConfig {
@@ -50,15 +50,10 @@ export function emitPortableSurface({ nodeType, routes, readTest, factOf, kindId
 	};
 	const recordsById = new Map<string, string[]>();
 	const factsById = new Map<string, string[]>();
+	for (const [id, read] of tableReadEntries(routes.readEntries, factOf, kindIdOf)) recordsById.set(id, [...new Set(read.map(entryRecord))]);
 	for (const [kind, read] of entries) {
 		const id = kindIdOf(kind);
-		const factsOf = new Map(read.map((entry) => [entry, factOf(entry)] as const));
-		const asEntries = read.filter((entry) => factsOf.get(entry) === undefined);
-		if (asEntries.length > 0) {
-			const records = recordsById.get(id) ?? recordsById.set(id, []).get(id)!;
-			for (const record of asEntries.map(entryRecord)) if (!records.includes(record)) records.push(record);
-		}
-		for (const fact of [...read].sort((a, b) => a.index - b.index).flatMap((entry) => factsOf.get(entry) ?? [])) {
+		for (const fact of [...read].sort((a, b) => a.index - b.index).flatMap((entry) => factOf(entry) ?? [])) {
 			const { container, ...rest } = fact;
 			const record = JSON.stringify(rest).replace(/^\{/, `{"container":${kindIdOf(container)},`);
 			const facts = factsById.get(id) ?? factsById.set(id, []).get(id)!;

@@ -101,7 +101,7 @@ export const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[0-9a-fA
 export const _slotRe_buildEscapeSequenceUnicodeBraced_content = /^(?:(?:u\{[0-9a-fA-F]+\}))$/u;
 export const _slotRe_buildEscapeSequenceHex_content = /^(?:(?:x[0-9a-fA-F]{2}))$/u;
 export const _slotRe_buildRawStringLiteralStart_prefix = /^(?:br|cr|r)$/u;
-export const _slotRe_buildRawStringLiteralStart_hashes = /^(?:(?:#*))$/u;
+export const _slotRe_buildRawStringLiteralStart_hashes = /^(?:(?:#{0,255}))$/u;
 export const _slotRe_buildRawStringLiteralEnd_hashes = _slotRe_buildRawStringLiteralStart_hashes;
 export const _delimited_buildBlockComment: DelimitedSpec = {
 	kind: 'block_comment',

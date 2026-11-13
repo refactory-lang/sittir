@@ -15635,51 +15635,22 @@ export interface PythonMap extends V.GrammarMap {
 			readonly $forms: V.Form<'value'>;
 		};
 		readonly 'literal.string': {
-			readonly elements:
-				| V.Read<PythonMap, 'expression.interpolation'>
-				| V.Read<PythonMap, 'literal.string.escape'>
-				| V.Read<PythonMap, 'literal.string.text'>
-				| '\\'
-				| T.Interpolation.Parsed;
+			readonly elements: V.Read<PythonMap, 'literal.string.escape'> | V.Read<PythonMap, 'literal.string.text'> | '\\';
 		};
 		readonly 'literal.string.bytes': {
-			readonly elements:
-				| V.Read<PythonMap, 'expression.interpolation'>
-				| V.Read<PythonMap, 'literal.string.escape'>
-				| V.Read<PythonMap, 'literal.string.text'>
-				| '\\'
-				| T.Interpolation.Parsed;
+			readonly elements: V.Read<PythonMap, 'literal.string.escape'> | V.Read<PythonMap, 'literal.string.text'> | '\\';
 		};
 		readonly 'literal.string.bytes.multiline': {
-			readonly elements:
-				| V.Read<PythonMap, 'expression.interpolation'>
-				| V.Read<PythonMap, 'literal.string.escape'>
-				| V.Read<PythonMap, 'literal.string.text'>
-				| '\\'
-				| T.Interpolation.Parsed;
+			readonly elements: V.Read<PythonMap, 'literal.string.escape'> | V.Read<PythonMap, 'literal.string.text'> | '\\';
 		};
 		readonly 'literal.string.bytes.raw': {
-			readonly elements:
-				| V.Read<PythonMap, 'expression.interpolation'>
-				| V.Read<PythonMap, 'literal.string.escape'>
-				| V.Read<PythonMap, 'literal.string.text'>
-				| '\\'
-				| T.Interpolation.Parsed;
+			readonly elements: V.Read<PythonMap, 'literal.string.escape'> | V.Read<PythonMap, 'literal.string.text'> | '\\';
 		};
 		readonly 'literal.string.bytes.raw.multiline': {
-			readonly elements:
-				| V.Read<PythonMap, 'expression.interpolation'>
-				| V.Read<PythonMap, 'literal.string.escape'>
-				| V.Read<PythonMap, 'literal.string.text'>
-				| '\\'
-				| T.Interpolation.Parsed;
+			readonly elements: V.Read<PythonMap, 'literal.string.escape'> | V.Read<PythonMap, 'literal.string.text'> | '\\';
 		};
 		readonly 'literal.string.concatenated': {
-			readonly elements:
-				| V.Read<PythonMap, 'expression.interpolation'>
-				| V.Read<PythonMap, 'literal.string.escape'>
-				| V.Read<PythonMap, 'literal.string.text'>
-				| '\\';
+			readonly elements: V.Read<PythonMap, 'literal.string.escape'> | V.Read<PythonMap, 'literal.string.text'> | '\\';
 			readonly strings:
 				| V.Read<PythonMap, 'literal.string'>
 				| V.Read<PythonMap, 'literal.string.bytes'>
@@ -15703,11 +15674,7 @@ export interface PythonMap extends V.GrammarMap {
 		};
 		readonly 'literal.string.escape': {
 			readonly content: string;
-			readonly elements:
-				| V.Read<PythonMap, 'expression.interpolation'>
-				| V.Read<PythonMap, 'literal.string.escape'>
-				| V.Read<PythonMap, 'literal.string.text'>
-				| '\\';
+			readonly elements: V.Read<PythonMap, 'literal.string.escape'> | V.Read<PythonMap, 'literal.string.text'> | '\\';
 			readonly $forms: V.Form<never, 'content'> | V.Form<'content'>;
 		};
 		readonly 'literal.string.interpolated': {
@@ -15775,43 +15742,19 @@ export interface PythonMap extends V.GrammarMap {
 				| T.Interpolation.Parsed;
 		};
 		readonly 'literal.string.multiline': {
-			readonly elements:
-				| V.Read<PythonMap, 'expression.interpolation'>
-				| V.Read<PythonMap, 'literal.string.escape'>
-				| V.Read<PythonMap, 'literal.string.text'>
-				| '\\'
-				| T.Interpolation.Parsed;
+			readonly elements: V.Read<PythonMap, 'literal.string.escape'> | V.Read<PythonMap, 'literal.string.text'> | '\\';
 		};
 		readonly 'literal.string.raw': {
-			readonly elements:
-				| V.Read<PythonMap, 'expression.interpolation'>
-				| V.Read<PythonMap, 'literal.string.escape'>
-				| V.Read<PythonMap, 'literal.string.text'>
-				| '\\'
-				| T.Interpolation.Parsed;
+			readonly elements: V.Read<PythonMap, 'literal.string.escape'> | V.Read<PythonMap, 'literal.string.text'> | '\\';
 		};
 		readonly 'literal.string.raw.multiline': {
-			readonly elements:
-				| V.Read<PythonMap, 'expression.interpolation'>
-				| V.Read<PythonMap, 'literal.string.escape'>
-				| V.Read<PythonMap, 'literal.string.text'>
-				| '\\'
-				| T.Interpolation.Parsed;
+			readonly elements: V.Read<PythonMap, 'literal.string.escape'> | V.Read<PythonMap, 'literal.string.text'> | '\\';
 		};
 		readonly 'literal.string.text': {
-			readonly elements:
-				| V.Read<PythonMap, 'expression.interpolation'>
-				| V.Read<PythonMap, 'literal.string.escape'>
-				| V.Read<PythonMap, 'literal.string.text'>
-				| '\\';
+			readonly elements: V.Read<PythonMap, 'literal.string.escape'> | V.Read<PythonMap, 'literal.string.text'> | '\\';
 		};
 		readonly 'literal.string.unicode': {
-			readonly elements:
-				| V.Read<PythonMap, 'expression.interpolation'>
-				| V.Read<PythonMap, 'literal.string.escape'>
-				| V.Read<PythonMap, 'literal.string.text'>
-				| '\\'
-				| T.Interpolation.Parsed;
+			readonly elements: V.Read<PythonMap, 'literal.string.escape'> | V.Read<PythonMap, 'literal.string.text'> | '\\';
 		};
 		readonly 'pattern.as': {
 			readonly name: V.Read<PythonMap, 'identifier'> | V.Read<PythonMap, 'identifier.qualified'>;
