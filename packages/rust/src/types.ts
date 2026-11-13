@@ -22966,7 +22966,7 @@ export namespace RawStringLiteral {
 		config: OmitEach<
 			NonNullable<
 				OmitEach<NonNullable<T.RawStringLiteral.Loose>, 'rawStringLiteralStart'> & {
-					prefix: T.RawStringLiteralStart.LooseArgs[0];
+					prefix: NonNullable<T.RawStringLiteralStart.LooseConfig>['prefix'];
 				}
 			>,
 			'rawStringLiteralEnd'

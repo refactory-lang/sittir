@@ -123,9 +123,15 @@ function gateOf(open: AssembledLexedPattern): FreeTextGate | undefined {
 	const gates = open.slots.filter((slot) => slot.delimiterRole === 'input' && slot.values.some((value) => value.interpolating === true));
 	if (gates.length > 1) throw emitShapeFailure({ code: 'delimiter-gate-ambiguous', message: `delimiters: '${open.kind}' gates its free text on ${gates.length} facets, where one may` });
 	const facet = gates[0];
+	const opening = facet?.values.filter((value) => value.interpolating === true) ?? [];
 	return facet === undefined
 		? undefined
-		: { token: open.kind, facet: facet.name, spellings: facet.values.filter((value) => value.interpolating === true).map((value) => value.value!) };
+		: {
+				token: open.kind,
+				facet: facet.name,
+				spellings: opening.map((value) => value.value!),
+				members: [...new Set(opening.map((value) => value.canonical ?? value.value!))]
+			};
 }
 
 function stampContentLeaves(node: AbstractAssembledCompound, close: AssembledLexedPattern, nodes: Nodes): void {

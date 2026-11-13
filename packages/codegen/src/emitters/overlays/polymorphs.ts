@@ -1,7 +1,7 @@
 import type { PortableMountCall } from '@sittir/types';
 import { emitShapeFailure } from '../../compiler/diagnostics/emit-diagnostics.ts';
 import type { NodeMap } from '../../compiler/types.ts';
-import { AbstractAssembledCompound, AssembledEnum, AssembledList, AssembledSupertype, delimiterPreferenceOf, isKindIdStored, isRequired, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledEnum, AssembledList, AssembledSupertype, delimiterPreferenceOf, isKindIdStored, isNodeRef, isRequired, separatorRequired, storageKindOfRef, type AssembledNode } from '../../compiler/model/node-map.ts';
 import {
 	classifyFactoryShape,
 	classifyFromEmission,
@@ -437,22 +437,50 @@ export function seatedRowsOf(
 	if (wireSet === undefined || row === undefined) return undefined;
 	const seats = seatsOf(wireSet, wires);
 	if (seats.length === 0 || seats.some((seat) => seat.typeFor === undefined)) return undefined;
-	const seatedType = (base: string, member: 'BuildArgs' | 'LooseArgs'): string =>
-		seats.reduce(
-			(type, seat) =>
-				seat.typeFor!(
-					type,
-					`T.${seat.groupTypeName}.${member}`,
-					`T.${seat.groupTypeName}.${member === 'BuildArgs' ? 'Config' : 'LooseConfig'}`
-				),
-			base
+	const seatedType = (base: string, surface: 'strict' | 'loose'): string =>
+		gatedListsOf(wireSet, wires).reduce(
+			(type, gated) =>
+				`GatedList<${type}, '${gated.facet}', ${gated.opens[surface].map((text) => JSON.stringify(text)).join(' | ')}, '${gated.list}', ${gated.opened.join(' | ')}>`,
+			seats.reduce(
+				(type, seat) =>
+					seat.typeFor!(
+						type,
+						`T.${seat.groupTypeName}.${surface === 'strict' ? 'BuildArgs' : 'LooseArgs'}`,
+						`T.${seat.groupTypeName}.${surface === 'strict' ? 'Config' : 'LooseConfig'}`,
+						surface
+					),
+				base
+			)
 		);
 	return {
-		buildArgs: rowTuple(row, 'strict', seatedType(row.strictType, 'BuildArgs')),
+		buildArgs: rowTuple(row, 'strict', seatedType(row.strictType, 'strict')),
 		looseArgs: seatsCoercible(wireSet, seats, wires)
-			? rowTuple(row, 'loose', seatedType(row.looseType, 'LooseArgs'))
+			? rowTuple(row, 'loose', seatedType(row.looseType, 'loose'))
 			: surface.looseArgs
 	};
+}
+
+interface GatedListSeat {
+	readonly facet: string;
+	readonly list: string;
+	readonly opens: { readonly strict: readonly string[]; readonly loose: readonly string[] };
+	readonly opened: readonly string[];
+}
+
+function gatedListsOf(wireSet: PolymorphWireSet, wires: PolymorphWires): readonly GatedListSeat[] {
+	const node = wireSet.node;
+	const freeText = node instanceof AbstractAssembledCompound ? node.freeText : undefined;
+	const gate = freeText?.gate;
+	if (freeText === undefined || gate === undefined) return [];
+	const seat = (wireSet.flattens ?? []).find((candidate) => candidate.group.kind === gate.token);
+	const facet = seat === undefined ? undefined : (flattenedKeysOf(seat).find(({ field }) => field === gate.facet)?.key ?? (seat.directKey === gate.facet ? gate.facet : undefined));
+	if (facet === undefined) return [];
+	return node.slots.flatMap((slot) => {
+		const held = freeText.opened.filter((kind) => slot.values.some((value) => isNodeRef(value) && value.node !== undefined && storageKindOfRef(value.node) === kind));
+		return held.length === 0
+			? []
+			: [{ facet, list: slot.propertyName, opens: { strict: gate.members, loose: gate.spellings }, opened: held.map((kind) => kindDiscriminantExpr(kind, wires.nodeMap, wires.kindEntries)) }];
+	});
 }
 
 function seatsCoercible(wireSet: PolymorphWireSet, seats: readonly SeatEmission[], wires: PolymorphWires): boolean {
@@ -670,7 +698,7 @@ function shape(
 
 interface SeatShape {
 	readonly method: readonly string[];
-	readonly typeFor?: (parentParamType: string, childArgsType: string, childConfigType: string) => string;
+	readonly typeFor?: (parentParamType: string, childArgsType: string, childConfigType: string, surface: 'strict' | 'loose') => string;
 	readonly spread?: true;
 }
 
@@ -752,7 +780,10 @@ function alwaysFlattenShape(k: string, keys: readonly FlattenKey[], m: string, d
 			`		return ${CALL_PO(`{ ...rest, ${k}: ${buildGroup} }`)};`,
 			`	};`
 		],
-		typeFor: (p, c) => (keys.length === 0 ? `OmitEach<NonNullable<${p}>, '${k}'>` : `OmitEach<NonNullable<${p}>, '${k}'> & ${groupOf(`${c}[0]`)}`)
+		typeFor: (p, c, config, surface) =>
+			keys.length === 0
+				? `OmitEach<NonNullable<${p}>, '${k}'>`
+				: `OmitEach<NonNullable<${p}>, '${k}'> & ${groupOf(directKey !== undefined && surface === 'loose' ? `NonNullable<${config}>['${directKey}']` : `${c}[0]`)}`
 	};
 }
 
@@ -821,7 +852,7 @@ function tupleShape(k: string, m: string): SeatShape {
 interface SeatEmission {
 	readonly method: readonly string[];
 	readonly apply: (parentExpr: string, childRef: string) => string;
-	readonly typeFor?: (parentParamType: string, childArgsType: string, childConfigType: string) => string;
+	readonly typeFor?: (parentParamType: string, childArgsType: string, childConfigType: string, surface: 'strict' | 'loose') => string;
 	readonly groupTypeName: string;
 	readonly child: FlavorRefs<string>;
 	readonly spread: boolean;

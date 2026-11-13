@@ -16,6 +16,7 @@ import type {
 	OmitEach,
 	OmitRegistered,
 	NoneOf,
+	GatedList,
 	WithoutGroup,
 	GrammarTypeMap,
 	NodeMethods,
@@ -15198,18 +15199,53 @@ export namespace String {
 	export type Loose = LooseFor<TSKindId.String>;
 	export type LooseConfig = LooseConfigFor<TSKindId.String>;
 	export type BuildArgs = [
-		config?: OmitEach<
-			NonNullable<
-				OmitEach<NonNullable<Partial<ConfigOf<T.String>>>, 'stringStart'> & { prefix?: T.StringStart.BuildArgs[0] }
+		config?: GatedList<
+			OmitEach<
+				NonNullable<
+					OmitEach<NonNullable<Partial<ConfigOf<T.String>>>, 'stringStart'> & { prefix?: T.StringStart.BuildArgs[0] }
+				>,
+				'stringEnd'
 			>,
-			'stringEnd'
+			'prefix',
+			'f' | 't' | 'rf' | 'rt',
+			'contents',
+			TSKindId.Interpolation
 		>,
 		options?: T.String.Options
 	];
 	export type LooseArgs = [
-		config?: OmitEach<
-			NonNullable<OmitEach<NonNullable<T.String.Loose>, 'stringStart'> & { prefix?: T.StringStart.LooseArgs[0] }>,
-			'stringEnd'
+		config?: GatedList<
+			OmitEach<
+				NonNullable<
+					OmitEach<NonNullable<T.String.Loose>, 'stringStart'> & {
+						prefix?: NonNullable<T.StringStart.LooseConfig>['prefix'];
+					}
+				>,
+				'stringEnd'
+			>,
+			'prefix',
+			| 'f'
+			| 'F'
+			| 't'
+			| 'T'
+			| 'rf'
+			| 'rF'
+			| 'Rf'
+			| 'RF'
+			| 'fr'
+			| 'fR'
+			| 'Fr'
+			| 'FR'
+			| 'rt'
+			| 'rT'
+			| 'Rt'
+			| 'RT'
+			| 'tr'
+			| 'tR'
+			| 'Tr'
+			| 'TR',
+			'contents',
+			TSKindId.Interpolation
 		>,
 		options?: T.String.Options
 	];
