@@ -23,6 +23,7 @@
 //! it found it (`hydrate_at`), the records its children's walks wrote
 //! included.
 
+use super::side::{NodeFacts, RunEntry};
 use super::{Address, ArenaError, Cell, CellShape, ListCell, Row, SideRecord, TreeArena};
 use crate::read::{Depth, Elided, ReadCtx, ReadError, ReadNode, ReadSlot, SlotSite};
 use crate::record::{stored, Stored, HEADER_WORDS};
@@ -135,6 +136,82 @@ type ExtraWalk = fn(&mut TreeCursor<'_>, &mut ReadCtx<'_>, &mut Hydration<'_>, &
 pub struct Hydration<'a> {
     tree: &'a mut TreeArena,
     extras: Option<ExtraWalk>,
+    /// The records whose walks are open, outermost first, each with the
+    /// run of its children as its walk has met them.
+    open: Vec<OpenRun>,
+    /// The node the last `meet` met.
+    met: Option<NodeFacts>,
+    /// The node and its descendant index the walk about to draft a record
+    /// stands on (`Hydration::node`).
+    entering: Option<(NodeIndex, NodeFacts)>,
+    /// The descendant index of the node the last `meet` met.
+    met_at: Option<NodeIndex>,
+}
+
+/// A record whose walk is open: where it is, the node it is of, and the run
+/// of its children so far. `rows` holds the rows still open, each by its
+/// entry and the descendant index its subtree ends at; `last` the entry of
+/// the child met last; `early` the records of children whose walks ended
+/// before the walk met them.
+struct OpenRun {
+    at: Address,
+    index: Option<NodeIndex>,
+    facts: Option<NodeFacts>,
+    entries: Vec<RunEntry>,
+    rows: Vec<(usize, u32)>,
+    last: Option<(NodeIndex, usize)>,
+    early: Vec<(NodeIndex, Address)>,
+}
+
+impl OpenRun {
+    /// Closes each open row whose subtree ends at or before `index`: the
+    /// entries after it so far are the ones inside it.
+    fn close_to(&mut self, index: u32) {
+        while let Some(&(entry, end)) = self.rows.last() {
+            if end > index {
+                break;
+            }
+            self.rows.pop();
+            let inside = crate::types::narrow(self.entries.len() - entry - 1);
+            if let RunEntry::Row { inner, .. } = &mut self.entries[entry] {
+                *inner = inside;
+            }
+        }
+    }
+
+    /// Adds the node `kid` the walk met, with `facts`: the record its walk
+    /// already wrote, else its row.
+    fn meet(&mut self, kid: &crate::nodes::Kid, facts: NodeFacts) {
+        self.close_to(kid.index.get());
+        if self.index == Some(kid.index) {
+            return;
+        }
+        if let Some(found) = self.early.iter().position(|&(index, _)| index == kid.index) {
+            let (_, at) = self.early.swap_remove(found);
+            self.entries.push(RunEntry::Record { at, shared: false });
+            return;
+        }
+        let entry = self.entries.len();
+        self.entries.push(RunEntry::Row { facts, span: kid.span(), inner: 0 });
+        self.rows.push((entry, kid.index.get() + kid.count));
+        self.last = Some((kid.index, entry));
+    }
+
+    /// Names the record at `at` of the child at `index`, whose walk ended:
+    /// in place of its row when the walk met it last, as a content of the
+    /// record's own node when it is that node, else kept until the walk
+    /// meets it.
+    fn name(&mut self, index: Option<NodeIndex>, at: Address) {
+        match (index, self.last) {
+            (Some(index), _) if self.index == Some(index) => self.entries.push(RunEntry::Record { at, shared: true }),
+            (Some(index), Some((last, entry))) if last == index && entry + 1 == self.entries.len() => {
+                self.rows.pop_if(|&mut (open, _)| open == entry);
+                self.entries[entry] = RunEntry::Record { at, shared: false };
+            }
+            (Some(index), _) => self.early.push((index, at)),
+            (None, _) => {}
+        }
+    }
 }
 
 /// The extra the cursor stands on (`kid`) walked whole into `N` when `N`
@@ -162,7 +239,13 @@ impl<'a> Hydration<'a> {
     /// A hydration of `tree`'s rows whose walks hold no extra: `hydrate_at`
     /// makes the one a walk writes records through.
     pub(crate) fn new(tree: &'a mut TreeArena) -> Self {
-        Self { tree, extras: None }
+        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None }
+    }
+
+    /// Tells the hydration the node `at` the walk about to draft a record
+    /// stands on, `node`.
+    pub fn node(&mut self, at: &crate::nodes::Kid, node: &crate::tree_sitter::Node<'_>) {
+        self.entering = Some((at.index, facts_of(at, node)));
     }
 
     /// Writes the record of the extra `kid` the cursor stands on, read whole
@@ -228,6 +311,8 @@ impl<'a> Hydration<'a> {
             None => self.tree.arena_mut().alloc(words)?,
         };
         self.tree.arena_mut().words_mut(at, 1)?[0] = header;
+        let entering = self.entering.take().or_else(|| self.met_at.zip(self.met));
+        self.open.push(OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), entries: Vec::new(), rows: Vec::new(), last: None, early: Vec::new() });
         Ok(Draft { at, words })
     }
 
@@ -285,6 +370,12 @@ impl<'a> Hydration<'a> {
         let node = cursor.node();
         let kid = crate::nodes::Kid::of(&node, crate::read::index_of(cursor), crate::read::field_id(cursor));
         self.tree.write_row(&kid, node.is_missing())?;
+        let facts = facts_of(&kid, &node);
+        if let Some(open) = self.open.last_mut() {
+            open.meet(&kid, facts);
+        }
+        self.met = Some(facts);
+        self.met_at = Some(kid.index);
         Ok(kid)
     }
 
@@ -376,6 +467,22 @@ impl<'a> Hydration<'a> {
     ///
     /// What the arena refuses.
     pub fn finish(&mut self, draft: Draft, side: &SideRecord, kind: KindId, inline: Option<Embed>) -> Result<Hydrated, HydrateError> {
+        let run = self.open.iter().rposition(|open| open.at == draft.at).and_then(|found| {
+            self.open.truncate(found + 1);
+            self.open.pop()
+        });
+        let side = match run {
+            Some(mut run) => {
+                run.close_to(u32::MAX);
+                let holder = self.open.last_mut();
+                let parent = holder.as_ref().map(|holder| holder.at);
+                if let Some(holder) = holder {
+                    holder.name(run.index, draft.at);
+                }
+                &SideRecord { parent, node: run.facts, run: run.entries, ..side.clone() }
+            }
+            None => side,
+        };
         let side = side.write_in(self.tree.arena_mut())?;
         if side != Address::NONE {
             self.tree.arena_mut().words_mut(draft.place(1, 1)?, 1)?[0] = side.0;
@@ -383,6 +490,11 @@ impl<'a> Hydration<'a> {
         self.tree.keep_record(draft.at);
         Ok(if inline.is_some() { Hydrated::Embedded } else { Hydrated::Record { kind, at: draft.at } })
     }
+}
+
+/// What navigation reads of `node`, `kid` its facts.
+fn facts_of(kid: &crate::nodes::Kid, node: &crate::tree_sitter::Node<'_>) -> NodeFacts {
+    NodeFacts::of(kid, node.is_missing(), node.has_error() || node.is_missing() || kid.error())
 }
 
 /// The side record of a parsed record read at `row`: where it came from,
@@ -595,7 +707,7 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 ///
 /// What the hydration refuses.
 pub fn hydrate_at<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, tree: &mut TreeArena) -> Result<Option<Address>, HydrateError> {
-    let records = &mut Hydration { tree, extras: Some(extra_walk::<N>) };
+    let records = &mut Hydration { extras: Some(extra_walk::<N>), ..Hydration::new(tree) };
     crate::read::goto(cursor, index);
     records.meet(cursor)?;
     ctx.begin_read();

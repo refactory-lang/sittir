@@ -67,6 +67,7 @@ fn record_start(words: u32) -> TokenStream {
             return ::core::result::Result::Ok(__held);
         }
         let __row = ::sittir_core::arena::hydrated_row(&__at, ctx);
+        records.node(&__at, &__node);
         let __draft = records.draft(__stored_kind(&__node), #words, inline)?;
     }
 }

@@ -204,6 +204,10 @@ impl NodeRows {
     }
 }
 
+fn kid_of(index: usize, facts: super::side::NodeFacts, span: crate::types::Span) -> Kid {
+    Kid { index: NodeIndex(crate::types::narrow(index)), start: span.start, end: span.end, count: 1, grammar: facts.kind, display: facts.display(), field: facts.field, named: facts.named, extra: facts.extra }
+}
+
 fn grammar_of(word: u32) -> KindId {
     KindId(u16::try_from(word & packed::KIND_MASK).unwrap_or(u16::MAX))
 }
@@ -316,6 +320,59 @@ impl TreeArena {
     pub(super) fn arena_mut(&mut self) -> &mut Arena {
         self.grown = true;
         &mut self.arena
+    }
+
+    /// Every node under the record at `root`, itself first, in document
+    /// order, as its records' runs hold them: each node's facts, numbered
+    /// from `NodeIndex::ROOT` as the walk meets it, with whether it is
+    /// `MISSING` and whether it holds an error. The root's bytes are its
+    /// record's, the whole source.
+    ///
+    /// # Errors
+    ///
+    /// What reading a record or its side record refuses, and a record with
+    /// no facts or a run whose rows hold more entries than it has.
+    pub fn run_preorder(&self, root: Address) -> Result<Vec<(Kid, bool, bool)>, ArenaError> {
+        let mut out = Vec::new();
+        self.run_record(root, &mut out)?;
+        Ok(out)
+    }
+
+    fn side_of(&self, at: Address) -> Result<super::SideRecord, ArenaError> {
+        let header = self.arena.words(at, crate::record::HEADER_WORDS)?;
+        super::SideRecord::read(&self.arena, Address(header[1]))
+    }
+
+    fn run_record(&self, at: Address, out: &mut Vec<(Kid, bool, bool)>) -> Result<u32, ArenaError> {
+        let side = self.side_of(at)?;
+        let facts = side.node.ok_or(ArenaError::Malformed { what: "parsed record facts", word: at.0 })?;
+        let span = side.at.ok_or(ArenaError::Malformed { what: "parsed record row", word: at.0 })?.span;
+        let own = out.len();
+        out.push((kid_of(own, facts, span), facts.missing, facts.holds_error));
+        let count = 1 + self.run_entries(&side.run, out)?;
+        out[own].0.count = count;
+        Ok(count)
+    }
+
+    fn run_entries(&self, mut entries: &[super::side::RunEntry], out: &mut Vec<(Kid, bool, bool)>) -> Result<u32, ArenaError> {
+        let mut count = 0;
+        while let Some((&entry, rest)) = entries.split_first() {
+            entries = rest;
+            match entry {
+                super::side::RunEntry::Record { at, shared: true } => count += self.run_entries(&self.side_of(at)?.run, out)?,
+                super::side::RunEntry::Record { at, shared: false } => count += self.run_record(at, out)?,
+                super::side::RunEntry::Row { facts, span, inner } => {
+                    let (inside, after) = entries.split_at_checked(inner as usize).ok_or(ArenaError::Malformed { what: "run row entries", word: inner })?;
+                    entries = after;
+                    let own = out.len();
+                    out.push((kid_of(own, facts, span), facts.missing, facts.holds_error));
+                    let nodes = 1 + self.run_entries(inside, out)?;
+                    out[own].0.count = nodes;
+                    count += nodes;
+                }
+            }
+        }
+        Ok(count)
     }
 
     /// Records a native node record written at `at`, an embedded one

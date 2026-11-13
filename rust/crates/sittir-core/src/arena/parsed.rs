@@ -321,10 +321,35 @@ impl<G: EngineGrammar> ParsedTree<G> {
                 .map(|index| (agree(&mut records, &mut nodes, index), records.kid(index)))
                 .collect::<Vec<_>>()
         };
+        let runs = {
+            let mut whole = TreeArena::new(G::KIND_BITS, crate::read::descendant_count(&self.tree().root_node()));
+            let grammar = self.grammar();
+            let root = match self.read_error(NodeIndex::ROOT) {
+                Some(_) => None,
+                None => super::hydrate_at::<N>(&mut self.tree().walk(), &mut self.read_ctx(), NodeIndex::ROOT, None, Depth::All, &mut whole).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?,
+            };
+            let arena = self.tree_arena();
+            let rows = arena.node_rows().ok_or("the whole read left a node with no row")?;
+            match root {
+                Some(root) => {
+                    let runs = whole.run_preorder(root).map_err(|refusal| refusal.to_string())?;
+                    let agrees = |index: NodeIndex, &(kid, missing, holds_error): &(crate::nodes::Kid, bool, bool)| {
+                        let row = rows.kid(index);
+                        let kid = if index == NodeIndex::ROOT { crate::nodes::Kid { start: row.start, end: row.end, ..kid } } else { kid };
+                        kid == row && missing == rows.missing(index) && holds_error == rows.holds_error(index)
+                    };
+                    let mut agree: Vec<bool> = (0..).map(NodeIndex).zip(&runs).map(|(index, run)| agrees(index, run)).collect();
+                    agree.resize(rows.len() as usize, false);
+                    Some(agree)
+                }
+                None => None,
+            }
+        };
         let mut parity = BackerParity::default();
         for (index, (backers_agree, kid)) in (0..).map(NodeIndex).zip(facts) {
             parity.nodes += 1;
-            if !backers_agree || !self.reads_agree::<N>(index, &kid)? || !self.extra_agrees::<N>(index, &kid)? {
+            let runs_agree = runs.as_ref().is_none_or(|runs| runs[index.0 as usize]);
+            if !backers_agree || !runs_agree || !self.reads_agree::<N>(index, &kid)? || !self.extra_agrees::<N>(index, &kid)? {
                 parity.differing += 1;
                 parity.first.get_or_insert(index.0);
             }
