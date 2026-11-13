@@ -182,15 +182,28 @@ pub trait HydrateInto: RecordSpace {
 
     /// Notes the record written at `at`.
     fn keep_record(&mut self, _at: Address) {}
+
+    /// Whether a leaf's or a unit's cell names its node by its holder's
+    /// run, as records that outlive their tree do: 1 for the holder's own
+    /// node, else two past the node's entry there, since a cell packs no
+    /// row 0. A tree's arena names it by its descendant index.
+    fn rows_by_run(&self) -> bool {
+        false
+    }
 }
 
-impl HydrateInto for super::ReadWriter<'_> {}
+impl HydrateInto for super::ReadWriter<'_> {
+    fn rows_by_run(&self) -> bool {
+        true
+    }
+}
 
 /// A record whose walk is open: where it is, the node it is of, and the run
 /// of its children so far. `rows` holds the rows still open, each by its
 /// entry and the descendant index its subtree ends at; `last` the entry of
 /// the child met last; `early` the records of children whose walks ended
-/// before the walk met them.
+/// before the walk met them; `met` each row's node with its entry, in the
+/// order the walk met them.
 struct OpenRun {
     at: Address,
     index: Option<NodeIndex>,
@@ -199,6 +212,7 @@ struct OpenRun {
     rows: Vec<(usize, u32)>,
     last: Option<(NodeIndex, usize)>,
     early: Vec<(NodeIndex, Address)>,
+    met: Vec<(NodeIndex, u32)>,
     /// The levels the node's own kind and the nodes met under it open net
     /// of those they close, and the node's own share of that.
     depth: i32,
@@ -237,6 +251,7 @@ impl OpenRun {
         self.entries.push(RunEntry::Row { facts, span: kid.span(), inner: 0 });
         self.rows.push((entry, kid.index.get() + kid.count));
         self.last = Some((kid.index, entry));
+        self.met.push((kid.index, crate::types::narrow(entry)));
         self.depth += depth;
     }
 
@@ -372,8 +387,38 @@ impl<'a> Hydration<'a> {
         self.tree.words_mut(at, 1)?[0] = header;
         let entering = self.entering.take().or_else(|| self.met_at.zip(self.met));
         let own = entering.map_or(0, |(_, facts)| self.depth_of(facts.kind));
-        self.open.push(OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), entries: Vec::new(), rows: Vec::new(), last: None, early: Vec::new(), depth: own, own });
+        self.open.push(OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), entries: Vec::new(), rows: Vec::new(), last: None, early: Vec::new(), met: Vec::new(), depth: own, own });
         Ok(Draft { at, words })
+    }
+
+    /// `value` as the record `draft` holds it: a leaf or a unit named by
+    /// the record's run where the records outlive their tree
+    /// (`HydrateInto::rows_by_run`).
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for a node the record's walk did not meet,
+    /// and `ArenaError::Unwritable` for a coordinate, which names a row of
+    /// a tree.
+    fn held(&self, draft: Draft, value: Hydrated) -> Result<Hydrated, ArenaError> {
+        if !self.tree.rows_by_run() {
+            return Ok(value);
+        }
+        let in_run = |row: NodeIndex| {
+            let outside = ArenaError::Malformed { what: "cell row outside its holder's run", word: row.0 };
+            let open = self.open.iter().rfind(|open| open.at == draft.at).ok_or(outside.clone())?;
+            if open.index == Some(row) {
+                return Ok(NodeIndex(1));
+            }
+            let found = open.met.binary_search_by_key(&row, |&(index, _)| index).map_err(|_| outside)?;
+            Ok(NodeIndex(open.met[found].1 + 2))
+        };
+        Ok(match value {
+            Hydrated::Node { kind, row, span, leaf: true } => Hydrated::Node { kind, row: in_run(row)?, span, leaf: true },
+            Hydrated::Node { leaf: false, .. } => return Err(ArenaError::Unwritable("a coordinate in records that outlive their tree")),
+            Hydrated::Unit { kind, row: Some(row) } => Hydrated::Unit { kind, row: Some(in_run(row)?) },
+            value => value,
+        })
     }
 
     /// Writes the cell of the slot of shape `shape` of `draft`: `value`,
@@ -384,6 +429,7 @@ impl<'a> Hydration<'a> {
     /// What encoding the cell refuses, and a cell past the record's words.
     pub fn cell(&mut self, draft: Draft, shape: CellShape, value: Option<Hydrated>) -> Result<(), HydrateError> {
         let bits = self.tree.kind_bits();
+        let value = value.map(|value| self.held(draft, value)).transpose()?;
         let out = self.tree.words_mut(draft.place(shape.word, shape.width)?, shape.width)?;
         match value {
             Some(Hydrated::Embedded) => Cell::inline_tag(out, shape)?,
@@ -409,10 +455,11 @@ impl<'a> Hydration<'a> {
         let words = len.checked_mul(width).and_then(|cells| cells.checked_add(1)).ok_or(ArenaError::Full)?;
         let cell = draft.place(shape.word, 1)?;
         let bits = self.tree.kind_bits();
+        let items = items.map(|item| item.map(|item| self.held(draft, item)).transpose()).collect::<Result<Vec<_>, _>>()?;
         let run = self.tree.alloc(words)?;
         let out = self.tree.words_mut(run, words)?;
         out[0] = len;
-        for (item, out) in items.zip(out[1..].chunks_exact_mut(width as usize)) {
+        for (item, out) in items.into_iter().zip(out[1..].chunks_exact_mut(width as usize)) {
             item.map_or(Ok(Cell::Absent), |item| item.cell())?.encode_parsed(out, shape, bits)?;
         }
         self.tree.words_mut(cell, 1)?[0] = ListCell::word(run)?.0;

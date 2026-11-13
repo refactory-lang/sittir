@@ -110,6 +110,44 @@ impl<'t> RunNodes<'t> {
         self.record(at, Parent::Unknown)
     }
 
+    /// The id of the node a cell of the record at `holder` names by `row`:
+    /// the holder's own node for 1, else the row two before `row` among the
+    /// entries of its run.
+    ///
+    /// # Errors
+    ///
+    /// What reading the holder's record refuses, and
+    /// `ArenaError::Malformed` for row 0 and for an entry that is no row.
+    pub fn row_index(&mut self, holder: Address, row: u32) -> Result<NodeIndex, ArenaError> {
+        if row == 1 {
+            return self.record(holder, Parent::Unknown);
+        }
+        let entry = row.checked_sub(2).ok_or(malformed("cell row", holder))?;
+        let Some(&RunEntry::Row { facts, span, inner }) = self.side(holder)?.run.get(entry as usize) else { return Err(malformed("cell row", holder)) };
+        Ok(self.meet(NodeSite::Row { holder, entry }, facts, span, inner == 0, Parent::Unknown))
+    }
+
+    /// The node the row at `entry` of the run of `holder` lies under: the
+    /// innermost row of the run that holds it, else the holder's node.
+    fn above(&mut self, holder: Address, entry: u32) -> Result<NodeIndex, ArenaError> {
+        let run = &self.side(holder)?.run;
+        let (mut at, mut inside) = (0, None);
+        while at < entry as usize {
+            match *run.get(at).ok_or(malformed("run row entries", holder))? {
+                RunEntry::Row { facts, span, inner } if at + inner as usize >= entry as usize => {
+                    inside = Some((at, facts, span));
+                    at += 1;
+                }
+                RunEntry::Row { inner, .. } => at += 1 + inner as usize,
+                RunEntry::Record { .. } => at += 1,
+            }
+        }
+        match inside {
+            Some((entry, facts, span)) => Ok(self.meet(NodeSite::Row { holder, entry: crate::types::narrow(entry) }, facts, span, false, Parent::Unknown)),
+            None => self.record(holder, Parent::Unknown),
+        }
+    }
+
     /// The side record of the record at `at`, read once.
     fn side(&mut self, at: Address) -> Result<&SideRecord, ArenaError> {
         let read = if let Some(&read) = self.table.sides.get(&at) {
@@ -227,10 +265,12 @@ impl<'t> RunNodes<'t> {
             Parent::Node(parent) => return Ok(Some(parent)),
             Parent::Unknown => {}
         }
-        let NodeSite::Record(at) = site else { return Err(ArenaError::Malformed { what: "row parent", word: index.0 }) };
-        let parent = match self.side(at)?.parent {
-            Some(parent) => Some(self.record(parent, Parent::Unknown)?),
-            None => None,
+        let parent = match site {
+            NodeSite::Row { holder, entry } => Some(self.above(holder, entry)?),
+            NodeSite::Record(at) => match self.side(at)?.parent {
+                Some(parent) => Some(self.record(parent, Parent::Unknown)?),
+                None => None,
+            },
         };
         self.table.met[index.0 as usize].parent = parent.map_or(Parent::Root, Parent::Node);
         Ok(parent)

@@ -69,8 +69,10 @@ pub enum Cell {
     /// A built record names an untouched parsed child by a `Child` cell
     /// instead, at a parsed record in that child's tree's arena.
     Coordinate { kind: KindId, index: NodeIndex, span: Span },
-    /// A parsed leaf: its byte span in the tree's source and its row there,
-    /// which keys its sides in the tree's trivia table. It has no record.
+    /// A parsed leaf, which has no record: its byte span in its source and
+    /// its row, which names its node. In a tree's arena the row is its
+    /// descendant index; in records that outlive their tree it is 1 for its
+    /// holder's own node, else two past its entry in its holder's run.
     ParsedLeaf { kind: KindId, span: Span, row: NodeIndex },
     /// A captured interior string of a parsed node: its byte span.
     ParsedText { span: Span },
@@ -81,8 +83,8 @@ pub enum Cell {
     /// child's record, so two holders of one record can differ.
     Child { kind: KindId, at: Address, link: Option<TreeId>, changed: ChangedEdges },
     /// A unit, which carries no text. `KindId::BLANK` is a blank arm. A
-    /// parsed unit names its row, which keys its sides as any parsed node's
-    /// row does; a built unit has none.
+    /// parsed unit names its row as a parsed leaf does; a built unit has
+    /// none.
     Unit { kind: KindId, row: Option<NodeIndex> },
     /// A built leaf, which has no record: its text in the string table, and
     /// the edges whose neighbour this holder changed, a fact of this site as

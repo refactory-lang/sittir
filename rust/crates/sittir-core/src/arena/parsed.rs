@@ -65,6 +65,47 @@ fn agree(records: &mut dyn Nodes<'_>, nodes: &mut dyn Nodes<'_>, index: NodeInde
         && records.holds_error(index) == nodes.holds_error(index)
 }
 
+/// Whether each leaf and unit cell of the record at `at` in `arena`, and of
+/// each content read from the same node, names a node of `runs` by its
+/// holder's run (`RunNodes::row_index`): a leaf one of the cell's span.
+fn cells_name_rows<N: RecordCells>(runs: &mut super::RunNodes<'_>, arena: &dyn ArenaRead, at: Address, bits: u32) -> Result<bool, super::ArenaError> {
+    let malformed = |what, word| super::ArenaError::Malformed { what, word };
+    let kind = arena.header_kind(at, bits)?;
+    let record = N::shape(kind).ok_or(malformed("record shape", u32::from(kind.0)))?;
+    let words = arena.words(at, record.words.max(HEADER_WORDS))?;
+    let mut cells = Vec::new();
+    for shape in record.cells {
+        if let Some(width) = shape.run {
+            let list = super::ListCell::of_word(super::CellWord(*words.get(shape.word as usize).ok_or(malformed("cell word", shape.word))?), arena)?;
+            for item in list.items(arena, width)? {
+                cells.push(Cell::decode_parsed(item, Address::NONE, *shape, bits)?);
+            }
+        } else {
+            let cell = words.get(shape.word as usize..(shape.word + shape.width) as usize).ok_or(malformed("cell word", shape.word))?;
+            cells.push(Cell::decode_parsed(cell, at.offset(shape.word).unwrap_or(Address::NONE), *shape, bits)?);
+        }
+    }
+    let own = runs.index_of(at)?;
+    for cell in cells {
+        let named = match cell {
+            Cell::ParsedLeaf { span, row, .. } => {
+                let index = runs.row_index(at, row.0)?;
+                runs.kid(index).span() == span && (index == own || runs.parent(index).is_some())
+            }
+            Cell::Unit { row: Some(row), .. } => {
+                let index = runs.row_index(at, row.0)?;
+                index == own || runs.parent(index).is_some()
+            }
+            Cell::Child { at: content, .. } if runs.index_of(content)? == own => cells_name_rows::<N>(runs, arena, content, bits)?,
+            _ => true,
+        };
+        if !named {
+            return Ok(false);
+        }
+    }
+    Ok(true)
+}
+
 /// A grammar's render of a record: its generated `render_record`.
 pub trait RecordGrammar: EngineGrammar {
     /// Renders the record `root` names, prepared into a fresh overlay over
@@ -350,7 +391,11 @@ impl<G: EngineGrammar> ParsedTree<G> {
                             && met_kids.len() == kept_kids.len()
                             && met_kids.iter().all(|kid| runs.parent(kid.index) == Some(run))
                             && runs.edge(run, crate::options::Side::Before).map(|kid| kid.index) == met_kids.first().map(|kid| kid.index)
-                            && runs.edge(run, crate::options::Side::After).map(|kid| kid.index) == met_kids.last().map(|kid| kid.index);
+                            && runs.edge(run, crate::options::Side::After).map(|kid| kid.index) == met_kids.last().map(|kid| kid.index)
+                            && match runs.site(run) {
+                                Some(super::NodeSite::Record(at)) => cells_name_rows::<N>(&mut runs, &whole, at, G::KIND_BITS).map_err(|refusal| refusal.to_string())?,
+                                _ => true,
+                            };
                         agree[row.0 as usize] = same;
                         pending.extend(met_kids.iter().zip(kept_kids.iter()).map(|(met, kept)| (met.index, kept.index)));
                     }
