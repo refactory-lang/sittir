@@ -1184,7 +1184,7 @@ macro_rules! napi_engine {
 
             /// `triviaSide` for the node a read left that the key `node`
             /// names. Refuses as `with_read_node`, and any other side.
-            #[::napi_derive::napi(ts_return_type = "object[]")]
+            #[::napi_derive::napi(ts_return_type = "import('@sittir/types').WireNode[]")]
             pub fn read_trivia_side(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, node: f64, side: String) -> ::napi::Result<Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>> {
                 let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
                 with_read_node(engine, node, |tree, index| Ok(tree.trivia_side(index, side)))
@@ -1194,7 +1194,7 @@ macro_rules! napi_engine {
             /// names with `entries`, which its render then writes. Refuses
             /// an engine already disposed, a number that is no key, a name
             /// whose record names no source, and any other side.
-            #[::napi_derive::napi(ts_args_type = "engine: object, node: number, side: string, entries: object[]")]
+            #[::napi_derive::napi(ts_args_type = "engine: object, node: number, side: string, entries: import('@sittir/types').WireNode[]")]
             pub fn write_read_trivia_side(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, node: f64, side: String, entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>) -> ::napi::Result<()> {
                 let engine = engine_of(engine)?;
                 let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
@@ -1203,13 +1203,13 @@ macro_rules! napi_engine {
             }
 
             /// `unitSides` for the node a read left that the key `node` names.
-            #[::napi_derive::napi(ts_return_type = "object[]")]
+            #[::napi_derive::napi(ts_return_type = "import('@sittir/types').UnitSidesWire[]")]
             pub fn read_unit_sides(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, node: f64) -> ::napi::Result<Vec<$crate::layout::UnitSides<<$grammar as $crate::engine::EngineGrammar>::Trivia>>> {
                 with_read_node(engine, node, |tree, index| Ok(tree.unit_sides(index)))
             }
 
             /// `slotLayouts` for the node a read left that the key `node` names.
-            #[::napi_derive::napi(ts_return_type = "object[]")]
+            #[::napi_derive::napi(ts_return_type = "import('@sittir/types').SlotLayoutWire[]")]
             pub fn read_slot_layouts(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, node: f64) -> ::napi::Result<Vec<$crate::layout::SlotLayout>> {
                 with_read_node(engine, node, |tree, index| Ok(tree.slot_layouts(index)))
             }

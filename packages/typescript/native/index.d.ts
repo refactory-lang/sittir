@@ -557,7 +557,7 @@ export declare function readSeparatorBefore(engine: object, node: number): impor
 export declare function readSiblings(engine: object, nodes: Array<number>): Array<number>
 
 /** r" `slotLayouts` for the node a read left that the key `node` names. */
-export declare function readSlotLayouts(engine: object, node: number): object[]
+export declare function readSlotLayouts(engine: object, node: number): import('@sittir/types').SlotLayoutWire[]
 
 /** r" `slotSeparator` for the node a read left that the key `node` names. */
 export declare function readSlotSeparator(engine: object, node: number): import('../src/types.ts').TSKindId | null
@@ -590,10 +590,10 @@ export declare function readText(engine: object, node: number, start: number, en
  * r" `triviaSide` for the node a read left that the key `node`
  * r" names. Refuses as `with_read_node`, and any other side.
  */
-export declare function readTriviaSide(engine: object, node: number, side: string): object[]
+export declare function readTriviaSide(engine: object, node: number, side: string): import('@sittir/types').WireNode[]
 
 /** r" `unitSides` for the node a read left that the key `node` names. */
-export declare function readUnitSides(engine: object, node: number): object[]
+export declare function readUnitSides(engine: object, node: number): import('@sittir/types').UnitSidesWire[]
 
 /**
  * r" Chunk `chunk` of the built arena, which a read wrote its
@@ -878,7 +878,7 @@ export declare function writeBuiltUnitSides(engine: object, address: number, uni
  * r" an engine already disposed, a number that is no key, a name
  * r" whose record names no source, and any other side.
  */
-export declare function writeReadTriviaSide(engine: object, node: number, side: string, entries: object[]): void
+export declare function writeReadTriviaSide(engine: object, node: number, side: string, entries: import('@sittir/types').WireNode[]): void
 
 /**
  * `text`, which a render interceptor produced in JavaScript,

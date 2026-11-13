@@ -273,7 +273,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	/** `triviaSide` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
 	readTriviaSide?(node: number, side: string): WireNode<ReadOutput>[];
 	/** `writeTriviaSide` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
-	writeReadTriviaSide?(node: number, side: string, entries: readonly unknown[]): void;
+	writeReadTriviaSide?(node: number, side: string, entries: readonly WireNode[]): void;
 	/** `unitSides` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
 	readUnitSides?(node: number): UnitSidesWire<ReadOutput>[];
 	/** `slotLayouts` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */

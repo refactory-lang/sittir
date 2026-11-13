@@ -646,9 +646,13 @@ impl crate::read::NodeNames for Records<'_> {
                 let (shape, bits) = self.shape;
                 let known = match sites.entry(holder) {
                     std::collections::hash_map::Entry::Occupied(known) => known.into_mut(),
-                    std::collections::hash_map::Entry::Vacant(unread) => unread.insert(crate::arena::site::row_sites(self.built, holder, shape, bits).ok()?),
+                    std::collections::hash_map::Entry::Vacant(unread) => {
+                        let mut sites = crate::arena::site::row_sites(self.built, holder, shape, bits).ok()?;
+                        sites.sort_unstable_by_key(|&(row, _)| row);
+                        unread.insert(sites)
+                    }
                 };
-                let site = known.iter().find(|&&(row, _)| row == entry + 2)?.1;
+                let site = known[known.binary_search_by_key(&(entry + 2), |&(row, _)| row).ok()?].1;
                 Some(crate::types::NodeName { node: crate::types::NodeId(holder.0), site: Some([site.word, site.item]) })
             }),
         }
