@@ -74,3 +74,22 @@ fn a_line_continuation_after_an_entry_leading_a_list_s_first_item_takes_that_ent
 fn a_line_continuation_before_an_entry_trailing_a_list_s_last_item_renders_before_it() {
     renders_as_read!(sittir_python, sittir_python::PythonGrammar, "x = [1 \\\n    # c\n]\n", "x = [1 \\\n    $ ]\n", "f(a \\\n    # c\n)\n", "f(a \\\n    $\n)\n");
 }
+
+#[test]
+fn the_line_after_a_line_continuation_in_brackets_keeps_its_level() {
+    renders_as_read!(
+        sittir_python,
+        sittir_python::PythonGrammar,
+        "x = [1\n    \\\n    # c ]\n",
+        "x = [1\n    \\\n    # c\n]\n",
+        "x = [1\n    \\\n    $ ]\n",
+        "x = [1\n    \\\n    $\n]\n",
+        "f(a\n    \\\n    # c )\n",
+        "f(a\n    \\\n    # c\n)\n",
+        "f(a\n    \\\n    $ )\n",
+        "f(a\n    \\\n    $\n)\n",
+        "x = [ # c\n    \\\n    1]\n",
+        "f( # c\n    \\\n    a)\n",
+        "x = [\n    # c\n    \\\n    1]\n",
+    );
+}

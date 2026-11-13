@@ -16,8 +16,9 @@ export interface PortableTypedInput {
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly readTest: (entry: ReadEntry) => readonly PortableCondition[];
 	readonly table: PortableBuildTable;
-	readonly presetCarried: ReadonlySet<number>;
+	readonly presetCarried: ReadonlySet<ReadEntry>;
 	readonly totalIntegerReads: ReadonlySet<number>;
+	readonly freeTextClosedBy: ReadonlyMap<ReadEntry, readonly string[]>;
 	readonly flags: ReadonlyMap<string, readonly string[]>;
 }
 
@@ -88,11 +89,11 @@ const PRELUDE = [
 	'',
 	'type Narrow<R, Id> = [Id] extends [never] ? NonNullable<R> : [Extract<NonNullable<R>, { readonly $type: Id } | Id>] extends [never] ? (NonNullable<R> extends readonly (infer E)[] ? readonly [Extract<E, { readonly $type: Id } | Id>, ...Extract<E, { readonly $type: Id } | Id>[]] : never) : Extract<NonNullable<R>, { readonly $type: Id } | Id>;',
 	'',
-	'type Present<N, G> = [keyof G] extends [never] ? N : [keyof G & keyof N] extends [never] ? (N extends readonly [infer H, ...infer T] ? readonly [Present<H, G>, ...{ [I in keyof T]: Present<T[I], G> }] : N extends readonly (infer E)[] ? readonly Present<E, G>[] : N) : Omit<N, keyof G> & { readonly [P in keyof G & keyof N]: () => G[P] extends readonly [infer Id, infer Sub] ? Present<Narrow<Ret<N[P]>, Id>, Sub> : never };',
+	'type Present<N, G> = [keyof G] extends [never] ? N : [keyof G & keyof N] extends [never] ? (N extends { readonly $type: unknown } ? N : N extends readonly [infer H, ...infer T] ? readonly [Present<H, G>, ...{ [I in keyof T]: Present<T[I], G> }] : N extends readonly (infer E)[] ? readonly Present<E, G>[] : N) : Omit<N, keyof G> & { readonly [P in keyof G & keyof N]: () => G[P] extends readonly [infer Id, infer Sub] ? Present<Narrow<Ret<N[P]>, Id>, Sub> : never };',
 	'',
 	'type Of<N, K> =N extends { readonly $type: infer T } ? (K extends T ? N : undefined) : N extends readonly (infer E)[] ? readonly Of<E, K>[] : undefined;',
 	'',
-	'type Without<N, K> = N extends { readonly $type: K } ? never : N extends readonly (infer E)[] ? readonly Without<E, K>[] : N;',
+	'type Without<N, K> = N extends { readonly $type: K } ? never : N extends { readonly $type: unknown } ? N : N extends readonly (infer E)[] ? readonly Without<E, K>[] : N;',
 	'',
 	'type ViewOfKind<K> = K extends keyof ViewByKind ? ViewByKind[K] : unknown;',
 	'',

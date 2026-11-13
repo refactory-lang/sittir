@@ -787,13 +787,20 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         let Some(first) = s.chars().next() else {
             return Ok(()); // empty write: context untouched (mark survives too)
         };
+        let mut indented = false;
         if let Some(tail) = self.tail.take().filter(|_| !s.starts_with('\n')) {
+            indented = self.indent_pending && tail.starts_with([' ', '\t']);
             self.emit(&tail)?;
             self.last = tail.chars().next_back();
         }
         let adjacent = std::mem::take(&mut self.tight) || !self.word_space_allowed();
         self.depth.disarm();
-        self.pay_indent(first)?;
+        if indented {
+            self.indent_pending = false;
+            self.line_depth = self.levels();
+        } else {
+            self.pay_indent(first)?;
+        }
         if let Some(last) = self.last {
             if !adjacent && !last.is_whitespace() && !first.is_whitespace() {
                 let word_seam = self.word.is_word(last) && self.word.is_word(first);

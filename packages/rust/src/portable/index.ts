@@ -5817,6 +5817,22 @@ const table: PortableTable = {
 			{
 				path: 'expression.call.member',
 				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [245], slots: { '276': 0 } } },
+					{ up: 0, via: [{ slots: { '276': 0 } }], plan: { op: 'is', types: [308], slots: { '245': 0 } } }
+				]
+			},
+			{
+				path: 'expression.call.qualified',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [245], slots: { '276': 0 } } },
+					{ up: 0, via: [{ slots: { '276': 0 } }], plan: { op: 'is', types: [263], slots: { '245': 0 } } }
+				]
+			},
+			{
+				path: 'expression.call.member',
+				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'is', types: [308], slots: { '276': 0 } } }]
 			},
 			{

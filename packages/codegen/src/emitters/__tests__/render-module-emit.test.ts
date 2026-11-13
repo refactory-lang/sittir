@@ -1030,6 +1030,14 @@ describe('the envelope pin gate is wired to the real pipeline', () => {
 			/typescript GoneNodeSlot\.Variant pins an enum codegen does not print/
 		);
 	}, 120_000);
+
+	it('refuses a stale pin handed to the render-module emitter, the way a generation hands it', async () => {
+		const { raw, nodeMap, generatedIdTables, templates, renderRules, joins } = await modelFor('typescript');
+		const inputs = grammarRenderInputs('typescript', { renderRules, renderAs: raw.renderAs, options: raw.options, joins });
+		const stale = { ...inputs.envelopePins, 'GoneNodeSlot.Variant': { display: '_property_identifier', extras: [] } };
+		const emitter = new RenderModuleEmitter({ grammar: 'typescript', nodeMap, generatedIdTables, ...inputs, envelopePins: stale });
+		expect(() => emitter.finalize(templates)).toThrow(/typescript GoneNodeSlot\.Variant pins an enum codegen does not print/);
+	}, 120_000);
 });
 
 describe('the render module emitter', () => {

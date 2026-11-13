@@ -13,6 +13,16 @@ export type PresenceKeywordOf = (kind: string, slot: string) => string | undefin
 
 export type TypeOf = (kind: string) => number | undefined;
 
+export function tableReadEntries<Id>(readEntries: ReadonlyMap<string, readonly ReadEntry[]>, factOf: (entry: ReadEntry) => unknown, idOf: (kind: string) => Id | undefined): ReadonlyMap<Id, readonly ReadEntry[]> {
+	const byId = new Map<Id, ReadEntry[]>();
+	for (const [kind, read] of [...readEntries].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
+		const id = idOf(kind);
+		if (id === undefined) continue;
+		for (const entry of read) if (factOf(entry) === undefined) (byId.get(id) ?? byId.set(id, []).get(id)!).push(entry);
+	}
+	return byId;
+}
+
 export const slotSubjectOf =
 	(nodeMap: NodeMap): SlotSubjectOf =>
 	(kind, name) => {

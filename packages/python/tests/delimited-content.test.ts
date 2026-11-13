@@ -113,6 +113,7 @@ describe("a string's read content is checked under the prefix it is seated under
 		[undefined, 'no prefix']
 	] as const)('refuses an interpolation under %s, naming it', (prefix, under) => {
 		const contents = [b.interpolation({ expression: 'x' })];
+		// @ts-expect-error the prefix types the contents too, so only a cast reaches the render's refusal
 		expect(() => rendered(b.string({ ...(prefix === undefined ? {} : { prefix }), contents }))).toThrow(`string: its interpolation is no part of it under ${under}`);
 	});
 
@@ -156,7 +157,7 @@ describe("a string's prefix reads as its canonical member", () => {
 		['Rf"{x}"', 'rf"{x}"'],
 		["F'a'", 'f"a"']
 	] as const)('rebuilds %s through the builder in canonical spelling', (source, built) => {
-		const read = readString(source) as unknown as { prefix(): 'rb' | 'rf' | 'f'; contents(): never };
+		const read = readString(source) as unknown as { prefix(): 'rb' | 'rf' | 'f'; contents(): never[] };
 		expect(rendered(b.string({ prefix: read.prefix(), contents: read.contents() }))).toBe(built);
 	});
 

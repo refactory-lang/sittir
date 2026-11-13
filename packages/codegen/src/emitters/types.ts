@@ -486,6 +486,7 @@ const VOCABULARY_IMPORTS = [
 	'OmitEach',
 	'OmitRegistered',
 	'NoneOf',
+	'GatedList',
 	'WithoutGroup',
 	'RenameKeys',
 	'GrammarTypeMap',
