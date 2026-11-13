@@ -202,26 +202,8 @@ interface SynthesizeRenderModuleBundleConfig extends RenderOptionsInputs {
 }
 
 function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig): RenderModuleBundle {
-	const {
-		grammar,
-		nodeMap,
-		generatedIdTables,
-		templates,
-		renderRules,
-		renderAs,
-		options,
-		sites,
-		addresses
-	} = config;
-	return {
-		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
-			renderRules,
-			renderAs,
-			options,
-			sites,
-			addresses
-		})
-	};
+	const { grammar, nodeMap, generatedIdTables, templates, ...inputs } = config;
+	return { emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, inputs) };
 }
 
 export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, EmittedTemplates> {
@@ -231,16 +213,11 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 	readonly #options: RenderOptionsInputs;
 
 	constructor(config: RenderModuleEmitterConfig) {
-		this.#grammar = config.grammar;
-		this.#nodeMap = config.nodeMap;
-		this.#generatedIdTables = config.generatedIdTables;
-		this.#options = {
-			renderRules: config.renderRules,
-			renderAs: config.renderAs,
-			options: config.options,
-			sites: config.sites,
-			addresses: config.addresses
-		};
+		const { grammar, nodeMap, generatedIdTables, ...inputs } = config;
+		this.#grammar = grammar;
+		this.#nodeMap = nodeMap;
+		this.#generatedIdTables = generatedIdTables;
+		this.#options = inputs;
 	}
 
 	emitLeaf(_node: AssembledPattern | AssembledKeyword | AssembledPunctuation | AssembledEnum): void {}
