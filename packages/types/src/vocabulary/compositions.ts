@@ -180,6 +180,7 @@ export interface JavaScriptFeatures
 		JavaScriptOperators,
 		KeyValuePairs,
 		LabeledStatements,
+		LoopLabels,
 		MemberDecorators,
 		ObjectOriented,
 		ObjectPatterns,

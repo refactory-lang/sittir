@@ -25937,7 +25937,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.collection.list.repeat'>
 				| V.Read<RustMap, 'expression.collection.struct'>
 				| V.Read<RustMap, 'expression.collection.tuple'>
-				| V.Read<RustMap, 'expression.instantiation'>
 				| V.Read<RustMap, 'expression.lambda'>
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
@@ -26023,6 +26022,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
+			readonly typeArguments: V.Read<RustMap, 'element.type_argument'>;
 			readonly $forms: V.Form<'arguments' | 'function'>;
 		};
 		readonly 'expression.call.macro': {
@@ -26039,6 +26039,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
 				| T.ScopedIdentifier.Parsed;
+			readonly typeArguments: V.Read<RustMap, 'element.type_argument'>;
 			readonly $forms: V.Form<'arguments' | 'function'>;
 		};
 		readonly 'expression.call.member': {
@@ -26188,7 +26189,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.collection.list.repeat'>
 				| V.Read<RustMap, 'expression.collection.struct'>
 				| V.Read<RustMap, 'expression.collection.tuple'>
-				| V.Read<RustMap, 'expression.instantiation'>
 				| V.Read<RustMap, 'expression.lambda'>
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
@@ -26199,11 +26199,15 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.unary.deref'>
 				| V.Read<RustMap, 'expression.unary.negation'>
 				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.label'>
+				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -26270,6 +26274,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
+			readonly typeArguments: V.Read<RustMap, 'element.type_argument'>;
 			readonly $forms: V.Form<'arguments' | 'function'>;
 		};
 		readonly 'expression.call.qualified': {
@@ -26419,7 +26424,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.collection.list.repeat'>
 				| V.Read<RustMap, 'expression.collection.struct'>
 				| V.Read<RustMap, 'expression.collection.tuple'>
-				| V.Read<RustMap, 'expression.instantiation'>
 				| V.Read<RustMap, 'expression.lambda'>
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
@@ -26505,6 +26509,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
+			readonly typeArguments: V.Read<RustMap, 'element.type_argument'>;
 			readonly $forms: V.Form<'arguments' | 'function'>;
 		};
 		readonly 'expression.cast.conversion': {
