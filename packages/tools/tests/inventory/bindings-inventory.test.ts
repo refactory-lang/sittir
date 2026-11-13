@@ -45,6 +45,9 @@ describe('bindingIssues', () => {
 			{ line: 4, message: 'unknown field no_such_field' }
 		]);
 	}, FULL_PIPELINE_TIMEOUT);
+	it('reads a minted name as whichever of its source kinds fits where it stands', async () => {
+		expect(await bindingIssues('rust', ['(generic_function function: (qualified_identifier))', '(generic_type type: (qualified_identifier))'].join('\n'))).toEqual([]);
+	}, FULL_PIPELINE_TIMEOUT);
 });
 
 describe('compileBindings', () => {
