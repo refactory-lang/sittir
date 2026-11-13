@@ -10,7 +10,7 @@ use crate::options::{EdgeArm, Edges};
 use crate::points::{Point, PointSpan};
 use crate::slot::ChangedEdges;
 use crate::spacing::SeamStrength;
-use crate::types::{Delimiter, KindId, NodeIndex, Span, TreeId};
+use crate::types::{Delimiter, FieldId, KindId, NodeIndex, Span, TreeId};
 
 /// The fields a reader of a record finds before a list's delimiters
 /// setting, in the order the side record holds them after its mask word:
@@ -49,7 +49,130 @@ mod mask {
     pub const DELIMITER: u32 = 1 << 8;
     pub const SEPARATOR_KIND: u32 = 1 << 9;
     pub const FLANKS: u32 = 1 << 10;
-    pub const ALL: u32 = (1 << 11) - 1;
+    pub const PARENT: u32 = 1 << 11;
+    pub const NODE: u32 = 1 << 12;
+    pub const SOURCE: u32 = 1 << 13;
+    pub const DEPTH: u32 = 1 << 14;
+    pub const RUN: u32 = 1 << 15;
+    pub const ALL: u32 = (1 << 16) - 1;
+}
+
+/// What a node's packed word holds: the kind in its low 16 bits (a row's
+/// grammar kind; a record's display kind when it is shown as an alias, its
+/// own kind being its header's), its field id above it, then its flags. A
+/// run entry with `RECORD` set names a child's record, and holds nothing
+/// else but `SHARED`.
+mod packed {
+    pub const KIND_MASK: u32 = 0xffff;
+    pub const FIELD_SHIFT: u32 = 16;
+    pub const FIELD_MASK: u32 = (1 << 10) - 1;
+    pub const NAMED: u32 = 1 << 26;
+    pub const EXTRA: u32 = 1 << 27;
+    pub const MISSING: u32 = 1 << 28;
+    pub const HOLDS_ERROR: u32 = 1 << 29;
+    pub const ALIASED: u32 = 1 << 30;
+    pub const RECORD: u32 = 1 << 31;
+    pub const SHARED: u32 = 1;
+}
+
+/// What navigation reads of a parsed node besides its kind and its bytes:
+/// the field it fills in its parent, the kind the parser shows it as when
+/// that is an alias, and whether it is named, an extra, `MISSING`, or holds
+/// an error in its subtree.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct NodeFacts {
+    pub field: Option<FieldId>,
+    pub alias: Option<KindId>,
+    pub named: bool,
+    pub extra: bool,
+    pub missing: bool,
+    pub holds_error: bool,
+}
+
+impl NodeFacts {
+    fn word(self, kind: u32) -> Result<u32, ArenaError> {
+        let field = self.field.map_or(0, |field| u32::from(field.0));
+        if field > packed::FIELD_MASK {
+            return Err(malformed("node field id", field));
+        }
+        let flags = [(self.named, packed::NAMED), (self.extra, packed::EXTRA), (self.missing, packed::MISSING), (self.holds_error, packed::HOLDS_ERROR), (self.alias.is_some(), packed::ALIASED)];
+        Ok(flags.into_iter().filter(|&(set, _)| set).fold(kind | field << packed::FIELD_SHIFT, |word, (_, bit)| word | bit))
+    }
+
+    fn of_word(word: u32, alias: Option<KindId>) -> Self {
+        let field = (word >> packed::FIELD_SHIFT) & packed::FIELD_MASK;
+        Self {
+            field: (field != 0).then(|| FieldId(u16::try_from(field).unwrap_or(u16::MAX))),
+            alias,
+            named: word & packed::NAMED != 0,
+            extra: word & packed::EXTRA != 0,
+            missing: word & packed::MISSING != 0,
+            holds_error: word & packed::HOLDS_ERROR != 0,
+        }
+    }
+}
+
+fn packed_kind(word: u32) -> KindId {
+    KindId(u16::try_from(word & packed::KIND_MASK).unwrap_or(u16::MAX))
+}
+
+/// One entry of a parsed record's run of children, which holds them in
+/// document order.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RunEntry {
+    /// A child with a record of its own, which holds its facts. `shared`
+    /// for a content read from its envelope's own node: it is no child of
+    /// the node, and navigation passes over it.
+    Record { at: Address, shared: bool },
+    /// A node with no record: its grammar kind, its facts and its bytes,
+    /// and how many of the entries after it lie inside it.
+    Row { kind: KindId, facts: NodeFacts, span: Span, inner: u32 },
+}
+
+/// The words a run entry takes: a record's two, a row's four, and one more
+/// for a row shown as an alias.
+pub const RUN_RECORD_WORDS: u32 = 2;
+pub const RUN_ROW_WORDS: u32 = 4;
+
+impl RunEntry {
+    fn put(self, put: &mut dyn FnMut(u32)) -> Result<(), ArenaError> {
+        match self {
+            RunEntry::Record { at, shared } => {
+                put(packed::RECORD | if shared { packed::SHARED } else { 0 });
+                put(at.0);
+            }
+            RunEntry::Row { kind, facts, span, inner } => {
+                put(facts.word(u32::from(kind.0))?);
+                put(span.start);
+                put(span.end);
+                put(inner);
+                if let Some(alias) = facts.alias {
+                    put(u32::from(alias.0));
+                }
+            }
+        }
+        Ok(())
+    }
+
+    /// The entry at the start of `words` and the words it takes.
+    fn take(words: &[u32]) -> Result<(RunEntry, usize), ArenaError> {
+        let &first = words.first().ok_or(malformed("run entry", 0))?;
+        if first & packed::RECORD != 0 {
+            let &[_, at] = words.first_chunk::<2>().ok_or(malformed("run record entry", first))?;
+            if first & !(packed::RECORD | packed::SHARED) != 0 || at == Address::NONE.0 {
+                return Err(malformed("run record entry", first));
+            }
+            return Ok((RunEntry::Record { at: Address(at), shared: first & packed::SHARED != 0 }, RUN_RECORD_WORDS as usize));
+        }
+        let &[_, start, end, inner] = words.first_chunk::<4>().ok_or(malformed("run row", first))?;
+        if start > end {
+            return Err(malformed("run row span end", end));
+        }
+        let aliased = first & packed::ALIASED != 0;
+        let alias = if aliased { Some(read_kind(*words.get(RUN_ROW_WORDS as usize).ok_or(malformed("run row alias", first))?)?) } else { None };
+        let entry = RunEntry::Row { kind: packed_kind(first), facts: NodeFacts::of_word(first, alias), span: Span { start, end }, inner };
+        Ok((entry, RUN_ROW_WORDS as usize + usize::from(aliased)))
+    }
 }
 
 /// A parsed node's place in the tree its arena is: its subtree's rows,
@@ -112,6 +235,16 @@ pub struct SideRecord {
     /// A snapshot root's stamped flanks (`NodeLayout::flanks`).
     pub flanks: crate::layout_kinds::Flanks,
     pub slots: Vec<SideSlot>,
+    /// A parsed node's parent's record; none for a source's root.
+    pub parent: Option<Address>,
+    /// A parsed node's navigation facts.
+    pub node: Option<NodeFacts>,
+    /// The string chunk a parsed node's source is, which its bytes index.
+    pub source: Option<u32>,
+    /// The levels a parsed node's subtree opens net of those it closes.
+    pub depth: i32,
+    /// A parsed node's children, in document order.
+    pub run: Vec<RunEntry>,
 }
 
 /// The words of one slot entry: word, before, after, separator, the two
@@ -299,6 +432,31 @@ impl SideRecord {
                 ]);
             }
         }
+        if let Some(parent) = self.parent {
+            flags |= mask::PARENT;
+            words(&[parent.0]);
+        }
+        if let Some(node) = self.node {
+            flags |= mask::NODE;
+            words(&[node.word(node.alias.map_or(0, |alias| u32::from(alias.0)))?]);
+        }
+        if let Some(source) = self.source {
+            flags |= mask::SOURCE;
+            words(&[source]);
+        }
+        if self.depth != 0 {
+            flags |= mask::DEPTH;
+            words(&[self.depth.cast_unsigned()]);
+        }
+        if !self.run.is_empty() {
+            flags |= mask::RUN;
+            let mut entries = Vec::new();
+            for entry in &self.run {
+                entry.put(&mut |word| entries.push(word))?;
+            }
+            words(&[u32::try_from(entries.len()).map_err(|_| ArenaError::Full)?]);
+            words(&entries);
+        }
         Ok(flags)
     }
 
@@ -376,6 +534,43 @@ impl SideRecord {
                 })
                 .collect::<Result<_, _>>()?;
         }
+        if has(mask::PARENT) {
+            let [parent] = fields.array()?;
+            if parent == Address::NONE.0 {
+                return Err(malformed("side record parent", parent));
+            }
+            record.parent = Some(Address(parent));
+        }
+        if has(mask::NODE) {
+            let [word] = fields.array()?;
+            if word & packed::RECORD != 0 {
+                return Err(malformed("side record node", word));
+            }
+            record.node = Some(NodeFacts::of_word(word, (word & packed::ALIASED != 0).then(|| packed_kind(word))));
+        }
+        if has(mask::SOURCE) {
+            let [source] = fields.array()?;
+            record.source = Some(source);
+        }
+        if has(mask::DEPTH) {
+            let [depth] = fields.array()?;
+            if depth == 0 {
+                return Err(malformed("side record depth", depth));
+            }
+            record.depth = depth.cast_signed();
+        }
+        if has(mask::RUN) {
+            let [len] = fields.array()?;
+            let mut words = fields.take(len)?;
+            if words.is_empty() {
+                return Err(malformed("side record run", len));
+            }
+            while !words.is_empty() {
+                let (entry, taken) = RunEntry::take(words)?;
+                record.run.push(entry);
+                words = &words[taken..];
+            }
+        }
         Ok(record)
     }
 }
@@ -411,6 +606,17 @@ mod tests {
                 },
                 SideSlot { word: 7, ..SideSlot::default() },
                 SideSlot { word: 9, space_before: Some(KindId::BLANK), ..SideSlot::default() },
+            ],
+            parent: Some(Address(77)),
+            node: Some(NodeFacts { field: Some(FieldId(9)), alias: Some(KindId(40)), named: true, extra: false, missing: false, holds_error: true }),
+            source: Some(3),
+            depth: -2,
+            run: vec![
+                RunEntry::Row { kind: KindId(5), facts: NodeFacts::default(), span: Span { start: 3, end: 4 }, inner: 0 },
+                RunEntry::Record { at: Address(90), shared: false },
+                RunEntry::Row { kind: KindId(6), facts: NodeFacts { field: Some(FieldId(1)), alias: Some(KindId(8)), named: true, extra: true, missing: true, holds_error: true }, span: Span { start: 6, end: 6 }, inner: 1 },
+                RunEntry::Row { kind: KindId(7), facts: NodeFacts { named: true, ..NodeFacts::default() }, span: Span { start: 6, end: 6 }, inner: 0 },
+                RunEntry::Record { at: Address(96), shared: true },
             ],
         }
     }
@@ -460,6 +666,12 @@ mod tests {
             SideRecord { separator_kind: whole.separator_kind, ..SideRecord::default() },
             SideRecord { flanks: whole.flanks, ..SideRecord::default() },
             SideRecord { slots: whole.slots, ..SideRecord::default() },
+            SideRecord { parent: whole.parent, ..SideRecord::default() },
+            SideRecord { node: whole.node, ..SideRecord::default() },
+            SideRecord { node: Some(NodeFacts::default()), ..SideRecord::default() },
+            SideRecord { source: whole.source, ..SideRecord::default() },
+            SideRecord { depth: 3, ..SideRecord::default() },
+            SideRecord { run: whole.run, ..SideRecord::default() },
         ];
         let mut arena = Arena::new();
         for record in alone {

@@ -320,6 +320,7 @@ impl SideRecord {
             separator_kind: None,
             flanks: layout.flanks,
             slots,
+            ..SideRecord::default()
         })
     }
 
