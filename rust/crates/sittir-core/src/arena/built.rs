@@ -4,7 +4,7 @@
 
 
 use super::{admit, Address, ArenaError, ArenaRead, Cell, CellAt, CellWord, HeldArenas, RecordGrammar};
-use crate::engine::{encode_handle, Engine, EngineGrammar, ReadTrees};
+use crate::engine::{encode_handle, Engine, ReadTrees};
 use crate::prepare::RenderContext;
 use crate::render::{CoordinateError, RenderError, RenderResult, RenderSink};
 use crate::slot::ChangedEdges;
@@ -13,7 +13,7 @@ use crate::trivia_store::{Place, Site, TriviaStore};
 use crate::trivia_table::TriviaSide;
 use crate::types::{KindId, NodeIndex};
 
-impl<G: EngineGrammar> Engine<G> {
+impl<G: RecordGrammar> Engine<G> {
     /// The entries of `side` of the record at `at`. For a built record, the
     /// ones a write gave it, or `None` when no write did, so the side is the
     /// one of the node it was rebuilt from. For a record a read left, the
@@ -40,7 +40,7 @@ impl<G: EngineGrammar> Engine<G> {
     pub fn write_built_trivia_side(&self, at: Address, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), ArenaError> {
         let at = at.record()?;
         if self.written().built().read_record(at) {
-            return self.write_read_side(super::NodeSite::Record(at).name(), side, entries);
+            return self.write_read_side(crate::types::NodeName { node: crate::types::NodeId(at.0), site: None }, side, entries);
         }
         self.written().write_held_side(Place::Record(at), side, entries)
     }
@@ -54,8 +54,12 @@ impl<G: EngineGrammar> Engine<G> {
     /// no source.
     pub fn write_read_side(&self, name: crate::types::NodeName, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), ArenaError> {
         let record = Address(name.node.0).record()?;
-        let tree = crate::types::TreeId(super::RunNodes::source_of(self.written().built().readable()?, record)?.0);
-        self.written().write_held_side(Place::Read { tree, site: super::NodeSite::named(name) }, side, entries)
+        let site = {
+            let chunks = self.written().built();
+            let built = chunks.readable()?;
+            (crate::types::TreeId(super::RunNodes::source_of(built, record)?.0), super::site::node_site(built, G::shape, G::KIND_BITS, name)?)
+        };
+        self.written().write_held_side(Place::Read { tree: site.0, site: site.1 }, side, entries)
     }
 
     /// What `f` answers of the node a read left a record of at `at`: the
@@ -66,7 +70,7 @@ impl<G: EngineGrammar> Engine<G> {
     ///
     /// What making the tree refuses.
     pub fn read_node<R>(&self, at: Address, f: impl FnOnce(&crate::engine::ParsedTree<G, crate::engine::Records<'_>>, NodeIndex) -> R) -> Result<Option<R>, ArenaError> {
-        self.read_named(super::NodeSite::Record(at).name(), f)
+        self.read_named(crate::types::NodeName { node: crate::types::NodeId(at.0), site: None }, f)
     }
 
     /// What `f` answers of the node a read left that `name` names: the tree
@@ -100,7 +104,7 @@ impl<G: EngineGrammar> Engine<G> {
                 trees.len() - 1
             };
             let tree = &trees[at].1;
-            let index = tree.index_at(super::NodeSite::named(name)).ok_or(ArenaError::Malformed { what: "node name", word: record.0 })?;
+            let index = tree.index_named(name).ok_or(ArenaError::Malformed { what: "node name", word: record.0 })?;
             siblings.extend(tree.siblings(&[index]));
         }
         Ok(siblings)
@@ -125,7 +129,7 @@ impl<G: EngineGrammar> Engine<G> {
             return Ok(None);
         }
         let tree = crate::engine::ParsedTree::over_records(self, &built, record)?;
-        let index = tree.index_at(super::NodeSite::named(name)).ok_or(ArenaError::Malformed { what: "node name", word: record.0 })?;
+        let index = tree.index_named(name).ok_or(ArenaError::Malformed { what: "node name", word: record.0 })?;
         Ok(Some(f(&tree, index)))
     }
 
@@ -378,7 +382,7 @@ pub fn render_record_entry<G: RecordGrammar>(
 fn local_address<G: RecordGrammar>(tree: &crate::engine::ParsedTree<G, crate::engine::Records<'_>>, address: crate::query::NamedAddress) -> Result<crate::query::Address, String> {
     use crate::query::{Address as Local, NamedAddress};
     let handle = |name: crate::types::NodeName| {
-        tree.index_at(super::NodeSite::named(name)).map(|index| encode_handle(tree.tree_id(), index)).ok_or_else(|| format!("{name:?} names no node its source's records hold"))
+        tree.index_named(name).map(|index| encode_handle(tree.tree_id(), index)).ok_or_else(|| format!("{name:?} names no node its source's records hold"))
     };
     Ok(match address {
         NamedAddress::Own(name) => Local::Own { handle: handle(name)? },

@@ -5,7 +5,7 @@ import { addressOf, cellFormatOf, nativeEngineOf } from '@sittir/common/engine';
 import { snapshotOf, treeOf, writeTrivia } from '@sittir/common/utils';
 import { sideEntryOf } from '../../common/src/built-arena.ts';
 import { builtRefOf, leafSitesOf } from '../../common/src/built-ref.ts';
-import { coordinateIndex } from '../../common/src/node-data.ts';
+import { coordinateIndex, coordinateOf, keyName } from '../../common/src/node-data.ts';
 import { getActiveBackend } from '../src/backend.js';
 import rust from '../src/index.ts';
 import { TSKindId } from '../src/kinds.ts';
@@ -223,16 +223,33 @@ describe('a built arena rendered natively', () => {
 			expect(() => statementOf(objects).statement.$trivia.trailing(comment)).toThrow('a side names a built record, and its engine builds no records');
 		});
 
+		it('names a parsed leaf by its holder and the cell that holds it', async () => {
+			const engine = await recordEngine();
+			const item = engine.parse('fn f() {}\n').statements()[0] as unknown as { readonly $at: number; name(): { $text(): string } };
+			const leaf = item.name();
+			const at = coordinateOf(leaf) as unknown as { readonly $node: number; readonly $site: readonly [number, number] };
+			expect(at.$node).toBe(item.$at);
+			expect(at.$site).toEqual([expect.any(Number), 0]);
+			expect(at.$site[0]).toBeGreaterThan(0);
+			expect(keyName(coordinateIndex(at as never))).toEqual({ node: item.$at, site: at.$site[0] });
+			expect((treeOf(leaf)!.built!.named(at as never) as { $text(): string }).$text()).toBe('f');
+		});
+
 		it("reads back as its builder's node from a parsed unit's side", async () => {
 			const engine = await recordEngine();
 			const block = (engine.parse('fn f() {\n    ;\n    x();\n}\n').statements()[0] as unknown as { body(): object }).body();
 			const tree = treeOf(block)!;
 			const holder = (block as { readonly $at: number }).$at;
-			const row = (n: number): number => coordinateIndex({ $node: holder, $row: n, $span: { start: 0, end: 0 }, $type: 0 } as never);
-			const comments = [1, 2, 3].map(() => engine.build.blockComment(engine.build.blockCommentRegular(' c ')));
-			const unit = comments.findIndex((comment, n) => {
-				tree.writeTriviaSide!(row(n), 'leading', [writtenEntry(comment)]);
-				return (tree.unitSides!(holder) as readonly unknown[]).length > 0 || (tree.writeTriviaSide!(row(n), 'leading', []), false);
+			const key = (site: readonly [number, number]): number => coordinateIndex({ $node: holder, $site: site, $span: { start: 0, end: 0 }, $type: 0 } as never);
+			const sites = Array.from({ length: 16 }, (_, word) => [word + 1, 0] as const);
+			const comments = sites.map(() => engine.build.blockComment(engine.build.blockCommentRegular(' c ')));
+			const unit = sites.findIndex((site, n) => {
+				try {
+					tree.writeTriviaSide!(key(site), 'leading', [writtenEntry(comments[n]!)]);
+				} catch {
+					return false;
+				}
+				return (tree.unitSides!(holder) as readonly unknown[]).length > 0 || (tree.writeTriviaSide!(key(site), 'leading', []), false);
 			});
 			expect(unit).not.toBe(-1);
 			expect((tree.unitSides!(holder) as readonly { leading: readonly unknown[] }[])[0]!.leading).toEqual([comments[unit]]);

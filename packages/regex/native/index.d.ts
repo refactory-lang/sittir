@@ -566,7 +566,7 @@ export declare function readSlotSeparator(engine: object, node: number): import(
 /**
  * r" `snapshotLayouts` for the node a read left that the key
  * r" `node` names, as `[key, layout]` pairs in preorder, each
- * r" node by its key (`NodeName::key`). Refuses as
+ * r" node a record or a slot names by its key (`NodeName::key`). Refuses as
  * r" `with_read_node` and as `snapshotLayouts`.
  */
 export declare function readSnapshotLayouts(engine: object, node: number, holderByte?: number | undefined | null): [number, object][]

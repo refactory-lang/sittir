@@ -1,5 +1,5 @@
 import { coordinateIndex, coordinateOf } from './node-data.ts';
-import { decodeIndex, decodeTree, type TreeHandle } from './read.ts';
+import { decodeTree, type TreeHandle } from './read.ts';
 import { undoIfFillFails } from './list-fills.ts';
 
 /** How a route reaches a node: as itself, or as the content of an alias envelope that shares its parser node. */

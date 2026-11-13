@@ -4,7 +4,7 @@ import { blankArmStored } from './blank-arm.ts';
 import { spelledMember } from './spelled.ts';
 import { builtRefOf } from './built-ref.ts';
 import { undoIfFillFails } from './list-fills.ts';
-import { holdTreeOn, treeOf } from './tree-token.ts';
+import { treeOf } from './tree-token.ts';
 import { treeBuiltArena, treeSlotTable, treeStructureTable } from './engine-scope.ts';
 import { decodeBuiltCell, type BuiltArena } from './built-arena.ts';
 import { builderInputs, type BuilderInputs } from './builder-inputs.ts';
@@ -17,6 +17,7 @@ import {
 	headerKind,
 	sideListSettingOffset,
 	wordOf,
+	type CellSite,
 	type RecordCell
 } from './record-cell.ts';
 import { aliasContentOf, asReadOutput, carryReadTree, coordinateOf, holdReadTree, isStorageKey, type ReadOutput } from './node-data.ts';
@@ -216,9 +217,9 @@ export function leafData(tree: TreeHandle, kind: number, span: ByteSpan, row: nu
 	return asReadOutput({ $type: kind, $text: () => text(span), $_layout: { at: coordinateAt(tree, row, span) } });
 }
 
-/** The row `row` of the run of the read's record at `holder`, a node with no record of its own, as read data: its kind, its text, which the arena answers each time it is asked, and its coordinate, which names it by its holder and row. */
-export function readLeaf(arena: BuiltArena, holder: number, kind: number, span: ByteSpan, row: number | undefined): ReadOutput {
-	const at = row === undefined ? { $node: holder, $span: span, $type: readRow(arena.tree, holder).stamped } : { $node: holder, $row: row, $span: span, $type: kind };
+/** The node the cell at `site` of the read's record at `holder` names, a node with no record of its own, or, with no site, the content sharing the record's own row, as read data: its kind, its text, which the arena answers each time it is asked, and its coordinate, which names it by its holder and site. */
+export function readLeaf(arena: BuiltArena, holder: number, kind: number, span: ByteSpan, site: CellSite | undefined): ReadOutput {
+	const at = site === undefined ? { $node: holder, $span: span, $type: readRow(arena.tree, holder).stamped } : { $node: holder, $site: site, $span: span, $type: kind };
 	const leaf = asReadOutput({ $type: kind, $text: () => arena.readText(holder, span), $_layout: { at: at as unknown as NodeCoordinate } });
 	holdReadTree(leaf, arena.token);
 	return leaf;
@@ -232,7 +233,7 @@ function cellData(holder: RecordPosition, cell: RecordCell, word: number, item: 
 		case 'coordinate':
 			return recordStub(tree, parsedRecordsOf(tree).cell(holder.$at, word, item));
 		case 'parsedLeaf':
-			return tree.built === undefined ? carryReadTree(holder, leafData(tree, cell.kind, cell.span, cell.row)) : readLeaf(tree.built, holder.$at, cell.kind, cell.span, cell.row === 1 ? undefined : cell.row - 2);
+			return tree.built === undefined ? carryReadTree(holder, leafData(tree, cell.kind, cell.span, cell.row)) : readLeaf(tree.built, holder.$at, cell.kind, cell.span, cell.row === 1 ? undefined : [word, item]);
 		case 'parsedText':
 			return tree.built === undefined ? tree.text?.(cell.span) : tree.built.readText(holder.$at, cell.span);
 		case 'child':

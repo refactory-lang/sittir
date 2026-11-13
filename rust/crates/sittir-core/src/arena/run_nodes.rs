@@ -22,24 +22,6 @@ pub enum NodeSite {
     Row { holder: Address, entry: u32 },
 }
 
-impl NodeSite {
-    /// The name the node kept here keeps past a call.
-    #[must_use]
-    pub fn name(self) -> crate::types::NodeName {
-        match self {
-            NodeSite::Record(at) => crate::types::NodeName { node: crate::types::NodeId(at.0), row: None },
-            NodeSite::Row { holder, entry } => crate::types::NodeName { node: crate::types::NodeId(holder.0), row: Some(entry) },
-        }
-    }
-
-    /// Where the node `name` names is kept.
-    #[must_use]
-    pub fn named(name: crate::types::NodeName) -> Self {
-        let holder = Address(name.node.0);
-        name.row.map_or(NodeSite::Record(holder), |entry| NodeSite::Row { holder, entry })
-    }
-}
-
 /// A node's parent as a navigation knows it: not looked up yet, none (a
 /// source's root), or the node.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

@@ -442,7 +442,7 @@ pub(crate) unsafe fn coordinate_from_napi(env: ::napi::sys::napi_env, napi_val: 
 
 /// `{ $treeHandle, $end, $span, $type? }`, the object `coordinate_from_napi`
 /// reads back; for a coordinate that names its node past the call
-/// (`NodeCoordinate::name`), `{ $node, $row?, $span, $type? }`, since its tree and
+/// (`NodeCoordinate::name`), `{ $node, $site?, $span, $type? }`, since its tree and
 /// index mean nothing once the call ends. Its edges are the prepare walk's
 /// and its gap JavaScript's, so neither crosses back.
 #[cfg(feature = "napi-bindings")]
@@ -453,7 +453,7 @@ pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: &Node
         return unsafe {
             object_with_present(env, &[
                 present(env, c"$node", Some(name.node.0))?,
-                present(env, c"$row", name.row)?,
+                present(env, c"$site", name.site.map(|site| site.to_vec()))?,
                 present(env, c"$span", Some(coord.span))?,
                 present(env, c"$type", coord.kind.map(|kind| u32::from(kind.0)))?,
             ])

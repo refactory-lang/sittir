@@ -123,11 +123,7 @@ impl<'a, T> RecordCtx<'a, T> {
         if let Some((from, name)) = side.sides.and_then(|from| Some((from, from.name()?))) {
             let holder = Address(name.node.0);
             let tree = TreeId(super::RunNodes::source_of(self.arena, holder)?.0);
-            let index = match name.row {
-                None => self.sources.record_row(tree, holder),
-                Some(entry) => self.sources.cell_row(tree, holder, entry + 2),
-            }
-            .ok_or(malformed("rebuilt-from name", holder.0))?;
+            let index = self.sources.name_row(tree, name).ok_or(malformed("rebuilt-from name", holder.0))?;
             let end = self.sources.row_coordinate(tree, index).ok_or(malformed("rebuilt-from name", holder.0))?.end;
             side.sides = Some(Sides { tree, index, end, span: from.span });
         }
@@ -136,13 +132,14 @@ impl<'a, T> RecordCtx<'a, T> {
 
     /// The cell the built word `word` holds, naming a node a read left with
     /// no record of its own as this call does: its source as its tree, and
-    /// the id the call gives the row its link names in its holder's run.
+    /// the id the call gives the node its link names.
     fn built_cell(self, word: u32) -> Result<Cell, ArenaError> {
         match Cell::decode_built(CellWord(word), self.arena, self.bits)? {
-            Cell::ReadLeaf { kind, at, holder, row: cell, span, changed } => {
+            Cell::ReadLeaf { kind, at, name, span, changed } => {
+                let holder = Address(name.node.0);
                 let tree = TreeId(super::RunNodes::source_of(self.arena, holder)?.0);
-                let row = self.sources.cell_row(tree, holder, cell).ok_or(malformed("link row", cell))?;
-                let end = self.sources.row_coordinate(tree, row).ok_or(malformed("link row", cell))?.end;
+                let row = self.sources.name_row(tree, name).ok_or(malformed("link site", holder.0))?;
+                let end = self.sources.row_coordinate(tree, row).ok_or(malformed("link site", holder.0))?.end;
                 Ok(Cell::LinkedLeaf { kind, at, tree, row, end, span, changed })
             }
             cell => Ok(cell),

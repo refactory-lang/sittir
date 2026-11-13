@@ -1,3 +1,4 @@
+import type { CellSite } from './record-cell.ts';
 import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, Pending, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
 import { carryRead, carryPlace, coordinateIndex, coordinateOf, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
@@ -407,7 +408,7 @@ function carrySides(held: object, fresh: object): void {
 }
 
 /** How a query names a read node: the handle its coordinate names it by. */
-export type NodeAddress = { readonly handle: number } | { readonly $node: number; readonly $row?: number };
+export type NodeAddress = { readonly handle: number } | { readonly $node: number; readonly $site?: CellSite };
 
 /** The address a query names `node` by; `undefined` for a node no read gave. */
 export function nodeAddressOf(node: AnyUntypedNode): NodeAddress | undefined {
@@ -418,9 +419,9 @@ export function nodeAddressOf(node: AnyUntypedNode): NodeAddress | undefined {
 }
 
 export function coordinateAddress(coordinate: NodeCoordinate): NodeAddress {
-	const { $node, $row } = coordinate as { readonly $node?: number; readonly $row?: number };
+	const { $node, $site } = coordinate as { readonly $node?: number; readonly $site?: CellSite };
 	if ($node === undefined) return { handle: coordinate.$treeHandle };
-	return $row === undefined ? { $node } : { $node, $row };
+	return $site === undefined ? { $node } : { $node, $site };
 }
 
 /** `node.$trivia.leading(...)` and `.trailing(...)`: set the position and return the node, or read it with no items. */

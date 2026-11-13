@@ -221,44 +221,104 @@ id_newtype! {
 }
 
 /// A node's name past a call, where its records outlive its tree: its own
-/// record `node`, or, with a `row`, the entry `row` of the run of the record
-/// `node`, for a node kept as a row with no record of its own. On the wire,
-/// `{ $node, $row? }`.
+/// record `node`, or, with a `site`, the node with no record of its own
+/// that the record `node` keeps in a slot: the word the slot's cell starts
+/// at and, in a list slot, the item. On the wire, `{ $node, $site? }`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub struct NodeName {
     #[serde(rename = "$node")]
     pub node: NodeId,
-    #[serde(rename = "$row", default, skip_serializing_if = "Option::is_none")]
-    pub row: Option<u32>,
+    #[serde(rename = "$site", default, skip_serializing_if = "Option::is_none")]
+    pub site: Option<[u32; 2]>,
 }
 
 impl NodeName {
-    /// The rows a record's run holds at most, for a name to have a key.
-    const RUN_ROWS: u32 = 1 << 19;
+    /// The bits of a key that hold a site's word, and those that hold its
+    /// item above them. A record's address takes 30 bits, so with these a
+    /// key is a whole number a double holds exactly.
+    const WORD_BITS: u32 = 7;
+    /// One past the widest record a site's word can name a cell of.
+    pub const SITE_WORDS: u32 = 1 << Self::WORD_BITS;
+    const ITEM_BITS: u32 = 16;
+    const NODE_BITS: u32 = 30;
+
+    /// The name's site as one word, its item above its word; 0 for a name
+    /// with no site, since a cell starts past its record's header.
+    #[must_use]
+    pub fn packed_site(self) -> u32 {
+        self.site.map_or(0, |[word, item]| (item << Self::WORD_BITS) | word)
+    }
+
+    /// The site `packed` spells (`packed_site`).
+    #[must_use]
+    pub fn site_of(packed: u32) -> Option<[u32; 2]> {
+        (packed != 0).then_some([packed & ((1 << Self::WORD_BITS) - 1), packed >> Self::WORD_BITS])
+    }
 
     /// The name as one number, which JavaScript keys a node by: a record's
-    /// address, or, for a row, a negative number its record's address and
-    /// the row make; none for a row past what a key holds.
+    /// address, or, with a site, a negative number its record's address
+    /// and its packed site make; none for a name past what a key holds.
     #[must_use]
     pub fn key(self) -> Option<f64> {
-        match self.row {
-            None => Some(f64::from(self.node.0)),
-            Some(row) if row < Self::RUN_ROWS => Some(-(f64::from(self.node.0) * f64::from(Self::RUN_ROWS) + f64::from(row) + 1.0)),
-            Some(_) => None,
+        let Some([word, item]) = self.site else { return Some(f64::from(self.node.0)) };
+        if word == 0 || word >> Self::WORD_BITS != 0 || item >> Self::ITEM_BITS != 0 || self.node.0 >> Self::NODE_BITS != 0 {
+            return None;
         }
+        let packed = (u64::from(self.node.0) << (Self::ITEM_BITS + Self::WORD_BITS)) | u64::from(self.packed_site());
+        #[allow(clippy::cast_precision_loss, reason = "the three fields take 53 bits, which a double holds exactly")]
+        Some(-(packed as f64))
     }
 
     /// The name `key` spells (`key`); none for a number that is no key.
     #[must_use]
-    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss, reason = "each value is checked whole and in range before it is narrowed")]
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss, clippy::cast_precision_loss, reason = "each value is checked whole and in range before it is narrowed, and the bound is a power of two")]
     pub fn from_key(key: f64) -> Option<Self> {
-        let whole = |value: f64| (value.fract() == 0.0 && (0.0..=f64::from(u32::MAX)).contains(&value)).then_some(value as u32);
-        if key >= 0.0 {
-            return whole(key).map(|node| Self { node: NodeId(node), row: None });
+        if key.fract() != 0.0 {
+            return None;
         }
-        let rest = -key - 1.0;
-        let rows = f64::from(Self::RUN_ROWS);
-        Some(Self { node: NodeId(whole((rest / rows).floor())?), row: Some(whole(rest % rows)?) })
+        if key >= 0.0 {
+            return (key <= f64::from(u32::MAX)).then_some(Self { node: NodeId(key as u32), site: None });
+        }
+        if -key >= (1u64 << (Self::NODE_BITS + Self::ITEM_BITS + Self::WORD_BITS)) as f64 {
+            return None;
+        }
+        let packed = (-key) as u64;
+        let site = Self::site_of((packed & ((1 << (Self::ITEM_BITS + Self::WORD_BITS)) - 1)) as u32)?;
+        (site[0] != 0).then_some(Self { node: NodeId((packed >> (Self::ITEM_BITS + Self::WORD_BITS)) as u32), site: Some(site) })
+    }
+}
+
+#[cfg(test)]
+mod name_tests {
+    use super::{NodeId, NodeName};
+
+    #[test]
+    fn a_name_and_its_key_are_found_from_each_other() {
+        let names = [
+            NodeName { node: NodeId(0), site: None },
+            NodeName { node: NodeId(u32::MAX), site: None },
+            NodeName { node: NodeId(32_768), site: Some([2, 0]) },
+            NodeName { node: NodeId((1 << 30) - 1), site: Some([127, 65_535]) },
+        ];
+        for name in names {
+            let key = name.key().expect("a key");
+            assert_eq!(key.fract(), 0.0);
+            assert!(key.abs() <= 9_007_199_254_740_991.0, "{key} is a whole number a double holds");
+            assert_eq!(NodeName::from_key(key), Some(name));
+        }
+        let mut keys: Vec<f64> = names.iter().filter_map(|name| name.key()).collect();
+        keys.dedup();
+        assert_eq!(keys.len(), names.len());
+    }
+
+    #[test]
+    fn a_site_past_what_a_key_holds_has_none() {
+        for site in [[128, 0], [2, 65_536], [0, 0]] {
+            assert_eq!(NodeName { node: NodeId(32_768), site: Some(site) }.key(), None, "{site:?}");
+        }
+        assert_eq!(NodeName { node: NodeId(1 << 30), site: Some([2, 0]) }.key(), None);
+        assert_eq!(NodeName::from_key(-0.5), None);
+        assert_eq!(NodeName::from_key(-(2f64.powi(53))), None);
     }
 }
 

@@ -96,17 +96,17 @@ fn a_link_record_takes_eight_words() {
 fn unnamed(text: &str) -> String {
     let mut out = String::new();
     let mut rest = text;
-    while let Some(at) = ["NodeIndex(", "TreeId(", "NodeId(", "row: Some("].iter().filter_map(|open| rest.find(open).map(|at| at + open.len())).min() {
+    while let Some(at) = ["NodeIndex(", "TreeId(", "NodeId("].iter().filter_map(|open| rest.find(open).map(|at| at + open.len())).min() {
         out.push_str(&rest[..at]);
         rest = rest[at..].trim_start_matches(|c: char| c.is_ascii_digit());
     }
-    let named = |row: &str| format!("carried: Some(CoordinateCarried {{ changed: ChangedEdges {{ leading: false, trailing: false }}, name: Some(NodeName {{ node: NodeId(), row: {row} }}) }})");
-    (out + rest).replace(&named("None"), "carried: None").replace(&named("Some()"), "carried: None")
+    let named = "carried: Some(CoordinateCarried { changed: ChangedEdges { leading: false, trailing: false }, name: Some(NodeName { node: NodeId(), site: None }) })";
+    (out + rest).replace(named, "carried: None")
 }
 
 /// Each node of `source` whose sides its records answer apart from its
 /// tree, by its bytes and kind.
-fn sides_apart<G: EngineGrammar, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str) -> Vec<String>
+fn sides_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str) -> Vec<String>
 where
     G::Trivia: std::fmt::Debug,
 {
@@ -135,7 +135,7 @@ where
 
 /// The fixtures of `name` with a node whose sides its records answer apart
 /// from its tree, each with the first such node.
-fn fixtures_apart<G: EngineGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> Vec<String>
+fn fixtures_apart<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> Vec<String>
 where
     G::Trivia: std::fmt::Debug,
 {
@@ -200,7 +200,7 @@ fn a_side_written_to_a_read_s_node_is_read_by_every_later_call() {
 
 /// The sources of `name`'s fixtures whose records store another layout
 /// than their tree does, and how many of the sources store any.
-fn layouts_apart<G: EngineGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> (Vec<String>, usize) {
+fn layouts_apart<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> (Vec<String>, usize) {
     let mut storing = 0;
     let apart = fixture_sources(name)
         .iter()
@@ -236,7 +236,7 @@ fn a_read_s_records_store_the_layout_its_tree_does() {
 
 /// Each `ERROR` node of `source` as its records keep it: where it is kept,
 /// and where each of its children is.
-fn errors_kept<G: EngineGrammar + Copy, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str) -> Vec<(Option<sittir_core::arena::NodeSite>, Vec<Option<sittir_core::arena::NodeSite>>)> {
+fn errors_kept<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str) -> Vec<(Option<sittir_core::arena::NodeSite>, Vec<Option<sittir_core::arena::NodeSite>>)> {
     use sittir_core::trivia_store::Place;
     let mut engine = Engine::new(grammar, options()).expect("an engine");
     let Some(root) = engine.parse_records::<N>(source).expect("a parse").root else { return Vec::new() };
@@ -328,7 +328,7 @@ fn a_coordinate_of_a_read_s_node_names_its_record() {
     let records = sittir_core::engine::ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
     let (coord, index) = held_coordinate(&records);
     let Some(Place::Read { site: NodeSite::Record(at), .. }) = records.place(index) else { panic!("a comment has a record") };
-    assert_eq!(coord.name(), Some(NodeSite::Record(at).name()));
+    assert_eq!(coord.name(), Some(sittir_core::types::NodeName { node: sittir_core::types::NodeId(at.0), site: None }));
     assert_eq!((coord.span, coord.kind), (kept.span, kept.kind));
 }
 
@@ -401,7 +401,8 @@ fn a_call_s_tree_is_made_from_a_record_and_never_from_its_source_alone() {
     let mut records = Vec::new();
     whole.nodes().walk(NodeIndex::ROOT, &mut |step, kid| {
         if step == Step::Meet {
-            if let Some(NodeSite::Record(at)) = whole.name_at(kid.index).map(NodeSite::named) {
+            if let Some(sittir_core::types::NodeName { node, site: None }) = whole.name_at(kid.index) {
+                let at = sittir_core::arena::Address(node.0);
                 records.push((at, kid.span(), kid.grammar));
             }
         }
@@ -439,7 +440,8 @@ fn sites_and_rows_agree<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateN
         let mut records = Vec::new();
         tree.nodes().walk(NodeIndex::ROOT, &mut |step, kid| {
             if step == Step::Meet && !kid.error() {
-                if let Some(NodeSite::Record(at)) = tree.name_at(kid.index).map(NodeSite::named) {
+                if let Some(sittir_core::types::NodeName { node, site: None }) = tree.name_at(kid.index) {
+                let at = sittir_core::arena::Address(node.0);
                     records.push(at);
                 }
             }
@@ -468,4 +470,20 @@ fn a_slot_s_site_and_its_node_s_row_are_found_from_each_other() {
         sites_and_rows_agree::<_, sittir_typescript::render::AnyNode>("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults),
     ];
     assert!(kept.iter().all(|&kept| kept > 0), "every grammar keeps some node in a slot with no record of its own: {kept:?}");
+}
+
+fn widest_record<G: sittir_core::arena::RecordGrammar>() -> u32 {
+    (0..=u16::MAX).filter_map(|kind| G::shape(sittir_core::types::KindId(kind))).map(|shape| shape.words).max().unwrap_or(0)
+}
+
+#[test]
+fn a_site_s_word_names_any_cell_of_every_record() {
+    let widest = [
+        widest_record::<sittir_rust::RustGrammar>(),
+        widest_record::<sittir_python::PythonGrammar>(),
+        widest_record::<sittir_typescript::TypeScriptGrammar>(),
+        widest_record::<sittir_regex::RegexGrammar>(),
+        widest_record::<sittir_scm::ScmGrammar>(),
+    ];
+    assert!(widest.iter().all(|&words| words > 0 && words < sittir_core::types::NodeName::SITE_WORDS), "{widest:?}");
 }

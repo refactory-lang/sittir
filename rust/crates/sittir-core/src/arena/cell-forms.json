@@ -33,7 +33,7 @@
 			},
 			{
 				"chunk": 2,
-				"words": [14, 0, 65537, 526, 0, 3, 7, 9, 5000, 2, 9, 528, 0, 3, 8, 9, 0, 4, 8, 2, 131072, 65568]
+				"words": [14, 0, 65537, 526, 0, 5000, 3, 2, 0, 2, 9, 528, 0, 5000, 0, 0, 0, 4, 8, 2, 131072, 65568]
 			}
 		],
 		"cells": [
@@ -49,10 +49,13 @@
 				"word": 131074
 			},
 			{
-				"form": "child",
+				"form": "linkedLeaf",
 				"kind": 14,
-				"at": 5000,
-				"link": 3,
+				"at": 32771,
+				"holder": 5000,
+				"site": [3, 2],
+				"start": 2,
+				"spanEnd": 9,
 				"leading": true,
 				"trailing": false,
 				"word": 131085
@@ -61,9 +64,8 @@
 				"form": "linkedLeaf",
 				"kind": 16,
 				"at": 32779,
-				"tree": 3,
-				"row": 8,
-				"end": 9,
+				"holder": 5000,
+				"site": null,
 				"start": 4,
 				"spanEnd": 8,
 				"leading": false,

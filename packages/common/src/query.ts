@@ -16,7 +16,7 @@ import type {
 } from '@sittir/types';
 import { inTreeEngine } from './engine-scope.ts';
 import type { TreeHandle } from './read.ts';
-import { treeOf, treeTokenOf } from './tree-token.ts';
+import { treeOf } from './tree-token.ts';
 import { handleArenaOf } from './built-ref.ts';
 import { coordinateAddress, hydrateWith, nodeAddressOf, type NodeAddress } from './utils.ts';
 import { refuse, slotItems } from './query-holds.ts';

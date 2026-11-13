@@ -14,7 +14,7 @@ import type {
 	Rendered
 } from '@sittir/types';
 import { decodeIndex, decodeTree, readObject, type ChunkWords, type RecordReader, type TreeHandle, type TriviaSideName } from './read.ts';
-import { coordinateIndex, coordinateOf, holdReadTree, placeOf, rootEdges, RUN_ROWS, sourceHandleOf, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
+import { coordinateIndex, coordinateOf, holdReadTree, keyName, placeOf, rootEdges, sourceHandleOf, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
 import { mintTreeToken, registerTree, treeOfToken } from './tree-token.ts';
 import type { RecordPosition } from './handle.ts';
 import type { DescendantBatch, TreeQuery } from './query.ts';
@@ -94,7 +94,7 @@ function recordTreeOf(view: RecordPosition): number {
 function sourceRecordOf(node: object): number | undefined {
 	const source = placeOf(node);
 	if (source === undefined || treeOfToken(source.token)?.built === undefined) return undefined;
-	return source.index >= 0 ? source.index : Math.floor((-source.index - 1) / RUN_ROWS);
+	return keyName(source.index).node;
 }
 
 function renderTreeOf(node: object): number | undefined {
@@ -269,9 +269,9 @@ export interface NativeEngineLike<TNode = unknown> {
 	readRenderAt?(node: number, leading: boolean, trailing: boolean, options?: object, templates?: boolean): string;
 	/** The text bytes `start` to `end` cover in the source the read's record at `node` of the built arena was read from. Refuses an address no read wrote and a span that is not one of the source's. Present when the addon carries the record codec. */
 	readText?(node: number, start: number, end: number): string;
-	/** `descendants` for a node a read left records of in the built arena: `from` and the batch name nodes as `{ $node, $row? }`. Present when the addon carries the record codec. */
+	/** `descendants` for a node a read left records of in the built arena: `from` and the batch name nodes as `{ $node, $site? }`. Present when the addon carries the record codec. */
 	readDescendants?: NativeEngineLike['descendants'];
-	/** `planHolds` for nodes a read left records of in the built arena, named as `{ $node, $row? }`. Present when the addon carries the record codec. */
+	/** `planHolds` for nodes a read left records of in the built arena, named as `{ $node, $site? }`. Present when the addon carries the record codec. */
 	readPlanHolds?: NativeEngineLike['planHolds'];
 	/** `snapshotLayouts` for the node a read left in the built arena that the key `node` names, each pair's node by its key. Present when the addon carries the record codec. */
 	readSnapshotLayouts?(node: number, holderByte?: number): [number, object][];

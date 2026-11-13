@@ -1147,7 +1147,7 @@ macro_rules! napi_engine {
                     Some(options) => options.resolve(&base).map_err(::napi::Error::from_reason)?,
                     None => base,
                 };
-                if name.row.is_none() {
+                if name.site.is_none() {
                     let changed = $crate::slot::ChangedEdges { leading, trailing };
                     let canonical = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| engine.render_at(&built, $crate::arena::Address(name.node.0), changed, &table, templates == Some(true), $crate::napi_engine::admit_entry::<$grammar>)))
                         .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_at panicked")))?
@@ -1157,7 +1157,7 @@ macro_rules! napi_engine {
                 let trees = $crate::engine::SourceTrees::new(&engine, &built, $crate::napi_engine::admit_entry::<$grammar>);
                 let read = $crate::engine::ReadTrees::over(&trees);
                 let no_node = || ::napi::Error::from_reason(format!("no read wrote a node named {name:?}"));
-                let index = read.holding(tree_id, $crate::arena::Address(name.node.0)).and_then(|tree| tree.index_at($crate::arena::NodeSite::named(name))).ok_or_else(no_node)?;
+                let index = read.holding(tree_id, $crate::arena::Address(name.node.0)).and_then(|tree| tree.index_named(name)).ok_or_else(no_node)?;
                 let coord = $crate::render::SourceTable::row_coordinate(&read, tree_id, index).ok_or_else(no_node)?;
                 let through = $crate::render::ThroughTemplates(&read);
                 let sources: &dyn $crate::render::SourceTable = if templates == Some(true) { &through } else { &read };
@@ -1170,7 +1170,7 @@ macro_rules! napi_engine {
 
             /// `snapshotLayouts` for the node a read left that the key
             /// `node` names, as `[key, layout]` pairs in preorder, each
-            /// node by its key (`NodeName::key`). Refuses as
+            /// node a record or a slot names by its key (`NodeName::key`). Refuses as
             /// `with_read_node` and as `snapshotLayouts`.
             #[::napi_derive::napi(ts_return_type = "[number, object][]")]
             pub fn read_snapshot_layouts(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, node: f64, holder_byte: Option<f64>) -> ::napi::Result<Vec<(f64, Box<$crate::layout::NodeLayout<<$grammar as $crate::engine::EngineGrammar>::Trivia>>)>> {
@@ -1178,7 +1178,7 @@ macro_rules! napi_engine {
                 with_read_node(engine, node, |tree, index| {
                     $crate::napi_engine::answered(tree, index, "snapshot panicked", || tree.snapshot_layouts(index, holder_byte))?
                         .into_iter()
-                        .map(|(index, layout)| Ok(($crate::napi_engine::node_key(tree, index)?, layout)))
+                        .filter_map(|(index, layout)| $crate::napi_engine::node_key(tree, index).map(|key| key.map(|key| (key, layout))).transpose())
                         .collect()
                 })
             }
@@ -2421,14 +2421,15 @@ pub fn named_key(key: f64) -> napi::Result<crate::types::NodeName> {
 }
 
 /// The key of the node `tree`, made for one call over a source's records,
-/// knows by `index` (`NodeName::key`).
+/// knows by `index` (`NodeName::key`); none for a node no record or slot
+/// names, which nothing past the call can ask after.
 ///
 /// # Errors
 ///
-/// An index the call gave no node, and a row past what a key holds.
+/// A site past what a key holds.
 #[cfg(feature = "arena")]
-pub fn node_key<G: crate::engine::EngineGrammar>(tree: &crate::ParsedTree<G, crate::engine::Records<'_>>, index: crate::types::NodeIndex) -> napi::Result<f64> {
-    tree.name_at(index).and_then(crate::types::NodeName::key).ok_or_else(|| napi::Error::from_reason(format!("node {} of the call has no key", index.0)))
+pub fn node_key<G: crate::arena::RecordGrammar>(tree: &crate::ParsedTree<G, crate::engine::Records<'_>>, index: crate::types::NodeIndex) -> napi::Result<Option<f64>> {
+    tree.name_at(index).map(|name| name.key().ok_or_else(|| napi::Error::from_reason(format!("the site of node {} of the call is past what a key holds", index.0)))).transpose()
 }
 
 /// The text bytes `start` to `end` cover in the source the record at `node`

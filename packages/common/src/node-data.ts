@@ -1,4 +1,5 @@
 import type { AnyUntypedNode, ByteSpan, ErrorRegion, NodeLayout, NodeTrivia, NodeCoordinate, TriviaEntry } from '@sittir/types';
+import type { CellSite } from './record-cell.ts';
 import { decodeIndex, isCoordinate, type TreeHandle, type TriviaSideName } from './read.ts';
 import { assertHoldsTree, carryTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
@@ -228,14 +229,28 @@ export function indexOf(node: object): number | undefined {
 	return at === undefined ? undefined : coordinateIndex(at);
 }
 
-export const RUN_ROWS = 2 ** 19;
+const SITE_WORDS = 2 ** 7;
+const SITE_ITEMS = 2 ** 16;
+const KEY_SITES = SITE_WORDS * SITE_ITEMS;
+const KEY_NODES = 2 ** 30;
+
+export function packedSite(site: CellSite | undefined): number {
+	if (site === undefined) return 0;
+	const [word, item] = site;
+	if (word <= 0 || word >= SITE_WORDS || item >= SITE_ITEMS) throw new Error(`the site at word ${word}, item ${item} is past what a node's key holds`);
+	return item * SITE_WORDS + word;
+}
+
+export function keyName(key: number): { readonly node: number; readonly site: number } {
+	return key >= 0 ? { node: key, site: 0 } : { node: Math.floor(-key / KEY_SITES), site: -key % KEY_SITES };
+}
 
 export function coordinateIndex(at: NodeCoordinate): number {
-	const { $node, $row } = at as { readonly $node?: number; readonly $row?: number };
+	const { $node, $site } = at as { readonly $node?: number; readonly $site?: CellSite };
 	if ($node === undefined) return decodeIndex(at.$treeHandle);
-	if ($row === undefined) return $node;
-	if ($row >= RUN_ROWS) throw new Error(`row ${$row} of the record at ${$node} is past what a node's key holds`);
-	return -($node * RUN_ROWS + $row + 1);
+	if ($site === undefined) return $node;
+	if ($node >= KEY_NODES) throw new Error(`the record at ${$node} is past what a node's key holds`);
+	return -($node * KEY_SITES + packedSite($site));
 }
 
 /** Whether `key` names one of a node's slots (`_<name>`). */

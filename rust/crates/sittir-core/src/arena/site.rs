@@ -23,7 +23,7 @@ fn malformed(what: &'static str, word: u32) -> ArenaError {
 /// record of its own.
 fn leaf_row(cell: &Cell) -> Option<u32> {
     match *cell {
-        Cell::ParsedLeaf { row, .. } => Some(row.0),
+        Cell::ParsedLeaf { row, .. } | Cell::Unit { row: Some(row), .. } => Some(row.0),
         _ => None,
     }
 }
@@ -89,4 +89,20 @@ pub fn row_sites(arena: &dyn ArenaRead, holder: Address, shape: fn(KindId) -> Op
         }
     }
     Ok(sites)
+}
+
+/// Where the node `name` names is kept: its own record, or the row of its
+/// record's run that the cell at its site names, a cell row of 1 being the
+/// record's own node.
+///
+/// # Errors
+///
+/// As `site_row`.
+pub fn node_site(arena: &dyn ArenaRead, shape: fn(KindId) -> Option<RecordShape>, bits: u32, name: crate::types::NodeName) -> Result<super::NodeSite, ArenaError> {
+    let holder = Address(name.node.0);
+    let Some([word, item]) = name.site else { return Ok(super::NodeSite::Record(holder)) };
+    Ok(match site_row(arena, holder, shape, bits, CellSite { word, item })? {
+        1 => super::NodeSite::Record(holder),
+        row => super::NodeSite::Row { holder, entry: row.checked_sub(2).ok_or(malformed("cell row", row))? },
+    })
 }

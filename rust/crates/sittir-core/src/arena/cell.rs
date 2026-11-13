@@ -101,7 +101,7 @@ pub enum Cell {
     /// own row, an entry of its run plus 2 otherwise), its byte span, whose
     /// text is its source's, and the edges whose neighbour this holder
     /// changed. Its sides are its row's.
-    ReadLeaf { kind: KindId, at: Address, holder: Address, row: u32, span: Span, changed: ChangedEdges },
+    ReadLeaf { kind: KindId, at: Address, name: crate::types::NodeName, span: Span, changed: ChangedEdges },
     /// A captured interior string of a built node: its text in the string table.
     BuiltText { text: StringRef },
 }
@@ -494,12 +494,11 @@ fn linked(arena: &dyn ArenaRead, at: Address, kind: KindId, changed: ChangedEdge
     if words[1] != 0 {
         return Err(malformed("link record side", words[1]));
     }
-    let tree = TreeId(words[2]);
-    match (words[5], words[4]) {
-        (0, 0) => Ok(Cell::ReadLeaf { kind, at, holder: record(words[2])?, row: words[3], span: span(words[6], words[7])?, changed }),
-        (0, end) => Ok(Cell::LinkedLeaf { kind, at, tree, row: NodeIndex(words[3]), end: NodeIndex(end), span: span(words[6], words[7])?, changed }),
-        (parsed, _) => Ok(Cell::Child { kind, at: record(parsed)?, link: Some(tree), changed }),
+    if words[5] != 0 {
+        return Err(malformed("link record", words[5]));
     }
+    let site = (words[3] != 0).then_some([words[3], words[4]]);
+    Ok(Cell::ReadLeaf { kind, at, name: crate::types::NodeName { node: crate::types::NodeId(record(words[2])?.0), site }, span: span(words[6], words[7])?, changed })
 }
 
 /// A list slot's cell: the address of its run of item cells and the items
@@ -618,12 +617,13 @@ mod tests {
             StringRef { chunk: entry.chunk(), byte: entry.word() + 4, len: n("len") }
         };
         match entry["form"].as_str().expect("a form") {
-            "linkedLeaf" => Cell::LinkedLeaf {
+            "linkedLeaf" => Cell::ReadLeaf {
                 kind: kind(),
                 at: Address(n("at")),
-                tree: TreeId(n("tree")),
-                row: NodeIndex(n("row")),
-                end: NodeIndex(n("end")),
+                name: crate::types::NodeName {
+                    node: crate::types::NodeId(n("holder")),
+                    site: entry["site"].as_array().map(|site| [0, 1].map(|at| u32::try_from(site[at].as_u64().expect("a site number")).expect("a site number"))),
+                },
                 span: Span { start: n("start"), end: n("spanEnd") },
                 changed: fixture_changed(entry),
             },
@@ -696,8 +696,9 @@ mod tests {
         let text = image.entry(KindId::BLANK, "ab");
         image.entry(KindId::ERROR, "?");
         let record = image.record(KindId(14), 3, &[(2, built_cell(name, ChangedEdges { leading: true, trailing: false }))]);
-        image.link(KindId(14), TreeId(3), NodeIndex(7), NodeIndex(9), Address(5000), Span { start: 2, end: 9 });
-        image.link(KindId(16), TreeId(3), NodeIndex(8), NodeIndex(9), Address::NONE, Span { start: 4, end: 8 });
+        let holder = crate::types::NodeId(5000);
+        image.link(KindId(14), crate::types::NodeName { node: holder, site: Some([3, 2]) }, Span { start: 2, end: 9 });
+        image.link(KindId(16), crate::types::NodeName { node: holder, site: None }, Span { start: 4, end: 8 });
         image.run(&[built_cell(record, ChangedEdges::default()), built_cell(text, ChangedEdges::default())]);
         for chunk in built["chunks"].as_array().expect("chunks") {
             let n = fixture_number(chunk, "chunk");

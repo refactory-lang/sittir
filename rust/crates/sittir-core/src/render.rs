@@ -355,6 +355,15 @@ pub trait SourceTable {
         None
     }
 
+    /// The id this call names the node `name` names by, in the source `tree`
+    /// names, whose records outlive their tree; `None` where the table
+    /// reads no such source or its records hold no such node.
+    #[cfg(feature = "arena")]
+    fn name_row(&self, tree: crate::types::TreeId, name: crate::types::NodeName) -> Option<crate::types::NodeIndex> {
+        let _ = (tree, name);
+        None
+    }
+
     /// The id this call names the node by that a cell of the parsed record
     /// at `holder` names by `row` in its run (`RunNodes::row_index`), in the
     /// source `tree` names; `None` where the table reads no such source.
@@ -459,6 +468,11 @@ impl SourceTable for ThroughTemplates<'_> {
     #[cfg(feature = "arena")]
     fn cell_row(&self, tree: crate::types::TreeId, holder: crate::arena::Address, row: u32) -> Option<crate::types::NodeIndex> {
         self.0.cell_row(tree, holder, row)
+    }
+
+    #[cfg(feature = "arena")]
+    fn name_row(&self, tree: crate::types::TreeId, name: crate::types::NodeName) -> Option<crate::types::NodeIndex> {
+        self.0.name_row(tree, name)
     }
 
     #[cfg(feature = "arena")]

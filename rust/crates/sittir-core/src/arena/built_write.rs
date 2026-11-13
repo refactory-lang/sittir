@@ -8,7 +8,7 @@ use super::cell::{flag, with_kind, CellWord, ListCell, LINK_WORDS};
 use super::count::OWNED;
 use super::memory::{ChunkMem, ChunkUnit};
 use super::{Address, ArenaError, BuiltChunks, CHUNK_WORDS, STRING_CHUNK_BYTES};
-use crate::types::{KindId, NodeIndex, Span, TreeId};
+use crate::types::{KindId, Span};
 
 /// The bytes of a leaf entry's head, its kind and its text's length.
 const ENTRY_HEAD_BYTES: u32 = 4;
@@ -173,15 +173,17 @@ impl<'a> BuiltWriter<'a> {
         Ok(true)
     }
 
-    /// The link record naming the parsed node of `kind` at `row` of `tree`,
-    /// held by the cell naming it: its subtree's end, its record there and
-    /// its byte span.
+    /// The link record naming the node of `kind` that `name` names, a node
+    /// a read left with no record of its own, held by the cell naming it:
+    /// its holder, then the word and item of its site, both 0 for its
+    /// holder's own node, and its byte span.
     ///
     /// # Errors
     ///
     /// As `header` and `place`.
-    pub fn link(&mut self, kind: KindId, tree: TreeId, row: NodeIndex, end: NodeIndex, record: Address, span: Span) -> Result<Address, ArenaError> {
-        let words = [self.header(kind, flag::LINK)?, 0, tree.0, row.0, end.0, record.0, span.start, span.end];
+    pub fn link(&mut self, kind: KindId, name: crate::types::NodeName, span: Span) -> Result<Address, ArenaError> {
+        let [word, item] = name.site.unwrap_or([0, 0]);
+        let words = [self.header(kind, flag::LINK)?, 0, name.node.0, word, item, 0, span.start, span.end];
         debug_assert_eq!(words.len(), LINK_WORDS as usize);
         self.place(&words, 1)
     }

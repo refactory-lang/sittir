@@ -3,6 +3,8 @@ import { BLANK_KIND_ID } from './blank-arm.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import type { RecordWords } from './read.ts';
 
+export type CellSite = readonly [word: number, item: number];
+
 /** The record codec's constants as an addon built with the `arena` feature exports them. */
 export interface RecordCodecConstants {
 	readonly CELL_TAG_ABSENT: number;
@@ -124,9 +126,8 @@ export type RecordCell =
 			readonly form: 'linkedLeaf';
 			readonly kind: number;
 			readonly at: number;
-			readonly tree: number;
-			readonly row: number;
-			readonly end: number;
+			readonly holder: number;
+			readonly site: CellSite | undefined;
 			readonly span: ByteSpan;
 			readonly changed: { readonly leading: boolean; readonly trailing: boolean };
 	  };

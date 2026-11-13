@@ -1,5 +1,5 @@
 import type { BuiltArena } from './built-arena.ts';
-import type { CellFormat, RecordCell } from './record-cell.ts';
+import type { CellFormat, CellSite, RecordCell } from './record-cell.ts';
 import type { ByteSpan, ErrorRegion, NodeCoordinate } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
 import type { TreeToken } from './tree-token.ts';
@@ -111,7 +111,7 @@ export function isCoordinate(value: unknown): value is NodeCoordinate {
  * @throws when the tree has no native read, or the coordinate names another tree.
  */
 export function readNode(tree: TreeHandle, coordinate: NodeCoordinate, depth?: number): unknown {
-	const named = coordinate as unknown as { readonly $node?: number; readonly $row?: number; readonly $span: NodeCoordinate['$span']; readonly $type: number };
+	const named = coordinate as unknown as { readonly $node?: number; readonly $site?: CellSite; readonly $span: NodeCoordinate['$span']; readonly $type: number };
 	if (named.$node !== undefined && tree.built !== undefined) return tree.built.named({ ...named, $node: named.$node });
 	if (tree.read === undefined) throw new Error('readNode: this tree has no native read');
 	const owner = decodeTree(coordinate.$treeHandle);

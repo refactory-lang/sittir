@@ -1,5 +1,5 @@
 import type { Snapshot } from '@sittir/types';
-import { decodeIndex, isCoordinate, type TreeHandle } from './read.ts';
+import { isCoordinate, type TreeHandle } from './read.ts';
 import { coordinateIndex, coordinateOf, enterPath, envelopeKindOf, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, nodeText, separatorOf, sidesOf, slotsOf, unitSidesOf } from './node-data.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { TriviaSides } from './trivia.ts';

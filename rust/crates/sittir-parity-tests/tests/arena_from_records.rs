@@ -1,11 +1,11 @@
 //! A tree its deep read hydrated whole renders in arena storage from what its
-//! records and rows hold. Untouched, rebuilt from a read and edited, no render
-//! is handed tree-sitter's tree (`LayoutWork::tree_reads`), a second render
-//! measures no layout run's baseline gap again, and an edited render writes
-//! no record.
+//! records and rows hold. Untouched and edited, no render is handed
+//! tree-sitter's tree (`LayoutWork::tree_reads`), and an edited render writes
+//! no record. A node built over a read's records renders as it does
+//! natively.
 #![cfg(feature = "arena")]
 
-use sittir_core::arena::{Address, ArenaRead, BuiltChunks, Cell, CellAt, HeldArenas, HydrateNode, LeafRead, Linked, RecordCells, RecordGrammar, RecordSink, RecordTrees, WriteCell};
+use sittir_core::arena::{Address, Cell, HydrateNode, LeafRead, Linked, RecordCells, RecordGrammar, RecordSink, WriteCell};
 use sittir_core::engine::{node_at_index, EngineGrammar, NodeRead, ParsedTree};
 use sittir_core::layout::{LayoutWork, NodeLayout, UnitSides};
 use sittir_core::nodes::Nodes;
@@ -14,16 +14,12 @@ use sittir_core::prepare::{Prepare, RenderContext};
 use sittir_core::read::{descendant_count, Depth, HasLayout, ReadNode};
 use sittir_core::render::RenderError;
 use sittir_core::slot::{ChangedEdges, NodeCoordinate};
-use sittir_core::trivia_store::TriviaStore;
 use sittir_core::types::NodeIndex;
 use sittir_core::SlotValue;
 use sittir_parity_tests::{edit_in_place, fixture_sources, parsed};
 
 /// A grammar's native render of a root (`render_node_parts`).
 type NativeRender<N> = fn(SlotValue<N>, &RenderContext<'_>, Option<&mut sittir_core::baseline::Baseline>) -> Result<(sittir_core::types::Source, String), RenderError>;
-
-/// A grammar's render of a record (`render_record`).
-type RecordRender<T> = fn(CellAt, &mut dyn RecordTrees, &dyn ArenaRead, &TriviaStore<T>, &RenderContext<'_>, Option<sittir_core::arena::Recording<'_>>) -> Result<String, RenderError>;
 
 /// One grammar's renders, a source holding comments, lists and nested
 /// blocks, the node of it a codemod edits (`kind:n`, its `n`th node of
@@ -34,7 +30,6 @@ struct Case<G: EngineGrammar, N> {
     grammar: G,
     options: fn() -> ResolvedOptions,
     native: NativeRender<N>,
-    record: RecordRender<G::Trivia>,
     rebuild: fn(&mut N),
     /// The root, read, made a built node of its own: it keeps the children
     /// it was read with and no layout.
@@ -65,13 +60,7 @@ fn since(after: LayoutWork, before: LayoutWork) -> LayoutWork {
     }
 }
 
-/// The work a render did measuring baseline gaps: regions walked, layout
-/// records rendered and the nodes they entered, frames aligned.
-fn measuring(work: &LayoutWork) -> [u32; 4] {
-    [work.region_nodes, work.records_rendered, work.record_nodes, work.gap_items]
-}
-
-impl<G: RecordGrammar, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells> Case<G, N> {
+impl<G: RecordGrammar + Copy, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells> Case<G, N> {
     /// The case's source parsed and hydrated whole (`hydrate_record`), and
     /// its root's record.
     fn hydrated(&self) -> (ParsedTree<G>, Address) {
@@ -88,28 +77,6 @@ impl<G: RecordGrammar, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode 
         Rendered { text, work: since(tree.layout_work(), before) }
     }
 
-    /// `tree`'s root rebuilt from its read (`rebuild`), and written as a
-    /// built record that links its children's parsed records.
-    fn rebuilt_root(&self, tree: &ParsedTree<G>) -> (N, BuiltChunks, CellAt) {
-        let mut node: N = tree.read(NodeIndex::ROOT, Depth::ONE).expect("the root reads");
-        (self.rebuild)(&mut node);
-        let (built, root) = built_record(tree, &node);
-        (node, built, root)
-    }
-
-    /// The built record `root` of `built` rendered over `tree`'s arena.
-    fn render_built(&self, tree: &ParsedTree<G>, built: &BuiltChunks, root: CellAt) -> Rendered {
-        let options = (self.options)();
-        let before = tree.layout_work();
-        let text = {
-            let seating = tree.seating();
-            let ctx = RenderContext::new(&options, &seating);
-            let mut arenas = HeldArenas::of([(tree.tree_id(), tree.tree_arena())]);
-            (self.record)(root, &mut arenas, built, tree.store(), &ctx, None).expect("a record render")
-        };
-        Rendered { text, work: since(tree.layout_work(), before) }
-    }
-
     /// The case's root read one level and made a built node (`bare`).
     fn bare_root(&self, tree: &ParsedTree<G>) -> N {
         let mut node: N = tree.read(NodeIndex::ROOT, Depth::ONE).expect("the root reads");
@@ -117,61 +84,26 @@ impl<G: RecordGrammar, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode 
         node
     }
 
-    /// The bare root written as a built record that links its children's
-    /// records in its tree's arena, and rendered over the tree.
-    fn bare_over_tree(&self) -> String {
+    /// The bare root rendered from the records a read of the case's source
+    /// left (`over_read`), and its native render after it.
+    fn bare(&self) -> (String, String) {
         let tree = parsed(self.grammar, (self.options)(), self.source);
-        let (built, root) = built_record(&tree, &self.bare_root(&tree));
-        self.render_built(&tree, &built, root).text
+        self.over_read(&tree, self.bare_root(&tree))
     }
 
-    /// The bare root written into the arena of an engine that read the
-    /// case's source and kept no tree, its cells naming the records the read
-    /// left, and rendered from that arena alone.
-    fn bare_over_read(&self) -> String {
-        use sittir_core::arena::NodeSite;
-        use sittir_core::trivia_store::Place;
-        let tree = parsed(self.grammar, (self.options)(), self.source);
-        let node = self.bare_root(&tree);
-        let mut engine = sittir_core::engine::Engine::new(self.grammar, (self.options)()).expect("an engine");
-        let read = engine.parse_records::<N>(self.source).expect("a parse").root.expect("a root");
-        let records: std::collections::HashMap<NodeIndex, Address> = {
-            let built = engine.written().built();
-            let over = ParsedTree::over_records(&engine, &built, read).expect("a tree over the records");
-            let (mut ours, mut theirs) = (over.nodes(), tree.nodes());
-            let mut records = std::collections::HashMap::new();
-            let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT)];
-            while let Some((run, row)) = pending.pop() {
-                if let Some(Place::Read { site: NodeSite::Record(at), .. }) = over.place(run) {
-                    records.insert(row, at);
-                }
-                let (met, kept) = (ours.kids(run), theirs.kids(row));
-                pending.extend(met.iter().zip(kept.iter()).map(|(met, kept)| (met.index, kept.index)));
-            }
-            records
-        };
-        let at = {
-            let mut link = |coord: &NodeCoordinate| records.get(&coord.index).map(|&at| Linked::Record(at)).ok_or(sittir_core::arena::ArenaError::Unwritable("a child with no record"));
-            let store = engine.written().clone();
-            let mut built = engine.written().built_mut();
-            let word = node.write_cell(&mut RecordSink::built(&mut built, &store, &mut link)).expect("a built record");
-            match Cell::decode_built(word, &*built, G::KIND_BITS) {
-                Ok(Cell::Child { at, .. }) => at,
-                other => panic!("a built root: {other:?}"),
-            }
-        };
-        let built = engine.written().built();
-        engine.render_at(&built, at, ChangedEdges::default(), &(self.options)(), false, |_| Ok(())).expect("a record render")
+    /// The root rebuilt from its read (`rebuild`) rendered from the records
+    /// a read of the case's source left, and its native render after it.
+    fn rebuilt(&self, tree: &ParsedTree<G>) -> (String, String) {
+        let mut node: N = tree.read(NodeIndex::ROOT, Depth::ONE).expect("the root reads");
+        (self.rebuild)(&mut node);
+        self.over_read(tree, node)
     }
 
-    /// The rebuilt root's record rendered (`rebuilt_root`), and the rebuilt
-    /// root's native render after it, which it matches.
-    fn rebuilt(&self, tree: &ParsedTree<G>) -> (Rendered, String) {
-        let (node, built, root) = self.rebuilt_root(tree);
-        let rendered = self.render_built(tree, &built, root);
+    fn over_read(&self, tree: &ParsedTree<G>, node: N) -> (String, String) {
         let options = (self.options)();
+        let record = OverRead::of::<N>(self.grammar, &options, tree).render(&node, &options);
         let native = (self.native)(SlotValue::Node(node), &RenderContext::new(&options, &tree.seating()), None).expect("a native render").1;
-        (rendered, native)
+        (record, native)
     }
 
     /// The case's edited node written back with its own inner side
@@ -198,19 +130,60 @@ fn nth_of_kind<G: EngineGrammar>(tree: &ParsedTree<G>, edited: &str) -> NodeInde
         .unwrap_or_else(|| panic!("a {edited}"))
 }
 
-/// `node` written as a built record into a fresh arena, each parsed child it
-/// holds linked to its record in `tree`'s arena.
-fn built_record<G: RecordGrammar, N: WriteCell<G::Trivia> + HydrateNode + RecordCells>(tree: &ParsedTree<G>, node: &N) -> (BuiltChunks, CellAt) {
-    let mut built = BuiltChunks::new(G::KIND_BITS, G::shape);
-    let mut link = |coord: &NodeCoordinate| -> Result<Linked, sittir_core::arena::ArenaError> {
-        match tree.read_record::<N>(coord.index, Depth::ONE).map_err(|_| sittir_core::arena::ArenaError::Unwritable("an unread child"))? {
-            Some(at) => Ok(Linked::Record(at)),
-            None => Ok(Linked::Leaf(tree.source()[coord.span.range()].to_owned())),
-        }
-    };
-    let word = node.write_cell(&mut RecordSink::built(&mut built, tree.store(), &mut link)).expect("a built record");
-    let cell = Cell::decode_built(word, &built, G::KIND_BITS).expect("a built root");
-    (built, CellAt { cell, tree: None, site: None })
+/// An engine that read a tree's source and kept no tree, and the record its
+/// read left for each of the tree's nodes that has one.
+struct OverRead<G: RecordGrammar> {
+    engine: sittir_core::engine::Engine<G>,
+    records: std::collections::HashMap<NodeIndex, Address>,
+}
+
+impl<G: RecordGrammar> OverRead<G> {
+    fn of<N: ReadNode + HydrateNode + RecordCells>(grammar: G, options: &ResolvedOptions, tree: &ParsedTree<G>) -> Self {
+        use sittir_core::arena::NodeSite;
+        use sittir_core::trivia_store::Place;
+        let mut engine = sittir_core::engine::Engine::new(grammar, options.clone()).expect("an engine");
+        let read = engine.parse_records::<N>(tree.source()).expect("a parse").root.expect("a root");
+        let records = {
+            let built = engine.written().built();
+            let over = ParsedTree::over_records(&engine, &built, read).expect("a tree over the records");
+            let (mut ours, mut theirs) = (over.nodes(), tree.nodes());
+            let mut records = std::collections::HashMap::new();
+            let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT)];
+            while let Some((run, row)) = pending.pop() {
+                if let Some(Place::Read { site: NodeSite::Record(at), .. }) = over.place(run) {
+                    records.insert(row, at);
+                }
+                let (met, kept) = (ours.kids(run), theirs.kids(row));
+                pending.extend(met.iter().zip(kept.iter()).map(|(met, kept)| (met.index, kept.index)));
+            }
+            records
+        };
+        Self { engine, records }
+    }
+
+    /// `coord`, a node of the tree, named by the record the read left it.
+    fn named(&self, coord: NodeCoordinate) -> NodeCoordinate {
+        let name = self.records.get(&coord.index).map(|at| sittir_core::types::NodeName { node: sittir_core::types::NodeId(at.0), site: None });
+        coord.named(name)
+    }
+
+    /// `node`, read from the tree, written into the engine's arena, its
+    /// cells naming the records the read left, and rendered from that arena
+    /// alone.
+    fn render<N: WriteCell<G::Trivia>>(&self, node: &N, options: &ResolvedOptions) -> String {
+        let at = {
+            let mut link = |coord: &NodeCoordinate| self.records.get(&coord.index).map(|&at| Linked::Record(at)).ok_or(sittir_core::arena::ArenaError::Unwritable("a child with no record"));
+            let store = self.engine.written().clone();
+            let mut built = self.engine.written().built_mut();
+            let word = node.write_cell(&mut RecordSink::built(&mut built, &store, &mut link)).expect("a built record");
+            match Cell::decode_built(word, &*built, G::KIND_BITS) {
+                Ok(Cell::Child { at, .. }) => at,
+                other => panic!("a built root: {other:?}"),
+            }
+        };
+        let built = self.engine.written().built();
+        self.engine.render_at(&built, at, ChangedEdges::default(), options, false, |_| Ok(())).expect("a record render")
+    }
 }
 
 /// A read node's layout made a rebuilt one's: its sides are the node's it
@@ -226,7 +199,6 @@ fn rust() -> Case<sittir_rust::RustGrammar, sittir_rust::render::AnyNode> {
         grammar: sittir_rust::RustGrammar,
         options: sittir_rust::render::options::defaults,
         native: sittir_rust::render::render_node_parts,
-        record: sittir_rust::render::node::render_record,
         rebuild: |node| {
             let sittir_rust::render::AnyNode::SourceFile(file) = node else { panic!("the root is a file") };
             rebuilt_layout(&mut file.layout);
@@ -246,7 +218,6 @@ fn python() -> Case<sittir_python::PythonGrammar, sittir_python::render::AnyNode
         grammar: sittir_python::PythonGrammar,
         options: sittir_python::render::options::defaults,
         native: sittir_python::render::render_node_parts,
-        record: sittir_python::render::node::render_record,
         rebuild: |node| {
             let sittir_python::render::AnyNode::Module(module) = node else { panic!("the root is a module") };
             rebuilt_layout(&mut module.layout);
@@ -266,7 +237,6 @@ fn typescript() -> Case<sittir_typescript::TypeScriptGrammar, sittir_typescript:
         grammar: sittir_typescript::TypeScriptGrammar,
         options: sittir_typescript::render::options::defaults,
         native: sittir_typescript::render::render_node_parts,
-        record: sittir_typescript::render::node::render_record,
         rebuild: |node| {
             let sittir_typescript::render::AnyNode::Program(program) = node else { panic!("the root is a program") };
             rebuilt_layout(&mut program.layout);
@@ -280,22 +250,22 @@ fn typescript() -> Case<sittir_typescript::TypeScriptGrammar, sittir_typescript:
     }
 }
 
-fn reads_no_tree<G: RecordGrammar, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells>(case: &Case<G, N>) -> [u32; 3] {
+fn reads_no_tree<G: RecordGrammar, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells>(case: &Case<G, N>) -> [u32; 2] {
     let (tree, root) = case.hydrated();
     let untouched = case.untouched(&tree, root);
     assert_eq!(untouched.text, case.source, "{}: untouched", case.name);
     let (rebuilt, native) = case.rebuilt(&tree);
-    assert_eq!(rebuilt.text, native, "{}: rebuilt", case.name);
+    assert_eq!(rebuilt, native, "{}: rebuilt", case.name);
     let (mut tree, root) = case.hydrated();
     let codemod = case.codemod(&mut tree, root);
     assert_eq!(codemod.text, case.source, "{}: codemod", case.name);
-    [untouched.work.tree_reads, rebuilt.work.tree_reads, codemod.work.tree_reads]
+    [untouched.work.tree_reads, codemod.work.tree_reads]
 }
 
 #[test]
 fn arena_render_reads_no_tree() {
     let reads = [("rust", reads_no_tree(&rust())), ("python", reads_no_tree(&python())), ("typescript", reads_no_tree(&typescript()))];
-    assert_eq!(reads, [("rust", [0; 3]), ("python", [0; 3]), ("typescript", [0; 3])], "tree reads of the untouched, rebuilt and codemod renders");
+    assert_eq!(reads, [("rust", [0; 2]), ("python", [0; 2]), ("typescript", [0; 2])], "tree reads of the untouched and codemod renders");
 }
 
 /// The record of `case`'s `nested` node (`kind:n`) rendered from a tree read
@@ -325,23 +295,6 @@ fn a_nested_record_renders_from_records() {
     ] {
         assert_eq!(reads, 0, "{name}: tree reads of a nested record's render");
         assert_eq!(text, through_tree, "{name}: a nested record renders from records as through the tree");
-    }
-}
-
-fn measured_twice<G: RecordGrammar, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells>(case: &Case<G, N>) -> ([u32; 4], [u32; 4]) {
-    let (tree, _) = case.hydrated();
-    let (_, built, root) = case.rebuilt_root(&tree);
-    let first = case.render_built(&tree, &built, root);
-    let second = case.render_built(&tree, &built, root);
-    assert_eq!(first.text, second.text, "{}", case.name);
-    (measuring(&first.work), measuring(&second.work))
-}
-
-#[test]
-fn a_baseline_gap_is_measured_once() {
-    for (name, (first, second)) in [("rust", measured_twice(&rust())), ("python", measured_twice(&python())), ("typescript", measured_twice(&typescript()))] {
-        assert!(first.iter().any(|&work| work > 0), "{name}: the first render measures its runs, {first:?}");
-        assert_eq!(second, [0; 4], "{name}: the second render measures none again (first {first:?})");
     }
 }
 
@@ -627,15 +580,66 @@ fn a_node_of_a_record_kind_no_written_record_names_is_no_leaf() {
     assert_eq!(tree.read_leaf::<Ts>(name), Ok(None), "a method name's envelope is no leaf before a read writes its record");
 }
 
-fn holds_a_read<G: RecordGrammar, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells>(case: &Case<G, N>, held: &str) {
-    let over_tree = case.bare_over_tree();
-    assert!(over_tree.contains(held), "{}: the built root renders the children it holds: {over_tree:?}", case.name);
-    assert_eq!(case.bare_over_read(), over_tree, "{}", case.name);
+fn holds_a_read<G: RecordGrammar + Copy, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells>(case: &Case<G, N>, held: &str) {
+    let (record, native) = case.bare();
+    assert!(record.contains(held), "{}: the built root renders the children it holds: {record:?}", case.name);
+    assert_eq!(record, native, "{}", case.name);
 }
 
 #[test]
-fn a_built_record_renders_the_same_over_a_read_s_records_as_over_its_tree() {
+fn a_built_record_over_a_read_s_records_renders_as_natively() {
     holds_a_read(&rust(), "let x = g(a, b);");
     holds_a_read(&python(), "return [a, b]");
     holds_a_read(&typescript(), "return { x, y }");
+}
+
+fn line_comment(text: &str) -> Vec<sittir_core::trivia::TriviaEntry<sittir_rust::render::node::TriviaNode>> {
+    use sittir_rust::render::node::TriviaNode;
+    let comment = sittir_core::trivia::TriviaText { kind: sittir_rust::render::kind_ids::LINE_COMMENT, text: text.to_owned(), span: None, before: None, after: None, bytes: None };
+    [TriviaNode::Text(comment), TriviaNode::Newline].into_iter().map(|entry| sittir_core::trivia::TriviaEntry::new(SlotValue::Node(entry))).collect()
+}
+
+const REBUILT: &str = "fn f() {\n    x = f(a) + g(b);\n    let c = |p: A ,q: B| p;\n}\n";
+
+/// A built node rebuilt from a parsed one renders from its record as it does
+/// natively: the sides written on it and on its unit child from the store,
+/// each side it holds none of from the node it was rebuilt from, and its list
+/// slot's layout from its side record or, when it stores none, from that
+/// node.
+#[test]
+fn a_built_node_s_written_sides_units_and_slots_render_from_its_record_as_natively() {
+    use sittir_rust::render::AnyNode;
+    type Edit = fn(&mut NodeLayout<sittir_rust::render::node::TriviaNode>, &ParsedTree<sittir_rust::RustGrammar>);
+    let written = |layout: &mut NodeLayout<_>| layout.trivia = Some(sittir_core::trivia::NodeTrivia { leading: Some(line_comment("// node")), ..Default::default() });
+    let cases: [(&str, Edit, &str); 3] = [
+        ("binary_expression:0", |layout, _| layout.units.push(UnitSides { slot: "_operator".into(), item: sittir_core::types::ItemIndex(0), trivia: sittir_core::trivia::NodeTrivia { leading: Some(line_comment("// unit")), ..Default::default() } }), "// unit"),
+        ("closure_parameters:0", |layout, _| assert!(layout.slots.is_empty(), "a read stores no slot layout: prepare takes its tree's"), "|p: A ,q: B|"),
+        (
+            "closure_parameters:0",
+            |layout, tree| {
+                let source = sittir_core::render::SourceTable::slot_layouts(&tree.seating(), layout.sides.as_ref().expect("rebuilt from its read"), sittir_core::render::Lent::NONE);
+                assert!(!source.is_empty(), "the source spaces the list apart from the options");
+                layout.slots = source.into_iter().map(|slot| sittir_core::layout::SlotLayout { before: slot.after, after: slot.before, ..slot }).collect();
+            },
+            "|p: A, q: B|",
+        ),
+    ];
+    let options = sittir_rust::render::options::defaults();
+    for (kind, edit, expected) in cases {
+        let tree = parsed(sittir_rust::RustGrammar, options.clone(), REBUILT);
+        let mut node: AnyNode = tree.read(nth_of_kind(&tree, kind), Depth::ONE).expect("a node");
+        let (AnyNode::BinaryExpression(sittir_rust::render::node::BinaryExpressionNode { layout, .. }) | AnyNode::ClosureParameters(sittir_rust::render::node::ClosureParametersNode { layout, .. })) = &mut node else { panic!("a node of {kind}") };
+        rebuilt_layout(layout);
+        let layout = layout.as_mut().expect("a read node names itself");
+        written(layout);
+        edit(layout, &tree);
+        let native = sittir_rust::render::render_node_parts(SlotValue::Node(node.clone()), &RenderContext::new(&options, &tree.seating()), None).expect("a native render").1;
+        let over = OverRead::of::<AnyNode>(sittir_rust::RustGrammar, &options, &tree);
+        let (AnyNode::BinaryExpression(sittir_rust::render::node::BinaryExpressionNode { layout, .. }) | AnyNode::ClosureParameters(sittir_rust::render::node::ClosureParametersNode { layout, .. })) = &mut node else { panic!("a node of {kind}") };
+        let layout = layout.as_mut().expect("a read node names itself");
+        layout.sides = layout.sides.take().map(|sides| over.named(sides));
+        let record = over.render(&node, &options);
+        assert_eq!(record, native, "{kind}");
+        assert!(record.contains("// node") && record.contains(expected), "{kind}: {record:?}");
+    }
 }

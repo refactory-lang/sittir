@@ -10,14 +10,13 @@
 //! inner side written back, a test-only write that changes no text.
 #![cfg(feature = "arena")]
 
-use sittir_core::arena::{Address, ArenaRead, BuiltChunks, Cell, CellAt, HeldArenas, HydrateNode, Linked, RecordCells, RecordGrammar, RecordSink, RecordTrees, WriteCell};
+use sittir_core::arena::{Address, HydrateNode, RecordCells, RecordGrammar, WriteCell};
 use sittir_core::engine::{claim_tree_id, Engine, EngineGrammar, ParsedTree};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::prepare::RenderContext;
 use sittir_core::read::{read_at, Depth, ReadNode};
 use sittir_core::render::RenderError;
 use sittir_core::slot::ChangedEdges;
-use sittir_core::trivia_store::TriviaStore;
 use sittir_core::types::NodeIndex;
 use sittir_core::SlotValue;
 use sittir_parity_tests::{edit_in_place, load_fixtures, ParityFixture};
@@ -36,15 +35,11 @@ enum Alike {
 /// A grammar's native render of a root (`render_node_parts`).
 type NativeRender<N> = fn(SlotValue<N>, &RenderContext<'_>, Option<&mut sittir_core::baseline::Baseline>) -> Result<(sittir_core::types::Source, String), RenderError>;
 
-/// A grammar's render of a record (`render_record`).
-type RecordRender<T> = fn(CellAt, &mut dyn RecordTrees, &dyn ArenaRead, &TriviaStore<T>, &RenderContext<'_>, Option<sittir_core::arena::Recording<'_>>) -> Result<String, RenderError>;
-
 /// One grammar's two renders: a native root's, and a record's.
 struct Renders<G: EngineGrammar, N> {
     grammar: G,
     options: fn() -> ResolvedOptions,
     native: NativeRender<N>,
-    record: RecordRender<G::Trivia>,
 }
 
 impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + RecordCells> Renders<G, N> {
@@ -63,17 +58,6 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + Record
         let node: N = read_at(&mut seating.cursor(index), &mut seating.ctx(), index, Depth::ONE).ok()?;
         let ctx = RenderContext::new(options, &seating);
         Some((self.native)(SlotValue::Node(node), &ctx, None).map(|(_, text)| text).map_err(|e| format!("native: {e}")))
-    }
-
-    /// The built record `root` of the arena `built`, its parsed children in
-    /// `tree`'s, rendered twice: both renders, which must agree.
-    fn record(&self, tree: &ParsedTree<G>, built: &BuiltChunks, root: CellAt, options: &ResolvedOptions) -> Result<String, String> {
-        let seating = tree.seating();
-        let ctx = RenderContext::new(options, &seating);
-        twice(|| {
-            let mut arenas = HeldArenas::of([(tree.tree_id(), tree.tree_arena())]);
-            (self.record)(root, &mut arenas, built, tree.store(), &ctx, None).map_err(|e| format!("record: {e}"))
-        })
     }
 
     /// The record at `at` of `tree`'s arena rendered twice by its entry point
@@ -217,7 +201,7 @@ fn corpus<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + R
 type RustRenders = Renders<sittir_rust::RustGrammar, sittir_rust::render::AnyNode>;
 
 fn rust() -> RustRenders {
-    Renders { grammar: sittir_rust::RustGrammar, options: sittir_rust::render::options::defaults, native: sittir_rust::render::render_node_parts, record: sittir_rust::render::node::render_record }
+    Renders { grammar: sittir_rust::RustGrammar, options: sittir_rust::render::options::defaults, native: sittir_rust::render::render_node_parts }
 }
 
 #[test]
@@ -227,7 +211,7 @@ fn every_rust_source_renders_alike_from_its_records() {
 
 #[test]
 fn every_typescript_source_renders_alike_from_its_records() {
-    corpus("typescript", &Renders { grammar: sittir_typescript::TypeScriptGrammar, options: sittir_typescript::render::options::defaults, native: sittir_typescript::render::render_node_parts, record: sittir_typescript::render::node::render_record });
+    corpus("typescript", &Renders { grammar: sittir_typescript::TypeScriptGrammar, options: sittir_typescript::render::options::defaults, native: sittir_typescript::render::render_node_parts });
 }
 
 #[test]
@@ -237,12 +221,12 @@ fn every_python_source_renders_alike_from_its_records() {
 
 #[test]
 fn every_regex_source_renders_alike_from_its_records() {
-    corpus("regex", &Renders { grammar: sittir_regex::RegexGrammar, options: sittir_regex::render::options::defaults, native: sittir_regex::render::render_node_parts, record: sittir_regex::render::node::render_record });
+    corpus("regex", &Renders { grammar: sittir_regex::RegexGrammar, options: sittir_regex::render::options::defaults, native: sittir_regex::render::render_node_parts });
 }
 
 #[test]
 fn every_scm_source_renders_alike_from_its_records() {
-    corpus("scm", &Renders { grammar: sittir_scm::ScmGrammar, options: sittir_scm::render::options::defaults, native: sittir_scm::render::render_node_parts, record: sittir_scm::render::node::render_record });
+    corpus("scm", &Renders { grammar: sittir_scm::ScmGrammar, options: sittir_scm::render::options::defaults, native: sittir_scm::render::render_node_parts });
 }
 
 /// The node of kind `kind` spanning `text` in `source`, read one level
@@ -311,7 +295,7 @@ fn where_a_parsed_record_renders_never_depends_on_what_was_read() {
 }
 
 fn python() -> Renders<sittir_python::PythonGrammar, sittir_python::render::AnyNode> {
-    Renders { grammar: sittir_python::PythonGrammar, options: sittir_python::render::options::defaults, native: sittir_python::render::render_node_parts, record: sittir_python::render::node::render_record }
+    Renders { grammar: sittir_python::PythonGrammar, options: sittir_python::render::options::defaults, native: sittir_python::render::render_node_parts }
 }
 
 #[test]
@@ -359,89 +343,6 @@ fn an_edited_parent_renders_from_its_record_and_an_untouched_child_holding_a_com
         let record = RustRenders::parsed(&tree, RustRenders::first_read(&tree, depth).expect("a record"), &options).expect("a record render");
         assert_eq!(record, native, "read {depth:?}");
         assert!(record.contains("g(/* inside */)") && record.contains("// written"), "{record:?}");
-    }
-}
-
-#[test]
-fn an_untouched_parsed_record_a_built_record_links_renders_as_its_source() {
-    let renders = rust();
-    let mut engine = renders.engine();
-    let options = engine.options().clone();
-    let tree = RustRenders::parse(&mut engine, EDITED);
-    let seating = tree.seating();
-    let mut root: sittir_rust::render::AnyNode = read_at(&mut seating.cursor(NodeIndex::ROOT), &mut seating.ctx(), NodeIndex::ROOT, Depth::ONE).expect("a root");
-    let sittir_rust::render::AnyNode::SourceFile(file) = &mut root else { panic!("the root is a file") };
-    let layout = file.layout.as_mut().expect("a read node names itself");
-    layout.sides = layout.at.take();
-    let native = (renders.native)(SlotValue::Node(root.clone()), &RenderContext::new(&options, &seating), None).expect("a native render").1;
-    let (built, root, linked) = built_record(&tree, &root);
-    assert!(linked > 0, "the built root links its parsed children");
-    let record = renders.record(&tree, &built, root, &options).expect("a record render");
-    assert_eq!(record, native);
-}
-
-/// `node` written as a built record into a fresh arena, each untouched
-/// parsed child it holds linked to its record in `tree`'s arena, and how many
-/// it linked.
-fn built_record<G: RecordGrammar, N: WriteCell<G::Trivia> + HydrateNode + RecordCells>(tree: &ParsedTree<G>, node: &N) -> (BuiltChunks, CellAt, usize) {
-    let mut built = BuiltChunks::new(G::KIND_BITS, G::shape);
-    let mut linked = 0;
-    let mut link = |coord: &sittir_core::slot::NodeCoordinate| -> Result<Linked, sittir_core::arena::ArenaError> {
-        match tree.read_record::<N>(coord.index, Depth::ONE).map_err(|_| sittir_core::arena::ArenaError::Unwritable("an unread child"))? {
-            Some(at) => {
-                linked += 1;
-                Ok(Linked::Record(at))
-            }
-            None => Ok(Linked::Leaf(tree.source()[coord.span.range()].to_owned())),
-        }
-    };
-    let word = node.write_cell(&mut RecordSink::built(&mut built, tree.store(), &mut link)).expect("a built record");
-    let cell = Cell::decode_built(word, &built, G::KIND_BITS).expect("a built root");
-    (built, CellAt { cell, tree: None, site: None }, linked)
-}
-
-const REBUILT: &str = "fn f() {\n    x = f(a) + g(b);\n    let c = |p: A ,q: B| p;\n}\n";
-
-/// A built node rebuilt from a parsed one renders from its record as it does
-/// natively: the sides written on it and on its unit child from the store,
-/// each side it holds none of from the node it was rebuilt from, and its list
-/// slot's layout from its side record or, when it stores none, from that
-/// node.
-#[test]
-fn a_built_node_s_written_sides_units_and_slots_render_from_its_record_as_natively() {
-    use sittir_core::layout::{NodeLayout, UnitSides};
-    use sittir_rust::render::AnyNode;
-    type Edit = fn(&mut NodeLayout<sittir_rust::render::node::TriviaNode>, &ParsedTree<sittir_rust::RustGrammar>);
-    let written = |layout: &mut NodeLayout<_>| layout.trivia = Some(sittir_core::trivia::NodeTrivia { leading: Some(line_comment("// node")), ..Default::default() });
-    let cases: [(sittir_core::types::KindId, Edit, &str); 3] = [
-        (rust_kinds::BINARY_EXPRESSION, |layout, _| layout.units.push(UnitSides { slot: "_operator".into(), item: sittir_core::types::ItemIndex(0), trivia: sittir_core::trivia::NodeTrivia { leading: Some(line_comment("// unit")), ..Default::default() } }), "// unit"),
-        (rust_kinds::CLOSURE_PARAMETERS, |layout, _| assert!(layout.slots.is_empty(), "a read stores no slot layout: prepare takes its tree's"), "|p: A ,q: B|"),
-        (
-            rust_kinds::CLOSURE_PARAMETERS,
-            |layout, tree| {
-                let source = sittir_core::render::SourceTable::slot_layouts(&tree.seating(), layout.sides.as_ref().expect("rebuilt from its read"), sittir_core::render::Lent::NONE);
-                assert!(!source.is_empty(), "the source spaces the list apart from the options");
-                layout.slots = source.into_iter().map(|slot| sittir_core::layout::SlotLayout { before: slot.after, after: slot.before, ..slot }).collect();
-            },
-            "|p: A, q: B|",
-        ),
-    ];
-    let renders = rust();
-    let mut engine = renders.engine();
-    let options = engine.options().clone();
-    for (kind, edit, expected) in cases {
-        let tree = RustRenders::parse(&mut engine, REBUILT);
-        let mut node: AnyNode = tree.read(index_of(&tree, kind, 0), Depth::ONE).expect("a node");
-        let (AnyNode::BinaryExpression(sittir_rust::render::node::BinaryExpressionNode { layout, .. }) | AnyNode::ClosureParameters(sittir_rust::render::node::ClosureParametersNode { layout, .. })) = &mut node else { panic!("a node of {kind:?}") };
-        let layout = layout.as_mut().expect("a read node names itself");
-        layout.sides = layout.at.take();
-        written(layout);
-        edit(layout, &tree);
-        let native = (renders.native)(SlotValue::Node(node.clone()), &RenderContext::new(&options, &tree.seating()), None).expect("a native render").1;
-        let (built, root, _) = built_record(&tree, &node);
-        let record = renders.record(&tree, &built, root, &options).expect("a record render");
-        assert_eq!(record, native, "{kind:?}");
-        assert!(record.contains("// node") && record.contains(expected), "{kind:?}: {record:?}");
     }
 }
 

@@ -233,18 +233,18 @@ pub struct Sides {
 impl Sides {
     /// The node `name` names past a call, spanning `span`, as a side record
     /// keeps it where its records outlive its tree: its record where a tree
-    /// is, its run row after 0 where an index is, and no end. A read
+    /// is, its packed site where an index is, and no end. A read
     /// resolves it to the call's own tree and index (`RecordCtx::side`).
     #[must_use]
     pub fn named(name: crate::types::NodeName, span: Span) -> Self {
-        Self { tree: TreeId(name.node.0), index: NodeIndex(name.row.map_or(0, |row| row + 1)), end: NodeIndex(0), span }
+        Self { tree: TreeId(name.node.0), index: NodeIndex(name.packed_site()), end: NodeIndex(0), span }
     }
 
     /// The name these words hold (`named`); none for a tree's node, whose
     /// subtree end is past its index and so never 0.
     #[must_use]
     pub fn name(self) -> Option<crate::types::NodeName> {
-        (self.end == NodeIndex(0)).then(|| crate::types::NodeName { node: crate::types::NodeId(self.tree.0), row: self.index.0.checked_sub(1) })
+        (self.end == NodeIndex(0)).then_some(crate::types::NodeName { node: crate::types::NodeId(self.tree.0), site: crate::types::NodeName::site_of(self.index.0) })
     }
 
     /// The node's coordinate in its tree.
