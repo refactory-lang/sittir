@@ -126,8 +126,8 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 		`${grammar}/${formatBackendLabel(backend)}:`,
 		`  fromPass=${from.pass}    fromTotal=${from.total}    fromTrivia=${from.trivia.length}`,
 		`  covPass=${coverage.pass}    covTotal=${coverage.total}`,
-		`  read-render-parsePass=${readRenderParse.pass}    read-render-parseTotal=${readRenderParse.total}    read-render-parseAstMatchPass=${readRenderParse.astMatchPass}    read-render-parseTrivia=${readRenderParse.trivia.length}    read-render-parseSpellingNormalized=${readRenderParse.spellingNormalized.length}`,
-		`  read-render-parse-shallowPass=${readRenderParseShallow.pass}    read-render-parse-shallowTotal=${readRenderParseShallow.total}    read-render-parse-shallowAstMatchPass=${readRenderParseShallow.astMatchPass}    read-render-parse-shallowTrivia=${readRenderParseShallow.trivia.length}    read-render-parse-shallowSpellingNormalized=${readRenderParseShallow.spellingNormalized.length}`,
+		`  read-render-parsePass=${readRenderParse.pass}    read-render-parseTotal=${readRenderParse.total}    read-render-parseAstMatchPass=${readRenderParse.astMatchPass}    read-render-parseTrivia=${readRenderParse.trivia.length}    read-render-parseSpellingNormalized=${readRenderParse.spellingNormalized.length}    read-render-parseFoldedMismatches=${readRenderParse.foldedMismatches.length}`,
+		`  read-render-parse-shallowPass=${readRenderParseShallow.pass}    read-render-parse-shallowTotal=${readRenderParseShallow.total}    read-render-parse-shallowAstMatchPass=${readRenderParseShallow.astMatchPass}    read-render-parse-shallowTrivia=${readRenderParseShallow.trivia.length}    read-render-parse-shallowSpellingNormalized=${readRenderParseShallow.spellingNormalized.length}    read-render-parse-shallowFoldedMismatches=${readRenderParseShallow.foldedMismatches.length}`,
 		`  factory-storagePass=${factoryStorage.pass}    factory-storageTotal=${factoryStorage.total}    factory-storageAstMatchPass=${factoryStorage.astMatchPass}`,
 		`  ir-storagePass=${irStorage.pass}    ir-storageTotal=${irStorage.total}    ir-storageAstMatchPass=${irStorage.astMatchPass}`,
 		`  built-render-parsePass=${builtRenderParse.pass}    built-render-parseTotal=${builtRenderParse.total}    built-render-parseAstMatchPass=${builtRenderParse.astMatchPass}    built-render-parseSeparatorTolerated=${builtRenderParse.separatorTolerated}    built-render-parseSpellingNormalized=${builtRenderParse.spellingNormalized}`,
@@ -247,6 +247,8 @@ export function toValidationRun(counts: GrammarCounts): ValidationRun {
 		builtRenderParseSpellingNormalized: builtRenderParse.spellingNormalized,
 		fromTrivia: from.trivia.length,
 		readRenderParseTrivia: readRenderParse.trivia.length,
+		readRenderParseFoldedMismatches: readRenderParse.foldedMismatches.length,
+		readRenderParseShallowFoldedMismatches: readRenderParseShallow.foldedMismatches.length,
 		readRenderParseShallowTrivia: readRenderParseShallow.trivia.length,
 		layoutRunsTotal: layoutRuns.total,
 		layoutRunsUnreached: layoutRuns.unreached.length,
@@ -480,6 +482,14 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 				stage: `${stage}-ast-mismatch`,
 				code: `${stage}-ast-mismatch`,
 				severity: 'error',
+				label: entryKindLabel(m)
+			});
+		for (const m of result.foldedMismatches)
+			failures.push({
+				...m,
+				stage: `${stage}-folded-mismatch`,
+				code: `${stage}-folded-mismatch`,
+				severity: 'warning',
 				label: entryKindLabel(m)
 			});
 		pushSkips(stage, result);
