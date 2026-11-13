@@ -14,25 +14,57 @@ use crate::trivia_table::TriviaSide;
 use crate::types::{KindId, NodeIndex};
 
 impl<G: EngineGrammar> Engine<G> {
-    /// The entries a write gave `side` of the built record at `at`, or
-    /// `None` when no write did, so the side is the one of the node it was
-    /// rebuilt from.
+    /// The entries of `side` of the record at `at`. For a built record, the
+    /// ones a write gave it, or `None` when no write did, so the side is the
+    /// one of the node it was rebuilt from. For a record a read left, the
+    /// ones a write gave it, else the ones its source assigns it.
     ///
     /// # Errors
     ///
-    /// `ArenaError::Malformed` for address 0, which names no record.
+    /// `ArenaError::Malformed` for address 0, which names no record, and
+    /// what reading a read's record refuses.
     pub fn built_trivia_side(&self, at: Address, side: TriviaSide) -> Result<Option<Vec<TriviaEntry<G::Trivia>>>, ArenaError> {
-        Ok(self.written().side(Place::Record(at.record()?), side))
+        let at = at.record()?;
+        match self.read_node(at, |tree, index| tree.trivia_side(index, side))? {
+            Some(entries) => Ok(Some(entries)),
+            None => Ok(self.written().side(Place::Record(at), side)),
+        }
     }
 
-    /// Replace `side` of the built record at `at` with `entries`, which its
-    /// render then writes (`render_built`).
+    /// Replace `side` of the record at `at`, a built one or one a read left,
+    /// with `entries`, which its render then writes (`render_built`).
     ///
     /// # Errors
     ///
     /// As `built_trivia_side`.
     pub fn write_built_trivia_side(&self, at: Address, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), ArenaError> {
-        self.written().write_held_side(Place::Record(at.record()?), side, entries)
+        let at = at.record()?;
+        let place = {
+            let built = self.written().built();
+            if built.read_entry(at) {
+                Place::Read { tree: crate::types::TreeId(super::RunNodes::source_of(&*built, at)?.0), site: super::NodeSite::Record(at) }
+            } else {
+                Place::Record(at)
+            }
+        };
+        self.written().write_held_side(place, side, entries)
+    }
+
+    /// What `f` answers of the node a read left a record of at `at`: the
+    /// tree over its source's records, made for this call, and the id the
+    /// call gives the node. `None` for an address no read wrote.
+    ///
+    /// # Errors
+    ///
+    /// What making the tree refuses.
+    pub fn read_node<R>(&self, at: Address, f: impl FnOnce(&crate::engine::ParsedTree<G, crate::engine::Records<'_>>, NodeIndex) -> R) -> Result<Option<R>, ArenaError> {
+        let built = self.written().built();
+        if !built.read_entry(at) {
+            return Ok(None);
+        }
+        let tree = crate::engine::ParsedTree::over_records(self, &built, at)?;
+        let index = tree.index_at(super::NodeSite::Record(at)).ok_or(ArenaError::Malformed { what: "record address", word: at.0 })?;
+        Ok(Some(f(&tree, index)))
     }
 
     /// The entries a write gave `side` of the built leaf at `site`, or `None`

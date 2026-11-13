@@ -654,6 +654,13 @@ impl<'a, G: EngineGrammar> ParsedTree<G, Records<'a>> {
         let held = crate::arena::HeldArenas::of([]).with_reads(built);
         Ok(engine.tree_of(Records { built, held, table }, text, inferred, breaks_lf, 0, tree))
     }
+
+    /// The id this call gives the node kept at `site`; none for a site no
+    /// record of the source holds.
+    #[must_use]
+    pub fn index_at(&self, site: crate::arena::NodeSite) -> Option<NodeIndex> {
+        crate::arena::RunNodes::over(self.tree.built, self.source, &self.tree.table).index_at(site)
+    }
 }
 
 impl<G: EngineGrammar, B: Backing> Drop for ParsedTree<G, B> {

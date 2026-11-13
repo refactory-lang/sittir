@@ -336,3 +336,39 @@ fn a_coordinate_of_a_read_s_node_names_its_record() {
     assert_eq!(coord.node(), Some(sittir_core::types::NodeId(at.0)));
     assert_eq!((coord.span, coord.kind), (kept.span, kept.kind));
 }
+
+#[test]
+fn a_read_s_record_answers_its_sides_by_its_address_as_a_built_record_does() {
+    use sittir_core::arena::{Address, NodeSite};
+    use sittir_core::trivia_store::Place;
+    use sittir_core::trivia_table::TriviaSide;
+    let source = "fn f() {\n    // why\n    a;\n}\n";
+    let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
+    let root = engine.parse_records::<sittir_rust::render::AnyNode>(source).expect("a parse").root.expect("a root");
+    let (at, side, assigned): (Address, TriviaSide, String) = {
+        let built = engine.written().built();
+        let records = sittir_core::engine::ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
+        let mut nodes = records.nodes();
+        let mut met = Vec::new();
+        nodes.walk(NodeIndex::ROOT, &mut |step, kid| {
+            if step == Step::Meet {
+                met.push(kid.index);
+            }
+            Visit::Enter
+        });
+        met.into_iter()
+            .find_map(|index| {
+                let Some(Place::Read { site: NodeSite::Record(at), .. }) = records.place(index) else { return None };
+                [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].into_iter().find_map(|side| {
+                    let entries = records.trivia_side(index, side);
+                    (!entries.is_empty()).then(|| (at, side, format!("{entries:?}")))
+                })
+            })
+            .expect("a record whose side holds the comment")
+    };
+    assert!(assigned.contains("Coord"), "the side holds the comment by its coordinate: {assigned}");
+    let read = engine.built_trivia_side(at, side).expect("a side").expect("the side its source assigns");
+    assert_eq!(unnamed(&format!("{read:?}")), unnamed(&assigned));
+    engine.write_built_trivia_side(at, side, Vec::new()).expect("a write");
+    assert_eq!(engine.built_trivia_side(at, side).expect("a side").map(|entries| entries.len()), Some(0), "the written side is the one read");
+}
