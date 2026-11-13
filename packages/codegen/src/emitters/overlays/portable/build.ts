@@ -41,6 +41,7 @@ import {
 	isDelimiterToken,
 	isMultiple,
 	isNodeRef,
+	isNonEmpty,
 	isRequired,
 	isTerminalValue,
 	memberOf as canonicalMemberOf,
@@ -540,6 +541,17 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const ids = sortedIds(kinds.flatMap((kind) => typeOf(kind) ?? []));
 		return all.flatMap((kind) => typeOf(kind) ?? []).every((id) => ids.includes(id)) ? undefined : ids;
 	};
+	const neverEmpty = (path: readonly SlotStep[], seats: readonly Seat[]): boolean => {
+		const lists = seats.filter((seat) => seat.many);
+		return (
+			lists.length > 0 &&
+			lists.every((seat) => isNonEmpty(seat.slot) && seat.within.every((container) => container.optional !== true)) &&
+			path.every((step) => {
+				const slot = slotOf(step.owner, step.slot);
+				return slot !== undefined && isRequired(slot);
+			})
+		);
+	};
 	const memberOf = (route: MemberRoute, guaranteed?: Guaranteed): { readonly member: PortableMemberStep; readonly seats: readonly Seat[] } | undefined => {
 		if (route.flag === true || route.spelled === true || route.path === undefined) return undefined;
 		const steps = stepsOf(route.path, guaranteed);
@@ -552,6 +564,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				name: route.name,
 				steps,
 				multiple: route.route === 'nested' ? route.multiple : isMultiple(slot),
+				...(neverEmpty(route.path, seats) ? { nonEmpty: true as const } : {}),
 				...(route.list === undefined ? {} : { list: route.list }),
 				seats: seats.map(seatRecord),
 				...(reads === undefined ? {} : { reads })
