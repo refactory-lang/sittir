@@ -658,20 +658,19 @@ impl BuiltChunks {
     }
 
     /// A new words chunk of `len` words for a read's records, zeroed: its
-    /// number and its memory. The chunk the builders write stays open.
+    /// number. The chunk the builders write stays open.
     ///
     /// # Errors
     ///
     /// As `alloc_words`.
-    pub fn alloc_read_words(&mut self, len: u32) -> Result<(u32, Arc<ChunkMem<u32>>), ArenaError> {
+    pub fn alloc_read_words(&mut self, len: u32) -> Result<u32, ArenaError> {
         let chunk = self.number(len)?;
-        let mem = ChunkMem::zeroed(len as usize);
-        self.chunks[chunk as usize] = Some(BuiltChunk::Words { mem: Arc::clone(&mem), counts: count::CountTable::new(len) });
-        Ok((chunk, mem))
+        self.chunks[chunk as usize] = Some(BuiltChunk::Words { mem: ChunkMem::zeroed(len as usize), counts: count::CountTable::new(len) });
+        Ok(chunk)
     }
 
     /// The memory of the words chunk `chunk`.
-    pub(crate) fn words_mem(&self, chunk: u32) -> Option<&Arc<ChunkMem<u32>>> {
+    pub(crate) fn words_mem(&self, chunk: u32) -> Option<&ChunkMem<u32>> {
         match self.chunks.get(chunk as usize) {
             Some(Some(BuiltChunk::Words { mem, .. })) => Some(mem),
             _ => None,

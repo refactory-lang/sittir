@@ -32,7 +32,8 @@ impl<T: ChunkUnit> Open<T> {
 /// left as it is.
 pub struct ReadWriter<'a> {
     chunks: &'a mut BuiltChunks,
-    open: Option<Open<u32>>,
+    /// The chunk the read has open, the words of it used, and its words.
+    open: Option<(u32, u32, u32)>,
 }
 
 impl<'a> ReadWriter<'a> {
@@ -58,13 +59,15 @@ impl super::RecordSpace for ReadWriter<'_> {
     }
 
     fn alloc(&mut self, words: u32) -> Result<Address, ArenaError> {
-        if !self.open.as_ref().is_some_and(|open| open.fits(words)) {
-            let (chunk, mem) = self.chunks.alloc_read_words(words.max(CHUNK_WORDS))?;
-            self.open = Some(Open { chunk, mem, used: 0 });
-        }
-        let open = self.open.as_mut().ok_or(ArenaError::Full)?;
-        let at = Address::new(open.chunk, open.used).ok_or(ArenaError::Full)?;
-        open.used += words;
+        let (chunk, used, len) = match self.open {
+            Some((chunk, used, len)) if used.checked_add(words).is_some_and(|end| end <= len) => (chunk, used, len),
+            _ => {
+                let len = words.max(CHUNK_WORDS);
+                (self.chunks.alloc_read_words(len)?, 0, len)
+            }
+        };
+        let at = Address::new(chunk, used).ok_or(ArenaError::Full)?;
+        self.open = Some((chunk, used + words, len));
         self.chunks.place(at, 1)?;
         Ok(at)
     }
