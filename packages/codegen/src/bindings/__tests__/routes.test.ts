@@ -1242,16 +1242,21 @@ describe("keptKinds over a supertype the slot holds", () => {
 		]);
 	});
 
-	it("tests nothing below a wildcard that every kind it may be guarantees, and gives a supertype's own entry no child test", async () => {
-		const routes = resolveRoutes(
-			await grammar(
-				'(impl_x clause: (_ trait: (_))) @declaration.extension.conformance\n(_struct (identifier)) @declaration.struct'
-			)
-		);
+	it('tests nothing below a wildcard that every kind it may be guarantees', async () => {
+		const routes = resolveRoutes(await grammar('(impl_x clause: (_ trait: (_))) @declaration.extension.conformance'));
 		expect(routes.readEntries.get('impl_x')?.[0]?.children).toEqual([
 			{ subject: { up: 0, down: [{ field: 'clause', kind: null, after: null, anchor: null }] }, kinds: ['clause_neg', 'clause_pos'] }
 		]);
-		expect(routes.readEntries.get('_struct')?.[0]?.children).toEqual([]);
+	});
+
+	it('mints no read entry for a supertype, which no parsed node is, and enters its claim on each kind it splits into', async () => {
+		const routes = resolveRoutes(await grammar('(_struct (identifier)) @declaration.struct'));
+		expect(routes.readEntries.has('_struct')).toBe(false);
+		expect(['struct_unit', 'struct_tuple', 'struct_named'].map((kind) => routes.readEntries.get(kind)?.map((e) => [e.claimed, e.vocab, e.children]))).toEqual([
+			[['_struct', 'declaration.struct', []]],
+			[['_struct', 'declaration.struct', []]],
+			[['_struct', 'declaration.struct', []]]
+		]);
 	});
 
 	it('routes no slot whose values, beside the kinds a member path leads through, a child test of a refinement tells', async () => {
