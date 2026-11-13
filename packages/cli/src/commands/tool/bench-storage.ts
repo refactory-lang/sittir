@@ -10,7 +10,6 @@ export const benchStorage: CommandModule = {
 			.option('--warmup <n>', 'Warmup batches per timed phase', '2')
 			.option('--iterations <n>', 'Measured corpus batches per phase and round', '3')
 			.option('--limit <n>', 'Use only the first n corpus entries (smoke runs)')
-			.option('--native-depth <depth>', 'Native hydration depth: a positive integer or all', 'all')
 			.option('--validation', 'Profile deep read, factory and IR render/parse validators under both paired backends')
 			.option(
 				'--baseline <tree>',
@@ -30,7 +29,6 @@ export const benchStorage: CommandModule = {
 						warmup: string;
 						iterations: string;
 						limit?: string;
-						nativeDepth: string;
 						validation?: boolean;
 						idleGate?: string;
 						holdPeers?: boolean;
@@ -45,7 +43,6 @@ export const benchStorage: CommandModule = {
 						warmup: Number(opts.warmup),
 						iterations: Number(opts.iterations),
 						limit: opts.limit === undefined ? undefined : Number(opts.limit),
-						nativeDepth: opts.nativeDepth === 'all' ? 'all' : Number(opts.nativeDepth),
 						validation: opts.validation,
 						idleGate: opts.idleGate,
 						holdPeers: opts.holdPeers,

@@ -42,24 +42,11 @@ it(
 );
 
 it.each([
-	{ label: 'default', args: ['regex'], depth: 'all', grammars: ['regex'], rounds: 2 },
-	{
-		label: 'depth 2',
-		args: ['--native-depth', '2'],
-		depth: 2,
-		grammars: allGrammars,
-		rounds: 1
-	},
-	{
-		label: 'depth all',
-		args: ['--native-depth', 'all'],
-		depth: 'all',
-		grammars: allGrammars,
-		rounds: 1
-	}
+	{ label: 'one grammar', args: ['regex'], grammars: ['regex'], rounds: 2 },
+	{ label: 'every stable grammar', args: [], grammars: allGrammars, rounds: 1 }
 ])(
-	'runs only native hydration with $label in fresh GC-enabled workers',
-	async ({ args, depth, grammars, rounds }) => {
+	'runs only native hydration of $label in fresh GC-enabled workers',
+	async ({ args, grammars, rounds }) => {
 		const report = await reportFor([
 			...args,
 			'--rounds',
@@ -72,25 +59,22 @@ it.each([
 			'2'
 		]);
 		expect(report.mode).toBe('native-hydration');
-		expect(report.schemaVersion).toBe(3);
+		expect(report.schemaVersion).toBe(4);
 		expect(report).not.toHaveProperty('samples');
 		expect(report).not.toHaveProperty('summary');
-		expect(report.options.nativeDepth).toBe(depth);
+		expect(report.options).not.toHaveProperty('nativeDepth');
 		expect(report.nativeSamples).toHaveLength(grammars.length * rounds);
 		expect(report.nativeSummary.map((row: { grammar: string }) => row.grammar)).toEqual(grammars);
 		expect(new Set(report.nativeSamples.map((row: { pid: number }) => row.pid)).size).toBe(grammars.length * rounds);
 		expect(report.environment.idleGated).toBe(false);
 		for (const row of report.nativeSamples) {
-			expect(row.depth).toBe(depth);
+			expect(row).not.toHaveProperty('depth');
 			expect(row.entries).toBeGreaterThan(0);
 			expect(row.entries + row.refused.length).toBe(2);
-			for (const phase of ['parse', 'hydrate', 'render', 'pipeline', 'afterShallow'])
-				expect(row.timings[phase]).toHaveLength(1);
+			expect(Object.keys(row.timings)).toEqual(['parse', 'render', 'pipeline']);
+			for (const phase of ['parse', 'render', 'pipeline']) expect(row.timings[phase]).toHaveLength(1);
 			expect(row.render.sha256).toMatch(/^[a-f\d]{64}$/);
-			expect(row.timings.pipeline[0]).toBeCloseTo(
-				row.timings.parse[0] + row.timings.hydrate[0] + row.timings.render[0],
-				6
-			);
+			expect(row.timings.pipeline[0]).toBeCloseTo(row.timings.parse[0] + row.timings.render[0], 6);
 		}
 	},
 	storageBenchTestTimeout

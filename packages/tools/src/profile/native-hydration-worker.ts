@@ -3,12 +3,11 @@ import type { GrammarName } from '@sittir/codegen/grammars';
 import { languageByName } from '../languages.ts';
 import { loadCorpusEntries } from '../validate/common.ts';
 import { nativeBackendOf } from '../validate/layout-runs.ts';
-import { sampleNativeHydration, type HydrationDepth, type NativeHydrationSample } from './native-hydration.ts';
+import { sampleNativeHydration, type NativeHydrationSample } from './native-hydration.ts';
 import { collectGarbage, corpusFingerprint } from './storage-common.ts';
 
 export interface NativeHydrationOptions {
 	grammar: GrammarName;
-	depth: HydrationDepth;
 	warmup: number;
 	iterations: number;
 	limit?: number;
@@ -26,7 +25,6 @@ export async function sampleNative(options: NativeHydrationOptions): Promise<Nat
 	const sample = await sampleNativeHydration(
 		await nativeBackendOf(options.grammar),
 		entries,
-		options.depth,
 		options.warmup,
 		options.iterations,
 		collectGarbage
