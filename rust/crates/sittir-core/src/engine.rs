@@ -604,24 +604,33 @@ impl<'a> Backing for Records<'a> {
 
 #[cfg(feature = "arena")]
 impl<'a, G: EngineGrammar> ParsedTree<G, Records<'a>> {
-    /// The source the record at `record` of `built` was read from, as one
-    /// call reads it through `engine`: its tree id names its source's entry.
+    /// The tree over the records a read left in `built` of the source the
+    /// record at `record` names, as one call reads it through `engine`
+    /// (`over_source`).
     ///
     /// # Errors
     ///
-    /// What reading the record, the records above it or its source's entry
-    /// refuses, and `ArenaError::Malformed` for a record that names no
-    /// source.
+    /// What reading the record or its source's entry refuses, and
+    /// `ArenaError::Malformed` for a record that names no source.
     pub fn over_records(engine: &Engine<G>, built: &'a crate::arena::BuiltChunks, record: crate::arena::Address) -> Result<Self, crate::arena::ArenaError> {
-        use crate::arena::ArenaRead;
-        let root = crate::arena::RunNodes::root_of(built, record)?;
-        let side = crate::arena::SideRecord::read(built, crate::arena::Address(built.words(root, crate::record::HEADER_WORDS)?[1]))?;
-        let entry = side.source.ok_or(crate::arena::ArenaError::Malformed { what: "parsed record source", word: root.0 })?;
-        let crate::arena::source::Source { text, breaks_lf, inferred } = crate::arena::source::Source::read(built, crate::arena::Address(entry))?;
+        Self::over_source(engine, built, TreeId(crate::arena::RunNodes::source_of(built, record)?.0))
+    }
+
+    /// The tree over the records a read left in `built` of the source whose
+    /// entry `tree` names, as one call reads it through `engine`: its nodes
+    /// are found from the root the entry names.
+    ///
+    /// # Errors
+    ///
+    /// What reading the source's entry or its root's record refuses, and
+    /// `ArenaError::Malformed` for a source that names no root.
+    pub fn over_source(engine: &Engine<G>, built: &'a crate::arena::BuiltChunks, tree: TreeId) -> Result<Self, crate::arena::ArenaError> {
+        let crate::arena::source::Source { text, breaks_lf, root, inferred } = crate::arena::source::Source::read(built, crate::arena::Address(tree.0))?;
+        let root = root.ok_or(crate::arena::ArenaError::Malformed { what: "source root", word: tree.0 })?;
         let table = crate::arena::RunTable::default();
         crate::arena::RunNodes::new(built, text, root, &table)?;
         let held = crate::arena::HeldArenas::of([]).with_reads(built);
-        Ok(engine.tree_of(Records { built, held, table }, text, inferred, breaks_lf, 0, TreeId(entry)))
+        Ok(engine.tree_of(Records { built, held, table }, text, inferred, breaks_lf, 0, tree))
     }
 }
 
@@ -2742,13 +2751,16 @@ impl<G: EngineGrammar> Engine<G> {
         let errors = error_regions(&mut TreeNodes::new(&tree, source, &work));
         let grammar = self.grammar;
         let mut built = self.written.built_mut();
-        let entry = built.write_source(&crate::arena::source::Source { text: source, breaks_lf: !source.contains('\r'), inferred }).map_err(|refusal| refusal.to_string())?;
+        let entry = built.write_source(&crate::arena::source::Source { text: source, breaks_lf: !source.contains('\r'), root: None, inferred }).map_err(|refusal| refusal.to_string())?;
         let root = if root.is_error() {
             None
         } else {
             let mut ctx = crate::read::ReadCtx::new(source, crate::types::TreeId(0), grammar.shows()).with_relaxes(grammar.relaxes());
             crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), &mut crate::arena::ReadWriter::new(&mut built)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?
         };
+        if let Some(root) = root {
+            built.root_source(entry, root).map_err(|refusal| refusal.to_string())?;
+        }
         Ok(ParsedRecords { root, source: entry, errors })
     }
 

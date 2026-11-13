@@ -154,20 +154,15 @@ impl<'t> RunNodes<'t> {
         self.answering(|walk| walk.depth_move(index, kinds))
     }
 
-    /// The record of the source's root above the record at `at`, by its
-    /// parent words.
+    /// The entry of the source the record at `at` was read from.
     ///
     /// # Errors
     ///
-    /// What reading a record on the way refuses.
-    pub fn root_of(arena: &dyn ArenaRead, mut at: Address) -> Result<Address, ArenaError> {
-        loop {
-            let header = arena.words(at, crate::record::HEADER_WORDS)?;
-            match SideRecord::read(arena, Address(header[1]))?.parent {
-                Some(parent) => at = parent,
-                None => return Ok(at),
-            }
-        }
+    /// What reading the record refuses, and `ArenaError::Malformed` for a
+    /// record that names no source.
+    pub fn source_of(arena: &dyn ArenaRead, at: Address) -> Result<Address, ArenaError> {
+        let header = arena.words(at, crate::record::HEADER_WORDS)?;
+        SideRecord::read(arena, Address(header[1]))?.source.map(Address).ok_or(malformed("parsed record source", at))
     }
 
 }

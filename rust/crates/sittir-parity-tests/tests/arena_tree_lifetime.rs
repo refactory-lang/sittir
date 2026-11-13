@@ -22,6 +22,7 @@ fn nodes_left<G: EngineGrammar, N: HydrateNode>(name: &str, engine: &mut Engine<
     let entry = Source::read(&*built, parse.source).unwrap_or_else(|refusal| panic!("{name} {source:?}: its source entry: {refusal}"));
     assert_eq!(entry.text, source, "{name}: the source reads back from its entry");
     assert_eq!(entry.breaks_lf, !source.contains('\r'), "{name} {source:?}");
+    assert_eq!(entry.root, parse.root, "{name} {source:?}: the source names its root's record");
     let Some(root) = parse.root else { return 0 };
     let table = RunTable::default();
     let mut nodes = RunNodes::new(&*built, entry.text, root, &table).unwrap_or_else(|refusal| panic!("{name} {source:?}: its root: {refusal}"));
