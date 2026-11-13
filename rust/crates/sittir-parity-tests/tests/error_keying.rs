@@ -7,8 +7,8 @@
 //! the `ERROR` replaces it. A line continuation whose in-line run the
 //! entry before it carries, as its `$after`, is still fixed in place by
 //! that run: one carrier holds it, and the continuation renders verbatim
-//! beside it. Each source renders as it reads, from its snapshot and with
-//! every node edited in place.
+//! beside it. Each source renders as it reads with every node edited in
+//! place, and so does its snapshot (`packages/tools/tests/snapshot-one-rule.test.ts`).
 
 use sittir_parity_tests::renders_as_read;
 

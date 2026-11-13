@@ -8,6 +8,7 @@ describe('a token-form supertype nested under another supertype arm', () => {
 	it.each([
 		['typescript', 'number_bigint', ['number_bigint_hex', 'number_bigint_binary', 'number_bigint_octal', 'number_bigint_decimal']],
 		['python', 'integer_decimal', ['integer_decimal_long', 'integer_decimal_imaginary', 'integer_decimal_plain']],
+		['python', 'integer_hex', ['integer_hex_long', 'integer_hex_plain']],
 		[
 			'rust',
 			'char_literal_escaped',

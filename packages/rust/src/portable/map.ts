@@ -26799,7 +26799,6 @@ export interface RustMap extends V.GrammarMap {
 				| 'false'
 				| 'self'
 				| 'true';
-			readonly $forms: V.Form<never, 'element' | 'length'> | V.Form<'element' | 'length', 'elements'>;
 		};
 		readonly 'expression.collection.list.repeat': {
 			readonly element:

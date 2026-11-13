@@ -15,6 +15,7 @@ import {
 	nativePlatformPackage
 } from '@sittir/codegen/grammars';
 import { LOADED_ENGINE, engineLibraryName, engineStampOf, hostPlatform, isStdLibrary, platformSuffix } from '@sittir/common/engine';
+import { load } from '../src/codegen-surface.ts';
 import { languageByName } from '../src/languages.ts';
 import { imageSymbols, mappedImages } from '../src/native-images.ts';
 
@@ -182,5 +183,22 @@ describe('a process that loads two grammar bindings', () => {
 		expect(folders('std')).toEqual([folder(first)]);
 		expect(folders('addon')).toEqual([folder(first), folder(second)]);
 		expect(mapped.find((entry) => entry.kind === 'engine')?.stamp).toBe(engineStampOf(join(nativeBindingDir(first), ENGINE)));
+	});
+});
+
+describe('a grammar binding reports the profile build-native built it with', () => {
+	it.each(allGrammars())('%s', async (grammar) => {
+		const { nativeBuildStamp } = await load('nativeBinaryFreshness');
+		const recorded = nativeBuildStamp(REPO_ROOT, grammar)?.profile;
+		expect(recorded).toBeDefined();
+		const { SittirEngine } = createRequire(import.meta.url)(join(nativeBindingDir(grammar), NATIVE_LOADER)) as {
+			SittirEngine: new () => { readonly buildProfile: unknown; dispose(): void };
+		};
+		const engine = new SittirEngine();
+		try {
+			expect(engine.buildProfile).toBe(recorded);
+		} finally {
+			engine.dispose();
+		}
 	});
 });

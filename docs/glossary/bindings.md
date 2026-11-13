@@ -638,22 +638,6 @@ The kind renames as an object literal, each kind to its vocabulary name; `{}` wh
 
 A string as a quoted TypeScript literal, for the generated layer.
 
-### `packages/codegen/src/bindings/flags.ts::FLAGS_PATH`
-
-The vocabulary's generated flags module, `flags.ts` in `VOCABULARY_DIR`. The inventory writes it from the vocabulary's `Flag` declarations, and it is the one file there that is not authored. The bindings hash covers it with the rest of the vocabulary, so `--write` writes it before any `grammar.bindings.ts`.
-
-### `packages/codegen/src/bindings/flags.ts::FLAG_BITS`
-
-The flags one bitflag word holds: 31, below the sign bit, so every bit is a positive number that `|` and `&` keep.
-
-### `packages/codegen/src/bindings/flags.ts::flagMembers`
-
-The members of the generated flags module: one bit per flag name, in name order, each named by its TypeScript name (`byReference` is `ByReference` at bit 3). A name has one bit wherever it is declared, so `Flags.Static | Flags.Async` is the same number in every language. More names than `FLAG_BITS` are refused, naming the ones past the word, since their bits need a second word, which is designed when one is needed. A feature never adds a member to the enum, since a member added by augmentation has no bit at run time. `printFlagsModule` in tools builds the module from these members.
-
-### `packages/codegen/src/bindings/flags-module.ts::flagsModuleInProcess`
-
-Builds the flags module from its members with the pinned build's `@sittir/typescript` factories and renders it with the pinned engine (tab indent). It runs only in the pinned reader's child, as the `flagsModule` mode, and loads the build through `loadPinnedBuild`, so the writer's output depends on the pin and not on the workspace's generated package. The header comment names `REGENERATE_BINDINGS_COMMAND`, the one source of the regenerate command.
-
 ### `packages/codegen/src/bindings/pinned-reader.ts::module`
 
 The `bindings.scm` reader, over the pinned `@sittir/scm` build (`bootstrap/pinned.ts::loadPinnedBuild`). It imports `@sittir/scm` and `@sittir/common` for types only: every value it uses comes from the pinned build, so the facts depend on the pin and not on the workspace's packages.

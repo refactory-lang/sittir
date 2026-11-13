@@ -137,10 +137,13 @@ problem and no view or template struct changes.
 - **Inert when a literal already carries its space.** At a seam following `"fn "`, `last` is `' '` (not word-class) → no insert.
 - **Absent optionals are free.** A missing optional's render is a no-op call → context untouched → the next seam tests against whatever actually preceded. The adjacent-optionals case needs zero special handling.
 - **Style vs required separation falls out.** Style spaces (around `->`, after `,`) are baked into generated literal text, visible and unconditional. The writer supplies only lexically-required spaces at dynamic boundaries.
+- **Two tokens never join into a third** (the maintainer, 2026-11-12: "We insert space wherever the two sides joined together were themselves a token"). A pair gets the space when its join is itself a token the parser lexes at that seam, token-tree punctuation included (rust's `& &`, `. .`, `< <` inside a macro's tokens). The fact is per seam, and it comes from the parser's own parse table, read from the built parser at emit time (the maintainer, 2026-11-12: "Parse table"). One walk of the table gives the grammar's join-pair table and, for each seam before a token, an arm bit; the writer tests a pair against the table only at an armed seam. That one derivation replaces the literal walk and the same-character rule. A doubled symbol stays tight where no state at its seam lexes the join: nested generics' `>>`, turbofish `::<`, a closure's `||` as a `let` value.
+  - **A seam whose states disagree is armed** (the maintainer, 2026-11-12: "Any state arms it"). Rust lexes `||` as one token at a closure statement that follows a block and as two elsewhere at the same seam, so the seam takes the space: a render never re-parses differently, and a few gain a space they didn't need.
+  - **A grammar-wide table is not enough.** Measured on the corpora, it fixed no render and spaced six rust renders that already parsed the same (`move | | {`, `E< <F as E>::G>`).
+  - **Known over-report:** the parse table says `<<` could be lexed in a cast such as `d as *mut E<<F as E>::G>`, where lexical precedence splits it, so that render gains a space (the maintainer, 2026-11-12: "Accept, file the probe"). A reader of the parser's lex modes would remove it.
 
 ### What it does NOT cover (by design)
 
-- **Punct-punct merges outside the registered pairs** (e.g. a grammar with no multi-char operator sharing a prefix with another). Not word-class collisions; the `literal_merge_pairs` table covers exactly the transitions a grammar's own anonymous-literal inventory proves risky, and a doubled unambiguous symbol like nested `>>` in generics is deliberately excluded (see `spacing.rs::write_text`'s `symbol_seam` comment).
 - **Newline-required boundaries** (line comment followed by code). Safe as long as trivia writes include their terminating newline — `last` becomes `'\n'`, not word-class. Trivia render pins this with a test.
 
 ---

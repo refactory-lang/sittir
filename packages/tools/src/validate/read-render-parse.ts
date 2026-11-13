@@ -1123,27 +1123,17 @@ export async function validateReadRenderParse(
 					const node1ForAst = findSpanNode(tree1.root, indices.start, indices.end, cand.displayKind, canonicalKindNameFromId);
 					const tsVisibleKind = node1ForAst?.type;
 
-					// Materialize the wrapped node directly — it already IS its source
-					// kind. renderedKind (source) drives the render template; targetKind
-					// (display) drives the post-reparse node lookup.
-					//
-					// Shallow mode (`recursive !== true`): the node with each child as
-					// its coordinate (`materializeShallow`), holding its tree.
-					// This preserves the read-render-parse-shallow metric's meaning
-					// (render() fed coordinate-bearing data, the shape lazy callers
-					// send) as distinct from the deep run's full materialization.
-					// Falls back to deep materialization when the wrapped node carries
-					// no coordinate.
 					const treeRoot = cand.displayKind === tree1.root.type;
 					options.profile?.candidate(entry.name, entry.source, kind, cand.start, cand.end);
-					let data: AnyUntypedNode;
+					let data: AnyUntypedNode | undefined;
 					try {
 						const at = (cand.node as AnyUntypedNode).$_layout?.at;
-						data = measureRoundtrip(options.profile, 'copy', () =>
-							recursive !== true && at !== undefined
-								? materializeShallow(cand.node, accessorOf, onAccessorThrow)
-								: (materializeDetached(cand.node, accessorOf, onAccessorThrow) as AnyUntypedNode)
-						);
+						if (recursive !== true || options.onFixture !== undefined)
+							data = measureRoundtrip(options.profile, 'copy', () =>
+								recursive !== true && at !== undefined
+									? materializeShallow(cand.node, accessorOf, onAccessorThrow)
+									: (materializeDetached(cand.node, accessorOf, onAccessorThrow) as AnyUntypedNode)
+							);
 					} catch (e) {
 						reportThrown({
 							name: `${entry.name} [${kind}]`,
@@ -1190,8 +1180,9 @@ export async function validateReadRenderParse(
 							});
 							shouldStop = options.stopOnFirstFailure === true;
 						};
-						const tolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, normalized: [] };
-						const outcome = reparse(data, tolerance);
+						const ownSideExtras = ownSideExtrasOf(cand.node, (span) => spans.slice(span));
+						const tolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, normalized: [], ...(data === undefined ? { ownSideExtras } : {}) };
+						const outcome = reparse(data ?? (() => nativeEngine.diagnostics.renderTemplates(cand.node as AnyUntypedNode)), tolerance);
 						if (outcome.status === 'excluded') {
 							excluded.push({ entry: entry.name, kind, reason: outcome.reason, input: inputSource });
 							continue;
@@ -1200,7 +1191,7 @@ export async function validateReadRenderParse(
 							failed(outcome.message, outcome.rendered);
 							continue;
 						}
-						const ownTolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, normalized: [], ownSideExtras: ownSideExtrasOf(cand.node, (span) => spans.slice(span)) };
+						const ownTolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, normalized: [], ownSideExtras };
 						const own = reparse(ownRender(cand.node), ownTolerance);
 						if (own.status !== 'round-trip') {
 							failed(`own render: ${own.status === 'failed' ? own.message : own.reason}`, own.rendered);
@@ -1245,7 +1236,7 @@ export async function validateReadRenderParse(
 							] as const)
 								if (stepTolerance.normalized!.length > 0)
 									spellingNormalized.push({ entry: entry.name, kind: renderedKind, input: inputSource, rendered: stepRendered, spellings: stepTolerance.normalized! });
-							if (options.onFixture) {
+							if (options.onFixture && data !== undefined) {
 								// Success path (both re-parse OK + AST match OK) —
 								// emit a render fixture (UntypedNode → rendered) and a
 								// round-trip fixture (source → reparse s-exp). The

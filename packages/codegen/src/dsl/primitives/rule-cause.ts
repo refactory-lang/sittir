@@ -81,6 +81,10 @@ export function vocabulary<F extends (...args: never[]) => unknown>(body: F): F 
 	return tag(body, { kind: 'vocabulary' });
 }
 
+export function withRuleCause<F extends (...args: never[]) => unknown>(body: F, declaration: RuleCauseDeclaration): F {
+	return tag(body, declaration);
+}
+
 export function ruleCauseOf(fn: unknown): RuleCauseDeclaration | undefined {
 	if (typeof fn !== 'function') return undefined;
 	return (fn as { [RULE_CAUSE]?: RuleCauseDeclaration })[RULE_CAUSE];

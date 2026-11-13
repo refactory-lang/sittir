@@ -2160,6 +2160,10 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Table['buildNumberFloatScientific']>,
 		ReturnType<typeof F.buildLiteralType>
 	>;
+	readonly literalType$legacyOctal: Seat<
+		ArgsOf<typeof F.buildNumberLegacyOctal>,
+		ReturnType<typeof F.buildLiteralType>
+	>;
 	readonly literalType$decimal: Seat<ArgsOf<Table['buildNumberDecimal']>, ReturnType<typeof F.buildLiteralType>>;
 	readonly literalType$binary: Seat<ArgsOf<Table['buildNumberBinary']>, ReturnType<typeof F.buildLiteralType>>;
 	readonly literalType$octal: Seat<ArgsOf<Table['buildNumberOctal']>, ReturnType<typeof F.buildLiteralType>>;
@@ -2193,6 +2197,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly floatPoint: Routes<Table>['literalType$floatPoint'];
 		readonly floatLeadingPoint: Routes<Table>['literalType$floatLeadingPoint'];
 		readonly floatScientific: Routes<Table>['literalType$floatScientific'];
+		readonly legacyOctal: Routes<Table>['literalType$legacyOctal'];
 		readonly decimal: Routes<Table>['literalType$decimal'];
 		readonly binary: Routes<Table>['literalType$binary'];
 		readonly octal: Routes<Table>['literalType$octal'];
@@ -2241,6 +2246,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly floatPoint: Table['buildNumberFloatPoint'];
 		readonly floatLeadingPoint: Table['buildNumberFloatLeadingPoint'];
 		readonly floatScientific: Table['buildNumberFloatScientific'];
+		readonly legacyOctal: typeof F.buildNumberLegacyOctal;
 		readonly decimal: typeof F.buildNumberDecimal;
 		readonly binary: Table['buildNumberBinary'];
 		readonly octal: Table['buildNumberOctal'];
@@ -2504,6 +2510,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly privatePropertyIdentifier: typeof F.buildPrivatePropertyIdentifier;
 	readonly commentLine: typeof F.buildCommentLine;
 	readonly commentBlock: typeof F.buildCommentBlock;
+	readonly numberLegacyOctal: typeof F.buildNumberLegacyOctal;
 	readonly numberBigintHex: typeof F.buildNumberBigintHex;
 	readonly numberBigintBinary: typeof F.buildNumberBigintBinary;
 	readonly numberBigintOctal: typeof F.buildNumberBigintOctal;
@@ -3950,6 +3957,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		F.buildLiteralType,
 		$at('buildNumberFloatScientific')
 	);
+	const literalType$legacyOctal: Routes<Table>['literalType$legacyOctal'] = K.literalType$legacyOctal(
+		F.buildLiteralType,
+		F.buildNumberLegacyOctal
+	);
 	const literalType$decimal: Routes<Table>['literalType$decimal'] = K.literalType$decimal(
 		F.buildLiteralType,
 		$at('buildNumberDecimal')
@@ -4013,6 +4024,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			floatPoint: literalType$floatPoint,
 			floatLeadingPoint: literalType$floatLeadingPoint,
 			floatScientific: literalType$floatScientific,
+			legacyOctal: literalType$legacyOctal,
 			decimal: literalType$decimal,
 			binary: literalType$binary,
 			octal: literalType$octal,
@@ -4065,6 +4077,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			floatPoint: $at('buildNumberFloatPoint'),
 			floatLeadingPoint: $at('buildNumberFloatLeadingPoint'),
 			floatScientific: $at('buildNumberFloatScientific'),
+			legacyOctal: F.buildNumberLegacyOctal,
 			decimal: F.buildNumberDecimal,
 			binary: $at('buildNumberBinary'),
 			octal: $at('buildNumberOctal'),
@@ -4327,6 +4340,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		privatePropertyIdentifier: F.buildPrivatePropertyIdentifier,
 		commentLine: F.buildCommentLine,
 		commentBlock: F.buildCommentBlock,
+		numberLegacyOctal: F.buildNumberLegacyOctal,
 		numberBigintHex: F.buildNumberBigintHex,
 		numberBigintBinary: F.buildNumberBigintBinary,
 		numberBigintOctal: F.buildNumberBigintOctal,

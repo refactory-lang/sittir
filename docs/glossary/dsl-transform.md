@@ -1723,10 +1723,6 @@ The rule algebra behind the token-form hoist. For a rule whose prec-peeled core 
 
 `fielded` holds the field sites as index paths from the rule root; each prec or token wrapper peeled on the way down consumes one path segment (`underWrapper`), so the sites handed to `findOutermostForms` are relative to the token body.
 
-### `packages/codegen/src/dsl/transform/token-forms.ts::findOutermostForms`
-
-Finds the first form alternation in a token body, descending through seqs, single-content wrappers and a presence choice whose live arm is a form alternation (the blank then becomes one more arm). It stops at a `FIELD` node and at a choice whose path is a field site (`isFieldedAt`): a field's value is one lexeme, so the automatic split applies to unfielded choices only.
-
 ### `packages/codegen/src/dsl/transform/token-forms.ts::isFieldedAt`
 
 Whether an index path is exactly one of the field sites.

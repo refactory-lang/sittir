@@ -61,12 +61,22 @@ describe('the structure table: what a built node of each kind must hold', () => 
 			booleans: [['_sign', 'ComplexPattern.sign']],
 			kindIds: [['_operator', 'ComplexPattern.operator', ids('plus', 'dash')]]
 		});
-		expect(compoundStructureRow(node('integer_hex') as never, nodeMap, kindEntries)).toEqual({
-			kind: 'integer_hex',
+		expect(compoundStructureRow(node('integer_hex_plain') as never, nodeMap, kindEntries)).toEqual({
+			kind: 'integer_hex_plain',
 			required: [['_content', 'content']],
-			single: [['_content', 'IntegerHex.content']],
-			texts: [['_radix_prefix', 'IntegerHex.radixPrefix', ['0x', '0X']]],
+			single: [['_content', 'IntegerHexPlain.content']],
+			texts: [['_radix_prefix', 'IntegerHexPlain.radixPrefix', ['0x', '0X']]],
 			options: ['radixPrefix']
+		});
+		expect(compoundStructureRow(node('integer_hex_long') as never, nodeMap, kindEntries)).toEqual({
+			kind: 'integer_hex_long',
+			required: [['_content', 'content']],
+			single: [['_content', 'IntegerHexLong.content']],
+			texts: [
+				['_radix_prefix', 'IntegerHexLong.radixPrefix', ['0x', '0X']],
+				['_marker', 'IntegerHexLong.marker', ['L', 'l']]
+			],
+			options: ['radixPrefix', 'marker']
 		});
 	});
 

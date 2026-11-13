@@ -125,9 +125,16 @@ function lineOf(text: string, spans: SourceSpans, offset: number): number {
 }
 
 
+function syntaxErrorAt(text: string, offsets: readonly number[]): BindingsSyntaxError {
+	const spans = sourceSpans(text);
+	return new BindingsSyntaxError([...new Set(offsets.map((offset) => lineOf(text, spans, offset)))].sort((a, b) => a - b));
+}
+
 async function parsedBindings(text: string): Promise<ReturnType<Engine['parse']>> {
 	await ready();
-	return engine.parse(text, { depth: Infinity });
+	const root = engine.parse(text, { depth: Infinity });
+	if (root.$errors.length > 0) throw syntaxErrorAt(text, root.$errors.map((region) => region.span.start));
+	return root;
 }
 
 function patternsIn(text: string, root: ReturnType<Engine['parse']>): ParsedPattern[] {
@@ -145,7 +152,9 @@ function patternsIn(text: string, root: ReturnType<Engine['parse']>): ParsedPatt
 }
 
 async function parsedPatterns(text: string): Promise<ParsedPattern[]> {
-	return patternsIn(text, await parsedBindings(text));
+	const patterns = patternsIn(text, await parsedBindings(text));
+	if (patterns.length === 0 && text.trim() !== '') throw syntaxErrorAt(text, [0]);
+	return patterns;
 }
 
 function captures(v: Visit): string[] {
@@ -728,18 +737,9 @@ function patternsOf(
 
 export async function readBindingsInProcess(text: string): Promise<BindingFacts> {
 	const facts: Facts = { claims: [], members: [], containers: [], templates: [], unclaimed: [] };
-	const root = await parsedBindings(text);
-	const patterns = patternsIn(text, root);
-	const errors = root.$errors.map((region) => region.span.start);
-	if (patterns.length === 0 && text.trim() !== '') errors.push(0);
-	for (const { definition, ...origin } of patterns) {
+	for (const { definition, ...origin } of await parsedPatterns(text)) {
 		for (const [top, inherited] of patternsOf(definition, []))
 			patternFacts(readPattern(top, inherited, origin), facts, origin);
-	}
-	if (errors.length > 0) {
-		const spans = sourceSpans(text);
-		const lines = new Set(errors.map((offset) => lineOf(text, spans, offset)));
-		throw new BindingsSyntaxError([...lines].sort((a, b) => a - b));
 	}
 	return facts;
 }

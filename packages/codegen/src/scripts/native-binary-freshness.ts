@@ -8,9 +8,10 @@ import { sha256File } from '../util/content-hash.ts';
 import { writeFileAtomic } from '../util/write-file-atomic.ts';
 import { filesUnder, posixRelative } from '../util/files.ts';
 import { parserSourceFiles } from '../transpile/parser-sources.ts';
+import type { EngineDiagnostics } from '@sittir/types';
 import { NATIVE_NAPI_CONFIG, REPO_ROOT, grammarPackageDir, nativeBinaryName, nativeBindingRelDir, nativeCrateRelDir, sittirDirOf, type GrammarName } from '../grammars.ts';
 
-export type NativeProfile = 'release' | 'gate' | 'dev';
+export type NativeProfile = NonNullable<EngineDiagnostics['buildProfile']>;
 
 export const NATIVE_PROFILE_FLAGS: Readonly<Record<NativeProfile, readonly string[]>> = {
 	release: ['--release'],

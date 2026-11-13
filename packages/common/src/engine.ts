@@ -10,10 +10,13 @@ import type {
 	ParsedRead,
 	ParsedRoot,
 	ParseOptions,
-	Rendered
+	Rendered,
+	SlotLayoutWire,
+	UnitSidesWire,
+	WireNode
 } from '@sittir/types';
-import { decodeTree, readObject, type ChunkWords, type RecordReader, type TreeHandle, type TriviaSideName } from './read.ts';
-import { holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
+import { decodeIndex, decodeTree, readObject, type ChunkWords, type RecordReader, type TreeHandle, type TriviaSideName } from './read.ts';
+import { coordinateOf, holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
 import type { RecordPosition } from './handle.ts';
 import type { DescendantBatch } from './query.ts';
@@ -82,6 +85,12 @@ export function saverOf(rendered: Rendered): RenderSaver {
 	const saver = savers.get(rendered);
 	if (saver === undefined) throw new Error('saverOf: not a render an engine returned');
 	return saver;
+}
+
+function recordTreeOf(view: RecordPosition): number {
+	const tree = view.$tree;
+	if (tree.records === undefined || tree.id === undefined) throw new Error('a record view renders through the tree it was read from, which is gone');
+	return tree.id;
 }
 
 function renderTreeOf(node: object): number | undefined {
@@ -154,16 +163,18 @@ export interface NativeEngineLike<TNode = unknown> {
 	 * @throws when the tree is not live, `index` is past its last node, or the grammar's model has no
 	 *   route for a child, naming the kind, the child and the index.
 	 */
-	read(treeId: number, index: number, depth?: number): TNode & ReadOutput;
+	read(treeId: number, index: number, depth?: number): WireNode<TNode & ReadOutput>;
 	/**
-	 * A snapshot of the node at descendant `index` of tree `treeId`: the node read at every depth into
-	 * plain data that names no tree, each node with its span (`$_layout.span`) measured from the start of
-	 * the native node that holds it, each placed extra with its text, and the node itself measured from the
-	 * byte `holderByte`, or, when absent, from where it or its leading side begins, whichever is first.
+	 * A snapshot's layout of the node at descendant `index` of tree `treeId` and of each node under it
+	 * that a read gives a layout, as `[row, layout]` pairs in preorder: each layout with its span
+	 * (`span`) measured from the start of the native node that holds it and each placed extra and
+	 * `ERROR` as its text, the node itself measured from the byte `holderByte`, or, when absent, from
+	 * where it or its leading side begins, whichever is first. When an `ERROR` holds the node, the one
+	 * pair is that `ERROR`'s.
 	 *
 	 * @throws as {@link read} does, and when `holderByte` lies after the first byte the snapshot measures.
 	 */
-	snapshot(treeId: number, index: number, holderByte?: number | null): TNode;
+	snapshotLayouts(treeId: number, index: number, holderByte?: number | null): readonly (readonly [number, object])[];
 	/**
 	 * The entries of `side` of the node at descendant `index` of tree `treeId`: the ones a write gave it,
 	 * else the ones the tree's trivia table assigns it. An extra is its coordinate, an `ERROR` its kind
@@ -171,13 +182,13 @@ export interface NativeEngineLike<TNode = unknown> {
 	 *
 	 * @throws when the tree is not live, `index` is past its last node, or `side` is none of the three.
 	 */
-	triviaSide(treeId: number, index: number, side: TriviaSideName): ReadOutput[];
+	triviaSide(treeId: number, index: number, side: TriviaSideName): WireNode<ReadOutput>[];
 	/**
 	 * Replaces `side` of the node at descendant `index` of tree `treeId` with `entries`.
 	 *
 	 * @throws as {@link triviaSide} does.
 	 */
-	writeTriviaSide(treeId: number, index: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	writeTriviaSide(treeId: number, index: number, side: TriviaSideName, entries: readonly WireNode[]): void;
 	/**
 	 * The sides of the unit children of the node at descendant `index` of tree `treeId`, which their
 	 * slots store as bare kinds: each `{ slot, item, leading?, trailing?, inner? }`, by its slot's
@@ -185,14 +196,14 @@ export interface NativeEngineLike<TNode = unknown> {
 	 *
 	 * @throws as {@link triviaSide} does.
 	 */
-	unitSides(treeId: number, index: number): ReadOutput[];
+	unitSides(treeId: number, index: number): UnitSidesWire<ReadOutput>[];
 	/**
 	 * The stored layout of each list slot of the node at descendant `index` of tree `treeId` that
 	 * stores any: each `{ slot, before?, after?, separator? }`, by its slot's wire key.
 	 *
 	 * @throws as {@link triviaSide} does.
 	 */
-	slotLayouts(treeId: number, index: number): unknown[];
+	slotLayouts(treeId: number, index: number): SlotLayoutWire[];
 	/**
 	 * The separator the list at descendant `index` of tree `treeId` writes between its items, as a
 	 * grammar id: the one its source spells where its slot stores one, else the one the read-time
@@ -252,8 +263,8 @@ export interface NativeEngineLike<TNode = unknown> {
 	externalBuffers?(): void;
 	/** The kind and subtree end, as `[kind, end]`, a read of tree `treeId` names the node at `index` by. Present when the addon carries the record codec. */
 	coordinate?(treeId: number, index: number): number[];
-	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour. Present when the addon carries the record codec. */
-	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object): string;
+	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour; `templates` renders it and every parsed node under it that has a record from its template, each leaf and unit as its source. Present when the addon carries the record codec. */
+	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object, templates?: boolean): string;
 	renderBuilt?(owner: object, address: number, leading: boolean, trailing: boolean, treeId?: number, options?: object): string;
 	renderBuiltLeaf?(
 		owner: object,
@@ -280,12 +291,12 @@ export interface NativeEngineLike<TNode = unknown> {
 		create: boolean,
 		options?: object
 	): boolean;
-	builtTriviaSide?(address: number, side: TriviaSideName): unknown[] | null;
-	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[]): void;
-	builtUnitSides?(address: number): unknown[];
-	writeBuiltUnitSides?(address: number, units: readonly unknown[]): void;
-	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void;
-	builtLeafSide?(holder: number, word: number, item: number, side: TriviaSideName): unknown[] | null;
+	builtTriviaSide?(address: number, side: TriviaSideName): WireNode[] | null;
+	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly WireNode[]): void;
+	builtUnitSides?(address: number): UnitSidesWire[];
+	writeBuiltUnitSides?(address: number, units: readonly UnitSidesWire[]): void;
+	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly WireNode[]): void;
+	builtLeafSide?(holder: number, word: number, item: number, side: TriviaSideName): WireNode[] | null;
 	copyBuiltSites?(from: number, to: number, skip: readonly number[]): void;
 	/**
 	 * The siblings that hold sides beside each node at descendant `indexes` of tree `treeId`, eight words a node: the
@@ -335,13 +346,15 @@ export interface NativeEngineLike<TNode = unknown> {
 		depth?: number | null
 	): string;
 	planHolds(addresses: string, plan: string): boolean[];
-	render(node: TNode, treeId?: number, options?: object): string;
+	render(node: WireNode, treeId?: number, options?: object): string;
+	/** The node at descendant `index` of tree `treeId` rendered as a render root whose `leading` and `trailing` edges have no neighbour, as {@link render} renders the node a read of it gives; `templates` renders it and every node under it that has a record from its template, each leaf and unit as its source. */
+	renderAt(treeId: number, index: number, leading: boolean, trailing: boolean, options?: object, templates?: boolean): string;
 	/** {@link render}'s text written to `path`: a new file when `create`, refusing a file at the path, and otherwise a replacement that leaves a file already holding the text untouched. Answers whether it wrote. */
-	renderToFile(node: TNode, path: string, create: boolean, treeId?: number, options?: object): boolean;
+	renderToFile(node: WireNode, path: string, create: boolean, treeId?: number, options?: object): boolean;
 	/** `text` written to `path` as {@link renderToFile} writes a render's text, answering whether it wrote. */
 	writeText(path: string, text: string, create: boolean): boolean;
-	/** The binary's compile profile (`debug` | `release`); absent on a binary that predates the getter. */
-	readonly buildProfile?: string;
+	/** The profile build-native built the binary with; `undefined` for a binary build-native didn't build. */
+	readonly buildProfile?: EngineDiagnostics['buildProfile'];
 	dispose(): void;
 }
 
@@ -353,12 +366,12 @@ export interface NativeEngineInstance {
 	readonly handle: EngineHandle;
 	parse(source: string): string;
 	dispose(): void;
-	readonly buildProfile?: string;
+	readonly buildProfile?: EngineDiagnostics['buildProfile'];
 }
 
 const TREE_FUNCTIONS = [
 	'read',
-	'snapshot',
+	'snapshotLayouts',
 	'triviaSide',
 	'writeTriviaSide',
 	'unitSides',
@@ -388,6 +401,7 @@ const TREE_FUNCTIONS = [
 
 const ENGINE_FUNCTIONS = [
 	'render',
+	'renderAt',
 	'renderToFile',
 	'renderRecord',
 	'renderRecordToFile',
@@ -422,7 +436,7 @@ export type NativeModuleLike<TNode = unknown, TEngine extends NativeEngineInstan
 	/** What this language's live trees hold natively and what their reports have told V8, in bytes. Diagnostics only. */
 	treeMemory(): { readonly trees: number; readonly counted: number; readonly reported: number };
 	/** The engine image this process mapped: its stamp and the file it was loaded from. Diagnostics only. */
-	engineStamp(): { readonly stamp: string; readonly path?: string | null };
+	engineStamp(): { readonly stamp: string; readonly path?: string };
 } & Pick<NativeEngineLike<TNode>, TreeFunction> & { readonly [F in EngineFunction]?: OnHandle<NonNullable<NativeEngineLike<TNode>[F]>> };
 
 /**
@@ -559,7 +573,7 @@ const treeDisposalRegistry = new FinalizationRegistry<{
 	readonly treeId: number;
 }>(({ release, treeId }) => release(treeId));
 
-function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, format: CellFormat, readObjectAt: (index: number, depth: number) => TNode): RecordReader {
+function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, format: CellFormat, readObjectAt: (index: number, depth: number) => WireNode<ReadOutput>): RecordReader {
 	const { readRecord, readRecordStub, readLeaf, readCell, chunk, renderRecord, coordinate } = engine;
 	if (readRecord === undefined || readRecordStub === undefined || readLeaf === undefined || readCell === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
 		throw new Error(ARENA_FEATURE_REFUSED);
@@ -658,28 +672,28 @@ export function createNativeEngine<
 				release: status.native.disposeTree,
 				treeId: parsed.treeId
 			});
-			const readObjectAt = (index: number, depth: number): TNode => {
+			const readObjectAt = (index: number, depth: number): WireNode<ReadOutput> => {
 				const node = engine.read(parsed.treeId, index, depth);
-				holdReadTree(node, liveToken);
+				if (typeof node === 'object') holdReadTree(node, liveToken);
 				return node;
 			};
 			const records = cellFormat === undefined ? undefined : recordReader(engine, parsed.treeId, cellFormat, readObjectAt);
 			const readAt =
 				records === undefined
 					? readObjectAt
-					: (index: number, depth: number): TNode => {
+					: (index: number, depth: number): WireNode<ReadOutput> => {
 							const facts = records.stub(index, depth);
 							if (facts !== undefined) {
 								const stub = readStub(tree, facts);
 								holdReadTree(stub, liveToken);
-								return stub as TNode;
+								return stub;
 							}
 							const leaf = records.leaf(index);
 							if (leaf === undefined) return readObjectAt(index, depth);
-							if (leaf.form === 'unit') return leaf.kind as TNode;
+							if (leaf.form === 'unit') return leaf.kind;
 							const node = leafData(tree, leaf.kind, leaf.span, leaf.row);
 							holdReadTree(node, liveToken);
-							return node as TNode;
+							return node;
 						};
 			const roots = new Map<number, unknown>();
 			const errors = Object.freeze(parsed.errors);
@@ -699,7 +713,7 @@ export function createNativeEngine<
 				},
 				options: parsed.options,
 				errors,
-				snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
+				snapshotLayouts: (index, holderByte) => engine.snapshotLayouts(parsed.treeId, index, holderByte),
 				triviaSide: (index, side) => readOwnEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
 				writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
 				unitSides: (index) => readOwnUnits(tree, engine.unitSides(parsed.treeId, index), liveToken),
@@ -729,6 +743,17 @@ export function createNativeEngine<
 		};
 
 		const writeText: TextWriter = (path, text, create) => engine.writeText(path, text, create);
+
+		function renderTemplates(node: AnyUntypedNode): string {
+			const record = builtRefOf(node) === undefined ? recordOf(node) : undefined;
+			const at = record === undefined ? coordinateOf(node) : undefined;
+			if (record === undefined && at === undefined) throw new Error('renderTemplates renders a node as a read gave it, and this one was built or edited');
+			const changed = rootEdges(node);
+			if (at !== undefined) return engine.renderAt(decodeTree(at.$treeHandle), decodeIndex(at.$treeHandle), changed.leading, changed.trailing, undefined, true);
+			const { renderRecord } = engine;
+			if (renderRecord === undefined) throw new Error(ARENA_FEATURE_REFUSED);
+			return renderRecord.call(engine, recordTreeOf(node as unknown as RecordPosition), record!, changed.leading, changed.trailing, undefined, true);
+		}
 
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
@@ -763,10 +788,7 @@ export function createNativeEngine<
 			const record = typeof node === 'number' ? undefined : recordOf(node);
 			if (record !== undefined) {
 				const changed = rootEdges(node as object);
-				const tree = (node as RecordPosition).$tree;
-				const treeId = tree.id;
-				if (tree.records === undefined || treeId === undefined)
-					throw new Error('a record view renders through the tree it was read from, which is gone');
+				const treeId = recordTreeOf(node as RecordPosition);
 				const { renderRecord, renderRecordToFile } = engine;
 				if (renderRecord === undefined || renderRecordToFile === undefined)
 					throw new Error(ARENA_FEATURE_REFUSED);
@@ -782,7 +804,7 @@ export function createNativeEngine<
 					writeText
 				);
 			}
-			const data = (typeof node === 'number' ? node : toNodeData(node, kindView)) as TNode;
+			const data = typeof node === 'number' ? node : toNodeData(node, kindView);
 			const treeId = typeof node === 'number' ? undefined : renderTreeOf(node);
 			return createRenderHandle(
 				() => {
@@ -820,6 +842,7 @@ export function createNativeEngine<
 				diagnostics: {
 					buildProfile: engine.buildProfile,
 					builtMemory: () => (cellFormat === undefined ? undefined : engine.builtMemory?.()),
+					renderTemplates,
 					parseTree,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const tree = parseTree(source);
@@ -890,6 +913,9 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 		},
 		buildProfile: engine.diagnostics.buildProfile,
 		builtMemory: engine.diagnostics.builtMemory,
+		renderTemplates(node) {
+			return engine.diagnostics.renderTemplates(node);
+		},
 		writeText(path, text, create) {
 			return engine.writeText(path, text, create);
 		},

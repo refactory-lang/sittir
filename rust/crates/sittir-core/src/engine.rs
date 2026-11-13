@@ -854,17 +854,6 @@ impl<G: EngineGrammar> ParsedTree<G> {
         Ok(true)
     }
 
-    /// The `ERROR` holding the node at `index` (`read_error`) as `snapshot`
-    /// reads one: its bytes and its span from the byte `holder`, or `None`
-    /// when no `ERROR` holds it. Refuses a holder after the `ERROR`'s start
-    /// (`ReadError::Unmeasured`).
-    pub fn snapshot_error(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> Option<Result<crate::ErrorRead, crate::read::ReadError>> {
-        let mut nodes = self.nodes();
-        node(&mut nodes, index)?;
-        let error = error_holding(&mut nodes, index)?;
-        Some(self.snapshot_error_at(&error, holder))
-    }
-
     /// The node at `index` read into `T`, `depth` levels down, seating no
     /// sides and reading a list's items with it (`ReadCtx::inline_items`),
     /// or, when an `ERROR` holds it, that `ERROR` as `read_error` reads it:
@@ -878,27 +867,6 @@ impl<G: EngineGrammar> ParsedTree<G> {
         }
         let mut cursor = self.reader_at(&mut nodes, index);
         Some(T::read(&mut cursor, &mut ctx, depth).map(NodeRead::Node))
-    }
-
-    /// A snapshot of the node at `index` (`snapshot`), or, when an `ERROR`
-    /// holds it, that `ERROR` as `snapshot_error` reads it: one navigation
-    /// answers both. `None` past the tree's last node.
-    pub fn snapshot_node<T: crate::read::ReadNode>(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> Option<Result<NodeRead<T>, crate::read::ReadError>> {
-        let mut nodes = self.nodes();
-        node(&mut nodes, index)?;
-        if let Some(error) = error_holding(&mut nodes, index) {
-            return Some(self.snapshot_error_at(&error, holder).map(NodeRead::Error));
-        }
-        Some(self.snapshot_in(nodes, index, holder).map(NodeRead::Node))
-    }
-
-    /// The `ERROR` `error` as a snapshot reads it, measured from the byte
-    /// `holder` or its own start: an `ERROR`'s snapshot measures its own span
-    /// alone.
-    fn snapshot_error_at(&self, error: &Kid, holder: Option<u32>) -> Result<crate::ErrorRead, crate::read::ReadError> {
-        let ctx = self.read_ctx().snapshot(self.snapshot_measure(error.index, error.start, holder)?);
-        let read = self.error_at(error, &ctx);
-        ctx.unmeasured().map_or(Ok(read), |byte| Err(crate::read::ReadError::Unmeasured { index: error.index, byte }))
     }
 
     fn error_at(&self, error: &Kid, ctx: &crate::read::ReadCtx<'_>) -> crate::ErrorRead {
@@ -949,27 +917,124 @@ impl<G: EngineGrammar> ParsedTree<G> {
         Ok(crate::read::SnapshotCtx::new(self.lines(), holder.or(own), index))
     }
 
-    /// A snapshot of the node at `index`, read at every depth: each node with
-    /// its span from the node that holds it, each extra and `ERROR` of
-    /// its sides with its text, and the node itself measured from the byte
-    /// `holder`, or, when absent, from where it or its leading side begins,
-    /// whichever is first. Refuses a holder after that byte, and any point a
-    /// holder would measure from after it (`ReadError::Unmeasured`).
-    pub fn snapshot<T: crate::read::ReadNode>(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
-        self.snapshot_in(self.nodes(), index, holder)
+    /// A snapshot's layout of the node at `root` and of each node under it
+    /// that a read gives a layout of its own, each by its row, in preorder:
+    /// its span from the node that holds it (`ReadCtx::hold`), its sides with
+    /// each extra and `ERROR` as its text measured from there and the runs at
+    /// the root's own outer edges dropped, its unit children's sides, and the
+    /// root's flanks. An alias envelope and its content share the envelope's
+    /// row, and a content an envelope reads through a hidden child keeps its
+    /// span alone. The root is measured from the byte `holder`, or, when
+    /// absent, from where it or its leading side begins, whichever is first.
+    /// When an `ERROR` holds the root, the one row is that `ERROR`'s, its span
+    /// measured from `holder` or its own start. `None` past the tree's last
+    /// node. Refuses a holder after the first byte the snapshot measures
+    /// (`ReadError::Unmeasured`), and a node the read refuses.
+    pub fn snapshot_layouts(&self, root: NodeIndex, holder: Option<u32>) -> Option<Result<crate::layout::SnapshotLayouts<G::Trivia>, crate::read::ReadError>> {
+        self.snapshot_rows(root, holder, None)
     }
 
-    /// `snapshot`, its sides found and its node read through `nodes`.
-    fn snapshot_in<'t, T: crate::read::ReadNode>(&'t self, nodes: Navigation<'t>, index: crate::types::NodeIndex, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
+    /// `snapshot_layouts`, each node's sides seated from `sides` instead of
+    /// the tree's own lookups.
+    pub fn snapshot_layouts_seated(&self, root: NodeIndex, holder: Option<u32>, sides: &dyn crate::read::SideLookup) -> Option<Result<crate::layout::SnapshotLayouts<G::Trivia>, crate::read::ReadError>> {
+        self.snapshot_rows(root, holder, Some(sides))
+    }
+
+    /// `snapshot_layouts`, each node's sides seated from `sides`, or from the
+    /// tree's own lookups when absent.
+    fn snapshot_rows(&self, root: NodeIndex, holder: Option<u32>, sides: Option<&dyn crate::read::SideLookup>) -> Option<Result<crate::layout::SnapshotLayouts<G::Trivia>, crate::read::ReadError>> {
+        let mut nodes = self.nodes();
+        node(&mut nodes, root)?;
+        if let Some(error) = error_holding(&mut nodes, root) {
+            return Some(self.error_row(&error, holder));
+        }
         let mut lookups = self.lookups_over(nodes);
-        lookups.record = Some(lookups.enclosing(index));
-        let start = lookups.nodes.kid(index).start;
-        let from = lookups.leading_start(index).map_or(start, |leading| leading.min(start));
-        let mut cursor = self.reader_at(&mut lookups.nodes, index);
-        let seating = Seating::with_layout(lookups, Lent::NONE);
-        let mut ctx = self.read_ctx().with_sides(&seating).snapshot(self.snapshot_measure(index, from, holder)?);
-        let read = T::read(&mut cursor, &mut ctx, crate::read::Depth::All)?;
-        ctx.unmeasured().map_or(Ok(read), |byte| Err(crate::read::ReadError::Unmeasured { index, byte }))
+        lookups.record = Some(lookups.enclosing(root));
+        let at = lookups.nodes.kid(root);
+        let from = lookups.leading_start(root).map_or(at.start, |leading| leading.min(at.start));
+        let lends = lookups.reads_records();
+        Some(self.lend(lends, |lent| {
+            let seating = Seating::with_layout(lookups, lent);
+            let measure = self.snapshot_measure(root, from, holder)?;
+            if !self.grammar.admits(at.grammar, at.display) {
+                return Err(crate::read::ReadError::Unadmitted { kind: at.grammar, index: root });
+            }
+            let mut ctx = self.read_ctx().inline_units().with_sides(sides.unwrap_or(&seating)).snapshot(measure);
+            let mut rows = Vec::new();
+            self.snapshot_row(&seating, &mut ctx, at, self.grammar.router(at.grammar, at.display), &mut rows)?;
+            ctx.unmeasured().map_or(Ok(rows), |byte| Err(crate::read::ReadError::Unmeasured { index: root, byte }))
+        }))
+    }
+
+    /// The one row of a snapshot of a node the `ERROR` `error` holds: the
+    /// `ERROR`'s, with its span alone, measured from the byte `holder` or its
+    /// own start.
+    fn error_row(&self, error: &Kid, holder: Option<u32>) -> Result<crate::layout::SnapshotLayouts<G::Trivia>, crate::read::ReadError> {
+        let ctx = self.read_ctx().snapshot(self.snapshot_measure(error.index, error.start, holder)?);
+        let layout = Box::new(crate::read::placed_at(ctx.origin_of(ctx.coordinate_of(error))));
+        ctx.unmeasured().map_or(Ok(vec![(error.index, layout)]), |byte| Err(crate::read::ReadError::Unmeasured { index: error.index, byte }))
+    }
+
+    /// Pushes onto `rows` the snapshot layout of the node `at`, read as
+    /// `router` reads it, and then those of the nodes under it.
+    fn snapshot_row(&self, seating: &Seating<'_, G>, ctx: &mut crate::read::ReadCtx<'_>, at: Kid, router: Option<crate::read::Router>, rows: &mut crate::layout::SnapshotLayouts<G::Trivia>) -> Result<(), crate::read::ReadError> {
+        let row = rows.len();
+        rows.push((at.index, Box::default()));
+        rows[row].1 = self.snapshot_layout(seating, ctx, at, router, rows)?;
+        Ok(())
+    }
+
+    /// The snapshot layout of the node `at`, read as `router` reads it,
+    /// pushing those of the nodes under it onto `rows`. A routed node, a
+    /// token interior and a text leaf hold the context while their children
+    /// are measured; an envelope holds nothing, and takes its content's
+    /// layout (`envelope_layout`).
+    fn snapshot_layout(&self, seating: &Seating<'_, G>, ctx: &mut crate::read::ReadCtx<'_>, at: Kid, router: Option<crate::read::Router>, rows: &mut crate::layout::SnapshotLayouts<G::Trivia>) -> Result<Box<crate::layout::NodeLayout<G::Trivia>>, crate::read::ReadError> {
+        use crate::read::{ReadError, Route, Router};
+        let origin = ctx.origin_of(ctx.coordinate_of(&at));
+        match router {
+            Some(Router::Children(route, _, routes)) => {
+                let Some(routed) = seating.navigated(|nodes| routes(nodes, &at)) else {
+                    return Err(seating.navigated(|nodes| nodes.kids(at.index)).iter().find_map(|child| route(child).err()).unwrap_or(ReadError::Unadmitted { kind: at.grammar, index: at.index }));
+                };
+                ctx.hold(&at, &routed.children);
+                for (child, route) in routed.children.iter().zip(&routed.routes) {
+                    if matches!(route, Route::Slot { scalar: false, .. }) && self.grammar.admits(child.grammar, child.display) {
+                        crate::stack::grown(|| self.snapshot_row(seating, ctx, *child, self.grammar.router(child.grammar, child.display), rows))?;
+                    }
+                }
+                let units = crate::read::units_of(&routed, ctx);
+                let mut layout = ctx.layout(at.index, origin, true);
+                layout.units = units;
+                Ok(layout)
+            }
+            Some(Router::Envelope { wraps_hidden, unit, inner }) => {
+                let content = if wraps_hidden {
+                    seating.navigated(|nodes| nodes.kids(at.index)).iter().find(|child| !child.entry()).copied().ok_or(ReadError::Unadmitted { kind: at.grammar, index: at.index })?
+                } else {
+                    at
+                };
+                let taken = if seating.navigated(|nodes| unit(nodes, &content)).is_some() {
+                    None
+                } else {
+                    let own = (content.index != at.index).then(|| {
+                        rows.push((content.index, Box::default()));
+                        rows.len() - 1
+                    });
+                    let mut layout = Some(crate::stack::grown(|| self.snapshot_layout(seating, ctx, content, inner(content.grammar, content.display), rows))?);
+                    let taken = crate::read::take_layout_keeping_at(&mut layout);
+                    if let Some(row) = own {
+                        rows[row].1 = layout.unwrap_or_default();
+                    }
+                    taken
+                };
+                Ok(crate::read::envelope_layout(taken, at.index, origin, None, ctx))
+            }
+            Some(Router::Interior(..)) | None => {
+                ctx.hold(&at, &seating.navigated(|nodes| nodes.kids(at.index)));
+                Ok(ctx.layout(at.index, origin, true))
+            }
+        }
     }
 
     /// Reject a handle minted by a different tree.
@@ -2146,6 +2211,11 @@ impl<'t, G: EngineGrammar> Seating<'t, G> {
         tree.slot_items(&mut lookups.nodes, index)
     }
 
+    /// `f` of the lookups' own navigation.
+    fn navigated<R>(&self, f: impl FnOnce(&mut dyn Nodes<'t>) -> R) -> R {
+        f(&mut self.lookups.borrow_mut().nodes)
+    }
+
     /// A cursor on the node at `index`, created at the tree's root: a copy
     /// of the lookups' own, moved there from where it stood.
     #[must_use]
@@ -2200,9 +2270,9 @@ fn frames_of<T: crate::trivia::TriviaItem>(levels: Vec<[Vec<SideEntry<T>>; 3]>) 
 /// One tree as a render's source table: its own coordinates resolve, any
 /// other tree's do not.
 impl<G: EngineGrammar> SourceTable for Seating<'_, G> {
-    fn source_of(&self, tree_id: TreeId) -> Option<&Arc<str>> {
+    fn source_of(&self, tree_id: TreeId) -> Option<&str> {
         let tree = self.tree();
-        (tree_id == tree.tree_id).then_some(&tree.source)
+        (tree_id == tree.tree_id).then_some(&*tree.source)
     }
 
     fn breaks_spelled_lf(&self, tree_id: TreeId) -> bool {
@@ -2571,8 +2641,8 @@ impl<'t, G: EngineGrammar, H: std::hash::BuildHasher> ReadTrees<'t, G, H> {
 /// The live trees as the render context's source table: a handle's tag names
 /// the tree, and the tree owns the source its spans index into.
 impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for ReadTrees<'_, G, H> {
-    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
-        Some(&self.get(tree_id)?.source)
+    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
+        Some(&*self.get(tree_id)?.source)
     }
 
     fn breaks_spelled_lf(&self, tree_id: crate::types::TreeId) -> bool {
@@ -2716,8 +2786,8 @@ mod tests {
         fn router(self, grammar: KindId, _display: KindId) -> Option<crate::read::Router> {
             let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
             match crate::read::kind_name(&language, grammar)? {
-                "function_item" => Some(crate::read::Router::Children(function_item_route, |_, _, _| None)),
-                "declaration_list" | "block" => Some(crate::read::Router::Children(item_route, |_, _, _| None)),
+                "function_item" => Some(crate::read::Router::Children(function_item_route, |_, _, _| None, |_, _| None)),
+                "declaration_list" | "block" => Some(crate::read::Router::Children(item_route, |_, _, _| None, |_, _| None)),
                 _ => None,
             }
         }
@@ -2874,11 +2944,11 @@ mod tests {
         let inside = NodeIndex(index.0 + 1);
         assert!(node_at_index(tree.tree(), inside).is_some_and(|node| node.parent().is_some_and(|parent| parent.is_error())), "the ERROR holds a node");
         assert_eq!(tree.read_error(inside), Some(error.clone()), "a node an ERROR holds reads as its ERROR");
-        assert_eq!(tree.snapshot_error(inside, None), tree.snapshot_error(index, None));
-        let snapped = tree.snapshot_error(index, None).expect("an ERROR snapshots").expect("from its own start");
+        assert_eq!(tree.snapshot_layouts(inside, None), tree.snapshot_layouts(index, None), "a node an ERROR holds snapshots as its ERROR");
+        let snapped = tree.snapshot_layouts(index, None).expect("an ERROR snapshots").expect("from its own start");
         let span = crate::points::PointSpan { start: crate::points::Point::ZERO, end: crate::points::Point { row: 0, column: 2 } };
-        assert_eq!((snapped.text.as_str(), snapped.at), ("@@", crate::read::Origin::Snapshot(span)));
-        assert_eq!(tree.snapshot_error(index, Some(11)), Some(Err(crate::read::ReadError::Unmeasured { index, byte: 10 })), "a holder after the ERROR is refused");
+        assert_eq!(snapped, [(index, Box::new(crate::read::placed_at(crate::read::Origin::Snapshot(span))))], "the ERROR's one row, its span alone");
+        assert_eq!(tree.snapshot_layouts(index, Some(11)), Some(Err(crate::read::ReadError::Unmeasured { index, byte: 10 })), "a holder after the ERROR is refused");
     }
 
     #[test]

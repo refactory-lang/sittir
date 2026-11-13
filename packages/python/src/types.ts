@@ -262,272 +262,281 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[87, 'pipe_eq'],
 	[88, 'format_specifier_text'],
 	[89, 'underscore'],
-	[90, 'integer_hex'],
-	[91, 'integer_octal'],
-	[92, 'integer_binary'],
-	[93, 'integer_decimal_long'],
-	[94, 'integer_decimal_imaginary'],
-	[95, 'integer_decimal_plain'],
-	[96, 'float_point'],
-	[97, 'float_leading_point'],
-	[98, 'float_scientific'],
-	[99, 'escape_sequence_unicode_fixed'],
-	[100, 'escape_sequence_unicode_wide'],
-	[101, 'escape_sequence_hex'],
-	[102, 'escape_sequence_octal'],
-	[103, 'escape_sequence_line_break'],
-	[104, 'escape_sequence_simple'],
-	[105, 'escape_sequence_named'],
-	[106, 'line_continuation_newline'],
-	[107, 'line_continuation_nul'],
-	[108, 'lt'],
-	[109, 'lt_eq'],
-	[110, 'eq_eq'],
-	[111, 'bang_eq'],
-	[112, 'gt_eq'],
-	[113, 'gt'],
-	[114, 'lt_gt'],
-	[115, '__init___keyword'],
-	[116, '_newline'],
-	[117, '_indent'],
-	[118, '_dedent'],
-	[119, 'string_start'],
-	[120, 'string_fragment'],
-	[121, 'escape_interpolation'],
-	[122, 'string_end'],
-	[123, '_tight'],
-	[124, '_space'],
-	[125, '_tab'],
-	[126, '_blankline'],
-	[127, '_double_blankline'],
-	[128, 'module'],
-	[129, '_statement'],
-	[130, '_simple_statements'],
-	[355, '_simple_statements'],
-	[131, 'import_statement'],
-	[132, 'import_prefix'],
-	[133, 'relative_import'],
-	[134, 'future_import_statement'],
-	[135, 'import_from_statement'],
-	[136, 'import_list'],
-	[137, 'aliased_import'],
-	[138, 'wildcard_import'],
-	[139, 'print_statement'],
-	[140, 'chevron'],
-	[141, 'assert_statement'],
-	[142, 'expression_statement'],
-	[143, 'named_expression'],
-	[144, '_named_expression_lhs'],
-	[145, 'return_statement'],
-	[146, 'delete_statement'],
-	[147, 'raise_statement'],
-	[148, 'pass_statement'],
-	[149, 'break_statement'],
-	[150, 'continue_statement'],
-	[151, 'if_statement'],
-	[152, 'elif_clause'],
-	[153, 'else_clause'],
-	[154, 'match_statement'],
-	[155, 'match_block'],
-	[156, 'case_clause'],
-	[157, 'for_statement'],
-	[158, 'while_statement'],
-	[159, 'try_statement'],
-	[160, 'except_clause'],
-	[161, 'finally_clause'],
-	[162, 'with_statement'],
-	[163, 'with_clause'],
-	[164, 'with_item'],
-	[165, 'function_definition'],
-	[166, 'parameters'],
-	[167, 'lambda_parameters'],
-	[168, 'list_splat'],
-	[169, 'dictionary_splat'],
-	[170, 'global_statement'],
-	[171, 'nonlocal_statement'],
-	[172, 'exec_statement'],
-	[173, 'type_alias_statement'],
-	[174, 'class_definition'],
-	[175, 'type_parameter'],
-	[176, 'parenthesized_list_splat'],
-	[177, 'argument_list'],
-	[178, 'decorated_definition'],
-	[179, 'decorator'],
-	[180, 'block'],
-	[181, 'expression_list'],
-	[182, 'dotted_name'],
-	[183, 'case_pattern'],
-	[184, '_simple_pattern'],
-	[354, '_simple_pattern'],
-	[185, 'case_as_pattern'],
-	[186, 'union_pattern'],
-	[187, 'dict_pattern'],
-	[188, 'key_value_pattern'],
-	[189, 'keyword_pattern'],
-	[190, 'splat_pattern'],
-	[191, 'class_pattern'],
-	[192, 'complex_pattern'],
-	[193, 'parameters_elements'],
-	[194, 'patterns'],
-	[195, 'parameter'],
-	[196, 'pattern'],
-	[197, 'tuple_pattern'],
-	[198, 'list_pattern'],
-	[199, 'default_parameter'],
-	[200, 'typed_default_parameter'],
-	[201, 'list_splat_pattern'],
-	[202, 'dictionary_splat_pattern'],
-	[203, 'as_pattern'],
-	[204, '_expression_within_for_in_clause'],
-	[205, 'expression'],
-	[206, 'primary_expression'],
-	[207, 'not_operator'],
-	[208, 'boolean_operator'],
-	[209, 'binary_operator'],
-	[210, 'unary_operator'],
-	[211, '_not_in'],
-	[212, '_is_not'],
-	[213, 'comparison_operator'],
-	[214, 'lambda'],
-	[215, 'lambda_within_for_in_clause'],
-	[216, 'assignment'],
-	[217, 'augmented_assignment'],
-	[218, 'pattern_list'],
-	[219, '_right_hand_side'],
-	[220, 'yield'],
-	[221, 'attribute'],
-	[222, 'subscript'],
-	[223, 'slice'],
-	[224, 'call'],
-	[225, 'typed_parameter'],
-	[226, 'type'],
-	[227, 'splat_type'],
-	[228, 'generic_type'],
-	[229, 'union_type'],
-	[230, 'constrained_type'],
-	[231, 'member_type'],
-	[232, 'keyword_argument'],
-	[233, 'list'],
-	[234, 'set'],
-	[235, 'tuple'],
-	[236, 'dictionary'],
-	[237, 'pair'],
-	[238, 'list_comprehension'],
-	[239, 'dictionary_comprehension'],
-	[240, 'set_comprehension'],
-	[241, 'generator_expression'],
-	[242, 'parenthesized_expression'],
-	[243, 'collection_elements'],
-	[244, 'for_in_clause'],
-	[245, 'if_clause'],
-	[246, 'conditional_expression'],
-	[247, 'concatenated_string'],
-	[248, 'string'],
-	[249, 'string_content'],
-	[250, 'interpolation'],
-	[251, '_f_expression'],
-	[252, 'escape_sequence'],
-	[253, 'not_escape_sequence'],
-	[254, 'format_specifier'],
-	[255, 'integer'],
-	[256, 'float'],
-	[257, 'await'],
-	[258, 'positional_separator'],
-	[259, 'keyword_separator'],
-	[260, 'simple_statements_elements'],
-	[261, 'subjects'],
-	[262, 'with_clause_with_items'],
-	[263, 'types'],
-	[264, 'argument_list_elements'],
-	[265, 'list_pattern_case_patterns'],
-	[266, 'dict_pattern_elements'],
-	[267, 'subscripts'],
-	[268, 'dictionary_elements'],
-	[269, 'slice_group'],
-	[270, 'type_param'],
-	[271, '_type_param_optional1'],
-	[272, 'type_params'],
-	[273, 'type_params_items'],
-	[274, 'tuple_pattern_elements'],
-	[275, 'case_pattern_list'],
-	[276, 'tuple_elements'],
-	[277, 'except_clause_exception_as'],
-	[278, 'case_tuple_pattern'],
-	[279, 'case_list_pattern'],
-	[280, 'print_arguments'],
-	[281, 'print_chevron_arguments'],
-	[282, 'print_statement_chevron'],
-	[283, 'print_statement_plain'],
-	[284, 'wildcard_pattern'],
-	[285, 'parenthesized_import_list'],
-	[286, 'comprehension_clauses'],
-	[287, 'integer_decimal'],
-	[288, 'simple_pattern_negative'],
-	[289, 'except_clause_exception_list'],
-	[290, 'except_clause_exception'],
-	[291, 'splat_pattern_list'],
-	[292, 'splat_pattern_dictionary'],
-	[293, 'assignment_eq'],
-	[294, 'assignment_type'],
-	[295, 'assignment_typed'],
-	[296, 'expression_statement_tuple'],
-	[297, 'with_clause_bare'],
-	[298, 'with_clause_paren'],
-	[299, 'suite_inline'],
-	[300, 'suite_block'],
-	[301, 'suite_empty'],
-	[302, 'comparison_operator_comparator'],
-	[303, 'yield_from_clause'],
-	[304, 'type_param_type_var'],
-	[305, 'type_param_type_var_tuple'],
-	[306, 'type_param_param_spec'],
-	[307, 'constructor_declaration'],
-	[308, '_statement_class_definition'],
-	[309, 'block_class_declaration'],
-	[310, 'suite_block_class_declaration'],
-	[311, 'decorated_definition_class_declaration'],
-	[312, 'module_repeat1'],
-	[313, 'import_prefix_repeat1'],
-	[314, '_import_list_repeat1'],
-	[315, 'assert_statement_repeat1'],
-	[316, 'if_statement_repeat1'],
-	[317, '_match_block_repeat1'],
-	[318, 'try_statement_repeat1'],
-	[319, 'global_statement_repeat1'],
-	[320, 'decorated_definition_repeat1'],
-	[321, 'expression_list_repeat1'],
-	[322, '_parameters_repeat1'],
-	[323, '_patterns_repeat1'],
-	[324, 'comparison_operator_repeat1'],
-	[325, 'pattern_list_repeat1'],
-	[326, '_collection_elements_repeat1'],
-	[327, 'for_in_clause_repeat1'],
-	[328, 'concatenated_string_repeat1'],
-	[329, 'string_repeat1'],
-	[330, 'string_content_repeat1'],
-	[331, 'format_specifier_repeat1'],
-	[332, 'simple_statements_elements_repeat1'],
-	[333, 'with_clause_with_items_repeat1'],
-	[334, '_exec_statement_optional1_repeat1'],
-	[335, 'types_repeat1'],
-	[336, 'argument_list_elements_repeat1'],
-	[337, 'list_pattern_case_patterns_repeat1'],
-	[338, 'dict_pattern_elements_repeat1'],
-	[339, 'subscripts_repeat1'],
-	[340, 'dictionary_elements_repeat1'],
-	[341, 'type_params_items_repeat1'],
-	[342, '_tuple_pattern_elements_repeat1'],
-	[343, 'case_pattern_list_repeat1'],
-	[344, '_tuple_elements_repeat1'],
-	[345, '_print_arguments_repeat1'],
-	[346, 'comprehension_clauses_repeat1'],
-	[347, 'except_clause_exception_list_repeat1'],
-	[348, 'with_clause_bare_repeat1'],
-	[349, '_block_class_definition_repeat1'],
-	[350, 'as_pattern_target'],
-	[351, 'format_expression'],
-	[352, 'method_declaration'],
-	[353, 'names'],
+	[90, 'integer_hex_long'],
+	[91, 'integer_hex_plain'],
+	[92, 'integer_octal_long'],
+	[93, 'integer_octal_plain'],
+	[94, 'integer_binary_long'],
+	[95, 'integer_binary_plain'],
+	[96, 'integer_legacy_octal_long'],
+	[97, 'integer_legacy_octal_plain'],
+	[98, 'integer_decimal_long'],
+	[99, 'integer_decimal_imaginary'],
+	[100, 'integer_decimal_plain'],
+	[101, 'float_point'],
+	[102, 'float_leading_point'],
+	[103, 'float_scientific'],
+	[104, 'escape_sequence_unicode_fixed'],
+	[105, 'escape_sequence_unicode_wide'],
+	[106, 'escape_sequence_hex'],
+	[107, 'escape_sequence_octal'],
+	[108, 'escape_sequence_line_break'],
+	[109, 'escape_sequence_simple'],
+	[110, 'escape_sequence_named'],
+	[111, 'line_continuation_newline'],
+	[112, 'line_continuation_nul'],
+	[113, 'lt'],
+	[114, 'lt_eq'],
+	[115, 'eq_eq'],
+	[116, 'bang_eq'],
+	[117, 'gt_eq'],
+	[118, 'gt'],
+	[119, 'lt_gt'],
+	[120, '__init___keyword'],
+	[121, '_newline'],
+	[122, '_indent'],
+	[123, '_dedent'],
+	[124, 'string_start'],
+	[125, 'string_fragment'],
+	[126, 'escape_interpolation'],
+	[127, 'string_end'],
+	[128, '_tight'],
+	[129, '_space'],
+	[130, '_tab'],
+	[131, '_blankline'],
+	[132, '_double_blankline'],
+	[133, 'module'],
+	[134, '_statement'],
+	[135, '_simple_statements'],
+	[364, '_simple_statements'],
+	[136, 'import_statement'],
+	[137, 'import_prefix'],
+	[138, 'relative_import'],
+	[139, 'future_import_statement'],
+	[140, 'import_from_statement'],
+	[141, 'import_list'],
+	[142, 'aliased_import'],
+	[143, 'wildcard_import'],
+	[144, 'print_statement'],
+	[145, 'chevron'],
+	[146, 'assert_statement'],
+	[147, 'expression_statement'],
+	[148, 'named_expression'],
+	[149, '_named_expression_lhs'],
+	[150, 'return_statement'],
+	[151, 'delete_statement'],
+	[152, 'raise_statement'],
+	[153, 'pass_statement'],
+	[154, 'break_statement'],
+	[155, 'continue_statement'],
+	[156, 'if_statement'],
+	[157, 'elif_clause'],
+	[158, 'else_clause'],
+	[159, 'match_statement'],
+	[160, 'match_block'],
+	[161, 'case_clause'],
+	[162, 'for_statement'],
+	[163, 'while_statement'],
+	[164, 'try_statement'],
+	[165, 'except_clause'],
+	[166, 'finally_clause'],
+	[167, 'with_statement'],
+	[168, 'with_clause'],
+	[169, 'with_item'],
+	[170, 'function_definition'],
+	[171, 'parameters'],
+	[172, 'lambda_parameters'],
+	[173, 'list_splat'],
+	[174, 'dictionary_splat'],
+	[175, 'global_statement'],
+	[176, 'nonlocal_statement'],
+	[177, 'exec_statement'],
+	[178, 'type_alias_statement'],
+	[179, 'class_definition'],
+	[180, 'type_parameter'],
+	[181, 'parenthesized_list_splat'],
+	[182, 'argument_list'],
+	[183, 'decorated_definition'],
+	[184, 'decorator'],
+	[185, 'block'],
+	[186, 'expression_list'],
+	[187, 'dotted_name'],
+	[188, 'case_pattern'],
+	[189, '_simple_pattern'],
+	[363, '_simple_pattern'],
+	[190, 'case_as_pattern'],
+	[191, 'union_pattern'],
+	[192, 'dict_pattern'],
+	[193, 'key_value_pattern'],
+	[194, 'keyword_pattern'],
+	[195, 'splat_pattern'],
+	[196, 'class_pattern'],
+	[197, 'complex_pattern'],
+	[198, 'parameters_elements'],
+	[199, 'patterns'],
+	[200, 'parameter'],
+	[201, 'pattern'],
+	[202, 'tuple_pattern'],
+	[203, 'list_pattern'],
+	[204, 'default_parameter'],
+	[205, 'typed_default_parameter'],
+	[206, 'list_splat_pattern'],
+	[207, 'dictionary_splat_pattern'],
+	[208, 'as_pattern'],
+	[209, '_expression_within_for_in_clause'],
+	[210, 'expression'],
+	[211, 'primary_expression'],
+	[212, 'not_operator'],
+	[213, 'boolean_operator'],
+	[214, 'binary_operator'],
+	[215, 'unary_operator'],
+	[216, '_not_in'],
+	[217, '_is_not'],
+	[218, 'comparison_operator'],
+	[219, 'lambda'],
+	[220, 'lambda_within_for_in_clause'],
+	[221, 'assignment'],
+	[222, 'augmented_assignment'],
+	[223, 'pattern_list'],
+	[224, '_right_hand_side'],
+	[225, 'yield'],
+	[226, 'attribute'],
+	[227, 'subscript'],
+	[228, 'slice'],
+	[229, 'call'],
+	[230, 'typed_parameter'],
+	[231, 'type'],
+	[232, 'splat_type'],
+	[233, 'generic_type'],
+	[234, 'union_type'],
+	[235, 'constrained_type'],
+	[236, 'member_type'],
+	[237, 'keyword_argument'],
+	[238, 'list'],
+	[239, 'set'],
+	[240, 'tuple'],
+	[241, 'dictionary'],
+	[242, 'pair'],
+	[243, 'list_comprehension'],
+	[244, 'dictionary_comprehension'],
+	[245, 'set_comprehension'],
+	[246, 'generator_expression'],
+	[247, 'parenthesized_expression'],
+	[248, 'collection_elements'],
+	[249, 'for_in_clause'],
+	[250, 'if_clause'],
+	[251, 'conditional_expression'],
+	[252, 'concatenated_string'],
+	[253, 'string'],
+	[254, 'string_content'],
+	[255, 'interpolation'],
+	[256, '_f_expression'],
+	[257, 'escape_sequence'],
+	[258, 'not_escape_sequence'],
+	[259, 'format_specifier'],
+	[260, 'integer'],
+	[261, 'float'],
+	[262, 'await'],
+	[263, 'positional_separator'],
+	[264, 'keyword_separator'],
+	[265, 'simple_statements_elements'],
+	[266, 'subjects'],
+	[267, 'with_clause_with_items'],
+	[268, 'types'],
+	[269, 'argument_list_elements'],
+	[270, 'list_pattern_case_patterns'],
+	[271, 'dict_pattern_elements'],
+	[272, 'subscripts'],
+	[273, 'dictionary_elements'],
+	[274, 'slice_group'],
+	[275, 'type_param'],
+	[276, '_type_param_optional1'],
+	[277, 'type_params'],
+	[278, 'type_params_items'],
+	[279, 'tuple_pattern_elements'],
+	[280, 'case_pattern_list'],
+	[281, 'tuple_elements'],
+	[282, 'except_clause_exception_as'],
+	[283, 'case_tuple_pattern'],
+	[284, 'case_list_pattern'],
+	[285, 'print_arguments'],
+	[286, 'print_chevron_arguments'],
+	[287, 'print_statement_chevron'],
+	[288, 'print_statement_plain'],
+	[289, 'wildcard_pattern'],
+	[290, 'parenthesized_import_list'],
+	[291, 'comprehension_clauses'],
+	[292, 'integer_hex'],
+	[293, 'integer_octal'],
+	[294, 'integer_binary'],
+	[295, 'integer_legacy_octal'],
+	[296, 'integer_decimal'],
+	[297, 'simple_pattern_negative'],
+	[298, 'except_clause_exception_list'],
+	[299, 'except_clause_exception'],
+	[300, 'splat_pattern_list'],
+	[301, 'splat_pattern_dictionary'],
+	[302, 'assignment_eq'],
+	[303, 'assignment_type'],
+	[304, 'assignment_typed'],
+	[305, 'expression_statement_tuple'],
+	[306, 'with_clause_bare'],
+	[307, 'with_clause_paren'],
+	[308, 'suite_inline'],
+	[309, 'suite_block'],
+	[310, 'suite_empty'],
+	[311, 'comparison_operator_comparator'],
+	[312, 'yield_from_clause'],
+	[313, 'type_param_type_var'],
+	[314, 'type_param_type_var_tuple'],
+	[315, 'type_param_param_spec'],
+	[316, 'constructor_declaration'],
+	[317, '_statement_class_definition'],
+	[318, 'block_class_declaration'],
+	[319, 'suite_block_class_declaration'],
+	[320, 'decorated_definition_class_declaration'],
+	[321, 'module_repeat1'],
+	[322, 'import_prefix_repeat1'],
+	[323, '_import_list_repeat1'],
+	[324, 'assert_statement_repeat1'],
+	[325, 'if_statement_repeat1'],
+	[326, '_match_block_repeat1'],
+	[327, 'try_statement_repeat1'],
+	[328, 'global_statement_repeat1'],
+	[329, 'decorated_definition_repeat1'],
+	[330, 'expression_list_repeat1'],
+	[331, '_parameters_repeat1'],
+	[332, '_patterns_repeat1'],
+	[333, 'comparison_operator_repeat1'],
+	[334, 'pattern_list_repeat1'],
+	[335, '_collection_elements_repeat1'],
+	[336, 'for_in_clause_repeat1'],
+	[337, 'concatenated_string_repeat1'],
+	[338, 'string_repeat1'],
+	[339, 'string_content_repeat1'],
+	[340, 'format_specifier_repeat1'],
+	[341, 'simple_statements_elements_repeat1'],
+	[342, 'with_clause_with_items_repeat1'],
+	[343, '_exec_statement_optional1_repeat1'],
+	[344, 'types_repeat1'],
+	[345, 'argument_list_elements_repeat1'],
+	[346, 'list_pattern_case_patterns_repeat1'],
+	[347, 'dict_pattern_elements_repeat1'],
+	[348, 'subscripts_repeat1'],
+	[349, 'dictionary_elements_repeat1'],
+	[350, 'type_params_items_repeat1'],
+	[351, '_tuple_pattern_elements_repeat1'],
+	[352, 'case_pattern_list_repeat1'],
+	[353, '_tuple_elements_repeat1'],
+	[354, '_print_arguments_repeat1'],
+	[355, 'comprehension_clauses_repeat1'],
+	[356, 'except_clause_exception_list_repeat1'],
+	[357, 'with_clause_bare_repeat1'],
+	[358, '_block_class_definition_repeat1'],
+	[359, 'as_pattern_target'],
+	[360, 'format_expression'],
+	[361, 'method_declaration'],
+	[362, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -622,272 +631,281 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[87, '|='],
 	[88, 'format_specifier_text'],
 	[89, '_'],
-	[90, 'integer_hex'],
-	[91, 'integer_octal'],
-	[92, 'integer_binary'],
-	[93, 'integer_decimal_long'],
-	[94, 'integer_decimal_imaginary'],
-	[95, 'integer_decimal_plain'],
-	[96, 'float_point'],
-	[97, 'float_leading_point'],
-	[98, 'float_scientific'],
-	[99, 'escape_sequence_unicode_fixed'],
-	[100, 'escape_sequence_unicode_wide'],
-	[101, 'escape_sequence_hex'],
-	[102, 'escape_sequence_octal'],
-	[103, 'escape_sequence_line_break'],
-	[104, 'escape_sequence_simple'],
-	[105, 'escape_sequence_named'],
-	[106, 'line_continuation_newline'],
-	[107, 'line_continuation_nul'],
-	[108, '<'],
-	[109, '<='],
-	[110, '=='],
-	[111, '!='],
-	[112, '>='],
-	[113, '>'],
-	[114, '<>'],
-	[115, 'identifier'],
-	[116, 'newline'],
-	[117, 'indent'],
-	[118, 'dedent'],
-	[119, 'string_start'],
-	[120, 'string_fragment'],
-	[121, 'escape_interpolation'],
-	[122, 'string_end'],
-	[123, '_tight'],
-	[124, '_space'],
-	[125, '_tab'],
-	[126, '_blankline'],
-	[127, '_double_blankline'],
-	[128, 'module'],
-	[129, '_statement'],
-	[130, '_simple_statements'],
-	[355, 'simple_statements'],
-	[131, 'import_statement'],
-	[132, 'import_prefix'],
-	[133, 'relative_import'],
-	[134, 'future_import_statement'],
-	[135, 'import_from_statement'],
-	[136, 'import_list'],
-	[137, 'aliased_import'],
-	[138, 'wildcard_import'],
-	[139, 'print_statement'],
-	[140, 'chevron'],
-	[141, 'assert_statement'],
-	[142, 'expression_statement'],
-	[143, 'named_expression'],
-	[144, '_named_expression_lhs'],
-	[145, 'return_statement'],
-	[146, 'delete_statement'],
-	[147, 'raise_statement'],
-	[148, 'pass_statement'],
-	[149, 'break_statement'],
-	[150, 'continue_statement'],
-	[151, 'if_statement'],
-	[152, 'elif_clause'],
-	[153, 'else_clause'],
-	[154, 'match_statement'],
-	[155, 'match_block'],
-	[156, 'case_clause'],
-	[157, 'for_statement'],
-	[158, 'while_statement'],
-	[159, 'try_statement'],
-	[160, 'except_clause'],
-	[161, 'finally_clause'],
-	[162, 'with_statement'],
-	[163, 'with_clause'],
-	[164, 'with_item'],
-	[165, 'function_definition'],
-	[166, 'parameters'],
-	[167, 'lambda_parameters'],
-	[168, 'list_splat'],
-	[169, 'dictionary_splat'],
-	[170, 'global_statement'],
-	[171, 'nonlocal_statement'],
-	[172, 'exec_statement'],
-	[173, 'type_alias_statement'],
-	[174, 'class_definition'],
-	[175, 'type_parameter'],
-	[176, 'parenthesized_list_splat'],
-	[177, 'argument_list'],
-	[178, 'decorated_definition'],
-	[179, 'decorator'],
-	[180, 'block_statement'],
-	[181, 'expression_list'],
-	[182, 'qualified_identifier'],
-	[183, 'case_pattern'],
-	[184, '_simple_pattern'],
-	[354, 'simple_pattern'],
-	[185, 'case_as_pattern'],
-	[186, 'union_pattern'],
-	[187, 'dict_pattern'],
-	[188, 'key_value_pattern'],
-	[189, 'keyword_pattern'],
-	[190, 'splat_pattern'],
-	[191, 'class_pattern'],
-	[192, 'complex_pattern'],
-	[193, 'parameters_elements'],
-	[194, 'patterns'],
-	[195, 'parameter'],
-	[196, 'pattern'],
-	[197, 'tuple_pattern'],
-	[198, 'list_pattern'],
-	[199, 'default_parameter'],
-	[200, 'typed_default_parameter'],
-	[201, 'rest_pattern'],
-	[202, 'map_rest_pattern'],
-	[203, 'as_pattern'],
-	[204, '_expression_within_for_in_clause'],
-	[205, 'expression'],
-	[206, 'primary_expression'],
-	[207, 'not_operator'],
-	[208, 'boolean_operator'],
-	[209, 'binary_operator'],
-	[210, 'unary_operator'],
-	[211, 'not in'],
-	[212, 'is not'],
-	[213, 'comparison_operator'],
-	[214, 'lambda_expression'],
-	[215, 'lambda_expression'],
-	[216, 'assignment'],
-	[217, 'augmented_assignment'],
-	[218, 'bare_tuple_pattern'],
-	[219, '_right_hand_side'],
-	[220, 'yield'],
-	[221, 'attribute'],
-	[222, 'subscript'],
-	[223, 'slice'],
-	[224, 'call'],
-	[225, 'typed_parameter'],
-	[226, 'type'],
-	[227, 'splat_type'],
-	[228, 'generic_type'],
-	[229, 'union_type'],
-	[230, 'constrained_type'],
-	[231, 'qualified_identifier'],
-	[232, 'keyword_argument'],
-	[233, 'list'],
-	[234, 'set'],
-	[235, 'tuple'],
-	[236, 'dictionary'],
-	[237, 'pair'],
-	[238, 'list_comprehension'],
-	[239, 'dictionary_comprehension'],
-	[240, 'set_comprehension'],
-	[241, 'generator_expression'],
-	[242, 'parenthesized_expression'],
-	[243, 'collection_elements'],
-	[244, 'for_in_clause'],
-	[245, 'if_clause'],
-	[246, 'conditional_expression'],
-	[247, 'concatenated_string'],
-	[248, 'string'],
-	[249, 'string_content'],
-	[250, 'interpolation'],
-	[251, '_f_expression'],
-	[252, 'escape_sequence'],
-	[253, 'not_escape_sequence'],
-	[254, 'format_specifier'],
-	[255, 'integer'],
-	[256, 'float'],
-	[257, 'await'],
-	[258, 'positional_separator'],
-	[259, 'keyword_separator'],
-	[260, 'simple_statements_elements'],
-	[261, 'subjects'],
-	[262, 'with_clause_with_items'],
-	[263, 'types'],
-	[264, 'argument_list_elements'],
-	[265, 'list_pattern_case_patterns'],
-	[266, 'dict_pattern_elements'],
-	[267, 'subscripts'],
-	[268, 'dictionary_elements'],
-	[269, 'slice_group'],
-	[270, 'type_param'],
-	[271, '_type_param_optional1'],
-	[272, 'type_params'],
-	[273, 'type_params_items'],
-	[274, 'tuple_pattern_elements'],
-	[275, 'bare_tuple_pattern'],
-	[276, 'tuple_elements'],
-	[277, 'except_clause_exception_as'],
-	[278, 'case_tuple_pattern'],
-	[279, 'case_list_pattern'],
-	[280, 'print_arguments'],
-	[281, 'print_chevron_arguments'],
-	[282, 'print_statement_chevron'],
-	[283, 'print_statement_plain'],
-	[284, 'wildcard_pattern'],
-	[285, 'parenthesized_import_list'],
-	[286, 'comprehension_clauses'],
-	[287, 'integer_decimal'],
-	[288, 'simple_pattern_negative'],
-	[289, 'except_clause_exception_list'],
-	[290, 'except_clause_exception'],
-	[291, 'rest_pattern'],
-	[292, 'map_rest_pattern'],
-	[293, 'assignment_eq'],
-	[294, 'assignment_type'],
-	[295, 'assignment_typed'],
-	[296, 'expression_statement_tuple'],
-	[297, 'with_clause_bare'],
-	[298, 'with_clause_paren'],
-	[299, 'block_statement'],
-	[300, 'suite_block'],
-	[301, 'suite_empty'],
-	[302, 'comparison_operator_comparator'],
-	[303, 'yield_from_clause'],
-	[304, 'type_param_type_var'],
-	[305, 'type_param_type_var_tuple'],
-	[306, 'type_param_param_spec'],
-	[307, 'constructor_declaration'],
-	[308, '_statement_class_definition'],
-	[309, 'block_class_declaration'],
-	[310, 'suite_block_class_declaration'],
-	[311, 'decorated_definition_class_declaration'],
-	[312, 'module_repeat1'],
-	[313, 'import_prefix_repeat1'],
-	[314, '_import_list_repeat1'],
-	[315, 'assert_statement_repeat1'],
-	[316, 'if_statement_repeat1'],
-	[317, '_match_block_repeat1'],
-	[318, 'try_statement_repeat1'],
-	[319, 'global_statement_repeat1'],
-	[320, 'decorated_definition_repeat1'],
-	[321, 'expression_list_repeat1'],
-	[322, '_parameters_repeat1'],
-	[323, '_patterns_repeat1'],
-	[324, 'comparison_operator_repeat1'],
-	[325, 'pattern_list_repeat1'],
-	[326, '_collection_elements_repeat1'],
-	[327, 'for_in_clause_repeat1'],
-	[328, 'concatenated_string_repeat1'],
-	[329, 'string_repeat1'],
-	[330, 'string_content_repeat1'],
-	[331, 'format_specifier_repeat1'],
-	[332, 'simple_statements_elements_repeat1'],
-	[333, 'with_clause_with_items_repeat1'],
-	[334, '_exec_statement_optional1_repeat1'],
-	[335, 'types_repeat1'],
-	[336, 'argument_list_elements_repeat1'],
-	[337, 'list_pattern_case_patterns_repeat1'],
-	[338, 'dict_pattern_elements_repeat1'],
-	[339, 'subscripts_repeat1'],
-	[340, 'dictionary_elements_repeat1'],
-	[341, 'type_params_items_repeat1'],
-	[342, '_tuple_pattern_elements_repeat1'],
-	[343, 'case_pattern_list_repeat1'],
-	[344, '_tuple_elements_repeat1'],
-	[345, '_print_arguments_repeat1'],
-	[346, 'comprehension_clauses_repeat1'],
-	[347, 'except_clause_exception_list_repeat1'],
-	[348, 'with_clause_bare_repeat1'],
-	[349, '_block_class_definition_repeat1'],
-	[350, 'as_pattern_target'],
-	[351, 'format_expression'],
-	[352, 'method_declaration'],
-	[353, 'names'],
+	[90, 'integer_hex_long'],
+	[91, 'integer_hex_plain'],
+	[92, 'integer_octal_long'],
+	[93, 'integer_octal_plain'],
+	[94, 'integer_binary_long'],
+	[95, 'integer_binary_plain'],
+	[96, 'integer_legacy_octal_long'],
+	[97, 'integer_legacy_octal_plain'],
+	[98, 'integer_decimal_long'],
+	[99, 'integer_decimal_imaginary'],
+	[100, 'integer_decimal_plain'],
+	[101, 'float_point'],
+	[102, 'float_leading_point'],
+	[103, 'float_scientific'],
+	[104, 'escape_sequence_unicode_fixed'],
+	[105, 'escape_sequence_unicode_wide'],
+	[106, 'escape_sequence_hex'],
+	[107, 'escape_sequence_octal'],
+	[108, 'escape_sequence_line_break'],
+	[109, 'escape_sequence_simple'],
+	[110, 'escape_sequence_named'],
+	[111, 'line_continuation_newline'],
+	[112, 'line_continuation_nul'],
+	[113, '<'],
+	[114, '<='],
+	[115, '=='],
+	[116, '!='],
+	[117, '>='],
+	[118, '>'],
+	[119, '<>'],
+	[120, 'identifier'],
+	[121, 'newline'],
+	[122, 'indent'],
+	[123, 'dedent'],
+	[124, 'string_start'],
+	[125, 'string_fragment'],
+	[126, 'escape_interpolation'],
+	[127, 'string_end'],
+	[128, '_tight'],
+	[129, '_space'],
+	[130, '_tab'],
+	[131, '_blankline'],
+	[132, '_double_blankline'],
+	[133, 'module'],
+	[134, '_statement'],
+	[135, '_simple_statements'],
+	[364, 'simple_statements'],
+	[136, 'import_statement'],
+	[137, 'import_prefix'],
+	[138, 'relative_import'],
+	[139, 'future_import_statement'],
+	[140, 'import_from_statement'],
+	[141, 'import_list'],
+	[142, 'aliased_import'],
+	[143, 'wildcard_import'],
+	[144, 'print_statement'],
+	[145, 'chevron'],
+	[146, 'assert_statement'],
+	[147, 'expression_statement'],
+	[148, 'named_expression'],
+	[149, '_named_expression_lhs'],
+	[150, 'return_statement'],
+	[151, 'delete_statement'],
+	[152, 'raise_statement'],
+	[153, 'pass_statement'],
+	[154, 'break_statement'],
+	[155, 'continue_statement'],
+	[156, 'if_statement'],
+	[157, 'elif_clause'],
+	[158, 'else_clause'],
+	[159, 'match_statement'],
+	[160, 'match_block'],
+	[161, 'case_clause'],
+	[162, 'for_statement'],
+	[163, 'while_statement'],
+	[164, 'try_statement'],
+	[165, 'except_clause'],
+	[166, 'finally_clause'],
+	[167, 'with_statement'],
+	[168, 'with_clause'],
+	[169, 'with_item'],
+	[170, 'function_definition'],
+	[171, 'parameters'],
+	[172, 'lambda_parameters'],
+	[173, 'list_splat'],
+	[174, 'dictionary_splat'],
+	[175, 'global_statement'],
+	[176, 'nonlocal_statement'],
+	[177, 'exec_statement'],
+	[178, 'type_alias_statement'],
+	[179, 'class_definition'],
+	[180, 'type_parameter'],
+	[181, 'parenthesized_list_splat'],
+	[182, 'argument_list'],
+	[183, 'decorated_definition'],
+	[184, 'decorator'],
+	[185, 'block_statement'],
+	[186, 'expression_list'],
+	[187, 'qualified_identifier'],
+	[188, 'case_pattern'],
+	[189, '_simple_pattern'],
+	[363, 'simple_pattern'],
+	[190, 'case_as_pattern'],
+	[191, 'union_pattern'],
+	[192, 'dict_pattern'],
+	[193, 'key_value_pattern'],
+	[194, 'keyword_pattern'],
+	[195, 'splat_pattern'],
+	[196, 'class_pattern'],
+	[197, 'complex_pattern'],
+	[198, 'parameters_elements'],
+	[199, 'patterns'],
+	[200, 'parameter'],
+	[201, 'pattern'],
+	[202, 'tuple_pattern'],
+	[203, 'list_pattern'],
+	[204, 'default_parameter'],
+	[205, 'typed_default_parameter'],
+	[206, 'rest_pattern'],
+	[207, 'map_rest_pattern'],
+	[208, 'as_pattern'],
+	[209, '_expression_within_for_in_clause'],
+	[210, 'expression'],
+	[211, 'primary_expression'],
+	[212, 'not_operator'],
+	[213, 'boolean_operator'],
+	[214, 'binary_operator'],
+	[215, 'unary_operator'],
+	[216, 'not in'],
+	[217, 'is not'],
+	[218, 'comparison_operator'],
+	[219, 'lambda_expression'],
+	[220, 'lambda_expression'],
+	[221, 'assignment'],
+	[222, 'augmented_assignment'],
+	[223, 'bare_tuple_pattern'],
+	[224, '_right_hand_side'],
+	[225, 'yield'],
+	[226, 'attribute'],
+	[227, 'subscript'],
+	[228, 'slice'],
+	[229, 'call'],
+	[230, 'typed_parameter'],
+	[231, 'type'],
+	[232, 'splat_type'],
+	[233, 'generic_type'],
+	[234, 'union_type'],
+	[235, 'constrained_type'],
+	[236, 'qualified_identifier'],
+	[237, 'keyword_argument'],
+	[238, 'list'],
+	[239, 'set'],
+	[240, 'tuple'],
+	[241, 'dictionary'],
+	[242, 'pair'],
+	[243, 'list_comprehension'],
+	[244, 'dictionary_comprehension'],
+	[245, 'set_comprehension'],
+	[246, 'generator_expression'],
+	[247, 'parenthesized_expression'],
+	[248, 'collection_elements'],
+	[249, 'for_in_clause'],
+	[250, 'if_clause'],
+	[251, 'conditional_expression'],
+	[252, 'concatenated_string'],
+	[253, 'string'],
+	[254, 'string_content'],
+	[255, 'interpolation'],
+	[256, '_f_expression'],
+	[257, 'escape_sequence'],
+	[258, 'not_escape_sequence'],
+	[259, 'format_specifier'],
+	[260, 'integer'],
+	[261, 'float'],
+	[262, 'await'],
+	[263, 'positional_separator'],
+	[264, 'keyword_separator'],
+	[265, 'simple_statements_elements'],
+	[266, 'subjects'],
+	[267, 'with_clause_with_items'],
+	[268, 'types'],
+	[269, 'argument_list_elements'],
+	[270, 'list_pattern_case_patterns'],
+	[271, 'dict_pattern_elements'],
+	[272, 'subscripts'],
+	[273, 'dictionary_elements'],
+	[274, 'slice_group'],
+	[275, 'type_param'],
+	[276, '_type_param_optional1'],
+	[277, 'type_params'],
+	[278, 'type_params_items'],
+	[279, 'tuple_pattern_elements'],
+	[280, 'bare_tuple_pattern'],
+	[281, 'tuple_elements'],
+	[282, 'except_clause_exception_as'],
+	[283, 'case_tuple_pattern'],
+	[284, 'case_list_pattern'],
+	[285, 'print_arguments'],
+	[286, 'print_chevron_arguments'],
+	[287, 'print_statement_chevron'],
+	[288, 'print_statement_plain'],
+	[289, 'wildcard_pattern'],
+	[290, 'parenthesized_import_list'],
+	[291, 'comprehension_clauses'],
+	[292, 'integer_hex'],
+	[293, 'integer_octal'],
+	[294, 'integer_binary'],
+	[295, 'integer_legacy_octal'],
+	[296, 'integer_decimal'],
+	[297, 'simple_pattern_negative'],
+	[298, 'except_clause_exception_list'],
+	[299, 'except_clause_exception'],
+	[300, 'rest_pattern'],
+	[301, 'map_rest_pattern'],
+	[302, 'assignment_eq'],
+	[303, 'assignment_type'],
+	[304, 'assignment_typed'],
+	[305, 'expression_statement_tuple'],
+	[306, 'with_clause_bare'],
+	[307, 'with_clause_paren'],
+	[308, 'block_statement'],
+	[309, 'suite_block'],
+	[310, 'suite_empty'],
+	[311, 'comparison_operator_comparator'],
+	[312, 'yield_from_clause'],
+	[313, 'type_param_type_var'],
+	[314, 'type_param_type_var_tuple'],
+	[315, 'type_param_param_spec'],
+	[316, 'constructor_declaration'],
+	[317, '_statement_class_definition'],
+	[318, 'block_class_declaration'],
+	[319, 'suite_block_class_declaration'],
+	[320, 'decorated_definition_class_declaration'],
+	[321, 'module_repeat1'],
+	[322, 'import_prefix_repeat1'],
+	[323, '_import_list_repeat1'],
+	[324, 'assert_statement_repeat1'],
+	[325, 'if_statement_repeat1'],
+	[326, '_match_block_repeat1'],
+	[327, 'try_statement_repeat1'],
+	[328, 'global_statement_repeat1'],
+	[329, 'decorated_definition_repeat1'],
+	[330, 'expression_list_repeat1'],
+	[331, '_parameters_repeat1'],
+	[332, '_patterns_repeat1'],
+	[333, 'comparison_operator_repeat1'],
+	[334, 'pattern_list_repeat1'],
+	[335, '_collection_elements_repeat1'],
+	[336, 'for_in_clause_repeat1'],
+	[337, 'concatenated_string_repeat1'],
+	[338, 'string_repeat1'],
+	[339, 'string_content_repeat1'],
+	[340, 'format_specifier_repeat1'],
+	[341, 'simple_statements_elements_repeat1'],
+	[342, 'with_clause_with_items_repeat1'],
+	[343, '_exec_statement_optional1_repeat1'],
+	[344, 'types_repeat1'],
+	[345, 'argument_list_elements_repeat1'],
+	[346, 'list_pattern_case_patterns_repeat1'],
+	[347, 'dict_pattern_elements_repeat1'],
+	[348, 'subscripts_repeat1'],
+	[349, 'dictionary_elements_repeat1'],
+	[350, 'type_params_items_repeat1'],
+	[351, '_tuple_pattern_elements_repeat1'],
+	[352, 'case_pattern_list_repeat1'],
+	[353, '_tuple_elements_repeat1'],
+	[354, '_print_arguments_repeat1'],
+	[355, 'comprehension_clauses_repeat1'],
+	[356, 'except_clause_exception_list_repeat1'],
+	[357, 'with_clause_bare_repeat1'],
+	[358, '_block_class_definition_repeat1'],
+	[359, 'as_pattern_target'],
+	[360, 'format_expression'],
+	[361, 'method_declaration'],
+	[362, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -1074,12 +1092,22 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.FormatSpecifierText;
 		case 'underscore':
 			return TSKindId.Underscore;
-		case 'integer_hex':
-			return TSKindId.IntegerHex;
-		case 'integer_octal':
-			return TSKindId.IntegerOctal;
-		case 'integer_binary':
-			return TSKindId.IntegerBinary;
+		case 'integer_hex_long':
+			return TSKindId.IntegerHexLong;
+		case 'integer_hex_plain':
+			return TSKindId.IntegerHexPlain;
+		case 'integer_octal_long':
+			return TSKindId.IntegerOctalLong;
+		case 'integer_octal_plain':
+			return TSKindId.IntegerOctalPlain;
+		case 'integer_binary_long':
+			return TSKindId.IntegerBinaryLong;
+		case 'integer_binary_plain':
+			return TSKindId.IntegerBinaryPlain;
+		case 'integer_legacy_octal_long':
+			return TSKindId.IntegerLegacyOctalLong;
+		case 'integer_legacy_octal_plain':
+			return TSKindId.IntegerLegacyOctalPlain;
 		case 'integer_decimal_long':
 			return TSKindId.IntegerDecimalLong;
 		case 'integer_decimal_imaginary':
@@ -1468,6 +1496,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ParenthesizedImportList;
 		case 'comprehension_clauses':
 			return TSKindId.ComprehensionClauses;
+		case 'integer_hex':
+			return TSKindId.IntegerHex;
+		case 'integer_octal':
+			return TSKindId.IntegerOctal;
+		case 'integer_binary':
+			return TSKindId.IntegerBinary;
+		case 'integer_legacy_octal':
+			return TSKindId.IntegerLegacyOctal;
 		case 'integer_decimal':
 			return TSKindId.IntegerDecimal;
 		case 'simple_pattern_negative':
@@ -1977,6 +2013,7 @@ export enum IntegerKind {
 	IntegerHex = 'integer_hex',
 	IntegerOctal = 'integer_octal',
 	IntegerBinary = 'integer_binary',
+	IntegerLegacyOctal = 'integer_legacy_octal',
 	IntegerDecimal = 'integer_decimal'
 }
 
@@ -1995,6 +2032,26 @@ export enum TypeParamKind {
 	TypeParamTypeVar = 'type_param_type_var',
 	TypeParamTypeVarTuple = 'type_param_type_var_tuple',
 	TypeParamParamSpec = 'type_param_param_spec'
+}
+
+export enum IntegerHexKind {
+	IntegerHexLong = 'integer_hex_long',
+	IntegerHexPlain = 'integer_hex_plain'
+}
+
+export enum IntegerOctalKind {
+	IntegerOctalLong = 'integer_octal_long',
+	IntegerOctalPlain = 'integer_octal_plain'
+}
+
+export enum IntegerBinaryKind {
+	IntegerBinaryLong = 'integer_binary_long',
+	IntegerBinaryPlain = 'integer_binary_plain'
+}
+
+export enum IntegerLegacyOctalKind {
+	IntegerLegacyOctalLong = 'integer_legacy_octal_long',
+	IntegerLegacyOctalPlain = 'integer_legacy_octal_plain'
 }
 
 export enum IntegerDecimalKind {
@@ -5091,8 +5148,28 @@ export interface ComprehensionClauses {
 	readonly contents: () => NonEmptyArray<ForInClause | IfClause>;
 }
 
-export interface IntegerHex {
-	readonly $type: TSKindId.IntegerHex;
+export interface IntegerHexLong {
+	readonly $type: TSKindId.IntegerHexLong;
+	readonly _radix_prefix: '0x' | '0X';
+	readonly _content: string;
+	readonly _marker: 'L' | 'l';
+	readonly __slotNames__?: {
+		readonly _radix_prefix: 'radixPrefix';
+		readonly _content: 'content';
+		readonly _marker: 'marker';
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+		readonly radixPrefix: SlotHint<'0x' | '0X'>;
+		readonly marker: SlotHint<'L' | 'l'>;
+	};
+	readonly radixPrefix: () => '0x' | '0X';
+	readonly content: () => string;
+	readonly marker: () => 'L' | 'l';
+}
+
+export interface IntegerHexPlain {
+	readonly $type: TSKindId.IntegerHexPlain;
 	readonly _radix_prefix: '0x' | '0X';
 	readonly _content: string;
 	readonly __slotNames__?: {
@@ -5107,8 +5184,28 @@ export interface IntegerHex {
 	readonly content: () => string;
 }
 
-export interface IntegerOctal {
-	readonly $type: TSKindId.IntegerOctal;
+export interface IntegerOctalLong {
+	readonly $type: TSKindId.IntegerOctalLong;
+	readonly _radix_prefix: '0o' | '0O';
+	readonly _content: string;
+	readonly _marker: 'L' | 'l';
+	readonly __slotNames__?: {
+		readonly _radix_prefix: 'radixPrefix';
+		readonly _content: 'content';
+		readonly _marker: 'marker';
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+		readonly radixPrefix: SlotHint<'0o' | '0O'>;
+		readonly marker: SlotHint<'L' | 'l'>;
+	};
+	readonly radixPrefix: () => '0o' | '0O';
+	readonly content: () => string;
+	readonly marker: () => 'L' | 'l';
+}
+
+export interface IntegerOctalPlain {
+	readonly $type: TSKindId.IntegerOctalPlain;
 	readonly _radix_prefix: '0o' | '0O';
 	readonly _content: string;
 	readonly __slotNames__?: {
@@ -5123,8 +5220,28 @@ export interface IntegerOctal {
 	readonly content: () => string;
 }
 
-export interface IntegerBinary {
-	readonly $type: TSKindId.IntegerBinary;
+export interface IntegerBinaryLong {
+	readonly $type: TSKindId.IntegerBinaryLong;
+	readonly _radix_prefix: '0b' | '0B';
+	readonly _content: string;
+	readonly _marker: 'L' | 'l';
+	readonly __slotNames__?: {
+		readonly _radix_prefix: 'radixPrefix';
+		readonly _content: 'content';
+		readonly _marker: 'marker';
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+		readonly radixPrefix: SlotHint<'0b' | '0B'>;
+		readonly marker: SlotHint<'L' | 'l'>;
+	};
+	readonly radixPrefix: () => '0b' | '0B';
+	readonly content: () => string;
+	readonly marker: () => 'L' | 'l';
+}
+
+export interface IntegerBinaryPlain {
+	readonly $type: TSKindId.IntegerBinaryPlain;
 	readonly _radix_prefix: '0b' | '0B';
 	readonly _content: string;
 	readonly __slotNames__?: {
@@ -5137,6 +5254,50 @@ export interface IntegerBinary {
 	};
 	readonly radixPrefix: () => '0b' | '0B';
 	readonly content: () => string;
+}
+
+export interface IntegerLegacyOctalLong {
+	readonly $type: TSKindId.IntegerLegacyOctalLong;
+	readonly _content: string;
+	readonly _marker: 'L' | 'l';
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+		readonly _marker: 'marker';
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+		readonly marker: SlotHint<'L' | 'l'>;
+	};
+	readonly content: () => string;
+	readonly marker: () => 'L' | 'l';
+}
+
+export interface IntegerLegacyOctalPlain {
+	readonly $type: TSKindId.IntegerLegacyOctalPlain;
+	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+	};
+	readonly content: () => string;
+}
+
+export interface IntegerDecimalLong {
+	readonly $type: TSKindId.IntegerDecimalLong;
+	readonly _content: string;
+	readonly _marker: 'L' | 'l';
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+		readonly _marker: 'marker';
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+		readonly marker: SlotHint<'L' | 'l'>;
+	};
+	readonly content: () => string;
+	readonly marker: () => 'L' | 'l';
 }
 
 export interface FloatPoint {
@@ -5963,7 +6124,6 @@ export type PositionalSeparator = TSKindId.PositionalSeparator;
 export type KeywordSeparator = TSKindId.KeywordSeparator;
 export type FormatSpecifierText = Terminal<TSKindId.FormatSpecifierText, string>;
 export type WildcardPattern = TSKindId.WildcardPattern;
-export type IntegerDecimalLong = Terminal<TSKindId.IntegerDecimalLong, string>;
 export type IntegerDecimalImaginary = Terminal<TSKindId.IntegerDecimalImaginary, string>;
 export type IntegerDecimalPlain = Terminal<TSKindId.IntegerDecimalPlain, string>;
 export type LineContinuationNewline = Terminal<TSKindId.LineContinuationNewline, string> & TriviaFlanks;
@@ -6089,13 +6249,21 @@ export type EscapeSequence =
 	| EscapeSequenceSimple
 	| EscapeSequenceNamed;
 
-export type Integer = IntegerHex | IntegerOctal | IntegerBinary | IntegerDecimal;
+export type Integer = IntegerHex | IntegerOctal | IntegerBinary | IntegerLegacyOctal | IntegerDecimal;
 
 export type Float = FloatPoint | FloatLeadingPoint | FloatScientific;
 
 export type LineContinuation = LineContinuationNewline | LineContinuationNul;
 
 export type TypeParam = TypeParamTypeVar | TypeParamTypeVarTuple | TypeParamParamSpec;
+
+export type IntegerHex = IntegerHexLong | IntegerHexPlain;
+
+export type IntegerOctal = IntegerOctalLong | IntegerOctalPlain;
+
+export type IntegerBinary = IntegerBinaryLong | IntegerBinaryPlain;
+
+export type IntegerLegacyOctal = IntegerLegacyOctalLong | IntegerLegacyOctalPlain;
 
 export type IntegerDecimal = IntegerDecimalLong | IntegerDecimalImaginary | IntegerDecimalPlain;
 
@@ -6223,6 +6391,30 @@ export namespace TypeParam {
 	export type Kind = 'type_param';
 	export type Bound = SupertypeSurface<TypeParam, BoundByKindId>;
 	export type Parsed = SupertypeSurface<TypeParam, ParsedByKindId>;
+}
+
+export namespace IntegerHex {
+	export type Kind = 'integer_hex';
+	export type Bound = SupertypeSurface<IntegerHex, BoundByKindId>;
+	export type Parsed = SupertypeSurface<IntegerHex, ParsedByKindId>;
+}
+
+export namespace IntegerOctal {
+	export type Kind = 'integer_octal';
+	export type Bound = SupertypeSurface<IntegerOctal, BoundByKindId>;
+	export type Parsed = SupertypeSurface<IntegerOctal, ParsedByKindId>;
+}
+
+export namespace IntegerBinary {
+	export type Kind = 'integer_binary';
+	export type Bound = SupertypeSurface<IntegerBinary, BoundByKindId>;
+	export type Parsed = SupertypeSurface<IntegerBinary, ParsedByKindId>;
+}
+
+export namespace IntegerLegacyOctal {
+	export type Kind = 'integer_legacy_octal';
+	export type Bound = SupertypeSurface<IntegerLegacyOctal, BoundByKindId>;
+	export type Parsed = SupertypeSurface<IntegerLegacyOctal, ParsedByKindId>;
 }
 
 export namespace IntegerDecimal {
@@ -10443,47 +10635,131 @@ export interface ComprehensionClausesNs extends NodeNs<
 	readonly BuildArgs: ComprehensionClauses.BuildArgs;
 	readonly LooseArgs: ComprehensionClauses.LooseArgs;
 }
-export interface IntegerHexNs extends NodeNs<
-	IntegerHex,
+export interface IntegerHexLongNs extends NodeNs<
+	IntegerHexLong,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	IntegerHex.Bound,
+	IntegerHexLong.Bound,
 	'content',
-	TSKindId.IntegerHex,
-	IntegerHex.Parsed,
+	TSKindId.IntegerHexLong,
+	IntegerHexLong.Parsed,
 	never
 > {
-	readonly BuildArgs: IntegerHex.BuildArgs;
-	readonly LooseArgs: IntegerHex.LooseArgs;
+	readonly BuildArgs: IntegerHexLong.BuildArgs;
+	readonly LooseArgs: IntegerHexLong.LooseArgs;
 }
-export interface IntegerOctalNs extends NodeNs<
-	IntegerOctal,
+export interface IntegerHexPlainNs extends NodeNs<
+	IntegerHexPlain,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	IntegerOctal.Bound,
+	IntegerHexPlain.Bound,
 	'content',
-	TSKindId.IntegerOctal,
-	IntegerOctal.Parsed,
+	TSKindId.IntegerHexPlain,
+	IntegerHexPlain.Parsed,
 	never
 > {
-	readonly BuildArgs: IntegerOctal.BuildArgs;
-	readonly LooseArgs: IntegerOctal.LooseArgs;
+	readonly BuildArgs: IntegerHexPlain.BuildArgs;
+	readonly LooseArgs: IntegerHexPlain.LooseArgs;
 }
-export interface IntegerBinaryNs extends NodeNs<
-	IntegerBinary,
+export interface IntegerOctalLongNs extends NodeNs<
+	IntegerOctalLong,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	IntegerBinary.Bound,
+	IntegerOctalLong.Bound,
 	'content',
-	TSKindId.IntegerBinary,
-	IntegerBinary.Parsed,
+	TSKindId.IntegerOctalLong,
+	IntegerOctalLong.Parsed,
 	never
 > {
-	readonly BuildArgs: IntegerBinary.BuildArgs;
-	readonly LooseArgs: IntegerBinary.LooseArgs;
+	readonly BuildArgs: IntegerOctalLong.BuildArgs;
+	readonly LooseArgs: IntegerOctalLong.LooseArgs;
+}
+export interface IntegerOctalPlainNs extends NodeNs<
+	IntegerOctalPlain,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	IntegerOctalPlain.Bound,
+	'content',
+	TSKindId.IntegerOctalPlain,
+	IntegerOctalPlain.Parsed,
+	never
+> {
+	readonly BuildArgs: IntegerOctalPlain.BuildArgs;
+	readonly LooseArgs: IntegerOctalPlain.LooseArgs;
+}
+export interface IntegerBinaryLongNs extends NodeNs<
+	IntegerBinaryLong,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	IntegerBinaryLong.Bound,
+	'content',
+	TSKindId.IntegerBinaryLong,
+	IntegerBinaryLong.Parsed,
+	never
+> {
+	readonly BuildArgs: IntegerBinaryLong.BuildArgs;
+	readonly LooseArgs: IntegerBinaryLong.LooseArgs;
+}
+export interface IntegerBinaryPlainNs extends NodeNs<
+	IntegerBinaryPlain,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	IntegerBinaryPlain.Bound,
+	'content',
+	TSKindId.IntegerBinaryPlain,
+	IntegerBinaryPlain.Parsed,
+	never
+> {
+	readonly BuildArgs: IntegerBinaryPlain.BuildArgs;
+	readonly LooseArgs: IntegerBinaryPlain.LooseArgs;
+}
+export interface IntegerLegacyOctalLongNs extends NodeNs<
+	IntegerLegacyOctalLong,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	IntegerLegacyOctalLong.Bound,
+	'content',
+	TSKindId.IntegerLegacyOctalLong,
+	IntegerLegacyOctalLong.Parsed,
+	never
+> {
+	readonly BuildArgs: IntegerLegacyOctalLong.BuildArgs;
+	readonly LooseArgs: IntegerLegacyOctalLong.LooseArgs;
+}
+export interface IntegerLegacyOctalPlainNs extends NodeNs<
+	IntegerLegacyOctalPlain,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	IntegerLegacyOctalPlain.Bound,
+	'content',
+	TSKindId.IntegerLegacyOctalPlain,
+	IntegerLegacyOctalPlain.Parsed,
+	never
+> {
+	readonly BuildArgs: IntegerLegacyOctalPlain.BuildArgs;
+	readonly LooseArgs: IntegerLegacyOctalPlain.LooseArgs;
+}
+export interface IntegerDecimalLongNs extends NodeNs<
+	IntegerDecimalLong,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	IntegerDecimalLong.Bound,
+	'content',
+	TSKindId.IntegerDecimalLong,
+	IntegerDecimalLong.Parsed,
+	never
+> {
+	readonly BuildArgs: IntegerDecimalLong.BuildArgs;
+	readonly LooseArgs: IntegerDecimalLong.LooseArgs;
 }
 export interface FloatPointNs extends NodeNs<
 	FloatPoint,
@@ -11078,12 +11354,6 @@ export interface FormatSpecifierTextNs extends LeafNs<
 	FormatSpecifierText.Bound,
 	TSKindId.FormatSpecifierText
 > {}
-export interface IntegerDecimalLongNs extends LeafNs<
-	IntegerDecimalLong,
-	string,
-	IntegerDecimalLong.Bound,
-	TSKindId.IntegerDecimalLong
-> {}
 export interface IntegerDecimalImaginaryNs extends LeafNs<
 	IntegerDecimalImaginary,
 	string,
@@ -11249,9 +11519,15 @@ export interface NamespaceMap {
 	[TSKindId.PrintStatementPlain]: PrintStatementPlainNs;
 	[TSKindId.ParenthesizedImportList]: ParenthesizedImportListNs;
 	[TSKindId.ComprehensionClauses]: ComprehensionClausesNs;
-	[TSKindId.IntegerHex]: IntegerHexNs;
-	[TSKindId.IntegerOctal]: IntegerOctalNs;
-	[TSKindId.IntegerBinary]: IntegerBinaryNs;
+	[TSKindId.IntegerHexLong]: IntegerHexLongNs;
+	[TSKindId.IntegerHexPlain]: IntegerHexPlainNs;
+	[TSKindId.IntegerOctalLong]: IntegerOctalLongNs;
+	[TSKindId.IntegerOctalPlain]: IntegerOctalPlainNs;
+	[TSKindId.IntegerBinaryLong]: IntegerBinaryLongNs;
+	[TSKindId.IntegerBinaryPlain]: IntegerBinaryPlainNs;
+	[TSKindId.IntegerLegacyOctalLong]: IntegerLegacyOctalLongNs;
+	[TSKindId.IntegerLegacyOctalPlain]: IntegerLegacyOctalPlainNs;
+	[TSKindId.IntegerDecimalLong]: IntegerDecimalLongNs;
 	[TSKindId.FloatPoint]: FloatPointNs;
 	[TSKindId.FloatLeadingPoint]: FloatLeadingPointNs;
 	[TSKindId.FloatScientific]: FloatScientificNs;
@@ -11316,7 +11592,6 @@ export interface NamespaceMap {
 	[TSKindId.TypeConversion]: TypeConversionNs;
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.FormatSpecifierText]: FormatSpecifierTextNs;
-	[TSKindId.IntegerDecimalLong]: IntegerDecimalLongNs;
 	[TSKindId.IntegerDecimalImaginary]: IntegerDecimalImaginaryNs;
 	[TSKindId.IntegerDecimalPlain]: IntegerDecimalPlainNs;
 	[TSKindId.LineContinuationNewline]: LineContinuationNewlineNs;
@@ -11458,9 +11733,15 @@ export interface BoundByKindId {
 	[TSKindId.PrintStatementPlain]: PrintStatementPlain.Bound;
 	[TSKindId.ParenthesizedImportList]: ParenthesizedImportList.Bound;
 	[TSKindId.ComprehensionClauses]: ComprehensionClauses.Bound;
-	[TSKindId.IntegerHex]: IntegerHex.Bound;
-	[TSKindId.IntegerOctal]: IntegerOctal.Bound;
-	[TSKindId.IntegerBinary]: IntegerBinary.Bound;
+	[TSKindId.IntegerHexLong]: IntegerHexLong.Bound;
+	[TSKindId.IntegerHexPlain]: IntegerHexPlain.Bound;
+	[TSKindId.IntegerOctalLong]: IntegerOctalLong.Bound;
+	[TSKindId.IntegerOctalPlain]: IntegerOctalPlain.Bound;
+	[TSKindId.IntegerBinaryLong]: IntegerBinaryLong.Bound;
+	[TSKindId.IntegerBinaryPlain]: IntegerBinaryPlain.Bound;
+	[TSKindId.IntegerLegacyOctalLong]: IntegerLegacyOctalLong.Bound;
+	[TSKindId.IntegerLegacyOctalPlain]: IntegerLegacyOctalPlain.Bound;
+	[TSKindId.IntegerDecimalLong]: IntegerDecimalLong.Bound;
 	[TSKindId.FloatPoint]: FloatPoint.Bound;
 	[TSKindId.FloatLeadingPoint]: FloatLeadingPoint.Bound;
 	[TSKindId.FloatScientific]: FloatScientific.Bound;
@@ -11504,7 +11785,6 @@ export interface BoundByKindId {
 	[TSKindId.TypeConversion]: TypeConversion.Bound;
 	[TSKindId.Identifier]: Identifier.Bound;
 	[TSKindId.FormatSpecifierText]: FormatSpecifierText.Bound;
-	[TSKindId.IntegerDecimalLong]: IntegerDecimalLong.Bound;
 	[TSKindId.IntegerDecimalImaginary]: IntegerDecimalImaginary.Bound;
 	[TSKindId.IntegerDecimalPlain]: IntegerDecimalPlain.Bound;
 	[TSKindId.LineContinuationNewline]: LineContinuationNewline.Bound;
@@ -11646,9 +11926,15 @@ export interface ParsedByKindId {
 	[TSKindId.PrintStatementPlain]: PrintStatementPlain.Parsed;
 	[TSKindId.ParenthesizedImportList]: ParenthesizedImportList.Parsed;
 	[TSKindId.ComprehensionClauses]: ComprehensionClauses.Parsed;
-	[TSKindId.IntegerHex]: IntegerHex.Parsed;
-	[TSKindId.IntegerOctal]: IntegerOctal.Parsed;
-	[TSKindId.IntegerBinary]: IntegerBinary.Parsed;
+	[TSKindId.IntegerHexLong]: IntegerHexLong.Parsed;
+	[TSKindId.IntegerHexPlain]: IntegerHexPlain.Parsed;
+	[TSKindId.IntegerOctalLong]: IntegerOctalLong.Parsed;
+	[TSKindId.IntegerOctalPlain]: IntegerOctalPlain.Parsed;
+	[TSKindId.IntegerBinaryLong]: IntegerBinaryLong.Parsed;
+	[TSKindId.IntegerBinaryPlain]: IntegerBinaryPlain.Parsed;
+	[TSKindId.IntegerLegacyOctalLong]: IntegerLegacyOctalLong.Parsed;
+	[TSKindId.IntegerLegacyOctalPlain]: IntegerLegacyOctalPlain.Parsed;
+	[TSKindId.IntegerDecimalLong]: IntegerDecimalLong.Parsed;
 	[TSKindId.FloatPoint]: FloatPoint.Parsed;
 	[TSKindId.FloatLeadingPoint]: FloatLeadingPoint.Parsed;
 	[TSKindId.FloatScientific]: FloatScientific.Parsed;
@@ -11692,7 +11978,6 @@ export interface ParsedByKindId {
 	[TSKindId.TypeConversion]: TypeConversion.Parsed;
 	[TSKindId.Identifier]: Identifier.Parsed;
 	[TSKindId.FormatSpecifierText]: FormatSpecifierText.Parsed;
-	[TSKindId.IntegerDecimalLong]: IntegerDecimalLong.Parsed;
 	[TSKindId.IntegerDecimalImaginary]: IntegerDecimalImaginary.Parsed;
 	[TSKindId.IntegerDecimalPlain]: IntegerDecimalPlain.Parsed;
 	[TSKindId.LineContinuationNewline]: LineContinuationNewline.Parsed;
@@ -11945,9 +12230,15 @@ export interface TypeKeyOf {
 	[TSKindId.PrintStatementPlain]: 'printStatementPlain';
 	[TSKindId.ParenthesizedImportList]: 'parenthesizedImportList';
 	[TSKindId.ComprehensionClauses]: 'comprehensionClauses';
-	[TSKindId.IntegerHex]: 'integerHex';
-	[TSKindId.IntegerOctal]: 'integerOctal';
-	[TSKindId.IntegerBinary]: 'integerBinary';
+	[TSKindId.IntegerHexLong]: 'integerHexLong';
+	[TSKindId.IntegerHexPlain]: 'integerHexPlain';
+	[TSKindId.IntegerOctalLong]: 'integerOctalLong';
+	[TSKindId.IntegerOctalPlain]: 'integerOctalPlain';
+	[TSKindId.IntegerBinaryLong]: 'integerBinaryLong';
+	[TSKindId.IntegerBinaryPlain]: 'integerBinaryPlain';
+	[TSKindId.IntegerLegacyOctalLong]: 'integerLegacyOctalLong';
+	[TSKindId.IntegerLegacyOctalPlain]: 'integerLegacyOctalPlain';
+	[TSKindId.IntegerDecimalLong]: 'integerDecimalLong';
 	[TSKindId.FloatPoint]: 'floatPoint';
 	[TSKindId.FloatLeadingPoint]: 'floatLeadingPoint';
 	[TSKindId.FloatScientific]: 'floatScientific';
@@ -12012,7 +12303,6 @@ export interface TypeKeyOf {
 	[TSKindId.TypeConversion]: 'typeConversion';
 	[TSKindId.Identifier]: 'identifier';
 	[TSKindId.FormatSpecifierText]: 'formatSpecifierText';
-	[TSKindId.IntegerDecimalLong]: 'integerDecimalLong';
 	[TSKindId.IntegerDecimalImaginary]: 'integerDecimalImaginary';
 	[TSKindId.IntegerDecimalPlain]: 'integerDecimalPlain';
 	[TSKindId.LineContinuationNewline]: 'lineContinuationNewline';
@@ -16139,18 +16429,56 @@ export namespace ComprehensionClauses {
 		]
 	>;
 }
-export namespace IntegerHex {
+export namespace IntegerHexLong {
 	export type Config = WidenSlots<
-		OmitEach<ConfigFor<TSKindId.IntegerHex>, 'radixPrefix'>,
+		OmitEach<ConfigFor<TSKindId.IntegerHexLong>, 'radixPrefix' | 'marker'>,
+		{ content: number | bigint }
+	>;
+	export type Options = { readonly radixPrefix?: '0x' | '0X'; readonly marker?: 'L' | 'l' };
+	export interface Bound extends BoundOf<T.IntegerHexLong, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.IntegerHexLong['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.IntegerHexLong, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.IntegerHexLong['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.IntegerHexLong['$type']>;
+	}
+	export type Loose =
+		| OmitEach<LooseFor<TSKindId.IntegerHexLong>, 'radixPrefix' | 'marker'>
+		| WidenSlots<
+				OmitEach<LooseConfigFor<TSKindId.IntegerHexLong>, 'radixPrefix' | 'marker'>,
+				{ content: number | bigint }
+		  >
+		| number
+		| bigint;
+	export type LooseConfig = WidenSlots<
+		OmitEach<LooseConfigFor<TSKindId.IntegerHexLong>, 'radixPrefix' | 'marker'>,
+		{ content: number | bigint }
+	>;
+	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.IntegerHexLong.Options];
+	export type LooseArgs = [value: T.IntegerHexLong.Loose, options?: T.IntegerHexLong.Options];
+	export type Kind = TSKindId.IntegerHexLong;
+}
+export namespace IntegerHexPlain {
+	export type Config = WidenSlots<
+		OmitEach<ConfigFor<TSKindId.IntegerHexPlain>, 'radixPrefix'>,
 		{ content: number | bigint }
 	>;
 	export type Options = { readonly radixPrefix?: '0x' | '0X' };
-	export interface Bound extends BoundOf<T.IntegerHex, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.IntegerHex['$type'];
+	export interface Bound extends BoundOf<T.IntegerHexPlain, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.IntegerHexPlain['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.IntegerHex, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.IntegerHex['$type'];
+	export interface Parsed extends ParsedOf<T.IntegerHexPlain, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.IntegerHexPlain['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
 			this,
@@ -16159,33 +16487,71 @@ export namespace IntegerHex {
 			KindMembers,
 			FixedTextKindId
 		>;
-		readonly $snapshot: () => Snapshot<T.IntegerHex['$type']>;
+		readonly $snapshot: () => Snapshot<T.IntegerHexPlain['$type']>;
 	}
 	export type Loose =
-		| OmitEach<LooseFor<TSKindId.IntegerHex>, 'radixPrefix'>
-		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerHex>, 'radixPrefix'>, { content: number | bigint }>
+		| OmitEach<LooseFor<TSKindId.IntegerHexPlain>, 'radixPrefix'>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerHexPlain>, 'radixPrefix'>, { content: number | bigint }>
 		| number
 		| bigint;
 	export type LooseConfig = WidenSlots<
-		OmitEach<LooseConfigFor<TSKindId.IntegerHex>, 'radixPrefix'>,
+		OmitEach<LooseConfigFor<TSKindId.IntegerHexPlain>, 'radixPrefix'>,
 		{ content: number | bigint }
 	>;
-	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.IntegerHex.Options];
-	export type LooseArgs = [value: T.IntegerHex.Loose, options?: T.IntegerHex.Options];
-	export type Kind = TSKindId.IntegerHex;
+	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.IntegerHexPlain.Options];
+	export type LooseArgs = [value: T.IntegerHexPlain.Loose, options?: T.IntegerHexPlain.Options];
+	export type Kind = TSKindId.IntegerHexPlain;
 }
-export namespace IntegerOctal {
+export namespace IntegerOctalLong {
 	export type Config = WidenSlots<
-		OmitEach<ConfigFor<TSKindId.IntegerOctal>, 'radixPrefix'>,
+		OmitEach<ConfigFor<TSKindId.IntegerOctalLong>, 'radixPrefix' | 'marker'>,
+		{ content: number | bigint }
+	>;
+	export type Options = { readonly radixPrefix?: '0o' | '0O'; readonly marker?: 'L' | 'l' };
+	export interface Bound extends BoundOf<T.IntegerOctalLong, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.IntegerOctalLong['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.IntegerOctalLong, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.IntegerOctalLong['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.IntegerOctalLong['$type']>;
+	}
+	export type Loose =
+		| OmitEach<LooseFor<TSKindId.IntegerOctalLong>, 'radixPrefix' | 'marker'>
+		| WidenSlots<
+				OmitEach<LooseConfigFor<TSKindId.IntegerOctalLong>, 'radixPrefix' | 'marker'>,
+				{ content: number | bigint }
+		  >
+		| number
+		| bigint;
+	export type LooseConfig = WidenSlots<
+		OmitEach<LooseConfigFor<TSKindId.IntegerOctalLong>, 'radixPrefix' | 'marker'>,
+		{ content: number | bigint }
+	>;
+	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.IntegerOctalLong.Options];
+	export type LooseArgs = [value: T.IntegerOctalLong.Loose, options?: T.IntegerOctalLong.Options];
+	export type Kind = TSKindId.IntegerOctalLong;
+}
+export namespace IntegerOctalPlain {
+	export type Config = WidenSlots<
+		OmitEach<ConfigFor<TSKindId.IntegerOctalPlain>, 'radixPrefix'>,
 		{ content: number | bigint }
 	>;
 	export type Options = { readonly radixPrefix?: '0o' | '0O' };
-	export interface Bound extends BoundOf<T.IntegerOctal, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.IntegerOctal['$type'];
+	export interface Bound extends BoundOf<T.IntegerOctalPlain, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.IntegerOctalPlain['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.IntegerOctal, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.IntegerOctal['$type'];
+	export interface Parsed extends ParsedOf<T.IntegerOctalPlain, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.IntegerOctalPlain['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
 			this,
@@ -16194,33 +16560,72 @@ export namespace IntegerOctal {
 			KindMembers,
 			FixedTextKindId
 		>;
-		readonly $snapshot: () => Snapshot<T.IntegerOctal['$type']>;
+		readonly $snapshot: () => Snapshot<T.IntegerOctalPlain['$type']>;
 	}
 	export type Loose =
-		| OmitEach<LooseFor<TSKindId.IntegerOctal>, 'radixPrefix'>
-		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerOctal>, 'radixPrefix'>, { content: number | bigint }>
+		| OmitEach<LooseFor<TSKindId.IntegerOctalPlain>, 'radixPrefix'>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerOctalPlain>, 'radixPrefix'>, { content: number | bigint }>
 		| number
 		| bigint;
 	export type LooseConfig = WidenSlots<
-		OmitEach<LooseConfigFor<TSKindId.IntegerOctal>, 'radixPrefix'>,
+		OmitEach<LooseConfigFor<TSKindId.IntegerOctalPlain>, 'radixPrefix'>,
 		{ content: number | bigint }
 	>;
-	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.IntegerOctal.Options];
-	export type LooseArgs = [value: T.IntegerOctal.Loose, options?: T.IntegerOctal.Options];
-	export type Kind = TSKindId.IntegerOctal;
+	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.IntegerOctalPlain.Options];
+	export type LooseArgs = [value: T.IntegerOctalPlain.Loose, options?: T.IntegerOctalPlain.Options];
+	export type Kind = TSKindId.IntegerOctalPlain;
 }
-export namespace IntegerBinary {
+export namespace IntegerBinaryLong {
 	export type Config = WidenSlots<
-		OmitEach<ConfigFor<TSKindId.IntegerBinary>, 'radixPrefix'>,
+		OmitEach<ConfigFor<TSKindId.IntegerBinaryLong>, 'radixPrefix' | 'marker'>,
+		{ content: number | bigint }
+	>;
+	export type Options = { readonly radixPrefix?: '0b' | '0B'; readonly marker?: 'L' | 'l' };
+	export interface Bound extends BoundOf<T.IntegerBinaryLong, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.IntegerBinaryLong['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.IntegerBinaryLong, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.IntegerBinaryLong['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.IntegerBinaryLong['$type']>;
+	}
+	export type Loose =
+		| OmitEach<LooseFor<TSKindId.IntegerBinaryLong>, 'radixPrefix' | 'marker'>
+		| WidenSlots<
+				OmitEach<LooseConfigFor<TSKindId.IntegerBinaryLong>, 'radixPrefix' | 'marker'>,
+				{ content: number | bigint }
+		  >
+		| number
+		| bigint;
+	export type LooseConfig = WidenSlots<
+		OmitEach<LooseConfigFor<TSKindId.IntegerBinaryLong>, 'radixPrefix' | 'marker'>,
+		{ content: number | bigint }
+	>;
+	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.IntegerBinaryLong.Options];
+	export type LooseArgs = [value: T.IntegerBinaryLong.Loose, options?: T.IntegerBinaryLong.Options];
+	export type Kind = TSKindId.IntegerBinaryLong;
+}
+export namespace IntegerBinaryPlain {
+	export type Config = WidenSlots<
+		OmitEach<ConfigFor<TSKindId.IntegerBinaryPlain>, 'radixPrefix'>,
 		{ content: number | bigint }
 	>;
 	export type Options = { readonly radixPrefix?: '0b' | '0B' };
-	export interface Bound extends BoundOf<T.IntegerBinary, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.IntegerBinary['$type'];
+	export interface Bound extends BoundOf<T.IntegerBinaryPlain, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.IntegerBinaryPlain['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.IntegerBinary, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.IntegerBinary['$type'];
+	export interface Parsed
+		extends ParsedOf<T.IntegerBinaryPlain, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.IntegerBinaryPlain['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
 			this,
@@ -16229,20 +16634,121 @@ export namespace IntegerBinary {
 			KindMembers,
 			FixedTextKindId
 		>;
-		readonly $snapshot: () => Snapshot<T.IntegerBinary['$type']>;
+		readonly $snapshot: () => Snapshot<T.IntegerBinaryPlain['$type']>;
 	}
 	export type Loose =
-		| OmitEach<LooseFor<TSKindId.IntegerBinary>, 'radixPrefix'>
-		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerBinary>, 'radixPrefix'>, { content: number | bigint }>
+		| OmitEach<LooseFor<TSKindId.IntegerBinaryPlain>, 'radixPrefix'>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerBinaryPlain>, 'radixPrefix'>, { content: number | bigint }>
 		| number
 		| bigint;
 	export type LooseConfig = WidenSlots<
-		OmitEach<LooseConfigFor<TSKindId.IntegerBinary>, 'radixPrefix'>,
+		OmitEach<LooseConfigFor<TSKindId.IntegerBinaryPlain>, 'radixPrefix'>,
 		{ content: number | bigint }
 	>;
-	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.IntegerBinary.Options];
-	export type LooseArgs = [value: T.IntegerBinary.Loose, options?: T.IntegerBinary.Options];
-	export type Kind = TSKindId.IntegerBinary;
+	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.IntegerBinaryPlain.Options];
+	export type LooseArgs = [value: T.IntegerBinaryPlain.Loose, options?: T.IntegerBinaryPlain.Options];
+	export type Kind = TSKindId.IntegerBinaryPlain;
+}
+export namespace IntegerLegacyOctalLong {
+	export type Config = WidenSlots<
+		OmitEach<ConfigFor<TSKindId.IntegerLegacyOctalLong>, 'marker'>,
+		{ content: number | bigint }
+	>;
+	export type Options = { readonly marker?: 'L' | 'l' };
+	export interface Bound extends BoundOf<T.IntegerLegacyOctalLong, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.IntegerLegacyOctalLong['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.IntegerLegacyOctalLong, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.IntegerLegacyOctalLong['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.IntegerLegacyOctalLong['$type']>;
+	}
+	export type Loose =
+		| OmitEach<LooseFor<TSKindId.IntegerLegacyOctalLong>, 'marker'>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerLegacyOctalLong>, 'marker'>, { content: number | bigint }>
+		| number
+		| bigint;
+	export type LooseConfig = WidenSlots<
+		OmitEach<LooseConfigFor<TSKindId.IntegerLegacyOctalLong>, 'marker'>,
+		{ content: number | bigint }
+	>;
+	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.IntegerLegacyOctalLong.Options];
+	export type LooseArgs = [value: T.IntegerLegacyOctalLong.Loose, options?: T.IntegerLegacyOctalLong.Options];
+	export type Kind = TSKindId.IntegerLegacyOctalLong;
+}
+export namespace IntegerLegacyOctalPlain {
+	export type Config = WidenSlots<ConfigFor<TSKindId.IntegerLegacyOctalPlain>, { content: number | bigint }>;
+	export interface Bound extends BoundOf<T.IntegerLegacyOctalPlain, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.IntegerLegacyOctalPlain['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.IntegerLegacyOctalPlain, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.IntegerLegacyOctalPlain['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.IntegerLegacyOctalPlain['$type']>;
+	}
+	export type Loose =
+		| LooseFor<TSKindId.IntegerLegacyOctalPlain>
+		| WidenSlots<LooseConfigFor<TSKindId.IntegerLegacyOctalPlain>, { content: number | bigint }>
+		| number
+		| bigint;
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.IntegerLegacyOctalPlain>, { content: number | bigint }>;
+	export type BuildArgs = [content: string | number | bigint, affix?: true] | [text: `0${string}`, affix: false];
+	export type LooseArgs = [content: string | number | bigint, affix?: true] | [text: `0${string}`, affix: false];
+	export type Kind = TSKindId.IntegerLegacyOctalPlain;
+}
+export namespace IntegerDecimalLong {
+	export type Config = WidenSlots<
+		OmitEach<ConfigFor<TSKindId.IntegerDecimalLong>, 'marker'>,
+		{ content: number | bigint }
+	>;
+	export type Options = { readonly marker?: 'L' | 'l' };
+	export interface Bound extends BoundOf<T.IntegerDecimalLong, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.IntegerDecimalLong['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.IntegerDecimalLong, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.IntegerDecimalLong['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.IntegerDecimalLong['$type']>;
+	}
+	export type Loose =
+		| OmitEach<LooseFor<TSKindId.IntegerDecimalLong>, 'marker'>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerDecimalLong>, 'marker'>, { content: number | bigint }>
+		| number
+		| bigint;
+	export type LooseConfig = WidenSlots<
+		OmitEach<LooseConfigFor<TSKindId.IntegerDecimalLong>, 'marker'>,
+		{ content: number | bigint }
+	>;
+	export type BuildArgs = [value: Admit<string | number | bigint>, options?: T.IntegerDecimalLong.Options];
+	export type LooseArgs = [value: T.IntegerDecimalLong.Loose, options?: T.IntegerDecimalLong.Options];
+	export type Kind = TSKindId.IntegerDecimalLong;
 }
 export namespace FloatPoint {
 	export type Config = WidenSlots<
@@ -17657,22 +18163,6 @@ export namespace FormatSpecifierText {
 	export type BuildArgs = FormatSpecifierTextNs['BuildArgs'];
 	export type LooseArgs = FormatSpecifierTextNs['LooseArgs'];
 	export type Kind = TSKindId.FormatSpecifierText;
-}
-export namespace IntegerDecimalLong {
-	export type Config = IntegerDecimalLongNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
-		readonly $type: TSKindId.IntegerDecimalLong;
-		$text(): string;
-	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: TSKindId.IntegerDecimalLong;
-		$text(): string;
-	}
-	export type Loose = IntegerDecimalLongNs['Loose'];
-	export type LooseConfig = IntegerDecimalLongNs['LooseConfig'];
-	export type BuildArgs = IntegerDecimalLongNs['BuildArgs'];
-	export type LooseArgs = IntegerDecimalLongNs['LooseArgs'];
-	export type Kind = TSKindId.IntegerDecimalLong;
 }
 export namespace IntegerDecimalImaginary {
 	export type Config = IntegerDecimalImaginaryNs['Config'];

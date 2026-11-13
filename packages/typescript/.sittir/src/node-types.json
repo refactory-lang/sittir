@@ -394,6 +394,10 @@
         "named": true
       },
       {
+        "type": "number_legacy_octal",
+        "named": true
+      },
+      {
         "type": "number_octal",
         "named": true
       }
@@ -9543,6 +9547,10 @@
   },
   {
     "type": "number_hex",
+    "named": true
+  },
+  {
+    "type": "number_legacy_octal",
     "named": true
   },
   {

@@ -5,13 +5,12 @@
 use sittir_core::layout_kinds::{Flanks, LayoutKinds};
 use sittir_core::types::NodeIndex;
 use sittir_parity_tests::parsed_rust;
-use sittir_rust::render::AnyNode;
 
 fn flanks_of(source: &str) -> Flanks {
-    match parsed_rust(source).snapshot::<AnyNode>(NodeIndex::ROOT, None).expect("a snapshot") {
-        AnyNode::SourceFile(root) => root.layout.map(|layout| layout.flanks).unwrap_or_default(),
-        _ => panic!("{source:?} snapshots as a source file"),
-    }
+    let layouts = parsed_rust(source).snapshot_layouts(NodeIndex::ROOT, None).expect("a root").expect("a snapshot");
+    let (row, layout) = layouts.first().expect("the root's row");
+    assert_eq!(*row, NodeIndex::ROOT, "{source:?}: the first row is the root's");
+    layout.flanks
 }
 
 const fn flanks(before: LayoutKinds, after: LayoutKinds) -> Flanks {

@@ -14,7 +14,6 @@
 
 use sittir_core::types::NodeIndex;
 use sittir_parity_tests::{block_chain, flat_tuple, indented_block_line, multiline_tuple_chain, on_deep_stack, parsed_rust, tuple_chain, unary_chain, wide_unit_blocks};
-use sittir_rust::render::AnyNode;
 use std::time::{Duration, Instant};
 
 /// The two depths timed, deep enough that a cost quadratic in the depth
@@ -38,9 +37,9 @@ const BLOCKS: [Chain; 3] = [("nested blocks", block_chain), ("blocks opened on o
 fn snapshot_time(chain: fn(usize) -> String, levels: usize) -> Duration {
     let tree = parsed_rust(&chain(levels));
     let start = Instant::now();
-    let node = tree.snapshot::<AnyNode>(NodeIndex::ROOT, None).expect("a snapshot");
+    let layouts = tree.snapshot_layouts(NodeIndex::ROOT, None).expect("a root").expect("a snapshot");
     let took = start.elapsed();
-    drop(node);
+    drop(layouts);
     took
 }
 

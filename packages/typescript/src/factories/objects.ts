@@ -138,6 +138,7 @@ export const _slotRe_buildNumberFloatScientific_integer = _slotRe_buildNumberFlo
 export const _slotRe_buildNumberFloatScientific_marker = _slotRe_buildNumberFloatPoint_marker;
 export const _slotRe_buildNumberFloatScientific_exponent_sign = _slotRe_buildNumberFloatPoint_exponent_sign;
 export const _slotRe_buildNumberFloatScientific_exponent = _leafRe_buildNumberDecimal;
+export const _slotRe_buildNumberLegacyOctal_content = /^(?:(?:0*[1-7][0-7]*))$/u;
 export const _slotRe_buildNumberBinary_radix_prefix = /^(?:0b|0B)$/u;
 export const _slotRe_buildNumberBinary_content = /^(?:(?:[0-1](_?[0-1])*))$/u;
 export const _slotRe_buildNumberOctal_radix_prefix = /^(?:0o|0O)$/u;
@@ -5055,16 +5056,19 @@ export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSin
 	return node as unknown as T.UnescapedSingleStringFragment.Bound;
 }
 
-export function buildEscapeSequence(content: string, affix?: true): T.EscapeSequence.Bound;
+export function buildEscapeSequence<const N extends string | number | bigint>(
+	content: N & NumericLiteral<N, true>,
+	affix?: true
+): T.EscapeSequence.Bound;
 export function buildEscapeSequence(text: `\\${string}`, affix: false): T.EscapeSequence.Bound;
-export function buildEscapeSequence(input: string, affix: boolean = true): T.EscapeSequence.Bound {
+export function buildEscapeSequence(input: string | number | bigint, affix: boolean = true): T.EscapeSequence.Bound {
 	let value = input;
 	if (!affix) {
 		if (typeof input !== 'string')
 			throw new Error(`escape_sequence.content: text must be a string: ${describeValue(input)}`);
 		value = unaffixed(input, '\\', '', 'escape_sequence');
 	}
-	const _content = value;
+	const _content = numberText(8, '0', value);
 	if (typeof _content !== 'string')
 		throw new Error(`escape_sequence.content: text must be a string: ${describeValue(_content)}`);
 	if (!_slotRe_buildEscapeSequence_content.test(_content))
@@ -5095,7 +5099,9 @@ function buildEscapeSequence$with(node: Held, setter: string, args: readonly unk
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'content':
-			return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequence(value)));
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildEscapeSequence(value))
+			);
 	}
 	throw new Error(`escape_sequence has no $with.${setter}`);
 }
@@ -13826,6 +13832,62 @@ function buildNumberFloatScientific$with$exponent(this: Received<Held>, ...args:
 	return buildNumberFloatScientific$with(receiverOf(this, '$with.exponent'), 'exponent', args);
 }
 
+export function buildNumberLegacyOctal<const N extends string | number | bigint>(
+	content: N & NumericLiteral<N, true>,
+	affix?: true
+): T.NumberLegacyOctal.Bound;
+export function buildNumberLegacyOctal(text: `0${string}`, affix: false): T.NumberLegacyOctal.Bound;
+export function buildNumberLegacyOctal(
+	input: string | number | bigint,
+	affix: boolean = true
+): T.NumberLegacyOctal.Bound {
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`number_legacy_octal.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '0', '', 'number_legacy_octal');
+	}
+	const _content = numberText(8, '', value);
+	if (typeof _content !== 'string')
+		throw new Error(`number_legacy_octal.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildNumberLegacyOctal_content.test(_content))
+		throw new Error(`number_legacy_octal.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'number_legacy_octal', { content: _content });
+	const node = {
+		$type: TSKindId.NumberLegacyOctal as const,
+		_content,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		content: () => hydrateStoredSlot(node, '_content'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { content: buildNumberLegacyOctal$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.NumberLegacyOctal.Bound;
+}
+
+function buildNumberLegacyOctal$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberLegacyOctal(value))
+			);
+	}
+	throw new Error(`number_legacy_octal has no $with.${setter}`);
+}
+function buildNumberLegacyOctal$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildNumberLegacyOctal$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
 export function buildNumberDecimal<const N extends string | number | bigint>(
 	text: N & NumericLiteral<N, true>
 ): T.NumberDecimal.Bound;
@@ -20040,6 +20102,7 @@ export type FluentKindMap = {
 	number_float_point: T.NumberFloatPoint.Bound;
 	number_float_leading_point: T.NumberFloatLeadingPoint.Bound;
 	number_float_scientific: T.NumberFloatScientific.Bound;
+	number_legacy_octal: T.NumberLegacyOctal.Bound;
 	number_decimal: T.NumberDecimal;
 	number_binary: T.NumberBinary.Bound;
 	number_octal: T.NumberOctal.Bound;
@@ -20320,6 +20383,7 @@ export const _factoryMap = {
 	number_float_point: buildNumberFloatPoint,
 	number_float_leading_point: buildNumberFloatLeadingPoint,
 	number_float_scientific: buildNumberFloatScientific,
+	number_legacy_octal: buildNumberLegacyOctal,
 	number_decimal: buildNumberDecimal,
 	number_binary: buildNumberBinary,
 	number_octal: buildNumberOctal,

@@ -270,9 +270,10 @@ pub trait SideLookup {
 
 /// What a snapshot read measures with: the source's lines, the descendant
 /// index of the node it snapshots, and the start of the native node the read
-/// is inside, from which each point it writes is measured. The holder moves as the read enters and leaves a node
-/// (`ReadCtx::hold`, `Placement::into_layout`), and the holders it replaced
-/// wait here, so a recursive read frame holds no context of its own.
+/// is inside, from which each point it writes is measured. The holder moves
+/// as the read enters and leaves a node (`ReadCtx::hold`, `ReadCtx::layout`),
+/// and the holders it replaced wait here, so a recursive read frame holds no
+/// context of its own.
 #[derive(Debug)]
 pub struct SnapshotCtx<'s> {
     pub lines: &'s crate::points::LineTable,
@@ -550,50 +551,26 @@ impl<'s> ReadCtx<'s> {
         (leading.is_some() || trailing.is_some() || inner.is_some()).then_some(NodeTrivia { leading, trailing, inner })
     }
 
-    /// In a snapshot, makes the start of the node the cursor is on the
-    /// holder its slots are measured from, keeping the holder it replaces for
-    /// the node's layout to restore (`Placement::into_layout`). Where the
-    /// leading side of its first child begins before it (the extras a list
-    /// passes to the item at its edge), the holder is where that side begins,
-    /// so every point measured from it lies at or after it.
-    /// Elsewhere nothing moves. A read that fails leaves the holder where it
-    /// was moved: the snapshot is not read further.
-    pub fn hold(&mut self, cursor: &TreeCursor<'_>) {
-        if self.snapshot.is_some() {
-            self.hold_in(cursor);
-        }
-    }
-
-    /// `hold` in a snapshot, kept out of line so that a read frame, which
-    /// recurses, does not carry its temporaries.
-    #[inline(never)]
-    fn hold_in(&mut self, cursor: &TreeCursor<'_>) {
-        let start = self.coordinate(&cursor.node(), index_of(cursor)).span.start;
-        let held = self.first_child_leading(cursor).map_or(start, |leading| leading.min(start));
+    /// In a snapshot, makes the node `at` the holder its slots are measured
+    /// from, keeping the holder it replaces for the node's layout to restore
+    /// (`layout`). The holder is where the node starts, or, where the leading
+    /// side of its first child among `children` begins before that (the
+    /// extras a list passes to the item at its edge), where that side begins,
+    /// so every point measured from it lies at or after it. Elsewhere nothing
+    /// moves.
+    ///
+    /// # Panics
+    ///
+    /// If that byte lies outside the source the context's lines measure; a
+    /// read node's start and its children's sides always lie inside it.
+    pub fn hold(&mut self, at: &Kid, children: &[Kid]) {
+        let Some(snapshot) = &self.snapshot else { return };
+        let start = self.coordinate_of(at).span.start;
+        let first = children.iter().find(|child| !child.entry());
+        let held = first.and_then(|child| self.sides?.leading_start(child.index)).map_or(start, |leading| leading.min(start));
+        let own = snapshot.lines.point(held).expect("a node's start lies in its source");
         if let Some(snapshot) = &mut self.snapshot {
-            let own = snapshot.lines.point(held).expect("a node's start lies in its source");
             snapshot.replaced.push(std::mem::replace(&mut snapshot.holder, own));
-        }
-    }
-
-    /// Where the leading side of the first child of the node the cursor is
-    /// on begins (`SideLookup::leading_start`), its extras and `ERROR`s passed
-    /// over: no other child's leading side can begin before its holder.
-    fn first_child_leading(&self, cursor: &TreeCursor<'_>) -> Option<u32> {
-        let lookup = self.sides?;
-        let holder = index_of(cursor);
-        let mut child = cursor.node().walk();
-        if !child.goto_first_child() {
-            return None;
-        }
-        loop {
-            let kid = Kid::of(&child.node(), holder + offset_of(&child), field_id(&child));
-            if !kid.entry() {
-                return lookup.leading_start(kid.index);
-            }
-            if !child.goto_next_sibling() {
-                return None;
-            }
         }
     }
 
@@ -1068,21 +1045,27 @@ pub type SlotUnit = fn(crate::types::SlotId, &mut dyn Nodes<'_>, &Kid) -> Option
 /// [`ReadNode::unit_id`] of one node.
 pub type UnitId = fn(&mut dyn Nodes<'_>, &Kid) -> Option<KindId>;
 
+/// [`ReadNode::routes`] of one kind: the children of a node it reads, as it
+/// routes them.
+pub type KindRoutes = fn(&mut dyn Nodes<'_>, &Kid) -> Option<Routed>;
+
 /// How a kind finds its slots on a node, each slot by its number: the
 /// position of its field among the node's slot fields.
 #[derive(Clone, Copy)]
 pub enum Router {
     /// Each child is routed by the kind's read, one child at a time; the
     /// function `routes` maps over the children. The second function gives
-    /// the id a slot stores for a child it stores as a unit.
-    Children(ChildRoute, SlotUnit),
+    /// the id a slot stores for a child it stores as a unit, and the third
+    /// every child with its route and the slots' keys (`ReadNode::routes`).
+    Children(ChildRoute, SlotUnit, KindRoutes),
     /// The node is one token, and each slot is a named group of its text,
     /// the names in slot order.
     Interior(&'static Interior, &'static [&'static str]),
     /// The one slot is the node itself, or its one child that is not trivia
     /// when the envelope wraps a hidden node; `unit` gives the id its content
-    /// stores when it stores that node as a unit.
-    Envelope { wraps_hidden: bool, unit: UnitId },
+    /// stores when it stores that node as a unit, and `inner` how its
+    /// content's own kind finds its slots.
+    Envelope { wraps_hidden: bool, unit: UnitId, inner: fn(KindId, KindId) -> Option<Router> },
 }
 
 /// A node's children as its read routes them: each child (`survey`), the
@@ -1876,13 +1859,13 @@ mod tests {
         assert_eq!(ctx.at_of(&root), Origin::Snapshot(PointSpan { start: Point::ZERO, end: lines.point(Span::whole(source).end).unwrap() }));
         let mut item = tree.walk();
         item.goto_first_child();
-        ctx.hold(&root);
+        ctx.hold(&Kid::at(&root), &[]);
         assert_eq!(ctx.at_of(&item), item_span);
         let mut name = tree.walk();
         name.goto_first_child();
         name.goto_first_child();
         name.goto_next_sibling();
-        ctx.hold(&item);
+        ctx.hold(&Kid::at(&item), &[]);
         assert_eq!(ctx.at_of(&name), Origin::Snapshot(PointSpan { start: Point { row: 0, column: 3 }, end: Point { row: 0, column: 4 } }));
         ctx.release();
         assert_eq!(ctx.at_of(&item), item_span, "a released holder measures the next sibling from the shared holder");

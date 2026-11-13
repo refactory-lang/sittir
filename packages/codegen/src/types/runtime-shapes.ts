@@ -115,9 +115,13 @@ export function compileAnchoredPattern(source: string, anchor: 'whole' | 'start'
 	}
 }
 
-export function patternAcceptsEmpty(source: string): boolean {
+export function patternAccepts(source: string, text: string): boolean {
 	const compiled = compileAnchoredPattern(source);
-	return 'regex' in compiled && compiled.regex.test('');
+	return 'regex' in compiled && compiled.regex.test(text);
+}
+
+export function patternAcceptsEmpty(source: string): boolean {
+	return patternAccepts(source, '');
 }
 
 type SampleState = { readonly source: string; index: number };

@@ -403,6 +403,7 @@ start's `quote` member. A string has one content fact on the portable surface, w
 - `py.build.string({ prefix: 'rb', content })` and `rs.build.rawStringLiteral({ prefix: 'br', content })`.
 - `prefix` is typed as the enum's canonical members. A non-canonical spelling (`'Rb'`, `'br'` for python) does not
   type-check.
+- Interpolation is typed by the prefix (the user, 2026-11-05: "Yes, in the types"; 2026-11-12: "Both surfaces"). `build.string`'s config is a union over `prefix`: an interpolating member (`f`, `t`, `rf`, `rt`, the enum's `interpolating` stamp) admits interpolations among its `contents`, and any other member, or none, admits text only. The loose config splits the same way, its `prefix` typed as the prefix's spellings and no longer any string (the user, 2026-11-12: "loose splits too"). The portable paths decide the prefix too, so a non-interpolating `literal.string` path's `elements` admits no `expression.interpolation`. The render refuses wherever the type can't decide: a `stringStart` node, a held string's `$with`, and `{{`, which shares `literal.string.escape` with `\n`.
 - The delimiter tokens have no builders on the public surface. Each one seats on its composite as an always-built
   flatten seat keyed by its input facets: the composite's config takes `prefix` directly and builds the token from it.
   The key is optional where the facet is.

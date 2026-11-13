@@ -57,7 +57,6 @@ import {
 	recordLength,
 	recordDelimiter,
 	rowData,
-	rowOf,
 	rowWith,
 	handleTrivia,
 	handleRender,
@@ -66,6 +65,7 @@ import {
 	handleEngine,
 	handleDispose,
 	handleQuery,
+	handleSnapshot,
 	blankArmRead,
 	blankArmStored,
 	spelledMember
@@ -9817,11 +9817,88 @@ function wrapComprehensionClauses$with$contents(this: Received<Held>, ...args: u
 	return wrapComprehensionClauses$with(receiverOf(this, '$with.contents'), 'contents', args);
 }
 
-export function wrapIntegerHex(data: T.IntegerHex, tree: TreeHandle): T.IntegerHex.Parsed {
+export function wrapIntegerHexLong(data: T.IntegerHexLong, tree: TreeHandle): T.IntegerHexLong.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.IntegerHex as const,
+		$type: TSKindId.IntegerHexLong as const,
+		radixPrefix() {
+			return hydrateSlot<'0x' | '0X'>(this, '_radix_prefix', tree);
+		},
+		content() {
+			return hydrateSlot<string>(this, '_content', tree);
+		},
+		marker() {
+			return hydrateSlot<'L' | 'l'>(this, '_marker', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		radixPrefix: wrapIntegerHexLong$with$radixPrefix,
+		content: wrapIntegerHexLong$with$content,
+		marker: wrapIntegerHexLong$with$marker,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerHexLong.Parsed;
+}
+function wrapIntegerHexLong$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.IntegerHexLong;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'radixPrefix':
+			return applySetter(args, (v: NonNullable<T.IntegerHexLong['_radix_prefix']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerHexLong(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_hex_long', 'radixPrefix', v) },
+						tree
+					)
+				)
+			);
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.IntegerHexLong['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerHexLong({ ...$edited(data), _content: admitSlot(handle, 'integer_hex_long', 'content', v) }, tree)
+				)
+			);
+		case 'marker':
+			return applySetter(args, (v: NonNullable<T.IntegerHexLong['_marker']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerHexLong({ ...$edited(data), _marker: admitSlot(handle, 'integer_hex_long', 'marker', v) }, tree)
+				)
+			);
+	}
+	throw new Error(`integer_hex_long has no $with.${setter}`);
+}
+function wrapIntegerHexLong$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerHexLong$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+}
+function wrapIntegerHexLong$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerHexLong$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function wrapIntegerHexLong$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerHexLong$with(receiverOf(this, '$with.marker'), 'marker', args);
+}
+
+export function wrapIntegerHexPlain(data: T.IntegerHexPlain, tree: TreeHandle): T.IntegerHexPlain.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.IntegerHexPlain as const,
 		radixPrefix() {
 			return hydrateSlot<'0x' | '0X'>(this, '_radix_prefix', tree);
 		},
@@ -9843,42 +9920,135 @@ export function wrapIntegerHex(data: T.IntegerHex, tree: TreeHandle): T.IntegerH
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { radixPrefix: wrapIntegerHex$with$radixPrefix, content: wrapIntegerHex$with$content, [RECEIVER]: node };
+	node.$with = {
+		radixPrefix: wrapIntegerHexPlain$with$radixPrefix,
+		content: wrapIntegerHexPlain$with$content,
+		[RECEIVER]: node
+	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.IntegerHex.Parsed;
+	return node as unknown as T.IntegerHexPlain.Parsed;
 }
-function wrapIntegerHex$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapIntegerHexPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.IntegerHex;
+	const data = node[INPUT] as T.IntegerHexPlain;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'radixPrefix':
-			return applySetter(args, (v: NonNullable<T.IntegerHex['_radix_prefix']>) =>
+			return applySetter(args, (v: NonNullable<T.IntegerHexPlain['_radix_prefix']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerHex({ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_hex', 'radixPrefix', v) }, tree)
+					wrapIntegerHexPlain(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_hex_plain', 'radixPrefix', v) },
+						tree
+					)
 				)
 			);
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.IntegerHex['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.IntegerHexPlain['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerHex({ ...$edited(data), _content: admitSlot(handle, 'integer_hex', 'content', v) }, tree)
+					wrapIntegerHexPlain(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_hex_plain', 'content', v) },
+						tree
+					)
 				)
 			);
 	}
-	throw new Error(`integer_hex has no $with.${setter}`);
+	throw new Error(`integer_hex_plain has no $with.${setter}`);
 }
-function wrapIntegerHex$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerHex$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+function wrapIntegerHexPlain$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerHexPlain$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
 }
-function wrapIntegerHex$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerHex$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapIntegerHexPlain$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerHexPlain$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function wrapIntegerOctal(data: T.IntegerOctal, tree: TreeHandle): T.IntegerOctal.Parsed {
+export function wrapIntegerOctalLong(data: T.IntegerOctalLong, tree: TreeHandle): T.IntegerOctalLong.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.IntegerOctal as const,
+		$type: TSKindId.IntegerOctalLong as const,
+		radixPrefix() {
+			return hydrateSlot<'0o' | '0O'>(this, '_radix_prefix', tree);
+		},
+		content() {
+			return hydrateSlot<string>(this, '_content', tree);
+		},
+		marker() {
+			return hydrateSlot<'L' | 'l'>(this, '_marker', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		radixPrefix: wrapIntegerOctalLong$with$radixPrefix,
+		content: wrapIntegerOctalLong$with$content,
+		marker: wrapIntegerOctalLong$with$marker,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerOctalLong.Parsed;
+}
+function wrapIntegerOctalLong$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.IntegerOctalLong;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'radixPrefix':
+			return applySetter(args, (v: NonNullable<T.IntegerOctalLong['_radix_prefix']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerOctalLong(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_octal_long', 'radixPrefix', v) },
+						tree
+					)
+				)
+			);
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.IntegerOctalLong['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerOctalLong(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_octal_long', 'content', v) },
+						tree
+					)
+				)
+			);
+		case 'marker':
+			return applySetter(args, (v: NonNullable<T.IntegerOctalLong['_marker']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerOctalLong(
+						{ ...$edited(data), _marker: admitSlot(handle, 'integer_octal_long', 'marker', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`integer_octal_long has no $with.${setter}`);
+}
+function wrapIntegerOctalLong$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerOctalLong$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+}
+function wrapIntegerOctalLong$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerOctalLong$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function wrapIntegerOctalLong$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerOctalLong$with(receiverOf(this, '$with.marker'), 'marker', args);
+}
+
+export function wrapIntegerOctalPlain(data: T.IntegerOctalPlain, tree: TreeHandle): T.IntegerOctalPlain.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.IntegerOctalPlain as const,
 		radixPrefix() {
 			return hydrateSlot<'0o' | '0O'>(this, '_radix_prefix', tree);
 		},
@@ -9901,48 +10071,134 @@ export function wrapIntegerOctal(data: T.IntegerOctal, tree: TreeHandle): T.Inte
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		radixPrefix: wrapIntegerOctal$with$radixPrefix,
-		content: wrapIntegerOctal$with$content,
+		radixPrefix: wrapIntegerOctalPlain$with$radixPrefix,
+		content: wrapIntegerOctalPlain$with$content,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.IntegerOctal.Parsed;
+	return node as unknown as T.IntegerOctalPlain.Parsed;
 }
-function wrapIntegerOctal$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapIntegerOctalPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.IntegerOctal;
+	const data = node[INPUT] as T.IntegerOctalPlain;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'radixPrefix':
-			return applySetter(args, (v: NonNullable<T.IntegerOctal['_radix_prefix']>) =>
+			return applySetter(args, (v: NonNullable<T.IntegerOctalPlain['_radix_prefix']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerOctal(
-						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_octal', 'radixPrefix', v) },
+					wrapIntegerOctalPlain(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_octal_plain', 'radixPrefix', v) },
 						tree
 					)
 				)
 			);
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.IntegerOctal['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.IntegerOctalPlain['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerOctal({ ...$edited(data), _content: admitSlot(handle, 'integer_octal', 'content', v) }, tree)
+					wrapIntegerOctalPlain(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_octal_plain', 'content', v) },
+						tree
+					)
 				)
 			);
 	}
-	throw new Error(`integer_octal has no $with.${setter}`);
+	throw new Error(`integer_octal_plain has no $with.${setter}`);
 }
-function wrapIntegerOctal$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerOctal$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+function wrapIntegerOctalPlain$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerOctalPlain$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
 }
-function wrapIntegerOctal$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerOctal$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapIntegerOctalPlain$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerOctalPlain$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function wrapIntegerBinary(data: T.IntegerBinary, tree: TreeHandle): T.IntegerBinary.Parsed {
+export function wrapIntegerBinaryLong(data: T.IntegerBinaryLong, tree: TreeHandle): T.IntegerBinaryLong.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.IntegerBinary as const,
+		$type: TSKindId.IntegerBinaryLong as const,
+		radixPrefix() {
+			return hydrateSlot<'0b' | '0B'>(this, '_radix_prefix', tree);
+		},
+		content() {
+			return hydrateSlot<string>(this, '_content', tree);
+		},
+		marker() {
+			return hydrateSlot<'L' | 'l'>(this, '_marker', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		radixPrefix: wrapIntegerBinaryLong$with$radixPrefix,
+		content: wrapIntegerBinaryLong$with$content,
+		marker: wrapIntegerBinaryLong$with$marker,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerBinaryLong.Parsed;
+}
+function wrapIntegerBinaryLong$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.IntegerBinaryLong;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'radixPrefix':
+			return applySetter(args, (v: NonNullable<T.IntegerBinaryLong['_radix_prefix']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerBinaryLong(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_binary_long', 'radixPrefix', v) },
+						tree
+					)
+				)
+			);
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.IntegerBinaryLong['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerBinaryLong(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_binary_long', 'content', v) },
+						tree
+					)
+				)
+			);
+		case 'marker':
+			return applySetter(args, (v: NonNullable<T.IntegerBinaryLong['_marker']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerBinaryLong(
+						{ ...$edited(data), _marker: admitSlot(handle, 'integer_binary_long', 'marker', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`integer_binary_long has no $with.${setter}`);
+}
+function wrapIntegerBinaryLong$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerBinaryLong$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+}
+function wrapIntegerBinaryLong$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerBinaryLong$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function wrapIntegerBinaryLong$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerBinaryLong$with(receiverOf(this, '$with.marker'), 'marker', args);
+}
+
+export function wrapIntegerBinaryPlain(data: T.IntegerBinaryPlain, tree: TreeHandle): T.IntegerBinaryPlain.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.IntegerBinaryPlain as const,
 		radixPrefix() {
 			return hydrateSlot<'0b' | '0B'>(this, '_radix_prefix', tree);
 		},
@@ -9965,41 +10221,232 @@ export function wrapIntegerBinary(data: T.IntegerBinary, tree: TreeHandle): T.In
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		radixPrefix: wrapIntegerBinary$with$radixPrefix,
-		content: wrapIntegerBinary$with$content,
+		radixPrefix: wrapIntegerBinaryPlain$with$radixPrefix,
+		content: wrapIntegerBinaryPlain$with$content,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.IntegerBinary.Parsed;
+	return node as unknown as T.IntegerBinaryPlain.Parsed;
 }
-function wrapIntegerBinary$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapIntegerBinaryPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.IntegerBinary;
+	const data = node[INPUT] as T.IntegerBinaryPlain;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'radixPrefix':
-			return applySetter(args, (v: NonNullable<T.IntegerBinary['_radix_prefix']>) =>
+			return applySetter(args, (v: NonNullable<T.IntegerBinaryPlain['_radix_prefix']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerBinary(
-						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_binary', 'radixPrefix', v) },
+					wrapIntegerBinaryPlain(
+						{ ...$edited(data), _radix_prefix: admitSlot(handle, 'integer_binary_plain', 'radixPrefix', v) },
 						tree
 					)
 				)
 			);
 		case 'content':
-			return applySetter(args, (v: NonNullable<T.IntegerBinary['_content']>) =>
+			return applySetter(args, (v: NonNullable<T.IntegerBinaryPlain['_content']>) =>
 				rebuilt(node, handle, () =>
-					wrapIntegerBinary({ ...$edited(data), _content: admitSlot(handle, 'integer_binary', 'content', v) }, tree)
+					wrapIntegerBinaryPlain(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_binary_plain', 'content', v) },
+						tree
+					)
 				)
 			);
 	}
-	throw new Error(`integer_binary has no $with.${setter}`);
+	throw new Error(`integer_binary_plain has no $with.${setter}`);
 }
-function wrapIntegerBinary$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerBinary$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
+function wrapIntegerBinaryPlain$with$radixPrefix(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerBinaryPlain$with(receiverOf(this, '$with.radixPrefix'), 'radixPrefix', args);
 }
-function wrapIntegerBinary$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntegerBinary$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapIntegerBinaryPlain$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerBinaryPlain$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
+export function wrapIntegerLegacyOctalLong(
+	data: T.IntegerLegacyOctalLong,
+	tree: TreeHandle
+): T.IntegerLegacyOctalLong.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.IntegerLegacyOctalLong as const,
+		content() {
+			return hydrateSlot<string>(this, '_content', tree);
+		},
+		marker() {
+			return hydrateSlot<'L' | 'l'>(this, '_marker', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: wrapIntegerLegacyOctalLong$with$content,
+		marker: wrapIntegerLegacyOctalLong$with$marker,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerLegacyOctalLong.Parsed;
+}
+function wrapIntegerLegacyOctalLong$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.IntegerLegacyOctalLong;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.IntegerLegacyOctalLong['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerLegacyOctalLong(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_legacy_octal_long', 'content', v) },
+						tree
+					)
+				)
+			);
+		case 'marker':
+			return applySetter(args, (v: NonNullable<T.IntegerLegacyOctalLong['_marker']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerLegacyOctalLong(
+						{ ...$edited(data), _marker: admitSlot(handle, 'integer_legacy_octal_long', 'marker', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`integer_legacy_octal_long has no $with.${setter}`);
+}
+function wrapIntegerLegacyOctalLong$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerLegacyOctalLong$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function wrapIntegerLegacyOctalLong$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerLegacyOctalLong$with(receiverOf(this, '$with.marker'), 'marker', args);
+}
+
+export function wrapIntegerLegacyOctalPlain(
+	data: T.IntegerLegacyOctalPlain,
+	tree: TreeHandle
+): T.IntegerLegacyOctalPlain.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.IntegerLegacyOctalPlain as const,
+		content() {
+			return hydrateSlot<string>(this, '_content', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { content: wrapIntegerLegacyOctalPlain$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerLegacyOctalPlain.Parsed;
+}
+function wrapIntegerLegacyOctalPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.IntegerLegacyOctalPlain;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.IntegerLegacyOctalPlain['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerLegacyOctalPlain(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_legacy_octal_plain', 'content', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`integer_legacy_octal_plain has no $with.${setter}`);
+}
+function wrapIntegerLegacyOctalPlain$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerLegacyOctalPlain$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
+export function wrapIntegerDecimalLong(data: T.IntegerDecimalLong, tree: TreeHandle): T.IntegerDecimalLong.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.IntegerDecimalLong as const,
+		content() {
+			return hydrateSlot<string>(this, '_content', tree);
+		},
+		marker() {
+			return hydrateSlot<'L' | 'l'>(this, '_marker', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		content: wrapIntegerDecimalLong$with$content,
+		marker: wrapIntegerDecimalLong$with$marker,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.IntegerDecimalLong.Parsed;
+}
+function wrapIntegerDecimalLong$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.IntegerDecimalLong;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.IntegerDecimalLong['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerDecimalLong(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_decimal_long', 'content', v) },
+						tree
+					)
+				)
+			);
+		case 'marker':
+			return applySetter(args, (v: NonNullable<T.IntegerDecimalLong['_marker']>) =>
+				rebuilt(node, handle, () =>
+					wrapIntegerDecimalLong(
+						{ ...$edited(data), _marker: admitSlot(handle, 'integer_decimal_long', 'marker', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`integer_decimal_long has no $with.${setter}`);
+}
+function wrapIntegerDecimalLong$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerDecimalLong$with(receiverOf(this, '$with.content'), 'content', args);
+}
+function wrapIntegerDecimalLong$with$marker(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapIntegerDecimalLong$with(receiverOf(this, '$with.marker'), 'marker', args);
 }
 
 export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle): T.FloatPoint.Parsed {
@@ -12828,8 +13275,8 @@ function viewModule(data: RecordPosition, tree: TreeHandle): T.Module.Parsed {
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -12888,8 +13335,8 @@ function viewSimpleStatements(data: RecordPosition, tree: TreeHandle): T.SimpleS
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -12954,8 +13401,8 @@ function viewImportStatement(data: RecordPosition, tree: TreeHandle): T.ImportSt
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -12991,8 +13438,8 @@ function viewRelativeImport(data: RecordPosition, tree: TreeHandle): T.RelativeI
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13018,8 +13465,8 @@ function viewFutureImportStatement(data: RecordPosition, tree: TreeHandle): T.Fu
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13049,8 +13496,8 @@ function viewImportFromStatement(data: RecordPosition, tree: TreeHandle): T.Impo
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13109,8 +13556,8 @@ function viewImportList(data: RecordPosition, tree: TreeHandle): T.ImportList.Pa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -13145,8 +13592,8 @@ function viewAliasedImport(data: RecordPosition, tree: TreeHandle): T.AliasedImp
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13172,8 +13619,8 @@ function viewPrintStatement(data: RecordPosition, tree: TreeHandle): T.PrintStat
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13199,8 +13646,8 @@ function viewChevron(data: RecordPosition, tree: TreeHandle): T.Chevron.Parsed {
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13226,8 +13673,8 @@ function viewAssertStatement(data: RecordPosition, tree: TreeHandle): T.AssertSt
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13260,8 +13707,8 @@ function viewExpressionStatement(data: RecordPosition, tree: TreeHandle): T.Expr
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13291,8 +13738,8 @@ function viewNamedExpression(data: RecordPosition, tree: TreeHandle): T.NamedExp
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13318,8 +13765,8 @@ function viewNamedExpressionLhs(data: RecordPosition, tree: TreeHandle): T.Named
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13345,8 +13792,8 @@ function viewReturnStatement(data: RecordPosition, tree: TreeHandle): T.ReturnSt
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13372,8 +13819,8 @@ function viewDeleteStatement(data: RecordPosition, tree: TreeHandle): T.DeleteSt
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13403,8 +13850,8 @@ function viewRaiseStatement(data: RecordPosition, tree: TreeHandle): T.RaiseStat
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13438,8 +13885,8 @@ function viewIfStatement(data: RecordPosition, tree: TreeHandle): T.IfStatement.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13474,8 +13921,8 @@ function viewElifClause(data: RecordPosition, tree: TreeHandle): T.ElifClause.Pa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13501,8 +13948,8 @@ function viewElseClause(data: RecordPosition, tree: TreeHandle): T.ElseClause.Pa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13532,8 +13979,8 @@ function viewMatchStatement(data: RecordPosition, tree: TreeHandle): T.MatchStat
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13559,8 +14006,8 @@ function viewMatchBlock(data: RecordPosition, tree: TreeHandle): T.MatchBlock.Pa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13594,8 +14041,8 @@ function viewCaseClause(data: RecordPosition, tree: TreeHandle): T.CaseClause.Pa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13637,8 +14084,8 @@ function viewForStatement(data: RecordPosition, tree: TreeHandle): T.ForStatemen
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13679,8 +14126,8 @@ function viewWhileStatement(data: RecordPosition, tree: TreeHandle): T.WhileStat
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13718,8 +14165,8 @@ function viewTryStatement(data: RecordPosition, tree: TreeHandle): T.TryStatemen
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13759,8 +14206,8 @@ function viewExceptClause(data: RecordPosition, tree: TreeHandle): T.ExceptClaus
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13786,8 +14233,8 @@ function viewFinallyClause(data: RecordPosition, tree: TreeHandle): T.FinallyCla
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13821,8 +14268,8 @@ function viewWithStatement(data: RecordPosition, tree: TreeHandle): T.WithStatem
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13848,8 +14295,8 @@ function viewWithItem(data: RecordPosition, tree: TreeHandle): T.WithItem.Parsed
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13895,8 +14342,8 @@ function viewFunctionDefinition(data: RecordPosition, tree: TreeHandle): T.Funct
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -13963,8 +14410,8 @@ function viewParameters(data: RecordPosition, tree: TreeHandle): T.Parameters.Pa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -14029,8 +14476,8 @@ function viewLambdaParameters(data: RecordPosition, tree: TreeHandle): T.LambdaP
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -14062,8 +14509,8 @@ function viewListSplat(data: RecordPosition, tree: TreeHandle): T.ListSplat.Pars
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14089,8 +14536,8 @@ function viewDictionarySplat(data: RecordPosition, tree: TreeHandle): T.Dictiona
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14116,8 +14563,8 @@ function viewGlobalStatement(data: RecordPosition, tree: TreeHandle): T.GlobalSt
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14143,8 +14590,8 @@ function viewNonlocalStatement(data: RecordPosition, tree: TreeHandle): T.Nonloc
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14174,8 +14621,8 @@ function viewExecStatement(data: RecordPosition, tree: TreeHandle): T.ExecStatem
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14209,8 +14656,8 @@ function viewTypeAliasStatement(data: RecordPosition, tree: TreeHandle): T.TypeA
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14248,8 +14695,8 @@ function viewClassDefinition(data: RecordPosition, tree: TreeHandle): T.ClassDef
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14314,8 +14761,8 @@ function viewTypeParameter(data: RecordPosition, tree: TreeHandle): T.TypeParame
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -14347,8 +14794,8 @@ function viewParenthesizedListSplat(data: RecordPosition, tree: TreeHandle): T.P
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14407,8 +14854,8 @@ function viewArgumentList(data: RecordPosition, tree: TreeHandle): T.ArgumentLis
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -14444,8 +14891,8 @@ function viewDecoratedDefinition(data: RecordPosition, tree: TreeHandle): T.Deco
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14471,8 +14918,8 @@ function viewDecorator(data: RecordPosition, tree: TreeHandle): T.Decorator.Pars
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14498,8 +14945,8 @@ function viewBlock(data: RecordPosition, tree: TreeHandle): T.Block.Parsed {
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14558,8 +15005,8 @@ function viewExpressionList(data: RecordPosition, tree: TreeHandle): T.Expressio
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -14594,8 +15041,8 @@ function viewDottedName(data: RecordPosition, tree: TreeHandle): T.DottedName.Pa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14621,8 +15068,8 @@ function viewCasePattern(data: RecordPosition, tree: TreeHandle): T.CasePattern.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14666,8 +15113,8 @@ function viewSimplePattern(data: RecordPosition, tree: TreeHandle): T.SimplePatt
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14697,8 +15144,8 @@ function viewCaseAsPattern(data: RecordPosition, tree: TreeHandle): T.CaseAsPatt
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14764,8 +15211,8 @@ function viewUnionPattern(data: RecordPosition, tree: TreeHandle): T.UnionPatter
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14824,8 +15271,8 @@ function viewDictPattern(data: RecordPosition, tree: TreeHandle): T.DictPattern.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -14879,8 +15326,8 @@ function viewKeyValuePattern(data: RecordPosition, tree: TreeHandle): T.KeyValue
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14928,8 +15375,8 @@ function viewKeywordPattern(data: RecordPosition, tree: TreeHandle): T.KeywordPa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14959,8 +15406,8 @@ function viewClassPattern(data: RecordPosition, tree: TreeHandle): T.ClassPatter
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -14998,8 +15445,8 @@ function viewComplexPattern(data: RecordPosition, tree: TreeHandle): T.ComplexPa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15064,8 +15511,8 @@ function viewParametersElements(data: RecordPosition, tree: TreeHandle): T.Param
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -15129,8 +15576,8 @@ function viewPatterns(data: RecordPosition, tree: TreeHandle): T.Patterns.Parsed
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -15194,8 +15641,8 @@ function viewTuplePattern(data: RecordPosition, tree: TreeHandle): T.TuplePatter
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -15260,8 +15707,8 @@ function viewListPattern(data: RecordPosition, tree: TreeHandle): T.ListPattern.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -15297,8 +15744,8 @@ function viewDefaultParameter(data: RecordPosition, tree: TreeHandle): T.Default
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15332,8 +15779,8 @@ function viewTypedDefaultParameter(data: RecordPosition, tree: TreeHandle): T.Ty
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15359,8 +15806,8 @@ function viewListSplatPattern(data: RecordPosition, tree: TreeHandle): T.ListSpl
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15386,8 +15833,8 @@ function viewDictionarySplatPattern(data: RecordPosition, tree: TreeHandle): T.D
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15417,8 +15864,8 @@ function viewAsPattern(data: RecordPosition, tree: TreeHandle): T.AsPattern.Pars
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15444,8 +15891,8 @@ function viewNotOperator(data: RecordPosition, tree: TreeHandle): T.NotOperator.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15479,8 +15926,8 @@ function viewBooleanOperator(data: RecordPosition, tree: TreeHandle): T.BooleanO
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15514,8 +15961,8 @@ function viewBinaryOperator(data: RecordPosition, tree: TreeHandle): T.BinaryOpe
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15545,8 +15992,8 @@ function viewUnaryOperator(data: RecordPosition, tree: TreeHandle): T.UnaryOpera
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15576,8 +16023,8 @@ function viewComparisonOperator(data: RecordPosition, tree: TreeHandle): T.Compa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15607,8 +16054,8 @@ function viewLambda(data: RecordPosition, tree: TreeHandle): T.Lambda.Parsed {
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15638,8 +16085,8 @@ function viewLambdaWithinForInClause(data: RecordPosition, tree: TreeHandle): T.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15673,8 +16120,8 @@ function viewAugmentedAssignment(data: RecordPosition, tree: TreeHandle): T.Augm
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15733,8 +16180,8 @@ function viewPatternList(data: RecordPosition, tree: TreeHandle): T.PatternList.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -15765,8 +16212,8 @@ function viewYield(data: RecordPosition, tree: TreeHandle): T.Yield.Parsed {
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15796,8 +16243,8 @@ function viewAttribute(data: RecordPosition, tree: TreeHandle): T.Attribute.Pars
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15827,8 +16274,8 @@ function viewSubscript(data: RecordPosition, tree: TreeHandle): T.Subscript.Pars
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15866,8 +16313,8 @@ function viewSlice(data: RecordPosition, tree: TreeHandle): T.Slice.Parsed {
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15904,8 +16351,8 @@ function viewCall(data: RecordPosition, tree: TreeHandle): T.Call.Parsed {
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15935,8 +16382,8 @@ function viewTypedParameter(data: RecordPosition, tree: TreeHandle): T.TypedPara
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15969,8 +16416,8 @@ function viewType(data: RecordPosition, tree: TreeHandle): T.Type.Parsed {
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -15996,8 +16443,8 @@ function viewSplatType(data: RecordPosition, tree: TreeHandle): T.SplatType.Pars
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16027,8 +16474,8 @@ function viewGenericType(data: RecordPosition, tree: TreeHandle): T.GenericType.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16058,8 +16505,8 @@ function viewUnionType(data: RecordPosition, tree: TreeHandle): T.UnionType.Pars
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16089,8 +16536,8 @@ function viewConstrainedType(data: RecordPosition, tree: TreeHandle): T.Constrai
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16120,8 +16567,8 @@ function viewMemberType(data: RecordPosition, tree: TreeHandle): T.MemberType.Pa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16151,8 +16598,8 @@ function viewKeywordArgument(data: RecordPosition, tree: TreeHandle): T.KeywordA
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16211,8 +16658,8 @@ function viewList(data: RecordPosition, tree: TreeHandle): T.List.Parsed {
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -16277,8 +16724,8 @@ function viewSet(data: RecordPosition, tree: TreeHandle): T.Set.Parsed {
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -16343,8 +16790,8 @@ function viewTuple(data: RecordPosition, tree: TreeHandle): T.Tuple.Parsed {
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -16409,8 +16856,8 @@ function viewDictionary(data: RecordPosition, tree: TreeHandle): T.Dictionary.Pa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -16446,8 +16893,8 @@ function viewPair(data: RecordPosition, tree: TreeHandle): T.Pair.Parsed {
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16477,8 +16924,8 @@ function viewListComprehension(data: RecordPosition, tree: TreeHandle): T.ListCo
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16508,8 +16955,8 @@ function viewDictionaryComprehension(data: RecordPosition, tree: TreeHandle): T.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16539,8 +16986,8 @@ function viewSetComprehension(data: RecordPosition, tree: TreeHandle): T.SetComp
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16570,8 +17017,8 @@ function viewGeneratorExpression(data: RecordPosition, tree: TreeHandle): T.Gene
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16597,8 +17044,8 @@ function viewParenthesizedExpression(data: RecordPosition, tree: TreeHandle): T.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16657,8 +17104,8 @@ function viewCollectionElements(data: RecordPosition, tree: TreeHandle): T.Colle
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -16701,8 +17148,8 @@ function viewForInClause(data: RecordPosition, tree: TreeHandle): T.ForInClause.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16734,8 +17181,8 @@ function viewIfClause(data: RecordPosition, tree: TreeHandle): T.IfClause.Parsed
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16769,8 +17216,8 @@ function viewConditionalExpression(data: RecordPosition, tree: TreeHandle): T.Co
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16801,8 +17248,8 @@ function viewConcatenatedString(data: RecordPosition, tree: TreeHandle): T.Conca
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16840,8 +17287,8 @@ function viewString(data: RecordPosition, tree: TreeHandle): T.String.Parsed {
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16882,8 +17329,8 @@ function viewStringContent(data: RecordPosition, tree: TreeHandle): T.StringCont
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16921,8 +17368,8 @@ function viewInterpolation(data: RecordPosition, tree: TreeHandle): T.Interpolat
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16954,8 +17401,8 @@ function viewFormatSpecifier(data: RecordPosition, tree: TreeHandle): T.FormatSp
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -16981,8 +17428,8 @@ function viewAwait(data: RecordPosition, tree: TreeHandle): T.Await.Parsed {
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -17008,8 +17455,8 @@ function viewComment(data: RecordPosition, tree: TreeHandle): T.Comment.Parsed {
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -17068,8 +17515,8 @@ function viewSimpleStatementsElements(data: RecordPosition, tree: TreeHandle): T
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -17133,8 +17580,8 @@ function viewSubjects(data: RecordPosition, tree: TreeHandle): T.Subjects.Parsed
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -17198,8 +17645,8 @@ function viewWithClauseWithItems(data: RecordPosition, tree: TreeHandle): T.With
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -17263,8 +17710,8 @@ function viewTypes(data: RecordPosition, tree: TreeHandle): T.Types.Parsed {
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -17336,8 +17783,8 @@ function viewArgumentListElements(data: RecordPosition, tree: TreeHandle): T.Arg
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -17401,8 +17848,8 @@ function viewListPatternCasePatterns(data: RecordPosition, tree: TreeHandle): T.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -17466,8 +17913,8 @@ function viewDictPatternElements(data: RecordPosition, tree: TreeHandle): T.Dict
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -17531,8 +17978,8 @@ function viewSubscripts(data: RecordPosition, tree: TreeHandle): T.Subscripts.Pa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -17596,8 +18043,8 @@ function viewDictionaryElements(data: RecordPosition, tree: TreeHandle): T.Dicti
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -17628,8 +18075,8 @@ function viewSliceGroup(data: RecordPosition, tree: TreeHandle): T.SliceGroup.Pa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -17688,8 +18135,8 @@ function viewTypeParams(data: RecordPosition, tree: TreeHandle): T.TypeParams.Pa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -17754,8 +18201,8 @@ function viewTypeParamsItems(data: RecordPosition, tree: TreeHandle): T.TypePara
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -17819,8 +18266,8 @@ function viewTuplePatternElements(data: RecordPosition, tree: TreeHandle): T.Tup
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -17884,8 +18331,8 @@ function viewCasePatternList(data: RecordPosition, tree: TreeHandle): T.CasePatt
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -17949,8 +18396,8 @@ function viewTupleElements(data: RecordPosition, tree: TreeHandle): T.TupleEleme
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -17985,8 +18432,8 @@ function viewExceptClauseExceptionAs(data: RecordPosition, tree: TreeHandle): T.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -18045,8 +18492,8 @@ function viewCaseTuplePattern(data: RecordPosition, tree: TreeHandle): T.CaseTup
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -18111,8 +18558,8 @@ function viewCaseListPattern(data: RecordPosition, tree: TreeHandle): T.CaseList
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -18177,8 +18624,8 @@ function viewPrintArguments(data: RecordPosition, tree: TreeHandle): T.PrintArgu
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -18242,8 +18689,8 @@ function viewPrintChevronArguments(data: RecordPosition, tree: TreeHandle): T.Pr
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -18278,8 +18725,8 @@ function viewPrintStatementChevron(data: RecordPosition, tree: TreeHandle): T.Pr
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -18338,8 +18785,8 @@ function viewPrintStatementPlain(data: RecordPosition, tree: TreeHandle): T.Prin
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -18404,8 +18851,8 @@ function viewParenthesizedImportList(data: RecordPosition, tree: TreeHandle): T.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -18437,8 +18884,8 @@ function viewComprehensionClauses(data: RecordPosition, tree: TreeHandle): T.Com
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -18447,103 +18894,309 @@ function viewComprehensionClauses(data: RecordPosition, tree: TreeHandle): T.Com
 	return node as unknown as T.ComprehensionClauses.Parsed;
 }
 
-function viewIntegerHex$radixPrefix(this: RecordHandle) {
+function viewIntegerHexLong$radixPrefix(this: RecordHandle) {
 	return viewSlot<'0x' | '0X'>(this, 2, 2, 4, 0, 2);
 }
-function viewIntegerHex$content(this: RecordHandle) {
+function viewIntegerHexLong$content(this: RecordHandle) {
 	return viewSlot<string>(this, 4, 2, 4, 0, 3);
 }
-function viewIntegerHex(data: RecordPosition, tree: TreeHandle): T.IntegerHex.Parsed {
+function viewIntegerHexLong$marker(this: RecordHandle) {
+	return viewSlot<'L' | 'l'>(this, 6, 2, 4, 0, 4);
+}
+function viewIntegerHexLong(data: RecordPosition, tree: TreeHandle): T.IntegerHexLong.Parsed {
 	const node = {
-		$type: TSKindId.IntegerHex as const,
+		$type: TSKindId.IntegerHexLong as const,
 		$tree: tree,
 		$at: data.$at,
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		$verbatim: undefined as string | undefined,
-		radixPrefix: viewIntegerHex$radixPrefix,
-		content: viewIntegerHex$content,
+		radixPrefix: viewIntegerHexLong$radixPrefix,
+		content: viewIntegerHexLong$content,
+		marker: viewIntegerHexLong$marker,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, marker: $with$marker, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 8, 2, 4, 0, 5);
+	return node as unknown as T.IntegerHexLong.Parsed;
+}
+
+function viewIntegerHexPlain$radixPrefix(this: RecordHandle) {
+	return viewSlot<'0x' | '0X'>(this, 2, 2, 4, 0, 2);
+}
+function viewIntegerHexPlain$content(this: RecordHandle) {
+	return viewSlot<string>(this, 4, 2, 4, 0, 3);
+}
+function viewIntegerHexPlain(data: RecordPosition, tree: TreeHandle): T.IntegerHexPlain.Parsed {
+	const node = {
+		$type: TSKindId.IntegerHexPlain as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
+		radixPrefix: viewIntegerHexPlain$radixPrefix,
+		content: viewIntegerHexPlain$content,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
-	return node as unknown as T.IntegerHex.Parsed;
+	return node as unknown as T.IntegerHexPlain.Parsed;
 }
 
-function viewIntegerOctal$radixPrefix(this: RecordHandle) {
+function viewIntegerOctalLong$radixPrefix(this: RecordHandle) {
 	return viewSlot<'0o' | '0O'>(this, 2, 2, 4, 0, 2);
 }
-function viewIntegerOctal$content(this: RecordHandle) {
+function viewIntegerOctalLong$content(this: RecordHandle) {
 	return viewSlot<string>(this, 4, 2, 4, 0, 3);
 }
-function viewIntegerOctal(data: RecordPosition, tree: TreeHandle): T.IntegerOctal.Parsed {
+function viewIntegerOctalLong$marker(this: RecordHandle) {
+	return viewSlot<'L' | 'l'>(this, 6, 2, 4, 0, 4);
+}
+function viewIntegerOctalLong(data: RecordPosition, tree: TreeHandle): T.IntegerOctalLong.Parsed {
 	const node = {
-		$type: TSKindId.IntegerOctal as const,
+		$type: TSKindId.IntegerOctalLong as const,
 		$tree: tree,
 		$at: data.$at,
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		$verbatim: undefined as string | undefined,
-		radixPrefix: viewIntegerOctal$radixPrefix,
-		content: viewIntegerOctal$content,
+		radixPrefix: viewIntegerOctalLong$radixPrefix,
+		content: viewIntegerOctalLong$content,
+		marker: viewIntegerOctalLong$marker,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
+	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, marker: $with$marker, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
-	return node as unknown as T.IntegerOctal.Parsed;
+	node.$verbatim = viewSlot<string | undefined>(node, 8, 2, 4, 0, 5);
+	return node as unknown as T.IntegerOctalLong.Parsed;
 }
 
-function viewIntegerBinary$radixPrefix(this: RecordHandle) {
-	return viewSlot<'0b' | '0B'>(this, 2, 2, 4, 0, 2);
+function viewIntegerOctalPlain$radixPrefix(this: RecordHandle) {
+	return viewSlot<'0o' | '0O'>(this, 2, 2, 4, 0, 2);
 }
-function viewIntegerBinary$content(this: RecordHandle) {
+function viewIntegerOctalPlain$content(this: RecordHandle) {
 	return viewSlot<string>(this, 4, 2, 4, 0, 3);
 }
-function viewIntegerBinary(data: RecordPosition, tree: TreeHandle): T.IntegerBinary.Parsed {
+function viewIntegerOctalPlain(data: RecordPosition, tree: TreeHandle): T.IntegerOctalPlain.Parsed {
 	const node = {
-		$type: TSKindId.IntegerBinary as const,
+		$type: TSKindId.IntegerOctalPlain as const,
 		$tree: tree,
 		$at: data.$at,
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		$verbatim: undefined as string | undefined,
-		radixPrefix: viewIntegerBinary$radixPrefix,
-		content: viewIntegerBinary$content,
+		radixPrefix: viewIntegerOctalPlain$radixPrefix,
+		content: viewIntegerOctalPlain$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
-	return node as unknown as T.IntegerBinary.Parsed;
+	return node as unknown as T.IntegerOctalPlain.Parsed;
+}
+
+function viewIntegerBinaryLong$radixPrefix(this: RecordHandle) {
+	return viewSlot<'0b' | '0B'>(this, 2, 2, 4, 0, 2);
+}
+function viewIntegerBinaryLong$content(this: RecordHandle) {
+	return viewSlot<string>(this, 4, 2, 4, 0, 3);
+}
+function viewIntegerBinaryLong$marker(this: RecordHandle) {
+	return viewSlot<'L' | 'l'>(this, 6, 2, 4, 0, 4);
+}
+function viewIntegerBinaryLong(data: RecordPosition, tree: TreeHandle): T.IntegerBinaryLong.Parsed {
+	const node = {
+		$type: TSKindId.IntegerBinaryLong as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
+		radixPrefix: viewIntegerBinaryLong$radixPrefix,
+		content: viewIntegerBinaryLong$content,
+		marker: viewIntegerBinaryLong$marker,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, marker: $with$marker, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 8, 2, 4, 0, 5);
+	return node as unknown as T.IntegerBinaryLong.Parsed;
+}
+
+function viewIntegerBinaryPlain$radixPrefix(this: RecordHandle) {
+	return viewSlot<'0b' | '0B'>(this, 2, 2, 4, 0, 2);
+}
+function viewIntegerBinaryPlain$content(this: RecordHandle) {
+	return viewSlot<string>(this, 4, 2, 4, 0, 3);
+}
+function viewIntegerBinaryPlain(data: RecordPosition, tree: TreeHandle): T.IntegerBinaryPlain.Parsed {
+	const node = {
+		$type: TSKindId.IntegerBinaryPlain as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
+		radixPrefix: viewIntegerBinaryPlain$radixPrefix,
+		content: viewIntegerBinaryPlain$content,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { radixPrefix: $with$radixPrefix, content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
+	return node as unknown as T.IntegerBinaryPlain.Parsed;
+}
+
+function viewIntegerLegacyOctalLong$content(this: RecordHandle) {
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+}
+function viewIntegerLegacyOctalLong$marker(this: RecordHandle) {
+	return viewSlot<'L' | 'l'>(this, 4, 2, 4, 0, 3);
+}
+function viewIntegerLegacyOctalLong(data: RecordPosition, tree: TreeHandle): T.IntegerLegacyOctalLong.Parsed {
+	const node = {
+		$type: TSKindId.IntegerLegacyOctalLong as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
+		content: viewIntegerLegacyOctalLong$content,
+		marker: viewIntegerLegacyOctalLong$marker,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { content: $with$content, marker: $with$marker, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
+	return node as unknown as T.IntegerLegacyOctalLong.Parsed;
+}
+
+function viewIntegerLegacyOctalPlain$content(this: RecordHandle) {
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+}
+function viewIntegerLegacyOctalPlain(data: RecordPosition, tree: TreeHandle): T.IntegerLegacyOctalPlain.Parsed {
+	const node = {
+		$type: TSKindId.IntegerLegacyOctalPlain as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
+		content: viewIntegerLegacyOctalPlain$content,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
+	return node as unknown as T.IntegerLegacyOctalPlain.Parsed;
+}
+
+function viewIntegerDecimalLong$content(this: RecordHandle) {
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+}
+function viewIntegerDecimalLong$marker(this: RecordHandle) {
+	return viewSlot<'L' | 'l'>(this, 4, 2, 4, 0, 3);
+}
+function viewIntegerDecimalLong(data: RecordPosition, tree: TreeHandle): T.IntegerDecimalLong.Parsed {
+	const node = {
+		$type: TSKindId.IntegerDecimalLong as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
+		content: viewIntegerDecimalLong$content,
+		marker: viewIntegerDecimalLong$marker,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { content: $with$content, marker: $with$marker, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 6, 2, 4, 0, 4);
+	return node as unknown as T.IntegerDecimalLong.Parsed;
 }
 
 function viewFloatPoint$integer(this: RecordHandle) {
@@ -18584,8 +19237,8 @@ function viewFloatPoint(data: RecordPosition, tree: TreeHandle): T.FloatPoint.Pa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -18641,8 +19294,8 @@ function viewFloatLeadingPoint(data: RecordPosition, tree: TreeHandle): T.FloatL
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -18694,8 +19347,8 @@ function viewFloatScientific(data: RecordPosition, tree: TreeHandle): T.FloatSci
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -18730,8 +19383,8 @@ function viewEscapeSequenceUnicodeFixed(data: RecordPosition, tree: TreeHandle):
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -18759,8 +19412,8 @@ function viewEscapeSequenceUnicodeWide(data: RecordPosition, tree: TreeHandle): 
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -18788,8 +19441,8 @@ function viewEscapeSequenceHex(data: RecordPosition, tree: TreeHandle): T.Escape
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -18817,8 +19470,8 @@ function viewEscapeSequenceOctal(data: RecordPosition, tree: TreeHandle): T.Esca
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -18846,8 +19499,8 @@ function viewEscapeSequenceLineBreak(data: RecordPosition, tree: TreeHandle): T.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -18875,8 +19528,8 @@ function viewEscapeSequenceSimple(data: RecordPosition, tree: TreeHandle): T.Esc
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -18904,8 +19557,8 @@ function viewEscapeSequenceNamed(data: RecordPosition, tree: TreeHandle): T.Esca
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -18932,8 +19585,8 @@ function viewSimplePatternNegative(data: RecordPosition, tree: TreeHandle): T.Si
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -18959,8 +19612,8 @@ function viewExceptClauseExceptionList(data: RecordPosition, tree: TreeHandle): 
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -18986,8 +19639,8 @@ function viewExceptClauseException(data: RecordPosition, tree: TreeHandle): T.Ex
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19013,8 +19666,8 @@ function viewSplatPatternList(data: RecordPosition, tree: TreeHandle): T.SplatPa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19040,8 +19693,8 @@ function viewSplatPatternDictionary(data: RecordPosition, tree: TreeHandle): T.S
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19071,8 +19724,8 @@ function viewAssignmentEq(data: RecordPosition, tree: TreeHandle): T.AssignmentE
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19102,8 +19755,8 @@ function viewAssignmentType(data: RecordPosition, tree: TreeHandle): T.Assignmen
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19137,8 +19790,8 @@ function viewAssignmentTyped(data: RecordPosition, tree: TreeHandle): T.Assignme
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19197,8 +19850,8 @@ function viewExpressionStatementTuple(data: RecordPosition, tree: TreeHandle): T
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -19262,8 +19915,8 @@ function viewWithClauseBare(data: RecordPosition, tree: TreeHandle): T.WithClaus
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -19327,8 +19980,8 @@ function viewWithClauseParen(data: RecordPosition, tree: TreeHandle): T.WithClau
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -19393,8 +20046,8 @@ function viewSuiteInline(data: RecordPosition, tree: TreeHandle): T.SuiteInline.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -19426,8 +20079,8 @@ function viewSuiteBlock(data: RecordPosition, tree: TreeHandle): T.SuiteBlock.Pa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19453,8 +20106,8 @@ function viewSuiteEmpty(data: RecordPosition, tree: TreeHandle): T.SuiteEmpty.Pa
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19487,8 +20140,8 @@ function viewComparisonOperatorComparator(
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19514,8 +20167,8 @@ function viewYieldFromClause(data: RecordPosition, tree: TreeHandle): T.YieldFro
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19545,8 +20198,8 @@ function viewTypeParamTypeVar(data: RecordPosition, tree: TreeHandle): T.TypePar
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19572,8 +20225,8 @@ function viewTypeParamTypeVarTuple(data: RecordPosition, tree: TreeHandle): T.Ty
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19599,8 +20252,8 @@ function viewTypeParamParamSpec(data: RecordPosition, tree: TreeHandle): T.TypeP
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19701,8 +20354,8 @@ function viewStringStart(data: RecordPosition, tree: TreeHandle): T.StringStart.
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19734,8 +20387,8 @@ function viewStringEnd(data: RecordPosition, tree: TreeHandle): T.StringEnd.Pars
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19778,8 +20431,8 @@ function viewConstructorDeclaration(data: RecordPosition, tree: TreeHandle): T.C
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19812,8 +20465,8 @@ function viewBlockClassDeclaration(data: RecordPosition, tree: TreeHandle): T.Bl
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19839,8 +20492,8 @@ function viewSuiteBlockClassDeclaration(data: RecordPosition, tree: TreeHandle):
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19873,8 +20526,8 @@ function viewDecoratedDefinitionClassDeclaration(
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -19933,8 +20586,8 @@ function viewNames(data: RecordPosition, tree: TreeHandle): T.Names.Parsed {
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -19965,8 +20618,8 @@ function viewAsPatternTarget(data: RecordPosition, tree: TreeHandle): T.AsPatter
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -20004,8 +20657,8 @@ function viewFormatExpression(data: RecordPosition, tree: TreeHandle): T.FormatE
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -20057,8 +20710,8 @@ function viewMethodDeclaration(data: RecordPosition, tree: TreeHandle): T.Method
 		toString: handleToString,
 		toJSON: refuseJSON,
 		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : $handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
@@ -20075,12 +20728,6 @@ function viewMethodDeclaration(data: RecordPosition, tree: TreeHandle): T.Method
 	return node as unknown as T.MethodDeclaration.Parsed;
 }
 
-function $handleQuery(this: RecordPosition): object {
-	return handleQuery(this, rowOf(this, _wrap));
-}
-function $handleSnapshot(this: RecordPosition): unknown {
-	return snapshotOf(rowOf(this, _wrap));
-}
 function $trivia$leading(this: Received<RecordPosition>, ...items: unknown[]): unknown {
 	return handleTrivia(receiverOf(this, '$trivia.leading'), _wrap, 'leading', items);
 }
@@ -20544,9 +21191,16 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.ParenthesizedImportList]: (d, t) =>
 		wrapParenthesizedImportList(d as unknown as T.ParenthesizedImportList, t),
 	[TSKindId.ComprehensionClauses]: (d, t) => wrapComprehensionClauses(d as unknown as T.ComprehensionClauses, t),
-	[TSKindId.IntegerHex]: (d, t) => wrapIntegerHex(d as unknown as T.IntegerHex, t),
-	[TSKindId.IntegerOctal]: (d, t) => wrapIntegerOctal(d as unknown as T.IntegerOctal, t),
-	[TSKindId.IntegerBinary]: (d, t) => wrapIntegerBinary(d as unknown as T.IntegerBinary, t),
+	[TSKindId.IntegerHexLong]: (d, t) => wrapIntegerHexLong(d as unknown as T.IntegerHexLong, t),
+	[TSKindId.IntegerHexPlain]: (d, t) => wrapIntegerHexPlain(d as unknown as T.IntegerHexPlain, t),
+	[TSKindId.IntegerOctalLong]: (d, t) => wrapIntegerOctalLong(d as unknown as T.IntegerOctalLong, t),
+	[TSKindId.IntegerOctalPlain]: (d, t) => wrapIntegerOctalPlain(d as unknown as T.IntegerOctalPlain, t),
+	[TSKindId.IntegerBinaryLong]: (d, t) => wrapIntegerBinaryLong(d as unknown as T.IntegerBinaryLong, t),
+	[TSKindId.IntegerBinaryPlain]: (d, t) => wrapIntegerBinaryPlain(d as unknown as T.IntegerBinaryPlain, t),
+	[TSKindId.IntegerLegacyOctalLong]: (d, t) => wrapIntegerLegacyOctalLong(d as unknown as T.IntegerLegacyOctalLong, t),
+	[TSKindId.IntegerLegacyOctalPlain]: (d, t) =>
+		wrapIntegerLegacyOctalPlain(d as unknown as T.IntegerLegacyOctalPlain, t),
+	[TSKindId.IntegerDecimalLong]: (d, t) => wrapIntegerDecimalLong(d as unknown as T.IntegerDecimalLong, t),
 	[TSKindId.FloatPoint]: (d, t) => wrapFloatPoint(d as unknown as T.FloatPoint, t),
 	[TSKindId.FloatLeadingPoint]: (d, t) => wrapFloatLeadingPoint(d as unknown as T.FloatLeadingPoint, t),
 	[TSKindId.FloatScientific]: (d, t) => wrapFloatScientific(d as unknown as T.FloatScientific, t),
@@ -20598,7 +21252,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.TypeConversion]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.Identifier]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.FormatSpecifierText]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.IntegerDecimalLong]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.IntegerDecimalImaginary]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.IntegerDecimalPlain]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.LineContinuationNewline]: (d, t) => wrapInteriorLeaf(d, t),
@@ -20741,9 +21394,15 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.PrintStatementPlain]: viewPrintStatementPlain,
 	[TSKindId.ParenthesizedImportList]: viewParenthesizedImportList,
 	[TSKindId.ComprehensionClauses]: viewComprehensionClauses,
-	[TSKindId.IntegerHex]: viewIntegerHex,
-	[TSKindId.IntegerOctal]: viewIntegerOctal,
-	[TSKindId.IntegerBinary]: viewIntegerBinary,
+	[TSKindId.IntegerHexLong]: viewIntegerHexLong,
+	[TSKindId.IntegerHexPlain]: viewIntegerHexPlain,
+	[TSKindId.IntegerOctalLong]: viewIntegerOctalLong,
+	[TSKindId.IntegerOctalPlain]: viewIntegerOctalPlain,
+	[TSKindId.IntegerBinaryLong]: viewIntegerBinaryLong,
+	[TSKindId.IntegerBinaryPlain]: viewIntegerBinaryPlain,
+	[TSKindId.IntegerLegacyOctalLong]: viewIntegerLegacyOctalLong,
+	[TSKindId.IntegerLegacyOctalPlain]: viewIntegerLegacyOctalPlain,
+	[TSKindId.IntegerDecimalLong]: viewIntegerDecimalLong,
 	[TSKindId.FloatPoint]: viewFloatPoint,
 	[TSKindId.FloatLeadingPoint]: viewFloatLeadingPoint,
 	[TSKindId.FloatScientific]: viewFloatScientific,

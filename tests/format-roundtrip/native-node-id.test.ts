@@ -77,12 +77,12 @@ for (const grammar of ['rust', 'typescript', 'python'] as const) {
 				expect(() => engine.render(root)).toThrow(testCase.expected);
 			});
 
-			it(`snapshot rejects a holder byte at a ${testCase.label}`, () => {
+			it(`snapshotLayouts rejects a holder byte at a ${testCase.label}`, () => {
 				const engine = tryLoadNativeEngine(grammar);
 				if (!engine) return;
 
 				const { treeId } = parseNativeFixture(engine, sources[grammar]);
-				expect(() => engine.snapshot(treeId, 0, testCase.offset)).toThrow(testCase.expected);
+				expect(() => engine.snapshotLayouts(treeId, 0, testCase.offset)).toThrow(testCase.expected);
 			});
 		}
 

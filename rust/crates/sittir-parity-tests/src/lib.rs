@@ -126,28 +126,17 @@ pub fn edit_in_place<G: sittir_core::engine::EngineGrammar>(tree: &mut sittir_co
     tree.write_trivia_side(index, inner, tree.trivia_side(index, inner)).expect("the node's own side writes back");
 }
 
-/// A source table that holds no tree, so a node renders from what it holds
-/// alone, as a snapshot does.
-pub struct NoSources;
-
-impl sittir_core::render::SourceTable for NoSources {
-    fn source_of(&self, _tree_id: sittir_core::types::TreeId) -> Option<&std::sync::Arc<str>> {
-        None
-    }
-}
-
-/// `$source` parsed by `$krate`'s `$grammar` under its default options, its
-/// root snapshot rendered.
-#[macro_export]
-macro_rules! snapshot_rendered {
-    ($krate:ident, $grammar:expr, $source:expr) => {{
-        let mut engine = ::sittir_core::engine::Engine::new($grammar, $krate::render::options::defaults()).expect("an engine");
-        let tree = engine.parse($source, ::sittir_core::engine::claim_tree_id().expect("a tree id")).expect("a parse");
-        let options = engine.options().clone();
-        let root: $krate::render::AnyNode = tree.snapshot(::sittir_core::types::NodeIndex::ROOT, None).expect("a snapshot");
-        let ctx = ::sittir_core::prepare::RenderContext::new(&options, &$crate::NoSources);
-        $krate::render::render_node_parts(::sittir_core::SlotValue::Node(root), &ctx, None).expect("a render").1
-    }};
+/// `tree` read whole into plain data that names no tree: each node with its
+/// span measured from the source's start, and each side's extras and
+/// `ERROR`s as their text.
+///
+/// # Errors
+///
+/// A node the read refuses.
+pub fn plain_read<G: sittir_core::engine::EngineGrammar, N: sittir_core::read::ReadNode>(tree: &sittir_core::engine::ParsedTree<G>) -> Result<N, sittir_core::read::ReadError> {
+    let seating = tree.seating();
+    let mut ctx = seating.ctx().snapshot(sittir_core::read::SnapshotCtx::new(tree.lines(), Some(0), sittir_core::types::NodeIndex::ROOT));
+    sittir_core::read::read_at::<N>(&mut seating.cursor(sittir_core::types::NodeIndex::ROOT), &mut ctx, sittir_core::types::NodeIndex::ROOT, sittir_core::read::Depth::All)
 }
 
 /// `$source` parsed by `$krate`'s `$grammar` under its default options with
@@ -167,14 +156,13 @@ macro_rules! edited_rendered {
     }};
 }
 
-/// Each `$source` renders as it reads, from its root snapshot
-/// (`snapshot_rendered`) and with every node edited (`edited_rendered`).
+/// Each `$source` renders as it reads with every node edited
+/// (`edited_rendered`).
 #[macro_export]
 macro_rules! renders_as_read {
     ($krate:ident, $grammar:expr, $($source:expr),+ $(,)?) => {
         for source in [$($source),+] {
-            let rendered = ($crate::snapshot_rendered!($krate, $grammar, source), $crate::edited_rendered!($krate, $grammar, source));
-            assert_eq!((rendered.0.as_str(), rendered.1.as_str()), (source, source));
+            assert_eq!($crate::edited_rendered!($krate, $grammar, source), source);
         }
     };
 }

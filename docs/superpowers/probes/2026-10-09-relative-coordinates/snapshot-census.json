@@ -978,39 +978,11 @@
 	],
 	"python": [
 		{
-			"entry": "Print used as an identifier",
-			"line": 1,
-			"class": "whitespace",
-			"live": "print()",
-			"snapshot": "print ()"
-		},
-		{
 			"entry": "Print used as a parameter",
 			"line": 2,
 			"class": "whitespace",
 			"live": "  b",
 			"snapshot": "    b"
-		},
-		{
-			"entry": "Exec used as an identifier",
-			"line": 1,
-			"class": "whitespace",
-			"live": "exec(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\" : None}, safe_dict)",
-			"snapshot": "exec(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\": None}, safe_dict)"
-		},
-		{
-			"entry": "Binary Addition / Subtraction With Floats",
-			"line": 1,
-			"class": "whitespace",
-			"live": ".1-.0",
-			"snapshot": ".1 - .0"
-		},
-		{
-			"entry": "Power Operator Precedence",
-			"line": 1,
-			"class": "whitespace",
-			"live": "2**2**3",
-			"snapshot": "2 ** 2 ** 3"
 		},
 		{
 			"entry": "Named expressions",
@@ -1027,13 +999,6 @@
 			"snapshot": "    yield"
 		},
 		{
-			"entry": "lambdas",
-			"line": 3,
-			"class": "whitespace",
-			"live": "lambda a, b = c, *d, **e: a",
-			"snapshot": "lambda a, b=c, *d, **e: a"
-		},
-		{
 			"entry": "Async context managers and iterators",
 			"line": 2,
 			"class": "whitespace",
@@ -1041,116 +1006,67 @@
 			"snapshot": "    async for c in d:"
 		},
 		{
-			"entry": "Arbitrary indentation between brackets",
-			"line": 2,
-			"class": "whitespace",
-			"live": "    b(",
-			"snapshot": "    b(1,"
+			"entry": "Strings",
+			"line": 3,
+			"class": "text",
+			"live": "UR'bye'",
+			"snapshot": "ur'bye'"
 		},
 		{
 			"entry": "Raw strings",
-			"line": 3,
-			"class": "whitespace",
-			"live": "",
-			"snapshot": "# no escape sequences in these"
+			"line": 9,
+			"class": "text",
+			"live": "fr\"\\{0}\"",
+			"snapshot": "rf\"\\{0}\""
 		},
 		{
 			"entry": "Raw strings with escaped quotes",
 			"line": 2,
 			"class": "whitespace",
 			"live": "           r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\")",
-			"snapshot": "r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\")"
+			"snapshot": "    r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\")"
 		},
 		{
 			"entry": "Format strings",
-			"line": 16,
+			"line": 17,
 			"class": "whitespace",
-			"live": "{\"string1\" if True else",
-			"snapshot": "{\"string1\" if True else \"string2\"}\"\"\""
+			"live": " \"string2\"}\"\"\"",
+			"snapshot": "\"string2\"}\"\"\""
 		},
 		{
-			"entry": "Format strings with format specifiers",
-			"line": 4,
-			"class": "whitespace",
-			"live": "f\"{a=}\"",
-			"snapshot": "f\"{a =}\""
-		},
-		{
-			"entry": "Matching specific values",
+			"entry": "Template Strings",
 			"line": 3,
-			"class": "whitespace",
-			"live": "        print(\"Goodbye!\")",
-			"snapshot": "        print (\"Goodbye!\")"
-		},
-		{
-			"entry": "Adding a wild card",
-			"line": 2,
-			"class": "whitespace",
-			"live": "# ^ conditional",
-			"snapshot": "    # ^ conditional"
-		},
-		{
-			"entry": "Or patterns",
-			"line": 2,
-			"class": "whitespace",
-			"live": "    case [\"north\"] | [\"go\", \"north\"]:",
-			"snapshot": "    case [\"north\"]| [\"go\", \"north\"]:"
-		},
-		{
-			"entry": "As patterns",
-			"line": 2,
-			"class": "whitespace",
-			"live": "    case [\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]:",
-			"snapshot": "    case [\"go\", (\"north\"| \"south\"| \"east\"| \"west\") as direction]:"
+			"class": "text",
+			"live": "tr\"Path: {path}\\n\"",
+			"snapshot": "rt\"Path: {path}\\n\""
 		},
 		{
 			"entry": "Literals",
-			"line": 2,
+			"line": 3,
 			"class": "whitespace",
-			"live": "    case 3 | -3:",
-			"snapshot": "    case 3| - 3:"
-		},
-		{
-			"entry": "Matching objects",
-			"line": 2,
-			"class": "whitespace",
-			"live": "    case Click(position=(x, y)):",
-			"snapshot": "    case Click(position = (x, y)):"
+			"live": "      pass",
+			"snapshot": "        pass"
 		},
 		{
 			"entry": "Constants and enums",
 			"line": 2,
 			"class": "whitespace",
 			"live": "    case Click((x, y), button=Button.LEFT):  # This is a left click",
-			"snapshot": "    case Click((x, y), button = Button.LEFT): # This is a left click"
-		},
-		{
-			"entry": "Complex case patterns on classes",
-			"line": 8,
-			"class": "whitespace",
-			"live": "    case Point3D(x=0, y=0, z=0): # kw args",
-			"snapshot": "    case Point3D(x = 0, y = 0, z = 0): # kw args"
+			"snapshot": "    case Click((x, y), button=Button.LEFT): # This is a left click"
 		},
 		{
 			"entry": "Complex case patterns on complex numbers",
 			"line": 2,
 			"class": "whitespace",
 			"live": "    case  -3 + 5j:",
-			"snapshot": "    case - 3 + 5j:"
+			"snapshot": "    case -3 + 5j:"
 		},
 		{
 			"entry": "Future import statements",
 			"line": 4,
 			"class": "whitespace",
 			"live": "                        unicode_literals)",
-			"snapshot": "unicode_literals)"
-		},
-		{
-			"entry": "Print statements with redirection",
-			"line": 2,
-			"class": "whitespace",
-			"live": "print >> a, \"b\", \"c\"",
-			"snapshot": "print >> a , \"b\", \"c\""
+			"snapshot": "    unicode_literals)"
 		},
 		{
 			"entry": "Control-flow statements",
@@ -1218,7 +1134,7 @@
 		{
 			"entry": "Function definitions",
 			"line": 2,
-			"class": "text",
+			"class": "whitespace",
 			"live": "  return (a,b)",
 			"snapshot": "    return (a,b)"
 		},
@@ -1276,21 +1192,7 @@
 			"line": 2,
 			"class": "whitespace",
 			"live": "  # We need to recognize the newline *preceding* this comment, because there's no newline after it",
-			"snapshot": "# We need to recognize the newline *preceding* this comment, because there's no newline after it"
-		},
-		{
-			"entry": "Extra newlines",
-			"line": 2,
-			"class": "whitespace",
-			"live": "",
-			"snapshot": "    b()"
-		},
-		{
-			"entry": "Escaped newline",
-			"line": 1,
-			"class": "text",
-			"live": "len(\"a\") \\",
-			"snapshot": "len(\"a\") or len(\"aa\")"
+			"snapshot": "    # We need to recognize the newline *preceding* this comment, because there's no newline after it"
 		},
 		{
 			"entry": "Type Alias Statements",

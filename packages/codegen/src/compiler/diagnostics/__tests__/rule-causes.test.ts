@@ -93,6 +93,42 @@ describe('semantic-gap reauthoring witnesses', () => {
 	});
 });
 
+describe('a semantic-gap witness on a token rule', () => {
+	const upstreamRules = {
+		integer: {
+			type: 'TOKEN',
+			content: {
+				type: 'CHOICE',
+				members: [
+					{ type: 'SEQ', members: [{ type: 'STRING', value: '0o' }, { type: 'PATTERN', value: '[0-7]+' }] },
+					{ type: 'PATTERN', value: '\\d+' }
+				]
+			}
+		},
+		space: { type: 'PATTERN', value: '\\s' }
+	};
+	const check = (form: readonly string[], kind = 'integer') => {
+		const witness = { text: form.join(''), form, kind, meaning: 'Octal 255.' };
+		return diagnose({
+			ruleCauses: { [kind]: { kind: 'reauthored', causes: [{ cause: 'semantic-gap', witnesses: [witness] }] } },
+			enriched: enriched({ ruleNames: new Set([kind]) }),
+			upstreamRules
+		});
+	};
+
+	it('matches a form item against a pattern of the token', () => {
+		expect(check(['0377'])).toEqual([]);
+		expect(check(['0o', '17'])).toEqual([]);
+	});
+	it('rejects a form item no pattern of the token matches', () => {
+		expect(codesOf(check(['03a']))).toEqual(['rule-cause-mismatch:integer']);
+	});
+	it('compiles a pattern with the classes tree-sitter lexes it with', () => {
+		expect(check([' '], 'space')).toEqual([]);
+		expect(codesOf(check(['\u00a0'], 'space'))).toEqual(['rule-cause-mismatch:space']);
+	});
+});
+
 describe('a witnessed cause given an empty witness array', () => {
 	const upstreamRules = { tuple: { type: 'SEQ', members: [{ type: 'STRING', value: '(' }, { type: 'STRING', value: ')' }] } };
 	it.each(['accepts-other-kind', 'semantic-gap', 'rejects-valid-syntax', 'misreads-valid-syntax', 'accepts-invalid-syntax'] as const)(

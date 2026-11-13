@@ -18,6 +18,23 @@ pub fn unknown_kind(id: crate::types::KindId, owner: &str) -> String {
     format!("unknown kind id {id} in {owner}")
 }
 
+/// The build profile an addon reports, from the `SITTIR_BUILD_PROFILE` its
+/// build was given: `release`, `gate` or `dev`, the profiles build-native
+/// builds, or `None` for a build it didn't make.
+///
+/// # Panics
+///
+/// On any other name, so a `const` holding the result stops the build.
+#[must_use]
+pub const fn build_profile(named: Option<&'static str>) -> Option<&'static str> {
+    match named {
+        Some(name) if !matches!(name.as_bytes(), b"release" | b"gate" | b"dev") => {
+            panic!("SITTIR_BUILD_PROFILE names a profile build-native builds: release, gate or dev")
+        }
+        _ => named,
+    }
+}
+
 /// A render's text as it crosses to JavaScript: a one-byte string when every
 /// byte is ASCII, which V8 copies without decoding it, and otherwise a UTF-8
 /// string, as a `String` crosses.
@@ -317,4 +334,22 @@ fn descriptors<'k>(
 #[cfg(feature = "napi-bindings")]
 fn key_name(key: &'static ::std::ffi::CStr) -> &'static str {
     key.to_str().unwrap_or("")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::build_profile;
+
+    #[test]
+    fn a_profile_build_native_builds_or_none_is_reported_as_named() {
+        for named in [Some("release"), Some("gate"), Some("dev"), None] {
+            assert_eq!(build_profile(named), named);
+        }
+    }
+
+    #[test]
+    #[should_panic(expected = "SITTIR_BUILD_PROFILE names a profile build-native builds: release, gate or dev")]
+    fn any_other_name_is_refused() {
+        let _ = build_profile(Some("debug"));
+    }
 }
