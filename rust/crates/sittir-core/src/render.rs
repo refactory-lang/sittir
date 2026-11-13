@@ -327,6 +327,43 @@ pub trait SourceTable {
         false
     }
 
+    /// The id this call names the node of the parsed record at `at` by, in
+    /// the source `tree` names, whose records outlive their tree; `None`
+    /// where the table reads no such source.
+    #[cfg(feature = "arena")]
+    fn record_row(&self, tree: crate::types::TreeId, at: crate::arena::Address) -> Option<crate::types::NodeIndex> {
+        let _ = (tree, at);
+        None
+    }
+
+    /// Where the node this call names `index` is kept, in the source `tree`
+    /// names, whose records outlive their tree: its record, or its row in
+    /// its holder's run; `None` where the table reads no such source.
+    #[cfg(feature = "arena")]
+    fn row_site(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex) -> Option<crate::arena::NodeSite> {
+        let _ = (tree, index);
+        None
+    }
+
+    /// How many levels the node `index` lies below the node `above`, 0 for
+    /// the node itself, looking `most` levels up at most, in the source
+    /// `tree` names, whose records outlive their tree; `None` further up or
+    /// apart, and where the table reads no such source.
+    #[cfg(feature = "arena")]
+    fn levels_below(&self, tree: crate::types::TreeId, above: crate::types::NodeIndex, index: crate::types::NodeIndex, most: u32) -> Option<u32> {
+        let _ = (tree, above, index, most);
+        None
+    }
+
+    /// The id this call names the node by that a cell of the parsed record
+    /// at `holder` names by `row` in its run (`RunNodes::row_index`), in the
+    /// source `tree` names; `None` where the table reads no such source.
+    #[cfg(feature = "arena")]
+    fn cell_row(&self, tree: crate::types::TreeId, holder: crate::arena::Address, row: u32) -> Option<crate::types::NodeIndex> {
+        let _ = (tree, holder, row);
+        None
+    }
+
     /// Renders the built record `record`, which the store `held` answered,
     /// into `w` as a trivia entry in the side that holds it, from the arena
     /// that wrote it, under `options`. A table that reaches no arena
@@ -412,6 +449,26 @@ impl SourceTable for ThroughTemplates<'_> {
 
     fn reads_templates(&self) -> bool {
         true
+    }
+
+    #[cfg(feature = "arena")]
+    fn record_row(&self, tree: crate::types::TreeId, at: crate::arena::Address) -> Option<crate::types::NodeIndex> {
+        self.0.record_row(tree, at)
+    }
+
+    #[cfg(feature = "arena")]
+    fn cell_row(&self, tree: crate::types::TreeId, holder: crate::arena::Address, row: u32) -> Option<crate::types::NodeIndex> {
+        self.0.cell_row(tree, holder, row)
+    }
+
+    #[cfg(feature = "arena")]
+    fn row_site(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex) -> Option<crate::arena::NodeSite> {
+        self.0.row_site(tree, index)
+    }
+
+    #[cfg(feature = "arena")]
+    fn levels_below(&self, tree: crate::types::TreeId, above: crate::types::NodeIndex, index: crate::types::NodeIndex, most: u32) -> Option<u32> {
+        self.0.levels_below(tree, above, index, most)
     }
 
     fn seat_through(&self, coord: &crate::slot::NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {

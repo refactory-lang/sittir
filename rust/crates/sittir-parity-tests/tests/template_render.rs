@@ -129,8 +129,39 @@ impl<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells> Renders<G, N> {
         Ok(Some(through))
     }
 
-    /// Whether `source` renders alike from its templates in both storages.
+    /// The root's record, read whole at parse into the engine's built
+    /// arena with no tree left, rendered from its templates; `None` when the
+    /// parser rejects the source whole.
+    fn records(&self, source: &str) -> Result<Option<String>, String> {
+        let mut engine = Engine::new(self.grammar, (self.options)()).expect("an engine");
+        let options = engine.options().clone();
+        let Some(root) = engine.parse_records::<N>(source)?.root else { return Ok(None) };
+        let built = engine.written().built();
+        engine.render_parsed(&built, root, ChangedEdges::default(), &options, true).map(Some).map_err(|e| e.to_string())
+    }
+
+    /// Whether `source` renders alike from its templates in both storages,
+    /// and from the records a parse leaves with no tree.
     fn alike(&self, source: &str) -> Result<Outcome, String> {
+        let outcome = self.alike_in_storages(source)?;
+        let records = caught(|| self.records(source));
+        match (&outcome, records) {
+            (Outcome::AsSource | Outcome::Rendered, Ok(Ok(Some(records)))) => {
+                let object = self.object(source)?;
+                if object != records {
+                    return Err(format!("\n object  {object:?}\n records {records:?}"));
+                }
+            }
+            (Outcome::AsSource | Outcome::Rendered, Ok(Ok(None))) => return Err("records: a parse left no root of a source both storages render".to_owned()),
+            (Outcome::AsSource | Outcome::Rendered, Ok(Err(refusal))) => return Err(format!("records: {refusal}")),
+            (Outcome::AsSource | Outcome::Rendered, Err(panic)) => return Err(format!("the render from records panics ({panic}), and the storages' do not")),
+            (Outcome::Unread, Ok(Ok(Some(_)))) => return Err("records: a parse left a root of a source the parser rejects whole".to_owned()),
+            (Outcome::Panicking(_) | Outcome::Unread, _) => {}
+        }
+        Ok(outcome)
+    }
+
+    fn alike_in_storages(&self, source: &str) -> Result<Outcome, String> {
         match (caught(|| self.object(source)), caught(|| self.arena(source))) {
             (Err(object), Err(arena)) if object == arena => Ok(Outcome::Panicking(object)),
             (Err(object), Err(arena)) => Ok(Outcome::Panicking(format!("object: {object}; arena: {arena}"))),

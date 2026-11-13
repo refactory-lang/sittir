@@ -61,7 +61,7 @@ pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens, 
 pub use view::{built_leaf_place, linked_leaf_place, held_changed, leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
 pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, captured_cell, coordinate_cell, leaf_cell, write_list, write_record, write_slot};
 pub use rows::{NodeRows, TreeArena, ROW_FIELD_BITS};
-pub use run_nodes::{NodeSite, RunNodes};
+pub use run_nodes::{NodeSite, RunNodes, RunTable};
 pub use side::{Row, SideRecord, SideSlot, Sides};
 
 /// A native node type's view over its records: a struct's is its
@@ -574,14 +574,15 @@ impl ArenaRead for Arena {
 /// name an entry in them.
 #[derive(Debug)]
 enum BuiltChunk {
-    Words { mem: Arc<ChunkMem<u32>>, counts: count::CountTable },
+    /// `read` for a chunk a read took for its records.
+    Words { mem: Arc<ChunkMem<u32>>, counts: count::CountTable, read: bool },
     Bytes { mem: Arc<ChunkMem<u8>>, cells: Arc<ChunkMem<u8>> },
 }
 
 impl BuiltChunk {
     fn byte_len(&self) -> usize {
         match self {
-            BuiltChunk::Words { mem, counts } => mem.byte_len() + counts.byte_len(),
+            BuiltChunk::Words { mem, counts, .. } => mem.byte_len() + counts.byte_len(),
             BuiltChunk::Bytes { mem, cells } => mem.byte_len() + cells.byte_len(),
         }
     }
@@ -652,7 +653,7 @@ impl BuiltChunks {
         let mem = ChunkMem::zeroed(len as usize);
         let counts = count::CountTable::new(len);
         let meta = Arc::clone(counts.meta());
-        self.chunks[chunk as usize] = Some(BuiltChunk::Words { mem: Arc::clone(&mem), counts });
+        self.chunks[chunk as usize] = Some(BuiltChunk::Words { mem: Arc::clone(&mem), counts, read: false });
         let sealed = self.opened(0, chunk, len <= CHUNK_WORDS).and_then(|sealed| match self.chunks.get_mut(sealed as usize) {
             Some(Some(BuiltChunk::Words { counts, .. })) => counts.seal().map(|meta| (sealed, meta)),
             _ => None,
@@ -668,7 +669,7 @@ impl BuiltChunks {
     /// As `alloc_words`.
     pub fn alloc_read_words(&mut self, len: u32) -> Result<u32, ArenaError> {
         let chunk = self.number(len)?;
-        self.chunks[chunk as usize] = Some(BuiltChunk::Words { mem: ChunkMem::zeroed(len as usize), counts: count::CountTable::new(len) });
+        self.chunks[chunk as usize] = Some(BuiltChunk::Words { mem: ChunkMem::zeroed(len as usize), counts: count::CountTable::new(len), read: true });
         Ok(chunk)
     }
 
@@ -808,6 +809,17 @@ impl ArenaRead for BuiltChunks {
     fn released(&self, at: Address) -> bool {
         match self.chunks.get(at.chunk() as usize) {
             Some(Some(BuiltChunk::Words { counts, .. })) => counts.peek(at.word()).is_ok_and(|byte| byte == 0),
+            _ => false,
+        }
+    }
+
+    fn read_chunk(&self, n: u32) -> bool {
+        matches!(self.chunks.get(n as usize), Some(Some(BuiltChunk::Words { read: true, .. })))
+    }
+
+    fn read_entry(&self, at: Address) -> bool {
+        match self.chunks.get(at.chunk() as usize) {
+            Some(Some(BuiltChunk::Words { counts, read: true, .. })) => counts.peek(at.word()).is_ok_and(|byte| byte != 0),
             _ => false,
         }
     }

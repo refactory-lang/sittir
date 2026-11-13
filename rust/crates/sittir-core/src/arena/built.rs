@@ -141,6 +141,35 @@ impl<G: RecordGrammar> Engine<G> {
         G::render_record(self.grammar(), root, &mut held, arena, self.written(), ctx, None)
     }
 
+    /// The parsed record at `at` of `built`, this engine's built arena,
+    /// which a read left there with no tree (`Engine::parse_records`),
+    /// rendered as a render root whose `changed` edges have no neighbour,
+    /// under `options`, its line endings unspelled: as its source where no
+    /// write lies in it, and, with `templates`, each node that has a record
+    /// from its template (`ThroughTemplates`). The call reads the record's
+    /// source through a tree of its own over the records
+    /// (`ParsedTree::over_records`).
+    ///
+    /// # Errors
+    ///
+    /// `RenderError::Record` for an address no read wrote a record at, else
+    /// what the record's render refuses.
+    pub fn render_parsed(&self, built: &super::BuiltChunks, at: Address, changed: ChangedEdges, options: &crate::options::ResolvedOptions, templates: bool) -> Result<String, RenderError> {
+        if !built.read_entry(at) {
+            return Err(RenderError::Record(ArenaError::Malformed { what: "record address", word: at.0 }));
+        }
+        let kind = built.header_kind(at, G::KIND_BITS).map_err(RenderError::Record)?;
+        let tree = crate::engine::ParsedTree::over_records(self, built, at).map_err(RenderError::Record)?;
+        let id = tree.tree_id();
+        let trees: std::collections::HashMap<_, _, crate::heap::IndexState> = [(id, tree)].into_iter().collect();
+        let read = ReadTrees::new(&trees);
+        let through = crate::render::ThroughTemplates(&read);
+        let sources: &dyn crate::render::SourceTable = if templates { &through } else { &read };
+        let root = CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree: Some(id), site: None };
+        let mut held = HeldArenas::of([]).with_reads(built);
+        G::render_record(self.grammar(), root, &mut held, built, self.written(), &RenderContext::new(options, sources), None)
+    }
+
     /// The lone built leaf of `kind` whose leaf entry is at `entry` in
     /// `arena`, rendered as a render root whose `changed` edges have no neighbour,
     /// with the sides `sides`: a root has no site, so its sides come with the

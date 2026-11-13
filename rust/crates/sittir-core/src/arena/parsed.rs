@@ -69,22 +69,7 @@ fn agree(records: &mut dyn Nodes<'_>, nodes: &mut dyn Nodes<'_>, index: NodeInde
 /// each content read from the same node, names a node of `runs` by its
 /// holder's run (`RunNodes::row_index`): a leaf one of the cell's span.
 fn cells_name_rows<N: RecordCells>(runs: &mut super::RunNodes<'_>, arena: &dyn ArenaRead, at: Address, bits: u32) -> Result<bool, super::ArenaError> {
-    let malformed = |what, word| super::ArenaError::Malformed { what, word };
-    let kind = arena.header_kind(at, bits)?;
-    let record = N::shape(kind).ok_or(malformed("record shape", u32::from(kind.0)))?;
-    let words = arena.words(at, record.words.max(HEADER_WORDS))?;
-    let mut cells = Vec::new();
-    for shape in record.cells {
-        if let Some(width) = shape.run {
-            let list = super::ListCell::of_word(super::CellWord(*words.get(shape.word as usize).ok_or(malformed("cell word", shape.word))?), arena)?;
-            for item in list.items(arena, width)? {
-                cells.push(Cell::decode_parsed(item, Address::NONE, *shape, bits)?);
-            }
-        } else {
-            let cell = words.get(shape.word as usize..(shape.word + shape.width) as usize).ok_or(malformed("cell word", shape.word))?;
-            cells.push(Cell::decode_parsed(cell, at.offset(shape.word).unwrap_or(Address::NONE), *shape, bits)?);
-        }
-    }
+    let cells = parsed_cells::<N>(arena, at, bits)?;
     let own = runs.index_of(at)?;
     for cell in cells {
         let named = match cell {
@@ -104,6 +89,28 @@ fn cells_name_rows<N: RecordCells>(runs: &mut super::RunNodes<'_>, arena: &dyn A
         }
     }
     Ok(true)
+}
+
+/// The cells of the parsed record at `at` in `arena`, as its kind's shape
+/// lays them out: each slot's, a list slot's each item's.
+fn parsed_cells<N: RecordCells>(arena: &dyn ArenaRead, at: Address, bits: u32) -> Result<Vec<Cell>, super::ArenaError> {
+    Ok(super::view::parsed_cells(arena, at, N::shape, bits)?.into_iter().map(|(_, _, cell)| cell).collect())
+}
+
+/// The cell a node of records that outlive their tree renders from, kept
+/// at `site` and named `index` by the call: its record, or, for a leaf or a
+/// unit, the cell of its holder that names its row, naming it `index`;
+/// `None` for a row no cell names.
+fn site_cell<N: RecordCells>(reads: &dyn ArenaRead, site: super::NodeSite, index: NodeIndex, bits: u32) -> Result<Option<Cell>, super::ArenaError> {
+    let (holder, entry) = match site {
+        super::NodeSite::Record(at) => return Ok(Some(Cell::Child { kind: reads.header_kind(at, bits)?, at, link: None, changed: ChangedEdges::default() })),
+        super::NodeSite::Row { holder, entry } => (holder, entry),
+    };
+    Ok(parsed_cells::<N>(reads, holder, bits)?.into_iter().find_map(|cell| match cell {
+        Cell::ParsedLeaf { kind, span, row } if row.0 == entry + 2 => Some(Cell::ParsedLeaf { kind, span, row: index }),
+        Cell::Unit { kind, row: Some(row) } if row.0 == entry + 2 => Some(Cell::Unit { kind, row: Some(index) }),
+        _ => None,
+    }))
 }
 
 /// A grammar's render of a record: its generated `render_record`.
@@ -191,8 +198,16 @@ pub fn render_record_read<G: RecordGrammar, N: RecordCells>(grammar: G, read: Re
         super::ArenaError::ReadOnly { index, kind } => format!("a render over arenas lent read-only met node {} ({}), which has no record to read", index.0, grammar.kind_name(kind)),
         error => error.to_string(),
     };
-    let arena = arenas.tree(tree).ok_or_else(|| format!("no arena of tree {} was lent", tree.0))?;
-    let Some(cell) = super::written::<N>(arena, index).map_err(describe)? else { return Ok(()) };
+    let cell = if let Some(arena) = arenas.tree(tree) {
+        super::written::<N>(arena, index).map_err(describe)?
+    } else {
+        let reads = arenas.reads().ok_or_else(|| format!("no arena of tree {} was lent", tree.0))?;
+        match render.sources.row_site(tree, index) {
+            Some(site) => site_cell::<N>(reads, site, index, G::KIND_BITS).map_err(describe)?,
+            None => None,
+        }
+    };
+    let Some(cell) = cell else { return Ok(()) };
     let root = CellAt { cell, tree: Some(tree), site: None };
     let recording = Recording { templates: super::Templates { tree, root: index, depth }, baseline };
     match grammar.render_record(root, &mut super::ReadArenas(arenas), &Arena::new(), store, render, Some(recording)) {
@@ -374,7 +389,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
             match root {
                 Some(root) => {
                     let mut agree = vec![false; rows.len() as usize];
-                    let mut runs = super::RunNodes::new(&whole, self.source(), root).map_err(|refusal| refusal.to_string())?;
+                    let table = super::RunTable::default();
+                    let mut runs = super::RunNodes::new(&whole, self.source(), root, &table).map_err(|refusal| refusal.to_string())?;
                     let mut records = RecordNodes::over(rows, self.source());
                     let kinds = grammar.surface_kinds();
                     let members = crate::trivia_table::DepthMembers::scanned(records.preorder(), kinds);

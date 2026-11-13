@@ -48,11 +48,24 @@ struct Table {
     refused: Option<ArenaError>,
 }
 
-/// Navigation over the parsed records of one source, in `arena`.
+/// The nodes the navigations of one call have met in one source, by the
+/// ids they gave them: every navigation over the table names a node alike.
+#[derive(Default)]
+pub struct RunTable(crate::engine::PerCall<Table>);
+
+/// Navigation over the parsed records of one source, in `arena`, naming
+/// each node by its id in `table`.
+#[derive(Clone, Copy)]
 pub struct RunNodes<'t> {
     arena: &'t dyn ArenaRead,
     text: &'t str,
-    table: Table,
+    table: &'t RunTable,
+}
+
+/// One answer's read of the records, with the table held for it.
+struct Walk<'a> {
+    arena: &'a dyn ArenaRead,
+    table: &'a mut Table,
 }
 
 fn malformed(what: &'static str, at: Address) -> ArenaError {
@@ -61,15 +74,72 @@ fn malformed(what: &'static str, at: Address) -> ArenaError {
 
 impl<'t> RunNodes<'t> {
     /// Navigation of the source whose root's record is at `root`, its bytes
-    /// indexing `text`.
+    /// indexing `text`, over `table`, which holds that source's nodes alone:
+    /// the root is its first.
     ///
     /// # Errors
     ///
     /// What reading the root's record refuses.
-    pub fn new(arena: &'t dyn ArenaRead, text: &'t str, root: Address) -> Result<Self, ArenaError> {
-        let mut nodes = Self { arena, text, table: Table::default() };
-        nodes.record(root, Parent::Root)?;
+    pub fn new(arena: &'t dyn ArenaRead, text: &'t str, root: Address, table: &'t RunTable) -> Result<Self, ArenaError> {
+        let nodes = Self { arena, text, table };
+        nodes.answering(|walk| walk.record(root, Parent::Root))?;
         Ok(nodes)
+    }
+
+    /// Navigation over `table`, which a navigation of the source rooted
+    /// (`new`).
+    #[must_use]
+    pub fn over(arena: &'t dyn ArenaRead, text: &'t str, table: &'t RunTable) -> Self {
+        Self { arena, text, table }
+    }
+
+    fn answering<R>(&self, f: impl FnOnce(&mut Walk<'_>) -> R) -> R {
+        self.table.0.with(|table| f(&mut Walk { arena: self.arena, table }))
+    }
+
+    /// What a read of the records refused, when one did: the nodes it was
+    /// answering for read as leaves.
+    #[must_use]
+    pub fn refused(&self) -> Option<ArenaError> {
+        self.answering(|walk| walk.table.refused.clone())
+    }
+
+    /// Where the node `index` names is kept.
+    #[must_use]
+    pub fn site(&self, index: NodeIndex) -> Option<NodeSite> {
+        self.answering(|walk| walk.site(index))
+    }
+
+    /// The id of the node whose record is at `at`.
+    ///
+    /// # Errors
+    ///
+    /// What reading the record refuses.
+    pub fn index_of(&mut self, at: Address) -> Result<NodeIndex, ArenaError> {
+        self.answering(|walk| walk.record(at, Parent::Unknown))
+    }
+
+    /// The id of the node a cell of the record at `holder` names by `row`:
+    /// the holder's own node for 1, else the row two before `row` among the
+    /// entries of its run.
+    ///
+    /// # Errors
+    ///
+    /// What reading the holder's record refuses, and
+    /// `ArenaError::Malformed` for row 0 and for an entry that is no row.
+    pub fn row_index(&mut self, holder: Address, row: u32) -> Result<NodeIndex, ArenaError> {
+        self.answering(|walk| walk.row_index(holder, row))
+    }
+
+    /// The levels the node at `index` opens net of those it closes, by the
+    /// depth members of `kinds`: its record's stamp, or, for a node with no
+    /// record, its own kind's and those of the rows inside it.
+    ///
+    /// # Errors
+    ///
+    /// What reading its record or its holder's refuses.
+    pub fn depth_move(&mut self, index: NodeIndex, kinds: crate::trivia_table::SurfaceKinds) -> Result<i32, ArenaError> {
+        self.answering(|walk| walk.depth_move(index, kinds))
     }
 
     /// The record of the source's root above the record at `at`, by its
@@ -88,37 +158,14 @@ impl<'t> RunNodes<'t> {
         }
     }
 
-    /// What a read of the records refused, when one did: the nodes it was
-    /// answering for read as leaves.
-    #[must_use]
-    pub fn refused(&self) -> Option<ArenaError> {
-        self.table.refused.clone()
-    }
+}
 
-    /// Where the node `index` names is kept.
-    #[must_use]
-    pub fn site(&self, index: NodeIndex) -> Option<NodeSite> {
+impl Walk<'_> {
+    fn site(&self, index: NodeIndex) -> Option<NodeSite> {
         self.table.met.get(index.0 as usize).map(|met| met.site)
     }
 
-    /// The id of the node whose record is at `at`.
-    ///
-    /// # Errors
-    ///
-    /// What reading the record refuses.
-    pub fn index_of(&mut self, at: Address) -> Result<NodeIndex, ArenaError> {
-        self.record(at, Parent::Unknown)
-    }
-
-    /// The id of the node a cell of the record at `holder` names by `row`:
-    /// the holder's own node for 1, else the row two before `row` among the
-    /// entries of its run.
-    ///
-    /// # Errors
-    ///
-    /// What reading the holder's record refuses, and
-    /// `ArenaError::Malformed` for row 0 and for an entry that is no row.
-    pub fn row_index(&mut self, holder: Address, row: u32) -> Result<NodeIndex, ArenaError> {
+    fn row_index(&mut self, holder: Address, row: u32) -> Result<NodeIndex, ArenaError> {
         if row == 1 {
             return self.record(holder, Parent::Unknown);
         }
@@ -175,7 +222,7 @@ impl<'t> RunNodes<'t> {
     }
 
     fn meet(&mut self, site: NodeSite, facts: NodeFacts, span: Span, childless: bool, parent: Parent) -> NodeIndex {
-        let table = &mut self.table;
+        let table = &mut *self.table;
         if let Some(&index) = table.ids.get(&site) {
             if table.met[index.0 as usize].parent == Parent::Unknown {
                 table.met[index.0 as usize].parent = parent;
@@ -276,14 +323,7 @@ impl<'t> RunNodes<'t> {
         Ok(parent)
     }
 
-    /// The levels the node at `index` opens net of those it closes, by the
-    /// depth members of `kinds`: its record's stamp, or, for a node with no
-    /// record, its own kind's and those of the rows inside it.
-    ///
-    /// # Errors
-    ///
-    /// What reading its record or its holder's refuses.
-    pub fn depth_move(&mut self, index: NodeIndex, kinds: crate::trivia_table::SurfaceKinds) -> Result<i32, ArenaError> {
+    fn depth_move(&mut self, index: NodeIndex, kinds: crate::trivia_table::SurfaceKinds) -> Result<i32, ArenaError> {
         let of = |kind: crate::types::KindId| i32::from(kinds.is_depth_member(kind) && kind == kinds.indent) - i32::from(kinds.is_depth_member(kind) && kind == kinds.dedent);
         match self.site(index).ok_or(ArenaError::Malformed { what: "node id", word: index.0 })? {
             NodeSite::Record(at) => Ok(self.side(at)?.depth),
@@ -312,12 +352,6 @@ impl<'t> RunNodes<'t> {
 
     fn facts(&self, index: NodeIndex) -> Option<NodeFacts> {
         self.table.met.get(index.0 as usize).map(|met| met.facts)
-    }
-}
-
-impl<'t> Nodes<'t> for RunNodes<'t> {
-    fn text(&self) -> &'t str {
-        self.text
     }
 
     fn kid(&mut self, index: NodeIndex) -> Kid {
@@ -351,11 +385,42 @@ impl<'t> Nodes<'t> for RunNodes<'t> {
         self.answer(parent, None)
     }
 
+}
+
+impl<'t> Nodes<'t> for RunNodes<'t> {
+    fn text(&self) -> &'t str {
+        self.text
+    }
+
+    fn kid(&mut self, index: NodeIndex) -> Kid {
+        self.answering(|walk| walk.kid(index))
+    }
+
+    fn kids(&mut self, index: NodeIndex) -> Kids {
+        self.answering(|walk| walk.kids(index))
+    }
+
+    fn edge(&mut self, index: NodeIndex, side: Side) -> Option<Kid> {
+        self.answering(|walk| walk.edge(index, side))
+    }
+
+    fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
+        self.answering(|walk| walk.parent(index))
+    }
+
     fn missing(&mut self, index: NodeIndex) -> bool {
-        self.facts(index).is_some_and(|facts| facts.missing)
+        self.answering(|walk| walk.facts(index).is_some_and(|facts| facts.missing))
     }
 
     fn holds_error(&mut self, index: NodeIndex) -> bool {
-        self.facts(index).is_some_and(|facts| facts.holds_error)
+        self.answering(|walk| walk.facts(index).is_some_and(|facts| facts.holds_error))
+    }
+
+    fn bound(&mut self) -> Option<u32> {
+        None
+    }
+
+    fn names(&mut self, index: NodeIndex) -> bool {
+        self.site(index).is_some()
     }
 }

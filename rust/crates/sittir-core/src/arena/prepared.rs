@@ -155,10 +155,17 @@ impl Templates {
     /// under it, so at every depth each does.
     #[must_use]
     pub fn reach(self, tree: TreeId, rows: &NodeRows, row: NodeIndex) -> bool {
+        self.reach_by(tree, |levels| rows.levels_below(self.root, row, levels))
+    }
+
+    /// `reach`, the levels a node lies below the root, looking so many up
+    /// at most, answered by `levels_below`.
+    #[must_use]
+    pub fn reach_by(self, tree: TreeId, levels_below: impl FnOnce(u32) -> Option<u32>) -> bool {
         tree == self.tree
             && match self.depth {
                 Depth::All => true,
-                Depth::Levels(levels) => rows.levels_below(self.root, row, levels.get()).is_some(),
+                Depth::Levels(levels) => levels_below(levels.get()).is_some(),
             }
     }
 }

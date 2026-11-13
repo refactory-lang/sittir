@@ -142,7 +142,7 @@ pub fn node_at_index(tree: &tree_sitter::Tree, index: NodeIndex) -> Option<tree_
 /// The node at `index` that `nodes` navigates, `None` past the tree's last
 /// node.
 fn node(nodes: &mut dyn Nodes<'_>, index: NodeIndex) -> Option<Kid> {
-    (index.index() < nodes.kid(NodeIndex::ROOT).count as usize).then(|| nodes.kid(index))
+    nodes.names(index).then(|| nodes.kid(index))
 }
 
 /// The outermost `ERROR` that is or holds the node at `index`, or `None`
@@ -424,12 +424,13 @@ fn siblings_counting(nodes: &mut dyn Nodes<'_>, index: crate::types::NodeIndex, 
 ///
 /// A handle names a node by its tree's id and its descendant index, and
 /// resolves through the tree's navigation (`ParsedTree::nodes`).
-pub struct ParsedTree<G: EngineGrammar> {
+pub struct ParsedTree<G: EngineGrammar, B: Backing = tree_sitter::Tree> {
     /// The grammar's read facts, consulted by every read of this tree.
     grammar: G,
-    /// The parsed tree-sitter tree.
-    tree: tree_sitter::Tree,
-    source: Arc<str>,
+    /// What the tree's nodes are read from: the parsed tree-sitter tree, or
+    /// the records a read left of it.
+    tree: B,
+    source: B::Text,
     /// What the parse read off the source's layout: the tree's layer of the
     /// render options (`InferredOptions`).
     inferred: crate::options::InferredOptions,
@@ -491,10 +492,130 @@ pub struct ParsedTree<G: EngineGrammar> {
     rows: std::sync::OnceLock<std::sync::Arc<crate::arena::NodeRows>>,
 }
 
-impl<G: EngineGrammar> Drop for ParsedTree<G> {
+/// What a parsed tree's nodes are read from, and how its source is held.
+pub trait Backing: Sized {
+    /// The source text, held as long as the tree.
+    type Text: std::ops::Deref<Target = str>;
+
+    /// Navigation of `tree` for one call.
+    fn navigation<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Navigation<'_>;
+
+    /// A cursor of tree-sitter's tree on the node at `index`, for a reader
+    /// of it: `nodes`' own, moved there, or one of the tree's; none for a
+    /// backing that holds no tree.
+    fn reader<'t, G: EngineGrammar>(tree: &'t ParsedTree<G, Self>, nodes: &mut Navigation<'t>, index: NodeIndex) -> Option<tree_sitter::TreeCursor<'t>>;
+
+    /// `f` of the arenas that hold `tree`'s records, lent to a call
+    /// outside a render.
+    #[cfg(feature = "arena")]
+    fn lend<G: EngineGrammar, R>(tree: &ParsedTree<G, Self>, f: impl FnOnce(Lent<'_>) -> R) -> R;
+
+    /// The arenas that hold `tree`'s records, where the tree holds them for
+    /// as long as it lives: a lookup of it reads them whatever its caller
+    /// lends.
+    #[cfg(feature = "arena")]
+    fn arenas<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<&dyn crate::arena::RecordArenas>;
+}
+
+impl Backing for tree_sitter::Tree {
+    type Text = Arc<str>;
+
+    fn navigation<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Navigation<'_> {
+        #[cfg(feature = "arena")]
+        if let Some(rows) = tree.shared_rows() {
+            return Navigation::Records(crate::nodes::RecordNodes::over(rows, &tree.source));
+        }
+        Navigation::Tree(tree.tree_nodes())
+    }
+
+    fn reader<'t, G: EngineGrammar>(tree: &'t ParsedTree<G, Self>, nodes: &mut Navigation<'t>, index: NodeIndex) -> Option<tree_sitter::TreeCursor<'t>> {
+        Some(match nodes.reader(index) {
+            Some(cursor) => cursor.clone(),
+            None => tree.tree_nodes().reader(index).clone(),
+        })
+    }
+
+    #[cfg(feature = "arena")]
+    fn lend<G: EngineGrammar, R>(tree: &ParsedTree<G, Self>, f: impl FnOnce(Lent<'_>) -> R) -> R {
+        f(Lent::of(&crate::arena::HeldArenas::of([(tree.tree_id, tree.tree_arena())])))
+    }
+
+    #[cfg(feature = "arena")]
+    fn arenas<G: EngineGrammar>(_: &ParsedTree<G, Self>) -> Option<&dyn crate::arena::RecordArenas> {
+        None
+    }
+}
+
+/// The records a read left of a source, in an engine's built arena, as one
+/// call reads them: the nodes the call's navigations have met, by the ids
+/// they gave them.
+#[cfg(feature = "arena")]
+pub struct Records<'a> {
+    built: &'a dyn crate::arena::ArenaRead,
+    held: crate::arena::HeldArenas<'a>,
+    table: crate::arena::RunTable,
+}
+
+#[cfg(feature = "arena")]
+impl<'a> Backing for Records<'a> {
+    type Text = &'a str;
+
+    fn navigation<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Navigation<'_> {
+        Navigation::Runs(crate::arena::RunNodes::over(tree.tree.built, tree.source, &tree.tree.table))
+    }
+
+    fn reader<'t, G: EngineGrammar>(_: &'t ParsedTree<G, Self>, _: &mut Navigation<'t>, _: NodeIndex) -> Option<tree_sitter::TreeCursor<'t>> {
+        None
+    }
+
+    fn lend<G: EngineGrammar, R>(tree: &ParsedTree<G, Self>, f: impl FnOnce(Lent<'_>) -> R) -> R {
+        f(Lent::of(&tree.tree.held))
+    }
+
+    fn arenas<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<&dyn crate::arena::RecordArenas> {
+        Some(&tree.tree.held)
+    }
+}
+
+#[cfg(feature = "arena")]
+impl<'a, G: EngineGrammar> ParsedTree<G, Records<'a>> {
+    /// The source the record at `record` of `built` was read from, as one
+    /// call reads it through `engine`: its tree id names its source's entry.
+    ///
+    /// # Errors
+    ///
+    /// What reading the record, the records above it or its source's entry
+    /// refuses, and `ArenaError::Malformed` for a record that names no
+    /// source.
+    pub fn over_records(engine: &Engine<G>, built: &'a crate::arena::BuiltChunks, record: crate::arena::Address) -> Result<Self, crate::arena::ArenaError> {
+        use crate::arena::ArenaRead;
+        let root = crate::arena::RunNodes::root_of(built, record)?;
+        let side = crate::arena::SideRecord::read(built, crate::arena::Address(built.words(root, crate::record::HEADER_WORDS)?[1]))?;
+        let entry = side.source.ok_or(crate::arena::ArenaError::Malformed { what: "parsed record source", word: root.0 })?;
+        let crate::arena::source::Source { text, breaks_lf, inferred } = crate::arena::source::Source::read(built, crate::arena::Address(entry))?;
+        let table = crate::arena::RunTable::default();
+        crate::arena::RunNodes::new(built, text, root, &table)?;
+        let held = crate::arena::HeldArenas::of([]).with_reads(built);
+        Ok(engine.tree_of(Records { built, held, table }, text, inferred, breaks_lf, 0, TreeId(entry)))
+    }
+}
+
+impl<G: EngineGrammar, B: Backing> Drop for ParsedTree<G, B> {
     /// Drops the tree's sides (`release_sides`).
     fn drop(&mut self) {
         let _ = self.release_sides();
+    }
+}
+
+/// A value the lookups of one call share and each changes in turn, for the
+/// length of one answer: none holds it across another's.
+#[derive(Default)]
+pub struct PerCall<T>(std::cell::RefCell<T>);
+
+impl<T> PerCall<T> {
+    /// What `f` answers given the value to change.
+    pub fn with<R>(&self, f: impl FnOnce(&mut T) -> R) -> R {
+        f(&mut self.0.borrow_mut())
     }
 }
 
@@ -614,7 +735,7 @@ pub fn decode_handle(handle: TreeHandle) -> (TreeId, NodeIndex) {
     )
 }
 
-impl<G: EngineGrammar> ParsedTree<G> {
+impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     /// This tree's identity — the tag carried by every handle it mints.
     pub fn tree_id(&self) -> TreeId {
         self.tree_id
@@ -640,6 +761,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.grown.store(true, std::sync::atomic::Ordering::Relaxed);
     }
 
+}
+
+impl<G: EngineGrammar> ParsedTree<G> {
     /// The bytes the tree holds natively: its own size and every table's
     /// heap, each counted by its capacity. tree-sitter's tree is left out,
     /// and so is a B-tree's node slack (`heap`).
@@ -649,7 +773,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// refused while anything borrows the tree:
     ///
     /// ```compile_fail,E0502
-    /// fn count<G: sittir_core::engine::EngineGrammar>(tree: &mut sittir_core::ParsedTree<G>) -> usize {
+    /// fn count<G: sittir_core::engine::EngineGrammar>(tree: &mut sittir_core::ParsedTree<G, B>) -> usize {
     ///     let source = tree.source();
     ///     let bytes = tree.native_bytes();
     ///     source.len() + bytes
@@ -699,7 +823,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
             + sides.bytes()
             + arena
     }
+}
 
+impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     /// What a walk of the read caches finds their values hold: the count
     /// `count_cached` keeps.
     #[cfg(test)]
@@ -753,25 +879,29 @@ impl<G: EngineGrammar> ParsedTree<G> {
         index.index() < self.nodes as usize
     }
 
+}
+
+impl<G: EngineGrammar> ParsedTree<G> {
     /// The parsed tree-sitter tree, each call counted in the tree's layout
     /// work (`LayoutWork::tree_reads`): every path to the tree passes here.
     pub fn tree(&self) -> &tree_sitter::Tree {
         self.work.tree_reads(1);
         &self.tree
     }
+}
 
+impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     /// Navigation of the tree for one call: over its rows once every node
     /// has one (`Navigation::Records`), else over tree-sitter's tree, its
     /// moves counted in the tree's layout work (`TreeNodes`).
     #[must_use]
     pub fn nodes(&self) -> Navigation<'_> {
-        #[cfg(feature = "arena")]
-        if let Some(rows) = self.shared_rows() {
-            return Navigation::Records(crate::nodes::RecordNodes::over(rows, &self.source));
-        }
-        Navigation::Tree(self.tree_nodes())
+        B::navigation(self)
     }
 
+}
+
+impl<G: EngineGrammar> ParsedTree<G> {
     /// Navigation of tree-sitter's tree for one call, its moves counted in
     /// the tree's layout work: what a reader of the tree's nodes reads
     /// through.
@@ -779,7 +909,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
     pub fn tree_nodes(&self) -> TreeNodes<'_> {
         TreeNodes::new(self.tree(), &self.source, &self.work)
     }
+}
 
+impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     /// Every node's row, once the tree's arena holds one for each, shared
     /// with the arena the first time that is asked (`TreeArena::shared_rows`).
     /// A call that finds the arena held by another answers what was shared
@@ -798,19 +930,21 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// A cursor on the node at `index`, created at the tree's root, for a
     /// reader of tree-sitter's tree: `nodes`' own, moved there, or, where
     /// `nodes` navigates rows, one of the tree's.
-    fn reader_at<'t>(&'t self, nodes: &mut Navigation<'t>, index: crate::types::NodeIndex) -> tree_sitter::TreeCursor<'t> {
-        match nodes.reader(index) {
-            Some(cursor) => cursor.clone(),
-            None => self.tree_nodes().reader(index).clone(),
-        }
+    fn reader_at<'t>(&'t self, nodes: &mut Navigation<'t>, index: crate::types::NodeIndex) -> Option<tree_sitter::TreeCursor<'t>> {
+        B::reader(self, nodes, index)
     }
 
+}
+
+impl<G: EngineGrammar> ParsedTree<G> {
     /// The node at `index` read into `T`, `depth` levels down, seating no
     /// sides; index 0 is the root.
     pub fn read<T: crate::read::ReadNode>(&self, index: crate::types::NodeIndex, depth: crate::read::Depth) -> Result<T, crate::read::ReadError> {
         crate::read::read_from::<T>(self.tree_nodes().reader(index), &mut self.read_ctx(), depth)
     }
+}
 
+impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     /// The sides of the unit children of the node at `index`, by slot and
     /// item, as a render read seats them for a client that stores each unit
     /// as its bare kind (`read::units_of`, `ReadCtx::inline_units`), found
@@ -834,6 +968,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
         Some(self.error_at(&error, &self.read_ctx()))
     }
 
+}
+
+impl<G: EngineGrammar> ParsedTree<G> {
     /// Whether an `ERROR` holds the node at `index` (`read_error`). When the
     /// `ERROR` is the tree's root, which no record holds and no walk meets,
     /// writes the rows of every node of the tree once; an `ERROR` below the
@@ -853,7 +990,6 @@ impl<G: EngineGrammar> ParsedTree<G> {
         }
         Ok(true)
     }
-
     /// The node at `index` read into `T`, `depth` levels down, seating no
     /// sides and reading a list's items with it (`ReadCtx::inline_items`),
     /// or, when an `ERROR` holds it, that `ERROR` as `read_error` reads it:
@@ -865,10 +1001,12 @@ impl<G: EngineGrammar> ParsedTree<G> {
         if let Some(error) = error_holding(&mut nodes, index) {
             return Some(Ok(NodeRead::Error(self.error_at(&error, &ctx))));
         }
-        let mut cursor = self.reader_at(&mut nodes, index);
+        let mut cursor = self.reader_at(&mut nodes, index)?;
         Some(T::read(&mut cursor, &mut ctx, depth).map(NodeRead::Node))
     }
+}
 
+impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     fn error_at(&self, error: &Kid, ctx: &crate::read::ReadCtx<'_>) -> crate::ErrorRead {
         let at = ctx.coordinate_of(error);
         let text = self.source[at.span.range()].to_owned();
@@ -977,7 +1115,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
 
     /// Pushes onto `rows` the snapshot layout of the node `at`, read as
     /// `router` reads it, and then those of the nodes under it.
-    fn snapshot_row(&self, seating: &Seating<'_, G>, ctx: &mut crate::read::ReadCtx<'_>, at: Kid, router: Option<crate::read::Router>, rows: &mut crate::layout::SnapshotLayouts<G::Trivia>) -> Result<(), crate::read::ReadError> {
+    fn snapshot_row(&self, seating: &Seating<'_, G, B>, ctx: &mut crate::read::ReadCtx<'_>, at: Kid, router: Option<crate::read::Router>, rows: &mut crate::layout::SnapshotLayouts<G::Trivia>) -> Result<(), crate::read::ReadError> {
         let row = rows.len();
         rows.push((at.index, Box::default()));
         rows[row].1 = self.snapshot_layout(seating, ctx, at, router, rows)?;
@@ -989,7 +1127,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// token interior and a text leaf hold the context while their children
     /// are measured; an envelope holds nothing, and takes its content's
     /// layout (`envelope_layout`).
-    fn snapshot_layout(&self, seating: &Seating<'_, G>, ctx: &mut crate::read::ReadCtx<'_>, at: Kid, router: Option<crate::read::Router>, rows: &mut crate::layout::SnapshotLayouts<G::Trivia>) -> Result<Box<crate::layout::NodeLayout<G::Trivia>>, crate::read::ReadError> {
+    fn snapshot_layout(&self, seating: &Seating<'_, G, B>, ctx: &mut crate::read::ReadCtx<'_>, at: Kid, router: Option<crate::read::Router>, rows: &mut crate::layout::SnapshotLayouts<G::Trivia>) -> Result<Box<crate::layout::NodeLayout<G::Trivia>>, crate::read::ReadError> {
         use crate::read::{ReadError, Route, Router};
         let origin = ctx.origin_of(ctx.coordinate_of(&at));
         match router {
@@ -1272,7 +1410,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// One call's lookups in this tree (`Lookups`).
-    fn lookups(&self) -> Lookups<'_, G> {
+    fn lookups(&self) -> Lookups<'_, G, B> {
         self.lookups_over(self.nodes())
     }
 
@@ -1280,7 +1418,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// `f` of the tree's lookups and what a call outside a render lends
     /// them (`Lent`): once the tree's rows are published, its own arena,
     /// locked for the call; else nothing.
-    fn lending<R>(&self, f: impl FnOnce(&mut Lookups<'_, G>, Lent<'_>) -> R) -> R {
+    fn lending<R>(&self, f: impl FnOnce(&mut Lookups<'_, G, B>, Lent<'_>) -> R) -> R {
         let mut lookups = self.lookups();
         let lends = lookups.reads_records();
         self.lend(lends, |lent| f(&mut lookups, lent))
@@ -1292,21 +1430,20 @@ impl<G: EngineGrammar> ParsedTree<G> {
     fn lend<R>(&self, lends: bool, f: impl FnOnce(Lent<'_>) -> R) -> R {
         #[cfg(feature = "arena")]
         if lends {
-            let held = crate::arena::HeldArenas::of([(self.tree_id, self.tree_arena())]);
-            return f(Lent::of(&held));
+            return B::lend(self, f);
         }
         f(Lent::NONE)
     }
 
     /// `f` of this tree's sides and source table for one call (`Seating`),
     /// lent what a call outside a render lends them (`lending`).
-    pub fn with_seating<R>(&self, f: impl FnOnce(&Seating<'_, G>) -> R) -> R {
+    pub fn with_seating<R>(&self, f: impl FnOnce(&Seating<'_, G, B>) -> R) -> R {
         let lookups = self.lookups();
         let lends = lookups.reads_records();
         self.lend(lends, |lent| f(&Seating::with_layout(lookups, lent)))
     }
 
-    fn lookups_over<'t>(&'t self, nodes: Navigation<'t>) -> Lookups<'t, G> {
+    fn lookups_over<'t>(&'t self, nodes: Navigation<'t>) -> Lookups<'t, G, B> {
         Lookups { tree: self, nodes, record: None, aligned: HashMap::default() }
     }
 
@@ -1314,7 +1451,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// nothing: a call that holds its tree's arena lends it with
     /// `with_seating`.
     #[must_use]
-    pub fn seating(&self) -> Seating<'_, G> {
+    pub fn seating(&self) -> Seating<'_, G, B> {
         Seating::with_layout(self.lookups(), Lent::NONE)
     }
 
@@ -1525,8 +1662,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
 /// read in order does, costs the path between them, not the path from the
 /// root. A lookup that reads or renders a node lends the cursor to that
 /// read.
-struct Lookups<'t, G: EngineGrammar> {
-    tree: &'t ParsedTree<G>,
+struct Lookups<'t, G: EngineGrammar, B: Backing> {
+    tree: &'t ParsedTree<G, B>,
     nodes: Navigation<'t>,
     /// The node whose full-depth record measures every run, when one record
     /// does, as a snapshot's: the nearest node around the snapshot's own
@@ -1539,7 +1676,7 @@ struct Lookups<'t, G: EngineGrammar> {
     aligned: HashMap<(usize, NodeIndex), (Record, std::rc::Rc<Aligned>), crate::heap::IndexState>,
 }
 
-impl<G: EngineGrammar> Lookups<'_, G> {
+impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     /// The node at `index`, `None` past the tree's last node.
     fn kid(&mut self, index: NodeIndex) -> Option<Kid> {
         node(&mut self.nodes, index)
@@ -1767,8 +1904,10 @@ impl<G: EngineGrammar> Lookups<'_, G> {
         };
         let rendered = rendered.unwrap_or_else(|| {
             let mut ctx = tree.read_ctx().with_sides(&sides);
-            let mut cursor = tree.reader_at(&mut self.nodes, index);
-            tree.grammar.render_read(&mut cursor, depth, &mut ctx, &render, &mut recorded)
+            match tree.reader_at(&mut self.nodes, index) {
+                Some(mut cursor) => tree.grammar.render_read(&mut cursor, depth, &mut ctx, &render, &mut recorded),
+                None => Err("a node's record is measured from its records, which the call was lent none of".to_owned()),
+            }
         });
         tree.work.record_nodes(recorded.entered());
         let record = Arc::new(rendered.map(|()| recorded));
@@ -1782,9 +1921,12 @@ impl<G: EngineGrammar> Lookups<'_, G> {
     /// navigates its rows, over the arenas `lent` lends when they hold its
     /// arena; none otherwise.
     #[cfg(feature = "arena")]
-    fn record_read<'l>(&self, index: NodeIndex, depth: crate::read::Depth, lent: Lent<'l>) -> Option<crate::arena::RecordRead<'l>> {
+    fn record_read<'l>(&'l self, index: NodeIndex, depth: crate::read::Depth, lent: Lent<'l>) -> Option<crate::arena::RecordRead<'l>> {
         let tree = self.tree.tree_id;
-        let arenas = lent.arenas().filter(|arenas| self.reads_records() && arenas.tree(tree).is_some())?;
+        let arenas = match B::arenas(self.tree) {
+            Some(own) => own,
+            None => lent.arenas().filter(|arenas| matches!(self.nodes, Navigation::Records(_)) && arenas.tree(tree).is_some())?,
+        };
         Some(crate::arena::RecordRead { tree, index, depth, arenas })
     }
 
@@ -1794,7 +1936,7 @@ impl<G: EngineGrammar> Lookups<'_, G> {
     #[cfg_attr(not(feature = "arena"), allow(clippy::unused_self, reason = "only the arena build navigates rows"))]
     fn reads_records(&self) -> bool {
         #[cfg(feature = "arena")]
-        if matches!(self.nodes, Navigation::Records(_)) {
+        if matches!(self.nodes, Navigation::Records(_) | Navigation::Runs(_)) {
             return true;
         }
         false
@@ -2139,6 +2281,10 @@ impl<G: EngineGrammar> Lookups<'_, G> {
         let Some(kid) = self.kid(coord.index).filter(|kid| kid.span() == coord.span) else {
             return 0;
         };
+        #[cfg(feature = "arena")]
+        if let Navigation::Runs(runs) = &mut self.nodes {
+            return runs.depth_move(coord.index, tree.grammar.surface_kinds()).unwrap_or(0);
+        }
         tree.depth_members(&mut self.nodes).between(coord.index, coord.index + kid.count)
     }
 
@@ -2166,32 +2312,32 @@ impl<G: EngineGrammar> Lookups<'_, G> {
 /// runs, and none runs inside another, so the cell is never borrowed twice;
 /// a read it hands a cursor reads a copy of it, so the read's sides move
 /// the lookups' own.
-pub struct Seating<'t, G: EngineGrammar> {
-    lookups: std::cell::RefCell<Lookups<'t, G>>,
+pub struct Seating<'t, G: EngineGrammar, B: Backing = tree_sitter::Tree> {
+    lookups: std::cell::RefCell<Lookups<'t, G, B>>,
     layout: bool,
     lent: Lent<'t>,
 }
 
-impl<'t, G: EngineGrammar> Seating<'t, G> {
+impl<'t, G: EngineGrammar, B: Backing> Seating<'t, G, B> {
     /// The sides of `lookups`' tree with their layout and writes, each
     /// lookup lent `lent`.
-    fn with_layout(lookups: Lookups<'t, G>, lent: Lent<'t>) -> Self {
+    fn with_layout(lookups: Lookups<'t, G, B>, lent: Lent<'t>) -> Self {
         Self { lookups: std::cell::RefCell::new(lookups), layout: true, lent }
     }
 
     /// The sides of `lookups`' tree as its source has them, without their
     /// layout or any write.
-    fn without_layout(lookups: Lookups<'t, G>) -> Self {
+    fn without_layout(lookups: Lookups<'t, G, B>) -> Self {
         Self { lookups: std::cell::RefCell::new(lookups), layout: false, lent: Lent::NONE }
     }
 
     /// The tree these lookups are in.
-    fn tree(&self) -> &'t ParsedTree<G> {
+    fn tree(&self) -> &'t ParsedTree<G, B> {
         self.lookups.borrow().tree
     }
 
     /// The lookups, when their tree is tree `tree`.
-    fn own(&self, tree: TreeId) -> Option<std::cell::RefMut<'_, Lookups<'t, G>>> {
+    fn own(&self, tree: TreeId) -> Option<std::cell::RefMut<'_, Lookups<'t, G, B>>> {
         let lookups = self.lookups.borrow_mut();
         (lookups.tree.tree_id == tree).then_some(lookups)
     }
@@ -2216,17 +2362,23 @@ impl<'t, G: EngineGrammar> Seating<'t, G> {
         f(&mut self.lookups.borrow_mut().nodes)
     }
 
+}
+
+impl<'t, G: EngineGrammar> Seating<'t, G> {
     /// A cursor on the node at `index`, created at the tree's root: a copy
     /// of the lookups' own, moved there from where it stood.
     #[must_use]
     pub fn cursor(&self, index: NodeIndex) -> tree_sitter::TreeCursor<'t> {
         let mut lookups = self.lookups.borrow_mut();
         let tree = lookups.tree;
-        tree.reader_at(&mut lookups.nodes, index)
+        match lookups.nodes.reader(index) {
+            Some(cursor) => cursor.clone(),
+            None => tree.tree_nodes().reader(index).clone(),
+        }
     }
 }
 
-impl<G: EngineGrammar> crate::read::SideLookup for Seating<'_, G> {
+impl<G: EngineGrammar, B: Backing> crate::read::SideLookup for Seating<'_, G, B> {
     fn side(&self, index: NodeIndex, side: TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any> {
         let mut lookups = self.lookups.borrow_mut();
         Box::new(if self.layout { lookups.side_entries(index, side, edge_changed, self.lent) } else { lookups.assigned(index, side, None) })
@@ -2269,7 +2421,7 @@ fn frames_of<T: crate::trivia::TriviaItem>(levels: Vec<[Vec<SideEntry<T>>; 3]>) 
 
 /// One tree as a render's source table: its own coordinates resolve, any
 /// other tree's do not.
-impl<G: EngineGrammar> SourceTable for Seating<'_, G> {
+impl<G: EngineGrammar, B: Backing> SourceTable for Seating<'_, G, B> {
     fn source_of(&self, tree_id: TreeId) -> Option<&str> {
         let tree = self.tree();
         (tree_id == tree.tree_id).then_some(&*tree.source)
@@ -2337,11 +2489,42 @@ impl<G: EngineGrammar> SourceTable for Seating<'_, G> {
         self.own(tree)?.coordinate(index)
     }
 
+    #[cfg(feature = "arena")]
+    fn record_row(&self, tree: TreeId, at: crate::arena::Address) -> Option<NodeIndex> {
+        match &mut self.own(tree)?.nodes {
+            Navigation::Runs(runs) => runs.index_of(at).ok(),
+            _ => None,
+        }
+    }
+
+    #[cfg(feature = "arena")]
+    fn cell_row(&self, tree: TreeId, holder: crate::arena::Address, row: u32) -> Option<NodeIndex> {
+        match &mut self.own(tree)?.nodes {
+            Navigation::Runs(runs) => runs.row_index(holder, row).ok(),
+            _ => None,
+        }
+    }
+
+    #[cfg(feature = "arena")]
+    fn row_site(&self, tree: TreeId, index: NodeIndex) -> Option<crate::arena::NodeSite> {
+        match &self.own(tree)?.nodes {
+            Navigation::Runs(runs) => runs.site(index),
+            _ => None,
+        }
+    }
+
+    #[cfg(feature = "arena")]
+    fn levels_below(&self, tree: TreeId, above: NodeIndex, index: NodeIndex, most: u32) -> Option<u32> {
+        let mut lookups = self.own(tree)?;
+        let Navigation::Runs(runs) = &mut lookups.nodes else { return None };
+        std::iter::successors(Some(index), |&at| runs.parent(at)).take(most as usize).position(|at| at == above).and_then(|levels| u32::try_from(levels).ok())
+    }
+
     fn read_node(&self, tree: TreeId, index: NodeIndex, read: &mut dyn FnMut(&mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
         let cursor = self.own(tree).and_then(|mut lookups| {
             lookups.kid(index)?;
             let tree = lookups.tree;
-            Some(tree.reader_at(&mut lookups.nodes, index))
+            tree.reader_at(&mut lookups.nodes, index)
         });
         let Some(mut cursor) = cursor else { return false };
         read(&mut cursor, &mut self.ctx());
@@ -2434,17 +2617,24 @@ impl<G: EngineGrammar> Engine<G> {
         let (whitespace, _) = self.grammar.whitespace();
         let root = crate::read::grammar_id(&tree.root_node());
         let inferred = crate::options::InferredOptions::infer(source, root, &self.options, self.grammar.option_tables(), whitespace);
+        let nodes = crate::read::descendant_count(&tree.root_node());
+        Ok(self.tree_of(tree, Arc::from(source), inferred, !source.contains('\r'), nodes, tree_id))
+    }
+
+    /// A tree of this engine over `tree` and its `source`, with what its
+    /// parse inferred.
+    fn tree_of<B: Backing>(&self, tree: B, source: B::Text, inferred: crate::options::InferredOptions, breaks_lf: bool, nodes: u32, tree_id: TreeId) -> ParsedTree<G, B> {
         let indent = inferred.indent.as_deref().unwrap_or(&self.options.indent);
         let spaces = |unit: &str| u32::try_from(unit.chars().filter(|&c| c == ' ').count()).unwrap_or(u32::MAX);
         let level_width = [spaces(indent), spaces(&self.options.indent), 1].into_iter().find(|&width| width > 0).unwrap_or(1);
         let read_options = inferred.over(&self.options);
-        Ok(ParsedTree {
+        ParsedTree {
             grammar: self.grammar,
-            nodes: crate::read::descendant_count(&tree.root_node()),
+            nodes,
             tree,
-            source: Arc::from(source),
+            source,
             inferred,
-            breaks_lf: !source.contains('\r'),
+            breaks_lf,
             tree_id,
             lines: std::sync::OnceLock::new(),
             trivia: Placement::new(self.grammar.surface_kinds(), level_width),
@@ -2462,7 +2652,7 @@ impl<G: EngineGrammar> Engine<G> {
             arena: std::sync::OnceLock::new(),
             #[cfg(feature = "arena")]
             rows: std::sync::OnceLock::new(),
-        })
+        }
     }
 
     /// Parses `source` and reads the whole tree as `N` into the engine's
@@ -2641,27 +2831,30 @@ fn align(items: &[SourceItem], written: &[crate::baseline::Item], steps: &mut u6
 /// noted, so the call can report the trees it read (`ReadTrees::read`): a
 /// tree grows during a render only through a lookup of it. Each tree read
 /// keeps one `Seating` for the call, so its lookups move one cursor.
-pub struct ReadTrees<'t, G: EngineGrammar, H = crate::heap::IndexState> {
-    trees: &'t HashMap<crate::types::TreeId, ParsedTree<G>, H>,
-    read: std::cell::RefCell<Vec<(TreeId, std::rc::Rc<Seating<'t, G>>)>>,
+pub struct ReadTrees<'t, G: EngineGrammar, H = crate::heap::IndexState, B: Backing = tree_sitter::Tree> {
+    trees: &'t HashMap<crate::types::TreeId, ParsedTree<G, B>, H>,
+    read: std::cell::RefCell<Vec<Seated<'t, G, B>>>,
 }
 
-impl<'t, G: EngineGrammar, H: std::hash::BuildHasher> ReadTrees<'t, G, H> {
+/// A tree a call read and the one `Seating` the call keeps for it.
+type Seated<'t, G, B> = (TreeId, std::rc::Rc<Seating<'t, G, B>>);
+
+impl<'t, G: EngineGrammar, H: std::hash::BuildHasher, B: Backing> ReadTrees<'t, G, H, B> {
     /// The live `trees`, none read yet.
     #[must_use]
-    pub fn new(trees: &'t HashMap<crate::types::TreeId, ParsedTree<G>, H>) -> Self {
+    pub fn new(trees: &'t HashMap<crate::types::TreeId, ParsedTree<G, B>, H>) -> Self {
         Self { trees, read: std::cell::RefCell::default() }
     }
 
     /// The live tree `tree`, noted as read, or `None` when it is not live.
     #[must_use]
-    pub fn get(&self, tree: crate::types::TreeId) -> Option<&'t ParsedTree<G>> {
+    pub fn get(&self, tree: crate::types::TreeId) -> Option<&'t ParsedTree<G, B>> {
         self.seating(tree).map(|seating| seating.tree())
     }
 
     /// The call's lookups in the live tree `tree`, made on its first read
     /// and noted, or `None` when it is not live.
-    fn seating(&self, tree: TreeId) -> Option<std::rc::Rc<Seating<'t, G>>> {
+    fn seating(&self, tree: TreeId) -> Option<std::rc::Rc<Seating<'t, G, B>>> {
         let parsed = self.trees.get(&tree)?;
         let mut read = self.read.borrow_mut();
         if let Some((_, seating)) = read.iter().find(|(id, _)| *id == tree) {
@@ -2681,7 +2874,7 @@ impl<'t, G: EngineGrammar, H: std::hash::BuildHasher> ReadTrees<'t, G, H> {
 
 /// The live trees as the render context's source table: a handle's tag names
 /// the tree, and the tree owns the source its spans index into.
-impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for ReadTrees<'_, G, H> {
+impl<G: EngineGrammar, H: std::hash::BuildHasher, B: Backing> SourceTable for ReadTrees<'_, G, H, B> {
     fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
         Some(&*self.get(tree_id)?.source)
     }
@@ -2746,6 +2939,26 @@ impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for ReadTrees<'_, 
 
     fn read_node(&self, tree: TreeId, index: NodeIndex, read: &mut dyn FnMut(&mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
         self.seating(tree).is_some_and(|seating| seating.read_node(tree, index, read))
+    }
+
+    #[cfg(feature = "arena")]
+    fn record_row(&self, tree: TreeId, at: crate::arena::Address) -> Option<NodeIndex> {
+        self.seating(tree)?.record_row(tree, at)
+    }
+
+    #[cfg(feature = "arena")]
+    fn cell_row(&self, tree: TreeId, holder: crate::arena::Address, row: u32) -> Option<NodeIndex> {
+        self.seating(tree)?.cell_row(tree, holder, row)
+    }
+
+    #[cfg(feature = "arena")]
+    fn row_site(&self, tree: TreeId, index: NodeIndex) -> Option<crate::arena::NodeSite> {
+        self.seating(tree)?.row_site(tree, index)
+    }
+
+    #[cfg(feature = "arena")]
+    fn levels_below(&self, tree: TreeId, above: NodeIndex, index: NodeIndex, most: u32) -> Option<u32> {
+        self.seating(tree)?.levels_below(tree, above, index, most)
     }
 
     fn for_each_edge_level(&self, coord: &NodeCoordinate, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {

@@ -161,6 +161,17 @@ pub trait Nodes<'t> {
     /// token too.
     fn holds_error(&mut self, index: NodeIndex) -> bool;
 
+    /// How many indexes name a node, from 0 up, where that is known
+    /// before any is met.
+    fn bound(&mut self) -> Option<u32> {
+        Some(self.kid(NodeIndex::ROOT).count)
+    }
+
+    /// Whether `index` names a node.
+    fn names(&mut self, index: NodeIndex) -> bool {
+        self.bound().is_some_and(|bound| index.0 < bound)
+    }
+
     /// Walks the subtree of the node at `from` in preorder, telling `visit`
     /// each node it meets and each node it leaves.
     fn walk(&mut self, from: NodeIndex, visit: &mut dyn FnMut(Step, &Kid) -> Visit) {
@@ -498,6 +509,8 @@ pub enum Navigation<'t> {
     Tree(TreeNodes<'t>),
     #[cfg(feature = "arena")]
     Records(RecordNodes<'t>),
+    #[cfg(feature = "arena")]
+    Runs(crate::arena::RunNodes<'t>),
 }
 
 impl<'t> Navigation<'t> {
@@ -509,6 +522,8 @@ impl<'t> Navigation<'t> {
             Self::Tree(tree) => Self::Tree(tree.region(nodes)),
             #[cfg(feature = "arena")]
             Self::Records(records) => Self::Records(*records),
+            #[cfg(feature = "arena")]
+            Self::Runs(runs) => Self::Runs(*runs),
         }
     }
 
@@ -520,6 +535,8 @@ impl<'t> Navigation<'t> {
             Self::Tree(tree) => Self::Tree(tree.copy()),
             #[cfg(feature = "arena")]
             Self::Records(records) => Self::Records(*records),
+            #[cfg(feature = "arena")]
+            Self::Runs(runs) => Self::Runs(*runs),
         }
     }
 
@@ -530,7 +547,7 @@ impl<'t> Navigation<'t> {
         match self {
             Self::Tree(tree) => Some(tree.reader(index)),
             #[cfg(feature = "arena")]
-            Self::Records(_) => None,
+            Self::Records(_) | Self::Runs(_) => None,
         }
     }
 
@@ -539,6 +556,8 @@ impl<'t> Navigation<'t> {
             Self::Tree(tree) => tree,
             #[cfg(feature = "arena")]
             Self::Records(records) => records,
+            #[cfg(feature = "arena")]
+            Self::Runs(runs) => runs,
         }
     }
 }
@@ -549,11 +568,21 @@ impl<'t> Nodes<'t> for Navigation<'t> {
             Self::Tree(tree) => tree.text(),
             #[cfg(feature = "arena")]
             Self::Records(records) => records.text(),
+            #[cfg(feature = "arena")]
+            Self::Runs(runs) => runs.text(),
         }
     }
 
     fn kid(&mut self, index: NodeIndex) -> Kid {
         self.nodes().kid(index)
+    }
+
+    fn bound(&mut self) -> Option<u32> {
+        self.nodes().bound()
+    }
+
+    fn names(&mut self, index: NodeIndex) -> bool {
+        self.nodes().names(index)
     }
 
     fn kids(&mut self, index: NodeIndex) -> Kids {

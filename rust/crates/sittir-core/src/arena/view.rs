@@ -47,6 +47,12 @@ pub fn through_record(sources: &dyn SourceTable, coord: &NodeCoordinate, cell: C
 /// names.
 pub trait RecordArenas {
     fn tree(&self, tree: TreeId) -> Option<&TreeArena>;
+
+    /// The built arena that holds the records reads left of their sources,
+    /// which outlive their trees, when the render reaches one.
+    fn reads(&self) -> Option<&dyn ArenaRead> {
+        None
+    }
 }
 
 /// What a record's view reads through: the arena its record is in and, for
@@ -55,6 +61,9 @@ pub trait RecordArenas {
 pub struct RecordCtx<'a, T> {
     arena: &'a dyn ArenaRead,
     tree: Option<TreeId>,
+    /// Whether the arena's parsed records outlive their tree: `tree` names
+    /// their source, and a cell names a node by its holder's run.
+    runs: bool,
     arenas: &'a dyn RecordArenas,
     sources: &'a dyn SourceTable,
     store: &'a TriviaStore<T>,
@@ -79,17 +88,35 @@ impl<'a, T> RecordCtx<'a, T> {
     /// grammar's.
     #[must_use]
     pub fn built(arena: &'a dyn ArenaRead, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>, bits: u32) -> Self {
-        Self { arena, tree: None, arenas, sources, store, prepared, bits }
+        Self { arena, tree: None, runs: false, arenas, sources, store, prepared, bits }
     }
 
-    /// The context of `tree`'s arena.
+    /// The context of `tree`'s arena: its tree's own, else the arena of
+    /// the records reads left (`RecordArenas::reads`), `tree` naming a
+    /// source there.
     ///
     /// # Errors
     ///
     /// `ArenaError::Malformed` when the render reaches no arena of `tree`.
     pub fn parsed(tree: TreeId, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>, bits: u32) -> Result<Self, ArenaError> {
-        let arena = arenas.tree(tree).ok_or(malformed("record tree", tree.0))?.arena();
-        Ok(Self { arena, tree: Some(tree), arenas, sources, store, prepared, bits })
+        let (arena, runs): (&dyn ArenaRead, bool) = match arenas.tree(tree) {
+            Some(own) => (own.arena(), false),
+            None => (arenas.reads().ok_or(malformed("record tree", tree.0))?, true),
+        };
+        Ok(Self { arena, tree: Some(tree), runs, arenas, sources, store, prepared, bits })
+    }
+
+    /// `cell`, which the record at `holder` holds, naming its node as this
+    /// call does: a leaf or a unit of records that outlive their tree by the
+    /// id the call gives the node its row names in `holder`'s run.
+    fn named(self, holder: Address, cell: Cell) -> Result<Cell, ArenaError> {
+        let Some(tree) = self.tree.filter(|_| self.runs) else { return Ok(cell) };
+        let id = |row: NodeIndex| self.sources.cell_row(tree, holder, row.0).ok_or(malformed("cell row", row.0));
+        Ok(match cell {
+            Cell::ParsedLeaf { kind, span, row } => Cell::ParsedLeaf { kind, span, row: id(row)? },
+            Cell::Unit { kind, row: Some(row) } => Cell::Unit { kind, row: Some(id(row)?) },
+            cell => cell,
+        })
     }
 
     /// The context of `tree`'s arena, the built arena `built` for none.
@@ -138,7 +165,7 @@ impl<'a, T> RecordCtx<'a, T> {
             return Cell::decode_built(CellWord(word), self.arena, self.bits);
         }
         let cell = words.get(shape.word as usize..(shape.word + shape.width) as usize).ok_or(malformed("cell word", shape.word))?;
-        Cell::decode_parsed(cell, at.offset(shape.word).unwrap_or(Address::NONE), shape, self.bits)
+        self.named(at, Cell::decode_parsed(cell, at.offset(shape.word).unwrap_or(Address::NONE), shape, self.bits)?)
     }
 
     /// The list of the slot of shape `shape` in `words`, and the words each
@@ -152,13 +179,13 @@ impl<'a, T> RecordCtx<'a, T> {
         Ok((ListCell::of_word(CellWord(word), self.arena)?, shape.run.ok_or(malformed("list run width", shape.word))?))
     }
 
-    /// The cell an item of a list slot of shape `shape` holds: its run's
-    /// `item` words.
-    pub(super) fn item_cell(self, item: &[u32], shape: CellShape) -> Result<Cell, ArenaError> {
+    /// The cell an item of a list slot of shape `shape` of the record at
+    /// `holder` holds: its run's `item` words.
+    pub(super) fn item_cell(self, item: &[u32], holder: Address, shape: CellShape) -> Result<Cell, ArenaError> {
         if self.tree.is_none() {
             return Cell::decode_built(CellWord(*item.first().ok_or(malformed("cell width", 0))?), self.arena, self.bits);
         }
-        Cell::decode_parsed(item, Address::NONE, shape, self.bits)
+        self.named(holder, Cell::decode_parsed(item, Address::NONE, shape, self.bits)?)
     }
 
     #[must_use]
@@ -238,7 +265,10 @@ impl<'a, T> RecordCtx<'a, T> {
         let row = self.cell_row(cell)?;
         let templated = |row: &ParsedRow| {
             matches!(cell, Cell::Child { .. } | Cell::ParsedLeaf { .. } | Cell::Unit { .. })
-                && self.prepared.templates().is_some_and(|templates| self.arenas.tree(row.tree).and_then(TreeArena::node_rows).is_some_and(|rows| templates.reach(row.tree, rows, row.row)))
+                && self.prepared.templates().is_some_and(|templates| match self.arenas.tree(row.tree) {
+                    Some(arena) => arena.node_rows().is_some_and(|rows| templates.reach(row.tree, rows, row.row)),
+                    None => templates.reach_by(row.tree, |levels| self.sources.levels_below(row.tree, templates.root, row.row, levels)),
+                })
         };
         Ok(row.filter(|row| !templated(row)))
     }
@@ -273,8 +303,10 @@ impl<'a, T> RecordCtx<'a, T> {
     pub fn stamped_row(self, cell: Cell) -> Result<Option<ParsedRow>, ArenaError> {
         let Cell::Child { kind, at, link, changed } = cell else { return self.cell_row(cell) };
         let Some((ctx, side)) = self.child_side(at, kind, link)? else { return Ok(None) };
-        let row = side.at.ok_or(malformed("parsed record row", at.0))?.index;
-        Ok(ctx.tree.map(|tree| ParsedRow { tree, row, kind, changed }))
+        Ok(match row_of(ctx, at, &side)? {
+            Some(Place::Row { tree, row }) => Some(ParsedRow { tree, row, kind, changed }),
+            _ => None,
+        })
     }
 
     /// The context a child cell's record is read in, its own arena or the
@@ -494,15 +526,39 @@ pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) 
     if ctx.tree.is_none() && ctx.arena.released(at) {
         return Err(malformed("released record", at.0));
     }
-    if ctx.tree.is_some_and(|tree| {
-        ctx.arenas
-            .tree(tree)
-            .is_none_or(|arena| !arena.contains_record(at))
-    }) {
+    if ctx.tree.is_some_and(|tree| if ctx.runs { !ctx.arena.read_chunk(at.chunk()) } else { ctx.arenas.tree(tree).is_none_or(|arena| !arena.contains_record(at)) }) {
         return Err(malformed("record address", at.0));
     }
     let side = if words[1] == Address::NONE.0 { super::SideRecord::default() } else { super::SideRecord::read(ctx.arena, Address(words[1]))? };
     Ok((words, side))
+}
+
+/// The cells of the parsed record at `at` in `arena`, as its kind's shape,
+/// read from `shape`, lays them out: each slot's, a list slot's each
+/// item's, with its slot's shape and its item there, a cell naming a row as
+/// its record holds it.
+///
+/// # Errors
+///
+/// What reading the record or decoding a cell refuses, and
+/// `ArenaError::Malformed` for a kind `shape` writes no record of.
+pub(super) fn parsed_cells(arena: &dyn ArenaRead, at: Address, shape: fn(KindId) -> Option<super::RecordShape>, bits: u32) -> Result<Vec<(CellShape, u32, Cell)>, ArenaError> {
+    let kind = arena.header_kind(at, bits)?;
+    let record = shape(kind).ok_or(malformed("record shape", u32::from(kind.0)))?;
+    let words = arena.words(at, record.words.max(crate::record::HEADER_WORDS))?;
+    let mut cells = Vec::new();
+    for &shape in record.cells {
+        if let Some(width) = shape.run {
+            let list = ListCell::of_word(CellWord(*words.get(shape.word as usize).ok_or(malformed("cell word", shape.word))?), arena)?;
+            for (item, n) in list.items(arena, width)?.zip(0..) {
+                cells.push((shape, n, Cell::decode_parsed(item, Address::NONE, shape, bits)?));
+            }
+        } else {
+            let cell = words.get(shape.word as usize..(shape.word + shape.width) as usize).ok_or(malformed("cell word", shape.word))?;
+            cells.push((shape, 0, Cell::decode_parsed(cell, at.offset(shape.word).unwrap_or(Address::NONE), shape, bits)?));
+        }
+    }
+    Ok(cells)
 }
 
 /// The row of the parsed record at `at` whose side record is `side`, the one
@@ -513,7 +569,7 @@ pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) 
 /// `ArenaError::Malformed` for a parsed record whose side record names no row.
 pub fn row_of<T>(ctx: RecordCtx<'_, T>, at: Address, side: &super::SideRecord) -> Result<Option<Place>, ArenaError> {
     let Some(tree) = ctx.tree else { return Ok(None) };
-    let row = side.at.ok_or(malformed("parsed record row", at.0))?.index;
+    let row = if ctx.runs { ctx.sources.record_row(tree, at).ok_or(malformed("parsed record", at.0))? } else { side.at.ok_or(malformed("parsed record row", at.0))?.index };
     Ok(Some(Place::Row { tree, row }))
 }
 
@@ -742,6 +798,7 @@ impl<T, V: KindOf, const ADJACENT: bool> KindTest for RecordSlot<'_, T, V, ADJAC
 pub struct RecordItems<'a, T, V, const ADJACENT: bool = false> {
     ctx: RecordCtx<'a, T>,
     holder: PrepPlace,
+    record: Address,
     shape: CellShape,
     run: u32,
     list: ListCell,
@@ -763,10 +820,10 @@ impl<'a, T, V, const ADJACENT: bool> RecordItems<'a, T, V, ADJACENT> {
     /// # Errors
     ///
     /// What decoding the list's cell or reaching its run refuses.
-    pub fn of_shape(ctx: RecordCtx<'a, T>, holder: PrepPlace, words: &[u32], shape: CellShape) -> Result<Self, ArenaError> {
+    pub fn of_shape(ctx: RecordCtx<'a, T>, holder: PrepPlace, record: Address, words: &[u32], shape: CellShape) -> Result<Self, ArenaError> {
         let (list, run) = ctx.slot_list(words, shape)?;
         let _run = list.items(ctx.arena, run)?;
-        Ok(Self { ctx, holder, shape, run, list, view: std::marker::PhantomData })
+        Ok(Self { ctx, holder, record, shape, run, list, view: std::marker::PhantomData })
     }
 
     /// The list, refused when it holds no item: a `repeat1` slot of
@@ -794,7 +851,7 @@ impl<'a, T, V: RecordView<'a, T> + Render, const ADJACENT: bool> crate::view::Sl
         let item = u32::try_from(index).ok().filter(|&item| item < self.list.len)?;
         let site = Site { holder: self.holder, word: self.shape.word, item: ItemIndex(item) };
         Some(match self.list.items(self.ctx.arena, self.run) {
-            Ok(mut items) => RecordSlot::of_cell(self.ctx, site, self.shape.key, self.ctx.item_cell(items.nth(index)?, self.shape)),
+            Ok(mut items) => RecordSlot::of_cell(self.ctx, site, self.shape.key, self.ctx.item_cell(items.nth(index)?, self.record, self.shape)),
             Err(refused) => RecordSlot { ctx: self.ctx, site, key: self.shape.key, cell: SlotCell::Refused(refused) },
         })
     }
@@ -971,7 +1028,7 @@ mod tests {
         let mut fixture = Fixture::new();
         let cells = ["a", "b"].map(|text| built_cell(fixture.arena.entry(KindId::BLANK, text), ChangedEdges::default()));
         let list = fixture.arena.run(&cells);
-        let items = RecordItems::<TriviaText, Word<'_>>::of_shape(fixture.ctx(), Place::Record(Address(1)).into(), &holding(list), LIST).expect("a list");
+        let items = RecordItems::<TriviaText, Word<'_>>::of_shape(fixture.ctx(), Place::Record(Address(1)).into(), Address(1), &holding(list), LIST).expect("a list");
         assert_eq!(items.count(), 2);
         assert_eq!(rendered(&items.item(1).expect("an item")).expect("rendered"), "b");
         assert_eq!(items.item(1).expect("an item").site, site(1));
@@ -984,7 +1041,7 @@ mod tests {
         let text = built_cell(fixture.arena.entry(KindId::BLANK, "x"), ChangedEdges::default());
         let len = crate::arena::CHUNK_WORDS + 2;
         let list = fixture.arena.run(&vec![text; len as usize]);
-        let items = RecordItems::<TriviaText, Word<'_>>::of_shape(fixture.ctx(), Place::Record(Address(1)).into(), &holding(list), LIST).expect("a list");
+        let items = RecordItems::<TriviaText, Word<'_>>::of_shape(fixture.ctx(), Place::Record(Address(1)).into(), Address(1), &holding(list), LIST).expect("a list");
         assert_eq!(items.count(), len as usize);
         for index in [0, len / 2, len - 1] {
             let item = items.item(index as usize).expect("an item in the oversized run");
@@ -999,7 +1056,7 @@ mod tests {
     fn a_list_whose_run_the_arena_never_wrote_is_refused_with_its_holder() {
         let fixture = Fixture::new();
         let list = Address::new(3, 0).expect("in range").0 << 2;
-        assert!(matches!(RecordItems::<TriviaText, Word<'_>>::of_shape(fixture.ctx(), Place::Record(Address(1)).into(), &holding(list), LIST), Err(ArenaError::OutOfBounds { .. })));
+        assert!(matches!(RecordItems::<TriviaText, Word<'_>>::of_shape(fixture.ctx(), Place::Record(Address(1)).into(), Address(1), &holding(list), LIST), Err(ArenaError::OutOfBounds { .. })));
     }
 
     #[test]

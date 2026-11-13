@@ -44,18 +44,29 @@ pub trait RecordTrees: RecordArenas {
 }
 
 /// The arenas of a render's parsed trees, each held for the render.
-pub struct HeldArenas<'t>(std::collections::HashMap<TreeId, std::sync::MutexGuard<'t, TreeArena>, crate::heap::IndexState>);
+pub struct HeldArenas<'t>(std::collections::HashMap<TreeId, std::sync::MutexGuard<'t, TreeArena>, crate::heap::IndexState>, Option<&'t dyn ArenaRead>);
 
 impl<'t> HeldArenas<'t> {
     /// The arenas `trees` holds, each by its tree.
     pub fn of(trees: impl IntoIterator<Item = (TreeId, std::sync::MutexGuard<'t, TreeArena>)>) -> Self {
-        Self(trees.into_iter().collect())
+        Self(trees.into_iter().collect(), None)
+    }
+
+    /// These arenas with `reads`, the built arena that holds the records
+    /// reads left.
+    #[must_use]
+    pub fn with_reads(self, reads: &'t dyn ArenaRead) -> Self {
+        Self(self.0, Some(reads))
     }
 }
 
 impl RecordArenas for HeldArenas<'_> {
     fn tree(&self, tree: TreeId) -> Option<&TreeArena> {
         self.0.get(&tree).map(|arena| &**arena)
+    }
+
+    fn reads(&self) -> Option<&dyn ArenaRead> {
+        self.1
     }
 }
 
@@ -73,6 +84,10 @@ pub struct ReadArenas<'a>(pub &'a dyn RecordArenas);
 impl RecordArenas for ReadArenas<'_> {
     fn tree(&self, tree: TreeId) -> Option<&TreeArena> {
         self.0.tree(tree)
+    }
+
+    fn reads(&self) -> Option<&dyn ArenaRead> {
+        self.0.reads()
     }
 }
 
@@ -452,10 +467,22 @@ impl<T: Clone + 'static> LayoutAt<'_, T> {
     /// parsed unit renders as its source.
     fn template_units(&self, prep: &RecordPrep<'_, T>) -> Result<Vec<UnitSides<T>>, ArenaError> {
         let (Some(templates), Some(record), Some(tree)) = (prep.prepared.templates(), self.key.at, self.key.tree) else { return Ok(Vec::new()) };
-        let Some(arena) = prep.trees.tree(tree) else { return Ok(Vec::new()) };
-        let Some(rows) = arena.node_rows() else { return Ok(Vec::new()) };
         let view = prep.view(Some(tree))?;
         let mut units = Vec::new();
+        let Some(arena) = prep.trees.tree(tree) else {
+            for (shape, item, cell) in super::view::parsed_cells(view.arena(), record, prep.shape, prep.bits)? {
+                let Cell::Unit { row: Some(row), .. } = cell else { continue };
+                let row = prep.sources.cell_row(tree, record, row.0).ok_or(malformed("cell row", row.0))?;
+                if !templates.reach_by(tree, |levels| prep.sources.levels_below(tree, templates.root, row, levels)) {
+                    continue;
+                }
+                if let Some(trivia) = source_sides(prep, &view.row_node(tree, row)?) {
+                    units.push(UnitSides { slot: shape.key.to_owned(), item: ItemIndex(item), trivia });
+                }
+            }
+            return Ok(units);
+        };
+        let Some(rows) = arena.node_rows() else { return Ok(Vec::new()) };
         for (slot, item, _, row) in super::reach::units(arena, record, prep.shape)? {
             if !templates.reach(tree, rows, row) {
                 continue;
@@ -621,7 +648,7 @@ impl<T, N, const ADJACENT: bool> SlotAt<'_, T, N, ADJACENT> {
         let (list, run) = view.slot_list(words, self.shape)?;
         list.items(view.arena(), run)?
             .zip(0..)
-            .map(|(words, at)| item(view.item_cell(words, self.shape)?, at, if parsed { Some(super::reach::CellPlace::item(list.run, at, self.shape)?) } else { None }))
+            .map(|(words, at)| item(view.item_cell(words, record, self.shape)?, at, if parsed { Some(super::reach::CellPlace::item(list.run, at, self.shape)?) } else { None }))
             .collect::<Result<_, _>>()
             .map(Items::Many)
     }

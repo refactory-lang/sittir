@@ -24,14 +24,14 @@ const CEILINGS: &[(&str, u32)] = &[
     ("arena/memory.rs", 4),
     ("arena/parsed.rs", 1),
     ("arena/rows.rs", 5),
-    ("engine.rs", 69),
+    ("engine.rs", 70),
     ("heap.rs", 3),
     ("layout.rs", 33),
     ("napi_engine.rs", 13),
     ("nodes.rs", 2),
     ("read.rs", 5),
     ("trivia_store.rs", 32),
-    ("trivia_table/place.rs", 52),
+    ("trivia_table/place.rs", 51),
 ];
 
 struct Use {

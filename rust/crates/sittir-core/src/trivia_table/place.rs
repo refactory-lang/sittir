@@ -276,15 +276,22 @@ impl<T> Chunks<T> {
     /// Sets the value at `index`, which none holds, answering the heap a
     /// chunk made for it takes.
     fn set(&self, index: usize, value: T) -> usize {
+        let mut held = Some(value);
+        let (_, made) = self.get_or_set(index, || held.take().expect("a value to set"));
+        debug_assert!(held.is_none(), "a value is set once");
+        made
+    }
+
+    /// The value at `index`, set to `value` when none holds it, and the
+    /// heap a chunk made for it takes.
+    fn get_or_set(&self, index: usize, value: impl FnOnce() -> T) -> (&T, usize) {
         let (chunk, at) = Self::locate(index);
         let mut made = 0;
         let values = self.chunks[chunk].get_or_init(|| {
             made = std::mem::size_of::<OnceLock<T>>() << chunk;
             (0..1usize << chunk).map(|_| OnceLock::new()).collect()
         });
-        let set = values[at].set(value);
-        debug_assert!(set.is_ok(), "a value is set once");
-        made
+        (values[at].get_or_init(value), made)
     }
 
     /// The values set, by index, up to the first index none holds.
@@ -364,25 +371,52 @@ const EMPTY: u32 = u32::MAX;
 /// a slot with acquire ordering finds them.
 #[derive(Debug)]
 struct Published {
-    slots: Box<[AtomicU32]>,
+    slots: Slots,
     tables: Chunks<Table>,
     runs: Chunks<Placed>,
 }
 
+/// Each node's two slots: one for every node of a tree whose nodes are
+/// counted, or made as a node's is first stored, for nodes met as they are
+/// read (`Nodes::bound`), which one call reads and no other thread.
+#[derive(Debug)]
+enum Slots {
+    Counted(Box<[AtomicU32]>),
+    Met(Chunks<std::cell::Cell<u32>>),
+}
+
 impl Published {
-    /// The slots of a tree of `nodes` nodes, all unplaced.
-    fn new(nodes: u32) -> Self {
-        Self { slots: (0..2 * nodes).map(|_| AtomicU32::new(UNPLACED)).collect(), tables: Chunks::new(nodes as usize), runs: Chunks::new(u32::MAX as usize) }
+    /// The slots of a tree of `nodes` nodes, all unplaced; of any node, for
+    /// a tree that counts none.
+    fn new(nodes: Option<u32>) -> Self {
+        let most = u32::MAX as usize;
+        let slots = match nodes {
+            Some(nodes) => Slots::Counted((0..2 * nodes).map(|_| AtomicU32::new(UNPLACED)).collect()),
+            None => Slots::Met(Chunks::new(2 * most + 1)),
+        };
+        Self { slots, tables: Chunks::new(nodes.map_or(most, |nodes| nodes as usize)), runs: Chunks::new(most) }
     }
 
-    fn slot(&self, index: NodeIndex, side: TriviaSide) -> Option<&AtomicU32> {
-        self.slots.get(2 * index.get() as usize + usize::from(side == TriviaSide::Inner))
+    fn at(index: NodeIndex, side: TriviaSide) -> usize {
+        2 * index.get() as usize + usize::from(side == TriviaSide::Inner)
+    }
+
+    /// Stores `slot` as the slot of `side` of the node at `index`,
+    /// answering the slot it held; none for a node the tree does not hold.
+    fn store(&self, index: NodeIndex, side: TriviaSide, slot: u32) -> Option<u32> {
+        match &self.slots {
+            Slots::Counted(slots) => slots.get(Self::at(index, side)).map(|held| held.swap(slot, Ordering::Release)),
+            Slots::Met(slots) => Some(slots.get_or_set(Self::at(index, side), || std::cell::Cell::new(UNPLACED)).0.replace(slot)),
+        }
     }
 
     /// The slot of `side` of the node at `index`; `EMPTY` for a node the
     /// tree does not hold.
     fn load(&self, index: NodeIndex, side: TriviaSide) -> u32 {
-        self.slot(index, side).map_or(EMPTY, |slot| slot.load(Ordering::Acquire))
+        match &self.slots {
+            Slots::Counted(slots) => slots.get(Self::at(index, side)).map_or(EMPTY, |slot| slot.load(Ordering::Acquire)),
+            Slots::Met(slots) => slots.get(Self::at(index, side)).map_or(UNPLACED, std::cell::Cell::get),
+        }
     }
 
     fn table(&self, slot: u32) -> Option<&Table> {
@@ -395,7 +429,11 @@ impl Published {
 
     /// The heap the slots and the directories take, and the chunks made.
     fn allocation(&self) -> usize {
-        std::mem::size_of_val::<[AtomicU32]>(&self.slots) + self.tables.allocation() + self.runs.allocation()
+        let slots = match &self.slots {
+            Slots::Counted(slots) => std::mem::size_of_val::<[AtomicU32]>(slots),
+            Slots::Met(slots) => slots.allocation(),
+        };
+        slots + self.tables.allocation() + self.runs.allocation()
     }
 }
 
@@ -481,7 +519,7 @@ impl Placement {
         let mut state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
         self.grown.store(true, Ordering::Relaxed);
         let published = self.published.get_or_init(|| {
-            let published = Published::new(nodes.kid(NodeIndex::ROOT).count);
+            let published = Published::new(nodes.bound());
             state.published += published.allocation();
             published
         });
@@ -1014,10 +1052,9 @@ impl<'t> Placer<'t, '_, '_> {
     /// The slot of `side` of the node at `index` once `cover` placed its
     /// layout owner: `EMPTY` where no layout owner placed it.
     fn settle(&self, index: NodeIndex, side: TriviaSide) -> u32 {
-        let Some(slot) = self.published.slot(index, side) else { return EMPTY };
-        match slot.load(Ordering::Relaxed) {
+        match self.published.load(index, side) {
             UNPLACED => {
-                slot.store(EMPTY, Ordering::Release);
+                self.published.store(index, side, EMPTY);
                 EMPTY
             }
             slot => slot,
@@ -1180,8 +1217,7 @@ impl<'t> Placer<'t, '_, '_> {
         };
         let published = self.published;
         let store = |index: NodeIndex, side: TriviaSide| {
-            if let Some(at) = published.slot(index, side) {
-                let replaced = at.swap(slot, Ordering::Release);
+            if let Some(replaced) = published.store(index, side, slot) {
                 debug_assert_eq!(replaced, UNPLACED, "one layout owner holds a side: {index} {side:?}");
             }
         };
