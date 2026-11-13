@@ -13,35 +13,11 @@ export interface PinnableKind {
 	readonly id: number;
 }
 
-const KEYWORD_KINDS = [
-	'type_keyword',
-	'declare_keyword',
-	'namespace_keyword',
-	'public_keyword',
-	'private_keyword',
-	'protected_keyword',
-	'override_keyword',
-	'readonly_keyword',
-	'module_keyword',
-	'any_keyword',
-	'number_keyword',
-	'boolean_keyword',
-	'string_keyword',
-	'symbol_keyword',
-	'export_keyword',
-	'object_keyword',
-	'new_keyword',
-	'get_keyword',
-	'set_keyword',
-	'async_keyword',
-	'static_keyword',
-	'let_keyword'
-];
 const PROPERTY_IDENTIFIER_DISPLAY = '_property_identifier';
 
 export const ENVELOPE_PINS: Readonly<Record<string, Readonly<Record<string, EnvelopePin>>>> = {
 	typescript: {
-		'MemberExpressionPropertyNodeSlot.PropertyIdentifier': { display: PROPERTY_IDENTIFIER_DISPLAY, extras: KEYWORD_KINDS }
+		'MemberExpressionPropertyNodeSlot.PropertyIdentifier': { display: PROPERTY_IDENTIFIER_DISPLAY, extras: [] }
 	}
 };
 
