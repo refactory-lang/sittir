@@ -239,3 +239,27 @@ describe.each([
 		expect(string.$with.contents(...string.contents().slice(1)).$render()).toBe('f"""{b}c"""');
 	});
 });
+
+describe('a string read with an interpolation its prefix does not admit', () => {
+	const source = `print(f"a"'b {c}")\n`;
+	type Recovered = ReadString & { readonly $with: { prefix(prefix: string): { $render(): unknown }; contents(...items: unknown[]): { $render(): unknown } } };
+	const unadmitted = (): Recovered => {
+		const tree = py.parse(source);
+		const found = (Array.from(tree.$query().$descendants.ofType(py.kinds.String)) as unknown as Recovered[]).find((string) => string.prefix() === undefined);
+		if (found === undefined) throw new Error('the recovered string is not read');
+		return found;
+	};
+
+	it('renders as its source, the delimiters it reads being its own', () => {
+		expect(String(py.render(py.parse(source)))).toBe(source);
+	});
+
+	it('takes an admitting prefix through $with.prefix, and a refusing one still refuses', () => {
+		expect(rendered(unadmitted().$with.prefix('f'))).toBe(`f'b {c}"`);
+		expect(() => rendered(unadmitted().$with.prefix('b'))).toThrow('string: its interpolation is no part of it under the `b` prefix');
+	});
+
+	it('keeps its source delimiters when its content is edited, as a string under an unknown prefix does', () => {
+		expect(rendered(unadmitted().$with.contents(...content("a'b")))).toBe(`'b a'b`);
+	});
+});
