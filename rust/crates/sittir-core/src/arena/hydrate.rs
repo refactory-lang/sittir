@@ -151,6 +151,10 @@ pub struct Hydration<'a> {
     /// The grammar's depth members, when the walk stamps each record's
     /// depth move.
     kinds: Option<crate::trivia_table::SurfaceKinds>,
+    /// The `ERROR` nodes the walk is under, outermost first, where the
+    /// records outlive their tree: each one's record, the descendant index
+    /// its subtree ends at, and its row.
+    errors: Vec<(Draft, u32, Row)>,
 }
 
 /// What a hydration writes into: the space its records take, and, for a
@@ -307,7 +311,7 @@ impl<'a> Hydration<'a> {
     /// A hydration of `tree`'s rows whose walks hold no extra: `hydrate_at`
     /// makes the one a walk writes records through.
     pub(crate) fn new(tree: &'a mut dyn HydrateInto) -> Self {
-        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None }
+        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new() }
     }
 
     /// The levels a node of `kind` opens (1), closes (-1) or neither, as
@@ -375,7 +379,16 @@ impl<'a> Hydration<'a> {
     /// than the cell it is embedded in, or of a kind its arena's kind field
     /// cannot hold; and what the arena refuses.
     pub fn draft(&mut self, kind: KindId, words: u32, inline: Option<Embed>) -> Result<Draft, HydrateError> {
-        if words < HEADER_WORDS || kind == KindId::BLANK || kind == KindId::ERROR {
+        if kind == KindId::ERROR {
+            return Err(ArenaError::Malformed { what: "record header", word: u32::from(kind.0) }.into());
+        }
+        self.open_record(kind, words, inline)
+    }
+
+    /// `draft`, for any kind a header holds: an `ERROR`'s record is the
+    /// hydration's own to write.
+    fn open_record(&mut self, kind: KindId, words: u32, inline: Option<Embed>) -> Result<Draft, HydrateError> {
+        if words < HEADER_WORDS || kind == KindId::BLANK {
             return Err(ArenaError::Malformed { what: "record header", word: u32::from(kind.0) }.into());
         }
         let header = super::with_kind(kind, self.tree.kind_bits())?;
@@ -475,6 +488,7 @@ impl<'a> Hydration<'a> {
     pub fn meet(&mut self, cursor: &TreeCursor<'_>) -> Result<crate::nodes::Kid, HydrateError> {
         let node = cursor.node();
         let kid = crate::nodes::Kid::of(&node, crate::read::index_of(cursor), crate::read::field_id(cursor));
+        self.leave_errors(kid.index.get())?;
         self.tree.write_row(&kid, node.is_missing())?;
         let facts = facts_of(&kid, &node);
         let depth = self.depth_of(kid.grammar);
@@ -483,7 +497,26 @@ impl<'a> Hydration<'a> {
         }
         self.met = Some(facts);
         self.met_at = Some(kid.index);
+        if kid.error() && self.tree.rows_by_run() {
+            self.entering = Some((kid.index, facts));
+            let draft = self.open_record(KindId::ERROR, HEADER_WORDS, None)?;
+            self.errors.push((draft, kid.index.get() + kid.count, Row { index: kid.index, end: kid.index + kid.count, span: kid.span() }));
+        }
         Ok(kid)
+    }
+
+    /// Ends the record of each `ERROR` whose subtree ends at or before the
+    /// node at descendant `index`: the walk has left it, so its run holds
+    /// every node under it.
+    fn leave_errors(&mut self, index: u32) -> Result<(), HydrateError> {
+        while let Some(&(draft, end, row)) = self.errors.last() {
+            if end > index {
+                break;
+            }
+            self.errors.pop();
+            self.finish(draft, &parsed_side(row, None), KindId::ERROR, None)?;
+        }
+        Ok(())
     }
 
     /// Writes the row of every node under the one `cursor` stands on, which
@@ -574,6 +607,14 @@ impl<'a> Hydration<'a> {
     ///
     /// What the arena refuses.
     pub fn finish(&mut self, draft: Draft, side: &SideRecord, kind: KindId, inline: Option<Embed>) -> Result<Hydrated, HydrateError> {
+        let opened = |open: &[OpenRun], at: Address| open.iter().rposition(|open| open.at == at);
+        while let Some(&(error, _, row)) = self.errors.last() {
+            if opened(&self.open, error.at) <= opened(&self.open, draft.at) {
+                break;
+            }
+            self.errors.pop();
+            self.finish(error, &parsed_side(row, None), KindId::ERROR, None)?;
+        }
         let run = self.open.iter().rposition(|open| open.at == draft.at).and_then(|found| {
             self.open.truncate(found + 1);
             self.open.pop()
@@ -832,6 +873,22 @@ pub fn hydrate_at<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx
 /// What the hydration refuses; what it wrote before stays written.
 pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
     hydrate_into::<N>(cursor, ctx, NodeIndex::ROOT, None, Depth::All, (source, Some(kinds)), into)
+}
+
+/// The tree `cursor` walks, whose root is an `ERROR`, written into `into`
+/// as the error's record, its run holding every node under it, each record
+/// naming the entry `source`: the record, which no reader reads.
+///
+/// # Errors
+///
+/// What the hydration refuses; what it wrote before stays written.
+pub fn hydrate_error(cursor: &mut TreeCursor<'_>, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
+    let records = &mut Hydration { source, kinds: Some(kinds), ..Hydration::new(into) };
+    crate::read::goto(cursor, NodeIndex::ROOT);
+    records.meet_whole(cursor)?;
+    let root = records.errors.first().map(|&(draft, ..)| draft.at);
+    records.leave_errors(u32::MAX)?;
+    Ok(root)
 }
 
 fn hydrate_into<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, (source, kinds): (Option<Address>, Option<crate::trivia_table::SurfaceKinds>), into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {

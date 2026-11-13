@@ -145,7 +145,8 @@ impl<'t> RunNodes<'t> {
 
     /// The levels the node at `index` opens net of those it closes, by the
     /// depth members of `kinds`: its record's stamp, or, for a node with no
-    /// record, its own kind's and those of the rows inside it.
+    /// record, its own kind's, those of the rows inside it and the stamps of
+    /// the records there.
     ///
     /// # Errors
     ///
@@ -338,14 +339,14 @@ impl Walk<'_> {
                 let run = &self.side(holder)?.run;
                 let Some(&RunEntry::Row { facts, inner, .. }) = run.get(entry as usize) else { return Err(malformed("run row", holder)) };
                 let inside = run.get(entry as usize + 1..entry as usize + 1 + inner as usize).ok_or(malformed("run row entries", holder))?;
-                Ok(of(facts.kind)
-                    + inside
-                        .iter()
-                        .map(|entry| match entry {
-                            RunEntry::Row { facts, .. } => of(facts.kind),
-                            RunEntry::Record { .. } => 0,
-                        })
-                        .sum::<i32>())
+                let (rows, records): (i32, Vec<Address>) = inside.iter().fold((of(facts.kind), Vec::new()), |(rows, mut records), entry| match *entry {
+                    RunEntry::Row { facts, .. } => (rows + of(facts.kind), records),
+                    RunEntry::Record { at, .. } => {
+                        records.push(at);
+                        (rows, records)
+                    }
+                });
+                records.into_iter().try_fold(rows, |moved, at| Ok(moved + self.side(at)?.depth))
             }
         }
     }

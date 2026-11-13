@@ -236,3 +236,59 @@ fn a_read_s_records_store_the_layout_its_tree_does() {
     assert!(storing.iter().sum::<usize>() > 0, "some fixture stores a layout apart from its options");
     assert!(apart.is_empty(), "{} sources:\n{}", apart.len(), apart.iter().take(8).cloned().collect::<Vec<_>>().join("\n"));
 }
+
+/// Each `ERROR` node of `source` as its records keep it: where it is kept,
+/// and where each of its children is.
+fn errors_kept<G: EngineGrammar + Copy, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str) -> Vec<(Option<sittir_core::arena::NodeSite>, Vec<Option<sittir_core::arena::NodeSite>>)> {
+    use sittir_core::trivia_store::Place;
+    let mut engine = Engine::new(grammar, options()).expect("an engine");
+    let Some(root) = engine.parse_records::<N>(source).expect("a parse").root else { return Vec::new() };
+    let built = engine.written().built();
+    let records = sittir_core::engine::ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
+    let site = |index| match records.place(index) {
+        Some(Place::Read { site, .. }) => Some(site),
+        _ => None,
+    };
+    let mut nodes = records.nodes();
+    let mut errors = Vec::new();
+    nodes.walk(NodeIndex::ROOT, &mut |step, kid| {
+        if step == Step::Meet && kid.grammar == sittir_core::types::KindId::ERROR {
+            errors.push(kid.index);
+        }
+        Visit::Enter
+    });
+    errors.into_iter().map(|index| (site(index), nodes.kids(index).iter().map(|kid| site(kid.index)).collect())).collect()
+}
+
+#[test]
+fn an_error_has_a_record_of_its_own_that_holds_its_children() {
+    use sittir_core::arena::NodeSite;
+    let kept = errors_kept::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults, "// lead\nfn f() {\n    a ) b;\n}\n@@@\n");
+    assert_eq!(kept.len(), 2, "one error in the block, one after the function: {kept:?}");
+    for (error, children) in kept {
+        let Some(NodeSite::Record(at)) = error else { panic!("an error is kept in a record of its own: {error:?}") };
+        assert_ne!(children.len(), 0, "an error holds what it could not read");
+        for child in children {
+            assert!(matches!(child, Some(NodeSite::Row { holder, .. }) if holder == at), "an error's child is a row of the error's record: {child:?}");
+        }
+    }
+}
+
+#[test]
+fn a_source_that_parses_to_an_error_alone_has_its_error_s_record_for_a_root() {
+    let source = "const default";
+    let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
+    let parse = engine.parse_records::<sittir_rust::render::AnyNode>(source).expect("a parse");
+    let root = parse.root.expect("a root");
+    let built = engine.written().built();
+    assert_eq!(Source::read(&*built, parse.source).expect("its source entry").root, Some(root));
+    let table = RunTable::default();
+    let mut nodes = RunNodes::new(&*built, source, root, &table).expect("its root");
+    let kid = nodes.kid(NodeIndex::ROOT);
+    assert_eq!((kid.grammar, kid.start, kid.end), (sittir_core::types::KindId::ERROR, 0, 13));
+    let tree = parsed(sittir_rust::RustGrammar, sittir_rust::render::options::defaults(), source);
+    let spans = |kids: sittir_core::nodes::Kids| kids.iter().map(|kid| (kid.grammar, kid.start, kid.end)).collect::<Vec<_>>();
+    let held = spans(tree.nodes().kids(NodeIndex::ROOT));
+    assert_ne!(held.len(), 0, "the error holds what it could not read");
+    assert_eq!(spans(nodes.kids(NodeIndex::ROOT)), held, "the root's children are the tree's");
+}

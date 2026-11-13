@@ -2753,7 +2753,7 @@ impl<G: EngineGrammar> Engine<G> {
         let mut built = self.written.built_mut();
         let entry = built.write_source(&crate::arena::source::Source { text: source, breaks_lf: !source.contains('\r'), root: None, inferred }).map_err(|refusal| refusal.to_string())?;
         let root = if root.is_error() {
-            None
+            crate::arena::hydrate_error(&mut tree.walk(), Some(entry), grammar.surface_kinds(), &mut crate::arena::ReadWriter::new(&mut built)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?
         } else {
             let mut ctx = crate::read::ReadCtx::new(source, crate::types::TreeId(0), grammar.shows()).with_relaxes(grammar.relaxes());
             crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), &mut crate::arena::ReadWriter::new(&mut built)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?

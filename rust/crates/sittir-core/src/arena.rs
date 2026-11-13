@@ -52,7 +52,7 @@ pub use borrowed::{ArenaRead, BorrowedArena};
 pub use built::render_record_entry;
 pub use built_write::{BuiltWriter, ReadWriter};
 pub use cell::{flag, header_of, kind_field, parsed_tag, with_kind, Cell, CellWord, ListCell, LINK_WORDS};
-pub use hydrate::{hydrate_at, hydrate_whole, parsed_side, row_of as hydrated_row, Draft, Embed, HydrateError, HydrateInto, HydrateNode, HydrateSlot, Hydrated, Hydration, Walk};
+pub use hydrate::{hydrate_at, hydrate_error, hydrate_whole, parsed_side, row_of as hydrated_row, Draft, Embed, HydrateError, HydrateInto, HydrateNode, HydrateSlot, Hydrated, Hydration, Walk};
 pub use memory::{ChunkMem, ChunkUnit};
 pub use parsed::{render_record_read, BackerParity, LeafRead, RecordGrammar, RecordRead, Recording};
 pub use reach::{deepen, reach, read_cell, written};
