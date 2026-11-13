@@ -239,6 +239,10 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 	const directVocab = (input: GrammarInput, k: string, context: readonly string[]): string | undefined =>
 		placed(input, k, context) ?? vocabOf(input.grammar).get(k);
 
+	const claimedPathsOf = (g: string): readonly string[] => [
+		...vocabOf(g).values(),
+		...[...(routesOf(g)?.containers ?? new Map())].flatMap(([kind, container]) => (container.refined === true ? refiningVocabs(g, kind) : []))
+	];
 	const derivedSuper = new Map<string, readonly string[] | null>();
 	const inclusion = new Map<string, Set<string>>();
 	const supertypeKind = (
@@ -276,9 +280,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		}
 		const parts: string[] = [];
 		for (const [ns, ps] of byns) {
-			const claimedInNs = new Set(
-				[...vocabOf(input.grammar).values()].filter((x) => x === ns || x.startsWith(`${ns}.`))
-			);
+			const claimedInNs = new Set(claimedPathsOf(input.grammar).filter((x) => x === ns || x.startsWith(`${ns}.`)));
 			const cover = ps.size / Math.max(1, claimedInNs.size);
 			if (cover >= 1) parts.push(ns);
 			else parts.push(...[...ps].sort());

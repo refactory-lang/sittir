@@ -508,6 +508,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							nonEmpty: true,
 							list: true,
 							seats: [
 								{
@@ -575,6 +576,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							nonEmpty: true,
 							list: true,
 							seats: [
 								{
@@ -1651,6 +1653,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							nonEmpty: true,
 							list: true,
 							seats: [
 								{
@@ -1839,6 +1842,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							nonEmpty: true,
 							list: true,
 							seats: [
 								{
@@ -35283,6 +35287,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
+							nonEmpty: true,
 							list: true,
 							seats: [
 								{
@@ -42057,6 +42062,11 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
+							],
+							reads: [
+								1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 267, 268, 270,
+								271, 272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 304, 305, 306, 307, 308,
+								309, 310, 311, 312, 313, 332, 333, 369, 370, 371, 372, 373, 374, 435, 436
 							]
 						},
 						{
@@ -42123,7 +42133,75 @@ export const build: PortableBuildTable = {
 									]
 								}
 							]
+						},
+						{
+							name: 'function',
+							steps: [
+								{
+									key: 'function',
+									builder: 'genericFunction'
+								},
+								{
+									key: 'function'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [245, 'function'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							requires: [['typeArguments']]
+						},
+						{
+							name: 'typeArguments',
+							steps: [
+								{
+									key: 'function',
+									builder: 'genericFunction'
+								},
+								{
+									key: 'typeArguments'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [245, 'typeArguments'],
+									kinds: []
+								},
+								{
+									at: [353, 'items'],
+									kinds: [433],
+									within: [
+										{
+											builder: 'typeArguments',
+											key: 'elements'
+										},
+										{
+											builder: 'typeArgumentsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							],
+							requires: [['function']]
 						}
+					],
+					owners: [
+						[0, 1],
+						[1, 2, 3]
 					],
 					presets: [],
 					flags: {},
@@ -42214,6 +42292,11 @@ export const build: PortableBuildTable = {
 									at: [276, 'function'],
 									kinds: [308]
 								}
+							],
+							reads: [
+								1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 267, 268, 270,
+								271, 272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 304, 305, 306, 307, 308,
+								309, 310, 311, 312, 313, 332, 333, 369, 370, 371, 372, 373, 374, 435, 436
 							]
 						},
 						{
@@ -42280,7 +42363,69 @@ export const build: PortableBuildTable = {
 									]
 								}
 							]
+						},
+						{
+							name: 'function',
+							steps: [
+								{
+									key: 'function',
+									builder: 'genericFunction'
+								},
+								{
+									key: 'function'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [245, 'function'],
+									kinds: [308]
+								}
+							],
+							requires: [['typeArguments']]
+						},
+						{
+							name: 'typeArguments',
+							steps: [
+								{
+									key: 'function',
+									builder: 'genericFunction'
+								},
+								{
+									key: 'typeArguments'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [245, 'typeArguments'],
+									kinds: []
+								},
+								{
+									at: [353, 'items'],
+									kinds: [433],
+									within: [
+										{
+											builder: 'typeArguments',
+											key: 'elements'
+										},
+										{
+											builder: 'typeArgumentsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							],
+							requires: [['function']]
 						}
+					],
+					owners: [
+						[0, 1],
+						[1, 2, 3]
 					],
 					presets: [],
 					flags: {},
@@ -42314,6 +42459,11 @@ export const build: PortableBuildTable = {
 									at: [276, 'function'],
 									kinds: [263]
 								}
+							],
+							reads: [
+								1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 267, 268, 270,
+								271, 272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 304, 305, 306, 307, 308,
+								309, 310, 311, 312, 313, 332, 333, 369, 370, 371, 372, 373, 374, 435, 436
 							]
 						},
 						{
@@ -42381,9 +42531,71 @@ export const build: PortableBuildTable = {
 									]
 								}
 							]
+						},
+						{
+							name: 'function',
+							steps: [
+								{
+									key: 'function',
+									builder: 'genericFunction'
+								},
+								{
+									key: 'function'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [245, 'function'],
+									kinds: [263]
+								}
+							],
+							requires: [['typeArguments']]
+						},
+						{
+							name: 'typeArguments',
+							steps: [
+								{
+									key: 'function',
+									builder: 'genericFunction'
+								},
+								{
+									key: 'typeArguments'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [245, 'typeArguments'],
+									kinds: []
+								},
+								{
+									at: [353, 'items'],
+									kinds: [433],
+									within: [
+										{
+											builder: 'typeArguments',
+											key: 'elements'
+										},
+										{
+											builder: 'typeArgumentsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							],
+							requires: [['function']]
 						}
 					],
 					empty: ['arguments'],
+					owners: [
+						[0, 1],
+						[1, 2, 3]
+					],
 					presets: [],
 					flags: {},
 					when: [
@@ -42718,6 +42930,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							nonEmpty: true,
 							list: true,
 							seats: [
 								{
@@ -42802,6 +43015,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							nonEmpty: true,
 							list: true,
 							seats: [
 								{
@@ -46616,6 +46830,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							nonEmpty: true,
 							list: true,
 							seats: [
 								{
@@ -50493,6 +50708,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							nonEmpty: true,
 							list: true,
 							seats: [
 								{
@@ -50566,6 +50782,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							nonEmpty: true,
 							list: true,
 							seats: [
 								{
@@ -51383,6 +51600,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							nonEmpty: true,
 							list: true,
 							seats: [
 								{
