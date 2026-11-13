@@ -1,6 +1,6 @@
-import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, Pending, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, Pending, TriviaEntry, TriviaFacts, UnitSidesWire, WireNode } from '@sittir/types';
 import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
-import { carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
+import { carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { admitSlot, builtArenaOf as handleBuiltArena, currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle } from './engine-scope.ts';
@@ -234,12 +234,12 @@ export function leafWireSides(leaf: object): TriviaSides<unknown> | undefined {
 	return own === undefined ? undefined : wireSides(leaf, own);
 }
 
-function wireSides(node: object, trivia: NodeTrivia): TriviaSides<unknown> {
+function wireSides(node: object, trivia: NodeTrivia): TriviaSides<WireNode> {
 	const wire = entryWire(node);
 	return mapTriviaEntries(trivia as TriviaSides<TriviaEntry>, (entries) => entries.map(wire));
 }
 
-function writeSites(arena: BuiltArena, sites: readonly number[], trivia: NodeTrivia, wired: TriviaSides<unknown>): void {
+function writeSites(arena: BuiltArena, sites: readonly number[], trivia: NodeTrivia, wired: TriviaSides<WireNode>): void {
 	for (const side of TRIVIA_SIDES) {
 		const entries = trivia[side];
 		const wire = wired[side];
@@ -249,7 +249,7 @@ function writeSites(arena: BuiltArena, sites: readonly number[], trivia: NodeTri
 	}
 }
 
-export function writeUnitSides(node: object, units: readonly UnitSidesData[]): void {
+export function writeUnitSides(node: object, units: readonly UnitSidesWire[]): void {
 	const built = builtRefOf(node);
 	if (built?.at === undefined) {
 		for (const unit of units) refuseBuiltEntries(unit);
@@ -268,11 +268,11 @@ function carryUnitSides(from: object, to: object): void {
 }
 
 function carryUnitSidesNow(from: object, to: object): void {
-	const units = (builtRefOf(to) === undefined ? heldUnitSides(from) : unitSidesOf(from)) as readonly UnitSidesData[] | undefined;
+	const units = builtRefOf(to) === undefined ? heldUnitSides(from) : unitSidesOf(from);
 	if (units !== undefined && units.length > 0) writeUnitSides(to, realignedUnits(units, from, to));
 }
 
-function entryWire(node: object): (entry: TriviaEntry) => unknown {
+function entryWire(node: object): (entry: TriviaEntry) => WireNode {
 	const tree = treeOf(node);
 	const built = builtRefOf(node)?.arena;
 	const arena = built ?? (tree === undefined ? undefined : treeBuiltArena(tree));

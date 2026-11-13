@@ -3,6 +3,7 @@ import { BuiltArena, builtCell, cellFormatOf, chunkOf, decodeBuiltCell, unitCell
 import { builtRecordOf, childSlot, handleDispose, LEAF_SITES, positionWords, storeCell, storeList, storeListOptions, writeLeafSites } from '@sittir/common/utils';
 import type { BuiltText, LeafSite, TreeHandle } from '@sittir/common/utils';
 import { patchCell, sideEntryOf } from '../../common/src/built-arena.ts';
+import type { UnitSidesWire, WireNode } from '@sittir/types';
 import type { RecordHandle } from '../../common/src/handle.ts';
 import { leafSitesOf, placeLeaf } from '../../common/src/built-ref.ts';
 import { PLAIN_KINDS, setTriviaOf } from '../../common/src/node-data.ts';
@@ -101,13 +102,14 @@ describe('a built arena', () => {
 
 	it('asks its native side store only about places a write gave sides', () => {
 		const asked: string[] = [];
-		const stored = new Map<string, readonly unknown[]>();
+		const stored = new Map<string, readonly WireNode[]>();
+		const storedUnits = new Map<number, readonly UnitSidesWire[]>();
 		const arena = arenaOf({
 			...NO_SIDES,
-			triviaSide: (at, side) => (asked.push(`${side} of ${at}`), stored.get(`${at} ${side}`) as unknown[] | undefined),
+			triviaSide: (at, side) => (asked.push(`${side} of ${at}`), stored.get(`${at} ${side}`) as WireNode[] | undefined),
 			writeTriviaSide: (at, side, entries) => void stored.set(`${at} ${side}`, entries),
-			unitSides: (at) => (asked.push(`units of ${at}`), [...(stored.get(`${at} units`) ?? [])]),
-			writeUnitSides: (at, units) => void stored.set(`${at} units`, units)
+			unitSides: (at) => (asked.push(`units of ${at}`), [...(storedUnits.get(at) ?? [])]),
+			writeUnitSides: (at, units) => void storedUnits.set(at, units)
 		});
 		const a = builtRecordOf(arena.view(arena.draft(7, 2)), arena)!;
 		const b = builtRecordOf(arena.view(arena.draft(7, 2)), arena)!;
@@ -125,7 +127,7 @@ describe('a built arena', () => {
 	});
 
 	it('copies the sites of a record after the work waiting on it, so the copy holds the unit sides that work writes', () => {
-		const stored = new Map<number, readonly unknown[]>();
+		const stored = new Map<number, readonly UnitSidesWire[]>();
 		const arena = arenaOf({
 			...NO_SIDES,
 			unitSides: (at) => [...(stored.get(at) ?? [])],
