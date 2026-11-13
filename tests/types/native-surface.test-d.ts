@@ -19,9 +19,8 @@ import type * as TypeScript from '../../packages/typescript/native/index.js';
 type Declared = NativeModuleLike<object>;
 type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 type KindIdAsNumber<R, Kind> = [Kind] extends [never] ? R : [Kind] extends [Extract<R, Kind>] ? Exclude<R, Kind> | number : R;
-type Wire<R, Kind = never> = WireOf<KindIdAsNumber<R, Kind>, Kind>;
-type WireOf<R, Kind> = R extends readonly unknown[]
-	? { -readonly [I in keyof R]: Wire<R[I], Kind> }
+type Wire<R> = R extends readonly unknown[]
+	? { -readonly [I in keyof R]: Wire<R[I]> }
 	: Equal<R, ReadOutput> extends true
 		? object
 		: Equal<R, ChunkWords> extends true
@@ -31,21 +30,22 @@ type WireOf<R, Kind> = R extends readonly unknown[]
 				: object extends R
 					? R
 					: R extends object
-						? { -readonly [K in keyof R]: K extends 'side' ? (Equal<R[K], TriviaSideName> extends true ? string : Wire<R[K], Kind>) : Wire<R[K], Kind> }
+						? { -readonly [K in keyof R]: K extends 'side' ? (Equal<R[K], TriviaSideName> extends true ? string : Wire<R[K]>) : Wire<R[K]> }
 						: R;
-type Same<Generated, Declaration, Kind = never> = Equal<Wire<Generated, Kind>, Wire<Declaration>>;
+type Same<A, B> = Equal<Wire<A>, Wire<B>>;
 type Taking<F> = F extends (...args: infer A) => unknown ? (...args: A) => unknown : F;
 type ReadonlyArg<T> = T extends unknown[] ? Readonly<T> : T;
 type Accepting<F> = F extends (...args: infer A) => unknown ? (...args: { [I in keyof A]: ReadonlyArg<A[I]> }) => unknown : F;
 type Admits<Generated, Declaration> = Accepting<Generated> extends Taking<Declaration> ? true : false;
-type ReturnsExactly<Generated, Declaration, Kind = never> = Same<Ret<Generated>, Ret<Declaration>, Kind>;
+type ReturnsExactly<Generated, Declaration, Kind = never> = Same<KindIdAsNumber<Ret<Generated>, Kind>, Ret<Declaration>>;
+type KindIdReturns = 'slotSeparator' | 'separatorBefore';
 type Member<M> = keyof Declared & keyof M;
 type Arity<F> = F extends (...args: infer A) => unknown ? A['length'] : never;
 
 type Drift<M, Kind> = {
 	readonly missing: Exclude<keyof Declared, keyof M>;
 	readonly parameters: { [K in Member<M>]-?: Admits<M[K], Declared[K]> extends true ? never : K }[Member<M>];
-	readonly returns: { [K in Member<M>]-?: ReturnsExactly<M[K], Declared[K], Kind> extends true ? never : K }[Member<M>];
+	readonly returns: { [K in Member<M>]-?: ReturnsExactly<M[K], Declared[K], K extends KindIdReturns ? Kind : never> extends true ? never : K }[Member<M>];
 	readonly arity: { [K in Member<M>]-?: [Arity<M[K]>] extends [Arity<Declared[K]>] ? ([Arity<Declared[K]>] extends [Arity<M[K]>] ? never : K) : K }[Member<M>];
 	readonly engine: M extends { SittirEngine: abstract new (...args: never) => infer E } ? (E extends NativeEngineInstance ? never : 'SittirEngine') : 'SittirEngine';
 };
@@ -105,7 +105,7 @@ type DeclaredShapes = {
 	readonly readMany: WireNode[] | Uint32Array;
 	readonly readsRender: true;
 };
-type Misshaped<M extends Shaped, Kind> = { [K in keyof DeclaredShapes]-?: Same<Shapes<M>[K], DeclaredShapes[K], Kind> extends true ? never : K }[keyof DeclaredShapes];
+type Misshaped<M extends Shaped> = { [K in keyof DeclaredShapes]-?: Same<Shapes<M>[K], DeclaredShapes[K]> extends true ? never : K }[keyof DeclaredShapes];
 type WireTypes = {
 	readonly read: WireNode;
 	readonly triviaSide: WireNode[];
@@ -120,6 +120,7 @@ type ObjectOnlyUnit<Node extends object> = Omit<UnitSidesWire<Node>, keyof NodeT
 type GeneratedRun = ItemOf<Ret<typeof Rust.layoutBaseline>>;
 type LeadingOnly<Run> = Omit<Run, 'side'> & { readonly side: 'leading' };
 type NoBreaks<Run> = Omit<Run, 'breaks'> & { readonly breaks?: 0 };
+type CounterAsKindId = Omit<typeof Rust, 'treeMemory'> & { treeMemory(): { trees: number; counted: RustKindId; reported: number } };
 
 expectTypeOf<Admits<(profile: 'release') => void, (profile: string) => void>>().toEqualTypeOf<false>();
 expectTypeOf<Admits<(indexes: [number, number]) => void, (indexes: readonly number[]) => void>>().toEqualTypeOf<false>();
@@ -142,6 +143,7 @@ expectTypeOf<ReturnsExactly<() => RustKindId.Semi | null, () => number | null, R
 expectTypeOf<ReturnsExactly<() => RustKindId | null, () => 0 | null, RustKindId>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => PythonKindId | null, () => number | null, RustKindId>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => RustKindId | null, () => RustKindId | null, RustKindId>>().toEqualTypeOf<false>();
+expectTypeOf<Drift<CounterAsKindId, RustKindId>['returns']>().toEqualTypeOf<'treeMemory'>();
 expectTypeOf<ReturnsExactly<() => [number, object][], () => readonly (readonly [number, object])[]>>().toEqualTypeOf<true>();
 expectTypeOf<ReturnsExactly<() => [number, object][], () => readonly (readonly [object, number])[]>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => [...number[], object], () => WireNode[]>>().toEqualTypeOf<false>();
@@ -157,8 +159,8 @@ expectTypeOf<Drift<typeof Rust, RustKindId>>().toEqualTypeOf<NoDrift>();
 expectTypeOf<Drift<typeof Scm, ScmKindId>>().toEqualTypeOf<NoDrift>();
 expectTypeOf<Drift<typeof TypeScript, TypeScriptKindId>>().toEqualTypeOf<NoDrift>();
 
-expectTypeOf<Misshaped<typeof Python, PythonKindId>>().toEqualTypeOf<never>();
-expectTypeOf<Misshaped<typeof Regex, RegexKindId>>().toEqualTypeOf<never>();
-expectTypeOf<Misshaped<typeof Rust, RustKindId>>().toEqualTypeOf<never>();
-expectTypeOf<Misshaped<typeof Scm, ScmKindId>>().toEqualTypeOf<never>();
-expectTypeOf<Misshaped<typeof TypeScript, TypeScriptKindId>>().toEqualTypeOf<never>();
+expectTypeOf<Misshaped<typeof Python>>().toEqualTypeOf<never>();
+expectTypeOf<Misshaped<typeof Regex>>().toEqualTypeOf<never>();
+expectTypeOf<Misshaped<typeof Rust>>().toEqualTypeOf<never>();
+expectTypeOf<Misshaped<typeof Scm>>().toEqualTypeOf<never>();
+expectTypeOf<Misshaped<typeof TypeScript>>().toEqualTypeOf<never>();
