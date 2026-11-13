@@ -258,6 +258,8 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 **Files:**
 - Modify: `napi_engine.rs` and `engine.rs`. In arena storage, `parse` hydrates the whole tree in the same call, then drops the `tree_sitter::Tree`, the placement scratch and the read caches before it returns. Only the nodes and the source text remain.
 - Modify: `arena/built_image.rs`. The LINK record names a node, not a tree, and stays 8 words.
+- The shape, as the spec's Tree lifetime section rules it (2026-11-12): a read hydrates into the engine's built chunks; a node is named by `types::NodeId`, its record's address; a built `Child` cell names a parsed record directly; a named leaf or fixed token is its holder's `NodeId` plus its site; a comment or `ERROR` gets a record; the source is one pooled string in its own chunk; a parsed record carries the rows of its recordless children; `TreeArena` and its `held` and `records` tables go. LINK remains only for a recordless target, as `[header, 0, holder, word, item, 0, start, end]`.
+- Record-word goldens are retaken once in this task. Render, query and snapshot output stays byte-identical.
 - Modify: `napi_engine.rs`, the lent arena's second read (see Task 5's follow-up and the spec's Tree lifetime section). `render_built_with` hands the arena it holds to `entry_sources_holding`, so `ArenaSources::render_record_entry` doesn't take `store.built()` again. `TriviaStore::shares_built` is `pub(crate)`. No failing test first, on the maintainer's word.
 - Remove the branches Task 5 keeps for trees read part-way: `edited_record`'s coordinate branch and the baseline measured through the tree. Every arena tree is now read whole at parse.
 - Modify: `packages/common/src/{read,record-view,handle,engine,create-engine,built-arena}.ts`. An arena root holds no `Tree` object and no reference to a tree. The arena's `#trees` and its `holdTree` calls go.
@@ -266,6 +268,7 @@ This is tree lifetime only, as the spec's Tree lifetime section rules. It adds n
 
 **Interfaces:**
 - Consumes: Tasks 5, 5b and 5c. Arena parses leave the live-tree table here.
+- Produces: `types::NodeId` and the rows that follow from it (the public `NodeCoordinate`, the side record's fields, `Cell::Child`/`Cell::LinkedLeaf`, the `SourceTable` methods and the addon calls). Each row needs the maintainer's approval before code.
 - Produces: the census below, as the PR body's first table. Its placement of each field fixes the names later tasks use.
 - Produces: `sittir_core::napi_engine::entry_sources_holding(grammar, store, built, f) -> R`, arena only, internal pub, taking no tree (API row approved by the maintainer, 2026-11-12).
 
