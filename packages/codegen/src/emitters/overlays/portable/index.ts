@@ -69,7 +69,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 		});
 		return isSlotBearingCompound(node) && readable.length > 0 ? [[node.typeName, readable] as const] : [];
 	});
-	const build = emitPortableBuild({ routes, model: input.model, nodeMap, kindEntries, flagPlans: plansByKind, features: [...input.vocabulary.featuresOf(compositionOf(input.grammar))].sort(byCodepoint), factOf, declaresFlag: (path, flag) => input.vocabulary.kinds.has(path) && input.vocabulary.members(path).get(flag)?.flag === true, valueScalarOf: (path) => (input.vocabulary.kinds.has(path) ? input.vocabulary.members(path).get('$value')?.scalar : undefined) });
+	const build = emitPortableBuild({ routes, model: input.model, nodeMap, kindEntries, flagPlans: plansByKind, features: [...input.vocabulary.featuresOf(compositionOf(input.grammar))].sort(byCodepoint), factOf, readTest, declaresFlag: (path, flag) => input.vocabulary.kinds.has(path) && input.vocabulary.members(path).get(flag)?.flag === true, valueScalarOf: (path) => (input.vocabulary.kinds.has(path) ? input.vocabulary.members(path).get('$value')?.scalar : undefined) });
 	return {
 		build: build.source,
 		typed: emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest, table: build.table, presetCarried: build.presetCarried, totalIntegerReads: build.totalIntegerReads, freeTextClosedBy: build.freeTextClosedBy, flags: new Map([...plansByKind].map(([kind, plans]) => [kind, [...plans.keys()]])) }),

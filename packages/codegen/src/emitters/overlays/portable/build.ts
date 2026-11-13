@@ -3,6 +3,7 @@ import type {
 	PortableBuildPath,
 	PortableBuildTable,
 	PortableCallShape,
+	PortableCondition,
 	PortableContainer,
 	PortableDecimalParts,
 	PortableDelimiterToken,
@@ -18,13 +19,15 @@ import type {
 	PortableSlotStep,
 	PortableTemplate,
 	PortableValueBuild,
-	QueryPlan
+	QueryPlan,
+	QuerySubject
 } from '@sittir/types';
 import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
 import { Delimiter } from '@sittir/common/delimiter';
+import { holds, portablePathHasFacts, readableEntries } from '@sittir/common/engine';
 import type { ChildTest, GrammarRoutes, MemberRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
 import { concreteKinds, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reachedBy, shownSlots, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
-import type { PortableFactRecord } from './read-tests.ts';
+import { slotSubjectOf, type PortableFactRecord } from './read-tests.ts';
 import { portableSpelledFactOf } from './spelled-facts.ts';
 import type { ModelMount, ModelSlot, SlotModel, TemplateFact } from '../../../bindings/facts.ts';
 import type { VocabularyScalar } from '../../../bindings/vocabulary.ts';
@@ -99,6 +102,7 @@ export interface PortableBuildInput {
 	readonly flagPlans: ReadonlyMap<string, ReadonlyMap<string, QueryPlan | null>>;
 	readonly features: readonly string[];
 	readonly factOf: (entry: ReadEntry) => PortableFactRecord | undefined;
+	readonly readTest: (entry: ReadEntry) => readonly PortableCondition[];
 	readonly declaresFlag: (path: string, flag: string) => boolean;
 	readonly valueScalarOf: (path: string) => VocabularyScalar | undefined;
 }
@@ -209,8 +213,9 @@ const sortedIds = (ids: Iterable<number>): readonly number[] => [...new Set(ids)
 const disjoint = (sets: readonly ReadonlySet<number>[]): boolean =>
 	sets.every((a, i) => sets.every((b, j) => i === j || [...a].every((id) => !b.has(id))));
 
-export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPlans, features, factOf, declaresFlag, valueScalarOf }: PortableBuildInput): PortableBuildOutput {
+export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPlans, features, factOf, readTest, declaresFlag, valueScalarOf }: PortableBuildInput): PortableBuildOutput {
 	const typeOf = (kind: string): number | undefined => findKindEntry(kindEntries, kind)?.id;
+	const subjectOf = slotSubjectOf(nodeMap);
 	const shapes = buildFactoryMap(nodeMap, kindEntries).factoryShapes;
 	const fixedText = new Map(fixedTextKinds(nodeMap, kindEntries));
 	const builders = new Map<string, PortableCallShape>();
@@ -742,25 +747,39 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		if (!isDelimiterToken(token)) return undefined;
 		const input = token.slots.find((slot) => slot.delimiterRole === 'input');
 		const preferred = token.slots.find((slot) => slot.delimiterRole === 'preferred');
-		const onToken = (predicate: ReadEntry['claim']['predicates'][number]): boolean =>
-			predicate.operator === 'match' && predicate.subject !== null && held(kind, predicate.subject)?.[0]?.slot === open;
-		const spelled = [...(routes.readEntries.get(kind) ?? [])]
-			.filter((other) => other.claim.predicates.every(onToken))
-			.sort((a, b) => b.claim.predicates.length - a.claim.predicates.length || a.index - b.index);
+		const openerSlots = JSON.stringify(subjectOf(node.kind, open)?.slots);
+		const readsOpener = (plan: QueryPlan<QuerySubject>): boolean => {
+			switch (plan.op) {
+				case 'eq':
+				case 'match':
+				case 'present':
+					return 'slots' in plan && JSON.stringify(plan.slots) === openerSlots;
+				case 'not':
+					return readsOpener(plan.of);
+				case 'and':
+				case 'or':
+					return plan.of.every(readsOpener);
+				default:
+					return false;
+			}
+		};
+		const entries = readableEntries((routes.readEntries.get(kind) ?? []).map((entry) => ({ path: entry.vocab, within: entry.claim.within, test: readTest(entry), entry })));
+		const spelled = entries.filter(({ test }) => test.every((condition) => condition.via.length === 0 && readsOpener(condition.plan)));
 		const readAs = (member: string | null, preference: string | null): string | undefined => {
 			const text = tokenText(token, member, preference);
-			return spelled.find((other) => other.claim.predicates.every((predicate) => predicate.arguments.some((argument) => 'text' in argument && new RegExp(argument.text).test(text))))?.vocab;
+			const holding = spelled.filter(({ test }) => test.every((condition) => holds(condition.plan, { texts: () => [text] })));
+			return holding.find((at) => !holding.some((other) => other.path !== at.path && portablePathHasFacts(at.path, other.path)))?.path;
 		};
-		return { node, open, token, input, preferred, readAs };
+		return { node, open, token, input, preferred, entries, decided: spelled.length === entries.length, readAs };
 	};
 	const freeTextClosedBy = new Map<number, readonly string[]>();
-	for (const [kind, entries] of routes.readEntries) {
+	for (const kind of routes.readEntries.keys()) {
 		const reads = spelledReadsOf(kind);
 		const gate = reads?.node.freeText?.gate;
-		if (reads === undefined || gate === undefined || gate.token !== reads.token.kind) continue;
+		if (reads === undefined || gate === undefined || gate.token !== reads.token.kind || !reads.decided) continue;
 		const quotes = reads.preferred === undefined ? [null] : reads.preferred.values.flatMap((value) => (isTerminalValue(value) ? [value.value] : []));
 		const opened = new Set(gate.spellings.flatMap((spelling) => quotes.flatMap((quote) => reads.readAs(spelling, quote) ?? [])));
-		for (const entry of entries) if (!opened.has(entry.vocab)) freeTextClosedBy.set(entry.index, reads.node.freeText!.opened);
+		for (const { entry } of reads.entries) if (!opened.has(entry.vocab)) freeTextClosedBy.set(entry.index, reads.node.freeText!.opened);
 	}
 	const delimiterPresets = (kind: string, entry: ReadEntry): readonly Placed[] => {
 		const reads = spelledReadsOf(kind);
