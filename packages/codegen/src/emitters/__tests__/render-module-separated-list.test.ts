@@ -14,6 +14,7 @@ import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { collectGeneratedKindEntries } from '../../dsl/symbol-table.ts';
 import { emittedTemplates } from './support/emitted-templates.ts';
 import { slot } from '../render-body.ts';
+import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import { CHOICE, FIELD, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { preference } from '../../dsl/primitives/preference.ts';
@@ -134,7 +135,7 @@ describe('renderNodeDataStruct — separatedList sibling fields', () => {
 			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
 		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: sepChoice }, kindEntries)).nodeMap;
-		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES).nodeRs.contents;
+		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES, { joins: NO_JOINS }).nodeRs.contents;
 
 		expect(emitted).toContain('pub delimiter: Option<::sittir_core::types::Delimiter>,');
 		expect(emitted).toContain('pub separator_kind: Option<KindId>,');
@@ -150,7 +151,7 @@ describe('renderNodeDataStruct — separatedList sibling fields', () => {
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries)).nodeMap;
-		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES).nodeRs.contents;
+		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES, { joins: NO_JOINS }).nodeRs.contents;
 
 		expect(emitted).not.toContain('pub separator_kind:');
 		expect(emitted).toContain('pub delimiter: Option<::sittir_core::types::Delimiter>,');
@@ -164,7 +165,7 @@ describe('renderNodeDataStruct — separatedList sibling fields', () => {
 			separator: { value: { type: STRING, value: ',' } }
 		};
 		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries)).nodeMap;
-		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES).nodeRs.contents;
+		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES, { joins: NO_JOINS }).nodeRs.contents;
 
 		expect(emitted).not.toContain('pub separator_kind:');
 		expect(emitted).not.toContain('pub delimiter:');
@@ -191,7 +192,8 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			'rust',
 			emittedTemplates({ member_list: slot('member') }),
 			nodeMap,
-			GENERATED_ID_TABLES
+			GENERATED_ID_TABLES,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 
 		expect(emitted).toContain('leading: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::LEADING)),');
@@ -218,7 +220,8 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: sepChoice }, kindEntries)).nodeMap;
 		const emitted = emitRenderModule('rust', emittedTemplates({ member_list: slot('member') }), nodeMap, GENERATED_ID_TABLES, {
 			renderRules: { rules: {} },
-			options: { member_list: { 'member:/separator/kind': preference('semi') } } as never
+			options: { member_list: { 'member:/separator/kind': preference('semi') } } as never,
+			joins: NO_JOINS
 		}).nodeRs.contents;
 
 		expect(emitted).toContain('::sittir_core::prepare::Setting::fill(&mut parts.separator_kind, overlay, ctx.options.site_arm(options::SITE_MEMBER_LIST_MEMBER_SEPARATOR).arm);');
@@ -239,7 +242,8 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			'rust',
 			emittedTemplates({ member_list: slot('member') }),
 			nodeMap,
-			GENERATED_ID_TABLES
+			GENERATED_ID_TABLES,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 
 		expect(emitted).toContain('leading: true,');
@@ -260,7 +264,8 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			'rust',
 			emittedTemplates({ member_list: slot('member') }),
 			nodeMap,
-			GENERATED_ID_TABLES
+			GENERATED_ID_TABLES,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 
 		expect(emitted).toContain('leading: false,');
@@ -281,7 +286,8 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			'rust',
 			emittedTemplates({ member_list: slot('member') }),
 			nodeMap,
-			GENERATED_ID_TABLES
+			GENERATED_ID_TABLES,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 
 		expect(emitted).toContain('leading: false,');
@@ -300,7 +306,8 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			'rust',
 			emittedTemplates({ member_list: slot('member') }),
 			nodeMap,
-			GENERATED_ID_TABLES
+			GENERATED_ID_TABLES,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 
 		expect(emitted).toContain('leading: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::LEADING)),');
@@ -313,7 +320,8 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			'rust',
 			emittedTemplates({ branch_with_list_field: slot('items') }),
 			nodeMap,
-			GENERATED_ID_TABLES
+			GENERATED_ID_TABLES,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 
 		expect(emitted).not.toContain('pub delimiter:');

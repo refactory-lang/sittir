@@ -1,3 +1,4 @@
+import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import { describe, expect, it } from 'vitest';
 import { FIELD, OPTIONAL, PATTERN, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { AssembledBranch, AssembledPattern, type AssembledNode } from '../../compiler/model/node-map.ts';
@@ -30,7 +31,7 @@ function helperSlotNodeMap() {
 describe("a slot read through a hidden helper's field", () => {
 	it('is recorded with its kind, slot and helper, and the body binds the slot absent', () => {
 		const { nodeMap, generatedIdTables } = helperSlotNodeMap();
-		const emitted = emitRenderModule('rust', emittedTemplates({ holder_parent: gate('value', slot('value')) }), nodeMap, generatedIdTables);
+		const emitted = emitRenderModule('rust', emittedTemplates({ holder_parent: gate('value', slot('value')) }), nodeMap, generatedIdTables, { joins: NO_JOINS });
 		expect(emitted.helperSlotReads).toEqual([{ kind: 'holder_parent', slot: 'value', helper: 'holder' }]);
 		const from = emitted.nodeRs.contents.indexOf('fn render_holder_parent<');
 		const body = emitted.nodeRs.contents.slice(from, emitted.nodeRs.contents.indexOf('\n}\n', from));

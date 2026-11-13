@@ -30,6 +30,7 @@ async function compileGrammarSource(source: string): Promise<AssembledNodeMap> {
 		assertCompilation({
 			grammar: 'fi',
 			package: grammarPackage('fi'),
+			evaluated: raw,
 			raw,
 			linked,
 			normalized,

@@ -33,10 +33,10 @@ export function absorbIds<R extends AnyRule>(host: R, ...absorbed: readonly AnyR
 }
 
 export function absorbDroppedIds<R extends AnyRule>(result: R, ...inputs: readonly AnyRule[]): R {
-	const kept = new Set(idsWithin(result));
+	const kept = new Set(ruleIdsWithin(result));
 	return withAbsorbedIds(
 		result,
-		inputs.flatMap(idsWithin).filter((id) => !kept.has(id))
+		inputs.flatMap(ruleIdsWithin).filter((id) => !kept.has(id))
 	);
 }
 
@@ -49,11 +49,11 @@ function withAbsorbedIds<R extends AnyRule>(host: R, absorbed: readonly RuleId[]
 
 const idWalker = new RuleWalker();
 
-function idsWithin(rule: AnyRule): RuleId[] {
+export function ruleIdsWithin(rule: AnyRule): RuleId[] {
 	return [
 		...(rule.id === undefined ? [] : [rule.id]),
 		...(rule.absorbedIds ?? []),
-		...idWalker.childrenOf(rule).flatMap(idsWithin)
+		...idWalker.childrenOf(rule).flatMap(ruleIdsWithin)
 	];
 }
 

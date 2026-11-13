@@ -16,8 +16,9 @@ import {
 	type GeneratedIdTables,
 	type JoinedIds,
 	type ParserSymbolTable,
-	type TreeShape
+	type BuiltParser
 } from '../dsl/symbol-table.ts';
+import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 
 export async function loadPackageIdTables(pkg: GrammarPackage): Promise<GeneratedIdTables> {
 	const parserCPath = join(sittirDirOf(pkg), 'src', 'parser.c');
@@ -26,24 +27,24 @@ export async function loadPackageIdTables(pkg: GrammarPackage): Promise<Generate
 		throw new GrammarDiagnosticError([missing], [missing]);
 	}
 	const grammarJsonPath = join(dirname(parserCPath), 'grammar.json');
-	const grammarJson = existsSync(grammarJsonPath) ? JSON.parse(readFileSync(grammarJsonPath, 'utf8')) : undefined;
+	if (!existsSync(grammarJsonPath)) {
+		const missing = fromMissingParserTables(pkg.name, relative(REPO_ROOT, grammarJsonPath));
+		throw new GrammarDiagnosticError([missing], [missing]);
+	}
+	const grammarJson: GrammarJson = JSON.parse(readFileSync(grammarJsonPath, 'utf8'));
 	const tables = await deriveGeneratedIdTablesFromParserCSource(readFileSync(parserCPath, 'utf8'), relative(REPO_ROOT, parserCPath), grammarJson);
-	return { ...tables, parser: await loadTreeShape(pkg) };
+	return { ...tables, parser: await loadBuiltParser(pkg, grammarJson) };
 }
 
-async function loadTreeShape(pkg: GrammarPackage): Promise<TreeShape> {
+async function loadBuiltParser(pkg: GrammarPackage, grammar: GrammarJson): Promise<BuiltParser> {
 	const wasm = builtParserWasm(pkg.dir);
 	if (!wasm.fresh) {
 		const stale = fromStaleParser(pkg.name, relative(REPO_ROOT, wasm.wasmPath), wasm.reason);
 		throw new GrammarDiagnosticError([stale], [stale]);
 	}
-	const language = await languageOf(wasm.bytes, wasm.digest);
-	return (source) => {
-		using parser = treeParser(language);
-		using tree = parser.parse(source);
-		return tree.root.toString();
-	};
+	return { language: await languageOf(wasm.bytes, wasm.digest), grammar };
 }
+
 
 export function foldedSymbols(parserC: string): ReadonlyMap<string, string> {
 	const start = parserC.indexOf('ts_symbol_map[]');

@@ -13,7 +13,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { DEDENT_TEXT, INDENT_TEXT } from '../../dsl/primitives/spacing.ts';
 import { classifySlot, buildSupertypeNodeSet, type SlotClass } from '../node-common.ts';
-import { closeUsedSupertypes, emitRenderModule, grammarRenderInputs, holderArmSeams, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
+import { closeUsedSupertypes, emitRenderModule, grammarRenderInputs, holderArmSeams, payloadCeilingAssertions, RenderModuleEmitter, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
+import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import { PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
@@ -105,9 +106,9 @@ const _optionsRs = new Map<string, string>();
 const _models = new Map<string, ReturnType<typeof buildModel>>();
 
 async function buildModel(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
-	const { raw, nodeMap, kindEntries, generatedIdTables, renderRules } = await emitReadyModel(grammar);
-	const templates = runTemplateEmitter({ grammar, nodeMap, kindEntries, renderRules });
-	return { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules };
+	const { raw, nodeMap, kindEntries, generatedIdTables, renderRules, joins } = await emitReadyModel(grammar);
+	const templates = runTemplateEmitter({ grammar, nodeMap, kindEntries, renderRules, joins });
+	return { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules, joins };
 }
 
 function modelFor(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
@@ -119,14 +120,14 @@ function modelFor(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 }
 
 async function getNodeRsForGrammar(grammar: 'rust' | 'typescript' | 'scm' | 'python'): Promise<string> {
-	const { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules } = await modelFor(grammar);
+	const { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules, joins } = await modelFor(grammar);
 	if (grammar === 'rust') _rustKindEntries = kindEntries;
 	const emit = emitRenderModule(
 		grammar,
 		templates,
 		nodeMap,
 		generatedIdTables,
-		{ ...grammarRenderInputs(grammar, { renderRules, renderAs: raw.renderAs, options: raw.options }), envelopePins: undefined }
+		{ ...grammarRenderInputs(grammar, { renderRules, renderAs: raw.renderAs, options: raw.options, joins }), envelopePins: undefined }
 	);
 	_optionsRs.set(grammar, emit.optionsRs.contents);
 	return emit.nodeRs.contents;
@@ -1017,17 +1018,26 @@ describe('the wire codec facts', () => {
 
 describe('the envelope pin gate is wired to the real pipeline', () => {
 	it('hands each grammar its pin table, so the gate cannot be dropped without a test failing', () => {
-		expect(grammarRenderInputs('typescript', {}).envelopePins).toBe(ENVELOPE_PINS.typescript);
-		expect(grammarRenderInputs('rust', {}).envelopePins).toEqual({});
+		expect(grammarRenderInputs('typescript', { joins: NO_JOINS }).envelopePins).toBe(ENVELOPE_PINS.typescript);
+		expect(grammarRenderInputs('rust', { joins: NO_JOINS }).envelopePins).toEqual({});
 	});
 
 	it('refuses a full emission that carries a pin for an enum it does not print', async () => {
-		const { raw, nodeMap, generatedIdTables, templates, renderRules } = await modelFor('typescript');
-		const inputs = grammarRenderInputs('typescript', { renderRules, renderAs: raw.renderAs, options: raw.options });
+		const { raw, nodeMap, generatedIdTables, templates, renderRules, joins } = await modelFor('typescript');
+		const inputs = grammarRenderInputs('typescript', { renderRules, renderAs: raw.renderAs, options: raw.options, joins });
 		const stale = { ...inputs.envelopePins, 'GoneNodeSlot.Variant': { display: '_property_identifier', extras: [] } };
 		expect(() => emitRenderModule('typescript', templates, nodeMap, generatedIdTables, { ...inputs, envelopePins: stale })).toThrow(
 			/typescript GoneNodeSlot\.Variant pins an enum codegen does not print/
 		);
+	}, 120_000);
+});
+
+describe('the render module emitter', () => {
+	it('hands the emission the join pairs it was given', async () => {
+		const { raw, nodeMap, generatedIdTables, templates, renderRules, joins } = await modelFor('typescript');
+		const inputs = grammarRenderInputs('typescript', { renderRules, renderAs: raw.renderAs, options: raw.options, joins: { ...joins, pairs: ['=>'] } });
+		const joined = new RenderModuleEmitter({ grammar: 'typescript', nodeMap, generatedIdTables, ...inputs }).finalize(templates);
+		expect(joined.emit.nodeRs.contents).toContain('.with_join_pairs(&[(61, 62)]); // "=>"');
 	}, 120_000);
 });
 

@@ -31,18 +31,13 @@ mod depth;
 pub struct WordMatcher {
     ascii: [bool; 128],
     unicode_fallback: fn(char) -> bool,
-    /// Ordered pairs of DIFFERING punctuation characters that appear
-    /// adjacent inside some multi-character anonymous token of this
-    /// grammar (e.g. rust's `('.', '=')` from `..=`). A seam whose
-    /// boundary chars form such a pair risks a maximal-munch collision:
-    /// the lexer's munch continues across the seam exactly when some real
-    /// token contains that transition (`..` + `=>` re-lexes as `..=` plus
-    /// a dangling `>`). A pair occurring in NO token (`!`+`[` in rust's
-    /// `#![...]`, `:`+`<` in the turbofish `::<`) cannot extend any munch
-    /// and stays tight. Derived at emit time from the grammar's own
-    /// anonymous-literal inventory (shared.ts `literalMergePairs`) — never
-    /// hand-picked.
-    literal_merge_pairs: &'static [(u8, u8)],
+    /// Ordered character pairs at which two tokens of this grammar, written
+    /// side by side, lex as a third token (rust's `('.', '=')`: `..` then
+    /// `=>` lexes as `..=`). Codegen derives them from the grammar's parse
+    /// table and keeps a pair only where a parse of the joined text does not
+    /// rule it out. A writer spaces a pair only between two writes armed to
+    /// join there (`JoinArm`).
+    join_pairs: &'static [(u8, u8)],
 }
 
 impl WordMatcher {
@@ -50,16 +45,13 @@ impl WordMatcher {
         Self {
             ascii,
             unicode_fallback,
-            literal_merge_pairs: &[],
+            join_pairs: &[],
         }
     }
 
     #[must_use]
-    pub const fn with_literal_merge_pairs(
-        mut self,
-        literal_merge_pairs: &'static [(u8, u8)],
-    ) -> Self {
-        self.literal_merge_pairs = literal_merge_pairs;
+    pub const fn with_join_pairs(mut self, join_pairs: &'static [(u8, u8)]) -> Self {
+        self.join_pairs = join_pairs;
         self
     }
 
@@ -86,14 +78,12 @@ impl WordMatcher {
 
     #[inline]
     #[must_use]
-    pub fn is_literal_merge_pair(&self, left: char, right: char) -> bool {
+    pub fn is_join_pair(&self, left: char, right: char) -> bool {
         if (left as u32) >= 128 || (right as u32) >= 128 {
             return false;
         }
         let (l, r) = (left as u8, right as u8);
-        self.literal_merge_pairs
-            .iter()
-            .any(|&(a, b)| a == l && b == r)
+        self.join_pairs.iter().any(|&(a, b)| a == l && b == r)
     }
 }
 
@@ -251,6 +241,13 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// them, with no word-collision space, because one of the two is
     /// verbatim; the next non-empty `write_text` takes it.
     tight: bool,
+    /// The join arms given for the next write (`join_arm`), combined.
+    join_pending: crate::render::JoinArm,
+    /// The join arms of the write in progress, which `write_text` tests.
+    join_at: crate::render::JoinArm,
+    /// Whether the last token written joins what follows it
+    /// (`JoinArm::next`).
+    joins_next: bool,
     /// The in-line run after the last verbatim text, written ahead of the
     /// next text unless that text breaks the line. Its breaks are spelled
     /// `\n` as it enters, as every text the writer writes is.
@@ -434,6 +431,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             glued: None,
             glued_open: None,
             tight: false,
+            join_pending: crate::render::JoinArm::NONE,
+            join_at: crate::render::JoinArm::NONE,
+            joins_next: false,
             tail: None,
             open_before: 0,
             recorder: None,
@@ -797,18 +797,17 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if let Some(last) = self.last {
             if !adjacent && !last.is_whitespace() && !first.is_whitespace() {
                 let word_seam = self.word.is_word(last) && self.word.is_word(first);
-                // An identical-char pair is in `literal_merge_pairs` only when the
-                // grammar lets its doubled token begin what directly follows the
-                // single-char token (e.g. `--` after a unary `-`); `>>` closing
-                // nested generics is never such a pair and stays tight.
-                let symbol_seam = self.word.is_literal_merge_pair(last, first);
-                if word_seam || symbol_seam {
+                let join_seam = self.joins_next && self.join_at.previous && self.word.is_join_pair(last, first);
+                if word_seam || join_seam {
                     self.emit(" ")?;
                 }
             }
         }
         self.emit(s)?;
         self.last = s.chars().next_back();
+        if self.last.is_some_and(|c| !c.is_whitespace()) {
+            self.joins_next = self.join_at.next;
+        }
         if s.contains('\n') {
             self.line_depth = 0;
         }
@@ -1134,6 +1133,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if s.is_empty() {
             return Ok(());
         }
+        let join = std::mem::take(&mut self.join_pending);
         self.tight |= self.glued.take().is_some();
         if self.deferring.is_some() {
             self.glued_open.get_or_insert(false);
@@ -1153,7 +1153,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if let Some(recorder) = self.recorder.as_mut() {
             recorder.before_text(s);
         }
+        self.join_at = join;
         let result = self.write_text(s);
+        self.join_at = crate::render::JoinArm::NONE;
         if let Some(recorder) = self.recorder.as_mut() {
             recorder.after_text(s);
         }
@@ -1191,6 +1193,10 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 }
 
 impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_, W> {
+    fn join_arm(&mut self, arm: crate::render::JoinArm) {
+        self.join_pending = self.join_pending.or(arm);
+    }
+
     fn text(&mut self, s: &str) -> crate::render::RenderResult {
         self.probe_text(s);
         let s = crate::line_endings::to_internal(if self.swallow_cr { crate::line_endings::without_swallowed_cr(s) } else { s });
@@ -1229,6 +1235,9 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             recorder.count_texts(false)
         });
         crate::render::RenderSink::text(self, &s)?;
+        if !s.is_empty() {
+            self.joins_next = true;
+        }
         if let (Some(recorder), Some(counting)) = (self.recorder.as_mut(), counting) {
             recorder.count_texts(counting);
             if let Some(at) = at {
@@ -1465,12 +1474,12 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             respelled = crate::line_endings::to_internal(&reindented);
             &respelled
         };
-        let token = crate::render::RenderSink::kind_of(self, coord)
-            .is_some_and(|kind| crate::render::RenderSink::kind_has(self, kind, crate::options::KindFlags::ANON));
+        let kind = crate::render::RenderSink::kind_of(self, coord);
+        let token = kind.is_some_and(|kind| crate::render::RenderSink::kind_has(self, kind, crate::options::KindFlags::ANON));
         if !token {
             self.write_deferred(Some(text))?;
         }
-        if let Some(kind) = crate::render::RenderSink::kind_of(self, coord) {
+        if let Some(kind) = kind {
             crate::render::RenderSink::leaf_kind(self, kind);
         }
         self.probe_slice(coord);
@@ -1479,6 +1488,14 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             recorder.count_texts(false)
         });
         self.write_chunk(text)?;
+        if !text.is_empty() {
+            self.joins_next = match kind {
+                Some(kind) if kind != crate::types::KindId::ERROR && self.options.is_some() => {
+                    crate::render::RenderSink::kind_has(self, kind, crate::options::KindFlags::JOINS_NEXT)
+                }
+                _ => true,
+            };
+        }
         if let (Some(recorder), Some(counting)) = (self.recorder.as_mut(), counting) {
             recorder.count_texts(counting);
             recorder.close(coord.span.end);
@@ -1706,21 +1723,60 @@ mod word_matcher_tests {
         assert_eq!(spaced(&["_a", "_b"]), "_a _b");
     }
 
-    // A small literal-merge-pair set matching rust's `..=`/`=>` token transitions —
+    // A small join-pair set matching rust's `..=`/`=>` token transitions —
     // enough to exercise seam behavior without depending on the real emitted
     // per-grammar table.
-    fn with_range_arrow_pairs() -> WordMatcher {
+    pub(super) fn with_range_arrow_pairs() -> WordMatcher {
         WordMatcher::new(default_ascii_table(), char::is_alphanumeric)
-            .with_literal_merge_pairs(&[(b'.', b'='), (b'=', b'>')])
+            .with_join_pairs(&[(b'.', b'='), (b'=', b'>')])
     }
 
+    // Every write armed on both sides, so only the pair table decides.
     fn spaced_with(word: &WordMatcher, parts: &[&str]) -> String {
         let mut out = String::new();
         let mut w = SpacingWriter::new(&mut out, word);
         for p in parts {
+            w.join_arm(crate::render::JoinArm::BOTH);
             w.text(p).unwrap();
         }
         out
+    }
+
+    fn joined(word: &WordMatcher, left: (crate::render::JoinArm, &str), right: (crate::render::JoinArm, &str)) -> String {
+        let mut out = String::new();
+        let mut w = SpacingWriter::new(&mut out, word);
+        w.join_arm(left.0);
+        w.text(left.1).unwrap();
+        w.join_arm(right.0);
+        w.text(right.1).unwrap();
+        out
+    }
+
+    #[test]
+    fn a_join_pair_spaces_only_where_the_left_write_joins_next_and_the_right_joins_previous() {
+        use crate::render::JoinArm;
+        let word = with_range_arrow_pairs();
+        assert_eq!(joined(&word, (JoinArm::NEXT, ".."), (JoinArm::PREVIOUS, "=>")), ".. =>");
+        assert_eq!(joined(&word, (JoinArm::NONE, ".."), (JoinArm::PREVIOUS, "=>")), "..=>");
+        assert_eq!(joined(&word, (JoinArm::NEXT, ".."), (JoinArm::NONE, "=>")), "..=>");
+        assert_eq!(joined(&word, (JoinArm::PREVIOUS, ".."), (JoinArm::NEXT, "=>")), "..=>");
+    }
+
+    #[test]
+    fn arms_before_one_write_combine_the_write_takes_them_and_an_empty_write_leaves_them() {
+        use crate::render::JoinArm;
+        let word = with_range_arrow_pairs();
+        let mut out = String::new();
+        let mut w = SpacingWriter::new(&mut out, &word);
+        w.join_arm(JoinArm::NEXT);
+        w.text("").unwrap();
+        w.text("..").unwrap();
+        w.join_arm(JoinArm::PREVIOUS);
+        w.join_arm(JoinArm::NONE);
+        w.text("=>").unwrap();
+        w.text("..").unwrap();
+        w.text("=>").unwrap();
+        assert_eq!(out, ".. =>..=>");
     }
 
     #[test]
@@ -1754,7 +1810,7 @@ mod word_matcher_tests {
         // `-|-` is a pair when `--` can begin what follows a unary `-`:
         // `- -x` and `- --x` must not re-lex as a decrement.
         let word = WordMatcher::new(default_ascii_table(), char::is_alphanumeric)
-            .with_literal_merge_pairs(&[(b'-', b'-')]);
+            .with_join_pairs(&[(b'-', b'-')]);
         assert_eq!(spaced_with(&word, &["-", "-", "x"]), "- -x");
         assert_eq!(spaced_with(&word, &["-", "--", "x"]), "- --x");
         assert_eq!(spaced_with(&word, &["-", "x"]), "-x");
@@ -1769,10 +1825,10 @@ mod word_matcher_tests {
     }
 
     #[test]
-    fn default_matcher_has_no_literal_merge_pairs() {
+    fn default_matcher_has_no_join_pairs() {
         // WordMatcher::default_ident() carries an empty pair set —
-        // grammars opt in via with_literal_merge_pairs at emit time.
-        assert_eq!(spaced(&["..", "=>"]), "..=>");
+        // grammars opt in via with_join_pairs at emit time.
+        assert_eq!(spaced_with(WordMatcher::default_ident(), &["..", "=>"]), "..=>");
     }
 }
 
@@ -1927,11 +1983,13 @@ mod sink_tests {
     #[test]
     fn a_tight_site_between_a_same_char_pair_still_gets_the_space() {
         let word = WordMatcher::new(default_ascii_table(), char::is_alphanumeric)
-            .with_literal_merge_pairs(&[(b'-', b'-')]);
+            .with_join_pairs(&[(b'-', b'-')]);
         let mut s = String::new();
         let mut w = SpacingWriter::new(&mut s, &word).with_table(&TABLE);
+        w.join_arm(crate::render::JoinArm::BOTH);
         w.text("-").unwrap();
         w.site(TIGHT);
+        w.join_arm(crate::render::JoinArm::BOTH);
         w.text("-").unwrap();
         w.site(TIGHT);
         w.text("x").unwrap();
@@ -2312,6 +2370,41 @@ mod sink_tests {
         f(&mut w, &|index, span| crate::slot::NodeCoordinate::new(crate::types::TreeId(1), index, index + 1, span));
         w.finish().unwrap();
         (s, sources.asked.get())
+    }
+
+    const JOINING: crate::types::KindId = crate::types::KindId(1);
+    const CLOSED: crate::types::KindId = crate::types::KindId(2);
+    static SLICE_FLAGS: [crate::options::KindFlags; 3] = [crate::options::KindFlags::NONE, crate::options::KindFlags::JOINS_NEXT, crate::options::KindFlags::NONE];
+
+    /// What a slice of `..` of `kind` and a `=>` armed with `arm` write, with
+    /// or without the kind flag table.
+    fn after_a_slice(kind: Option<crate::types::KindId>, arm: crate::render::JoinArm, flagged: bool) -> String {
+        let word = super::word_matcher_tests::with_range_arrow_pairs();
+        let sources = Moves { source: std::sync::Arc::from("a.."), moved: 0, asked: std::cell::Cell::new(0) };
+        let options = crate::options::ResolvedOptions { kind_flags: &SLICE_FLAGS, ..Default::default() };
+        let mut out = String::new();
+        let mut w = SpacingWriter::new(&mut out, &word).with_table(&TABLE).with_sources(&sources);
+        if flagged {
+            w = w.with_options(&options);
+        }
+        let mut coord = crate::slot::NodeCoordinate::new(crate::types::TreeId(1), CHILD, CHILD + 1, crate::types::Span { start: 1, end: 3 });
+        coord.kind = kind;
+        w.slice(&coord).unwrap();
+        w.join_arm(arm);
+        w.text("=>").unwrap();
+        w.finish().unwrap();
+        out
+    }
+
+    #[test]
+    fn a_slice_s_last_token_joins_what_follows_where_its_kind_says_so_or_its_kind_is_unknown() {
+        use crate::render::JoinArm;
+        assert_eq!(after_a_slice(Some(JOINING), JoinArm::PREVIOUS, true), ".. =>");
+        assert_eq!(after_a_slice(Some(CLOSED), JoinArm::PREVIOUS, true), "..=>");
+        assert_eq!(after_a_slice(Some(JOINING), JoinArm::NONE, true), "..=>");
+        assert_eq!(after_a_slice(None, JoinArm::PREVIOUS, true), ".. =>");
+        assert_eq!(after_a_slice(Some(crate::types::KindId::ERROR), JoinArm::PREVIOUS, true), ".. =>");
+        assert_eq!(after_a_slice(Some(CLOSED), JoinArm::PREVIOUS, false), ".. =>");
     }
 
     #[test]

@@ -196869,7 +196869,7 @@
     "wrappedText": "fn _f(&B) {}"
   },
   {
-    "expectedOutput": "\na as B<C>;\nd as *mut E<<F as E>::G>;\n",
+    "expectedOutput": "\na as B<C>;\nd as *mut E< <F as E>::G>;\n",
     "grammar": "rust",
     "input": {
       "$errors": [],
@@ -196998,13 +196998,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (type_cast_expression expression: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))))) statements: (expression_statement (expression_statement_with_semi expression: (type_cast_expression expression: (identifier) type: (pointer_type_mut writable: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (qualified_identifier qualifier: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier)))))))))))",
-    "expectedSourceOut": "\na as B<C>;\nd as *mut E<<F as E>::G>;\n",
+    "expectedSourceOut": "\na as B<C>;\nd as *mut E< <F as E>::G>;\n",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "source_file",
     "sourceIn": "\na as B<C>;\nd as *mut E<<F as E>::G>;\n",
     "wrappedOffset": 0,
-    "wrappedText": "\na as B<C>;\nd as *mut E<<F as E>::G>;\n"
+    "wrappedText": "\na as B<C>;\nd as *mut E< <F as E>::G>;\n"
   },
   {
     "expectedOutput": "a as B<C>;",
@@ -197071,7 +197071,7 @@
     "wrappedText": "a as B<C>;\n"
   },
   {
-    "expectedOutput": "d as *mut E<<F as E>::G>;",
+    "expectedOutput": "d as *mut E< <F as E>::G>;",
     "grammar": "rust",
     "input": {
       "$type": 179,
@@ -197152,13 +197152,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(expression_statement (expression_statement_with_semi expression: (type_cast_expression expression: (identifier) type: (pointer_type_mut writable: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (qualified_identifier qualifier: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier))))))))))",
-    "expectedSourceOut": "d as *mut E<<F as E>::G>;",
+    "expectedSourceOut": "d as *mut E< <F as E>::G>;",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "expression_statement",
     "sourceIn": "d as *mut E<<F as E>::G>;",
     "wrappedOffset": 0,
-    "wrappedText": "d as *mut E<<F as E>::G>;\n"
+    "wrappedText": "d as *mut E< <F as E>::G>;\n"
   },
   {
     "expectedOutput": "a as B<C>;",
@@ -197222,7 +197222,7 @@
     "wrappedText": "a as B<C>;\n"
   },
   {
-    "expectedOutput": "d as *mut E<<F as E>::G>;",
+    "expectedOutput": "d as *mut E< <F as E>::G>;",
     "grammar": "rust",
     "input": {
       "$type": 394,
@@ -197300,13 +197300,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(expression_statement_with_semi expression: (type_cast_expression expression: (identifier) type: (pointer_type_mut writable: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (qualified_identifier qualifier: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier)))))))))",
-    "expectedSourceOut": "d as *mut E<<F as E>::G>;",
+    "expectedSourceOut": "d as *mut E< <F as E>::G>;",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "expression_statement_with_semi",
     "sourceIn": "d as *mut E<<F as E>::G>;",
     "wrappedOffset": 0,
-    "wrappedText": "d as *mut E<<F as E>::G>;\n"
+    "wrappedText": "d as *mut E< <F as E>::G>;\n"
   },
   {
     "expectedOutput": "a as B<C>",
@@ -197367,7 +197367,7 @@
     "wrappedText": "fn _f() { let _ = a as B<C>; }"
   },
   {
-    "expectedOutput": "d as *mut E<<F as E>::G>",
+    "expectedOutput": "d as *mut E< <F as E>::G>",
     "grammar": "rust",
     "input": {
       "$type": 273,
@@ -197442,13 +197442,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(type_cast_expression expression: (identifier) type: (pointer_type_mut writable: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (qualified_identifier qualifier: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier))))))))",
-    "expectedSourceOut": "d as *mut E<<F as E>::G>",
+    "expectedSourceOut": "d as *mut E< <F as E>::G>",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "type_cast_expression",
     "sourceIn": "d as *mut E<<F as E>::G>",
     "wrappedOffset": 18,
-    "wrappedText": "fn _f() { let _ = d as *mut E<<F as E>::G>; }"
+    "wrappedText": "fn _f() { let _ = d as *mut E< <F as E>::G>; }"
   },
   {
     "expectedOutput": "B<C>",
@@ -197502,7 +197502,7 @@
     "wrappedText": "type _X = B<C>;"
   },
   {
-    "expectedOutput": "E<<F as E>::G>",
+    "expectedOutput": "E< <F as E>::G>",
     "grammar": "rust",
     "input": {
       "$type": 246,
@@ -197567,13 +197567,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (qualified_identifier qualifier: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier))))))",
-    "expectedSourceOut": "E<<F as E>::G>",
+    "expectedSourceOut": "E< <F as E>::G>",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "generic_type",
     "sourceIn": "E<<F as E>::G>",
     "wrappedOffset": 10,
-    "wrappedText": "type _X = E<<F as E>::G>;"
+    "wrappedText": "type _X = E< <F as E>::G>;"
   },
   {
     "expectedOutput": "B",
@@ -198041,7 +198041,7 @@
     "wrappedText": "type _X = B<<F as E>::G>;"
   },
   {
-    "expectedOutput": "*mut E<<F as E>::G>",
+    "expectedOutput": "*mut E< <F as E>::G>",
     "grammar": "rust",
     "input": {
       "$type": 389,
@@ -198109,13 +198109,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(pointer_type_mut writable: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (qualified_identifier qualifier: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier)))))))",
-    "expectedSourceOut": "*mut E<<F as E>::G>",
+    "expectedSourceOut": "*mut E< <F as E>::G>",
     "grammar": "rust",
     "kind": "roundtrip",
     "pattern": "pointer_type_mut",
     "sourceIn": "*mut E<<F as E>::G>",
     "wrappedOffset": 10,
-    "wrappedText": "type _X = *mut E<<F as E>::G>;"
+    "wrappedText": "type _X = *mut E< <F as E>::G>;"
   },
   {
     "expectedOutput": "<F as E>::G",

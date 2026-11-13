@@ -15,6 +15,7 @@ import { emitAll } from '../emit.ts';
 import { TemplateEmitter } from '../templates.ts';
 import { flatten } from '../../compiler/flatten.ts';
 import { resolveIrKeys } from '../../compiler/assemble.ts';
+import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 
 function makeBranch(kind: string, label: string, kindEntries: readonly GeneratedKindEntry[]): AssembledBranch {
 	const rule: SeqRule<'link'> = {
@@ -72,8 +73,8 @@ describe('loop-driven emitters', () => {
 	it('store collection state on the instance, not in module globals', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(() => makeNodeMapWith(new Map()));
 		const kindEntries = collectGeneratedKindEntries(generatedIdTables);
-		const left = new TemplateEmitter({ grammar: 'rust', nodeMap, kindEntries });
-		const right = new TemplateEmitter({ grammar: 'rust', nodeMap, kindEntries });
+		const left = new TemplateEmitter({ grammar: 'rust', nodeMap, kindEntries, joins: NO_JOINS });
+		const right = new TemplateEmitter({ grammar: 'rust', nodeMap, kindEntries, joins: NO_JOINS });
 
 		left.emitBranch(makeBranch('left_kind', 'left', kindEntries));
 		right.emitBranch(makeBranch('right_kind', 'right', kindEntries));
@@ -87,21 +88,21 @@ describe('loop-driven emitters', () => {
 	it('emitAll creates fresh loop-driven emitter instances per run', () => {
 		const fixture = withGeneratedIdTables((kindEntries) => makeNodeMapWith(new Map(layoutNodes(kindEntries))));
 
-		const first = emitAll({ grammar: 'rust', ...fixture });
-		const second = emitAll({ grammar: 'rust', ...fixture });
+		const first = emitAll({ grammar: 'rust', joins: NO_JOINS, ...fixture });
+		const second = emitAll({ grammar: 'rust', joins: NO_JOINS, ...fixture });
 
 		expect(first.templates.bodies).not.toBe(second.templates.bodies);
 	});
 
 	it('emitAll routes group nodes through the wrap emitter', () => {
-		const { wrap } = emitAll({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeHiddenHelperNodeMap(kindEntries))});
+		const { wrap } = emitAll({ grammar: 'synth', joins: NO_JOINS, ...withGeneratedIdTables((kindEntries) => makeHiddenHelperNodeMap(kindEntries))});
 
 		expect(wrap).toContain('export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle): T.AssignmentEq.Parsed {');
 		expect(wrap).toContain('[TSKindId.AssignmentEq]: (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),');
 	});
 
 	it('emitAll emits no wrap for a supertype node', () => {
-		const { wrap } = emitAll({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeHiddenSupertypeNodeMap(kindEntries))});
+		const { wrap } = emitAll({ grammar: 'synth', joins: NO_JOINS, ...withGeneratedIdTables((kindEntries) => makeHiddenSupertypeNodeMap(kindEntries))});
 
 		expect(wrap).not.toContain('wrapExportStatementDefault');
 		expect(wrap).not.toContain("'_export_statement_default'");

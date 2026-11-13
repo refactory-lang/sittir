@@ -120,6 +120,10 @@ export interface GrammarJson {
 	readonly name: string;
 	readonly rules: Readonly<Record<string, GrammarRule>>;
 	readonly supertypes?: readonly string[];
+	readonly extras?: readonly GrammarRule[];
+	readonly externals?: readonly GrammarRule[];
+	readonly inline?: readonly string[];
+	readonly conflicts?: readonly (readonly string[])[];
 }
 
 export type PrecRuleUnion = PrecRule | PrecLeftRule | PrecRightRule | PrecDynamicRule;

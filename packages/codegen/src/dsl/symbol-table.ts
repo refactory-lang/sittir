@@ -19,7 +19,8 @@ import {
 	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, RuleAnnotations } from '../types/rule.ts';
-import type { GrammarRule } from '../grammar-shapes/grammar-json.ts';
+import type { GrammarJson, GrammarRule } from '../grammar-shapes/grammar-json.ts';
+import type { ParserLanguage } from '../engine-loader.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import {
 	isParserHiddenName,
@@ -471,12 +472,17 @@ export type GeneratedIdTable =
 
 export type TreeShape = (source: string) => string;
 
+export interface BuiltParser {
+	readonly language: ParserLanguage;
+	readonly grammar: GrammarJson;
+}
+
 export interface GeneratedIdTables {
 	readonly kindIds: GeneratedIdTable;
 	readonly fieldIds: GeneratedIdTable;
 	readonly folds: ReadonlyMap<number, readonly number[]>;
 	readonly sourceArtifact: string;
-	readonly parser: TreeShape | null;
+	readonly parser: BuiltParser | null;
 }
 
 export interface GeneratedKindEntry {

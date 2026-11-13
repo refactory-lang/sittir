@@ -26,6 +26,7 @@ import type { BoundaryArm, BoundaryMark, KindBoundary } from './boundary-arms.ts
 import { childIndexOf, optionKey, type AddressLeafEntry, type AddressTables, type ChildIndex } from './options.ts';
 import { lineBreakTerminatedKinds, lineTerminatedKinds } from '../compiler/model/trivia.ts';
 import { PREFERRED_NEWLINE, indentChars, indentUnitOf, newlineArms } from '../compiler/model/layout-kinds.ts';
+import type { JoinFacts } from '../compiler/model/join-seams/index.ts';
 
 export type SeamStrength = 'Fallback' | 'Cascade' | 'Declared';
 
@@ -128,6 +129,7 @@ const KIND_ANON = 1;
 const KIND_LINE_TERMINATED = 2;
 const KIND_LINE_BREAK_TERMINATED = 4;
 const KIND_ROOT = 8;
+const KIND_JOINS_NEXT = 16;
 
 const DELIMITER_BITS: Readonly<Record<string, number>> = Object.fromEntries(
 	Object.entries(Delimiter).map(([member, bits]) => [`Delimiter.${member}`, bits])
@@ -157,7 +159,7 @@ function screaming(s: string): string {
 	return toScreamingSnakeCase(s, s);
 }
 
-function kindFlagsOf(kindEntries: readonly IdEntry[], nodeMap: NodeMap): { readonly id: number; readonly flags: number }[] {
+function kindFlagsOf(kindEntries: readonly IdEntry[], nodeMap: NodeMap, joins: JoinFacts): { readonly id: number; readonly flags: number }[] {
 	const flags = new Map<number, number>();
 	for (const entry of kindEntries) {
 		if (entry.id === undefined) continue;
@@ -165,7 +167,8 @@ function kindFlagsOf(kindEntries: readonly IdEntry[], nodeMap: NodeMap): { reado
 			(entry.anon === true ? KIND_ANON : 0) |
 			(lineTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_TERMINATED : 0) |
 			(lineBreakTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_BREAK_TERMINATED : 0) |
-			(nodeMap.nodes.get(entry.kind)?.grammarRoot === true ? KIND_ROOT : 0);
+			(nodeMap.nodes.get(entry.kind)?.grammarRoot === true ? KIND_ROOT : 0) |
+			([entry.kind, entry.symbolName, entry.parseName].some((name) => name !== undefined && joins.joinsNextKinds.has(name)) ? KIND_JOINS_NEXT : 0);
 		if (bits !== 0) flags.set(entry.id, (flags.get(entry.id) ?? 0) | bits);
 	}
 	return [...flags].map(([id, bits]) => ({ id, flags: bits })).sort((a, b) => a.id - b.id);
@@ -186,6 +189,7 @@ export function planRenderOptions(
 	sites: readonly SitePreference[],
 	kindEntries: readonly IdEntry[],
 	nodeMap: NodeMap,
+	joins: JoinFacts,
 	whitespaceText: ReadonlyMap<string, string>,
 	declaredIndent: string | undefined,
 	grammar: string,
@@ -292,7 +296,7 @@ export function planRenderOptions(
 		whitespaceText: [...whitespaceText]
 			.map(([kind, text]) => ({ id: idOf(kindEntries, kind, 'renderAs'), text }))
 			.sort((a, b) => a.id - b.id),
-		kindFlags: kindFlagsOf(kindEntries, nodeMap),
+		kindFlags: kindFlagsOf(kindEntries, nodeMap, joins),
 		leafEdges: leafEdgesTable(kindEntries, nodeMap),
 		seatWrappers: [...seatWrappers].sort((a, b) => a.id - b.id),
 		gaps: [...whitespaceText.keys()]
@@ -766,7 +770,7 @@ export function renderOptionsRs(
 	L.push('];', '');
 	L.push('/// Per kind id, its row in `EDGE_SITES`.');
 	L.push(...denseTable('EDGE_ROWS', 'EdgeRow', new Map(edgeRows.map((e, row) => [e.kind, row]))));
-	L.push('/// Per kind id, its `KindFlags`: `ANON` (the parser\'s anonymous token), `LINE_TERMINATED`, `LINE_BREAK_TERMINATED`, `ROOT`.');
+	L.push('/// Per kind id, its `KindFlags`: `ANON` (the parser\'s anonymous token), `LINE_TERMINATED`, `LINE_BREAK_TERMINATED`, `ROOT`, `JOINS_NEXT`.');
 	L.push(...denseFlags('KIND_FLAGS', plan.kindFlags, 'KindFlags'));
 	L.push('/// Per kind id, the layout kinds its leaf pattern takes before it (low byte) and after it (high byte); 0 where the kind has no stamp.');
 	L.push(...denseFlags('LEAF_EDGES', plan.leafEdges, 'u16').map((line) => line.replace('pub static', 'pub const')));

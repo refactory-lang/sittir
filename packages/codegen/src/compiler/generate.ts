@@ -32,6 +32,7 @@ import type { DroppedTokens } from './diagnostics/grammar-diagnostics.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { defaultTriviaForm, triviaKinds } from './model/trivia.ts';
+import { joinSeamsOf } from './model/join-seams/index.ts';
 
 export interface GeneratedFiles {
 	types: string;
@@ -124,6 +125,12 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 		nodeMap.scc = computeNodeSCC(nodeMap);
 
+		if (generatedIdTables.parser === null) throw new Error(`generate: ${cfg.grammar} has no built parser to read its join seams from`);
+		const joins = joinSeamsOf(nodeMap, compilation.evaluated.rules, generatedIdTables.parser);
+		for (const unmapped of joins.unmapped) {
+			compilation.diagnostics.fail({ code: 'join-seam-unmapped', message: `${cfg.grammar}: join seam ${unmapped}` });
+		}
+
 		const emitted = emitAll({
 			grammar: cfg.grammar,
 			nodeMap,
@@ -138,6 +145,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			reparseHosts: raw.reparseHosts,
 			options: raw.options,
 			renderAs: raw.renderAs,
+			joins,
 			diagnostics: compilation.diagnostics
 		});
 

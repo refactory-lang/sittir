@@ -1,3 +1,4 @@
+import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { emittedTemplates } from './support/emitted-templates.ts';
 import { EMPTY, slot } from '../render-body.ts';
@@ -392,7 +393,7 @@ function makeSupertypeBackedChildEnumNodeMap(kindEntries: readonly GeneratedKind
 describe('native node emission', () => {
 	it('boxes a payload a choice reaches again through what it holds by value, and asserts it over the ceiling', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap, MINIMAL_TOKENS);
-		const emitted = emitRenderModule('rust', emittedTemplates({ call_expression: slot('callee') }), nodeMap, generatedIdTables).nodeRs.contents;
+		const emitted = emitRenderModule('rust', emittedTemplates({ call_expression: slot('callee') }), nodeMap, generatedIdTables, { joins: NO_JOINS }).nodeRs.contents;
 		expect(emitted).toContain('pub callee: ::sittir_core::SlotValue<ExpressionNode>,');
 		expect(emitted).toContain('    CallExpression(Box<CallExpressionNode>),');
 		expect(emitted).toMatch(new RegExp(`^const _: \\(\\) = assert!\\(::core::mem::size_of::<CallExpressionNode>\\(\\) > ${PAYLOAD_CEILING_BYTES}, "`, 'm'));
@@ -404,7 +405,8 @@ describe('native node emission', () => {
 			'rust',
 			emittedTemplates({ call_expression: slot('callee') }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		);
 
 		expect(emitted.nodeRs.contents).toContain('pub enum AnyNode');
@@ -445,7 +447,8 @@ describe('native node emission', () => {
 			'rust',
 			emittedTemplates({ optional_parent: EMPTY }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 
 		expect(rust).toContain(
@@ -461,7 +464,8 @@ describe('native node emission', () => {
 			'rust',
 			emittedTemplates({ child_parent: EMPTY }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		);
 		const start = emitted.nodeRs.contents.indexOf('pub struct ChildParentNode');
 		const end = emitted.nodeRs.contents.indexOf('}', start);
@@ -492,7 +496,8 @@ describe('native node emission', () => {
 			'rust',
 			emittedTemplates({ supertype_alias_parent: EMPTY }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		);
 		const start = emitted.nodeRs.contents.indexOf('pub struct SupertypeAliasParentNode');
 		const end = emitted.nodeRs.contents.indexOf('}', start);
@@ -512,7 +517,8 @@ describe('native node emission', () => {
 			'rust',
 			emittedTemplates({ repeated_parent: EMPTY }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		);
 		const start = emitted.nodeRs.contents.indexOf('pub struct RepeatedParentNode');
 		const end = emitted.nodeRs.contents.indexOf('}', start);
@@ -534,7 +540,8 @@ describe('native node emission', () => {
 			'rust',
 			emittedTemplates({ optional_repeated_parent: EMPTY }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		);
 		const start = emitted.nodeRs.contents.indexOf('pub struct OptionalRepeatedParentNode');
 		const end = emitted.nodeRs.contents.indexOf('}', start);
@@ -551,7 +558,8 @@ describe('native node emission', () => {
 			'python',
 			emittedTemplates({ module: EMPTY }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 
 		expect(emitted).toContain('pub enum StatementNode {');
@@ -573,7 +581,8 @@ describe('native node emission', () => {
 			'rust',
 			emittedTemplates({ hidden_wrapper_parent: EMPTY }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 
 		expect(emitted).toContain('pub enum HiddenWrapperParentContentNodeSlot {');
@@ -587,7 +596,8 @@ describe('native node emission', () => {
 			'typescript',
 			emittedTemplates({ object_like: EMPTY }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 
 		expect(emitted).toContain('pub enum ObjectLikeContentNodeSlot {');
@@ -612,7 +622,8 @@ describe('native node emission', () => {
 			'rust',
 			emittedTemplates({ field_expression: slot('field') }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 
 		expect(emitted).toContain('pub enum FieldExpressionFieldNodeSlot {');
@@ -630,7 +641,8 @@ describe('native node emission', () => {
 			'rust',
 			emittedTemplates({ repeated_field_parent: slot('items') }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		);
 		const start = emitted.nodeRs.contents.indexOf('pub struct RepeatedFieldParentNode');
 		const end = emitted.nodeRs.contents.indexOf('}', start);
@@ -648,7 +660,8 @@ describe('native node emission', () => {
 			'rust',
 			emittedTemplates({ optional_repeated_field_parent: slot('items') }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		);
 		const start = emitted.nodeRs.contents.indexOf('pub struct OptionalRepeatedFieldParentNode');
 		const end = emitted.nodeRs.contents.indexOf('}', start);
@@ -666,7 +679,8 @@ describe('native node emission', () => {
 			'rust',
 			emittedTemplates({ parent_expression: slot('value') }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		);
 
 		expect(emitted.nodeRs.contents).toContain('pub enum ExpressionNode');
@@ -682,7 +696,8 @@ describe('native node emission', () => {
 			'rust',
 			emittedTemplates({ self: slot('text') }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		);
 
 		expect(emitted.nodeRs.contents).toMatch(/pub enum AnyNode \{[^}]*\n    #\[kind\(kind::SELF\)\]\n    Self_,/);
