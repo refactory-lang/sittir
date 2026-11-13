@@ -57,9 +57,12 @@ describe('bindingIssues', () => {
 	it('reads a minted name as whichever of its source kinds fits where it stands', async () => {
 		expect(await bindingIssues('rust', ['(generic_function function: (qualified_identifier))', '(generic_type type: (qualified_identifier))'].join('\n'))).toEqual([]);
 	}, FULL_PIPELINE_TIMEOUT);
-	it('tries a bounded number of readings, and says so when none of them compiles', async () => {
-		const many = `(qualified_identifier ${Array.from({ length: 5 }, () => '(qualified_identifier)').join(' ')} (string_literal))`;
-		expect(await bindingIssues('rust', many)).toEqual([{ line: 1, message: 'none of the first 64 of the 729 readings of its minted names compiles' }]);
+	it('reads each minted name by where it stands, however many the pattern holds', async () => {
+		const items = `(source_file ${Array.from({ length: 5 }, () => '(type_item type: (qualified_identifier name: (type_identifier)))').join(' ')})`;
+		expect(await bindingIssues('rust', items)).toEqual([]);
+		const issues = await bindingIssues('rust', `(qualified_identifier ${Array.from({ length: 5 }, () => '(qualified_identifier)').join(' ')} (string_literal))`);
+		expect(issues.map((issue) => issue.line)).toEqual([1]);
+		expect(issues[0]?.message).toMatch(/^Bad pattern structure/);
 	}, FULL_PIPELINE_TIMEOUT);
 });
 
