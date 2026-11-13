@@ -266,6 +266,12 @@ pub fn wide_unit_blocks(levels: usize) -> String {
     format!("fn f(){{\n{}{}\nx\n{}\n}}\n", " ".repeat(levels), "{".repeat(levels), "}".repeat(levels))
 }
 
+/// `levels` blocks each opened with a multi-line comment on one line indented `levels` spaces, so the indentation unit is as wide as the chain is deep.
+#[must_use]
+pub fn wide_unit_comments(levels: usize) -> String {
+    format!("fn f() {{\n{}{}{}\n}}\n", " ".repeat(levels), "{/* a\nb */".repeat(levels), "}".repeat(levels))
+}
+
 /// `levels` rust `!` operators, each applied to the one after it:
 /// `!!true`. Every level is a layout owner of its own, so a snapshot places
 /// each on its own read.
