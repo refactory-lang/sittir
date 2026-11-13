@@ -84,9 +84,9 @@ export const TOKEN_INTERIORS = {
 		]
 	},
 	metavariable: { regex: '^\\$(?<name>[a-zA-Z_][0-9A-Z_a-z]*)$', slots: [{ name: 'name', propertyName: 'name' }] },
-	raw_string_literal_end: { regex: '^"(?<hashes>(?:#*))$', slots: [{ name: 'hashes', propertyName: 'hashes' }] },
+	raw_string_literal_end: { regex: '^"(?<hashes>(?:#{0,255}))$', slots: [{ name: 'hashes', propertyName: 'hashes' }] },
 	raw_string_literal_start: {
-		regex: '^(?<prefix>br|cr|r)(?<hashes>(?:#*))"$',
+		regex: '^(?<prefix>br|cr|r)(?<hashes>(?:#{0,255}))"$',
 		slots: [
 			{ name: 'prefix', propertyName: 'prefix' },
 			{ name: 'hashes', propertyName: 'hashes' }
