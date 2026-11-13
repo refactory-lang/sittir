@@ -215,7 +215,7 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 		if ((table.tokens?.[id]?.length ?? 0) > 0) out.push('opaque');
 		if (held.some((k) => { const held = idOf(k); return held !== undefined && table.delimiters?.[held]?.readOnly !== undefined; })) out.push('readOnly');
 		const structural = arms.filter((arm) => arm.literal === undefined);
-		if ((entriesFor(kind) ?? []).some((entry) => presetCarried.has(entry.index))) out.push('preset');
+		if ((entriesFor(kind) ?? []).some((entry) => presetCarried.has(entry))) out.push('preset');
 		if (structural.some((arm) => arm.scalar !== undefined && (arm.scalar === 'float' || !totalIntegerReads.has(arm.kind)))) out.push('scalar');
 		const builtWhole = structural.length > 0 && structural.every((arm) => nullaryBuilt(table, arm));
 		const readsText = !builtWhole && (node.slots.length === 0 || (structural.length > 0 && structural.every((arm) => (arm.members.length === 0 && arm.seated !== undefined) || textBuilt(table, arm))));
@@ -234,7 +234,7 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 		for (const [, list] of routes.readEntries)
 			for (const entry of list) {
 				if (entry.vocab !== path) continue;
-				const closes = new Set(freeTextClosedBy.get(entry.index) ?? []);
+				const closes = new Set(freeTextClosedBy.get(entry) ?? []);
 				for (const route of entry.members) {
 					if (route.name !== member || route.flag === true) continue;
 					const except = new Set(route.route === 'slot' ? (route.except ?? []) : []);

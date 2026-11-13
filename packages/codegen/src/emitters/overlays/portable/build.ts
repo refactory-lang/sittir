@@ -27,7 +27,7 @@ import { Delimiter } from '@sittir/common/delimiter';
 import { holds, portablePathHasFacts, readableEntries } from '@sittir/common/engine';
 import type { ChildTest, GrammarRoutes, MemberRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
 import { concreteKinds, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reachedBy, shownSlots, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
-import { slotSubjectOf, type PortableFactRecord } from './read-tests.ts';
+import { slotSubjectOf, tableReadEntries, type PortableFactRecord } from './read-tests.ts';
 import { portableSpelledFactOf } from './spelled-facts.ts';
 import type { ModelMount, ModelSlot, SlotModel, TemplateFact } from '../../../bindings/facts.ts';
 import type { VocabularyScalar } from '../../../bindings/vocabulary.ts';
@@ -110,9 +110,9 @@ export interface PortableBuildInput {
 export interface PortableBuildOutput {
 	readonly table: PortableBuildTable;
 	readonly diagnostics: readonly PickDiagnostic[];
-	readonly presetCarried: ReadonlySet<number>;
+	readonly presetCarried: ReadonlySet<ReadEntry>;
 	readonly totalIntegerReads: ReadonlySet<number>;
-	readonly freeTextClosedBy: ReadonlyMap<number, readonly string[]>;
+	readonly freeTextClosedBy: ReadonlyMap<ReadEntry, readonly string[]>;
 }
 
 interface RoutedFill {
@@ -216,6 +216,7 @@ const disjoint = (sets: readonly ReadonlySet<number>[]): boolean =>
 export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPlans, features, factOf, readTest, declaresFlag, valueScalarOf }: PortableBuildInput): PortableBuildOutput {
 	const typeOf = (kind: string): number | undefined => findKindEntry(kindEntries, kind)?.id;
 	const subjectOf = slotSubjectOf(nodeMap);
+	const tableEntries = tableReadEntries(routes.readEntries, factOf, typeOf);
 	const shapes = buildFactoryMap(nodeMap, kindEntries).factoryShapes;
 	const fixedText = new Map(fixedTextKinds(nodeMap, kindEntries));
 	const builders = new Map<string, PortableCallShape>();
@@ -763,7 +764,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					return false;
 			}
 		};
-		const entries = readableEntries((routes.readEntries.get(kind) ?? []).map((entry) => ({ path: entry.vocab, within: entry.claim.within, test: readTest(entry), entry })));
+		const id = typeOf(kind);
+		const entries = readableEntries((id === undefined ? [] : (tableEntries.get(id) ?? [])).map((entry) => ({ path: entry.vocab, within: entry.claim.within, test: readTest(entry), entry })));
 		const spelled = entries.filter(({ test }) => test.every((condition) => condition.via.length === 0 && readsOpener(condition.plan)));
 		const readAs = (member: string | null, preference: string | null): string | undefined => {
 			const text = tokenText(token, member, preference);
@@ -772,14 +774,14 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		};
 		return { node, open, token, input, preferred, entries, decided: spelled.length === entries.length, readAs };
 	};
-	const freeTextClosedBy = new Map<number, readonly string[]>();
+	const freeTextClosedBy = new Map<ReadEntry, readonly string[]>();
 	for (const kind of routes.readEntries.keys()) {
 		const reads = spelledReadsOf(kind);
 		const gate = reads?.node.freeText?.gate;
 		if (reads === undefined || gate === undefined || gate.token !== reads.token.kind || !reads.decided) continue;
 		const quotes = reads.preferred === undefined ? [null] : reads.preferred.values.flatMap((value) => (isTerminalValue(value) ? [value.value] : []));
 		const opened = new Set(gate.spellings.flatMap((spelling) => quotes.flatMap((quote) => reads.readAs(spelling, quote) ?? [])));
-		for (const { entry } of reads.entries) if (!opened.has(entry.vocab)) freeTextClosedBy.set(entry.index, reads.node.freeText!.opened);
+		for (const { entry } of reads.entries) if (!opened.has(entry.vocab)) freeTextClosedBy.set(entry, reads.node.freeText!.opened);
 	}
 	const delimiterPresets = (kind: string, entry: ReadEntry): readonly Placed[] => {
 		const reads = spelledReadsOf(kind);
@@ -1265,7 +1267,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		}
 	];
 	const paths: Record<string, PortableBuildPath> = {};
-	const presetCarried = new Set<number>();
+	const presetCarried = new Set<ReadEntry>();
 	const decided = new Map<string, Record<keyof PortableValueBuild, string | undefined>>();
 	for (const [path, arms] of [...byPath].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
 		const tests = new Map<Arm, PortablePickTest[]>(arms.map((arm) => [arm, []]));
@@ -1338,7 +1340,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const emptied = empty.length === 0 ? kept : [...kept, { empty }];
 			tests.set(arm, lacking.length === 0 && required.length === 0 ? emptied : [...emptied, { absent: lacking, required }]);
 		}
-		for (const arm of ordered) if (arm.chosen) presetCarried.add(arm.entry.index);
+		for (const arm of ordered) if (arm.chosen) presetCarried.add(arm.entry);
 		paths[path] = {
 			root: root && ordered.some((arm) => !holders.has(arm)),
 			arms: ordered.map(
