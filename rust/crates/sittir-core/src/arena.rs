@@ -36,6 +36,7 @@ pub mod rows;
 pub mod run_nodes;
 mod view;
 pub mod side;
+pub mod source;
 mod small;
 mod write;
 
@@ -626,6 +627,8 @@ pub struct BuiltChunks {
     freed: Vec<u32>,
     trees: Vec<TreeId>,
     overflow: HashMap<u32, u32, crate::heap::IndexState>,
+    /// The string chunk open for reads' sources, and its bytes used.
+    sources: Option<(u32, u32)>,
 }
 
 impl BuiltChunks {
@@ -633,7 +636,7 @@ impl BuiltChunks {
     /// shapes are `shape`'s: the grammar's stamps.
     #[must_use]
     pub fn new(kind_bits: u32, shape: ShapeOf) -> Self {
-        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), trees: Vec::new(), overflow: HashMap::default() }
+        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), trees: Vec::new(), overflow: HashMap::default(), sources: None }
     }
 
     /// A new words chunk of `len` words, zeroed: its number, its memory and
