@@ -301,7 +301,8 @@ export interface ParsedRoot {
 }
 
 export interface EngineDiagnostics<TRoot = unknown, TTree extends object = object> {
-	readonly buildProfile: string | undefined;
+	/** The profile build-native built the engine's binary with; `undefined` for a binary build-native didn't build. */
+	readonly buildProfile: 'release' | 'gate' | 'dev' | undefined;
 	/**
 	 * The engine's built arena now: `chunks`, the bytes every chunk takes with its counts,
 	 * `counts`, the part of them the counts take, and `live`, the records, runs and side records
