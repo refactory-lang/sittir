@@ -23,6 +23,7 @@ Bookkeeping edits are docs commits to master: pathspec commits, pushed by litera
 - **Merging,** on the maintainer's word only, given directly or relayed by brainstorm:
   - pin the head (`gh pr merge N --merge --match-head-commit <sha>`), no `--delete-branch`, and keep the remote branch;
   - re-verify first: head unchanged, MERGEABLE, required checks green, 0 open threads, and the task status line (section 1).
+  - **Stacks merge top down** (the user's standing rule, 2026-11-13): the topmost PR goes into its base branch first, down to the one that targets master. No `--delete-branch` mid-stack. Retargeting a PR before its base merges is the wrong order.
 - **A provable flake doesn't block a merge the maintainer approved** ("If something is provably a flake we can merge it", 2026-11-12). The proof needs all three:
   1. the failing test passes at the same head, in another leg of the same run or in a re-run;
   2. it failed by timeout or a runner fault, not by an assertion or a wrong value;
