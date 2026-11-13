@@ -1086,7 +1086,66 @@ macro_rules! napi_engine {
                 let engine = engine_of(engine)?;
                 let owner = engine_of(owner)?;
                 let at = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
-                render_built_with(&engine, &env, &owner, tree_id, options, |arena, trees, ctx| owner.render_built(arena, at, $crate::slot::ChangedEdges { leading, trailing }, trees, ctx))
+                let changed = $crate::slot::ChangedEdges { leading, trailing };
+                let (rendered, options) = render_read(&engine, &owner, at, changed, options)?;
+                match rendered {
+                    Some(rendered) => Ok(rendered),
+                    None => render_built_with(&engine, &env, &owner, tree_id, options, |arena, trees, ctx| owner.render_built(arena, at, changed, trees, ctx)),
+                }
+            }
+
+            /// What `render_built` answers for a record a read left at `at`
+            /// of the arena `owner` holds: rendered from the arena alone,
+            /// under `options` over the layer its source's read inferred
+            /// over `engine`'s, its line endings spelled. No text, and the
+            /// options handed back, for an address no read wrote.
+            fn render_read(
+                engine: &$crate::engine::Engine<$grammar>,
+                owner: &$crate::engine::Engine<$grammar>,
+                at: $crate::arena::Address,
+                changed: $crate::slot::ChangedEdges,
+                options: Option<$options>,
+            ) -> ::napi::Result<(Option<$crate::boundary::RenderedText>, Option<$options>)> {
+                use $crate::arena::ArenaRead;
+                let built = owner.written().built();
+                if !built.read_entry(at) {
+                    return Ok((None, options));
+                }
+                let refused = |e: $crate::arena::ArenaError| ::napi::Error::from_reason(format!("render_built failed: {e}"));
+                let source = $crate::arena::source::Source::read(&*built, $crate::arena::RunNodes::source_of(&*built, at).map_err(refused)?).map_err(refused)?;
+                let base = source.inferred.over(engine.options());
+                let table = match options {
+                    Some(options) => options.resolve(&base).map_err(::napi::Error::from_reason)?,
+                    None => base,
+                };
+                let canonical = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| owner.render_at(&built, at, changed, &table, false)))
+                    .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
+                    .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))?;
+                Ok((Some($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline))), None))
+            }
+
+            /// Parse `source` with `engine` and keep no tree: the read
+            /// leaves the source's text and every node's record in the
+            /// engine's built arena (`Engine::parse_records`). As JSON
+            /// `{ root, source, options, errors }`: the address of the
+            /// root's record, null when its reader writes none; the address
+            /// of the source's entry; the source's layer of the render
+            /// options; and its error regions. Refuses an engine in use, a
+            /// parse that fails, and what the read or the arena refuses.
+            #[::napi_derive::napi]
+            pub fn parse_records(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, source: String) -> ::napi::Result<String> {
+                let parsed = engine
+                    .try_borrow_mut()
+                    .map_err(|_| ::napi::Error::from_reason("the engine is in use"))?
+                    .parse_records::<$any>(&source)
+                    .map_err(::napi::Error::from_reason)?;
+                Ok(::serde_json::json!({
+                    "root": parsed.root.map(|at| at.0),
+                    "source": parsed.source.0,
+                    "options": parsed.options,
+                    "errors": parsed.errors,
+                })
+                .to_string())
             }
 
             /// `render_built`'s text written to `path` (`save_rendered`),

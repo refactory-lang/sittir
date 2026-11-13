@@ -426,6 +426,18 @@ export declare function liveTreeCount(): number
 export type NodeIndex = number
 
 /**
+ * r" Parse `source` with `engine` and keep no tree: the read
+ * r" leaves the source's text and every node's record in the
+ * r" engine's built arena (`Engine::parse_records`). As JSON
+ * r" `{ root, source, options, errors }`: the address of the
+ * r" root's record, null when its reader writes none; the address
+ * r" of the source's entry; the source's layer of the render
+ * r" options; and its error regions. Refuses an engine in use, a
+ * r" parse that fails, and what the read or the arena refuses.
+ */
+export declare function parseRecords(engine: object, source: string): string
+
+/**
  * Whether each node `addresses` names (a JSON array of
  * `query::Address`, all in one tree) satisfies the `where` plan
  * (JSON, see `query::PlanSpec`), in order. Refuses a tree that is

@@ -2776,6 +2776,7 @@ impl<G: EngineGrammar> Engine<G> {
         let (whitespace, _) = self.grammar.whitespace();
         let root = tree.root_node();
         let inferred = crate::options::InferredOptions::infer(source, crate::read::grammar_id(&root), &self.options, self.grammar.option_tables(), whitespace);
+        let options = inferred.to_json(self.grammar.option_tables());
         let work = crate::layout::LayoutWorkCounter::default();
         let errors = error_regions(&mut TreeNodes::new(&tree, source, &work));
         let grammar = self.grammar;
@@ -2790,7 +2791,7 @@ impl<G: EngineGrammar> Engine<G> {
         if let Some(root) = root {
             built.root_source(entry, root).map_err(|refusal| refusal.to_string())?;
         }
-        Ok(ParsedRecords { root, source: entry, errors })
+        Ok(ParsedRecords { root, source: entry, options, errors })
     }
 
     pub fn find_and_read(&mut self, _source: String, _pattern: String) -> Result<String, String> {
@@ -2799,14 +2800,16 @@ impl<G: EngineGrammar> Engine<G> {
 
 }
 
-/// What an arena parse leaves: the root's record, none for a source that
-/// parses to an `ERROR` alone, the source's entry, and the parse's `ERROR`
+/// What an arena parse leaves: the root's record, none for a root its
+/// reader writes none for, the source's entry, the source's layer of the
+/// render options (`ParsedTree::inferred_options`), and the parse's `ERROR`
 /// and `MISSING` regions.
 #[cfg(feature = "arena")]
 #[derive(Debug)]
 pub struct ParsedRecords {
     pub root: Option<crate::arena::Address>,
     pub source: crate::arena::Address,
+    pub options: serde_json::Value,
     pub errors: Vec<ErrorRegion>,
 }
 
