@@ -97,7 +97,7 @@ import { assertPredictedKindEntries, catalogRenames, catalogSymbolSource, collec
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
-import { withId, rebaseRuleIds, withKindFacts } from '../dsl/rule-attrs.ts';
+import { absorbAlignedIds, absorbDroppedIds, withId, rebaseRuleIds, withKindFacts } from '../dsl/rule-attrs.ts';
 import { peelWrapper } from './canonical-rules.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { wordDisplaysOf } from '../dsl/rule-transforms.ts';
@@ -505,16 +505,19 @@ export function canonicalizeRuleLiterals(
 				const entry = parsedAs ?? findEntryForLiteralText(kindEntries, rule.value);
 				if (entry && (syntactic || entry.anon === true)) {
 					return stampAliasTargetId(
-						{
-							type: SYMBOL,
-							name: entry.kind,
-							literal: rule.value,
-							inline: isParserHiddenKind(entry.kind, kindEntries),
-							kindId: parsedAs?.id ?? entry.parseId ?? entry.id,
-							metadata: makeRuleMetadata({ symbolSource: 'link' }),
-							...(rule.aliasedTo === undefined ? {} : { aliasedTo: rule.aliasedTo }),
-							...(rule.annotations === undefined ? {} : { annotations: rule.annotations })
-						} satisfies SymbolRule<'link'>,
+						withId(
+							{
+								type: SYMBOL,
+								name: entry.kind,
+								literal: rule.value,
+								inline: isParserHiddenKind(entry.kind, kindEntries),
+								kindId: parsedAs?.id ?? entry.parseId ?? entry.id,
+								metadata: makeRuleMetadata({ symbolSource: 'link' }),
+								...(rule.aliasedTo === undefined ? {} : { aliasedTo: rule.aliasedTo }),
+								...(rule.annotations === undefined ? {} : { annotations: rule.annotations })
+							} satisfies SymbolRule<'link'>,
+							rule.id
+						),
 						{ kindEntries, misses, aliasBodies }
 					);
 				}
@@ -2048,11 +2051,14 @@ export function computeParentSets(refs: SymbolRef[]): Map<string, SymbolRef[]> {
 function liftTerminatedList(seq: SeqRule<'link'>, ctx: LinkCtx): Rule<'link'> | null {
 	const info = separatedListBodyInfo(seq, ctx.sourceSymbols);
 	if (info?.form !== 'terminated') return null;
-	const list: Repeat1Rule<'link'> = {
-		type: REPEAT1,
-		content: liftSeparators(info.element, ctx),
-		separator: { value: info.separatorRule, trailing: 'optional', terminated: true }
-	};
+	const list = absorbDroppedIds<Repeat1Rule<'link'>>(
+		{
+			type: REPEAT1,
+			content: liftSeparators(info.element, ctx),
+			separator: { value: info.separatorRule, trailing: 'optional', terminated: true }
+		},
+		...seq.members
+	);
 	return { ...seq, members: [list] };
 }
 
@@ -2061,14 +2067,18 @@ function separatedListAt(seq: SeqRule<'link'>, start: number, ctx: LinkCtx): { l
 		const info = separatedListBodyInfo({ type: SEQ, members: seq.members.slice(start, end) } as SeqRule<'link'>, ctx.sourceSymbols);
 		if (info === null || info.form === 'terminated' || info.repeat === undefined) continue;
 		const separator = { value: info.separatorRule, trailing: info.trailing, leading: info.leading };
-		const content = liftSeparators(info.element, ctx);
+		const element = liftSeparators(info.element, ctx);
+		const content = info.outerElement === undefined ? element : absorbAlignedIds(element, liftSeparators(info.outerElement, ctx));
 		const whole = info.form === 'head' && start === 0 && end === seq.members.length;
-		const list = {
-			...(info.form !== 'head' ? info.repeat : info.carrier === undefined || whole ? {} : carrySeqAttrs(info.carrier as SeqRule<'link'>)),
-			...(info.form === 'head' ? { type: REPEAT1 } : {}),
-			content,
-			separator
-		} as Rule<'link'>;
+		const list = absorbDroppedIds(
+			{
+				...(info.form !== 'head' ? info.repeat : info.carrier === undefined || whole ? {} : carrySeqAttrs(info.carrier as SeqRule<'link'>)),
+				...(info.form === 'head' ? { type: REPEAT1 } : {}),
+				content,
+				separator
+			} as Rule<'link'>,
+			...seq.members.slice(start, end)
+		);
 		return { list, end, whole };
 	}
 	return null;
@@ -2105,15 +2115,18 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
 			const content = liftSeparators(rule.content, ctx);
 			const sep = separatorOf(content, ctx.sourceSymbols);
 			if (sep) {
-				return {
-					...rule,
-					content: sep.content,
-					separator: {
-						value: sep.separator,
-						trailing: sep.trailing ? 'mandatory' : undefined,
-						leading: sep.trailing ? undefined : 'mandatory'
-					}
-				};
+				return absorbDroppedIds(
+					{
+						...rule,
+						content: sep.content,
+						separator: {
+							value: sep.separator,
+							trailing: sep.trailing ? 'mandatory' : undefined,
+							leading: sep.trailing ? undefined : 'mandatory'
+						}
+					},
+					content
+				);
 			}
 			return { ...rule, content };
 		}
