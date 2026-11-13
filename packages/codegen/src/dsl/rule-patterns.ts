@@ -1238,6 +1238,7 @@ export interface SeparatedListBodyInfo<P extends PhaseName = 'normalize'> {
 	flankCarrying: boolean;
 	form: 'head' | 'leading' | 'tail' | 'terminated';
 	element: Rule<P>;
+	outerElement?: Rule<P>;
 	separatorRule: Rule<P>;
 	flatMembers: Rule<P>[];
 	repeat?: Rule<P>;
@@ -1344,6 +1345,7 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 			flankCarrying,
 			form: 'head' as const,
 			element: detected.content as Rule<P>,
+			outerElement: head,
 			separatorRule: detected.separator as Rule<P>,
 			flatMembers: members,
 			repeat: members[repeatIdx]!,
@@ -1361,6 +1363,7 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 		flankCarrying: true,
 		form: 'tail' as const,
 		element: detected.content as Rule<P>,
+		outerElement: tail,
 		separatorRule: detected.separator as Rule<P>,
 		flatMembers: members,
 		repeat: members[0]!,

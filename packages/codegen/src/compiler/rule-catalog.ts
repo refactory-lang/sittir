@@ -296,6 +296,11 @@ export function reownedRuleId(id: RuleId, owner: string): RuleId {
 	return `${RULE_ID_SCHEME}${encodeURIComponent(owner)}:${ruleIdPath(id)}`;
 }
 
+export function rebasedRuleId(id: RuleId, hostId: RuleId): RuleId {
+	const path = ruleIdPath(id);
+	return path === 'root' ? hostId : `${hostId}/${path}`;
+}
+
 export function ruleIdPath(id: RuleId): string {
 	return id.slice(id.indexOf(':', RULE_ID_SCHEME.length) + 1);
 }
