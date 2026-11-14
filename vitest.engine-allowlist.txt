@@ -50,7 +50,6 @@ packages/python/tests/list-storage-ownership.test.ts
 packages/python/tests/list-view.test.ts
 packages/python/tests/loose-spread-forwarding.test.ts
 packages/python/tests/nested-supertype-arms.test.ts
-packages/python/tests/nodes.test.ts
 packages/python/tests/nonempty-loose-rest.test.ts
 packages/python/tests/nonempty-match-block.test.ts
 packages/python/tests/number-coercion.test.ts
@@ -105,7 +104,6 @@ packages/regex/tests/lazy-quantifier.test.ts
 packages/regex/tests/list-storage-ownership.test.ts
 packages/regex/tests/literal-roundtrip.test.ts
 packages/regex/tests/no-space-trivia.test.ts
-packages/regex/tests/nodes.test.ts
 packages/regex/tests/owner-numeric-argument.test.ts
 packages/regex/tests/query-leaf.test.ts
 packages/regex/tests/query-presence.test.ts
@@ -179,7 +177,6 @@ packages/rust/tests/nested-supertype-arms.test.ts
 packages/rust/tests/newline-option.test.ts
 packages/rust/tests/no-argument-forwarding-with-sibling.test.ts
 packages/rust/tests/nodedata-shape.test.ts
-packages/rust/tests/nodes.test.ts
 packages/rust/tests/non-special-token-read.test.ts
 packages/rust/tests/number-coercion.test.ts
 packages/rust/tests/number-input.test.ts
@@ -236,16 +233,6 @@ packages/rust/tests/visible-wrapper-seat.test.ts
 packages/rust/tests/whitespace-trivia.test.ts
 packages/rust/tests/with-list-setter.test.ts
 packages/rust/tests/written-trivia.test.ts
-packages/scm/tests/from-parsed-coordinate.test.ts
-packages/scm/tests/full-form-acceptance.test.ts
-packages/scm/tests/list-storage-ownership.test.ts
-packages/scm/tests/literal-roundtrip.test.ts
-packages/scm/tests/loose-spread-forwarding.test.ts
-packages/scm/tests/named-node-parens.test.ts
-packages/scm/tests/nodes.test.ts
-packages/scm/tests/parse-errors.test.ts
-packages/scm/tests/portable-rows.test.ts
-packages/scm/tests/query-leaf.test.ts
 packages/typescript/tests/acceptance.test.ts
 packages/typescript/tests/alias-envelope-identity.test.ts
 packages/typescript/tests/alias-envelope-rebuilt-alone.test.ts
@@ -288,7 +275,6 @@ packages/typescript/tests/list-separator-read.test.ts
 packages/typescript/tests/list-storage-ownership.test.ts
 packages/typescript/tests/literal-roundtrip.test.ts
 packages/typescript/tests/loose-spread-forwarding.test.ts
-packages/typescript/tests/nodes.test.ts
 packages/typescript/tests/number-coercion.test.ts
 packages/typescript/tests/number-input.test.ts
 packages/typescript/tests/number-slot-refusal.test.ts
