@@ -314,7 +314,7 @@ export type ConfigSeat<Loose, R, Signed extends boolean = false> = <const I exte
  * @typeParam Signed - whether a negative number can build one of the grammar's numeric literals.
  */
 export type OptionalConfigSeat<Loose, R, Signed extends boolean = false> = {
-	<const I extends Loose>(input: I & RefuseUndeclared<I, Loose, Signed>): R;
+	<const I extends Loose | undefined>(input: I & RefuseUndeclared<Exclude<I, undefined>, Loose, Signed>): R;
 	(input?: undefined): R;
 };
 

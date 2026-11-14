@@ -121,4 +121,17 @@ export function anOptionalLooseInputRefusesAnInlineNegativeBigint(): void {
 	const config = { left: -1n, operator: '+', right: 2 } as const;
 	// @ts-expect-error a negative bigint literal held in a constant is refused
 	ir.binaryExpression(config);
+	// @ts-expect-error an unknown key is refused
+	ir.binaryExpression({ left: 1, operator: '+', right: 2, bogus: 1 });
+}
+
+declare const maybe: { left: number; operator: '+'; right: number } | undefined;
+declare const maybeConstant: { readonly left: 1; readonly operator: '+'; readonly right: 2 } | undefined;
+
+export function anOptionalLooseInputStillTakesWhatItTook(): void {
+	ir.binaryExpression(maybe);
+	ir.binaryExpression(maybeConstant);
+	ir.binaryExpression(Math.random() > 0.5 ? ({ left: 1, operator: '+', right: 2 } as const) : undefined);
+	ir.binaryExpression(undefined);
+	ir.binaryExpression();
 }
