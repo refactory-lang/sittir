@@ -223,6 +223,7 @@ describe('deriveVocabulary', () => {
 			'declaration.property.signature.getter',
 			'declaration.property.signature.setter',
 			'declaration.signature.index',
+			'declaration.signature.index.mapped',
 			'statement.block.static'
 		]);
 		expect(body?.multiple).toBe(true);

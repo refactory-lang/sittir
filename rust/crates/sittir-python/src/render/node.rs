@@ -30629,6 +30629,7 @@ fn prepare_string_start<N: StringStartPrepare + ?Sized>(node: &mut N, overlay: &
 impl ::sittir_core::delimiters::DelimiterToken for StringStartNode {
     fn facet(&self) -> Option<&str> { StringStartFields::quote(self) }
     fn opaque(&self) -> bool { StringStartFields::verbatim(self).is_some() }
+    fn read(&self) -> bool { ::sittir_core::layout::BodyLayout::read(StringStartFields::layout(self)) }
     fn gate(&self) -> Option<&str> { StringStartFields::prefix(self) }
 }
 
@@ -30640,6 +30641,7 @@ impl ::sittir_core::delimiters::SetFacet for StringStartNode {
 impl ::sittir_core::delimiters::DelimiterToken for StringStartNodeRecord<'_> {
     fn facet(&self) -> Option<&str> { StringStartFields::quote(self) }
     fn opaque(&self) -> bool { StringStartFields::verbatim(self).is_some() }
+    fn read(&self) -> bool { ::sittir_core::layout::BodyLayout::read(StringStartFields::layout(self)) }
     fn gate(&self) -> Option<&str> { StringStartFields::prefix(self) }
 }
 
@@ -30877,6 +30879,7 @@ impl ::sittir_core::delimiters::DelimiterToken for StringEndNode {
     fn facet(&self) -> Option<&str> { StringEndFields::quote(self) }
     fn content(&self) -> Option<&str> { StringEndFields::content(self) }
     fn opaque(&self) -> bool { StringEndFields::verbatim(self).is_some() }
+    fn read(&self) -> bool { ::sittir_core::layout::BodyLayout::read(StringEndFields::layout(self)) }
 }
 
 impl ::sittir_core::delimiters::SetFacet for StringEndNode {
@@ -30888,6 +30891,7 @@ impl ::sittir_core::delimiters::DelimiterToken for StringEndNodeRecord<'_> {
     fn facet(&self) -> Option<&str> { StringEndFields::quote(self) }
     fn content(&self) -> Option<&str> { StringEndFields::content(self) }
     fn opaque(&self) -> bool { StringEndFields::verbatim(self).is_some() }
+    fn read(&self) -> bool { ::sittir_core::layout::BodyLayout::read(StringEndFields::layout(self)) }
 }
 
 }

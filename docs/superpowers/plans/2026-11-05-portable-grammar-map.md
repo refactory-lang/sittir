@@ -237,7 +237,7 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 
 ### Task 6: The typed engine surface, honest raw reads and tokens as text
 
-**Status:** partly done: tokens read as text and ReadOf/InputOf exist (#1158); the typed read/build signatures, API['portable']['map'], ReadByKind and their tests are not started.
+**Status:** partly done: tokens read as text and ReadOf/InputOf exist (#1158). The rest is **superseded** by the generated-portable-builders plan (`docs/superpowers/plans/2026-11-13-portable-generated-builders.md`): the generated build functions and projection carry the types, and `PortableRuntime` goes, so nothing here types it. The honest reads of typescript `identifier.qualified` move to that plan's projection task (Task 5). The steps below are kept as the record and are not run.
 
 **Files:**
 - Modify: `PortableRuntime<API>` (`build`, `read`) in `@sittir/types`, and `portableRuntime` in `packages/common/src/portable/`
@@ -265,7 +265,7 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 
 ### Task 7: Standard packages and `PortableEngine<C>`
 
-**Status:** partly done: the c-like and object-oriented packages landed in #1158; PortableEngine<C> is not started.
+**Status:** partly done: the c-like and object-oriented packages landed in #1158; PortableEngine<C> is not started. `PortableEngine<C>` is the type of the generated portable engine (`build`, `parse`, `project`, `render`, `kinds`, `is`) over a composition, per the generated-portable-builders spec: one type, shared with the single-grammar engine.
 
 **Files:**
 - Create: the approved packages, each a feature folder under `packages/types/src/vocabulary/features/` with no content of its own
@@ -306,10 +306,10 @@ The admission census (`tool portable-admission`) owns both counts. It already re
 
 ### Task 9: Final gates and the PR
 
-- [ ] **Step 1: Confirm the removals.** Nothing named `GrammarContext.slots`, `Seated`, `gate.RequiredBy`, `OwnSlots` or `Fit` is left, and `V.Unmapped` is the real low-level node type.
+- [ ] **Step 1: Confirm the removals.** Nothing named `GrammarContext.slots`, `Seated`, `gate.RequiredBy`, `OwnSlots` or `Fit` is left. In an input, a member's node arm is the grammar's node types for its paths (`G['nodes']`), never `{ $type: number }`.
 - [ ] **Step 2: Run every gate:**
   - the census at 0 and the raw-arm count at or below base;
-  - conformance diagnostics at or below base;
+  - the generated portable modules type-check, with the emit diagnostics at or below their ceilings. This replaces the conformance mirror and its diagnostics ratchet (the generated-portable-builders plan, Task 7);
   - validate history against base;
   - the full suite and the workspace type-check;
   - type-check times against the baseline table.

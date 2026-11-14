@@ -71,7 +71,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -567,7 +566,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
@@ -1597,7 +1595,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -1709,7 +1706,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -1849,7 +1845,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -2015,7 +2010,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -2155,7 +2149,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -2321,7 +2314,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -2461,7 +2453,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -2627,7 +2618,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -2767,7 +2757,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -2933,7 +2922,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -3073,7 +3061,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -3239,7 +3226,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -3346,7 +3332,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -3512,7 +3497,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -3619,7 +3603,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -3785,7 +3768,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -3892,7 +3874,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -4058,7 +4039,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -4374,7 +4354,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -4560,7 +4539,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -4746,7 +4724,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -4932,7 +4909,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -5118,7 +5094,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -5304,7 +5279,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -5490,7 +5464,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -5676,7 +5649,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -5862,7 +5834,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -6048,7 +6019,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -6234,7 +6204,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -6420,7 +6389,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -6699,7 +6667,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -6907,7 +6874,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -7115,7 +7081,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -7323,7 +7288,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -7531,7 +7495,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -7723,7 +7686,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -7888,7 +7850,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -8029,7 +7990,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -8194,7 +8154,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -8302,7 +8261,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -8467,7 +8425,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -8575,7 +8532,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -8740,7 +8696,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -8848,7 +8803,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -9013,7 +8967,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -9120,7 +9073,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -9285,7 +9237,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -9425,7 +9376,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -9590,7 +9540,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -9730,7 +9679,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -9895,7 +9843,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -10036,7 +9983,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -10195,7 +10141,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -10303,7 +10248,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -10462,7 +10406,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -10570,7 +10513,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -10729,7 +10671,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -10837,7 +10778,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -10996,7 +10936,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -11103,7 +11042,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -11268,7 +11206,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -11408,7 +11345,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -11573,7 +11509,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -11680,7 +11615,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -11845,7 +11779,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -11952,7 +11885,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -12117,7 +12049,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -12224,7 +12155,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -12389,7 +12319,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -12496,7 +12425,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -12655,7 +12583,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -12762,7 +12689,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -12921,7 +12847,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -13028,7 +12953,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -13187,7 +13111,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -13294,7 +13217,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -13453,7 +13375,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -13560,7 +13481,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -13725,7 +13645,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -13832,7 +13751,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -13997,7 +13915,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -14104,7 +14021,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -14269,7 +14185,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -14376,7 +14291,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -14541,7 +14455,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -14648,7 +14561,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -14807,7 +14719,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -14914,7 +14825,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -15073,7 +14983,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -15180,7 +15089,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -15339,7 +15247,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -15446,7 +15353,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -15605,7 +15511,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -16274,7 +16179,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -16469,7 +16373,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -16638,7 +16541,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -16833,7 +16735,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -16995,7 +16896,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -17101,7 +17001,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -17213,7 +17112,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -17352,7 +17250,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -17673,7 +17570,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -17827,7 +17723,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -17980,7 +17875,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -18134,7 +18028,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -18288,7 +18181,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -18442,7 +18334,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -18596,7 +18487,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -18750,7 +18640,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -18904,7 +18793,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -19058,7 +18946,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -19212,7 +19099,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -19366,7 +19252,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -19520,7 +19405,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -19674,7 +19558,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -19828,7 +19711,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -19982,7 +19864,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -20136,7 +20017,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -20275,7 +20155,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -20414,7 +20293,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -20550,7 +20428,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -20688,7 +20565,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -20824,7 +20700,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -20962,7 +20837,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -21098,7 +20972,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -21236,7 +21109,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -21372,7 +21244,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -21510,7 +21381,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -21646,7 +21516,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -21784,7 +21653,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -21920,7 +21788,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -22058,7 +21925,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -22194,7 +22060,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -22332,7 +22197,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -22468,7 +22332,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -22606,7 +22469,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -22742,7 +22604,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -22880,7 +22741,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -23016,7 +22876,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -23154,7 +23013,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -23290,7 +23148,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -23428,7 +23285,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -23564,7 +23420,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -23702,7 +23557,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -23838,7 +23692,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -23976,7 +23829,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -24112,7 +23964,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -24250,7 +24101,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -24386,7 +24236,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -24524,7 +24373,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -24660,7 +24508,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -24798,7 +24645,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -24934,7 +24780,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -25072,7 +24917,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -25208,7 +25052,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -25346,7 +25189,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -25482,7 +25324,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -25620,7 +25461,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -25756,7 +25596,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -25894,7 +25733,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -26030,7 +25868,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -26168,7 +26005,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -26304,7 +26140,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -26443,7 +26278,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -26579,7 +26413,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -26717,7 +26550,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -26853,7 +26685,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -26991,7 +26822,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -27127,7 +26957,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -27265,7 +27094,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -27401,7 +27229,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -27540,7 +27367,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -27648,7 +27474,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -27842,7 +27667,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -27898,7 +27722,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.function'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -28012,7 +27835,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.function'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -28181,7 +28003,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -28427,7 +28248,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.function'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -28581,7 +28401,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -28777,7 +28596,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -28969,7 +28787,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -29108,7 +28925,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -29427,7 +29243,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -29594,7 +29409,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -29730,7 +29544,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -29866,7 +29679,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -30085,7 +29897,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -30280,7 +30091,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
@@ -30421,7 +30231,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -30630,7 +30439,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -30780,7 +30588,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
@@ -30980,7 +30787,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 								| V.Read<TypeScriptMap, 'expression.instantiation'>
 								| V.Read<TypeScriptMap, 'expression.lambda'>
 								| V.Read<TypeScriptMap, 'expression.member'>
-								| V.Read<TypeScriptMap, 'expression.meta'>
 								| V.Text<TypeScriptMap, 'expression.meta'>
 								| V.Read<TypeScriptMap, 'expression.parenthesized'>
 								| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -31116,7 +30922,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -31255,7 +31060,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
@@ -31393,7 +31197,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -31532,7 +31335,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -31670,7 +31472,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -31809,7 +31610,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -31948,7 +31748,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -32087,7 +31886,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -32226,7 +32024,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -32365,7 +32162,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -32504,7 +32300,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -32643,7 +32438,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -32781,7 +32575,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -32920,7 +32713,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -33059,7 +32851,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -33197,7 +32988,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -33675,7 +33465,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -33865,7 +33654,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -34004,7 +33792,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -34486,7 +34273,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -34720,7 +34506,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -34918,7 +34703,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -35056,7 +34840,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
@@ -35577,7 +35360,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
@@ -35717,7 +35499,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
@@ -35860,7 +35641,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
@@ -36353,7 +36133,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
@@ -36612,7 +36391,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
@@ -37283,7 +37061,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.instantiation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -37439,7 +37216,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 								| V.Read<TypeScriptMap, 'expression.instantiation'>
 								| V.Read<TypeScriptMap, 'expression.lambda'>
 								| V.Read<TypeScriptMap, 'expression.member'>
-								| V.Read<TypeScriptMap, 'expression.meta'>
 								| V.Text<TypeScriptMap, 'expression.meta'>
 								| V.Read<TypeScriptMap, 'expression.parenthesized'>
 								| V.Read<TypeScriptMap, 'expression.subscript'>
@@ -38283,7 +38059,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.interpolation'>
 				| V.Read<TypeScriptMap, 'expression.lambda'>
 				| V.Read<TypeScriptMap, 'expression.member'>
-				| V.Read<TypeScriptMap, 'expression.meta'>
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>

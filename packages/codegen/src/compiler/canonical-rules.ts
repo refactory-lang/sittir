@@ -35,6 +35,7 @@ export function peelWrapper(wrapper: EvalRule): EvalRule {
 function canonicalOptionalRule(rule: EvalRule & { type: typeof OPTIONAL }): EvalRule {
 	const content = rule.content;
 	if (content.type === OPTIONAL || content.type === REPEAT) return peelWrapper(rule);
+	if (content.type === CHOICE && content.members.length === 0) return peelWrapper(rule);
 	if (content.type === REPEAT1) return { ...peelWrapper(rule), type: REPEAT } as EvalRule;
 	return rule;
 }
