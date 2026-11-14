@@ -198,12 +198,10 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 				declarators: [ts.build.variableDeclaratorPlain({
 					name: "inn",
 					value: ts.build.binaryExpression.in({
-						binaryExpressionIn: {
-							left: ts.build.stringDouble("a"),
-							right: ts.build.parenthesizedExpressionTyped({
-								expression: "obj",
-							}),
-						},
+						left: ts.build.stringDouble("a"),
+						right: ts.build.parenthesizedExpressionTyped({
+							expression: "obj",
+						}),
 					}),
 				})],
 			}), ts.build.lexicalDeclaration({

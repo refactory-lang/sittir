@@ -126,13 +126,8 @@ export const catchClause$flatten$catchClauseGroup =
 
 export const binaryExpression$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { binaryExpressionIn: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) } as never, options as never);
-	};
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ binaryExpressionIn: _c(child)(...args) });
 
 export const classHeritage$extendsClause =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
