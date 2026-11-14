@@ -1,6 +1,6 @@
 //! A record's side record: the layout facts beside its slots. Word 0 is a
 //! mask of the fields present, and the fields follow in a fixed order:
-//! `at` (index, end, byte start, byte end), `edges`, `span`, `sides`, `separator`, `delimiter`,
+//! `at` (kind, byte start, byte end), `edges`, `span`, `sides`, `separator`, `delimiter`,
 //! `separator_kind`, `flanks`, `slots`. `changed` is two bits of the mask. It holds no trivia and no unit sides: a written side is
 //! in the engine's store of written sides ([`crate::trivia_store`]), and a
 //! parsed node's assigned sides in its tree's trivia table.
@@ -22,7 +22,7 @@ use crate::types::{Delimiter, FieldId, KindId, NodeIndex, Span, TreeId};
 /// that take no words.
 pub mod field {
     pub const AT: u32 = super::mask::AT;
-    pub const AT_WORDS: u32 = 4;
+    pub const AT_WORDS: u32 = 3;
     pub const EDGES: u32 = super::mask::EDGES;
     pub const EDGES_WORDS: u32 = 2;
     pub const SPAN: u32 = super::mask::SPAN;
@@ -196,31 +196,13 @@ impl RunEntry {
     }
 }
 
-/// A parsed node's place in the tree its arena is: its subtree's rows,
-/// `[index, end)`, and its byte span, as its read stamped them, so a view
-/// of the record has its whole coordinate from the record alone.
+/// What a parsed node's coordinate names besides its record: its kind and
+/// its byte span, as its read stamped them, so a view of the record has its
+/// whole coordinate from the record alone.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Row {
-    pub index: NodeIndex,
-    pub end: NodeIndex,
+    pub kind: KindId,
     pub span: Span,
-}
-
-impl Row {
-    /// The row of a node kept in records that outlive their tree: no index
-    /// names it, so its coordinate's kind is kept where an index would be,
-    /// and its end is 0, which no row of a tree ends at.
-    #[must_use]
-    pub fn named(kind: KindId, span: Span) -> Self {
-        Self { index: NodeIndex(u32::from(kind.0)), end: NodeIndex(0), span }
-    }
-
-    /// The kind the coordinate of a node kept in records that outlive
-    /// their tree names (`named`); none for a row of a tree.
-    #[must_use]
-    pub fn kind(&self) -> Option<KindId> {
-        (self.end.0 == 0).then(|| u16::try_from(self.index.0).ok().map(KindId)).flatten()
-    }
 }
 
 /// The node a built node was rebuilt from: its tree, its subtree's rows and
@@ -275,7 +257,7 @@ pub struct SideSlot {
 /// What a side record holds.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct SideRecord {
-    /// A parsed node's rows and byte span; the tree is the arena's.
+    /// A parsed node's coordinate kind and byte span.
     pub at: Option<Row>,
     pub edges: Option<Edges>,
     pub span: Option<PointSpan>,
@@ -432,9 +414,9 @@ impl SideRecord {
     fn fields(&self, runs: &[(Address, u32)], put: &mut dyn FnMut(u32)) -> Result<u32, ArenaError> {
         let mut flags = 0;
         let mut words = |words: &[u32]| words.iter().for_each(|&word| put(word));
-        if let Some(Row { index, end, span }) = self.at {
+        if let Some(Row { kind, span }) = self.at {
             flags |= mask::AT;
-            words(&[index.0, end.0, span.start, span.end]);
+            words(&[u32::from(kind.0), span.start, span.end]);
         }
         if let Some(edges) = self.edges {
             flags |= mask::EDGES;
@@ -527,11 +509,11 @@ impl SideRecord {
         let has = |bit: u32| flags & bit != 0;
         let mut record = SideRecord { changed: ChangedEdges { leading: has(mask::CHANGED_LEADING), trailing: has(mask::CHANGED_TRAILING) }, ..SideRecord::default() };
         if has(mask::AT) {
-            let [index, end, start, end_byte]: [u32; field::AT_WORDS as usize] = fields.array()?;
-            if start > end_byte {
-                return Err(malformed("side record span end", end_byte));
+            let [kind, start, end]: [u32; field::AT_WORDS as usize] = fields.array()?;
+            if start > end {
+                return Err(malformed("side record span end", end));
             }
-            record.at = Some(Row { index: NodeIndex(index), end: NodeIndex(end), span: Span { start, end: end_byte } });
+            record.at = Some(Row { kind: read_kind(kind)?, span: Span { start, end } });
         }
         if has(mask::EDGES) {
             let [before, after]: [u32; field::EDGES_WORDS as usize] = fields.array()?;
@@ -646,7 +628,7 @@ mod tests {
 
     fn full() -> SideRecord {
         SideRecord {
-            at: Some(Row { index: NodeIndex(4), end: NodeIndex(9), span: Span { start: 3, end: 8 } }),
+            at: Some(Row { kind: KindId(4), span: Span { start: 3, end: 8 } }),
             edges: Some(Edges {
                 before: Some(EdgeArm { arm: KindId::BLANK, strength: None }),
                 after: Some(EdgeArm { arm: KindId(31), strength: Some(SeamStrength::Trivia) }),
@@ -754,7 +736,7 @@ mod tests {
             fixture["sides"][n]["words"].as_array().expect("words").iter().map(|word| u32::try_from(word.as_u64().expect("a word")).expect("a word")).collect()
         };
         let every = SideRecord {
-            at: Some(Row { index: NodeIndex(4), end: NodeIndex(9), span: Span { start: 3, end: 8 } }),
+            at: Some(Row { kind: KindId(4), span: Span { start: 3, end: 8 } }),
             edges: Some(Edges { before: None, after: Some(EdgeArm { arm: KindId(31), strength: None }) }),
             span: Some(PointSpan { start: Point { row: 1, column: 2 }, end: Point { row: 3, column: 0 } }),
             sides: Some(Sides { tree: TreeId(2), index: NodeIndex(5), end: NodeIndex(6), span: Span { start: 10, end: 14 } }),
@@ -790,8 +772,9 @@ mod tests {
             vec![mask::FLANKS, 3],
             vec![mask::FLANKS, 1 << 16],
             vec![mask::AT],
-            vec![mask::AT, 1, 2, 3],
-            vec![mask::AT, 1, 2, 9, 4],
+            vec![mask::AT, 1, 2],
+            vec![mask::AT, 1, 9, 4],
+            vec![mask::AT, 70_000, 1, 2],
             vec![mask::EDGES, 5, 0],
             vec![mask::EDGES, EDGE_SET | 9 << 16, 0],
             vec![mask::SIDES, 1, 2, 3, 9, 4],

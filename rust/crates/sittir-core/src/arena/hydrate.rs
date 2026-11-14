@@ -354,8 +354,9 @@ impl<'a> Hydration<'a> {
         let read = walk(cursor, ctx, self, kid)?;
         if !read && self.tree.rows_by_run() && self.met_at == Some(kid.index) {
             self.entering = self.met.map(|facts| (kid.index, facts));
-            let draft = self.open_record(ctx.stamped_kind(kid.grammar, kid.display), HEADER_WORDS, None)?;
-            self.errors.push((draft, kid.index.get() + kid.count, Row { index: kid.index, end: kid.index + kid.count, span: kid.span() }));
+            let kind = ctx.stamped_kind(kid.grammar, kid.display);
+            let draft = self.open_record(kind, HEADER_WORDS, None)?;
+            self.errors.push((draft, kid.index.get() + kid.count, Row { kind, span: kid.span() }));
         }
         Ok(read)
     }
@@ -516,7 +517,8 @@ impl<'a> Hydration<'a> {
         if kid.error() && self.tree.rows_by_run() {
             self.entering = Some((kid.index, facts));
             let draft = self.open_record(KindId::ERROR, HEADER_WORDS, None)?;
-            self.errors.push((draft, kid.index.get() + kid.count, Row { index: kid.index, end: kid.index + kid.count, span: kid.span() }));
+            let kind = self.stamp.map_or(facts.kind, |(shows, relaxes)| crate::read::stamp(facts.kind, facts.display(), shows, relaxes));
+            self.errors.push((draft, kid.index.get() + kid.count, Row { kind, span: kid.span() }));
         }
         Ok(kid)
     }
@@ -643,14 +645,7 @@ impl<'a> Hydration<'a> {
                 if let Some(holder) = holder {
                     holder.name(run.index, draft.at, run.depth, run.own);
                 }
-                let at = match (side.at, run.facts) {
-                    (Some(row), Some(facts)) if self.tree.rows_by_run() => {
-                        let kind = self.stamp.map_or(facts.kind, |(shows, relaxes)| crate::read::stamp(facts.kind, facts.display(), shows, relaxes));
-                        Some(Row::named(kind, row.span))
-                    }
-                    (at, _) => at,
-                };
-                &SideRecord { at, parent, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: run.entries, ..side.clone() }
+                &SideRecord { parent, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: run.entries, ..side.clone() }
             }
             None => side,
         };
@@ -675,12 +670,12 @@ pub fn parsed_side(row: Row, delimiter: Option<crate::types::Delimiter>) -> Side
     SideRecord { at: Some(row), delimiter, ..SideRecord::default() }
 }
 
-/// The row the child `at` was read at, with its subtree's end and its span:
-/// the whole source for the root, as a read's coordinate names it.
+/// What the coordinate of the child `at` names: its stamped kind and its
+/// span, the whole source for the root, as a read's coordinate names it.
 #[must_use]
 pub fn row_of(at: &crate::read::Kid, ctx: &ReadCtx<'_>) -> Row {
     let span = if at.index == NodeIndex::ROOT { Span::whole(ctx.source) } else { Span { start: at.start, end: at.end } };
-    Row { index: at.index, end: at.index + at.count, span }
+    Row { kind: ctx.stamped_kind(at.grammar, at.display), span }
 }
 
 /// A node type's direct hydration: what the node the cursor is on is held as

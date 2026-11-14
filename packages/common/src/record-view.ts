@@ -93,8 +93,7 @@ function readRow(tree: TreeHandle, at: number): { readonly kind: number; readonl
 	const sides = sideWordsAt(records, side);
 	const row = decodeSideRow(sides.words, sides.start, records.format);
 	if (row === undefined) throw new Error(`the side record of a read's record of kind ${kind} holds no span`);
-	if (row.end !== 0) throw new Error(`the side record of a read's record of kind ${kind} names a row of a tree`);
-	return { kind, span: row.span, stamped: row.index };
+	return { kind, span: row.span, stamped: row.kind };
 }
 
 /** The record a read left at `at` of the built arena `tree` is, as a position: its kind, and its coordinate, which names it by its address. */

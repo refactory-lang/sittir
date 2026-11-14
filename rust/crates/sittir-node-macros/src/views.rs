@@ -330,7 +330,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                     _ => return ::core::result::Result::Err(#refused),
                 };
                 let (words, side) = ::sittir_core::arena::record_of(ctx, at, if ctx.tree().is_none() { #built_words } else { #words }, kind)?;
-                let place = ::sittir_core::arena::place_of(ctx, at, &side)?;
+                let place = ::sittir_core::arena::place_of(ctx, at)?;
                 let layout = ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), ::sittir_core::arena::held_changed(site.is_some(), held, &side), side.sides);
                 ::core::result::Result::Ok(Self {
                     __layout: layout,

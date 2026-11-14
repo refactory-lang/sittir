@@ -81,7 +81,7 @@ export interface CellFormat {
 	readonly countSaturated: number;
 	readonly held: { readonly record: number; readonly run: number; readonly side: number; readonly text: number };
 	readonly chunkShift: number;
-	/** The side record's `at`, its first field: a parsed node's row, its subtree's end and its byte span. */
+	/** The side record's `at`, its first field: a parsed node's coordinate kind and its byte span. */
 	readonly sideAt: SideField;
 	/** The fields a side record holds before a list's delimiters setting, in its order, `at` first. */
 	readonly sideBeforeDelimiter: readonly SideField[];
@@ -93,10 +93,9 @@ export interface CellFormat {
 	readonly sideSeparatorKind: number;
 }
 
-/** A parsed node's place as its record's side record stamps it. */
+/** What a parsed node's coordinate names, as its record's side record stamps it. */
 export interface SideRow {
-	readonly index: number;
-	readonly end: number;
+	readonly kind: number;
 	readonly span: ByteSpan;
 }
 
@@ -359,7 +358,7 @@ export function decodeSideRow(words: ArrayLike<number>, at: number, format: Cell
 		if (value === undefined) throw new Error(`a side record's row ends at word ${at + n}`);
 		return value;
 	};
-	return { index: word(1), end: word(2), span: { start: word(3), end: word(4) } };
+	return { kind: word(1), span: { start: word(2), end: word(3) } };
 }
 
 export function decodeSideDelimiter(words: ArrayLike<number>, at: number, format: CellFormat): number | undefined {

@@ -9,7 +9,7 @@
 //! The derive writes each node type's `WriteCell` through these helpers.
 
 use crate::heap::HeapBytes;
-use super::{Address, ArenaError, BuiltChunks, BuiltWriter, CellWord, Row, SideRecord, SideSlot, Sides};
+use super::{Address, ArenaError, BuiltChunks, BuiltWriter, CellWord, SideRecord, SideSlot, Sides};
 use crate::layout::{NodeLayout, UnitSides};
 use crate::record::HEADER_WORDS;
 use crate::slot::{ChangedEdges, NodeCoordinate, SlotValue};
@@ -317,7 +317,7 @@ impl SideRecord {
             })
             .collect::<Result<_, ArenaError>>()?;
         Ok(SideRecord {
-            at: layout.at.as_ref().map(|at| Row { index: at.index, end: at.end, span: at.span }),
+            at: None,
             edges: layout.edges,
             span: layout.span,
             sides: layout.sides.as_ref().map(|from| from.name().map_or(Sides { tree: from.tree, index: from.index, end: from.end, span: from.span }, |name| Sides::named(name, from.span))),
@@ -370,7 +370,7 @@ mod tests {
     #[test]
     fn a_layout_s_facts_land_in_its_side_record_by_stamped_word() {
         let record = SideRecord::of(Some(&layout()), |key| (key == "_items").then_some(4)).expect("every slot is stamped");
-        assert_eq!(record.at, Some(Row { index: NodeIndex(6), end: NodeIndex(11), span: Span { start: 4, end: 9 } }));
+        assert_eq!(record.at, None);
         assert_eq!(record.edges, layout().edges);
         assert_eq!(record.sides, Some(Sides { tree: TreeId(3), index: NodeIndex(1), end: NodeIndex(2), span: Span { start: 4, end: 9 } }));
         assert_eq!(record.changed, ChangedEdges { leading: false, trailing: true });

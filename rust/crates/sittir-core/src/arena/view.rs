@@ -28,7 +28,7 @@ use crate::view::{KindOf, KindTest, Slot};
 pub fn source_root<T>(root: super::CellAt, built: &dyn ArenaRead, arenas: &dyn RecordArenas, store: &TriviaStore<T>, sources: &dyn SourceTable, bits: u32) -> Result<Option<NodeCoordinate>, ArenaError> {
     let prepared = Prepared::new();
     let ctx = RecordCtx::of(root.tree, built, arenas, sources, store, &prepared, bits)?;
-    let Some(row) = ctx.stamped_row(root.cell)? else { return Ok(None) };
+    let Some(row) = ctx.cell_row(root.cell)? else { return Ok(None) };
     let coord = ctx.row_coordinate(row)?;
     Ok(sources.renders_as_source(&coord).then_some(coord))
 }
@@ -58,9 +58,6 @@ pub trait RecordArenas {
 pub struct RecordCtx<'a, T> {
     arena: &'a dyn ArenaRead,
     tree: Option<TreeId>,
-    /// Whether the arena's parsed records outlive their tree: `tree` names
-    /// their source, and a cell names a node by its holder's run.
-    runs: bool,
     arenas: &'a dyn RecordArenas,
     sources: &'a dyn SourceTable,
     store: &'a TriviaStore<T>,
@@ -85,7 +82,7 @@ impl<'a, T> RecordCtx<'a, T> {
     /// grammar's.
     #[must_use]
     pub fn built(arena: &'a dyn ArenaRead, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>, bits: u32) -> Self {
-        Self { arena, tree: None, runs: false, arenas, sources, store, prepared, bits }
+        Self { arena, tree: None, arenas, sources, store, prepared, bits }
     }
 
     /// The context of `tree`'s arena: its tree's own, else the arena of
@@ -97,7 +94,7 @@ impl<'a, T> RecordCtx<'a, T> {
     /// `ArenaError::Malformed` when the render reaches no arena of `tree`.
     pub fn parsed(tree: TreeId, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>, bits: u32) -> Result<Self, ArenaError> {
         let arena = arenas.reads().ok_or(malformed("record tree", tree.0))?;
-        Ok(Self { arena, tree: Some(tree), runs: true, arenas, sources, store, prepared, bits })
+        Ok(Self { arena, tree: Some(tree), arenas, sources, store, prepared, bits })
     }
 
     /// The side record at `at`, the default for address 0, the node it was
@@ -144,7 +141,7 @@ impl<'a, T> RecordCtx<'a, T> {
     /// call does: a leaf or a unit of records that outlive their tree by the
     /// id the call gives the node its row names in `holder`'s run.
     fn named(self, holder: Address, cell: Cell) -> Result<Cell, ArenaError> {
-        let Some(tree) = self.tree.filter(|_| self.runs) else { return Ok(cell) };
+        let Some(tree) = self.tree else { return Ok(cell) };
         let id = |row: NodeIndex| self.sources.cell_row(tree, holder, row.0).ok_or(malformed("cell row", row.0));
         Ok(match cell {
             Cell::ParsedLeaf { kind, span, row } => Cell::ParsedLeaf { kind, span, row: id(row)? },
@@ -321,16 +318,21 @@ impl<'a, T> RecordCtx<'a, T> {
         Ok(row.filter(|row| !templated(row)))
     }
 
-    /// The parsed node `cell` names (`parsed_row`), whatever renders it.
-    fn cell_row(self, cell: Cell) -> Result<Option<ParsedRow>, ArenaError> {
+    /// The parsed node `cell` names (`parsed_row`), whatever renders it;
+    /// `None` for a built value.
+    ///
+    /// # Errors
+    ///
+    /// What reading a child's record or reaching a linked arena refuses.
+    pub fn cell_row(self, cell: Cell) -> Result<Option<ParsedRow>, ArenaError> {
         let here = |row, kind| self.tree.map(|tree| ParsedRow { tree, row, kind, changed: ChangedEdges::default() });
         Ok(match cell {
             Cell::Coordinate { kind, index, .. } => here(index, kind),
             Cell::ParsedLeaf { kind, row, .. } | Cell::Unit { kind, row: Some(row) } => here(row, kind),
             Cell::LinkedLeaf { kind, tree, row, changed, .. } => Some(ParsedRow { tree, row, kind, changed }),
             Cell::Child { kind, at, link, changed } => {
-                let Some((ctx, side)) = self.child_side(at, kind, link)? else { return Ok(None) };
-                match row_of(ctx, at, &side)? {
+                let Some(ctx) = self.parsed_child(at, kind, link)? else { return Ok(None) };
+                match row_of(ctx, at)? {
                     Some(Place::Row { tree, row }) => Some(ParsedRow { tree, row, kind, changed }),
                     _ => None,
                 }
@@ -339,34 +341,15 @@ impl<'a, T> RecordCtx<'a, T> {
         })
     }
 
-    /// The row a cell's parsed node is read at: `parsed_row`'s, and for an
-    /// envelope's content, the row it shares with its envelope, which its
-    /// side record stamps; `None` for a built value.
-    ///
-    /// # Errors
-    ///
-    /// What reading a child's record or reaching a linked arena refuses, and
-    /// `ArenaError::Malformed` for a parsed record whose side record names no
-    /// row.
-    pub fn stamped_row(self, cell: Cell) -> Result<Option<ParsedRow>, ArenaError> {
-        let Cell::Child { kind, at, link, changed } = cell else { return self.cell_row(cell) };
-        let Some((ctx, side)) = self.child_side(at, kind, link)? else { return Ok(None) };
-        Ok(match row_of(ctx, at, &side)? {
-            Some(Place::Row { tree, row }) => Some(ParsedRow { tree, row, kind, changed }),
-            _ => None,
-        })
-    }
-
-    /// The context a child cell's record is read in, its own arena or the
-    /// tree its link names, and the record's side record; `None` for a built
-    /// record.
-    fn child_side(self, at: Address, kind: KindId, link: Option<TreeId>) -> Result<Option<(Self, super::SideRecord)>, ArenaError> {
+    /// The context a child cell's parsed record of `kind` is read in, its
+    /// own arena or the tree its link names; `None` for a built record.
+    fn parsed_child(self, at: Address, kind: KindId, link: Option<TreeId>) -> Result<Option<Self>, ArenaError> {
         let ctx = self.child(at, link)?;
         if ctx.tree.is_none() {
             return Ok(None);
         }
-        let (_, side) = record_of(ctx, at, crate::record::HEADER_WORDS, kind)?;
-        Ok(Some((ctx, side)))
+        record_of(ctx, at, crate::record::HEADER_WORDS, kind)?;
+        Ok(Some(ctx))
     }
 
     /// The coordinate of the parsed node `row` names, as a read of its tree
@@ -604,30 +587,30 @@ pub(super) fn parsed_cells(arena: &dyn ArenaRead, at: Address, shape: fn(KindId)
     Ok(cells)
 }
 
-/// The row of the parsed record at `at` whose side record is `side`, the one
-/// record of that row; none for a built record.
+/// The row of the parsed record at `at`, the one record of that row; none
+/// for a built record.
 ///
 /// # Errors
 ///
-/// `ArenaError::Malformed` for a parsed record whose side record names no row.
-pub fn row_of<T>(ctx: RecordCtx<'_, T>, at: Address, side: &super::SideRecord) -> Result<Option<Place>, ArenaError> {
+/// `ArenaError::Malformed` for a parsed record its source does not number.
+pub fn row_of<T>(ctx: RecordCtx<'_, T>, at: Address) -> Result<Option<Place>, ArenaError> {
     let Some(tree) = ctx.tree else { return Ok(None) };
-    let row = if ctx.runs { ctx.sources.record_row(tree, at).ok_or(malformed("parsed record", at.0))? } else { side.at.ok_or(malformed("parsed record row", at.0))?.index };
+    let row = ctx.sources.record_row(tree, at).ok_or(malformed("parsed record", at.0))?;
     Ok(Some(Place::Row { tree, row }))
 }
 
-/// The place of the record at `at` whose side record is `side`: a parsed
-/// record's row (`row_of`), or a built record's address.
+/// The place of the record at `at`: a parsed record's row (`row_of`), or a
+/// built record's address.
 ///
 /// # Errors
 ///
-/// `ArenaError::Malformed` for a parsed record whose side record names no
-/// row, or a row that holds another record.
-pub fn place_of<T>(ctx: RecordCtx<'_, T>, at: Address, side: &super::SideRecord) -> Result<PrepPlace, ArenaError> {
+/// `ArenaError::Malformed` for a parsed record its source does not number,
+/// or a row that holds another record.
+pub fn place_of<T>(ctx: RecordCtx<'_, T>, at: Address) -> Result<PrepPlace, ArenaError> {
     if ctx.tree.is_none() {
         return Ok(Place::Record(at).into());
     }
-    row_of(ctx, at, side)?.map(PrepPlace::from).ok_or(malformed("parsed record whose row holds another record", at.0))
+    row_of(ctx, at)?.map(PrepPlace::from).ok_or(malformed("parsed record whose row holds another record", at.0))
 }
 
 /// The place of the parsed leaf at `row` of `ctx`'s tree, held at `site`:

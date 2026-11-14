@@ -31,8 +31,7 @@ const fixture = JSON.parse(
 	};
 	readonly sides: readonly {
 		readonly row: {
-			readonly index: number;
-			readonly end: number;
+			readonly kind: number;
 			readonly start: number;
 			readonly endByte: number;
 		} | null;
@@ -109,10 +108,7 @@ describe('the record cell decoder reads what the native codec writes', () => {
 
 	it("reads each side record's row and delimiters setting past the fields before it", () => {
 		for (const side of fixture.sides) {
-			const row =
-				side.row === null
-					? undefined
-					: { index: side.row.index, end: side.row.end, span: { start: side.row.start, end: side.row.endByte } };
+			const row = side.row === null ? undefined : { kind: side.row.kind, span: { start: side.row.start, end: side.row.endByte } };
 			expect(decodeSideRow(side.words, 0, format!)).toEqual(row);
 			expect(decodeSideDelimiter(side.words, 0, format!)).toBe(side.delimiter ?? undefined);
 		}
