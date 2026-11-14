@@ -4,7 +4,7 @@
 
 **Goal:** each grammar's portable layer is generated code: typed per-path build functions over the low-level loose builders, and a per-kind projection. The emitter writes them through the pinned `@sittir/typescript` builders. The run-time interpreters, `PortableRuntime` and the shipped tables go.
 
-**Spec:** `docs/superpowers/specs/2026-11-13-portable-generated-builders-design.md`. Read it first. This plan argues from it and doesn't restate it. Its decisions 1–6 are proposals until the user rules. A task that depends on a decision starts after that ruling.
+**Spec:** `docs/superpowers/specs/2026-11-13-portable-generated-builders-design.md`. Read it first. This plan argues from it and doesn't restate it. Decisions 1, 2, 3 and 6 and the export rows are approved, and 4 and 5 are emitter-internal. Decision 7 is a proposal: a task that depends on it starts after the ruling.
 
 **Prototype:** `probe/portable-generated` (`packages/tools/src/portable/prototype/`). Task 4 moves its emitter into codegen.
 

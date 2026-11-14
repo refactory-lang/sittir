@@ -1,6 +1,6 @@
 # Generated portable builders and projections
 
-**Status:** proposed, 2026-11-13. The shape, the surface, the pin and the emitter-gap rule are the user's approved answers to the example set; the rows under "Decisions" are proposals.
+**Status:** proposed, 2026-11-13. The shape, the surface, the pin and the emitter-gap rule are the user's approved answers to the example set; the user approved decisions 1, 2, 3 and 6 and the public export rows on 2026-11-14. Decisions 4 and 5 change no surface and are accepted as emitter-internal. Decision 7 is a proposal.
 
 **Prototype:** branch `probe/portable-generated` (no PR). The emitter is `packages/tools/src/portable/prototype/emit.ts`, and its output is `packages/{python,typescript}/src/portable/prototype.ts`.
 
@@ -94,7 +94,7 @@ Both writings of the getter produce the same text. Emitting takes about 10 ms pe
 
 ## Decisions
 
-Each row shows the case, then the proposed answer. Decision 7 changes the call the user writes, so it's shown before → after.
+Each row shows the case, then the answer. Decision 7 changes the call the user writes, so it's shown before → after.
 
 ### 1. One source for a member's paths
 
@@ -106,7 +106,7 @@ Each row shows the case, then the proposed answer. Decision 7 changes the call t
 | python `declaration.property.getter` → `type` | `string` (`-> int` reads as `'int'`) | no leaf seat | no string branch, so `value.$path` on `string \| …` is TS2339 |
 | python `statement.return` → `expression` | 89 paths | 85 paths | `identifier` has no build row: it builds from text |
 
-**Proposed answer.** The member's read type is the source, because a portable input is what a read returns (`InputOf`).
+**Answer (approved 2026-11-14).** The member's read type is the source, because a portable input is what a read returns (`InputOf`).
 - The emitter takes each member's path set from the same read-route facts that write the `map.ts` override. Every path in it gets a case.
 - Each case's placement comes from the build table. A path with no fitting arm fails generation as `portable-emit-unplaced-path`.
 - A string the type admits but no leaf or token seat takes goes to the loose builder unchanged, and the loose builder coerces it. The interpreter does the same today.
@@ -132,7 +132,7 @@ methodDeclaration({ name: getter_name(input.name), … })
 TS2322: Type 'PythonNode' is not assignable to type 'string | ({ readonly $type: TSKindId.Identifier; } & NodeMarker)'.
 ```
 
-**Proposed answer.** In an input, a member's node arm is the language's node types for the kinds its paths read, never `{ $type: number }`.
+**Answer (approved 2026-11-14).** In an input, a member's node arm is the language's node types for the kinds its paths read, never `{ $type: number }`.
 - `map.ts` gains `nodes`, one entry per path, written from the generated `PortableIds`: `readonly 'statement.block': T.Block.Bound | T.Block.Parsed | T.SuiteEmpty.Bound | …`.
 - An unmapped kind keeps its `UnmappedKinds` entry, which is already a real node type.
 - `engine.isNode` then narrows to exactly those types, and the generated code places the node by its kind:
@@ -152,7 +152,7 @@ if (engine.isNode(value)) return value.$type === TSKindId.Block ? b.suiteBlock(v
 
 **The case.** Python reads `@property async def x(self)` as `{ $path: 'declaration.property.getter', $flags: ['async'], name: 'x' }`. The getter's `$flags` type is `'override'` only, so the read isn't assignable to its own input. The generated `async: …includes('async')` is TS2345: `'"async"' is not assignable to parameter of type '"override"'`.
 
-**Proposed answer.** A path's flag names are the union of the flags its arms set and its facts carry. Read and build use the same arms. `map.ts` writes the set per path, and `FlagsAt<G, P>` reads it.
+**Answer (approved 2026-11-14).** A path's flag names are the union of the flags its arms set and its facts carry. Read and build use the same arms. `map.ts` writes the set per path, and `FlagsAt<G, P>` reads it.
 
 | path | today's `$flags` type | from its arms and facts |
 |---|---|---|
@@ -173,7 +173,7 @@ A keyword flag is a boolean on the loose surface (`static: …includes('static')
 | `b.x(...items)`, `items: (T \| null)[]` | TS2345 | — |
 | `b.x(f(first), ...rest.map(f))` | — | type-checks |
 
-**Proposed answer.** The loose surface doesn't change, because a non-empty list stays non-empty in its type.
+**Answer (emitter-internal, accepted 2026-11-14).** The loose surface doesn't change, because a non-empty list stays non-empty in its type.
 - The emitter spreads a typed array for a list that may be empty.
 - For a non-empty list it writes `f(first), ...rest.map(f)`. When the list's container is optional, it guards with `first === undefined`.
 - It returns `null` only from members whose list takes holes (typescript `Elisions`).
@@ -189,7 +189,7 @@ parameters: first === undefined ? b.parameters() : b.parameters(b.parametersElem
 - Python: TS2590 "union type too complex to represent" ×2, TS7023 implicit `any` from recursion ×2.
 - Typescript: TS2590 ×4, TS7023 ×4.
 
-**Proposed answer.**
+**Answer (emitter-internal, accepted 2026-11-14).**
 - Each member's item type is written out as a union of `BuildInput<Map, P>` over the member's paths, plus `string` where the type admits it, plus the node types from decision 2. It's named per member, and `BuildItem` goes.
 - Every arm function is annotated with its kind's node type, and every member function with its seats' node union. That breaks the recursion.
 - Named per-path interfaces were tried and rejected: a path with several build forms isn't an object type (TS2312 on python `expression.lambda`, `expression.collection.tuple.bare` and two octal integers).
@@ -219,7 +219,7 @@ It narrows with 0 errors. Check time is 8.9 s against a 5.9 s baseline (the same
 
 Today's pinned vocabulary reader isn't affected. Codegen already runs it in a child process under `tsconfig.pinned.json` (`bindings/read.ts` `startReader`). Only an in-process `loadPinnedBuild()` under the workspace tsconfig mixes versions, and that's what the prototype did.
 
-**Proposed answer.**
+**Answer (approved 2026-11-14).**
 - The emitter runs as a mode of the pinned child process, so it loads the pin the way the reader does.
 - `loadPinnedBuild` refuses to load in a process whose resolution maps the pinned build's `@sittir/common` outside the pinned directory. It checks `import.meta.resolve('@sittir/common', <pinned typescript dist>)` and throws `pinned-build-unpinned`, which names the resolved path and the child reader. A mixed load then fails at once, by name, instead of later as an unrelated arena or engine error.
 
@@ -233,7 +233,7 @@ Today's pinned vocabulary reader isn't affected. Codegen already runs it in a ch
 | `statement.return` with `expression: 'x'` | accepted (identifier text) | builds `return x` |
 | a method's `body: { statements: [...] }`, no `$path` | TS2322: `$path` is required | refuses (`cannot resolve value to any of [suite_inline, suite_block, suite_empty]`) |
 
-**Proposed answer.**
+**Proposed answer (awaiting the user).**
 - **`$path` is optional where the context decides it:**
   - on the input of a path function, since the function names the path;
   - on a member whose paths include exactly one structure-built path (a getter's or a method's `body`).
@@ -278,6 +278,8 @@ The conformance ruling ("an MVP set per language") maps onto them like this:
 The MVP sets themselves are the user's choice. Until they're named, every path generated today counts as outside, and the ratchet holds the line.
 
 ## Public exports
+
+Approved by the user, 2026-11-14.
 
 | package | export | change |
 |---|---|---|
