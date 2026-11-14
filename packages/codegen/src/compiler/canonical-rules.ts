@@ -113,9 +113,12 @@ function canonicalRule(rule: EvalRule): EvalRule {
 	}
 }
 
-export function canonicalRuleTree(rule: EvalRule): EvalRule {
-	const walker = new RuleWalker<EvalRule>({});
-	return canonicalRule(walker.map(rule, canonicalRule));
+export function canonicalRuleTree(
+	rule: EvalRule,
+	settle: (from: EvalRule, to: EvalRule) => EvalRule = (_, to) => to
+): EvalRule {
+	const visit = (node: EvalRule): EvalRule => settle(node, canonicalRule(node));
+	return visit(new RuleWalker<EvalRule>({}).map(rule, visit));
 }
 
 function canonicalRuleBodies(bodies: Readonly<Record<string, EvalRule>>): Record<string, EvalRule> {

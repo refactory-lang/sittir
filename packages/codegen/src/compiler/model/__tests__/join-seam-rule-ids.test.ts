@@ -111,6 +111,37 @@ describe('alignRuleIds', () => {
 			expect(idsOf.get(right)).toEqual([id('members.0')]);
 			expect(idsOf.get(z)).toEqual([id('members.1/content/members.1')]);
 		});
+
+		it('a choice of fields with one name whose other arm holds a field of the same shape', () => {
+			const left = field(x);
+			const inner: GrammarRule = { type: 'FIELD', name: 'g', content: y };
+			const right = field({ type: 'SEQ', members: [{ type: 'STRING', value: '=' }, inner] });
+			const { idsOf, unaligned } = aligned({ type: 'CHOICE', members: [left, right] });
+			expect(unaligned).toEqual([]);
+			expect(idsOf.get(left)).toEqual([id('root')]);
+			expect(idsOf.get(x)).toEqual([id('content/members.0')]);
+			expect(idsOf.get(inner)).toEqual([id('content/members.1/members.1')]);
+			expect(idsOf.get(y)).toEqual([id('content/members.1/members.1/content')]);
+		});
+
+		it('a choice of fields with one name whose other arm holds the same field', () => {
+			const again: GrammarRule = { type: 'SYMBOL', name: 'x' };
+			const inner = field(again);
+			const { idsOf, unaligned } = aligned({
+				type: 'CHOICE',
+				members: [
+					field(x),
+					field({
+						type: 'SEQ',
+						members: [{ type: 'STRING', value: '(' }, inner, { type: 'STRING', value: ')' }]
+					})
+				]
+			});
+			expect(unaligned).toEqual([]);
+			expect(idsOf.get(x)).toEqual([id('content/members.0')]);
+			expect(idsOf.get(inner)).toEqual([id('content/members.1/members.1')]);
+			expect(idsOf.get(again)).toEqual([id('content/members.1/members.1/content')]);
+		});
 	});
 
 	it('reads an optional in the encoding the evaluated rules were built from, an optional of nothing included', () => {

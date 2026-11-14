@@ -11,6 +11,9 @@ export interface RuleIdAlignment {
 type Evaluated = Rule<'evaluate'>;
 
 const TOKENS = new Set<string>(['TOKEN', 'IMMEDIATE_TOKEN']);
+const ORIGINS = Symbol('origins');
+
+type Traced = Evaluated & { readonly [ORIGINS]?: readonly GrammarRule[] };
 
 function membersOf(rule: GrammarRule | Evaluated): readonly (GrammarRule | Evaluated)[] | undefined {
 	return rule.type === 'SEQ' || rule.type === 'CHOICE' ? rule.members : undefined;
@@ -23,6 +26,10 @@ function contentOf<R extends GrammarRule | Evaluated>(rule: R): R | undefined {
 function childrenOf<R extends GrammarRule | Evaluated>(rule: R): readonly R[] {
 	const content = contentOf(rule);
 	return (membersOf(rule) as readonly R[] | undefined) ?? (content === undefined ? [] : [content]);
+}
+
+function originsOf(rule: Evaluated): readonly GrammarRule[] {
+	return (rule as Traced)[ORIGINS] ?? [];
 }
 
 export function alignRuleIds(
@@ -43,25 +50,20 @@ export function alignRuleIds(
 		}
 		return shape;
 	};
-	const encoded = new Map<GrammarRule, Evaluated>();
-	const dslEncoded = (rule: GrammarRule): Evaluated => {
-		let out = encoded.get(rule);
-		if (out !== undefined) return out;
+	const traced = (rule: GrammarRule): Evaluated => {
+		const origin = { [ORIGINS]: [rule] };
 		if (rule.type === 'CHOICE' && rule.members.length === 2 && rule.members[1]!.type === 'BLANK') {
 			const { members, ...attributes } = rule;
-			out = { ...attributes, type: 'OPTIONAL', content: dslEncoded(members[0]!) } as Evaluated;
-		} else if (rule.type === 'SEQ' || rule.type === 'CHOICE')
-			out = { ...rule, members: rule.members.map(dslEncoded) } as Evaluated;
-		else if ('content' in rule) out = { ...rule, content: dslEncoded(rule.content) } as Evaluated;
-		else out = rule as Evaluated;
-		encoded.set(rule, out);
-		return out;
+			return { ...attributes, ...origin, type: 'OPTIONAL', content: traced(members[0]!) } as Evaluated;
+		}
+		if (rule.type === 'SEQ' || rule.type === 'CHOICE')
+			return { ...rule, ...origin, members: rule.members.map(traced) } as Evaluated;
+		if ('content' in rule) return { ...rule, ...origin, content: traced(rule.content) } as Evaluated;
+		return { ...rule, ...origin } as Evaluated;
 	};
-	const canonicalShapes = new Map<GrammarRule, number>();
-	const canonicalShapeOf = (rule: GrammarRule): number => {
-		let shape = canonicalShapes.get(rule);
-		if (shape === undefined) canonicalShapes.set(rule, (shape = shapeOf(canonicalRuleTree(dslEncoded(rule)))));
-		return shape;
+	const keepOrigins = (from: Evaluated, to: Evaluated): Traced => {
+		const lost = originsOf(from).filter((origin) => !originsOf(to).includes(origin));
+		return lost.length === 0 ? to : { ...to, [ORIGINS]: [...originsOf(to), ...lost] };
 	};
 	const stamp = (rule: GrammarRule, id: RuleId | undefined): void => {
 		if (id === undefined) return;
@@ -69,27 +71,16 @@ export function alignRuleIds(
 		if (ids === undefined) idsOf.set(rule, [id]);
 		else if (!ids.includes(id)) ids.push(id);
 	};
-	const align = (rule: GrammarRule, target: Evaluated): void => {
-		stamp(rule, target.id);
-		if (TOKENS.has(rule.type) && TOKENS.has(target.type)) return;
-		const claimed = new Set<Evaluated>();
-		const place = (child: GrammarRule): void => {
-			const shape = canonicalShapeOf(child);
-			if (shape === shapeOf(target)) return align(child, target);
-			const queue = [...childrenOf(target)];
-			for (let at = 0; at < queue.length; at++) {
-				const candidate = queue[at]!;
-				if (claimed.has(candidate)) continue;
-				if (shapeOf(candidate) === shape) {
-					claimed.add(candidate);
-					return align(child, candidate);
-				}
-				queue.push(...childrenOf(candidate));
-			}
-			stamp(child, target.id);
-			for (const grandchild of childrenOf(child)) place(grandchild);
-		};
-		for (const child of childrenOf(rule)) place(child);
+	const place = (canonical: Evaluated, target: Evaluated): void => {
+		for (const origin of originsOf(canonical)) stamp(origin, target.id);
+		if (TOKENS.has(target.type)) return;
+		const targets = childrenOf(target);
+		childrenOf(canonical).forEach((child, k) => place(child, targets[k]!));
+	};
+	const inherit = (rule: GrammarRule, ids: readonly RuleId[]): void => {
+		if (!idsOf.has(rule)) for (const id of ids) stamp(rule, id);
+		if (TOKENS.has(rule.type)) return;
+		for (const child of childrenOf(rule)) inherit(child, idsOf.get(rule) ?? []);
 	};
 	const differenceOf = (rule: Evaluated, target: Evaluated): string => {
 		const kids = childrenOf(rule);
@@ -102,10 +93,16 @@ export function alignRuleIds(
 	};
 	for (const [name, rule] of Object.entries(rules)) {
 		const target = evaluated[name];
-		if (target === undefined) unaligned.push(`${name}: no evaluated rule`);
-		else if (canonicalShapeOf(rule) !== shapeOf(target))
-			unaligned.push(`${name}: ${differenceOf(canonicalRuleTree(dslEncoded(rule)), target)}`);
-		else align(rule, target);
+		if (target === undefined) {
+			unaligned.push(`${name}: no evaluated rule`);
+			continue;
+		}
+		const canonical = canonicalRuleTree(traced(rule), keepOrigins);
+		if (shapeOf(canonical) !== shapeOf(target)) unaligned.push(`${name}: ${differenceOf(canonical, target)}`);
+		else {
+			place(canonical, target);
+			inherit(rule, []);
+		}
 	}
 	return { idsOf, unaligned };
 }
