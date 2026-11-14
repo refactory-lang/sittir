@@ -1609,3 +1609,99 @@ Attributes: annotations on a declaration that are not evaluated.
 ### `packages/types/src/vocabulary/features/block-comments/index.ts::BlockComments`
 
 Block comments: a comment between delimiters that can span lines.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/bound-clauses/clause.ts::Clause::Bounds`
+
+The bounds of a bound clause: the types a bounded type parameter must extend.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/bound-clauses/index.ts::BoundClauses`
+
+Bound clauses: type parameters constrained by an `extends` bound.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/constrained-type-parameters/index.ts::ConstrainedTypeParameters`
+
+Constrained type parameters: a type parameter that carries a constraint on what it may stand for.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/constrained-type-parameters/type.ts::Type::Constrained`
+
+The constrained arm of the type family: a type parameter written with its bound.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Enum`
+
+An enum declaration whose type parameters carry bounds.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Extension`
+
+An extension declaration whose type parameters carry bounds.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Function`
+
+A function declaration whose type parameters carry bounds.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Method`
+
+A method declaration whose type parameters carry bounds.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::TypeAlias`
+
+A type alias declaration whose type parameters carry bounds.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::TypeParameter`
+
+A type parameter declaration carrying a bound.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Union`
+
+A union type declaration whose type parameters carry bounds.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/element.ts::Element::TypeArgument`
+
+A type argument at a use site of a bounded type parameter.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/higher-rank-polymorphism/index.ts::HigherRankPolymorphism`
+
+Higher-rank polymorphism: a type parameter quantified inside another type rather than at the outermost declaration.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/index.ts::BoundedQuantification`
+
+Bounded quantification: type parameters whose range is limited by an upper bound.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/type.ts::Type::Constrained`
+
+The constrained arm of bounded quantification's type family.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/clause.ts::Clause::Where`
+
+The where keyword form of a clause: bounds introduced by `where` after the declaration's header.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Enum`
+
+An enum declaration whose bounds are written in a where clause.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Extension`
+
+An extension declaration whose bounds are written in a where clause.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Function`
+
+A function declaration whose bounds are written in a where clause.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Method`
+
+A method declaration whose bounds are written in a where clause.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::TypeAlias`
+
+A type alias declaration whose bounds are written in a where clause.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Union`
+
+A union type declaration whose bounds are written in a where clause.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/element.ts::Element::TypeArgument`
+
+A type argument at a use site of a where-clause bounded parameter.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/index.ts::WhereClauses`
+
+Where clauses: bounds on type parameters written in a `where` clause after the declaration's header.
