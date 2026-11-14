@@ -743,6 +743,7 @@ module.exports.readPlanHolds = nativeBinding.readPlanHolds
 module.exports.readRenderAt = nativeBinding.readRenderAt
 module.exports.readSeparatorBefore = nativeBinding.readSeparatorBefore
 module.exports.readSiblings = nativeBinding.readSiblings
+module.exports.readSides = nativeBinding.readSides
 module.exports.readSlotLayouts = nativeBinding.readSlotLayouts
 module.exports.readSlotSeparator = nativeBinding.readSlotSeparator
 module.exports.readSnapshotLayouts = nativeBinding.readSnapshotLayouts

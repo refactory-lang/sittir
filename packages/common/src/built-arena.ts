@@ -72,7 +72,7 @@ export interface BuiltRecords {
 	parse(source: string): ParsedRecords;
 	text(node: number, start: number, end: number): string;
 	readonly query: TreeQuery;
-	readonly reads: ReadNodes;
+	readonly reads: ReadNodes & { sides(node: number): ReadSides };
 	readonly trivia: {
 		triviaSide(at: number, side: TriviaSideName): WireNode[] | undefined;
 		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly WireNode[]): void;
@@ -85,6 +85,10 @@ export interface BuiltRecords {
 }
 
 export type ReadNodes = Required<Pick<TreeHandle, 'snapshotLayouts' | 'triviaSide' | 'writeTriviaSide' | 'unitSides' | 'slotLayouts' | 'slotSeparator' | 'separatorBefore' | 'editedWithin' | 'isEmpty' | 'siblings' | 'sources'>>;
+
+export interface ReadSides extends Readonly<Record<TriviaSideName, readonly WireNode[]>> {
+	readonly units: readonly UnitSidesWire[];
+}
 
 export interface ParsedRecords {
 	readonly root: number | null;
@@ -270,6 +274,7 @@ export class BuiltArena {
 	readonly #text: BuiltRecords['text'];
 	readonly #sources: ReadNodes['sources'];
 	readonly #reads: (WritableWords | undefined)[] = [];
+	readonly #readSides = new Map<number, ReadSides>();
 	readonly #roots = new Set<number>();
 	readonly #errors = new Map<number, readonly unknown[]>();
 	readonly #entries: (Map<string, BuiltText> | undefined)[] = [];
@@ -314,6 +319,14 @@ export class BuiltArena {
 		this.#trivia = trivia;
 		this.#writeLeafSites = writeLeafSites;
 		this.token = mintTreeToken(0);
+		const sidesOf = (node: number): ReadSides => {
+			const held = this.#readSides.get(node);
+			if (held !== undefined) return held;
+			const read = reads.sides(node);
+			this.#readSides.set(node, read);
+			return read;
+		};
+		const unitsOf = (node: number): UnitSidesWire[] => sidesOf(node).units.map((unit) => ({ ...unit, ...mapTriviaEntries(unit, (entries) => entries.slice()) }));
 		this.tree = {
 			built: this,
 			token: this.token,
@@ -327,25 +340,30 @@ export class BuiltArena {
 			siblings: reads.siblings,
 			sources: reads.sources,
 			triviaSide: (at, side) => {
-				if (at < 0) return readEntries(this.tree, reads.triviaSide(at, side) ?? []);
-				if (!this.reads(at) && ((this.#sided[chunkOf(at, format)]?.get(at) ?? 0) & SIDE_BITS[side]) === 0) return undefined;
+				if (at < 0 || this.reads(at)) return readEntries(this.tree, sidesOf(at)[side].slice());
+				if (((this.#sided[chunkOf(at, format)]?.get(at) ?? 0) & SIDE_BITS[side]) === 0) return undefined;
 				const entries = trivia.triviaSide(at, side);
 				return entries === undefined ? undefined : readEntries(this.tree, entries);
 			},
 			writeTriviaSide: (at, side, entries) => {
-				if (at < 0) return reads.writeTriviaSide(at, side, entries);
+				if (at < 0) {
+					this.#readSides.clear();
+					return reads.writeTriviaSide(at, side, entries);
+				}
+				this.#readSides.delete(at);
 				trivia.writeTriviaSide(at, side, entries);
 				const sided = (this.#sided[chunkOf(at, format)] ??= new Map());
 				sided.set(at, (sided.get(at) ?? 0) | SIDE_BITS[side]);
 			},
 			unitSides: (at) => {
-				if (at < 0) return readUnits(this.tree, reads.unitSides(at));
+				if (at < 0) return readUnits(this.tree, unitsOf(at));
 				this.settle(at);
 				if (this.#unitSided[chunkOf(at, format)]?.has(at) === true) return readUnits(this.tree, trivia.unitSides(at));
-				return this.reads(at) ? readUnits(this.tree, reads.unitSides(at)) : [];
+				return this.reads(at) ? readUnits(this.tree, unitsOf(at)) : [];
 			},
 			writeUnitSides: (at, units) => {
 				this.#undefer(at);
+				this.#readSides.delete(at);
 				trivia.writeUnitSides(at, units);
 				(this.#unitSided[chunkOf(at, format)] ??= new Set()).add(at);
 			}
@@ -1059,6 +1077,7 @@ export class BuiltArena {
 
 	/** Replaces `side` of the built leaf at each site `sites` names, `[holder, word, item]` after another, with `entries`. */
 	writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly WireNode[]): void {
+		this.#readSides.clear();
 		this.#trivia.writeLeafSide(sites, side, entries);
 		for (let n = 0; n < sites.length; n += 3) (this.#leafSited[chunkOf(sites[n]!, this.format)] ??= new Set()).add(sites[n]!);
 	}

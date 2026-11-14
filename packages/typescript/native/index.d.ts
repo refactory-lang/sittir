@@ -477,6 +477,13 @@ export declare function readSeparatorBefore(engine: object, node: number): impor
  */
 export declare function readSiblings(engine: object, nodes: Array<number>): Array<number>
 
+/**
+ * r" `{ leading, trailing, inner, units }`: `triviaSide` of each
+ * r" side and `unitSides` for the node a read left that the key
+ * r" `node` names, all from one tree over its source's records.
+ */
+export declare function readSides(engine: object, node: number): { leading: import('@sittir/types').WireNode[]; trailing: import('@sittir/types').WireNode[]; inner: import('@sittir/types').WireNode[]; units: import('@sittir/types').UnitSidesWire[] }
+
 /** r" `slotLayouts` for the node a read left that the key `node` names. */
 export declare function readSlotLayouts(engine: object, node: number): import('@sittir/types').SlotLayoutWire[]
 

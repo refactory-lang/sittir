@@ -1005,6 +1005,16 @@ macro_rules! napi_engine {
                 with_read_node(engine, node, |tree, index| Ok(tree.unit_sides(index)))
             }
 
+            /// `{ leading, trailing, inner, units }`: `triviaSide` of each
+            /// side and `unitSides` for the node a read left that the key
+            /// `node` names, all from one tree over its source's records.
+            #[::napi_derive::napi(ts_return_type = "{ leading: import('@sittir/types').WireNode[]; trailing: import('@sittir/types').WireNode[]; inner: import('@sittir/types').WireNode[]; units: import('@sittir/types').UnitSidesWire[] }")]
+            pub fn read_sides(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, node: f64) -> ::napi::Result<$crate::napi_engine::Made> {
+                use $crate::trivia_table::TriviaSide::{Inner, Leading, Trailing};
+                let (sides, units) = with_read_node(engine, node, |tree, index| Ok(([Leading, Trailing, Inner].map(|side| tree.trivia_side(index, side)), tree.unit_sides(index))))?;
+                $crate::napi_engine::sides_object(&env, sides, units)
+            }
+
             /// `slotLayouts` for the node a read left that the key `node` names.
             #[::napi_derive::napi(ts_return_type = "import('@sittir/types').SlotLayoutWire[]")]
             pub fn read_slot_layouts(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, node: f64) -> ::napi::Result<Vec<$crate::layout::SlotLayout>> {
@@ -1963,6 +1973,23 @@ pub fn built_chunk<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore<
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "data", data)?;
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "meta", Made(meta))?;
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "freed", std::mem::take(&mut buffers.unreported))?;
+    Ok(Made(object.raw()))
+}
+
+/// `{ leading, trailing, inner, units }` of `sides`, in that order, and
+/// `units`.
+///
+/// # Errors
+///
+/// What making the object refuses.
+#[cfg(feature = "arena")]
+pub fn sides_object<E: napi::bindgen_prelude::ToNapiValue, U: napi::bindgen_prelude::ToNapiValue>(env: &napi::Env, sides: [Vec<E>; 3], units: Vec<U>) -> napi::Result<Made> {
+    use napi::JsValue;
+    let mut object = napi::bindgen_prelude::Object::new(env)?;
+    for (name, entries) in ["leading", "trailing", "inner"].into_iter().zip(sides) {
+        napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, name, entries)?;
+    }
+    napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "units", units)?;
     Ok(Made(object.raw()))
 }
 

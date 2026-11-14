@@ -30,7 +30,7 @@ const NO_READS: Pick<Records, 'read' | 'parse' | 'text' | 'query' | 'reads'> = {
 	parse: noRead,
 	text: noRead,
 	query: { descendants: noRead, planHolds: noRead },
-	reads: { snapshotLayouts: noRead, triviaSide: noRead, writeTriviaSide: noRead, unitSides: noRead, slotLayouts: noRead, slotSeparator: noRead, separatorBefore: noRead, editedWithin: noRead, isEmpty: noRead, siblings: noRead, sources: noRead }
+	reads: { snapshotLayouts: noRead, sides: noRead, triviaSide: noRead, writeTriviaSide: noRead, unitSides: noRead, slotLayouts: noRead, slotSeparator: noRead, separatorBefore: noRead, editedWithin: noRead, isEmpty: noRead, siblings: noRead, sources: noRead }
 };
 type Views = ConstructorParameters<typeof BuiltArena>[3];
 type WriteLeafSites = ConstructorParameters<typeof BuiltArena>[4];
@@ -159,6 +159,42 @@ describe('a built arena', () => {
 		arena.defer(at, () => ran.push(at));
 		expect(sideEntryOf(node, arena, undefined)).toEqual({ $type: 7, $record: at });
 		expect(ran).toEqual([at]);
+	});
+
+	it("asks the engine for a read node's sides once, and again after one of them is written", () => {
+		const asked: number[] = [];
+		const written: [number, string][] = [];
+		const sides = (node: number) => {
+			asked.push(node);
+			return { leading: [{ text: `leading ${asked.length}` }], trailing: [], inner: [], units: [{ slot: 'body', item: 0, leading: [{ text: 'unit' }] }] };
+		};
+		const record = new Uint32Array(2 ** format!.chunkShift);
+		const reads = { ...NO_READS.reads, sides, writeTriviaSide: (node: number, side: string) => void written.push([node, side]) };
+		const arena = new BuiltArena(
+			{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunksOf(), bump: () => undefined, release: () => [], ...NO_READS, read: (chunk: number) => (chunk === 9 ? record : undefined), reads, trivia: NO_SIDES },
+			(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
+			{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
+			NO_VIEWS,
+			() => undefined
+		);
+		const at = 9 * 2 ** format!.chunkShift + 4;
+		for (const key of [at, -77]) {
+			asked.length = 0;
+			const first = arena.tree.triviaSide(key, 'leading')!;
+			expect(first).toEqual([{ text: 'leading 1' }]);
+			first.push({ text: "a caller's own" } as never);
+			expect(arena.tree.triviaSide(key, 'leading')).toEqual([{ text: 'leading 1' }]);
+			expect(arena.tree.triviaSide(key, 'trailing')).toEqual([]);
+			expect(arena.tree.triviaSide(key, 'inner')).toEqual([]);
+			expect(arena.tree.unitSides(key)).toEqual([{ slot: 'body', item: 0, leading: [{ text: 'unit' }] }]);
+			expect(asked).toEqual([key]);
+		}
+		arena.tree.writeTriviaSide(-77, 'leading', []);
+		expect(written).toEqual([[-77, 'leading']]);
+		asked.length = 0;
+		arena.tree.triviaSide(-77, 'trailing');
+		arena.tree.triviaSide(at, 'trailing');
+		expect(asked).toEqual([-77, at]);
 	});
 
 	it("reads a read's records in a chunk number a freed builder chunk had", () => {
