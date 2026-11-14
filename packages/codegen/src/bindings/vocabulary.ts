@@ -18,6 +18,7 @@ export const TEXTS = 'texts';
 export const TEXT_PATHS = 'TextPaths';
 export const SLOT = 'Slot';
 export const REFINED_BY = 'RefinedBy';
+export const SUB_KIND_OF = 'SubKindOf';
 export const SYNONYMS = 'Synonyms';
 const NEVER = 'never';
 
@@ -39,6 +40,7 @@ export interface Declared {
 	readonly parent: string | undefined;
 	readonly refines: string | undefined;
 	readonly heritage: readonly string[];
+	readonly restated: readonly string[];
 	readonly members: readonly Member[];
 	readonly text?: true;
 }
