@@ -1,7 +1,7 @@
 import type { CellSite } from './record-cell.ts';
 import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, Pending, TriviaEntry, TriviaFacts, UnitSidesWire, WireNode } from '@sittir/types';
 import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
-import { carryRead, carryPlace, coordinateIndex, coordinateOf, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides } from './node-data.ts';
+import { carryRead, carryPlace, coordinateIndex, coordinateOf, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, triviaOf, unitSidesOf, writtenSides } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { admitSlot, builtArenaOf as handleBuiltArena, currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle } from './engine-scope.ts';
@@ -15,7 +15,7 @@ import { spelledForm } from './interior.ts';
 import { spelledMember } from './spelled.ts';
 import { snapshotOf } from './snapshot.ts';
 import { cacheOf, chosenSeparatorOf, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
-import { HANDLE, isParsedPosition, isRecordPosition, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
+import { HANDLE, isParsedPosition, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
 import { builtRecordOf, holdSideEntries, isBuiltNode, patchCell, patchFlag, patchList, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
