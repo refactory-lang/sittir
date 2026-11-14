@@ -14,7 +14,7 @@ import type {
 	UnionType
 } from '@sittir/typescript';
 import { isNode, parsedTypescript, type Kinds, type Span, type Statement, type TypescriptSource } from './pinned-typescript.ts';
-import { type Declared, type FeatureIndex, FLAG, FLAGGED, type Member, type MemberArity, REFINED_BY, SLOT, TEXT } from './vocabulary.ts';
+import { type Declared, type FeatureIndex, FLAG, FLAGGED, type Member, type MemberArity, REFINED_BY, SLOT, SUB_KIND_OF, TEXT } from './vocabulary.ts';
 
 interface Source extends Omit<TypescriptSource, 'spelled'> {
 	readonly text: (item: object | number) => string;
@@ -148,6 +148,7 @@ function declareText(declaration: TypeAliasDeclaration.Parsed, scope: readonly s
 		parent: scope.length === 0 ? undefined : scope.join('.'),
 		refines: undefined,
 		heritage: [],
+		restated: [],
 		members: flags.map((name) => ({ name, optional: true, type: FLAG, flag: true, references: [], literals: [] })),
 		text: true
 	});
@@ -187,6 +188,7 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 		parent,
 		refines,
 		heritage: heritageNames(heritage, source),
+		restated: restatedKeys(heritage, source),
 		members
 	});
 }
@@ -243,7 +245,7 @@ function arityOf(type: Annotation | undefined, source: Source): { readonly arity
 	return arrayType(type, source) ? { arity: 'list' } : hasArrayArm(type, source) ? { arity: 'either' } : {};
 }
 
-function stringLiterals(type: Annotation, source: Source): string[] | undefined {
+function stringLiterals(type: AliasType, source: Source): string[] | undefined {
 	const { K, text } = source;
 	if (!isNode(type)) return undefined;
 	if (type.$type === K.UnionType) {
@@ -268,6 +270,16 @@ function refinedValue(heritage: ExtendsTypeClause.Parsed, source: Source): strin
 		return within === undefined ? undefined : vocabularyReference(heritage, source, within);
 	}
 	return undefined;
+}
+
+function restatedKeys(heritage: ExtendsTypeClause.Parsed | undefined, source: Source): string[] {
+	const { K, text } = source;
+	if (heritage === undefined) return [];
+	return [heritage.types()].flat().flatMap((type: HeritageType) => {
+		if (!isNode(type) || type.$type !== K.GenericType || text(type.name()) !== SUB_KIND_OF) return [];
+		const keys = type.typeArguments()?.types()[1];
+		return keys === undefined ? [] : (stringLiterals(keys, source) ?? []);
+	});
 }
 
 function heritageNames(heritage: ExtendsTypeClause.Parsed | undefined, source: Source): string[] {
