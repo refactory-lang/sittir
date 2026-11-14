@@ -25,6 +25,7 @@ import type {
 } from '../../types/rule.ts';
 import type { AssembledNonterminal, NodeOrTerminal } from '../../compiler/model/node-map.ts';
 import { emitRule, type EmitCtx } from '../templates.ts';
+import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import { showBody } from './support/show-body.ts';
 import type { RenderRule } from '../../types/rule.ts';
 
@@ -41,9 +42,8 @@ function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 		} as unknown as EmitCtx['nodeMap'],
 		wordMatcher: /^\w+$/,
 		isWordChar: (c: string) => /\w/.test(c),
-		// No merge-hazard pairs by default — tests opt in via overrides,
-		// mirroring how grammars opt in at emit time.
-		isLiteralMergePair: () => false,
+		isJoinPair: () => false,
+		joins: NO_JOINS,
 		externals: [],
 		rules: {},
 		visitingHelpers: new Set<string>(),
@@ -86,6 +86,18 @@ describe('emitRule — string', () => {
 		// Only a real tag opener needs separating — see separateBraceFromTag.
 		const rule: StringRule = { type: STRING, value: '{}' };
 		expect(shown(rule, makeCtx())).toBe('{}');
+	});
+});
+
+describe('emitRule — join arms', () => {
+	const joins = { ...NO_JOINS, joinsPrevious: new Set(['rule:k:members.1', 'rule:k:root']), joinsNext: new Set(['rule:k:gone']), pairs: ['--'] };
+
+	it("passes a rule's arms, its own and the ones it absorbed, to its first write", () => {
+		const minus = { type: STRING, value: '-', id: 'rule:k:members.1', absorbedIds: ['rule:k:gone'] } as RenderRule;
+		expect(emitRule(minus, makeCtx({ joins }))).toEqual([{ kind: 'text', text: '-', join: { previous: true, next: true } }]);
+		const seq = { type: SEQ, id: 'rule:k:root', members: [{ type: STRING, value: '(', id: 'rule:k:members.0' }, { type: STRING, value: ')' }] } as RenderRule;
+		expect(emitRule(seq, makeCtx({ joins }))[0]).toEqual({ kind: 'text', text: '(', join: { previous: true, next: false } });
+		expect(emitRule({ type: STRING, value: '-', id: 'rule:k:other' } as RenderRule, makeCtx({ joins }))).toEqual([{ kind: 'text', text: '-' }]);
 	});
 });
 
@@ -237,7 +249,7 @@ describe('emitRule — seq', () => {
 	});
 
 	it('defaults a static literal seam to a space whether or not it is a merge hazard', () => {
-		const hazardCtx = makeCtx({ isLiteralMergePair: (l: string, r: string) => l === '.' && r === '=' });
+		const hazardCtx = makeCtx({ isJoinPair: (l: string, r: string) => l === '.' && r === '=' });
 		const hazard: SeqRule = {
 			type: SEQ,
 			members: [
@@ -667,7 +679,7 @@ describe('emitRule — token seams', () => {
 	});
 
 	it('lets the seam replace a statically spaced seam, and places two seams on one boundary in order', () => {
-		const hazardCtx = makeCtx({ isLiteralMergePair: (l: string, r: string) => l === '.' && r === '=' });
+		const hazardCtx = makeCtx({ isJoinPair: (l: string, r: string) => l === '.' && r === '=' });
 		const spaced = { type: SEQ, members: [{ type: STRING, value: '..' }, seamChoice('eq_before'), { type: STRING, value: '=>' }] } as unknown as SeqRule;
 		expect(shown(spaced, hazardCtx)).toBe('..⟨seam eq_before⟩=>');
 		const two = { type: SEQ, members: [{ type: STRING, value: ')' }, seamChoice('rparen_after'), seamChoice('lbrace_before'), { type: STRING, value: '{' }] } as unknown as SeqRule;
@@ -680,7 +692,7 @@ describe('emitRule — token seams', () => {
 	});
 
 	it('peels a seam at the edge of a nested group so it stands in for a statically spaced boundary', () => {
-		const hazardCtx = makeCtx({ isLiteralMergePair: (l: string, r: string) => l === '.' && r === '=' });
+		const hazardCtx = makeCtx({ isJoinPair: (l: string, r: string) => l === '.' && r === '=' });
 		const group = { type: SEQ, members: [seamChoice('eq_before'), { type: STRING, value: '=>' }, { type: STRING, value: 'x' }], staticSeamBefore: 'spaced' } as unknown as SeqRule;
 		const rule = { type: SEQ, members: [{ type: STRING, value: '..' }, group] } as unknown as SeqRule;
 		expect(shown(rule, hazardCtx)).toBe('..⟨seam eq_before⟩=> x');

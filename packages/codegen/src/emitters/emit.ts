@@ -2,7 +2,7 @@ import type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import { assertReparseHostKeys, type ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
 import { emitReparseHosts } from './reparse-hosts.ts';
 import { isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
-import type { DiagnosticSink } from '../types/diagnostics.ts';
+import { DiagnosticSink, EmitHaltedError } from '../types/diagnostics.ts';
 import { resolveRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -35,6 +35,7 @@ import {
 } from './shared.ts';
 import { builderTables } from './overlays/build-table.ts';
 import { collectPolymorphWires } from './overlays/polymorphs.ts';
+import { unreachedJoinSeams, type JoinFacts } from '../compiler/model/join-seams/index.ts';
 
 export interface EmitAllConfig {
 	grammar: string;
@@ -50,6 +51,7 @@ export interface EmitAllConfig {
 	reparseHosts?: ReparseHostsConfig;
 	options?: OptionsConfig;
 	renderAs?: Readonly<Record<string, EvaluatedRule<'evaluate'>>>;
+	joins: JoinFacts;
 	diagnostics?: DiagnosticSink;
 }
 
@@ -101,6 +103,7 @@ function emitStages(config: EmitAllConfig, collector: EmitCollector): EmitAllRes
 		reparseHosts,
 		options: optionsBlock,
 		renderAs,
+		joins,
 		diagnostics
 	} = config;
 	assertReparseHostKeys(grammar, reparseHosts, new Set([...nodeMap.nodes.keys(), ...collectGeneratedKindEntries(generatedIdTables).flatMap((entry) => (entry.parseName === undefined ? [entry.kind] : [entry.kind, entry.parseName]))]));
@@ -108,10 +111,17 @@ function emitStages(config: EmitAllConfig, collector: EmitCollector): EmitAllRes
 	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	const resolvedRules = resolveRenderRules(
 		{ nodeMap, kindEntries, options: optionsBlock, whitespaceText: whitespaceTextOf(renderAs, nodeMap) },
-		(spaced) => stampStaticSpacing(nodeMap, grammar, spaced, kindEntries)
+		(spaced) => stampStaticSpacing(nodeMap, grammar, spaced, kindEntries, joins)
 	);
 
 	const renderRules = resolvedRules.seamed;
+	collector.guard(() => {
+		const unreached = unreachedJoinSeams(joins, renderRules.rules, [...nodeMap.nodes.values()].flatMap((node) => ('slots' in node ? node.slots : [])));
+		if (unreached.length === 0) return;
+		const sink = new DiagnosticSink();
+		for (const seam of unreached) sink.fail({ code: 'join-seam-unreached', message: `${grammar}: join seam ${seam} is armed, and no rule or slot holds its position` });
+		throw new EmitHaltedError(sink.all());
+	});
 	const sitePreferences = collectSitePreferences({ nodeMap, kindEntries, renderRules, options: optionsBlock });
 
 	const factoryEmitter = new FactoryEmitter({
@@ -141,7 +151,7 @@ function emitStages(config: EmitAllConfig, collector: EmitCollector): EmitAllRes
 	});
 
 	const addressTables = addressTablesFor(nodeMap, kindEntries, sitePreferences, optionsBlock);
-	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules, kindEntries, diagnostics });
+	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules, kindEntries, joins, diagnostics });
 
 	const renderModuleEmitterInst =
 		renderModuleEmission.tag === 'emit'
@@ -154,7 +164,8 @@ function emitStages(config: EmitAllConfig, collector: EmitCollector): EmitAllRes
 						options: optionsBlock,
 						renderAs,
 						sites: sitePreferences,
-						addresses: addressTables
+						addresses: addressTables,
+						joins
 					})
 				})
 			: undefined;

@@ -1609,3 +1609,131 @@ Attributes: annotations on a declaration that are not evaluated.
 ### `packages/types/src/vocabulary/features/block-comments/index.ts::BlockComments`
 
 Block comments: a comment between delimiters that can span lines.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/bound-clauses/clause.ts::Clause::Bounds`
+
+The bounds of a bound clause, claimed by the runtime tree. Its `bounds` slot is a list of constraint nodes: a macro call, an identifier, a higher-ranked bound, a removed bound, or a type. Each is a `clause.bounds` path under the `Clause` interface.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/bound-clauses/index.ts::BoundClauses`
+
+The bound-clauses feature marker: an interface extending `BoundedQuantification` with `'bound-clauses': true`. A declaration that carries the marker admits the bounds written as a clause, and it adds no slots of its own.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/constrained-type-parameters/index.ts::ConstrainedTypeParameters`
+
+The constrained-type-parameters feature marker: an interface extending `BoundedQuantification` and `PythonTypeForms` with `'constrained-type-parameters': true`. It adds the python type-forms surface to bounded quantification and no slots of its own.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/constrained-type-parameters/type.ts::Type::Constrained`
+
+The `type.constrained` node: a type whose `constraint` slot holds the single type its parameter is restricted to. The slot takes any `Type.Any`.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Enum`
+
+The `declaration.enum` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Extension`
+
+The `declaration.extension` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Function`
+
+The `declaration.function` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Method`
+
+The `declaration.method` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::TypeAlias`
+
+The `declaration.type_alias` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::TypeParameter`
+
+The `declaration.type_parameter` node under bounded quantification. Its `bounds` slot lists the constraints on the parameter: a macro call, an identifier, a higher-ranked bound, a removed bound, or a type. Its `Parameters`, `Value` and `Variadic` arms set `bounds` to never.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Union`
+
+The `declaration.union` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/element.ts::Element::TypeArgument`
+
+The `element.type_argument` node: a type argument at a use site. Its `bounds` slot lists the constraints on the argument, using the same node kinds as a type parameter's bounds.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/higher-rank-polymorphism/index.ts::HigherRankPolymorphism`
+
+Higher-rank polymorphism: an interface extending `BoundedQuantification` with `'higher-rank-polymorphism': true`. A bound under it quantifies over type parameters of its own, the `Clause.Bounds.HigherRanked` arm.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/index.ts::BoundedQuantification`
+
+Bounded quantification: an interface extending `ParametricPolymorphism` with `'bounded-quantification': true`. It joins the declaration, element and type arms, and the bounds a type parameter must satisfy appear in its constraint and in where clauses.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/type.ts::Type::Constrained`
+
+The `type.constrained` arm under bounded quantification. It declares no slots of its own.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/clause.ts::Clause::Where`
+
+The `clause.where` node: a where clause. Its `wherePredicates` slot lists the `Where.Predicate` nodes written after the signature. Each predicate has a `left` slot naming the constrained type and a `bounds` slot listing its constraints.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Enum`
+
+An enum declaration that carries a `whereClause` slot holding a `Clause.Where`.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Extension`
+
+An extension declaration that carries a `whereClause` slot holding a `Clause.Where`.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Function`
+
+A function declaration that carries a `whereClause` slot holding a `Clause.Where`.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Method`
+
+A method declaration that carries a `whereClause` slot holding a `Clause.Where`.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::TypeAlias`
+
+A type alias declaration that carries a `whereClause` slot and a `trailingWhereClause` slot, each holding a `Clause.Where`. The trailing slot takes a where clause written after the aliased type.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Union`
+
+A union type declaration that carries a `whereClause` slot holding a `Clause.Where`.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/element.ts::Element::TypeArgument`
+
+The `element.type_argument` node under where clauses: a type argument whose `bounds` slot lists its constraints, in the same node kinds as a type parameter's bounds.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/index.ts::WhereClauses`
+
+Where clauses: an interface extending `BoundedQuantification` with `'where-clauses': true`. It places bounds on type parameters after the signature, separately from the parameter list, through the `Clause.Where` node.
+
+### `packages/types/src/vocabulary/features/python-statements/clause.ts::Clause::ElseIf`
+
+The `clause.else_if` node, Python's `elif` clause, claimed by the `p` claim tag. Its `condition` slot holds an expression, identifier, literal or pattern. Its `consequence` slot holds the body: a type alias or a statement.
+
+### `packages/types/src/vocabulary/features/python-statements/statement.ts::Statement::Delete`
+
+The `statement.delete` node, Python's `del` statement, claimed by the `p` claim tag. Its `expressions` slot lists the targets to delete, each an expression, identifier, literal or pattern.
+
+### `packages/types/src/vocabulary/features/python-statements/statement.ts::Statement::If`
+
+The `statement.if` node under python statements, claimed by the `p` claim tag only. Its one slot, `alternatives`, lists the clauses that follow the body, each a `Clause.Any`.
+
+### `packages/types/src/vocabulary/features/python-statements/index.ts::PythonStatements`
+
+Python statements: an interface marked `'python-statements': true`. It covers Python's `elif` clause, its `del` statement, and `else` on loops.
+
+### `packages/types/src/vocabulary/features/interface-conformance/clause.ts::Clause::Implements`
+
+The `clause.implements` node, claimed by the `t` claim tag. Its `types` slot lists the interfaces or types a class implements, each an identifier or a type.
+
+### `packages/types/src/vocabulary/features/interface-conformance/declaration.ts::Declaration::Class`
+
+The `declaration.class` node with an `implements` slot listing the interfaces or types the class conforms to, each an identifier or a type. The `t` claim tag claims the node.
+
+### `packages/types/src/vocabulary/features/interface-conformance/expression.ts::Expression::Class`
+
+The `expression.class` node, a class written as an expression, with an `implements` slot listing the interfaces or types it conforms to, each an identifier or a type.
+
+### `packages/types/src/vocabulary/features/interface-conformance/index.ts::InterfaceConformance`
+
+Nominal interface conformance: an interface marked `'interface-conformance': true`. A class declares the interfaces it implements through the `implements` slot.

@@ -16,7 +16,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "elements"
+			"name": "elements",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -100,7 +104,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -298,7 +306,11 @@
 						},
 						{
 							"kind": "slot",
-							"name": "optional"
+							"name": "optional",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						},
 						{
 							"kind": "seam",
@@ -442,7 +454,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -536,7 +552,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "if",
@@ -572,7 +592,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "elements"
+			"name": "elements",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -602,7 +626,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "elements"
+			"name": "elements",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -632,7 +660,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "elements"
+			"name": "elements",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -694,7 +726,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "async"
+							"name": "async",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						},
 						{
 							"kind": "seam",
@@ -706,7 +742,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "content",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -722,7 +762,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -758,7 +802,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -834,7 +882,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "left"
+			"name": "left",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -842,7 +894,11 @@
 		},
 		{
 			"kind": "text",
-			"text": "="
+			"text": "=",
+			"join": {
+				"previous": true,
+				"next": false
+			}
 		},
 		{
 			"kind": "seam",
@@ -850,7 +906,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "right",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -872,7 +932,11 @@
 		},
 		{
 			"kind": "text",
-			"text": "="
+			"text": "=",
+			"join": {
+				"previous": true,
+				"next": false
+			}
 		},
 		{
 			"kind": "seam",
@@ -880,7 +944,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "right",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -910,7 +978,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "right",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -932,7 +1004,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -1020,7 +1096,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "right"
+							"name": "right",
+							"join": {
+								"previous": true,
+								"next": true
+							}
 						}
 					]
 				}
@@ -1064,7 +1144,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "right",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -1124,7 +1208,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "type_arguments"
+							"name": "type_arguments",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						}
 					]
 				}
@@ -1388,7 +1476,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -1548,7 +1640,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "if",
@@ -1687,7 +1783,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -1725,7 +1825,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "right",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -1733,7 +1837,11 @@
 		},
 		{
 			"kind": "text",
-			"text": "?"
+			"text": "?",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -1741,7 +1849,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "consequence"
+			"name": "consequence",
+			"join": {
+				"previous": true,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -1757,7 +1869,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "alternative"
+			"name": "alternative",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -1775,7 +1891,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "bounds"
+			"name": "bounds",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -1940,7 +2060,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "type_parameters"
+							"name": "type_parameters",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						}
 					]
 				}
@@ -1964,7 +2088,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -2158,7 +2286,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -2180,7 +2312,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -2232,7 +2368,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -2262,7 +2402,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "value",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -2545,7 +2689,11 @@
 		},
 		{
 			"kind": "text",
-			"text": "default"
+			"text": "default",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -2553,7 +2701,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "content",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -2767,7 +2919,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "value",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "slot",
@@ -2835,7 +2991,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "slot",
@@ -2861,7 +3021,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "types"
+			"name": "types",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -2885,7 +3049,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "type_arguments"
+							"name": "type_arguments",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						}
 					]
 				}
@@ -2955,7 +3123,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": true,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -3019,7 +3191,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "right",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -3049,7 +3225,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "left"
+			"name": "left",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -3065,7 +3245,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "right",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -3129,7 +3313,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "right",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -3199,7 +3387,11 @@
 									"body": [
 										{
 											"kind": "slot",
-											"name": "value"
+											"name": "value",
+											"join": {
+												"previous": false,
+												"next": true
+											}
 										}
 									]
 								}
@@ -3223,7 +3415,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "right",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -3279,7 +3475,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -3293,7 +3493,11 @@
 		},
 		{
 			"kind": "text",
-			"text": "for"
+			"text": "for",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -3313,37 +3517,19 @@
 		},
 		{
 			"kind": "slot",
-			"name": "initializer"
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "initializer",
-					"kinds": [
-						"expression",
-						"sequence_expression"
-					],
-					"body": [
-						{
-							"kind": "seam",
-							"field": "semi_before"
-						},
-						{
-							"kind": "text",
-							"text": ";"
-						},
-						{
-							"kind": "seam",
-							"field": "semi_after"
-						}
-					]
-				}
-			]
+			"name": "initializer",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "slot",
-			"name": "condition"
+			"name": "condition",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "if",
@@ -3379,7 +3565,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "increment"
+							"name": "increment",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						}
 					]
 				}
@@ -3399,7 +3589,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -3427,7 +3621,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "elements"
+							"name": "elements",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						}
 					]
 				}
@@ -3453,7 +3651,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "item"
+			"name": "item",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -3509,7 +3711,11 @@
 						},
 						{
 							"kind": "slot",
-							"name": "elements"
+							"name": "elements",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						}
 					]
 				}
@@ -3822,7 +4028,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "return_type"
+			"name": "return_type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -4048,7 +4258,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type_arguments"
+			"name": "type_arguments",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -4087,7 +4301,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "consequence"
+			"name": "consequence",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "if",
@@ -4123,7 +4341,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -4557,7 +4779,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "index_type"
+			"name": "index_type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -4677,7 +4903,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -4727,7 +4957,11 @@
 									"body": [
 										{
 											"kind": "slot",
-											"name": "type"
+											"name": "type",
+											"join": {
+												"previous": false,
+												"next": true
+											}
 										}
 									]
 								}
@@ -4753,7 +4987,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type_arguments"
+			"name": "type_arguments",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -4789,7 +5027,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "closing"
+			"name": "closing",
+			"join": {
+				"previous": true,
+				"next": false
+			}
 		}
 	],
 	"interface_declaration": [
@@ -4839,7 +5081,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -4907,7 +5153,11 @@
 		},
 		{
 			"kind": "text",
-			"text": "&"
+			"text": "&",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -4915,7 +5165,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "right",
+			"join": {
+				"previous": true,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -4945,7 +5199,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -5029,7 +5287,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "index_type"
+			"name": "index_type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -5067,7 +5329,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "if",
@@ -5095,7 +5361,11 @@
 									"body": [
 										{
 											"kind": "slot",
-											"name": "alias"
+											"name": "alias",
+											"join": {
+												"previous": false,
+												"next": true
+											}
 										}
 									]
 								}
@@ -5391,7 +5661,11 @@
 						},
 						{
 							"kind": "slot",
-							"name": "optional"
+							"name": "optional",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						},
 						{
 							"kind": "seam",
@@ -5409,7 +5683,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "type_parameters"
+							"name": "type_parameters",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						}
 					]
 				}
@@ -5793,7 +6071,11 @@
 						},
 						{
 							"kind": "slot",
-							"name": "optional"
+							"name": "optional",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						},
 						{
 							"kind": "seam",
@@ -6151,7 +6433,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "function"
+			"name": "function",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "if",
@@ -6161,7 +6447,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "type_arguments"
+							"name": "type_arguments",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						}
 					]
 				}
@@ -6201,7 +6491,11 @@
 		},
 		{
 			"kind": "text",
-			"text": "!"
+			"text": "!",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -6567,7 +6861,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "right",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -6637,7 +6935,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "closing"
+			"name": "closing",
+			"join": {
+				"previous": true,
+				"next": false
+			}
 		},
 		{
 			"kind": "seam",
@@ -6673,7 +6975,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -6695,7 +7001,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -6771,7 +7081,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "name"
+			"name": "name",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -6779,7 +7093,11 @@
 		},
 		{
 			"kind": "text",
-			"text": "?"
+			"text": "?",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -6825,7 +7143,11 @@
 									"body": [
 										{
 											"kind": "slot",
-											"name": "value"
+											"name": "value",
+											"join": {
+												"previous": false,
+												"next": true
+											}
 										}
 									]
 								}
@@ -6855,7 +7177,11 @@
 		},
 		{
 			"kind": "text",
-			"text": "?"
+			"text": "?",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -6885,7 +7211,11 @@
 		},
 		{
 			"kind": "text",
-			"text": "?"
+			"text": "?",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -6915,7 +7245,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "value",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -6945,7 +7279,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "value",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -6967,7 +7305,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "sequence_expression"
+			"name": "sequence_expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -6997,7 +7339,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "if",
@@ -7041,7 +7387,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -7090,7 +7440,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "statements"
+			"name": "statements",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -7208,7 +7562,11 @@
 						},
 						{
 							"kind": "slot",
-							"name": "optional"
+							"name": "optional",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						},
 						{
 							"kind": "seam",
@@ -7390,7 +7748,11 @@
 									"body": [
 										{
 											"kind": "slot",
-											"name": "value"
+											"name": "value",
+											"join": {
+												"previous": false,
+												"next": true
+											}
 										}
 									]
 								}
@@ -7580,7 +7942,11 @@
 									"body": [
 										{
 											"kind": "slot",
-											"name": "value"
+											"name": "value",
+											"join": {
+												"previous": false,
+												"next": true
+											}
 										}
 									]
 								}
@@ -7610,7 +7976,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -7736,7 +8106,11 @@
 									"body": [
 										{
 											"kind": "slot",
-											"name": "value"
+											"name": "value",
+											"join": {
+												"previous": false,
+												"next": true
+											}
 										}
 									]
 								}
@@ -7762,7 +8136,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "pattern"
+			"name": "pattern",
+			"join": {
+				"previous": true,
+				"next": false
+			}
 		},
 		{
 			"kind": "text",
@@ -7856,7 +8234,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "name"
+			"name": "name",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "if",
@@ -7884,7 +8266,11 @@
 						},
 						{
 							"kind": "text",
-							"text": "="
+							"text": "=",
+							"join": {
+								"previous": true,
+								"next": false
+							}
 						},
 						{
 							"kind": "seam",
@@ -7898,7 +8284,11 @@
 									"body": [
 										{
 											"kind": "slot",
-											"name": "value"
+											"name": "value",
+											"join": {
+												"previous": false,
+												"next": true
+											}
 										}
 									]
 								}
@@ -7920,7 +8310,11 @@
 		},
 		{
 			"kind": "text",
-			"text": "..."
+			"text": "...",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -7928,7 +8322,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "lhs_expression"
+			"name": "lhs_expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -7950,7 +8348,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -7978,7 +8380,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "expression"
+							"name": "expression",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						}
 					]
 				}
@@ -8016,7 +8422,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8030,7 +8440,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8106,7 +8520,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "pattern"
+			"name": "pattern",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "if",
@@ -8154,7 +8572,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8176,7 +8598,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "statements"
+			"name": "statements",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8304,7 +8730,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "index"
+			"name": "index",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8364,7 +8794,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "value",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8380,7 +8814,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8414,7 +8852,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8502,7 +8944,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8528,7 +8974,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8566,7 +9016,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "consequence"
+			"name": "consequence",
+			"join": {
+				"previous": true,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8582,7 +9036,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "alternative"
+			"name": "alternative",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8604,7 +9062,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "slot",
@@ -8704,7 +9166,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "tuple_type_members"
+							"name": "tuple_type_members",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						}
 					]
 				}
@@ -8730,7 +9196,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "item"
+			"name": "item",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8782,7 +9252,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "value",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "slot",
@@ -8808,7 +9282,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8830,7 +9308,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "types"
+			"name": "types",
+			"join": {
+				"previous": true,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8838,7 +9320,11 @@
 		},
 		{
 			"kind": "text",
-			"text": ">"
+			"text": ">",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8856,7 +9342,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -8996,7 +9486,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "type",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -9098,7 +9592,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type_arguments"
+			"name": "type_arguments",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -9224,7 +9722,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "item"
+			"name": "item",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -9266,7 +9768,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "argument"
+			"name": "argument",
+			"join": {
+				"previous": true,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -9298,7 +9804,11 @@
 		},
 		{
 			"kind": "text",
-			"text": "|"
+			"text": "|",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -9306,7 +9816,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "right",
+			"join": {
+				"previous": true,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -9350,7 +9864,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "argument"
+			"name": "argument",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -9462,7 +9980,11 @@
 		},
 		{
 			"kind": "text",
-			"text": "!"
+			"text": "!",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -9526,7 +10048,11 @@
 									"body": [
 										{
 											"kind": "slot",
-											"name": "value"
+											"name": "value",
+											"join": {
+												"previous": false,
+												"next": true
+											}
 										}
 									]
 								}
@@ -9560,7 +10086,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -9586,7 +10116,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -9614,7 +10148,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "expression"
+							"name": "expression",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						}
 					]
 				}
@@ -9640,7 +10178,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",

@@ -198,6 +198,30 @@ describe('Normalize — fanOutSeqChoices (T060)', () => {
 		expect(branches[1].members.map((m: any) => m.value)).toEqual(['a', 'c', 'd']);
 	});
 
+	it('keeps the ids the seq and its choice absorbed when it fans out', () => {
+		const rule = {
+			type: SEQ,
+			id: 'rule:k:root',
+			absorbedIds: ['rule:k:members.0'],
+			members: [
+				{ type: STRING, value: 'a', id: 'rule:k:members.1' },
+				{
+					type: CHOICE,
+					id: 'rule:k:members.2',
+					absorbedIds: ['rule:k:members.2/members.0'],
+					members: [
+						{ type: STRING, value: 'b', id: 'rule:k:members.2/members.1' },
+						{ type: STRING, value: 'c', id: 'rule:k:members.2/members.2' }
+					]
+				}
+			]
+		} as Rule;
+		const out = fanOutSeqChoices(rule);
+		expect(out.type).toBe('CHOICE');
+		expect(out.id).toBe('rule:k:root');
+		expect([...(out.absorbedIds ?? [])].sort()).toEqual(['rule:k:members.0', 'rule:k:members.2', 'rule:k:members.2/members.0']);
+	});
+
 	it('leaves multi-choice seqs alone', () => {
 		// Two choices in one seq → combinatorial explosion. Skip.
 		const rule: Rule = {

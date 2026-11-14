@@ -152,6 +152,7 @@ fn list<'a>(
         head: None,
         tail: None,
         units: None,
+        join: sittir_core::render::JoinArm::NONE,
     }
 }
 
@@ -229,6 +230,7 @@ fn an_empty_list_writes_nothing_even_with_flanks_head_tail_and_template() {
         head: Some(sittir_core::types::SiteId(0)),
         tail: Some(sittir_core::types::SiteId(1)),
         units: None,
+        join: sittir_core::render::JoinArm::NONE,
     };
     assert_eq!(rt_with_sites(&view), "");
     let none = ListView {
@@ -243,6 +245,7 @@ fn an_empty_list_writes_nothing_even_with_flanks_head_tail_and_template() {
         head: None,
         tail: None,
         units: None,
+        join: sittir_core::render::JoinArm::NONE,
     };
     assert_eq!(rt(&none), "");
 }
@@ -262,6 +265,7 @@ fn template_is_outside_head_and_tail() {
         head: Some(sittir_core::types::SiteId(0)),
         tail: Some(sittir_core::types::SiteId(1)),
         units: None,
+        join: sittir_core::render::JoinArm::NONE,
     };
     assert_eq!(rt_with_sites(&view), "{\na,b\n}");
 }
@@ -281,6 +285,7 @@ fn optional_elements_still_take_separators() {
         head: None,
         tail: None,
         units: None,
+        join: sittir_core::render::JoinArm::NONE,
     };
     assert_eq!(rt(&view), ",,a");
 }
@@ -319,6 +324,7 @@ fn spelled_list<L: sittir_core::view::SlotItems>(items: L) -> ListView<'static, 
         head: None,
         tail: None,
         units: None,
+        join: sittir_core::render::JoinArm::NONE,
     }
 }
 

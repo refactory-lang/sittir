@@ -110,7 +110,8 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 		try {
 			const { runTemplateEmitter } = await load('templates');
 			const { collectKindEntries } = await load('kindDiscriminant');
-			const tpl = runTemplateEmitter({ grammar, nodeMap, kindEntries: collectKindEntries(nodeMap, generatedIdTables) });
+			const { NO_JOINS } = await load('joinSeams');
+			const tpl = runTemplateEmitter({ grammar, nodeMap, kindEntries: collectKindEntries(nodeMap, generatedIdTables), joins: NO_JOINS });
 			const body = tpl.bodies.get(kind);
 			stages.emitTemplate = body ?? null;
 		} catch (e) {

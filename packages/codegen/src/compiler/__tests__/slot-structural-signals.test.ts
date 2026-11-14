@@ -12,6 +12,7 @@ import {
 	resolveSingleFieldFactorySlot
 } from '../../emitters/shared.ts';
 import { runTemplateEmitter } from '../../emitters/templates.ts';
+import { NO_JOINS } from '../model/join-seams/index.ts';
 import { refersTo } from '../../emitters/render-body.ts';
 
 function buildNodeMap(rules: Record<string, unknown>) {
@@ -132,7 +133,7 @@ describe('slot structural signals', () => {
 		const slot = getCompound(nodeMap, 'box').slots[0];
 		expect(slot?.isUnnamed).toBe(true);
 		expect(slot?.storageName).toBe('obj');
-		const templates = runTemplateEmitter({ grammar: 'synth', nodeMap, kindEntries: collectGeneratedKindEntries(generatedIdTables) });
+		const templates = runTemplateEmitter({ grammar: 'synth', nodeMap, kindEntries: collectGeneratedKindEntries(generatedIdTables), joins: NO_JOINS });
 		expect(refersTo(templates.bodies.get('box')!, 'obj')).toBe(true);
 	});
 

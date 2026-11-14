@@ -43,7 +43,7 @@ import type {
 import { sym } from '../types/rule.ts';
 import { isSpliceableBareMember, withoutBlankMembers } from './rule-patterns.ts';
 import { combineMultiplicity, type LeafMultiplicity } from './rule-transforms.ts';
-import { withAttrsFrom, withId } from './rule-attrs.ts';
+import { absorbIds, withAttrsFrom, withId } from './rule-attrs.ts';
 
 export type PrecKind = 'left' | 'right' | 'dynamic' | undefined;
 
@@ -201,7 +201,9 @@ function structuralAlias(content: Structural, target: string | SymbolRule<'evalu
 
 function buildSeq(input: { members: Built[]; multiplicity?: LeafMultiplicity }): Built {
 	const { members: splicedInput, multiplicity } = input;
-	const rawMembers = splicedInput.flatMap((m) => (isSpliceableBareMember(m) ? m.members : [m]));
+	const rawMembers = splicedInput.flatMap((m) =>
+		isSpliceableBareMember(m) ? m.members.map((member, k) => (k === 0 ? absorbIds(member, m) : member)) : [m]
+	);
 	const multToPush = multiplicity === 'nonEmptyArray' ? 'array' : multiplicity;
 	const pushed = rawMembers.map((m) => {
 		const isBareLiteral = (m.type === STRING || m.type === PATTERN) && !isSlotPromotedLiteral(m);

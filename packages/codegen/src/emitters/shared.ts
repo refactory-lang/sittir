@@ -59,10 +59,8 @@ import {
 	valueParseLabelsOf
 } from '../compiler/model/node-map.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
-import { type KindEntryLike, findEntryForLiteralText, findOwnKindEntry } from '../dsl/symbol-table.ts';
+import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
-import { sameCharMergePairs } from '../compiler/model/first-tokens.ts';
-import { admitsWhitespaceMember, canonicalText, SPACE_MEMBER } from '../dsl/whitespace.ts';
 import type { RenderRule } from '../types/rule.ts';
 
 export function isSlotBearingCompound(node: AssembledNode): node is SlotBearingCompound {
@@ -1317,32 +1315,6 @@ export function classifyTemplateEmission(node: AssembledNode): TemplateEmission 
 		return 'skip-leaf-model-type';
 	}
 	return 'emit';
-}
-
-export function literalMergePairs(
-	literals: readonly { readonly text: string }[],
-	kindEntries: readonly KindEntryLike[],
-	grammar: Pick<NodeMap, 'normalizedRules' | 'nodelessExtrasRun'>
-): [number, number][] {
-	if (!admitsWhitespaceMember(grammar.nodelessExtrasRun, SPACE_MEMBER, canonicalText(SPACE_MEMBER))) return [];
-	const rules = grammar.normalizedRules;
-	const excluded = /[A-Za-z0-9_\s]/;
-	const pairs = new Set<number>();
-	for (const c of rules === undefined ? [] : sameCharMergePairs(rules)) {
-		if (c.charCodeAt(0) < 128 && !excluded.test(c)) pairs.add(c.charCodeAt(0) * 129);
-	}
-	for (const literal of literals) {
-		if (findEntryForLiteralText(kindEntries, literal.text) === undefined) continue;
-		if (literal.text.length < 2) continue;
-		for (let i = 0; i + 1 < literal.text.length; i++) {
-			const a = literal.text.charCodeAt(i);
-			const b = literal.text.charCodeAt(i + 1);
-			if (a === b || a >= 128 || b >= 128) continue;
-			if (excluded.test(literal.text[i]!) || excluded.test(literal.text[i + 1]!)) continue;
-			pairs.add(a * 128 + b);
-		}
-	}
-	return [...pairs].sort((x, y) => x - y).map((p) => [Math.floor(p / 128), p % 128]);
 }
 
 export function escForSource(s: string): string {
