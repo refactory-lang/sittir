@@ -184,7 +184,8 @@ function derive(
 	const direct: SubFactory[] = [];
 	for (const slot of node.slots) {
 		if (isMultiple(slot)) continue;
-		const residual = node.configSlots.filter((f) => f !== slot);
+		const sitsBeside = node.sittingBeside(slot);
+		const residual = node.configSlots.filter((f) => f !== slot && sitsBeside(f));
 		for (const value of armValuesOf(slot, nodeMap)) {
 			const name = lowerCamelCase(value.variant);
 			const storage = textStorageOf(value, nodeMap);
@@ -204,7 +205,8 @@ function derive(
 		if (isMultiple(slot)) continue;
 		const group = forwardedGroupOf(slot, nodeMap);
 		if (group === undefined || !isCallableArm(group, isEmitted)) continue;
-		const residual = node.configSlots.filter((f) => f !== slot);
+		const sitsBeside = node.sittingBeside(slot);
+		const residual = node.configSlots.filter((f) => f !== slot && sitsBeside(f));
 		direct.push({ name: slot.propertyName, slot, residual, arm: { via: 'node', child: group, path: [], variantOf: node.kind }, depth: DIRECT, merges: false });
 	}
 	const nested = direct.flatMap((host) => nestedArmsOf(host, nodeMap, isEmitted, nextVisiting));

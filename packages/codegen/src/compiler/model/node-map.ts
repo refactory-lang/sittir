@@ -1843,6 +1843,46 @@ export interface Delimited {
 	readonly varying: boolean;
 }
 
+function slotsBesideEachOther(
+	root: RenderRule,
+	ctx: { readonly slots: readonly AssembledNonterminal[] }
+): {
+	readonly found: ReadonlySet<AssembledNonterminal>;
+	readonly pairs: ReadonlyMap<AssembledNonterminal, ReadonlySet<AssembledNonterminal>>;
+} {
+	const slotById = new Map(ctx.slots.flatMap((slot) => slot.sourceRuleIds.map((id) => [id, slot] as const)));
+	const found = new Set<AssembledNonterminal>();
+	const pairs = new Map<AssembledNonterminal, Set<AssembledNonterminal>>();
+	const pair = ([a, b]: readonly [AssembledNonterminal, AssembledNonterminal]): void => {
+		const beside = pairs.get(a) ?? new Set<AssembledNonterminal>();
+		beside.add(b);
+		pairs.set(a, beside);
+	};
+	const walk = (rule: RenderRule): readonly AssembledNonterminal[] => {
+		const slot = rule === root || rule.id === undefined ? undefined : slotById.get(rule.id);
+		if (slot !== undefined) {
+			found.add(slot);
+			return [slot];
+		}
+		const groups = renderRuleWalker.childrenOf(rule).map(walk);
+		if (rule.type !== CHOICE) {
+			for (const [i, group] of groups.entries()) {
+				for (const other of groups.slice(i + 1)) {
+					for (const a of group) {
+						for (const b of other) {
+							pair([a, b]);
+							pair([b, a]);
+						}
+					}
+				}
+			}
+		}
+		return groups.flat();
+	};
+	walk(root);
+	return { found, pairs };
+}
+
 export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRule> extends AssembledNodeBase<R> {
 	readonly simplifiedRule: SimplifiedRule;
 	readonly renderRule: RenderRule;
@@ -1941,6 +1981,14 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		if (this.delimiterOf !== undefined) return this._slots.filter((slot) => slot.delimiterRole === 'input');
 		const real = this._slots.filter((slot) => slot.registeredOption === undefined);
 		return real.length > 0 || this._slots.every((slot) => slot.values.every(isFixedTextValue)) ? real : this._slots;
+	}
+
+	#beside: { readonly found: ReadonlySet<AssembledNonterminal>; readonly pairs: ReadonlyMap<AssembledNonterminal, ReadonlySet<AssembledNonterminal>> } | undefined;
+
+	sittingBeside(slot: AssembledNonterminal): (other: AssembledNonterminal) => boolean {
+		this.#beside ??= slotsBesideEachOther(this.renderRule, { slots: this._slots });
+		const { found, pairs } = this.#beside;
+		return (other) => !found.has(slot) || !found.has(other) || pairs.get(slot)?.has(other) === true;
 	}
 
 	get soleSlot(): AssembledNonterminal | undefined {

@@ -152,20 +152,10 @@ export interface Routes<Table extends AnyTable> {
 		readonly semi: Routes<Table>['usingDeclaration$semi'];
 	};
 	readonly catchClause: Table['catchClause$seated'];
-	readonly binaryExpression$in: <
-		const V extends OmitEach<ArgsOf<Table['buildBinaryExpression']>[0], 'binaryExpressionIn'> & {
-			binaryExpressionIn: ArgsOf<Table['buildBinaryExpressionIn']>[0];
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildBinaryExpression']>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<Table['buildBinaryExpressionIn']>[0];
-				}
-			>,
-		options?: OptionsArg<Table['buildBinaryExpression']>
-	) => ReturnType<Table['buildBinaryExpression']>;
+	readonly binaryExpression$in: Seat<
+		ArgsOf<Table['buildBinaryExpressionIn']>,
+		ReturnType<Table['buildBinaryExpression']>
+	>;
 	readonly binaryExpression: Table['buildBinaryExpression'] & { readonly in: Routes<Table>['binaryExpression$in'] };
 	readonly classHeritage$extendsClause: Seat<
 		ArgsOf<Table['buildClassHeritageExtendsClause']>,
