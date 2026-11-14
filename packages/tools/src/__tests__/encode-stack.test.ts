@@ -611,6 +611,37 @@ describe('disassemble on x86-64', () => {
 		expect(unread.unresolved.map((site) => site.offset)).toEqual([0x20, 0x28]);
 	});
 
+	it('ends a function\'s last jump table at the entries its range check states', async () => {
+		const listing = [
+			...ELF,
+			...x86(0x4000, 'sittir_x::t', [
+				'leaq 0x1000(%rip), %rbx # 0x5000 <table>',
+				'movq 0x10(%rip), %r13 # 0x3000 <x>',
+				'movq (%rdi), %rax',
+				'cmpq $0x1, %rax',
+				'ja @12',
+				'movslq (%rbx,%rax,4), %rax',
+				'addq %rbx, %rax',
+				'jmpq *%rax',
+				'callq *%r13',
+				'jmp @2',
+				'callq *%r13',
+				'jmp @2',
+				'retq',
+				'callq *%r13',
+				'retq'
+			]),
+			...x86(0x2100, G, ['retq'])
+		];
+		const table = new Map([
+			[0x5000, 0x4020 - 0x5000],
+			[0x5004, 0x4028 - 0x5000],
+			[0x5008, 0x4034 - 0x5000]
+		]);
+		const read = named(await disassemble(listing, image(table)), 'sittir_x::t');
+		expect(read.unresolved.map((site) => site.offset)).toEqual([0x34]);
+	});
+
 	it('ends a jump table where the next table the function reads begins', async () => {
 		const listing = [
 			...ELF,

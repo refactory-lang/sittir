@@ -359,7 +359,9 @@ export const DYNAMIC_CLASSES: readonly DynamicClass[] = [
 ];
 const OUTLINED = /^_?OUTLINED_FUNCTION_\d+$/;
 const RIP_ADDRESS = /^leaq? -?0x[0-9a-f]+\(%rip\), %(\w+) ##? 0x([0-9a-f]+)\b/;
-const TABLE_ENTRY = /^movslq \(%(\w+),%\w+,4\), %(\w+)$/;
+const TABLE_ENTRY = /^movslq \(%(\w+),%(\w+),4\), %(\w+)$/;
+const TABLE_RANGE = /^cmp[qlwb]? \$(-?(?:0x)?[0-9a-f]+), %(\w+)$/;
+const TABLE_RANGE_BRANCH = /^(ja|jae)$/;
 const TABLE_ADD = /^addq %(\w+), %(\w+)$/;
 const TABLE_REACH = 12;
 const TABLE_ROUNDS = 8;
@@ -673,6 +675,7 @@ interface TableJump {
 	readonly jump: number;
 	readonly entry: number;
 	readonly base: string;
+	readonly entries?: number;
 }
 
 type Tables = ReadonlyMap<number, readonly number[]>;
@@ -744,6 +747,19 @@ function x86Flow(ins: string, at: number, index: ReadonlyMap<number, number>): D
 	return { next: op === 'jmp' || op === 'jmpq' ? taken : [...taken, at + 1], jump: false };
 }
 
+function x86TableEntries(body: readonly Instruction[], entry: number, index: string, written: Isa['written']): number | undefined {
+	for (let back = entry - 1; back >= Math.max(1, entry - TABLE_REACH); back--) {
+		const ins = body[back]!.ins;
+		const op = mnemonic(ins);
+		if (TABLE_RANGE_BRANCH.test(op)) {
+			const range = TABLE_RANGE.exec(body[back - 1]!.ins);
+			return range && wide(range[2]!) === index ? imm(range[1]!) + (op === 'ja' ? 1 : 0) : undefined;
+		}
+		if (BRANCH.test(op) || ENDS.test(op) || written(ins).includes(index)) return undefined;
+	}
+	return undefined;
+}
+
 function x86Table(body: readonly Instruction[], jump: number, written: Isa['written']): TableJump | undefined {
 	const target = REG_BRANCH.exec(body[jump]!.ins);
 	if (!target) return undefined;
@@ -754,7 +770,10 @@ function x86Table(body: readonly Instruction[], jump: number, written: Isa['writ
 		const add = base === undefined ? TABLE_ADD.exec(ins) : undefined;
 		const entry = base === undefined ? undefined : TABLE_ENTRY.exec(ins);
 		if (add && wide(add[2]!) === jumped) base = wide(add[1]!);
-		else if (entry && wide(entry[1]!) === base && wide(entry[2]!) === jumped) return { jump, entry: back, base };
+		else if (entry && wide(entry[1]!) === base && wide(entry[3]!) === jumped) {
+			const entries = x86TableEntries(body, back, wide(entry[2]!), written);
+			return entries === undefined ? { jump, entry: back, base } : { jump, entry: back, base, entries };
+		}
 		else if (BRANCH.test(mnemonic(ins)) || ENDS.test(mnemonic(ins)) || written(ins).some((reg) => reg === jumped || reg === base))
 			return undefined;
 	}
@@ -953,7 +972,9 @@ function heldStates(isa: Isa, body: readonly Instruction[], image: Image): reado
 			tables.flatMap(({ jump }, at) => {
 				const value = bases[at];
 				if (value === undefined) return [];
-				const targets = tableTargets(image, value, Math.min(...ends.filter((end) => end > value)), index);
+				const sized = tables[at]!.entries;
+				const end = Math.min(...ends.filter((end) => end > value), sized === undefined ? Infinity : value + 4 * sized);
+				const targets = tableTargets(image, value, end, index);
 				return targets.length ? [[jump, targets] as const] : [];
 			})
 		);
