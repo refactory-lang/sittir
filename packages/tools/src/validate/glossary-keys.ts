@@ -31,10 +31,13 @@ export type CountName = BrokenClass | 'undocumented';
 
 export const COUNT_NAMES: readonly CountName[] = [...BROKEN_CLASSES, 'undocumented'];
 
+export type DeclarationKind = 'declaration' | 'method' | 'field';
+
 export interface Declaration {
 	readonly path: readonly string[];
 	readonly exported: boolean;
 	readonly isStatic: boolean;
+	readonly kind: DeclarationKind;
 }
 
 export interface GlossaryKey {
@@ -111,6 +114,10 @@ function isUndocumentedEligible(path: readonly string[], exported: boolean): boo
 	return exported && path.length <= UNDOCUMENTED_DEPTH;
 }
 
+function isCounted(declaration: Declaration): boolean {
+	return declaration.kind !== 'field' && isUndocumentedEligible(declaration.path, declaration.exported);
+}
+
 function isContextuallyDeclared(
 	literal: ts.ObjectLiteralExpression,
 	name: string,
@@ -139,11 +146,17 @@ export function enumerateDeclarations(
 	const listed = namesExportedByList(sourceFile);
 	const found = new Map<string, Declaration>();
 	const declaringNodes = new Set<ts.Node>();
-	const add = (path: readonly string[], exported: boolean, isStatic = false, node?: ts.Node): void => {
+	const add = (
+		path: readonly string[],
+		exported: boolean,
+		kind: DeclarationKind,
+		member: { readonly isStatic?: boolean; readonly node?: ts.Node } = {}
+	): void => {
+		const isStatic = member.isStatic ?? false;
 		const id = `${path.join('::')}${isStatic ? '\u0000static' : ''}`;
 		const prior = found.get(id);
-		if (prior === undefined || (exported && !prior.exported)) found.set(id, { path, exported, isStatic });
-		if (node !== undefined && isUndocumentedEligible(path, exported)) declaringNodes.add(node);
+		if (prior === undefined || (exported && !prior.exported)) found.set(id, { path, exported, isStatic, kind });
+		if (member.node !== undefined && isUndocumentedEligible(path, exported)) declaringNodes.add(member.node);
 	};
 
 	const typeMembers = (type: ts.TypeNode | undefined, path: readonly string[], exported: boolean): void => {
@@ -169,7 +182,7 @@ export function enumerateDeclarations(
 			const name = nameOf(member.name);
 			if (name === undefined) continue;
 			const own = [...path, name];
-			add(own, exported, false, member);
+			add(own, exported, ts.isPropertySignature(member) ? 'field' : 'method', { node: member });
 			if (ts.isPropertySignature(member)) typeMembers(member.type, own, exported);
 		}
 	};
@@ -177,12 +190,12 @@ export function enumerateDeclarations(
 	const classMembers = (node: ts.ClassLikeDeclaration, path: readonly string[], exported: boolean): void => {
 		for (const member of node.members) {
 			if (ts.isConstructorDeclaration(member)) {
-				add([...path, 'constructor'], exported);
+				add([...path, 'constructor'], exported, 'method');
 				for (const parameter of member.parameters) {
 					const name = nameOf(parameter.name);
 					const modifiers = ts.getModifiers(parameter) ?? [];
 					if (name !== undefined && modifiers.length > 0 && !hasModifier(parameter, ts.SyntaxKind.PrivateKeyword)) {
-						add([...path, name], exported, false, parameter);
+						add([...path, name], exported, 'field', { node: parameter });
 						typeMembers(parameter.type, [...path, name], exported);
 					}
 				}
@@ -198,7 +211,10 @@ export function enumerateDeclarations(
 			const name = nameOf(member.name);
 			if (name === undefined || hasModifier(member, ts.SyntaxKind.PrivateKeyword)) continue;
 			const own = [...path, name];
-			add(own, exported, hasModifier(member, ts.SyntaxKind.StaticKeyword), member);
+			add(own, exported, ts.isPropertyDeclaration(member) ? 'field' : 'method', {
+				isStatic: hasModifier(member, ts.SyntaxKind.StaticKeyword),
+				node: member
+			});
 			if (ts.isPropertyDeclaration(member)) typeMembers(member.type, own, exported);
 		}
 	};
@@ -216,7 +232,8 @@ export function enumerateDeclarations(
 			const name = ts.isShorthandPropertyAssignment(property) ? property.name.text : nameOf(property.name);
 			if (name === undefined) continue;
 			const own = [...path, name];
-			if (!isContextuallyDeclared(literal, name, checker, counted)) add(own, exported);
+			if (!isContextuallyDeclared(literal, name, checker, counted))
+				add(own, exported, ts.isPropertyAssignment(property) || ts.isShorthandPropertyAssignment(property) ? 'field' : 'method');
 			if (ts.isPropertyAssignment(property)) objectMembers(property.initializer, own, exported, checker);
 		}
 	};
@@ -224,7 +241,7 @@ export function enumerateDeclarations(
 	const namespaceMembers = (node: ts.ModuleDeclaration, prefix: readonly string[], exported: boolean): void => {
 		if (!ts.isIdentifier(node.name)) return;
 		const path = [...prefix, node.name.text];
-		add(path, exported);
+		add(path, exported, 'declaration');
 		if (node.body === undefined) return;
 		if (ts.isModuleDeclaration(node.body)) namespaceMembers(node.body, path, exported);
 		else if (ts.isModuleBlock(node.body))
@@ -234,29 +251,29 @@ export function enumerateDeclarations(
 	const visit = (statements: ts.NodeArray<ts.Statement>, prefix: readonly string[], isExported: ExportTest): void => {
 		for (const statement of statements) {
 			if (ts.isFunctionDeclaration(statement) && statement.name !== undefined) {
-				add([...prefix, statement.name.text], isExported(statement, statement.name.text));
+				add([...prefix, statement.name.text], isExported(statement, statement.name.text), 'declaration');
 			} else if (ts.isClassDeclaration(statement) && statement.name !== undefined) {
 				const path = [...prefix, statement.name.text];
 				const exported = isExported(statement, statement.name.text);
-				add(path, exported);
+				add(path, exported, 'declaration');
 				classMembers(statement, path, exported);
 			} else if (ts.isInterfaceDeclaration(statement)) {
 				const path = [...prefix, statement.name.text];
 				const exported = isExported(statement, statement.name.text);
-				add(path, exported);
+				add(path, exported, 'declaration');
 				signatures(statement.members, path, exported);
 			} else if (ts.isTypeAliasDeclaration(statement)) {
 				const path = [...prefix, statement.name.text];
 				const exported = isExported(statement, statement.name.text);
-				add(path, exported);
+				add(path, exported, 'declaration');
 				typeMembers(statement.type, path, exported);
 			} else if (ts.isEnumDeclaration(statement)) {
 				const path = [...prefix, statement.name.text];
 				const exported = isExported(statement, statement.name.text);
-				add(path, exported);
+				add(path, exported, 'declaration');
 				for (const member of statement.members) {
 					const name = nameOf(member.name);
-					if (name !== undefined) add([...path, name], exported);
+					if (name !== undefined) add([...path, name], exported, 'field');
 				}
 			} else if (ts.isVariableStatement(statement)) {
 				const constant = (statement.declarationList.flags & ts.NodeFlags.Const) !== 0;
@@ -264,7 +281,7 @@ export function enumerateDeclarations(
 					for (const bound of boundNames(declaration.name)) {
 						const path = [...prefix, bound];
 						const exported = isExported(statement, bound);
-						add(path, exported);
+						add(path, exported, 'declaration');
 						if (checker !== undefined && constant && ts.isIdentifier(declaration.name)) {
 							objectMembers(declaration.initializer, path, exported, checker);
 						}
@@ -444,7 +461,7 @@ export function measure(root: string): Measurement {
 	let exported = 0;
 	for (const [file, own] of declarations) {
 		for (const declaration of own) {
-			if (!isUndocumentedEligible(declaration.path, declaration.exported)) continue;
+			if (!isCounted(declaration)) continue;
 			exported += 1;
 			if (!resolved.has(declarationId(file, declaration)))
 				undocumented.push(`${file}::${declaration.path.join('::')}${declaration.isStatic ? ' (static)' : ''}`);
