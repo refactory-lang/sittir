@@ -111,3 +111,14 @@ export function aNegativeLiteralIsRefusedAtAnyDepth(): void {
 	// @ts-expect-error a negative literal is refused in a config nested in a list item
 	ir.array([{ $type: TSKindId.BinaryExpression, left: 1, operator: '+', right: -2 }]);
 }
+
+export function anOptionalLooseInputRefusesAnInlineNegativeBigint(): void {
+	ir.binaryExpression({ left: 1n, operator: '+', right: 2 });
+	// @ts-expect-error a negative bigint literal is refused, as a negative number literal is
+	ir.binaryExpression({ left: -1n, operator: '+', right: 2 });
+	// @ts-expect-error a negative number literal is refused
+	ir.binaryExpression({ left: -1, operator: '+', right: 2 });
+	const config = { left: -1n, operator: '+', right: 2 } as const;
+	// @ts-expect-error a negative bigint literal held in a constant is refused
+	ir.binaryExpression(config);
+}
