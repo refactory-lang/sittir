@@ -17,7 +17,7 @@
 using engine = await createEngine(python, { api: 'portable' });
 const getter = engine.build.declaration.property.getter({
 	name: 'x',
-	body: { $path: 'statement.block', statements: [{ $path: 'statement.return', expression: { $path: 'literal.number.integer', $value: 1 } }] }
+	body: { statements: [{ $path: 'statement.return', expression: 1 }] }
 });
 engine.render(getter); // "@property\ndef x(self):\n    return 1\n"
 engine.project(engine.parse('class C:\n    @property\n    def x(self):\n        return 1\n'));
@@ -94,7 +94,7 @@ Both writings of the getter produce the same text. Emitting takes about 10 ms pe
 
 ## Decisions
 
-Each row shows the case, then the proposed answer.
+Each row shows the case, then the proposed answer. Decision 7 changes the call the user writes, so it's shown before → after.
 
 ### 1. One source for a member's paths
 
@@ -222,6 +222,43 @@ Today's pinned vocabulary reader isn't affected. Codegen already runs it in a ch
 **Proposed answer.**
 - The emitter runs as a mode of the pinned child process, so it loads the pin the way the reader does.
 - `loadPinnedBuild` refuses to load in a process whose resolution maps the pinned build's `@sittir/common` outside the pinned directory. It checks `import.meta.resolve('@sittir/common', <pinned typescript dist>)` and throws `pinned-build-unpinned`, which names the resolved path and the child reader. A mixed load then fails at once, by name, instead of later as an unrelated arena or engine error.
+
+### 7. Less nesting: `$path` and bare scalars
+
+**The case.** Portable works like the loose API, and `$path` is required only where the context doesn't decide the kind. Today's types and the interpreter, measured on python (typescript matches):
+
+| input | types today (`BuildInput`) | interpreter today |
+|---|---|---|
+| `statement.return` with `expression: 1` | TS2322: `number` isn't admitted | builds `return 1` |
+| `statement.return` with `expression: 'x'` | accepted (identifier text) | builds `return x` |
+| a method's `body: { statements: [...] }`, no `$path` | TS2322: `$path` is required | refuses (`cannot resolve value to any of [suite_inline, suite_block, suite_empty]`) |
+
+**Proposed answer.**
+- **`$path` is optional where the context decides it:**
+  - on the input of a path function, since the function names the path;
+  - on a member whose paths include exactly one structure-built path (a getter's or a method's `body`).
+  
+  The type is `{ readonly $path?: P }` there. The generated member function reads a structure without `$path` as that path, with no `switch`.
+- **A bare scalar coerces** where the member's paths include a value path that builds it, as the loose builders coerce:
+  - a `number` or `bigint` goes to the path whose `builds` row takes it (an integral number to `builds.integer`, any other number to `builds.float`, a `bigint` to `builds.bigint`);
+  - `true` and `false` go to the boolean paths;
+  - a string goes to the member's leaf, as today.
+  
+  The type admits the scalar exactly where a path builds it. A member where two paths take the same scalar is `portable-emit-unfit-member`.
+- `$path` stays required on a member with several structure-built paths (a block's `statements`).
+
+| call | today | proposed |
+|---|---|---|
+| a getter | `getter({ $path: 'declaration.property.getter', name: 'x', body: { $path: 'statement.block', statements: [{ $path: 'statement.return', expression: { $path: 'literal.number.integer', $value: 1 } }] } })` | `getter({ name: 'x', body: { statements: [{ $path: 'statement.return', expression: 1 }] } })` |
+| a float element | `list({ $path: 'expression.collection.list', elements: [{ $path: 'literal.number.float', $value: 1.5 }] })` | `list({ elements: [1.5] })` |
+| an identifier element | `list({ $path: 'expression.collection.list', elements: ['y'] })` | `list({ elements: ['y'] })` |
+
+The generated member function for `statement.return` → `expression`, after:
+```ts
+if (typeof value === 'number') return Number.isInteger(value) ? literal_number_integer({ $value: value }) : literal_number_float({ $value: value });
+if (typeof value === 'bigint') return literal_number_integer({ $value: value });
+if (typeof value === 'string') return b.identifier(value);
+```
 
 ## Diagnostics and the MVP sets
 
