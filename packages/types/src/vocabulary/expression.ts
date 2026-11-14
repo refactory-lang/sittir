@@ -213,32 +213,6 @@ export namespace Expression {
 		export interface Logical<G extends GrammarMap, K extends Under<'expression.binary.logical'> = 'expression.binary.logical'> extends SubKindOf<V.Expression.Binary<G, K>> {
 			// claimed by p
 			readonly $path: K;
-			readonly left: Slot<
-				G,
-				K,
-				'left',
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| V.Pattern.Any<G>
-				| V.Declaration.Module<G>
-				| V.Statement.Any<G>
-			>;
-			// prt only
-			readonly operator: Slot<G, K, 'operator', string>;
-			// prt only
-			readonly right: Slot<
-				G,
-				K,
-				'right',
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| V.Pattern.Any<G>
-				| V.Declaration.Module<G>
-				| V.Statement.Any<G>
-			>;
-			// prt only
 		}
 		export namespace Logical {
 			export interface And<G extends GrammarMap, K extends Under<'expression.binary.logical.and'> = 'expression.binary.logical.and'> extends SubKindOf<V.Expression.Binary.Logical<G, K>, 'operator'> {

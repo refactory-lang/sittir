@@ -502,6 +502,10 @@ impl<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a> BodyLayout<'a> for Recor
     fn has_inner(self) -> bool {
         crate::trivia::has_inner(self.trivia())
     }
+
+    fn read(self) -> bool {
+        self.place.row().is_some()
+    }
 }
 
 /// A view built from the cell that names its value in a holder's record.
