@@ -763,8 +763,8 @@ function x86TableEntries(body: readonly Instruction[], entry: number, index: str
 
 function skipsTable(body: readonly Instruction[], check: number, entry: number): boolean {
 	const at = new Map(body.map(({ address }, position) => [address, position] as const));
-	const lands = (position: number): boolean => position > check && position <= entry;
-	return body.every(({ ins }, position) => {
+	const lands = (position: number): boolean => position >= check && position <= entry;
+	return body.every(({ ins }) => {
 		if (!BRANCH.test(mnemonic(ins)) || operands(ins).includes('*')) return true;
 		const target = at.get(hex(ADDRESS.exec(operands(ins))?.[1] ?? ''));
 		return target === undefined || !lands(target);

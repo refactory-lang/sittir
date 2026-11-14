@@ -612,7 +612,7 @@ describe('disassemble on x86-64', () => {
 	});
 
 	describe('reads a function\'s last jump table past the entries a comparison states only when the comparison bounds the whole index', () => {
-		const lastTable = (check: string, branch: string) => [
+		const lastTable = (check: string, branch: string, exit = 'retq') => [
 			...ELF,
 			...x86(0x4000, 'sittir_x::t', [
 				'leaq 0x1000(%rip), %rbx # 0x5000 <table>',
@@ -627,7 +627,7 @@ describe('disassemble on x86-64', () => {
 				'jmp @2',
 				'callq *%r13',
 				'jmp @2',
-				'retq',
+				exit,
 				'callq *%r13',
 				'retq'
 			]),
@@ -650,6 +650,10 @@ describe('disassemble on x86-64', () => {
 
 		it('keeps reading when the branch lands on the load itself', async () => {
 			expect(await unresolvedOf(lastTable('cmpq $0x1, %rax', 'ja @5'))).toEqual([]);
+		});
+
+		it('keeps reading when another branch jumps to the branch past the comparison', async () => {
+			expect(await unresolvedOf(lastTable('cmpq $0x1, %rax', 'ja @12', 'jmp @4'))).toEqual([]);
 		});
 
 		it('keeps reading past a comparison with a negative immediate, which the branch reads as unsigned', async () => {
