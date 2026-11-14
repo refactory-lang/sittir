@@ -4,8 +4,8 @@ import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 
-// Same comparison as the design probe: ids and absorbedIds are ignored, keys are sorted.
-const IGNORE = new Set(['id', 'absorbedIds']);
+// Same comparison as the design probe: ids, absorbedIds and the slot ids built from them are ignored, keys are sorted.
+const IGNORE = new Set(['id', 'absorbedIds', 'sourceRuleIds']);
 const plain = (value: unknown): unknown => {
 	if (value instanceof Map) return plain(Object.fromEntries(value));
 	if (value instanceof Set) return plain([...value]);

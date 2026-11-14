@@ -37,7 +37,7 @@ export function buildParserWasm(grammarDir: string): string {
 	return wasmPath;
 }
 
-interface ParserRecord {
+export interface ParserRecord {
 	readonly source: string;
 	readonly wasm: string;
 }
@@ -49,7 +49,7 @@ export function ensureParserWasm(grammarDir: string): { readonly wasmPath: strin
 }
 
 export type ParserWasm = { readonly wasmPath: string } & (
-	| { readonly fresh: true; readonly bytes: Uint8Array; readonly digest: string }
+	| { readonly fresh: true; readonly bytes: Uint8Array; readonly record: ParserRecord }
 	| { readonly fresh: false; readonly reason: string }
 );
 
@@ -60,11 +60,12 @@ export function builtParserWasm(grammarDir: string): ParserWasm {
 	if (!existsSync(wasmPath)) return { wasmPath, fresh: false, reason: 'it does not exist' };
 	if (!existsSync(recordPath)) return { wasmPath, fresh: false, reason: `no ${PARSER_RECORD} records what it was built from` };
 	const recorded = JSON.parse(readFileSync(recordPath, 'utf8')) as Partial<ParserRecord>;
-	if (recorded.source !== parserSourceKey(sittirDir)) return { wasmPath, fresh: false, reason: 'it was built from other sources than it reads now' };
+	const source = parserSourceKey(sittirDir);
+	if (recorded.source !== source) return { wasmPath, fresh: false, reason: 'it was built from other sources than it reads now' };
 	const bytes = new Uint8Array(readFileSync(wasmPath));
-	const digest = sha256(bytes);
-	if (recorded.wasm !== digest) return { wasmPath, fresh: false, reason: `its bytes are not the ones ${PARSER_RECORD} records` };
-	return { wasmPath, fresh: true, bytes, digest };
+	const wasm = sha256(bytes);
+	if (recorded.wasm !== wasm) return { wasmPath, fresh: false, reason: `its bytes are not the ones ${PARSER_RECORD} records` };
+	return { wasmPath, fresh: true, bytes, record: { source, wasm } };
 }
 
 export function parserSourceKey(sittirDir: string, flavor?: PathFlavor): string {

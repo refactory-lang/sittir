@@ -4,7 +4,7 @@
 
 **Goal:** each grammar's portable layer is generated code: typed per-path build functions over the low-level loose builders, and a per-kind projection. The emitter writes them through the pinned `@sittir/typescript` builders. The run-time interpreters, `PortableRuntime` and the shipped tables go.
 
-**Spec:** `docs/superpowers/specs/2026-11-13-portable-generated-builders-design.md`. Read it first. This plan argues from it and doesn't restate it. Decisions 1, 2, 3, 6 and 7 and the export rows are approved, and 4 and 5 are emitter-internal. "A parse returns the projection" is a proposal: Tasks 5 and 6 follow its ruling.
+**Spec:** `docs/superpowers/specs/2026-11-13-portable-generated-builders-design.md`. Read it first. This plan argues from it and doesn't restate it. Decisions 1, 2, 3, 6 and 7, "a parse returns the projection" and the export rows are approved, and 4 and 5 are emitter-internal.
 
 **Prototype:** `probe/portable-generated` (`packages/tools/src/portable/prototype/`). Task 4 moves its emitter into codegen.
 
@@ -43,15 +43,18 @@
 
 ### Task 2: The emitter type-checks against the pinned declarations
 
-**Files:**
-- Modify: `packages/codegen/src/bootstrap/bootstrap.ts` (writes the pinned tsconfig beside the build)
-- Create: the emitter's tsconfig, extending it
-- Modify: the root `type-check` script
+**Status:** done.
 
-- [ ] **Step 1: The failing case.** A fixture emitter call `t.switchCase({ value, body: [] })` type-checks today, though `body` isn't a key the pinned builder takes.
-- [ ] **Step 2: Implement.** `sittir bootstrap` writes a tsconfig mapping `@sittir/*` to `scratchpad/bootstrap/<sha>/packages/*/dist` declarations, and the emitter's directory type-checks under it.
-- [ ] **Step 3: Run it.** The fixture is now an error. If the loose config types admit excess keys so it stays green, stop and report: the gate needs the loose types to refuse unknown keys first.
-- [ ] **Step 4: Commit.**
+**Files:**
+- Modify: `packages/codegen/src/bootstrap/bootstrap.ts` (writes `scratchpad/pinned-types/tsconfig.json` into the checkout on every bootstrap); create `bootstrap/pinned-types.ts` and `packages/codegen/scripts/check-pinned-types.ts` (the boundary)
+- Create: `packages/codegen/tsconfig.emitter.json`, extending it; `packages/codegen/src/emitters/overlays/portable/emit/` (the emitter's directory: `engine.ts` and the type fixture)
+- Modify: the root `type-check` script (`type-check:emitter`); the emitter's directory leaves codegen's own and build tsconfigs
+
+- [x] **Step 1: The failing case.** A fixture emitter call `t.switchCase({ value, body: [] })` type-checks today, though `body` isn't a key the pinned builder takes: the prototype typed its builders as `Record<string, any>`.
+- [x] **Step 2: Implement.** `sittir bootstrap` writes a tsconfig mapping every `@sittir/*` export of the pinned build to the declaration file its `types` condition names, when the pin built it. It extends codegen's tsconfig, so only `paths` change. The emitter's directory type-checks under it.
+  - `paths` only redirects: an unmapped subpath or an unbuilt declaration falls through to the live checkout. So `type-check:emitter` first lists the emitter program's files (`tsc --explainFiles`) and fails on any `@sittir/*` import, the pinned declarations' own included, that resolves outside the pin (`pinned-types-escape`).
+- [x] **Step 3: Run it.** The fixture is an error (TS2345, "an unknown key: body"), held by `@ts-expect-error`; a correct call under the directive is TS2578. The loose config types refuse unknown keys.
+- [x] **Step 4: Commit.**
 
 ### Task 3: The grammar map carries what the generated signatures need
 
@@ -76,7 +79,7 @@
 ### Task 4: The build emitter
 
 **Files:**
-- Create: `packages/codegen/src/emitters/overlays/portable/emit-build.ts` (from the prototype), run in the pinned child
+- Create: `packages/codegen/src/emitters/overlays/portable/emit/build.ts` (from the prototype, its builders typed by `emit/engine.ts`), run in the pinned child
 - Generated: `packages/<lang>/src/portable/build.ts` becomes `portableBuild(engine)`
 - Test: `packages/tools/src/__tests__/portable-generated-build.test.ts`
 
@@ -102,6 +105,7 @@
   - the python getter has no `parameters`;
   - typescript `identifier.qualified`'s honest members, moved here from the portable-grammar-map plan.
 - [ ] **Step 3: Implement,** regenerate, and run the test, validate history and the suite. Commit.
+- [ ] **Step 4: Measure** parse against parse-with-projection over the corpus, per grammar and storage, and put the ratios in the PR body. They don't gate.
 
 ### Task 6: The portable engine and the removals
 
@@ -113,7 +117,7 @@
 
 - [ ] **Step 1: The failing tests.**
   - `createEngine(python, { api: 'portable' })` has `build.declaration.property.getter`, typed by `BuildInput`.
-  - `project(parse(source))` is typed by `ReadOf`.
+  - `parse(source)` returns `File<G>`, projected whole in the call; `project(node, carried?)` reports kept nodes through `PortableCarried` from `@sittir/types`.
   - Nothing named in the spec's removed rows is exported.
 - [ ] **Step 2: Implement.** Delete the interpreters and move every caller (tools, tests, conformance) to the engine. Remove the Task 4 interpreter comparison, with its rows recorded in the commit.
 - [ ] **Step 3: Three-way verification,** plus the workspace type-check. Commit.

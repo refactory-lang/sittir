@@ -142,6 +142,18 @@ export function fromStaleParser(grammar: string, wasmPath: string, reason: strin
 	};
 }
 
+export function fromStaleJoinSeams(grammar: string, path: string, moved: readonly string[]): GrammarDiagnostic {
+	return {
+		scope: 'grammar',
+		code: 'join-seams-stale',
+		severity: 'error',
+		grammar,
+		message: `the join seams at ${path} were derived for other ${moved.join(', ')}. Run \`sittir gen --grammar ${grammar} --all\` to re-derive them`,
+		canProceed: false,
+		details: { path, moved }
+	};
+}
+
 export function fromMissingParserTables(grammar: string, parserCPath: string): GrammarDiagnostic {
 	return {
 		scope: 'grammar',

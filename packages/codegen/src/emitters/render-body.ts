@@ -1,5 +1,6 @@
 import { NO_KINDS, SEPARATING_KINDS, TIGHT_KINDS, breakingKindsOfText, layoutKindsOfText } from '../compiler/model/layout-kinds.ts';
 import { isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
+import type { JoinArm } from '../compiler/model/join-seams/index.ts';
 
 export function isWhitespaceOnly(text: string): boolean {
 	return text.trim() === '';
@@ -8,11 +9,13 @@ export function isWhitespaceOnly(text: string): boolean {
 export interface TextNode {
 	readonly kind: 'text';
 	readonly text: string;
+	readonly join?: JoinArm;
 }
 
 export interface SlotNode {
 	readonly kind: 'slot';
 	readonly name: string;
+	readonly join?: JoinArm;
 }
 
 export interface SpaceNode {
@@ -208,7 +211,8 @@ export function concat(...bodies: readonly Body[]): Body {
 		for (const node of body) {
 			const prev = out[out.length - 1];
 			if (prev?.kind === 'text' && node.kind === 'text') {
-				out[out.length - 1] = { kind: 'text', text: prev.text + node.text };
+				const join = armOf(prev.join?.previous === true, node.join?.next === true);
+				out[out.length - 1] = join === undefined ? { kind: 'text', text: prev.text + node.text } : { kind: 'text', text: prev.text + node.text, join };
 				continue;
 			}
 			out.push(node);
@@ -285,6 +289,31 @@ export function edgeChar(body: Body, side: 'starts' | 'ends'): string {
 	}
 }
 
+function armOf(previous: boolean, next: boolean): JoinArm | undefined {
+	return previous || next ? { previous, next } : undefined;
+}
+
+function sameArm(a: JoinArm | undefined, b: JoinArm | undefined): boolean {
+	return (a?.previous === true) === (b?.previous === true) && (a?.next === true) === (b?.next === true);
+}
+
+function armed<N extends TextNode | SlotNode>(node: N, arm: JoinArm): N {
+	const join = armOf(arm.previous || node.join?.previous === true, arm.next || node.join?.next === true)!;
+	return { ...node, join };
+}
+
+export function withJoinArm(body: Body, arm: JoinArm): Body {
+	if (!arm.previous && !arm.next) return body;
+	const at = body.findIndex((node) => node.kind === 'text' || node.kind === 'slot' || node.kind === 'if');
+	if (at < 0) return body;
+	const node = body[at]!;
+	const replaced: BodyNode =
+		node.kind === 'if'
+			? { ...node, arms: node.arms.map((branch) => ({ ...branch, body: withJoinArm(branch.body, arm) })), fallback: node.fallback === undefined ? undefined : withJoinArm(node.fallback, arm) }
+			: armed(node as TextNode | SlotNode, arm);
+	return [...body.slice(0, at), replaced, ...body.slice(at + 1)];
+}
+
 export function equalBodies(a: Body, b: Body): boolean {
 	return a.length === b.length && a.every((node, i) => equalNodes(node, b[i]!));
 }
@@ -293,11 +322,11 @@ export function equalNodes(a: BodyNode, b: BodyNode): boolean {
 	if (a.kind !== b.kind) return false;
 	switch (a.kind) {
 		case 'text':
-			return a.text === (b as TextNode).text;
+			return a.text === (b as TextNode).text && sameArm(a.join, (b as TextNode).join);
 		case 'tokenSeam':
 			return a.text === (b as TokenSeamNode).text && a.lexeme === (b as TokenSeamNode).lexeme;
 		case 'slot':
-			return a.name === (b as SlotNode).name;
+			return a.name === (b as SlotNode).name && sameArm(a.join, (b as SlotNode).join);
 		case 'seam':
 			return a.field === (b as SeamNode).field;
 		case 'space':
@@ -554,12 +583,14 @@ export function liftGates(body: Body, viewOf: (name: string) => ViewKind): Lifte
 			const prefix = only === undefined || at === -1 ? undefined : literalOf(only.body.slice(0, at));
 			const suffix = only === undefined || at === -1 ? undefined : literalOf(only.body.slice(at + 1));
 			const kind = only === undefined ? 'text' : viewOf(only.test);
-			if (only === undefined || prefix === undefined || suffix === undefined || kind === 'text') {
+			const flanksJoin = only?.body.some((n) => n.kind === 'text' && n.join !== undefined) === true;
+			if (only === undefined || prefix === undefined || suffix === undefined || kind === 'text' || flanksJoin) {
 				out.push([{ ...node, arms, fallback }]);
 				continue;
 			}
+			const gated = [only.body[at]!];
 			if (kind === 'single') {
-				out.push(concat(text(prefix), slot(only.test), text(suffix)));
+				out.push(concat(text(prefix), gated, text(suffix)));
 				continue;
 			}
 			if (prefix !== '' || suffix !== '') {
@@ -571,7 +602,7 @@ export function liftGates(body: Body, viewOf: (name: string) => ViewKind): Lifte
 				}
 				flanks.set(only.test, { prefix, suffix });
 			}
-			out.push(slot(only.test));
+			out.push(gated);
 		}
 		return concat(...out);
 	};
@@ -647,6 +678,10 @@ export function doubledFlanks(body: Body, path = 'body', precededBySeam = false)
 	return found;
 }
 
+export function joinArmConst(arm: JoinArm): string {
+	return `::sittir_core::render::JoinArm::${arm.previous ? (arm.next ? 'BOTH' : 'PREVIOUS') : arm.next ? 'NEXT' : 'NONE'}`;
+}
+
 export function printRustBody(body: Body, printer: RustBodyPrinter): string[] {
 	return [...printStatements(body, printer, 1), '    Ok(())'];
 }
@@ -674,10 +709,18 @@ function printStatements(
 		);
 	};
 	let literal = '';
+	let runText = false;
+	let runPrevious = false;
+	let runNext = false;
 	const flush = (): void => {
 		if (literal === '') return;
+		const arm = armOf(runPrevious, runNext);
+		if (arm !== undefined) lines.push(`${pad}w.join_arm(${joinArmConst(arm)});`);
 		lines.push(`${pad}w.text(${rustStringLiteral(literal)})?;`);
 		literal = '';
+		runText = false;
+		runPrevious = false;
+		runNext = false;
 	};
 	let pendingText: string | undefined;
 	let hasPendingText = false;
@@ -697,6 +740,9 @@ function printStatements(
 			case 'text': {
 				const text = hasPendingText ? pendingText! : node.text;
 				hasPendingText = false;
+				if (!runText) runPrevious = node.join?.previous === true;
+				runText = true;
+				runNext = node.join?.next === true;
 				literal += text;
 				break;
 			}
@@ -725,7 +771,8 @@ function printStatements(
 					unit === undefined
 						? `${field}.render(w)?;`
 						: `::sittir_core::layout::BodyLayout::render_unit(node.layout(), ${JSON.stringify(unit)}, ::sittir_core::types::ItemIndex(0), w, |w| ${field}.render(w))?;`;
-				lines.push(...[...armSeamLines(field, arms, 'before'), render, ...armSeamLines(field, arms, 'after')].map((line) => `${pad}${line}`));
+				const join = node.join === undefined ? [] : [printer.optional?.(node.name) === true ? `if ${field}.is_present() { w.join_arm(${joinArmConst(node.join)}); }` : `w.join_arm(${joinArmConst(node.join)});`];
+				lines.push(...[...join, ...armSeamLines(field, arms, 'before'), render, ...armSeamLines(field, arms, 'after')].map((line) => `${pad}${line}`));
 				break;
 			}
 			case 'seam': {

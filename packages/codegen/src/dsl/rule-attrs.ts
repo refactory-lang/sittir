@@ -2,7 +2,7 @@ import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, Multiplicity, RuleId, RuleAnnotations } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 import { separatorFactsEqual } from './rule-patterns.ts';
-import { reownedRuleId, ruleIdPath } from '../compiler/rule-catalog.ts';
+import { rebasedRuleId, reownedRuleId } from '../compiler/rule-catalog.ts';
 
 export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): R {
 	const src = original as StampedAttrs & { id?: string };
@@ -26,13 +26,71 @@ export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): 
 }
 
 export function absorbIds<R extends AnyRule>(host: R, ...absorbed: readonly AnyRule[]): R {
+	return withAbsorbedIds(
+		host,
+		absorbed.flatMap((r) => [...(r.id === undefined ? [] : [r.id]), ...(r.absorbedIds ?? [])])
+	);
+}
+
+export function absorbDroppedIds<R extends AnyRule>(result: R, ...inputs: readonly AnyRule[]): R {
+	const kept = new Set(ruleIdsWithin(result));
+	return withAbsorbedIds(
+		result,
+		inputs.flatMap(ruleIdsWithin).filter((id) => !kept.has(id))
+	);
+}
+
+function withAbsorbedIds<R extends AnyRule>(host: R, absorbed: readonly RuleId[]): R {
 	const ids = new Set<RuleId>(host.absorbedIds ?? []);
-	for (const r of absorbed) {
-		if (r.id !== undefined && r.id !== host.id) ids.add(r.id);
-		for (const id of r.absorbedIds ?? []) if (id !== host.id) ids.add(id);
-	}
+	for (const id of absorbed) if (id !== host.id) ids.add(id);
 	if (ids.size === (host.absorbedIds?.length ?? 0)) return host;
 	return { ...host, absorbedIds: [...ids] };
+}
+
+const idWalker = new RuleWalker();
+
+export function ruleIdsWithin(rule: AnyRule): RuleId[] {
+	return [
+		...(rule.id === undefined ? [] : [rule.id]),
+		...(rule.absorbedIds ?? []),
+		...idWalker.childrenOf(rule).flatMap(ruleIdsWithin)
+	];
+}
+
+type RuleBag = {
+	readonly members?: readonly AnyRule[];
+	readonly content?: AnyRule;
+	readonly separator?: { readonly value: AnyRule };
+};
+
+export function absorbAlignedIds<R extends AnyRule>(host: R, ...absorbed: readonly AnyRule[]): R {
+	const merged = absorbIds(host, ...absorbed);
+	const bag = merged as RuleBag;
+	const others = absorbed as readonly RuleBag[];
+	const patch: { members?: AnyRule[]; content?: AnyRule; separator?: { readonly value: AnyRule } } = {};
+	if (Array.isArray(bag.members)) {
+		const members = bag.members.map((member, k) =>
+			absorbAlignedIds(
+				member,
+				...others.flatMap((other) => (other.members?.length === bag.members!.length ? [other.members[k]!] : []))
+			)
+		);
+		if (members.some((member, k) => member !== bag.members![k])) patch.members = members;
+	} else if (bag.content !== undefined && typeof bag.content === 'object') {
+		const content = absorbAlignedIds(
+			bag.content,
+			...others.flatMap((other) => (other.content === undefined ? [] : [other.content]))
+		);
+		if (content !== bag.content) patch.content = content;
+	}
+	if (bag.separator !== undefined) {
+		const value = absorbAlignedIds(
+			bag.separator.value,
+			...others.flatMap((other) => (other.separator === undefined ? [] : [other.separator.value]))
+		);
+		if (value !== bag.separator.value) patch.separator = { ...bag.separator, value };
+	}
+	return Object.keys(patch).length === 0 ? merged : ({ ...merged, ...patch } as R);
 }
 
 export function structuralKey(rule: AnyRule): string {
@@ -110,10 +168,6 @@ export function reownRuleIds<R extends AnyRule>(body: R, owner: string): R {
 
 export function rebaseRuleIds<R extends AnyRule>(body: R, hostId: RuleId | undefined): R {
 	if (hostId === undefined) return body;
-	const rebase = (r: R): R => {
-		if (r.id === undefined) return r;
-		const path = ruleIdPath(r.id);
-		return { ...r, id: path === 'root' ? hostId : `${hostId}/${path}` };
-	};
+	const rebase = (r: R): R => (r.id === undefined ? r : { ...r, id: rebasedRuleId(r.id, hostId) });
 	return rebase(new RuleWalker<R>().map(body, rebase));
 }

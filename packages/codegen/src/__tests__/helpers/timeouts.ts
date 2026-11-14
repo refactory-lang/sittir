@@ -1,1 +1,2 @@
 export const FULL_PIPELINE_TIMEOUT = 180_000;
+export const JOIN_DERIVATION_TIMEOUT = 600_000;

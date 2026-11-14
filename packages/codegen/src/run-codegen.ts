@@ -7,6 +7,7 @@ import { OXFMT_EFFECTIVE_CONFIG } from './oxfmt-config.ts';
 import { validateRenderableFromNodeMap, formatRenderableReport } from './validate/renderable.ts';
 
 import { generate } from './compiler/generate.ts';
+import { JOIN_SEAMS_FILE } from './compiler/model/join-seams/file.ts';
 import { compileGrammar, type Compilation } from './compiler/compile.ts';
 import {
 	GrammarDiagnosticError,
@@ -264,7 +265,8 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 		outputDir,
 		emitRenderModule: all,
 		compilation,
-		allowDiagnostics
+		allowDiagnostics,
+		rederiveJoinSeams: true
 	});
 
 	if (result.slotGroupingDiagnostics.length > 0) {
@@ -325,6 +327,8 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 		) + '\n',
 		'utf8'
 	);
+
+	if (result.derivedJoinSeams !== undefined) writeFileSync(join(sittirDir, JOIN_SEAMS_FILE), result.derivedJoinSeams, 'utf8');
 
 	{
 		const census = result.templates.seamCensus;

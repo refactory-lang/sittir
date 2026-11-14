@@ -1,4 +1,5 @@
 import { ALIAS, CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
+import type { GrammarRule } from '../grammar-shapes/grammar-json.ts';
 import type { AnyRule } from '../types/rule.ts';
 import { compileAnchoredPattern, isPrecWrapperType, isTokenWrapperType } from '../types/runtime-shapes.ts';
 
@@ -41,12 +42,13 @@ export function wordCharAsciiTable(wordMatcher: RegExp): boolean[] {
 	return Array.from({ length: 128 }, (_, i) => isWord(String.fromCharCode(i)));
 }
 
-export function ruleToRegexSource(rule: AnyRule): string | null {
+export function ruleToRegexSource(rule: AnyRule | GrammarRule): string | null {
 	const shaped = rule as {
 		value?: string;
 		content?: AnyRule;
 		members?: readonly AnyRule[];
 	};
+	if (rule.type === 'BLANK') return '';
 	if (isTokenWrapperType(rule.type) || isPrecWrapperType(rule.type) || rule.type === FIELD || rule.type === ALIAS) {
 		return shaped.content ? ruleToRegexSource(shaped.content) : null;
 	}

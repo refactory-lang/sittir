@@ -26,6 +26,7 @@ import { emitTypes } from '../types.ts';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { emitTables } from '../../__tests__/helpers/emit-tables.ts';
 import { emitAll } from '../emit.ts';
+import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 
 // ---------------------------------------------------------------------------
 // Synthetic grammar: `iface_body` with curly `{...}` and flow `{|...|}` forms
@@ -450,7 +451,7 @@ describe('factories emitter — per-form factory emission', () => {
 		const normalized = normalizeGrammar(linkPredicted(raw, { generatedIdTables: withFixtureLexicalRanks(rawIdTablesOf(raw)) }));
 		const nodeMap = assemble(AssembleCtx.from(normalized));
 		stampIrSurface(nodeMap, normalized.generatedIdTables);
-		const { factories } = emitAll({ generatedIdTables: normalized.generatedIdTables, grammar: 'synth', nodeMap });
+		const { factories } = emitAll({ generatedIdTables: normalized.generatedIdTables, grammar: 'synth', nodeMap, joins: NO_JOINS });
 		expect(factories).toMatch(/export function buildIfaceBodyCurly\(/);
 		expect(factories).toMatch(/export function buildIfaceBodyFlow\(/);
 	}, 60_000);

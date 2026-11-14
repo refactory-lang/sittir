@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { grammarPackage, sittirDirOf } from '../../grammars.ts';
 import { deriveGeneratedIdTablesFromParserCSource, loadPackageIdTables } from '../generated-metadata.ts';
+import { treeShapeOf } from '../../engine-loader.ts';
 import { collectGeneratedKindEntries, findEntryForLiteralText, reservedWordset } from '../../dsl/symbol-table.ts';
 
 describe('generated metadata', () => {
@@ -643,7 +644,7 @@ describe('loadPackageIdTables', () => {
 
 	it("loads the grammar's own parser beside its tables", async () => {
 		const { parser } = await loadPackageIdTables(grammarPackage('scm'));
-		expect(parser!('(a)')).toBe('(program definitions: (named_node_plain name: (identifier)))');
+		expect(treeShapeOf(parser!.language)('(a)')).toBe('(program definitions: (named_node_plain name: (identifier)))');
 	});
 
 	it('frees the parser and the tree of every probe', async () => {
@@ -651,8 +652,8 @@ describe('loadPackageIdTables', () => {
 		const parsers = vi.spyOn(Parser.prototype, 'delete');
 		const trees = vi.spyOn(Tree.prototype, 'delete');
 		try {
-			parser!('(a)');
-			parser!('(b)');
+			treeShapeOf(parser!.language)('(a)');
+			treeShapeOf(parser!.language)('(b)');
 			expect(parsers).toHaveBeenCalledTimes(2);
 			expect(trees).toHaveBeenCalledTimes(2);
 		} finally {
@@ -666,7 +667,7 @@ describe('loadPackageIdTables', () => {
 		const load = vi.spyOn(Language, 'load');
 		try {
 			const { parser } = await loadPackageIdTables(grammarPackage('scm'));
-			expect(parser!('(a)')).toBe('(program definitions: (named_node_plain name: (identifier)))');
+			expect(treeShapeOf(parser!.language)('(a)')).toBe('(program definitions: (named_node_plain name: (identifier)))');
 			expect(load).not.toHaveBeenCalled();
 		} finally {
 			load.mockRestore();

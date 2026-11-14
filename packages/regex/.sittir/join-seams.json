@@ -1,0 +1,11 @@
+{
+	"parser": {
+		"source": "c07023c166c63c3da407e34dca4071a46983e75767da2b67499a8163de576587",
+		"wasm": "514e27154d8a90fb39e57ede2637524a436bfe89358eb8172926aef2229a0ab4"
+	},
+	"inputs": "4306bc38b408ad16787001f9534c9ac12998708563c03497e24fbaa3bc0f9c8a",
+	"seams": [],
+	"pairs": [],
+	"joinsNextKinds": [],
+	"blocked": []
+}

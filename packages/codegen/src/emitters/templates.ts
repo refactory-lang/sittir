@@ -28,9 +28,9 @@ import type { DiagnosticSink } from '../types/diagnostics.ts';
 import type { DroppedTokens } from '../compiler/diagnostics/grammar-diagnostics.ts';
 import { DEDENT_TEXT, INDENT_TEXT, type Layout } from '../dsl/primitives/spacing.ts';
 import type { CodegenEmitter } from './emitter.ts';
-import { classifyTemplateEmission, literalMergePairs } from './shared.ts';
+import { classifyTemplateEmission } from './shared.ts';
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
-import { getNodeProjection } from './node-projection-cache.ts';
+import { ruleJoinArm, type JoinFacts } from '../compiler/model/join-seams/index.ts';
 import {
 	flanksOf,
 	hasArmEdgeSeams,
@@ -75,6 +75,7 @@ import {
 	text,
 	weight,
 	writesTokenSeam,
+	withJoinArm,
 	type Body
 } from './render-body.ts';
 
@@ -84,6 +85,7 @@ export interface EmitTemplatesConfig {
 	renderRules?: RenderRules;
 	grammarSha?: string;
 	kindEntries: readonly KindEntryLike[];
+	joins: JoinFacts;
 	diagnostics?: DiagnosticSink;
 }
 
@@ -118,15 +120,16 @@ export interface EmitCtx {
 	readonly nodeMap: NodeMap;
 	readonly wordMatcher: RegExp;
 	readonly isWordChar: (c: string) => boolean;
-	readonly isLiteralMergePair: (l: string, r: string) => boolean;
+	readonly isJoinPair: (l: string, r: string) => boolean;
+	readonly joins: JoinFacts;
 	readonly externals: readonly string[];
 	readonly rules: Record<string, RenderRule>;
 	readonly visitingHelpers: Set<string>;
 	readonly emittedSlotNames: Set<string>;
 	readonly seamBoundaries?: SeamBoundaryRecord[];
-	readonly mergePairClassCombos?: ReadonlySet<string>;
-	readonly mergePairLeftChars?: ReadonlySet<string>;
-	readonly mergePairRightChars?: ReadonlySet<string>;
+	readonly joinPairClassCombos?: ReadonlySet<string>;
+	readonly joinPairLeftChars?: ReadonlySet<string>;
+	readonly joinPairRightChars?: ReadonlySet<string>;
 	readonly ownerSlots?: Readonly<Record<string, AssembledNonterminal>>;
 	readonly lexedTop?: RenderRule;
 	readonly currentKind?: string;
@@ -164,39 +167,26 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			}
 		}
 		this.#kindEntries = config.kindEntries;
+		const joins = config.joins;
+		const joinPairs = new Set(joins.pairs);
 		this.#ctx = {
 			nodeMap: config.nodeMap,
 			wordMatcher: this.#wordMatcher,
 			isWordChar: wordCharPredicate(this.#wordMatcher),
-			isLiteralMergePair: (() => {
-				const pairs = new Set(
-					literalMergePairs(
-						getNodeProjection(config.nodeMap).literals,
-						config.kindEntries,
-						config.nodeMap
-					).map(
-						([a, b]) => a * 128 + b
-					)
-				);
-				return (l: string, r: string) =>
-					l.charCodeAt(0) < 128 && r.charCodeAt(0) < 128 && pairs.has(l.charCodeAt(0) * 128 + r.charCodeAt(0));
-			})(),
+			isJoinPair: (l: string, r: string) => joinPairs.has(l + r),
+			joins,
 			...(() => {
 				const table = wordCharAsciiTable(this.#wordMatcher);
-				const cls = (code: number) => (table[code] ? 'word' : 'not-word');
+				const cls = (char: string) => (table[char.charCodeAt(0)] ? 'word' : 'not-word');
 				const combos = new Set<string>();
 				const lefts = new Set<string>();
 				const rights = new Set<string>();
-				for (const [a, b] of literalMergePairs(
-					getNodeProjection(config.nodeMap).literals,
-					config.kindEntries,
-					config.nodeMap
-				)) {
-					combos.add(`${cls(a)}\0${cls(b)}`);
-					lefts.add(String.fromCharCode(a));
-					rights.add(String.fromCharCode(b));
+				for (const pair of joins.pairs) {
+					combos.add(`${cls(pair[0]!)}\0${cls(pair[1]!)}`);
+					lefts.add(pair[0]!);
+					rights.add(pair[1]!);
 				}
-				return { mergePairClassCombos: combos, mergePairLeftChars: lefts, mergePairRightChars: rights };
+				return { joinPairClassCombos: combos, joinPairLeftChars: lefts, joinPairRightChars: rights };
 			})(),
 			externals: ruleListParts(config.nodeMap.externals ?? []).names,
 			rules: config.renderRules?.rules ?? config.nodeMap.normalizedRules ?? {},
@@ -451,7 +441,7 @@ function classifySeqBoundary(
 		const rightE = partEdge(rightRule, 'starts', r);
 		if (leftE === 'varies' || rightE === 'varies') return RUNTIME_VARYING;
 		if (seamNeedsSpace({ left: leftE, right: rightE })) return STATIC_SPACED;
-		if (ctx.mergePairClassCombos?.has(`${leftE}\0${rightE}`)) return RUNTIME_VARYING;
+		if (ctx.joinPairClassCombos?.has(`${leftE}\0${rightE}`)) return RUNTIME_VARYING;
 		return STATIC_GLUED;
 	}
 	return STATIC_SPACED;
@@ -473,6 +463,10 @@ function joinStaticSeam(body: Body, segment: Body, spaced: boolean, seams: Body 
 }
 
 export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
+	return withJoinArm(emitRuleShape(rule, ctx), ruleJoinArm(ctx.joins, rule));
+}
+
+function emitRuleShape(rule: RenderRule, ctx: EmitCtx): Body {
 	const flanks = flanksOf(rule);
 	if (flanks !== undefined) return emitRule(flanks.inner, ctx);
 	switch (rule.type) {
@@ -765,8 +759,8 @@ function staticListInterior(
 		const blocked =
 			!ctx.isWordChar(first) &&
 			!ctx.isWordChar(last) &&
-			ctx.mergePairRightChars?.has(first) === false &&
-			ctx.mergePairLeftChars?.has(last) === false;
+			ctx.joinPairRightChars?.has(first) === false &&
+			ctx.joinPairLeftChars?.has(last) === false;
 		verdict = blocked ? 'runtime-derivable' : 'runtime-varying';
 	} else {
 		const edgeCtx = {
@@ -800,7 +794,7 @@ function staticListInterior(
 			let seams = 0;
 			for (const l of ends) {
 				for (const r of starts) {
-					const seam = (ctx.isWordChar(l) && ctx.isWordChar(r)) || ctx.isLiteralMergePair(l, r);
+					const seam = (ctx.isWordChar(l) && ctx.isWordChar(r)) || ctx.isJoinPair(l, r);
 					if (seam) seams++;
 				}
 			}
@@ -1557,7 +1551,8 @@ export function stampStaticSpacing(
 	nodeMap: NodeMap,
 	grammar: string,
 	renderRules: RenderRules | undefined,
-	kindEntries: readonly KindEntryLike[]
+	kindEntries: readonly KindEntryLike[],
+	joins: JoinFacts
 ): void {
-	runTemplateEmitter({ grammar, nodeMap, renderRules, kindEntries });
+	runTemplateEmitter({ grammar, nodeMap, renderRules, kindEntries, joins });
 }

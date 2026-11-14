@@ -1,5 +1,6 @@
 import { compileGrammar } from '../../compiler/compile.ts';
 import { computeNodeSCC } from '../../compiler/scc.ts';
+import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import { resolveRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import { collectSitePreferences } from '../../compiler/model/site-preferences.ts';
 import { collectKindEntries } from '../../emitters/kind-discriminant.ts';
@@ -11,7 +12,8 @@ export async function emitReadyModel(grammar: string) {
 	nodeMap.scc = computeNodeSCC(nodeMap);
 	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	const rulesConfig = { nodeMap, kindEntries, options: raw.options, whitespaceText: whitespaceTextOf(raw.renderAs, nodeMap) };
-	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced, kindEntries)).seamed;
+	const joins = NO_JOINS;
+	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced, kindEntries, joins)).seamed;
 	collectSitePreferences({ nodeMap, kindEntries, renderRules, options: raw.options });
-	return { raw, nodeMap, kindEntries, generatedIdTables, renderRules };
+	return { raw, nodeMap, kindEntries, generatedIdTables, renderRules, joins };
 }

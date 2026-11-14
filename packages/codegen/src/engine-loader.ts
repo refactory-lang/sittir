@@ -74,3 +74,11 @@ export function treeParser({ Parser, language }: ParserLanguage, log?: TS.LogCal
 		[Symbol.dispose]: () => parser.delete()
 	};
 }
+
+export function treeShapeOf(language: ParserLanguage): (source: string) => string {
+	return (source) => {
+		using parser = treeParser(language);
+		using tree = parser.parse(source);
+		return tree.root.toString();
+	};
+}

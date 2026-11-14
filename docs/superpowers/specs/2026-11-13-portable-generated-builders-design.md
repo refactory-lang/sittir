@@ -1,6 +1,6 @@
 # Generated portable builders and projections
 
-**Status:** proposed, 2026-11-13. The shape, the surface, the pin and the emitter-gap rule are the user's approved answers to the example set; the user approved decisions 1, 2, 3 and 6 and the public export rows on 2026-11-14. Decisions 4 and 5 change no surface and are accepted as emitter-internal. The user approved decision 7 on 2026-11-14. "A parse returns the projection" (under the surface) is a proposal.
+**Status:** proposed, 2026-11-13. The shape, the surface, the pin and the emitter-gap rule are the user's approved answers to the example set; the user approved decisions 1, 2, 3 and 6 and the public export rows on 2026-11-14. Decisions 4 and 5 change no surface and are accepted as emitter-internal. The user approved decision 7 and "a parse returns the projection" (under the surface) on 2026-11-14.
 
 **Prototype:** branch `probe/portable-generated` (no PR). The emitter is `packages/tools/src/portable/prototype/emit.ts`, and its output is `packages/{python,typescript}/src/portable/prototype.ts`.
 
@@ -32,13 +32,13 @@ The same calls against typescript give `get x() {\n  return 1;\n}`. A portable g
 
 ### A parse returns the projection
 
-**Proposed, 2026-11-14.** On the portable engine, projection happens on read: `parse(source)` returns the source's projection, and the caller never calls `project` after it.
+**Approved, 2026-11-14.** On the portable engine, projection happens on read: `parse(source)` returns the source's projection, and the caller never calls `project` after it.
 
 - **What it returns:** the root's structure, `{ $path: 'file', … }`. Every grammar's root kind projects to `file` (python `module`, typescript `program`, rust `source_file`, probed), so the type is `File<G>`. The emitter refuses a grammar whose root kind has no `file` arm.
 - **Whole, in the parse call.** The generated projection walks the tree once, while the parse holds it, and returns plain data. It isn't lazy:
   - A projection is plain data (readonly fields, arrays, strings, numbers), and it is the build's input as it stands (decision 1).
   - A lazy member would need a getter or a `Proxy`, which the node surface rules out, or a function, which changes every member's type and stops the projection being an input.
-  - Plan Task 5 measures parse against parse-with-projection over the corpus and reports the ratio. It doesn't gate.
+  - Plan Task 5 measures parse against parse-with-projection over the corpus and reports the ratio per grammar in its PR. It doesn't gate.
 - **What a projection holds:**
   - every node a path claims, as its structure;
   - a node it can't express, kept in place as the node itself: the node a parse error sits on, an unclaimed kind, a flag no arm builds. The member's node arm types it (decision 2), `engine.isNode` tells it apart, and a build passes it through. Probed: python `x = = 1` keeps its `1` as an `integer_decimal_plain` node.
@@ -315,12 +315,12 @@ Approved by the user, 2026-11-14.
 | package | export | change |
 |---|---|---|
 | `@sittir/common/engine` | `portableRuntime`, `portableRuntimeTree`, `PortableRuntime`, `portablePathHasFacts` | removed: the engine's `build`, `parse` and `project` replace them |
-| `@sittir/common/engine` | `PortableCarry`, `PortableCarried` | proposed with "a parse returns the projection": moved to `@sittir/types`, as the type of `engine.project(node, carried)` (approved row: removed) |
+| `@sittir/common/engine` | `PortableCarry`, `PortableCarried` | moved to `@sittir/types`, as the type of `engine.project(node, carried?)` |
 | `@sittir/common/portable` | `classifierOf`, `registerPortableRows`, `portableTrees`, `PortableClassifier`, `PortableKindTree`, `PortableGuardTree`, `PortableQueryIds`, `PortableLanguage` | removed: no run-time table |
 | `@sittir/common/portable` | `portable`, `portableGuardsOf`, `LanguageGuard`, `PortableGuard`, `PortableKind` | removed: each grammar's generated module supplies `kinds.portable` and `is.portable` |
 | `@sittir/types` | `PortableReadEntry`, `PortablePath`, `PortableTable`, `PortableFact`, `PortablePlace`, `PortableRows`, `PortableStep`, `PortableCondition`, and the build-table types `PortableCallShape` through `PortableBuildTable` | removed from the public package: they become codegen's internal emitter input |
 | `@sittir/types` | `PortableStructure` | removed: `BuildInput<G, P>` and `ReadOf<G>` type the structures |
-| `@sittir/types` | `PortableEngine<API>`, `PortableSurface` | changed: the generated engine's type (`build`, `parse`, `project`, `render`, `kinds`, `is`); `PortableEngine<C>` over a composition is the same shape. Proposed with "a parse returns the projection": `parse` returns `File<G>` |
+| `@sittir/types` | `PortableEngine<API>`, `PortableSurface` | changed: the generated engine's type (`build`, `parse`, `project`, `render`, `kinds`, `is`); `PortableEngine<C>` over a composition is the same shape; `parse` returns `File<G>` |
 | `@sittir/types/vocabulary` | `BuildInput<G, P>` | added: a path's input |
 | `@sittir/types/vocabulary` | `GrammarMap` | changed: gains `nodes` (decision 2) and the per-path flag sets (decision 3) |
 | `@sittir/types/vocabulary` | `Unmapped` | changed: in an input, a member's node arm is `G['nodes'][P]` |

@@ -1,4 +1,4 @@
-import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { mkdirSync, existsSync, writeFileSync, renameSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, dirname, join, posix } from 'node:path';
 import { GRAMMAR_ENTRY, grammarTypePrefix, layerPath, packageRequire, parserNameOf, sittirDirOf, topLayerPath, upstreamPackage, type GrammarPackage } from '../grammars.ts';
 import { upstreamFileTypes } from '../compiler/upstream-file-types.ts';
@@ -12,7 +12,9 @@ function writeFileIfChanged(path: string, content: string | Uint8Array): void {
 			if (existing.equals(next)) return;
 		} catch {}
 	}
-	writeFileSync(path, content);
+	const staged = `${path}.${process.pid}.tmp`;
+	writeFileSync(staged, content);
+	renameSync(staged, path);
 }
 
 export interface TranspileOptions {
@@ -130,7 +132,7 @@ function copyExternalScannerSources(pkg: GrammarPackage, parserName: string, out
 			const srcFile = join(baseSrc, file);
 			const dstFile = join(targetSrc, file);
 			if (statSync(srcFile).isFile()) {
-				copyFileSync(srcFile, dstFile);
+				writeFileIfChanged(dstFile, readFileSync(srcFile));
 			}
 		}
 	}

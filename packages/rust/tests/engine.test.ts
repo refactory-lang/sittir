@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TSKindId } from '../src/types.ts';
 import { createEngine } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
+import { tmpdir } from 'node:os';
 
 const descriptor = async () => (await import('../src/index.ts')).default;
 
@@ -121,12 +122,12 @@ describe('engine', () => {
 		const engine = await createEngine(await descriptor(), { nodeStorage: 'object' });
 		const rendered = engine.render(engine.build.identifier('x'));
 
-		rendered.save('/tmp/sittir-rust-render.txt');
+		rendered.save(`${tmpdir()}/sittir-rust-render.txt`);
 		expect(renderToFile).toHaveBeenCalledOnce();
 		expect(render).not.toHaveBeenCalled();
 		expect(renderToFile).toHaveBeenCalledWith(
 			expect.objectContaining({ $type: TSKindId.Identifier }),
-			'/tmp/sittir-rust-render.txt',
+			`${tmpdir()}/sittir-rust-render.txt`,
 			false
 		);
 	});
