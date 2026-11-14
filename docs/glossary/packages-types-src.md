@@ -1708,16 +1708,32 @@ Where clauses: an interface extending `BoundedQuantification` with `'where-claus
 
 ### `packages/types/src/vocabulary/features/python-statements/clause.ts::Clause::ElseIf`
 
-The `clause.else_if` node, Python's `elif` clause, claimed by the python grammar. Its `condition` slot holds an expression, identifier, literal or pattern. Its `consequence` slot holds the body: a type alias or a statement.
+The `clause.else_if` node, Python's `elif` clause, claimed by the `p` claim tag. Its `condition` slot holds an expression, identifier, literal or pattern. Its `consequence` slot holds the body: a type alias or a statement.
 
 ### `packages/types/src/vocabulary/features/python-statements/statement.ts::Statement::Delete`
 
-The `statement.delete` node, Python's `del` statement, claimed by the python grammar. Its `expressions` slot lists the targets to delete, each an expression, identifier, literal or pattern.
+The `statement.delete` node, Python's `del` statement, claimed by the `p` claim tag. Its `expressions` slot lists the targets to delete, each an expression, identifier, literal or pattern.
 
 ### `packages/types/src/vocabulary/features/python-statements/statement.ts::Statement::If`
 
-The `statement.if` node under python statements, claimed by the python grammar only. Its one slot, `alternatives`, lists the clauses that follow the body, each a `Clause.Any`.
+The `statement.if` node under python statements, claimed by the `p` claim tag only. Its one slot, `alternatives`, lists the clauses that follow the body, each a `Clause.Any`.
 
 ### `packages/types/src/vocabulary/features/python-statements/index.ts::PythonStatements`
 
 Python statements: an interface marked `'python-statements': true`. It covers Python's `elif` clause, its `del` statement, and `else` on loops.
+
+### `packages/types/src/vocabulary/features/interface-conformance/clause.ts::Clause::Implements`
+
+The `clause.implements` node, claimed by the `t` claim tag. Its `types` slot lists the interfaces or types a class implements, each an identifier or a type.
+
+### `packages/types/src/vocabulary/features/interface-conformance/declaration.ts::Declaration::Class`
+
+The `declaration.class` node with an `implements` slot listing the interfaces or types the class conforms to, each an identifier or a type. The `t` claim tag claims the node.
+
+### `packages/types/src/vocabulary/features/interface-conformance/expression.ts::Expression::Class`
+
+The `expression.class` node, a class written as an expression, with an `implements` slot listing the interfaces or types it conforms to, each an identifier or a type.
+
+### `packages/types/src/vocabulary/features/interface-conformance/index.ts::InterfaceConformance`
+
+Nominal interface conformance: an interface marked `'interface-conformance': true`. A class declares the interfaces it implements through the `implements` slot.
