@@ -144,7 +144,7 @@ describe('alignRuleIds', () => {
 		});
 	});
 
-	it('reads an optional in the encoding the evaluated rules were built from, an optional of nothing included', () => {
+	it('gives an optional of nothing the ids of the parent it folds into', () => {
 		const nothing: GrammarRule = { type: 'CHOICE', members: [{ type: 'BLANK' }, { type: 'BLANK' }] };
 		const a: GrammarRule = { type: 'STRING', value: 'a' };
 		const built = {
@@ -157,8 +157,8 @@ describe('alignRuleIds', () => {
 		const evaluated = buildRuleCatalog({ r: canonicalRuleTree(built) }, { roots: ['r'] }).rules;
 		const { idsOf, unaligned } = alignRuleIds({ r: { type: 'SEQ', members: [nothing, a] } }, evaluated);
 		expect(unaligned).toEqual([]);
-		expect(idsOf.get(nothing)).toEqual([id('members.0')]);
-		expect(idsOf.get(a)).toEqual([id('members.1')]);
+		expect(idsOf.get(nothing)).toEqual([id('root')]);
+		expect(idsOf.get(a)).toEqual([id('root')]);
 	});
 
 	it('names a node whose shapes disagree', () => {

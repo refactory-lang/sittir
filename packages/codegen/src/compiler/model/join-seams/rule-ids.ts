@@ -52,10 +52,6 @@ export function alignRuleIds(
 	};
 	const traced = (rule: GrammarRule): Evaluated => {
 		const origin = { [ORIGINS]: [rule] };
-		if (rule.type === 'CHOICE' && rule.members.length === 2 && rule.members[1]!.type === 'BLANK') {
-			const { members, ...attributes } = rule;
-			return { ...attributes, ...origin, type: 'OPTIONAL', content: traced(members[0]!) } as Evaluated;
-		}
 		if (rule.type === 'SEQ' || rule.type === 'CHOICE')
 			return { ...rule, ...origin, members: rule.members.map(traced) } as Evaluated;
 		if ('content' in rule) return { ...rule, ...origin, content: traced(rule.content) } as Evaluated;
