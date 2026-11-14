@@ -7,6 +7,7 @@ import {
 	wrapInPrecStack,
 	isEnrichGroupLiftSymbol,
 	insideLexicalToken,
+	memberIndex,
 	namedFieldCount,
 	ApplyPathSkip
 } from './transform-path.ts';
@@ -308,7 +309,7 @@ function clearSiblingDefaults(rule: RuntimeRule, segments: readonly PathSegment[
 		if (members === undefined) return parent;
 		return {
 			...parent,
-			members: members.map((m, i) => (i === last.value || !isDefaultArm(m) ? m : dropDefault(m)))
+			members: members.map((m, i) => (i === memberIndex(last.value, members.length) || !isDefaultArm(m) ? m : dropDefault(m)))
 		} as RuntimeRule;
 	});
 }
@@ -462,12 +463,12 @@ function planSiblingVariantHoist(
 	if (!hoistChoice) return bail(`position ${resolvedPos} is '${seqMembers[resolvedPos]?.type}', not a hoistable choice`);
 	const { choice, choiceMembers, absent, place } = hoistChoice;
 	const armCount = site.through === 'optional' ? choiceMembers.length - 1 : choiceMembers.length;
-	for (const p of parsed) if (p.altIdx < 0) p.altIdx += armCount;
+	for (const p of parsed) p.altIdx = memberIndex(p.altIdx, armCount);
 	if (absentEntries.length > 1) return bail(`more than one absent variant declared (${absentEntries.map(([k]) => k).join(', ')})`);
 	for (const [key, v] of absentEntries) {
 		const segs = parsePath(key);
 		const head = segs[0];
-		const at = head?.kind === 'index' ? (head.value < 0 ? seqMembers.length + head.value : head.value) : undefined;
+		const at = head?.kind === 'index' ? memberIndex(head.value, seqMembers.length) : undefined;
 		if (segs.length !== 1 || at !== resolvedPos) return bail(`absent variant '${v.name}' at '${key}' does not address the optional at ${resolvedPos}`);
 		if (absent === undefined) return bail(`absent variant '${v.name}' at '${key}' addresses a choice that is not optional`);
 	}
@@ -501,7 +502,7 @@ function planSiblingVariantHoist(
 
 function hoistPositionOf(site: HoistSite, core: RuntimeRule): number | undefined {
 	const seqMembers = membersOf(core);
-	if (site.through !== 'field') return site.at < 0 ? seqMembers.length + site.at : site.at;
+	if (site.through !== 'field') return memberIndex(site.at, seqMembers.length);
 	if (namedFieldCount(core, site.field) !== 1) return undefined;
 	const at = seqMembers.findIndex((member) => isFieldLike(member) && member.name === site.field);
 	return at < 0 ? undefined : at;
@@ -611,7 +612,7 @@ function buildHoistedVariants(plan: SiblingVariantHoistPlan, parentKind: string)
 	};
 	const refs: { altIdx: number; ref: RuntimeRule; name: string; declaredDefault: boolean }[] = [];
 	for (const p of parsed) {
-		const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
+		const resolvedAlt = memberIndex(p.altIdx, choiceMembers.length);
 		const altMember = choiceMembers[resolvedAlt]!;
 		refuseSameSite(altMember, p.key);
 		const name = polymorphVisibleName(parentKind, variantMintName(p.v));
