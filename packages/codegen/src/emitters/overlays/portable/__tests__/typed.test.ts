@@ -1,11 +1,12 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { generate } from '../../../../compiler/generate.ts';
 import type { PortableTypedOutput } from '../typed.ts';
+import { tmpdir } from 'node:os';
 
 let typed: PortableTypedOutput;
 
 beforeAll(async () => {
-	const generated = await generate({ grammar: 'rust', outputDir: '/tmp/sittir-portable-typed-rust/src' });
+	const generated = await generate({ grammar: 'rust', outputDir: `${tmpdir()}/sittir-portable-typed-rust/src` });
 	if (generated.portableTyped === undefined) throw new Error('rust emitted no typed module');
 	typed = generated.portableTyped;
 }, 120_000);
@@ -122,7 +123,7 @@ describe('emitPortableTyped, python', () => {
 	let python: PortableTypedOutput;
 
 	beforeAll(async () => {
-		const generated = await generate({ grammar: 'python', outputDir: '/tmp/sittir-portable-typed-python/src' });
+		const generated = await generate({ grammar: 'python', outputDir: `${tmpdir()}/sittir-portable-typed-python/src` });
 		if (generated.portableTyped === undefined) throw new Error('python emitted no typed module');
 		python = generated.portableTyped;
 	}, 120_000);

@@ -18,13 +18,14 @@ import { beforeAll, describe, it, expect } from 'vitest';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { generate } from '../../compiler/generate.ts';
 import { AbstractAssembledCompound } from '../../compiler/model/node-map.ts';
+import { tmpdir } from 'node:os';
 
 type Generated = Awaited<ReturnType<typeof generate>>;
 
 let python: Generated;
 
 beforeAll(async () => {
-	python = await generate({ grammar: 'python', outputDir: '/tmp/sittir-rt-python/src' });
+	python = await generate({ grammar: 'python', outputDir: `${tmpdir()}/sittir-rt-python/src` });
 }, FULL_PIPELINE_TIMEOUT);
 
 describe('round-trip validation', () => {
@@ -39,7 +40,7 @@ describe('round-trip validation', () => {
 		let result: Generated;
 
 		beforeAll(async () => {
-			result = await generate({ grammar, outputDir: `/tmp/sittir-rt-${grammar}/src` });
+			result = await generate({ grammar, outputDir: `${tmpdir()}/sittir-rt-${grammar}/src` });
 		}, FULL_PIPELINE_TIMEOUT);
 
 		it('generates all output files without crashing', () => {

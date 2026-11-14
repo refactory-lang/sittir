@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { generate } from '../../../../compiler/generate.ts';
 import { rawGroupOf, type ExactSlots } from '../exact.ts';
+import { tmpdir } from 'node:os';
 
 let exact: ExactSlots;
 
@@ -23,7 +24,7 @@ const reasonsAt = (slots: ExactSlots, path: string, member: string, kind: string
 };
 
 const exactOf = async (grammar: string): Promise<ExactSlots> => {
-	const generated = await generate({ grammar, outputDir: `/tmp/sittir-portable-exact-${grammar}/src` });
+	const generated = await generate({ grammar, outputDir: `${tmpdir()}/sittir-portable-exact-${grammar}/src` });
 	if (generated.portableTyped === undefined) throw new Error(`${grammar} emitted no typed module`);
 	return generated.portableTyped.exact;
 };

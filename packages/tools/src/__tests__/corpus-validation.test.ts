@@ -25,6 +25,7 @@ import { afterAll, describe, it, expect } from 'vitest';
 import { generate } from '../../../codegen/src/compiler/generate.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { disposeNativeEngines } from '../validate/common.ts';
+import { tmpdir } from 'node:os';
 
 afterAll(disposeNativeEngines);
 
@@ -71,7 +72,7 @@ describe('corpus validation — generator produces usable output', () => {
 		async (grammar) => {
 			const result = await generate({
 				grammar,
-				outputDir: `/tmp/sittir-floor-${grammar}/src`
+				outputDir: `${tmpdir()}/sittir-floor-${grammar}/src`
 			});
 			expect(result.factories).toContain('_factoryMap');
 			expect(result.from).toContain('_fromMap');

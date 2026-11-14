@@ -19,6 +19,7 @@ vi.mock('../generated-metadata.ts', async () => {
 });
 
 import { generate } from '../generate.ts';
+import { tmpdir } from 'node:os';
 
 type Generated = Awaited<ReturnType<typeof generate>>;
 
@@ -30,7 +31,7 @@ async function generateCapturingStderr(grammar: string): Promise<{ result: Gener
 		return true;
 	}) as typeof process.stderr.write;
 	try {
-		return { result: await generate({ grammar, outputDir: `/tmp/sittir-test-${grammar}` }), stderr };
+		return { result: await generate({ grammar, outputDir: `${tmpdir()}/sittir-test-${grammar}` }), stderr };
 	} finally {
 		process.stderr.write = original;
 	}
