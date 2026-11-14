@@ -99,15 +99,6 @@ export const importClause$defaultImport$importClauseGroup$namedImports =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 
-export const usingDeclaration$automaticSemicolon =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(config as never, _m(options, { automaticSemicolon: value }) as never);
-export const usingDeclaration$semi =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(config as never, _m(options, { automaticSemicolon: value }) as never);
-
 export const catchClause$flatten$catchClauseGroup =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config?: unknown, options?: unknown): ReturnType<PF> => {
@@ -202,75 +193,6 @@ export const restPattern$identifier =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const restPattern$nonNullExpression =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-
-export const ambientDeclaration$function =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration$generatorFunction =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration$class =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration$lexical =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration$variable =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration$using =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration$functionSignature =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration$abstractClass =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration$internalModule =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration$typeAlias =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration$enum =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration$interface =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration$importAlias =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration$ambient =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration$global =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration$using$automaticSemicolon =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration$using$semi =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -380,6 +302,24 @@ export const parenthesizedExpressionSequence$sequenceExpression =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 
+export const usingDeclarationPlain$automaticSemicolon =
+	<PF extends (...args: never[]) => unknown>(parent: PF, value: unknown) =>
+	(...children: readonly unknown[]): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ automaticSemicolon: value }, ...children);
+export const usingDeclarationPlain$semi =
+	<PF extends (...args: never[]) => unknown>(parent: PF, value: unknown) =>
+	(...children: readonly unknown[]): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ automaticSemicolon: value }, ...children);
+
+export const usingDeclarationAwait$automaticSemicolon =
+	<PF extends (...args: never[]) => unknown>(parent: PF, value: unknown) =>
+	(...children: readonly unknown[]): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ automaticSemicolon: value }, ...children);
+export const usingDeclarationAwait$semi =
+	<PF extends (...args: never[]) => unknown>(parent: PF, value: unknown) =>
+	(...children: readonly unknown[]): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ automaticSemicolon: value }, ...children);
+
 export const exportStatementDefaultFrom$starFrom =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -420,6 +360,99 @@ export const exportStatementDefaultDeclarationDefaultKwValue$semi =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
 	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
+
+export const formalParametersSetAccessorSignature$elements =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+
+export const formalParametersElementsReceiver$formalParametersElementsReceiverGroup = <
+	PF extends (config: never) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	return (config?: unknown, options?: unknown): ReturnType<PF> => {
+		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
+		const seat = _o(config)['formalParametersElementsReceiverGroup'];
+		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
+		return _fwd<ReturnType<PF>>(
+			parent,
+			{ ..._o(config), formalParametersElementsReceiverGroup: _c(child)(...seat) },
+			options
+		);
+	};
+};
+
+export const ambientDeclaration$function =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const ambientDeclaration$generatorFunction =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const ambientDeclaration$class =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const ambientDeclaration$lexical =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const ambientDeclaration$variable =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const ambientDeclaration$using =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const ambientDeclaration$functionSignature =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const ambientDeclaration$abstractClass =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const ambientDeclaration$internalModule =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const ambientDeclaration$typeAlias =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const ambientDeclaration$enum =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const ambientDeclaration$interface =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const ambientDeclaration$importAlias =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const ambientDeclaration$ambient =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const ambientDeclaration$global =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const ambientDeclaration$using$plain =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const ambientDeclaration$using$await =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 
 export const exportStatementDefaultDeclarationDefaultKw$function =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -485,11 +518,11 @@ export const exportStatementDefaultDeclarationDefaultKw$value =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon =
+export const exportStatementDefaultDeclarationDefaultKw$using$plain =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const exportStatementDefaultDeclarationDefaultKw$using$semi =
+export const exportStatementDefaultDeclarationDefaultKw$using$await =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -553,11 +586,11 @@ export const exportStatementDefaultDeclarationDefaultKw$ambient$global =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon =
+export const exportStatementDefaultDeclarationDefaultKw$ambient$using$plain =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const exportStatementDefaultDeclarationDefaultKw$ambient$using$semi =
+export const exportStatementDefaultDeclarationDefaultKw$ambient$using$await =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -638,14 +671,9 @@ export const exportStatementDefaultDeclaration$variable =
 	};
 export const exportStatementDefaultDeclaration$using =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'kind' || key === 'variableDeclarators' || key === 'automaticSemicolon') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
 export const exportStatementDefaultDeclaration$functionSignature =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -760,13 +788,13 @@ export const exportStatementDefaultDeclaration$defaultKw =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
-export const exportStatementDefaultDeclaration$using$automaticSemicolon =
+export const exportStatementDefaultDeclaration$using$plain =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
-export const exportStatementDefaultDeclaration$using$semi =
+export const exportStatementDefaultDeclaration$using$await =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
@@ -862,13 +890,13 @@ export const exportStatementDefaultDeclaration$ambient$global =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
-export const exportStatementDefaultDeclaration$ambient$using$automaticSemicolon =
+export const exportStatementDefaultDeclaration$ambient$using$plain =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
-export const exportStatementDefaultDeclaration$ambient$using$semi =
+export const exportStatementDefaultDeclaration$ambient$using$await =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
@@ -970,13 +998,13 @@ export const exportStatementDefaultDeclaration$defaultKw$value =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
-export const exportStatementDefaultDeclaration$defaultKw$using$automaticSemicolon =
+export const exportStatementDefaultDeclaration$defaultKw$using$plain =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
-export const exportStatementDefaultDeclaration$defaultKw$using$semi =
+export const exportStatementDefaultDeclaration$defaultKw$using$await =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
@@ -1072,13 +1100,13 @@ export const exportStatementDefaultDeclaration$defaultKw$ambient$global =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
-export const exportStatementDefaultDeclaration$defaultKw$ambient$using$automaticSemicolon =
+export const exportStatementDefaultDeclaration$defaultKw$ambient$using$plain =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
-export const exportStatementDefaultDeclaration$defaultKw$ambient$using$semi =
+export const exportStatementDefaultDeclaration$defaultKw$ambient$using$await =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
@@ -1096,30 +1124,6 @@ export const exportStatementDefaultDeclaration$defaultKw$value$semi =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
-
-export const formalParametersSetAccessorSignature$elements =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-
-export const formalParametersElementsReceiver$formalParametersElementsReceiverGroup = <
-	PF extends (config: never) => unknown,
-	CF extends (...args: never[]) => unknown
->(
-	parent: PF,
-	child: CF
-) => {
-	return (config?: unknown, options?: unknown): ReturnType<PF> => {
-		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
-		const seat = _o(config)['formalParametersElementsReceiverGroup'];
-		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
-		return _fwd<ReturnType<PF>>(
-			parent,
-			{ ..._o(config), formalParametersElementsReceiverGroup: _c(child)(...seat) },
-			options
-		);
-	};
-};
 
 export const yieldExpressionDelegate$as =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>

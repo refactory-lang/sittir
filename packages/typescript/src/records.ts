@@ -75,13 +75,6 @@ export const records = {
 		declarators: { word: 3, width: 1, run: 3, forms: 1, built: 3 },
 		terminator: { word: 4, width: 1, forms: 2, built: 4 }
 	},
-	UsingDeclarationNode: {
-		words: 5,
-		builtWords: 5,
-		kind: { word: 2, width: 1, forms: 2, built: 2 },
-		variable_declarator: { word: 3, width: 1, run: 3, forms: 1, built: 3 },
-		automatic_semicolon: { word: 4, width: 1, forms: 2, built: 4 }
-	},
 	StatementBlockNode: {
 		words: 4,
 		builtWords: 4,
@@ -969,6 +962,18 @@ export const records = {
 		builtWords: 4,
 		operator: { word: 2, width: 1, forms: 2, built: 2 },
 		argument: { word: 3, width: 4, forms: 3, built: 3 }
+	},
+	UsingDeclarationPlainNode: {
+		words: 4,
+		builtWords: 4,
+		variable_declarator: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
+		automatic_semicolon: { word: 3, width: 1, forms: 2, built: 3 }
+	},
+	UsingDeclarationAwaitNode: {
+		words: 4,
+		builtWords: 4,
+		variable_declarator: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
+		automatic_semicolon: { word: 3, width: 1, forms: 2, built: 3 }
 	},
 	ArrowFunctionParameterNode: { words: 5, builtWords: 3, parameter: { word: 2, width: 3, forms: 1, built: 2 } },
 	ClassHeritageExtendsClauseNode: {

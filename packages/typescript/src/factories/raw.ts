@@ -21,7 +21,6 @@ export const buildImportAttribute = dispatched(() => backend().buildImportAttrib
 export const buildExpressionStatement = dispatched(() => backend().buildExpressionStatement);
 export const buildVariableDeclaration = dispatched(() => backend().buildVariableDeclaration);
 export const buildLexicalDeclaration = dispatched(() => backend().buildLexicalDeclaration);
-export const buildUsingDeclaration = dispatched(() => backend().buildUsingDeclaration);
 export const buildStatementBlock = dispatched(() => backend().buildStatementBlock);
 export const buildElseClause = dispatched(() => backend().buildElseClause);
 export const buildIfStatement = dispatched(() => backend().buildIfStatement);
@@ -189,7 +188,6 @@ export const buildTypes = dispatched(() => backend().buildTypes);
 export const buildTypeParametersElements = dispatched(() => backend().buildTypeParametersElements);
 export const buildTupleTypeMembers = dispatched(() => backend().buildTupleTypeMembers);
 export const buildImportClauseGroup = dispatched(() => backend().buildImportClauseGroup);
-export const buildUsingDeclarationArm = O.buildUsingDeclarationArm;
 export const buildCatchClauseGroup = dispatched(() => backend().buildCatchClauseGroup);
 export const buildGetAccessorSignature = dispatched(() => backend().buildGetAccessorSignature);
 export const buildAmbientDeclarationGlobal = dispatched(() => backend().buildAmbientDeclarationGlobal);
@@ -233,6 +231,8 @@ export const buildStringDouble = dispatched(() => backend().buildStringDouble);
 export const buildStringSingle = dispatched(() => backend().buildStringSingle);
 export const buildUpdateExpressionPostfix = dispatched(() => backend().buildUpdateExpressionPostfix);
 export const buildUpdateExpressionPrefix = dispatched(() => backend().buildUpdateExpressionPrefix);
+export const buildUsingDeclarationPlain = dispatched(() => backend().buildUsingDeclarationPlain);
+export const buildUsingDeclarationAwait = dispatched(() => backend().buildUsingDeclarationAwait);
 export const buildArrowFunctionParameter = dispatched(() => backend().buildArrowFunctionParameter);
 export const buildClassHeritageExtendsClause = dispatched(() => backend().buildClassHeritageExtendsClause);
 export const buildImportClauseDefaultImport = dispatched(() => backend().buildImportClauseDefaultImport);
@@ -280,6 +280,7 @@ export const buildAbstractMethodSignatureGetter = dispatched(() => backend().bui
 export const buildAbstractMethodSignatureSetter = dispatched(() => backend().buildAbstractMethodSignatureSetter);
 export const buildPublicFieldDefinitionPlain = dispatched(() => backend().buildPublicFieldDefinitionPlain);
 export const buildPublicFieldDefinitionAccessor = dispatched(() => backend().buildPublicFieldDefinitionAccessor);
+export const buildForHeaderUsingKindKind = O.buildForHeaderUsingKindKind;
 export const buildHtmlComment = dispatched(() => backend().buildHtmlComment);
 export const buildJsxText = dispatched(() => backend().buildJsxText);
 export const buildTemplateChars = dispatched(() => backend().buildTemplateChars);
@@ -329,7 +330,6 @@ export const _factoryMap = {
 	expression_statement: buildExpressionStatement,
 	variable_declaration: buildVariableDeclaration,
 	lexical_declaration: buildLexicalDeclaration,
-	using_declaration: buildUsingDeclaration,
 	statement_block: buildStatementBlock,
 	else_clause: buildElseClause,
 	if_statement: buildIfStatement,
@@ -490,7 +490,6 @@ export const _factoryMap = {
 	type_parameters_elements: buildTypeParametersElements,
 	tuple_type_members: buildTupleTypeMembers,
 	import_clause_group: buildImportClauseGroup,
-	using_declaration_arm: buildUsingDeclarationArm,
 	catch_clause_group: buildCatchClauseGroup,
 	_get_accessor_signature: buildGetAccessorSignature,
 	ambient_declaration_global: buildAmbientDeclarationGlobal,
@@ -534,6 +533,8 @@ export const _factoryMap = {
 	string_single: buildStringSingle,
 	update_expression_postfix: buildUpdateExpressionPostfix,
 	update_expression_prefix: buildUpdateExpressionPrefix,
+	using_declaration_plain: buildUsingDeclarationPlain,
+	using_declaration_await: buildUsingDeclarationAwait,
 	arrow_function_parameter: buildArrowFunctionParameter,
 	class_heritage_extends_clause: buildClassHeritageExtendsClause,
 	import_clause_default_import: buildImportClauseDefaultImport,
@@ -567,6 +568,7 @@ export const _factoryMap = {
 	abstract_method_signature_setter: buildAbstractMethodSignatureSetter,
 	public_field_definition_plain: buildPublicFieldDefinitionPlain,
 	public_field_definition_accessor: buildPublicFieldDefinitionAccessor,
+	for_header_using_kind_kind: buildForHeaderUsingKindKind,
 	html_comment: buildHtmlComment,
 	jsx_text: buildJsxText,
 	_template_chars: buildTemplateChars,

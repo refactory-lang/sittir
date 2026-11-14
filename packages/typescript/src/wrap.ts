@@ -1020,94 +1020,6 @@ function wrapLexicalDeclaration$with$terminator(this: Received<Held>, ...args: u
 	return wrapLexicalDeclaration$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
-export function wrapUsingDeclaration(data: T.UsingDeclaration, tree: TreeHandle): T.UsingDeclaration.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.UsingDeclaration as const,
-		kind() {
-			return this._kind;
-		},
-		variableDeclarators() {
-			return hydrateSlots<T.VariableDeclarator>(this, '_variable_declarator', tree);
-		},
-		automaticSemicolon() {
-			return this._automatic_semicolon;
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		kind: wrapUsingDeclaration$with$kind,
-		variableDeclarators: wrapUsingDeclaration$with$variableDeclarators,
-		automaticSemicolon: wrapUsingDeclaration$with$automaticSemicolon,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.UsingDeclaration.Parsed;
-}
-function wrapUsingDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.UsingDeclaration;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'kind':
-			return applySetter(args, (v: NonNullable<T.UsingDeclaration['_kind']>) =>
-				rebuilt(node, handle, () =>
-					wrapUsingDeclaration({ ...$edited(data), _kind: admitSlot(handle, 'using_declaration', 'kind', v) }, tree)
-				)
-			);
-		case 'variableDeclarators':
-			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.UsingDeclaration['_variable_declarator']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapUsingDeclaration(
-						{
-							...$edited(data),
-							_variable_declarator: admitSlot(
-								handle,
-								'using_declaration',
-								'variableDeclarators',
-								restItems('variableDeclarators', v)
-							)
-						},
-						tree
-					)
-				)
-			);
-		case 'automaticSemicolon':
-			return applySetter(args, (v: NonNullable<T.UsingDeclaration['_automatic_semicolon']>) =>
-				rebuilt(node, handle, () =>
-					wrapUsingDeclaration(
-						{ ...$edited(data), _automatic_semicolon: admitSlot(handle, 'using_declaration', 'automaticSemicolon', v) },
-						tree
-					)
-				)
-			);
-	}
-	throw new Error(`using_declaration has no $with.${setter}`);
-}
-function wrapUsingDeclaration$with$kind(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapUsingDeclaration$with(receiverOf(this, '$with.kind'), 'kind', args);
-}
-function wrapUsingDeclaration$with$variableDeclarators(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapUsingDeclaration$with(receiverOf(this, '$with.variableDeclarators'), 'variableDeclarators', args);
-}
-function wrapUsingDeclaration$with$automaticSemicolon(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapUsingDeclaration$with(receiverOf(this, '$with.automaticSemicolon'), 'automaticSemicolon', args);
-}
-
 export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle): T.StatementBlock.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -14335,6 +14247,172 @@ function wrapUpdateExpressionPrefix$with$argument(this: Received<Held>, ...args:
 	return wrapUpdateExpressionPrefix$with(receiverOf(this, '$with.argument'), 'argument', args);
 }
 
+export function wrapUsingDeclarationPlain(
+	data: T.UsingDeclarationPlain,
+	tree: TreeHandle
+): T.UsingDeclarationPlain.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.UsingDeclarationPlain as const,
+		variableDeclarators() {
+			return hydrateSlots<T.VariableDeclarator>(this, '_variable_declarator', tree);
+		},
+		automaticSemicolon() {
+			return this._automatic_semicolon;
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		variableDeclarators: wrapUsingDeclarationPlain$with$variableDeclarators,
+		automaticSemicolon: wrapUsingDeclarationPlain$with$automaticSemicolon,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.UsingDeclarationPlain.Parsed;
+}
+function wrapUsingDeclarationPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.UsingDeclarationPlain;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'variableDeclarators':
+			return applySetter(
+				args,
+				(...v: NonEmptyArray<NonNullable<T.UsingDeclarationPlain['_variable_declarator']>[number]>) =>
+					rebuilt(node, handle, () =>
+						wrapUsingDeclarationPlain(
+							{
+								...$edited(data),
+								_variable_declarator: admitSlot(
+									handle,
+									'using_declaration_plain',
+									'variableDeclarators',
+									restItems('variableDeclarators', v)
+								)
+							},
+							tree
+						)
+					)
+			);
+		case 'automaticSemicolon':
+			return applySetter(args, (v: NonNullable<T.UsingDeclarationPlain['_automatic_semicolon']>) =>
+				rebuilt(node, handle, () =>
+					wrapUsingDeclarationPlain(
+						{
+							...$edited(data),
+							_automatic_semicolon: admitSlot(handle, 'using_declaration_plain', 'automaticSemicolon', v)
+						},
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`using_declaration_plain has no $with.${setter}`);
+}
+function wrapUsingDeclarationPlain$with$variableDeclarators(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapUsingDeclarationPlain$with(receiverOf(this, '$with.variableDeclarators'), 'variableDeclarators', args);
+}
+function wrapUsingDeclarationPlain$with$automaticSemicolon(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapUsingDeclarationPlain$with(receiverOf(this, '$with.automaticSemicolon'), 'automaticSemicolon', args);
+}
+
+export function wrapUsingDeclarationAwait(
+	data: T.UsingDeclarationAwait,
+	tree: TreeHandle
+): T.UsingDeclarationAwait.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.UsingDeclarationAwait as const,
+		variableDeclarators() {
+			return hydrateSlots<T.VariableDeclarator>(this, '_variable_declarator', tree);
+		},
+		automaticSemicolon() {
+			return this._automatic_semicolon;
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		variableDeclarators: wrapUsingDeclarationAwait$with$variableDeclarators,
+		automaticSemicolon: wrapUsingDeclarationAwait$with$automaticSemicolon,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.UsingDeclarationAwait.Parsed;
+}
+function wrapUsingDeclarationAwait$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.UsingDeclarationAwait;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'variableDeclarators':
+			return applySetter(
+				args,
+				(...v: NonEmptyArray<NonNullable<T.UsingDeclarationAwait['_variable_declarator']>[number]>) =>
+					rebuilt(node, handle, () =>
+						wrapUsingDeclarationAwait(
+							{
+								...$edited(data),
+								_variable_declarator: admitSlot(
+									handle,
+									'using_declaration_await',
+									'variableDeclarators',
+									restItems('variableDeclarators', v)
+								)
+							},
+							tree
+						)
+					)
+			);
+		case 'automaticSemicolon':
+			return applySetter(args, (v: NonNullable<T.UsingDeclarationAwait['_automatic_semicolon']>) =>
+				rebuilt(node, handle, () =>
+					wrapUsingDeclarationAwait(
+						{
+							...$edited(data),
+							_automatic_semicolon: admitSlot(handle, 'using_declaration_await', 'automaticSemicolon', v)
+						},
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`using_declaration_await has no $with.${setter}`);
+}
+function wrapUsingDeclarationAwait$with$variableDeclarators(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapUsingDeclarationAwait$with(receiverOf(this, '$with.variableDeclarators'), 'variableDeclarators', args);
+}
+function wrapUsingDeclarationAwait$with$automaticSemicolon(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapUsingDeclarationAwait$with(receiverOf(this, '$with.automaticSemicolon'), 'automaticSemicolon', args);
+}
+
 export function wrapArrowFunctionParameter(
 	data: T.ArrowFunctionParameter,
 	tree: TreeHandle
@@ -18996,46 +19074,6 @@ function viewLexicalDeclaration(data: RecordPosition, tree: TreeHandle): T.Lexic
 	node.$with = { kind: $with$kind, declarators: $with$declarators, terminator: $with$terminator, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.LexicalDeclaration.Parsed;
-}
-
-function viewUsingDeclaration$kind(this: RecordHandle) {
-	return childSlot(this, 2, 1, 2, 0, 2);
-}
-function viewUsingDeclaration$variableDeclarators(this: RecordHandle) {
-	return viewSlots<T.VariableDeclarator>(this, 3, 1, 3, 1, 0, 3);
-}
-function viewUsingDeclaration$automaticSemicolon(this: RecordHandle) {
-	return childSlot(this, 4, 1, 2, 0, 4);
-}
-function viewUsingDeclaration(data: RecordPosition, tree: TreeHandle): T.UsingDeclaration.Parsed {
-	const node = {
-		$type: TSKindId.UsingDeclaration as const,
-		$tree: tree,
-		$at: data.$at,
-		$words: positionWords(data),
-		$cache: undefined as Record<number, unknown> | undefined,
-		$_layout: data.$_layout,
-		kind: viewUsingDeclaration$kind,
-		variableDeclarators: viewUsingDeclaration$variableDeclarators,
-		automaticSemicolon: viewUsingDeclaration$automaticSemicolon,
-		$with: undefined as unknown as object,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
-		$engine: handleEngine,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$with = {
-		kind: $with$kind,
-		variableDeclarators: $with$variableDeclarators,
-		automaticSemicolon: $with$automaticSemicolon,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.UsingDeclaration.Parsed;
 }
 
 function viewStatementBlock$statements(this: RecordHandle) {
@@ -25795,6 +25833,76 @@ function viewUpdateExpressionPrefix(data: RecordPosition, tree: TreeHandle): T.U
 	return node as unknown as T.UpdateExpressionPrefix.Parsed;
 }
 
+function viewUsingDeclarationPlain$variableDeclarators(this: RecordHandle) {
+	return viewSlots<T.VariableDeclarator>(this, 2, 1, 3, 1, 0, 2);
+}
+function viewUsingDeclarationPlain$automaticSemicolon(this: RecordHandle) {
+	return childSlot(this, 3, 1, 2, 0, 3);
+}
+function viewUsingDeclarationPlain(data: RecordPosition, tree: TreeHandle): T.UsingDeclarationPlain.Parsed {
+	const node = {
+		$type: TSKindId.UsingDeclarationPlain as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		variableDeclarators: viewUsingDeclarationPlain$variableDeclarators,
+		automaticSemicolon: viewUsingDeclarationPlain$automaticSemicolon,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = {
+		variableDeclarators: $with$variableDeclarators,
+		automaticSemicolon: $with$automaticSemicolon,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	return node as unknown as T.UsingDeclarationPlain.Parsed;
+}
+
+function viewUsingDeclarationAwait$variableDeclarators(this: RecordHandle) {
+	return viewSlots<T.VariableDeclarator>(this, 2, 1, 3, 1, 0, 2);
+}
+function viewUsingDeclarationAwait$automaticSemicolon(this: RecordHandle) {
+	return childSlot(this, 3, 1, 2, 0, 3);
+}
+function viewUsingDeclarationAwait(data: RecordPosition, tree: TreeHandle): T.UsingDeclarationAwait.Parsed {
+	const node = {
+		$type: TSKindId.UsingDeclarationAwait as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		variableDeclarators: viewUsingDeclarationAwait$variableDeclarators,
+		automaticSemicolon: viewUsingDeclarationAwait$automaticSemicolon,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = {
+		variableDeclarators: $with$variableDeclarators,
+		automaticSemicolon: $with$automaticSemicolon,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	return node as unknown as T.UsingDeclarationAwait.Parsed;
+}
+
 function viewArrowFunctionParameter$parameter(this: RecordHandle) {
 	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
 }
@@ -28014,7 +28122,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.ExpressionStatement]: (d, t) => wrapExpressionStatement(d as unknown as T.ExpressionStatement, t),
 	[TSKindId.VariableDeclaration]: (d, t) => wrapVariableDeclaration(d as unknown as T.VariableDeclaration, t),
 	[TSKindId.LexicalDeclaration]: (d, t) => wrapLexicalDeclaration(d as unknown as T.LexicalDeclaration, t),
-	[TSKindId.UsingDeclaration]: (d, t) => wrapUsingDeclaration(d as unknown as T.UsingDeclaration, t),
 	[TSKindId.StatementBlock]: (d, t) => wrapStatementBlock(d as unknown as T.StatementBlock, t),
 	[TSKindId.ElseClause]: (d, t) => wrapElseClause(d as unknown as T.ElseClause, t),
 	[TSKindId.IfStatement]: (d, t) => wrapIfStatement(d as unknown as T.IfStatement, t),
@@ -28232,6 +28339,8 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.UpdateExpressionPostfix]: (d, t) =>
 		wrapUpdateExpressionPostfix(d as unknown as T.UpdateExpressionPostfix, t),
 	[TSKindId.UpdateExpressionPrefix]: (d, t) => wrapUpdateExpressionPrefix(d as unknown as T.UpdateExpressionPrefix, t),
+	[TSKindId.UsingDeclarationPlain]: (d, t) => wrapUsingDeclarationPlain(d as unknown as T.UsingDeclarationPlain, t),
+	[TSKindId.UsingDeclarationAwait]: (d, t) => wrapUsingDeclarationAwait(d as unknown as T.UsingDeclarationAwait, t),
 	[TSKindId.ArrowFunctionParameter]: (d, t) => wrapArrowFunctionParameter(d as unknown as T.ArrowFunctionParameter, t),
 	[TSKindId.ClassHeritageExtendsClause]: (d, t) =>
 		wrapClassHeritageExtendsClause(d as unknown as T.ClassHeritageExtendsClause, t),
@@ -28324,7 +28433,6 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.ExpressionStatement]: viewExpressionStatement,
 	[TSKindId.VariableDeclaration]: viewVariableDeclaration,
 	[TSKindId.LexicalDeclaration]: viewLexicalDeclaration,
-	[TSKindId.UsingDeclaration]: viewUsingDeclaration,
 	[TSKindId.StatementBlock]: viewStatementBlock,
 	[TSKindId.ElseClause]: viewElseClause,
 	[TSKindId.IfStatement]: viewIfStatement,
@@ -28510,6 +28618,8 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.StringSingle]: viewStringSingle,
 	[TSKindId.UpdateExpressionPostfix]: viewUpdateExpressionPostfix,
 	[TSKindId.UpdateExpressionPrefix]: viewUpdateExpressionPrefix,
+	[TSKindId.UsingDeclarationPlain]: viewUsingDeclarationPlain,
+	[TSKindId.UsingDeclarationAwait]: viewUsingDeclarationAwait,
 	[TSKindId.ArrowFunctionParameter]: viewArrowFunctionParameter,
 	[TSKindId.ClassHeritageExtendsClause]: viewClassHeritageExtendsClause,
 	[TSKindId.ImportClauseDefaultImport]: viewImportClauseDefaultImport,

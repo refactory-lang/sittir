@@ -776,6 +776,45 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
+    "message": "conflict between assignment_expression, for_header_using_kind_kind on '{' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "assignment_expression",
+          "for_header_using_kind_kind"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "assignment_expression"
+        ],
+        [
+          "for_header_using_kind_kind"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'for'",
+          "'('",
+          "'await'",
+          "'using'"
+        ],
+        "lookahead": "'{'",
+        "interpretations": [
+          "assignment_expression",
+          "for_header_using_kind_kind"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
     "message": "conflict between assignment_expression, pattern on '=' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
@@ -804,43 +843,6 @@
         "interpretations": [
           "assignment_expression",
           "pattern"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "typescript",
-    "message": "conflict between assignment_expression, using_declaration_arm on '{' resolved by AddConflict (default)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "assignment_expression",
-          "using_declaration_arm"
-        ]
-      },
-      "step": "default",
-      "sourceChains": [
-        [
-          "assignment_expression"
-        ],
-        [
-          "using_declaration_arm"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'await'",
-          "'using'"
-        ],
-        "lookahead": "'{'",
-        "interpretations": [
-          "assignment_expression",
-          "using_declaration_arm"
         ]
       }
     }
