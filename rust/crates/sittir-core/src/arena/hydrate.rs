@@ -146,19 +146,7 @@ pub struct Hydration<'a> {
 type Stamp = (fn(KindId) -> bool, fn(KindId, KindId) -> bool);
 
 /// What a hydration writes into: the space its records take.
-pub trait HydrateInto: RecordSpace {
-    /// Holds the record at `at` for the node at `row`, which no cell names.
-    ///
-    /// # Errors
-    ///
-    /// What the holder refuses.
-    fn hold(&mut self, _row: NodeIndex, _at: Address) -> Result<(), ArenaError> {
-        Ok(())
-    }
-
-    /// Notes the record written at `at`.
-    fn keep_record(&mut self, _at: Address) {}
-}
+pub trait HydrateInto: RecordSpace {}
 
 impl HydrateInto for super::ReadWriter<'_> {}
 
@@ -247,14 +235,12 @@ impl OpenRun {
 }
 
 /// The extra the cursor stands on (`kid`) walked whole into `N` when `N`
-/// reads it as a record (`ReadNode::router`), its record held by its tree.
+/// reads it as a record (`ReadNode::router`).
 fn extra_walk<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, records: &mut Hydration<'_>, kid: &crate::nodes::Kid) -> Result<bool, HydrateError> {
     if N::router(kid.grammar, kid.display).is_none() {
         return Ok(false);
     }
-    if let Hydrated::Record { at, .. } = crate::stack::grown(|| N::hydrate(cursor, ctx, records))? {
-        records.tree.hold(kid.index, at)?;
-    }
+    crate::stack::grown(|| N::hydrate(cursor, ctx, records))?;
     Ok(true)
 }
 
@@ -556,7 +542,6 @@ impl<'a> Hydration<'a> {
         if side != Address::NONE {
             self.tree.words_mut(draft.place(1, 1)?, 1)?[0] = side.0;
         }
-        self.tree.keep_record(draft.at);
         Ok(Hydrated::Record { kind, at: draft.at })
     }
 }
