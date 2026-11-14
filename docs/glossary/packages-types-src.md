@@ -1614,6 +1614,10 @@ Block comments: a comment between delimiters that can span lines.
 
 The bounds of a bound clause, claimed by the runtime tree. Its `bounds` slot is a list of constraint nodes: a macro call, an identifier, a higher-ranked bound, a removed bound, or a type. Each is a `clause.bounds` path under the `Clause` interface.
 
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/bound-clauses/clause.ts::Clause`
+
+The `Clause` namespace of bound clauses. It groups the `Bounds` arm, the constraints a bound clause places on a type parameter. The namespace declares no slots of its own; the arm is documented under its own key.
+
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/bound-clauses/index.ts::BoundClauses`
 
 The bound-clauses feature marker: an interface extending `BoundedQuantification` with `'bound-clauses': true`. A declaration that carries the marker admits the bounds written as a clause, and it adds no slots of its own.
@@ -1654,9 +1658,17 @@ The `declaration.type_parameter` node under bounded quantification. Its `bounds`
 
 The `declaration.union` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration`
+
+The `Declaration` namespace of bounded quantification. It groups the declaration arms that can carry bounds on their type parameters: enum, extension, function, interface, method, type alias, type parameter and union. The namespace declares no slots of its own; each arm is documented under its own key.
+
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/element.ts::Element::TypeArgument`
 
 The `element.type_argument` node: a type argument at a use site. Its `bounds` slot lists the constraints on the argument, using the same node kinds as a type parameter's bounds.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/element.ts::Element`
+
+The `Element` namespace of bounded quantification. It groups the `TypeArgument` arm, a type argument at a use site with its bounds. The namespace declares no slots of its own; the arm is documented under its own key.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/higher-rank-polymorphism/index.ts::HigherRankPolymorphism`
 
