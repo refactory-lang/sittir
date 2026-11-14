@@ -2206,14 +2206,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "internal_module",
-          "annotations": {
-            "variant": "internal_module",
-            "variantOf": "expression"
-          }
-        },
-        {
-          "type": "SYMBOL",
           "name": "type_assertion",
           "annotations": {
             "variant": "type_assertion",

@@ -2663,7 +2663,6 @@ export enum ExpressionKind {
 	AsExpression = 'as_expression',
 	SatisfiesExpression = 'satisfies_expression',
 	InstantiationExpression = 'instantiation_expression',
-	InternalModule = 'internal_module',
 	TypeAssertion = 'type_assertion',
 	PrimaryExpression = 'primary_expression',
 	AssignmentExpression = 'assignment_expression',
@@ -10805,7 +10804,6 @@ export type Expression =
 	| AsExpression
 	| SatisfiesExpression
 	| InstantiationExpression
-	| InternalModule
 	| TypeAssertion
 	| PrimaryExpression
 	| AssignmentExpression
@@ -11996,7 +11994,6 @@ export namespace Array {
 				readonly functionExpression?: { readonly after?: LayoutKindId };
 				readonly generatorFunction?: { readonly after?: LayoutKindId };
 				readonly instantiationExpression?: { readonly after?: LayoutKindId };
-				readonly internalModule?: { readonly after?: LayoutKindId };
 				readonly memberExpression?: { readonly after?: LayoutKindId };
 				readonly metaPropertyImportMeta?: { readonly after?: LayoutKindId };
 				readonly metaPropertyNewTarget?: { readonly after?: LayoutKindId };
@@ -12297,7 +12294,6 @@ export namespace SequenceExpression {
 				readonly functionExpression?: { readonly after?: LayoutKindId };
 				readonly generatorFunction?: { readonly after?: LayoutKindId };
 				readonly instantiationExpression?: { readonly after?: LayoutKindId };
-				readonly internalModule?: { readonly after?: LayoutKindId };
 				readonly memberExpression?: { readonly after?: LayoutKindId };
 				readonly metaPropertyImportMeta?: { readonly after?: LayoutKindId };
 				readonly metaPropertyNewTarget?: { readonly after?: LayoutKindId };
@@ -12375,7 +12371,6 @@ export namespace Arguments {
 				readonly functionExpression?: { readonly after?: LayoutKindId };
 				readonly generatorFunction?: { readonly after?: LayoutKindId };
 				readonly instantiationExpression?: { readonly after?: LayoutKindId };
-				readonly internalModule?: { readonly after?: LayoutKindId };
 				readonly memberExpression?: { readonly after?: LayoutKindId };
 				readonly metaPropertyImportMeta?: { readonly after?: LayoutKindId };
 				readonly metaPropertyNewTarget?: { readonly after?: LayoutKindId };

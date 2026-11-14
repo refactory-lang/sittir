@@ -822,14 +822,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect((node as any).expression()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
-		it('delegate.internalModule builds the parent', () => {
-			const node = ir.yieldExpression.delegate.internalModule({
-				name: { $type: TSKindId.Identifier, text: 'test' } as never
-			});
-			expect(node.$type).toBe(TSKindId.YieldExpression);
-			expect((node as any).expression()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
 		it('delegate.typeAssertion builds the parent', () => {
 			const node = ir.yieldExpression.delegate.typeAssertion({
 				typeArguments: { $type: TSKindId.TypeArguments, types: ir.types(TSKindId.ThisType as never) as never } as never,

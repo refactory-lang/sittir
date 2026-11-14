@@ -47,7 +47,7 @@ pub enum AnyNode {
     #[kind(kind::IMPORT_ATTRIBUTE)]
     ImportAttribute(ImportAttributeNode),
     #[kind(kind::EXPRESSION_STATEMENT)]
-    ExpressionStatement(Box<ExpressionStatementNode>),
+    ExpressionStatement(ExpressionStatementNode),
     #[kind(kind::VARIABLE_DECLARATION)]
     VariableDeclaration(VariableDeclarationNode),
     #[kind(kind::LEXICAL_DECLARATION)]
@@ -81,9 +81,9 @@ pub enum AnyNode {
     #[kind(kind::DEBUGGER_STATEMENT)]
     DebuggerStatement(DebuggerStatementNode),
     #[kind(kind::RETURN_STATEMENT)]
-    ReturnStatement(Box<ReturnStatementNode>),
+    ReturnStatement(ReturnStatementNode),
     #[kind(kind::THROW_STATEMENT)]
-    ThrowStatement(Box<ThrowStatementNode>),
+    ThrowStatement(ThrowStatementNode),
     #[kind(kind::LABELED_STATEMENT)]
     LabeledStatement(LabeledStatementNode),
     #[kind(kind::SWITCH_BODY)]
@@ -371,7 +371,7 @@ pub enum AnyNode {
     #[kind(kind::EXPORT_STATEMENT_NAMESPACE_EXPORT)]
     ExportStatementNamespaceExport(ExportStatementNamespaceExportNode),
     #[kind(kind::EXPORT_STATEMENT_EQUALS_EXPORT)]
-    ExportStatementEqualsExport(Box<ExportStatementEqualsExportNode>),
+    ExportStatementEqualsExport(ExportStatementEqualsExportNode),
     #[kind(kind::COMMENT_LINE)]
     CommentLine(CommentLineNode),
     #[kind(kind::COMMENT_BLOCK)]
@@ -459,7 +459,7 @@ pub enum AnyNode {
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW)]
     ExportStatementDefaultDeclarationDefaultKw(ExportStatementDefaultDeclarationDefaultKwNode),
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE)]
-    ExportStatementDefaultDeclarationDefaultKwValue(Box<ExportStatementDefaultDeclarationDefaultKwValueNode>),
+    ExportStatementDefaultDeclarationDefaultKwValue(ExportStatementDefaultDeclarationDefaultKwValueNode),
     #[kind(kind::VARIABLE_DECLARATOR_PLAIN)]
     VariableDeclaratorPlain(Box<VariableDeclaratorPlainNode>),
     #[kind(kind::VARIABLE_DECLARATOR_DEFINITE)]
@@ -3262,7 +3262,7 @@ pub enum ExportStatementNode {
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM, kind::EXPORT_STATEMENT_DEFAULT_DECLARATION, kind::EXPORT_STATEMENT_DEFAULT)]
     ExportStatementDefault(ExportStatementDefaultNode),
     #[kind(kind::EXPORT_STATEMENT_EQUALS_EXPORT)]
-    ExportStatementEqualsExport(Box<ExportStatementEqualsExportNode>),
+    ExportStatementEqualsExport(ExportStatementEqualsExportNode),
     #[kind(kind::EXPORT_STATEMENT_NAMESPACE_EXPORT)]
     ExportStatementNamespaceExport(ExportStatementNamespaceExportNode),
 }
@@ -3663,7 +3663,7 @@ pub enum StatementNode {
     #[kind(kind::DEBUGGER_STATEMENT)]
     DebuggerStatement(DebuggerStatementNode),
     #[kind(kind::EXPRESSION_STATEMENT)]
-    ExpressionStatement(Box<ExpressionStatementNode>),
+    ExpressionStatement(ExpressionStatementNode),
     #[kind(kind::FUNCTION_DECLARATION, kind::GENERATOR_FUNCTION_DECLARATION, kind::CLASS_DECLARATION, kind::LEXICAL_DECLARATION, kind::VARIABLE_DECLARATION, kind::USING_DECLARATION, kind::FUNCTION_SIGNATURE, kind::ABSTRACT_CLASS_DECLARATION, kind::MODULE, kind::INTERNAL_MODULE, kind::TYPE_ALIAS_DECLARATION, kind::ENUM_DECLARATION, kind::INTERFACE_DECLARATION, kind::IMPORT_ALIAS, kind::AMBIENT_DECLARATION, kind::DECLARATION)]
     Declaration(DeclarationNode),
     #[kind(kind::STATEMENT_BLOCK)]
@@ -3689,9 +3689,9 @@ pub enum StatementNode {
     #[kind(kind::CONTINUE_STATEMENT)]
     ContinueStatement(ContinueStatementNode),
     #[kind(kind::RETURN_STATEMENT)]
-    ReturnStatement(Box<ReturnStatementNode>),
+    ReturnStatement(ReturnStatementNode),
     #[kind(kind::THROW_STATEMENT)]
-    ThrowStatement(Box<ThrowStatementNode>),
+    ThrowStatement(ThrowStatementNode),
     #[kind(kind::EMPTY_STATEMENT)]
     #[node(edged)]
     EmptyStatement(::sittir_core::options::Edges),
@@ -4174,8 +4174,6 @@ pub enum ExpressionNode {
     SatisfiesExpression(SatisfiesExpressionNode),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionNode),
-    #[kind(kind::INTERNAL_MODULE)]
-    InternalModule(InternalModuleNode),
     #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionNode),
     #[kind(kind::SUBSCRIPT_EXPRESSION, kind::MEMBER_EXPRESSION, kind::PARENTHESIZED_EXPRESSION_TYPED, kind::PARENTHESIZED_EXPRESSION_SEQUENCE, kind::UNDEFINED, kind::IDENTIFIER, kind::THIS, kind::SUPER, kind::NUMBER_HEX, kind::NUMBER_FLOAT_POINT, kind::NUMBER_FLOAT_LEADING_POINT, kind::NUMBER_FLOAT_SCIENTIFIC, kind::NUMBER_LEGACY_OCTAL, kind::NUMBER_DECIMAL, kind::NUMBER_BINARY, kind::NUMBER_OCTAL, kind::NUMBER_BIGINT_HEX, kind::NUMBER_BIGINT_BINARY, kind::NUMBER_BIGINT_OCTAL, kind::NUMBER_BIGINT_DECIMAL, kind::STRING_DOUBLE, kind::STRING_SINGLE, kind::TEMPLATE_STRING, kind::REGEX, kind::TRUE, kind::FALSE, kind::NULL, kind::OBJECT, kind::ARRAY, kind::FUNCTION_EXPRESSION, kind::ARROW_FUNCTION, kind::GENERATOR_FUNCTION, kind::CLASS, kind::META_PROPERTY_NEW_TARGET, kind::META_PROPERTY_IMPORT_META, kind::CALL_EXPRESSION_CALL, kind::CALL_EXPRESSION_TEMPLATE_CALL, kind::CALL_EXPRESSION_MEMBER, kind::NON_NULL_EXPRESSION, kind::PRIMARY_EXPRESSION, kind::PARENTHESIZED_EXPRESSION, kind::NUMBER, kind::STRING, kind::META_PROPERTY, kind::CALL_EXPRESSION, folded(kind::CONSTRUCTOR_KEYWORD), folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
@@ -4208,7 +4206,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionNode {
             ExpressionNode::AsExpression(t) => t.prepare(ctx),
             ExpressionNode::SatisfiesExpression(t) => t.prepare(ctx),
             ExpressionNode::InstantiationExpression(t) => t.prepare(ctx),
-            ExpressionNode::InternalModule(t) => t.prepare(ctx),
             ExpressionNode::TypeAssertion(t) => t.prepare(ctx),
             ExpressionNode::PrimaryExpression(t) => t.prepare(ctx),
             ExpressionNode::AssignmentExpression(t) => t.prepare(ctx),
@@ -4228,7 +4225,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionNode {
             ExpressionNode::AsExpression(t) => t.gap_edges(),
             ExpressionNode::SatisfiesExpression(t) => t.gap_edges(),
             ExpressionNode::InstantiationExpression(t) => t.gap_edges(),
-            ExpressionNode::InternalModule(t) => t.gap_edges(),
             ExpressionNode::TypeAssertion(t) => t.gap_edges(),
             ExpressionNode::PrimaryExpression(t) => t.gap_edges(),
             ExpressionNode::AssignmentExpression(t) => t.gap_edges(),
@@ -4248,7 +4244,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionNode {
             ExpressionNode::AsExpression(t) => t.snapshot_edge(),
             ExpressionNode::SatisfiesExpression(t) => t.snapshot_edge(),
             ExpressionNode::InstantiationExpression(t) => t.snapshot_edge(),
-            ExpressionNode::InternalModule(t) => t.snapshot_edge(),
             ExpressionNode::TypeAssertion(t) => t.snapshot_edge(),
             ExpressionNode::PrimaryExpression(t) => t.snapshot_edge(),
             ExpressionNode::AssignmentExpression(t) => t.snapshot_edge(),
@@ -4268,7 +4263,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionNode {
             ExpressionNode::AsExpression(t) => t.source_coordinate(),
             ExpressionNode::SatisfiesExpression(t) => t.source_coordinate(),
             ExpressionNode::InstantiationExpression(t) => t.source_coordinate(),
-            ExpressionNode::InternalModule(t) => t.source_coordinate(),
             ExpressionNode::TypeAssertion(t) => t.source_coordinate(),
             ExpressionNode::PrimaryExpression(t) => t.source_coordinate(),
             ExpressionNode::AssignmentExpression(t) => t.source_coordinate(),
@@ -4288,7 +4282,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionNode {
             ExpressionNode::AsExpression(t) => t.source_separator(ctx),
             ExpressionNode::SatisfiesExpression(t) => t.source_separator(ctx),
             ExpressionNode::InstantiationExpression(t) => t.source_separator(ctx),
-            ExpressionNode::InternalModule(t) => t.source_separator(ctx),
             ExpressionNode::TypeAssertion(t) => t.source_separator(ctx),
             ExpressionNode::PrimaryExpression(t) => t.source_separator(ctx),
             ExpressionNode::AssignmentExpression(t) => t.source_separator(ctx),
@@ -4317,7 +4310,6 @@ impl ::sittir_core::view::KindOf for ExpressionNode {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::PrimaryExpression(inner) => inner.kind_in(kinds),
             Self::AssignmentExpression(inner) => inner.kind_in(kinds),
@@ -4347,7 +4339,6 @@ impl ::sittir_core::view::KindOf for ExpressionNodeRecord<'_> {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::PrimaryExpression(inner) => inner.kind_in(kinds),
             Self::AssignmentExpression(inner) => inner.kind_in(kinds),
@@ -6701,8 +6692,6 @@ pub enum ExpressionStatementExpressionNodeSlot {
     SatisfiesExpression(SatisfiesExpressionNode),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionNode),
-    #[kind(kind::INTERNAL_MODULE)]
-    InternalModule(InternalModuleNode),
     #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionNode),
     #[kind(kind::SUBSCRIPT_EXPRESSION)]
@@ -6823,7 +6812,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementExpressionNodeSlot {
             ExpressionStatementExpressionNodeSlot::AsExpression(t) => t.prepare(ctx),
             ExpressionStatementExpressionNodeSlot::SatisfiesExpression(t) => t.prepare(ctx),
             ExpressionStatementExpressionNodeSlot::InstantiationExpression(t) => t.prepare(ctx),
-            ExpressionStatementExpressionNodeSlot::InternalModule(t) => t.prepare(ctx),
             ExpressionStatementExpressionNodeSlot::TypeAssertion(t) => t.prepare(ctx),
             ExpressionStatementExpressionNodeSlot::SubscriptExpression(t) => t.prepare(ctx),
             ExpressionStatementExpressionNodeSlot::MemberExpression(t) => t.prepare(ctx),
@@ -6883,7 +6871,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementExpressionNodeSlot {
             ExpressionStatementExpressionNodeSlot::AsExpression(t) => t.gap_edges(),
             ExpressionStatementExpressionNodeSlot::SatisfiesExpression(t) => t.gap_edges(),
             ExpressionStatementExpressionNodeSlot::InstantiationExpression(t) => t.gap_edges(),
-            ExpressionStatementExpressionNodeSlot::InternalModule(t) => t.gap_edges(),
             ExpressionStatementExpressionNodeSlot::TypeAssertion(t) => t.gap_edges(),
             ExpressionStatementExpressionNodeSlot::SubscriptExpression(t) => t.gap_edges(),
             ExpressionStatementExpressionNodeSlot::MemberExpression(t) => t.gap_edges(),
@@ -6943,7 +6930,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementExpressionNodeSlot {
             ExpressionStatementExpressionNodeSlot::AsExpression(t) => t.snapshot_edge(),
             ExpressionStatementExpressionNodeSlot::SatisfiesExpression(t) => t.snapshot_edge(),
             ExpressionStatementExpressionNodeSlot::InstantiationExpression(t) => t.snapshot_edge(),
-            ExpressionStatementExpressionNodeSlot::InternalModule(t) => t.snapshot_edge(),
             ExpressionStatementExpressionNodeSlot::TypeAssertion(t) => t.snapshot_edge(),
             ExpressionStatementExpressionNodeSlot::SubscriptExpression(t) => t.snapshot_edge(),
             ExpressionStatementExpressionNodeSlot::MemberExpression(t) => t.snapshot_edge(),
@@ -7003,7 +6989,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementExpressionNodeSlot {
             ExpressionStatementExpressionNodeSlot::AsExpression(t) => t.source_coordinate(),
             ExpressionStatementExpressionNodeSlot::SatisfiesExpression(t) => t.source_coordinate(),
             ExpressionStatementExpressionNodeSlot::InstantiationExpression(t) => t.source_coordinate(),
-            ExpressionStatementExpressionNodeSlot::InternalModule(t) => t.source_coordinate(),
             ExpressionStatementExpressionNodeSlot::TypeAssertion(t) => t.source_coordinate(),
             ExpressionStatementExpressionNodeSlot::SubscriptExpression(t) => t.source_coordinate(),
             ExpressionStatementExpressionNodeSlot::MemberExpression(t) => t.source_coordinate(),
@@ -7063,7 +7048,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementExpressionNodeSlot {
             ExpressionStatementExpressionNodeSlot::AsExpression(t) => t.source_separator(ctx),
             ExpressionStatementExpressionNodeSlot::SatisfiesExpression(t) => t.source_separator(ctx),
             ExpressionStatementExpressionNodeSlot::InstantiationExpression(t) => t.source_separator(ctx),
-            ExpressionStatementExpressionNodeSlot::InternalModule(t) => t.source_separator(ctx),
             ExpressionStatementExpressionNodeSlot::TypeAssertion(t) => t.source_separator(ctx),
             ExpressionStatementExpressionNodeSlot::SubscriptExpression(t) => t.source_separator(ctx),
             ExpressionStatementExpressionNodeSlot::MemberExpression(t) => t.source_separator(ctx),
@@ -7132,7 +7116,6 @@ impl ::sittir_core::view::KindOf for ExpressionStatementExpressionNodeSlot {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -7195,7 +7178,6 @@ impl ::sittir_core::render::Render for ExpressionStatementExpressionNodeSlot {
             ExpressionStatementExpressionNodeSlot::AsExpression(inner) => inner.render(w),
             ExpressionStatementExpressionNodeSlot::SatisfiesExpression(inner) => inner.render(w),
             ExpressionStatementExpressionNodeSlot::InstantiationExpression(inner) => inner.render(w),
-            ExpressionStatementExpressionNodeSlot::InternalModule(inner) => inner.render(w),
             ExpressionStatementExpressionNodeSlot::TypeAssertion(inner) => inner.render(w),
             ExpressionStatementExpressionNodeSlot::SubscriptExpression(inner) => inner.render(w),
             ExpressionStatementExpressionNodeSlot::MemberExpression(inner) => inner.render(w),
@@ -7259,7 +7241,6 @@ impl ::sittir_core::view::KindOf for ExpressionStatementExpressionNodeSlotRecord
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -7322,7 +7303,6 @@ impl ::sittir_core::render::Render for ExpressionStatementExpressionNodeSlotReco
             ExpressionStatementExpressionNodeSlotRecord::AsExpression(inner) => inner.render(w),
             ExpressionStatementExpressionNodeSlotRecord::SatisfiesExpression(inner) => inner.render(w),
             ExpressionStatementExpressionNodeSlotRecord::InstantiationExpression(inner) => inner.render(w),
-            ExpressionStatementExpressionNodeSlotRecord::InternalModule(inner) => inner.render(w),
             ExpressionStatementExpressionNodeSlotRecord::TypeAssertion(inner) => inner.render(w),
             ExpressionStatementExpressionNodeSlotRecord::SubscriptExpression(inner) => inner.render(w),
             ExpressionStatementExpressionNodeSlotRecord::MemberExpression(inner) => inner.render(w),
@@ -7519,8 +7499,6 @@ pub enum ForStatementInitializerNodeSlot {
     SatisfiesExpression(SatisfiesExpressionNode),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionNode),
-    #[kind(kind::INTERNAL_MODULE)]
-    InternalModule(InternalModuleNode),
     #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionNode),
     #[kind(kind::SUBSCRIPT_EXPRESSION)]
@@ -7646,7 +7624,6 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerNodeSlot {
             ForStatementInitializerNodeSlot::AsExpression(t) => t.prepare(ctx),
             ForStatementInitializerNodeSlot::SatisfiesExpression(t) => t.prepare(ctx),
             ForStatementInitializerNodeSlot::InstantiationExpression(t) => t.prepare(ctx),
-            ForStatementInitializerNodeSlot::InternalModule(t) => t.prepare(ctx),
             ForStatementInitializerNodeSlot::TypeAssertion(t) => t.prepare(ctx),
             ForStatementInitializerNodeSlot::SubscriptExpression(t) => t.prepare(ctx),
             ForStatementInitializerNodeSlot::MemberExpression(t) => t.prepare(ctx),
@@ -7709,7 +7686,6 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerNodeSlot {
             ForStatementInitializerNodeSlot::AsExpression(t) => t.gap_edges(),
             ForStatementInitializerNodeSlot::SatisfiesExpression(t) => t.gap_edges(),
             ForStatementInitializerNodeSlot::InstantiationExpression(t) => t.gap_edges(),
-            ForStatementInitializerNodeSlot::InternalModule(t) => t.gap_edges(),
             ForStatementInitializerNodeSlot::TypeAssertion(t) => t.gap_edges(),
             ForStatementInitializerNodeSlot::SubscriptExpression(t) => t.gap_edges(),
             ForStatementInitializerNodeSlot::MemberExpression(t) => t.gap_edges(),
@@ -7772,7 +7748,6 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerNodeSlot {
             ForStatementInitializerNodeSlot::AsExpression(t) => t.snapshot_edge(),
             ForStatementInitializerNodeSlot::SatisfiesExpression(t) => t.snapshot_edge(),
             ForStatementInitializerNodeSlot::InstantiationExpression(t) => t.snapshot_edge(),
-            ForStatementInitializerNodeSlot::InternalModule(t) => t.snapshot_edge(),
             ForStatementInitializerNodeSlot::TypeAssertion(t) => t.snapshot_edge(),
             ForStatementInitializerNodeSlot::SubscriptExpression(t) => t.snapshot_edge(),
             ForStatementInitializerNodeSlot::MemberExpression(t) => t.snapshot_edge(),
@@ -7835,7 +7810,6 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerNodeSlot {
             ForStatementInitializerNodeSlot::AsExpression(t) => t.source_coordinate(),
             ForStatementInitializerNodeSlot::SatisfiesExpression(t) => t.source_coordinate(),
             ForStatementInitializerNodeSlot::InstantiationExpression(t) => t.source_coordinate(),
-            ForStatementInitializerNodeSlot::InternalModule(t) => t.source_coordinate(),
             ForStatementInitializerNodeSlot::TypeAssertion(t) => t.source_coordinate(),
             ForStatementInitializerNodeSlot::SubscriptExpression(t) => t.source_coordinate(),
             ForStatementInitializerNodeSlot::MemberExpression(t) => t.source_coordinate(),
@@ -7898,7 +7872,6 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerNodeSlot {
             ForStatementInitializerNodeSlot::AsExpression(t) => t.source_separator(ctx),
             ForStatementInitializerNodeSlot::SatisfiesExpression(t) => t.source_separator(ctx),
             ForStatementInitializerNodeSlot::InstantiationExpression(t) => t.source_separator(ctx),
-            ForStatementInitializerNodeSlot::InternalModule(t) => t.source_separator(ctx),
             ForStatementInitializerNodeSlot::TypeAssertion(t) => t.source_separator(ctx),
             ForStatementInitializerNodeSlot::SubscriptExpression(t) => t.source_separator(ctx),
             ForStatementInitializerNodeSlot::MemberExpression(t) => t.source_separator(ctx),
@@ -7970,7 +7943,6 @@ impl ::sittir_core::view::KindOf for ForStatementInitializerNodeSlot {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -8036,7 +8008,6 @@ impl ::sittir_core::render::Render for ForStatementInitializerNodeSlot {
             ForStatementInitializerNodeSlot::AsExpression(inner) => inner.render(w),
             ForStatementInitializerNodeSlot::SatisfiesExpression(inner) => inner.render(w),
             ForStatementInitializerNodeSlot::InstantiationExpression(inner) => inner.render(w),
-            ForStatementInitializerNodeSlot::InternalModule(inner) => inner.render(w),
             ForStatementInitializerNodeSlot::TypeAssertion(inner) => inner.render(w),
             ForStatementInitializerNodeSlot::SubscriptExpression(inner) => inner.render(w),
             ForStatementInitializerNodeSlot::MemberExpression(inner) => inner.render(w),
@@ -8103,7 +8074,6 @@ impl ::sittir_core::view::KindOf for ForStatementInitializerNodeSlotRecord<'_> {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -8169,7 +8139,6 @@ impl ::sittir_core::render::Render for ForStatementInitializerNodeSlotRecord<'_>
             ForStatementInitializerNodeSlotRecord::AsExpression(inner) => inner.render(w),
             ForStatementInitializerNodeSlotRecord::SatisfiesExpression(inner) => inner.render(w),
             ForStatementInitializerNodeSlotRecord::InstantiationExpression(inner) => inner.render(w),
-            ForStatementInitializerNodeSlotRecord::InternalModule(inner) => inner.render(w),
             ForStatementInitializerNodeSlotRecord::TypeAssertion(inner) => inner.render(w),
             ForStatementInitializerNodeSlotRecord::SubscriptExpression(inner) => inner.render(w),
             ForStatementInitializerNodeSlotRecord::MemberExpression(inner) => inner.render(w),
@@ -8237,8 +8206,6 @@ pub enum ForStatementConditionNodeSlot {
     SatisfiesExpression(SatisfiesExpressionNode),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionNode),
-    #[kind(kind::INTERNAL_MODULE)]
-    InternalModule(InternalModuleNode),
     #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionNode),
     #[kind(kind::SUBSCRIPT_EXPRESSION)]
@@ -8362,7 +8329,6 @@ impl ::sittir_core::prepare::Prepare for ForStatementConditionNodeSlot {
             ForStatementConditionNodeSlot::AsExpression(t) => t.prepare(ctx),
             ForStatementConditionNodeSlot::SatisfiesExpression(t) => t.prepare(ctx),
             ForStatementConditionNodeSlot::InstantiationExpression(t) => t.prepare(ctx),
-            ForStatementConditionNodeSlot::InternalModule(t) => t.prepare(ctx),
             ForStatementConditionNodeSlot::TypeAssertion(t) => t.prepare(ctx),
             ForStatementConditionNodeSlot::SubscriptExpression(t) => t.prepare(ctx),
             ForStatementConditionNodeSlot::MemberExpression(t) => t.prepare(ctx),
@@ -8423,7 +8389,6 @@ impl ::sittir_core::prepare::Prepare for ForStatementConditionNodeSlot {
             ForStatementConditionNodeSlot::AsExpression(t) => t.gap_edges(),
             ForStatementConditionNodeSlot::SatisfiesExpression(t) => t.gap_edges(),
             ForStatementConditionNodeSlot::InstantiationExpression(t) => t.gap_edges(),
-            ForStatementConditionNodeSlot::InternalModule(t) => t.gap_edges(),
             ForStatementConditionNodeSlot::TypeAssertion(t) => t.gap_edges(),
             ForStatementConditionNodeSlot::SubscriptExpression(t) => t.gap_edges(),
             ForStatementConditionNodeSlot::MemberExpression(t) => t.gap_edges(),
@@ -8484,7 +8449,6 @@ impl ::sittir_core::prepare::Prepare for ForStatementConditionNodeSlot {
             ForStatementConditionNodeSlot::AsExpression(t) => t.snapshot_edge(),
             ForStatementConditionNodeSlot::SatisfiesExpression(t) => t.snapshot_edge(),
             ForStatementConditionNodeSlot::InstantiationExpression(t) => t.snapshot_edge(),
-            ForStatementConditionNodeSlot::InternalModule(t) => t.snapshot_edge(),
             ForStatementConditionNodeSlot::TypeAssertion(t) => t.snapshot_edge(),
             ForStatementConditionNodeSlot::SubscriptExpression(t) => t.snapshot_edge(),
             ForStatementConditionNodeSlot::MemberExpression(t) => t.snapshot_edge(),
@@ -8545,7 +8509,6 @@ impl ::sittir_core::prepare::Prepare for ForStatementConditionNodeSlot {
             ForStatementConditionNodeSlot::AsExpression(t) => t.source_coordinate(),
             ForStatementConditionNodeSlot::SatisfiesExpression(t) => t.source_coordinate(),
             ForStatementConditionNodeSlot::InstantiationExpression(t) => t.source_coordinate(),
-            ForStatementConditionNodeSlot::InternalModule(t) => t.source_coordinate(),
             ForStatementConditionNodeSlot::TypeAssertion(t) => t.source_coordinate(),
             ForStatementConditionNodeSlot::SubscriptExpression(t) => t.source_coordinate(),
             ForStatementConditionNodeSlot::MemberExpression(t) => t.source_coordinate(),
@@ -8606,7 +8569,6 @@ impl ::sittir_core::prepare::Prepare for ForStatementConditionNodeSlot {
             ForStatementConditionNodeSlot::AsExpression(t) => t.source_separator(ctx),
             ForStatementConditionNodeSlot::SatisfiesExpression(t) => t.source_separator(ctx),
             ForStatementConditionNodeSlot::InstantiationExpression(t) => t.source_separator(ctx),
-            ForStatementConditionNodeSlot::InternalModule(t) => t.source_separator(ctx),
             ForStatementConditionNodeSlot::TypeAssertion(t) => t.source_separator(ctx),
             ForStatementConditionNodeSlot::SubscriptExpression(t) => t.source_separator(ctx),
             ForStatementConditionNodeSlot::MemberExpression(t) => t.source_separator(ctx),
@@ -8676,7 +8638,6 @@ impl ::sittir_core::view::KindOf for ForStatementConditionNodeSlot {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -8740,7 +8701,6 @@ impl ::sittir_core::render::Render for ForStatementConditionNodeSlot {
             ForStatementConditionNodeSlot::AsExpression(inner) => inner.render(w),
             ForStatementConditionNodeSlot::SatisfiesExpression(inner) => inner.render(w),
             ForStatementConditionNodeSlot::InstantiationExpression(inner) => inner.render(w),
-            ForStatementConditionNodeSlot::InternalModule(inner) => inner.render(w),
             ForStatementConditionNodeSlot::TypeAssertion(inner) => inner.render(w),
             ForStatementConditionNodeSlot::SubscriptExpression(inner) => inner.render(w),
             ForStatementConditionNodeSlot::MemberExpression(inner) => inner.render(w),
@@ -8805,7 +8765,6 @@ impl ::sittir_core::view::KindOf for ForStatementConditionNodeSlotRecord<'_> {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -8869,7 +8828,6 @@ impl ::sittir_core::render::Render for ForStatementConditionNodeSlotRecord<'_> {
             ForStatementConditionNodeSlotRecord::AsExpression(inner) => inner.render(w),
             ForStatementConditionNodeSlotRecord::SatisfiesExpression(inner) => inner.render(w),
             ForStatementConditionNodeSlotRecord::InstantiationExpression(inner) => inner.render(w),
-            ForStatementConditionNodeSlotRecord::InternalModule(inner) => inner.render(w),
             ForStatementConditionNodeSlotRecord::TypeAssertion(inner) => inner.render(w),
             ForStatementConditionNodeSlotRecord::SubscriptExpression(inner) => inner.render(w),
             ForStatementConditionNodeSlotRecord::MemberExpression(inner) => inner.render(w),
@@ -9072,8 +9030,6 @@ pub enum YieldExpressionExpressionNodeSlot {
     SatisfiesExpression(SatisfiesExpressionNode),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionNode),
-    #[kind(kind::INTERNAL_MODULE)]
-    InternalModule(InternalModuleNode),
     #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionNode),
     #[kind(kind::SUBSCRIPT_EXPRESSION)]
@@ -9193,7 +9149,6 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionExpressionNodeSlot {
             YieldExpressionExpressionNodeSlot::AsExpression(t) => t.prepare(ctx),
             YieldExpressionExpressionNodeSlot::SatisfiesExpression(t) => t.prepare(ctx),
             YieldExpressionExpressionNodeSlot::InstantiationExpression(t) => t.prepare(ctx),
-            YieldExpressionExpressionNodeSlot::InternalModule(t) => t.prepare(ctx),
             YieldExpressionExpressionNodeSlot::TypeAssertion(t) => t.prepare(ctx),
             YieldExpressionExpressionNodeSlot::SubscriptExpression(t) => t.prepare(ctx),
             YieldExpressionExpressionNodeSlot::MemberExpression(t) => t.prepare(ctx),
@@ -9253,7 +9208,6 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionExpressionNodeSlot {
             YieldExpressionExpressionNodeSlot::AsExpression(t) => t.gap_edges(),
             YieldExpressionExpressionNodeSlot::SatisfiesExpression(t) => t.gap_edges(),
             YieldExpressionExpressionNodeSlot::InstantiationExpression(t) => t.gap_edges(),
-            YieldExpressionExpressionNodeSlot::InternalModule(t) => t.gap_edges(),
             YieldExpressionExpressionNodeSlot::TypeAssertion(t) => t.gap_edges(),
             YieldExpressionExpressionNodeSlot::SubscriptExpression(t) => t.gap_edges(),
             YieldExpressionExpressionNodeSlot::MemberExpression(t) => t.gap_edges(),
@@ -9313,7 +9267,6 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionExpressionNodeSlot {
             YieldExpressionExpressionNodeSlot::AsExpression(t) => t.snapshot_edge(),
             YieldExpressionExpressionNodeSlot::SatisfiesExpression(t) => t.snapshot_edge(),
             YieldExpressionExpressionNodeSlot::InstantiationExpression(t) => t.snapshot_edge(),
-            YieldExpressionExpressionNodeSlot::InternalModule(t) => t.snapshot_edge(),
             YieldExpressionExpressionNodeSlot::TypeAssertion(t) => t.snapshot_edge(),
             YieldExpressionExpressionNodeSlot::SubscriptExpression(t) => t.snapshot_edge(),
             YieldExpressionExpressionNodeSlot::MemberExpression(t) => t.snapshot_edge(),
@@ -9373,7 +9326,6 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionExpressionNodeSlot {
             YieldExpressionExpressionNodeSlot::AsExpression(t) => t.source_coordinate(),
             YieldExpressionExpressionNodeSlot::SatisfiesExpression(t) => t.source_coordinate(),
             YieldExpressionExpressionNodeSlot::InstantiationExpression(t) => t.source_coordinate(),
-            YieldExpressionExpressionNodeSlot::InternalModule(t) => t.source_coordinate(),
             YieldExpressionExpressionNodeSlot::TypeAssertion(t) => t.source_coordinate(),
             YieldExpressionExpressionNodeSlot::SubscriptExpression(t) => t.source_coordinate(),
             YieldExpressionExpressionNodeSlot::MemberExpression(t) => t.source_coordinate(),
@@ -9433,7 +9385,6 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionExpressionNodeSlot {
             YieldExpressionExpressionNodeSlot::AsExpression(t) => t.source_separator(ctx),
             YieldExpressionExpressionNodeSlot::SatisfiesExpression(t) => t.source_separator(ctx),
             YieldExpressionExpressionNodeSlot::InstantiationExpression(t) => t.source_separator(ctx),
-            YieldExpressionExpressionNodeSlot::InternalModule(t) => t.source_separator(ctx),
             YieldExpressionExpressionNodeSlot::TypeAssertion(t) => t.source_separator(ctx),
             YieldExpressionExpressionNodeSlot::SubscriptExpression(t) => t.source_separator(ctx),
             YieldExpressionExpressionNodeSlot::MemberExpression(t) => t.source_separator(ctx),
@@ -9502,7 +9453,6 @@ impl ::sittir_core::view::KindOf for YieldExpressionExpressionNodeSlot {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -9565,7 +9515,6 @@ impl ::sittir_core::render::Render for YieldExpressionExpressionNodeSlot {
             YieldExpressionExpressionNodeSlot::AsExpression(inner) => inner.render(w),
             YieldExpressionExpressionNodeSlot::SatisfiesExpression(inner) => inner.render(w),
             YieldExpressionExpressionNodeSlot::InstantiationExpression(inner) => inner.render(w),
-            YieldExpressionExpressionNodeSlot::InternalModule(inner) => inner.render(w),
             YieldExpressionExpressionNodeSlot::TypeAssertion(inner) => inner.render(w),
             YieldExpressionExpressionNodeSlot::SubscriptExpression(inner) => inner.render(w),
             YieldExpressionExpressionNodeSlot::MemberExpression(inner) => inner.render(w),
@@ -9629,7 +9578,6 @@ impl ::sittir_core::view::KindOf for YieldExpressionExpressionNodeSlotRecord<'_>
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -9692,7 +9640,6 @@ impl ::sittir_core::render::Render for YieldExpressionExpressionNodeSlotRecord<'
             YieldExpressionExpressionNodeSlotRecord::AsExpression(inner) => inner.render(w),
             YieldExpressionExpressionNodeSlotRecord::SatisfiesExpression(inner) => inner.render(w),
             YieldExpressionExpressionNodeSlotRecord::InstantiationExpression(inner) => inner.render(w),
-            YieldExpressionExpressionNodeSlotRecord::InternalModule(inner) => inner.render(w),
             YieldExpressionExpressionNodeSlotRecord::TypeAssertion(inner) => inner.render(w),
             YieldExpressionExpressionNodeSlotRecord::SubscriptExpression(inner) => inner.render(w),
             YieldExpressionExpressionNodeSlotRecord::MemberExpression(inner) => inner.render(w),
@@ -10093,8 +10040,6 @@ pub enum ArrayElementsNodeSlot {
     SatisfiesExpression(SatisfiesExpressionNode),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionNode),
-    #[kind(kind::INTERNAL_MODULE)]
-    InternalModule(InternalModuleNode),
     #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionNode),
     #[kind(kind::SUBSCRIPT_EXPRESSION)]
@@ -10215,7 +10160,6 @@ impl ::sittir_core::prepare::Prepare for ArrayElementsNodeSlot {
             ArrayElementsNodeSlot::AsExpression(t) => t.prepare(ctx),
             ArrayElementsNodeSlot::SatisfiesExpression(t) => t.prepare(ctx),
             ArrayElementsNodeSlot::InstantiationExpression(t) => t.prepare(ctx),
-            ArrayElementsNodeSlot::InternalModule(t) => t.prepare(ctx),
             ArrayElementsNodeSlot::TypeAssertion(t) => t.prepare(ctx),
             ArrayElementsNodeSlot::SubscriptExpression(t) => t.prepare(ctx),
             ArrayElementsNodeSlot::MemberExpression(t) => t.prepare(ctx),
@@ -10275,7 +10219,6 @@ impl ::sittir_core::prepare::Prepare for ArrayElementsNodeSlot {
             ArrayElementsNodeSlot::AsExpression(t) => t.gap_edges(),
             ArrayElementsNodeSlot::SatisfiesExpression(t) => t.gap_edges(),
             ArrayElementsNodeSlot::InstantiationExpression(t) => t.gap_edges(),
-            ArrayElementsNodeSlot::InternalModule(t) => t.gap_edges(),
             ArrayElementsNodeSlot::TypeAssertion(t) => t.gap_edges(),
             ArrayElementsNodeSlot::SubscriptExpression(t) => t.gap_edges(),
             ArrayElementsNodeSlot::MemberExpression(t) => t.gap_edges(),
@@ -10335,7 +10278,6 @@ impl ::sittir_core::prepare::Prepare for ArrayElementsNodeSlot {
             ArrayElementsNodeSlot::AsExpression(t) => t.snapshot_edge(),
             ArrayElementsNodeSlot::SatisfiesExpression(t) => t.snapshot_edge(),
             ArrayElementsNodeSlot::InstantiationExpression(t) => t.snapshot_edge(),
-            ArrayElementsNodeSlot::InternalModule(t) => t.snapshot_edge(),
             ArrayElementsNodeSlot::TypeAssertion(t) => t.snapshot_edge(),
             ArrayElementsNodeSlot::SubscriptExpression(t) => t.snapshot_edge(),
             ArrayElementsNodeSlot::MemberExpression(t) => t.snapshot_edge(),
@@ -10395,7 +10337,6 @@ impl ::sittir_core::prepare::Prepare for ArrayElementsNodeSlot {
             ArrayElementsNodeSlot::AsExpression(t) => t.source_coordinate(),
             ArrayElementsNodeSlot::SatisfiesExpression(t) => t.source_coordinate(),
             ArrayElementsNodeSlot::InstantiationExpression(t) => t.source_coordinate(),
-            ArrayElementsNodeSlot::InternalModule(t) => t.source_coordinate(),
             ArrayElementsNodeSlot::TypeAssertion(t) => t.source_coordinate(),
             ArrayElementsNodeSlot::SubscriptExpression(t) => t.source_coordinate(),
             ArrayElementsNodeSlot::MemberExpression(t) => t.source_coordinate(),
@@ -10455,7 +10396,6 @@ impl ::sittir_core::prepare::Prepare for ArrayElementsNodeSlot {
             ArrayElementsNodeSlot::AsExpression(t) => t.source_separator(ctx),
             ArrayElementsNodeSlot::SatisfiesExpression(t) => t.source_separator(ctx),
             ArrayElementsNodeSlot::InstantiationExpression(t) => t.source_separator(ctx),
-            ArrayElementsNodeSlot::InternalModule(t) => t.source_separator(ctx),
             ArrayElementsNodeSlot::TypeAssertion(t) => t.source_separator(ctx),
             ArrayElementsNodeSlot::SubscriptExpression(t) => t.source_separator(ctx),
             ArrayElementsNodeSlot::MemberExpression(t) => t.source_separator(ctx),
@@ -10524,7 +10464,6 @@ impl ::sittir_core::view::KindOf for ArrayElementsNodeSlot {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -10587,7 +10526,6 @@ impl ::sittir_core::render::Render for ArrayElementsNodeSlot {
             ArrayElementsNodeSlot::AsExpression(inner) => inner.render(w),
             ArrayElementsNodeSlot::SatisfiesExpression(inner) => inner.render(w),
             ArrayElementsNodeSlot::InstantiationExpression(inner) => inner.render(w),
-            ArrayElementsNodeSlot::InternalModule(inner) => inner.render(w),
             ArrayElementsNodeSlot::TypeAssertion(inner) => inner.render(w),
             ArrayElementsNodeSlot::SubscriptExpression(inner) => inner.render(w),
             ArrayElementsNodeSlot::MemberExpression(inner) => inner.render(w),
@@ -10651,7 +10589,6 @@ impl ::sittir_core::view::KindOf for ArrayElementsNodeSlotRecord<'_> {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -10714,7 +10651,6 @@ impl ::sittir_core::render::Render for ArrayElementsNodeSlotRecord<'_> {
             ArrayElementsNodeSlotRecord::AsExpression(inner) => inner.render(w),
             ArrayElementsNodeSlotRecord::SatisfiesExpression(inner) => inner.render(w),
             ArrayElementsNodeSlotRecord::InstantiationExpression(inner) => inner.render(w),
-            ArrayElementsNodeSlotRecord::InternalModule(inner) => inner.render(w),
             ArrayElementsNodeSlotRecord::TypeAssertion(inner) => inner.render(w),
             ArrayElementsNodeSlotRecord::SubscriptExpression(inner) => inner.render(w),
             ArrayElementsNodeSlotRecord::MemberExpression(inner) => inner.render(w),
@@ -11158,8 +11094,6 @@ pub enum ArrowFunctionBodyNodeSlot {
     SatisfiesExpression(SatisfiesExpressionNode),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionNode),
-    #[kind(kind::INTERNAL_MODULE)]
-    InternalModule(InternalModuleNode),
     #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionNode),
     #[kind(kind::SUBSCRIPT_EXPRESSION)]
@@ -11280,7 +11214,6 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionBodyNodeSlot {
             ArrowFunctionBodyNodeSlot::AsExpression(t) => t.prepare(ctx),
             ArrowFunctionBodyNodeSlot::SatisfiesExpression(t) => t.prepare(ctx),
             ArrowFunctionBodyNodeSlot::InstantiationExpression(t) => t.prepare(ctx),
-            ArrowFunctionBodyNodeSlot::InternalModule(t) => t.prepare(ctx),
             ArrowFunctionBodyNodeSlot::TypeAssertion(t) => t.prepare(ctx),
             ArrowFunctionBodyNodeSlot::SubscriptExpression(t) => t.prepare(ctx),
             ArrowFunctionBodyNodeSlot::MemberExpression(t) => t.prepare(ctx),
@@ -11340,7 +11273,6 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionBodyNodeSlot {
             ArrowFunctionBodyNodeSlot::AsExpression(t) => t.gap_edges(),
             ArrowFunctionBodyNodeSlot::SatisfiesExpression(t) => t.gap_edges(),
             ArrowFunctionBodyNodeSlot::InstantiationExpression(t) => t.gap_edges(),
-            ArrowFunctionBodyNodeSlot::InternalModule(t) => t.gap_edges(),
             ArrowFunctionBodyNodeSlot::TypeAssertion(t) => t.gap_edges(),
             ArrowFunctionBodyNodeSlot::SubscriptExpression(t) => t.gap_edges(),
             ArrowFunctionBodyNodeSlot::MemberExpression(t) => t.gap_edges(),
@@ -11400,7 +11332,6 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionBodyNodeSlot {
             ArrowFunctionBodyNodeSlot::AsExpression(t) => t.snapshot_edge(),
             ArrowFunctionBodyNodeSlot::SatisfiesExpression(t) => t.snapshot_edge(),
             ArrowFunctionBodyNodeSlot::InstantiationExpression(t) => t.snapshot_edge(),
-            ArrowFunctionBodyNodeSlot::InternalModule(t) => t.snapshot_edge(),
             ArrowFunctionBodyNodeSlot::TypeAssertion(t) => t.snapshot_edge(),
             ArrowFunctionBodyNodeSlot::SubscriptExpression(t) => t.snapshot_edge(),
             ArrowFunctionBodyNodeSlot::MemberExpression(t) => t.snapshot_edge(),
@@ -11460,7 +11391,6 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionBodyNodeSlot {
             ArrowFunctionBodyNodeSlot::AsExpression(t) => t.source_coordinate(),
             ArrowFunctionBodyNodeSlot::SatisfiesExpression(t) => t.source_coordinate(),
             ArrowFunctionBodyNodeSlot::InstantiationExpression(t) => t.source_coordinate(),
-            ArrowFunctionBodyNodeSlot::InternalModule(t) => t.source_coordinate(),
             ArrowFunctionBodyNodeSlot::TypeAssertion(t) => t.source_coordinate(),
             ArrowFunctionBodyNodeSlot::SubscriptExpression(t) => t.source_coordinate(),
             ArrowFunctionBodyNodeSlot::MemberExpression(t) => t.source_coordinate(),
@@ -11520,7 +11450,6 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionBodyNodeSlot {
             ArrowFunctionBodyNodeSlot::AsExpression(t) => t.source_separator(ctx),
             ArrowFunctionBodyNodeSlot::SatisfiesExpression(t) => t.source_separator(ctx),
             ArrowFunctionBodyNodeSlot::InstantiationExpression(t) => t.source_separator(ctx),
-            ArrowFunctionBodyNodeSlot::InternalModule(t) => t.source_separator(ctx),
             ArrowFunctionBodyNodeSlot::TypeAssertion(t) => t.source_separator(ctx),
             ArrowFunctionBodyNodeSlot::SubscriptExpression(t) => t.source_separator(ctx),
             ArrowFunctionBodyNodeSlot::MemberExpression(t) => t.source_separator(ctx),
@@ -11589,7 +11518,6 @@ impl ::sittir_core::view::KindOf for ArrowFunctionBodyNodeSlot {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -11652,7 +11580,6 @@ impl ::sittir_core::render::Render for ArrowFunctionBodyNodeSlot {
             ArrowFunctionBodyNodeSlot::AsExpression(inner) => inner.render(w),
             ArrowFunctionBodyNodeSlot::SatisfiesExpression(inner) => inner.render(w),
             ArrowFunctionBodyNodeSlot::InstantiationExpression(inner) => inner.render(w),
-            ArrowFunctionBodyNodeSlot::InternalModule(inner) => inner.render(w),
             ArrowFunctionBodyNodeSlot::TypeAssertion(inner) => inner.render(w),
             ArrowFunctionBodyNodeSlot::SubscriptExpression(inner) => inner.render(w),
             ArrowFunctionBodyNodeSlot::MemberExpression(inner) => inner.render(w),
@@ -11716,7 +11643,6 @@ impl ::sittir_core::view::KindOf for ArrowFunctionBodyNodeSlotRecord<'_> {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -11779,7 +11705,6 @@ impl ::sittir_core::render::Render for ArrowFunctionBodyNodeSlotRecord<'_> {
             ArrowFunctionBodyNodeSlotRecord::AsExpression(inner) => inner.render(w),
             ArrowFunctionBodyNodeSlotRecord::SatisfiesExpression(inner) => inner.render(w),
             ArrowFunctionBodyNodeSlotRecord::InstantiationExpression(inner) => inner.render(w),
-            ArrowFunctionBodyNodeSlotRecord::InternalModule(inner) => inner.render(w),
             ArrowFunctionBodyNodeSlotRecord::TypeAssertion(inner) => inner.render(w),
             ArrowFunctionBodyNodeSlotRecord::SubscriptExpression(inner) => inner.render(w),
             ArrowFunctionBodyNodeSlotRecord::MemberExpression(inner) => inner.render(w),
@@ -11932,8 +11857,6 @@ pub enum MemberExpressionObjectNodeSlot {
     SatisfiesExpression(SatisfiesExpressionNode),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionNode),
-    #[kind(kind::INTERNAL_MODULE)]
-    InternalModule(InternalModuleNode),
     #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionNode),
     #[kind(kind::SUBSCRIPT_EXPRESSION)]
@@ -12054,7 +11977,6 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionObjectNodeSlot {
             MemberExpressionObjectNodeSlot::AsExpression(t) => t.prepare(ctx),
             MemberExpressionObjectNodeSlot::SatisfiesExpression(t) => t.prepare(ctx),
             MemberExpressionObjectNodeSlot::InstantiationExpression(t) => t.prepare(ctx),
-            MemberExpressionObjectNodeSlot::InternalModule(t) => t.prepare(ctx),
             MemberExpressionObjectNodeSlot::TypeAssertion(t) => t.prepare(ctx),
             MemberExpressionObjectNodeSlot::SubscriptExpression(t) => t.prepare(ctx),
             MemberExpressionObjectNodeSlot::MemberExpression(t) => t.prepare(ctx),
@@ -12114,7 +12036,6 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionObjectNodeSlot {
             MemberExpressionObjectNodeSlot::AsExpression(t) => t.gap_edges(),
             MemberExpressionObjectNodeSlot::SatisfiesExpression(t) => t.gap_edges(),
             MemberExpressionObjectNodeSlot::InstantiationExpression(t) => t.gap_edges(),
-            MemberExpressionObjectNodeSlot::InternalModule(t) => t.gap_edges(),
             MemberExpressionObjectNodeSlot::TypeAssertion(t) => t.gap_edges(),
             MemberExpressionObjectNodeSlot::SubscriptExpression(t) => t.gap_edges(),
             MemberExpressionObjectNodeSlot::MemberExpression(t) => t.gap_edges(),
@@ -12174,7 +12095,6 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionObjectNodeSlot {
             MemberExpressionObjectNodeSlot::AsExpression(t) => t.snapshot_edge(),
             MemberExpressionObjectNodeSlot::SatisfiesExpression(t) => t.snapshot_edge(),
             MemberExpressionObjectNodeSlot::InstantiationExpression(t) => t.snapshot_edge(),
-            MemberExpressionObjectNodeSlot::InternalModule(t) => t.snapshot_edge(),
             MemberExpressionObjectNodeSlot::TypeAssertion(t) => t.snapshot_edge(),
             MemberExpressionObjectNodeSlot::SubscriptExpression(t) => t.snapshot_edge(),
             MemberExpressionObjectNodeSlot::MemberExpression(t) => t.snapshot_edge(),
@@ -12234,7 +12154,6 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionObjectNodeSlot {
             MemberExpressionObjectNodeSlot::AsExpression(t) => t.source_coordinate(),
             MemberExpressionObjectNodeSlot::SatisfiesExpression(t) => t.source_coordinate(),
             MemberExpressionObjectNodeSlot::InstantiationExpression(t) => t.source_coordinate(),
-            MemberExpressionObjectNodeSlot::InternalModule(t) => t.source_coordinate(),
             MemberExpressionObjectNodeSlot::TypeAssertion(t) => t.source_coordinate(),
             MemberExpressionObjectNodeSlot::SubscriptExpression(t) => t.source_coordinate(),
             MemberExpressionObjectNodeSlot::MemberExpression(t) => t.source_coordinate(),
@@ -12294,7 +12213,6 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionObjectNodeSlot {
             MemberExpressionObjectNodeSlot::AsExpression(t) => t.source_separator(ctx),
             MemberExpressionObjectNodeSlot::SatisfiesExpression(t) => t.source_separator(ctx),
             MemberExpressionObjectNodeSlot::InstantiationExpression(t) => t.source_separator(ctx),
-            MemberExpressionObjectNodeSlot::InternalModule(t) => t.source_separator(ctx),
             MemberExpressionObjectNodeSlot::TypeAssertion(t) => t.source_separator(ctx),
             MemberExpressionObjectNodeSlot::SubscriptExpression(t) => t.source_separator(ctx),
             MemberExpressionObjectNodeSlot::MemberExpression(t) => t.source_separator(ctx),
@@ -12363,7 +12281,6 @@ impl ::sittir_core::view::KindOf for MemberExpressionObjectNodeSlot {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -12426,7 +12343,6 @@ impl ::sittir_core::render::Render for MemberExpressionObjectNodeSlot {
             MemberExpressionObjectNodeSlot::AsExpression(inner) => inner.render(w),
             MemberExpressionObjectNodeSlot::SatisfiesExpression(inner) => inner.render(w),
             MemberExpressionObjectNodeSlot::InstantiationExpression(inner) => inner.render(w),
-            MemberExpressionObjectNodeSlot::InternalModule(inner) => inner.render(w),
             MemberExpressionObjectNodeSlot::TypeAssertion(inner) => inner.render(w),
             MemberExpressionObjectNodeSlot::SubscriptExpression(inner) => inner.render(w),
             MemberExpressionObjectNodeSlot::MemberExpression(inner) => inner.render(w),
@@ -12490,7 +12406,6 @@ impl ::sittir_core::view::KindOf for MemberExpressionObjectNodeSlotRecord<'_> {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -12553,7 +12468,6 @@ impl ::sittir_core::render::Render for MemberExpressionObjectNodeSlotRecord<'_> 
             MemberExpressionObjectNodeSlotRecord::AsExpression(inner) => inner.render(w),
             MemberExpressionObjectNodeSlotRecord::SatisfiesExpression(inner) => inner.render(w),
             MemberExpressionObjectNodeSlotRecord::InstantiationExpression(inner) => inner.render(w),
-            MemberExpressionObjectNodeSlotRecord::InternalModule(inner) => inner.render(w),
             MemberExpressionObjectNodeSlotRecord::TypeAssertion(inner) => inner.render(w),
             MemberExpressionObjectNodeSlotRecord::SubscriptExpression(inner) => inner.render(w),
             MemberExpressionObjectNodeSlotRecord::MemberExpression(inner) => inner.render(w),
@@ -12748,8 +12662,6 @@ pub enum SubscriptExpressionObjectNodeSlot {
     SatisfiesExpression(SatisfiesExpressionNode),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionNode),
-    #[kind(kind::INTERNAL_MODULE)]
-    InternalModule(InternalModuleNode),
     #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionNode),
     #[kind(kind::SUBSCRIPT_EXPRESSION)]
@@ -12868,7 +12780,6 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionObjectNodeSlot {
             SubscriptExpressionObjectNodeSlot::AsExpression(t) => t.prepare(ctx),
             SubscriptExpressionObjectNodeSlot::SatisfiesExpression(t) => t.prepare(ctx),
             SubscriptExpressionObjectNodeSlot::InstantiationExpression(t) => t.prepare(ctx),
-            SubscriptExpressionObjectNodeSlot::InternalModule(t) => t.prepare(ctx),
             SubscriptExpressionObjectNodeSlot::TypeAssertion(t) => t.prepare(ctx),
             SubscriptExpressionObjectNodeSlot::SubscriptExpression(t) => t.prepare(ctx),
             SubscriptExpressionObjectNodeSlot::MemberExpression(t) => t.prepare(ctx),
@@ -12927,7 +12838,6 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionObjectNodeSlot {
             SubscriptExpressionObjectNodeSlot::AsExpression(t) => t.gap_edges(),
             SubscriptExpressionObjectNodeSlot::SatisfiesExpression(t) => t.gap_edges(),
             SubscriptExpressionObjectNodeSlot::InstantiationExpression(t) => t.gap_edges(),
-            SubscriptExpressionObjectNodeSlot::InternalModule(t) => t.gap_edges(),
             SubscriptExpressionObjectNodeSlot::TypeAssertion(t) => t.gap_edges(),
             SubscriptExpressionObjectNodeSlot::SubscriptExpression(t) => t.gap_edges(),
             SubscriptExpressionObjectNodeSlot::MemberExpression(t) => t.gap_edges(),
@@ -12986,7 +12896,6 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionObjectNodeSlot {
             SubscriptExpressionObjectNodeSlot::AsExpression(t) => t.snapshot_edge(),
             SubscriptExpressionObjectNodeSlot::SatisfiesExpression(t) => t.snapshot_edge(),
             SubscriptExpressionObjectNodeSlot::InstantiationExpression(t) => t.snapshot_edge(),
-            SubscriptExpressionObjectNodeSlot::InternalModule(t) => t.snapshot_edge(),
             SubscriptExpressionObjectNodeSlot::TypeAssertion(t) => t.snapshot_edge(),
             SubscriptExpressionObjectNodeSlot::SubscriptExpression(t) => t.snapshot_edge(),
             SubscriptExpressionObjectNodeSlot::MemberExpression(t) => t.snapshot_edge(),
@@ -13045,7 +12954,6 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionObjectNodeSlot {
             SubscriptExpressionObjectNodeSlot::AsExpression(t) => t.source_coordinate(),
             SubscriptExpressionObjectNodeSlot::SatisfiesExpression(t) => t.source_coordinate(),
             SubscriptExpressionObjectNodeSlot::InstantiationExpression(t) => t.source_coordinate(),
-            SubscriptExpressionObjectNodeSlot::InternalModule(t) => t.source_coordinate(),
             SubscriptExpressionObjectNodeSlot::TypeAssertion(t) => t.source_coordinate(),
             SubscriptExpressionObjectNodeSlot::SubscriptExpression(t) => t.source_coordinate(),
             SubscriptExpressionObjectNodeSlot::MemberExpression(t) => t.source_coordinate(),
@@ -13104,7 +13012,6 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionObjectNodeSlot {
             SubscriptExpressionObjectNodeSlot::AsExpression(t) => t.source_separator(ctx),
             SubscriptExpressionObjectNodeSlot::SatisfiesExpression(t) => t.source_separator(ctx),
             SubscriptExpressionObjectNodeSlot::InstantiationExpression(t) => t.source_separator(ctx),
-            SubscriptExpressionObjectNodeSlot::InternalModule(t) => t.source_separator(ctx),
             SubscriptExpressionObjectNodeSlot::TypeAssertion(t) => t.source_separator(ctx),
             SubscriptExpressionObjectNodeSlot::SubscriptExpression(t) => t.source_separator(ctx),
             SubscriptExpressionObjectNodeSlot::MemberExpression(t) => t.source_separator(ctx),
@@ -13172,7 +13079,6 @@ impl ::sittir_core::view::KindOf for SubscriptExpressionObjectNodeSlot {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -13234,7 +13140,6 @@ impl ::sittir_core::render::Render for SubscriptExpressionObjectNodeSlot {
             SubscriptExpressionObjectNodeSlot::AsExpression(inner) => inner.render(w),
             SubscriptExpressionObjectNodeSlot::SatisfiesExpression(inner) => inner.render(w),
             SubscriptExpressionObjectNodeSlot::InstantiationExpression(inner) => inner.render(w),
-            SubscriptExpressionObjectNodeSlot::InternalModule(inner) => inner.render(w),
             SubscriptExpressionObjectNodeSlot::TypeAssertion(inner) => inner.render(w),
             SubscriptExpressionObjectNodeSlot::SubscriptExpression(inner) => inner.render(w),
             SubscriptExpressionObjectNodeSlot::MemberExpression(inner) => inner.render(w),
@@ -13297,7 +13202,6 @@ impl ::sittir_core::view::KindOf for SubscriptExpressionObjectNodeSlotRecord<'_>
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -13359,7 +13263,6 @@ impl ::sittir_core::render::Render for SubscriptExpressionObjectNodeSlotRecord<'
             SubscriptExpressionObjectNodeSlotRecord::AsExpression(inner) => inner.render(w),
             SubscriptExpressionObjectNodeSlotRecord::SatisfiesExpression(inner) => inner.render(w),
             SubscriptExpressionObjectNodeSlotRecord::InstantiationExpression(inner) => inner.render(w),
-            SubscriptExpressionObjectNodeSlotRecord::InternalModule(inner) => inner.render(w),
             SubscriptExpressionObjectNodeSlotRecord::TypeAssertion(inner) => inner.render(w),
             SubscriptExpressionObjectNodeSlotRecord::SubscriptExpression(inner) => inner.render(w),
             SubscriptExpressionObjectNodeSlotRecord::MemberExpression(inner) => inner.render(w),
@@ -19073,7 +18976,7 @@ pub enum ObjectTypeContentItemNodeSlot {
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION)]
     ExportStatementDefaultDeclaration(Box<ExportStatementDefaultDeclarationNode>),
     #[kind(kind::EXPORT_STATEMENT_EQUALS_EXPORT)]
-    ExportStatementEqualsExport(Box<ExportStatementEqualsExportNode>),
+    ExportStatementEqualsExport(ExportStatementEqualsExportNode),
     #[kind(kind::EXPORT_STATEMENT_NAMESPACE_EXPORT)]
     ExportStatementNamespaceExport(ExportStatementNamespaceExportNode),
     #[kind(kind::PROPERTY_SIGNATURE)]
@@ -19207,7 +19110,7 @@ impl ::sittir_core::render::Render for ObjectTypeContentItemNodeSlot {
         match self {
             ObjectTypeContentItemNodeSlot::ExportStatementDefaultFrom(inner) => inner.render(w),
             ObjectTypeContentItemNodeSlot::ExportStatementDefaultDeclaration(inner) => inner.as_ref().render(w),
-            ObjectTypeContentItemNodeSlot::ExportStatementEqualsExport(inner) => inner.as_ref().render(w),
+            ObjectTypeContentItemNodeSlot::ExportStatementEqualsExport(inner) => inner.render(w),
             ObjectTypeContentItemNodeSlot::ExportStatementNamespaceExport(inner) => inner.render(w),
             ObjectTypeContentItemNodeSlot::PropertySignature(inner) => inner.as_ref().render(w),
             ObjectTypeContentItemNodeSlot::CallSignature(inner) => inner.render(w),
@@ -19270,8 +19173,6 @@ pub enum BinaryExpressionInLeftNodeSlot {
     SatisfiesExpression(SatisfiesExpressionNode),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionNode),
-    #[kind(kind::INTERNAL_MODULE)]
-    InternalModule(InternalModuleNode),
     #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionNode),
     #[kind(kind::SUBSCRIPT_EXPRESSION)]
@@ -19392,7 +19293,6 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInLeftNodeSlot {
             BinaryExpressionInLeftNodeSlot::AsExpression(t) => t.prepare(ctx),
             BinaryExpressionInLeftNodeSlot::SatisfiesExpression(t) => t.prepare(ctx),
             BinaryExpressionInLeftNodeSlot::InstantiationExpression(t) => t.prepare(ctx),
-            BinaryExpressionInLeftNodeSlot::InternalModule(t) => t.prepare(ctx),
             BinaryExpressionInLeftNodeSlot::TypeAssertion(t) => t.prepare(ctx),
             BinaryExpressionInLeftNodeSlot::SubscriptExpression(t) => t.prepare(ctx),
             BinaryExpressionInLeftNodeSlot::MemberExpression(t) => t.prepare(ctx),
@@ -19452,7 +19352,6 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInLeftNodeSlot {
             BinaryExpressionInLeftNodeSlot::AsExpression(t) => t.gap_edges(),
             BinaryExpressionInLeftNodeSlot::SatisfiesExpression(t) => t.gap_edges(),
             BinaryExpressionInLeftNodeSlot::InstantiationExpression(t) => t.gap_edges(),
-            BinaryExpressionInLeftNodeSlot::InternalModule(t) => t.gap_edges(),
             BinaryExpressionInLeftNodeSlot::TypeAssertion(t) => t.gap_edges(),
             BinaryExpressionInLeftNodeSlot::SubscriptExpression(t) => t.gap_edges(),
             BinaryExpressionInLeftNodeSlot::MemberExpression(t) => t.gap_edges(),
@@ -19512,7 +19411,6 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInLeftNodeSlot {
             BinaryExpressionInLeftNodeSlot::AsExpression(t) => t.snapshot_edge(),
             BinaryExpressionInLeftNodeSlot::SatisfiesExpression(t) => t.snapshot_edge(),
             BinaryExpressionInLeftNodeSlot::InstantiationExpression(t) => t.snapshot_edge(),
-            BinaryExpressionInLeftNodeSlot::InternalModule(t) => t.snapshot_edge(),
             BinaryExpressionInLeftNodeSlot::TypeAssertion(t) => t.snapshot_edge(),
             BinaryExpressionInLeftNodeSlot::SubscriptExpression(t) => t.snapshot_edge(),
             BinaryExpressionInLeftNodeSlot::MemberExpression(t) => t.snapshot_edge(),
@@ -19572,7 +19470,6 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInLeftNodeSlot {
             BinaryExpressionInLeftNodeSlot::AsExpression(t) => t.source_coordinate(),
             BinaryExpressionInLeftNodeSlot::SatisfiesExpression(t) => t.source_coordinate(),
             BinaryExpressionInLeftNodeSlot::InstantiationExpression(t) => t.source_coordinate(),
-            BinaryExpressionInLeftNodeSlot::InternalModule(t) => t.source_coordinate(),
             BinaryExpressionInLeftNodeSlot::TypeAssertion(t) => t.source_coordinate(),
             BinaryExpressionInLeftNodeSlot::SubscriptExpression(t) => t.source_coordinate(),
             BinaryExpressionInLeftNodeSlot::MemberExpression(t) => t.source_coordinate(),
@@ -19632,7 +19529,6 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInLeftNodeSlot {
             BinaryExpressionInLeftNodeSlot::AsExpression(t) => t.source_separator(ctx),
             BinaryExpressionInLeftNodeSlot::SatisfiesExpression(t) => t.source_separator(ctx),
             BinaryExpressionInLeftNodeSlot::InstantiationExpression(t) => t.source_separator(ctx),
-            BinaryExpressionInLeftNodeSlot::InternalModule(t) => t.source_separator(ctx),
             BinaryExpressionInLeftNodeSlot::TypeAssertion(t) => t.source_separator(ctx),
             BinaryExpressionInLeftNodeSlot::SubscriptExpression(t) => t.source_separator(ctx),
             BinaryExpressionInLeftNodeSlot::MemberExpression(t) => t.source_separator(ctx),
@@ -19701,7 +19597,6 @@ impl ::sittir_core::view::KindOf for BinaryExpressionInLeftNodeSlot {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -19764,7 +19659,6 @@ impl ::sittir_core::render::Render for BinaryExpressionInLeftNodeSlot {
             BinaryExpressionInLeftNodeSlot::AsExpression(inner) => inner.render(w),
             BinaryExpressionInLeftNodeSlot::SatisfiesExpression(inner) => inner.render(w),
             BinaryExpressionInLeftNodeSlot::InstantiationExpression(inner) => inner.render(w),
-            BinaryExpressionInLeftNodeSlot::InternalModule(inner) => inner.render(w),
             BinaryExpressionInLeftNodeSlot::TypeAssertion(inner) => inner.render(w),
             BinaryExpressionInLeftNodeSlot::SubscriptExpression(inner) => inner.render(w),
             BinaryExpressionInLeftNodeSlot::MemberExpression(inner) => inner.render(w),
@@ -19828,7 +19722,6 @@ impl ::sittir_core::view::KindOf for BinaryExpressionInLeftNodeSlotRecord<'_> {
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
             Self::TypeAssertion(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -19891,7 +19784,6 @@ impl ::sittir_core::render::Render for BinaryExpressionInLeftNodeSlotRecord<'_> 
             BinaryExpressionInLeftNodeSlotRecord::AsExpression(inner) => inner.render(w),
             BinaryExpressionInLeftNodeSlotRecord::SatisfiesExpression(inner) => inner.render(w),
             BinaryExpressionInLeftNodeSlotRecord::InstantiationExpression(inner) => inner.render(w),
-            BinaryExpressionInLeftNodeSlotRecord::InternalModule(inner) => inner.render(w),
             BinaryExpressionInLeftNodeSlotRecord::TypeAssertion(inner) => inner.render(w),
             BinaryExpressionInLeftNodeSlotRecord::SubscriptExpression(inner) => inner.render(w),
             BinaryExpressionInLeftNodeSlotRecord::MemberExpression(inner) => inner.render(w),
@@ -21492,7 +21384,7 @@ pub enum ExportStatementDefaultDeclarationDefaultKwContentNodeSlot {
     #[kind(kind::AMBIENT_DECLARATION)]
     AmbientDeclaration(AmbientDeclarationNode),
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE)]
-    ExportStatementDefaultDeclarationDefaultKwValue(Box<ExportStatementDefaultDeclarationDefaultKwValueNode>),
+    ExportStatementDefaultDeclarationDefaultKwValue(ExportStatementDefaultDeclarationDefaultKwValueNode),
 }
 
 impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationDefaultKwContentNodeSlot {
@@ -21645,7 +21537,7 @@ impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationDefaultK
             ExportStatementDefaultDeclarationDefaultKwContentNodeSlot::InterfaceDeclaration(inner) => inner.as_ref().render(w),
             ExportStatementDefaultDeclarationDefaultKwContentNodeSlot::ImportAlias(inner) => inner.render(w),
             ExportStatementDefaultDeclarationDefaultKwContentNodeSlot::AmbientDeclaration(inner) => inner.render(w),
-            ExportStatementDefaultDeclarationDefaultKwContentNodeSlot::ExportStatementDefaultDeclarationDefaultKwValue(inner) => inner.as_ref().render(w),
+            ExportStatementDefaultDeclarationDefaultKwContentNodeSlot::ExportStatementDefaultDeclarationDefaultKwValue(inner) => inner.render(w),
         }
     }
 }
@@ -50135,7 +50027,6 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionNode {
             Self::AsExpression(t) => t.seat_target(table, ctx),
             Self::SatisfiesExpression(t) => t.seat_target(table, ctx),
             Self::InstantiationExpression(t) => t.seat_target(table, ctx),
-            Self::InternalModule(t) => t.seat_target(table, ctx),
             Self::TypeAssertion(t) => t.seat_target(table, ctx),
             Self::PrimaryExpression(t) => t.seat_target(table, ctx),
             Self::AssignmentExpression(t) => t.seat_target(table, ctx),
@@ -50341,7 +50232,6 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionStatementExpressionNodeSlo
             Self::AsExpression(t) => t.seat_target(table, ctx),
             Self::SatisfiesExpression(t) => t.seat_target(table, ctx),
             Self::InstantiationExpression(t) => t.seat_target(table, ctx),
-            Self::InternalModule(t) => t.seat_target(table, ctx),
             Self::TypeAssertion(t) => t.seat_target(table, ctx),
             Self::SubscriptExpression(t) => t.seat_target(table, ctx),
             Self::MemberExpression(t) => t.seat_target(table, ctx),
@@ -50391,7 +50281,6 @@ impl ::sittir_core::prepare::SeatTarget for ForStatementInitializerNodeSlot {
             Self::AsExpression(t) => t.seat_target(table, ctx),
             Self::SatisfiesExpression(t) => t.seat_target(table, ctx),
             Self::InstantiationExpression(t) => t.seat_target(table, ctx),
-            Self::InternalModule(t) => t.seat_target(table, ctx),
             Self::TypeAssertion(t) => t.seat_target(table, ctx),
             Self::SubscriptExpression(t) => t.seat_target(table, ctx),
             Self::MemberExpression(t) => t.seat_target(table, ctx),
@@ -50440,7 +50329,6 @@ impl ::sittir_core::prepare::SeatTarget for ForStatementConditionNodeSlot {
             Self::AsExpression(t) => t.seat_target(table, ctx),
             Self::SatisfiesExpression(t) => t.seat_target(table, ctx),
             Self::InstantiationExpression(t) => t.seat_target(table, ctx),
-            Self::InternalModule(t) => t.seat_target(table, ctx),
             Self::TypeAssertion(t) => t.seat_target(table, ctx),
             Self::SubscriptExpression(t) => t.seat_target(table, ctx),
             Self::MemberExpression(t) => t.seat_target(table, ctx),
@@ -50498,7 +50386,6 @@ impl ::sittir_core::prepare::SeatTarget for YieldExpressionExpressionNodeSlot {
             Self::AsExpression(t) => t.seat_target(table, ctx),
             Self::SatisfiesExpression(t) => t.seat_target(table, ctx),
             Self::InstantiationExpression(t) => t.seat_target(table, ctx),
-            Self::InternalModule(t) => t.seat_target(table, ctx),
             Self::TypeAssertion(t) => t.seat_target(table, ctx),
             Self::SubscriptExpression(t) => t.seat_target(table, ctx),
             Self::MemberExpression(t) => t.seat_target(table, ctx),
@@ -50570,7 +50457,6 @@ impl ::sittir_core::prepare::SeatTarget for ArrayElementsNodeSlot {
             Self::AsExpression(t) => t.seat_target(table, ctx),
             Self::SatisfiesExpression(t) => t.seat_target(table, ctx),
             Self::InstantiationExpression(t) => t.seat_target(table, ctx),
-            Self::InternalModule(t) => t.seat_target(table, ctx),
             Self::TypeAssertion(t) => t.seat_target(table, ctx),
             Self::SubscriptExpression(t) => t.seat_target(table, ctx),
             Self::MemberExpression(t) => t.seat_target(table, ctx),
@@ -50629,7 +50515,6 @@ impl ::sittir_core::prepare::SeatTarget for ArrowFunctionBodyNodeSlot {
             Self::AsExpression(t) => t.seat_target(table, ctx),
             Self::SatisfiesExpression(t) => t.seat_target(table, ctx),
             Self::InstantiationExpression(t) => t.seat_target(table, ctx),
-            Self::InternalModule(t) => t.seat_target(table, ctx),
             Self::TypeAssertion(t) => t.seat_target(table, ctx),
             Self::SubscriptExpression(t) => t.seat_target(table, ctx),
             Self::MemberExpression(t) => t.seat_target(table, ctx),
@@ -50687,7 +50572,6 @@ impl ::sittir_core::prepare::SeatTarget for MemberExpressionObjectNodeSlot {
             Self::AsExpression(t) => t.seat_target(table, ctx),
             Self::SatisfiesExpression(t) => t.seat_target(table, ctx),
             Self::InstantiationExpression(t) => t.seat_target(table, ctx),
-            Self::InternalModule(t) => t.seat_target(table, ctx),
             Self::TypeAssertion(t) => t.seat_target(table, ctx),
             Self::SubscriptExpression(t) => t.seat_target(table, ctx),
             Self::MemberExpression(t) => t.seat_target(table, ctx),
@@ -50735,7 +50619,6 @@ impl ::sittir_core::prepare::SeatTarget for SubscriptExpressionObjectNodeSlot {
             Self::AsExpression(t) => t.seat_target(table, ctx),
             Self::SatisfiesExpression(t) => t.seat_target(table, ctx),
             Self::InstantiationExpression(t) => t.seat_target(table, ctx),
-            Self::InternalModule(t) => t.seat_target(table, ctx),
             Self::TypeAssertion(t) => t.seat_target(table, ctx),
             Self::SubscriptExpression(t) => t.seat_target(table, ctx),
             Self::MemberExpression(t) => t.seat_target(table, ctx),
@@ -51135,7 +51018,6 @@ impl ::sittir_core::prepare::SeatTarget for BinaryExpressionInLeftNodeSlot {
             Self::AsExpression(t) => t.seat_target(table, ctx),
             Self::SatisfiesExpression(t) => t.seat_target(table, ctx),
             Self::InstantiationExpression(t) => t.seat_target(table, ctx),
-            Self::InternalModule(t) => t.seat_target(table, ctx),
             Self::TypeAssertion(t) => t.seat_target(table, ctx),
             Self::SubscriptExpression(t) => t.seat_target(table, ctx),
             Self::MemberExpression(t) => t.seat_target(table, ctx),
@@ -51755,7 +51637,7 @@ fn render_for_statement<N: ForStatementFields + ?Sized>(node: &N, w: &mut dyn ::
     if initializer.kind_in(&*w, &[::sittir_core::types::KindId(22), ::sittir_core::types::KindId(227)]) { w.site_at(options::SITE_FOR_STATEMENT_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_initializer", ::sittir_core::types::ItemIndex(0), w, |w| initializer.render(w))?;
     if initializer.kind_in(&*w, &[::sittir_core::types::KindId(22), ::sittir_core::types::KindId(227)]) { w.site_at(options::SITE_FOR_STATEMENT_SEMI_AFTER); }
-    if initializer.kind_in(&*w, &[::sittir_core::types::KindId(1), ::sittir_core::types::KindId(129), ::sittir_core::types::KindId(155), ::sittir_core::types::KindId(156), ::sittir_core::types::KindId(157), ::sittir_core::types::KindId(158), ::sittir_core::types::KindId(159), ::sittir_core::types::KindId(160), ::sittir_core::types::KindId(161), ::sittir_core::types::KindId(162), ::sittir_core::types::KindId(163), ::sittir_core::types::KindId(164), ::sittir_core::types::KindId(165), ::sittir_core::types::KindId(166), ::sittir_core::types::KindId(235), ::sittir_core::types::KindId(237), ::sittir_core::types::KindId(238), ::sittir_core::types::KindId(242), ::sittir_core::types::KindId(245), ::sittir_core::types::KindId(248), ::sittir_core::types::KindId(250), ::sittir_core::types::KindId(252), ::sittir_core::types::KindId(257), ::sittir_core::types::KindId(258), ::sittir_core::types::KindId(259), ::sittir_core::types::KindId(260), ::sittir_core::types::KindId(262), ::sittir_core::types::KindId(264), ::sittir_core::types::KindId(268), ::sittir_core::types::KindId(269), ::sittir_core::types::KindId(270), ::sittir_core::types::KindId(272), ::sittir_core::types::KindId(274), ::sittir_core::types::KindId(276), ::sittir_core::types::KindId(279), ::sittir_core::types::KindId(280), ::sittir_core::types::KindId(281), ::sittir_core::types::KindId(282), ::sittir_core::types::KindId(283), ::sittir_core::types::KindId(300), ::sittir_core::types::KindId(305), ::sittir_core::types::KindId(306), ::sittir_core::types::KindId(307), ::sittir_core::types::KindId(308), ::sittir_core::types::KindId(316), ::sittir_core::types::KindId(419), ::sittir_core::types::KindId(420), ::sittir_core::types::KindId(421), ::sittir_core::types::KindId(422), ::sittir_core::types::KindId(423), ::sittir_core::types::KindId(424), ::sittir_core::types::KindId(425), ::sittir_core::types::KindId(426), ::sittir_core::types::KindId(427), ::sittir_core::types::KindId(440), ::sittir_core::types::KindId(441)]) {
+    if initializer.kind_in(&*w, &[::sittir_core::types::KindId(1), ::sittir_core::types::KindId(129), ::sittir_core::types::KindId(155), ::sittir_core::types::KindId(156), ::sittir_core::types::KindId(157), ::sittir_core::types::KindId(158), ::sittir_core::types::KindId(159), ::sittir_core::types::KindId(160), ::sittir_core::types::KindId(161), ::sittir_core::types::KindId(162), ::sittir_core::types::KindId(163), ::sittir_core::types::KindId(164), ::sittir_core::types::KindId(165), ::sittir_core::types::KindId(166), ::sittir_core::types::KindId(235), ::sittir_core::types::KindId(237), ::sittir_core::types::KindId(238), ::sittir_core::types::KindId(242), ::sittir_core::types::KindId(245), ::sittir_core::types::KindId(248), ::sittir_core::types::KindId(250), ::sittir_core::types::KindId(252), ::sittir_core::types::KindId(257), ::sittir_core::types::KindId(258), ::sittir_core::types::KindId(259), ::sittir_core::types::KindId(260), ::sittir_core::types::KindId(262), ::sittir_core::types::KindId(264), ::sittir_core::types::KindId(268), ::sittir_core::types::KindId(269), ::sittir_core::types::KindId(270), ::sittir_core::types::KindId(272), ::sittir_core::types::KindId(274), ::sittir_core::types::KindId(276), ::sittir_core::types::KindId(279), ::sittir_core::types::KindId(280), ::sittir_core::types::KindId(281), ::sittir_core::types::KindId(282), ::sittir_core::types::KindId(283), ::sittir_core::types::KindId(300), ::sittir_core::types::KindId(305), ::sittir_core::types::KindId(306), ::sittir_core::types::KindId(307), ::sittir_core::types::KindId(308), ::sittir_core::types::KindId(419), ::sittir_core::types::KindId(420), ::sittir_core::types::KindId(421), ::sittir_core::types::KindId(422), ::sittir_core::types::KindId(423), ::sittir_core::types::KindId(424), ::sittir_core::types::KindId(425), ::sittir_core::types::KindId(426), ::sittir_core::types::KindId(427), ::sittir_core::types::KindId(440), ::sittir_core::types::KindId(441)]) {
         w.site_at(options::SITE_FOR_STATEMENT_SEMI_BEFORE);
         w.text(";")?;
         w.site_at(options::SITE_FOR_STATEMENT_SEMI_AFTER);
@@ -51763,7 +51645,7 @@ fn render_for_statement<N: ForStatementFields + ?Sized>(node: &N, w: &mut dyn ::
     if condition.kind_in(&*w, &[::sittir_core::types::KindId(22), ::sittir_core::types::KindId(227)]) { w.site_at(options::SITE_FOR_STATEMENT_SEMI_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_condition", ::sittir_core::types::ItemIndex(0), w, |w| condition.render(w))?;
     if condition.kind_in(&*w, &[::sittir_core::types::KindId(22), ::sittir_core::types::KindId(227)]) { w.site_at(options::SITE_FOR_STATEMENT_SEMI_AFTER); }
-    if condition.kind_in(&*w, &[::sittir_core::types::KindId(1), ::sittir_core::types::KindId(129), ::sittir_core::types::KindId(155), ::sittir_core::types::KindId(156), ::sittir_core::types::KindId(157), ::sittir_core::types::KindId(158), ::sittir_core::types::KindId(159), ::sittir_core::types::KindId(160), ::sittir_core::types::KindId(161), ::sittir_core::types::KindId(162), ::sittir_core::types::KindId(163), ::sittir_core::types::KindId(164), ::sittir_core::types::KindId(165), ::sittir_core::types::KindId(166), ::sittir_core::types::KindId(235), ::sittir_core::types::KindId(237), ::sittir_core::types::KindId(238), ::sittir_core::types::KindId(242), ::sittir_core::types::KindId(245), ::sittir_core::types::KindId(248), ::sittir_core::types::KindId(250), ::sittir_core::types::KindId(252), ::sittir_core::types::KindId(257), ::sittir_core::types::KindId(258), ::sittir_core::types::KindId(259), ::sittir_core::types::KindId(260), ::sittir_core::types::KindId(262), ::sittir_core::types::KindId(264), ::sittir_core::types::KindId(268), ::sittir_core::types::KindId(269), ::sittir_core::types::KindId(270), ::sittir_core::types::KindId(272), ::sittir_core::types::KindId(274), ::sittir_core::types::KindId(276), ::sittir_core::types::KindId(279), ::sittir_core::types::KindId(280), ::sittir_core::types::KindId(281), ::sittir_core::types::KindId(282), ::sittir_core::types::KindId(283), ::sittir_core::types::KindId(300), ::sittir_core::types::KindId(305), ::sittir_core::types::KindId(306), ::sittir_core::types::KindId(307), ::sittir_core::types::KindId(308), ::sittir_core::types::KindId(316), ::sittir_core::types::KindId(419), ::sittir_core::types::KindId(420), ::sittir_core::types::KindId(421), ::sittir_core::types::KindId(422), ::sittir_core::types::KindId(423), ::sittir_core::types::KindId(424), ::sittir_core::types::KindId(425), ::sittir_core::types::KindId(426), ::sittir_core::types::KindId(427), ::sittir_core::types::KindId(440), ::sittir_core::types::KindId(441)]) {
+    if condition.kind_in(&*w, &[::sittir_core::types::KindId(1), ::sittir_core::types::KindId(129), ::sittir_core::types::KindId(155), ::sittir_core::types::KindId(156), ::sittir_core::types::KindId(157), ::sittir_core::types::KindId(158), ::sittir_core::types::KindId(159), ::sittir_core::types::KindId(160), ::sittir_core::types::KindId(161), ::sittir_core::types::KindId(162), ::sittir_core::types::KindId(163), ::sittir_core::types::KindId(164), ::sittir_core::types::KindId(165), ::sittir_core::types::KindId(166), ::sittir_core::types::KindId(235), ::sittir_core::types::KindId(237), ::sittir_core::types::KindId(238), ::sittir_core::types::KindId(242), ::sittir_core::types::KindId(245), ::sittir_core::types::KindId(248), ::sittir_core::types::KindId(250), ::sittir_core::types::KindId(252), ::sittir_core::types::KindId(257), ::sittir_core::types::KindId(258), ::sittir_core::types::KindId(259), ::sittir_core::types::KindId(260), ::sittir_core::types::KindId(262), ::sittir_core::types::KindId(264), ::sittir_core::types::KindId(268), ::sittir_core::types::KindId(269), ::sittir_core::types::KindId(270), ::sittir_core::types::KindId(272), ::sittir_core::types::KindId(274), ::sittir_core::types::KindId(276), ::sittir_core::types::KindId(279), ::sittir_core::types::KindId(280), ::sittir_core::types::KindId(281), ::sittir_core::types::KindId(282), ::sittir_core::types::KindId(283), ::sittir_core::types::KindId(300), ::sittir_core::types::KindId(305), ::sittir_core::types::KindId(306), ::sittir_core::types::KindId(307), ::sittir_core::types::KindId(308), ::sittir_core::types::KindId(419), ::sittir_core::types::KindId(420), ::sittir_core::types::KindId(421), ::sittir_core::types::KindId(422), ::sittir_core::types::KindId(423), ::sittir_core::types::KindId(424), ::sittir_core::types::KindId(425), ::sittir_core::types::KindId(426), ::sittir_core::types::KindId(427), ::sittir_core::types::KindId(440), ::sittir_core::types::KindId(441)]) {
         w.site_at(options::SITE_FOR_STATEMENT_SEMI_BEFORE);
         w.text(";")?;
         w.site_at(options::SITE_FOR_STATEMENT_SEMI_AFTER);
@@ -56240,7 +56122,7 @@ fn render_constructor_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> 
 fn render_export_statement(t: &ExportStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         ExportStatementNode::ExportStatementDefault(inner) => inner.render(w),
-        ExportStatementNode::ExportStatementEqualsExport(inner) => inner.as_ref().render(w),
+        ExportStatementNode::ExportStatementEqualsExport(inner) => inner.render(w),
         ExportStatementNode::ExportStatementNamespaceExport(inner) => inner.render(w),
     }
 }
@@ -56321,7 +56203,7 @@ fn render_statement(t: &StatementNode, w: &mut dyn ::sittir_core::render::Render
         StatementNode::ExportStatement(inner) => inner.render(w),
         StatementNode::ImportStatement(inner) => inner.as_ref().render(w),
         StatementNode::DebuggerStatement(inner) => inner.render(w),
-        StatementNode::ExpressionStatement(inner) => inner.as_ref().render(w),
+        StatementNode::ExpressionStatement(inner) => inner.render(w),
         StatementNode::Declaration(inner) => inner.render(w),
         StatementNode::StatementBlock(inner) => inner.render(w),
         StatementNode::IfStatement(inner) => inner.render(w),
@@ -56334,8 +56216,8 @@ fn render_statement(t: &StatementNode, w: &mut dyn ::sittir_core::render::Render
         StatementNode::WithStatement(inner) => inner.render(w),
         StatementNode::BreakStatement(inner) => inner.render(w),
         StatementNode::ContinueStatement(inner) => inner.render(w),
-        StatementNode::ReturnStatement(inner) => inner.as_ref().render(w),
-        StatementNode::ThrowStatement(inner) => inner.as_ref().render(w),
+        StatementNode::ReturnStatement(inner) => inner.render(w),
+        StatementNode::ThrowStatement(inner) => inner.render(w),
         StatementNode::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(227), edges, w, render_empty_statement),
         StatementNode::LabeledStatement(inner) => inner.render(w),
     }
@@ -56429,7 +56311,6 @@ fn render_expression(t: &ExpressionNode, w: &mut dyn ::sittir_core::render::Rend
         ExpressionNode::AsExpression(inner) => inner.render(w),
         ExpressionNode::SatisfiesExpression(inner) => inner.render(w),
         ExpressionNode::InstantiationExpression(inner) => inner.render(w),
-        ExpressionNode::InternalModule(inner) => inner.render(w),
         ExpressionNode::TypeAssertion(inner) => inner.render(w),
         ExpressionNode::PrimaryExpression(inner) => inner.render(w),
         ExpressionNode::AssignmentExpression(inner) => inner.render(w),
@@ -56451,7 +56332,6 @@ fn render_expression_record(t: &ExpressionNodeRecord<'_>, w: &mut dyn ::sittir_c
         ExpressionNodeRecord::AsExpression(inner) => inner.render(w),
         ExpressionNodeRecord::SatisfiesExpression(inner) => inner.render(w),
         ExpressionNodeRecord::InstantiationExpression(inner) => inner.render(w),
-        ExpressionNodeRecord::InternalModule(inner) => inner.render(w),
         ExpressionNodeRecord::TypeAssertion(inner) => inner.render(w),
         ExpressionNodeRecord::PrimaryExpression(inner) => inner.render(w),
         ExpressionNodeRecord::AssignmentExpression(inner) => inner.render(w),
@@ -58760,17 +58640,17 @@ const _: () = assert!(::core::mem::size_of::<ExportClauseNode>() <= 256, "Export
 const _: () = assert!(::core::mem::size_of::<ExportSpecifierNode>() <= 256, "ExportSpecifierNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ExportSpecifiersNode>() <= 256, "ExportSpecifiersNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwNode>() <= 256, "ExportStatementDefaultDeclarationDefaultKwNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwValueNode>() > 256, "ExportStatementDefaultDeclarationDefaultKwValueNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwValueNode>() <= 256, "ExportStatementDefaultDeclarationDefaultKwValueNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationNode>() > 256, "ExportStatementDefaultDeclarationNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultFromClauseFromNode>() <= 256, "ExportStatementDefaultFromClauseFromNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultFromNode>() <= 256, "ExportStatementDefaultFromNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultFromNsFromNode>() <= 256, "ExportStatementDefaultFromNsFromNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultFromStarFromNode>() <= 256, "ExportStatementDefaultFromStarFromNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultNode>() <= 256, "ExportStatementDefaultNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<ExportStatementEqualsExportNode>() > 256, "ExportStatementEqualsExportNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<ExportStatementEqualsExportNode>() <= 256, "ExportStatementEqualsExportNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ExportStatementNamespaceExportNode>() <= 256, "ExportStatementNamespaceExportNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ExportStatementNode>() <= 256, "ExportStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<ExpressionStatementNode>() > 256, "ExpressionStatementNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<ExpressionStatementNode>() <= 256, "ExpressionStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ExtendsClauseNode>() <= 256, "ExtendsClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ExtendsClauseSingleNode>() > 256, "ExtendsClauseSingleNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<ExtendsTypeClauseNode>() <= 256, "ExtendsTypeClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -58891,7 +58771,7 @@ const _: () = assert!(::core::mem::size_of::<RegexPatternNode>() <= 256, "RegexP
 const _: () = assert!(::core::mem::size_of::<RequiredParameterNode>() > 256, "RequiredParameterNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<RestPatternNode>() <= 256, "RestPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<RestTypeNode>() <= 256, "RestTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<ReturnStatementNode>() > 256, "ReturnStatementNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<ReturnStatementNode>() <= 256, "ReturnStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<SatisfiesExpressionNode>() <= 256, "SatisfiesExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<SequenceExpressionNode>() <= 256, "SequenceExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<SetterParameterNode>() <= 256, "SetterParameterNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -58915,7 +58795,7 @@ const _: () = assert!(::core::mem::size_of::<TemplateSubstitutionNode>() <= 256,
 const _: () = assert!(::core::mem::size_of::<TemplateTypeNode>() <= 256, "TemplateTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TernaryExpressionNode>() <= 256, "TernaryExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TernaryQmarkNode>() <= 256, "TernaryQmarkNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<ThrowStatementNode>() > 256, "ThrowStatementNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<ThrowStatementNode>() <= 256, "ThrowStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TryStatementNode>() > 256, "TryStatementNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<TupleParameterNode>() <= 256, "TupleParameterNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TupleTypeMembersNode>() <= 256, "TupleTypeMembersNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -58960,11 +58840,11 @@ const _: () = assert!(::core::mem::size_of::<AbstractClassDeclarationNode>() == 
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AbstractKeywordNode>() == 0, "AbstractKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<AbstractMethodSignatureGetterNode>() == 344, "AbstractMethodSignatureGetterNode is not the 344 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<AbstractMethodSignatureGetterNode>() == 320, "AbstractMethodSignatureGetterNode is not the 320 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<AbstractMethodSignaturePlainNode>() == 464, "AbstractMethodSignaturePlainNode is not the 464 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<AbstractMethodSignaturePlainNode>() == 440, "AbstractMethodSignaturePlainNode is not the 440 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<AbstractMethodSignatureSetterNode>() == 504, "AbstractMethodSignatureSetterNode is not the 504 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<AbstractMethodSignatureSetterNode>() == 480, "AbstractMethodSignatureSetterNode is not the 480 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AccessibilityModifierEnum>() == 1, "AccessibilityModifierEnum is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -58990,11 +58870,11 @@ const _: () = assert!(::core::mem::size_of::<AmpNode>() == 0, "AmpNode is not th
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AnyKeywordNode>() == 0, "AnyKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<AnyNode>() == 256, "AnyNode is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<AnyNode>() == 264, "AnyNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ArgumentsNode>() == 48, "ArgumentsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ArrayElementsNodeSlot>() == 224, "ArrayElementsNodeSlot is not the 224 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ArrayElementsNodeSlot>() == 200, "ArrayElementsNodeSlot is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ArrayNode>() == 48, "ArrayNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59004,7 +58884,7 @@ const _: () = assert!(::core::mem::size_of::<ArrayPatternNode>() == 48, "ArrayPa
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ArrayTypeNode>() == 56, "ArrayTypeNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ArrowFunctionBodyNodeSlot>() == 208, "ArrowFunctionBodyNodeSlot is not the 208 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ArrowFunctionBodyNodeSlot>() == 184, "ArrowFunctionBodyNodeSlot is not the 184 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ArrowFunctionContentNodeSlot>() == 160, "ArrowFunctionContentNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59032,7 +58912,7 @@ const _: () = assert!(::core::mem::size_of::<AssignmentExpressionLeftNodeSlot>()
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AssignmentExpressionNode>() == 96, "AssignmentExpressionNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<AssignmentPatternNode>() == 400, "AssignmentPatternNode is not the 400 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<AssignmentPatternNode>() == 376, "AssignmentPatternNode is not the 376 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AsyncKeywordNode>() == 0, "AsyncKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59056,7 +58936,7 @@ const _: () = assert!(::core::mem::size_of::<BangEqNode>() == 0, "BangEqNode is 
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<BangNode>() == 0, "BangNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<BinaryExpressionInLeftNodeSlot>() == 208, "BinaryExpressionInLeftNodeSlot is not the 208 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<BinaryExpressionInLeftNodeSlot>() == 184, "BinaryExpressionInLeftNodeSlot is not the 184 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<BinaryExpressionInNode>() == 96, "BinaryExpressionInNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59138,7 +59018,7 @@ const _: () = assert!(::core::mem::size_of::<CommentBlockNode>() == 56, "Comment
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<CommentLineNode>() == 56, "CommentLineNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ComputedPropertyNameNode>() == 224, "ComputedPropertyNameNode is not the 224 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ComputedPropertyNameNode>() == 200, "ComputedPropertyNameNode is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ConditionalTypeNode>() == 176, "ConditionalTypeNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59224,11 +59104,11 @@ const _: () = assert!(::core::mem::size_of::<EmptyMemberNode>() == 8, "EmptyMemb
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<EmptyStatementNode>() == 8, "EmptyStatementNode is not the 8 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<EnumAssignmentNode>() == 448, "EnumAssignmentNode is not the 448 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<EnumAssignmentNode>() == 400, "EnumAssignmentNode is not the 400 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<EnumBodyElementNameNode>() == 240, "EnumBodyElementNameNode is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<EnumBodyElementNameNode>() == 216, "EnumBodyElementNameNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<EnumBodyElementNode>() == 240, "EnumBodyElementNode is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<EnumBodyElementNode>() == 216, "EnumBodyElementNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<EnumBodyElementsNode>() == 48, "EnumBodyElementsNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59262,15 +59142,15 @@ const _: () = assert!(::core::mem::size_of::<ExportSpecifierTypeKeywordNodeSlot>
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExportSpecifiersNode>() == 48, "ExportSpecifiersNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationContentNodeSlot>() == 232, "ExportStatementDefaultDeclarationContentNodeSlot is not the 232 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationContentNodeSlot>() == 256, "ExportStatementDefaultDeclarationContentNodeSlot is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwContentNodeSlot>() == 216, "ExportStatementDefaultDeclarationDefaultKwContentNodeSlot is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwContentNodeSlot>() == 240, "ExportStatementDefaultDeclarationDefaultKwContentNodeSlot is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwNode>() == 232, "ExportStatementDefaultDeclarationDefaultKwNode is not the 232 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwNode>() == 256, "ExportStatementDefaultDeclarationDefaultKwNode is not the 256 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwValueNode>() == 264, "ExportStatementDefaultDeclarationDefaultKwValueNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwValueNode>() == 240, "ExportStatementDefaultDeclarationDefaultKwValueNode is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationNode>() == 272, "ExportStatementDefaultDeclarationNode is not the 272 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationNode>() == 296, "ExportStatementDefaultDeclarationNode is not the 296 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultFromClauseFromNode>() == 128, "ExportStatementDefaultFromClauseFromNode is not the 128 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59284,21 +59164,21 @@ const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultFromStarFromN
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultNode>() == 192, "ExportStatementDefaultNode is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExportStatementEqualsExportNode>() == 264, "ExportStatementEqualsExportNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExportStatementEqualsExportNode>() == 240, "ExportStatementEqualsExportNode is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExportStatementNamespaceExportNode>() == 96, "ExportStatementNamespaceExportNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExportStatementNode>() == 192, "ExportStatementNode is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExportStatementNode>() == 240, "ExportStatementNode is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExpressionNode>() == 208, "ExpressionNode is not the 208 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExpressionNode>() == 184, "ExpressionNode is not the 184 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExpressionStatementExpressionNodeSlot>() == 208, "ExpressionStatementExpressionNodeSlot is not the 208 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExpressionStatementExpressionNodeSlot>() == 184, "ExpressionStatementExpressionNodeSlot is not the 184 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExpressionStatementNode>() == 264, "ExpressionStatementNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExpressionStatementNode>() == 240, "ExpressionStatementNode is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExtendsClauseNode>() == 48, "ExtendsClauseNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ExtendsClauseSingleNode>() == 288, "ExtendsClauseSingleNode is not the 288 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ExtendsClauseSingleNode>() == 264, "ExtendsClauseSingleNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ExtendsKeywordNode>() == 0, "ExtendsKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59316,29 +59196,29 @@ const _: () = assert!(::core::mem::size_of::<FinallyKeywordNode>() == 0, "Finall
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<FlowMaybeTypeNode>() == 56, "FlowMaybeTypeNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ForHeaderLetConstKindNode>() == 400, "ForHeaderLetConstKindNode is not the 400 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ForHeaderLetConstKindNode>() == 376, "ForHeaderLetConstKindNode is not the 376 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ForHeaderLhsLeftNodeSlot>() == 96, "ForHeaderLhsLeftNodeSlot is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ForHeaderLhsNode>() == 360, "ForHeaderLhsNode is not the 360 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ForHeaderLhsNode>() == 336, "ForHeaderLhsNode is not the 336 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ForHeaderLhsOperatorNodeSlot>() == 1, "ForHeaderLhsOperatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ForHeaderNode>() == 16, "ForHeaderNode is not the 16 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ForHeaderUsingKindNode>() == 400, "ForHeaderUsingKindNode is not the 400 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ForHeaderUsingKindNode>() == 376, "ForHeaderUsingKindNode is not the 376 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ForHeaderVarKindNode>() == 528, "ForHeaderVarKindNode is not the 528 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ForHeaderVarKindNode>() == 480, "ForHeaderVarKindNode is not the 480 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ForInStatementNode>() == 96, "ForInStatementNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ForKeywordNode>() == 0, "ForKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ForStatementConditionNodeSlot>() == 208, "ForStatementConditionNodeSlot is not the 208 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ForStatementConditionNodeSlot>() == 184, "ForStatementConditionNodeSlot is not the 184 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ForStatementInitializerNodeSlot>() == 208, "ForStatementInitializerNodeSlot is not the 208 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ForStatementInitializerNodeSlot>() == 184, "ForStatementInitializerNodeSlot is not the 184 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ForStatementNode>() == 680, "ForStatementNode is not the 680 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ForStatementNode>() == 608, "ForStatementNode is not the 608 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<FormalParametersElementsItemNodeSlot>() == 16, "FormalParametersElementsItemNodeSlot is not the 16 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59532,7 +59412,7 @@ const _: () = assert!(::core::mem::size_of::<MappedTypeClauseNode>() == 520, "Ma
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<MemberExpressionNode>() == 160, "MemberExpressionNode is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<MemberExpressionObjectNodeSlot>() == 208, "MemberExpressionObjectNodeSlot is not the 208 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<MemberExpressionObjectNodeSlot>() == 184, "MemberExpressionObjectNodeSlot is not the 184 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<MemberExpressionOperatorNodeSlot>() == 1, "MemberExpressionOperatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59548,19 +59428,19 @@ const _: () = assert!(::core::mem::size_of::<MetaPropertyNode>() == 10, "MetaPro
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<MethodDefinitionClassBodyMemberMethodNode>() == 192, "MethodDefinitionClassBodyMemberMethodNode is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<MethodDefinitionGetterNode>() == 424, "MethodDefinitionGetterNode is not the 424 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<MethodDefinitionGetterNode>() == 400, "MethodDefinitionGetterNode is not the 400 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<MethodDefinitionPlainNode>() == 544, "MethodDefinitionPlainNode is not the 544 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<MethodDefinitionPlainNode>() == 520, "MethodDefinitionPlainNode is not the 520 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<MethodDefinitionSetterNode>() == 584, "MethodDefinitionSetterNode is not the 584 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<MethodDefinitionSetterNode>() == 560, "MethodDefinitionSetterNode is not the 560 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<MethodSignatureGetterNode>() == 344, "MethodSignatureGetterNode is not the 344 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<MethodSignatureGetterNode>() == 320, "MethodSignatureGetterNode is not the 320 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<MethodSignatureNode>() == 16, "MethodSignatureNode is not the 16 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<MethodSignaturePlainNode>() == 464, "MethodSignaturePlainNode is not the 464 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<MethodSignaturePlainNode>() == 440, "MethodSignaturePlainNode is not the 440 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<MethodSignatureSetterNode>() == 504, "MethodSignatureSetterNode is not the 504 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<MethodSignatureSetterNode>() == 480, "MethodSignatureSetterNode is not the 480 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ModuleKeywordNode>() == 0, "ModuleKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59630,7 +59510,7 @@ const _: () = assert!(::core::mem::size_of::<NumberOctalNode>() == 80, "NumberOc
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ObjectAssignmentPatternLeftNodeSlot>() == 64, "ObjectAssignmentPatternLeftNodeSlot is not the 64 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ObjectAssignmentPatternNode>() == 288, "ObjectAssignmentPatternNode is not the 288 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ObjectAssignmentPatternNode>() == 264, "ObjectAssignmentPatternNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ObjectKeywordNode>() == 0, "ObjectKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59640,11 +59520,11 @@ const _: () = assert!(::core::mem::size_of::<ObjectPatternNode>() == 48, "Object
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ObjectPatternPropertiesNodeSlot>() == 176, "ObjectPatternPropertiesNodeSlot is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ObjectPropertiesNodeSlot>() == 224, "ObjectPropertiesNodeSlot is not the 224 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ObjectPropertiesNodeSlot>() == 200, "ObjectPropertiesNodeSlot is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ObjectTypeClosingNodeSlot>() == 1, "ObjectTypeClosingNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ObjectTypeContentItemNodeSlot>() == 200, "ObjectTypeContentItemNodeSlot is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ObjectTypeContentItemNodeSlot>() == 240, "ObjectTypeContentItemNodeSlot is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ObjectTypeContentNode>() == 48, "ObjectTypeContentNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59664,7 +59544,7 @@ const _: () = assert!(::core::mem::size_of::<OptionalChainNode>() == 0, "Optiona
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<OptionalParameterNameNodeSlot>() == 176, "OptionalParameterNameNodeSlot is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<OptionalParameterNode>() == 520, "OptionalParameterNode is not the 520 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<OptionalParameterNode>() == 496, "OptionalParameterNode is not the 496 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<OptionalTupleParameterNode>() == 112, "OptionalTupleParameterNode is not the 112 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59674,11 +59554,11 @@ const _: () = assert!(::core::mem::size_of::<OverrideKeywordNode>() == 0, "Overr
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<OverrideModifierNode>() == 0, "OverrideModifierNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<PairKeyNodeSlot>() == 224, "PairKeyNodeSlot is not the 224 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<PairKeyNodeSlot>() == 200, "PairKeyNodeSlot is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<PairNode>() == 448, "PairNode is not the 448 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<PairNode>() == 400, "PairNode is not the 400 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<PairPatternNode>() == 416, "PairPatternNode is not the 416 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<PairPatternNode>() == 392, "PairPatternNode is not the 392 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ParenthesizedExpressionNode>() == 96, "ParenthesizedExpressionNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59726,13 +59606,13 @@ const _: () = assert!(::core::mem::size_of::<ProgramNode>() == 96, "ProgramNode 
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<PropertyIdentifierNode>() == 56, "PropertyIdentifierNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<PropertySignatureNode>() == 336, "PropertySignatureNode is not the 336 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<PropertySignatureNode>() == 312, "PropertySignatureNode is not the 312 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ProtectedKeywordNode>() == 0, "ProtectedKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<PublicFieldDefinitionAccessorNode>() == 576, "PublicFieldDefinitionAccessorNode is not the 576 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<PublicFieldDefinitionAccessorNode>() == 528, "PublicFieldDefinitionAccessorNode is not the 528 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<PublicFieldDefinitionPlainNode>() == 616, "PublicFieldDefinitionPlainNode is not the 616 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<PublicFieldDefinitionPlainNode>() == 568, "PublicFieldDefinitionPlainNode is not the 568 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<PublicFieldDefinitionPlainOptionalityNodeSlot>() == 1, "PublicFieldDefinitionPlainOptionalityNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59766,7 +59646,7 @@ const _: () = assert!(::core::mem::size_of::<RegexPatternNode>() == 32, "RegexPa
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<RequireKeywordNode>() == 0, "RequireKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<RequiredParameterNode>() == 520, "RequiredParameterNode is not the 520 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<RequiredParameterNode>() == 496, "RequiredParameterNode is not the 496 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<RestPatternNode>() == 176, "RestPatternNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59774,7 +59654,7 @@ const _: () = assert!(::core::mem::size_of::<RestTypeNode>() == 240, "RestTypeNo
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ReturnKeywordNode>() == 0, "ReturnKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ReturnStatementNode>() == 264, "ReturnStatementNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ReturnStatementNode>() == 240, "ReturnStatementNode is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<RparenNode>() == 0, "RparenNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59802,7 +59682,7 @@ const _: () = assert!(::core::mem::size_of::<SlashNode>() == 0, "SlashNode is no
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SpaceNode>() == 0, "SpaceNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SpreadElementNode>() == 224, "SpreadElementNode is not the 224 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<SpreadElementNode>() == 200, "SpreadElementNode is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SquoteNode>() == 0, "SquoteNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59820,7 +59700,7 @@ const _: () = assert!(::core::mem::size_of::<StatementBlockTerminatorNodeSlot>()
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<StatementIdentifierNode>() == 56, "StatementIdentifierNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<StatementNode>() == 216, "StatementNode is not the 216 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<StatementNode>() == 248, "StatementNode is not the 248 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<StaticKeywordNode>() == 0, "StaticKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59838,17 +59718,17 @@ const _: () = assert!(::core::mem::size_of::<StringSingleNode>() == 40, "StringS
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SubscriptExpressionNode>() == 96, "SubscriptExpressionNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SubscriptExpressionObjectNodeSlot>() == 208, "SubscriptExpressionObjectNodeSlot is not the 208 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<SubscriptExpressionObjectNodeSlot>() == 184, "SubscriptExpressionObjectNodeSlot is not the 184 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SuperKeywordNode>() == 0, "SuperKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SuperNode>() == 8, "SuperNode is not the 8 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SwitchBodyCasesNodeSlot>() == 248, "SwitchBodyCasesNodeSlot is not the 248 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<SwitchBodyCasesNodeSlot>() == 224, "SwitchBodyCasesNodeSlot is not the 224 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SwitchBodyNode>() == 40, "SwitchBodyNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<SwitchCaseNode>() == 248, "SwitchCaseNode is not the 248 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<SwitchCaseNode>() == 224, "SwitchCaseNode is not the 224 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<SwitchDefaultNode>() == 40, "SwitchDefaultNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59868,11 +59748,11 @@ const _: () = assert!(::core::mem::size_of::<TemplateLiteralTypeElementsNodeSlot
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TemplateLiteralTypeNode>() == 40, "TemplateLiteralTypeNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<TemplateStringElementsNodeSlot>() == 224, "TemplateStringElementsNodeSlot is not the 224 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<TemplateStringElementsNodeSlot>() == 200, "TemplateStringElementsNodeSlot is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TemplateStringNode>() == 40, "TemplateStringNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<TemplateSubstitutionNode>() == 224, "TemplateSubstitutionNode is not the 224 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<TemplateSubstitutionNode>() == 200, "TemplateSubstitutionNode is not the 200 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TemplateTypeNode>() == 240, "TemplateTypeNode is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59890,7 +59770,7 @@ const _: () = assert!(::core::mem::size_of::<ThisTypeNode>() == 0, "ThisTypeNode
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ThrowKeywordNode>() == 0, "ThrowKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<ThrowStatementNode>() == 264, "ThrowStatementNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<ThrowStatementNode>() == 240, "ThrowStatementNode is not the 240 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TightNode>() == 0, "TightNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -60014,7 +59894,7 @@ const _: () = assert!(::core::mem::size_of::<VariableDeclaratorDefiniteNode>() =
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<VariableDeclaratorNode>() == 112, "VariableDeclaratorNode is not the 112 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<VariableDeclaratorPlainNode>() == 336, "VariableDeclaratorPlainNode is not the 336 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<VariableDeclaratorPlainNode>() == 312, "VariableDeclaratorPlainNode is not the 312 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<VoidKeywordNode>() == 0, "VoidKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -60028,7 +59908,7 @@ const _: () = assert!(::core::mem::size_of::<WithStatementNode>() == 152, "WithS
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<YieldExpressionDelegateNode>() == 56, "YieldExpressionDelegateNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<YieldExpressionExpressionNodeSlot>() == 208, "YieldExpressionExpressionNodeSlot is not the 208 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<YieldExpressionExpressionNodeSlot>() == 184, "YieldExpressionExpressionNodeSlot is not the 184 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<YieldExpressionNode>() == 56, "YieldExpressionNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
