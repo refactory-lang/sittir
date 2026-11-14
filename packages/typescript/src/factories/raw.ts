@@ -260,7 +260,8 @@ export const buildMetaPropertyImportMeta = O.buildMetaPropertyImportMeta;
 export const buildForHeaderLhs = dispatched(() => backend().buildForHeaderLhs);
 export const buildForHeaderVarKind = dispatched(() => backend().buildForHeaderVarKind);
 export const buildForHeaderLetConstKind = dispatched(() => backend().buildForHeaderLetConstKind);
-export const buildForHeaderUsingKind = dispatched(() => backend().buildForHeaderUsingKind);
+export const buildForHeaderUsingKindPlain = dispatched(() => backend().buildForHeaderUsingKindPlain);
+export const buildForHeaderUsingKindAwait = dispatched(() => backend().buildForHeaderUsingKindAwait);
 export const buildFormalParametersGetAccessorSignature = O.buildFormalParametersGetAccessorSignature;
 export const buildFormalParametersSetAccessorSignature = dispatched(
 	() => backend().buildFormalParametersSetAccessorSignature
@@ -280,7 +281,6 @@ export const buildAbstractMethodSignatureGetter = dispatched(() => backend().bui
 export const buildAbstractMethodSignatureSetter = dispatched(() => backend().buildAbstractMethodSignatureSetter);
 export const buildPublicFieldDefinitionPlain = dispatched(() => backend().buildPublicFieldDefinitionPlain);
 export const buildPublicFieldDefinitionAccessor = dispatched(() => backend().buildPublicFieldDefinitionAccessor);
-export const buildForHeaderUsingKindKind = O.buildForHeaderUsingKindKind;
 export const buildHtmlComment = dispatched(() => backend().buildHtmlComment);
 export const buildJsxText = dispatched(() => backend().buildJsxText);
 export const buildTemplateChars = dispatched(() => backend().buildTemplateChars);
@@ -552,7 +552,8 @@ export const _factoryMap = {
 	for_header_lhs: buildForHeaderLhs,
 	for_header_var_kind: buildForHeaderVarKind,
 	for_header_let_const_kind: buildForHeaderLetConstKind,
-	for_header_using_kind: buildForHeaderUsingKind,
+	for_header_using_kind_plain: buildForHeaderUsingKindPlain,
+	for_header_using_kind_await: buildForHeaderUsingKindAwait,
 	_formal_parameters_get_accessor_signature: buildFormalParametersGetAccessorSignature,
 	_formal_parameters_set_accessor_signature: buildFormalParametersSetAccessorSignature,
 	_formal_parameters_elements_set_accessor_signature: buildFormalParametersElementsSetAccessorSignature,
@@ -568,7 +569,6 @@ export const _factoryMap = {
 	abstract_method_signature_setter: buildAbstractMethodSignatureSetter,
 	public_field_definition_plain: buildPublicFieldDefinitionPlain,
 	public_field_definition_accessor: buildPublicFieldDefinitionAccessor,
-	for_header_using_kind_kind: buildForHeaderUsingKindKind,
 	html_comment: buildHtmlComment,
 	jsx_text: buildJsxText,
 	_template_chars: buildTemplateChars,

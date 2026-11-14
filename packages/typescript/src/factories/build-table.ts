@@ -1877,12 +1877,6 @@ export interface Routes<Table extends AnyTable> {
 		readonly plain: Table['buildVariableDeclaratorPlain'];
 		readonly definite: Table['buildVariableDeclaratorDefinite'];
 	};
-	readonly forHeader: {
-		readonly lhs: Table['buildForHeaderLhs'];
-		readonly varKind: Table['buildForHeaderVarKind'];
-		readonly letConstKind: Table['buildForHeaderLetConstKind'];
-		readonly usingKind: Table['buildForHeaderUsingKind'];
-	};
 	readonly parenthesizedExpression: {
 		readonly typed: Table['buildParenthesizedExpressionTyped'];
 		readonly sequence: Routes<Table>['parenthesizedExpressionSequence'];
@@ -2137,6 +2131,10 @@ export interface Routes<Table extends AnyTable> {
 		readonly from: Routes<Table>['exportStatementDefaultFrom'];
 		readonly declaration: Routes<Table>['exportStatementDefaultDeclaration'];
 	};
+	readonly forHeaderUsingKind: Table['buildForHeaderUsingKindPlain'] & {
+		readonly plain: Table['buildForHeaderUsingKindPlain'];
+		readonly await: Table['buildForHeaderUsingKindAwait'];
+	};
 	readonly numberBigint: typeof F.buildNumberBigintDecimal & {
 		readonly hex: typeof F.buildNumberBigintHex;
 		readonly binary: typeof F.buildNumberBigintBinary;
@@ -2254,6 +2252,12 @@ export interface Routes<Table extends AnyTable> {
 		readonly throw: Table['buildThrowStatement'];
 		readonly empty: typeof F.buildEmptyStatement;
 		readonly labeled: Table['buildLabeledStatement'];
+	};
+	readonly forHeader: {
+		readonly lhs: Table['buildForHeaderLhs'];
+		readonly varKind: Table['buildForHeaderVarKind'];
+		readonly letConstKind: Table['buildForHeaderLetConstKind'];
+		readonly usingKind: Routes<Table>['forHeaderUsingKind'];
 	};
 	readonly number: typeof F.buildNumberDecimal & {
 		readonly hex: Table['buildNumberHex'];
@@ -2459,7 +2463,8 @@ export interface Ir<Table extends AnyTable> {
 	readonly forHeaderLhs: Table['buildForHeaderLhs'];
 	readonly forHeaderVarKind: Table['buildForHeaderVarKind'];
 	readonly forHeaderLetConstKind: Table['buildForHeaderLetConstKind'];
-	readonly forHeaderUsingKind: Table['buildForHeaderUsingKind'];
+	readonly forHeaderUsingKindPlain: Table['buildForHeaderUsingKindPlain'];
+	readonly forHeaderUsingKindAwait: Table['buildForHeaderUsingKindAwait'];
 	readonly formalParametersSetAccessorSignature: Routes<Table>['formalParametersSetAccessorSignature'];
 	readonly setterParameter: Table['buildSetterParameter'];
 	readonly methodDefinitionPlain: Table['buildMethodDefinitionPlain'];
@@ -2480,7 +2485,6 @@ export interface Ir<Table extends AnyTable> {
 	readonly importSpecifier: Routes<Table>['importSpecifier'];
 	readonly usingDeclaration: Routes<Table>['usingDeclaration'];
 	readonly variableDeclarator: Routes<Table>['variableDeclarator'];
-	readonly forHeader: Routes<Table>['forHeader'];
 	readonly parenthesizedExpression: Routes<Table>['parenthesizedExpression'];
 	readonly callExpression: Routes<Table>['callExpression'];
 	readonly updateExpression: Routes<Table>['updateExpression'];
@@ -2496,10 +2500,12 @@ export interface Ir<Table extends AnyTable> {
 	readonly classBodyMember: Routes<Table>['classBodyMember'];
 	readonly enumBodyElement: Routes<Table>['enumBodyElement'];
 	readonly exportStatementDefault: Routes<Table>['exportStatementDefault'];
+	readonly forHeaderUsingKind: Routes<Table>['forHeaderUsingKind'];
 	readonly numberBigint: Routes<Table>['numberBigint'];
 	readonly exportStatement: Routes<Table>['exportStatement'];
 	readonly declaration: Routes<Table>['declaration'];
 	readonly statement: Routes<Table>['statement'];
+	readonly forHeader: Routes<Table>['forHeader'];
 	readonly number: Routes<Table>['number'];
 	readonly import: typeof F.buildImport;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
@@ -2517,7 +2523,6 @@ export interface Ir<Table extends AnyTable> {
 	readonly metaPropertyNewTarget: typeof F.buildMetaPropertyNewTarget;
 	readonly metaPropertyImportMeta: typeof F.buildMetaPropertyImportMeta;
 	readonly formalParametersGetAccessorSignature: typeof F.buildFormalParametersGetAccessorSignature;
-	readonly forHeaderUsingKindKind: typeof F.buildForHeaderUsingKindKind;
 	readonly automaticSemicolon: typeof F.buildAutomaticSemicolon;
 	readonly functionSignatureAutomaticSemicolon: typeof F.buildFunctionSignatureAutomaticSemicolon;
 	readonly thisType: typeof F.buildThisType;
@@ -3729,12 +3734,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		plain: $at('buildVariableDeclaratorPlain'),
 		definite: $at('buildVariableDeclaratorDefinite')
 	} as const);
-	const forHeader: Routes<Table>['forHeader'] = Object.freeze({
-		lhs: $at('buildForHeaderLhs'),
-		varKind: $at('buildForHeaderVarKind'),
-		letConstKind: $at('buildForHeaderLetConstKind'),
-		usingKind: $at('buildForHeaderUsingKind')
-	} as const);
 	const parenthesizedExpression: Routes<Table>['parenthesizedExpression'] = Object.freeze({
 		typed: $at('buildParenthesizedExpressionTyped'),
 		sequence: parenthesizedExpressionSequence
@@ -3941,6 +3940,12 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		from: exportStatementDefaultFrom,
 		declaration: exportStatementDefaultDeclaration
 	} as const);
+	const forHeaderUsingKind: Routes<Table>['forHeaderUsingKind'] = Object.freeze(
+		Object.assign(delegate($at('buildForHeaderUsingKindPlain')), {
+			plain: $at('buildForHeaderUsingKindPlain'),
+			await: $at('buildForHeaderUsingKindAwait')
+		} as const)
+	);
 	const numberBigint: Routes<Table>['numberBigint'] = Object.freeze(
 		Object.assign(delegate(F.buildNumberBigintDecimal), {
 			hex: F.buildNumberBigintHex,
@@ -4099,6 +4104,12 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		throw: $at('buildThrowStatement'),
 		empty: F.buildEmptyStatement,
 		labeled: $at('buildLabeledStatement')
+	} as const);
+	const forHeader: Routes<Table>['forHeader'] = Object.freeze({
+		lhs: $at('buildForHeaderLhs'),
+		varKind: $at('buildForHeaderVarKind'),
+		letConstKind: $at('buildForHeaderLetConstKind'),
+		usingKind: forHeaderUsingKind
 	} as const);
 	const number: Routes<Table>['number'] = Object.freeze(
 		Object.assign(delegate(F.buildNumberDecimal), {
@@ -4304,7 +4315,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		forHeaderLhs: $at('buildForHeaderLhs'),
 		forHeaderVarKind: $at('buildForHeaderVarKind'),
 		forHeaderLetConstKind: $at('buildForHeaderLetConstKind'),
-		forHeaderUsingKind: $at('buildForHeaderUsingKind'),
+		forHeaderUsingKindPlain: $at('buildForHeaderUsingKindPlain'),
+		forHeaderUsingKindAwait: $at('buildForHeaderUsingKindAwait'),
 		formalParametersSetAccessorSignature: formalParametersSetAccessorSignature,
 		setterParameter: $at('buildSetterParameter'),
 		methodDefinitionPlain: $at('buildMethodDefinitionPlain'),
@@ -4325,7 +4337,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		importSpecifier: importSpecifier,
 		usingDeclaration: usingDeclaration,
 		variableDeclarator: variableDeclarator,
-		forHeader: forHeader,
 		parenthesizedExpression: parenthesizedExpression,
 		callExpression: callExpression,
 		updateExpression: updateExpression,
@@ -4341,10 +4352,12 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		classBodyMember: classBodyMember,
 		enumBodyElement: enumBodyElement,
 		exportStatementDefault: exportStatementDefault,
+		forHeaderUsingKind: forHeaderUsingKind,
 		numberBigint: numberBigint,
 		exportStatement: exportStatement,
 		declaration: declaration,
 		statement: statement,
+		forHeader: forHeader,
 		number: number,
 		import: F.buildImport,
 		emptyStatement: F.buildEmptyStatement,
@@ -4362,7 +4375,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		metaPropertyNewTarget: F.buildMetaPropertyNewTarget,
 		metaPropertyImportMeta: F.buildMetaPropertyImportMeta,
 		formalParametersGetAccessorSignature: F.buildFormalParametersGetAccessorSignature,
-		forHeaderUsingKindKind: F.buildForHeaderUsingKindKind,
 		automaticSemicolon: F.buildAutomaticSemicolon,
 		functionSignatureAutomaticSemicolon: F.buildFunctionSignatureAutomaticSemicolon,
 		thisType: F.buildThisType,

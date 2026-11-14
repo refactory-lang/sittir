@@ -11,7 +11,7 @@ const CENSUS: Readonly<Record<string, Record<LeafSafety, number>>> = {
 	regex: { 'guard-excludes-closer': 16, 'reserved-word': 0, 'regular-token': 0, unguarded: 0 },
 	rust: { 'guard-excludes-closer': 25, 'reserved-word': 0, 'regular-token': 1, unguarded: 0 },
 	scm: { 'guard-excludes-closer': 7, 'reserved-word': 0, 'regular-token': 1, unguarded: 0 },
-	typescript: { 'guard-excludes-closer': 13, 'reserved-word': 0, 'regular-token': 2, unguarded: 0 }
+	typescript: { 'guard-excludes-closer': 14, 'reserved-word': 0, 'regular-token': 2, unguarded: 0 }
 };
 
 async function censusOf(grammar: string): Promise<Record<LeafSafety, number>> {

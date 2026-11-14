@@ -3264,10 +3264,10 @@
 			"field": "for_header_lhs_after"
 		}
 	],
-	"for_header_using_kind": [
+	"for_header_using_kind_await": [
 		{
 			"kind": "seam",
-			"field": "for_header_using_kind_before"
+			"field": "for_header_using_kind_await_before"
 		},
 		{
 			"kind": "text",
@@ -3278,8 +3278,28 @@
 			"field": "lparen_after"
 		},
 		{
-			"kind": "slot",
-			"name": "kind"
+			"kind": "seam",
+			"field": "await_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "await"
+		},
+		{
+			"kind": "seam",
+			"field": "await_keyword_after"
+		},
+		{
+			"kind": "seam",
+			"field": "using_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "using"
+		},
+		{
+			"kind": "seam",
+			"field": "using_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -3329,7 +3349,83 @@
 		},
 		{
 			"kind": "seam",
-			"field": "for_header_using_kind_after"
+			"field": "for_header_using_kind_await_after"
+		}
+	],
+	"for_header_using_kind_plain": [
+		{
+			"kind": "seam",
+			"field": "for_header_using_kind_plain_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
+			"kind": "seam",
+			"field": "kind_before"
+		},
+		{
+			"kind": "text",
+			"text": "using"
+		},
+		{
+			"kind": "seam",
+			"field": "kind_after"
+		},
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "terminator",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "terminator"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "operator_before"
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
+		},
+		{
+			"kind": "slot",
+			"name": "right",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "for_header_using_kind_plain_after"
 		}
 	],
 	"for_header_var_kind": [

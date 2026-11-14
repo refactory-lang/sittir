@@ -14175,6 +14175,28 @@
         "hoisted": true
       }
     },
+    "for_header_using_kind": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "for_header_using_kind_plain",
+          "annotations": {
+            "variant": "plain",
+            "variantOf": "for_header_using_kind",
+            "default": true
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "for_header_using_kind_await",
+          "annotations": {
+            "variant": "await",
+            "variantOf": "for_header_using_kind"
+          }
+        }
+      ]
+    },
     "comment_line": {
       "type": "TOKEN",
       "content": {
@@ -17169,7 +17191,7 @@
         "hoisted": true
       }
     },
-    "for_header_using_kind": {
+    "for_header_using_kind_plain": {
       "type": "SEQ",
       "members": [
         {
@@ -17183,20 +17205,118 @@
               "type": "FIELD",
               "name": "kind",
               "content": {
+                "type": "STRING",
+                "value": "using"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "left",
+              "content": {
                 "type": "CHOICE",
                 "members": [
                   {
-                    "type": "STRING",
-                    "value": "using"
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "STRING",
+                      "value": "of"
+                    },
+                    "named": true,
+                    "value": "identifier"
                   },
                   {
                     "type": "SYMBOL",
-                    "name": "for_header_using_kind_kind",
-                    "metadata": {
-                      "symbolSource": "group-lift"
-                    }
+                    "name": "_destructuring_pattern"
                   }
                 ]
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "terminator",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_automatic_semicolon"
+                    },
+                    "named": true,
+                    "value": "automatic_semicolon"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
+            }
+          ],
+          "annotations": {
+            "hoisted": true
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "operator",
+          "content": {
+            "type": "SYMBOL",
+            "name": "__for_header_operator"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "right",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_expressions"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "for_header_using_kind_await": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "kind",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "await"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "using"
+                  }
+                ],
+                "annotations": {
+                  "hoisted": true
+                }
               }
             },
             {
@@ -19012,22 +19132,6 @@
         "hoisted": true
       }
     },
-    "for_header_using_kind_kind": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "await"
-        },
-        {
-          "type": "STRING",
-          "value": "using"
-        }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
-    },
     "for_header_arm3_kind": {
       "type": "SEQ",
       "members": [
@@ -19689,10 +19793,6 @@
     ],
     [
       "assignment_expression",
-      "for_header_using_kind_kind"
-    ],
-    [
-      "assignment_expression",
       "pattern"
     ],
     [
@@ -19840,7 +19940,11 @@
     ],
     [
       "primary_expression",
-      "for_header_using_kind"
+      "for_header_using_kind_await"
+    ],
+    [
+      "primary_expression",
+      "for_header_using_kind_plain"
     ],
     [
       "primary_expression",
@@ -20655,6 +20759,7 @@
     "variable_declarator",
     "meta_property",
     "_for_header",
+    "for_header_using_kind",
     "_method_definition_class_body_member_method"
   ],
   "reserved": {

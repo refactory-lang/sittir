@@ -321,10 +321,10 @@ export const build: PortableBuildTable = {
 									at: [391, 'items'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -334,7 +334,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -377,14 +377,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -462,9 +462,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [286, 'property'],
-									kinds: [502],
+									kinds: [503],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -590,10 +590,10 @@ export const build: PortableBuildTable = {
 									at: [375, 'bounds'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -603,7 +603,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -651,8 +651,8 @@ export const build: PortableBuildTable = {
 									at: [231, 'bodies'],
 									kinds: [
 										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 427,
-										428, 432, 433
+										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 428,
+										429, 433, 434
 									],
 									refined: [228],
 									tokens: {
@@ -680,9 +680,9 @@ export const build: PortableBuildTable = {
 													seats: [
 														{
 															at: [228, 'label'],
-															kinds: [505],
+															kinds: [506],
 															leaf: 'identifier',
-															texts: [1, 505],
+															texts: [1, 506],
 															pattern: {
 																source:
 																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -726,14 +726,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -760,8 +760,8 @@ export const build: PortableBuildTable = {
 									at: [230, 'bodies'],
 									kinds: [
 										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 427,
-										428, 432, 433
+										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 428,
+										429, 433, 434
 									],
 									refined: [228],
 									tokens: {
@@ -789,9 +789,9 @@ export const build: PortableBuildTable = {
 													seats: [
 														{
 															at: [228, 'label'],
-															kinds: [505],
+															kinds: [506],
 															leaf: 'identifier',
-															texts: [1, 505],
+															texts: [1, 506],
 															pattern: {
 																source:
 																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -892,10 +892,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -905,7 +905,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -958,10 +958,10 @@ export const build: PortableBuildTable = {
 									at: [374, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -971,7 +971,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -1017,8 +1017,8 @@ export const build: PortableBuildTable = {
 									at: [212, 'body'],
 									kinds: [
 										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 427,
-										428, 432, 433
+										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 428,
+										429, 433, 434
 									],
 									refined: [228],
 									tokens: {
@@ -1045,9 +1045,9 @@ export const build: PortableBuildTable = {
 													seats: [
 														{
 															at: [228, 'label'],
-															kinds: [505],
+															kinds: [506],
 															leaf: 'identifier',
-															texts: [1, 505],
+															texts: [1, 506],
 															pattern: {
 																source:
 																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -1135,7 +1135,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [192, 'moduleExportName'],
-									kinds: [1, 9, 273, 423, 424],
+									kinds: [1, 9, 273, 424, 425],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
@@ -1180,7 +1180,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [194, 'name'],
-									kinds: [1, 9, 273, 423, 424],
+									kinds: [1, 9, 273, 424, 425],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
@@ -1207,7 +1207,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [194, 'alias'],
-									kinds: [1, 9, 273, 423, 424],
+									kinds: [1, 9, 273, 424, 425],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
@@ -1266,7 +1266,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [194, 'name'],
-									kinds: [1, 9, 273, 423, 424],
+									kinds: [1, 9, 273, 424, 425],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
@@ -1293,7 +1293,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [194, 'alias'],
-									kinds: [1, 9, 273, 423, 424],
+									kinds: [1, 9, 273, 424, 425],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
@@ -1401,9 +1401,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [321, 'types'],
-									kinds: [319, 351, 507],
+									kinds: [319, 351, 508],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -1483,10 +1483,10 @@ export const build: PortableBuildTable = {
 									at: [312, 'types'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -1496,7 +1496,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -1597,11 +1597,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [199, 'content'],
-									kinds: [201, 431]
+									kinds: [201, 432]
 								},
 								{
 									at: [385, 'items'],
-									kinds: [203, 416, 417],
+									kinds: [203, 417, 418],
 									within: [
 										{
 											builder: 'namedImports',
@@ -1637,7 +1637,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [431, 'identifier'],
+									at: [432, 'identifier'],
 									kinds: [1],
 									leaf: 'identifier',
 									texts: [1],
@@ -1683,7 +1683,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [385, 'items'],
-									kinds: [203, 416, 417],
+									kinds: [203, 417, 418],
 									within: [
 										{
 											builder: 'namedImports',
@@ -1792,7 +1792,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [309, 'source'],
-									kinds: [273, 423, 424]
+									kinds: [273, 424, 425]
 								}
 							]
 						}
@@ -1812,7 +1812,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 416,
+					kind: 417,
 					builder: 'importSpecifierName',
 					members: [
 						{
@@ -1826,7 +1826,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [416, 'name'],
+									at: [417, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
 									texts: [1],
@@ -1863,7 +1863,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 417,
+					kind: 418,
 					builder: 'importSpecifierAs',
 					members: [
 						{
@@ -1877,8 +1877,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [417, 'name'],
-									kinds: [1, 9, 273, 423, 424],
+									at: [418, 'name'],
+									kinds: [1, 9, 273, 424, 425],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
@@ -1903,7 +1903,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [417, 'alias'],
+									at: [418, 'alias'],
 									kinds: [1],
 									leaf: 'identifier',
 									texts: [1],
@@ -1945,7 +1945,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 416,
+					kind: 417,
 					builder: 'importSpecifierName',
 					members: [
 						{
@@ -1959,7 +1959,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [416, 'name'],
+									at: [417, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
 									texts: [1],
@@ -2006,7 +2006,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 417,
+					kind: 418,
 					builder: 'importSpecifierAs',
 					members: [
 						{
@@ -2020,8 +2020,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [417, 'name'],
-									kinds: [1, 9, 273, 423, 424],
+									at: [418, 'name'],
+									kinds: [1, 9, 273, 424, 425],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
@@ -2046,7 +2046,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [417, 'alias'],
+									at: [418, 'alias'],
 									kinds: [1],
 									leaf: 'identifier',
 									texts: [1],
@@ -2113,9 +2113,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [361, 'name'],
-									kinds: [507],
+									kinds: [508],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -2138,10 +2138,10 @@ export const build: PortableBuildTable = {
 									at: [361, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -2151,7 +2151,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -2179,10 +2179,10 @@ export const build: PortableBuildTable = {
 									at: [361, 'alias'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -2192,7 +2192,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -2369,7 +2369,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [313, 'content'],
-									kinds: [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 399, 427, 428]
+									kinds: [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 399, 428, 429]
 								},
 								{
 									at: [398, 'body'],
@@ -2432,9 +2432,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [314, 'name'],
-									kinds: [507],
+									kinds: [508],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -2489,9 +2489,9 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [288, 'members'],
-									kinds: [290, 386, 407],
+									kinds: [290, 386, 408],
 									tokens: {
-										';': 407
+										';': 408
 									},
 									within: [
 										{
@@ -2503,8 +2503,8 @@ export const build: PortableBuildTable = {
 									many: true
 								},
 								{
-									at: [408, 'methodDefinition'],
-									kinds: [454, 455, 456, 466, 468],
+									at: [409, 'methodDefinition'],
+									kinds: [456, 457, 458, 467, 469],
 									within: [
 										{
 											builder: 'classBody',
@@ -2527,7 +2527,7 @@ export const build: PortableBuildTable = {
 													list: true,
 													seats: [
 														{
-															at: [408, 'decorators'],
+															at: [409, 'decorators'],
 															kinds: [285],
 															many: true
 														}
@@ -2538,8 +2538,8 @@ export const build: PortableBuildTable = {
 									]
 								},
 								{
-									at: [409, 'methodSignature'],
-									kinds: [301, 457, 458, 459],
+									at: [410, 'methodSignature'],
+									kinds: [301, 459, 460, 461],
 									within: [
 										{
 											builder: 'classBody',
@@ -2553,8 +2553,8 @@ export const build: PortableBuildTable = {
 									]
 								},
 								{
-									at: [410, 'member'],
-									kinds: [298, 301, 302, 377, 411, 412, 457, 458, 459, 460, 461, 462, 463, 464],
+									at: [411, 'member'],
+									kinds: [298, 301, 302, 377, 412, 413, 459, 460, 461, 462, 463, 464, 465, 466],
 									within: [
 										{
 											builder: 'classBody',
@@ -2593,7 +2593,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [430, 'extendsClause'],
+									at: [431, 'extendsClause'],
 									kinds: [310]
 								}
 							]
@@ -2630,10 +2630,10 @@ export const build: PortableBuildTable = {
 									at: [312, 'types'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -2643,7 +2643,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -2681,10 +2681,10 @@ export const build: PortableBuildTable = {
 									at: [312, 'types'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -2694,7 +2694,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -2760,9 +2760,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [246, 'name'],
-									kinds: [507],
+									kinds: [508],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -2817,9 +2817,9 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [288, 'members'],
-									kinds: [290, 386, 407],
+									kinds: [290, 386, 408],
 									tokens: {
-										';': 407
+										';': 408
 									},
 									within: [
 										{
@@ -2831,8 +2831,8 @@ export const build: PortableBuildTable = {
 									many: true
 								},
 								{
-									at: [408, 'methodDefinition'],
-									kinds: [454, 455, 456, 466, 468],
+									at: [409, 'methodDefinition'],
+									kinds: [456, 457, 458, 467, 469],
 									within: [
 										{
 											builder: 'classBody',
@@ -2855,7 +2855,7 @@ export const build: PortableBuildTable = {
 													list: true,
 													seats: [
 														{
-															at: [408, 'decorators'],
+															at: [409, 'decorators'],
 															kinds: [285],
 															many: true
 														}
@@ -2866,8 +2866,8 @@ export const build: PortableBuildTable = {
 									]
 								},
 								{
-									at: [409, 'methodSignature'],
-									kinds: [301, 457, 458, 459],
+									at: [410, 'methodSignature'],
+									kinds: [301, 459, 460, 461],
 									within: [
 										{
 											builder: 'classBody',
@@ -2881,8 +2881,8 @@ export const build: PortableBuildTable = {
 									]
 								},
 								{
-									at: [410, 'member'],
-									kinds: [298, 301, 302, 377, 411, 412, 457, 458, 459, 460, 461, 462, 463, 464],
+									at: [411, 'member'],
+									kinds: [298, 301, 302, 377, 412, 413, 459, 460, 461, 462, 463, 464, 465, 466],
 									within: [
 										{
 											builder: 'classBody',
@@ -2921,7 +2921,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [430, 'extendsClause'],
+									at: [431, 'extendsClause'],
 									kinds: [310]
 								}
 							]
@@ -2958,10 +2958,10 @@ export const build: PortableBuildTable = {
 									at: [312, 'types'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -2971,7 +2971,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -3009,10 +3009,10 @@ export const build: PortableBuildTable = {
 									at: [312, 'types'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -3022,7 +3022,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -3060,7 +3060,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 466,
+					kind: 467,
 					builder: 'constructorDeclaration',
 					members: [
 						{
@@ -3074,7 +3074,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [466, 'body'],
+									at: [467, 'body'],
 									kinds: [211]
 								}
 							]
@@ -3121,7 +3121,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 466,
+					kind: 467,
 					builder: 'constructorDeclaration',
 					members: [
 						{
@@ -3135,7 +3135,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [466, 'body'],
+									at: [467, 'body'],
 									kinds: [211]
 								}
 							]
@@ -3192,7 +3192,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 466,
+					kind: 467,
 					builder: 'constructorDeclaration',
 					members: [
 						{
@@ -3206,7 +3206,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [466, 'body'],
+									at: [467, 'body'],
 									kinds: [211]
 								}
 							]
@@ -3263,7 +3263,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 466,
+					kind: 467,
 					builder: 'constructorDeclaration',
 					members: [
 						{
@@ -3277,7 +3277,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [466, 'body'],
+									at: [467, 'body'],
 									kinds: [211]
 								}
 							]
@@ -3439,10 +3439,10 @@ export const build: PortableBuildTable = {
 								{
 									at: [388, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -3454,14 +3454,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -3506,10 +3506,10 @@ export const build: PortableBuildTable = {
 								{
 									at: [324, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -3521,14 +3521,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -3561,14 +3561,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -3596,7 +3596,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 463,
+					kind: 465,
 					builder: 'publicFieldDefinitionPlain',
 					members: [
 						{
@@ -3611,7 +3611,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [463, 'decorators'],
+									at: [465, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -3628,12 +3628,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [463, 'name'],
+									at: [465, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -3648,14 +3648,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -3685,7 +3685,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [463, 'optionality'],
+									at: [465, 'optionality'],
 									kinds: [116, 139],
 									tokens: {
 										'!': 116,
@@ -3706,17 +3706,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [463, 'type'],
+									at: [465, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -3726,7 +3726,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -3757,18 +3757,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [463, 'value'],
+									at: [465, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -3912,7 +3912,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 463,
+					kind: 465,
 					builder: 'publicFieldDefinitionPlain',
 					members: [
 						{
@@ -3927,7 +3927,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [463, 'decorators'],
+									at: [465, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -3944,12 +3944,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [463, 'name'],
+									at: [465, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -3964,14 +3964,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -4001,7 +4001,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [463, 'optionality'],
+									at: [465, 'optionality'],
 									kinds: [116, 139],
 									tokens: {
 										'!': 116,
@@ -4022,17 +4022,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [463, 'type'],
+									at: [465, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -4042,7 +4042,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -4073,18 +4073,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [463, 'value'],
+									at: [465, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -4238,7 +4238,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 463,
+					kind: 465,
 					builder: 'publicFieldDefinitionPlain',
 					members: [
 						{
@@ -4253,7 +4253,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [463, 'decorators'],
+									at: [465, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -4270,12 +4270,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [463, 'name'],
+									at: [465, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -4290,14 +4290,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -4327,7 +4327,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [463, 'optionality'],
+									at: [465, 'optionality'],
 									kinds: [116, 139],
 									tokens: {
 										'!': 116,
@@ -4348,17 +4348,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [463, 'type'],
+									at: [465, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -4368,7 +4368,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -4399,18 +4399,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [463, 'value'],
+									at: [465, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -4564,7 +4564,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 463,
+					kind: 465,
 					builder: 'publicFieldDefinitionPlain',
 					members: [
 						{
@@ -4579,7 +4579,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [463, 'decorators'],
+									at: [465, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -4596,12 +4596,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [463, 'name'],
+									at: [465, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -4616,14 +4616,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -4653,7 +4653,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [463, 'optionality'],
+									at: [465, 'optionality'],
 									kinds: [116, 139],
 									tokens: {
 										'!': 116,
@@ -4674,17 +4674,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [463, 'type'],
+									at: [465, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -4694,7 +4694,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -4725,18 +4725,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [463, 'value'],
+									at: [465, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -4906,10 +4906,10 @@ export const build: PortableBuildTable = {
 								{
 									at: [371, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -4924,14 +4924,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -4968,10 +4968,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -4981,7 +4981,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -5109,10 +5109,10 @@ export const build: PortableBuildTable = {
 								{
 									at: [371, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -5127,14 +5127,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -5171,10 +5171,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -5184,7 +5184,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -5322,10 +5322,10 @@ export const build: PortableBuildTable = {
 								{
 									at: [371, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -5340,14 +5340,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -5384,10 +5384,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -5397,7 +5397,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -5535,10 +5535,10 @@ export const build: PortableBuildTable = {
 								{
 									at: [371, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -5553,14 +5553,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -5597,10 +5597,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -5610,7 +5610,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -5808,10 +5808,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -5821,7 +5821,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -5959,8 +5959,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -6073,10 +6073,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -6086,7 +6086,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -6224,8 +6224,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -6344,10 +6344,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -6357,7 +6357,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -6479,8 +6479,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -6533,9 +6533,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [320, 'name'],
-									kinds: [507],
+									kinds: [508],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -6593,9 +6593,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [321, 'types'],
-									kinds: [319, 351, 507],
+									kinds: [319, 351, 508],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -6626,7 +6626,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [400, 'items'],
-									kinds: [191, 301, 370, 371, 376, 377, 401, 402, 403, 411, 412, 432, 433, 457, 458, 459],
+									kinds: [191, 301, 370, 371, 376, 377, 401, 402, 403, 412, 413, 433, 434, 459, 460, 461],
 									many: true
 								}
 							]
@@ -6672,7 +6672,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 454,
+					kind: 456,
 					builder: 'methodDefinitionPlain',
 					members: [
 						{
@@ -6686,12 +6686,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [454, 'name'],
+									at: [456, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -6706,14 +6706,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -6742,7 +6742,7 @@ export const build: PortableBuildTable = {
 							multiple: false,
 							seats: [
 								{
-									at: [454, 'typeParameters'],
+									at: [456, 'typeParameters'],
 									kinds: []
 								},
 								{
@@ -6774,17 +6774,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [454, 'returnType'],
+									at: [456, 'returnType'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -6794,7 +6794,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -6844,7 +6844,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [454, 'body'],
+									at: [456, 'body'],
 									kinds: [211]
 								}
 							]
@@ -6932,8 +6932,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -7069,7 +7069,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 454,
+					kind: 456,
 					builder: 'methodDefinitionPlain',
 					members: [
 						{
@@ -7083,12 +7083,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [454, 'name'],
+									at: [456, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -7103,14 +7103,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -7139,7 +7139,7 @@ export const build: PortableBuildTable = {
 							multiple: false,
 							seats: [
 								{
-									at: [454, 'typeParameters'],
+									at: [456, 'typeParameters'],
 									kinds: []
 								},
 								{
@@ -7171,17 +7171,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [454, 'returnType'],
+									at: [456, 'returnType'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -7191,7 +7191,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -7241,7 +7241,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [454, 'body'],
+									at: [456, 'body'],
 									kinds: [211]
 								}
 							]
@@ -7329,8 +7329,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -7476,7 +7476,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 454,
+					kind: 456,
 					builder: 'methodDefinitionPlain',
 					members: [
 						{
@@ -7490,12 +7490,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [454, 'name'],
+									at: [456, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -7510,14 +7510,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -7546,7 +7546,7 @@ export const build: PortableBuildTable = {
 							multiple: false,
 							seats: [
 								{
-									at: [454, 'typeParameters'],
+									at: [456, 'typeParameters'],
 									kinds: []
 								},
 								{
@@ -7578,17 +7578,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [454, 'returnType'],
+									at: [456, 'returnType'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -7598,7 +7598,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -7648,7 +7648,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [454, 'body'],
+									at: [456, 'body'],
 									kinds: [211]
 								}
 							]
@@ -7736,8 +7736,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -7883,7 +7883,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 454,
+					kind: 456,
 					builder: 'methodDefinitionPlain',
 					members: [
 						{
@@ -7897,12 +7897,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [454, 'name'],
+									at: [456, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -7917,14 +7917,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -7953,7 +7953,7 @@ export const build: PortableBuildTable = {
 							multiple: false,
 							seats: [
 								{
-									at: [454, 'typeParameters'],
+									at: [456, 'typeParameters'],
 									kinds: []
 								},
 								{
@@ -7985,17 +7985,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [454, 'returnType'],
+									at: [456, 'returnType'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -8005,7 +8005,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -8055,7 +8055,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [454, 'body'],
+									at: [456, 'body'],
 									kinds: [211]
 								}
 							]
@@ -8143,8 +8143,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -8290,7 +8290,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 457,
+					kind: 459,
 					builder: 'methodSignaturePlain',
 					members: [
 						{
@@ -8304,12 +8304,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [457, 'name'],
+									at: [459, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -8324,14 +8324,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -8361,7 +8361,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [457, 'typeParameters'],
+									at: [459, 'typeParameters'],
 									kinds: []
 								},
 								{
@@ -8393,17 +8393,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [457, 'returnType'],
+									at: [459, 'returnType'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -8413,7 +8413,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -8535,8 +8535,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -8663,7 +8663,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 460,
+					kind: 462,
 					builder: 'abstractMethodSignaturePlain',
 					members: [
 						{
@@ -8677,12 +8677,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [460, 'name'],
+									at: [462, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -8697,14 +8697,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -8734,7 +8734,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [460, 'typeParameters'],
+									at: [462, 'typeParameters'],
 									kinds: []
 								},
 								{
@@ -8766,17 +8766,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [460, 'returnType'],
+									at: [462, 'returnType'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -8786,7 +8786,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -8908,8 +8908,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -8997,7 +8997,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 460,
+					kind: 462,
 					builder: 'abstractMethodSignaturePlain',
 					members: [
 						{
@@ -9011,12 +9011,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [460, 'name'],
+									at: [462, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -9031,14 +9031,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -9068,7 +9068,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [460, 'typeParameters'],
+									at: [462, 'typeParameters'],
 									kinds: []
 								},
 								{
@@ -9100,17 +9100,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [460, 'returnType'],
+									at: [462, 'returnType'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -9120,7 +9120,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -9242,8 +9242,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -9341,7 +9341,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 460,
+					kind: 462,
 					builder: 'abstractMethodSignaturePlain',
 					members: [
 						{
@@ -9355,12 +9355,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [460, 'name'],
+									at: [462, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -9375,14 +9375,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -9412,7 +9412,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [460, 'typeParameters'],
+									at: [462, 'typeParameters'],
 									kinds: []
 								},
 								{
@@ -9444,17 +9444,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [460, 'returnType'],
+									at: [462, 'returnType'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -9464,7 +9464,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -9586,8 +9586,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -9685,7 +9685,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 460,
+					kind: 462,
 					builder: 'abstractMethodSignaturePlain',
 					members: [
 						{
@@ -9699,12 +9699,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [460, 'name'],
+									at: [462, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -9719,14 +9719,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -9756,7 +9756,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [460, 'typeParameters'],
+									at: [462, 'typeParameters'],
 									kinds: []
 								},
 								{
@@ -9788,17 +9788,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [460, 'returnType'],
+									at: [462, 'returnType'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -9808,7 +9808,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -9930,8 +9930,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -10029,7 +10029,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 457,
+					kind: 459,
 					builder: 'methodSignaturePlain',
 					members: [
 						{
@@ -10043,12 +10043,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [457, 'name'],
+									at: [459, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -10063,14 +10063,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -10100,7 +10100,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [457, 'typeParameters'],
+									at: [459, 'typeParameters'],
 									kinds: []
 								},
 								{
@@ -10132,17 +10132,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [457, 'returnType'],
+									at: [459, 'returnType'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -10152,7 +10152,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -10274,8 +10274,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -10412,7 +10412,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 457,
+					kind: 459,
 					builder: 'methodSignaturePlain',
 					members: [
 						{
@@ -10426,12 +10426,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [457, 'name'],
+									at: [459, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -10446,14 +10446,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -10483,7 +10483,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [457, 'typeParameters'],
+									at: [459, 'typeParameters'],
 									kinds: []
 								},
 								{
@@ -10515,17 +10515,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [457, 'returnType'],
+									at: [459, 'returnType'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -10535,7 +10535,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -10657,8 +10657,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -10795,7 +10795,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 457,
+					kind: 459,
 					builder: 'methodSignaturePlain',
 					members: [
 						{
@@ -10809,12 +10809,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [457, 'name'],
+									at: [459, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -10829,14 +10829,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -10866,7 +10866,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [457, 'typeParameters'],
+									at: [459, 'typeParameters'],
 									kinds: []
 								},
 								{
@@ -10898,17 +10898,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [457, 'returnType'],
+									at: [459, 'returnType'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -10918,7 +10918,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -11040,8 +11040,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -11193,7 +11193,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [316, 'name'],
-									kinds: [1, 244, 273, 423, 424],
+									kinds: [1, 244, 273, 424, 425],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -11251,7 +11251,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [315, 'name'],
-									kinds: [1, 244, 273, 423, 424],
+									kinds: [1, 244, 273, 424, 425],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -11310,9 +11310,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [399, 'name'],
-									kinds: [502],
+									kinds: [503],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -11335,10 +11335,10 @@ export const build: PortableBuildTable = {
 									at: [399, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -11348,7 +11348,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -11453,10 +11453,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -11466,7 +11466,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -11501,14 +11501,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -11563,7 +11563,7 @@ export const build: PortableBuildTable = {
 					holders: [[387, 'items']]
 				},
 				{
-					kind: 470,
+					kind: 471,
 					builder: 'receiverParameterDeclaration',
 					members: [
 						{
@@ -11578,7 +11578,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [470, 'decorators'],
+									at: [471, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -11596,17 +11596,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [470, 'type'],
+									at: [471, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -11616,7 +11616,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -11647,18 +11647,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [470, 'value'],
+									at: [471, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -11710,7 +11710,7 @@ export const build: PortableBuildTable = {
 							required: []
 						}
 					],
-					holders: [[472, 'receiver']]
+					holders: [[473, 'receiver']]
 				},
 				{
 					kind: 328,
@@ -11786,10 +11786,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -11799,7 +11799,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -11834,14 +11834,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -11896,7 +11896,7 @@ export const build: PortableBuildTable = {
 					holders: [[387, 'items']]
 				},
 				{
-					kind: 451,
+					kind: 453,
 					builder: 'setterParameter',
 					members: [
 						{
@@ -11911,7 +11911,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [451, 'decorators'],
+									at: [453, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -11928,7 +11928,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [451, 'pattern'],
+									at: [453, 'pattern'],
 									kinds: [279],
 									tokens: {
 										this: 279
@@ -11965,17 +11965,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [451, 'type'],
+									at: [453, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -11985,7 +11985,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -12044,7 +12044,7 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					holders: [[450, 'item']]
+					holders: [[452, 'item']]
 				}
 			]
 		},
@@ -12128,10 +12128,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -12141,7 +12141,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -12176,14 +12176,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -12248,7 +12248,7 @@ export const build: PortableBuildTable = {
 					holders: [[387, 'items']]
 				},
 				{
-					kind: 470,
+					kind: 471,
 					builder: 'receiverParameterDeclaration',
 					members: [
 						{
@@ -12263,7 +12263,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [470, 'decorators'],
+									at: [471, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -12281,17 +12281,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [470, 'type'],
+									at: [471, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -12301,7 +12301,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -12332,18 +12332,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [470, 'value'],
+									at: [471, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -12405,7 +12405,7 @@ export const build: PortableBuildTable = {
 							required: []
 						}
 					],
-					holders: [[472, 'receiver']]
+					holders: [[473, 'receiver']]
 				},
 				{
 					kind: 328,
@@ -12481,10 +12481,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -12494,7 +12494,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -12529,14 +12529,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -12601,7 +12601,7 @@ export const build: PortableBuildTable = {
 					holders: [[387, 'items']]
 				},
 				{
-					kind: 451,
+					kind: 453,
 					builder: 'setterParameter',
 					members: [
 						{
@@ -12616,7 +12616,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [451, 'decorators'],
+									at: [453, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -12633,7 +12633,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [451, 'pattern'],
+									at: [453, 'pattern'],
 									kinds: [279],
 									tokens: {
 										this: 279
@@ -12670,17 +12670,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [451, 'type'],
+									at: [453, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -12690,7 +12690,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -12759,7 +12759,7 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					holders: [[450, 'item']]
+					holders: [[452, 'item']]
 				}
 			]
 		},
@@ -12843,10 +12843,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -12856,7 +12856,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -12891,14 +12891,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -12963,7 +12963,7 @@ export const build: PortableBuildTable = {
 					holders: [[387, 'items']]
 				},
 				{
-					kind: 470,
+					kind: 471,
 					builder: 'receiverParameterDeclaration',
 					members: [
 						{
@@ -12978,7 +12978,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [470, 'decorators'],
+									at: [471, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -12996,17 +12996,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [470, 'type'],
+									at: [471, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -13016,7 +13016,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -13047,18 +13047,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [470, 'value'],
+									at: [471, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -13120,7 +13120,7 @@ export const build: PortableBuildTable = {
 							required: []
 						}
 					],
-					holders: [[472, 'receiver']]
+					holders: [[473, 'receiver']]
 				},
 				{
 					kind: 328,
@@ -13196,10 +13196,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -13209,7 +13209,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -13244,14 +13244,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -13316,7 +13316,7 @@ export const build: PortableBuildTable = {
 					holders: [[387, 'items']]
 				},
 				{
-					kind: 451,
+					kind: 453,
 					builder: 'setterParameter',
 					members: [
 						{
@@ -13331,7 +13331,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [451, 'decorators'],
+									at: [453, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -13348,7 +13348,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [451, 'pattern'],
+									at: [453, 'pattern'],
 									kinds: [279],
 									tokens: {
 										this: 279
@@ -13385,17 +13385,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [451, 'type'],
+									at: [453, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -13405,7 +13405,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -13474,7 +13474,7 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					holders: [[450, 'item']]
+					holders: [[452, 'item']]
 				}
 			]
 		},
@@ -13558,10 +13558,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -13571,7 +13571,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -13606,14 +13606,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -13678,7 +13678,7 @@ export const build: PortableBuildTable = {
 					holders: [[387, 'items']]
 				},
 				{
-					kind: 470,
+					kind: 471,
 					builder: 'receiverParameterDeclaration',
 					members: [
 						{
@@ -13693,7 +13693,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [470, 'decorators'],
+									at: [471, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -13711,17 +13711,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [470, 'type'],
+									at: [471, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -13731,7 +13731,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -13762,18 +13762,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [470, 'value'],
+									at: [471, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -13835,7 +13835,7 @@ export const build: PortableBuildTable = {
 							required: []
 						}
 					],
-					holders: [[472, 'receiver']]
+					holders: [[473, 'receiver']]
 				},
 				{
 					kind: 328,
@@ -13911,10 +13911,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -13924,7 +13924,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -13959,14 +13959,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -14031,7 +14031,7 @@ export const build: PortableBuildTable = {
 					holders: [[387, 'items']]
 				},
 				{
-					kind: 451,
+					kind: 453,
 					builder: 'setterParameter',
 					members: [
 						{
@@ -14046,7 +14046,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [451, 'decorators'],
+									at: [453, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -14063,7 +14063,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [451, 'pattern'],
+									at: [453, 'pattern'],
 									kinds: [279],
 									tokens: {
 										this: 279
@@ -14100,17 +14100,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [451, 'type'],
+									at: [453, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -14120,7 +14120,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -14189,7 +14189,7 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					holders: [[450, 'item']]
+					holders: [[452, 'item']]
 				}
 			]
 		},
@@ -14237,10 +14237,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -14250,7 +14250,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -14285,14 +14285,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -14347,7 +14347,7 @@ export const build: PortableBuildTable = {
 					holders: [[387, 'items']]
 				},
 				{
-					kind: 470,
+					kind: 471,
 					builder: 'receiverParameterDeclaration',
 					members: [
 						{
@@ -14362,7 +14362,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [470, 'decorators'],
+									at: [471, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -14380,17 +14380,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [470, 'type'],
+									at: [471, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -14400,7 +14400,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -14431,18 +14431,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [470, 'value'],
+									at: [471, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -14485,7 +14485,7 @@ export const build: PortableBuildTable = {
 						}
 					},
 					when: [],
-					holders: [[472, 'receiver']]
+					holders: [[473, 'receiver']]
 				}
 			]
 		},
@@ -14493,7 +14493,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 464,
+					kind: 466,
 					builder: 'publicFieldDefinitionAccessor',
 					members: [
 						{
@@ -14508,7 +14508,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [464, 'decorators'],
+									at: [466, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -14525,12 +14525,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [464, 'name'],
+									at: [466, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -14545,14 +14545,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -14582,17 +14582,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [464, 'type'],
+									at: [466, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -14602,7 +14602,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -14633,18 +14633,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [464, 'value'],
+									at: [466, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -14723,7 +14723,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 455,
+					kind: 457,
 					builder: 'methodDefinitionGetter',
 					members: [
 						{
@@ -14737,12 +14737,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [455, 'name'],
+									at: [457, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -14757,14 +14757,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -14794,17 +14794,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [455, 'type'],
+									at: [457, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -14814,7 +14814,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -14864,7 +14864,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [455, 'body'],
+									at: [457, 'body'],
 									kinds: [211]
 								}
 							]
@@ -14936,7 +14936,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 455,
+					kind: 457,
 					builder: 'methodDefinitionGetter',
 					members: [
 						{
@@ -14950,12 +14950,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [455, 'name'],
+									at: [457, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -14970,14 +14970,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -15007,17 +15007,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [455, 'type'],
+									at: [457, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -15027,7 +15027,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -15077,7 +15077,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [455, 'body'],
+									at: [457, 'body'],
 									kinds: [211]
 								}
 							]
@@ -15159,7 +15159,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 455,
+					kind: 457,
 					builder: 'methodDefinitionGetter',
 					members: [
 						{
@@ -15173,12 +15173,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [455, 'name'],
+									at: [457, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -15193,14 +15193,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -15230,17 +15230,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [455, 'type'],
+									at: [457, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -15250,7 +15250,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -15300,7 +15300,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [455, 'body'],
+									at: [457, 'body'],
 									kinds: [211]
 								}
 							]
@@ -15382,7 +15382,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 455,
+					kind: 457,
 					builder: 'methodDefinitionGetter',
 					members: [
 						{
@@ -15396,12 +15396,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [455, 'name'],
+									at: [457, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -15416,14 +15416,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -15453,17 +15453,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [455, 'type'],
+									at: [457, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -15473,7 +15473,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -15523,7 +15523,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [455, 'body'],
+									at: [457, 'body'],
 									kinds: [211]
 								}
 							]
@@ -15605,7 +15605,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 464,
+					kind: 466,
 					builder: 'publicFieldDefinitionAccessor',
 					members: [
 						{
@@ -15620,7 +15620,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [464, 'decorators'],
+									at: [466, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -15637,12 +15637,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [464, 'name'],
+									at: [466, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -15657,14 +15657,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -15694,17 +15694,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [464, 'type'],
+									at: [466, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -15714,7 +15714,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -15745,18 +15745,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [464, 'value'],
+									at: [466, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -15845,7 +15845,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 464,
+					kind: 466,
 					builder: 'publicFieldDefinitionAccessor',
 					members: [
 						{
@@ -15860,7 +15860,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [464, 'decorators'],
+									at: [466, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -15877,12 +15877,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [464, 'name'],
+									at: [466, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -15897,14 +15897,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -15934,17 +15934,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [464, 'type'],
+									at: [466, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -15954,7 +15954,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -15985,18 +15985,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [464, 'value'],
+									at: [466, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -16085,7 +16085,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 464,
+					kind: 466,
 					builder: 'publicFieldDefinitionAccessor',
 					members: [
 						{
@@ -16100,7 +16100,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [464, 'decorators'],
+									at: [466, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -16117,12 +16117,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [464, 'name'],
+									at: [466, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -16137,14 +16137,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -16174,17 +16174,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [464, 'type'],
+									at: [466, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -16194,7 +16194,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -16225,18 +16225,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [464, 'value'],
+									at: [466, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -16325,7 +16325,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 456,
+					kind: 458,
 					builder: 'methodDefinitionSetter',
 					members: [
 						{
@@ -16339,12 +16339,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [456, 'name'],
+									at: [458, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -16359,14 +16359,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -16395,7 +16395,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [456, 'body'],
+									at: [458, 'body'],
 									kinds: [211]
 								}
 							]
@@ -16423,8 +16423,8 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [450, 'item'],
-									kinds: [451]
+									at: [452, 'item'],
+									kinds: [453]
 								}
 							]
 						}
@@ -16496,7 +16496,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 456,
+					kind: 458,
 					builder: 'methodDefinitionSetter',
 					members: [
 						{
@@ -16510,12 +16510,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [456, 'name'],
+									at: [458, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -16530,14 +16530,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -16566,7 +16566,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [456, 'body'],
+									at: [458, 'body'],
 									kinds: [211]
 								}
 							]
@@ -16594,8 +16594,8 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [450, 'item'],
-									kinds: [451]
+									at: [452, 'item'],
+									kinds: [453]
 								}
 							]
 						}
@@ -16677,7 +16677,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 456,
+					kind: 458,
 					builder: 'methodDefinitionSetter',
 					members: [
 						{
@@ -16691,12 +16691,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [456, 'name'],
+									at: [458, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -16711,14 +16711,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -16747,7 +16747,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [456, 'body'],
+									at: [458, 'body'],
 									kinds: [211]
 								}
 							]
@@ -16775,8 +16775,8 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [450, 'item'],
-									kinds: [451]
+									at: [452, 'item'],
+									kinds: [453]
 								}
 							]
 						}
@@ -16858,7 +16858,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 456,
+					kind: 458,
 					builder: 'methodDefinitionSetter',
 					members: [
 						{
@@ -16872,12 +16872,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [456, 'name'],
+									at: [458, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -16892,14 +16892,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -16928,7 +16928,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [456, 'body'],
+									at: [458, 'body'],
 									kinds: [211]
 								}
 							]
@@ -16956,8 +16956,8 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [450, 'item'],
-									kinds: [451]
+									at: [452, 'item'],
+									kinds: [453]
 								}
 							]
 						}
@@ -17039,7 +17039,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 464,
+					kind: 466,
 					builder: 'publicFieldDefinitionAccessor',
 					members: [
 						{
@@ -17054,7 +17054,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [464, 'decorators'],
+									at: [466, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -17071,12 +17071,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [464, 'name'],
+									at: [466, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -17091,14 +17091,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -17128,17 +17128,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [464, 'type'],
+									at: [466, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -17148,7 +17148,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -17179,18 +17179,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [464, 'value'],
+									at: [466, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -17279,7 +17279,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 461,
+					kind: 463,
 					builder: 'abstractMethodSignatureGetter',
 					members: [
 						{
@@ -17293,12 +17293,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [461, 'name'],
+									at: [463, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -17313,14 +17313,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -17350,17 +17350,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [461, 'type'],
+									at: [463, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -17370,7 +17370,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -17463,7 +17463,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 461,
+					kind: 463,
 					builder: 'abstractMethodSignatureGetter',
 					members: [
 						{
@@ -17477,12 +17477,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [461, 'name'],
+									at: [463, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -17497,14 +17497,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -17534,17 +17534,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [461, 'type'],
+									at: [463, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -17554,7 +17554,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -17657,7 +17657,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 461,
+					kind: 463,
 					builder: 'abstractMethodSignatureGetter',
 					members: [
 						{
@@ -17671,12 +17671,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [461, 'name'],
+									at: [463, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -17691,14 +17691,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -17728,17 +17728,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [461, 'type'],
+									at: [463, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -17748,7 +17748,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -17851,7 +17851,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 461,
+					kind: 463,
 					builder: 'abstractMethodSignatureGetter',
 					members: [
 						{
@@ -17865,12 +17865,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [461, 'name'],
+									at: [463, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -17885,14 +17885,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -17922,17 +17922,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [461, 'type'],
+									at: [463, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -17942,7 +17942,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -18045,7 +18045,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 462,
+					kind: 464,
 					builder: 'abstractMethodSignatureSetter',
 					members: [
 						{
@@ -18059,12 +18059,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [462, 'name'],
+									at: [464, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -18079,14 +18079,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -18127,8 +18127,8 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [450, 'item'],
-									kinds: [451]
+									at: [452, 'item'],
+									kinds: [453]
 								}
 							]
 						}
@@ -18187,7 +18187,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 462,
+					kind: 464,
 					builder: 'abstractMethodSignatureSetter',
 					members: [
 						{
@@ -18201,12 +18201,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [462, 'name'],
+									at: [464, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -18221,14 +18221,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -18269,8 +18269,8 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [450, 'item'],
-									kinds: [451]
+									at: [452, 'item'],
+									kinds: [453]
 								}
 							]
 						}
@@ -18339,7 +18339,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 462,
+					kind: 464,
 					builder: 'abstractMethodSignatureSetter',
 					members: [
 						{
@@ -18353,12 +18353,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [462, 'name'],
+									at: [464, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -18373,14 +18373,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -18421,8 +18421,8 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [450, 'item'],
-									kinds: [451]
+									at: [452, 'item'],
+									kinds: [453]
 								}
 							]
 						}
@@ -18491,7 +18491,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 462,
+					kind: 464,
 					builder: 'abstractMethodSignatureSetter',
 					members: [
 						{
@@ -18505,12 +18505,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [462, 'name'],
+									at: [464, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -18525,14 +18525,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -18573,8 +18573,8 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [450, 'item'],
-									kinds: [451]
+									at: [452, 'item'],
+									kinds: [453]
 								}
 							]
 						}
@@ -18643,7 +18643,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 458,
+					kind: 460,
 					builder: 'methodSignatureGetter',
 					members: [
 						{
@@ -18657,12 +18657,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [458, 'name'],
+									at: [460, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -18677,14 +18677,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -18714,17 +18714,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [458, 'type'],
+									at: [460, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -18734,7 +18734,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -18840,7 +18840,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 458,
+					kind: 460,
 					builder: 'methodSignatureGetter',
 					members: [
 						{
@@ -18854,12 +18854,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [458, 'name'],
+									at: [460, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -18874,14 +18874,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -18911,17 +18911,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [458, 'type'],
+									at: [460, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -18931,7 +18931,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -19047,7 +19047,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 458,
+					kind: 460,
 					builder: 'methodSignatureGetter',
 					members: [
 						{
@@ -19061,12 +19061,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [458, 'name'],
+									at: [460, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -19081,14 +19081,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -19118,17 +19118,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [458, 'type'],
+									at: [460, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -19138,7 +19138,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -19254,7 +19254,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 458,
+					kind: 460,
 					builder: 'methodSignatureGetter',
 					members: [
 						{
@@ -19268,12 +19268,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [458, 'name'],
+									at: [460, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -19288,14 +19288,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -19325,17 +19325,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [458, 'type'],
+									at: [460, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -19345,7 +19345,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -19461,7 +19461,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 459,
+					kind: 461,
 					builder: 'methodSignatureSetter',
 					members: [
 						{
@@ -19475,12 +19475,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [459, 'name'],
+									at: [461, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -19495,14 +19495,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -19543,8 +19543,8 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [450, 'item'],
-									kinds: [451]
+									at: [452, 'item'],
+									kinds: [453]
 								}
 							]
 						}
@@ -19616,7 +19616,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 459,
+					kind: 461,
 					builder: 'methodSignatureSetter',
 					members: [
 						{
@@ -19630,12 +19630,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [459, 'name'],
+									at: [461, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -19650,14 +19650,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -19698,8 +19698,8 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [450, 'item'],
-									kinds: [451]
+									at: [452, 'item'],
+									kinds: [453]
 								}
 							]
 						}
@@ -19781,7 +19781,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 459,
+					kind: 461,
 					builder: 'methodSignatureSetter',
 					members: [
 						{
@@ -19795,12 +19795,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [459, 'name'],
+									at: [461, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -19815,14 +19815,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -19863,8 +19863,8 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [450, 'item'],
-									kinds: [451]
+									at: [452, 'item'],
+									kinds: [453]
 								}
 							]
 						}
@@ -19946,7 +19946,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 459,
+					kind: 461,
 					builder: 'methodSignatureSetter',
 					members: [
 						{
@@ -19960,12 +19960,12 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [459, 'name'],
+									at: [461, 'name'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -19980,14 +19980,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -20028,8 +20028,8 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [450, 'item'],
-									kinds: [451]
+									at: [452, 'item'],
+									kinds: [453]
 								}
 							]
 						}
@@ -20165,10 +20165,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -20178,7 +20178,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -20300,8 +20300,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -20374,10 +20374,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -20387,7 +20387,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -20457,7 +20457,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 411,
+					kind: 412,
 					builder: 'indexSignatureColon',
 					members: [
 						{
@@ -20472,7 +20472,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [411, 'sign'],
+									at: [412, 'sign'],
 									kinds: [102, 103],
 									tokens: {
 										'+': 102,
@@ -20492,7 +20492,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [411, 'name'],
+									at: [412, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
 									texts: [1],
@@ -20515,13 +20515,13 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [411, 'indexType'],
+									at: [412, 'indexType'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -20531,7 +20531,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -20555,17 +20555,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [411, 'type'],
+									at: [412, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -20575,7 +20575,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -20596,10 +20596,10 @@ export const build: PortableBuildTable = {
 									at: [331, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -20609,7 +20609,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -20630,10 +20630,10 @@ export const build: PortableBuildTable = {
 									at: [332, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -20643,7 +20643,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -20664,10 +20664,10 @@ export const build: PortableBuildTable = {
 									at: [333, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -20677,7 +20677,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -20726,7 +20726,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 412,
+					kind: 413,
 					builder: 'indexSignatureMappedTypeClause',
 					members: [
 						{
@@ -20741,7 +20741,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [412, 'sign'],
+									at: [413, 'sign'],
 									kinds: [102, 103],
 									tokens: {
 										'+': 102,
@@ -20761,7 +20761,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [412, 'mappedTypeClause'],
+									at: [413, 'mappedTypeClause'],
 									kinds: [361]
 								}
 							]
@@ -20777,17 +20777,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [412, 'type'],
+									at: [413, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -20797,7 +20797,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -20818,10 +20818,10 @@ export const build: PortableBuildTable = {
 									at: [331, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -20831,7 +20831,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -20852,10 +20852,10 @@ export const build: PortableBuildTable = {
 									at: [332, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -20865,7 +20865,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -20886,10 +20886,10 @@ export const build: PortableBuildTable = {
 									at: [333, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -20899,7 +20899,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -20963,9 +20963,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [325, 'name'],
-									kinds: [507],
+									kinds: [508],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -21020,10 +21020,10 @@ export const build: PortableBuildTable = {
 									at: [325, 'value'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -21033,7 +21033,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -21077,9 +21077,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [373, 'name'],
-									kinds: [507],
+									kinds: [508],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -21124,10 +21124,10 @@ export const build: PortableBuildTable = {
 									at: [375, 'bounds'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -21137,7 +21137,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -21180,7 +21180,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 440,
+					kind: 441,
 					builder: 'variableDeclaratorDefinite',
 					members: [
 						{
@@ -21194,7 +21194,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [440, 'name'],
+									at: [441, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
 									texts: [1],
@@ -21217,17 +21217,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [440, 'type'],
+									at: [441, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -21237,7 +21237,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -21271,7 +21271,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 439,
+					kind: 440,
 					builder: 'variableDeclaratorPlain',
 					members: [
 						{
@@ -21285,7 +21285,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [439, 'name'],
+									at: [440, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
 									texts: [1],
@@ -21309,17 +21309,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [439, 'type'],
+									at: [440, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -21329,7 +21329,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -21360,18 +21360,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [439, 'value'],
+									at: [440, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -21419,7 +21419,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [208, 'declarators'],
-									kinds: [210, 439, 440],
+									kinds: [210, 440, 441],
 									many: true
 								}
 							]
@@ -21450,7 +21450,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 439,
+					kind: 440,
 					builder: 'variableDeclaratorPlain',
 					members: [
 						{
@@ -21464,7 +21464,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [439, 'name'],
+									at: [440, 'name'],
 									kinds: [239, 243]
 								}
 							]
@@ -21481,17 +21481,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [439, 'type'],
+									at: [440, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -21501,7 +21501,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -21532,18 +21532,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [439, 'value'],
+									at: [440, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -21587,7 +21587,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [208, 'declarators'],
-									kinds: [210, 439, 440],
+									kinds: [210, 440, 441],
 									many: true
 								}
 							]
@@ -21634,7 +21634,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [207, 'declarators'],
-									kinds: [210, 439, 440],
+									kinds: [210, 440, 441],
 									many: true
 								}
 							]
@@ -21672,10 +21672,10 @@ export const build: PortableBuildTable = {
 								{
 									at: [294, 'key'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -21687,14 +21687,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -21727,14 +21727,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -21793,14 +21793,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -21845,10 +21845,10 @@ export const build: PortableBuildTable = {
 									at: [347, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 346, 348, 349, 350, 351, 358, 359, 360, 362, 364,
-										365, 366, 367, 369, 378, 379, 381, 382, 506, 507
+										365, 366, 367, 369, 378, 379, 381, 382, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -21858,7 +21858,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -21931,10 +21931,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -21944,7 +21944,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -22023,10 +22023,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -22036,7 +22036,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -22086,7 +22086,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [262, 'left'],
-									kinds: [234, 418, 419]
+									kinds: [234, 419, 420]
 								},
 								{
 									at: [261, 'content'],
@@ -22122,14 +22122,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -22190,7 +22190,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [264, 'left'],
-									kinds: [1, 234, 259, 260, 300, 418, 419],
+									kinds: [1, 234, 259, 260, 300, 419, 420],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -22216,14 +22216,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -22275,7 +22275,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [264, 'left'],
-									kinds: [1, 234, 259, 260, 300, 418, 419],
+									kinds: [1, 234, 259, 260, 300, 419, 420],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -22301,14 +22301,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -22360,7 +22360,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [264, 'left'],
-									kinds: [1, 234, 259, 260, 300, 418, 419],
+									kinds: [1, 234, 259, 260, 300, 419, 420],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -22386,14 +22386,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -22445,7 +22445,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [264, 'left'],
-									kinds: [1, 234, 259, 260, 300, 418, 419],
+									kinds: [1, 234, 259, 260, 300, 419, 420],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -22471,14 +22471,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -22530,7 +22530,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [264, 'left'],
-									kinds: [1, 234, 259, 260, 300, 418, 419],
+									kinds: [1, 234, 259, 260, 300, 419, 420],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -22556,14 +22556,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -22615,7 +22615,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [264, 'left'],
-									kinds: [1, 234, 259, 260, 300, 418, 419],
+									kinds: [1, 234, 259, 260, 300, 419, 420],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -22641,14 +22641,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -22700,7 +22700,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [264, 'left'],
-									kinds: [1, 234, 259, 260, 300, 418, 419],
+									kinds: [1, 234, 259, 260, 300, 419, 420],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -22726,14 +22726,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -22785,7 +22785,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [264, 'left'],
-									kinds: [1, 234, 259, 260, 300, 418, 419],
+									kinds: [1, 234, 259, 260, 300, 419, 420],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -22811,14 +22811,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -22870,7 +22870,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [264, 'left'],
-									kinds: [1, 234, 259, 260, 300, 418, 419],
+									kinds: [1, 234, 259, 260, 300, 419, 420],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -22896,14 +22896,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -22955,7 +22955,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [264, 'left'],
-									kinds: [1, 234, 259, 260, 300, 418, 419],
+									kinds: [1, 234, 259, 260, 300, 419, 420],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -22981,14 +22981,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23040,7 +23040,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [264, 'left'],
-									kinds: [1, 234, 259, 260, 300, 418, 419],
+									kinds: [1, 234, 259, 260, 300, 419, 420],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -23066,14 +23066,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23125,7 +23125,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [264, 'left'],
-									kinds: [1, 234, 259, 260, 300, 418, 419],
+									kinds: [1, 234, 259, 260, 300, 419, 420],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -23151,14 +23151,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23210,7 +23210,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [264, 'left'],
-									kinds: [1, 234, 259, 260, 300, 418, 419],
+									kinds: [1, 234, 259, 260, 300, 419, 420],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -23236,14 +23236,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23295,7 +23295,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [264, 'left'],
-									kinds: [1, 234, 259, 260, 300, 418, 419],
+									kinds: [1, 234, 259, 260, 300, 419, 420],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -23321,14 +23321,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23380,7 +23380,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [264, 'left'],
-									kinds: [1, 234, 259, 260, 300, 418, 419],
+									kinds: [1, 234, 259, 260, 300, 419, 420],
 									leaf: 'identifier',
 									texts: [1],
 									pattern: {
@@ -23406,14 +23406,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23468,14 +23468,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23522,14 +23522,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23557,14 +23557,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23606,14 +23606,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23641,14 +23641,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23700,14 +23700,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23735,14 +23735,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23794,14 +23794,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23829,14 +23829,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23888,14 +23888,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23923,14 +23923,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -23982,14 +23982,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24017,14 +24017,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24076,14 +24076,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24111,14 +24111,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24170,14 +24170,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24205,14 +24205,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24264,14 +24264,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24299,14 +24299,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24358,14 +24358,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24393,14 +24393,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24452,14 +24452,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24487,14 +24487,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24546,14 +24546,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24581,14 +24581,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24640,14 +24640,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24675,14 +24675,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24734,14 +24734,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24769,14 +24769,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24828,14 +24828,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24863,14 +24863,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24922,14 +24922,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -24957,14 +24957,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25016,14 +25016,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25051,14 +25051,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25110,14 +25110,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25145,14 +25145,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25204,14 +25204,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25239,14 +25239,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25298,14 +25298,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25333,14 +25333,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25392,14 +25392,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25427,14 +25427,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25486,14 +25486,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25521,14 +25521,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25560,18 +25560,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [406, 'left'],
+									at: [407, 'left'],
 									kinds: [
 										1, 127, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238,
 										242, 245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25603,18 +25603,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [406, 'right'],
+									at: [407, 'right'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25676,14 +25676,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25711,14 +25711,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25770,14 +25770,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25805,14 +25805,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25864,14 +25864,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25899,14 +25899,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25958,14 +25958,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -25993,14 +25993,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -26033,7 +26033,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 422,
+					kind: 423,
 					builder: 'callExpressionMember',
 					members: [
 						{
@@ -26047,17 +26047,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [422, 'function'],
+									at: [423, 'function'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 236, 238, 242, 245, 248,
-										250, 252, 256, 259, 260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 405, 418, 419, 420,
-										421, 422, 423, 424, 441, 442
+										250, 252, 256, 259, 260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 406, 419, 420, 421,
+										422, 423, 424, 425, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -26081,17 +26081,17 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [422, 'typeArguments'],
+									at: [423, 'typeArguments'],
 									kinds: []
 								},
 								{
 									at: [391, 'items'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -26101,7 +26101,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -26135,7 +26135,7 @@ export const build: PortableBuildTable = {
 							multiple: false,
 							seats: [
 								{
-									at: [422, 'arguments'],
+									at: [423, 'arguments'],
 									kinds: []
 								},
 								{
@@ -26143,14 +26143,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -26185,7 +26185,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 420,
+					kind: 421,
 					builder: 'callExpressionCall',
 					members: [
 						{
@@ -26199,19 +26199,19 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [420, 'function'],
+									at: [421, 'function'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 197, 234, 237, 238, 242, 245,
 										248, 250, 252, 256, 257, 258, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280,
-										281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426, 441,
-										442
+										281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426, 427, 442,
+										443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
 										import: 197,
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -26235,17 +26235,17 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [420, 'typeArguments'],
+									at: [421, 'typeArguments'],
 									kinds: []
 								},
 								{
 									at: [391, 'items'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -26255,7 +26255,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -26289,7 +26289,7 @@ export const build: PortableBuildTable = {
 							multiple: false,
 							seats: [
 								{
-									at: [420, 'arguments'],
+									at: [421, 'arguments'],
 									kinds: []
 								},
 								{
@@ -26297,14 +26297,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -26361,14 +26361,14 @@ export const build: PortableBuildTable = {
 									at: [257, 'function'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 236, 238, 242, 245, 248,
-										250, 252, 256, 259, 260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 405, 418, 419, 420,
-										421, 422, 423, 424, 441, 442
+										250, 252, 256, 259, 260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 406, 419, 420, 421,
+										422, 423, 424, 425, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -26399,10 +26399,10 @@ export const build: PortableBuildTable = {
 									at: [391, 'items'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -26412,7 +26412,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -26455,14 +26455,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -26516,14 +26516,14 @@ export const build: PortableBuildTable = {
 									at: [257, 'function'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 236, 238, 242, 245, 248,
-										250, 252, 256, 259, 260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 405, 418, 419, 420,
-										421, 422, 423, 424, 441, 442
+										250, 252, 256, 259, 260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 406, 419, 420, 421,
+										422, 423, 424, 425, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -26554,10 +26554,10 @@ export const build: PortableBuildTable = {
 									at: [391, 'items'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -26567,7 +26567,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -26619,7 +26619,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 420,
+					kind: 421,
 					builder: 'callExpressionCall',
 					members: [
 						{
@@ -26633,7 +26633,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [420, 'function'],
+									at: [421, 'function'],
 									kinds: [235, 236, 259]
 								}
 							]
@@ -26650,17 +26650,17 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [420, 'typeArguments'],
+									at: [421, 'typeArguments'],
 									kinds: []
 								},
 								{
 									at: [391, 'items'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -26670,7 +26670,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -26704,7 +26704,7 @@ export const build: PortableBuildTable = {
 							multiple: false,
 							seats: [
 								{
-									at: [420, 'arguments'],
+									at: [421, 'arguments'],
 									kinds: []
 								},
 								{
@@ -26712,14 +26712,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -26764,7 +26764,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 421,
+					kind: 422,
 					builder: 'callExpressionTemplateCall',
 					members: [
 						{
@@ -26778,17 +26778,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [421, 'function'],
+									at: [422, 'function'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 236, 238, 242, 245, 248,
-										250, 252, 256, 257, 259, 260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 405, 418, 419,
-										420, 421, 422, 423, 424, 441, 442
+										250, 252, 256, 257, 259, 260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 406, 419, 420,
+										421, 422, 423, 424, 425, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -26811,7 +26811,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [421, 'arguments'],
+									at: [422, 'arguments'],
 									kinds: [274]
 								}
 							]
@@ -26850,14 +26850,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -26883,10 +26883,10 @@ export const build: PortableBuildTable = {
 									at: [306, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 67, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351,
-										358, 359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										358, 359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -26897,7 +26897,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -26944,14 +26944,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -26986,10 +26986,10 @@ export const build: PortableBuildTable = {
 									at: [391, 'items'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -26999,7 +26999,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -27053,14 +27053,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -27106,14 +27106,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -27139,10 +27139,10 @@ export const build: PortableBuildTable = {
 									at: [307, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -27152,7 +27152,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -27215,9 +27215,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [245, 'name'],
-									kinds: [507],
+									kinds: [508],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -27274,9 +27274,9 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [288, 'members'],
-									kinds: [290, 386, 407],
+									kinds: [290, 386, 408],
 									tokens: {
-										';': 407
+										';': 408
 									},
 									within: [
 										{
@@ -27288,8 +27288,8 @@ export const build: PortableBuildTable = {
 									many: true
 								},
 								{
-									at: [408, 'methodDefinition'],
-									kinds: [454, 455, 456, 466, 468],
+									at: [409, 'methodDefinition'],
+									kinds: [456, 457, 458, 467, 469],
 									within: [
 										{
 											builder: 'classBody',
@@ -27312,7 +27312,7 @@ export const build: PortableBuildTable = {
 													list: true,
 													seats: [
 														{
-															at: [408, 'decorators'],
+															at: [409, 'decorators'],
 															kinds: [285],
 															many: true
 														}
@@ -27323,8 +27323,8 @@ export const build: PortableBuildTable = {
 									]
 								},
 								{
-									at: [409, 'methodSignature'],
-									kinds: [301, 457, 458, 459],
+									at: [410, 'methodSignature'],
+									kinds: [301, 459, 460, 461],
 									within: [
 										{
 											builder: 'classBody',
@@ -27338,8 +27338,8 @@ export const build: PortableBuildTable = {
 									]
 								},
 								{
-									at: [410, 'member'],
-									kinds: [298, 301, 302, 377, 411, 412, 457, 458, 459, 460, 461, 462, 463, 464],
+									at: [411, 'member'],
+									kinds: [298, 301, 302, 377, 412, 413, 459, 460, 461, 462, 463, 464, 465, 466],
 									within: [
 										{
 											builder: 'classBody',
@@ -27378,7 +27378,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [430, 'extendsClause'],
+									at: [431, 'extendsClause'],
 									kinds: [310]
 								}
 							]
@@ -27415,10 +27415,10 @@ export const build: PortableBuildTable = {
 									at: [312, 'types'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -27428,7 +27428,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -27466,10 +27466,10 @@ export const build: PortableBuildTable = {
 									at: [312, 'types'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -27479,7 +27479,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -27533,14 +27533,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -27580,9 +27580,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [238, 'properties'],
-									kinds: [267, 293, 294, 454, 455, 456, 503],
+									kinds: [267, 293, 294, 456, 457, 458, 504],
 									leaf: 'identifier',
-									texts: [1, 503],
+									texts: [1, 504],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -27621,14 +27621,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -27655,14 +27655,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -27689,14 +27689,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -27802,10 +27802,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -27815,7 +27815,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -27953,8 +27953,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -28069,10 +28069,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -28082,7 +28082,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -28220,8 +28220,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -28281,14 +28281,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -28319,10 +28319,10 @@ export const build: PortableBuildTable = {
 									at: [391, 'items'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -28332,7 +28332,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -28407,23 +28407,24 @@ export const build: PortableBuildTable = {
 						[328, 'value'],
 						[329, 'value'],
 						[403, 'value'],
-						[406, 'left'],
-						[406, 'right'],
-						[414, 'expression'],
-						[418, 'expression'],
-						[420, 'function'],
-						[425, 'argument'],
+						[407, 'left'],
+						[407, 'right'],
+						[415, 'expression'],
+						[419, 'expression'],
+						[421, 'function'],
 						[426, 'argument'],
-						[438, 'value'],
+						[427, 'argument'],
 						[439, 'value'],
-						[443, 'right'],
-						[444, 'value'],
+						[440, 'value'],
 						[444, 'right'],
+						[445, 'value'],
 						[445, 'right'],
 						[446, 'right'],
-						[463, 'value'],
-						[464, 'value'],
-						[470, 'value']
+						[447, 'right'],
+						[448, 'right'],
+						[465, 'value'],
+						[466, 'value'],
+						[471, 'value']
 					]
 				},
 				{
@@ -28472,10 +28473,10 @@ export const build: PortableBuildTable = {
 									at: [391, 'items'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -28485,7 +28486,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -28545,14 +28546,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -28598,14 +28599,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 211, 234, 235, 236, 237, 238,
 										242, 245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -28636,7 +28637,7 @@ export const build: PortableBuildTable = {
 							multiple: false,
 							seats: [
 								{
-									at: [429, 'parameter'],
+									at: [430, 'parameter'],
 									kinds: [1],
 									leaf: 'identifier',
 									texts: [1],
@@ -28737,10 +28738,10 @@ export const build: PortableBuildTable = {
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -28750,7 +28751,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -28842,15 +28843,15 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 197, 234, 235, 236, 237, 238,
 										242, 245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
 										import: 197,
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -28874,9 +28875,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [259, 'property'],
-									kinds: [127, 502],
+									kinds: [127, 503],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -28939,7 +28940,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 442,
+					kind: 443,
 					members: [],
 					presets: [],
 					flags: {},
@@ -28950,7 +28951,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 441,
+					kind: 442,
 					members: [],
 					presets: [],
 					flags: {},
@@ -28966,7 +28967,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 419,
+					kind: 420,
 					builder: 'parenthesizedExpressionSequence',
 					members: [
 						{
@@ -28980,7 +28981,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [419, 'sequenceExpression'],
+									at: [420, 'sequenceExpression'],
 									kinds: [272]
 								}
 							]
@@ -29000,7 +29001,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 418,
+					kind: 419,
 					builder: 'parenthesizedExpressionTyped',
 					members: [
 						{
@@ -29014,18 +29015,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [418, 'expression'],
+									at: [419, 'expression'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -29049,17 +29050,17 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [418, 'type'],
+									at: [419, 'type'],
 									kinds: []
 								},
 								{
 									at: [334, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -29069,7 +29070,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -29097,7 +29098,7 @@ export const build: PortableBuildTable = {
 							kinds: [
 								1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245,
 								248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280,
-								281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426, 441, 442
+								281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426, 427, 442, 443
 							]
 						},
 						{
@@ -29131,14 +29132,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -29186,14 +29187,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -29220,14 +29221,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -29291,14 +29292,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -29353,14 +29354,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -29415,14 +29416,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -29477,14 +29478,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -29539,14 +29540,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -29601,14 +29602,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -29663,14 +29664,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -29711,7 +29712,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 426,
+					kind: 427,
 					builder: 'updateExpressionPrefix',
 					members: [
 						{
@@ -29725,18 +29726,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [426, 'argument'],
+									at: [427, 'argument'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -29772,7 +29773,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 425,
+					kind: 426,
 					builder: 'updateExpressionPostfix',
 					members: [
 						{
@@ -29786,18 +29787,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [425, 'argument'],
+									at: [426, 'argument'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -29838,7 +29839,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 426,
+					kind: 427,
 					builder: 'updateExpressionPrefix',
 					members: [
 						{
@@ -29852,18 +29853,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [426, 'argument'],
+									at: [427, 'argument'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -29899,7 +29900,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 425,
+					kind: 426,
 					builder: 'updateExpressionPostfix',
 					members: [
 						{
@@ -29913,18 +29914,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [425, 'argument'],
+									at: [426, 'argument'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -29984,14 +29985,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -30036,18 +30037,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [414, 'expression'],
+									at: [415, 'expression'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -30133,8 +30134,8 @@ export const build: PortableBuildTable = {
 									at: [190, 'statements'],
 									kinds: [
 										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 427,
-										428, 432, 433
+										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 428,
+										429, 433, 434
 									],
 									refined: [228],
 									tokens: {
@@ -30162,9 +30163,9 @@ export const build: PortableBuildTable = {
 													seats: [
 														{
 															at: [228, 'label'],
-															kinds: [505],
+															kinds: [506],
 															leaf: 'identifier',
-															texts: [1, 505],
+															texts: [1, 506],
 															pattern: {
 																source:
 																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -30203,7 +30204,7 @@ export const build: PortableBuildTable = {
 						[192, 'moduleExportName'],
 						[194, 'name'],
 						[194, 'alias'],
-						[417, 'name']
+						[418, 'name']
 					]
 				},
 				{
@@ -30289,45 +30290,47 @@ export const build: PortableBuildTable = {
 						[395, 'parameter'],
 						[402, 'name'],
 						[403, 'value'],
-						[406, 'left'],
-						[406, 'right'],
-						[411, 'name'],
-						[414, 'expression'],
-						[416, 'name'],
+						[407, 'left'],
+						[407, 'right'],
+						[412, 'name'],
+						[415, 'expression'],
 						[417, 'name'],
-						[417, 'alias'],
-						[418, 'expression'],
-						[420, 'function'],
+						[418, 'name'],
+						[418, 'alias'],
+						[419, 'expression'],
 						[421, 'function'],
 						[422, 'function'],
-						[425, 'argument'],
+						[423, 'function'],
 						[426, 'argument'],
-						[429, 'parameter'],
-						[431, 'identifier'],
-						[438, 'value'],
-						[439, 'name'],
+						[427, 'argument'],
+						[430, 'parameter'],
+						[432, 'identifier'],
 						[439, 'value'],
 						[440, 'name'],
-						[443, 'right'],
-						[444, 'left'],
-						[444, 'value'],
+						[440, 'value'],
+						[441, 'name'],
 						[444, 'right'],
 						[445, 'left'],
+						[445, 'value'],
 						[445, 'right'],
 						[446, 'left'],
 						[446, 'right'],
-						[463, 'value'],
-						[464, 'value'],
-						[470, 'value'],
+						[447, 'left'],
+						[447, 'right'],
+						[448, 'left'],
+						[448, 'right'],
+						[465, 'value'],
+						[466, 'value'],
+						[471, 'value'],
+						[506, 'content'],
+						[504, 'content'],
 						[505, 'content'],
 						[503, 'content'],
-						[504, 'content'],
-						[502, 'content'],
-						[507, 'content']
+						[508, 'content']
 					]
 				},
 				{
-					kind: 507,
+					kind: 508,
 					seated: 'direct',
 					members: [],
 					presets: [],
@@ -30382,11 +30385,11 @@ export const build: PortableBuildTable = {
 						[391, 'items'],
 						[393, 'items'],
 						[399, 'type'],
-						[411, 'indexType']
+						[412, 'indexType']
 					]
 				},
 				{
-					kind: 502,
+					kind: 503,
 					seated: 'placed',
 					members: [],
 					presets: [],
@@ -30404,8 +30407,6 @@ export const build: PortableBuildTable = {
 						[371, 'name'],
 						[388, 'name'],
 						[399, 'name'],
-						[454, 'name'],
-						[455, 'name'],
 						[456, 'name'],
 						[457, 'name'],
 						[458, 'name'],
@@ -30414,11 +30415,13 @@ export const build: PortableBuildTable = {
 						[461, 'name'],
 						[462, 'name'],
 						[463, 'name'],
-						[464, 'name']
+						[464, 'name'],
+						[465, 'name'],
+						[466, 'name']
 					]
 				},
 				{
-					kind: 503,
+					kind: 504,
 					seated: 'direct',
 					members: [],
 					presets: [],
@@ -30427,7 +30430,7 @@ export const build: PortableBuildTable = {
 					holders: [[238, 'properties']]
 				},
 				{
-					kind: 504,
+					kind: 505,
 					seated: 'direct',
 					members: [],
 					presets: [],
@@ -30444,7 +30447,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 505,
+					kind: 506,
 					seated: 'direct',
 					members: [],
 					presets: [],
@@ -30498,9 +30501,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [354, 'property'],
-									kinds: [127, 502],
+									kinds: [127, 503],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -30569,9 +30572,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [335, 'property'],
-									kinds: [127, 502],
+									kinds: [127, 503],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -30756,7 +30759,7 @@ export const build: PortableBuildTable = {
 						[391, 'items'],
 						[393, 'items'],
 						[399, 'type'],
-						[411, 'indexType']
+						[412, 'indexType']
 					]
 				},
 				{
@@ -30798,9 +30801,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [244, 'name'],
-									kinds: [502],
+									kinds: [503],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -30865,9 +30868,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [319, 'name'],
-									kinds: [507],
+									kinds: [508],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -31057,7 +31060,7 @@ export const build: PortableBuildTable = {
 						[391, 'items'],
 						[393, 'items'],
 						[399, 'type'],
-						[411, 'indexType']
+						[412, 'indexType']
 					]
 				}
 			]
@@ -32217,7 +32220,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 404,
+					kind: 405,
 					builder: 'literalType.negativeNumber',
 					mounted: {
 						call: 'child',
@@ -32236,8 +32239,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [404, 'value'],
-									kinds: [155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 277, 405]
+									at: [405, 'value'],
+									kinds: [155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 277, 406]
 								}
 							]
 						}
@@ -32348,7 +32351,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 423,
+					kind: 424,
 					builder: 'stringDouble',
 					members: [
 						{
@@ -32363,7 +32366,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [423, 'elements'],
+									at: [424, 'elements'],
 									kinds: [118, 120],
 									leaf: 'unescapedDoubleStringFragment',
 									texts: [118],
@@ -32381,13 +32384,13 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							variant: 'string',
-							value: 423,
+							value: 424,
 							default: true
 						}
 					]
 				},
 				{
-					kind: 424,
+					kind: 425,
 					builder: 'stringSingle',
 					members: [
 						{
@@ -32402,7 +32405,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [424, 'elements'],
+									at: [425, 'elements'],
 									kinds: [119, 120],
 									leaf: 'unescapedSingleStringFragment',
 									texts: [119],
@@ -32420,7 +32423,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							variant: 'string',
-							value: 424
+							value: 425
 						}
 					]
 				}
@@ -32527,7 +32530,7 @@ export const build: PortableBuildTable = {
 					presets: [],
 					flags: {},
 					when: [],
-					holders: [[423, 'elements']]
+					holders: [[424, 'elements']]
 				},
 				{
 					kind: 119,
@@ -32536,7 +32539,7 @@ export const build: PortableBuildTable = {
 					presets: [],
 					flags: {},
 					when: [],
-					holders: [[424, 'elements']]
+					holders: [[425, 'elements']]
 				}
 			]
 		},
@@ -32669,14 +32672,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -32769,9 +32772,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [239, 'properties'],
-									kinds: [241, 292, 295, 504],
+									kinds: [241, 292, 295, 505],
 									leaf: 'identifier',
-									texts: [1, 504],
+									texts: [1, 505],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -32807,9 +32810,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [241, 'left'],
-									kinds: [239, 243, 504],
+									kinds: [239, 243, 505],
 									leaf: 'identifier',
-									texts: [1, 504],
+									texts: [1, 505],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -32833,14 +32836,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -32884,10 +32887,10 @@ export const build: PortableBuildTable = {
 								{
 									at: [295, 'key'],
 									kinds: [
-										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 405, 423, 424, 502
+										127, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 406, 424, 425, 503
 									],
 									leaf: 'identifier',
-									texts: [1, 502],
+									texts: [1, 503],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -32899,14 +32902,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -33046,8 +33049,8 @@ export const build: PortableBuildTable = {
 									at: [211, 'statements'],
 									kinds: [
 										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 427,
-										428, 432, 433
+										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 428,
+										429, 433, 434
 									],
 									refined: [228],
 									tokens: {
@@ -33075,9 +33078,9 @@ export const build: PortableBuildTable = {
 													seats: [
 														{
 															at: [228, 'label'],
-															kinds: [505],
+															kinds: [506],
 															leaf: 'identifier',
-															texts: [1, 505],
+															texts: [1, 506],
 															pattern: {
 																source:
 																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -33154,9 +33157,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [222, 'label'],
-									kinds: [505],
+									kinds: [506],
 									leaf: 'identifier',
-									texts: [1, 505],
+									texts: [1, 506],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -33192,9 +33195,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [223, 'label'],
-									kinds: [505],
+									kinds: [506],
 									leaf: 'identifier',
-									texts: [1, 505],
+									texts: [1, 506],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -33257,14 +33260,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -33324,7 +33327,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 433,
+					kind: 434,
 					builder: 'exportStatementDefaultDeclaration',
 					members: [
 						{
@@ -33339,7 +33342,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [433, 'decorators'],
+									at: [434, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -33356,11 +33359,11 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [433, 'content'],
-									kinds: [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 427, 428]
+									at: [434, 'content'],
+									kinds: [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 428, 429]
 								}
 							],
-							reads: [207, 208, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 427, 428]
+							reads: [207, 208, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 428, 429]
 						}
 					],
 					presets: [],
@@ -33373,7 +33376,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 432,
+					kind: 433,
 					builder: 'exportStatementDefaultFrom',
 					members: [
 						{
@@ -33395,7 +33398,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [436, 'exportClause'],
+									at: [437, 'exportClause'],
 									kinds: [193]
 								}
 							]
@@ -33419,7 +33422,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [435, 'namespaceExport'],
+									at: [436, 'namespaceExport'],
 									kinds: [192]
 								}
 							],
@@ -33445,8 +33448,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [436, 'source'],
-									kinds: [273, 423, 424]
+									at: [437, 'source'],
+									kinds: [273, 424, 425]
 								}
 							],
 							requires: [['exportClause']]
@@ -33470,8 +33473,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [435, 'source'],
-									kinds: [273, 423, 424]
+									at: [436, 'source'],
+									kinds: [273, 424, 425]
 								}
 							],
 							requires: [['exportClause']]
@@ -33510,7 +33513,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 432,
+					kind: 433,
 					builder: 'exportStatementDefaultFrom',
 					members: [
 						{
@@ -33533,8 +33536,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [434, 'source'],
-									kinds: [273, 423, 424]
+									at: [435, 'source'],
+									kinds: [273, 424, 425]
 								}
 							]
 						}
@@ -33582,7 +33585,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 433,
+					kind: 434,
 					builder: 'exportStatementDefaultDeclaration',
 					members: [
 						{
@@ -33597,7 +33600,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [433, 'decorators'],
+									at: [434, 'decorators'],
 									kinds: [285],
 									many: true
 								}
@@ -33623,11 +33626,11 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [437, 'content'],
-									kinds: [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 427, 428, 438]
+									at: [438, 'content'],
+									kinds: [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 428, 429, 439]
 								}
 							],
-							reads: [207, 208, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 427, 428]
+							reads: [207, 208, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 428, 429]
 						},
 						{
 							name: 'value',
@@ -33662,18 +33665,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [438, 'value'],
+									at: [439, 'value'],
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425,
-										426, 441, 442
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426,
+										427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -33732,14 +33735,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -33782,7 +33785,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [213, 'condition'],
-									kinds: [234, 418, 419]
+									kinds: [234, 419, 420]
 								}
 							]
 						},
@@ -33800,8 +33803,8 @@ export const build: PortableBuildTable = {
 									at: [213, 'consequence'],
 									kinds: [
 										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 427,
-										428, 432, 433
+										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 428,
+										429, 433, 434
 									],
 									refined: [228],
 									tokens: {
@@ -33828,9 +33831,9 @@ export const build: PortableBuildTable = {
 													seats: [
 														{
 															at: [228, 'label'],
-															kinds: [505],
+															kinds: [506],
 															leaf: 'identifier',
-															texts: [1, 505],
+															texts: [1, 506],
 															pattern: {
 																source:
 																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -33893,10 +33896,10 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [198, 'fromClause'],
-									kinds: [273, 309, 413, 423, 424]
+									kinds: [273, 309, 414, 424, 425]
 								}
 							],
-							reads: [309, 423, 424]
+							reads: [309, 424, 425]
 						},
 						{
 							name: 'importAttribute',
@@ -33934,8 +33937,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [413, 'source'],
-									kinds: [273, 423, 424]
+									at: [414, 'source'],
+									kinds: [273, 424, 425]
 								}
 							],
 							requires: [['importClause']]
@@ -33959,7 +33962,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [413, 'importClause'],
+									at: [414, 'importClause'],
 									kinds: [199]
 								}
 							],
@@ -34074,10 +34077,10 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [198, 'fromClause'],
-									kinds: [273, 309, 413, 423, 424]
+									kinds: [273, 309, 414, 424, 425]
 								}
 							],
-							reads: [309, 423, 424]
+							reads: [309, 424, 425]
 						},
 						{
 							name: 'importAttribute',
@@ -34115,8 +34118,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [413, 'source'],
-									kinds: [273, 423, 424]
+									at: [414, 'source'],
+									kinds: [273, 424, 425]
 								}
 							],
 							requires: [['importClause']]
@@ -34140,7 +34143,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [413, 'importClause'],
+									at: [414, 'importClause'],
 									kinds: [199]
 								}
 							],
@@ -34200,9 +34203,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [228, 'label'],
-									kinds: [505],
+									kinds: [506],
 									leaf: 'identifier',
-									texts: [1, 505],
+									texts: [1, 506],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -34225,8 +34228,8 @@ export const build: PortableBuildTable = {
 									at: [228, 'body'],
 									kinds: [
 										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 427,
-										428, 432, 433
+										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 428,
+										429, 433, 434
 									],
 									refined: [228],
 									tokens: {
@@ -34253,9 +34256,9 @@ export const build: PortableBuildTable = {
 													seats: [
 														{
 															at: [228, 'label'],
-															kinds: [505],
+															kinds: [506],
 															leaf: 'identifier',
-															texts: [1, 505],
+															texts: [1, 506],
 															pattern: {
 																source:
 																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -34304,15 +34307,15 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 207, 208, 227, 234, 235, 236,
 										237, 238, 242, 245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273,
-										274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421,
-										422, 423, 424, 425, 426, 441, 442
+										274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422,
+										423, 424, 425, 426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
 										';': 227,
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -34339,15 +34342,15 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 227, 234, 235, 236, 237, 238,
 										242, 245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276,
-										277, 278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423,
-										424, 425, 426, 441, 442
+										277, 278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424,
+										425, 426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
 										';': 227,
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -34375,14 +34378,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -34408,8 +34411,8 @@ export const build: PortableBuildTable = {
 									at: [215, 'body'],
 									kinds: [
 										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 427,
-										428, 432, 433
+										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 428,
+										429, 433, 434
 									],
 									refined: [228],
 									tokens: {
@@ -34436,9 +34439,9 @@ export const build: PortableBuildTable = {
 													seats: [
 														{
 															at: [228, 'label'],
-															kinds: [505],
+															kinds: [506],
 															leaf: 'identifier',
-															texts: [1, 505],
+															texts: [1, 506],
 															pattern: {
 																source:
 																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -34486,8 +34489,8 @@ export const build: PortableBuildTable = {
 									at: [219, 'body'],
 									kinds: [
 										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 427,
-										428, 432, 433
+										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 428,
+										429, 433, 434
 									],
 									refined: [228],
 									tokens: {
@@ -34514,9 +34517,9 @@ export const build: PortableBuildTable = {
 													seats: [
 														{
 															at: [228, 'label'],
-															kinds: [505],
+															kinds: [506],
 															leaf: 'identifier',
-															texts: [1, 505],
+															texts: [1, 506],
 															pattern: {
 																source:
 																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -34543,7 +34546,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [219, 'condition'],
-									kinds: [234, 418, 419]
+									kinds: [234, 419, 420]
 								}
 							]
 						}
@@ -34578,7 +34581,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [216, 'header'],
-									kinds: [217, 443, 444, 445, 446]
+									kinds: [217, 404, 444, 445, 446, 447, 448]
 								}
 							]
 						},
@@ -34596,8 +34599,8 @@ export const build: PortableBuildTable = {
 									at: [216, 'body'],
 									kinds: [
 										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 427,
-										428, 432, 433
+										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 428,
+										429, 433, 434
 									],
 									refined: [228],
 									tokens: {
@@ -34624,9 +34627,9 @@ export const build: PortableBuildTable = {
 													seats: [
 														{
 															at: [228, 'label'],
-															kinds: [505],
+															kinds: [506],
 															leaf: 'identifier',
-															texts: [1, 505],
+															texts: [1, 506],
 															pattern: {
 																source:
 																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -34686,7 +34689,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [218, 'condition'],
-									kinds: [234, 418, 419]
+									kinds: [234, 419, 420]
 								}
 							]
 						},
@@ -34704,8 +34707,8 @@ export const build: PortableBuildTable = {
 									at: [218, 'body'],
 									kinds: [
 										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 427,
-										428, 432, 433
+										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 428,
+										429, 433, 434
 									],
 									refined: [228],
 									tokens: {
@@ -34732,9 +34735,9 @@ export const build: PortableBuildTable = {
 													seats: [
 														{
 															at: [228, 'label'],
-															kinds: [505],
+															kinds: [506],
 															leaf: 'identifier',
-															texts: [1, 505],
+															texts: [1, 506],
 															pattern: {
 																source:
 																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -34784,14 +34787,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -34829,7 +34832,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [221, 'object'],
-									kinds: [234, 418, 419]
+									kinds: [234, 419, 420]
 								}
 							]
 						},
@@ -34847,8 +34850,8 @@ export const build: PortableBuildTable = {
 									at: [221, 'body'],
 									kinds: [
 										191, 196, 198, 205, 206, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224,
-										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 427,
-										428, 432, 433
+										225, 226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401, 402, 403, 428,
+										429, 433, 434
 									],
 									refined: [228],
 									tokens: {
@@ -34875,9 +34878,9 @@ export const build: PortableBuildTable = {
 													seats: [
 														{
 															at: [228, 'label'],
-															kinds: [505],
+															kinds: [506],
 															leaf: 'identifier',
-															texts: [1, 505],
+															texts: [1, 506],
 															pattern: {
 																source:
 																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -34923,7 +34926,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [214, 'value'],
-									kinds: [234, 418, 419]
+									kinds: [234, 419, 420]
 								}
 							]
 						},
@@ -34990,14 +34993,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -35111,10 +35114,10 @@ export const build: PortableBuildTable = {
 									at: [378, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365,
-										366, 367, 369, 378, 379, 381, 382, 506, 507
+										366, 367, 369, 378, 379, 381, 382, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -35124,7 +35127,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -35170,10 +35173,10 @@ export const build: PortableBuildTable = {
 									at: [350, 'left'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -35183,7 +35186,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -35210,10 +35213,10 @@ export const build: PortableBuildTable = {
 									at: [350, 'right'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -35223,7 +35226,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -35250,10 +35253,10 @@ export const build: PortableBuildTable = {
 									at: [350, 'consequence'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -35263,7 +35266,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -35290,10 +35293,10 @@ export const build: PortableBuildTable = {
 									at: [350, 'alternative'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -35303,7 +35306,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -35393,10 +35396,10 @@ export const build: PortableBuildTable = {
 									at: [383, 'returnType'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 337, 339, 345, 346, 348, 349, 350, 351,
-										352, 358, 359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										352, 358, 359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -35406,7 +35409,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -35502,8 +35505,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -35576,10 +35579,10 @@ export const build: PortableBuildTable = {
 									at: [345, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -35589,7 +35592,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -35685,8 +35688,8 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [472, 'receiver'],
-									kinds: [470]
+									at: [473, 'receiver'],
+									kinds: [471]
 								}
 							]
 						}
@@ -35748,9 +35751,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [351, 'name'],
-									kinds: [319, 507],
+									kinds: [319, 508],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -35778,10 +35781,10 @@ export const build: PortableBuildTable = {
 									at: [391, 'items'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -35791,7 +35794,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -35851,7 +35854,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [284, 'elements'],
-									kinds: [235, 236, 273, 423, 424]
+									kinds: [235, 236, 273, 424, 425]
 								}
 							]
 						}
@@ -35861,7 +35864,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							member: 'source',
-							kinds: [235, 236, 273, 423, 424]
+							kinds: [235, 236, 273, 424, 425]
 						},
 						{
 							absent: [],
@@ -35897,14 +35900,14 @@ export const build: PortableBuildTable = {
 									kinds: [
 										1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
 										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424,
-										425, 426, 441, 442
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425,
+										426, 427, 442, 443
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
+										'import.meta': 443,
+										'new.target': 442,
 										super: 280,
 										this: 279
 									},
@@ -35934,8 +35937,8 @@ export const build: PortableBuildTable = {
 							kinds: [
 								1, 128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245,
 								248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279,
-								280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426, 441,
-								442
+								280, 281, 282, 283, 300, 305, 306, 307, 308, 316, 406, 419, 420, 421, 422, 423, 424, 425, 426, 427, 442,
+								443
 							]
 						},
 						{
@@ -35977,7 +35980,7 @@ export const build: PortableBuildTable = {
 						[391, 'items'],
 						[393, 'items'],
 						[399, 'type'],
-						[411, 'indexType']
+						[412, 'indexType']
 					]
 				}
 			]
@@ -36003,10 +36006,10 @@ export const build: PortableBuildTable = {
 									at: [359, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365,
-										366, 367, 369, 378, 379, 381, 382, 506, 507
+										366, 367, 369, 378, 379, 381, 382, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -36016,7 +36019,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -36060,9 +36063,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [349, 'name'],
-									kinds: [507],
+									kinds: [508],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -36086,10 +36089,10 @@ export const build: PortableBuildTable = {
 									at: [349, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -36099,7 +36102,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -36146,10 +36149,10 @@ export const build: PortableBuildTable = {
 									at: [382, 'left'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -36159,7 +36162,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -36186,10 +36189,10 @@ export const build: PortableBuildTable = {
 									at: [382, 'right'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -36199,7 +36202,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -36244,8 +36247,8 @@ export const build: PortableBuildTable = {
 								{
 									at: [362, 'content'],
 									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 281, 282, 283, 404, 405,
-										423, 424
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 281, 282, 283, 405, 406,
+										424, 425
 									]
 								}
 							]
@@ -36283,10 +36286,10 @@ export const build: PortableBuildTable = {
 									at: [360, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365,
-										366, 367, 369, 378, 379, 381, 382, 506, 507
+										366, 367, 369, 378, 379, 381, 382, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -36296,7 +36299,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -36323,10 +36326,10 @@ export const build: PortableBuildTable = {
 									at: [360, 'indexType'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -36336,7 +36339,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -36382,10 +36385,10 @@ export const build: PortableBuildTable = {
 									at: [365, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365,
-										366, 367, 369, 378, 379, 381, 382, 506, 507
+										366, 367, 369, 378, 379, 381, 382, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -36395,7 +36398,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -36464,7 +36467,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [400, 'items'],
-									kinds: [191, 301, 370, 371, 376, 377, 401, 402, 403, 411, 412, 432, 433, 457, 458, 459],
+									kinds: [191, 301, 370, 371, 376, 377, 401, 402, 403, 412, 413, 433, 434, 459, 460, 461],
 									within: [
 										{
 											builder: 'objectTypeContent',
@@ -36528,10 +36531,10 @@ export const build: PortableBuildTable = {
 									at: [342, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -36541,7 +36544,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -36587,10 +36590,10 @@ export const build: PortableBuildTable = {
 									at: [366, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -36600,7 +36603,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -36682,10 +36685,10 @@ export const build: PortableBuildTable = {
 									at: [352, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -36695,7 +36698,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -37069,10 +37072,10 @@ export const build: PortableBuildTable = {
 									at: [380, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -37082,7 +37085,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -37111,7 +37114,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 506,
+					kind: 507,
 					members: [],
 					presets: [],
 					flags: {},
@@ -37140,10 +37143,10 @@ export const build: PortableBuildTable = {
 									at: [343, 'type'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -37153,7 +37156,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -37242,10 +37245,10 @@ export const build: PortableBuildTable = {
 									at: [393, 'items'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 340, 341, 342, 343, 345, 346, 348,
-										349, 350, 351, 358, 359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										349, 350, 351, 358, 359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -37255,7 +37258,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -37304,10 +37307,10 @@ export const build: PortableBuildTable = {
 									at: [381, 'left'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -37317,7 +37320,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -37344,10 +37347,10 @@ export const build: PortableBuildTable = {
 									at: [381, 'right'],
 									kinds: [
 										39, 40, 41, 42, 43, 45, 77, 143, 144, 145, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 506, 507
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 507, 508
 									],
 									leaf: 'identifier',
-									texts: [1, 507],
+									texts: [1, 508],
 									tokens: {
 										'*': 364,
 										any: 39,
@@ -37357,7 +37360,7 @@ export const build: PortableBuildTable = {
 										object: 45,
 										string: 42,
 										symbol: 43,
-										this: 506,
+										this: 507,
 										'unique symbol': 143,
 										unknown: 144,
 										void: 77
@@ -37440,25 +37443,24 @@ export const build: PortableBuildTable = {
 		'371': ['name'],
 		'388': ['name'],
 		'403': ['value'],
-		'404': ['value'],
-		'406': ['left', 'right'],
-		'414': ['expression'],
-		'418': ['expression'],
-		'420': ['function'],
+		'405': ['value'],
+		'407': ['left', 'right'],
+		'415': ['expression'],
+		'419': ['expression'],
 		'421': ['function'],
 		'422': ['function'],
-		'423': ['elements'],
+		'423': ['function'],
 		'424': ['elements'],
-		'425': ['argument'],
+		'425': ['elements'],
 		'426': ['argument'],
-		'438': ['value'],
+		'427': ['argument'],
 		'439': ['value'],
-		'443': ['right'],
-		'444': ['value', 'right'],
-		'445': ['right'],
+		'440': ['value'],
+		'444': ['right'],
+		'445': ['value', 'right'],
 		'446': ['right'],
-		'454': ['name'],
-		'455': ['name'],
+		'447': ['right'],
+		'448': ['right'],
 		'456': ['name'],
 		'457': ['name'],
 		'458': ['name'],
@@ -37466,9 +37468,11 @@ export const build: PortableBuildTable = {
 		'460': ['name'],
 		'461': ['name'],
 		'462': ['name'],
-		'463': ['name', 'value'],
-		'464': ['name', 'value'],
-		'470': ['value']
+		'463': ['name'],
+		'464': ['name'],
+		'465': ['name', 'value'],
+		'466': ['name', 'value'],
+		'471': ['value']
 	},
 	features: [
 		'AbstractClasses',

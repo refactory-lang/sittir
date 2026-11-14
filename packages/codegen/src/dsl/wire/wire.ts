@@ -314,10 +314,11 @@ export function wireLiftRenamedTo(name: string): string | undefined {
 export function wireRenameLift(liftName: string, newName: string, hoisted: boolean = false): void {
 	if (!currentContext) return;
 	const named = currentContext.liftNames.get(liftName);
-	if (named !== undefined && named.name !== newName) {
+	const consumedAgain = hoisted && named?.hoisted === true;
+	if (named !== undefined && named.name !== newName && !consumedAgain) {
 		throw new Error(`variant(): the shared lift '${liftName}' is named '${named.name}' by one owner and '${newName}' by another; one kind has one name`);
 	}
-	currentContext.liftNames.set(liftName, { name: newName, hoisted: hoisted || named?.hoisted === true });
+	if (!consumedAgain) currentContext.liftNames.set(liftName, { name: newName, hoisted: hoisted || named?.hoisted === true });
 	if (hoisted) recordLiftEditor(currentContext, liftName);
 	recordLiftClaim(liftName);
 }

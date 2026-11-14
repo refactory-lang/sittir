@@ -637,6 +637,11 @@ export default grammar(enrich(base), wire({
 			'1/2/2': field('terminator'),
 			'1/3': variant('using_kind'),
 			'1/3/2': field('terminator')
+		},
+
+		for_header_using_kind: {
+			'kind:/0': variant('plain', { default: true }),
+			'kind:/1': variant('await')
 		}
 	},
 	extras: ($, previous) => [...(previous ?? [])],

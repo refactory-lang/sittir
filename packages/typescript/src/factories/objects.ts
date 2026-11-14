@@ -16878,55 +16878,51 @@ function buildForHeaderLetConstKind$with$right(this: Received<Held>, ...args: un
 	return buildForHeaderLetConstKind$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
-export function buildForHeaderUsingKind<
-	LeftSlot extends T.ForHeaderUsingKind.Config['left'],
-	RightSlot extends T.ForHeaderUsingKind.Config['right']
+export function buildForHeaderUsingKindPlain<
+	LeftSlot extends T.ForHeaderUsingKindPlain.Config['left'],
+	RightSlot extends T.ForHeaderUsingKindPlain.Config['right']
 >(
-	config: RefusingConfig<T.ForHeaderUsingKind.Config, { left: LeftSlot; right: RightSlot }>,
-	options?: T.ForHeaderUsingKind.Options
-): T.ForHeaderUsingKind.Bound;
-export function buildForHeaderUsingKind(
-	config: T.ForHeaderUsingKind.Config,
-	options?: T.ForHeaderUsingKind.Options
-): T.ForHeaderUsingKind.Bound {
-	currentHandle()?.admit(TSKindId.ForHeaderUsingKind, [config]);
-	const _kind = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_kind']>>(config.kind);
+	config: RefusingConfig<T.ForHeaderUsingKindPlain.Config, { left: LeftSlot; right: RightSlot }>,
+	options?: T.ForHeaderUsingKindPlain.Options
+): T.ForHeaderUsingKindPlain.Bound;
+export function buildForHeaderUsingKindPlain(
+	config: T.ForHeaderUsingKindPlain.Config,
+	options?: T.ForHeaderUsingKindPlain.Options
+): T.ForHeaderUsingKindPlain.Bound {
+	currentHandle()?.admit(TSKindId.ForHeaderUsingKindPlain, [config]);
 	const _left = rejectReservedText(
 		config.left,
-		'ForHeaderUsingKind.left',
+		'ForHeaderUsingKindPlain.left',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKind['_terminator']>>(
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKindPlain['_terminator']>>(
 		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
-	const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_operator']>>(config.operator);
+	const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKindPlain['_operator']>>(config.operator);
 	const _right = rejectReservedText(
-		kindIdStorage<NonNullable<T.ForHeaderUsingKind['_right']>>(config.right),
-		'ForHeaderUsingKind.right',
+		kindIdStorage<NonNullable<T.ForHeaderUsingKindPlain['_right']>>(config.right),
+		'ForHeaderUsingKindPlain.right',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'for_header_using_kind', {
-			kind: _kind,
+		admitChildren(handle, 'for_header_using_kind_plain', {
 			left: _left,
 			terminator: _terminator,
 			operator: _operator,
 			right: _right
 		});
 	const node = {
-		$type: TSKindId.ForHeaderUsingKind as const,
-		_kind,
+		$type: TSKindId.ForHeaderUsingKindPlain as const,
 		_left,
 		_terminator,
 		_operator,
 		_right,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		kind: () => _kind,
 		left: () => hydrateStoredSlot(node, '_left'),
 		terminator: () => blankArmRead(_terminator),
 		operator: () => _operator,
@@ -16943,59 +16939,159 @@ export function buildForHeaderUsingKind(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		kind: buildForHeaderUsingKind$with$kind,
-		left: buildForHeaderUsingKind$with$left,
-		terminator: buildForHeaderUsingKind$with$terminator,
-		operator: buildForHeaderUsingKind$with$operator,
-		right: buildForHeaderUsingKind$with$right,
+		left: buildForHeaderUsingKindPlain$with$left,
+		terminator: buildForHeaderUsingKindPlain$with$terminator,
+		operator: buildForHeaderUsingKindPlain$with$operator,
+		right: buildForHeaderUsingKindPlain$with$right,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ForHeaderUsingKind.Bound;
+	return node as unknown as T.ForHeaderUsingKindPlain.Bound;
 }
 
-function buildForHeaderUsingKind$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function buildForHeaderUsingKindPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const config = node[INPUT] as T.ForHeaderUsingKind.Config;
-	const options = node[OPTIONS] as T.ForHeaderUsingKind.Options;
+	const config = node[INPUT] as T.ForHeaderUsingKindPlain.Config;
+	const options = node[OPTIONS] as T.ForHeaderUsingKindPlain.Options;
 	switch (setter) {
-		case 'kind':
-			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['kind']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, kind: value }, options))
-			);
 		case 'left':
 			return applySetter(args, (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, left: value }, options))
+				rebuilt(node, handle, () => buildForHeaderUsingKindPlain({ ...config, left: value }, options))
 			);
 		case 'terminator':
 			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind(config, { ...options, terminator: spelling }))
+				rebuilt(node, handle, () => buildForHeaderUsingKindPlain(config, { ...options, terminator: spelling }))
 			);
 		case 'operator':
-			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, operator: value }, options))
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKindPlain.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKindPlain({ ...config, operator: value }, options))
 			);
 		case 'right':
-			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['right']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, right: value }, options))
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKindPlain.Config>['right']>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKindPlain({ ...config, right: value }, options))
 			);
 	}
-	throw new Error(`for_header_using_kind has no $with.${setter}`);
+	throw new Error(`for_header_using_kind_plain has no $with.${setter}`);
 }
-function buildForHeaderUsingKind$with$kind(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildForHeaderUsingKind$with(receiverOf(this, '$with.kind'), 'kind', args);
+function buildForHeaderUsingKindPlain$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderUsingKindPlain$with(receiverOf(this, '$with.left'), 'left', args);
 }
-function buildForHeaderUsingKind$with$left(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildForHeaderUsingKind$with(receiverOf(this, '$with.left'), 'left', args);
+function buildForHeaderUsingKindPlain$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderUsingKindPlain$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
-function buildForHeaderUsingKind$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildForHeaderUsingKind$with(receiverOf(this, '$with.terminator'), 'terminator', args);
+function buildForHeaderUsingKindPlain$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderUsingKindPlain$with(receiverOf(this, '$with.operator'), 'operator', args);
 }
-function buildForHeaderUsingKind$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildForHeaderUsingKind$with(receiverOf(this, '$with.operator'), 'operator', args);
+function buildForHeaderUsingKindPlain$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderUsingKindPlain$with(receiverOf(this, '$with.right'), 'right', args);
 }
-function buildForHeaderUsingKind$with$right(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildForHeaderUsingKind$with(receiverOf(this, '$with.right'), 'right', args);
+
+export function buildForHeaderUsingKindAwait<
+	LeftSlot extends T.ForHeaderUsingKindAwait.Config['left'],
+	RightSlot extends T.ForHeaderUsingKindAwait.Config['right']
+>(
+	config: RefusingConfig<T.ForHeaderUsingKindAwait.Config, { left: LeftSlot; right: RightSlot }>,
+	options?: T.ForHeaderUsingKindAwait.Options
+): T.ForHeaderUsingKindAwait.Bound;
+export function buildForHeaderUsingKindAwait(
+	config: T.ForHeaderUsingKindAwait.Config,
+	options?: T.ForHeaderUsingKindAwait.Options
+): T.ForHeaderUsingKindAwait.Bound {
+	currentHandle()?.admit(TSKindId.ForHeaderUsingKindAwait, [config]);
+	const _left = rejectReservedText(
+		config.left,
+		'ForHeaderUsingKindAwait.left',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKindAwait['_terminator']>>(
+		blankArmStored(options?.terminator),
+		[['\n', TSKindId.AutomaticSemicolon] as const]
+	);
+	const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKindAwait['_operator']>>(config.operator);
+	const _right = rejectReservedText(
+		kindIdStorage<NonNullable<T.ForHeaderUsingKindAwait['_right']>>(config.right),
+		'ForHeaderUsingKindAwait.right',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_header_using_kind_await', {
+			left: _left,
+			terminator: _terminator,
+			operator: _operator,
+			right: _right
+		});
+	const node = {
+		$type: TSKindId.ForHeaderUsingKindAwait as const,
+		_left,
+		_terminator,
+		_operator,
+		_right,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		left: () => hydrateStoredSlot(node, '_left'),
+		terminator: () => blankArmRead(_terminator),
+		operator: () => _operator,
+		right: () => hydrateStoredSlot(node, '_right'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[OPTIONS]: options,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		left: buildForHeaderUsingKindAwait$with$left,
+		terminator: buildForHeaderUsingKindAwait$with$terminator,
+		operator: buildForHeaderUsingKindAwait$with$operator,
+		right: buildForHeaderUsingKindAwait$with$right,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ForHeaderUsingKindAwait.Bound;
+}
+
+function buildForHeaderUsingKindAwait$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForHeaderUsingKindAwait.Config;
+	const options = node[OPTIONS] as T.ForHeaderUsingKindAwait.Options;
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKindAwait({ ...config, left: value }, options))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKindAwait(config, { ...options, terminator: spelling }))
+			);
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKindAwait.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKindAwait({ ...config, operator: value }, options))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKindAwait.Config>['right']>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKindAwait({ ...config, right: value }, options))
+			);
+	}
+	throw new Error(`for_header_using_kind_await has no $with.${setter}`);
+}
+function buildForHeaderUsingKindAwait$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderUsingKindAwait$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function buildForHeaderUsingKindAwait$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderUsingKindAwait$with(receiverOf(this, '$with.terminator'), 'terminator', args);
+}
+function buildForHeaderUsingKindAwait$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderUsingKindAwait$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function buildForHeaderUsingKindAwait$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForHeaderUsingKindAwait$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
 export const buildFormalParametersGetAccessorSignature: TSKindId.FormalParametersGetAccessorSignature =
@@ -19009,8 +19105,6 @@ function buildPublicFieldDefinitionAccessor$with$value(this: Received<Held>, ...
 	return buildPublicFieldDefinitionAccessor$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
-export const buildForHeaderUsingKindKind: TSKindId.ForHeaderUsingKindKind = TSKindId.ForHeaderUsingKindKind;
-
 export function buildHtmlComment(text: string): T.HtmlComment.Bound {
 	if (typeof text !== 'string') throw new Error(`html_comment: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
@@ -20223,7 +20317,8 @@ export type FluentKindMap = {
 	for_header_lhs: T.ForHeaderLhs.Bound;
 	for_header_var_kind: T.ForHeaderVarKind.Bound;
 	for_header_let_const_kind: T.ForHeaderLetConstKind.Bound;
-	for_header_using_kind: T.ForHeaderUsingKind.Bound;
+	for_header_using_kind_plain: T.ForHeaderUsingKindPlain.Bound;
+	for_header_using_kind_await: T.ForHeaderUsingKindAwait.Bound;
 	_formal_parameters_get_accessor_signature: T.FormalParametersGetAccessorSignature;
 	_formal_parameters_set_accessor_signature: T.FormalParametersSetAccessorSignature.Bound;
 	_formal_parameters_elements_set_accessor_signature: T.FormalParametersElementsSetAccessorSignature.Bound;
@@ -20239,7 +20334,6 @@ export type FluentKindMap = {
 	abstract_method_signature_setter: T.AbstractMethodSignatureSetter.Bound;
 	public_field_definition_plain: T.PublicFieldDefinitionPlain.Bound;
 	public_field_definition_accessor: T.PublicFieldDefinitionAccessor.Bound;
-	for_header_using_kind_kind: T.ForHeaderUsingKindKind;
 	html_comment: T.HtmlComment;
 	jsx_text: T.JsxText;
 	_template_chars: T.TemplateChars;
@@ -20505,7 +20599,8 @@ export const _factoryMap = {
 	for_header_lhs: buildForHeaderLhs,
 	for_header_var_kind: buildForHeaderVarKind,
 	for_header_let_const_kind: buildForHeaderLetConstKind,
-	for_header_using_kind: buildForHeaderUsingKind,
+	for_header_using_kind_plain: buildForHeaderUsingKindPlain,
+	for_header_using_kind_await: buildForHeaderUsingKindAwait,
 	_formal_parameters_get_accessor_signature: buildFormalParametersGetAccessorSignature,
 	_formal_parameters_set_accessor_signature: buildFormalParametersSetAccessorSignature,
 	_formal_parameters_elements_set_accessor_signature: buildFormalParametersElementsSetAccessorSignature,
@@ -20521,7 +20616,6 @@ export const _factoryMap = {
 	abstract_method_signature_setter: buildAbstractMethodSignatureSetter,
 	public_field_definition_plain: buildPublicFieldDefinitionPlain,
 	public_field_definition_accessor: buildPublicFieldDefinitionAccessor,
-	for_header_using_kind_kind: buildForHeaderUsingKindKind,
 	html_comment: buildHtmlComment,
 	jsx_text: buildJsxText,
 	_template_chars: buildTemplateChars,

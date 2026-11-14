@@ -284,6 +284,20 @@
     ]
   },
   {
+    "type": "for_header_using_kind",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "for_header_using_kind_await",
+        "named": true
+      },
+      {
+        "type": "for_header_using_kind_plain",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "import_specifier",
     "named": true,
     "subtypes": [
@@ -3647,16 +3661,16 @@
     }
   },
   {
-    "type": "for_header_using_kind",
+    "type": "for_header_using_kind_await",
     "named": true,
     "fields": {
       "kind": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
-            "type": "for_header_using_kind_kind",
-            "named": true
+            "type": "await",
+            "named": false
           },
           {
             "type": "using",
@@ -3723,9 +3737,76 @@
     }
   },
   {
-    "type": "for_header_using_kind_kind",
+    "type": "for_header_using_kind_plain",
     "named": true,
-    "fields": {}
+    "fields": {
+      "kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "using",
+            "named": false
+          }
+        ]
+      },
+      "left": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "array_pattern",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "object_pattern",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "in",
+            "named": false
+          },
+          {
+            "type": "of",
+            "named": false
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "sequence_expression",
+            "named": true
+          }
+        ]
+      },
+      "terminator": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "automatic_semicolon",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "for_header_var_kind",

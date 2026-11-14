@@ -776,45 +776,6 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between assignment_expression, for_header_using_kind_kind on '{' resolved by AddConflict (default)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "assignment_expression",
-          "for_header_using_kind_kind"
-        ]
-      },
-      "step": "default",
-      "sourceChains": [
-        [
-          "assignment_expression"
-        ],
-        [
-          "for_header_using_kind_kind"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'for'",
-          "'('",
-          "'await'",
-          "'using'"
-        ],
-        "lookahead": "'{'",
-        "interpretations": [
-          "assignment_expression",
-          "for_header_using_kind_kind"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "typescript",
     "message": "conflict between assignment_expression, pattern on '=' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
@@ -2263,14 +2224,14 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between primary_expression, for_header_using_kind on 'in' resolved by AddConflict (upstream-declared)",
+    "message": "conflict between primary_expression, for_header_using_kind_await on 'in' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
           "primary_expression",
-          "for_header_using_kind"
+          "for_header_using_kind_await"
         ]
       },
       "step": "upstream-declared",
@@ -2279,6 +2240,49 @@
           "primary_expression"
         ],
         [
+          "for_header_using_kind_await",
+          "for_header_using_kind",
+          "_for_header"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'for'",
+          "'('",
+          "'await'",
+          "'using'",
+          "identifier"
+        ],
+        "lookahead": "'in'",
+        "interpretations": [
+          "primary_expression",
+          "for_header_using_kind_await"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between primary_expression, for_header_using_kind_plain on 'in' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "for_header_using_kind_plain"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "for_header_using_kind_plain",
           "for_header_using_kind",
           "_for_header"
         ]
@@ -2293,7 +2297,7 @@
         "lookahead": "'in'",
         "interpretations": [
           "primary_expression",
-          "for_header_using_kind"
+          "for_header_using_kind_plain"
         ]
       }
     }

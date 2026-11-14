@@ -109,8 +109,13 @@ export interface SubBuilderRowKind {
 	'exportStatementDefault.from': TSKindId.ExportStatementDefaultFrom;
 	'forHeader.letConstKind': TSKindId.ForHeaderLetConstKind;
 	'forHeader.lhs': TSKindId.ForHeaderLhs;
-	'forHeader.usingKind': TSKindId.ForHeaderUsingKind;
+	'forHeader.usingKind': TSKindId.ForHeaderUsingKindPlain;
+	'forHeader.usingKind.await': TSKindId.ForHeaderUsingKindAwait;
+	'forHeader.usingKind.plain': TSKindId.ForHeaderUsingKindPlain;
 	'forHeader.varKind': TSKindId.ForHeaderVarKind;
+	forHeaderUsingKind: TSKindId.ForHeaderUsingKindPlain;
+	'forHeaderUsingKind.await': TSKindId.ForHeaderUsingKindAwait;
+	'forHeaderUsingKind.plain': TSKindId.ForHeaderUsingKindPlain;
 	'importSpecifier.as': TSKindId.ImportSpecifierAs;
 	'importSpecifier.name': TSKindId.ImportSpecifierName;
 	'indexSignature.colon': TSKindId.IndexSignatureColon;

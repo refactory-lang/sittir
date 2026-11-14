@@ -77,6 +77,16 @@ describe('variants of a choice a field holds', () => {
 		expect(shape(rules[copy!])).toEqual(['await', 'using']);
 	}, 120_000);
 
+	it('hoist a lift two rules share into each, when both declare the variants', async () => {
+		const both = `edits: { declaration: { 'kind:/0': variant('plain', { default: true }), 'kind:/1': variant('await') }, header: { 'kind:/0': variant('plain', { default: true }), 'kind:/1': variant('await') } }`;
+		const { rules } = await evaluateSittirGrammar(baseModule, 'usingtest', both);
+		expect(shape(rules.declaration)).toEqual(['declaration_plain', 'declaration_await']);
+		expect(shape(rules.header)).toEqual(['header_plain', 'header_await']);
+		expect(shape(rules.declaration_await)).toEqual([{ kind: ['await', 'using'] }, { identifier: 'identifier' }, ';']);
+		expect(shape(rules.header_await)).toEqual(['(', { kind: ['await', 'using'] }, { identifier: 'identifier' }, ')']);
+		expect(Object.keys(rules).filter((name) => name.endsWith('_arm') || name.endsWith('_kind'))).toEqual([]);
+	}, 120_000);
+
 	it('keep one default when the declared default displaces one an earlier layer set', async () => {
 		const layered = `edits: { declaration: [{ 'kind:/0': arm.default }, { 'kind:/0': variant('plain'), 'kind:/1': variant('await', { default: true }) }] }`;
 		const { rules } = await evaluateSittirGrammar(baseModule, 'usingtest', layered);

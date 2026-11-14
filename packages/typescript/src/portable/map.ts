@@ -36181,7 +36181,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly header:
 				| V.Unmapped<'typescript:for_header_let_const_kind'>
 				| V.Unmapped<'typescript:for_header_lhs'>
-				| V.Unmapped<'typescript:for_header_using_kind'>
+				| V.Unmapped<'typescript:for_header_using_kind_await'>
+				| V.Unmapped<'typescript:for_header_using_kind_plain'>
 				| V.Unmapped<'typescript:for_header_var_kind'>;
 			readonly label: V.Read<TypeScriptMap, 'identifier.label'>;
 			readonly $forms: V.Form<'body' | 'header'>;
@@ -38673,7 +38674,8 @@ declare module '@sittir/types/vocabulary' {
 		readonly 'typescript:extends_clause_single': T.ExtendsClauseSingle.Parsed;
 		readonly 'typescript:for_header_let_const_kind': T.ForHeaderLetConstKind.Parsed;
 		readonly 'typescript:for_header_lhs': T.ForHeaderLhs.Parsed;
-		readonly 'typescript:for_header_using_kind': T.ForHeaderUsingKind.Parsed;
+		readonly 'typescript:for_header_using_kind_await': T.ForHeaderUsingKindAwait.Parsed;
+		readonly 'typescript:for_header_using_kind_plain': T.ForHeaderUsingKindPlain.Parsed;
 		readonly 'typescript:for_header_var_kind': T.ForHeaderVarKind.Parsed;
 		readonly 'typescript:type_query_subscript_expression': T.TypeQuerySubscriptExpression.Parsed;
 		readonly 'typescript:using_declaration_await': T.UsingDeclarationAwait.Parsed;

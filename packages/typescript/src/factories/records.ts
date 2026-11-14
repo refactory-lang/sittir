@@ -25708,234 +25708,416 @@ function withForHeaderLetConstKind(node: object, setter: string, args: readonly 
 	throw new Error(`for_header_let_const_kind has no $with.${setter}`);
 }
 
-export function buildForHeaderUsingKind<
-	LeftSlot extends T.ForHeaderUsingKind.Config['left'],
-	RightSlot extends T.ForHeaderUsingKind.Config['right']
+export function buildForHeaderUsingKindPlain<
+	LeftSlot extends T.ForHeaderUsingKindPlain.Config['left'],
+	RightSlot extends T.ForHeaderUsingKindPlain.Config['right']
 >(
-	config: RefusingConfig<T.ForHeaderUsingKind.Config, { left: LeftSlot; right: RightSlot }>,
-	options?: T.ForHeaderUsingKind.Options
-): T.ForHeaderUsingKind.Bound;
-export function buildForHeaderUsingKind(
-	config: T.ForHeaderUsingKind.Config,
-	options?: T.ForHeaderUsingKind.Options
-): T.ForHeaderUsingKind.Bound {
-	currentHandle()?.admit(TSKindId.ForHeaderUsingKind, [config]);
-	const _kind = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_kind']>>(config.kind);
+	config: RefusingConfig<T.ForHeaderUsingKindPlain.Config, { left: LeftSlot; right: RightSlot }>,
+	options?: T.ForHeaderUsingKindPlain.Options
+): T.ForHeaderUsingKindPlain.Bound;
+export function buildForHeaderUsingKindPlain(
+	config: T.ForHeaderUsingKindPlain.Config,
+	options?: T.ForHeaderUsingKindPlain.Options
+): T.ForHeaderUsingKindPlain.Bound {
+	currentHandle()?.admit(TSKindId.ForHeaderUsingKindPlain, [config]);
 	const _left = rejectReservedText(
 		config.left,
-		'ForHeaderUsingKind.left',
+		'ForHeaderUsingKindPlain.left',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKind['_terminator']>>(
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKindPlain['_terminator']>>(
 		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
-	const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_operator']>>(config.operator);
+	const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKindPlain['_operator']>>(config.operator);
 	const _right = rejectReservedText(
-		kindIdStorage<NonNullable<T.ForHeaderUsingKind['_right']>>(config.right),
-		'ForHeaderUsingKind.right',
+		kindIdStorage<NonNullable<T.ForHeaderUsingKindPlain['_right']>>(config.right),
+		'ForHeaderUsingKindPlain.right',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'for_header_using_kind', {
-			kind: _kind,
+		admitChildren(handle, 'for_header_using_kind_plain', {
 			left: _left,
 			terminator: _terminator,
 			operator: _operator,
 			right: _right
 		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ForHeaderUsingKind as const, { _kind, _left, _terminator, _operator, _right });
+	handle?.verifyStored?.(TSKindId.ForHeaderUsingKindPlain as const, { _left, _terminator, _operator, _right });
 	return arena.scope(() => {
-		const record = arena.record(TSKindId.ForHeaderUsingKind as const);
-		storeCell(arena, record, 2, 2, _kind);
-		storeCell(arena, record, 3, 3, _left);
-		storeCell(arena, record, 4, 7, _terminator);
-		storeCell(arena, record, 5, 8, _operator);
-		storeCell(arena, record, 6, 9, _right);
+		const record = arena.record(TSKindId.ForHeaderUsingKindPlain as const);
+		storeCell(arena, record, 2, 2, _left);
+		storeCell(arena, record, 3, 6, _terminator);
+		storeCell(arena, record, 4, 7, _operator);
+		storeCell(arena, record, 5, 8, _right);
 		const node = arena.view(record);
-		return node as unknown as T.ForHeaderUsingKind.Bound;
+		return node as unknown as T.ForHeaderUsingKindPlain.Bound;
 	});
 }
 
-function buildForHeaderUsingKind$patch(
+function buildForHeaderUsingKindPlain$patch(
 	source: object,
-	config: T.ForHeaderUsingKind.Config,
-	options?: T.ForHeaderUsingKind.Options
-): T.ForHeaderUsingKind.Bound {
-	currentHandle()?.admit(TSKindId.ForHeaderUsingKind, [config]);
-	const _kind = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_kind']>>(config.kind);
+	config: T.ForHeaderUsingKindPlain.Config,
+	options?: T.ForHeaderUsingKindPlain.Options
+): T.ForHeaderUsingKindPlain.Bound {
+	currentHandle()?.admit(TSKindId.ForHeaderUsingKindPlain, [config]);
 	const _left = rejectReservedText(
 		config.left,
-		'ForHeaderUsingKind.left',
+		'ForHeaderUsingKindPlain.left',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKind['_terminator']>>(
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKindPlain['_terminator']>>(
 		blankArmStored(options?.terminator),
 		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
-	const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_operator']>>(config.operator);
+	const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKindPlain['_operator']>>(config.operator);
 	const _right = rejectReservedText(
-		kindIdStorage<NonNullable<T.ForHeaderUsingKind['_right']>>(config.right),
-		'ForHeaderUsingKind.right',
+		kindIdStorage<NonNullable<T.ForHeaderUsingKindPlain['_right']>>(config.right),
+		'ForHeaderUsingKindPlain.right',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'for_header_using_kind', {
-			kind: _kind,
+		admitChildren(handle, 'for_header_using_kind_plain', {
 			left: _left,
 			terminator: _terminator,
 			operator: _operator,
 			right: _right
 		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ForHeaderUsingKind as const, { _kind, _left, _terminator, _operator, _right });
+	handle?.verifyStored?.(TSKindId.ForHeaderUsingKindPlain as const, { _left, _terminator, _operator, _right });
 	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.ForHeaderUsingKind as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'kind', _kind));
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'left', _left));
-		patchCell(arena, record, 4, 7, carriedSlot(source, 'terminator', _terminator));
-		patchCell(arena, record, 5, 8, carriedSlot(source, 'operator', _operator));
-		patchCell(arena, record, 6, 9, carriedSlot(source, 'right', _right));
+		const record = arena.copy(source, TSKindId.ForHeaderUsingKindPlain as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'terminator', _terminator));
+		patchCell(arena, record, 4, 7, carriedSlot(source, 'operator', _operator));
+		patchCell(arena, record, 5, 8, carriedSlot(source, 'right', _right));
 		const node = arena.view(record);
-		return node as unknown as T.ForHeaderUsingKind.Bound;
+		return node as unknown as T.ForHeaderUsingKindPlain.Bound;
 	});
 }
-function buildForHeaderUsingKind$set(
+function buildForHeaderUsingKindPlain$set(
 	source: object,
 	...[slot, input]:
-		| ['kind', Partial<T.ForHeaderUsingKind.Config>]
-		| ['left', Partial<T.ForHeaderUsingKind.Config>]
-		| ['operator', Partial<T.ForHeaderUsingKind.Config>]
-		| ['right', Partial<T.ForHeaderUsingKind.Config>]
-		| ['terminator', T.ForHeaderUsingKind.Options]
-): T.ForHeaderUsingKind.Bound {
+		| ['left', Partial<T.ForHeaderUsingKindPlain.Config>]
+		| ['operator', Partial<T.ForHeaderUsingKindPlain.Config>]
+		| ['right', Partial<T.ForHeaderUsingKindPlain.Config>]
+		| ['terminator', T.ForHeaderUsingKindPlain.Options]
+): T.ForHeaderUsingKindPlain.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
-			case 'kind':
 			case 'left':
 			case 'operator':
 			case 'right':
-				return buildForHeaderUsingKind$patch(
+				return buildForHeaderUsingKindPlain$patch(
 					source,
-					{ ...(inputs.config as T.ForHeaderUsingKind.Config), ...input },
-					inputs.options as T.ForHeaderUsingKind.Options
+					{ ...(inputs.config as T.ForHeaderUsingKindPlain.Config), ...input },
+					inputs.options as T.ForHeaderUsingKindPlain.Options
 				);
 			case 'terminator':
-				return buildForHeaderUsingKind$patch(source, inputs.config as T.ForHeaderUsingKind.Config, {
-					...(inputs.options as T.ForHeaderUsingKind.Options),
+				return buildForHeaderUsingKindPlain$patch(source, inputs.config as T.ForHeaderUsingKindPlain.Config, {
+					...(inputs.options as T.ForHeaderUsingKindPlain.Options),
 					...input
 				});
 		}
 	}
 	switch (slot) {
-		case 'kind': {
-			const config = input;
-			const _kind = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_kind']>>(config.kind);
-			return setSlot(
-				source,
-				TSKindId.ForHeaderUsingKind as const,
-				'for_header_using_kind',
-				0,
-				'kind',
-				_kind
-			) as unknown as T.ForHeaderUsingKind.Bound;
-		}
 		case 'left': {
 			const config = input;
 			const _left = rejectReservedText(
 				config.left,
-				'ForHeaderUsingKind.left',
+				'ForHeaderUsingKindPlain.left',
 				TSKindId.Identifier,
 				_reservedWords_buildIdentifier
 			);
 			return setSlot(
 				source,
-				TSKindId.ForHeaderUsingKind as const,
-				'for_header_using_kind',
-				1,
+				TSKindId.ForHeaderUsingKindPlain as const,
+				'for_header_using_kind_plain',
+				0,
 				'left',
 				_left
-			) as unknown as T.ForHeaderUsingKind.Bound;
+			) as unknown as T.ForHeaderUsingKindPlain.Bound;
 		}
 		case 'operator': {
 			const config = input;
-			const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_operator']>>(config.operator);
+			const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKindPlain['_operator']>>(config.operator);
 			return setSlot(
 				source,
-				TSKindId.ForHeaderUsingKind as const,
-				'for_header_using_kind',
-				3,
+				TSKindId.ForHeaderUsingKindPlain as const,
+				'for_header_using_kind_plain',
+				2,
 				'operator',
 				_operator
-			) as unknown as T.ForHeaderUsingKind.Bound;
+			) as unknown as T.ForHeaderUsingKindPlain.Bound;
 		}
 		case 'right': {
 			const config = input;
 			const _right = rejectReservedText(
-				kindIdStorage<NonNullable<T.ForHeaderUsingKind['_right']>>(config.right),
-				'ForHeaderUsingKind.right',
+				kindIdStorage<NonNullable<T.ForHeaderUsingKindPlain['_right']>>(config.right),
+				'ForHeaderUsingKindPlain.right',
 				TSKindId.Identifier,
 				_reservedWords_buildIdentifier
 			);
 			return setSlot(
 				source,
-				TSKindId.ForHeaderUsingKind as const,
-				'for_header_using_kind',
-				4,
+				TSKindId.ForHeaderUsingKindPlain as const,
+				'for_header_using_kind_plain',
+				3,
 				'right',
 				_right
-			) as unknown as T.ForHeaderUsingKind.Bound;
+			) as unknown as T.ForHeaderUsingKindPlain.Bound;
 		}
 		case 'terminator': {
 			const options = input;
-			const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKind['_terminator']>>(
+			const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKindPlain['_terminator']>>(
 				blankArmStored(options?.terminator),
 				[['\n', TSKindId.AutomaticSemicolon] as const]
 			);
 			return setSlot(
 				source,
-				TSKindId.ForHeaderUsingKind as const,
-				'for_header_using_kind',
-				2,
+				TSKindId.ForHeaderUsingKindPlain as const,
+				'for_header_using_kind_plain',
+				1,
 				'terminator',
 				_terminator
-			) as unknown as T.ForHeaderUsingKind.Bound;
+			) as unknown as T.ForHeaderUsingKindPlain.Bound;
 		}
 	}
 }
-function withForHeaderUsingKind(node: object, setter: string, args: readonly unknown[]): unknown {
+function withForHeaderUsingKindPlain(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'kind':
-			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['kind']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind$set(node, 'kind', { kind: value }))
-			);
 		case 'left':
 			return applySetter(args, (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind$set(node, 'left', { left: value }))
+				rebuilt(node, handle, () => buildForHeaderUsingKindPlain$set(node, 'left', { left: value }))
 			);
 		case 'terminator':
 			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind$set(node, 'terminator', { terminator: spelling }))
+				rebuilt(node, handle, () => buildForHeaderUsingKindPlain$set(node, 'terminator', { terminator: spelling }))
 			);
 		case 'operator':
-			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind$set(node, 'operator', { operator: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKindPlain.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKindPlain$set(node, 'operator', { operator: value }))
 			);
 		case 'right':
-			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['right']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind$set(node, 'right', { right: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKindPlain.Config>['right']>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKindPlain$set(node, 'right', { right: value }))
 			);
 	}
-	throw new Error(`for_header_using_kind has no $with.${setter}`);
+	throw new Error(`for_header_using_kind_plain has no $with.${setter}`);
+}
+
+export function buildForHeaderUsingKindAwait<
+	LeftSlot extends T.ForHeaderUsingKindAwait.Config['left'],
+	RightSlot extends T.ForHeaderUsingKindAwait.Config['right']
+>(
+	config: RefusingConfig<T.ForHeaderUsingKindAwait.Config, { left: LeftSlot; right: RightSlot }>,
+	options?: T.ForHeaderUsingKindAwait.Options
+): T.ForHeaderUsingKindAwait.Bound;
+export function buildForHeaderUsingKindAwait(
+	config: T.ForHeaderUsingKindAwait.Config,
+	options?: T.ForHeaderUsingKindAwait.Options
+): T.ForHeaderUsingKindAwait.Bound {
+	currentHandle()?.admit(TSKindId.ForHeaderUsingKindAwait, [config]);
+	const _left = rejectReservedText(
+		config.left,
+		'ForHeaderUsingKindAwait.left',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKindAwait['_terminator']>>(
+		blankArmStored(options?.terminator),
+		[['\n', TSKindId.AutomaticSemicolon] as const]
+	);
+	const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKindAwait['_operator']>>(config.operator);
+	const _right = rejectReservedText(
+		kindIdStorage<NonNullable<T.ForHeaderUsingKindAwait['_right']>>(config.right),
+		'ForHeaderUsingKindAwait.right',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_header_using_kind_await', {
+			left: _left,
+			terminator: _terminator,
+			operator: _operator,
+			right: _right
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ForHeaderUsingKindAwait as const, { _left, _terminator, _operator, _right });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ForHeaderUsingKindAwait as const);
+		storeCell(arena, record, 2, 2, _left);
+		storeCell(arena, record, 3, 6, _terminator);
+		storeCell(arena, record, 4, 7, _operator);
+		storeCell(arena, record, 5, 8, _right);
+		const node = arena.view(record);
+		return node as unknown as T.ForHeaderUsingKindAwait.Bound;
+	});
+}
+
+function buildForHeaderUsingKindAwait$patch(
+	source: object,
+	config: T.ForHeaderUsingKindAwait.Config,
+	options?: T.ForHeaderUsingKindAwait.Options
+): T.ForHeaderUsingKindAwait.Bound {
+	currentHandle()?.admit(TSKindId.ForHeaderUsingKindAwait, [config]);
+	const _left = rejectReservedText(
+		config.left,
+		'ForHeaderUsingKindAwait.left',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKindAwait['_terminator']>>(
+		blankArmStored(options?.terminator),
+		[['\n', TSKindId.AutomaticSemicolon] as const]
+	);
+	const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKindAwait['_operator']>>(config.operator);
+	const _right = rejectReservedText(
+		kindIdStorage<NonNullable<T.ForHeaderUsingKindAwait['_right']>>(config.right),
+		'ForHeaderUsingKindAwait.right',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_header_using_kind_await', {
+			left: _left,
+			terminator: _terminator,
+			operator: _operator,
+			right: _right
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ForHeaderUsingKindAwait as const, { _left, _terminator, _operator, _right });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ForHeaderUsingKindAwait as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'terminator', _terminator));
+		patchCell(arena, record, 4, 7, carriedSlot(source, 'operator', _operator));
+		patchCell(arena, record, 5, 8, carriedSlot(source, 'right', _right));
+		const node = arena.view(record);
+		return node as unknown as T.ForHeaderUsingKindAwait.Bound;
+	});
+}
+function buildForHeaderUsingKindAwait$set(
+	source: object,
+	...[slot, input]:
+		| ['left', Partial<T.ForHeaderUsingKindAwait.Config>]
+		| ['operator', Partial<T.ForHeaderUsingKindAwait.Config>]
+		| ['right', Partial<T.ForHeaderUsingKindAwait.Config>]
+		| ['terminator', T.ForHeaderUsingKindAwait.Options]
+): T.ForHeaderUsingKindAwait.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'left':
+			case 'operator':
+			case 'right':
+				return buildForHeaderUsingKindAwait$patch(
+					source,
+					{ ...(inputs.config as T.ForHeaderUsingKindAwait.Config), ...input },
+					inputs.options as T.ForHeaderUsingKindAwait.Options
+				);
+			case 'terminator':
+				return buildForHeaderUsingKindAwait$patch(source, inputs.config as T.ForHeaderUsingKindAwait.Config, {
+					...(inputs.options as T.ForHeaderUsingKindAwait.Options),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'left': {
+			const config = input;
+			const _left = rejectReservedText(
+				config.left,
+				'ForHeaderUsingKindAwait.left',
+				TSKindId.Identifier,
+				_reservedWords_buildIdentifier
+			);
+			return setSlot(
+				source,
+				TSKindId.ForHeaderUsingKindAwait as const,
+				'for_header_using_kind_await',
+				0,
+				'left',
+				_left
+			) as unknown as T.ForHeaderUsingKindAwait.Bound;
+		}
+		case 'operator': {
+			const config = input;
+			const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKindAwait['_operator']>>(config.operator);
+			return setSlot(
+				source,
+				TSKindId.ForHeaderUsingKindAwait as const,
+				'for_header_using_kind_await',
+				2,
+				'operator',
+				_operator
+			) as unknown as T.ForHeaderUsingKindAwait.Bound;
+		}
+		case 'right': {
+			const config = input;
+			const _right = rejectReservedText(
+				kindIdStorage<NonNullable<T.ForHeaderUsingKindAwait['_right']>>(config.right),
+				'ForHeaderUsingKindAwait.right',
+				TSKindId.Identifier,
+				_reservedWords_buildIdentifier
+			);
+			return setSlot(
+				source,
+				TSKindId.ForHeaderUsingKindAwait as const,
+				'for_header_using_kind_await',
+				3,
+				'right',
+				_right
+			) as unknown as T.ForHeaderUsingKindAwait.Bound;
+		}
+		case 'terminator': {
+			const options = input;
+			const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKindAwait['_terminator']>>(
+				blankArmStored(options?.terminator),
+				[['\n', TSKindId.AutomaticSemicolon] as const]
+			);
+			return setSlot(
+				source,
+				TSKindId.ForHeaderUsingKindAwait as const,
+				'for_header_using_kind_await',
+				1,
+				'terminator',
+				_terminator
+			) as unknown as T.ForHeaderUsingKindAwait.Bound;
+		}
+	}
+}
+function withForHeaderUsingKindAwait(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKindAwait$set(node, 'left', { left: value }))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKindAwait$set(node, 'terminator', { terminator: spelling }))
+			);
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKindAwait.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKindAwait$set(node, 'operator', { operator: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKindAwait.Config>['right']>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKindAwait$set(node, 'right', { right: value }))
+			);
+	}
+	throw new Error(`for_header_using_kind_await has no $with.${setter}`);
 }
 
 export const buildFormalParametersGetAccessorSignature: TSKindId.FormalParametersGetAccessorSignature =
@@ -29588,8 +29770,6 @@ function withPublicFieldDefinitionAccessor(node: object, setter: string, args: r
 	throw new Error(`public_field_definition_accessor has no $with.${setter}`);
 }
 
-export const buildForHeaderUsingKindKind: TSKindId.ForHeaderUsingKindKind = TSKindId.ForHeaderUsingKindKind;
-
 export function buildHtmlComment(text: string): T.HtmlComment.Bound {
 	if (typeof text !== 'string') throw new Error(`html_comment: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
@@ -31045,7 +31225,8 @@ export type FluentKindMap = {
 	for_header_lhs: T.ForHeaderLhs.Bound;
 	for_header_var_kind: T.ForHeaderVarKind.Bound;
 	for_header_let_const_kind: T.ForHeaderLetConstKind.Bound;
-	for_header_using_kind: T.ForHeaderUsingKind.Bound;
+	for_header_using_kind_plain: T.ForHeaderUsingKindPlain.Bound;
+	for_header_using_kind_await: T.ForHeaderUsingKindAwait.Bound;
 	_formal_parameters_get_accessor_signature: T.FormalParametersGetAccessorSignature;
 	_formal_parameters_set_accessor_signature: T.FormalParametersSetAccessorSignature.Bound;
 	_formal_parameters_elements_set_accessor_signature: T.FormalParametersElementsSetAccessorSignature.Bound;
@@ -31061,7 +31242,6 @@ export type FluentKindMap = {
 	abstract_method_signature_setter: T.AbstractMethodSignatureSetter.Bound;
 	public_field_definition_plain: T.PublicFieldDefinitionPlain.Bound;
 	public_field_definition_accessor: T.PublicFieldDefinitionAccessor.Bound;
-	for_header_using_kind_kind: T.ForHeaderUsingKindKind;
 	html_comment: T.HtmlComment;
 	jsx_text: T.JsxText;
 	_template_chars: T.TemplateChars;
@@ -31327,7 +31507,8 @@ export const _factoryMap = {
 	for_header_lhs: buildForHeaderLhs,
 	for_header_var_kind: buildForHeaderVarKind,
 	for_header_let_const_kind: buildForHeaderLetConstKind,
-	for_header_using_kind: buildForHeaderUsingKind,
+	for_header_using_kind_plain: buildForHeaderUsingKindPlain,
+	for_header_using_kind_await: buildForHeaderUsingKindAwait,
 	_formal_parameters_get_accessor_signature: buildFormalParametersGetAccessorSignature,
 	_formal_parameters_set_accessor_signature: buildFormalParametersSetAccessorSignature,
 	_formal_parameters_elements_set_accessor_signature: buildFormalParametersElementsSetAccessorSignature,
@@ -31343,7 +31524,6 @@ export const _factoryMap = {
 	abstract_method_signature_setter: buildAbstractMethodSignatureSetter,
 	public_field_definition_plain: buildPublicFieldDefinitionPlain,
 	public_field_definition_accessor: buildPublicFieldDefinitionAccessor,
-	for_header_using_kind_kind: buildForHeaderUsingKindKind,
 	html_comment: buildHtmlComment,
 	jsx_text: buildJsxText,
 	_template_chars: buildTemplateChars,
@@ -31553,68 +31733,69 @@ export const builtViews: BuiltViews = Object.freeze({
 		400: withObjectTypeContent,
 		402: withExportStatementNamespaceExport,
 		403: withExportStatementEqualsExport,
-		404: withLiteralTypeNegativeNumber,
-		406: withBinaryExpressionIn,
-		408: withClassBodyMemberMethod,
-		409: withClassBodyMemberMethodSig,
-		410: withClassBodyMemberDeclaration,
-		411: withIndexSignatureColon,
-		412: withIndexSignatureMappedTypeClause,
-		413: withImportStatementClauseFrom,
-		414: withYieldExpressionDelegate,
-		416: withImportSpecifierName,
-		417: withImportSpecifierAs,
-		418: withParenthesizedExpressionTyped,
-		419: withParenthesizedExpressionSequence,
-		420: withCallExpressionCall,
-		421: withCallExpressionTemplateCall,
-		422: withCallExpressionMember,
-		423: withStringDouble,
-		424: withStringSingle,
-		425: withUpdateExpressionPostfix,
-		426: withUpdateExpressionPrefix,
-		427: withUsingDeclarationPlain,
-		428: withUsingDeclarationAwait,
-		429: withArrowFunctionParameter,
-		430: withClassHeritageExtendsClause,
-		431: withImportClauseDefaultImport,
-		432: withExportStatementDefaultFrom,
-		433: withExportStatementDefaultDeclaration,
-		434: withExportStatementDefaultFromStarFrom,
-		435: withExportStatementDefaultFromNsFrom,
-		436: withExportStatementDefaultFromClauseFrom,
-		437: withExportStatementDefaultDeclarationDefaultKw,
-		438: withExportStatementDefaultDeclarationDefaultKwValue,
-		439: withVariableDeclaratorPlain,
-		440: withVariableDeclaratorDefinite,
-		443: withForHeaderLhs,
-		444: withForHeaderVarKind,
-		445: withForHeaderLetConstKind,
-		446: withForHeaderUsingKind,
-		449: withFormalParametersSetAccessorSignature,
-		450: withFormalParametersElementsSetAccessorSignature,
-		451: withSetterParameter,
-		454: withMethodDefinitionPlain,
-		455: withMethodDefinitionGetter,
-		456: withMethodDefinitionSetter,
-		457: withMethodSignaturePlain,
-		458: withMethodSignatureGetter,
-		459: withMethodSignatureSetter,
-		460: withAbstractMethodSignaturePlain,
-		461: withAbstractMethodSignatureGetter,
-		462: withAbstractMethodSignatureSetter,
-		463: withPublicFieldDefinitionPlain,
-		464: withPublicFieldDefinitionAccessor,
-		466: withConstructorDeclaration,
-		470: withReceiverParameterDeclaration,
-		472: withFormalParametersElementsReceiver,
-		473: withFormalParametersElementsReceiverGroup,
-		500: withInterfaceBody,
-		502: withPropertyIdentifier,
-		503: withShorthandPropertyIdentifier,
-		504: withShorthandPropertyIdentifierPattern,
-		505: withStatementIdentifier,
-		507: withTypeIdentifier
+		405: withLiteralTypeNegativeNumber,
+		407: withBinaryExpressionIn,
+		409: withClassBodyMemberMethod,
+		410: withClassBodyMemberMethodSig,
+		411: withClassBodyMemberDeclaration,
+		412: withIndexSignatureColon,
+		413: withIndexSignatureMappedTypeClause,
+		414: withImportStatementClauseFrom,
+		415: withYieldExpressionDelegate,
+		417: withImportSpecifierName,
+		418: withImportSpecifierAs,
+		419: withParenthesizedExpressionTyped,
+		420: withParenthesizedExpressionSequence,
+		421: withCallExpressionCall,
+		422: withCallExpressionTemplateCall,
+		423: withCallExpressionMember,
+		424: withStringDouble,
+		425: withStringSingle,
+		426: withUpdateExpressionPostfix,
+		427: withUpdateExpressionPrefix,
+		428: withUsingDeclarationPlain,
+		429: withUsingDeclarationAwait,
+		430: withArrowFunctionParameter,
+		431: withClassHeritageExtendsClause,
+		432: withImportClauseDefaultImport,
+		433: withExportStatementDefaultFrom,
+		434: withExportStatementDefaultDeclaration,
+		435: withExportStatementDefaultFromStarFrom,
+		436: withExportStatementDefaultFromNsFrom,
+		437: withExportStatementDefaultFromClauseFrom,
+		438: withExportStatementDefaultDeclarationDefaultKw,
+		439: withExportStatementDefaultDeclarationDefaultKwValue,
+		440: withVariableDeclaratorPlain,
+		441: withVariableDeclaratorDefinite,
+		444: withForHeaderLhs,
+		445: withForHeaderVarKind,
+		446: withForHeaderLetConstKind,
+		447: withForHeaderUsingKindPlain,
+		448: withForHeaderUsingKindAwait,
+		451: withFormalParametersSetAccessorSignature,
+		452: withFormalParametersElementsSetAccessorSignature,
+		453: withSetterParameter,
+		456: withMethodDefinitionPlain,
+		457: withMethodDefinitionGetter,
+		458: withMethodDefinitionSetter,
+		459: withMethodSignaturePlain,
+		460: withMethodSignatureGetter,
+		461: withMethodSignatureSetter,
+		462: withAbstractMethodSignaturePlain,
+		463: withAbstractMethodSignatureGetter,
+		464: withAbstractMethodSignatureSetter,
+		465: withPublicFieldDefinitionPlain,
+		466: withPublicFieldDefinitionAccessor,
+		467: withConstructorDeclaration,
+		471: withReceiverParameterDeclaration,
+		473: withFormalParametersElementsReceiver,
+		474: withFormalParametersElementsReceiverGroup,
+		501: withInterfaceBody,
+		503: withPropertyIdentifier,
+		504: withShorthandPropertyIdentifier,
+		505: withShorthandPropertyIdentifierPattern,
+		506: withStatementIdentifier,
+		508: withTypeIdentifier
 	}),
 	words: Object.freeze({
 		2: 4,
@@ -31795,68 +31976,69 @@ export const builtViews: BuiltViews = Object.freeze({
 		400: 3,
 		402: 4,
 		403: 4,
-		404: 3,
-		406: 4,
-		408: 5,
-		409: 4,
+		405: 3,
+		407: 4,
+		409: 5,
 		410: 4,
-		411: 7,
-		412: 6,
-		413: 4,
-		414: 3,
-		416: 4,
-		417: 5,
-		418: 4,
-		419: 3,
-		420: 5,
-		421: 4,
-		422: 5,
-		423: 3,
+		411: 4,
+		412: 7,
+		413: 6,
+		414: 4,
+		415: 3,
+		417: 4,
+		418: 5,
+		419: 4,
+		420: 3,
+		421: 5,
+		422: 4,
+		423: 5,
 		424: 3,
-		425: 4,
+		425: 3,
 		426: 4,
 		427: 4,
 		428: 4,
-		429: 3,
-		430: 4,
+		429: 4,
+		430: 3,
 		431: 4,
-		432: 5,
-		433: 4,
-		434: 3,
-		435: 4,
+		432: 4,
+		433: 5,
+		434: 4,
+		435: 3,
 		436: 4,
-		437: 3,
-		438: 4,
-		439: 5,
-		440: 4,
-		443: 5,
-		444: 6,
-		445: 7,
+		437: 4,
+		438: 3,
+		439: 4,
+		440: 5,
+		441: 4,
+		444: 5,
+		445: 6,
 		446: 7,
-		449: 3,
-		450: 3,
-		451: 7,
-		454: 9,
-		455: 7,
-		456: 7,
-		457: 8,
-		458: 6,
-		459: 6,
-		460: 8,
+		447: 6,
+		448: 6,
+		451: 3,
+		452: 3,
+		453: 7,
+		456: 9,
+		457: 7,
+		458: 7,
+		459: 8,
+		460: 6,
 		461: 6,
-		462: 6,
-		463: 9,
-		464: 8,
-		466: 5,
-		470: 7,
-		472: 4,
-		473: 3,
-		500: 5,
-		502: 3,
+		462: 8,
+		463: 6,
+		464: 6,
+		465: 9,
+		466: 8,
+		467: 5,
+		471: 7,
+		473: 4,
+		474: 3,
+		501: 5,
 		503: 3,
 		504: 3,
 		505: 3,
-		507: 3
+		506: 3,
+		508: 3
 	}),
 	cells: Object.freeze({
 		2: 2,
@@ -32037,16 +32219,15 @@ export const builtViews: BuiltViews = Object.freeze({
 		400: 2,
 		402: 2,
 		403: 2,
-		404: 2,
-		406: 2,
-		408: 2,
+		405: 2,
+		407: 2,
 		409: 2,
 		410: 2,
-		411: 3,
+		411: 2,
 		412: 3,
-		413: 2,
+		413: 3,
 		414: 2,
-		416: 2,
+		415: 2,
 		417: 2,
 		418: 2,
 		419: 2,
@@ -32062,8 +32243,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		429: 2,
 		430: 2,
 		431: 2,
-		432: 3,
-		433: 2,
+		432: 2,
+		433: 3,
 		434: 2,
 		435: 2,
 		436: 2,
@@ -32071,15 +32252,15 @@ export const builtViews: BuiltViews = Object.freeze({
 		438: 2,
 		439: 2,
 		440: 2,
-		443: 2,
+		441: 2,
 		444: 2,
 		445: 2,
 		446: 2,
-		449: 2,
-		450: 2,
-		451: 3,
-		454: 3,
-		455: 3,
+		447: 2,
+		448: 2,
+		451: 2,
+		452: 2,
+		453: 3,
 		456: 3,
 		457: 3,
 		458: 3,
@@ -32089,16 +32270,18 @@ export const builtViews: BuiltViews = Object.freeze({
 		462: 3,
 		463: 3,
 		464: 3,
-		466: 2,
-		470: 3,
-		472: 2,
+		465: 3,
+		466: 3,
+		467: 2,
+		471: 3,
 		473: 2,
-		500: 2,
-		502: 2,
+		474: 2,
+		501: 2,
 		503: 2,
 		504: 2,
 		505: 2,
-		507: 2
+		506: 2,
+		508: 2
 	}),
 	places: Object.freeze({
 		2: [[2, 2, 2, 4, 0, 0]],
@@ -32692,146 +32875,139 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0]
 		],
-		404: [[2, 2, 15, 9, 14, 0]],
-		406: [
+		405: [[2, 2, 15, 9, 14, 0]],
+		407: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0]
 		],
-		408: [
+		409: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 39, 8, 39, 0],
 			[42, 4, 1, 18, 0, 0]
-		],
-		409: [
-			[2, 2, 35, 8, 35, 0],
-			[37, 3, 1, 2, 0, 0]
 		],
 		410: [
 			[2, 2, 35, 8, 35, 0],
 			[37, 3, 1, 2, 0, 0]
 		],
 		411: [
+			[2, 2, 35, 8, 35, 0],
+			[37, 3, 1, 2, 0, 0]
+		],
+		412: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 3, 1, 0, 0],
 			[7, 5, 4, 3, 0, 0],
 			[11, 6, 3, 1, 0, 0]
 		],
-		412: [
+		413: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 15, 8, 15, 0],
 			[19, 5, 3, 1, 0, 0]
 		],
-		413: [
+		414: [
 			[2, 2, 14, 8, 14, 0],
 			[16, 3, 3, 8, 3, 0]
 		],
-		414: [[2, 2, 4, 3, 0, 0]],
-		416: [
+		415: [[2, 2, 4, 3, 0, 0]],
+		417: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 3, 1, 0, 0]
 		],
-		417: [
+		418: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 4, 11, 3, 0],
 			[7, 4, 3, 1, 0, 0]
 		],
-		418: [
+		419: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0]
 		],
-		419: [[2, 2, 3, 8, 3, 0]],
-		420: [
+		420: [[2, 2, 3, 8, 3, 0]],
+		421: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0],
 			[11, 4, 3, 8, 3, 0]
-		],
-		421: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 8, 3, 0]
 		],
 		422: [
 			[2, 2, 4, 3, 0, 0],
+			[6, 3, 3, 8, 3, 0]
+		],
+		423: [
+			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0],
 			[11, 4, 3, 8, 3, 0]
 		],
-		423: [[2, 2, 1, 1, 0, 3]],
 		424: [[2, 2, 1, 1, 0, 3]],
-		425: [
+		425: [[2, 2, 1, 1, 0, 3]],
+		426: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0]
 		],
-		426: [
+		427: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 4, 3, 0, 0]
-		],
-		427: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 0]
 		],
 		428: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 1, 2, 0, 0]
 		],
-		429: [[2, 2, 3, 1, 0, 0]],
-		430: [
+		429: [
+			[2, 2, 1, 1, 0, 3],
+			[3, 3, 1, 2, 0, 0]
+		],
+		430: [[2, 2, 3, 1, 0, 0]],
+		431: [
 			[2, 2, 3, 8, 3, 0],
 			[5, 3, 3, 8, 3, 0]
 		],
-		431: [
+		432: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 7, 8, 7, 0]
 		],
-		432: [
+		433: [
 			[2, 0],
 			[3, 3, 11, 8, 11, 0],
 			[14, 4, 1, 2, 0, 0]
 		],
-		433: [
+		434: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 3, 1, 0, 0]
 		],
-		434: [[2, 2, 3, 8, 3, 0]],
-		435: [
+		435: [[2, 2, 3, 8, 3, 0]],
+		436: [
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 3, 8, 3, 0]
 		],
-		436: [
+		437: [
 			[2, 2, 5, 8, 5, 0],
 			[7, 3, 3, 8, 3, 0]
 		],
-		437: [[2, 2, 3, 1, 0, 0]],
-		438: [
+		438: [[2, 2, 3, 1, 0, 0]],
+		439: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0]
 		],
-		439: [
+		440: [
 			[2, 2, 4, 9, 3, 0],
 			[6, 3, 3, 1, 0, 0],
 			[9, 4, 4, 3, 0, 0]
 		],
-		440: [
+		441: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		443: [
+		444: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 1, 2, 0, 0],
 			[6, 4, 4, 3, 0, 0]
 		],
-		444: [
+		445: [
 			[2, 2, 4, 9, 3, 0],
 			[6, 3, 4, 3, 0, 0],
 			[10, 4, 1, 2, 0, 0],
 			[11, 5, 4, 3, 0, 0]
-		],
-		445: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 4, 9, 3, 0],
-			[7, 4, 1, 18, 0, 0],
-			[8, 5, 1, 2, 0, 0],
-			[9, 6, 4, 3, 0, 0]
 		],
 		446: [
 			[2, 2, 1, 2, 0, 0],
@@ -32840,9 +33016,21 @@ export const builtViews: BuiltViews = Object.freeze({
 			[8, 5, 1, 2, 0, 0],
 			[9, 6, 4, 3, 0, 0]
 		],
-		449: [[2, 2, 14, 8, 14, 0]],
-		450: [[2, 2, 12, 8, 12, 0]],
-		451: [
+		447: [
+			[2, 2, 4, 9, 3, 0],
+			[6, 3, 1, 18, 0, 0],
+			[7, 4, 1, 2, 0, 0],
+			[8, 5, 4, 3, 0, 0]
+		],
+		448: [
+			[2, 2, 4, 9, 3, 0],
+			[6, 3, 1, 18, 0, 0],
+			[7, 4, 1, 2, 0, 0],
+			[8, 5, 4, 3, 0, 0]
+		],
+		451: [[2, 2, 14, 8, 14, 0]],
+		452: [[2, 2, 12, 8, 12, 0]],
+		453: [
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0],
 			[2, 0],
@@ -32850,7 +33038,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[5, 5, 4, 3, 0, 0],
 			[9, 6, 3, 1, 0, 0]
 		],
-		454: [
+		456: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -32864,7 +33052,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[27, 7, 3, 1, 0, 0],
 			[30, 8, 4, 8, 4, 0]
 		],
-		455: [
+		457: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -32872,7 +33060,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[19, 5, 3, 1, 0, 0],
 			[22, 6, 4, 8, 4, 0]
 		],
-		456: [
+		458: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -32880,7 +33068,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[19, 5, 16, 8, 16, 0],
 			[35, 6, 4, 8, 4, 0]
 		],
-		457: [
+		459: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -32893,21 +33081,21 @@ export const builtViews: BuiltViews = Object.freeze({
 			[24, 6, 3, 1, 0, 0],
 			[27, 7, 3, 1, 0, 0]
 		],
-		458: [
+		460: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 3, 1, 0, 0]
 		],
-		459: [
+		461: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 16, 8, 16, 0]
 		],
-		460: [
+		462: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -32917,19 +33105,19 @@ export const builtViews: BuiltViews = Object.freeze({
 			[24, 6, 3, 1, 0, 0],
 			[27, 7, 3, 1, 0, 0]
 		],
-		461: [
+		463: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 3, 1, 0, 0]
 		],
-		462: [
+		464: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 16, 8, 16, 0]
 		],
-		463: [
+		465: [
 			[3, 3, 1, 1, 0, 3],
 			[2, 0],
 			[4, 4, 1, 2, 0, 0],
@@ -32942,7 +33130,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[21, 7, 3, 1, 0, 0],
 			[24, 8, 4, 3, 0, 0]
 		],
-		464: [
+		466: [
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0],
 			[2, 0],
@@ -32952,12 +33140,12 @@ export const builtViews: BuiltViews = Object.freeze({
 			[20, 6, 3, 1, 0, 0],
 			[23, 7, 4, 3, 0, 0]
 		],
-		466: [
+		467: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 3, 1, 0, 0],
 			[6, 4, 4, 8, 4, 0]
 		],
-		470: [
+		471: [
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0],
 			[2, 0],
@@ -32965,21 +33153,21 @@ export const builtViews: BuiltViews = Object.freeze({
 			[5, 5, 3, 1, 0, 0],
 			[8, 6, 4, 3, 0, 0]
 		],
-		472: [
+		473: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 5, 8, 5, 0]
 		],
-		473: [[2, 2, 3, 8, 3, 0]],
-		500: [
+		474: [[2, 2, 3, 8, 3, 0]],
+		501: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 3, 8, 3, 0],
 			[6, 4, 1, 2, 0, 0]
 		],
-		502: [[2, 2, 3, 1, 0, 0]],
 		503: [[2, 2, 3, 1, 0, 0]],
 		504: [[2, 2, 3, 1, 0, 0]],
 		505: [[2, 2, 3, 1, 0, 0]],
-		507: [[2, 2, 3, 1, 0, 0]]
+		506: [[2, 2, 3, 1, 0, 0]],
+		508: [[2, 2, 3, 1, 0, 0]]
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifier,

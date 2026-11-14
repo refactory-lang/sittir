@@ -15582,14 +15582,14 @@ function wrapForHeaderLetConstKind$with$right(this: Received<Held>, ...args: unk
 	return wrapForHeaderLetConstKind$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
-export function wrapForHeaderUsingKind(data: T.ForHeaderUsingKind, tree: TreeHandle): T.ForHeaderUsingKind.Parsed {
+export function wrapForHeaderUsingKindPlain(
+	data: T.ForHeaderUsingKindPlain,
+	tree: TreeHandle
+): T.ForHeaderUsingKindPlain.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.ForHeaderUsingKind as const,
-		kind() {
-			return this._kind;
-		},
+		$type: TSKindId.ForHeaderUsingKindPlain as const,
 		left() {
 			return hydrateSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
 		},
@@ -15618,86 +15618,178 @@ export function wrapForHeaderUsingKind(data: T.ForHeaderUsingKind, tree: TreeHan
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		kind: wrapForHeaderUsingKind$with$kind,
-		left: wrapForHeaderUsingKind$with$left,
-		terminator: wrapForHeaderUsingKind$with$terminator,
-		operator: wrapForHeaderUsingKind$with$operator,
-		right: wrapForHeaderUsingKind$with$right,
+		left: wrapForHeaderUsingKindPlain$with$left,
+		terminator: wrapForHeaderUsingKindPlain$with$terminator,
+		operator: wrapForHeaderUsingKindPlain$with$operator,
+		right: wrapForHeaderUsingKindPlain$with$right,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ForHeaderUsingKind.Parsed;
+	return node as unknown as T.ForHeaderUsingKindPlain.Parsed;
 }
-function wrapForHeaderUsingKind$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapForHeaderUsingKindPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ForHeaderUsingKind;
+	const data = node[INPUT] as T.ForHeaderUsingKindPlain;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'kind':
-			return applySetter(args, (v: NonNullable<T.ForHeaderUsingKind['_kind']>) =>
-				rebuilt(node, handle, () =>
-					wrapForHeaderUsingKind(
-						{ ...$edited(data), _kind: admitSlot(handle, 'for_header_using_kind', 'kind', v) },
-						tree
-					)
-				)
-			);
 		case 'left':
-			return applySetter(args, (v: NonNullable<T.ForHeaderUsingKind['_left']>) =>
+			return applySetter(args, (v: NonNullable<T.ForHeaderUsingKindPlain['_left']>) =>
 				rebuilt(node, handle, () =>
-					wrapForHeaderUsingKind(
-						{ ...$edited(data), _left: admitSlot(handle, 'for_header_using_kind', 'left', v) },
+					wrapForHeaderUsingKindPlain(
+						{ ...$edited(data), _left: admitSlot(handle, 'for_header_using_kind_plain', 'left', v) },
 						tree
 					)
 				)
 			);
 		case 'terminator':
-			return applySetter(args, (v: NonNullable<T.ForHeaderUsingKind['_terminator']> | null) =>
+			return applySetter(args, (v: NonNullable<T.ForHeaderUsingKindPlain['_terminator']> | null) =>
 				rebuilt(node, handle, () =>
-					wrapForHeaderUsingKind(
+					wrapForHeaderUsingKindPlain(
 						{
 							...$edited(data),
-							_terminator: admitSlot(handle, 'for_header_using_kind', 'terminator', blankArmStored(v))
+							_terminator: admitSlot(handle, 'for_header_using_kind_plain', 'terminator', blankArmStored(v))
 						},
 						tree
 					)
 				)
 			);
 		case 'operator':
-			return applySetter(args, (v: NonNullable<T.ForHeaderUsingKind['_operator']>) =>
+			return applySetter(args, (v: NonNullable<T.ForHeaderUsingKindPlain['_operator']>) =>
 				rebuilt(node, handle, () =>
-					wrapForHeaderUsingKind(
-						{ ...$edited(data), _operator: admitSlot(handle, 'for_header_using_kind', 'operator', v) },
+					wrapForHeaderUsingKindPlain(
+						{ ...$edited(data), _operator: admitSlot(handle, 'for_header_using_kind_plain', 'operator', v) },
 						tree
 					)
 				)
 			);
 		case 'right':
-			return applySetter(args, (v: NonNullable<T.ForHeaderUsingKind['_right']>) =>
+			return applySetter(args, (v: NonNullable<T.ForHeaderUsingKindPlain['_right']>) =>
 				rebuilt(node, handle, () =>
-					wrapForHeaderUsingKind(
-						{ ...$edited(data), _right: admitSlot(handle, 'for_header_using_kind', 'right', v) },
+					wrapForHeaderUsingKindPlain(
+						{ ...$edited(data), _right: admitSlot(handle, 'for_header_using_kind_plain', 'right', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`for_header_using_kind has no $with.${setter}`);
+	throw new Error(`for_header_using_kind_plain has no $with.${setter}`);
 }
-function wrapForHeaderUsingKind$with$kind(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapForHeaderUsingKind$with(receiverOf(this, '$with.kind'), 'kind', args);
+function wrapForHeaderUsingKindPlain$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapForHeaderUsingKindPlain$with(receiverOf(this, '$with.left'), 'left', args);
 }
-function wrapForHeaderUsingKind$with$left(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapForHeaderUsingKind$with(receiverOf(this, '$with.left'), 'left', args);
+function wrapForHeaderUsingKindPlain$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapForHeaderUsingKindPlain$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
-function wrapForHeaderUsingKind$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapForHeaderUsingKind$with(receiverOf(this, '$with.terminator'), 'terminator', args);
+function wrapForHeaderUsingKindPlain$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapForHeaderUsingKindPlain$with(receiverOf(this, '$with.operator'), 'operator', args);
 }
-function wrapForHeaderUsingKind$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapForHeaderUsingKind$with(receiverOf(this, '$with.operator'), 'operator', args);
+function wrapForHeaderUsingKindPlain$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapForHeaderUsingKindPlain$with(receiverOf(this, '$with.right'), 'right', args);
 }
-function wrapForHeaderUsingKind$with$right(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapForHeaderUsingKind$with(receiverOf(this, '$with.right'), 'right', args);
+
+export function wrapForHeaderUsingKindAwait(
+	data: T.ForHeaderUsingKindAwait,
+	tree: TreeHandle
+): T.ForHeaderUsingKindAwait.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ForHeaderUsingKindAwait as const,
+		left() {
+			return hydrateSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
+		},
+		terminator() {
+			return blankArmRead(this._terminator);
+		},
+		operator() {
+			return this._operator;
+		},
+		right() {
+			return hydrateSlot<T.Expression | T.SequenceExpression>(this, '_right', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		left: wrapForHeaderUsingKindAwait$with$left,
+		terminator: wrapForHeaderUsingKindAwait$with$terminator,
+		operator: wrapForHeaderUsingKindAwait$with$operator,
+		right: wrapForHeaderUsingKindAwait$with$right,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ForHeaderUsingKindAwait.Parsed;
+}
+function wrapForHeaderUsingKindAwait$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.ForHeaderUsingKindAwait;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (v: NonNullable<T.ForHeaderUsingKindAwait['_left']>) =>
+				rebuilt(node, handle, () =>
+					wrapForHeaderUsingKindAwait(
+						{ ...$edited(data), _left: admitSlot(handle, 'for_header_using_kind_await', 'left', v) },
+						tree
+					)
+				)
+			);
+		case 'terminator':
+			return applySetter(args, (v: NonNullable<T.ForHeaderUsingKindAwait['_terminator']> | null) =>
+				rebuilt(node, handle, () =>
+					wrapForHeaderUsingKindAwait(
+						{
+							...$edited(data),
+							_terminator: admitSlot(handle, 'for_header_using_kind_await', 'terminator', blankArmStored(v))
+						},
+						tree
+					)
+				)
+			);
+		case 'operator':
+			return applySetter(args, (v: NonNullable<T.ForHeaderUsingKindAwait['_operator']>) =>
+				rebuilt(node, handle, () =>
+					wrapForHeaderUsingKindAwait(
+						{ ...$edited(data), _operator: admitSlot(handle, 'for_header_using_kind_await', 'operator', v) },
+						tree
+					)
+				)
+			);
+		case 'right':
+			return applySetter(args, (v: NonNullable<T.ForHeaderUsingKindAwait['_right']>) =>
+				rebuilt(node, handle, () =>
+					wrapForHeaderUsingKindAwait(
+						{ ...$edited(data), _right: admitSlot(handle, 'for_header_using_kind_await', 'right', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`for_header_using_kind_await has no $with.${setter}`);
+}
+function wrapForHeaderUsingKindAwait$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapForHeaderUsingKindAwait$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function wrapForHeaderUsingKindAwait$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapForHeaderUsingKindAwait$with(receiverOf(this, '$with.terminator'), 'terminator', args);
+}
+function wrapForHeaderUsingKindAwait$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapForHeaderUsingKindAwait$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function wrapForHeaderUsingKindAwait$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapForHeaderUsingKindAwait$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
 export function wrapFormalParametersSetAccessorSignature(
@@ -26415,34 +26507,30 @@ function viewForHeaderLetConstKind(data: RecordPosition, tree: TreeHandle): T.Fo
 	return node as unknown as T.ForHeaderLetConstKind.Parsed;
 }
 
-function viewForHeaderUsingKind$kind(this: RecordHandle) {
-	return childSlot(this, 2, 1, 2, 0, 2);
+function viewForHeaderUsingKindPlain$left(this: RecordHandle) {
+	return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, 2, 4, 9, 3, 2);
 }
-function viewForHeaderUsingKind$left(this: RecordHandle) {
-	return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, 3, 4, 9, 3, 3);
+function viewForHeaderUsingKindPlain$terminator(this: RecordHandle) {
+	return blankArmRead(childSlot(this, 6, 1, 18, 0, 3));
 }
-function viewForHeaderUsingKind$terminator(this: RecordHandle) {
-	return blankArmRead(childSlot(this, 7, 1, 18, 0, 4));
+function viewForHeaderUsingKindPlain$operator(this: RecordHandle) {
+	return childSlot(this, 7, 1, 2, 0, 4);
 }
-function viewForHeaderUsingKind$operator(this: RecordHandle) {
-	return childSlot(this, 8, 1, 2, 0, 5);
+function viewForHeaderUsingKindPlain$right(this: RecordHandle) {
+	return viewSlot<T.Expression | T.SequenceExpression>(this, 8, 4, 3, 0, 5);
 }
-function viewForHeaderUsingKind$right(this: RecordHandle) {
-	return viewSlot<T.Expression | T.SequenceExpression>(this, 9, 4, 3, 0, 6);
-}
-function viewForHeaderUsingKind(data: RecordPosition, tree: TreeHandle): T.ForHeaderUsingKind.Parsed {
+function viewForHeaderUsingKindPlain(data: RecordPosition, tree: TreeHandle): T.ForHeaderUsingKindPlain.Parsed {
 	const node = {
-		$type: TSKindId.ForHeaderUsingKind as const,
+		$type: TSKindId.ForHeaderUsingKindPlain as const,
 		$tree: tree,
 		$at: data.$at,
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		kind: viewForHeaderUsingKind$kind,
-		left: viewForHeaderUsingKind$left,
-		terminator: viewForHeaderUsingKind$terminator,
-		operator: viewForHeaderUsingKind$operator,
-		right: viewForHeaderUsingKind$right,
+		left: viewForHeaderUsingKindPlain$left,
+		terminator: viewForHeaderUsingKindPlain$terminator,
+		operator: viewForHeaderUsingKindPlain$operator,
+		right: viewForHeaderUsingKindPlain$right,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -26454,7 +26542,6 @@ function viewForHeaderUsingKind(data: RecordPosition, tree: TreeHandle): T.ForHe
 		[Symbol.dispose]: handleDispose
 	};
 	node.$with = {
-		kind: $with$kind,
 		left: $with$left,
 		terminator: $with$terminator,
 		operator: $with$operator,
@@ -26462,7 +26549,52 @@ function viewForHeaderUsingKind(data: RecordPosition, tree: TreeHandle): T.ForHe
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.ForHeaderUsingKind.Parsed;
+	return node as unknown as T.ForHeaderUsingKindPlain.Parsed;
+}
+
+function viewForHeaderUsingKindAwait$left(this: RecordHandle) {
+	return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, 2, 4, 9, 3, 2);
+}
+function viewForHeaderUsingKindAwait$terminator(this: RecordHandle) {
+	return blankArmRead(childSlot(this, 6, 1, 18, 0, 3));
+}
+function viewForHeaderUsingKindAwait$operator(this: RecordHandle) {
+	return childSlot(this, 7, 1, 2, 0, 4);
+}
+function viewForHeaderUsingKindAwait$right(this: RecordHandle) {
+	return viewSlot<T.Expression | T.SequenceExpression>(this, 8, 4, 3, 0, 5);
+}
+function viewForHeaderUsingKindAwait(data: RecordPosition, tree: TreeHandle): T.ForHeaderUsingKindAwait.Parsed {
+	const node = {
+		$type: TSKindId.ForHeaderUsingKindAwait as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		left: viewForHeaderUsingKindAwait$left,
+		terminator: viewForHeaderUsingKindAwait$terminator,
+		operator: viewForHeaderUsingKindAwait$operator,
+		right: viewForHeaderUsingKindAwait$right,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = {
+		left: $with$left,
+		terminator: $with$terminator,
+		operator: $with$operator,
+		right: $with$right,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	return node as unknown as T.ForHeaderUsingKindAwait.Parsed;
 }
 
 function viewFormalParametersSetAccessorSignature$elements(this: RecordHandle) {
@@ -28370,7 +28502,10 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.ForHeaderLhs]: (d, t) => wrapForHeaderLhs(d as unknown as T.ForHeaderLhs, t),
 	[TSKindId.ForHeaderVarKind]: (d, t) => wrapForHeaderVarKind(d as unknown as T.ForHeaderVarKind, t),
 	[TSKindId.ForHeaderLetConstKind]: (d, t) => wrapForHeaderLetConstKind(d as unknown as T.ForHeaderLetConstKind, t),
-	[TSKindId.ForHeaderUsingKind]: (d, t) => wrapForHeaderUsingKind(d as unknown as T.ForHeaderUsingKind, t),
+	[TSKindId.ForHeaderUsingKindPlain]: (d, t) =>
+		wrapForHeaderUsingKindPlain(d as unknown as T.ForHeaderUsingKindPlain, t),
+	[TSKindId.ForHeaderUsingKindAwait]: (d, t) =>
+		wrapForHeaderUsingKindAwait(d as unknown as T.ForHeaderUsingKindAwait, t),
 	[TSKindId.FormalParametersSetAccessorSignature]: (d, t) =>
 		wrapFormalParametersSetAccessorSignature(d as unknown as T.FormalParametersSetAccessorSignature, t),
 	[TSKindId.FormalParametersElementsSetAccessorSignature]: (d, t) =>
@@ -28635,7 +28770,8 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.ForHeaderLhs]: viewForHeaderLhs,
 	[TSKindId.ForHeaderVarKind]: viewForHeaderVarKind,
 	[TSKindId.ForHeaderLetConstKind]: viewForHeaderLetConstKind,
-	[TSKindId.ForHeaderUsingKind]: viewForHeaderUsingKind,
+	[TSKindId.ForHeaderUsingKindPlain]: viewForHeaderUsingKindPlain,
+	[TSKindId.ForHeaderUsingKindAwait]: viewForHeaderUsingKindAwait,
 	[TSKindId.FormalParametersSetAccessorSignature]: viewFormalParametersSetAccessorSignature,
 	[TSKindId.FormalParametersElementsSetAccessorSignature]: viewFormalParametersElementsSetAccessorSignature,
 	[TSKindId.SetterParameter]: viewSetterParameter,

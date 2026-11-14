@@ -5059,20 +5059,39 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
-	describe('for_header_using_kind', () => {
+	describe('for_header_using_kind_plain', () => {
 		it('factory produces correct type', () => {
-			const node = ir.forHeaderUsingKind({
-				kind: 'using',
+			const node = ir.forHeaderUsingKindPlain({
 				left: { $type: TSKindId.Identifier, text: 'test' } as never,
 				operator: 'in',
 				right: TSKindId.Undefined as never
 			});
-			expect(node.$type).toBe(TSKindId.ForHeaderUsingKind);
+			expect(node.$type).toBe(TSKindId.ForHeaderUsingKindPlain);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.forHeaderUsingKind({
-				kind: 'using',
+			const node = ir.forHeaderUsingKindPlain({
+				left: { $type: TSKindId.Identifier, text: 'test' } as never,
+				operator: 'in',
+				right: TSKindId.Undefined as never
+			});
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('for_header_using_kind_await', () => {
+		it('factory produces correct type', () => {
+			const node = ir.forHeaderUsingKindAwait({
+				left: { $type: TSKindId.Identifier, text: 'test' } as never,
+				operator: 'in',
+				right: TSKindId.Undefined as never
+			});
+			expect(node.$type).toBe(TSKindId.ForHeaderUsingKindAwait);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.forHeaderUsingKindAwait({
 				left: { $type: TSKindId.Identifier, text: 'test' } as never,
 				operator: 'in',
 				right: TSKindId.Undefined as never
@@ -5356,12 +5375,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.publicFieldDefinitionAccessor({ name: { $type: TSKindId.NumberDecimal, text: '1' } as never });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
-		});
-	});
-
-	describe('for_header_using_kind_kind', () => {
-		it('is the kind id', () => {
-			expect(ir.forHeaderUsingKindKind).toBe(TSKindId.ForHeaderUsingKindKind);
 		});
 	});
 

@@ -1066,14 +1066,21 @@ export const records = {
 		operator: { word: 8, width: 1, forms: 2, built: 5 },
 		right: { word: 9, width: 4, forms: 3, built: 6 }
 	},
-	ForHeaderUsingKindNode: {
-		words: 13,
-		builtWords: 7,
-		kind: { word: 2, width: 1, forms: 2, built: 2 },
-		left: { word: 3, width: 4, inline: 3, forms: 9, built: 3 },
-		terminator: { word: 7, width: 1, forms: 18, built: 4 },
-		operator: { word: 8, width: 1, forms: 2, built: 5 },
-		right: { word: 9, width: 4, forms: 3, built: 6 }
+	ForHeaderUsingKindPlainNode: {
+		words: 12,
+		builtWords: 6,
+		left: { word: 2, width: 4, inline: 3, forms: 9, built: 2 },
+		terminator: { word: 6, width: 1, forms: 18, built: 3 },
+		operator: { word: 7, width: 1, forms: 2, built: 4 },
+		right: { word: 8, width: 4, forms: 3, built: 5 }
+	},
+	ForHeaderUsingKindAwaitNode: {
+		words: 12,
+		builtWords: 6,
+		left: { word: 2, width: 4, inline: 3, forms: 9, built: 2 },
+		terminator: { word: 6, width: 1, forms: 18, built: 3 },
+		operator: { word: 7, width: 1, forms: 2, built: 4 },
+		right: { word: 8, width: 4, forms: 3, built: 5 }
 	},
 	FormalParametersSetAccessorSignatureNode: {
 		words: 16,
