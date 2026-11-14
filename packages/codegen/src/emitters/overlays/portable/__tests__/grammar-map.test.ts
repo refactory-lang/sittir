@@ -1,8 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { generate } from '../../../../compiler/generate.ts';
+import { tmpdir } from 'node:os';
 
 const mapOf = async (grammar: string): Promise<string> => {
-	const generated = await generate({ grammar, outputDir: `/tmp/sittir-grammar-map-${grammar}/src` });
+	const generated = await generate({ grammar, outputDir: `${tmpdir()}/sittir-grammar-map-${grammar}/src` });
 	if (generated.portableTyped === undefined) throw new Error(`${grammar} emitted no typed module`);
 	return generated.portableTyped.map;
 };
