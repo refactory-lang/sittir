@@ -10,8 +10,11 @@
 // starts, so one file is formatted at a time). sittir runs the corpus in
 // path-order chunks of about CHUNK_BYTES of source; after each chunk every
 // parse root and whole tree is released ([Symbol.dispose], timed as
-// treeReleaseMs; deep-read reads each chunk on an engine of its own and
-// disposes it, timed as releaseMs), the chunk's trees are dropped and an
+// treeReleaseMs; in arena storage, where a parsed node lives as long as its
+// engine, each chunk runs on an engine of its own and disposing that engine
+// is the release, timed as treeReleaseMs; deep-read reads each chunk on an
+// engine of its own and disposes it, timed as releaseMs), the chunk's trees
+// are dropped and an
 // event-loop yield is taken before the next. Each phase's time is its sum
 // over the chunks, so a batch never holds the whole corpus's trees. At least
 // two seconds and one batch of warmup, then <batches> timed batches with an
@@ -84,18 +87,24 @@ if (tool === 'oxfmt') {
   };
 } else {
   assert(tool === 'object' || tool === 'arena', `tool: ${tool}`);
-  const engine = await loadSittir(path.resolve(tree), tool);
-  describe = { tool: 'sittir', nodeStorage: tool, buildProfile: engine.diagnostics.buildProfile };
-  dispose = () => engine.dispose();
+  const first = await loadSittir(path.resolve(tree), tool);
+  describe = { tool: 'sittir', nodeStorage: tool, buildProfile: first.diagnostics.buildProfile };
+  const shared = tool === 'object' ? first : undefined;
+  if (shared === undefined) first.dispose();
+  dispose = () => shared?.dispose();
   run = async () => {
     const times = {};
     const renders = [];
     const editedRenders = [];
     for (const chunk of chunks) {
+      const engine = shared ?? await loadSittir(path.resolve(tree), tool);
       const pass = corpusBatch(engine, chunk);
       const start = performance.now();
-      for (const node of pass.roots) node[Symbol.dispose]?.();
-      for (const node of pass.wholes) node[Symbol.dispose]?.();
+      if (shared === undefined) engine.dispose();
+      else {
+        for (const node of pass.roots) node[Symbol.dispose]?.();
+        for (const node of pass.wholes) node[Symbol.dispose]?.();
+      }
       pass.times.treeReleaseMs = performance.now() - start;
       for (const [phase, ms] of Object.entries(pass.times)) times[phase] = (times[phase] ?? 0) + ms;
       renders.push(...pass.renders);
@@ -127,7 +136,7 @@ try {
   writeFileSync(out, JSON.stringify({
     at: new Date().toISOString(), tree, ...describe, corpus: manifest.name, commit: manifest.commit, files: sources.length, bytes,
     node: process.version, v8: process.versions.v8, cpu: cpuModel(), loadAverage: os.loadavg(),
-    protocol: `Every admitted file of one corpus per batch (sittir in path-order chunks of about ${CHUNK_BYTES / 1e6} MB, each phase summed over the chunks, every parse root and whole tree released after its chunk (treeReleaseMs), a yield between chunks; deep-read the addon's parseRecords per file, each chunk on an engine of its own, disposed after it (releaseMs); oxfmt one awaited format() per file); at least two seconds and one batch of warmup, then the timed batches, an event-loop yield between batches, no forced GC; output hashes equal across batches.`,
+    protocol: `Every admitted file of one corpus per batch (sittir in path-order chunks of about ${CHUNK_BYTES / 1e6} MB, each phase summed over the chunks, every parse root and whole tree released after its chunk (treeReleaseMs; in arena storage each chunk on an engine of its own, disposed after it, which is the release), a yield between chunks; deep-read the addon's parseRecords per file, each chunk on an engine of its own, disposed after it (releaseMs); oxfmt one awaited format() per file); at least two seconds and one batch of warmup, then the timed batches, an event-loop yield between batches, no forced GC; output hashes equal across batches.`,
     warmupBatches, signature, rendersDifferingFromSource, samples, peakRssMB: peakRss / 2 ** 20,
   }, null, 1) + '\n');
   console.log(JSON.stringify({ tool, corpus: manifest.name, signature, samples: samples.length }));
