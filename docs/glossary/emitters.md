@@ -8954,32 +8954,9 @@ absent optional slot leaves no mark behind. The boundary is recorded as static-g
 
 ### `packages/codegen/src/emitters/templates.ts::staticListInterior`
 
-```text
-/**
- * The SpacingWriter's seam law — `word_seam(l, r) ∨
- * literal_merge_pair(l, r)`, same word table, same pair table (identical-char
- * pairs included exactly when the join analysis keeps them) — applied
- * STATICALLY to a list's interior boundaries, for the census:
- *
- * - `runtime-derivable`: the checks' outcome is a statically-known
- *   constant — a separator whose own edge chars can never seam against
- *   any character, or a `""`-joined list whose derived element edge-char
- *   sets (`edgeCharSetsOfKind`) give the law one outcome over every
- *   combination.
- * - `runtime-varying`: unknown edges or a non-constant outcome — the
- *   true residue.
- *
- * Emission is NEVER changed here. A constant-space verdict statically
- * owes the writer's space between GRAMMAR edges, but a rendered element
- * may end in trailing trivia (a line comment's `'\n'`) that is not in
- * the derived sets — the writer would then NOT insert, so baking the
- * space into the separator would diverge (and a space after a newline is
- * an indentation error in python). Baking stays blocked until trivia
- * edges are modeled or ruled out; until then the verdict is census
- * information only, and the separator string remains the sole place a
- * space could ever be added.
- */
-```
+The census verdict for a list's interior boundaries, `runtime-derivable` or `runtime-varying`. It does not change emission: it only returns the verdict.
+
+With a separator, the verdict is derivable when neither the separator's first nor its last character is a word character and neither can join its neighbour: the first character is absent from the join pair table's right-character set, and the last is absent from its left-character set. Without a separator, each element contributes its edge characters: terminal text gives its first and last character, and any other value gives the edge character sets of its kind. An empty terminal or an edge set that is not known makes the verdict varying. Otherwise every (left, right) pair of edge characters is tested for a seam, where a seam is two word characters or a join pair. If no pair is a seam or every pair is, the verdict is derivable; a mix is varying.
 
 ### `packages/codegen/src/emitters/templates.ts::warnedMultiSlotGroups`
 
