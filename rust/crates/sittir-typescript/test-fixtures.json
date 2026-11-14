@@ -23091,27 +23091,23 @@
       "$type": 190,
       "_statements": [
         {
-          "$type": 206,
-          "_expression": {
-            "$type": 316,
-            "_body": {
-              "$_layout": {
-                "trivia": {
-                  "inner": [
-                    185
-                  ]
-                }
-              },
-              "$type": 211,
-              "_statements": [],
-              "_terminator": 175
+          "$type": 316,
+          "_body": {
+            "$_layout": {
+              "trivia": {
+                "inner": [
+                  185
+                ]
+              }
             },
-            "_name": {
-              "$text": "Foo",
-              "$type": 1
-            }
+            "$type": 211,
+            "_statements": [],
+            "_terminator": 175
           },
-          "_terminator": 175
+          "_name": {
+            "$text": "Foo",
+            "$type": 1
+          }
         },
         {
           "$_layout": {
@@ -23121,34 +23117,30 @@
               ]
             }
           },
-          "$type": 206,
-          "_expression": {
-            "$type": 316,
-            "_body": {
-              "$type": 211,
-              "_statements": [
-                {
-                  "$type": 207,
-                  "_declarators": [
-                    {
-                      "$type": 438,
-                      "_name": {
-                        "$text": "x",
-                        "$type": 1
-                      }
+          "$type": 316,
+          "_body": {
+            "$type": 211,
+            "_statements": [
+              {
+                "$type": 207,
+                "_declarators": [
+                  {
+                    "$type": 438,
+                    "_name": {
+                      "$text": "x",
+                      "$type": 1
                     }
-                  ],
-                  "_terminator": 22
-                }
-              ],
-              "_terminator": 175
-            },
-            "_name": {
-              "$text": "Bar",
-              "$type": 1
-            }
+                  }
+                ],
+                "_terminator": 22
+              }
+            ],
+            "_terminator": 175
           },
-          "_terminator": 175
+          "_name": {
+            "$text": "Bar",
+            "$type": 1
+          }
         }
       ]
     },
@@ -23162,7 +23154,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (expression_statement expression: (internal_module name: (identifier) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon)) statements: (expression_statement expression: (internal_module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (internal_module name: (identifier) body: (statement_block terminator: (automatic_semicolon))) statements: (internal_module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier))) terminator: (automatic_semicolon))))",
     "expectedSourceOut": "\nnamespace Foo {\n}\n\nnamespace Bar {\n  var x;\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -23170,103 +23162,6 @@
     "sourceIn": "\nnamespace Foo {\n}\n\nnamespace Bar {\n  var x;\n}\n",
     "wrappedOffset": 0,
     "wrappedText": "\nnamespace Foo {\n}\n\nnamespace Bar {\n  var x;\n}\n"
-  },
-  {
-    "expectedOutput": "namespace Foo {\n}\n",
-    "grammar": "typescript",
-    "input": {
-      "$type": 206,
-      "_expression": {
-        "$type": 316,
-        "_body": {
-          "$_layout": {
-            "trivia": {
-              "inner": [
-                185
-              ]
-            }
-          },
-          "$type": 211,
-          "_statements": [],
-          "_terminator": 175
-        },
-        "_name": {
-          "$text": "Foo",
-          "$type": 1
-        }
-      },
-      "_terminator": 175
-    },
-    "kind": "render",
-    "options": {
-      "program": {
-        "before": 185
-      }
-    },
-    "pattern": "expression_statement"
-  },
-  {
-    "edits": [],
-    "expectedReparseTree": "(expression_statement expression: (internal_module name: (identifier) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
-    "expectedSourceOut": "namespace Foo {\n}\n",
-    "grammar": "typescript",
-    "kind": "roundtrip",
-    "pattern": "expression_statement",
-    "sourceIn": "namespace Foo {\n}",
-    "wrappedOffset": 0,
-    "wrappedText": "namespace Foo {\n}\n"
-  },
-  {
-    "expectedOutput": "namespace Bar {\n  var x;\n}\n",
-    "grammar": "typescript",
-    "input": {
-      "$type": 206,
-      "_expression": {
-        "$type": 316,
-        "_body": {
-          "$type": 211,
-          "_statements": [
-            {
-              "$type": 207,
-              "_declarators": [
-                {
-                  "$type": 438,
-                  "_name": {
-                    "$text": "x",
-                    "$type": 1
-                  }
-                }
-              ],
-              "_terminator": 22
-            }
-          ],
-          "_terminator": 175
-        },
-        "_name": {
-          "$text": "Bar",
-          "$type": 1
-        }
-      },
-      "_terminator": 175
-    },
-    "kind": "render",
-    "options": {
-      "program": {
-        "before": 185
-      }
-    },
-    "pattern": "expression_statement"
-  },
-  {
-    "edits": [],
-    "expectedReparseTree": "(expression_statement expression: (internal_module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
-    "expectedSourceOut": "namespace Bar {\n  var x;\n}\n",
-    "grammar": "typescript",
-    "kind": "roundtrip",
-    "pattern": "expression_statement",
-    "sourceIn": "namespace Bar {\n  var x;\n}",
-    "wrappedOffset": 0,
-    "wrappedText": "namespace Bar {\n  var x;\n}\n"
   },
   {
     "expectedOutput": "namespace Foo {\n}\n",
