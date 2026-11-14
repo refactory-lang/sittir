@@ -36,10 +36,11 @@ pnpm test                     # all vitest suites (records test history)
 pnpm test:watch               # watch mode
 pnpm type-check               # tsc --noEmit across the workspace
 pnpm run type-check:examples  # type-check the example modules
+pnpm run type-check:emitter   # type-check the portable emitter against the pinned build's declarations (bootstraps first)
 pnpm lint                     # oxlint
 pnpm format:check             # oxfmt
 pnpm build                    # full workspace build
-pnpm exec tsx packages/cli/src/cli.ts bootstrap  # build the pinned reader; once per fresh clone, before validate:native
+pnpm exec tsx packages/cli/src/cli.ts bootstrap  # build the pinned reader and write scratchpad/pinned-types/tsconfig.json; once per fresh clone, before validate:native
 ```
 
 ## Documentation gates

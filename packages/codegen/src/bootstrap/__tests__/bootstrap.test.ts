@@ -1,9 +1,9 @@
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, realpathSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { BOOTSTRAP_COMMAND, BOOTSTRAP_PACKAGES, bootstrapDir, bootstrapSteps, isBootstrapped, markBootstrapped, readPin } from '../bootstrap.ts';
+import { BOOTSTRAP_COMMAND, BOOTSTRAP_PACKAGES, PINNED_TYPES_CONFIG, bootstrap, bootstrapDir, bootstrapSteps, isBootstrapped, markBootstrapped, pinnedTypePaths, readPin } from '../bootstrap.ts';
 import { loadPinnedBuild } from '../pinned.ts';
 
 const SHA = 'a'.repeat(40);
@@ -89,5 +89,42 @@ describe('the pinned build loader', () => {
 	it('refuses a missing build, naming the command that makes it', async () => {
 		process.env.SITTIR_BOOTSTRAP_DIR = mkdtempSync(join(tmpdir(), 'sittir-pin-empty-'));
 		await expect(loadPinnedBuild()).rejects.toThrow(BOOTSTRAP_COMMAND);
+	});
+});
+
+function pinnedPackages(dir: string = realpathSync(mkdtempSync(join(tmpdir(), 'sittir-pin-types-')))): string {
+	const manifest = (folder: string, contents: object): void => {
+		mkdirSync(join(dir, 'packages', folder), { recursive: true });
+		writeFileSync(join(dir, 'packages', folder, 'package.json'), JSON.stringify(contents));
+	};
+	manifest('typescript', { name: '@sittir/typescript', exports: { '.': { types: './dist/index.d.ts', import: './dist/index.js' }, './api': { types: './dist/api.d.ts' } } });
+	manifest('types', { name: '@sittir/types', exports: { '.': { types: './src/index.ts' } } });
+	manifest('vendored', { name: 'not-sittir', exports: { '.': { types: './index.d.ts' } } });
+	manifest('untyped', { name: '@sittir/untyped', exports: { '.': './index.js' } });
+	mkdirSync(join(dir, 'packages', 'no-manifest'), { recursive: true });
+	return dir;
+}
+
+describe('the pinned build\'s declarations', () => {
+	it('map every @sittir export to the declaration file its types condition names', () => {
+		const dir = pinnedPackages();
+		expect(pinnedTypePaths(dir)).toEqual({
+			'@sittir/typescript': [join(dir, 'packages/typescript/dist/index.d.ts')],
+			'@sittir/typescript/api': [join(dir, 'packages/typescript/dist/api.d.ts')],
+			'@sittir/types': [join(dir, 'packages/types/src/index.ts')]
+		});
+	});
+
+	it('are written into the checkout on every bootstrap, a finished build included', () => {
+		const root = checkout();
+		const cache = realpathSync(mkdtempSync(join(tmpdir(), 'sittir-pin-cache-')));
+		process.env.SITTIR_BOOTSTRAP_DIR = cache;
+		const dir = pinnedPackages(join(cache, SHA));
+		markBootstrapped(dir, SHA);
+		expect(bootstrap(root)).toBe(dir);
+		expect(JSON.parse(readFileSync(join(root, PINNED_TYPES_CONFIG), 'utf8'))).toEqual({
+			extends: join(root, 'packages', 'codegen', 'tsconfig.json'),
+			compilerOptions: { paths: pinnedTypePaths(dir) }
+		});
 	});
 });

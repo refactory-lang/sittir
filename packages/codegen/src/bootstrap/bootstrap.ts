@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { REPO_ROOT } from '../grammars.ts';
 
@@ -14,6 +14,8 @@ export const BOOTSTRAP_DIR_ENV = 'SITTIR_BOOTSTRAP_DIR';
 const COMPLETE = '.complete';
 
 export const PIN_FILE = 'bootstrap.json';
+
+export const PINNED_TYPES_CONFIG = join('scratchpad', 'pinned-types', 'tsconfig.json');
 
 export function readPin(root: string = REPO_ROOT): string {
 	const { sha } = JSON.parse(readFileSync(join(root, PIN_FILE), 'utf8')) as { sha?: unknown };
@@ -58,14 +60,45 @@ export function bootstrapSteps(sha: string, dir: string, root: string = REPO_ROO
 	];
 }
 
+interface PackageManifest {
+	readonly name?: string;
+	readonly exports?: Readonly<Record<string, string | { readonly types?: string }>>;
+}
+
+export function pinnedTypePaths(dir: string): Record<string, string[]> {
+	const packages = join(dir, 'packages');
+	const entries = readdirSync(packages).flatMap((folder): [string, string[]][] => {
+		const manifestPath = join(packages, folder, 'package.json');
+		if (!existsSync(manifestPath)) return [];
+		const { name, exports = {} } = JSON.parse(readFileSync(manifestPath, 'utf8')) as PackageManifest;
+		if (name === undefined || !name.startsWith('@sittir/')) return [];
+		return Object.entries(exports).flatMap(([subpath, target]): [string, string[]][] => {
+			const types = typeof target === 'string' ? undefined : target.types;
+			if (types === undefined) return [];
+			return [[subpath === '.' ? name : `${name}/${subpath.replace(/^\.\//, '')}`, [join(packages, folder, types)]]];
+		});
+	});
+	return Object.fromEntries(entries);
+}
+
+export function writePinnedTypes(root: string, dir: string): string {
+	const path = join(root, PINNED_TYPES_CONFIG);
+	mkdirSync(dirname(path), { recursive: true });
+	const config = { extends: join(root, 'packages', 'codegen', 'tsconfig.json'), compilerOptions: { paths: pinnedTypePaths(dir) } };
+	writeFileSync(path, `${JSON.stringify(config, null, '\t')}\n`);
+	return path;
+}
+
 export function bootstrap(root: string = REPO_ROOT): string {
 	const sha = readPin(root);
 	const dir = bootstrapDir(root);
-	if (isBootstrapped(dir)) return dir;
-	const steps = bootstrapSteps(sha, dir, root);
-	for (const step of existsSync(dir) ? steps.slice(1) : steps) {
-		execFileSync(step.command, step.args, { cwd: step.cwd, stdio: 'inherit' });
+	if (!isBootstrapped(dir)) {
+		const steps = bootstrapSteps(sha, dir, root);
+		for (const step of existsSync(dir) ? steps.slice(1) : steps) {
+			execFileSync(step.command, step.args, { cwd: step.cwd, stdio: 'inherit' });
+		}
+		markBootstrapped(dir, sha);
 	}
-	markBootstrapped(dir, sha);
+	writePinnedTypes(root, dir);
 	return dir;
 }
