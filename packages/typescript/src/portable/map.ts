@@ -387,7 +387,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
-				| V.Unmapped<'typescript:using_declaration'>
+				| V.Unmapped<'typescript:using_declaration_await'>
+				| V.Unmapped<'typescript:using_declaration_plain'>
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
@@ -499,7 +500,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
-				| V.Unmapped<'typescript:using_declaration'>
+				| V.Unmapped<'typescript:using_declaration_await'>
+				| V.Unmapped<'typescript:using_declaration_plain'>
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
@@ -875,7 +877,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
-				| V.Unmapped<'typescript:using_declaration'>
+				| V.Unmapped<'typescript:using_declaration_await'>
+				| V.Unmapped<'typescript:using_declaration_plain'>
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
@@ -1345,7 +1348,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'statement.block'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
-				| V.Unmapped<'typescript:using_declaration'>;
+				| V.Unmapped<'typescript:using_declaration_await'>
+				| V.Unmapped<'typescript:using_declaration_plain'>;
 			readonly $forms: V.Form<'content'>;
 		};
 		readonly 'declaration.class': {
@@ -33376,7 +33380,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
-				| V.Unmapped<'typescript:using_declaration'>
+				| V.Unmapped<'typescript:using_declaration_await'>
+				| V.Unmapped<'typescript:using_declaration_plain'>
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
@@ -34205,7 +34210,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
-				| V.Unmapped<'typescript:using_declaration'>
+				| V.Unmapped<'typescript:using_declaration_await'>
+				| V.Unmapped<'typescript:using_declaration_plain'>
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
@@ -34411,7 +34417,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
-				| V.Unmapped<'typescript:using_declaration'>;
+				| V.Unmapped<'typescript:using_declaration_await'>
+				| V.Unmapped<'typescript:using_declaration_plain'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly exportClause: V.Read<TypeScriptMap, 'clause.export'> | V.Read<TypeScriptMap, 'clause.export.namespace'>;
 			readonly name:
@@ -34843,7 +34850,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
-				| V.Unmapped<'typescript:using_declaration'>;
+				| V.Unmapped<'typescript:using_declaration_await'>
+				| V.Unmapped<'typescript:using_declaration_plain'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly exportClause: V.Read<TypeScriptMap, 'clause.export'> | V.Read<TypeScriptMap, 'clause.export.namespace'>;
 			readonly name:
@@ -35239,7 +35247,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
-				| V.Unmapped<'typescript:using_declaration'>
+				| V.Unmapped<'typescript:using_declaration_await'>
+				| V.Unmapped<'typescript:using_declaration_plain'>
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
@@ -35393,7 +35402,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
-				| V.Unmapped<'typescript:using_declaration'>
+				| V.Unmapped<'typescript:using_declaration_await'>
+				| V.Unmapped<'typescript:using_declaration_plain'>
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
@@ -35507,7 +35517,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
-				| V.Unmapped<'typescript:using_declaration'>
+				| V.Unmapped<'typescript:using_declaration_await'>
+				| V.Unmapped<'typescript:using_declaration_plain'>
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
@@ -36044,7 +36055,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
-				| V.Unmapped<'typescript:using_declaration'>
+				| V.Unmapped<'typescript:using_declaration_await'>
+				| V.Unmapped<'typescript:using_declaration_plain'>
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
@@ -36159,7 +36171,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
-				| V.Unmapped<'typescript:using_declaration'>
+				| V.Unmapped<'typescript:using_declaration_await'>
+				| V.Unmapped<'typescript:using_declaration_plain'>
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
@@ -36278,7 +36291,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
-				| V.Unmapped<'typescript:using_declaration'>
+				| V.Unmapped<'typescript:using_declaration_await'>
+				| V.Unmapped<'typescript:using_declaration_plain'>
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
@@ -36533,7 +36547,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.throw'>
 				| V.Read<TypeScriptMap, 'statement.try'>
 				| ';'
-				| V.Unmapped<'typescript:using_declaration'>
+				| V.Unmapped<'typescript:using_declaration_await'>
+				| V.Unmapped<'typescript:using_declaration_plain'>
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ExpressionStatement.Parsed
 				| T.ForStatement.Parsed
@@ -38661,7 +38676,8 @@ declare module '@sittir/types/vocabulary' {
 		readonly 'typescript:for_header_using_kind': T.ForHeaderUsingKind.Parsed;
 		readonly 'typescript:for_header_var_kind': T.ForHeaderVarKind.Parsed;
 		readonly 'typescript:type_query_subscript_expression': T.TypeQuerySubscriptExpression.Parsed;
-		readonly 'typescript:using_declaration': T.UsingDeclaration.Parsed;
+		readonly 'typescript:using_declaration_await': T.UsingDeclarationAwait.Parsed;
+		readonly 'typescript:using_declaration_plain': T.UsingDeclarationPlain.Parsed;
 	}
 }
 

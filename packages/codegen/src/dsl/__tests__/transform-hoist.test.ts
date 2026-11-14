@@ -160,6 +160,68 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 				})
 			).toThrow(/absent case only exists when the sibling variants hoist/);
 		});
+
+		it('keeps a named default and an absent default both, for the ir surface to refuse', () => {
+			const { result } = withWireContext('ref', () => {
+				const g = globalThis as any;
+				return transform(refRule(g, g.optional), {
+					'1/0/0': variant('raw_const', { default: true }),
+					'1/0/1': variant('raw_mut'),
+					'1': variant('plain', { absent: true, default: true })
+				}) as any;
+			});
+			expect(result.members.map((m: any) => [m.name, m.annotations?.default === true])).toEqual([
+				['ref_raw_const', true],
+				['ref_raw_mut', false],
+				['ref_plain', true]
+			]);
+		});
+	});
+
+	describe('variants of a choice under field()', () => {
+		const usingRule = (g: any) =>
+			g.seq(
+				g.field('kind', g.choice({ type: 'STRING', value: 'using' }, g.seq({ type: 'STRING', value: 'await' }, { type: 'STRING', value: 'using' }))),
+				g.field('declarator', { type: 'SYMBOL', name: 'variable_declarator' }),
+				{ type: 'STRING', value: ';' }
+			);
+		const shape = (rule: any): unknown =>
+			rule.type === 'FIELD' ? { [rule.name]: shape(rule.content) } : rule.type === 'SEQ' ? rule.members.map(shape) : (rule.value ?? rule.name);
+		const variants = { 'kind:/0': variant('plain', { default: true }), 'kind:/1': variant('await') };
+
+		it('hoists the choice the field holds, addressed by the field name, and keeps the field around each arm', () => {
+			const { result, ctx } = withWireContext('using_declaration', () => {
+				const g = globalThis as any;
+				return transform(usingRule(g), variants) as any;
+			});
+			expect(result.type).toBe('CHOICE');
+			expect(result.members.map((m: any) => [m.name, m.annotations?.variant])).toEqual([
+				['using_declaration_plain', 'plain'],
+				['using_declaration_await', 'await']
+			]);
+			expect(shape(ctx.deposits.get('using_declaration_plain'))).toEqual([{ kind: 'using' }, { declarator: 'variable_declarator' }, ';']);
+			expect(shape(ctx.deposits.get('using_declaration_await'))).toEqual([{ kind: ['await', 'using'] }, { declarator: 'variable_declarator' }, ';']);
+		});
+
+		it('keeps the per-arm form when the field name is not one member of the sequence', () => {
+			const { result, ctx } = withWireContext('using_declaration', () => {
+				const g = globalThis as any;
+				return transform(g.seq({ type: 'STRING', value: '(' }, usingRule(g), { type: 'STRING', value: ')' }), variants) as any;
+			});
+			expect(result.type).toBe('SEQ');
+			expect(shape(ctx.deposits.get('using_declaration_await'))).toEqual(['await', 'using']);
+		});
+
+		it('keeps two declared defaults both, for the ir surface to refuse', () => {
+			const { result } = withWireContext('using_declaration', () => {
+				const g = globalThis as any;
+				return transform(usingRule(g), { 'kind:/0': variant('plain', { default: true }), 'kind:/1': variant('await', { default: true }) }) as any;
+			});
+			expect(result.members.map((m: any) => [m.name, m.annotations?.default === true])).toEqual([
+				['using_declaration_plain', true],
+				['using_declaration_await', true]
+			]);
+		});
 	});
 
 	it('bails on mixed choice positions (variants at different choicePos)', () => {

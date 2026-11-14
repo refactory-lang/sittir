@@ -1095,93 +1095,6 @@ function buildLexicalDeclaration$with$terminator(this: Received<Held>, ...args: 
 	return buildLexicalDeclaration$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
-export function buildUsingDeclaration<VariableDeclaratorsSlot extends T.UsingDeclaration.Config['variableDeclarators']>(
-	config: RefusingConfig<T.UsingDeclaration.Config, { variableDeclarators: VariableDeclaratorsSlot }>,
-	options?: T.UsingDeclaration.Options
-): T.UsingDeclaration.Bound;
-export function buildUsingDeclaration(
-	config: T.UsingDeclaration.Config,
-	options?: T.UsingDeclaration.Options
-): T.UsingDeclaration.Bound {
-	currentHandle()?.admit(TSKindId.UsingDeclaration, [config]);
-	const _kind = kindIdStorage<NonNullable<T.UsingDeclaration['_kind']>>(config.kind);
-	const _variable_declarator = listStorage<NonNullable<T.UsingDeclaration['_variable_declarator']>>(
-		config.variableDeclarators
-	);
-	const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.UsingDeclaration['_automatic_semicolon']>>(
-		options?.automaticSemicolon,
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'using_declaration', {
-			kind: _kind,
-			variableDeclarators: _variable_declarator,
-			automaticSemicolon: _automatic_semicolon
-		});
-	const node = {
-		$type: TSKindId.UsingDeclaration as const,
-		_kind,
-		_variable_declarator,
-		_automatic_semicolon,
-		$_layout: undefined,
-		$with: undefined as unknown as object,
-		kind: () => _kind,
-		variableDeclarators: () => hydrateStoredSlots(node, '_variable_declarator'),
-		automaticSemicolon: () => _automatic_semicolon,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory,
-		[HANDLE]: handle,
-		[INPUT]: config,
-		[OPTIONS]: options,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		kind: buildUsingDeclaration$with$kind,
-		variableDeclarators: buildUsingDeclaration$with$variableDeclarators,
-		automaticSemicolon: buildUsingDeclaration$with$automaticSemicolon,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.UsingDeclaration.Bound;
-}
-
-function buildUsingDeclaration$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.UsingDeclaration.Config;
-	const options = node[OPTIONS] as T.UsingDeclaration.Options;
-	switch (setter) {
-		case 'kind':
-			return applySetter(args, (value: Admit<NonNullable<T.UsingDeclaration.Config>['kind']>) =>
-				rebuilt(node, handle, () => buildUsingDeclaration({ ...config, kind: value }, options))
-			);
-		case 'variableDeclarators':
-			return applySetter(args, (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
-				rebuilt(node, handle, () =>
-					buildUsingDeclaration({ ...config, variableDeclarators: restItems('variableDeclarators', values) }, options)
-				)
-			);
-		case 'automaticSemicolon':
-			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-				rebuilt(node, handle, () => buildUsingDeclaration(config, { ...options, automaticSemicolon: spelling }))
-			);
-	}
-	throw new Error(`using_declaration has no $with.${setter}`);
-}
-function buildUsingDeclaration$with$kind(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildUsingDeclaration$with(receiverOf(this, '$with.kind'), 'kind', args);
-}
-function buildUsingDeclaration$with$variableDeclarators(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildUsingDeclaration$with(receiverOf(this, '$with.variableDeclarators'), 'variableDeclarators', args);
-}
-function buildUsingDeclaration$with$automaticSemicolon(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildUsingDeclaration$with(receiverOf(this, '$with.automaticSemicolon'), 'automaticSemicolon', args);
-}
-
 export function buildStatementBlock(): T.EmptyStatementBlock;
 export function buildStatementBlock<A extends Admit<T.Statement[]>>(
 	...children: A & RefuseUndeclared<A>
@@ -12590,8 +12503,6 @@ function buildImportClauseGroup$with$content(this: Received<Held>, ...args: unkn
 	return buildImportClauseGroup$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export const buildUsingDeclarationArm: TSKindId.UsingDeclarationArm = TSKindId.UsingDeclarationArm;
-
 export function buildCatchClauseGroup<
 	ParameterSlot extends T.CatchClauseGroup.Config['parameter'],
 	TypeSlot extends T.CatchClauseGroup.Config['type']
@@ -15663,6 +15574,168 @@ function buildUpdateExpressionPrefix$with$operator(this: Received<Held>, ...args
 }
 function buildUpdateExpressionPrefix$with$argument(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildUpdateExpressionPrefix$with(receiverOf(this, '$with.argument'), 'argument', args);
+}
+
+export function buildUsingDeclarationPlain<A extends NonEmptyArray<Admit<T.VariableDeclarator>>>(
+	...children: A & RefuseUndeclared<A>
+): T.UsingDeclarationPlain.Bound;
+export function buildUsingDeclarationPlain<A extends NonEmptyArray<Admit<T.VariableDeclarator>>>(
+	options: ListOptions<T.UsingDeclarationPlain.Options>,
+	...children: A & RefuseUndeclared<A>
+): T.UsingDeclarationPlain.Bound;
+export function buildUsingDeclarationPlain(...args: unknown[]): T.UsingDeclarationPlain.Bound {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['automaticSemicolon'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as T.UsingDeclarationPlain.Options;
+	const children = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.VariableDeclarator>>;
+	currentHandle()?.admit(TSKindId.UsingDeclarationPlain, args);
+	const _variable_declarator = children;
+	const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.UsingDeclarationPlain['_automatic_semicolon']>>(
+		options?.automaticSemicolon,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'using_declaration_plain', {
+			variableDeclarators: _variable_declarator,
+			automaticSemicolon: _automatic_semicolon
+		});
+	const node = {
+		$type: TSKindId.UsingDeclarationPlain as const,
+		_variable_declarator,
+		_automatic_semicolon,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		variableDeclarators: () => hydrateStoredSlots(node, '_variable_declarator'),
+		automaticSemicolon: () => _automatic_semicolon,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: children,
+		[OPTIONS]: options,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		variableDeclarators: buildUsingDeclarationPlain$with$variableDeclarators,
+		automaticSemicolon: buildUsingDeclarationPlain$with$automaticSemicolon,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.UsingDeclarationPlain.Bound;
+}
+
+function buildUsingDeclarationPlain$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const children = node[INPUT] as NonEmptyArray<Admit<T.VariableDeclarator>>;
+	const options = node[OPTIONS] as T.UsingDeclarationPlain.Options;
+	switch (setter) {
+		case 'variableDeclarators':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () => buildUsingDeclarationPlain(options, ...restItems('variableDeclarators', vs)))
+			);
+		case 'automaticSemicolon':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () =>
+					buildUsingDeclarationPlain({ ...options, automaticSemicolon: spelling }, ...children)
+				)
+			);
+	}
+	throw new Error(`using_declaration_plain has no $with.${setter}`);
+}
+function buildUsingDeclarationPlain$with$variableDeclarators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUsingDeclarationPlain$with(receiverOf(this, '$with.variableDeclarators'), 'variableDeclarators', args);
+}
+function buildUsingDeclarationPlain$with$automaticSemicolon(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUsingDeclarationPlain$with(receiverOf(this, '$with.automaticSemicolon'), 'automaticSemicolon', args);
+}
+
+export function buildUsingDeclarationAwait<A extends NonEmptyArray<Admit<T.VariableDeclarator>>>(
+	...children: A & RefuseUndeclared<A>
+): T.UsingDeclarationAwait.Bound;
+export function buildUsingDeclarationAwait<A extends NonEmptyArray<Admit<T.VariableDeclarator>>>(
+	options: ListOptions<T.UsingDeclarationAwait.Options>,
+	...children: A & RefuseUndeclared<A>
+): T.UsingDeclarationAwait.Bound;
+export function buildUsingDeclarationAwait(...args: unknown[]): T.UsingDeclarationAwait.Bound {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['automaticSemicolon'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as T.UsingDeclarationAwait.Options;
+	const children = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.VariableDeclarator>>;
+	currentHandle()?.admit(TSKindId.UsingDeclarationAwait, args);
+	const _variable_declarator = children;
+	const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.UsingDeclarationAwait['_automatic_semicolon']>>(
+		options?.automaticSemicolon,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'using_declaration_await', {
+			variableDeclarators: _variable_declarator,
+			automaticSemicolon: _automatic_semicolon
+		});
+	const node = {
+		$type: TSKindId.UsingDeclarationAwait as const,
+		_variable_declarator,
+		_automatic_semicolon,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		variableDeclarators: () => hydrateStoredSlots(node, '_variable_declarator'),
+		automaticSemicolon: () => _automatic_semicolon,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: children,
+		[OPTIONS]: options,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		variableDeclarators: buildUsingDeclarationAwait$with$variableDeclarators,
+		automaticSemicolon: buildUsingDeclarationAwait$with$automaticSemicolon,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.UsingDeclarationAwait.Bound;
+}
+
+function buildUsingDeclarationAwait$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const children = node[INPUT] as NonEmptyArray<Admit<T.VariableDeclarator>>;
+	const options = node[OPTIONS] as T.UsingDeclarationAwait.Options;
+	switch (setter) {
+		case 'variableDeclarators':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () => buildUsingDeclarationAwait(options, ...restItems('variableDeclarators', vs)))
+			);
+		case 'automaticSemicolon':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () =>
+					buildUsingDeclarationAwait({ ...options, automaticSemicolon: spelling }, ...children)
+				)
+			);
+	}
+	throw new Error(`using_declaration_await has no $with.${setter}`);
+}
+function buildUsingDeclarationAwait$with$variableDeclarators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUsingDeclarationAwait$with(receiverOf(this, '$with.variableDeclarators'), 'variableDeclarators', args);
+}
+function buildUsingDeclarationAwait$with$automaticSemicolon(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUsingDeclarationAwait$with(receiverOf(this, '$with.automaticSemicolon'), 'automaticSemicolon', args);
 }
 
 export function buildArrowFunctionParameter<V extends Admit<T.Identifier>>(
@@ -18936,6 +19009,8 @@ function buildPublicFieldDefinitionAccessor$with$value(this: Received<Held>, ...
 	return buildPublicFieldDefinitionAccessor$with(receiverOf(this, '$with.value'), 'value', args);
 }
 
+export const buildForHeaderUsingKindKind: TSKindId.ForHeaderUsingKindKind = TSKindId.ForHeaderUsingKindKind;
+
 export function buildHtmlComment(text: string): T.HtmlComment.Bound {
 	if (typeof text !== 'string') throw new Error(`html_comment: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
@@ -19926,7 +20001,6 @@ export type FluentKindMap = {
 	expression_statement: T.ExpressionStatement.Bound;
 	variable_declaration: T.VariableDeclaration.Bound;
 	lexical_declaration: T.LexicalDeclaration.Bound;
-	using_declaration: T.UsingDeclaration.Bound;
 	statement_block: T.StatementBlock.Bound;
 	else_clause: T.ElseClause.Bound;
 	if_statement: T.IfStatement.Bound;
@@ -20087,7 +20161,6 @@ export type FluentKindMap = {
 	type_parameters_elements: T.TypeParametersElements.Bound;
 	tuple_type_members: T.TupleTypeMembers.Bound;
 	import_clause_group: T.ImportClauseGroup.Bound;
-	using_declaration_arm: T.UsingDeclarationArm;
 	catch_clause_group: T.CatchClauseGroup.Bound;
 	_get_accessor_signature: T.GetAccessorSignature.Bound;
 	ambient_declaration_global: T.AmbientDeclarationGlobal.Bound;
@@ -20131,6 +20204,8 @@ export type FluentKindMap = {
 	string_single: T.StringSingle.Bound;
 	update_expression_postfix: T.UpdateExpressionPostfix.Bound;
 	update_expression_prefix: T.UpdateExpressionPrefix.Bound;
+	using_declaration_plain: T.UsingDeclarationPlain.Bound;
+	using_declaration_await: T.UsingDeclarationAwait.Bound;
 	arrow_function_parameter: T.ArrowFunctionParameter.Bound;
 	class_heritage_extends_clause: T.ClassHeritageExtendsClause.Bound;
 	import_clause_default_import: T.ImportClauseDefaultImport.Bound;
@@ -20164,6 +20239,7 @@ export type FluentKindMap = {
 	abstract_method_signature_setter: T.AbstractMethodSignatureSetter.Bound;
 	public_field_definition_plain: T.PublicFieldDefinitionPlain.Bound;
 	public_field_definition_accessor: T.PublicFieldDefinitionAccessor.Bound;
+	for_header_using_kind_kind: T.ForHeaderUsingKindKind;
 	html_comment: T.HtmlComment;
 	jsx_text: T.JsxText;
 	_template_chars: T.TemplateChars;
@@ -20207,7 +20283,6 @@ export const _factoryMap = {
 	expression_statement: buildExpressionStatement,
 	variable_declaration: buildVariableDeclaration,
 	lexical_declaration: buildLexicalDeclaration,
-	using_declaration: buildUsingDeclaration,
 	statement_block: buildStatementBlock,
 	else_clause: buildElseClause,
 	if_statement: buildIfStatement,
@@ -20368,7 +20443,6 @@ export const _factoryMap = {
 	type_parameters_elements: buildTypeParametersElements,
 	tuple_type_members: buildTupleTypeMembers,
 	import_clause_group: buildImportClauseGroup,
-	using_declaration_arm: buildUsingDeclarationArm,
 	catch_clause_group: buildCatchClauseGroup,
 	_get_accessor_signature: buildGetAccessorSignature,
 	ambient_declaration_global: buildAmbientDeclarationGlobal,
@@ -20412,6 +20486,8 @@ export const _factoryMap = {
 	string_single: buildStringSingle,
 	update_expression_postfix: buildUpdateExpressionPostfix,
 	update_expression_prefix: buildUpdateExpressionPrefix,
+	using_declaration_plain: buildUsingDeclarationPlain,
+	using_declaration_await: buildUsingDeclarationAwait,
 	arrow_function_parameter: buildArrowFunctionParameter,
 	class_heritage_extends_clause: buildClassHeritageExtendsClause,
 	import_clause_default_import: buildImportClauseDefaultImport,
@@ -20445,6 +20521,7 @@ export const _factoryMap = {
 	abstract_method_signature_setter: buildAbstractMethodSignatureSetter,
 	public_field_definition_plain: buildPublicFieldDefinitionPlain,
 	public_field_definition_accessor: buildPublicFieldDefinitionAccessor,
+	for_header_using_kind_kind: buildForHeaderUsingKindKind,
 	html_comment: buildHtmlComment,
 	jsx_text: buildJsxText,
 	_template_chars: buildTemplateChars,

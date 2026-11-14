@@ -800,6 +800,20 @@
     ]
   },
   {
+    "type": "using_declaration",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "using_declaration_await",
+        "named": true
+      },
+      {
+        "type": "using_declaration_plain",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "variable_declarator",
     "named": true,
     "subtypes": [
@@ -3641,12 +3655,12 @@
         "required": true,
         "types": [
           {
-            "type": "using",
-            "named": false
+            "type": "for_header_using_kind_kind",
+            "named": true
           },
           {
-            "type": "using_declaration_arm",
-            "named": true
+            "type": "using",
+            "named": false
           }
         ]
       },
@@ -3707,6 +3721,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "for_header_using_kind_kind",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "for_header_var_kind",
@@ -8809,20 +8828,20 @@
     }
   },
   {
-    "type": "using_declaration",
+    "type": "using_declaration_await",
     "named": true,
     "fields": {
       "kind": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
-            "type": "using",
+            "type": "await",
             "named": false
           },
           {
-            "type": "using_declaration_arm",
-            "named": true
+            "type": "using",
+            "named": false
           }
         ]
       },
@@ -8849,9 +8868,40 @@
     }
   },
   {
-    "type": "using_declaration_arm",
+    "type": "using_declaration_plain",
     "named": true,
-    "fields": {}
+    "fields": {
+      "kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "using",
+            "named": false
+          }
+        ]
+      },
+      "variable_declarator": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "variable_declarator",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "automatic_semicolon",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "variable_declaration",

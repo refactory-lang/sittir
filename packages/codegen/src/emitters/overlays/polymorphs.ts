@@ -7,6 +7,7 @@ import {
 	classifyFromEmission,
 	compareOrdinal,
 	isSlotBearingCompound,
+	leadingOptionsOf,
 	ownTextLeaf,
 	resolveDirectFactorySlot,
 	resolveFieldStorageInfo,
@@ -15,12 +16,14 @@ import {
 	refusingParam,
 	seatDeclaration,
 	withTrailingParam,
+	type LeadingOptions,
 	type LooseRefusal,
 	type RefusingParams
 } from '../shared.ts';
 import { looseRefusal } from '../interior.ts';
 import {
 	constructorTargetKind,
+	leadingOptionsSplit,
 	listHasOptions,
 	listSpreadTarget,
 	rowTuple,
@@ -571,10 +574,29 @@ interface WireShape {
 	readonly paramFor: (parentRef: string, childRef: string | undefined) => RefusingParams;
 }
 
+function spreadValueShape(m: string, k: string, leading: LeadingOptions, loose: LooseRefusal): WireShape {
+	const kept = leading.keys.filter((key) => key !== k);
+	const head = `export const ${m} = <${PFS}>(parent: PF, value: unknown) =>`;
+	return {
+		method:
+			kept.length === 0
+				? [head, `	(...children: readonly unknown[]): ReturnType<PF> => _s<ReturnType<PF>>(parent)({ ${k}: value }, ...children);`]
+				: [
+						head,
+						'	(...args: readonly unknown[]): ReturnType<PF> => {',
+						...leadingOptionsSplit({ type: 'Record<string, unknown>', keys: kept }, 'children', 'readonly unknown[]').map((line) => `\t${line}`),
+						`		return _s<ReturnType<PF>>(parent)(_m(options, { ${k}: value }), ...children);`,
+						'	};'
+					],
+		paramFor: (p) => refusingParam('args', `OmitLeadingOption<ArgsOf<${p}>, '${k}'>`, { rest: true, loose })
+	};
+}
+
 function shape(
 	sub: SubFactory,
 	k: string,
 	positional: boolean,
+	leading: LeadingOptions | undefined,
 	mergeKeys: readonly string[] | undefined,
 	m: string,
 	call: PortableMountCall,
@@ -582,6 +604,7 @@ function shape(
 ): WireShape {
 	const registered = sub.slot.registeredOption !== undefined;
 	if (sub.arm.via === 'value') {
+		if (leading !== undefined) return spreadValueShape(m, k, leading, loose);
 		if (call === 'none') {
 			return {
 				method: positional
@@ -951,10 +974,11 @@ function emitSub(
 	const p = parentOverride ?? parentRefs(parent, wires.coerceEmitted);
 	const k = sub.slot.propertyName;
 	const positional = resolveDirectFactorySlot(parent, nodeMap) !== undefined;
+	const leading = leadingOptionsOf(parent, nodeMap);
 
 	if (sub.arm.via === 'value') {
 		const val = valueStorageExpr(sub.arm.storage, resolveFieldStorageInfo(sub.slot, nodeMap), wires.kindEntries);
-		const s = shape(sub, k, positional, undefined, m, mountCallOf(sub, nodeMap), looseRefusal(nodeMap));
+		const s = shape(sub, k, positional, leading, undefined, m, mountCallOf(sub, nodeMap), looseRefusal(nodeMap));
 		const parent = p.coerce ?? p.strict;
 		const type = functionTypeOf(s.paramFor(parent.type, undefined), `ReturnType<${parent.type}>`);
 		return { name: m, method: s.method, apply: `K.${m}(${parent.value}, ${val})`, type, coercible: p.coerce !== undefined };
@@ -966,7 +990,7 @@ function emitSub(
 		sub.arm.path.length === 0 && sub.residual.length > 0 && sub.merges
 			? armConfigKeys(sub, nodeMap, { isEmitted: wires.isEmitted })
 			: undefined;
-	const s = shape(sub, k, positional, mergeKeys, m, mountCallOf(sub, nodeMap), looseRefusal(nodeMap));
+	const s = shape(sub, k, positional, leading, mergeKeys, m, mountCallOf(sub, nodeMap), looseRefusal(nodeMap));
 	const wrap: FlavorRefs = positional ? { strict: p.strict, coerce: p.coerce && p.strict } : p;
 	const coercible = wrap.coerce !== undefined && c.coerce !== undefined;
 	const parentRef = coercible ? wrap.coerce! : wrap.strict;
@@ -1008,7 +1032,7 @@ function referencedDecls(decls: readonly Decl[], roots: readonly string[]): Decl
 	return decls.filter((decl) => kept.has(decl.name));
 }
 
-const SITTIR_TYPES = ['ArgsOf', 'ConfigSeat', 'ElementsOf', 'EmptyForm', 'NoneOf', 'OmitEach', 'OptionalConfigSeat', 'OptionsArg', 'RefuseUndeclared', 'RenameKeys', 'Seat', 'WithoutGroup'];
+const SITTIR_TYPES = ['ArgsOf', 'ConfigSeat', 'ElementsOf', 'EmptyForm', 'NoneOf', 'OmitEach', 'OmitLeadingOption', 'OptionalConfigSeat', 'OptionsArg', 'RefuseUndeclared', 'RenameKeys', 'Seat', 'WithoutGroup'];
 
 export function sittirTypesImport(body: readonly string[]): string[] {
 	const text = body.join('\n');

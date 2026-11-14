@@ -95,7 +95,9 @@ export interface SubBuilderRowKind {
 	'declaration.lexical': TSKindId.LexicalDeclaration;
 	'declaration.module': TSKindId.Module;
 	'declaration.typeAlias': TSKindId.TypeAliasDeclaration;
-	'declaration.using': TSKindId.UsingDeclaration;
+	'declaration.using': TSKindId.UsingDeclarationPlain;
+	'declaration.using.await': TSKindId.UsingDeclarationAwait;
+	'declaration.using.plain': TSKindId.UsingDeclarationPlain;
 	'declaration.variable': TSKindId.VariableDeclaration;
 	'enumBodyElement.assignment': TSKindId.EnumAssignment;
 	'enumBodyElement.name': TSKindId.EnumBodyElementName;
@@ -164,7 +166,9 @@ export interface SubBuilderRowKind {
 	'statement.declaration.lexical': TSKindId.LexicalDeclaration;
 	'statement.declaration.module': TSKindId.Module;
 	'statement.declaration.typeAlias': TSKindId.TypeAliasDeclaration;
-	'statement.declaration.using': TSKindId.UsingDeclaration;
+	'statement.declaration.using': TSKindId.UsingDeclarationPlain;
+	'statement.declaration.using.await': TSKindId.UsingDeclarationAwait;
+	'statement.declaration.using.plain': TSKindId.UsingDeclarationPlain;
 	'statement.declaration.variable': TSKindId.VariableDeclaration;
 	'statement.do': TSKindId.DoStatement;
 	'statement.empty': TSKindId.EmptyStatement;
@@ -189,6 +193,9 @@ export interface SubBuilderRowKind {
 	updateExpression: TSKindId.UpdateExpressionPostfix;
 	'updateExpression.postfix': TSKindId.UpdateExpressionPostfix;
 	'updateExpression.prefix': TSKindId.UpdateExpressionPrefix;
+	usingDeclaration: TSKindId.UsingDeclarationPlain;
+	'usingDeclaration.await': TSKindId.UsingDeclarationAwait;
+	'usingDeclaration.plain': TSKindId.UsingDeclarationPlain;
 	'variableDeclarator.definite': TSKindId.VariableDeclaratorDefinite;
 	'variableDeclarator.plain': TSKindId.VariableDeclaratorPlain;
 }

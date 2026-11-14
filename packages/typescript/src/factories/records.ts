@@ -1432,167 +1432,6 @@ function withLexicalDeclaration(node: object, setter: string, args: readonly unk
 	throw new Error(`lexical_declaration has no $with.${setter}`);
 }
 
-export function buildUsingDeclaration<VariableDeclaratorsSlot extends T.UsingDeclaration.Config['variableDeclarators']>(
-	config: RefusingConfig<T.UsingDeclaration.Config, { variableDeclarators: VariableDeclaratorsSlot }>,
-	options?: T.UsingDeclaration.Options
-): T.UsingDeclaration.Bound;
-export function buildUsingDeclaration(
-	config: T.UsingDeclaration.Config,
-	options?: T.UsingDeclaration.Options
-): T.UsingDeclaration.Bound {
-	currentHandle()?.admit(TSKindId.UsingDeclaration, [config]);
-	const _kind = kindIdStorage<NonNullable<T.UsingDeclaration['_kind']>>(config.kind);
-	const _variable_declarator = listStorage<NonNullable<T.UsingDeclaration['_variable_declarator']>>(
-		config.variableDeclarators
-	);
-	const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.UsingDeclaration['_automatic_semicolon']>>(
-		options?.automaticSemicolon,
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'using_declaration', {
-			kind: _kind,
-			variableDeclarators: _variable_declarator,
-			automaticSemicolon: _automatic_semicolon
-		});
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.UsingDeclaration as const, { _kind, _variable_declarator, _automatic_semicolon });
-	return arena.scope(() => {
-		const record = arena.record(TSKindId.UsingDeclaration as const);
-		storeCell(arena, record, 2, 2, _kind);
-		storeList(arena, record, 3, 3, _variable_declarator);
-		storeCell(arena, record, 4, 4, _automatic_semicolon);
-		const node = arena.view(record);
-		return node as unknown as T.UsingDeclaration.Bound;
-	});
-}
-
-function buildUsingDeclaration$patch(
-	source: object,
-	config: T.UsingDeclaration.Config,
-	options?: T.UsingDeclaration.Options
-): T.UsingDeclaration.Bound {
-	currentHandle()?.admit(TSKindId.UsingDeclaration, [config]);
-	const _kind = kindIdStorage<NonNullable<T.UsingDeclaration['_kind']>>(config.kind);
-	const _variable_declarator = listStorage<NonNullable<T.UsingDeclaration['_variable_declarator']>>(
-		config.variableDeclarators
-	);
-	const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.UsingDeclaration['_automatic_semicolon']>>(
-		options?.automaticSemicolon,
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'using_declaration', {
-			kind: _kind,
-			variableDeclarators: _variable_declarator,
-			automaticSemicolon: _automatic_semicolon
-		});
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.UsingDeclaration as const, { _kind, _variable_declarator, _automatic_semicolon });
-	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.UsingDeclaration as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'kind', _kind));
-		patchList(arena, record, 3, 3, _variable_declarator);
-		patchCell(arena, record, 4, 4, carriedSlot(source, 'automaticSemicolon', _automatic_semicolon));
-		const node = arena.view(record);
-		return node as unknown as T.UsingDeclaration.Bound;
-	});
-}
-function buildUsingDeclaration$set(
-	source: object,
-	...[slot, input]:
-		| ['kind', Partial<T.UsingDeclaration.Config>]
-		| ['variableDeclarators', Partial<T.UsingDeclaration.Config>]
-		| ['automaticSemicolon', T.UsingDeclaration.Options]
-): T.UsingDeclaration.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		switch (slot) {
-			case 'kind':
-			case 'variableDeclarators':
-				return buildUsingDeclaration$patch(
-					source,
-					{ ...(inputs.config as T.UsingDeclaration.Config), ...input },
-					inputs.options as T.UsingDeclaration.Options
-				);
-			case 'automaticSemicolon':
-				return buildUsingDeclaration$patch(source, inputs.config as T.UsingDeclaration.Config, {
-					...(inputs.options as T.UsingDeclaration.Options),
-					...input
-				});
-		}
-	}
-	switch (slot) {
-		case 'kind': {
-			const config = input;
-			const _kind = kindIdStorage<NonNullable<T.UsingDeclaration['_kind']>>(config.kind);
-			return setSlot(
-				source,
-				TSKindId.UsingDeclaration as const,
-				'using_declaration',
-				0,
-				'kind',
-				_kind
-			) as unknown as T.UsingDeclaration.Bound;
-		}
-		case 'variableDeclarators': {
-			const config = input;
-			const _variable_declarator = listStorage<NonNullable<T.UsingDeclaration['_variable_declarator']>>(
-				config.variableDeclarators
-			);
-			return setSlot(
-				source,
-				TSKindId.UsingDeclaration as const,
-				'using_declaration',
-				1,
-				'variableDeclarators',
-				_variable_declarator
-			) as unknown as T.UsingDeclaration.Bound;
-		}
-		case 'automaticSemicolon': {
-			const options = input;
-			const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.UsingDeclaration['_automatic_semicolon']>>(
-				options?.automaticSemicolon,
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			);
-			return setSlot(
-				source,
-				TSKindId.UsingDeclaration as const,
-				'using_declaration',
-				2,
-				'automaticSemicolon',
-				_automatic_semicolon
-			) as unknown as T.UsingDeclaration.Bound;
-		}
-	}
-}
-function withUsingDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
-	const handle = handleOf(node as RecordHandle);
-	switch (setter) {
-		case 'kind':
-			return applySetter(args, (value: Admit<NonNullable<T.UsingDeclaration.Config>['kind']>) =>
-				rebuilt(node, handle, () => buildUsingDeclaration$set(node, 'kind', { kind: value }))
-			);
-		case 'variableDeclarators':
-			return applySetter(args, (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
-				rebuilt(node, handle, () =>
-					buildUsingDeclaration$set(node, 'variableDeclarators', {
-						variableDeclarators: restItems('variableDeclarators', values)
-					})
-				)
-			);
-		case 'automaticSemicolon':
-			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-				rebuilt(node, handle, () =>
-					buildUsingDeclaration$set(node, 'automaticSemicolon', { automaticSemicolon: spelling })
-				)
-			);
-	}
-	throw new Error(`using_declaration has no $with.${setter}`);
-}
-
 export function buildStatementBlock(): T.EmptyStatementBlock;
 export function buildStatementBlock<A extends Admit<T.Statement[]>>(
 	...children: A & RefuseUndeclared<A>
@@ -18824,8 +18663,6 @@ function withImportClauseGroup(node: object, setter: string, args: readonly unkn
 	throw new Error(`import_clause_group has no $with.${setter}`);
 }
 
-export const buildUsingDeclarationArm: TSKindId.UsingDeclarationArm = TSKindId.UsingDeclarationArm;
-
 export function buildCatchClauseGroup<
 	ParameterSlot extends T.CatchClauseGroup.Config['parameter'],
 	TypeSlot extends T.CatchClauseGroup.Config['type']
@@ -23705,6 +23542,282 @@ function withUpdateExpressionPrefix(node: object, setter: string, args: readonly
 			);
 	}
 	throw new Error(`update_expression_prefix has no $with.${setter}`);
+}
+
+export function buildUsingDeclarationPlain<A extends NonEmptyArray<Admit<T.VariableDeclarator>>>(
+	...children: A & RefuseUndeclared<A>
+): T.UsingDeclarationPlain.Bound;
+export function buildUsingDeclarationPlain<A extends NonEmptyArray<Admit<T.VariableDeclarator>>>(
+	options: ListOptions<T.UsingDeclarationPlain.Options>,
+	...children: A & RefuseUndeclared<A>
+): T.UsingDeclarationPlain.Bound;
+export function buildUsingDeclarationPlain(...args: unknown[]): T.UsingDeclarationPlain.Bound {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['automaticSemicolon'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as T.UsingDeclarationPlain.Options;
+	const children = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.VariableDeclarator>>;
+	currentHandle()?.admit(TSKindId.UsingDeclarationPlain, args);
+	const _variable_declarator = children;
+	const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.UsingDeclarationPlain['_automatic_semicolon']>>(
+		options?.automaticSemicolon,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'using_declaration_plain', {
+			variableDeclarators: _variable_declarator,
+			automaticSemicolon: _automatic_semicolon
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.UsingDeclarationPlain as const, { _variable_declarator, _automatic_semicolon });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.UsingDeclarationPlain as const);
+		storeList(arena, record, 2, 2, _variable_declarator);
+		storeCell(arena, record, 3, 3, _automatic_semicolon);
+		const node = arena.view(record);
+		return node as unknown as T.UsingDeclarationPlain.Bound;
+	});
+}
+
+function buildUsingDeclarationPlain$patch(source: object, ...args: unknown[]): T.UsingDeclarationPlain.Bound {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['automaticSemicolon'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as T.UsingDeclarationPlain.Options;
+	const children = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.VariableDeclarator>>;
+	currentHandle()?.admit(TSKindId.UsingDeclarationPlain, args);
+	const _variable_declarator = children;
+	const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.UsingDeclarationPlain['_automatic_semicolon']>>(
+		options?.automaticSemicolon,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'using_declaration_plain', {
+			variableDeclarators: _variable_declarator,
+			automaticSemicolon: _automatic_semicolon
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.UsingDeclarationPlain as const, { _variable_declarator, _automatic_semicolon });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.UsingDeclarationPlain as const);
+		patchList(arena, record, 2, 2, _variable_declarator);
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'automaticSemicolon', _automatic_semicolon));
+		const node = arena.view(record);
+		return node as unknown as T.UsingDeclarationPlain.Bound;
+	});
+}
+function buildUsingDeclarationPlain$set(
+	source: object,
+	...[slot, input]:
+		| ['variableDeclarators', NonEmptyArray<Admit<T.VariableDeclarator>>]
+		| ['automaticSemicolon', T.UsingDeclarationPlain.Options]
+): T.UsingDeclarationPlain.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'variableDeclarators':
+				return buildUsingDeclarationPlain$patch(source, inputs.options as T.UsingDeclarationPlain.Options, ...input);
+			case 'automaticSemicolon':
+				return buildUsingDeclarationPlain$patch(
+					source,
+					{ ...(inputs.options as T.UsingDeclarationPlain.Options), ...input },
+					...(inputs.elements as NonEmptyArray<Admit<T.VariableDeclarator>>)
+				);
+		}
+	}
+	switch (slot) {
+		case 'variableDeclarators': {
+			const children = input;
+			const _variable_declarator = children;
+			return setSlot(
+				source,
+				TSKindId.UsingDeclarationPlain as const,
+				'using_declaration_plain',
+				0,
+				'variableDeclarators',
+				_variable_declarator
+			) as unknown as T.UsingDeclarationPlain.Bound;
+		}
+		case 'automaticSemicolon': {
+			const options = input;
+			const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.UsingDeclarationPlain['_automatic_semicolon']>>(
+				options?.automaticSemicolon,
+				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+			);
+			return setSlot(
+				source,
+				TSKindId.UsingDeclarationPlain as const,
+				'using_declaration_plain',
+				1,
+				'automaticSemicolon',
+				_automatic_semicolon
+			) as unknown as T.UsingDeclarationPlain.Bound;
+		}
+	}
+}
+function withUsingDeclarationPlain(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'variableDeclarators':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () =>
+					buildUsingDeclarationPlain$set(node, 'variableDeclarators', restItems('variableDeclarators', vs))
+				)
+			);
+		case 'automaticSemicolon':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () =>
+					buildUsingDeclarationPlain$set(node, 'automaticSemicolon', { automaticSemicolon: spelling })
+				)
+			);
+	}
+	throw new Error(`using_declaration_plain has no $with.${setter}`);
+}
+
+export function buildUsingDeclarationAwait<A extends NonEmptyArray<Admit<T.VariableDeclarator>>>(
+	...children: A & RefuseUndeclared<A>
+): T.UsingDeclarationAwait.Bound;
+export function buildUsingDeclarationAwait<A extends NonEmptyArray<Admit<T.VariableDeclarator>>>(
+	options: ListOptions<T.UsingDeclarationAwait.Options>,
+	...children: A & RefuseUndeclared<A>
+): T.UsingDeclarationAwait.Bound;
+export function buildUsingDeclarationAwait(...args: unknown[]): T.UsingDeclarationAwait.Bound {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['automaticSemicolon'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as T.UsingDeclarationAwait.Options;
+	const children = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.VariableDeclarator>>;
+	currentHandle()?.admit(TSKindId.UsingDeclarationAwait, args);
+	const _variable_declarator = children;
+	const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.UsingDeclarationAwait['_automatic_semicolon']>>(
+		options?.automaticSemicolon,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'using_declaration_await', {
+			variableDeclarators: _variable_declarator,
+			automaticSemicolon: _automatic_semicolon
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.UsingDeclarationAwait as const, { _variable_declarator, _automatic_semicolon });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.UsingDeclarationAwait as const);
+		storeList(arena, record, 2, 2, _variable_declarator);
+		storeCell(arena, record, 3, 3, _automatic_semicolon);
+		const node = arena.view(record);
+		return node as unknown as T.UsingDeclarationAwait.Bound;
+	});
+}
+
+function buildUsingDeclarationAwait$patch(source: object, ...args: unknown[]): T.UsingDeclarationAwait.Bound {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['automaticSemicolon'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as T.UsingDeclarationAwait.Options;
+	const children = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.VariableDeclarator>>;
+	currentHandle()?.admit(TSKindId.UsingDeclarationAwait, args);
+	const _variable_declarator = children;
+	const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.UsingDeclarationAwait['_automatic_semicolon']>>(
+		options?.automaticSemicolon,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'using_declaration_await', {
+			variableDeclarators: _variable_declarator,
+			automaticSemicolon: _automatic_semicolon
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.UsingDeclarationAwait as const, { _variable_declarator, _automatic_semicolon });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.UsingDeclarationAwait as const);
+		patchList(arena, record, 2, 2, _variable_declarator);
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'automaticSemicolon', _automatic_semicolon));
+		const node = arena.view(record);
+		return node as unknown as T.UsingDeclarationAwait.Bound;
+	});
+}
+function buildUsingDeclarationAwait$set(
+	source: object,
+	...[slot, input]:
+		| ['variableDeclarators', NonEmptyArray<Admit<T.VariableDeclarator>>]
+		| ['automaticSemicolon', T.UsingDeclarationAwait.Options]
+): T.UsingDeclarationAwait.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'variableDeclarators':
+				return buildUsingDeclarationAwait$patch(source, inputs.options as T.UsingDeclarationAwait.Options, ...input);
+			case 'automaticSemicolon':
+				return buildUsingDeclarationAwait$patch(
+					source,
+					{ ...(inputs.options as T.UsingDeclarationAwait.Options), ...input },
+					...(inputs.elements as NonEmptyArray<Admit<T.VariableDeclarator>>)
+				);
+		}
+	}
+	switch (slot) {
+		case 'variableDeclarators': {
+			const children = input;
+			const _variable_declarator = children;
+			return setSlot(
+				source,
+				TSKindId.UsingDeclarationAwait as const,
+				'using_declaration_await',
+				0,
+				'variableDeclarators',
+				_variable_declarator
+			) as unknown as T.UsingDeclarationAwait.Bound;
+		}
+		case 'automaticSemicolon': {
+			const options = input;
+			const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.UsingDeclarationAwait['_automatic_semicolon']>>(
+				options?.automaticSemicolon,
+				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+			);
+			return setSlot(
+				source,
+				TSKindId.UsingDeclarationAwait as const,
+				'using_declaration_await',
+				1,
+				'automaticSemicolon',
+				_automatic_semicolon
+			) as unknown as T.UsingDeclarationAwait.Bound;
+		}
+	}
+}
+function withUsingDeclarationAwait(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'variableDeclarators':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () =>
+					buildUsingDeclarationAwait$set(node, 'variableDeclarators', restItems('variableDeclarators', vs))
+				)
+			);
+		case 'automaticSemicolon':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () =>
+					buildUsingDeclarationAwait$set(node, 'automaticSemicolon', { automaticSemicolon: spelling })
+				)
+			);
+	}
+	throw new Error(`using_declaration_await has no $with.${setter}`);
 }
 
 export function buildArrowFunctionParameter<V extends Admit<T.Identifier>>(
@@ -29475,6 +29588,8 @@ function withPublicFieldDefinitionAccessor(node: object, setter: string, args: r
 	throw new Error(`public_field_definition_accessor has no $with.${setter}`);
 }
 
+export const buildForHeaderUsingKindKind: TSKindId.ForHeaderUsingKindKind = TSKindId.ForHeaderUsingKindKind;
+
 export function buildHtmlComment(text: string): T.HtmlComment.Bound {
 	if (typeof text !== 'string') throw new Error(`html_comment: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
@@ -30708,7 +30823,6 @@ export type FluentKindMap = {
 	expression_statement: T.ExpressionStatement.Bound;
 	variable_declaration: T.VariableDeclaration.Bound;
 	lexical_declaration: T.LexicalDeclaration.Bound;
-	using_declaration: T.UsingDeclaration.Bound;
 	statement_block: T.StatementBlock.Bound;
 	else_clause: T.ElseClause.Bound;
 	if_statement: T.IfStatement.Bound;
@@ -30869,7 +30983,6 @@ export type FluentKindMap = {
 	type_parameters_elements: T.TypeParametersElements.Bound;
 	tuple_type_members: T.TupleTypeMembers.Bound;
 	import_clause_group: T.ImportClauseGroup.Bound;
-	using_declaration_arm: T.UsingDeclarationArm;
 	catch_clause_group: T.CatchClauseGroup.Bound;
 	_get_accessor_signature: T.GetAccessorSignature.Bound;
 	ambient_declaration_global: T.AmbientDeclarationGlobal.Bound;
@@ -30913,6 +31026,8 @@ export type FluentKindMap = {
 	string_single: T.StringSingle.Bound;
 	update_expression_postfix: T.UpdateExpressionPostfix.Bound;
 	update_expression_prefix: T.UpdateExpressionPrefix.Bound;
+	using_declaration_plain: T.UsingDeclarationPlain.Bound;
+	using_declaration_await: T.UsingDeclarationAwait.Bound;
 	arrow_function_parameter: T.ArrowFunctionParameter.Bound;
 	class_heritage_extends_clause: T.ClassHeritageExtendsClause.Bound;
 	import_clause_default_import: T.ImportClauseDefaultImport.Bound;
@@ -30946,6 +31061,7 @@ export type FluentKindMap = {
 	abstract_method_signature_setter: T.AbstractMethodSignatureSetter.Bound;
 	public_field_definition_plain: T.PublicFieldDefinitionPlain.Bound;
 	public_field_definition_accessor: T.PublicFieldDefinitionAccessor.Bound;
+	for_header_using_kind_kind: T.ForHeaderUsingKindKind;
 	html_comment: T.HtmlComment;
 	jsx_text: T.JsxText;
 	_template_chars: T.TemplateChars;
@@ -30989,7 +31105,6 @@ export const _factoryMap = {
 	expression_statement: buildExpressionStatement,
 	variable_declaration: buildVariableDeclaration,
 	lexical_declaration: buildLexicalDeclaration,
-	using_declaration: buildUsingDeclaration,
 	statement_block: buildStatementBlock,
 	else_clause: buildElseClause,
 	if_statement: buildIfStatement,
@@ -31150,7 +31265,6 @@ export const _factoryMap = {
 	type_parameters_elements: buildTypeParametersElements,
 	tuple_type_members: buildTupleTypeMembers,
 	import_clause_group: buildImportClauseGroup,
-	using_declaration_arm: buildUsingDeclarationArm,
 	catch_clause_group: buildCatchClauseGroup,
 	_get_accessor_signature: buildGetAccessorSignature,
 	ambient_declaration_global: buildAmbientDeclarationGlobal,
@@ -31194,6 +31308,8 @@ export const _factoryMap = {
 	string_single: buildStringSingle,
 	update_expression_postfix: buildUpdateExpressionPostfix,
 	update_expression_prefix: buildUpdateExpressionPrefix,
+	using_declaration_plain: buildUsingDeclarationPlain,
+	using_declaration_await: buildUsingDeclarationAwait,
 	arrow_function_parameter: buildArrowFunctionParameter,
 	class_heritage_extends_clause: buildClassHeritageExtendsClause,
 	import_clause_default_import: buildImportClauseDefaultImport,
@@ -31227,6 +31343,7 @@ export const _factoryMap = {
 	abstract_method_signature_setter: buildAbstractMethodSignatureSetter,
 	public_field_definition_plain: buildPublicFieldDefinitionPlain,
 	public_field_definition_accessor: buildPublicFieldDefinitionAccessor,
+	for_header_using_kind_kind: buildForHeaderUsingKindKind,
 	html_comment: buildHtmlComment,
 	jsx_text: buildJsxText,
 	_template_chars: buildTemplateChars,
@@ -31259,8 +31376,8 @@ export type _FactoryMap = typeof _factoryMap;
 export const builtViews: BuiltViews = Object.freeze({
 	withs: Object.freeze({
 		2: withHashBangLine,
-		121: withEscapeSequence,
-		128: withPrivatePropertyIdentifier,
+		120: withEscapeSequence,
+		127: withPrivatePropertyIdentifier,
 		153: withCommentLine,
 		154: withCommentBlock,
 		155: withNumberHex,
@@ -31286,7 +31403,6 @@ export const builtViews: BuiltViews = Object.freeze({
 		206: withExpressionStatement,
 		207: withVariableDeclaration,
 		208: withLexicalDeclaration,
-		209: withUsingDeclaration,
 		211: withStatementBlock,
 		212: withElseClause,
 		213: withIfStatement,
@@ -31430,78 +31546,80 @@ export const builtViews: BuiltViews = Object.freeze({
 		392: withTypeParametersElements,
 		393: withTupleTypeMembers,
 		394: withImportClauseGroup,
-		396: withCatchClauseGroup,
-		397: withGetAccessorSignature,
-		399: withAmbientDeclarationGlobal,
-		400: withAmbientDeclarationModule,
-		401: withObjectTypeContent,
-		403: withExportStatementNamespaceExport,
-		404: withExportStatementEqualsExport,
-		405: withLiteralTypeNegativeNumber,
-		407: withBinaryExpressionIn,
-		409: withClassBodyMemberMethod,
-		410: withClassBodyMemberMethodSig,
-		411: withClassBodyMemberDeclaration,
-		412: withIndexSignatureColon,
-		413: withIndexSignatureMappedTypeClause,
-		414: withImportStatementClauseFrom,
-		415: withYieldExpressionDelegate,
-		417: withImportSpecifierName,
-		418: withImportSpecifierAs,
-		419: withParenthesizedExpressionTyped,
-		420: withParenthesizedExpressionSequence,
-		421: withCallExpressionCall,
-		422: withCallExpressionTemplateCall,
-		423: withCallExpressionMember,
-		424: withStringDouble,
-		425: withStringSingle,
-		426: withUpdateExpressionPostfix,
-		427: withUpdateExpressionPrefix,
-		428: withArrowFunctionParameter,
-		429: withClassHeritageExtendsClause,
-		430: withImportClauseDefaultImport,
-		431: withExportStatementDefaultFrom,
-		432: withExportStatementDefaultDeclaration,
-		433: withExportStatementDefaultFromStarFrom,
-		434: withExportStatementDefaultFromNsFrom,
-		435: withExportStatementDefaultFromClauseFrom,
-		436: withExportStatementDefaultDeclarationDefaultKw,
-		437: withExportStatementDefaultDeclarationDefaultKwValue,
-		438: withVariableDeclaratorPlain,
-		439: withVariableDeclaratorDefinite,
-		442: withForHeaderLhs,
-		443: withForHeaderVarKind,
-		444: withForHeaderLetConstKind,
-		445: withForHeaderUsingKind,
-		448: withFormalParametersSetAccessorSignature,
-		449: withFormalParametersElementsSetAccessorSignature,
-		450: withSetterParameter,
-		453: withMethodDefinitionPlain,
-		454: withMethodDefinitionGetter,
-		455: withMethodDefinitionSetter,
-		456: withMethodSignaturePlain,
-		457: withMethodSignatureGetter,
-		458: withMethodSignatureSetter,
-		459: withAbstractMethodSignaturePlain,
-		460: withAbstractMethodSignatureGetter,
-		461: withAbstractMethodSignatureSetter,
-		462: withPublicFieldDefinitionPlain,
-		463: withPublicFieldDefinitionAccessor,
-		464: withConstructorDeclaration,
-		468: withReceiverParameterDeclaration,
-		470: withFormalParametersElementsReceiver,
-		471: withFormalParametersElementsReceiverGroup,
-		498: withInterfaceBody,
-		500: withPropertyIdentifier,
-		501: withShorthandPropertyIdentifier,
-		502: withShorthandPropertyIdentifierPattern,
-		503: withStatementIdentifier,
-		505: withTypeIdentifier
+		395: withCatchClauseGroup,
+		396: withGetAccessorSignature,
+		398: withAmbientDeclarationGlobal,
+		399: withAmbientDeclarationModule,
+		400: withObjectTypeContent,
+		402: withExportStatementNamespaceExport,
+		403: withExportStatementEqualsExport,
+		404: withLiteralTypeNegativeNumber,
+		406: withBinaryExpressionIn,
+		408: withClassBodyMemberMethod,
+		409: withClassBodyMemberMethodSig,
+		410: withClassBodyMemberDeclaration,
+		411: withIndexSignatureColon,
+		412: withIndexSignatureMappedTypeClause,
+		413: withImportStatementClauseFrom,
+		414: withYieldExpressionDelegate,
+		416: withImportSpecifierName,
+		417: withImportSpecifierAs,
+		418: withParenthesizedExpressionTyped,
+		419: withParenthesizedExpressionSequence,
+		420: withCallExpressionCall,
+		421: withCallExpressionTemplateCall,
+		422: withCallExpressionMember,
+		423: withStringDouble,
+		424: withStringSingle,
+		425: withUpdateExpressionPostfix,
+		426: withUpdateExpressionPrefix,
+		427: withUsingDeclarationPlain,
+		428: withUsingDeclarationAwait,
+		429: withArrowFunctionParameter,
+		430: withClassHeritageExtendsClause,
+		431: withImportClauseDefaultImport,
+		432: withExportStatementDefaultFrom,
+		433: withExportStatementDefaultDeclaration,
+		434: withExportStatementDefaultFromStarFrom,
+		435: withExportStatementDefaultFromNsFrom,
+		436: withExportStatementDefaultFromClauseFrom,
+		437: withExportStatementDefaultDeclarationDefaultKw,
+		438: withExportStatementDefaultDeclarationDefaultKwValue,
+		439: withVariableDeclaratorPlain,
+		440: withVariableDeclaratorDefinite,
+		443: withForHeaderLhs,
+		444: withForHeaderVarKind,
+		445: withForHeaderLetConstKind,
+		446: withForHeaderUsingKind,
+		449: withFormalParametersSetAccessorSignature,
+		450: withFormalParametersElementsSetAccessorSignature,
+		451: withSetterParameter,
+		454: withMethodDefinitionPlain,
+		455: withMethodDefinitionGetter,
+		456: withMethodDefinitionSetter,
+		457: withMethodSignaturePlain,
+		458: withMethodSignatureGetter,
+		459: withMethodSignatureSetter,
+		460: withAbstractMethodSignaturePlain,
+		461: withAbstractMethodSignatureGetter,
+		462: withAbstractMethodSignatureSetter,
+		463: withPublicFieldDefinitionPlain,
+		464: withPublicFieldDefinitionAccessor,
+		466: withConstructorDeclaration,
+		470: withReceiverParameterDeclaration,
+		472: withFormalParametersElementsReceiver,
+		473: withFormalParametersElementsReceiverGroup,
+		500: withInterfaceBody,
+		502: withPropertyIdentifier,
+		503: withShorthandPropertyIdentifier,
+		504: withShorthandPropertyIdentifierPattern,
+		505: withStatementIdentifier,
+		507: withTypeIdentifier
 	}),
 	words: Object.freeze({
 		2: 4,
-		121: 4,
-		128: 4,
+		120: 4,
+		127: 4,
 		153: 4,
 		154: 4,
 		155: 5,
@@ -31527,7 +31645,6 @@ export const builtViews: BuiltViews = Object.freeze({
 		206: 4,
 		207: 4,
 		208: 5,
-		209: 5,
 		211: 4,
 		212: 3,
 		213: 5,
@@ -31671,78 +31788,80 @@ export const builtViews: BuiltViews = Object.freeze({
 		392: 3,
 		393: 3,
 		394: 3,
-		396: 4,
-		397: 3,
-		399: 3,
-		400: 5,
-		401: 3,
+		395: 4,
+		396: 3,
+		398: 3,
+		399: 5,
+		400: 3,
+		402: 4,
 		403: 4,
-		404: 4,
-		405: 3,
-		407: 4,
-		409: 5,
+		404: 3,
+		406: 4,
+		408: 5,
+		409: 4,
 		410: 4,
-		411: 4,
-		412: 7,
-		413: 6,
-		414: 4,
-		415: 3,
-		417: 4,
-		418: 5,
-		419: 4,
-		420: 3,
-		421: 5,
-		422: 4,
-		423: 5,
+		411: 7,
+		412: 6,
+		413: 4,
+		414: 3,
+		416: 4,
+		417: 5,
+		418: 4,
+		419: 3,
+		420: 5,
+		421: 4,
+		422: 5,
+		423: 3,
 		424: 3,
-		425: 3,
+		425: 4,
 		426: 4,
 		427: 4,
-		428: 3,
-		429: 4,
+		428: 4,
+		429: 3,
 		430: 4,
-		431: 5,
-		432: 4,
-		433: 3,
-		434: 4,
+		431: 4,
+		432: 5,
+		433: 4,
+		434: 3,
 		435: 4,
-		436: 3,
-		437: 4,
-		438: 5,
-		439: 4,
-		442: 5,
-		443: 6,
-		444: 7,
+		436: 4,
+		437: 3,
+		438: 4,
+		439: 5,
+		440: 4,
+		443: 5,
+		444: 6,
 		445: 7,
-		448: 3,
+		446: 7,
 		449: 3,
-		450: 7,
-		453: 9,
-		454: 7,
+		450: 3,
+		451: 7,
+		454: 9,
 		455: 7,
-		456: 8,
-		457: 6,
+		456: 7,
+		457: 8,
 		458: 6,
-		459: 8,
-		460: 6,
+		459: 6,
+		460: 8,
 		461: 6,
-		462: 9,
-		463: 8,
-		464: 5,
-		468: 7,
-		470: 4,
-		471: 3,
-		498: 5,
-		500: 3,
-		501: 3,
+		462: 6,
+		463: 9,
+		464: 8,
+		466: 5,
+		470: 7,
+		472: 4,
+		473: 3,
+		500: 5,
 		502: 3,
 		503: 3,
-		505: 3
+		504: 3,
+		505: 3,
+		507: 3
 	}),
 	cells: Object.freeze({
 		2: 2,
-		121: 2,
-		128: 2,
+		120: 2,
+		127: 2,
 		153: 2,
 		154: 2,
 		155: 2,
@@ -31768,7 +31887,6 @@ export const builtViews: BuiltViews = Object.freeze({
 		206: 2,
 		207: 2,
 		208: 2,
-		209: 2,
 		211: 2,
 		212: 2,
 		213: 2,
@@ -31912,22 +32030,23 @@ export const builtViews: BuiltViews = Object.freeze({
 		392: 2,
 		393: 2,
 		394: 2,
+		395: 2,
 		396: 2,
-		397: 2,
+		398: 2,
 		399: 2,
 		400: 2,
-		401: 2,
+		402: 2,
 		403: 2,
 		404: 2,
-		405: 2,
-		407: 2,
+		406: 2,
+		408: 2,
 		409: 2,
 		410: 2,
-		411: 2,
+		411: 3,
 		412: 3,
-		413: 3,
+		413: 2,
 		414: 2,
-		415: 2,
+		416: 2,
 		417: 2,
 		418: 2,
 		419: 2,
@@ -31942,8 +32061,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		428: 2,
 		429: 2,
 		430: 2,
-		431: 3,
-		432: 2,
+		431: 2,
+		432: 3,
 		433: 2,
 		434: 2,
 		435: 2,
@@ -31951,14 +32070,14 @@ export const builtViews: BuiltViews = Object.freeze({
 		437: 2,
 		438: 2,
 		439: 2,
-		442: 2,
+		440: 2,
 		443: 2,
 		444: 2,
 		445: 2,
-		448: 2,
+		446: 2,
 		449: 2,
-		450: 3,
-		453: 3,
+		450: 2,
+		451: 3,
 		454: 3,
 		455: 3,
 		456: 3,
@@ -31969,21 +32088,22 @@ export const builtViews: BuiltViews = Object.freeze({
 		461: 3,
 		462: 3,
 		463: 3,
-		464: 2,
-		468: 3,
-		470: 2,
-		471: 2,
-		498: 2,
+		464: 3,
+		466: 2,
+		470: 3,
+		472: 2,
+		473: 2,
 		500: 2,
-		501: 2,
 		502: 2,
 		503: 2,
-		505: 2
+		504: 2,
+		505: 2,
+		507: 2
 	}),
 	places: Object.freeze({
 		2: [[2, 2, 2, 4, 0, 0]],
-		121: [[2, 2, 2, 4, 0, 0]],
-		128: [[2, 2, 2, 4, 0, 0]],
+		120: [[2, 2, 2, 4, 0, 0]],
+		127: [[2, 2, 2, 4, 0, 0]],
 		153: [[2, 2, 2, 4, 0, 0]],
 		154: [[2, 2, 2, 4, 0, 0]],
 		155: [
@@ -32055,11 +32175,6 @@ export const builtViews: BuiltViews = Object.freeze({
 			[3, 3, 1, 2, 0, 0]
 		],
 		208: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 1, 1, 0, 3],
-			[4, 4, 1, 2, 0, 0]
-		],
-		209: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0]
@@ -32554,161 +32669,162 @@ export const builtViews: BuiltViews = Object.freeze({
 			['side', true, false]
 		],
 		394: [[2, 2, 5, 8, 5, 0]],
-		396: [
+		395: [
 			[2, 2, 4, 9, 3, 0],
 			[6, 3, 3, 1, 0, 0]
 		],
-		397: [[2, 2, 3, 1, 0, 0]],
-		399: [[2, 2, 4, 8, 4, 0]],
-		400: [
+		396: [[2, 2, 3, 1, 0, 0]],
+		398: [[2, 2, 4, 8, 4, 0]],
+		399: [
 			[2, 2, 5, 8, 5, 0],
 			[7, 3, 4, 3, 0, 0],
 			[11, 4, 1, 18, 0, 0]
 		],
-		401: [
+		400: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, true]
 		],
-		403: [
+		402: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 1, 2, 0, 0]
 		],
-		404: [
+		403: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0]
 		],
-		405: [[2, 2, 15, 9, 14, 0]],
-		407: [
+		404: [[2, 2, 15, 9, 14, 0]],
+		406: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0]
 		],
-		409: [
+		408: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 39, 8, 39, 0],
 			[42, 4, 1, 18, 0, 0]
+		],
+		409: [
+			[2, 2, 35, 8, 35, 0],
+			[37, 3, 1, 2, 0, 0]
 		],
 		410: [
 			[2, 2, 35, 8, 35, 0],
 			[37, 3, 1, 2, 0, 0]
 		],
 		411: [
-			[2, 2, 35, 8, 35, 0],
-			[37, 3, 1, 2, 0, 0]
-		],
-		412: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 3, 1, 0, 0],
 			[7, 5, 4, 3, 0, 0],
 			[11, 6, 3, 1, 0, 0]
 		],
-		413: [
+		412: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 15, 8, 15, 0],
 			[19, 5, 3, 1, 0, 0]
 		],
-		414: [
+		413: [
 			[2, 2, 14, 8, 14, 0],
 			[16, 3, 3, 8, 3, 0]
 		],
-		415: [[2, 2, 4, 3, 0, 0]],
-		417: [
+		414: [[2, 2, 4, 3, 0, 0]],
+		416: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 3, 1, 0, 0]
 		],
-		418: [
+		417: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 4, 11, 3, 0],
 			[7, 4, 3, 1, 0, 0]
 		],
-		419: [
+		418: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0]
 		],
-		420: [[2, 2, 3, 8, 3, 0]],
-		421: [
+		419: [[2, 2, 3, 8, 3, 0]],
+		420: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0],
 			[11, 4, 3, 8, 3, 0]
 		],
-		422: [
+		421: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 8, 3, 0]
 		],
-		423: [
+		422: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0],
 			[11, 4, 3, 8, 3, 0]
 		],
+		423: [[2, 2, 1, 1, 0, 3]],
 		424: [[2, 2, 1, 1, 0, 3]],
-		425: [[2, 2, 1, 1, 0, 3]],
-		426: [
+		425: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0]
 		],
-		427: [
+		426: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 4, 3, 0, 0]
 		],
-		428: [[2, 2, 3, 1, 0, 0]],
-		429: [
+		427: [
+			[2, 2, 1, 1, 0, 3],
+			[3, 3, 1, 2, 0, 0]
+		],
+		428: [
+			[2, 2, 1, 1, 0, 3],
+			[3, 3, 1, 2, 0, 0]
+		],
+		429: [[2, 2, 3, 1, 0, 0]],
+		430: [
 			[2, 2, 3, 8, 3, 0],
 			[5, 3, 3, 8, 3, 0]
 		],
-		430: [
+		431: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 7, 8, 7, 0]
 		],
-		431: [
+		432: [
 			[2, 0],
 			[3, 3, 11, 8, 11, 0],
 			[14, 4, 1, 2, 0, 0]
 		],
-		432: [
+		433: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 3, 1, 0, 0]
 		],
-		433: [[2, 2, 3, 8, 3, 0]],
-		434: [
+		434: [[2, 2, 3, 8, 3, 0]],
+		435: [
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 3, 8, 3, 0]
 		],
-		435: [
+		436: [
 			[2, 2, 5, 8, 5, 0],
 			[7, 3, 3, 8, 3, 0]
 		],
-		436: [[2, 2, 3, 1, 0, 0]],
-		437: [
+		437: [[2, 2, 3, 1, 0, 0]],
+		438: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0]
 		],
-		438: [
+		439: [
 			[2, 2, 4, 9, 3, 0],
 			[6, 3, 3, 1, 0, 0],
 			[9, 4, 4, 3, 0, 0]
 		],
-		439: [
+		440: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		442: [
+		443: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 1, 2, 0, 0],
 			[6, 4, 4, 3, 0, 0]
 		],
-		443: [
+		444: [
 			[2, 2, 4, 9, 3, 0],
 			[6, 3, 4, 3, 0, 0],
 			[10, 4, 1, 2, 0, 0],
 			[11, 5, 4, 3, 0, 0]
-		],
-		444: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 4, 9, 3, 0],
-			[7, 4, 1, 18, 0, 0],
-			[8, 5, 1, 2, 0, 0],
-			[9, 6, 4, 3, 0, 0]
 		],
 		445: [
 			[2, 2, 1, 2, 0, 0],
@@ -32717,9 +32833,16 @@ export const builtViews: BuiltViews = Object.freeze({
 			[8, 5, 1, 2, 0, 0],
 			[9, 6, 4, 3, 0, 0]
 		],
-		448: [[2, 2, 14, 8, 14, 0]],
-		449: [[2, 2, 12, 8, 12, 0]],
-		450: [
+		446: [
+			[2, 2, 1, 2, 0, 0],
+			[3, 3, 4, 9, 3, 0],
+			[7, 4, 1, 18, 0, 0],
+			[8, 5, 1, 2, 0, 0],
+			[9, 6, 4, 3, 0, 0]
+		],
+		449: [[2, 2, 14, 8, 14, 0]],
+		450: [[2, 2, 12, 8, 12, 0]],
+		451: [
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0],
 			[2, 0],
@@ -32727,7 +32850,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[5, 5, 4, 3, 0, 0],
 			[9, 6, 3, 1, 0, 0]
 		],
-		453: [
+		454: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -32741,7 +32864,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[27, 7, 3, 1, 0, 0],
 			[30, 8, 4, 8, 4, 0]
 		],
-		454: [
+		455: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -32749,7 +32872,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[19, 5, 3, 1, 0, 0],
 			[22, 6, 4, 8, 4, 0]
 		],
-		455: [
+		456: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -32757,7 +32880,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[19, 5, 16, 8, 16, 0],
 			[35, 6, 4, 8, 4, 0]
 		],
-		456: [
+		457: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -32770,21 +32893,21 @@ export const builtViews: BuiltViews = Object.freeze({
 			[24, 6, 3, 1, 0, 0],
 			[27, 7, 3, 1, 0, 0]
 		],
-		457: [
+		458: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 3, 1, 0, 0]
 		],
-		458: [
+		459: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 16, 8, 16, 0]
 		],
-		459: [
+		460: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -32794,19 +32917,19 @@ export const builtViews: BuiltViews = Object.freeze({
 			[24, 6, 3, 1, 0, 0],
 			[27, 7, 3, 1, 0, 0]
 		],
-		460: [
+		461: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 3, 1, 0, 0]
 		],
-		461: [
+		462: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 16, 8, 16, 0]
 		],
-		462: [
+		463: [
 			[3, 3, 1, 1, 0, 3],
 			[2, 0],
 			[4, 4, 1, 2, 0, 0],
@@ -32819,7 +32942,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[21, 7, 3, 1, 0, 0],
 			[24, 8, 4, 3, 0, 0]
 		],
-		463: [
+		464: [
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0],
 			[2, 0],
@@ -32829,12 +32952,12 @@ export const builtViews: BuiltViews = Object.freeze({
 			[20, 6, 3, 1, 0, 0],
 			[23, 7, 4, 3, 0, 0]
 		],
-		464: [
+		466: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 3, 1, 0, 0],
 			[6, 4, 4, 8, 4, 0]
 		],
-		468: [
+		470: [
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0],
 			[2, 0],
@@ -32842,28 +32965,28 @@ export const builtViews: BuiltViews = Object.freeze({
 			[5, 5, 3, 1, 0, 0],
 			[8, 6, 4, 3, 0, 0]
 		],
-		470: [
+		472: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 5, 8, 5, 0]
 		],
-		471: [[2, 2, 3, 8, 3, 0]],
-		498: [
+		473: [[2, 2, 3, 8, 3, 0]],
+		500: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 3, 8, 3, 0],
 			[6, 4, 1, 2, 0, 0]
 		],
-		500: [[2, 2, 3, 1, 0, 0]],
-		501: [[2, 2, 3, 1, 0, 0]],
 		502: [[2, 2, 3, 1, 0, 0]],
 		503: [[2, 2, 3, 1, 0, 0]],
-		505: [[2, 2, 3, 1, 0, 0]]
+		504: [[2, 2, 3, 1, 0, 0]],
+		505: [[2, 2, 3, 1, 0, 0]],
+		507: [[2, 2, 3, 1, 0, 0]]
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifier,
-		119: leafUnescapedDoubleStringFragment,
-		120: leafUnescapedSingleStringFragment,
-		126: leafRegexPattern,
-		127: leafRegexFlags,
+		118: leafUnescapedDoubleStringFragment,
+		119: leafUnescapedSingleStringFragment,
+		125: leafRegexPattern,
+		126: leafRegexFlags,
 		160: leafNumberDecimal,
 		176: leafTemplateChars,
 		177: leafTernaryQmark,

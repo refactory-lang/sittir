@@ -9875,14 +9875,30 @@
 			"field": "update_expression_prefix_after"
 		}
 	],
-	"using_declaration": [
+	"using_declaration_await": [
 		{
 			"kind": "seam",
-			"field": "using_declaration_before"
+			"field": "using_declaration_await_before"
 		},
 		{
-			"kind": "slot",
-			"name": "kind"
+			"kind": "text",
+			"text": "await"
+		},
+		{
+			"kind": "seam",
+			"field": "await_keyword_after"
+		},
+		{
+			"kind": "seam",
+			"field": "using_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "using"
+		},
+		{
+			"kind": "seam",
+			"field": "using_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -9894,7 +9910,33 @@
 		},
 		{
 			"kind": "seam",
-			"field": "using_declaration_after"
+			"field": "using_declaration_await_after"
+		}
+	],
+	"using_declaration_plain": [
+		{
+			"kind": "seam",
+			"field": "using_declaration_plain_before"
+		},
+		{
+			"kind": "text",
+			"text": "using"
+		},
+		{
+			"kind": "seam",
+			"field": "kind_after"
+		},
+		{
+			"kind": "slot",
+			"name": "variable_declarator"
+		},
+		{
+			"kind": "slot",
+			"name": "automatic_semicolon"
+		},
+		{
+			"kind": "seam",
+			"field": "using_declaration_plain_after"
 		}
 	],
 	"variable_declaration": [

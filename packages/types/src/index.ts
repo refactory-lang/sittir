@@ -296,6 +296,19 @@ export type ElementsOf<F> = F extends (...args: infer A extends readonly unknown
 		: never;
 
 export type OmitEach<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+/**
+ * OmitLeadingOption<Args, K> — a positional builder's argument tuples with `K`
+ * taken out of the options object a tuple leads with. A tuple whose options keep
+ * no other key goes; a tuple that leads with a child stays as it is.
+ */
+export type OmitLeadingOption<Args extends readonly unknown[], K extends PropertyKey> = Args extends readonly [
+	infer O extends object & { readonly $type?: never },
+	...infer Rest extends readonly unknown[]
+]
+	? [Exclude<keyof O, K | '$type'>] extends [never]
+		? never
+		: readonly [Omit<O, K>, ...Rest]
+	: Args;
 export type OmitRegistered<T, K extends PropertyKey> = T extends unknown
 	? [Exclude<keyof T, K>] extends [never]
 		? { readonly [key: string]: never }

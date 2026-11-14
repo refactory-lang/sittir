@@ -578,6 +578,11 @@ export default grammar(enrich(base), wire({
 			1: variant('prefix')
 		},
 
+		using_declaration: {
+			'kind:/0': variant('plain', { default: true }),
+			'kind:/1': variant('await')
+		},
+
 		arrow_function: { '1/0': variant('parameter') },
 
 		class_heritage: { '0': variant('extends_clause'), '1': variant('implements_clause') },

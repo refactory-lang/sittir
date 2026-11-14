@@ -41,6 +41,15 @@ describe('arm.default', () => {
 		expect((arms[1] as unknown as Annotated).annotations?.default).toBeUndefined();
 	});
 
+	it('addressed from the end, keeps its own default and drops an earlier one', () => {
+		const choice = seqOverChoice() as unknown as { members: [{ members: Annotated[] }] };
+		choice.members[0].members[0]!.annotations = { default: true };
+		const arms = armsOf(transform(choice as unknown as RuntimeRule, { '0/-1': arm.default }));
+
+		expect((arms[0] as unknown as Annotated).annotations?.default).toBeUndefined();
+		expect((arms[1] as unknown as Annotated).annotations?.default).toBe(true);
+	});
+
 	it('leaves the arm otherwise untouched', () => {
 		const arms = armsOf(transform(seqOverChoice(), { '0/1': arm.default }));
 

@@ -318,6 +318,7 @@ export function wireRenameLift(liftName: string, newName: string, hoisted: boole
 		throw new Error(`variant(): the shared lift '${liftName}' is named '${named.name}' by one owner and '${newName}' by another; one kind has one name`);
 	}
 	currentContext.liftNames.set(liftName, { name: newName, hoisted: hoisted || named?.hoisted === true });
+	if (hoisted) recordLiftEditor(currentContext, liftName);
 	recordLiftClaim(liftName);
 }
 
@@ -757,6 +758,10 @@ export function wireSetLiftBody(name: string, body: RuntimeRule): void {
 	const context = currentContext;
 	if (!context) return;
 	context.liftBodies.set(name, body);
+	recordLiftEditor(context, name);
+}
+
+function recordLiftEditor(context: WireContext, name: string): void {
 	if (context.currentRuleKind !== null) (context.liftEditors.get(name) ?? context.liftEditors.set(name, new Set()).get(name)!).add(context.currentRuleKind);
 }
 

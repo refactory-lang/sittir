@@ -941,70 +941,24 @@
       ]
     },
     "using_declaration": {
-      "type": "SEQ",
+      "type": "CHOICE",
       "members": [
         {
-          "type": "FIELD",
-          "name": "kind",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "using"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "using_declaration_arm",
-                "metadata": {
-                  "symbolSource": "group-lift"
-                }
-              }
-            ]
+          "type": "SYMBOL",
+          "name": "using_declaration_plain",
+          "annotations": {
+            "variant": "plain",
+            "variantOf": "using_declaration",
+            "default": true
           }
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "variable_declarator",
-              "content": {
-                "type": "SYMBOL",
-                "name": "variable_declarator"
-              },
-              "metadata": {
-                "fieldSource": "enriched"
-              }
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": ","
-                  },
-                  {
-                    "type": "FIELD",
-                    "name": "variable_declarator",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "variable_declarator"
-                    },
-                    "metadata": {
-                      "fieldSource": "enriched"
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        },
-        {
           "type": "SYMBOL",
-          "name": "_semicolon"
+          "name": "using_declaration_await",
+          "annotations": {
+            "variant": "await",
+            "variantOf": "using_declaration"
+          }
         }
       ]
     },
@@ -13739,22 +13693,6 @@
         "hoisted": true
       }
     },
-    "using_declaration_arm": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "await"
-        },
-        {
-          "type": "STRING",
-          "value": "using"
-        }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
-    },
     "catch_clause_group": {
       "type": "SEQ",
       "members": [
@@ -16183,6 +16121,136 @@
         "hoisted": true
       }
     },
+    "using_declaration_plain": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "kind",
+          "content": {
+            "type": "STRING",
+            "value": "using"
+          }
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "variable_declarator",
+              "content": {
+                "type": "SYMBOL",
+                "name": "variable_declarator"
+              },
+              "metadata": {
+                "fieldSource": "enriched"
+              }
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "variable_declarator",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "variable_declarator"
+                    },
+                    "metadata": {
+                      "fieldSource": "enriched"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_semicolon"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "using_declaration_await": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "kind",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "await"
+              },
+              {
+                "type": "STRING",
+                "value": "using"
+              }
+            ],
+            "annotations": {
+              "hoisted": true
+            }
+          }
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "variable_declarator",
+              "content": {
+                "type": "SYMBOL",
+                "name": "variable_declarator"
+              },
+              "metadata": {
+                "fieldSource": "enriched"
+              }
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "variable_declarator",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "variable_declarator"
+                    },
+                    "metadata": {
+                      "fieldSource": "enriched"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_semicolon"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
     "arrow_function_parameter": {
       "type": "FIELD",
       "name": "parameter",
@@ -17123,7 +17191,7 @@
                   },
                   {
                     "type": "SYMBOL",
-                    "name": "using_declaration_arm",
+                    "name": "for_header_using_kind_kind",
                     "metadata": {
                       "symbolSource": "group-lift"
                     }
@@ -18944,6 +19012,38 @@
         "hoisted": true
       }
     },
+    "for_header_using_kind_kind": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "await"
+        },
+        {
+          "type": "STRING",
+          "value": "using"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "for_header_arm3_kind": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "await"
+        },
+        {
+          "type": "STRING",
+          "value": "using"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
     "_layout": {
       "type": "CHOICE",
       "members": [
@@ -19589,11 +19689,11 @@
     ],
     [
       "assignment_expression",
-      "pattern"
+      "for_header_using_kind_kind"
     ],
     [
       "assignment_expression",
-      "using_declaration_arm"
+      "pattern"
     ],
     [
       "await_expression",
@@ -20550,6 +20650,7 @@
     "call_expression",
     "string",
     "update_expression",
+    "using_declaration",
     "export_statement_default",
     "variable_declarator",
     "meta_property",

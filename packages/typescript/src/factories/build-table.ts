@@ -2,7 +2,7 @@
 import * as F from './raw.js';
 import * as K from './combinators.js';
 import { delegate } from '@sittir/common/utils';
-import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared, Seat } from '@sittir/types';
+import type { ArgsOf, OmitEach, OmitLeadingOption, OptionsArg, RefuseUndeclared, Seat } from '@sittir/types';
 import { TSKindId } from '../types.js';
 import type * as LooseTable from './loose.js';
 import type * as StrictTable from './strict.js';
@@ -135,22 +135,6 @@ export interface Routes<Table extends AnyTable> {
 			};
 		};
 	};
-	readonly usingDeclaration$automaticSemicolon: <
-		const V extends OmitEach<ArgsOf<Table['buildUsingDeclaration']>[0], 'automaticSemicolon'>
-	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildUsingDeclaration']>[0], 'automaticSemicolon'>>,
-		options?: OptionsArg<Table['buildUsingDeclaration']>
-	) => ReturnType<Table['buildUsingDeclaration']>;
-	readonly usingDeclaration$semi: <
-		const V extends OmitEach<ArgsOf<Table['buildUsingDeclaration']>[0], 'automaticSemicolon'>
-	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildUsingDeclaration']>[0], 'automaticSemicolon'>>,
-		options?: OptionsArg<Table['buildUsingDeclaration']>
-	) => ReturnType<Table['buildUsingDeclaration']>;
-	readonly usingDeclaration: Table['buildUsingDeclaration'] & {
-		readonly automaticSemicolon: Routes<Table>['usingDeclaration$automaticSemicolon'];
-		readonly semi: Routes<Table>['usingDeclaration$semi'];
-	};
 	readonly catchClause: Table['catchClause$seated'];
 	readonly binaryExpression$in: <
 		const V extends OmitEach<ArgsOf<Table['buildBinaryExpression']>[0], 'binaryExpressionIn'> & {
@@ -253,95 +237,6 @@ export interface Routes<Table extends AnyTable> {
 		readonly identifier: Routes<Table>['restPattern$identifier'];
 		readonly nonNullExpression: Routes<Table>['restPattern$nonNullExpression'];
 	};
-	readonly ambientDeclaration$function: Seat<
-		ArgsOf<Table['buildFunctionDeclaration']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration$generatorFunction: Seat<
-		ArgsOf<Table['buildGeneratorFunctionDeclaration']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration$class: Seat<
-		ArgsOf<Table['buildClassDeclaration']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration$lexical: Seat<
-		ArgsOf<Table['buildLexicalDeclaration']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration$variable: Seat<
-		ArgsOf<Table['buildVariableDeclaration']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration$using: Seat<
-		ArgsOf<Table['buildUsingDeclaration']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration$functionSignature: Seat<
-		ArgsOf<Table['buildFunctionSignature']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration$abstractClass: Seat<
-		ArgsOf<Table['buildAbstractClassDeclaration']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration$internalModule: Seat<
-		ArgsOf<Table['buildInternalModule']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration$typeAlias: Seat<
-		ArgsOf<Table['buildTypeAliasDeclaration']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration$enum: Seat<
-		ArgsOf<Table['buildEnumDeclaration']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration$interface: Seat<
-		ArgsOf<Table['buildInterfaceDeclaration']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration$importAlias: Seat<
-		ArgsOf<Table['buildImportAlias']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration$ambient: Seat<
-		ArgsOf<Table['buildAmbientDeclaration']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration$global: Seat<
-		ArgsOf<Table['buildAmbientDeclarationGlobal']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration$using$automaticSemicolon: Seat<
-		ArgsOf<Routes<Table>['usingDeclaration$automaticSemicolon']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration$using$semi: Seat<
-		ArgsOf<Routes<Table>['usingDeclaration$semi']>,
-		ReturnType<typeof F.buildAmbientDeclaration>
-	>;
-	readonly ambientDeclaration: Table['buildAmbientDeclaration'] & {
-		readonly function: Routes<Table>['ambientDeclaration$function'];
-		readonly generatorFunction: Routes<Table>['ambientDeclaration$generatorFunction'];
-		readonly class: Routes<Table>['ambientDeclaration$class'];
-		readonly lexical: Routes<Table>['ambientDeclaration$lexical'];
-		readonly variable: Routes<Table>['ambientDeclaration$variable'];
-		readonly using: Routes<Table>['ambientDeclaration$using'] & {
-			readonly automaticSemicolon: Routes<Table>['ambientDeclaration$using$automaticSemicolon'];
-			readonly semi: Routes<Table>['ambientDeclaration$using$semi'];
-		};
-		readonly functionSignature: Routes<Table>['ambientDeclaration$functionSignature'];
-		readonly abstractClass: Routes<Table>['ambientDeclaration$abstractClass'];
-		readonly internalModule: Routes<Table>['ambientDeclaration$internalModule'];
-		readonly typeAlias: Routes<Table>['ambientDeclaration$typeAlias'];
-		readonly enum: Routes<Table>['ambientDeclaration$enum'];
-		readonly interface: Routes<Table>['ambientDeclaration$interface'];
-		readonly importAlias: Routes<Table>['ambientDeclaration$importAlias'];
-		readonly ambient: Routes<Table>['ambientDeclaration$ambient'];
-		readonly global: Routes<Table>['ambientDeclaration$global'];
-		readonly module: Table['buildAmbientDeclarationModule'];
-	};
 	readonly typeQueryMemberExpression$dot: <
 		const V extends OmitEach<ArgsOf<Table['buildTypeQueryMemberExpression']>[0], 'operator'>
 	>(
@@ -442,6 +337,30 @@ export interface Routes<Table extends AnyTable> {
 	readonly parenthesizedExpressionSequence: Table['buildParenthesizedExpressionSequence'] & {
 		readonly sequenceExpression: Routes<Table>['parenthesizedExpressionSequence$sequenceExpression'];
 	};
+	readonly usingDeclarationPlain$automaticSemicolon: Seat<
+		OmitLeadingOption<ArgsOf<Table['buildUsingDeclarationPlain']>, 'automaticSemicolon'>,
+		ReturnType<Table['buildUsingDeclarationPlain']>
+	>;
+	readonly usingDeclarationPlain$semi: Seat<
+		OmitLeadingOption<ArgsOf<Table['buildUsingDeclarationPlain']>, 'automaticSemicolon'>,
+		ReturnType<Table['buildUsingDeclarationPlain']>
+	>;
+	readonly usingDeclarationPlain: Table['buildUsingDeclarationPlain'] & {
+		readonly automaticSemicolon: Routes<Table>['usingDeclarationPlain$automaticSemicolon'];
+		readonly semi: Routes<Table>['usingDeclarationPlain$semi'];
+	};
+	readonly usingDeclarationAwait$automaticSemicolon: Seat<
+		OmitLeadingOption<ArgsOf<Table['buildUsingDeclarationAwait']>, 'automaticSemicolon'>,
+		ReturnType<Table['buildUsingDeclarationAwait']>
+	>;
+	readonly usingDeclarationAwait$semi: Seat<
+		OmitLeadingOption<ArgsOf<Table['buildUsingDeclarationAwait']>, 'automaticSemicolon'>,
+		ReturnType<Table['buildUsingDeclarationAwait']>
+	>;
+	readonly usingDeclarationAwait: Table['buildUsingDeclarationAwait'] & {
+		readonly automaticSemicolon: Routes<Table>['usingDeclarationAwait$automaticSemicolon'];
+		readonly semi: Routes<Table>['usingDeclarationAwait$semi'];
+	};
 	readonly exportStatementDefaultFrom$starFrom: <
 		const V extends OmitEach<ArgsOf<Table['buildExportStatementDefaultFrom']>[0], 'content'> & {
 			content: ArgsOf<Table['buildExportStatementDefaultFromStarFrom']>[0];
@@ -501,6 +420,111 @@ export interface Routes<Table extends AnyTable> {
 		readonly automaticSemicolon: Routes<Table>['exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon'];
 		readonly semi: Routes<Table>['exportStatementDefaultDeclarationDefaultKwValue$semi'];
 	};
+	readonly formalParametersSetAccessorSignature$elements: Seat<
+		ArgsOf<Table['buildFormalParametersElementsSetAccessorSignature']>,
+		ReturnType<typeof F.buildFormalParametersSetAccessorSignature>
+	>;
+	readonly formalParametersSetAccessorSignature: Table['buildFormalParametersSetAccessorSignature'] & {
+		readonly elements: Routes<Table>['formalParametersSetAccessorSignature$elements'];
+	};
+	readonly formalParametersElementsReceiver: Table['formalParametersElementsReceiver$seated'];
+	readonly importSpecifier: {
+		readonly name: Table['buildImportSpecifierName'];
+		readonly as: Routes<Table>['importSpecifierAs'];
+	};
+	readonly usingDeclaration: Routes<Table>['usingDeclarationPlain'] & {
+		readonly plain: Routes<Table>['usingDeclarationPlain'];
+		readonly await: Routes<Table>['usingDeclarationAwait'];
+	};
+	readonly ambientDeclaration$function: Seat<
+		ArgsOf<Table['buildFunctionDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$generatorFunction: Seat<
+		ArgsOf<Table['buildGeneratorFunctionDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$class: Seat<
+		ArgsOf<Table['buildClassDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$lexical: Seat<
+		ArgsOf<Table['buildLexicalDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$variable: Seat<
+		ArgsOf<Table['buildVariableDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$using: Seat<
+		ArgsOf<Routes<Table>['usingDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$functionSignature: Seat<
+		ArgsOf<Table['buildFunctionSignature']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$abstractClass: Seat<
+		ArgsOf<Table['buildAbstractClassDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$internalModule: Seat<
+		ArgsOf<Table['buildInternalModule']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$typeAlias: Seat<
+		ArgsOf<Table['buildTypeAliasDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$enum: Seat<
+		ArgsOf<Table['buildEnumDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$interface: Seat<
+		ArgsOf<Table['buildInterfaceDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$importAlias: Seat<
+		ArgsOf<Table['buildImportAlias']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$ambient: Seat<
+		ArgsOf<Table['buildAmbientDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$global: Seat<
+		ArgsOf<Table['buildAmbientDeclarationGlobal']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$using$plain: Seat<
+		ArgsOf<Routes<Table>['usingDeclarationPlain']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$using$await: Seat<
+		ArgsOf<Routes<Table>['usingDeclarationAwait']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration: Table['buildAmbientDeclaration'] & {
+		readonly function: Routes<Table>['ambientDeclaration$function'];
+		readonly generatorFunction: Routes<Table>['ambientDeclaration$generatorFunction'];
+		readonly class: Routes<Table>['ambientDeclaration$class'];
+		readonly lexical: Routes<Table>['ambientDeclaration$lexical'];
+		readonly variable: Routes<Table>['ambientDeclaration$variable'];
+		readonly using: Routes<Table>['ambientDeclaration$using'] & {
+			readonly plain: Routes<Table>['ambientDeclaration$using$plain'];
+			readonly await: Routes<Table>['ambientDeclaration$using$await'];
+		};
+		readonly functionSignature: Routes<Table>['ambientDeclaration$functionSignature'];
+		readonly abstractClass: Routes<Table>['ambientDeclaration$abstractClass'];
+		readonly internalModule: Routes<Table>['ambientDeclaration$internalModule'];
+		readonly typeAlias: Routes<Table>['ambientDeclaration$typeAlias'];
+		readonly enum: Routes<Table>['ambientDeclaration$enum'];
+		readonly interface: Routes<Table>['ambientDeclaration$interface'];
+		readonly importAlias: Routes<Table>['ambientDeclaration$importAlias'];
+		readonly ambient: Routes<Table>['ambientDeclaration$ambient'];
+		readonly global: Routes<Table>['ambientDeclaration$global'];
+		readonly module: Table['buildAmbientDeclarationModule'];
+	};
 	readonly exportStatementDefaultDeclarationDefaultKw$function: Seat<
 		ArgsOf<Table['buildFunctionDeclaration']>,
 		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
@@ -522,7 +546,7 @@ export interface Routes<Table extends AnyTable> {
 		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
 	>;
 	readonly exportStatementDefaultDeclarationDefaultKw$using: Seat<
-		ArgsOf<Table['buildUsingDeclaration']>,
+		ArgsOf<Routes<Table>['usingDeclaration']>,
 		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
 	>;
 	readonly exportStatementDefaultDeclarationDefaultKw$functionSignature: Seat<
@@ -565,12 +589,12 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Table['buildExportStatementDefaultDeclarationDefaultKwValue']>,
 		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
 	>;
-	readonly exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon: Seat<
-		ArgsOf<Routes<Table>['usingDeclaration$automaticSemicolon']>,
+	readonly exportStatementDefaultDeclarationDefaultKw$using$plain: Seat<
+		ArgsOf<Routes<Table>['usingDeclarationPlain']>,
 		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
 	>;
-	readonly exportStatementDefaultDeclarationDefaultKw$using$semi: Seat<
-		ArgsOf<Routes<Table>['usingDeclaration$semi']>,
+	readonly exportStatementDefaultDeclarationDefaultKw$using$await: Seat<
+		ArgsOf<Routes<Table>['usingDeclarationAwait']>,
 		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
 	>;
 	readonly exportStatementDefaultDeclarationDefaultKw$ambient$function: Seat<
@@ -596,8 +620,8 @@ export interface Routes<Table extends AnyTable> {
 	readonly exportStatementDefaultDeclarationDefaultKw$ambient$using: Seat<
 		ArgsOf<
 			Routes<Table>['ambientDeclaration$using'] & {
-				readonly automaticSemicolon: Routes<Table>['ambientDeclaration$using$automaticSemicolon'];
-				readonly semi: Routes<Table>['ambientDeclaration$using$semi'];
+				readonly plain: Routes<Table>['ambientDeclaration$using$plain'];
+				readonly await: Routes<Table>['ambientDeclaration$using$await'];
 			}
 		>,
 		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
@@ -638,12 +662,12 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Routes<Table>['ambientDeclaration$global']>,
 		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
 	>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon: Seat<
-		ArgsOf<Routes<Table>['ambientDeclaration$using$automaticSemicolon']>,
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$using$plain: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$using$plain']>,
 		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
 	>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$using$semi: Seat<
-		ArgsOf<Routes<Table>['ambientDeclaration$using$semi']>,
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$using$await: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$using$await']>,
 		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
 	>;
 	readonly exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon: Seat<
@@ -661,8 +685,8 @@ export interface Routes<Table extends AnyTable> {
 		readonly lexical: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$lexical'];
 		readonly variable: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$variable'];
 		readonly using: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using'] & {
-			readonly automaticSemicolon: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon'];
-			readonly semi: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$semi'];
+			readonly plain: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$plain'];
+			readonly await: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$await'];
 		};
 		readonly functionSignature: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$functionSignature'];
 		readonly abstractClass: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$abstractClass'];
@@ -679,8 +703,8 @@ export interface Routes<Table extends AnyTable> {
 			readonly lexical: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$lexical'];
 			readonly variable: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$variable'];
 			readonly using: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using'] & {
-				readonly automaticSemicolon: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon'];
-				readonly semi: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$semi'];
+				readonly plain: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$plain'];
+				readonly await: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$await'];
 			};
 			readonly functionSignature: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature'];
 			readonly abstractClass: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$abstractClass'];
@@ -762,14 +786,16 @@ export interface Routes<Table extends AnyTable> {
 		options?: OptionsArg<Table['buildExportStatementDefaultDeclaration']>
 	) => ReturnType<Table['buildExportStatementDefaultDeclaration']>;
 	readonly exportStatementDefaultDeclaration$using: <
-		const V extends OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> &
-			ArgsOf<Table['buildUsingDeclaration']>[0]
+		const V extends OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
+			content: ArgsOf<Routes<Table>['usingDeclaration']>;
+		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
-				OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> &
-					ArgsOf<Table['buildUsingDeclaration']>[0]
+				OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
+					content: ArgsOf<Routes<Table>['usingDeclaration']>;
+				}
 			>,
 		options?: OptionsArg<Table['buildExportStatementDefaultDeclaration']>
 	) => ReturnType<Table['buildExportStatementDefaultDeclaration']>;
@@ -899,30 +925,30 @@ export interface Routes<Table extends AnyTable> {
 			>,
 		options?: OptionsArg<Table['buildExportStatementDefaultDeclaration']>
 	) => ReturnType<Table['buildExportStatementDefaultDeclaration']>;
-	readonly exportStatementDefaultDeclaration$using$automaticSemicolon: <
+	readonly exportStatementDefaultDeclaration$using$plain: <
 		const V extends OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
-			content: ArgsOf<Routes<Table>['usingDeclaration$automaticSemicolon']>;
+			content: ArgsOf<Routes<Table>['usingDeclarationPlain']>;
 		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
 				OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
-					content: ArgsOf<Routes<Table>['usingDeclaration$automaticSemicolon']>;
+					content: ArgsOf<Routes<Table>['usingDeclarationPlain']>;
 				}
 			>,
 		options?: OptionsArg<Table['buildExportStatementDefaultDeclaration']>
 	) => ReturnType<Table['buildExportStatementDefaultDeclaration']>;
-	readonly exportStatementDefaultDeclaration$using$semi: <
+	readonly exportStatementDefaultDeclaration$using$await: <
 		const V extends OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
-			content: ArgsOf<Routes<Table>['usingDeclaration$semi']>;
+			content: ArgsOf<Routes<Table>['usingDeclarationAwait']>;
 		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
 				OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
-					content: ArgsOf<Routes<Table>['usingDeclaration$semi']>;
+					content: ArgsOf<Routes<Table>['usingDeclarationAwait']>;
 				}
 			>,
 		options?: OptionsArg<Table['buildExportStatementDefaultDeclaration']>
@@ -1001,8 +1027,8 @@ export interface Routes<Table extends AnyTable> {
 		const V extends OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
 			content: ArgsOf<
 				Routes<Table>['ambientDeclaration$using'] & {
-					readonly automaticSemicolon: Routes<Table>['ambientDeclaration$using$automaticSemicolon'];
-					readonly semi: Routes<Table>['ambientDeclaration$using$semi'];
+					readonly plain: Routes<Table>['ambientDeclaration$using$plain'];
+					readonly await: Routes<Table>['ambientDeclaration$using$await'];
 				}
 			>;
 		}
@@ -1013,8 +1039,8 @@ export interface Routes<Table extends AnyTable> {
 				OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
 					content: ArgsOf<
 						Routes<Table>['ambientDeclaration$using'] & {
-							readonly automaticSemicolon: Routes<Table>['ambientDeclaration$using$automaticSemicolon'];
-							readonly semi: Routes<Table>['ambientDeclaration$using$semi'];
+							readonly plain: Routes<Table>['ambientDeclaration$using$plain'];
+							readonly await: Routes<Table>['ambientDeclaration$using$await'];
 						}
 					>;
 				}
@@ -1147,30 +1173,30 @@ export interface Routes<Table extends AnyTable> {
 			>,
 		options?: OptionsArg<Table['buildExportStatementDefaultDeclaration']>
 	) => ReturnType<Table['buildExportStatementDefaultDeclaration']>;
-	readonly exportStatementDefaultDeclaration$ambient$using$automaticSemicolon: <
+	readonly exportStatementDefaultDeclaration$ambient$using$plain: <
 		const V extends OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
-			content: ArgsOf<Routes<Table>['ambientDeclaration$using$automaticSemicolon']>;
+			content: ArgsOf<Routes<Table>['ambientDeclaration$using$plain']>;
 		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
 				OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
-					content: ArgsOf<Routes<Table>['ambientDeclaration$using$automaticSemicolon']>;
+					content: ArgsOf<Routes<Table>['ambientDeclaration$using$plain']>;
 				}
 			>,
 		options?: OptionsArg<Table['buildExportStatementDefaultDeclaration']>
 	) => ReturnType<Table['buildExportStatementDefaultDeclaration']>;
-	readonly exportStatementDefaultDeclaration$ambient$using$semi: <
+	readonly exportStatementDefaultDeclaration$ambient$using$await: <
 		const V extends OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
-			content: ArgsOf<Routes<Table>['ambientDeclaration$using$semi']>;
+			content: ArgsOf<Routes<Table>['ambientDeclaration$using$await']>;
 		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
 				OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
-					content: ArgsOf<Routes<Table>['ambientDeclaration$using$semi']>;
+					content: ArgsOf<Routes<Table>['ambientDeclaration$using$await']>;
 				}
 			>,
 		options?: OptionsArg<Table['buildExportStatementDefaultDeclaration']>
@@ -1249,8 +1275,8 @@ export interface Routes<Table extends AnyTable> {
 		const V extends OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
 			content: ArgsOf<
 				Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using'] & {
-					readonly automaticSemicolon: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon'];
-					readonly semi: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$semi'];
+					readonly plain: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$plain'];
+					readonly await: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$await'];
 				}
 			>;
 		}
@@ -1261,8 +1287,8 @@ export interface Routes<Table extends AnyTable> {
 				OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
 					content: ArgsOf<
 						Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using'] & {
-							readonly automaticSemicolon: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon'];
-							readonly semi: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$semi'];
+							readonly plain: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$plain'];
+							readonly await: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$await'];
 						}
 					>;
 				}
@@ -1391,8 +1417,8 @@ export interface Routes<Table extends AnyTable> {
 					readonly lexical: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$lexical'];
 					readonly variable: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$variable'];
 					readonly using: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using'] & {
-						readonly automaticSemicolon: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon'];
-						readonly semi: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$semi'];
+						readonly plain: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$plain'];
+						readonly await: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$await'];
 					};
 					readonly functionSignature: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature'];
 					readonly abstractClass: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$abstractClass'];
@@ -1419,8 +1445,8 @@ export interface Routes<Table extends AnyTable> {
 							readonly lexical: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$lexical'];
 							readonly variable: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$variable'];
 							readonly using: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using'] & {
-								readonly automaticSemicolon: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon'];
-								readonly semi: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$semi'];
+								readonly plain: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$plain'];
+								readonly await: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$await'];
 							};
 							readonly functionSignature: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature'];
 							readonly abstractClass: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$abstractClass'];
@@ -1461,30 +1487,30 @@ export interface Routes<Table extends AnyTable> {
 			>,
 		options?: OptionsArg<Table['buildExportStatementDefaultDeclaration']>
 	) => ReturnType<Table['buildExportStatementDefaultDeclaration']>;
-	readonly exportStatementDefaultDeclaration$defaultKw$using$automaticSemicolon: <
+	readonly exportStatementDefaultDeclaration$defaultKw$using$plain: <
 		const V extends OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
-			content: ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon']>;
+			content: ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$plain']>;
 		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
 				OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
-					content: ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon']>;
+					content: ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$plain']>;
 				}
 			>,
 		options?: OptionsArg<Table['buildExportStatementDefaultDeclaration']>
 	) => ReturnType<Table['buildExportStatementDefaultDeclaration']>;
-	readonly exportStatementDefaultDeclaration$defaultKw$using$semi: <
+	readonly exportStatementDefaultDeclaration$defaultKw$using$await: <
 		const V extends OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
-			content: ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$semi']>;
+			content: ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$await']>;
 		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
 				OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
-					content: ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$semi']>;
+					content: ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$await']>;
 				}
 			>,
 		options?: OptionsArg<Table['buildExportStatementDefaultDeclaration']>
@@ -1563,8 +1589,8 @@ export interface Routes<Table extends AnyTable> {
 		const V extends OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
 			content: ArgsOf<
 				Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using'] & {
-					readonly automaticSemicolon: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon'];
-					readonly semi: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$semi'];
+					readonly plain: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$plain'];
+					readonly await: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$await'];
 				}
 			>;
 		}
@@ -1575,8 +1601,8 @@ export interface Routes<Table extends AnyTable> {
 				OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
 					content: ArgsOf<
 						Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using'] & {
-							readonly automaticSemicolon: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon'];
-							readonly semi: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$semi'];
+							readonly plain: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$plain'];
+							readonly await: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$await'];
 						}
 					>;
 				}
@@ -1709,30 +1735,30 @@ export interface Routes<Table extends AnyTable> {
 			>,
 		options?: OptionsArg<Table['buildExportStatementDefaultDeclaration']>
 	) => ReturnType<Table['buildExportStatementDefaultDeclaration']>;
-	readonly exportStatementDefaultDeclaration$defaultKw$ambient$using$automaticSemicolon: <
+	readonly exportStatementDefaultDeclaration$defaultKw$ambient$using$plain: <
 		const V extends OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
-			content: ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon']>;
+			content: ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$plain']>;
 		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
 				OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
-					content: ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon']>;
+					content: ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$plain']>;
 				}
 			>,
 		options?: OptionsArg<Table['buildExportStatementDefaultDeclaration']>
 	) => ReturnType<Table['buildExportStatementDefaultDeclaration']>;
-	readonly exportStatementDefaultDeclaration$defaultKw$ambient$using$semi: <
+	readonly exportStatementDefaultDeclaration$defaultKw$ambient$using$await: <
 		const V extends OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
-			content: ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$semi']>;
+			content: ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$await']>;
 		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
 				OmitEach<ArgsOf<Table['buildExportStatementDefaultDeclaration']>[0], 'content'> & {
-					content: ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$semi']>;
+					content: ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$await']>;
 				}
 			>,
 		options?: OptionsArg<Table['buildExportStatementDefaultDeclaration']>
@@ -1772,8 +1798,8 @@ export interface Routes<Table extends AnyTable> {
 		readonly lexical: Routes<Table>['exportStatementDefaultDeclaration$lexical'];
 		readonly variable: Routes<Table>['exportStatementDefaultDeclaration$variable'];
 		readonly using: Routes<Table>['exportStatementDefaultDeclaration$using'] & {
-			readonly automaticSemicolon: Routes<Table>['exportStatementDefaultDeclaration$using$automaticSemicolon'];
-			readonly semi: Routes<Table>['exportStatementDefaultDeclaration$using$semi'];
+			readonly plain: Routes<Table>['exportStatementDefaultDeclaration$using$plain'];
+			readonly await: Routes<Table>['exportStatementDefaultDeclaration$using$await'];
 		};
 		readonly functionSignature: Routes<Table>['exportStatementDefaultDeclaration$functionSignature'];
 		readonly abstractClass: Routes<Table>['exportStatementDefaultDeclaration$abstractClass'];
@@ -1790,8 +1816,8 @@ export interface Routes<Table extends AnyTable> {
 			readonly lexical: Routes<Table>['exportStatementDefaultDeclaration$ambient$lexical'];
 			readonly variable: Routes<Table>['exportStatementDefaultDeclaration$ambient$variable'];
 			readonly using: Routes<Table>['exportStatementDefaultDeclaration$ambient$using'] & {
-				readonly automaticSemicolon: Routes<Table>['exportStatementDefaultDeclaration$ambient$using$automaticSemicolon'];
-				readonly semi: Routes<Table>['exportStatementDefaultDeclaration$ambient$using$semi'];
+				readonly plain: Routes<Table>['exportStatementDefaultDeclaration$ambient$using$plain'];
+				readonly await: Routes<Table>['exportStatementDefaultDeclaration$ambient$using$await'];
 			};
 			readonly functionSignature: Routes<Table>['exportStatementDefaultDeclaration$ambient$functionSignature'];
 			readonly abstractClass: Routes<Table>['exportStatementDefaultDeclaration$ambient$abstractClass'];
@@ -1810,8 +1836,8 @@ export interface Routes<Table extends AnyTable> {
 			readonly lexical: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$lexical'];
 			readonly variable: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$variable'];
 			readonly using: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$using'] & {
-				readonly automaticSemicolon: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$using$automaticSemicolon'];
-				readonly semi: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$using$semi'];
+				readonly plain: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$using$plain'];
+				readonly await: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$using$await'];
 			};
 			readonly functionSignature: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$functionSignature'];
 			readonly abstractClass: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$abstractClass'];
@@ -1828,8 +1854,8 @@ export interface Routes<Table extends AnyTable> {
 				readonly lexical: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$ambient$lexical'];
 				readonly variable: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$ambient$variable'];
 				readonly using: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$ambient$using'] & {
-					readonly automaticSemicolon: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$ambient$using$automaticSemicolon'];
-					readonly semi: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$ambient$using$semi'];
+					readonly plain: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$ambient$using$plain'];
+					readonly await: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$ambient$using$await'];
 				};
 				readonly functionSignature: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature'];
 				readonly abstractClass: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$ambient$abstractClass'];
@@ -1846,35 +1872,6 @@ export interface Routes<Table extends AnyTable> {
 				readonly semi: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$value$semi'];
 			};
 		};
-	};
-	readonly formalParametersSetAccessorSignature$elements: Seat<
-		ArgsOf<Table['buildFormalParametersElementsSetAccessorSignature']>,
-		ReturnType<typeof F.buildFormalParametersSetAccessorSignature>
-	>;
-	readonly formalParametersSetAccessorSignature: Table['buildFormalParametersSetAccessorSignature'] & {
-		readonly elements: Routes<Table>['formalParametersSetAccessorSignature$elements'];
-	};
-	readonly formalParametersElementsReceiver: Table['formalParametersElementsReceiver$seated'];
-	readonly declaration: {
-		readonly function: Table['buildFunctionDeclaration'];
-		readonly generatorFunction: Table['buildGeneratorFunctionDeclaration'];
-		readonly class: Table['buildClassDeclaration'];
-		readonly lexical: Table['buildLexicalDeclaration'];
-		readonly variable: Table['buildVariableDeclaration'];
-		readonly using: Routes<Table>['usingDeclaration'];
-		readonly functionSignature: Table['buildFunctionSignature'];
-		readonly abstractClass: Table['buildAbstractClassDeclaration'];
-		readonly module: Table['buildModule'];
-		readonly internalModule: Table['buildInternalModule'];
-		readonly typeAlias: Table['buildTypeAliasDeclaration'];
-		readonly enum: Table['buildEnumDeclaration'];
-		readonly interface: Table['buildInterfaceDeclaration'];
-		readonly importAlias: Table['buildImportAlias'];
-		readonly ambient: Routes<Table>['ambientDeclaration'];
-	};
-	readonly importSpecifier: {
-		readonly name: Table['buildImportSpecifierName'];
-		readonly as: Routes<Table>['importSpecifierAs'];
 	};
 	readonly variableDeclarator: {
 		readonly plain: Table['buildVariableDeclaratorPlain'];
@@ -2219,6 +2216,23 @@ export interface Routes<Table extends AnyTable> {
 		readonly equalsExport: Table['buildExportStatementEqualsExport'];
 		readonly namespaceExport: Table['buildExportStatementNamespaceExport'];
 	};
+	readonly declaration: {
+		readonly function: Table['buildFunctionDeclaration'];
+		readonly generatorFunction: Table['buildGeneratorFunctionDeclaration'];
+		readonly class: Table['buildClassDeclaration'];
+		readonly lexical: Table['buildLexicalDeclaration'];
+		readonly variable: Table['buildVariableDeclaration'];
+		readonly using: Routes<Table>['usingDeclaration'];
+		readonly functionSignature: Table['buildFunctionSignature'];
+		readonly abstractClass: Table['buildAbstractClassDeclaration'];
+		readonly module: Table['buildModule'];
+		readonly internalModule: Table['buildInternalModule'];
+		readonly typeAlias: Table['buildTypeAliasDeclaration'];
+		readonly enum: Table['buildEnumDeclaration'];
+		readonly interface: Table['buildInterfaceDeclaration'];
+		readonly importAlias: Table['buildImportAlias'];
+		readonly ambient: Routes<Table>['ambientDeclaration'];
+	};
 	readonly statement: {
 		readonly export: Routes<Table>['exportStatement'];
 		readonly import: Routes<Table>['importStatement'];
@@ -2267,7 +2281,6 @@ export interface Ir<Table extends AnyTable> {
 	readonly expressionStatement: Table['buildExpressionStatement'];
 	readonly variableDeclaration: Table['buildVariableDeclaration'];
 	readonly lexicalDeclaration: Table['buildLexicalDeclaration'];
-	readonly usingDeclaration: Routes<Table>['usingDeclaration'];
 	readonly statementBlock: Table['buildStatementBlock'];
 	readonly elseClause: Table['buildElseClause'];
 	readonly ifStatement: Table['buildIfStatement'];
@@ -2437,6 +2450,8 @@ export interface Ir<Table extends AnyTable> {
 	readonly stringSingle: Table['buildStringSingle'];
 	readonly updateExpressionPostfix: Table['buildUpdateExpressionPostfix'];
 	readonly updateExpressionPrefix: Table['buildUpdateExpressionPrefix'];
+	readonly usingDeclarationPlain: Routes<Table>['usingDeclarationPlain'];
+	readonly usingDeclarationAwait: Routes<Table>['usingDeclarationAwait'];
 	readonly exportStatementDefaultFrom: Routes<Table>['exportStatementDefaultFrom'];
 	readonly exportStatementDefaultDeclaration: Routes<Table>['exportStatementDefaultDeclaration'];
 	readonly variableDeclaratorPlain: Table['buildVariableDeclaratorPlain'];
@@ -2462,8 +2477,8 @@ export interface Ir<Table extends AnyTable> {
 	readonly receiverParameterDeclaration: Table['buildReceiverParameterDeclaration'];
 	readonly formalParametersElementsReceiver: Routes<Table>['formalParametersElementsReceiver'];
 	readonly interfaceBody: Routes<Table>['interfaceBody'];
-	readonly declaration: Routes<Table>['declaration'];
 	readonly importSpecifier: Routes<Table>['importSpecifier'];
+	readonly usingDeclaration: Routes<Table>['usingDeclaration'];
 	readonly variableDeclarator: Routes<Table>['variableDeclarator'];
 	readonly forHeader: Routes<Table>['forHeader'];
 	readonly parenthesizedExpression: Routes<Table>['parenthesizedExpression'];
@@ -2483,6 +2498,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly exportStatementDefault: Routes<Table>['exportStatementDefault'];
 	readonly numberBigint: Routes<Table>['numberBigint'];
 	readonly exportStatement: Routes<Table>['exportStatement'];
+	readonly declaration: Routes<Table>['declaration'];
 	readonly statement: Routes<Table>['statement'];
 	readonly number: Routes<Table>['number'];
 	readonly import: typeof F.buildImport;
@@ -2496,12 +2512,12 @@ export interface Ir<Table extends AnyTable> {
 	readonly undefined: typeof F.buildUndefined;
 	readonly overrideModifier: typeof F.buildOverrideModifier;
 	readonly existentialType: typeof F.buildExistentialType;
-	readonly usingDeclarationArm: typeof F.buildUsingDeclarationArm;
 	readonly emptyMember: typeof F.buildEmptyMember;
 	readonly optionalChainMarker: typeof F.buildOptionalChainMarker;
 	readonly metaPropertyNewTarget: typeof F.buildMetaPropertyNewTarget;
 	readonly metaPropertyImportMeta: typeof F.buildMetaPropertyImportMeta;
 	readonly formalParametersGetAccessorSignature: typeof F.buildFormalParametersGetAccessorSignature;
+	readonly forHeaderUsingKindKind: typeof F.buildForHeaderUsingKindKind;
 	readonly automaticSemicolon: typeof F.buildAutomaticSemicolon;
 	readonly functionSignatureAutomaticSemicolon: typeof F.buildFunctionSignatureAutomaticSemicolon;
 	readonly thisType: typeof F.buildThisType;
@@ -2699,18 +2715,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			)
 		} as const)
 	);
-	const usingDeclaration$automaticSemicolon: Routes<Table>['usingDeclaration$automaticSemicolon'] =
-		K.usingDeclaration$automaticSemicolon($at('buildUsingDeclaration'), TSKindId.AutomaticSemicolon);
-	const usingDeclaration$semi: Routes<Table>['usingDeclaration$semi'] = K.usingDeclaration$semi(
-		$at('buildUsingDeclaration'),
-		TSKindId.Semi
-	);
-	const usingDeclaration: Routes<Table>['usingDeclaration'] = Object.freeze(
-		Object.assign(delegate($at('buildUsingDeclaration')), {
-			automaticSemicolon: usingDeclaration$automaticSemicolon,
-			semi: usingDeclaration$semi
-		} as const)
-	);
 	const catchClause: Routes<Table>['catchClause'] = $at('catchClause$seated');
 	const binaryExpression$in: Routes<Table>['binaryExpression$in'] = K.binaryExpression$in(
 		$at('buildBinaryExpression'),
@@ -2795,87 +2799,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			nonNullExpression: restPattern$nonNullExpression
 		} as const)
 	);
-	const ambientDeclaration$function: Routes<Table>['ambientDeclaration$function'] = K.ambientDeclaration$function(
-		F.buildAmbientDeclaration,
-		$at('buildFunctionDeclaration')
-	);
-	const ambientDeclaration$generatorFunction: Routes<Table>['ambientDeclaration$generatorFunction'] =
-		K.ambientDeclaration$generatorFunction(F.buildAmbientDeclaration, $at('buildGeneratorFunctionDeclaration'));
-	const ambientDeclaration$class: Routes<Table>['ambientDeclaration$class'] = K.ambientDeclaration$class(
-		F.buildAmbientDeclaration,
-		$at('buildClassDeclaration')
-	);
-	const ambientDeclaration$lexical: Routes<Table>['ambientDeclaration$lexical'] = K.ambientDeclaration$lexical(
-		F.buildAmbientDeclaration,
-		$at('buildLexicalDeclaration')
-	);
-	const ambientDeclaration$variable: Routes<Table>['ambientDeclaration$variable'] = K.ambientDeclaration$variable(
-		F.buildAmbientDeclaration,
-		$at('buildVariableDeclaration')
-	);
-	const ambientDeclaration$using: Routes<Table>['ambientDeclaration$using'] = K.ambientDeclaration$using(
-		F.buildAmbientDeclaration,
-		$at('buildUsingDeclaration')
-	);
-	const ambientDeclaration$functionSignature: Routes<Table>['ambientDeclaration$functionSignature'] =
-		K.ambientDeclaration$functionSignature(F.buildAmbientDeclaration, $at('buildFunctionSignature'));
-	const ambientDeclaration$abstractClass: Routes<Table>['ambientDeclaration$abstractClass'] =
-		K.ambientDeclaration$abstractClass(F.buildAmbientDeclaration, $at('buildAbstractClassDeclaration'));
-	const ambientDeclaration$internalModule: Routes<Table>['ambientDeclaration$internalModule'] =
-		K.ambientDeclaration$internalModule(F.buildAmbientDeclaration, $at('buildInternalModule'));
-	const ambientDeclaration$typeAlias: Routes<Table>['ambientDeclaration$typeAlias'] = K.ambientDeclaration$typeAlias(
-		F.buildAmbientDeclaration,
-		$at('buildTypeAliasDeclaration')
-	);
-	const ambientDeclaration$enum: Routes<Table>['ambientDeclaration$enum'] = K.ambientDeclaration$enum(
-		F.buildAmbientDeclaration,
-		$at('buildEnumDeclaration')
-	);
-	const ambientDeclaration$interface: Routes<Table>['ambientDeclaration$interface'] = K.ambientDeclaration$interface(
-		F.buildAmbientDeclaration,
-		$at('buildInterfaceDeclaration')
-	);
-	const ambientDeclaration$importAlias: Routes<Table>['ambientDeclaration$importAlias'] =
-		K.ambientDeclaration$importAlias(F.buildAmbientDeclaration, $at('buildImportAlias'));
-	const ambientDeclaration$ambient: Routes<Table>['ambientDeclaration$ambient'] = K.ambientDeclaration$ambient(
-		F.buildAmbientDeclaration,
-		$at('buildAmbientDeclaration')
-	);
-	const ambientDeclaration$global: Routes<Table>['ambientDeclaration$global'] = K.ambientDeclaration$global(
-		F.buildAmbientDeclaration,
-		$at('buildAmbientDeclarationGlobal')
-	);
-	const ambientDeclaration$using$automaticSemicolon: Routes<Table>['ambientDeclaration$using$automaticSemicolon'] =
-		K.ambientDeclaration$using$automaticSemicolon(F.buildAmbientDeclaration, usingDeclaration.automaticSemicolon);
-	const ambientDeclaration$using$semi: Routes<Table>['ambientDeclaration$using$semi'] = K.ambientDeclaration$using$semi(
-		F.buildAmbientDeclaration,
-		usingDeclaration.semi
-	);
-	const ambientDeclaration: Routes<Table>['ambientDeclaration'] = Object.freeze(
-		Object.assign(delegate($at('buildAmbientDeclaration')), {
-			function: ambientDeclaration$function,
-			generatorFunction: ambientDeclaration$generatorFunction,
-			class: ambientDeclaration$class,
-			lexical: ambientDeclaration$lexical,
-			variable: ambientDeclaration$variable,
-			using: Object.freeze(
-				Object.assign(ambientDeclaration$using, {
-					automaticSemicolon: ambientDeclaration$using$automaticSemicolon,
-					semi: ambientDeclaration$using$semi
-				} as const)
-			),
-			functionSignature: ambientDeclaration$functionSignature,
-			abstractClass: ambientDeclaration$abstractClass,
-			internalModule: ambientDeclaration$internalModule,
-			typeAlias: ambientDeclaration$typeAlias,
-			enum: ambientDeclaration$enum,
-			interface: ambientDeclaration$interface,
-			importAlias: ambientDeclaration$importAlias,
-			ambient: ambientDeclaration$ambient,
-			global: ambientDeclaration$global,
-			module: $at('buildAmbientDeclarationModule')
-		} as const)
-	);
 	const typeQueryMemberExpression$dot: Routes<Table>['typeQueryMemberExpression$dot'] = K.typeQueryMemberExpression$dot(
 		$at('buildTypeQueryMemberExpression'),
 		TSKindId.Dot
@@ -2948,6 +2871,30 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			sequenceExpression: parenthesizedExpressionSequence$sequenceExpression
 		} as const)
 	);
+	const usingDeclarationPlain$automaticSemicolon: Routes<Table>['usingDeclarationPlain$automaticSemicolon'] =
+		K.usingDeclarationPlain$automaticSemicolon($at('buildUsingDeclarationPlain'), TSKindId.AutomaticSemicolon);
+	const usingDeclarationPlain$semi: Routes<Table>['usingDeclarationPlain$semi'] = K.usingDeclarationPlain$semi(
+		$at('buildUsingDeclarationPlain'),
+		TSKindId.Semi
+	);
+	const usingDeclarationPlain: Routes<Table>['usingDeclarationPlain'] = Object.freeze(
+		Object.assign(delegate($at('buildUsingDeclarationPlain')), {
+			automaticSemicolon: usingDeclarationPlain$automaticSemicolon,
+			semi: usingDeclarationPlain$semi
+		} as const)
+	);
+	const usingDeclarationAwait$automaticSemicolon: Routes<Table>['usingDeclarationAwait$automaticSemicolon'] =
+		K.usingDeclarationAwait$automaticSemicolon($at('buildUsingDeclarationAwait'), TSKindId.AutomaticSemicolon);
+	const usingDeclarationAwait$semi: Routes<Table>['usingDeclarationAwait$semi'] = K.usingDeclarationAwait$semi(
+		$at('buildUsingDeclarationAwait'),
+		TSKindId.Semi
+	);
+	const usingDeclarationAwait: Routes<Table>['usingDeclarationAwait'] = Object.freeze(
+		Object.assign(delegate($at('buildUsingDeclarationAwait')), {
+			automaticSemicolon: usingDeclarationAwait$automaticSemicolon,
+			semi: usingDeclarationAwait$semi
+		} as const)
+	);
 	const exportStatementDefaultFrom$starFrom: Routes<Table>['exportStatementDefaultFrom$starFrom'] =
 		K.exportStatementDefaultFrom$starFrom(
 			$at('buildExportStatementDefaultFrom'),
@@ -2985,6 +2932,108 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			automaticSemicolon: exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon,
 			semi: exportStatementDefaultDeclarationDefaultKwValue$semi
 		} as const);
+	const formalParametersSetAccessorSignature$elements: Routes<Table>['formalParametersSetAccessorSignature$elements'] =
+		K.formalParametersSetAccessorSignature$elements(
+			F.buildFormalParametersSetAccessorSignature,
+			$at('buildFormalParametersElementsSetAccessorSignature')
+		);
+	const formalParametersSetAccessorSignature: Routes<Table>['formalParametersSetAccessorSignature'] = Object.freeze(
+		Object.assign(delegate($at('buildFormalParametersSetAccessorSignature')), {
+			elements: formalParametersSetAccessorSignature$elements
+		} as const)
+	);
+	const formalParametersElementsReceiver: Routes<Table>['formalParametersElementsReceiver'] = $at(
+		'formalParametersElementsReceiver$seated'
+	);
+	const importSpecifier: Routes<Table>['importSpecifier'] = Object.freeze({
+		name: $at('buildImportSpecifierName'),
+		as: importSpecifierAs
+	} as const);
+	const usingDeclaration: Routes<Table>['usingDeclaration'] = Object.freeze(
+		Object.assign(delegate(usingDeclarationPlain), {
+			plain: usingDeclarationPlain,
+			await: usingDeclarationAwait
+		} as const)
+	);
+	const ambientDeclaration$function: Routes<Table>['ambientDeclaration$function'] = K.ambientDeclaration$function(
+		F.buildAmbientDeclaration,
+		$at('buildFunctionDeclaration')
+	);
+	const ambientDeclaration$generatorFunction: Routes<Table>['ambientDeclaration$generatorFunction'] =
+		K.ambientDeclaration$generatorFunction(F.buildAmbientDeclaration, $at('buildGeneratorFunctionDeclaration'));
+	const ambientDeclaration$class: Routes<Table>['ambientDeclaration$class'] = K.ambientDeclaration$class(
+		F.buildAmbientDeclaration,
+		$at('buildClassDeclaration')
+	);
+	const ambientDeclaration$lexical: Routes<Table>['ambientDeclaration$lexical'] = K.ambientDeclaration$lexical(
+		F.buildAmbientDeclaration,
+		$at('buildLexicalDeclaration')
+	);
+	const ambientDeclaration$variable: Routes<Table>['ambientDeclaration$variable'] = K.ambientDeclaration$variable(
+		F.buildAmbientDeclaration,
+		$at('buildVariableDeclaration')
+	);
+	const ambientDeclaration$using: Routes<Table>['ambientDeclaration$using'] = K.ambientDeclaration$using(
+		F.buildAmbientDeclaration,
+		usingDeclaration
+	);
+	const ambientDeclaration$functionSignature: Routes<Table>['ambientDeclaration$functionSignature'] =
+		K.ambientDeclaration$functionSignature(F.buildAmbientDeclaration, $at('buildFunctionSignature'));
+	const ambientDeclaration$abstractClass: Routes<Table>['ambientDeclaration$abstractClass'] =
+		K.ambientDeclaration$abstractClass(F.buildAmbientDeclaration, $at('buildAbstractClassDeclaration'));
+	const ambientDeclaration$internalModule: Routes<Table>['ambientDeclaration$internalModule'] =
+		K.ambientDeclaration$internalModule(F.buildAmbientDeclaration, $at('buildInternalModule'));
+	const ambientDeclaration$typeAlias: Routes<Table>['ambientDeclaration$typeAlias'] = K.ambientDeclaration$typeAlias(
+		F.buildAmbientDeclaration,
+		$at('buildTypeAliasDeclaration')
+	);
+	const ambientDeclaration$enum: Routes<Table>['ambientDeclaration$enum'] = K.ambientDeclaration$enum(
+		F.buildAmbientDeclaration,
+		$at('buildEnumDeclaration')
+	);
+	const ambientDeclaration$interface: Routes<Table>['ambientDeclaration$interface'] = K.ambientDeclaration$interface(
+		F.buildAmbientDeclaration,
+		$at('buildInterfaceDeclaration')
+	);
+	const ambientDeclaration$importAlias: Routes<Table>['ambientDeclaration$importAlias'] =
+		K.ambientDeclaration$importAlias(F.buildAmbientDeclaration, $at('buildImportAlias'));
+	const ambientDeclaration$ambient: Routes<Table>['ambientDeclaration$ambient'] = K.ambientDeclaration$ambient(
+		F.buildAmbientDeclaration,
+		$at('buildAmbientDeclaration')
+	);
+	const ambientDeclaration$global: Routes<Table>['ambientDeclaration$global'] = K.ambientDeclaration$global(
+		F.buildAmbientDeclaration,
+		$at('buildAmbientDeclarationGlobal')
+	);
+	const ambientDeclaration$using$plain: Routes<Table>['ambientDeclaration$using$plain'] =
+		K.ambientDeclaration$using$plain(F.buildAmbientDeclaration, usingDeclaration.plain);
+	const ambientDeclaration$using$await: Routes<Table>['ambientDeclaration$using$await'] =
+		K.ambientDeclaration$using$await(F.buildAmbientDeclaration, usingDeclaration.await);
+	const ambientDeclaration: Routes<Table>['ambientDeclaration'] = Object.freeze(
+		Object.assign(delegate($at('buildAmbientDeclaration')), {
+			function: ambientDeclaration$function,
+			generatorFunction: ambientDeclaration$generatorFunction,
+			class: ambientDeclaration$class,
+			lexical: ambientDeclaration$lexical,
+			variable: ambientDeclaration$variable,
+			using: Object.freeze(
+				Object.assign(ambientDeclaration$using, {
+					plain: ambientDeclaration$using$plain,
+					await: ambientDeclaration$using$await
+				} as const)
+			),
+			functionSignature: ambientDeclaration$functionSignature,
+			abstractClass: ambientDeclaration$abstractClass,
+			internalModule: ambientDeclaration$internalModule,
+			typeAlias: ambientDeclaration$typeAlias,
+			enum: ambientDeclaration$enum,
+			interface: ambientDeclaration$interface,
+			importAlias: ambientDeclaration$importAlias,
+			ambient: ambientDeclaration$ambient,
+			global: ambientDeclaration$global,
+			module: $at('buildAmbientDeclarationModule')
+		} as const)
+	);
 	const exportStatementDefaultDeclarationDefaultKw$function: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$function'] =
 		K.exportStatementDefaultDeclarationDefaultKw$function(
 			F.buildExportStatementDefaultDeclarationDefaultKw,
@@ -3013,7 +3062,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	const exportStatementDefaultDeclarationDefaultKw$using: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using'] =
 		K.exportStatementDefaultDeclarationDefaultKw$using(
 			F.buildExportStatementDefaultDeclarationDefaultKw,
-			$at('buildUsingDeclaration')
+			usingDeclaration
 		);
 	const exportStatementDefaultDeclarationDefaultKw$functionSignature: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$functionSignature'] =
 		K.exportStatementDefaultDeclarationDefaultKw$functionSignature(
@@ -3065,15 +3114,15 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			F.buildExportStatementDefaultDeclarationDefaultKw,
 			$at('buildExportStatementDefaultDeclarationDefaultKwValue')
 		);
-	const exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon'] =
-		K.exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon(
+	const exportStatementDefaultDeclarationDefaultKw$using$plain: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$plain'] =
+		K.exportStatementDefaultDeclarationDefaultKw$using$plain(
 			F.buildExportStatementDefaultDeclarationDefaultKw,
-			usingDeclaration.automaticSemicolon
+			usingDeclaration.plain
 		);
-	const exportStatementDefaultDeclarationDefaultKw$using$semi: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$semi'] =
-		K.exportStatementDefaultDeclarationDefaultKw$using$semi(
+	const exportStatementDefaultDeclarationDefaultKw$using$await: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$using$await'] =
+		K.exportStatementDefaultDeclarationDefaultKw$using$await(
 			F.buildExportStatementDefaultDeclarationDefaultKw,
-			usingDeclaration.semi
+			usingDeclaration.await
 		);
 	const exportStatementDefaultDeclarationDefaultKw$ambient$function: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$function'] =
 		K.exportStatementDefaultDeclarationDefaultKw$ambient$function(
@@ -3150,15 +3199,15 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			F.buildExportStatementDefaultDeclarationDefaultKw,
 			ambientDeclaration.global
 		);
-	const exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon'] =
-		K.exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon(
+	const exportStatementDefaultDeclarationDefaultKw$ambient$using$plain: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$plain'] =
+		K.exportStatementDefaultDeclarationDefaultKw$ambient$using$plain(
 			F.buildExportStatementDefaultDeclarationDefaultKw,
-			ambientDeclaration.using.automaticSemicolon
+			ambientDeclaration.using.plain
 		);
-	const exportStatementDefaultDeclarationDefaultKw$ambient$using$semi: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$semi'] =
-		K.exportStatementDefaultDeclarationDefaultKw$ambient$using$semi(
+	const exportStatementDefaultDeclarationDefaultKw$ambient$using$await: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$ambient$using$await'] =
+		K.exportStatementDefaultDeclarationDefaultKw$ambient$using$await(
 			F.buildExportStatementDefaultDeclarationDefaultKw,
-			ambientDeclaration.using.semi
+			ambientDeclaration.using.await
 		);
 	const exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon'] =
 		K.exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon(
@@ -3179,8 +3228,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			variable: exportStatementDefaultDeclarationDefaultKw$variable,
 			using: Object.freeze(
 				Object.assign(exportStatementDefaultDeclarationDefaultKw$using, {
-					automaticSemicolon: exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon,
-					semi: exportStatementDefaultDeclarationDefaultKw$using$semi
+					plain: exportStatementDefaultDeclarationDefaultKw$using$plain,
+					await: exportStatementDefaultDeclarationDefaultKw$using$await
 				} as const)
 			),
 			functionSignature: exportStatementDefaultDeclarationDefaultKw$functionSignature,
@@ -3200,8 +3249,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 					variable: exportStatementDefaultDeclarationDefaultKw$ambient$variable,
 					using: Object.freeze(
 						Object.assign(exportStatementDefaultDeclarationDefaultKw$ambient$using, {
-							automaticSemicolon: exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon,
-							semi: exportStatementDefaultDeclarationDefaultKw$ambient$using$semi
+							plain: exportStatementDefaultDeclarationDefaultKw$ambient$using$plain,
+							await: exportStatementDefaultDeclarationDefaultKw$ambient$using$await
 						} as const)
 					),
 					functionSignature: exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature,
@@ -3248,10 +3297,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			$at('buildVariableDeclaration')
 		);
 	const exportStatementDefaultDeclaration$using: Routes<Table>['exportStatementDefaultDeclaration$using'] =
-		K.exportStatementDefaultDeclaration$using(
-			$at('buildExportStatementDefaultDeclaration'),
-			$at('buildUsingDeclaration')
-		);
+		K.exportStatementDefaultDeclaration$using($at('buildExportStatementDefaultDeclaration'), usingDeclaration);
 	const exportStatementDefaultDeclaration$functionSignature: Routes<Table>['exportStatementDefaultDeclaration$functionSignature'] =
 		K.exportStatementDefaultDeclaration$functionSignature(
 			$at('buildExportStatementDefaultDeclaration'),
@@ -3299,15 +3345,15 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			$at('buildExportStatementDefaultDeclaration'),
 			$at('buildExportStatementDefaultDeclarationDefaultKw')
 		);
-	const exportStatementDefaultDeclaration$using$automaticSemicolon: Routes<Table>['exportStatementDefaultDeclaration$using$automaticSemicolon'] =
-		K.exportStatementDefaultDeclaration$using$automaticSemicolon(
+	const exportStatementDefaultDeclaration$using$plain: Routes<Table>['exportStatementDefaultDeclaration$using$plain'] =
+		K.exportStatementDefaultDeclaration$using$plain(
 			$at('buildExportStatementDefaultDeclaration'),
-			usingDeclaration.automaticSemicolon
+			usingDeclaration.plain
 		);
-	const exportStatementDefaultDeclaration$using$semi: Routes<Table>['exportStatementDefaultDeclaration$using$semi'] =
-		K.exportStatementDefaultDeclaration$using$semi(
+	const exportStatementDefaultDeclaration$using$await: Routes<Table>['exportStatementDefaultDeclaration$using$await'] =
+		K.exportStatementDefaultDeclaration$using$await(
 			$at('buildExportStatementDefaultDeclaration'),
-			usingDeclaration.semi
+			usingDeclaration.await
 		);
 	const exportStatementDefaultDeclaration$ambient$function: Routes<Table>['exportStatementDefaultDeclaration$ambient$function'] =
 		K.exportStatementDefaultDeclaration$ambient$function(
@@ -3384,15 +3430,15 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			$at('buildExportStatementDefaultDeclaration'),
 			ambientDeclaration.global
 		);
-	const exportStatementDefaultDeclaration$ambient$using$automaticSemicolon: Routes<Table>['exportStatementDefaultDeclaration$ambient$using$automaticSemicolon'] =
-		K.exportStatementDefaultDeclaration$ambient$using$automaticSemicolon(
+	const exportStatementDefaultDeclaration$ambient$using$plain: Routes<Table>['exportStatementDefaultDeclaration$ambient$using$plain'] =
+		K.exportStatementDefaultDeclaration$ambient$using$plain(
 			$at('buildExportStatementDefaultDeclaration'),
-			ambientDeclaration.using.automaticSemicolon
+			ambientDeclaration.using.plain
 		);
-	const exportStatementDefaultDeclaration$ambient$using$semi: Routes<Table>['exportStatementDefaultDeclaration$ambient$using$semi'] =
-		K.exportStatementDefaultDeclaration$ambient$using$semi(
+	const exportStatementDefaultDeclaration$ambient$using$await: Routes<Table>['exportStatementDefaultDeclaration$ambient$using$await'] =
+		K.exportStatementDefaultDeclaration$ambient$using$await(
 			$at('buildExportStatementDefaultDeclaration'),
-			ambientDeclaration.using.semi
+			ambientDeclaration.using.await
 		);
 	const exportStatementDefaultDeclaration$defaultKw$function: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$function'] =
 		K.exportStatementDefaultDeclaration$defaultKw$function(
@@ -3474,15 +3520,15 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			$at('buildExportStatementDefaultDeclaration'),
 			exportStatementDefaultDeclarationDefaultKw.value
 		);
-	const exportStatementDefaultDeclaration$defaultKw$using$automaticSemicolon: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$using$automaticSemicolon'] =
-		K.exportStatementDefaultDeclaration$defaultKw$using$automaticSemicolon(
+	const exportStatementDefaultDeclaration$defaultKw$using$plain: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$using$plain'] =
+		K.exportStatementDefaultDeclaration$defaultKw$using$plain(
 			$at('buildExportStatementDefaultDeclaration'),
-			exportStatementDefaultDeclarationDefaultKw.using.automaticSemicolon
+			exportStatementDefaultDeclarationDefaultKw.using.plain
 		);
-	const exportStatementDefaultDeclaration$defaultKw$using$semi: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$using$semi'] =
-		K.exportStatementDefaultDeclaration$defaultKw$using$semi(
+	const exportStatementDefaultDeclaration$defaultKw$using$await: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$using$await'] =
+		K.exportStatementDefaultDeclaration$defaultKw$using$await(
 			$at('buildExportStatementDefaultDeclaration'),
-			exportStatementDefaultDeclarationDefaultKw.using.semi
+			exportStatementDefaultDeclarationDefaultKw.using.await
 		);
 	const exportStatementDefaultDeclaration$defaultKw$ambient$function: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$ambient$function'] =
 		K.exportStatementDefaultDeclaration$defaultKw$ambient$function(
@@ -3559,15 +3605,15 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			$at('buildExportStatementDefaultDeclaration'),
 			exportStatementDefaultDeclarationDefaultKw.ambient.global
 		);
-	const exportStatementDefaultDeclaration$defaultKw$ambient$using$automaticSemicolon: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$ambient$using$automaticSemicolon'] =
-		K.exportStatementDefaultDeclaration$defaultKw$ambient$using$automaticSemicolon(
+	const exportStatementDefaultDeclaration$defaultKw$ambient$using$plain: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$ambient$using$plain'] =
+		K.exportStatementDefaultDeclaration$defaultKw$ambient$using$plain(
 			$at('buildExportStatementDefaultDeclaration'),
-			exportStatementDefaultDeclarationDefaultKw.ambient.using.automaticSemicolon
+			exportStatementDefaultDeclarationDefaultKw.ambient.using.plain
 		);
-	const exportStatementDefaultDeclaration$defaultKw$ambient$using$semi: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$ambient$using$semi'] =
-		K.exportStatementDefaultDeclaration$defaultKw$ambient$using$semi(
+	const exportStatementDefaultDeclaration$defaultKw$ambient$using$await: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$ambient$using$await'] =
+		K.exportStatementDefaultDeclaration$defaultKw$ambient$using$await(
 			$at('buildExportStatementDefaultDeclaration'),
-			exportStatementDefaultDeclarationDefaultKw.ambient.using.semi
+			exportStatementDefaultDeclarationDefaultKw.ambient.using.await
 		);
 	const exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon: Routes<Table>['exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon'] =
 		K.exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon(
@@ -3588,8 +3634,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			variable: exportStatementDefaultDeclaration$variable,
 			using: Object.freeze(
 				Object.assign(exportStatementDefaultDeclaration$using, {
-					automaticSemicolon: exportStatementDefaultDeclaration$using$automaticSemicolon,
-					semi: exportStatementDefaultDeclaration$using$semi
+					plain: exportStatementDefaultDeclaration$using$plain,
+					await: exportStatementDefaultDeclaration$using$await
 				} as const)
 			),
 			functionSignature: exportStatementDefaultDeclaration$functionSignature,
@@ -3609,8 +3655,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 					variable: exportStatementDefaultDeclaration$ambient$variable,
 					using: Object.freeze(
 						Object.assign(exportStatementDefaultDeclaration$ambient$using, {
-							automaticSemicolon: exportStatementDefaultDeclaration$ambient$using$automaticSemicolon,
-							semi: exportStatementDefaultDeclaration$ambient$using$semi
+							plain: exportStatementDefaultDeclaration$ambient$using$plain,
+							await: exportStatementDefaultDeclaration$ambient$using$await
 						} as const)
 					),
 					functionSignature: exportStatementDefaultDeclaration$ambient$functionSignature,
@@ -3633,8 +3679,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 					variable: exportStatementDefaultDeclaration$defaultKw$variable,
 					using: Object.freeze(
 						Object.assign(exportStatementDefaultDeclaration$defaultKw$using, {
-							automaticSemicolon: exportStatementDefaultDeclaration$defaultKw$using$automaticSemicolon,
-							semi: exportStatementDefaultDeclaration$defaultKw$using$semi
+							plain: exportStatementDefaultDeclaration$defaultKw$using$plain,
+							await: exportStatementDefaultDeclaration$defaultKw$using$await
 						} as const)
 					),
 					functionSignature: exportStatementDefaultDeclaration$defaultKw$functionSignature,
@@ -3654,8 +3700,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 							variable: exportStatementDefaultDeclaration$defaultKw$ambient$variable,
 							using: Object.freeze(
 								Object.assign(exportStatementDefaultDeclaration$defaultKw$ambient$using, {
-									automaticSemicolon: exportStatementDefaultDeclaration$defaultKw$ambient$using$automaticSemicolon,
-									semi: exportStatementDefaultDeclaration$defaultKw$ambient$using$semi
+									plain: exportStatementDefaultDeclaration$defaultKw$ambient$using$plain,
+									await: exportStatementDefaultDeclaration$defaultKw$ambient$using$await
 								} as const)
 							),
 							functionSignature: exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature,
@@ -3679,40 +3725,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			)
 		} as const)
 	);
-	const formalParametersSetAccessorSignature$elements: Routes<Table>['formalParametersSetAccessorSignature$elements'] =
-		K.formalParametersSetAccessorSignature$elements(
-			F.buildFormalParametersSetAccessorSignature,
-			$at('buildFormalParametersElementsSetAccessorSignature')
-		);
-	const formalParametersSetAccessorSignature: Routes<Table>['formalParametersSetAccessorSignature'] = Object.freeze(
-		Object.assign(delegate($at('buildFormalParametersSetAccessorSignature')), {
-			elements: formalParametersSetAccessorSignature$elements
-		} as const)
-	);
-	const formalParametersElementsReceiver: Routes<Table>['formalParametersElementsReceiver'] = $at(
-		'formalParametersElementsReceiver$seated'
-	);
-	const declaration: Routes<Table>['declaration'] = Object.freeze({
-		function: $at('buildFunctionDeclaration'),
-		generatorFunction: $at('buildGeneratorFunctionDeclaration'),
-		class: $at('buildClassDeclaration'),
-		lexical: $at('buildLexicalDeclaration'),
-		variable: $at('buildVariableDeclaration'),
-		using: usingDeclaration,
-		functionSignature: $at('buildFunctionSignature'),
-		abstractClass: $at('buildAbstractClassDeclaration'),
-		module: $at('buildModule'),
-		internalModule: $at('buildInternalModule'),
-		typeAlias: $at('buildTypeAliasDeclaration'),
-		enum: $at('buildEnumDeclaration'),
-		interface: $at('buildInterfaceDeclaration'),
-		importAlias: $at('buildImportAlias'),
-		ambient: ambientDeclaration
-	} as const);
-	const importSpecifier: Routes<Table>['importSpecifier'] = Object.freeze({
-		name: $at('buildImportSpecifierName'),
-		as: importSpecifierAs
-	} as const);
 	const variableDeclarator: Routes<Table>['variableDeclarator'] = Object.freeze({
 		plain: $at('buildVariableDeclaratorPlain'),
 		definite: $at('buildVariableDeclaratorDefinite')
@@ -4049,6 +4061,23 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		equalsExport: $at('buildExportStatementEqualsExport'),
 		namespaceExport: $at('buildExportStatementNamespaceExport')
 	} as const);
+	const declaration: Routes<Table>['declaration'] = Object.freeze({
+		function: $at('buildFunctionDeclaration'),
+		generatorFunction: $at('buildGeneratorFunctionDeclaration'),
+		class: $at('buildClassDeclaration'),
+		lexical: $at('buildLexicalDeclaration'),
+		variable: $at('buildVariableDeclaration'),
+		using: usingDeclaration,
+		functionSignature: $at('buildFunctionSignature'),
+		abstractClass: $at('buildAbstractClassDeclaration'),
+		module: $at('buildModule'),
+		internalModule: $at('buildInternalModule'),
+		typeAlias: $at('buildTypeAliasDeclaration'),
+		enum: $at('buildEnumDeclaration'),
+		interface: $at('buildInterfaceDeclaration'),
+		importAlias: $at('buildImportAlias'),
+		ambient: ambientDeclaration
+	} as const);
 	const statement: Routes<Table>['statement'] = Object.freeze({
 		export: exportStatement,
 		import: importStatement,
@@ -4097,7 +4126,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		expressionStatement: $at('buildExpressionStatement'),
 		variableDeclaration: $at('buildVariableDeclaration'),
 		lexicalDeclaration: $at('buildLexicalDeclaration'),
-		usingDeclaration: usingDeclaration,
 		statementBlock: $at('buildStatementBlock'),
 		elseClause: $at('buildElseClause'),
 		ifStatement: $at('buildIfStatement'),
@@ -4267,6 +4295,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		stringSingle: $at('buildStringSingle'),
 		updateExpressionPostfix: $at('buildUpdateExpressionPostfix'),
 		updateExpressionPrefix: $at('buildUpdateExpressionPrefix'),
+		usingDeclarationPlain: usingDeclarationPlain,
+		usingDeclarationAwait: usingDeclarationAwait,
 		exportStatementDefaultFrom: exportStatementDefaultFrom,
 		exportStatementDefaultDeclaration: exportStatementDefaultDeclaration,
 		variableDeclaratorPlain: $at('buildVariableDeclaratorPlain'),
@@ -4292,8 +4322,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		receiverParameterDeclaration: $at('buildReceiverParameterDeclaration'),
 		formalParametersElementsReceiver: formalParametersElementsReceiver,
 		interfaceBody: interfaceBody,
-		declaration: declaration,
 		importSpecifier: importSpecifier,
+		usingDeclaration: usingDeclaration,
 		variableDeclarator: variableDeclarator,
 		forHeader: forHeader,
 		parenthesizedExpression: parenthesizedExpression,
@@ -4313,6 +4343,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		exportStatementDefault: exportStatementDefault,
 		numberBigint: numberBigint,
 		exportStatement: exportStatement,
+		declaration: declaration,
 		statement: statement,
 		number: number,
 		import: F.buildImport,
@@ -4326,12 +4357,12 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		undefined: F.buildUndefined,
 		overrideModifier: F.buildOverrideModifier,
 		existentialType: F.buildExistentialType,
-		usingDeclarationArm: F.buildUsingDeclarationArm,
 		emptyMember: F.buildEmptyMember,
 		optionalChainMarker: F.buildOptionalChainMarker,
 		metaPropertyNewTarget: F.buildMetaPropertyNewTarget,
 		metaPropertyImportMeta: F.buildMetaPropertyImportMeta,
 		formalParametersGetAccessorSignature: F.buildFormalParametersGetAccessorSignature,
+		forHeaderUsingKindKind: F.buildForHeaderUsingKindKind,
 		automaticSemicolon: F.buildAutomaticSemicolon,
 		functionSignatureAutomaticSemicolon: F.buildFunctionSignatureAutomaticSemicolon,
 		thisType: F.buildThisType,
