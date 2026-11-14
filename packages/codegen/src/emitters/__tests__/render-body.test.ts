@@ -28,7 +28,8 @@ import { doubledFlanks,
 	templateOf,
 	text,
 	tokenSeam,
-	weight
+	weight,
+	withJoinArm
 } from '../render-body.ts';
 import type { IfNode } from '../render-body.ts';
 
@@ -145,6 +146,18 @@ describe('liftGates', () => {
 		expect(liftGates(multi, viewOf).body).toEqual(multi);
 		const chain = branches([{ test: 'type', body: slot('type') }, { test: 'value', body: slot('value') }], text('_'));
 		expect(liftGates(chain, viewOf).body).toEqual(chain);
+	});
+
+	it('keeps the join arms of the slot it lifts', () => {
+		const next = { previous: false, next: true };
+		expect(liftGates(gate('type', withJoinArm(slot('type'), next)), viewOf).body).toEqual(withJoinArm(slot('type'), next));
+		expect(liftGates(gate('name', concat(text('fn '), withJoinArm(slot('name'), next))), viewOf).body).toEqual(concat(text('fn '), withJoinArm(slot('name'), next)));
+	});
+
+	it('keeps a gate whose flank text carries join arms: a flank is a plain string, with no arms of its own', () => {
+		const lifted = liftGates(gate('type', concat(withJoinArm(text('->'), { previous: true, next: true }), slot('type'))), viewOf);
+		expect(lifted.flanks.size).toBe(0);
+		expect(lifted.body[0]!.kind).toBe('if');
 	});
 
 	it('refuses two different flank sets for one slot', () => {
@@ -410,5 +423,44 @@ describe('doubledFlanks', () => {
 		expect(doubledFlanks([{ kind: 'seam', field: 'a' }, { kind: 'seam', field: 'b' }])).toHaveLength(0);
 		expect(doubledFlanks([{ kind: 'seam', field: 'a' }, { kind: 'tokenSeam', text: '\n' }])).toHaveLength(0);
 		expect(doubledFlanks([{ kind: 'seam', field: 'a' }, ...gate('x', [{ kind: 'adjacent' }, { kind: 'slot', name: 'x' }])])).toHaveLength(1);
+	});
+});
+
+describe('join arms', () => {
+	const printer = { field: (name: string) => name, site: (name: string) => `options::SITE_${name.toUpperCase()}`, kinds: (names: readonly string[]) => `&[${names.join(', ')}]`, optional: (name: string) => name === 'maybe' };
+	const PREVIOUS = { previous: true, next: false } as const;
+	const NEXT = { previous: false, next: true } as const;
+
+	it('arms the first write of a body, inside each arm of a leading gate', () => {
+		const armed = withJoinArm(concat(SPACE, branches([{ test: 'a', body: slot('a') }], text('-')), slot('b')), PREVIOUS);
+		expect(armed[1]).toEqual({ kind: 'if', arms: [{ test: 'a', body: [{ kind: 'slot', name: 'a', join: PREVIOUS }] }], fallback: [{ kind: 'text', text: '-', join: PREVIOUS }] });
+		expect(armed[2]).toEqual({ kind: 'slot', name: 'b' });
+		expect(withJoinArm(withJoinArm(text('-'), PREVIOUS), NEXT)).toEqual([{ kind: 'text', text: '-', join: { previous: true, next: true } }]);
+	});
+
+	it('keeps the outer arms of two texts it merges and tells armed texts apart', () => {
+		expect(concat(withJoinArm(text('-'), PREVIOUS), withJoinArm(text('>'), NEXT))).toEqual([{ kind: 'text', text: '->', join: { previous: true, next: true } }]);
+		expect(equalBodies(withJoinArm(text('-'), PREVIOUS), text('-'))).toBe(false);
+	});
+
+	it('arms a text write from its first text and its last before writing it', () => {
+		const body = concat(withJoinArm(text('-'), PREVIOUS), SPACE, withJoinArm(text('-'), NEXT), slot('x'));
+		expect(printRustBody(body, printer)).toEqual([
+			'    w.join_arm(::sittir_core::render::JoinArm::BOTH);',
+			'    w.text("- -")?;',
+			'    x.render(w)?;',
+			'    Ok(())'
+		]);
+	});
+
+	it('arms a slot before it renders, and an optional slot only when it is present', () => {
+		const body = concat(withJoinArm(slot('x'), PREVIOUS), withJoinArm(slot('maybe'), NEXT));
+		expect(printRustBody(body, printer)).toEqual([
+			'    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);',
+			'    x.render(w)?;',
+			'    if maybe.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }',
+			'    maybe.render(w)?;',
+			'    Ok(())'
+		]);
 	});
 });

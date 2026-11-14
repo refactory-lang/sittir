@@ -86,7 +86,6 @@ import {
 	slotLiteralValues,
 	isSlotBearingCompound,
 	classifyPrimitiveField,
-	literalMergePairs,
 	fieldTypeComponents,
 	kindEnumAltIdPairs,
 	slotSeparatorTexts,
@@ -147,6 +146,7 @@ import {
 	references,
 	rustStringLiteral,
 	isWhitespaceOnly,
+	joinArmConst,
 	templateOf,
 	type ArmSeams,
 	type Body,
@@ -154,6 +154,7 @@ import {
 	type ViewKind
 } from './render-body.ts';
 import { findEntryForLiteralText, generatedFieldIds, type GeneratedIdTables } from '../dsl/symbol-table.ts';
+import { joinArmOf, type JoinFacts } from '../compiler/model/join-seams/index.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import type { Rule } from '../types/rule.ts';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
@@ -182,6 +183,7 @@ export interface RenderOptionsInputs {
 	readonly sites?: readonly SitePreference[];
 	readonly addresses?: AddressTables;
 	readonly envelopePins?: Readonly<Record<string, EnvelopePin>>;
+	readonly joins: JoinFacts;
 }
 
 export function grammarRenderInputs(grammar: GrammarName, inputs: RenderOptionsInputs): RenderOptionsInputs {
@@ -594,22 +596,21 @@ function tokenSeamsOf(fixed: FixedLiterals): ReadonlyMap<number, string> {
 function renderTypedDispatch(
 	structs: EmittedStruct[],
 	payloadNodes: readonly AssembledNode[],
-	literals: readonly NodeLiteral[],
 	fixed: FixedLiterals,
 	meta: MetaData,
 	nodeMap: NodeMap,
 	usedSupertypeNames: ReadonlySet<string>,
 	kindIdByKind: ReadonlyMap<string, number>,
 	plan: RenderPlan,
-	kindEntries: readonly KindEntryLike[],
 	boxedPayloads: readonly string[],
-	armSeams: ReadonlyMap<string, readonly ArmSeams[]>
+	armSeams: ReadonlyMap<string, readonly ArmSeams[]>,
+	joins: JoinFacts
 ): string[] {
 	const structsByKind = new Map(structs.map((s) => [s.kind, s]));
 	const lines: string[] = [];
 
 	for (const node of payloadNodes) {
-		if (layoutNodeOf(node) === node) lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap, kindIdByKind, plan, armSeams));
+		if (layoutNodeOf(node) === node) lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap, kindIdByKind, plan, armSeams, joins));
 	}
 	for (const literal of fixed.values()) lines.push(...renderFixedLiteralFn(literal));
 
@@ -622,7 +623,7 @@ function renderTypedDispatch(
 	}
 
 	const wordTable = wordCharAsciiTable(nodeMap.wordMatcher ?? /\w/);
-	const mergePairs = literalMergePairs(literals, kindEntries, nodeMap);
+	const joinPairs = joins.pairs.map((pair) => [pair.charCodeAt(0), pair.charCodeAt(1)] as const);
 	lines.push(`/// Word-class table derived from this grammar's Link-pinned word pattern.`);
 	lines.push(
 		`static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core::spacing::WordMatcher::new(`
@@ -631,10 +632,8 @@ function renderTypedDispatch(
 	lines.push(`    char::is_alphanumeric,`);
 	lines.push(`)`);
 	lines.push(
-		`.with_literal_merge_pairs(&[${mergePairs.map(([a, b]) => `(${a}, ${b})`).join(', ')}]); // ${
-			mergePairs.length === 0
-				? 'no multi-char punctuation transitions in this grammar'
-				: mergePairs.map(([a, b]) => JSON.stringify(String.fromCharCode(a) + String.fromCharCode(b))).join(' ')
+		`.with_join_pairs(&[${joinPairs.map(([a, b]) => `(${a}, ${b})`).join(', ')}]); // ${
+			joins.pairs.length === 0 ? 'no two tokens of this grammar join into a third' : joins.pairs.map((pair) => JSON.stringify(pair)).join(' ')
 		}`
 	);
 	lines.push('');
@@ -695,7 +694,8 @@ function renderTypedKindFn(
 	nodeMap: NodeMap,
 	kindIdByKind: ReadonlyMap<string, number>,
 	plan: RenderPlan,
-	armSeams: ReadonlyMap<string, readonly ArmSeams[]>
+	armSeams: ReadonlyMap<string, readonly ArmSeams[]>,
+	joins: JoinFacts
 ): string[] {
 	switch (node.modelType) {
 		case 'branch':
@@ -706,7 +706,7 @@ function renderTypedKindFn(
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan, armSeams);
+			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan, armSeams, joins);
 		}
 		case 'polymorph':
 		case 'alias': {
@@ -715,7 +715,7 @@ function renderTypedKindFn(
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan, armSeams);
+			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan, armSeams, joins);
 		}
 		case 'pattern':
 		case 'keyword':
@@ -787,7 +787,8 @@ function renderTypedBranchFn(
 	nodeMap: NodeMap,
 	kindIdByKind: ReadonlyMap<string, number>,
 	plan: RenderPlan,
-	armSeams: ReadonlyMap<string, readonly ArmSeams[]>
+	armSeams: ReadonlyMap<string, readonly ArmSeams[]>,
+	joins: JoinFacts
 ): string[] {
 	return [
 		`fn ${rustTypedRenderFnName(node.typeName)}<N: ${rustNodeFieldsTraitName(node)} + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
@@ -799,7 +800,8 @@ function renderTypedBranchFn(
 			node,
 			kindIdByKind,
 			plan,
-			armSeams
+			armSeams,
+			joins
 		),
 		`}`,
 		''
@@ -829,13 +831,18 @@ function buildTypedTemplateBody(
 	node: AssembledNode,
 	kindIdByKind: ReadonlyMap<string, number>,
 	plan: RenderPlan,
-	armSeams: ReadonlyMap<string, readonly ArmSeams[]>
+	armSeams: ReadonlyMap<string, readonly ArmSeams[]>,
+	joins: JoinFacts
 ): string[] {
 	const lines: string[] = [];
 	const sepLiteral = JSON.stringify(separator);
 
 	const shapeByName = new Map<string, NodeSlotShape>();
-	for (const f of [...slotModel.named, ...slotModel.unnamed]) shapeByName.set(f.name, nodeSlotShapeOf(f, nodeMap));
+	const slotByName = new Map<string, AssembledNonterminal>();
+	for (const f of [...slotModel.named, ...slotModel.unnamed]) {
+		shapeByName.set(f.name, nodeSlotShapeOf(f, nodeMap));
+		slotByName.set(f.name, f);
+	}
 
 	const bound = new Set<string>();
 	const bind = (ident: string, expr: string): void => {
@@ -917,6 +924,7 @@ function buildTypedTemplateBody(
 			lines.push(
 				`        units: ${f.hasNodeField ? `::sittir_core::layout::BodyLayout::list_units(node.layout(), ${wireKey})` : 'None'},`
 			);
+			lines.push(`        join: ${joinArmConst(joinArmOf(joins, slotByName.get(f.name)?.sourceRuleIds ?? []))},`);
 			lines.push(`    };`);
 			continue;
 		}
@@ -1091,6 +1099,7 @@ function planRenderOptionsFor(
 		sites,
 		kindEntries,
 		nodeMap,
+		inputs.joins,
 		whitespaceTextOf(inputs.renderAs, nodeMap),
 		declaredIndent,
 		lang,
@@ -1106,7 +1115,7 @@ export function emitRenderModule(
 	templates: EmittedTemplates,
 	nodeMap: NodeMap,
 	generatedIdTables: GeneratedIdTables,
-	inputs: RenderOptionsInputs = {}
+	inputs: RenderOptionsInputs
 ): RustRenderModuleEmit {
 	const { plan, addresses, kindEntries: optionsKindEntries } = planRenderOptionsFor(lang, nodeMap, generatedIdTables, inputs);
 	const structs: EmittedStruct[] = [];
@@ -1116,8 +1125,9 @@ export function emitRenderModule(
 		structs.push(emitStruct(kind, node, templates.bodies.get(kind)!, nodeMap));
 	}
 	const meta = collectMetaData(nodeMap);
-	const unboxed = renderNodeSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, [], inputs.envelopePins);
-	const support = renderNodeSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, boxedPayloadsOf(unboxed.text, unboxed.choicePayloads), inputs.envelopePins);
+	const joins = inputs.joins;
+	const unboxed = renderNodeSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, [], inputs.envelopePins, joins);
+	const support = renderNodeSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, boxedPayloadsOf(unboxed.text, unboxed.choicePayloads), inputs.envelopePins, joins);
 
 	const nodeRs =
 		[
@@ -1466,7 +1476,8 @@ function renderNodeSupport(
 	generatedIdTables: GeneratedIdTables,
 	plan: RenderPlan,
 	boxedPayloads: readonly string[],
-	envelopePins: Readonly<Record<string, EnvelopePin>> | undefined
+	envelopePins: Readonly<Record<string, EnvelopePin>> | undefined,
+	joins: JoinFacts
 ): {
 	readonly text: string;
 	readonly records: ReadonlyMap<string, RecordLayout>;
@@ -1556,16 +1567,15 @@ function renderNodeSupport(
 			...renderTypedDispatch(
 				structs,
 				payloadNodes,
-				projection.literals,
 				fixed,
 				meta,
 				nodeMap,
 				usedSupertypeNames,
 				kidByKind,
 				plan,
-				kindEntries,
 				read.boxedPayloads,
-				read.armSeams
+				read.armSeams,
+				joins
 			),
 			...renderNodeEntry(),
 			'',

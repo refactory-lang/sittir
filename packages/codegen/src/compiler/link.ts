@@ -104,6 +104,7 @@ import { wordDisplaysOf } from '../dsl/rule-transforms.ts';
 import { isAllTextShape } from './assemble.ts';
 import { auxTokenKinds } from './diagnostics/catalog-coverage.ts';
 import { createRuleId } from './rule-catalog.ts';
+import { treeShapeOf } from '../engine-loader.ts';
 
 export interface LinkOptions {
 	readonly generatedIdTables: GeneratedIdTables;
@@ -305,7 +306,7 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 		externals: raw.externals,
 		extras: raw.extras,
 		nodelessExtrasRun: nodelessExtrasRun(raw.extras, raw.rules),
-		lineEndings: admittedLineEndings(raw, generatedIdTables.parser),
+		lineEndings: admittedLineEndings(raw, generatedIdTables.parser === null ? null : treeShapeOf(generatedIdTables.parser.language)),
 		word: raw.word,
 		wordMatcher: wordMatcherRegex,
 		reserved: raw.reserved,

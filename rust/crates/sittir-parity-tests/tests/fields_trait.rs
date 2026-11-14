@@ -81,6 +81,7 @@ fn render_function<N: FunctionFields + ?Sized>(node: &N, w: &mut dyn RenderSink)
         head: None,
         tail: None,
         units: node.layout().list_units("_parameters"),
+        join: sittir_core::render::JoinArm::NONE,
     };
     let return_type = View::new(node.return_type(), "->{}");
     w.text("fn")?;

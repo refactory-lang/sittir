@@ -79,7 +79,7 @@ pub struct ResolvedOptions {
     pub edge_rows: &'static [Option<EdgeRow>],
     /// Per spacing site, in vector order: the arm its table holds by default and the strength that default carries.
     pub sites: &'static [SiteSpec],
-    /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`, `KIND_LINE_BREAK_TERMINATED`, `KIND_ROOT`).
+    /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`, `KIND_LINE_BREAK_TERMINATED`, `KIND_ROOT`, `KindFlags::JOINS_NEXT`).
     pub kind_flags: &'static [KindFlags],
     /// Per kind id of a wrapper, the way its seat passes through to the node
     /// it holds; none for any other kind (`prepare::SeatSlot`).
@@ -137,6 +137,11 @@ impl KindFlags {
     /// The grammar's root kind: its edges are the render's own flanks, written
     /// at the start and the end of a render instead of dropped there.
     pub const ROOT: Self = Self(1 << 3);
+    /// A kind whose last token can join the token written after it into a
+    /// third token: some grammar position that can end the kind holds a
+    /// derived `next` bit (`render::JoinArm::next`). A slice of the kind
+    /// arms its right edge from this flag.
+    pub const JOINS_NEXT: Self = Self(1 << 4);
 
     /// Whether the set holds any flag of `other`.
     #[must_use]

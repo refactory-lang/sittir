@@ -499,8 +499,37 @@ pub enum LineHold {
     Terminated,
 }
 
+/// Which sides of a write's tokens can join a neighbouring token into a
+/// third one: `previous`, its first token with the token written before it;
+/// `next`, its last token with the token written after it. A space goes in
+/// between two writes only where the left one's `next`, the right one's
+/// `previous` and the grammar's join table (`WordMatcher::is_join_pair`) all
+/// hold.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct JoinArm {
+    pub previous: bool,
+    pub next: bool,
+}
+
+impl JoinArm {
+    pub const NONE: Self = Self { previous: false, next: false };
+    pub const PREVIOUS: Self = Self { previous: true, next: false };
+    pub const NEXT: Self = Self { previous: false, next: true };
+    pub const BOTH: Self = Self { previous: true, next: true };
+
+    /// Both arms' sides together.
+    #[must_use]
+    pub const fn or(self, other: Self) -> Self {
+        Self { previous: self.previous || other.previous, next: self.next || other.next }
+    }
+}
+
 pub trait RenderSink {
     fn text(&mut self, s: &str) -> RenderResult;
+    /// Arms the join test of the next write (`JoinArm`). Arms given before one
+    /// write combine and that write takes them; an empty write leaves them for
+    /// the one after it.
+    fn join_arm(&mut self, arm: JoinArm);
     /// Text that keeps its source adjacency on both sides, an `ERROR`
     /// region's: `text` with the source's runs `before` and `after` it, each
     /// `Some` where the source spells that side in-line (empty where the
@@ -512,7 +541,8 @@ pub trait RenderSink {
     /// line break writes and a seam that stays on the line does not, unless
     /// a whitespace entry spells it. `at`, the bytes of its tree's source the
     /// text spans when read from a live tree, anchors it in a recording
-    /// render as a slice is anchored.
+    /// render as a slice is anchored. The text's last token counts as
+    /// joining whatever is written after it (`JoinArm::next`).
     fn verbatim(&mut self, before: Option<&str>, text: &str, after: Option<&str>, at: Option<crate::types::Span>) -> RenderResult {
         let _ = at;
         self.text(&[before.unwrap_or_default(), text, after.unwrap_or_default()].concat())
@@ -614,7 +644,10 @@ pub trait RenderSink {
     }
     /// Write the bytes a coordinate names, from the tree table this writer
     /// holds, and move the depth as the node's template would
-    /// (`SourceTable::depth_move`). The default refuses: a sink with no source table cannot answer
+    /// (`SourceTable::depth_move`). The slice's first token takes the arm
+    /// set before it. Its last token counts as joining whatever is written
+    /// after it (`JoinArm::next`) when its kind carries
+    /// `KindFlags::JOINS_NEXT`, or when its kind is unknown. The default refuses: a sink with no source table cannot answer
     /// a coordinate, and answering it as empty would silently delete source.
     fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> RenderResult {
         Err(CoordinateError::UnknownTree {

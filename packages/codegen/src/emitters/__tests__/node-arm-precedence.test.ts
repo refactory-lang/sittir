@@ -1,3 +1,4 @@
+import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import { CHOICE, FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { AssembledBranch, AssembledEnum, AssembledPattern, AssembledSupertype } from '../../compiler/model/node-map.ts';
@@ -56,7 +57,8 @@ describe('supertype node arm precedence', () => {
 			'rust',
 			emittedTemplates({ param: slot('type') }),
 			makeNodeMap(),
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 		expect(emitted).toContain('    #[kind(kind::IDENTIFIER)]\n    Identifier(IdentifierNode),');
 		expect(emitted).toContain('    #[kind(kind::_PRIM, kind::U8, kind::BOOL)]\n    Prim(PrimEnum),');

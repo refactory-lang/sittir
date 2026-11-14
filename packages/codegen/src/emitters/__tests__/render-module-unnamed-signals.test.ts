@@ -1,3 +1,4 @@
+import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { emittedTemplates } from './support/emitted-templates.ts';
@@ -78,7 +79,8 @@ describe('render-module unnamed structural signals', () => {
 			'rust',
 			emittedTemplates({ mixed_parent: slot('identifier') }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 
 		expect(parent.slots[0]!.values.every((value) => value.multiplicity === 'nonEmptyArray')).toBe(true);
@@ -101,7 +103,8 @@ describe('render-module unnamed structural signals', () => {
 			'rust',
 			emittedTemplates({ parent_helper: slot('value') }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 
 		const start = emitted.indexOf('pub struct ParentHelperNode');

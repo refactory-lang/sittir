@@ -20,6 +20,7 @@ export interface Compilation {
 	readonly grammar: string;
 	readonly package: GrammarPackage;
 	readonly generatedIdTables: GeneratedIdTables;
+	readonly evaluated: RawGrammar;
 	readonly raw: RawGrammar;
 	readonly linked: LinkedGrammar;
 	readonly normalized: NormalizedGrammar;
@@ -66,6 +67,7 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 		grammar,
 		package: cfg.package,
 		generatedIdTables: linked.generatedIdTables,
+		evaluated,
 		raw,
 		linked,
 		normalized,
