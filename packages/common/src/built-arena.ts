@@ -72,7 +72,7 @@ export interface BuiltRecords {
 	parse(source: string): ParsedRecords;
 	text(node: number, start: number, end: number): string;
 	readonly query: TreeQuery;
-	readonly reads: ReadNodes & { sides(node: number): ReadSides };
+	readonly reads: ReadNodes;
 	readonly trivia: {
 		triviaSide(at: number, side: TriviaSideName): WireNode[] | undefined;
 		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly WireNode[]): void;
@@ -84,7 +84,7 @@ export interface BuiltRecords {
 	};
 }
 
-export type ReadNodes = Required<Pick<TreeHandle, 'snapshotLayouts' | 'triviaSide' | 'writeTriviaSide' | 'unitSides' | 'slotLayouts' | 'slotSeparator' | 'separatorBefore' | 'editedWithin' | 'isEmpty' | 'siblings' | 'sources'>>;
+export type ReadNodes = Required<Pick<TreeHandle, 'snapshotLayouts' | 'writeTriviaSide' | 'slotLayouts' | 'slotSeparator' | 'separatorBefore' | 'editedWithin' | 'isEmpty' | 'siblings' | 'sources'>> & { sides(node: number): ReadSides };
 
 export interface ReadSides extends Readonly<Record<TriviaSideName, readonly WireNode[]>> {
 	readonly units: readonly UnitSidesWire[];

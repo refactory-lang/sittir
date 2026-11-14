@@ -824,7 +824,7 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
-	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, builtBump, releaseBuilt, parseRecords, readWords, readText, readDescendants, readPlanHolds, readSnapshotLayouts, readTriviaSide, writeReadTriviaSide, readUnitSides, readSides, readSlotLayouts, readSlotSeparator, readSeparatorBefore, readEditedWithin, readIsEmpty, readSiblings, readSources } = engine;
+	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, builtBump, releaseBuilt, parseRecords, readWords, readText, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSides, readSlotLayouts, readSlotSeparator, readSeparatorBefore, readEditedWithin, readIsEmpty, readSiblings, readSources } = engine;
 	if (
 		builtBump === undefined ||
 		releaseBuilt === undefined ||
@@ -843,9 +843,7 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		readDescendants === undefined ||
 		readPlanHolds === undefined ||
 		readSnapshotLayouts === undefined ||
-		readTriviaSide === undefined ||
 		writeReadTriviaSide === undefined ||
-		readUnitSides === undefined ||
 		readSides === undefined ||
 		readSlotLayouts === undefined ||
 		readSlotSeparator === undefined ||
@@ -871,9 +869,7 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		reads: {
 			snapshotLayouts: (node, holderByte) => readSnapshotLayouts.call(engine, node, holderByte),
 			sides: (node) => readSides.call(engine, node),
-			triviaSide: (node, side) => readTriviaSide.call(engine, node, side),
 			writeTriviaSide: (node, side, entries) => writeReadTriviaSide.call(engine, node, side, entries),
-			unitSides: (node) => readUnitSides.call(engine, node),
 			slotLayouts: (node) => readSlotLayouts.call(engine, node),
 			slotSeparator: (node) => readSlotSeparator.call(engine, node) ?? undefined,
 			separatorBefore: (node) => readSeparatorBefore.call(engine, node) ?? undefined,

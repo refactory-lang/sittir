@@ -30,7 +30,7 @@ const NO_READS: Pick<Records, 'read' | 'parse' | 'text' | 'query' | 'reads'> = {
 	parse: noRead,
 	text: noRead,
 	query: { descendants: noRead, planHolds: noRead },
-	reads: { snapshotLayouts: noRead, sides: noRead, triviaSide: noRead, writeTriviaSide: noRead, unitSides: noRead, slotLayouts: noRead, slotSeparator: noRead, separatorBefore: noRead, editedWithin: noRead, isEmpty: noRead, siblings: noRead, sources: noRead }
+	reads: { snapshotLayouts: noRead, sides: noRead, writeTriviaSide: noRead, slotLayouts: noRead, slotSeparator: noRead, separatorBefore: noRead, editedWithin: noRead, isEmpty: noRead, siblings: noRead, sources: noRead }
 };
 type Views = ConstructorParameters<typeof BuiltArena>[3];
 type WriteLeafSites = ConstructorParameters<typeof BuiltArena>[4];
