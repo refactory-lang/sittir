@@ -2666,12 +2666,12 @@ function renderRecordFn(): string[] {
 	const view = rustRecordViewName('AnyNode');
 	const params = [
 		'    root: ::sittir_core::arena::CellAt,',
-		'    trees: &mut dyn ::sittir_core::arena::RecordTrees,',
+		'    reads: Option<&dyn ::sittir_core::arena::ArenaRead>,',
 		'    built: &dyn ::sittir_core::arena::ArenaRead,',
 		`    store: &::sittir_core::trivia_store::TriviaStore<${TRIVIA_NODE}>,`,
 		"    ctx: &::sittir_core::prepare::RenderContext<'_>,"
 	];
-	const sourceRoot = 'if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {';
+	const sourceRoot = 'if let Some(coord) = ::sittir_core::arena::source_root(root, built, reads, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {';
 	return [
 		'::sittir_core::records_codec! {',
 		'/// Render the record `root` names: a parsed root its source renders as',
@@ -2685,9 +2685,9 @@ function renderRecordFn(): string[] {
 		') -> Result<String, ::sittir_core::render::RenderError> {',
 		'    let (templates, baseline) = ::sittir_core::arena::Recording::parts(recording);',
 		`    ${sourceRoot}`,
-		'        return render_node_parts(::sittir_core::SlotValue::Coord(coord), &ctx.lending(&*trees), baseline).map(|(_, text)| text);',
+		'        return render_node_parts(::sittir_core::SlotValue::Coord(coord), &ctx.lending(reads), baseline).map(|(_, text)| text);',
 		'    }',
-		'    with_record_node(root, templates, trees, built, store, ctx, |node, ctx| render_root(ctx, baseline, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))',
+		'    with_record_node(root, templates, reads, built, store, ctx, |node, ctx| render_root(ctx, baseline, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))',
 		'}',
 		'',
 		'/// Write the built record `root` names into `w` as a trivia entry in',
@@ -2700,22 +2700,22 @@ function renderRecordFn(): string[] {
 		`    ${sourceRoot}`,
 		`        return ::sittir_core::render::Render::render(&::sittir_core::SlotValue::<${TRIVIA_NODE}>::Coord(coord), w);`,
 		'    }',
-		'    with_record_node(root, None, trees, built, store, ctx, |node, _| node.render(w))',
+		'    with_record_node(root, None, reads, built, store, ctx, |node, _| node.render(w))',
 		'}',
 		'',
 		'/// The record `root` names, prepared into a fresh overlay for a render',
 		'/// that renders `templates` from their templates, as `body` reads it',
-		'/// through its view, under `ctx` lending the arenas `trees` it holds.',
+		'/// through its view, under `ctx` lending the reads\' arena `reads`.',
 		'fn with_record_node<R>(',
 		'    root: ::sittir_core::arena::CellAt,',
 		'    templates: Option<::sittir_core::arena::Templates>,',
 		...params.slice(1),
 		`    body: impl FnOnce(&${view}<'_>, &::sittir_core::prepare::RenderContext<'_>) -> Result<R, ::sittir_core::render::RenderError>,`,
 		') -> Result<R, ::sittir_core::render::RenderError> {',
-		`    let prepared = ::sittir_core::arena::prepare_root::<${TRIVIA_NODE}, AnyNode>(trees, built, store, root, templates, ctx, kind::KIND_BITS)?;`,
-		'    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, &*trees, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;',
+		`    let prepared = ::sittir_core::arena::prepare_root::<${TRIVIA_NODE}, AnyNode>(reads, built, store, root, templates, ctx, kind::KIND_BITS)?;`,
+		'    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, reads, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;',
 		`    let node = <${view}<'_> as ::sittir_core::arena::RecordView<'_, ${TRIVIA_NODE}>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;`,
-		'    body(&node, &ctx.lending(&*trees))',
+		'    body(&node, &ctx.lending(reads))',
 		'}',
 		'}',
 		''

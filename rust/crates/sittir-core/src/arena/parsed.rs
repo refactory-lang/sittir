@@ -2,7 +2,7 @@
 //! left records of, and the parity of a read's records with the tree they
 //! were read from.
 
-use super::{Address, Arena, ArenaRead, Cell, CellAt, RecordCells, RecordTrees};
+use super::{Address, Arena, ArenaRead, Cell, CellAt, RecordCells};
 use crate::engine::{EngineGrammar, ParsedTree, Records};
 use crate::nodes::{Navigation, Nodes, TreeNodes};
 use crate::prepare::RenderContext;
@@ -146,7 +146,7 @@ pub trait RecordGrammar: EngineGrammar {
     /// # Errors
     ///
     /// What the record's prepare or render refuses.
-    fn render_record(self, root: CellAt, trees: &mut dyn RecordTrees, built: &dyn ArenaRead, store: &TriviaStore<Self::Trivia>, ctx: &RenderContext<'_>, recording: Option<Recording<'_>>) -> Result<String, RenderError>;
+    fn render_record(self, root: CellAt, reads: Option<&dyn ArenaRead>, built: &dyn ArenaRead, store: &TriviaStore<Self::Trivia>, ctx: &RenderContext<'_>, recording: Option<Recording<'_>>) -> Result<String, RenderError>;
 
     /// Writes the built record `root` names into `w` as a trivia entry in
     /// the side that holds it: prepared into a fresh overlay of its own over
@@ -157,7 +157,7 @@ pub trait RecordGrammar: EngineGrammar {
     /// # Errors
     ///
     /// As `render_record`.
-    fn render_entry(self, root: CellAt, trees: &mut dyn RecordTrees, built: &dyn ArenaRead, store: &TriviaStore<Self::Trivia>, ctx: &RenderContext<'_>, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult;
+    fn render_entry(self, root: CellAt, reads: Option<&dyn ArenaRead>, built: &dyn ArenaRead, store: &TriviaStore<Self::Trivia>, ctx: &RenderContext<'_>, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult;
 
     /// The record a node of `kind` is written as, `None` for a kind that has
     /// no record (`RecordCells::shape` of the grammar's node).
@@ -198,7 +198,7 @@ pub struct RecordRead<'a> {
     pub tree: crate::types::TreeId,
     pub index: NodeIndex,
     pub depth: Depth,
-    pub arenas: &'a dyn super::RecordArenas,
+    pub reads: &'a dyn ArenaRead,
 }
 
 /// Renders the node `read` names from its templates, read only, as the
@@ -215,12 +215,11 @@ pub struct RecordRead<'a> {
 ///
 /// What the render refuses, naming the kinds it names.
 pub fn render_record_read<G: RecordGrammar, N: RecordCells>(grammar: G, read: RecordRead<'_>, store: &TriviaStore<G::Trivia>, render: &RenderContext<'_>, baseline: &mut crate::baseline::Baseline) -> Result<(), String> {
-    let RecordRead { tree, index, depth, arenas } = read;
+    let RecordRead { tree, index, depth, reads } = read;
     let describe = |error: super::ArenaError| match error {
         super::ArenaError::ReadOnly { index, kind } => format!("a render over arenas lent read-only met node {} ({}), which has no record to read", index.0, grammar.kind_name(kind)),
         error => error.to_string(),
     };
-    let reads = arenas.reads().ok_or_else(|| format!("no arena of tree {} was lent", tree.0))?;
     let cell = match render.sources.row_site(tree, index) {
         Some(site) => site_cell::<N>(reads, site, index, G::KIND_BITS).map_err(describe)?,
         None => None,
@@ -228,7 +227,7 @@ pub fn render_record_read<G: RecordGrammar, N: RecordCells>(grammar: G, read: Re
     let Some(cell) = cell else { return Ok(()) };
     let root = CellAt { cell, tree: Some(tree), site: None };
     let recording = Recording { templates: super::Templates { tree, root: index, depth }, baseline };
-    match grammar.render_record(root, &mut super::ReadArenas(arenas), &Arena::new(), store, render, Some(recording)) {
+    match grammar.render_record(root, Some(reads), &Arena::new(), store, render, Some(recording)) {
         Ok(_) => Ok(()),
         Err(RenderError::Record(error)) => Err(describe(error)),
         Err(error) => Err(error.to_string()),

@@ -307,25 +307,25 @@ sittir_core::records_codec! {
         fn render_record(
             self,
             root: sittir_core::arena::CellAt,
-            trees: &mut dyn sittir_core::arena::RecordTrees,
+            reads: Option<&dyn sittir_core::arena::ArenaRead>,
             built: &dyn sittir_core::arena::ArenaRead,
             store: &sittir_core::trivia_store::TriviaStore<Self::Trivia>,
             ctx: &sittir_core::prepare::RenderContext<'_>,
             recording: Option<sittir_core::arena::Recording<'_>>,
         ) -> std::result::Result<String, sittir_core::render::RenderError> {
-            render::node::render_record(root, trees, built, store, ctx, recording)
+            render::node::render_record(root, reads, built, store, ctx, recording)
         }
 
         fn render_entry(
             self,
             root: sittir_core::arena::CellAt,
-            trees: &mut dyn sittir_core::arena::RecordTrees,
+            reads: Option<&dyn sittir_core::arena::ArenaRead>,
             built: &dyn sittir_core::arena::ArenaRead,
             store: &sittir_core::trivia_store::TriviaStore<Self::Trivia>,
             ctx: &sittir_core::prepare::RenderContext<'_>,
             w: &mut dyn sittir_core::render::RenderSink,
         ) -> sittir_core::render::RenderResult {
-            render::node::render_entry_record(root, trees, built, store, ctx, w)
+            render::node::render_entry_record(root, reads, built, store, ctx, w)
         }
 
         fn shape(kind: sittir_core::types::KindId) -> Option<sittir_core::arena::RecordShape> {

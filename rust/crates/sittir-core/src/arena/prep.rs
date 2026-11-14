@@ -10,7 +10,7 @@ use std::borrow::Cow;
 use std::marker::PhantomData;
 
 use super::view::ParsedRow;
-use super::{place_of, record_of, Address, PrepPlace, ArenaRead, ArenaError, Cell, HydrateNode, Prepared, RecordArenas, RecordCtx, RecordView};
+use super::{place_of, record_of, Address, PrepPlace, ArenaRead, ArenaError, Cell, HydrateNode, Prepared, RecordCtx, RecordView};
 use crate::layout::{merge_source_sides, slots_or_source, SlotLayout, UnitSides};
 use crate::options::{ArmSite, Edges, Side};
 use crate::delimiters::{DelimiterSlot, DelimiterToken, SetFacet, TokenFacts};
@@ -36,43 +36,6 @@ fn malformed(what: &'static str, word: u32) -> ArenaError {
     ArenaError::Malformed { what, word }
 }
 
-/// The arenas a render's prepare reads.
-pub trait RecordTrees: RecordArenas {}
-
-/// The arenas a render holds: the built arena that holds the records reads
-/// left, when it reads one.
-#[derive(Default)]
-pub struct HeldArenas<'t>(Option<&'t dyn ArenaRead>);
-
-impl<'t> HeldArenas<'t> {
-    /// Arenas with `reads`, the built arena that holds the records reads
-    /// left.
-    #[must_use]
-    pub fn reading(reads: &'t dyn ArenaRead) -> Self {
-        Self(Some(reads))
-    }
-}
-
-impl RecordArenas for HeldArenas<'_> {
-    fn reads(&self) -> Option<&dyn ArenaRead> {
-        self.0
-    }
-}
-
-impl RecordTrees for HeldArenas<'_> {}
-
-/// The arenas another render lent (`render::Lent`), as a render's prepare
-/// reads them.
-pub struct ReadArenas<'a>(pub &'a dyn RecordArenas);
-
-impl RecordArenas for ReadArenas<'_> {
-    fn reads(&self) -> Option<&dyn ArenaRead> {
-        self.0.reads()
-    }
-}
-
-impl RecordTrees for ReadArenas<'_> {}
-
 /// The overlay a render of the root record `root`, of node type `N`, renders
 /// with: the root prepared into a fresh one, for a render that renders
 /// `templates` from their templates.
@@ -80,19 +43,19 @@ impl RecordTrees for ReadArenas<'_> {}
 /// # Errors
 ///
 /// What the root's prepare refuses.
-pub fn prepare_root<T, N: PrepareRecord<T> + super::RecordCells>(trees: &mut dyn RecordTrees, built: &dyn ArenaRead, store: &TriviaStore<T>, root: CellAt, templates: Option<super::Templates>, ctx: &RenderContext<'_>, bits: u32) -> Result<Prepared<T>, RenderError> {
+pub fn prepare_root<T, N: PrepareRecord<T> + super::RecordCells>(reads: Option<&dyn ArenaRead>, built: &dyn ArenaRead, store: &TriviaStore<T>, root: CellAt, templates: Option<super::Templates>, ctx: &RenderContext<'_>, bits: u32) -> Result<Prepared<T>, RenderError> {
     let mut prepared = Prepared::new().with_templates(templates);
-    N::prepare_record(&mut RecordPrep::new(&mut prepared, trees, built, ctx.sources, store, bits).with_shape(N::shape), root, ctx)?;
+    N::prepare_record(&mut RecordPrep::new(&mut prepared, reads, built, ctx.sources, store, bits).with_shape(N::shape), root, ctx)?;
     Ok(prepared)
 }
 
 /// What a record's prepare reads and writes besides the record: the overlay
-/// it fills and the parsed trees' arenas it may write a first read into,
-/// beside the built arena, the render's trees and the store of written
-/// sides, which it only reads, and the bits the grammar's kind fields take.
+/// it fills, beside the built arena that holds the records reads left, the
+/// built arena, the render's trees and the store of written sides, which
+/// it only reads, and the bits the grammar's kind fields take.
 pub struct RecordPrep<'r, T> {
     prepared: &'r mut Prepared<T>,
-    trees: &'r mut dyn RecordTrees,
+    reads: Option<&'r dyn ArenaRead>,
     built: &'r dyn ArenaRead,
     sources: &'r dyn SourceTable,
     store: &'r TriviaStore<T>,
@@ -103,8 +66,8 @@ pub struct RecordPrep<'r, T> {
 
 impl<'r, T> RecordPrep<'r, T> {
     #[must_use]
-    pub fn new(prepared: &'r mut Prepared<T>, trees: &'r mut dyn RecordTrees, built: &'r dyn ArenaRead, sources: &'r dyn SourceTable, store: &'r TriviaStore<T>, bits: u32) -> Self {
-        Self { prepared, trees, built, sources, store, bits, shape: |_| None }
+    pub fn new(prepared: &'r mut Prepared<T>, reads: Option<&'r dyn ArenaRead>, built: &'r dyn ArenaRead, sources: &'r dyn SourceTable, store: &'r TriviaStore<T>, bits: u32) -> Self {
+        Self { prepared, reads, built, sources, store, bits, shape: |_| None }
     }
 
     /// This prepare, its node type's kinds written as `shape` gives.
@@ -116,7 +79,7 @@ impl<'r, T> RecordPrep<'r, T> {
     /// The view context of `tree`'s arena, the built arena for none, over
     /// the overlay as prepare has filled it so far.
     fn view(&self, tree: Option<TreeId>) -> Result<RecordCtx<'_, T>, ArenaError> {
-        RecordCtx::of(tree, self.built, &*self.trees, self.sources, self.store, self.prepared, self.bits)
+        RecordCtx::of(tree, self.built, self.reads, self.sources, self.store, self.prepared, self.bits)
     }
 
     /// The coordinate of the parsed node `row` names, read from the tree of
@@ -125,10 +88,10 @@ impl<'r, T> RecordPrep<'r, T> {
         self.view(tree)?.row_coordinate(row)
     }
 
-    /// The parsed trees' arenas prepare holds, lent to each lookup it makes
-    /// through the render's sources that measures.
+    /// The reads' arena prepare holds, lent to each lookup it makes through
+    /// the render's sources that measures.
     fn lent(&self) -> crate::render::Lent<'_> {
-        crate::render::Lent::of(&*self.trees)
+        crate::render::Lent::of(self.reads)
     }
 }
 
@@ -971,9 +934,8 @@ mod tests {
         let at = arena.push(&[u32::from(kind.0), 0]).expect("room");
         let arena = CountedArena { arena, reads: Counter::new(0) };
         let mut prepared = Prepared::<()>::new();
-        let mut trees = HeldArenas::default();
         let store = TriviaStore::new();
-        let prep = RecordPrep::new(&mut prepared, &mut trees, &arena, &NoSources, &store, crate::record::PARSED_KIND_BITS);
+        let prep = RecordPrep::new(&mut prepared, None, &arena, &NoSources, &store, crate::record::PARSED_KIND_BITS);
         let key = RecordKey::of(&prep, CellAt {
             cell: Cell::Child { kind, at, link: None, changed: ChangedEdges::default() },
             tree: None,

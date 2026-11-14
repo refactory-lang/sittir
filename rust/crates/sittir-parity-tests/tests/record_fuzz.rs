@@ -5,7 +5,7 @@
 //! that names a record holding it is refused at admission.
 #![cfg(feature = "arena")]
 
-use sittir_core::arena::{Address, ArenaError, ArenaRead, BuiltChunks, Cell, CellAt, CellWord, HeldArenas, Linked, RecordCells, RecordGrammar, RecordSink, WriteCell};
+use sittir_core::arena::{Address, ArenaError, ArenaRead, BuiltChunks, Cell, CellAt, CellWord, Linked, RecordCells, RecordGrammar, RecordSink, WriteCell};
 use sittir_core::engine::{claim_tree_id, Engine, ParsedTree};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::prepare::RenderContext;
@@ -113,8 +113,7 @@ impl<T: Clone + sittir_core::heap::HeapBytes> Built<T> {
 
     /// `G`'s render of the root, its panic caught.
     fn render<G: RecordGrammar<Trivia = T>>(&self, tree: &ParsedTree<G>, ctx: &RenderContext<'_>) -> std::thread::Result<Result<String, RenderError>> {
-        let mut arenas = HeldArenas::default();
-        std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| tree.grammar().render_record(self.root, &mut arenas, &self.image, &self.store, ctx, None)))
+        std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| tree.grammar().render_record(self.root, None, &self.image, &self.store, ctx, None)))
     }
 }
 

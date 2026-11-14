@@ -27,14 +27,14 @@ impl<'a> RenderContext<'a> {
         Self { options, sources, lent: Lent::NONE }
     }
 
-    /// This context, lending `arenas`, which the render holds.
+    /// This context, lending `reads`, which the render holds.
     #[cfg(feature = "arena")]
     #[must_use]
-    pub fn lending<'b>(&self, arenas: &'b dyn crate::arena::RecordArenas) -> RenderContext<'b>
+    pub fn lending<'b>(&self, reads: Option<&'b dyn crate::arena::ArenaRead>) -> RenderContext<'b>
     where
         'a: 'b,
     {
-        RenderContext { options: self.options, sources: self.sources, lent: Lent::of(arenas) }
+        RenderContext { options: self.options, sources: self.sources, lent: Lent::of(reads) }
     }
 }
 

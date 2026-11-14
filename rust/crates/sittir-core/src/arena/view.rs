@@ -25,9 +25,9 @@ use crate::view::{KindOf, KindTest, Slot};
 ///
 /// `ArenaError::Malformed` for a root naming no arena of the render, or a
 /// parsed record whose side record names no row.
-pub fn source_root<T>(root: super::CellAt, built: &dyn ArenaRead, arenas: &dyn RecordArenas, store: &TriviaStore<T>, sources: &dyn SourceTable, bits: u32) -> Result<Option<NodeCoordinate>, ArenaError> {
+pub fn source_root<T>(root: super::CellAt, built: &dyn ArenaRead, reads: Option<&dyn ArenaRead>, store: &TriviaStore<T>, sources: &dyn SourceTable, bits: u32) -> Result<Option<NodeCoordinate>, ArenaError> {
     let prepared = Prepared::new();
-    let ctx = RecordCtx::of(root.tree, built, arenas, sources, store, &prepared, bits)?;
+    let ctx = RecordCtx::of(root.tree, built, reads, sources, store, &prepared, bits)?;
     let Some(row) = ctx.cell_row(root.cell)? else { return Ok(None) };
     let coord = ctx.row_coordinate(row)?;
     Ok(sources.renders_as_source(&coord).then_some(coord))
@@ -43,22 +43,15 @@ pub fn through_record(sources: &dyn SourceTable, coord: &NodeCoordinate, cell: C
     sources.edited_within(coord) || (sources.reads_templates() && matches!(cell, Cell::Child { .. }))
 }
 
-/// The arenas a render reaches.
-pub trait RecordArenas {
-    /// The built arena that holds the records reads left of their sources,
-    /// which outlive their trees, when the render reaches one.
-    fn reads(&self) -> Option<&dyn ArenaRead> {
-        None
-    }
-}
-
 /// What a record's view reads through: the arena its record is in and, for
 /// a parsed arena, its tree; the trees' arenas its links reach; the render's
 /// trees, its store of written sides and its prepared overlay.
 pub struct RecordCtx<'a, T> {
     arena: &'a dyn ArenaRead,
     tree: Option<TreeId>,
-    arenas: &'a dyn RecordArenas,
+    /// The built arena that holds the records reads left of their sources,
+    /// when the render reaches one.
+    reads: Option<&'a dyn ArenaRead>,
     sources: &'a dyn SourceTable,
     store: &'a TriviaStore<T>,
     prepared: &'a Prepared<T>,
@@ -81,20 +74,20 @@ impl<'a, T> RecordCtx<'a, T> {
     /// The context of the built arena, its kind fields `bits` bits: the
     /// grammar's.
     #[must_use]
-    pub fn built(arena: &'a dyn ArenaRead, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>, bits: u32) -> Self {
-        Self { arena, tree: None, arenas, sources, store, prepared, bits }
+    pub fn built(arena: &'a dyn ArenaRead, reads: Option<&'a dyn ArenaRead>, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>, bits: u32) -> Self {
+        Self { arena, tree: None, reads, sources, store, prepared, bits }
     }
 
     /// The context of `tree`'s arena: its tree's own, else the arena of
-    /// the records reads left (`RecordArenas::reads`), `tree` naming a
+    /// the records reads left (`reads`), `tree` naming a
     /// source there.
     ///
     /// # Errors
     ///
     /// `ArenaError::Malformed` when the render reaches no arena of `tree`.
-    pub fn parsed(tree: TreeId, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>, bits: u32) -> Result<Self, ArenaError> {
-        let arena = arenas.reads().ok_or(malformed("record tree", tree.0))?;
-        Ok(Self { arena, tree: Some(tree), arenas, sources, store, prepared, bits })
+    pub fn parsed(tree: TreeId, reads: Option<&'a dyn ArenaRead>, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>, bits: u32) -> Result<Self, ArenaError> {
+        let arena = reads.ok_or(malformed("record tree", tree.0))?;
+        Ok(Self { arena, tree: Some(tree), reads, sources, store, prepared, bits })
     }
 
     /// The side record at `at`, the default for address 0, the node it was
@@ -155,10 +148,10 @@ impl<'a, T> RecordCtx<'a, T> {
     /// # Errors
     ///
     /// `ArenaError::Malformed` when the render reaches no arena of `tree`.
-    pub fn of(tree: Option<TreeId>, built: &'a dyn ArenaRead, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>, bits: u32) -> Result<Self, ArenaError> {
+    pub fn of(tree: Option<TreeId>, built: &'a dyn ArenaRead, reads: Option<&'a dyn ArenaRead>, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>, bits: u32) -> Result<Self, ArenaError> {
         match tree {
-            None => Ok(Self::built(built, arenas, sources, store, prepared, bits)),
-            Some(tree) => Self::parsed(tree, arenas, sources, store, prepared, bits),
+            None => Ok(Self::built(built, reads, sources, store, prepared, bits)),
+            Some(tree) => Self::parsed(tree, reads, sources, store, prepared, bits),
         }
     }
 
@@ -168,7 +161,7 @@ impl<'a, T> RecordCtx<'a, T> {
     ///
     /// `ArenaError::Malformed` when the render reaches no arena of `tree`.
     pub fn linked(self, tree: TreeId) -> Result<Self, ArenaError> {
-        Self::parsed(tree, self.arenas, self.sources, self.store, self.prepared, self.bits)
+        Self::parsed(tree, self.reads, self.sources, self.store, self.prepared, self.bits)
     }
 
     /// The context the record a child cell names at `at` is read in: the
@@ -918,8 +911,6 @@ mod tests {
         }
     }
 
-    struct NoTrees;
-    impl RecordArenas for NoTrees {}
 
     struct Sources(HashMap<TreeId, Arc<str>>);
     impl SourceTable for Sources {
@@ -961,7 +952,7 @@ mod tests {
         }
 
         fn ctx(&self) -> RecordCtx<'_, TriviaText> {
-            RecordCtx::built(&self.arena, &NoTrees, &self.sources, &self.store, &self.prepared, 9)
+            RecordCtx::built(&self.arena, None, &self.sources, &self.store, &self.prepared, 9)
         }
     }
 

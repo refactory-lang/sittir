@@ -3,7 +3,7 @@
 //! parsed trees its cells link are held for the render.
 
 
-use super::{admit, Address, ArenaError, ArenaRead, Cell, CellAt, CellWord, HeldArenas, RecordGrammar};
+use super::{admit, Address, ArenaError, ArenaRead, Cell, CellAt, CellWord, RecordGrammar};
 use crate::engine::{encode_handle, Engine, ReadTrees};
 use crate::prepare::RenderContext;
 use crate::render::{CoordinateError, RenderError, RenderResult, RenderSink};
@@ -286,8 +286,8 @@ impl<G: RecordGrammar> Engine<G> {
         trees: &ReadTrees<'_, G>,
         ctx: &RenderContext<'_>,
     ) -> Result<String, RenderError> {
-        let (root, mut held) = admitted_root::<G>(arena, at, changed, trees)?;
-        G::render_record(self.grammar(), root, &mut held, arena, self.written(), ctx, None)
+        let root = admitted_root::<G>(arena, at, changed, trees)?;
+        G::render_record(self.grammar(), root, None, arena, self.written(), ctx, None)
     }
     /// The record at `at` of the engine's built arena `built`, a built one
     /// or one a read left, rendered under `options` as a render root whose
@@ -303,37 +303,43 @@ impl<G: RecordGrammar> Engine<G> {
     /// `admit` refuses, a side's built record `entries` refuses, else what
     /// the record's render refuses.
     pub fn render_at(&self, built: &super::BuiltChunks, at: Address, changed: ChangedEdges, options: &crate::options::ResolvedOptions, templates: bool, entries: crate::engine::AdmitEntry) -> Result<String, RenderError> {
-        let (root, mut held) = root_at::<G>(built, at, changed)?;
+        let root = root_at::<G>(built, at, changed)?;
         let trees = crate::engine::SourceTrees::new(self, built, entries);
         let read = ReadTrees::over(&trees);
         let through = crate::render::ThroughTemplates(&read);
         let sources: &dyn crate::render::SourceTable = if templates { &through } else { &read };
-        G::render_record(self.grammar(), root, &mut held, built, self.written(), &RenderContext::new(options, sources), None)
+        G::render_record(self.grammar(), root, Some(built), built, self.written(), &RenderContext::new(options, sources), None)
     }
 
-    /// The lone built leaf of `kind` whose leaf entry is at `entry` in
-    /// `arena`, rendered as a render root whose `changed` edges have no neighbour,
-    /// with the sides `sides`: a root has no site, so its sides come with the
-    /// call (`Place::ROOT_LEAF`).
+    /// The lone built leaf of `kind` whose leaf entry is at `entry` in the
+    /// engine's built arena `built`, rendered under `options` as a render
+    /// root whose `changed` edges have no neighbour, its line endings
+    /// unspelled, with the sides `sides`: a root has no site, so its sides
+    /// come with the call (`Place::ROOT_LEAF`). The tree over each source a
+    /// side's entry reaches is made for the call.
     ///
     /// # Errors
     ///
     /// `RenderError::Record` for a kind no node of the grammar is written as
-    /// and for an entry of another kind or outside the arena's strings, else
-    /// what the leaf's render refuses.
+    /// and for an entry of another kind or outside the arena's strings, a
+    /// side's built record `entries` refuses, else what the leaf's render
+    /// refuses.
+    #[allow(clippy::too_many_arguments, reason = "the leaf, its sides and its edges, then what the render reads through")]
     pub fn render_built_leaf(
         &self,
-        arena: &dyn ArenaRead,
+        built: &super::BuiltChunks,
         kind: KindId,
         entry: Address,
         sides: Option<NodeTrivia<G::Trivia>>,
         changed: ChangedEdges,
-        ctx: &RenderContext<'_>,
+        options: &crate::options::ResolvedOptions,
+        entries: crate::engine::AdmitEntry,
     ) -> Result<String, RenderError> {
-        let cell = admitted_leaf::<G>(arena, kind, entry, changed).map_err(RenderError::Record)?;
+        let cell = admitted_leaf::<G>(built, kind, entry, changed).map_err(RenderError::Record)?;
         let store = self.written().root_leaf(sides);
-        let mut held = HeldArenas::default();
-        G::render_record(self.grammar(), CellAt { cell, tree: None, site: None }, &mut held, arena, &store, ctx, None)
+        let trees = crate::engine::SourceTrees::new(self, built, entries);
+        let read = ReadTrees::over(&trees);
+        G::render_record(self.grammar(), CellAt { cell, tree: None, site: None }, Some(built), built, &store, &RenderContext::new(options, &read), None)
     }
 }
 
@@ -373,8 +379,8 @@ pub fn render_record_entry<G: RecordGrammar>(
     if arena.header_kind(record.at, G::KIND_BITS).map_err(RenderError::Record)? != record.kind {
         return Err(RenderError::Record(ArenaError::Malformed { what: "trivia entry kind", word: u32::from(record.kind.0) }));
     }
-    let (root, mut held) = admitted_root::<G>(arena, record.at, ChangedEdges::default(), trees)?;
-    G::render_entry(grammar, root, &mut held, arena, store, ctx, w)
+    let root = admitted_root::<G>(arena, record.at, ChangedEdges::default(), trees)?;
+    G::render_entry(grammar, root, None, arena, store, ctx, w)
 }
 
 /// `address` as `tree`, made for one call over a source's records, names
@@ -401,18 +407,17 @@ fn local_address<G: RecordGrammar>(tree: &crate::engine::ParsedTree<G, crate::en
 /// `RenderError::Record` for a record whose header names a kind other than
 /// its entry's and for words `admit` refuses, else what the render refuses.
 pub fn render_entry_at<G: RecordGrammar>(grammar: G, built: &super::BuiltChunks, record: BuiltEntry, store: &TriviaStore<G::Trivia>, ctx: &RenderContext<'_>, w: &mut dyn RenderSink) -> RenderResult {
-    let (root, mut held) = root_at::<G>(built, record.at, ChangedEdges::default())?;
+    let root = root_at::<G>(built, record.at, ChangedEdges::default())?;
     if root.cell != (Cell::Child { kind: record.kind, at: record.at, link: None, changed: ChangedEdges::default() }) {
         return Err(RenderError::Record(ArenaError::Malformed { what: "trivia entry kind", word: u32::from(record.kind.0) }));
     }
-    G::render_entry(grammar, root, &mut held, built, store, ctx, w)
+    G::render_entry(grammar, root, Some(built), built, store, ctx, w)
 }
 
 /// The record at `at` of the engine's built arena `built` as a render root
-/// whose `changed` edges have no neighbour, with the reads' records it
-/// reaches held: a record a read left names its source, and a built one is
-/// admitted.
-fn root_at<G: RecordGrammar>(built: &super::BuiltChunks, at: Address, changed: ChangedEdges) -> Result<(CellAt, HeldArenas<'_>), RenderError> {
+/// whose `changed` edges have no neighbour: a record a read left names its
+/// source, and a built one is admitted.
+fn root_at<G: RecordGrammar>(built: &super::BuiltChunks, at: Address, changed: ChangedEdges) -> Result<CellAt, RenderError> {
     let kind = built.header_kind(at, G::KIND_BITS).map_err(RenderError::Record)?;
     let tree = if built.read_record(at) {
         Some(crate::types::TreeId(super::RunNodes::source_of(built, at).map_err(RenderError::Record)?.0))
@@ -420,19 +425,14 @@ fn root_at<G: RecordGrammar>(built: &super::BuiltChunks, at: Address, changed: C
         admit(built, at, G::shape, G::KIND_BITS).map_err(RenderError::Record)?;
         None
     };
-    Ok((CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree, site: None }, HeldArenas::reading(built)))
+    Ok(CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree, site: None })
 }
 
-fn admitted_root<'t, G: RecordGrammar>(
-    arena: &dyn ArenaRead,
-    at: Address,
-    changed: ChangedEdges,
-    trees: &ReadTrees<'t, G>,
-) -> Result<(CellAt, HeldArenas<'t>), RenderError> {
+fn admitted_root<G: RecordGrammar>(arena: &dyn ArenaRead, at: Address, changed: ChangedEdges, trees: &ReadTrees<'_, G>) -> Result<CellAt, RenderError> {
     let kind = arena.header_kind(at, G::KIND_BITS).map_err(RenderError::Record)?;
     let linked = admit(arena, at, G::shape, G::KIND_BITS).map_err(RenderError::Record)?;
     for tree in linked {
         trees.get(tree).ok_or(CoordinateError::UnknownTree { handle: encode_handle(tree, NodeIndex::ROOT), tree_id: tree })?;
     }
-    Ok((CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree: None, site: None }, HeldArenas::default()))
+    Ok(CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree: None, site: None })
 }

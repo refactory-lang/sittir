@@ -847,35 +847,6 @@ macro_rules! napi_engine {
             #[::napi_derive::napi]
             pub const SIDE_FIELD_SEPARATOR_KIND: u32 = $crate::arena::side::field::SEPARATOR_KIND;
 
-            /// What `render` answers for the built arena `owner` holds,
-            /// borrowed for this call, under `options` over `engine`'s, with
-            /// every live tree held, its line endings spelled.
-            fn render_built_with(
-                engine: &$crate::engine::Engine<$grammar>,
-                env: &::napi::Env,
-                owner: &$crate::engine::Engine<$grammar>,
-                tree_id: Option<$crate::types::TreeId>,
-                options: Option<$options>,
-                render: impl FnOnce(
-                    &dyn $crate::arena::ArenaRead,
-                    &$crate::engine::ReadTrees<'_, $grammar>,
-                    &$crate::prepare::RenderContext<'_>,
-                ) -> Result<String, $crate::render::RenderError>,
-            ) -> ::napi::Result<$crate::boundary::RenderedText> {
-                let chunks = owner.written().built();
-                let arena = chunks.readable().map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                with_live_trees(env, |trees| {
-                    let table = render_options(engine, tree_id.and_then(|id| trees.get(id)), options)?;
-                    let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| {
-                        let ctx = $crate::prepare::RenderContext::new(&table, sources);
-                        ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| render(arena, trees, &ctx)))
-                    })
-                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
-                        .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))?;
-                    Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))
-                })
-            }
-
             /// Whether the records a read of `source` leaves answer its nodes
             /// as the tree a parse of it gives does, with the records' layout
             /// baseline (`Engine::backer_parity`): `{ nodes, differing,
@@ -1196,7 +1167,6 @@ macro_rules! napi_engine {
             #[::napi_derive::napi(ts_args_type = "engine: object, owner: object, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null", ts_return_type = "string")]
             pub fn render_built_leaf(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
-                env: ::napi::Env,
                 owner: &::napi::bindgen_prelude::External<EngineCell>,
                 kind: u32,
                 entry: u32,
@@ -1208,7 +1178,14 @@ macro_rules! napi_engine {
                 let engine = engine_of(engine)?;
                 let owner = engine_of(owner)?;
                 let kind = $crate::types::KindId(u16::try_from(kind).map_err(|_| ::napi::Error::from_reason(format!("kind {kind} is wider than a kind")))?);
-                render_built_with(&engine, &env, &owner, None, options, |arena, _, ctx| owner.render_built_leaf(arena, kind, $crate::arena::Address(entry), sides, $crate::slot::ChangedEdges { leading, trailing }, ctx))
+                let table = render_options(&engine, None, options)?;
+                let chunks = owner.written().built();
+                let built = chunks.readable().map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                let changed = $crate::slot::ChangedEdges { leading, trailing };
+                let canonical = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| owner.render_built_leaf(built, kind, $crate::arena::Address(entry), sides, changed, &table, $crate::napi_engine::admit_entry::<$grammar>)))
+                    .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
+                    .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))?;
+                Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))
             }
 
             /// `render_built_leaf`'s text written to `path`
@@ -1217,7 +1194,6 @@ macro_rules! napi_engine {
             #[::napi_derive::napi(ts_args_type = "engine: object, owner: object, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object | undefined | null")]
             pub fn render_built_leaf_to_file(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
-                env: ::napi::Env,
                 owner: &::napi::bindgen_prelude::External<EngineCell>,
                 kind: u32,
                 entry: u32,
@@ -1228,7 +1204,7 @@ macro_rules! napi_engine {
                 create: bool,
                 options: Option<$options>,
             ) -> ::napi::Result<bool> {
-                let rendered = render_built_leaf(engine, env, owner, kind, entry, sides, leading, trailing, options)?;
+                let rendered = render_built_leaf(engine, owner, kind, entry, sides, leading, trailing, options)?;
                 $crate::napi_engine::save_rendered(&path, &rendered.0, create)
             }
 

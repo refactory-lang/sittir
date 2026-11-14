@@ -50,9 +50,9 @@ pub use cell::{flag, header_of, kind_field, parsed_tag, with_kind, Cell, CellWor
 pub use hydrate::{hydrate_error, hydrate_whole, parsed_side, row_of as hydrated_row, Draft, HydrateError, HydrateInto, HydrateNode, HydrateSlot, Hydrated, Hydration};
 pub use memory::{ChunkMem, ChunkUnit};
 pub use parsed::{render_record_read, runs_agree, BackerParity, BaselineRuns, RecordGrammar, RecordRead, Recording};
-pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, ReadArenas, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
+pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, LayoutAt, PrepareRecord, RecordAt, RecordPrep, SettingAt, SettingOf, SlotAt};
 pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens, Templates};
-pub use view::{built_leaf_place, linked_leaf_place, held_changed, leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
+pub use view::{built_leaf_place, linked_leaf_place, held_changed, leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
 pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, captured_cell, coordinate_cell, leaf_cell, write_list, write_record, write_slot};
 pub use run_nodes::{NodeSite, RunNodes, RunTable};
 pub use side::{Row, SideRecord, SideSlot, Sides};

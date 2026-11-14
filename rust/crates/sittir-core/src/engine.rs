@@ -505,7 +505,7 @@ pub trait Backing: Sized {
     /// as long as it lives: a lookup of it reads them whatever its caller
     /// lends.
     #[cfg(feature = "arena")]
-    fn arenas<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<&dyn crate::arena::RecordArenas>;
+    fn reads<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<&dyn crate::arena::ArenaRead>;
 
     /// Where the engine's store keeps the written sides of the node at
     /// `index`; none for a tree that keeps its written sides itself.
@@ -549,7 +549,7 @@ impl Backing for tree_sitter::Tree {
     }
 
     #[cfg(feature = "arena")]
-    fn arenas<G: EngineGrammar>(_: &ParsedTree<G, Self>) -> Option<&dyn crate::arena::RecordArenas> {
+    fn reads<G: EngineGrammar>(_: &ParsedTree<G, Self>) -> Option<&dyn crate::arena::ArenaRead> {
         None
     }
     fn place<G: EngineGrammar>(_: &ParsedTree<G, Self>, _: NodeIndex) -> Option<crate::trivia_store::Place> {
@@ -571,7 +571,6 @@ impl Backing for tree_sitter::Tree {
 #[cfg(feature = "arena")]
 pub struct Records<'a> {
     built: &'a dyn crate::arena::ArenaRead,
-    held: crate::arena::HeldArenas<'a>,
     table: crate::arena::RunTable,
     /// How the grammar lays a record of each kind out, and its kind bits:
     /// what finds a slot's site from its node's row and back.
@@ -598,11 +597,11 @@ impl<'a> Backing for Records<'a> {
     }
 
     fn lend<G: EngineGrammar, R>(tree: &ParsedTree<G, Self>, f: impl FnOnce(Lent<'_>) -> R) -> R {
-        f(Lent::of(&tree.tree.held))
+        f(Lent::of(Some(tree.tree.built)))
     }
 
-    fn arenas<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<&dyn crate::arena::RecordArenas> {
-        Some(&tree.tree.held)
+    fn reads<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<&dyn crate::arena::ArenaRead> {
+        Some(tree.tree.built)
     }
 
     fn place<G: EngineGrammar>(tree: &ParsedTree<G, Self>, index: NodeIndex) -> Option<crate::trivia_store::Place> {
@@ -664,8 +663,7 @@ impl<'a, G: crate::arena::RecordGrammar> ParsedTree<G, Records<'a>> {
         let crate::arena::source::Source { text, breaks_lf, inferred } = crate::arena::source::Source::read(built, crate::arena::Address(tree.0))?;
         let table = crate::arena::RunTable::default();
         crate::arena::RunNodes::holding(built, text, record, &table)?;
-        let held = crate::arena::HeldArenas::reading(built);
-        Ok(engine.tree_of(Records { built, held, table, shape: (G::shape, G::KIND_BITS), sites: PerCall::default() }, text, inferred, breaks_lf, 0, tree))
+        Ok(engine.tree_of(Records { built, table, shape: (G::shape, G::KIND_BITS), sites: PerCall::default() }, text, inferred, breaks_lf, 0, tree))
     }
 
     /// The arena the records this tree is over lie in.
@@ -2013,7 +2011,7 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     fn record_read<'l>(&'l self, index: NodeIndex, depth: crate::read::Depth, lent: Lent<'l>) -> Option<crate::arena::RecordRead<'l>> {
         let tree = self.tree.tree_id;
         let _ = lent;
-        Some(crate::arena::RecordRead { tree, index, depth, arenas: B::arenas(self.tree)? })
+        Some(crate::arena::RecordRead { tree, index, depth, reads: B::reads(self.tree)? })
     }
 
     /// Whether these lookups navigate the tree's rows

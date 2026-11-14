@@ -125,33 +125,33 @@ pub struct EdgeLevel {
 #[derive(Clone, Copy)]
 pub struct Lent<'a> {
     #[cfg(feature = "arena")]
-    arenas: Option<&'a dyn crate::arena::RecordArenas>,
+    reads: Option<&'a dyn crate::arena::ArenaRead>,
     #[cfg(not(feature = "arena"))]
-    arenas: std::marker::PhantomData<&'a ()>,
+    reads: std::marker::PhantomData<&'a ()>,
 }
 
 impl Lent<'_> {
     /// No arena lent.
     pub const NONE: Self = Self {
         #[cfg(feature = "arena")]
-        arenas: None,
+        reads: None,
         #[cfg(not(feature = "arena"))]
-        arenas: std::marker::PhantomData,
+        reads: std::marker::PhantomData,
     };
 }
 
 #[cfg(feature = "arena")]
 impl<'a> Lent<'a> {
-    /// `arenas`, lent.
+    /// `reads`, the built arena that holds the records reads left, lent.
     #[must_use]
-    pub fn of(arenas: &'a dyn crate::arena::RecordArenas) -> Self {
-        Self { arenas: Some(arenas) }
+    pub fn of(reads: Option<&'a dyn crate::arena::ArenaRead>) -> Self {
+        Self { reads }
     }
 
-    /// The arenas lent.
+    /// The arena lent.
     #[must_use]
-    pub fn arenas(self) -> Option<&'a dyn crate::arena::RecordArenas> {
-        self.arenas
+    pub fn reads(self) -> Option<&'a dyn crate::arena::ArenaRead> {
+        self.reads
     }
 }
 
