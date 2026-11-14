@@ -162,6 +162,41 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 		});
 	});
 
+	describe('variants of a choice under field()', () => {
+		const usingRule = (g: any) =>
+			g.seq(
+				g.field('kind', g.choice({ type: 'STRING', value: 'using' }, g.seq({ type: 'STRING', value: 'await' }, { type: 'STRING', value: 'using' }))),
+				g.field('declarator', { type: 'SYMBOL', name: 'variable_declarator' }),
+				{ type: 'STRING', value: ';' }
+			);
+		const shape = (rule: any): unknown =>
+			rule.type === 'FIELD' ? { [rule.name]: shape(rule.content) } : rule.type === 'SEQ' ? rule.members.map(shape) : (rule.value ?? rule.name);
+		const variants = { 'kind:/0': variant('plain', { default: true }), 'kind:/1': variant('await') };
+
+		it('hoists the choice the field holds, addressed by the field name, and keeps the field around each arm', () => {
+			const { result, ctx } = withWireContext('using_declaration', () => {
+				const g = globalThis as any;
+				return transform(usingRule(g), variants) as any;
+			});
+			expect(result.type).toBe('CHOICE');
+			expect(result.members.map((m: any) => [m.name, m.annotations?.variant])).toEqual([
+				['using_declaration_plain', 'plain'],
+				['using_declaration_await', 'await']
+			]);
+			expect(shape(ctx.deposits.get('using_declaration_plain'))).toEqual([{ kind: 'using' }, { declarator: 'variable_declarator' }, ';']);
+			expect(shape(ctx.deposits.get('using_declaration_await'))).toEqual([{ kind: ['await', 'using'] }, { declarator: 'variable_declarator' }, ';']);
+		});
+
+		it('keeps the per-arm form when the field name is not one member of the sequence', () => {
+			const { result, ctx } = withWireContext('using_declaration', () => {
+				const g = globalThis as any;
+				return transform(g.seq({ type: 'STRING', value: '(' }, usingRule(g), { type: 'STRING', value: ')' }), variants) as any;
+			});
+			expect(result.type).toBe('SEQ');
+			expect(shape(ctx.deposits.get('using_declaration_await'))).toEqual(['await', 'using']);
+		});
+	});
+
 	it('bails on mixed choice positions (variants at different choicePos)', () => {
 		const { ctx } = withWireContext('mixed', () => {
 			const g = globalThis as any;
