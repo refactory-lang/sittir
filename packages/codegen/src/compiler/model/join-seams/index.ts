@@ -1,14 +1,27 @@
 import type { BuiltParser } from '../../../dsl/symbol-table.ts';
 import type { GrammarRule } from '../../../grammar-shapes/grammar-json.ts';
+import { canonical } from '../../../transpile/evaluate-for-derivation.ts';
 import type { ExternalRole } from '../../../types/ir.ts';
 import type { AnyRule, Rule, RuleId } from '../../../types/rule.ts';
 import { ruleIdsWithin } from '../../../dsl/rule-attrs.ts';
+import { sha256 } from '../../../util/content-hash.ts';
 import type { NodeMap } from '../../types.ts';
 import { lineEndingsOf } from '../line-endings.ts';
 import type { CharSet } from '../pattern-automaton.ts';
 import { lineTerminated } from '../trivia.ts';
 import { SeamClosure, type ConcreteSeam } from './closure.ts';
-import { GrammarView, type ViewRule } from './grammar-view.ts';
+import {
+	joinSeamsFileOf,
+	unprovenArms,
+	type BlockedJoinCheck,
+	type JoinPairRecord,
+	type JoinProof,
+	type JoinSeamFacts,
+	type JoinSeamRecord,
+	type JoinSeamsFile,
+	type JoinStamp
+} from './file.ts';
+import { forEachSeamKey, GrammarView, type ViewRule } from './grammar-view.ts';
 import { type Context, type Instance, InstanceBuilder, render } from './instances.ts';
 import { errorNear, leavesOf, ParseOracle, sameTree } from './oracle.ts';
 import { readParserTables } from './parser-tables.ts';
@@ -16,9 +29,9 @@ import { isRuleIdUnder } from '../../rule-catalog.ts';
 import { alignRuleIds, rebasedIdsOf } from './rule-ids.ts';
 import { SeamWalk } from './walk.ts';
 
-export type JoinVerdict = 'differs' | 'same' | 'unbuildable' | 'tight-only' | 'inseparable';
+type JoinVerdict = 'differs' | 'same' | 'unbuildable' | 'tight-only' | 'inseparable';
 
-export interface JoinCheck {
+interface JoinCheck {
 	readonly seam: string;
 	readonly state: number;
 	readonly symbol: number;
@@ -26,25 +39,37 @@ export interface JoinCheck {
 	readonly next: string;
 	verdict: JoinVerdict;
 	reason?: string;
-	text?: string;
 }
 
 export interface JoinSeamInput {
 	readonly parser: BuiltParser;
 	readonly evaluated: Readonly<Record<string, Rule<'evaluate'>>>;
 	readonly externalRoles: ReadonlyMap<string, ExternalRole['role']>;
+	readonly externalBodies: ReadonlyMap<string, ViewRule>;
 	readonly wordMatcher: RegExp | undefined;
 	readonly whitespace: CharSet;
-	readonly endsLine: (kind: string) => boolean;
+	readonly lineEnds: ReadonlySet<string>;
 	readonly spliced: (name: string) => boolean;
 }
+
+export type JoinInputs = Pick<JoinSeamInput, 'externalRoles' | 'externalBodies' | 'wordMatcher' | 'whitespace' | 'lineEnds'>;
 
 export interface JoinArm {
 	readonly previous: boolean;
 	readonly next: boolean;
 }
 
-export type JoinFacts = Pick<JoinSeams, 'joinsNext' | 'joinsPrevious' | 'joinsNextKinds' | 'pairs' | 'seamIds'>;
+export interface JoinFacts {
+	readonly joinsNext: ReadonlySet<RuleId>;
+	readonly joinsPrevious: ReadonlySet<RuleId>;
+	readonly joinsNextKinds: ReadonlySet<string>;
+	readonly pairs: readonly string[];
+	readonly seamIds: ReadonlyMap<string, ReadonlySet<RuleId>>;
+}
+
+export interface ResolvedJoins extends JoinFacts {
+	readonly unmapped: readonly string[];
+}
 
 export const NO_JOINS: JoinFacts = {
 	joinsNext: new Set(),
@@ -94,24 +119,10 @@ export function ruleJoinArm(
 	return joinArmOf(joins, [rule.id, ...(rule.absorbedIds ?? [])]);
 }
 
-export interface SeamArms {
+interface SeamArms {
 	readonly joinsNext: ReadonlySet<string>;
 	readonly joinsPrevious: ReadonlySet<string>;
-	readonly pairs: readonly string[];
-}
-
-export interface JoinSeams {
-	readonly joinsNext: ReadonlySet<RuleId>;
-	readonly joinsPrevious: ReadonlySet<RuleId>;
-	readonly joinsNextKinds: ReadonlySet<string>;
-	readonly pairs: readonly string[];
-	readonly seamIds: ReadonlyMap<string, ReadonlySet<RuleId>>;
-	readonly unmapped: readonly string[];
-	readonly checks: readonly JoinCheck[];
-	readonly kept: SeamArms;
-	readonly candidates: SeamArms;
-	readonly proven: SeamArms;
-	readonly forkStates: ReadonlySet<number>;
+	readonly pairs: ReadonlySet<string>;
 }
 
 const PRINTABLE_FIRST = 0x21;
@@ -131,42 +142,61 @@ function kindsJoiningNext(view: GrammarView, joining: ReadonlySet<number>): Set<
 	return out;
 }
 
-export function joinSeamsOf(
+export function joinSeamInputOf(
 	nodeMap: NodeMap,
 	evaluated: Readonly<Record<string, Rule<'evaluate'>>>,
 	parser: BuiltParser
-): JoinSeams {
+): JoinSeamInput {
 	const externalRoles = new Map<string, ExternalRole['role']>();
 	for (const [kind, node] of nodeMap.nodes)
 		if (node.externalRole !== undefined) externalRoles.set(kind, node.externalRole);
-	return deriveJoinSeams({
+	const externalBodies = new Map<string, ViewRule>();
+	for (const external of parser.grammar.externals ?? []) {
+		if (external.type !== 'SYMBOL') continue;
+		const body = evaluated[external.name];
+		if (body !== undefined) externalBodies.set(external.name, body);
+	}
+	return {
 		parser,
 		evaluated,
 		externalRoles,
+		externalBodies,
 		wordMatcher: nodeMap.wordMatcher,
 		whitespace: lineEndingsOf(nodeMap).whitespace,
-		endsLine: (kind) => nodeMap.nodes.has(kind) && lineTerminated(nodeMap, kind) === true,
+		lineEnds: new Set([...nodeMap.nodes.keys()].filter((kind) => lineTerminated(nodeMap, kind) === true)),
 		spliced: (name) => !nodeMap.nodes.has(name)
-	});
+	};
 }
 
-export function deriveJoinSeams(input: JoinSeamInput): JoinSeams {
+export function joinInputsHash(inputs: JoinInputs): string {
+	return sha256(
+		JSON.stringify(
+			canonical({
+				externalRoles: inputs.externalRoles,
+				externalBodies: inputs.externalBodies,
+				wordMatcher: inputs.wordMatcher === undefined ? null : [inputs.wordMatcher.source, inputs.wordMatcher.flags],
+				whitespace: inputs.whitespace.ranges,
+				lineEnds: inputs.lineEnds
+			})
+		)
+	);
+}
+
+export function joinStampOf(input: JoinSeamInput): JoinStamp {
+	return { parser: input.parser.record, inputs: joinInputsHash(input) };
+}
+
+export function deriveJoinSeams(input: JoinSeamInput): JoinSeamsFile {
 	const { grammar, language } = input.parser;
 	const startRule = Object.keys(grammar.rules)[0]!;
 	const tables = readParserTables(language.language, startRule);
-	const bodies = new Map<string, ViewRule>();
-	for (const external of grammar.externals ?? []) {
-		if (external.type !== 'SYMBOL') continue;
-		const body = input.evaluated[external.name];
-		if (body !== undefined) bodies.set(external.name, body);
-	}
 	const view = new GrammarView(
 		grammar,
 		tables,
-		{ roles: input.externalRoles, bodies },
+		{ roles: input.externalRoles, bodies: input.externalBodies },
 		input.wordMatcher,
 		input.whitespace,
-		input.endsLine
+		(kind) => input.lineEnds.has(kind)
 	);
 	const walk = new SeamWalk(view);
 	walk.run();
@@ -264,7 +294,6 @@ export function deriveJoinSeams(input: JoinSeamInput): JoinSeams {
 		const spaced = render(instance.tokens, instance.seamAt, ' ');
 		const tight = render(instance.tokens, instance.seamAt, '');
 		if (spaced === null || tight === null) return fail(check, 'seam not renderable');
-		check.text = tight.text;
 		using spacedTree = oracle.parse(spaced.text);
 		const leaves = leavesOf(spacedTree.root);
 		const absorbing = leaves.find(
@@ -348,6 +377,7 @@ export function deriveJoinSeams(input: JoinSeamInput): JoinSeams {
 		}
 		if (check.verdict === 'unbuildable') check.reason = first;
 	}
+	const pairOf = (check: JoinCheck): string => `${check.previous.at(-1)}${check.next[0]}`;
 	const kept = checks.filter((check) => check.verdict === 'differs' || check.verdict === 'unbuildable');
 	const pairKeys = (list: readonly JoinCheck[]): Set<string> =>
 		new Set(list.map((check) => `${check.state}|${check.symbol}`));
@@ -370,22 +400,56 @@ export function deriveJoinSeams(input: JoinSeamInput): JoinSeams {
 	const armsOf = (list: readonly JoinCheck[]): SeamArms => ({
 		joinsNext: joinsNextOf(pairKeys(list)),
 		joinsPrevious: new Set(list.map((check) => check.seam)),
-		pairs: [...new Set(list.map((check) => `${check.previous.at(-1)}${check.next[0]}`))].sort()
+		pairs: new Set(list.map(pairOf))
 	});
-	const alignment = alignRuleIds(grammar.rules, input.evaluated);
+	const keptArms = armsOf(kept);
+	const provenArms = armsOf(checks.filter((check) => check.verdict === 'differs'));
+	const proofOf = (arm: keyof SeamArms, key: string): JoinProof => (provenArms[arm].has(key) ? 'proven' : 'unproven');
+	const armed = [...new Set([...keptArms.joinsPrevious, ...keptArms.joinsNext])].map(
+		(seam): JoinSeamRecord => ({
+			seam,
+			...(keptArms.joinsPrevious.has(seam) ? { previous: proofOf('joinsPrevious', seam) } : {}),
+			...(keptArms.joinsNext.has(seam) ? { next: proofOf('joinsNext', seam) } : {})
+		})
+	);
+	const pairs = [...keptArms.pairs].map((pair): JoinPairRecord => ({ pair, proof: proofOf('pairs', pair) }));
+	const unproven = unprovenArms({ seams: armed, pairs });
+	const unprovenPrevious = new Set(unproven.previous);
+	const unprovenPairs = new Set(unproven.pairs);
+	const blocked = checks
+		.filter((check) => check.verdict === 'unbuildable' && (unprovenPrevious.has(check.seam) || unprovenPairs.has(pairOf(check))))
+		.map(
+			({ seam, state, previous, next, reason }): BlockedJoinCheck => ({
+				seam,
+				state,
+				previous,
+				next,
+				...(reason === undefined ? {} : { reason })
+			})
+		);
+	return joinSeamsFileOf(joinStampOf(input), {
+		seams: armed,
+		pairs,
+		joinsNextKinds: [...kindsJoiningNext(view, new Set(kept.map((check) => check.symbol)))],
+		blocked
+	});
+}
+
+export function joinFactsOf(facts: JoinSeamFacts, input: Pick<JoinSeamInput, 'parser' | 'evaluated' | 'spliced'>): ResolvedJoins {
+	const rules = input.parser.grammar.rules;
+	const alignment = alignRuleIds(rules, input.evaluated);
 	const idsOfKey = new Map<string, Set<RuleId>>();
-	for (const [rule, key] of view.keyOf) {
+	forEachSeamKey(rules, (rule, _, key) => {
 		const ids = alignment.idsOf.get(rule);
-		if (ids === undefined) continue;
+		if (ids === undefined) return;
 		let set = idsOfKey.get(key);
 		if (set === undefined) idsOfKey.set(key, (set = new Set()));
 		for (const id of ids) set.add(id);
-	}
-	const keptArms = armsOf(kept);
+	});
 	const unmapped = [...alignment.unaligned];
 	const rebased = rebasedIdsOf(input.evaluated, input.spliced);
 	const seamIds = new Map<string, ReadonlySet<RuleId>>();
-	const idsOf = (keys: ReadonlySet<string>): Set<RuleId> => {
+	const idsOf = (keys: readonly string[]): Set<RuleId> => {
 		const out = new Set<RuleId>();
 		for (const key of keys) {
 			const ids = idsOfKey.get(key);
@@ -399,46 +463,16 @@ export function deriveJoinSeams(input: JoinSeamInput): JoinSeams {
 		}
 		return out;
 	};
-	const joinsNext = idsOf(keptArms.joinsNext);
-	const joinsPrevious = idsOf(keptArms.joinsPrevious);
+	const joinsNext = idsOf(facts.seams.filter((record) => record.next !== undefined).map((record) => record.seam));
+	const joinsPrevious = idsOf(facts.seams.filter((record) => record.previous !== undefined).map((record) => record.seam));
 	return {
 		joinsNext,
 		joinsPrevious,
-		joinsNextKinds: kindsJoiningNext(view, new Set(kept.map((check) => check.symbol))),
-		pairs: keptArms.pairs,
+		joinsNextKinds: new Set(facts.joinsNextKinds),
+		pairs: facts.pairs.map((record) => record.pair),
 		seamIds,
-		unmapped,
-		kept: keptArms,
-		checks,
-		candidates: armsOf(checks),
-		proven: armsOf(checks.filter((check) => check.verdict === 'differs')),
-		forkStates: walk.forkStates
+		unmapped
 	};
-}
-
-export interface UnprovenArms {
-	readonly previous: readonly string[];
-	readonly next: readonly string[];
-	readonly pairs: readonly string[];
-	readonly decisive: readonly JoinCheck[];
-}
-
-export function unprovenArms(seams: Pick<JoinSeams, 'kept' | 'proven' | 'checks'>): UnprovenArms {
-	const without = (kept: Iterable<string>, proven: Iterable<string>): string[] => {
-		const shown = new Set(proven);
-		return [...kept].filter((key) => !shown.has(key));
-	};
-	const previous = without(seams.kept.joinsPrevious, seams.proven.joinsPrevious);
-	const next = without(seams.kept.joinsNext, seams.proven.joinsNext);
-	const pairs = without(seams.kept.pairs, seams.proven.pairs);
-	const blockedPrevious = new Set(previous);
-	const blockedPairs = new Set(pairs);
-	const decisive = seams.checks.filter(
-		(check) =>
-			check.verdict === 'unbuildable' &&
-			(blockedPrevious.has(check.seam) || blockedPairs.has(`${check.previous.at(-1)}${check.next[0]}`))
-	);
-	return { previous, next, pairs, decisive };
 }
 
 function fail(check: JoinCheck, reason: string): void {

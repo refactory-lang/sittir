@@ -42,7 +42,7 @@ async function loadBuiltParser(pkg: GrammarPackage, grammar: GrammarJson): Promi
 		const stale = fromStaleParser(pkg.name, relative(REPO_ROOT, wasm.wasmPath), wasm.reason);
 		throw new GrammarDiagnosticError([stale], [stale]);
 	}
-	return { language: await languageOf(wasm.bytes, wasm.digest), grammar };
+	return { language: await languageOf(wasm.bytes, wasm.record.wasm), grammar, record: wasm.record, sittirDir: sittirDirOf(pkg) };
 }
 
 

@@ -1,3 +1,4 @@
+import { join, relative } from 'node:path';
 import { computeNodeSCC } from './scc.ts';
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
 import { compileGrammar, assertCompilation, type Compilation } from './compile.ts';
@@ -5,7 +6,7 @@ import { compileGrammar, assertCompilation, type Compilation } from './compile.t
 import { emitKindIdRust } from '../emitters/kind-id-rust.ts';
 import { emitFieldIdRust } from '../emitters/field-id-rust.ts';
 import { emitConfig } from '../emitters/config.ts';
-import { grammarPackage, isStableGrammar, type GrammarPackage } from '../grammars.ts';
+import { grammarPackage, isStableGrammar, REPO_ROOT, type GrammarPackage } from '../grammars.ts';
 import { emitDescriptor, emitIndex } from '../emitters/index-file.ts';
 import { buildNodeModel, printNodeModel } from '../emitters/node-model.ts';
 import { accessorClassDiagnostics } from './model/accessor-classes.ts';
@@ -23,7 +24,7 @@ import type { RenderModuleBundle } from '../emitters/render-module.ts';
 import { loadPackageIdTables } from './generated-metadata.ts';
 import { assertGrammarJsonInlineIntegrity } from './inline-sets.ts';
 import { DiagnosticSink, type CompilerDiagnostic, type GrammarDiagnostic } from '../types/diagnostics.ts';
-import { formatCompilerDiagnostics, formatNamingEvents } from './diagnostics/grammar-diagnostics.ts';
+import { formatCompilerDiagnostics, formatNamingEvents, fromStaleJoinSeams, GrammarDiagnosticError } from './diagnostics/grammar-diagnostics.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
 
 import type { NodeMap, RawGrammar } from './types.ts';
@@ -32,7 +33,8 @@ import type { DroppedTokens } from './diagnostics/grammar-diagnostics.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { defaultTriviaForm, triviaKinds } from './model/trivia.ts';
-import { joinSeamsOf } from './model/join-seams/index.ts';
+import { JOIN_SEAMS_FILE, printJoinSeams, readJoinSeams, settleJoinSeams } from './model/join-seams/file.ts';
+import { deriveJoinSeams, joinFactsOf, joinSeamInputOf, joinStampOf } from './model/join-seams/index.ts';
 
 export interface GeneratedFiles {
 	types: string;
@@ -70,6 +72,7 @@ export interface GeneratedFiles {
 	renderModule?: RenderModuleBundle;
 	slotGroupingDiagnostics: readonly SlotGroupingDiagnostic[];
 	droppedTokens: readonly DroppedTokens[];
+	derivedJoinSeams: string | undefined;
 }
 
 export interface GenerateConfig {
@@ -79,6 +82,7 @@ export interface GenerateConfig {
 	emitRenderModule?: boolean;
 	compilation?: Compilation;
 	allowDiagnostics?: ReadonlySet<string>;
+	rederiveJoinSeams?: boolean;
 }
 
 export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
@@ -126,7 +130,18 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		nodeMap.scc = computeNodeSCC(nodeMap);
 
 		if (generatedIdTables.parser === null) throw new Error(`generate: ${cfg.grammar} has no built parser to read its join seams from`);
-		const joins = joinSeamsOf(nodeMap, compilation.evaluated.rules, generatedIdTables.parser);
+		const joinInput = joinSeamInputOf(nodeMap, compilation.evaluated.rules, generatedIdTables.parser);
+		const settled = settleJoinSeams(
+			readJoinSeams(generatedIdTables.parser.sittirDir),
+			joinStampOf(joinInput),
+			cfg.rederiveJoinSeams === true,
+			() => deriveJoinSeams(joinInput)
+		);
+		if ('stale' in settled) {
+			const stale = fromStaleJoinSeams(cfg.grammar, relative(REPO_ROOT, join(generatedIdTables.parser.sittirDir, JOIN_SEAMS_FILE)), settled.stale);
+			throw new GrammarDiagnosticError([stale], [stale]);
+		}
+		const joins = joinFactsOf(settled.file, joinInput);
 		for (const unmapped of joins.unmapped) {
 			compilation.diagnostics.fail({ code: 'join-seam-unmapped', message: `${cfg.grammar}: join seam ${unmapped}` });
 		}
@@ -242,7 +257,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			generatedIdTables,
 			renderModule: emitted.renderModule,
 			slotGroupingDiagnostics: compilation.slotGroupingDiagnostics,
-			droppedTokens: emitted.templates.droppedTokens
+			droppedTokens: emitted.templates.droppedTokens,
+			derivedJoinSeams: settled.derived ? printJoinSeams(settled.file) : undefined
 		};
 		return result;
 	} finally {

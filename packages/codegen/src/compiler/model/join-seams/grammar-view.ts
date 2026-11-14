@@ -64,6 +64,20 @@ function symbolsIn(rule: GrammarRule, out: Set<string>): void {
 	}
 }
 
+export function forEachSeamKey(
+	rules: Readonly<Record<string, GrammarRule>>,
+	visit: (rule: GrammarRule, owner: string, key: string) => void
+): void {
+	const index = (rule: GrammarRule, owner: string, path: string): void => {
+		visit(rule, owner, `${owner}:${path}`);
+		const sub = (segment: string): string => (path === 'root' ? segment : `${path}/${segment}`);
+		if (rule.type === 'SEQ' || rule.type === 'CHOICE') rule.members.forEach((member, k) => index(member, owner, sub(`members.${k}`)));
+		else if (rule.type === 'REPEAT' || rule.type === 'REPEAT1') index(rule.content, owner, sub('content'));
+		else if ('content' in rule) index(rule.content, owner, path);
+	};
+	for (const [name, rule] of Object.entries(rules)) index(rule, name, 'root');
+}
+
 export class GrammarView {
 	readonly rules: Readonly<Record<string, GrammarRule>>;
 	readonly startRule: string;
@@ -105,7 +119,10 @@ export class GrammarView {
 		this.conflicted = new Set((grammar.conflicts ?? []).flat());
 		this.externals = new Set((grammar.externals ?? []).flatMap((rule) => (rule.type === 'SYMBOL' ? [rule.name] : [])));
 		this.isWordChar = wordCharClass(wordMatcher);
-		for (const [name, rule] of Object.entries(grammar.rules)) this.index(rule, name, 'root');
+		forEachSeamKey(grammar.rules, (rule, owner, key) => {
+			this.keyOf.set(rule, key);
+			this.ownerOf.set(rule, owner);
+		});
 		const fromStart = this.reachable([this.startRule]);
 		const extraRoots = (grammar.extras ?? []).flatMap((rule) => (rule.type === 'SYMBOL' ? [rule.name] : []));
 		this.extrasOnly = new Set([...this.reachable(extraRoots)].filter((name) => !fromStart.has(name)));
@@ -126,16 +143,6 @@ export class GrammarView {
 		const list = map.get(key);
 		if (list === undefined) map.set(key, [id]);
 		else list.push(id);
-	}
-
-	private index(rule: GrammarRule, owner: string, path: string): void {
-		this.keyOf.set(rule, `${owner}:${path}`);
-		this.ownerOf.set(rule, owner);
-		const sub = (segment: string): string => (path === 'root' ? segment : `${path}/${segment}`);
-		if (rule.type === 'SEQ' || rule.type === 'CHOICE')
-			rule.members.forEach((member, k) => this.index(member, owner, sub(`members.${k}`)));
-		else if (rule.type === 'REPEAT' || rule.type === 'REPEAT1') this.index(rule.content, owner, sub('content'));
-		else if ('content' in rule) this.index(rule.content, owner, path);
 	}
 
 	private reachable(roots: readonly string[]): Set<string> {
