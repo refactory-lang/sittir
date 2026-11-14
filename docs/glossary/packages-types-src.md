@@ -1612,96 +1612,96 @@ Block comments: a comment between delimiters that can span lines.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/bound-clauses/clause.ts::Clause::Bounds`
 
-The bounds of a bound clause: the types a bounded type parameter must extend.
+The bounds of a bound clause, claimed by the runtime tree. Its `bounds` slot is a list of constraint nodes: a macro call, an identifier, a higher-ranked bound, a removed bound, or a type. Each is a `clause.bounds` path under the `Clause` interface.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/bound-clauses/index.ts::BoundClauses`
 
-Bound clauses: type parameters constrained by an `extends` bound.
+The bound-clauses feature marker: an interface extending `BoundedQuantification` with `'bound-clauses': true`. A declaration that carries the marker admits the bounds written as a clause, and it adds no slots of its own.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/constrained-type-parameters/index.ts::ConstrainedTypeParameters`
 
-Constrained type parameters: a type parameter that carries a constraint on what it may stand for.
+The constrained-type-parameters feature marker: an interface extending `BoundedQuantification` and `PythonTypeForms` with `'constrained-type-parameters': true`. It adds the python type-forms surface to bounded quantification and no slots of its own.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/constrained-type-parameters/type.ts::Type::Constrained`
 
-The constrained arm of the type family: a type parameter written with its bound.
+The `type.constrained` node: a type whose `constraint` slot holds the single type its parameter is restricted to. The slot takes any `Type.Any`.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Enum`
 
-An enum declaration whose type parameters carry bounds.
+The `declaration.enum` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Extension`
 
-An extension declaration whose type parameters carry bounds.
+The `declaration.extension` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Function`
 
-A function declaration whose type parameters carry bounds.
+The `declaration.function` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Method`
 
-A method declaration whose type parameters carry bounds.
+The `declaration.method` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::TypeAlias`
 
-A type alias declaration whose type parameters carry bounds.
+The `declaration.type_alias` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::TypeParameter`
 
-A type parameter declaration carrying a bound.
+The `declaration.type_parameter` node under bounded quantification. Its `bounds` slot lists the constraints on the parameter: a macro call, an identifier, a higher-ranked bound, a removed bound, or a type. Its `Parameters`, `Value` and `Variadic` arms set `bounds` to never.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Union`
 
-A union type declaration whose type parameters carry bounds.
+The `declaration.union` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/element.ts::Element::TypeArgument`
 
-A type argument at a use site of a bounded type parameter.
+The `element.type_argument` node: a type argument at a use site. Its `bounds` slot lists the constraints on the argument, using the same node kinds as a type parameter's bounds.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/higher-rank-polymorphism/index.ts::HigherRankPolymorphism`
 
-Higher-rank polymorphism: a type parameter quantified inside another type rather than at the outermost declaration.
+Higher-rank polymorphism: an interface extending `BoundedQuantification` with `'higher-rank-polymorphism': true`. A bound under it quantifies over type parameters of its own, the `Clause.Bounds.HigherRanked` arm.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/index.ts::BoundedQuantification`
 
-Bounded quantification: type parameters whose range is limited by an upper bound.
+Bounded quantification: an interface extending `ParametricPolymorphism` with `'bounded-quantification': true`. It joins the declaration, element and type arms, and the bounds a type parameter must satisfy appear in its constraint and in where clauses.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/type.ts::Type::Constrained`
 
-The constrained arm of bounded quantification's type family.
+The `type.constrained` arm under bounded quantification. It declares no slots of its own.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/clause.ts::Clause::Where`
 
-The where keyword form of a clause: bounds introduced by `where` after the declaration's header.
+The `clause.where` node: a where clause. Its `wherePredicates` slot lists the `Where.Predicate` nodes written after the signature. Each predicate has a `left` slot naming the constrained type and a `bounds` slot listing its constraints.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Enum`
 
-An enum declaration whose bounds are written in a where clause.
+An enum declaration that carries a `whereClause` slot holding a `Clause.Where`.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Extension`
 
-An extension declaration whose bounds are written in a where clause.
+An extension declaration that carries a `whereClause` slot holding a `Clause.Where`.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Function`
 
-A function declaration whose bounds are written in a where clause.
+A function declaration that carries a `whereClause` slot holding a `Clause.Where`.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Method`
 
-A method declaration whose bounds are written in a where clause.
+A method declaration that carries a `whereClause` slot holding a `Clause.Where`.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::TypeAlias`
 
-A type alias declaration whose bounds are written in a where clause.
+A type alias declaration that carries a `whereClause` slot and a `trailingWhereClause` slot, each holding a `Clause.Where`. The trailing slot takes a where clause written after the aliased type.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Union`
 
-A union type declaration whose bounds are written in a where clause.
+A union type declaration that carries a `whereClause` slot holding a `Clause.Where`.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/element.ts::Element::TypeArgument`
 
-A type argument at a use site of a where-clause bounded parameter.
+The `element.type_argument` node under where clauses: a type argument whose `bounds` slot lists its constraints, in the same node kinds as a type parameter's bounds.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/index.ts::WhereClauses`
 
-Where clauses: bounds on type parameters written in a `where` clause after the declaration's header.
+Where clauses: an interface extending `BoundedQuantification` with `'where-clauses': true`. It places bounds on type parameters after the signature, separately from the parameter list, through the `Clause.Where` node.
