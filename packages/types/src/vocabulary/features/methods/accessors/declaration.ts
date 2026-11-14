@@ -33,7 +33,6 @@ export namespace Declaration {
 			readonly body: Slot<G, K, 'body', V.Statement.Block<G>>;
 			readonly doc?: Slot<G, K, 'doc', V.Literal.String.Any<G>>;
 			// p only
-			readonly parameters: Slot<G, K, 'parameters', V.Declaration.Parameter.Any<G> | V.Identifier.Any<G> | V.Pattern.Any<G> | string>[];
 			readonly typeParameters?: Slot<G, K, 'typeParameters', V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>>[];
 			// p only
 		}

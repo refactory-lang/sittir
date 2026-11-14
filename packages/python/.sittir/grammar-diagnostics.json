@@ -556,13 +556,5 @@
       "form": "rule",
       "name": "comprehension_clauses"
     }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-value-unshaped",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.number.integer.imaginary: its $value is a number, but integer_decimal_imaginary has no number shape, so no read or build of it carries one"
   }
 ]
