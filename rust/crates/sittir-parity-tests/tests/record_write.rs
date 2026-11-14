@@ -1,17 +1,21 @@
 //! A read over the corpus: every round-trip fixture source of each grammar
 //! the typed reader reads, and the large Rust probe inputs, reads to
 //! records with no refusal, and a second read of the same source by the
-//! same engine writes as many words as the first.
+//! same engine writes as many entries as the first.
 #![cfg(feature = "arena")]
 
-use sittir_core::arena::{ArenaRead, HydrateNode, RecordCells, MAX_CHUNKS};
+use sittir_core::arena::{Address, ArenaRead, HydrateNode, RecordCells, MAX_CHUNKS};
 use sittir_core::engine::{Engine, EngineGrammar};
 use sittir_parity_tests::{load_fixtures, ParityFixture};
 
-/// The words the chunks reads wrote in `engine`'s arena hold.
+/// The entries reads wrote in `engine`'s arena.
 fn written<G: EngineGrammar>(engine: &Engine<G>) -> usize {
     let built = engine.written().built();
-    (1..MAX_CHUNKS).filter(|&n| built.read_chunk(n)).filter_map(|n| built.chunk(n)).map(<[u32]>::len).sum()
+    (1..MAX_CHUNKS)
+        .filter(|&n| built.read_chunk(n))
+        .filter_map(|n| Some((n, u32::try_from(built.chunk(n)?.len()).ok()?)))
+        .map(|(n, len)| (0..len).filter(|&word| Address::new(n, word).is_some_and(|at| built.read_entry(at))).count())
+        .sum()
 }
 
 /// Reads `source` twice in a fresh engine of `grammar`.
@@ -21,7 +25,7 @@ fn write<G: EngineGrammar, N: HydrateNode + RecordCells>(grammar: G, options: si
     let first = written(&engine);
     engine.parse_records::<N>(source).map_err(|e| format!("reread: {e}"))?;
     if written(&engine) != first * 2 {
-        return Err(format!("a second read wrote {} words where the first wrote {first}", written(&engine) - first));
+        return Err(format!("a second read wrote {} entries where the first wrote {first}", written(&engine) - first));
     }
     Ok(())
 }

@@ -670,6 +670,18 @@ mod tests {
     }
 
     #[test]
+    fn a_later_read_writes_on_in_the_chunk_the_read_before_it_left_open() {
+        use crate::arena::{ReadWriter, RecordSpace, CHUNK_WORDS};
+        let mut arena = BuiltChunks::new(BITS, shape);
+        let first = ReadWriter::new(&mut arena).alloc(6).expect("a record");
+        let second = ReadWriter::new(&mut arena).alloc(6).expect("a record");
+        assert_eq!((second.chunk(), second.word()), (first.chunk(), first.word() + 6), "the second read's record follows the first's");
+        let whole = ReadWriter::new(&mut arena).alloc(CHUNK_WORDS).expect("a record");
+        assert_ne!(whole.chunk(), first.chunk(), "a record the open chunk has no room for takes the next");
+        assert!(arena.read_chunk(first.chunk()) && arena.read_chunk(whole.chunk()));
+    }
+
+    #[test]
     fn releasing_a_read_s_record_itself_leaves_it_as_it_is() {
         let mut built = Builder::new();
         let chunk = built.arena.alloc_read_words(64).expect("a read's chunk");

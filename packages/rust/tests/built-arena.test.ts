@@ -161,6 +161,26 @@ describe('a built arena', () => {
 		expect(ran).toEqual([at]);
 	});
 
+	it("reads a read's records in a chunk number a freed builder chunk had", () => {
+		let made = 0;
+		const words = (length: number) => ({ chunk: ++made, data: new Uint32Array(length), meta: new Uint8Array(metaBytes(length)), freed: made === 2 ? [1] : [] });
+		const record = new Uint32Array(2 ** format!.chunkShift);
+		const arena = new BuiltArena(
+			{ format: format!, owner: {}, kinds: PLAIN_KINDS, words, bytes: chunksOf().bytes, bump: () => undefined, release: () => [], ...NO_READS, read: (chunk: number) => (made === 2 && chunk === 1 ? record : undefined), trivia: NO_SIDES },
+			(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
+			{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
+			NO_VIEWS,
+			() => undefined
+		);
+		const wide = 2 ** format!.chunkShift + 1;
+		const at = (arena.view(arena.draft(7, wide)) as { readonly $at: number }).$at;
+		expect(chunkOf(at, format!)).toBe(1);
+		arena.draft(8, wide);
+		expect(arena.reads(at)).toBe(true);
+		expect(arena.words(at, 4)).toBe(record);
+		expect(arena.holdsRecords(1)).toBe(true);
+	});
+
 	it('refuses a handle whose chunk was freed and its number given to a new chunk, and releases nothing through it', () => {
 		const released: number[] = [];
 		let next = 0;

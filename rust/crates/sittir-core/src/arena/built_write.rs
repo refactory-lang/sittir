@@ -26,20 +26,19 @@ impl<T: ChunkUnit> Open<T> {
     }
 }
 
-/// Writes a read's records into chunks of a built arena the read takes
-/// whole: each entry reserved in the chunk the read has open, with a count
-/// of one, and lent to be written in place. The builders' own open chunk is
-/// left as it is.
+/// Writes a read's records into the chunk a built arena keeps open for its
+/// reads: each entry reserved with a count of one and lent to be written in
+/// place, a record the open chunk has no room for opening the next, and a
+/// record past a chunk's words taking a chunk of its own. The builders' own
+/// open chunk is left as it is.
 pub struct ReadWriter<'a> {
     chunks: &'a mut BuiltChunks,
-    /// The chunk the read has open, the words of it used, and its words.
-    open: Option<(u32, u32, u32)>,
 }
 
 impl<'a> ReadWriter<'a> {
-    /// A writer taking fresh chunks of `chunks`.
+    /// A writer appending to the chunk `chunks` has open for reads.
     pub fn new(chunks: &'a mut BuiltChunks) -> Self {
-        Self { chunks, open: None }
+        Self { chunks }
     }
 }
 
@@ -59,15 +58,19 @@ impl super::RecordSpace for ReadWriter<'_> {
     }
 
     fn alloc(&mut self, words: u32) -> Result<Address, ArenaError> {
-        let (chunk, used, len) = match self.open {
-            Some((chunk, used, len)) if used.checked_add(words).is_some_and(|end| end <= len) => (chunk, used, len),
-            _ => {
-                let len = words.max(CHUNK_WORDS);
-                (self.chunks.alloc_read_words(len)?, 0, len)
+        let at = match self.chunks.reads {
+            _ if words > CHUNK_WORDS => Address::new(self.chunks.alloc_read_words(words)?, 0),
+            Some((chunk, used)) if used + words <= CHUNK_WORDS => {
+                self.chunks.reads = Some((chunk, used + words));
+                Address::new(chunk, used)
             }
-        };
-        let at = Address::new(chunk, used).ok_or(ArenaError::Full)?;
-        self.open = Some((chunk, used + words, len));
+            _ => {
+                let chunk = self.chunks.alloc_read_words(CHUNK_WORDS)?;
+                self.chunks.reads = Some((chunk, words));
+                Address::new(chunk, 0)
+            }
+        }
+        .ok_or(ArenaError::Full)?;
         self.chunks.place(at, 1)?;
         Ok(at)
     }

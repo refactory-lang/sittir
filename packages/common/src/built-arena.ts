@@ -180,6 +180,10 @@ class Chunks<A extends WritableWords | Uint8Array> {
 		this.used[chunk] = 0;
 	}
 
+	vacate(chunk: number): void {
+		if (this.released(chunk)) delete this.chunks[chunk];
+	}
+
 	has(chunk: number): boolean {
 		const data = this.chunks[chunk];
 		return data !== undefined && data.length !== 0;
@@ -967,14 +971,20 @@ export class BuiltArena {
 	}
 
 	#readChunk(chunk: number): WritableWords | undefined {
-		if (chunk === 0 || this.#words.chunks[chunk] !== undefined || this.#bytes.chunks[chunk] !== undefined) return undefined;
-		return (this.#reads[chunk] ??= this.#read(chunk));
+		if (chunk === 0 || this.#words.has(chunk) || this.#bytes.has(chunk)) return undefined;
+		const held = this.#reads[chunk];
+		if (held !== undefined) return held;
+		const read = this.#read(chunk);
+		if (read === undefined) return undefined;
+		this.#words.vacate(chunk);
+		this.#bytes.vacate(chunk);
+		return (this.#reads[chunk] = read);
 	}
 
 	#chunk(at: number, length: number): WritableWords {
 		const chunk = chunkOf(at, this.format);
-		if (this.#words.released(chunk)) throw new Error(releasedRecord(at));
 		const read = this.#readChunk(chunk);
+		if (read === undefined && this.#words.released(chunk)) throw new Error(releasedRecord(at));
 		if (read !== undefined) {
 			if (wordOf(at, this.format) + length > read.length) throw new Error(`a read's record runs past its chunk (address ${at}, ${length} words)`);
 			return read;
