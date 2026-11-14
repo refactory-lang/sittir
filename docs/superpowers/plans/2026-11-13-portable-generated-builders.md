@@ -4,11 +4,11 @@
 
 **Goal:** each grammar's portable layer is generated code: typed per-path build functions over the low-level loose builders, and a per-kind projection. The emitter writes them through the pinned `@sittir/typescript` builders. The run-time interpreters, `PortableRuntime` and the shipped tables go.
 
-**Spec:** `docs/superpowers/specs/2026-11-13-portable-generated-builders-design.md`. Read it first. This plan argues from it and doesn't restate it. Decisions 1, 2, 3 and 6 and the export rows are approved, and 4 and 5 are emitter-internal. Decision 7 is a proposal: a task that depends on it starts after the ruling.
+**Spec:** `docs/superpowers/specs/2026-11-13-portable-generated-builders-design.md`. Read it first. This plan argues from it and doesn't restate it. Decisions 1, 2, 3, 6 and 7 and the export rows are approved, and 4 and 5 are emitter-internal. "A parse returns the projection" is a proposal: Tasks 5 and 6 follow its ruling.
 
 **Prototype:** `probe/portable-generated` (`packages/tools/src/portable/prototype/`). Task 4 moves its emitter into codegen.
 
-**Executor:** sittir-design. **Reviewer:** sittir-brainstorm, at the end of every task.
+**Executor:** sittir-design, by the user's ruling of 2026-11-14. **Reviewer:** sittir-brainstorm, at the end of every task. Each task lands as its own PR.
 
 ## Global Constraints
 
@@ -28,6 +28,8 @@
 - **Hand-written source in `packages/{codegen,common,tools,types}/src` carries no explanatory comments.** Docs carry no PR or task numbers.
 
 ### Task 1: The pin loads only pinned
+
+**Status:** the `pinned-build-unpinned` guard (Steps 1–3, first half) comes from sittir-implement. The child's emit mode remains.
 
 **Files:**
 - Modify: `packages/codegen/src/bootstrap/pinned.ts`
