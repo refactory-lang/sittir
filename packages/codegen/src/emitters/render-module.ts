@@ -3921,6 +3921,7 @@ function delimiterTokenImpl(structName: string, node: AssembledNode, nodeMap: No
 		`    fn facet(&self) -> Option<&str> { ${read(facets.facet)} }`,
 		...(facets.content === undefined ? [] : [`    fn content(&self) -> Option<&str> { ${read(facets.content)} }`]),
 		`    fn opaque(&self) -> bool { ${fields}::${VERBATIM_FIELD}(self).is_some() }`,
+		`    fn read(&self) -> bool { ::sittir_core::layout::BodyLayout::read(${fields}::layout(self)) }`,
 		...(facets.gate === undefined ? [] : [`    fn gate(&self) -> Option<&str> { ${read(facets.gate)} }`]),
 		`}`,
 		''

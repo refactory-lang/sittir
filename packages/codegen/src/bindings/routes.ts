@@ -554,8 +554,7 @@ function childTestsOf(model: SlotModel, kind: string, fact: ChildFact, facts: re
 	return excludes.length === 0 ? [] : [{ subject: child.subject, excludes }];
 }
 
-const claimChildTests = (model: SlotModel, kind: string, claim: ClaimFact): ChildTest[] =>
-	modelNode(model, kind)?.modelType === 'supertype' ? [] : claim.children.flatMap((child) => childTestsOf(model, kind, child, claim.children));
+const claimChildTests = (model: SlotModel, kind: string, claim: ClaimFact): ChildTest[] => claim.children.flatMap((child) => childTestsOf(model, kind, child, claim.children));
 
 const atOrUnder = (path: string, other: string): boolean => path === other || path.startsWith(`${other}.`);
 
@@ -1206,6 +1205,11 @@ function tokenKindOf(model: SlotModel, token: string): string | null {
 	return kind === undefined || more.length > 0 ? null : kind.kind;
 }
 
+const parsedForm =
+	(model: SlotModel) =>
+	(form: string): boolean =>
+		modelNode(model, form)?.modelType !== 'supertype' && shownKinds(model, form).some((kind) => modelNode(model, kind) !== undefined);
+
 export function readsByKind(model: SlotModel, claims: readonly ClaimFact[]): ClaimReads {
 	const claimsOwn = new Set(claims.flatMap((c) => (c.kind === null || c.kind === WILDCARD ? [] : [`${c.kind} ${c.vocab}`])));
 	const reads = new Map<string, ClaimRead[]>();
@@ -1214,7 +1218,7 @@ export function readsByKind(model: SlotModel, claims: readonly ClaimFact[]): Cla
 		if (owner === null) return;
 		const forms = owner === WILDCARD ? admittedKinds(model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`)) : claimFormsOf(model, owner, claim);
 		const literal = owner !== WILDCARD && literalClaimOf(claim) !== undefined;
-		for (const form of forms.filter((form) => shownKinds(model, form).some((kind) => modelNode(model, kind) !== undefined)))
+		for (const form of forms.filter(parsedForm(model)))
 			for (const { kind, spelled } of readKinds(model, form, claim)) {
 				const decided = literal && modelNode(model, form)?.splitFrom != null && form === boundKindName(claim.vocab, isParserHiddenName(form));
 				const read = { form, claimed: owner === WILDCARD ? form : owner, vocab: claim.vocab, claim, index, spelled, decided };
@@ -1508,7 +1512,7 @@ export function unenteredForms(input: GrammarInput, routes: GrammarRoutes): stri
 		const owner = claim.kind;
 		if (owner === null || owner === WILDCARD) return [];
 		return claimFormsOf(input.model, owner, claim)
-			.filter((form) => form !== owner)
+			.filter((form) => form !== owner && parsedForm(input.model)(form))
 			.flatMap((form) =>
 				readKinds(input.model, form, claim).flatMap(({ kind }) =>
 					shownNameOnly(input.model, kind) || (routes.readEntries.get(kind) ?? []).some((e) => e.index === index) || routes.stopped.some((s) => s.kind === kind && s.index === index) ? [] : [kind]

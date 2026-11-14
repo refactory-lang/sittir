@@ -634,10 +634,12 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         let base = &source[line_start..start];
         let base = &base[..base.len() - base.trim_start_matches([' ', '\t']).len()];
         let levels = if self.indent_pending || self.held_breaks() { self.levels() } else { self.line_depth };
-        let target = self.indent.repeat(levels);
-        if base == target {
+        let unit = self.indent;
+        let at_target = base.len() == unit.len().saturating_mul(levels) && (unit.is_empty() || base.as_bytes().chunks_exact(unit.len()).all(|chunk| chunk == unit.as_bytes()));
+        if at_target {
             return std::borrow::Cow::Borrowed(text);
         }
+        let mut target: Option<String> = None;
         let inside = sources.line_starts_inside_tokens(coord);
         let mut out = String::with_capacity(text.len());
         let mut at = coord.span.start;
@@ -647,7 +649,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             }
             let shifted = index > 0 && !line.trim().is_empty() && line.starts_with(base) && inside.binary_search(&at).is_err();
             if shifted {
-                out.push_str(&target);
+                out.push_str(target.get_or_insert_with(|| unit.repeat(levels)));
                 out.push_str(&line[base.len()..]);
             } else {
                 out.push_str(line);
