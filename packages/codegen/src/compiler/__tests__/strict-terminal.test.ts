@@ -15,12 +15,13 @@
 import { beforeAll, describe, it, expect } from 'vitest';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { generate } from '../generate.ts';
+import { tmpdir } from 'node:os';
 
 describe('leaf factory guards', () => {
 	let factories: string;
 
 	beforeAll(async () => {
-		factories = (await generate({ grammar: 'rust', outputDir: '/tmp/rust-leaf-guards' })).factories;
+		factories = (await generate({ grammar: 'rust', outputDir: `${tmpdir()}/rust-leaf-guards` })).factories;
 	}, FULL_PIPELINE_TIMEOUT);
 
 	it('hoists leaf pattern checks to module-level regex consts', () => {

@@ -11,6 +11,7 @@ import { resolve } from 'node:path';
 import { generate } from '../generate.ts';
 import { stableGrammars } from '../../grammars.ts';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
+import { tmpdir } from 'node:os';
 
 const baselineDir = resolve(import.meta.dirname!, '../../../../../specs/005-five-phase-compiler/baseline');
 
@@ -56,7 +57,7 @@ for (const grammar of stableGrammars()) {
 		it(`generates output for ${grammar}`, async () => {
 			result = await generate({
 				grammar,
-				outputDir: `/tmp/sittir-baseline-${grammar}`
+				outputDir: `${tmpdir()}/sittir-baseline-${grammar}`
 			});
 			expect(result).toBeDefined();
 		}, FULL_PIPELINE_TIMEOUT);
