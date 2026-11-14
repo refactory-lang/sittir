@@ -21,6 +21,8 @@ function project(): { readonly checkout: string; readonly sibling: string; reado
 	symlinkSync(join(sibling, 'packages', 'common'), join(sibling, 'node_modules', '@sittir', 'common'));
 	file(join(checkout, 'packages', 'codegen', 'package.json'), JSON.stringify({ name: '@sittir/codegen' }));
 	file(join(checkout, 'packages', 'other', 'package.json'), JSON.stringify({ name: '@sittir/other' }));
+	file(join(checkout, 'packages', 'codegen', 'node_modules', '@sittir', 'nested', 'package.json'), JSON.stringify({ name: '@sittir/nested' }));
+	file(join(checkout, 'packages', 'codegen', 'node_modules', '@sittir', 'nested', 'index.d.ts'), 'export declare const nested: number;\n');
 	file(join(checkout, 'node_modules', 'third', 'package.json'), JSON.stringify({ name: 'third', types: './index.d.ts' }));
 	file(join(checkout, 'node_modules', 'third', 'index.d.ts'), 'export declare const third: number;\n');
 	file(join(checkout, 'packages', 'live', 'package.json'), JSON.stringify({ name: '@sittir/live', types: './index.d.ts', exports: { '.': { types: './index.d.ts' } } }));
@@ -39,7 +41,8 @@ function project(): { readonly checkout: string; readonly sibling: string; reado
 			"import { other } from '../../other/other.ts';",
 			"import { common } from '../../../../sibling/packages/common/index.ts';",
 			"import { third } from 'third';",
-			'export const sum = pinned + live + helper + other + common + third + referenced + rooted;',
+			"import { nested } from '../node_modules/@sittir/nested/index.d.ts';",
+			'export const sum = pinned + live + helper + other + common + third + nested + referenced + rooted;',
 			''
 		].join('\n')
 	);
@@ -75,7 +78,8 @@ describe('the pinned build\'s type boundary', () => {
 				join(checkout, 'packages', 'live', 'ref.d.ts'),
 				join(checkout, 'packages', 'live', 'root.d.ts'),
 				join(checkout, 'packages', 'other', 'other.ts'),
-				join(sibling, 'packages', 'common', 'index.d.ts')
+				join(sibling, 'packages', 'common', 'index.d.ts'),
+				join(checkout, 'packages', 'codegen', 'node_modules', '@sittir', 'nested', 'index.d.ts')
 			].sort()
 		);
 		const reasons = escapes.map(({ reason }) => reason).join('\n');

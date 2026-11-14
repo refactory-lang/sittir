@@ -26,13 +26,18 @@ const within = (dir: string, path: string): boolean => {
 	return rel !== '' && !rel.startsWith('..') && !isAbsolute(rel);
 };
 
-function packageOwner(): (file: string) => string | undefined {
-	const owners = new Map<string, string | undefined>();
-	const ownerOf = (dir: string): string | undefined => {
+interface PackageOwner {
+	readonly name: string;
+	readonly dir: string;
+}
+
+function packageOwner(): (file: string) => PackageOwner | undefined {
+	const owners = new Map<string, PackageOwner | undefined>();
+	const ownerOf = (dir: string): PackageOwner | undefined => {
 		if (owners.has(dir)) return owners.get(dir);
 		const manifest = join(dir, 'package.json');
-		const named = existsSync(manifest) ? (JSON.parse(readFileSync(manifest, 'utf8')) as { readonly name?: string }).name : undefined;
-		const owner = named ?? (dirname(dir) === dir ? undefined : ownerOf(dirname(dir)));
+		const name = existsSync(manifest) ? (JSON.parse(readFileSync(manifest, 'utf8')) as { readonly name?: string }).name : undefined;
+		const owner = name !== undefined ? { name, dir } : dirname(dir) === dir ? undefined : ownerOf(dirname(dir));
 		owners.set(dir, owner);
 		return owner;
 	};
@@ -42,8 +47,8 @@ function packageOwner(): (file: string) => string | undefined {
 export function pinnedTypeEscapes(explained: string, { cwd, checkout, pinned }: PinnedTypeScope): PinnedTypeEscape[] {
 	const [emitter, pin] = [join(real(checkout), EMITTER_PACKAGE), real(pinned)];
 	const ownerOf = packageOwner();
-	const unpinned = (file: string): boolean => (ownerOf(file)?.startsWith('@sittir/') ?? false) && !within(pin, file);
-	const local = (file: string, reason: string): boolean => within(emitter, file) && LOCAL_REASONS.some((pattern) => pattern.test(reason));
+	const unpinned = (file: string): boolean => (ownerOf(file)?.name.startsWith('@sittir/') ?? false) && !within(pin, file);
+	const local = (file: string, reason: string): boolean => ownerOf(file)?.dir === emitter && LOCAL_REASONS.some((pattern) => pattern.test(reason));
 	const escapes = new Map<string, PinnedTypeEscape>();
 	let file: string | undefined;
 	for (const line of explained.split('\n')) {
