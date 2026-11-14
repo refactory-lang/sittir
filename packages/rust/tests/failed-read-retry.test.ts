@@ -7,12 +7,9 @@ type Members = Record<string, (...args: unknown[]) => unknown>;
 
 const SOURCE = 'type T = ((Foo, (Baz,)), (Bar,), ());\n';
 
-describe.each([
-	{ storage: 'arena', member: 'cell' },
-	{ storage: 'object', member: 'read' }
-] as const)('a read that fails partway, in $storage storage', ({ storage, member }) => {
+describe('a read that fails partway, in object storage', () => {
 	it('leaves no list it made unfilled for the read that follows, wherever it fails', async () => {
-		const rs = await createEngine(rust, { nodeStorage: storage });
+		const rs = await createEngine(rust, { nodeStorage: 'object' });
 		const statementOf = () => {
 			const statement = rs.parse(SOURCE, { depth: 1 }).statements()[0]!;
 			if (!rs.is.typeItem(statement)) throw new Error('not a type item');
@@ -24,10 +21,10 @@ describe.each([
 		let failures = 0;
 		for (let failAt = 1; ; failAt++) {
 			const statement = statementOf();
-			const reader = (member === 'cell' ? treeOf(statement)!.records : treeOf(statement)) as unknown as Members;
-			const read = reader[member]!;
+			const reader = treeOf(statement) as unknown as Members;
+			const read = reader.read!;
 			let calls = 0;
-			reader[member] = function (this: unknown, ...args: unknown[]) {
+			reader.read = function (this: unknown, ...args: unknown[]) {
 				if (++calls === failAt) throw new Error('injected read failure');
 				return read.apply(this, args);
 			};

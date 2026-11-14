@@ -307,3 +307,107 @@ pub fn probe_input(name: &str) -> String {
     let path = format!("{}/../../../docs/superpowers/probes/2026-10-01-shared-arena/transport/inputs/{name}", env!("CARGO_MANIFEST_DIR"));
     std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("{path}: {e}"))
 }
+
+/// An engine that read a tree's source and kept no tree, the record its
+/// read left for the root, and the record it left for each of the tree's
+/// nodes that has one, by the node's index in the tree.
+#[cfg(feature = "arena")]
+pub struct OverRead<G: sittir_core::arena::RecordGrammar> {
+    pub engine: sittir_core::engine::Engine<G>,
+    pub root: sittir_core::arena::Address,
+    pub records: std::collections::HashMap<sittir_core::types::NodeIndex, sittir_core::arena::Address>,
+}
+
+#[cfg(feature = "arena")]
+impl<G: sittir_core::arena::RecordGrammar> OverRead<G> {
+    /// An engine of `grammar` under `options` that read `tree`'s source.
+    ///
+    /// # Panics
+    ///
+    /// When the read refuses, or leaves its root no record.
+    pub fn of<N: sittir_core::read::ReadNode + sittir_core::arena::HydrateNode + sittir_core::arena::RecordCells>(grammar: G, options: &sittir_core::options::ResolvedOptions, tree: &sittir_core::engine::ParsedTree<G>) -> Self {
+        use sittir_core::arena::NodeSite;
+        use sittir_core::nodes::Nodes;
+        use sittir_core::trivia_store::Place;
+        use sittir_core::types::NodeIndex;
+        let mut engine = sittir_core::engine::Engine::new(grammar, options.clone()).expect("an engine");
+        let root = engine.parse_records::<N>(tree.source()).expect("a parse").root.expect("a root");
+        let records = {
+            let built = engine.written().built();
+            let over = sittir_core::engine::ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
+            let (mut ours, mut theirs) = (over.nodes(), tree.nodes());
+            let mut records = std::collections::HashMap::new();
+            let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT)];
+            while let Some((run, row)) = pending.pop() {
+                if let Some(Place::Read { site: NodeSite::Record(at), .. }) = over.place(run) {
+                    records.insert(row, at);
+                }
+                let (met, kept) = (ours.kids(run), theirs.kids(row));
+                pending.extend(met.iter().zip(kept.iter()).map(|(met, kept)| (met.index, kept.index)));
+            }
+            records
+        };
+        Self { engine, root, records }
+    }
+
+    /// The name of the record the read left the tree's node at `index`.
+    #[must_use]
+    pub fn name(&self, index: sittir_core::types::NodeIndex) -> Option<sittir_core::types::NodeName> {
+        self.records.get(&index).map(|at| sittir_core::types::NodeName { node: sittir_core::types::NodeId(at.0), site: None })
+    }
+
+    /// `coord`, a node of the tree, named by the record the read left it.
+    #[must_use]
+    pub fn named(&self, coord: sittir_core::slot::NodeCoordinate) -> sittir_core::slot::NodeCoordinate {
+        let name = self.name(coord.index);
+        coord.named(name)
+    }
+
+    /// The record at `at` rendered as a render root whose `changed` edges
+    /// have no neighbour, from the engine's arena alone, each record under
+    /// it from its template when `templates`.
+    ///
+    /// # Errors
+    ///
+    /// What the render refuses.
+    pub fn render_at(&self, at: sittir_core::arena::Address, changed: sittir_core::slot::ChangedEdges, options: &sittir_core::options::ResolvedOptions, templates: bool) -> Result<String, sittir_core::render::RenderError> {
+        let built = self.engine.written().built();
+        self.engine.render_at(&built, at, changed, options, templates, |_| Ok(()))
+    }
+
+    /// `node`, read from the tree, written into the engine's arena, its
+    /// cells naming the records the read left, and rendered from that arena
+    /// alone.
+    ///
+    /// # Panics
+    ///
+    /// When the write or the render refuses.
+    pub fn render<N: sittir_core::arena::WriteCell<G::Trivia>>(&self, node: &N, options: &sittir_core::options::ResolvedOptions) -> String {
+        use sittir_core::arena::{Cell, Linked, RecordSink};
+        let at = {
+            let mut link = |coord: &sittir_core::slot::NodeCoordinate| self.records.get(&coord.index).map(|&at| Linked::Record(at)).ok_or(sittir_core::arena::ArenaError::Unwritable("a child with no record"));
+            let store = self.engine.written().clone();
+            let mut built = self.engine.written().built_mut();
+            let word = node.write_cell(&mut RecordSink::built(&mut built, &store, &mut link)).expect("a built record");
+            match Cell::decode_built(word, &*built, G::KIND_BITS) {
+                Ok(Cell::Child { at, .. }) => at,
+                other => panic!("a built root: {other:?}"),
+            }
+        };
+        self.render_at(at, sittir_core::slot::ChangedEdges::default(), options, false).expect("a record render")
+    }
+
+    /// Writes the inner side of the tree's node at `index` back to the
+    /// record the read left it, as `edit_in_place` does to a tree: its
+    /// render is its template's, with no text changed.
+    ///
+    /// # Panics
+    ///
+    /// When the node has no record, or the store refuses the write.
+    pub fn edit_in_place(&self, index: sittir_core::types::NodeIndex) {
+        let inner = sittir_core::trivia_table::TriviaSide::Inner;
+        let name = self.name(index).expect("the edited node has a record");
+        let entries = self.engine.read_named(name, |parsed, at| parsed.trivia_side(at, inner)).expect("the records read").expect("a read wrote the record");
+        self.engine.write_read_side(name, inner, entries).expect("the node's own side writes back");
+    }
+}

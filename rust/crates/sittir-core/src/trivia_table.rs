@@ -225,8 +225,7 @@ impl HeapBytes for DepthMembers {
 }
 
 /// The walk under one node: its tokens in source order, its entries by
-/// descendant index in source order, and the bytes of each node under it,
-/// kept by its index less the walk's start.
+/// index in source order, and the bytes of each node under it.
 pub struct Walk {
     pub tokens: Vec<Span>,
     pub entries: Vec<NodeIndex>,
@@ -234,8 +233,33 @@ pub struct Walk {
     /// one for each token it pushed inside a node and one for each node it
     /// left inside another.
     pub folds: u32,
-    spans: Vec<(u32, u32)>,
-    base: NodeIndex,
+    spans: Spans,
+}
+
+/// The bytes of each node under a walk's start: by its index less the
+/// start's where a subtree's indexes run on from its root's
+/// (`Nodes::bound`), else by its index.
+enum Spans {
+    Under { base: NodeIndex, spans: Vec<(u32, u32)> },
+    Met(std::collections::HashMap<NodeIndex, (u32, u32), crate::heap::IndexState>),
+}
+
+impl Spans {
+    fn set(&mut self, index: NodeIndex, span: (u32, u32)) {
+        match self {
+            Spans::Under { base, spans } => spans[index.offset_from(*base) as usize] = span,
+            Spans::Met(spans) => {
+                spans.insert(index, span);
+            }
+        }
+    }
+
+    fn get(&self, index: NodeIndex) -> (u32, u32) {
+        match self {
+            Spans::Under { base, spans } => spans[index.offset_from(*base) as usize],
+            Spans::Met(spans) => spans.get(&index).copied().unwrap_or_default(),
+        }
+    }
 }
 
 /// The first start and last end of the tokens pushed inside a node, its
@@ -255,7 +279,7 @@ impl Walk {
     /// The bytes of the node at descendant `index`, which lies under the walk's start.
     #[must_use]
     pub fn span(&self, index: NodeIndex) -> (u32, u32) {
-        self.spans[index.offset_from(self.base) as usize]
+        self.spans.get(index)
     }
 }
 
@@ -273,11 +297,14 @@ pub fn is_empty(nodes: &mut dyn Nodes<'_>, index: NodeIndex) -> bool {
 #[must_use]
 pub fn walk(nodes: &mut dyn Nodes<'_>, index: NodeIndex, source: &str) -> Walk {
     struct Frame {
-        at_index: u32,
+        index: NodeIndex,
         at: u32,
         bounds: Bounds,
     }
-    let mut spans = vec![(0, 0); nodes.kid(index).count as usize];
+    let mut spans = match nodes.bound() {
+        Some(_) => Spans::Under { base: index, spans: vec![(0, 0); nodes.kid(index).count as usize] },
+        None => Spans::Met(std::collections::HashMap::default()),
+    };
     let mut tokens: Vec<Span> = Vec::new();
     let mut entries: Vec<NodeIndex> = Vec::new();
     let mut frames: Vec<Frame> = Vec::new();
@@ -298,14 +325,13 @@ pub fn walk(nodes: &mut dyn Nodes<'_>, index: NodeIndex, source: &str) -> Walk {
         tokens.push(token);
     };
     nodes.walk(index, &mut |step, kid| {
-        let local = kid.index.offset_from(index);
         if step == Step::Leave {
             let Some(mut frame) = frames.pop() else { return Visit::Pass };
-            let (start, end) = spans[frame.at_index as usize];
+            let (start, end) = spans.get(frame.index);
             if let Some(token) = hidden(frame.at, end) {
                 push(&mut tokens, Some(&mut frame.bounds), &mut folds, token);
             }
-            if frame.at_index != 0 {
+            if frame.index != index {
                 if let Some((first, last)) = frame.bounds.0 {
                     if start < first {
                         push(&mut tokens, Some(&mut frame.bounds), &mut folds, Span { start, end: start });
@@ -324,7 +350,7 @@ pub fn walk(nodes: &mut dyn Nodes<'_>, index: NodeIndex, source: &str) -> Walk {
             return Visit::Pass;
         }
         let Kid { start, end, .. } = *kid;
-        spans[local as usize] = (start, end);
+        spans.set(kid.index, (start, end));
         if let Some(frame) = frames.last_mut() {
             if let Some(token) = hidden(frame.at, start) {
                 push(&mut tokens, Some(&mut frame.bounds), &mut folds, token);
@@ -335,7 +361,7 @@ pub fn walk(nodes: &mut dyn Nodes<'_>, index: NodeIndex, source: &str) -> Walk {
         } else if kid.leaf() {
             push(&mut tokens, frames.last_mut().map(|frame| &mut frame.bounds), &mut folds, Span { start, end });
         } else {
-            frames.push(Frame { at_index: local, at: start, bounds: Bounds::default() });
+            frames.push(Frame { index: kid.index, at: start, bounds: Bounds::default() });
             return Visit::Enter;
         }
         if let Some(frame) = frames.last_mut() {
@@ -344,7 +370,7 @@ pub fn walk(nodes: &mut dyn Nodes<'_>, index: NodeIndex, source: &str) -> Walk {
         Visit::Pass
     });
     tokens.sort_by_key(|token| (token.start, token.end));
-    Walk { tokens, entries, folds, spans, base: index }
+    Walk { tokens, entries, folds, spans }
 }
 
 /// Where the assignment puts an entry of a gap.

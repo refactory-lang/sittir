@@ -19,7 +19,6 @@ use crate::options::Edges;
 use crate::slot::CoordinateEdges;
 use crate::trivia::NodeTrivia;
 use crate::read::Depth;
-use super::rows::NodeRows;
 use crate::trivia_store::{Place, Site};
 
 /// Where the overlay keeps a node's facts: the place the store keeps its
@@ -150,15 +149,16 @@ pub struct Templates {
 }
 
 impl Templates {
-    /// Whether the node at `row` of `tree`, whose rows are `rows`, renders
-    /// from its template. A render of `root`'s record reaches only nodes
-    /// under it, so at every depth each does.
+    /// Whether a node of `tree` renders from its template: the levels it
+    /// lies below the root, looking so many up at most, answered by
+    /// `levels_below`. A render of `root`'s record reaches only nodes under
+    /// it, so at every depth each does.
     #[must_use]
-    pub fn reach(self, tree: TreeId, rows: &NodeRows, row: NodeIndex) -> bool {
+    pub fn reach_by(self, tree: TreeId, levels_below: impl FnOnce(u32) -> Option<u32>) -> bool {
         tree == self.tree
             && match self.depth {
                 Depth::All => true,
-                Depth::Levels(levels) => rows.levels_below(self.root, row, levels.get()).is_some(),
+                Depth::Levels(levels) => levels_below(levels.get()).is_some(),
             }
     }
 }

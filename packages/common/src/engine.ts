@@ -7,6 +7,7 @@ import type {
 	NativeEngineOptions,
 	NativeLanguageEngine,
 	NativeParseResult,
+	NodeCoordinate,
 	ParsedRead,
 	ParsedRoot,
 	ParseOptions,
@@ -15,17 +16,15 @@ import type {
 	UnitSidesWire,
 	WireNode
 } from '@sittir/types';
-import { decodeIndex, decodeTree, readObject, type ChunkWords, type RecordReader, type TreeHandle, type TriviaSideName } from './read.ts';
-import { coordinateOf, holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
-import { mintTreeToken, registerTree } from './tree-token.ts';
-import type { RecordPosition } from './handle.ts';
-import type { DescendantBatch } from './query.ts';
-import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
-import { leafData, readStub, recordOf } from './record-view.ts';
-import { readOwnEntries, readOwnUnits, type BuiltRecords, type WritableWords } from './built-arena.ts';
+import { decodeIndex, decodeTree, readObject, type TreeHandle, type TriviaSideName } from './read.ts';
+import { coordinateIndex, coordinateOf, holdReadTree, keyName, placeOf, rootEdges, sourceHandleOf, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
+import { mintTreeToken, registerTree, treeOfToken } from './tree-token.ts';
+import type { DescendantBatch, TreeQuery } from './query.ts';
+import { cellFormatOf, type CellFormat } from './record-cell.ts';
+import { readOwnEntries, readOwnUnits, type BuiltRecords, type ParsedRecords, type WritableWords } from './built-arena.ts';
 import { builtRefOf, handleArenaOf } from './built-ref.ts';
 import { nodeStorageOf } from './engine-scope.ts';
-import { leafWireSides } from './utils.ts';
+import { leafWireSides, type NodeAddress } from './utils.ts';
 
 export const ARENA_FEATURE_REFUSED = 'arena node storage needs an addon built with the `arena` feature';
 
@@ -87,10 +86,10 @@ export function saverOf(rendered: Rendered): RenderSaver {
 	return saver;
 }
 
-function recordTreeOf(view: RecordPosition): number {
-	const tree = view.$tree;
-	if (tree.records === undefined || tree.id === undefined) throw new Error('a record view renders through the tree it was read from, which is gone');
-	return tree.id;
+function sourceRecordOf(node: object): number | undefined {
+	const source = placeOf(node);
+	if (source === undefined || treeOfToken(source.token)?.built === undefined) return undefined;
+	return keyName(source.index).node;
 }
 
 function renderTreeOf(node: object): number | undefined {
@@ -114,11 +113,12 @@ export interface StoredLayout {
 	readonly separators: number;
 }
 
-/** Whether a tree's record backer answers its nodes as its tree backer does (`NativeEngineLike.backerParity`). */
+/** Whether the records a read of a source leaves answer its nodes as its tree does, with the records' layout baseline (`NativeEngineLike.backerParity`). */
 export interface BackerParity {
 	readonly nodes: number;
 	readonly differing: number;
 	readonly first?: number;
+	readonly runs: readonly BaselineRun[];
 }
 
 /** The work a tree's layout reads have done so far (`NativeEngineLike.layoutWork`), each count as the addon's `LayoutWork` names it. */
@@ -239,16 +239,6 @@ export interface NativeEngineLike<TNode = unknown> {
 	 * @throws when the tree is not live, or `span` is not a span of its source: past its end, reversed, or splitting a character.
 	 */
 	text(treeId: number, span: ByteSpan): string;
-	/** The address of the record of the node at `index`, read `depth` levels down, `null` for a node with none. Present when the addon carries the record codec. */
-	readRecord?(treeId: number, index: number, depth?: number): number | null;
-	readRecordStub?(treeId: number, index: number, depth?: number): number[] | null;
-	readLeaf?(treeId: number, index: number): number[] | null;
-	/** Materializes parsed records to `depth` (default one, Infinity for all), including children of cached parents. Returns only an address; chunk copies are requested separately. Present when the addon carries the record codec. */
-	hydrateRecord?(treeId: number, index: number, depth?: number): number | null;
-	/** Chunk `n` of the tree's arena over its native memory, every word of it, with no copy; disposing the tree detaches it. Present when the addon carries the record codec. */
-	chunk?(treeId: number, n: number): ChunkWords;
-	/** The address of the record the parsed cell at `word`, item `item`, of the record at `holder` names: on the first read through it, written `depth` levels down and the cell rewritten to name it. Present when the addon carries the record codec. */
-	readCell?(treeId: number, holder: number, word: number, item: number, depth?: number): number;
 	/** A new zeroed chunk of `length` words of the engine's built arena, over its native memory, its number, and its meta, where its entries' counts are kept, with the chunk it sealed and that chunk's meta, now sized for its entries. Present when the addon carries the record codec. */
 	builtWords?(length: number): { chunk: number; data: WritableWords; meta: Uint8Array; freed: number[]; sealed?: { chunk: number; meta: Uint8Array } };
 	/** A new zeroed chunk of `length` bytes of the engine's built arena's strings, over its native memory, its number, and its meta, its cell count. Present when the addon carries the record codec. */
@@ -257,15 +247,47 @@ export interface NativeEngineLike<TNode = unknown> {
 	builtBump?(address: number): void;
 	/** Releases a count of the built entry at `address` of form `held`, the count its builder's handle holds when `owned`; answers the trees released link and side records named. Present when the addon carries the record codec. */
 	releaseBuilt?(address: number, held: number, owned: boolean): number[];
+	/** Parses `source` and keeps no tree: as JSON `{ root, source, options, errors }`, the address of the root's record in the built arena, null when its reader writes none, the address of the source's entry, the source's layer of the render options, and its error regions. Present when the addon carries the record codec. */
+	parseRecords?(source: string): string;
+	/** Chunk `chunk` of the built arena, which a read wrote, over its native memory with no copy; null for a chunk no read wrote. Present when the addon carries the record codec. */
+	readWords?(chunk: number): WritableWords | null;
+	/** `renderAt` for the node a read left in the built arena that the key `node` names, from the arena alone. Present when the addon carries the record codec. */
+	readRenderAt?(node: number, leading: boolean, trailing: boolean, options?: object, templates?: boolean): string;
+	/** The text bytes `start` to `end` cover in the source the read's record at `node` of the built arena was read from. Refuses an address no read wrote and a span that is not one of the source's. Present when the addon carries the record codec. */
+	readText?(node: number, start: number, end: number): string;
+	/** `descendants` for a node a read left records of in the built arena: `from` and the batch name nodes as `{ $node, $site? }`. Present when the addon carries the record codec. */
+	readDescendants?: NativeEngineLike['descendants'];
+	/** `planHolds` for nodes a read left records of in the built arena, named as `{ $node, $site? }`. Present when the addon carries the record codec. */
+	readPlanHolds?: NativeEngineLike['planHolds'];
+	/** `snapshotLayouts` for the node a read left in the built arena that the key `node` names, each pair's node by its key. Present when the addon carries the record codec. */
+	readSnapshotLayouts?(node: number, holderByte?: number): [number, object][];
+	/** `triviaSide` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
+	readTriviaSide?(node: number, side: string): WireNode<ReadOutput>[];
+	/** `writeTriviaSide` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
+	writeReadTriviaSide?(node: number, side: string, entries: readonly WireNode[]): void;
+	/** `unitSides` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
+	readUnitSides?(node: number): UnitSidesWire<ReadOutput>[];
+	/** The three trivia sides and the unit sides of the node a read left in the built arena that the key `node` names, from one read of its source's records. Present when the addon carries the record codec. */
+	readSides?(node: number): { leading: WireNode<ReadOutput>[]; trailing: WireNode<ReadOutput>[]; inner: WireNode<ReadOutput>[]; units: UnitSidesWire<ReadOutput>[] };
+	/** `slotLayouts` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
+	readSlotLayouts?(node: number): SlotLayoutWire[];
+	/** `slotSeparator` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
+	readSlotSeparator?(node: number): number | null;
+	/** `separatorBefore` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
+	readSeparatorBefore?(node: number): number | null;
+	/** `editedWithin` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
+	readEditedWithin?(node: number, ownSides: boolean): boolean;
+	/** `isEmpty` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
+	readIsEmpty?(node: number): boolean;
+	/** `siblings` for the nodes reads left in the built arena that the keys `nodes` name, eight words a node, each from its own source. Present when the addon carries the record codec. */
+	readSiblings?(nodes: readonly number[]): number[];
+	/** The address of the source entry each node a read left in the built arena that the keys `nodes` name was read from. Present when the addon carries the record codec. */
+	readSources?(nodes: readonly number[]): number[];
 	/** The bytes the built arena's chunks take, and of them its counts'. Present when the addon carries the record codec. */
 	builtMemory?(): { chunks: number; counts: number; live: number };
 	/** Refuses, by name, a runtime that does not allow external array buffers. Present when the addon carries the record codec. */
 	externalBuffers?(): void;
-	/** The kind and subtree end, as `[kind, end]`, a read of tree `treeId` names the node at `index` by. Present when the addon carries the record codec. */
-	coordinate?(treeId: number, index: number): number[];
-	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour; `templates` renders it and every parsed node under it that has a record from its template, each leaf and unit as its source. Present when the addon carries the record codec. */
-	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object, templates?: boolean): string;
-	renderBuilt?(owner: object, address: number, leading: boolean, trailing: boolean, treeId?: number, options?: object): string;
+	renderBuilt?(owner: object, address: number, leading: boolean, trailing: boolean, source?: number, options?: object): string;
 	renderBuiltLeaf?(
 		owner: object,
 		kind: number,
@@ -275,10 +297,8 @@ export interface NativeEngineLike<TNode = unknown> {
 		trailing: boolean,
 		options?: object
 	): string;
-	/** {@link renderRecord}'s text written to `path`, answering whether it wrote. Present when the addon carries the record codec. */
-	renderRecordToFile?(treeId: number, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object): boolean;
 	/** {@link renderBuilt}'s text written to `path`, answering whether it wrote. Present when the addon carries the record codec. */
-	renderBuiltToFile?(owner: object, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, treeId?: number, options?: object): boolean;
+	renderBuiltToFile?(owner: object, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, source?: number, options?: object): boolean;
 	/** {@link renderBuiltLeaf}'s text written to `path`, answering whether it wrote. Present when the addon carries the record codec. */
 	renderBuiltLeafToFile?(
 		owner: object,
@@ -331,12 +351,14 @@ export interface NativeEngineLike<TNode = unknown> {
 	 */
 	layoutWork(treeId: number): LayoutWork;
 	/**
-	 * Reads tree `treeId` whole, then compares each node as arena storage's record backer and the tree backer
-	 * answer it: the nodes compared, how many differ, and the first that does. A diagnostic.
+	 * Parses `source` as a tree and as the records a read of it leaves, then compares each node of the tree with
+	 * the node the records answer in its place: the nodes compared, how many differ, the first that does, and the
+	 * records' layout baseline, its runs naming nodes by their indexes in the tree. The read's records stay in the
+	 * engine's arena. A diagnostic. Present when the addon carries the record codec.
 	 *
-	 * @throws when the tree is not live or its read is refused.
+	 * @throws when the engine is in use or disposed, or the read is refused.
 	 */
-	backerParity(treeId: number): BackerParity;
+	backerParity?(source: string): BackerParity;
 	descendants(
 		from: string,
 		kinds: number[] | undefined | null,
@@ -381,18 +403,10 @@ const TREE_FUNCTIONS = [
 	'editedWithin',
 	'isEmpty',
 	'text',
-	'readRecord',
-	'readRecordStub',
-	'readLeaf',
-	'hydrateRecord',
-	'chunk',
-	'readCell',
-	'coordinate',
 	'siblings',
 	'layoutBaseline',
 	'storedLayout',
 	'layoutWork',
-	'backerParity',
 	'descendants',
 	'planHolds',
 	'externalBuffers',
@@ -400,11 +414,10 @@ const TREE_FUNCTIONS = [
 ] as const satisfies readonly (keyof NativeEngineLike)[];
 
 const ENGINE_FUNCTIONS = [
+	'backerParity',
 	'render',
 	'renderAt',
 	'renderToFile',
-	'renderRecord',
-	'renderRecordToFile',
 	'renderBuilt',
 	'renderBuiltToFile',
 	'renderBuiltLeaf',
@@ -413,6 +426,24 @@ const ENGINE_FUNCTIONS = [
 	'builtBytes',
 	'builtBump',
 	'releaseBuilt',
+	'parseRecords',
+	'readWords',
+	'readRenderAt',
+	'readText',
+	'readDescendants',
+	'readPlanHolds',
+	'readSnapshotLayouts',
+	'readTriviaSide',
+	'writeReadTriviaSide',
+	'readUnitSides',
+	'readSides',
+	'readSlotLayouts',
+	'readSlotSeparator',
+	'readSeparatorBefore',
+	'readEditedWithin',
+	'readIsEmpty',
+	'readSiblings',
+	'readSources',
 	'builtMemory',
 	'builtTriviaSide',
 	'writeBuiltTriviaSide',
@@ -573,53 +604,6 @@ const treeDisposalRegistry = new FinalizationRegistry<{
 	readonly treeId: number;
 }>(({ release, treeId }) => release(treeId));
 
-function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, format: CellFormat, readObjectAt: (index: number, depth: number) => WireNode<ReadOutput>): RecordReader {
-	const { readRecord, readRecordStub, readLeaf, readCell, chunk, renderRecord, coordinate } = engine;
-	if (readRecord === undefined || readRecordStub === undefined || readLeaf === undefined || readCell === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
-		throw new Error(ARENA_FEATURE_REFUSED);
-	}
-	const chunks: ChunkWords[] = [];
-	const coordinates = new Map<number, { readonly kind: number; readonly end: number }>();
-	return {
-		format,
-		record: (at, depth) => readRecord.call(engine, treeId, at, depth) ?? undefined,
-		stub: (index, depth) => readRecordStub.call(engine, treeId, index, depth) ?? undefined,
-		leaf(index) {
-			const leaf = readLeaf.call(engine, treeId, index);
-			if (leaf === null) return undefined;
-			if (leaf.length === 1) return { form: 'unit', kind: leaf[0]!, row: index };
-			return { form: 'parsedLeaf', kind: leaf[0]!, span: { start: leaf[1]!, end: leaf[2]! }, row: index };
-		},
-		exported: (address) => chunks[chunkOf(address, format)],
-		cell: (holder, word, item, depth) => readCell.call(engine, treeId, holder, word, item, depth),
-		hydrate(index, depth) {
-			if (engine.hydrateRecord === undefined)
-				throw new Error('native record hydration needs an addon with hydrateRecord');
-			return engine.hydrateRecord(treeId, index, depth) ?? undefined;
-		},
-		render: (address, leading, trailing) => renderRecord.call(engine, treeId, address, leading, trailing),
-		object: (index, depth = 1) => readObjectAt(index, depth),
-		words(address, length) {
-			const n = chunkOf(address, format);
-			const end = wordOf(address, format) + length;
-			let words = chunks[n];
-			if (words === undefined || words.length < end) words = chunks[n] = chunk.call(engine, treeId, n);
-			if (words.length < end) throw new Error(`tree ${treeId}'s chunk ${n} holds ${words.length} words, short of a record that ends at word ${end}`);
-			return words;
-		},
-		coordinate(index) {
-			let at = coordinates.get(index);
-			if (at === undefined) {
-				const [kind, end] = coordinate.call(engine, treeId, index);
-				if (kind === undefined || end === undefined) throw new Error(`tree ${treeId}'s coordinate of node ${index} is not a kind and an end`);
-				at = { kind, end };
-				coordinates.set(index, at);
-			}
-			return at;
-		}
-	};
-}
-
 /**
  * Tagged-union result for `createNativeEngine` — mirrors the
  * `loadNativeEngineForGrammar` pattern in
@@ -677,36 +661,17 @@ export function createNativeEngine<
 				if (typeof node === 'object') holdReadTree(node, liveToken);
 				return node;
 			};
-			const records = cellFormat === undefined ? undefined : recordReader(engine, parsed.treeId, cellFormat, readObjectAt);
-			const readAt =
-				records === undefined
-					? readObjectAt
-					: (index: number, depth: number): WireNode<ReadOutput> => {
-							const facts = records.stub(index, depth);
-							if (facts !== undefined) {
-								const stub = readStub(tree, facts);
-								holdReadTree(stub, liveToken);
-								return stub;
-							}
-							const leaf = records.leaf(index);
-							if (leaf === undefined) return readObjectAt(index, depth);
-							if (leaf.form === 'unit') return leaf.kind;
-							const node = leafData(tree, leaf.kind, leaf.span, leaf.row);
-							holdReadTree(node, liveToken);
-							return node;
-						};
 			const roots = new Map<number, unknown>();
 			const errors = Object.freeze(parsed.errors);
 			const tree: TreeHandle = {
 				id: parsed.treeId,
 				token: liveToken,
 				text: (span) => engine.text(parsed.treeId, span),
-				...(records === undefined ? {} : { records }),
 				read: (index, depth = 1) => {
-					if (index !== 0) return readAt(index, depth);
+					if (index !== 0) return readObjectAt(index, depth);
 					let cached = roots.get(depth);
 					if (cached === undefined) {
-						cached = Object.assign(readObject(readAt(0, depth), 'the root'), { $errors: errors });
+						cached = Object.assign(readObject(readObjectAt(0, depth), 'the root'), { $errors: errors });
 						roots.set(depth, cached);
 					}
 					return cached;
@@ -723,20 +688,7 @@ export function createNativeEngine<
 				editedWithin: (index, ownSides) => engine.editedWithin(parsed.treeId, index, ownSides),
 				isEmpty: (index) => engine.isEmpty(parsed.treeId, index),
 				siblings: (indexes) => engine.siblings(parsed.treeId, indexes),
-				query: {
-					descendants: (walk) =>
-						JSON.parse(
-							engine.descendants(
-								JSON.stringify(walk.from),
-								walk.kinds === undefined ? undefined : [...walk.kinds],
-								walk.resume === undefined ? undefined : [...walk.resume],
-								walk.limit,
-								walk.plan === undefined ? undefined : JSON.stringify(walk.plan),
-								walk.depth
-							)
-						) as DescendantBatch,
-					planHolds: (addresses, plan) => engine.planHolds(JSON.stringify(addresses), JSON.stringify(plan))
-				}
+				query: queryOver(engine.descendants, engine.planHolds)
 			};
 			registerTree(liveToken, tree);
 			return tree;
@@ -744,15 +696,19 @@ export function createNativeEngine<
 
 		const writeText: TextWriter = (path, text, create) => engine.writeText(path, text, create);
 
-		function renderTemplates(node: AnyUntypedNode): string {
-			const record = builtRefOf(node) === undefined ? recordOf(node) : undefined;
-			const at = record === undefined ? coordinateOf(node) : undefined;
-			if (record === undefined && at === undefined) throw new Error('renderTemplates renders a node as a read gave it, and this one was built or edited');
+		function readRendered(node: object, named: NodeCoordinate, options: object | undefined, templates: boolean): string {
+			const { readRenderAt } = engine;
+			if (readRenderAt === undefined) throw new Error(ARENA_FEATURE_REFUSED);
 			const changed = rootEdges(node);
-			if (at !== undefined) return engine.renderAt(decodeTree(at.$treeHandle), decodeIndex(at.$treeHandle), changed.leading, changed.trailing, undefined, true);
-			const { renderRecord } = engine;
-			if (renderRecord === undefined) throw new Error(ARENA_FEATURE_REFUSED);
-			return renderRecord.call(engine, recordTreeOf(node as unknown as RecordPosition), record!, changed.leading, changed.trailing, undefined, true);
+			return readRenderAt.call(engine, coordinateIndex(named), changed.leading, changed.trailing, options, templates);
+		}
+
+		function renderTemplates(node: AnyUntypedNode): string {
+			const at = coordinateOf(node);
+			if (at === undefined) throw new Error('renderTemplates renders a node as a read gave it, and this one was built or edited');
+			const changed = rootEdges(node);
+			if ('$node' in at) return readRendered(node, at, undefined, true);
+			return engine.renderAt(decodeTree(at.$treeHandle), decodeIndex(at.$treeHandle), changed.leading, changed.trailing, undefined, true);
 		}
 
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
@@ -772,8 +728,8 @@ export function createNativeEngine<
 						return at;
 					};
 					return createRenderHandle(
-						() => renderBuilt.call(engine, built.arena.owner, settled(), changed.leading, changed.trailing, renderTreeOf(node as object), perCall),
-						(path, create) => renderBuiltToFile.call(engine, built.arena.owner, settled(), changed.leading, changed.trailing, path, create, renderTreeOf(node as object), perCall),
+						() => renderBuilt.call(engine, built.arena.owner, settled(), changed.leading, changed.trailing, sourceRecordOf(node as object), perCall),
+						(path, create) => renderBuiltToFile.call(engine, built.arena.owner, settled(), changed.leading, changed.trailing, path, create, sourceRecordOf(node as object), perCall),
 						writeText
 					);
 				}
@@ -785,24 +741,10 @@ export function createNativeEngine<
 					writeText
 				);
 			}
-			const record = typeof node === 'number' ? undefined : recordOf(node);
-			if (record !== undefined) {
-				const changed = rootEdges(node as object);
-				const treeId = recordTreeOf(node as RecordPosition);
-				const { renderRecord, renderRecordToFile } = engine;
-				if (renderRecord === undefined || renderRecordToFile === undefined)
-					throw new Error(ARENA_FEATURE_REFUSED);
-				return createRenderHandle(
-					() => {
-						holdsTrees();
-						return renderRecord.call(engine, treeId, record, changed.leading, changed.trailing, perCall);
-					},
-					(path, create) => {
-						holdsTrees();
-						return renderRecordToFile.call(engine, treeId, record, changed.leading, changed.trailing, path, create, perCall);
-					},
-					writeText
-				);
+			const named = typeof node === 'number' ? undefined : coordinateOf(node);
+			if (named !== undefined && '$node' in named) {
+				const text = (): string => readRendered(node as object, named, perCall, false);
+				return createRenderHandle(text, (path, create) => writeText(path, text(), create), writeText);
 			}
 			const data = typeof node === 'number' ? node : toNodeData(node, kindView);
 			const treeId = typeof node === 'number' ? undefined : renderTreeOf(node);
@@ -856,6 +798,25 @@ export function createNativeEngine<
 	}
 }
 
+function queryOver(descendants: NativeEngineLike['descendants'], planHolds: NativeEngineLike['planHolds']): TreeQuery {
+	return {
+		descendants: (walk) => {
+			const batch = JSON.parse(
+				descendants(
+					JSON.stringify(walk.from),
+					walk.kinds === undefined ? undefined : [...walk.kinds],
+					walk.resume === undefined ? undefined : [...walk.resume],
+					walk.limit,
+					walk.plan === undefined ? undefined : JSON.stringify(walk.plan),
+					walk.depth
+				)
+			) as Omit<DescendantBatch, 'origin'> & { readonly origin: number | NodeAddress };
+			return { ...batch, origin: typeof batch.origin === 'number' ? { handle: batch.origin } : batch.origin };
+		},
+		planHolds: (addresses, plan) => planHolds(JSON.stringify(addresses), JSON.stringify(plan))
+	};
+}
+
 const nativeRecords = new WeakMap<object, BuiltRecords>();
 
 export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
@@ -863,7 +824,7 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
-	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, builtBump, releaseBuilt } = engine;
+	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, builtBump, releaseBuilt, parseRecords, readWords, readText, readDescendants, readPlanHolds, readSnapshotLayouts, readTriviaSide, writeReadTriviaSide, readUnitSides, readSides, readSlotLayouts, readSlotSeparator, readSeparatorBefore, readEditedWithin, readIsEmpty, readSiblings, readSources } = engine;
 	if (
 		builtBump === undefined ||
 		releaseBuilt === undefined ||
@@ -875,7 +836,24 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		builtLeafSide === undefined ||
 		copyBuiltSites === undefined ||
 		builtWords === undefined ||
-		builtBytes === undefined
+		builtBytes === undefined ||
+		parseRecords === undefined ||
+		readWords === undefined ||
+		readText === undefined ||
+		readDescendants === undefined ||
+		readPlanHolds === undefined ||
+		readSnapshotLayouts === undefined ||
+		readTriviaSide === undefined ||
+		writeReadTriviaSide === undefined ||
+		readUnitSides === undefined ||
+		readSides === undefined ||
+		readSlotLayouts === undefined ||
+		readSlotSeparator === undefined ||
+		readSeparatorBefore === undefined ||
+		readEditedWithin === undefined ||
+		readIsEmpty === undefined ||
+		readSiblings === undefined ||
+		readSources === undefined
 	)
 		throw new Error(ARENA_FEATURE_REFUSED);
 	return {
@@ -886,6 +864,24 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		bytes: (length) => builtBytes.call(engine, length),
 		bump: (at) => builtBump.call(engine, at),
 		release: (at, held, owned) => releaseBuilt.call(engine, at, held, owned),
+		read: (chunk) => readWords.call(engine, chunk) ?? undefined,
+		parse: (source) => JSON.parse(parseRecords.call(engine, source)) as ParsedRecords,
+		text: (node, start, end) => readText.call(engine, node, start, end),
+		query: queryOver(readDescendants.bind(engine), readPlanHolds.bind(engine)),
+		reads: {
+			snapshotLayouts: (node, holderByte) => readSnapshotLayouts.call(engine, node, holderByte),
+			sides: (node) => readSides.call(engine, node),
+			triviaSide: (node, side) => readTriviaSide.call(engine, node, side),
+			writeTriviaSide: (node, side, entries) => writeReadTriviaSide.call(engine, node, side, entries),
+			unitSides: (node) => readUnitSides.call(engine, node),
+			slotLayouts: (node) => readSlotLayouts.call(engine, node),
+			slotSeparator: (node) => readSlotSeparator.call(engine, node) ?? undefined,
+			separatorBefore: (node) => readSeparatorBefore.call(engine, node) ?? undefined,
+			editedWithin: (node, ownSides) => readEditedWithin.call(engine, node, ownSides),
+			isEmpty: (node) => readIsEmpty.call(engine, node),
+			siblings: (nodes) => readSiblings.call(engine, nodes),
+			sources: (nodes) => readSources.call(engine, nodes)
+		},
 		trivia: {
 			triviaSide: (at, side) => builtTriviaSide.call(engine, at, side) ?? undefined,
 			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries),

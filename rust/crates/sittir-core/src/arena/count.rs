@@ -330,7 +330,8 @@ impl BuiltChunks {
     /// record, and the records its sides in the store hold, which `sides`
     /// drops and answers. The tree of each link record and side record
     /// released is kept for `take_trees`. A sealed chunk left with no live
-    /// entry is freed.
+    /// entry is freed. A read's record takes no release, as a cell naming
+    /// one drops no count of it: it is freed with its arena.
     ///
     /// # Errors
     ///
@@ -344,6 +345,9 @@ impl BuiltChunks {
         let mut stack = Vec::new();
         if let Held::Text(at) = held {
             return self.drop_cell(CellWord(at.0 << 2), &mut stack);
+        }
+        if self.read_chunk(held.at().chunk()) {
+            return Ok(());
         }
         if owned {
             let byte = self.table(held.at().chunk())?.count(held.at().word())?;
@@ -389,6 +393,7 @@ impl BuiltChunks {
             return Ok(());
         }
         match self.chunks.get_mut(at.chunk() as usize) {
+            Some(Some(BuiltChunk::Words { read: true, .. })) => Ok(()),
             Some(Some(BuiltChunk::Words { .. })) => self.drop_count(Held::Record(at), stack),
             Some(Some(BuiltChunk::Bytes { cells, .. })) => {
                 // SAFETY: as `CountTable::bytes`.
@@ -534,6 +539,9 @@ impl BuiltChunks {
         };
         if dead {
             self.chunks[chunk as usize] = None;
+            if self.sources.is_some_and(|(open, _)| open == chunk) {
+                self.sources = None;
+            }
             self.overflow.retain(|&at, _| Address(at).chunk() != chunk);
             self.free.push_back(chunk);
             self.freed.push(chunk);
@@ -554,8 +562,8 @@ mod tests {
 
     fn shape(kind: KindId) -> Option<RecordShape> {
         const CELLS: &[CellShape] = &[
-            CellShape { word: 2, width: 3, run: None, inline: 0, forms: form::NODE, built: 2, key: "_child" },
-            CellShape { word: 5, width: 1, run: Some(3), inline: 0, forms: form::NODE, built: 3, key: "_items" },
+            CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_child" },
+            CellShape { word: 5, width: 1, run: Some(3), forms: form::NODE, built: 3, key: "_items" },
         ];
         match kind {
             PAIR => Some(RecordShape { words: 6, built_words: 4, cells: CELLS }),
@@ -648,6 +656,40 @@ mod tests {
         assert!(!built.arena.released(shared), "the second root still holds the shared leaf, through its cell and its list");
         built.release(second, true).expect("released");
         assert!([second, list, shared].into_iter().all(|at| built.arena.released(at)));
+    }
+
+    #[test]
+    fn releasing_a_root_leaves_a_read_s_record_it_holds_as_it_is() {
+        let mut built = Builder::new();
+        let chunk = built.arena.alloc_read_words(64).expect("a read's chunk");
+        let read = Address::new(chunk, 0).expect("an address");
+        let root = built.place(&[with_kind(PAIR, BITS).expect("a kind"), 0, read.0 << 2, 0], OWNED | 1);
+        built.release(root, true).expect("a read's record takes no release");
+        assert!(built.arena.released(root));
+        assert!(built.arena.read_chunk(chunk), "the read's chunk is still the arena's");
+    }
+
+    #[test]
+    fn a_later_read_writes_on_in_the_chunk_the_read_before_it_left_open() {
+        use crate::arena::{ReadWriter, RecordSpace, CHUNK_WORDS};
+        let mut arena = BuiltChunks::new(BITS, shape);
+        let first = ReadWriter::new(&mut arena).alloc(6).expect("a record");
+        let second = ReadWriter::new(&mut arena).alloc(6).expect("a record");
+        assert_eq!((second.chunk(), second.word()), (first.chunk(), first.word() + 6), "the second read's record follows the first's");
+        let whole = ReadWriter::new(&mut arena).alloc(CHUNK_WORDS).expect("a record");
+        assert_ne!(whole.chunk(), first.chunk(), "a record the open chunk has no room for takes the next");
+        assert!(arena.read_chunk(first.chunk()) && arena.read_chunk(whole.chunk()));
+    }
+
+    #[test]
+    fn releasing_a_read_s_record_itself_leaves_it_as_it_is() {
+        let mut built = Builder::new();
+        let chunk = built.arena.alloc_read_words(64).expect("a read's chunk");
+        let read = Address::new(chunk, 0).expect("an address");
+        for owned in [false, true] {
+            built.release(read, owned).expect("a read's record takes no release");
+        }
+        assert!(built.arena.read_chunk(chunk), "the read's chunk is still the arena's");
     }
 
     #[test]

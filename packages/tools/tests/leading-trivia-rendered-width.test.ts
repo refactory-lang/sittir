@@ -16,7 +16,7 @@ afterAll(disposeNativeEngines);
  * both name one parser node: the line gap before it is the envelope's, which a
  * root render leaves out, so the width is the owned comment and nothing else.
  */
-const ts = await sharedEngine(() => createEngine(typescript));
+const ts = await sharedEngine(() => createEngine(typescript, { nodeStorage: 'object' }));
 const native = await loadNativeEngine('typescript');
 const accessorOf = await loadSlotAccessorOf('typescript');
 const render = (node: AnyUntypedNode): string => native.render(node).toString();
@@ -53,7 +53,7 @@ describe('leadingTriviaRenderedWidth on a detached alias envelope', () => {
  */
 describe('leadingTriviaRenderedWidth through the first-descendant chain', () => {
 	it('counts the comments the block and its first statement print before the first token', async () => {
-		using py = await createEngine(python);
+		using py = await createEngine(python, { nodeStorage: 'object' });
 		const nativePy = await loadNativeEngine('python');
 		const renderPy = (node: AnyUntypedNode): string => nativePy.render(node).toString();
 		const triviaPy = (node: object) => sidesOf(node);

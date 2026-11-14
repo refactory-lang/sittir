@@ -6,12 +6,16 @@ const source = 'fn a() {}\nfn b() {}';
 const crlfSource = source.replaceAll('\n', '\r\n');
 
 describe.each(['object', 'arena'] as const)('rendering a %s node through another engine', (nodeStorage) => {
-	it.each([false, true])('uses the rendering engine defaults after parser disposal: %s', async (disposeParser) => {
+	it.each([false, true])('uses the rendering engine defaults, and after parser disposal (%s) renders an object node and refuses an arena node', async (disposeParser) => {
 		const parser = await createEngine(rust, { nodeStorage });
 		const renderer = await createEngine(rust, { render: { layout: { newline: '\r\n' } } });
 		try {
 			const root = parser.parse(source);
 			if (disposeParser) parser.dispose();
+			if (disposeParser && nodeStorage === 'arena') {
+				expect(() => renderer.render(root).toString()).toThrow(/the arena that built a side's record was released/);
+				return;
+			}
 			expect(renderer.render(root).toString()).toBe(crlfSource);
 			expect(renderer.render(root, { layout: { newline: '\n' } }).toString()).toBe(source);
 		} finally {

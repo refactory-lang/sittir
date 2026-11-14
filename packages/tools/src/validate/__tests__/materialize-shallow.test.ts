@@ -17,9 +17,9 @@ async function shallow(nodeStorage: 'object' | 'arena', kind: string, source: st
 
 describe('a node read one level down, through the slot readers', () => {
 	for (const nodeStorage of ['object', 'arena'] as const) {
-		it(`${nodeStorage}: holds each child as its coordinate, and renders`, async () => {
+		it(`${nodeStorage}: holds each child ${nodeStorage === 'object' ? 'as its coordinate' : 'whole, since no tree is left to name'}, and renders`, async () => {
 			const { data, rendered, dispose } = await shallow(nodeStorage, 'let_declaration', 'fn f() { let x = a + b; }');
-			expect(isCoordinate(data._value)).toBe(true);
+			expect(isCoordinate(data._value)).toBe(nodeStorage === 'object');
 			expect(rendered).toBe('let x = a + b;');
 			dispose();
 		});

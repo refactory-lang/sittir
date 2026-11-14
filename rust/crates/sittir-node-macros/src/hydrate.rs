@@ -32,19 +32,15 @@ fn stored_impl(ident: &Ident, stored: &TokenStream) -> TokenStream {
     }
 }
 
-/// The impl's head and the admission and own-row prelude of a struct's walk:
-/// `__held` is what its holder holds of it, by coordinate or, for a text
-/// leaf, whole.
-fn struct_impl(ident: &Ident, leaf: bool, body: &TokenStream) -> TokenStream {
+/// The impl's head and the admission prelude of a struct's walk.
+fn struct_impl(ident: &Ident, body: &TokenStream) -> TokenStream {
     gated(&quote! {
         impl ::sittir_core::arena::HydrateNode for #ident {
             #[allow(unused_mut, unused_variables)]
             fn hydrate(
                 cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                 ctx: &mut __rt::ReadCtx<'_>,
-                depth: ::core::option::Option<__rt::Depth>,
                 records: &mut ::sittir_core::arena::Hydration<'_>,
-                inline: ::core::option::Option<::sittir_core::arena::Embed>,
             ) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError> {
                 let __at = ctx.current(cursor);
                 let __node = cursor.node();
@@ -52,27 +48,23 @@ fn struct_impl(ident: &Ident, leaf: bool, body: &TokenStream) -> TokenStream {
                     return ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: __at.grammar, index: __at.index }.into());
                 }
                 let index = __at.index;
-                let __held = ::sittir_core::arena::Hydrated::Node { kind: __stored_kind(&__node), row: index, span: ::sittir_core::types::Span { start: __at.start, end: __at.end }, leaf: #leaf };
                 #body
             }
         }
     })
 }
 
-/// The start of the walk of a struct with a record: none past the read's
-/// depth unless embedded, and its record, reserved.
+/// The start of the walk of a struct with a record: its record, reserved.
 fn record_start(words: u32) -> TokenStream {
     quote! {
-        if records.walk(depth, inline) == ::sittir_core::arena::Walk::Skip {
-            return ::core::result::Result::Ok(__held);
-        }
         let __row = ::sittir_core::arena::hydrated_row(&__at, ctx);
-        let __draft = records.draft(__stored_kind(&__node), #words, inline)?;
+        records.node(&__at, &__node);
+        let __draft = records.draft(__stored_kind(&__node), #words)?;
     }
 }
 
 fn record_end(delimiter: &TokenStream) -> TokenStream {
-    quote!(records.finish(__draft, &::sittir_core::arena::parsed_side(__row, #delimiter), __stored_kind(&__node), inline))
+    quote!(records.finish(__draft, &::sittir_core::arena::parsed_side(__row, #delimiter), __stored_kind(&__node)))
 }
 
 fn words_of(ident: &Ident, attrs: &KindAttrs) -> syn::Result<u32> {
@@ -87,16 +79,16 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         return Ok(stored);
     }
     let hydrate = if leaf {
-        struct_impl(ident, true, &quote! {
+        struct_impl(ident, &quote! {
             records.meet_under(cursor, __at.count)?;
-            ::core::result::Result::Ok(__held)
+            ::core::result::Result::Ok(::sittir_core::arena::Hydrated::Leaf { kind: __stored_kind(&__node), row: index, span: ::sittir_core::types::Span { start: __at.start, end: __at.end } })
         })
     } else if let Some(pattern) = &attrs.interior {
-        struct_impl(ident, false, &interior(ident, attrs, fields, pattern)?)
+        struct_impl(ident, &interior(ident, attrs, fields, pattern)?)
     } else if attrs.content.is_some() {
-        struct_impl(ident, false, &envelope(ident, attrs, fields)?)
+        struct_impl(ident, &envelope(ident, attrs, fields)?)
     } else {
-        struct_impl(ident, false, &routed(ident, attrs, fields)?)
+        struct_impl(ident, &routed(ident, attrs, fields)?)
     };
     Ok(quote!(#stored #hydrate))
 }
@@ -114,7 +106,6 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
         }))
         .map(|(i, (field, slot))| (i, field, slot))
         .collect();
-    let min_depth = attrs.min_depth.unwrap_or(0);
     let mut starts = Vec::new();
     let mut takes = Vec::new();
     let mut separators = Vec::new();
@@ -140,14 +131,10 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
             continue;
         }
         let shape = crate::views::cell_shape(field, &slot.cell)?;
-        if slot.cell.run.is_some() {
-            let message = format!("{ident}.{}: a list's items embed no record", field.ident);
-            starts.push(quote!(const _: () = assert!(#shape.forms & ::sittir_core::record::form::INLINE == 0, #message);));
-        }
         starts.push(quote!(let mut #acc = <#ty as ::sittir_core::arena::HydrateSlot>::held();));
         takes.push(quote! {
             __rt::Route::Slot { slot: #id, .. } => {
-                if let ::core::result::Result::Err(refusal) = <#ty as ::sittir_core::arena::HydrateSlot>::take_held(&mut #acc, cursor, ctx, depth, #site, records, #shape, __draft) {
+                if let ::core::result::Result::Err(refusal) = <#ty as ::sittir_core::arena::HydrateSlot>::take_held(&mut #acc, cursor, ctx, #site, records) {
                     break 'walk ::core::result::Result::Err(refusal);
                 }
                 true
@@ -189,8 +176,6 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
     let end = record_end(&delimiter);
     Ok(quote! {
         #start
-        let __starts = ctx.starts();
-        let depth = depth.map(|depth| if __starts { depth.at_least(#min_depth) } else { depth });
         #(#starts)*
         #collect
         if cursor.goto_first_child() {
@@ -291,15 +276,11 @@ fn envelope(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Resu
     let inner: &Type = inner_of(field.ty, "SlotValue").ok_or_else(|| syn::Error::new_spanned(field.ty, "an envelope's content is a `SlotValue<…>`"))?;
     let Role::Slot(slot) = &field.role else { return Err(syn::Error::new_spanned(content, "an envelope's content is a slot")) };
     if attrs.content_list {
-        let refused = format!("{ident}: an envelope over a list holds the list's record, its coordinate or its embedded record, and the list hydrated to none of them");
+        let refused = format!("{ident}: an envelope over a list holds the list's record, and the list hydrated to none of them");
         return Ok(quote! {
-            match <#inner as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, depth.and_then(__rt::Depth::below), records, inline)? {
+            match <#inner as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, records)? {
                 ::sittir_core::arena::Hydrated::Record { at, .. } => ::core::result::Result::Ok(::sittir_core::arena::Hydrated::Record { kind: __stored_kind(&__node), at }),
-                ::sittir_core::arena::Hydrated::Node { row, span, leaf, .. } => {
-                    ::core::result::Result::Ok(::sittir_core::arena::Hydrated::Node { kind: __stored_kind(&__node), row, span, leaf })
-                }
-                embedded @ ::sittir_core::arena::Hydrated::Embedded => ::core::result::Result::Ok(embedded),
-                ::sittir_core::arena::Hydrated::Unit { .. } | ::sittir_core::arena::Hydrated::Text { .. } => ::core::result::Result::Err(::sittir_core::arena::ArenaError::Unwritable(#refused).into()),
+                ::sittir_core::arena::Hydrated::Leaf { .. } | ::sittir_core::arena::Hydrated::Unit { .. } | ::sittir_core::arena::Hydrated::Text { .. } => ::core::result::Result::Err(::sittir_core::arena::ArenaError::Unwritable(#refused).into()),
             }
         });
     }
@@ -339,9 +320,8 @@ fn envelope(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Resu
     Ok(quote! {
         const _: () = assert!(#wraps_hidden || <#inner as ::sittir_core::record::Stored>::STORED & ::sittir_core::record::stored::RECORD == 0, #message);
         #start
-        let __inline = records.embed(__draft, #shape)?;
         #hidden
-        let __content = <#inner as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, depth, records, __inline);
+        let __content = <#inner as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, records);
         #restore
         records.cell(__draft, #shape, ::core::option::Option::Some(__content?))?;
         #end
@@ -375,7 +355,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
         }
         let name = format_ident!("__hydrate_{}", at);
         let value = match (variant.payload, &variant.first) {
-            (Some(payload), _) => quote!(<#payload as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, depth, records, inline)),
+            (Some(payload), _) => quote!(<#payload as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, records)),
             (None, Some(first)) => quote! {
                 records.meet_under(cursor, ctx.current(cursor).count)?;
                 ::core::result::Result::Ok(::sittir_core::arena::Hydrated::Unit { kind: #first, row: ::core::option::Option::Some(__rt::index_of(cursor)) })
@@ -388,9 +368,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
             fn #name(
                 cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                 ctx: &mut __rt::ReadCtx<'_>,
-                depth: ::core::option::Option<__rt::Depth>,
                 records: &mut ::sittir_core::arena::Hydration<'_>,
-                inline: ::core::option::Option<::sittir_core::arena::Embed>,
             ) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError> {
                 #value
             }
@@ -399,13 +377,11 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
     }
     let hydrate = gated(&quote! {
         const _: () = {
-            type __Hydrate = fn(&mut ::sittir_core::tree_sitter::TreeCursor<'_>, &mut __rt::ReadCtx<'_>, ::core::option::Option<__rt::Depth>, &mut ::sittir_core::arena::Hydration<'_>, ::core::option::Option<::sittir_core::arena::Embed>) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError>;
+            type __Hydrate = fn(&mut ::sittir_core::tree_sitter::TreeCursor<'_>, &mut __rt::ReadCtx<'_>, &mut ::sittir_core::arena::Hydration<'_>) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError>;
             fn __unhydrated(
                 cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                 _ctx: &mut __rt::ReadCtx<'_>,
-                _depth: ::core::option::Option<__rt::Depth>,
                 _records: &mut ::sittir_core::arena::Hydration<'_>,
-                _inline: ::core::option::Option<::sittir_core::arena::Embed>,
             ) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError> {
                 ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: __rt::index_of(cursor) }.into())
             }
@@ -415,28 +391,13 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>], codec_only: bool) -> 
                 fn hydrate(
                     cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                     ctx: &mut __rt::ReadCtx<'_>,
-                    depth: ::core::option::Option<__rt::Depth>,
                     records: &mut ::sittir_core::arena::Hydration<'_>,
-                    inline: ::core::option::Option<::sittir_core::arena::Embed>,
                 ) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError> {
                     let __at = ctx.current(cursor);
                     let (grammar, display) = (__at.grammar, __at.display);
                     match __variant(grammar, display).and_then(|i| __HYDRATES.get(i as usize)) {
-                        ::core::option::Option::Some(hydrate) => hydrate(cursor, ctx, depth, records, inline),
+                        ::core::option::Option::Some(hydrate) => hydrate(cursor, ctx, records),
                         ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, index: __rt::index_of(cursor) }.into()),
-                    }
-                }
-                fn hydrate_stamped(
-                    stamped: ::sittir_core::types::KindId,
-                    cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
-                    ctx: &mut __rt::ReadCtx<'_>,
-                    depth: ::core::option::Option<__rt::Depth>,
-                    records: &mut ::sittir_core::arena::Hydration<'_>,
-                    inline: ::core::option::Option<::sittir_core::arena::Embed>,
-                ) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError> {
-                    match __variant_of_kind(stamped).and_then(|i| __HYDRATES.get(i as usize)) {
-                        ::core::option::Option::Some(hydrate) => hydrate(cursor, ctx, depth, records, inline),
-                        ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: stamped, index: __rt::index_of(cursor) }.into()),
                     }
                 }
             }
@@ -454,9 +415,7 @@ pub fn members(ident: &Ident) -> TokenStream {
             fn hydrate(
                 cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>,
                 ctx: &mut __rt::ReadCtx<'_>,
-                _depth: ::core::option::Option<__rt::Depth>,
                 records: &mut ::sittir_core::arena::Hydration<'_>,
-                _inline: ::core::option::Option<::sittir_core::arena::Embed>,
             ) -> ::core::result::Result<::sittir_core::arena::Hydrated, ::sittir_core::arena::HydrateError> {
                 let at = ctx.current(cursor);
                 let member = __resolve(&mut __rt::LentCursor::new(cursor, ctx.source), &at).ok_or(__rt::ReadError::Unspelled { kind: at.grammar, index: at.index })?;

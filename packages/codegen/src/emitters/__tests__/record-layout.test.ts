@@ -32,11 +32,11 @@ describe('recordLayoutOf', () => {
 		expect(recordLayoutOf([])).toEqual({ words: RECORD_HEADER_WORDS, builtWords: RECORD_HEADER_WORDS, places: [] });
 	});
 
-	it("reserves a bounded child's embedded record and stamps its capacity, and a list of them holds their cells", () => {
-		const layout = recordLayoutOf([{ field: 'child', form: slotRecordForm(false, STORED.record, false, 7) }]);
-		expect(layout).toEqual({ words: 9, builtWords: 3, places: [{ field: 'child', word: 2, forms: FORM.inline, width: 7, inline: 7, built: 2 }] });
-		expect(recordArgs(layout.places[0]!)).toBe('word = 2, width = 7, inline = 7, forms = 8, built = 2');
-		expect(slotRecordForm(false, STORED.record, true, 7)).toEqual({ tag: 'cell', forms: FORM.node, width: 1, run: 3 });
+	it("names a child's record from a node cell, and a list of them holds their cells", () => {
+		const layout = recordLayoutOf([{ field: 'child', form: slotRecordForm(false, STORED.record, false) }]);
+		expect(layout).toEqual({ words: 5, builtWords: 3, places: [{ field: 'child', word: 2, forms: FORM.node, width: 3, built: 2 }] });
+		expect(recordArgs(layout.places[0]!)).toBe('word = 2, width = 3, forms = 1, built = 2');
+		expect(slotRecordForm(false, STORED.record, true)).toEqual({ tag: 'cell', forms: FORM.node, width: 1, run: 3 });
 	});
 
 	it('opens a cell of several forms with a tag word, and a blank arm adds no width', () => {

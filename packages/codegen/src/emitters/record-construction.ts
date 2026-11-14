@@ -255,7 +255,7 @@ export class BuiltViewTable {
 }
 
 function placeRow(place: RecordPlace): string {
-	return 'bit' in place ? `[${place.word}, ${place.bit}]` : `[${place.word}, ${place.built}, ${place.width}, ${place.forms}, ${place.inline ?? 0}, ${place.run ?? 0}]`;
+	return 'bit' in place ? `[${place.word}, ${place.bit}]` : `[${place.word}, ${place.built}, ${place.width}, ${place.forms}, ${place.run ?? 0}]`;
 }
 
 function viewKindId(node: ViewKind): number {

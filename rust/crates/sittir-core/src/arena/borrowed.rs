@@ -17,6 +17,27 @@ pub trait ArenaRead {
         false
     }
 
+    /// Whether chunk `n` is one a read took for its records, which it alone
+    /// writes. An arena no read writes into answers false.
+    fn read_chunk(&self, n: u32) -> bool {
+        let _ = n;
+        false
+    }
+
+    /// Whether `at` lies in a chunk a read wrote (`read_chunk`): where a
+    /// record a read left is, its own entry or one embedded in its
+    /// holder's.
+    fn read_record(&self, at: Address) -> bool {
+        self.read_chunk(at.chunk())
+    }
+
+    /// Whether `at` is where a read wrote an entry of its records
+    /// (`read_chunk`).
+    fn read_entry(&self, at: Address) -> bool {
+        let _ = at;
+        false
+    }
+
     /// Whether chunk `n` was freed: every entry in it was released. An
     /// arena that frees no chunk answers false.
     fn freed(&self, n: u32) -> bool {

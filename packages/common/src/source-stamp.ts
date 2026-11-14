@@ -1,7 +1,7 @@
 import type { SourceMember } from '@sittir/types';
 import { Source } from './source.ts';
 import type { TreeHandle } from './read.ts';
-import { isHandle } from './handle.ts';
+import { isHandle, isParsedPosition } from './handle.ts';
 import { isHeldRead } from './node-data.ts';
 
 export const SOURCE = Symbol('sittir.source-stamp') as typeof SourceMember;
@@ -22,8 +22,8 @@ export function sourceOf(node: object): Source | undefined {
 	if (own !== undefined) return own;
 	const tree = (node as { readonly $tree?: TreeHandle }).$tree;
 	if (tree !== undefined && isHandle(node)) {
-		if (tree.built !== undefined) return Source.Factory;
-		return typeof (node as { readonly $at?: unknown }).$at === 'number' ? Source.Ts : undefined;
+		if (isParsedPosition(node)) return Source.Ts;
+		return tree.built === undefined ? undefined : Source.Factory;
 	}
 	return isHeldRead(node) ? Source.Ts : undefined;
 }

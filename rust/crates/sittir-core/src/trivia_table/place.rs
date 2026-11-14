@@ -42,11 +42,12 @@ use std::collections::{BTreeMap, HashMap};
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::sync::{Arc, Mutex, OnceLock, PoisonError};
 
-/// Where a token falls in the walk's order: by its bytes, then as the walk
-/// pushes it, so the tokens at one byte keep the walk's order. A leaf goes
-/// as the walk visits it, hidden text as it visits the child after it, and
-/// a node's edge tokens and last hidden text as it leaves the node, the
-/// inner of two nodes it leaves at once first.
+/// Where a token falls in the walk's order: by its bytes, then, for the
+/// tokens with no width, which alone can share their bytes, by their nodes'
+/// ranks at that byte (`Rank`), so they keep the walk's order: a leaf goes
+/// as the walk enters it, and a node's edge as the walk leaves the node,
+/// the inner of two nodes it leaves at once first. Hidden text has width,
+/// so its bytes are its own.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 struct Key {
     start: u32,
@@ -58,17 +59,36 @@ struct Key {
 }
 
 impl Key {
-    fn leaf(start: u32, end: u32, index: NodeIndex) -> Self {
-        Self { start, end, visit: index.get(), leaf: true, leave: 0, edge: 0 }
+    /// A leaf's token: `rank` its node's at its byte when it has no width.
+    fn leaf(start: u32, end: u32, rank: Option<Rank>) -> Self {
+        Self { start, end, visit: rank.map_or(0, |rank| rank.enter), leaf: true, leave: 0, edge: 0 }
     }
 
-    fn before(start: u32, end: u32, kid: NodeIndex) -> Self {
-        Self { start, end, visit: kid.get(), leaf: false, leave: u32::MAX, edge: 0 }
+    /// Hidden text before a child.
+    fn before(start: u32, end: u32) -> Self {
+        Self { start, end, visit: 0, leaf: false, leave: u32::MAX, edge: 0 }
     }
 
-    fn leave(start: u32, end: u32, node: &Kid, edge: u8) -> Self {
-        Self { start, end, visit: node.index.get() + node.count, leaf: false, leave: u32::MAX - node.index.get(), edge }
+    /// Hidden text after a node's last child.
+    fn after(start: u32, end: u32) -> Self {
+        Self { start, end, visit: 0, leaf: false, leave: 0, edge: 0 }
     }
+
+    /// The edge `edge` of a node at `at`, `rank` its node's there.
+    fn edge(at: u32, rank: Rank, edge: u8) -> Self {
+        Self { start: at, end: at, visit: rank.exit, leaf: false, leave: u32::MAX - rank.enter, edge }
+    }
+}
+
+/// Where a node falls among the nodes that touch one byte, in document
+/// order: `enter` counts the nodes touching the byte the walk enters before
+/// it, and `exit` those it has entered when it leaves the node. A node
+/// after another's subtree enters at or past that one's `exit`; of two
+/// nodes that leave at once, the inner entered later.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct Rank {
+    enter: u32,
+    exit: u32,
 }
 
 /// A token of the walk, by its bytes and its place in the walk's order.
@@ -84,16 +104,8 @@ impl Tok {
         self.start == self.end
     }
 
-    fn leaf(kid: &Kid) -> Self {
-        Self { start: kid.start, end: kid.end, key: Key::leaf(kid.start, kid.end, kid.index) }
-    }
-
-    fn start_edge(kid: &Kid) -> Self {
-        Self { start: kid.start, end: kid.start, key: Key::leave(kid.start, kid.start, kid, 1) }
-    }
-
-    fn end_edge(kid: &Kid) -> Self {
-        Self { start: kid.end, end: kid.end, key: Key::leave(kid.end, kid.end, kid, 2) }
+    fn edge(at: u32, rank: Rank, edge: u8) -> Self {
+        Self { start: at, end: at, key: Key::edge(at, rank, edge) }
     }
 }
 
@@ -264,15 +276,22 @@ impl<T> Chunks<T> {
     /// Sets the value at `index`, which none holds, answering the heap a
     /// chunk made for it takes.
     fn set(&self, index: usize, value: T) -> usize {
+        let mut held = Some(value);
+        let (_, made) = self.get_or_set(index, || held.take().expect("a value to set"));
+        debug_assert!(held.is_none(), "a value is set once");
+        made
+    }
+
+    /// The value at `index`, set to `value` when none holds it, and the
+    /// heap a chunk made for it takes.
+    fn get_or_set(&self, index: usize, value: impl FnOnce() -> T) -> (&T, usize) {
         let (chunk, at) = Self::locate(index);
         let mut made = 0;
         let values = self.chunks[chunk].get_or_init(|| {
             made = std::mem::size_of::<OnceLock<T>>() << chunk;
             (0..1usize << chunk).map(|_| OnceLock::new()).collect()
         });
-        let set = values[at].set(value);
-        debug_assert!(set.is_ok(), "a value is set once");
-        made
+        (values[at].get_or_init(value), made)
     }
 
     /// The values set, by index, up to the first index none holds.
@@ -352,25 +371,52 @@ const EMPTY: u32 = u32::MAX;
 /// a slot with acquire ordering finds them.
 #[derive(Debug)]
 struct Published {
-    slots: Box<[AtomicU32]>,
+    slots: Slots,
     tables: Chunks<Table>,
     runs: Chunks<Placed>,
 }
 
+/// Each node's two slots: one for every node of a tree whose nodes are
+/// counted, or made as a node's is first stored, for nodes met as they are
+/// read (`Nodes::bound`), which one call reads and no other thread.
+#[derive(Debug)]
+enum Slots {
+    Counted(Box<[AtomicU32]>),
+    Met(Chunks<std::cell::Cell<u32>>),
+}
+
 impl Published {
-    /// The slots of a tree of `nodes` nodes, all unplaced.
-    fn new(nodes: u32) -> Self {
-        Self { slots: (0..2 * nodes).map(|_| AtomicU32::new(UNPLACED)).collect(), tables: Chunks::new(nodes as usize), runs: Chunks::new(u32::MAX as usize) }
+    /// The slots of a tree of `nodes` nodes, all unplaced; of any node, for
+    /// a tree that counts none.
+    fn new(nodes: Option<u32>) -> Self {
+        let most = u32::MAX as usize;
+        let slots = match nodes {
+            Some(nodes) => Slots::Counted((0..2 * nodes).map(|_| AtomicU32::new(UNPLACED)).collect()),
+            None => Slots::Met(Chunks::new(2 * most + 1)),
+        };
+        Self { slots, tables: Chunks::new(nodes.map_or(most, |nodes| nodes as usize)), runs: Chunks::new(most) }
     }
 
-    fn slot(&self, index: NodeIndex, side: TriviaSide) -> Option<&AtomicU32> {
-        self.slots.get(2 * index.get() as usize + usize::from(side == TriviaSide::Inner))
+    fn at(index: NodeIndex, side: TriviaSide) -> usize {
+        2 * index.get() as usize + usize::from(side == TriviaSide::Inner)
+    }
+
+    /// Stores `slot` as the slot of `side` of the node at `index`,
+    /// answering the slot it held; none for a node the tree does not hold.
+    fn store(&self, index: NodeIndex, side: TriviaSide, slot: u32) -> Option<u32> {
+        match &self.slots {
+            Slots::Counted(slots) => slots.get(Self::at(index, side)).map(|held| held.swap(slot, Ordering::Release)),
+            Slots::Met(slots) => Some(slots.get_or_set(Self::at(index, side), || std::cell::Cell::new(UNPLACED)).0.replace(slot)),
+        }
     }
 
     /// The slot of `side` of the node at `index`; `EMPTY` for a node the
     /// tree does not hold.
     fn load(&self, index: NodeIndex, side: TriviaSide) -> u32 {
-        self.slot(index, side).map_or(EMPTY, |slot| slot.load(Ordering::Acquire))
+        match &self.slots {
+            Slots::Counted(slots) => slots.get(Self::at(index, side)).map_or(EMPTY, |slot| slot.load(Ordering::Acquire)),
+            Slots::Met(slots) => slots.get(Self::at(index, side)).map_or(UNPLACED, std::cell::Cell::get),
+        }
     }
 
     fn table(&self, slot: u32) -> Option<&Table> {
@@ -383,7 +429,11 @@ impl Published {
 
     /// The heap the slots and the directories take, and the chunks made.
     fn allocation(&self) -> usize {
-        std::mem::size_of_val::<[AtomicU32]>(&self.slots) + self.tables.allocation() + self.runs.allocation()
+        let slots = match &self.slots {
+            Slots::Counted(slots) => std::mem::size_of_val::<[AtomicU32]>(slots),
+            Slots::Met(slots) => slots.allocation(),
+        };
+        slots + self.tables.allocation() + self.runs.allocation()
     }
 }
 
@@ -469,11 +519,11 @@ impl Placement {
         let mut state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
         self.grown.store(true, Ordering::Relaxed);
         let published = self.published.get_or_init(|| {
-            let published = Published::new(nodes.kid(NodeIndex::ROOT).count);
+            let published = Published::new(nodes.bound());
             state.published += published.allocation();
             published
         });
-        let mut placer = Placer { nodes, lines, kinds: self.kinds, unit: self.unit.max(1), state: &mut state, published, kids: HashMap::default(), plans: HashMap::default(), placed: PlacedSides::new() };
+        let mut placer = Placer { nodes, lines, kinds: self.kinds, unit: self.unit.max(1), state: &mut state, published, kids: HashMap::default(), plans: HashMap::default(), placed: PlacedSides::new(), ranks: HashMap::default() };
         f(&mut placer)
     }
 
@@ -632,6 +682,9 @@ struct Placer<'t, 's, 'n> {
     kids: HashMap<NodeIndex, Arc<[Kid]>, IndexState>,
     plans: HashMap<Gap, Arc<Plan>, IndexState>,
     placed: PlacedSides,
+    /// Each node's rank at a byte, for the bytes a token with no width was
+    /// asked at.
+    ranks: HashMap<u32, HashMap<NodeIndex, Rank, IndexState>, IndexState>,
 }
 
 impl<'t> Placer<'t, '_, '_> {
@@ -641,6 +694,48 @@ impl<'t> Placer<'t, '_, '_> {
 
     fn len(&self) -> u32 {
         narrow(self.text().len())
+    }
+
+    /// The rank at `byte` of the node at `index`, which touches it: every
+    /// node touching the byte is ranked on the first ask, in one walk from
+    /// the root that enters only those.
+    fn rank(&mut self, byte: u32, index: NodeIndex) -> Rank {
+        if !self.ranks.contains_key(&byte) {
+            let mut ranks: HashMap<NodeIndex, Rank, IndexState> = HashMap::default();
+            let mut entered: Vec<(NodeIndex, u32, crate::nodes::Kids, usize)> = vec![(NodeIndex::ROOT, 0, self.nodes.kids(NodeIndex::ROOT), 0)];
+            let mut count = 1;
+            while let Some((node, enter, kids, next)) = entered.last_mut() {
+                if let Some(kid) = kids.get(*next) {
+                    *next += 1;
+                    if kid.start <= byte && byte <= kid.end {
+                        let (kid, enter) = (kid.index, count);
+                        count += 1;
+                        let kids = self.nodes.kids(kid);
+                        entered.push((kid, enter, kids, 0));
+                    }
+                } else {
+                    ranks.insert(*node, Rank { enter: *enter, exit: count });
+                    entered.pop();
+                }
+            }
+            self.ranks.insert(byte, ranks);
+        }
+        let rank = self.ranks.get(&byte).and_then(|ranks| ranks.get(&index)).copied();
+        debug_assert!(rank.is_some(), "a node ranked at a byte touches it");
+        rank.unwrap_or(Rank { enter: 0, exit: 0 })
+    }
+
+    fn leaf_tok(&mut self, kid: &Kid) -> Tok {
+        let rank = (kid.start == kid.end).then(|| self.rank(kid.start, kid.index));
+        Tok { start: kid.start, end: kid.end, key: Key::leaf(kid.start, kid.end, rank) }
+    }
+
+    fn start_edge(&mut self, node: &Kid) -> Tok {
+        Tok::edge(node.start, self.rank(node.start, node.index), 1)
+    }
+
+    fn end_edge(&mut self, node: &Kid) -> Tok {
+        Tok::edge(node.end, self.rank(node.end, node.index), 2)
     }
 
     /// What the placement reads of the node at `index`: from the shape of
@@ -682,7 +777,7 @@ impl<'t> Placer<'t, '_, '_> {
             return None;
         }
         if kid.leaf() {
-            return Some(Tok::leaf(kid));
+            return Some(self.leaf_tok(kid));
         }
         if let Some(&known) = self.state.firsts.get(&kid.index) {
             return known;
@@ -694,7 +789,7 @@ impl<'t> Placer<'t, '_, '_> {
             let Some(frame) = frames.last_mut() else { break None };
             let Some(&child) = frame.kids.get(frame.next) else {
                 let node = frame.node;
-                let after = hidden(source, frame.at, node.end, |start, end| Key::leave(start, end, &node, 0));
+                let after = hidden(source, frame.at, node.end, Key::after);
                 if after.is_some() {
                     break after;
                 }
@@ -703,7 +798,7 @@ impl<'t> Placer<'t, '_, '_> {
                 continue;
             };
             frame.next += 1;
-            let before = hidden(source, frame.at, child.start, |start, end| Key::before(start, end, child.index));
+            let before = hidden(source, frame.at, child.start, Key::before);
             frame.at = child.end;
             if before.is_some() {
                 break before;
@@ -712,7 +807,7 @@ impl<'t> Placer<'t, '_, '_> {
                 continue;
             }
             if child.leaf() {
-                break Some(Tok::leaf(&child));
+                break Some(self.leaf_tok(&child));
             }
             if let Some(&known) = self.state.firsts.get(&child.index) {
                 if known.is_some() {
@@ -726,7 +821,7 @@ impl<'t> Placer<'t, '_, '_> {
         let mut found = found?;
         for frame in frames.iter().rev() {
             if frame.node.start < found.start {
-                found = Tok::start_edge(&frame.node);
+                found = self.start_edge(&frame.node);
             }
             self.state.firsts.insert(frame.node.index, Some(found));
         }
@@ -745,7 +840,7 @@ impl<'t> Placer<'t, '_, '_> {
             return None;
         }
         if kid.leaf() {
-            return Some(Tok::leaf(kid));
+            return Some(self.leaf_tok(kid));
         }
         if let Some(&known) = self.state.lasts.get(&kid.index) {
             return known;
@@ -759,7 +854,7 @@ impl<'t> Placer<'t, '_, '_> {
             let node = frame.node;
             if frame.left == 0 {
                 let first = frame.kids.first().map(|kid| kid.index);
-                let before = hidden(source, node.start, frame.at, |start, end| first.map_or_else(|| Key::leave(start, end, &node, 0), |first| Key::before(start, end, first)));
+                let before = hidden(source, node.start, frame.at, |start, end| if first.is_some() { Key::before(start, end) } else { Key::after(start, end) });
                 if before.is_some() {
                     break before;
                 }
@@ -769,7 +864,7 @@ impl<'t> Placer<'t, '_, '_> {
             }
             let child = frame.kids[frame.left - 1];
             let next = frame.kids.get(frame.left).map(|kid| kid.index);
-            let after = hidden(source, child.end, frame.at, |start, end| next.map_or_else(|| Key::leave(start, end, &node, 0), |next| Key::before(start, end, next)));
+            let after = hidden(source, child.end, frame.at, |start, end| if next.is_some() { Key::before(start, end) } else { Key::after(start, end) });
             frame.left -= 1;
             frame.at = child.start;
             if after.is_some() {
@@ -779,7 +874,7 @@ impl<'t> Placer<'t, '_, '_> {
                 continue;
             }
             if child.leaf() {
-                break Some(Tok::leaf(&child));
+                break Some(self.leaf_tok(&child));
             }
             if let Some(&known) = self.state.lasts.get(&child.index) {
                 if known.is_some() {
@@ -794,7 +889,7 @@ impl<'t> Placer<'t, '_, '_> {
         let mut found = found?;
         for frame in frames.iter().rev() {
             if frame.node.end > found.end {
-                found = Tok::end_edge(&frame.node);
+                found = self.end_edge(&frame.node);
             }
             self.state.lasts.insert(frame.node.index, Some(found));
         }
@@ -836,14 +931,14 @@ impl<'t> Placer<'t, '_, '_> {
         }
         for (position, kid) in kids.iter().enumerate() {
             self.state.parent.insert(kid.index, index);
-            if let Some(token) = hidden(source, at, kid.start, |start, end| Key::before(start, end, kid.index)) {
+            if let Some(token) = hidden(source, at, kid.start, Key::before) {
                 segments.push(Segment { first: token, last: token, kid: None });
             }
             at = kid.end;
             if kid.entry() {
                 entries.push(*kid);
             } else if kid.leaf() {
-                let token = Tok::leaf(kid);
+                let token = self.leaf_tok(kid);
                 segments.push(Segment { first: token, last: token, kid: Some(position) });
             } else if let (Some(first), Some(last)) = (self.first(kid), self.last(kid)) {
                 segments.push(Segment { first, last, kid: Some(position) });
@@ -851,17 +946,17 @@ impl<'t> Placer<'t, '_, '_> {
                 self.entries_under(kid, &mut entries);
             }
         }
-        if let Some(token) = hidden(source, at, node.end, |start, end| Key::leave(start, end, &node, 0)).filter(|_| !node.leaf() && !node.entry()) {
+        if let Some(token) = hidden(source, at, node.end, Key::after).filter(|_| !node.leaf() && !node.entry()) {
             segments.push(Segment { first: token, last: token, kid: None });
         }
         if !root {
             if let (Some(first), Some(last)) = (segments.first().map(|segment| segment.first), segments.last().map(|segment| segment.last)) {
                 if node.start < first.start {
-                    let edge = Tok::start_edge(&node);
+                    let edge = self.start_edge(&node);
                     segments.insert(0, Segment { first: edge, last: edge, kid: None });
                 }
                 if node.end > last.end {
-                    let edge = Tok::end_edge(&node);
+                    let edge = self.end_edge(&node);
                     segments.push(Segment { first: edge, last: edge, kid: None });
                 }
             }
@@ -957,10 +1052,9 @@ impl<'t> Placer<'t, '_, '_> {
     /// The slot of `side` of the node at `index` once `cover` placed its
     /// layout owner: `EMPTY` where no layout owner placed it.
     fn settle(&self, index: NodeIndex, side: TriviaSide) -> u32 {
-        let Some(slot) = self.published.slot(index, side) else { return EMPTY };
-        match slot.load(Ordering::Relaxed) {
+        match self.published.load(index, side) {
             UNPLACED => {
-                slot.store(EMPTY, Ordering::Release);
+                self.published.store(index, side, EMPTY);
                 EMPTY
             }
             slot => slot,
@@ -1035,7 +1129,8 @@ impl<'t> Placer<'t, '_, '_> {
             }
             if entry != last {
                 let (node, side) = self.restore_side(&shape);
-                events.push((Order { from: shape.node.end, gap: false, left: None, step: u32::MAX - member.get() }, Event::Restore { place: Place::Side(node, side), depth: entry - last }));
+                let inner = u32::MAX - self.rank(shape.node.end, member).enter;
+                events.push((Order { from: shape.node.end, gap: false, left: None, step: inner }, Event::Restore { place: Place::Side(node, side), depth: entry - last }));
             }
         }
         events.sort_by_key(|(order, _)| *order);
@@ -1122,8 +1217,7 @@ impl<'t> Placer<'t, '_, '_> {
         };
         let published = self.published;
         let store = |index: NodeIndex, side: TriviaSide| {
-            if let Some(at) = published.slot(index, side) {
-                let replaced = at.swap(slot, Ordering::Release);
+            if let Some(replaced) = published.store(index, side, slot) {
                 debug_assert_eq!(replaced, UNPLACED, "one layout owner holds a side: {index} {side:?}");
             }
         };

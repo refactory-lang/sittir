@@ -1,6 +1,6 @@
 import type { Snapshot } from '@sittir/types';
-import { decodeIndex, isCoordinate, type TreeHandle } from './read.ts';
-import { coordinateOf, enterPath, envelopeKindOf, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, nodeText, separatorOf, sidesOf, slotsOf, unitSidesOf } from './node-data.ts';
+import { isCoordinate, type TreeHandle } from './read.ts';
+import { coordinateIndex, coordinateOf, enterPath, envelopeKindOf, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, nodeText, separatorOf, sidesOf, slotsOf, unitSidesOf } from './node-data.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { TriviaSides } from './trivia.ts';
 import { builtEntryNode, isBuiltEntry, readCoordinate } from './built-arena.ts';
@@ -83,7 +83,7 @@ function snapshotStep({ value, measure }: SnapshotTask, walk: SnapshotWalk): unk
 	const at = coordinateOf(value);
 	const tree = at === undefined ? undefined : (measure?.tree ?? snapshotTreeOf(value));
 	if (at === undefined || tree === undefined) return copyStep(value, walk, undefined);
-	const row = decodeIndex(at.$treeHandle);
+	const row = coordinateIndex(at);
 	const measured = measure ?? measureOf(tree, row, value);
 	const layout = measured.rows.get(row);
 	if (layout === undefined) throw new Error(`snapshot: the measure of a parsed subtree holds no layout for its row ${row}`);

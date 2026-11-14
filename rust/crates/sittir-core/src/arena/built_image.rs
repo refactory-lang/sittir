@@ -5,7 +5,7 @@
 use super::cell::{flag, with_kind, LINK_WORDS};
 use super::{Address, ArenaRead, CHUNK_WORDS};
 use crate::slot::ChangedEdges;
-use crate::types::{KindId, NodeIndex, Span, TreeId};
+use crate::types::{KindId, Span};
 
 enum ImageChunk {
     Words(Vec<u32>),
@@ -97,10 +97,12 @@ impl BuiltImage {
         image
     }
 
-    /// The link record of the parsed node at `row` of `tree`, whose record
-    /// is `record`, `Address::NONE` for a node without one.
-    pub(crate) fn link(&mut self, kind: KindId, tree: TreeId, row: NodeIndex, end: NodeIndex, record: Address, span: Span) -> Address {
-        let words: [u32; LINK_WORDS as usize] = [self.header(kind, flag::LINK), 0, tree.0, row.0, end.0, record.0, span.start, span.end];
+    /// The link record of the node `name` names, a node a read left with
+    /// no record of its own: its holder, then the word and item of its
+    /// site, both 0 for its holder's own node.
+    pub(crate) fn link(&mut self, kind: KindId, name: crate::types::NodeName, span: Span) -> Address {
+        let [word, item] = name.site.unwrap_or([0, 0]);
+        let words: [u32; LINK_WORDS as usize] = [self.header(kind, flag::LINK), 0, name.node.0, word, item, 0, span.start, span.end];
         self.words(&words)
     }
 

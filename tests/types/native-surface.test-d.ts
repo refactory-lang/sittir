@@ -38,7 +38,7 @@ type ReadonlyArg<T> = T extends unknown[] ? Readonly<T> : T;
 type Accepting<F> = F extends (...args: infer A) => unknown ? (...args: { [I in keyof A]: ReadonlyArg<A[I]> }) => unknown : F;
 type Admits<Generated, Declaration> = Accepting<Generated> extends Taking<Declaration> ? true : false;
 type ReturnsExactly<Generated, Declaration, Kind = never> = Same<KindIdAsNumber<Ret<Generated>, Kind>, Ret<Declaration>>;
-type KindIdReturns = 'slotSeparator' | 'separatorBefore';
+type KindIdReturns = 'slotSeparator' | 'separatorBefore' | 'readSlotSeparator' | 'readSeparatorBefore';
 type Member<M> = keyof Declared & keyof M;
 type Arity<F> = F extends (...args: infer A) => unknown ? A['length'] : never;
 
@@ -60,7 +60,6 @@ type Renders<Read, Render, RenderToFile> = [Read] extends [NodeOf<Render> & Node
 type Shaped = Record<
 	| 'SittirEngine'
 	| 'read'
-	| 'readMany'
 	| 'render'
 	| 'renderToFile'
 	| 'layoutWork'
@@ -87,8 +86,7 @@ type Shapes<M extends Shaped> = {
 	readonly builtMemory: Ret<M['builtMemory']>;
 	readonly span: SpanOf<M['text']>;
 	readonly buildProfile: ProfileOf<M['SittirEngine']>;
-	readonly readMany: Ret<M['readMany']>;
-	readonly readsRender: Renders<Ret<M['read']> | ItemOf<Ret<M['readMany']>>, M['render'], M['renderToFile']>;
+	readonly readsRender: Renders<Ret<M['read']>, M['render'], M['renderToFile']>;
 };
 type DeclaredShapes = {
 	readonly layoutWork: LayoutWork;
@@ -102,7 +100,6 @@ type DeclaredShapes = {
 	readonly builtMemory: ReturnType<NonNullable<NativeEngineLike['builtMemory']>>;
 	readonly span: ByteSpan;
 	readonly buildProfile: EngineDiagnostics['buildProfile'];
-	readonly readMany: WireNode[] | Uint32Array;
 	readonly readsRender: true;
 };
 type Misshaped<M extends Shaped> = { [K in keyof DeclaredShapes]-?: Same<Shapes<M>[K], DeclaredShapes[K]> extends true ? never : K }[keyof DeclaredShapes];

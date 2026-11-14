@@ -4,8 +4,8 @@ import type { LayoutWork } from '@sittir/common/engine';
 import { languageByName } from '../src/languages.ts';
 import { layoutWorkOf } from '../src/validate/layout-runs.ts';
 
-const rust = await createEngine(await languageByName('rust'));
-const typescript = await createEngine(await languageByName('typescript'));
+const rust = await createEngine(await languageByName('rust'), { nodeStorage: 'object' });
+const typescript = await createEngine(await languageByName('typescript'), { nodeStorage: 'object' });
 const rustWork = await layoutWorkOf('rust');
 const typescriptWork = await layoutWorkOf('typescript');
 

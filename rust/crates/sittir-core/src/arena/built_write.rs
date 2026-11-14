@@ -8,7 +8,7 @@ use super::cell::{flag, with_kind, CellWord, ListCell, LINK_WORDS};
 use super::count::OWNED;
 use super::memory::{ChunkMem, ChunkUnit};
 use super::{Address, ArenaError, BuiltChunks, CHUNK_WORDS, STRING_CHUNK_BYTES};
-use crate::types::{KindId, NodeIndex, Span, TreeId};
+use crate::types::{KindId, Span};
 
 /// The bytes of a leaf entry's head, its kind and its text's length.
 const ENTRY_HEAD_BYTES: u32 = 4;
@@ -23,6 +23,68 @@ struct Open<T: ChunkUnit> {
 impl<T: ChunkUnit> Open<T> {
     fn fits(&self, len: u32) -> bool {
         self.used.checked_add(len).is_some_and(|end| end as usize <= self.mem.len())
+    }
+}
+
+/// Writes a read's records into the chunk a built arena keeps open for its
+/// reads: each entry reserved with a count of one and lent to be written in
+/// place, a record the open chunk has no room for opening the next, and a
+/// record past a chunk's words taking a chunk of its own. The builders' own
+/// open chunk is left as it is.
+pub struct ReadWriter<'a> {
+    chunks: &'a mut BuiltChunks,
+}
+
+impl<'a> ReadWriter<'a> {
+    /// A writer appending to the chunk `chunks` has open for reads.
+    pub fn new(chunks: &'a mut BuiltChunks) -> Self {
+        Self { chunks }
+    }
+}
+
+impl super::ArenaRead for ReadWriter<'_> {
+    fn chunk(&self, n: u32) -> Option<&[u32]> {
+        super::ArenaRead::chunk(&*self.chunks, n)
+    }
+
+    fn string_chunk(&self, n: u32) -> Option<&[u8]> {
+        super::ArenaRead::string_chunk(&*self.chunks, n)
+    }
+}
+
+impl super::RecordSpace for ReadWriter<'_> {
+    fn kind_bits(&self) -> u32 {
+        self.chunks.kind_bits
+    }
+
+    fn alloc(&mut self, words: u32) -> Result<Address, ArenaError> {
+        let at = match self.chunks.reads {
+            _ if words > CHUNK_WORDS => Address::new(self.chunks.alloc_read_words(words)?, 0),
+            Some((chunk, used)) if used + words <= CHUNK_WORDS => {
+                self.chunks.reads = Some((chunk, used + words));
+                Address::new(chunk, used)
+            }
+            _ => {
+                let chunk = self.chunks.alloc_read_words(CHUNK_WORDS)?;
+                self.chunks.reads = Some((chunk, words));
+                Address::new(chunk, 0)
+            }
+        }
+        .ok_or(ArenaError::Full)?;
+        self.chunks.place(at, 1)?;
+        Ok(at)
+    }
+
+    fn words_mut(&mut self, at: Address, len: u32) -> Result<&mut [u32], ArenaError> {
+        let out = ArenaError::OutOfBounds { chunk: at.chunk(), word: at.word(), len };
+        let mem = self.chunks.words_mem(at.chunk()).ok_or(out.clone())?;
+        let (start, end) = (at.word() as usize, at.word() as usize + len as usize);
+        if end > mem.len() {
+            return Err(out);
+        }
+        // SAFETY: the writer holds the store's mutable borrow, so no other
+        // slice of the chunk is live, and a native call runs no JavaScript.
+        Ok(unsafe { &mut mem.slice_mut()[start..end] })
     }
 }
 
@@ -99,15 +161,32 @@ impl<'a> BuiltWriter<'a> {
         ListCell::word(self.place(&words, 1)?)
     }
 
-    /// The link record naming the parsed node of `kind` at `row` of `tree`,
-    /// held by the cell naming it: its subtree's end, its record there and
-    /// its byte span.
+    /// Holds the record at `at` once more, for a cell that names it, when a
+    /// read left it: a built record names it as it names a built child.
+    /// False, holding nothing, for any other address.
+    ///
+    /// # Errors
+    ///
+    /// What reaching the record's count refuses.
+    pub fn hold_read(&mut self, at: Address) -> Result<bool, ArenaError> {
+        if !super::ArenaRead::read_entry(&*self.chunks, at) {
+            return Ok(false);
+        }
+        self.chunks.adopt(at)?;
+        Ok(true)
+    }
+
+    /// The link record naming the node of `kind` that `name` names, a node
+    /// a read left with no record of its own, held by the cell naming it:
+    /// its holder, then the word and item of its site, both 0 for its
+    /// holder's own node, and its byte span.
     ///
     /// # Errors
     ///
     /// As `header` and `place`.
-    pub fn link(&mut self, kind: KindId, tree: TreeId, row: NodeIndex, end: NodeIndex, record: Address, span: Span) -> Result<Address, ArenaError> {
-        let words = [self.header(kind, flag::LINK)?, 0, tree.0, row.0, end.0, record.0, span.start, span.end];
+    pub fn link(&mut self, kind: KindId, name: crate::types::NodeName, span: Span) -> Result<Address, ArenaError> {
+        let [word, item] = name.site.unwrap_or([0, 0]);
+        let words = [self.header(kind, flag::LINK)?, 0, name.node.0, word, item, 0, span.start, span.end];
         debug_assert_eq!(words.len(), LINK_WORDS as usize);
         self.place(&words, 1)
     }

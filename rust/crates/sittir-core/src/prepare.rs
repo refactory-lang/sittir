@@ -27,14 +27,14 @@ impl<'a> RenderContext<'a> {
         Self { options, sources, lent: Lent::NONE }
     }
 
-    /// This context, lending `arenas`, which the render holds.
+    /// This context, lending `reads`, which the render holds.
     #[cfg(feature = "arena")]
     #[must_use]
-    pub fn lending<'b>(&self, arenas: &'b dyn crate::arena::RecordArenas) -> RenderContext<'b>
+    pub fn lending<'b>(&self, reads: Option<&'b dyn crate::arena::ArenaRead>) -> RenderContext<'b>
     where
         'a: 'b,
     {
-        RenderContext { options: self.options, sources: self.sources, lent: Lent::of(arenas) }
+        RenderContext { options: self.options, sources: self.sources, lent: Lent::of(reads) }
     }
 }
 
@@ -595,7 +595,7 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<KindId> {
         match self {
             SlotValue::Node(t) => t.source_separator(ctx),
-            SlotValue::Coord(coord) if coord.writes.as_ref().is_some_and(|writes| writes.changed.leading) => None,
+            SlotValue::Coord(coord) if coord.changed().leading => None,
             SlotValue::Coord(coord) => ctx.sources.separator_before(coord, ctx.lent),
         }
     }

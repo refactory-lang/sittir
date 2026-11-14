@@ -31,31 +31,36 @@ pub struct NodeCoordinate {
     /// The edge seams of the kind this coordinate names, filled by the prepare
     /// walk so a verbatim slice meets its neighbours like a rendered node does.
     pub edges: Option<CoordinateEdges>,
-    /// What JavaScript wrote on the coordinate it sent (`CoordinateWrites`),
-    /// behind one pointer, so a read coordinate pays only that pointer.
-    pub writes: Option<Box<CoordinateWrites>>,
+    /// What the coordinate carries past its place in a tree
+    /// (`CoordinateCarried`), behind one pointer, so a coordinate that
+    /// carries nothing pays only that pointer.
+    pub carried: Option<Box<CoordinateCarried>>,
 }
 
 impl HeapBytes for NodeCoordinate {
     fn heap_bytes(&self) -> usize {
-        let Self { tree: _, index: _, end: _, span: _, kind: _, edges, writes } = self;
-        edges.heap_bytes() + writes.heap_bytes()
+        let Self { tree: _, index: _, end: _, span: _, kind: _, edges, carried } = self;
+        edges.heap_bytes() + carried.heap_bytes()
     }
 }
 
-/// What JavaScript writes on a coordinate it sends back, kept off the read's
-/// own path in one box (`NodeCoordinate::writes`): a coordinate the reader
-/// built carries neither.
+/// What a coordinate carries past its place in a tree, kept off the read's
+/// own path in one box (`NodeCoordinate::carried`): what JavaScript wrote on
+/// a coordinate it sent back, and the node's name where its records outlive
+/// its tree. A coordinate a tree's read built carries neither.
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
-pub struct CoordinateWrites {
+pub struct CoordinateCarried {
     /// The edges whose neighbour a built holder changed (`$_layout.changed`):
     /// the node's sides there drop their layout runs.
     pub changed: ChangedEdges,
+    /// The node's name where its records outlive its tree
+    /// (`ReadCtx::names`): `tree` and `index` name it for one call only.
+    pub name: Option<crate::types::NodeName>,
 }
 
-impl HeapBytes for CoordinateWrites {
+impl HeapBytes for CoordinateCarried {
     fn heap_bytes(&self) -> usize {
-        let Self { changed: ChangedEdges { leading: _, trailing: _ } } = self;
+        let Self { changed: ChangedEdges { leading: _, trailing: _ }, name: _ } = self;
         0
     }
 }
@@ -124,13 +129,39 @@ impl NodeCoordinate {
             span,
             kind: None,
             edges: None,
-            writes: None,
+            carried: None,
         }
     }
 
-    /// The edges whose neighbour JavaScript changed (`CoordinateWrites::changed`).
+    /// The edges whose neighbour JavaScript changed (`CoordinateCarried::changed`).
     pub fn changed(&self) -> ChangedEdges {
-        self.writes.as_ref().map_or_else(ChangedEdges::default, |writes| writes.changed)
+        self.carried.as_ref().map_or_else(ChangedEdges::default, |carried| carried.changed)
+    }
+
+    /// The node's name where its records outlive its tree
+    /// (`CoordinateCarried::name`).
+    #[must_use]
+    pub fn name(&self) -> Option<crate::types::NodeName> {
+        self.carried.as_ref().and_then(|carried| carried.name)
+    }
+
+    /// The coordinate with `changed` for the edges whose neighbour changed.
+    #[must_use]
+    pub fn with_changed(self, changed: ChangedEdges) -> Self {
+        let name = self.name();
+        self.carrying(changed, name)
+    }
+
+    /// The coordinate naming its node `name` past the call.
+    #[must_use]
+    pub fn named(self, name: Option<crate::types::NodeName>) -> Self {
+        let changed = self.changed();
+        self.carrying(changed, name)
+    }
+
+    fn carrying(self, changed: ChangedEdges, name: Option<crate::types::NodeName>) -> Self {
+        let carried = (changed != ChangedEdges::default() || name.is_some()).then(|| Box::new(CoordinateCarried { changed, name }));
+        Self { carried, ..self }
     }
 
     /// The tree and the index packed as one handle: the wire's `$treeHandle`.
@@ -406,16 +437,28 @@ pub(crate) unsafe fn coordinate_from_napi(env: ::napi::sys::napi_env, napi_val: 
         None => ChangedEdges::default(),
     };
     let (tree, index) = crate::engine::decode_handle(crate::types::TreeHandle(handle));
-    let writes = (changed != ChangedEdges::default()).then(|| Box::new(CoordinateWrites { changed }));
-    Ok(Some(NodeCoordinate { kind, writes, ..NodeCoordinate::new(tree, index, end, span) }))
+    Ok(Some(NodeCoordinate { kind, ..NodeCoordinate::new(tree, index, end, span) }.with_changed(changed)))
 }
 
-/// `{ $treeHandle, $span, $type? }`, the object `coordinate_from_napi` reads
-/// back. Its edges are the prepare walk's and its gap JavaScript's, so neither
-/// crosses back.
+/// `{ $treeHandle, $end, $span, $type? }`, the object `coordinate_from_napi`
+/// reads back; for a coordinate that names its node past the call
+/// (`NodeCoordinate::name`), `{ $node, $site?, $span, $type? }`, since its tree and
+/// index mean nothing once the call ends. Its edges are the prepare walk's
+/// and its gap JavaScript's, so neither crosses back.
 #[cfg(feature = "napi-bindings")]
 pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: &NodeCoordinate) -> ::napi::Result<::napi::sys::napi_value> {
     use crate::boundary::{object_with_present, present};
+    if let Some(name) = coord.name() {
+        // SAFETY: its caller passes the live `env` napi gave `to_napi_value`.
+        return unsafe {
+            object_with_present(env, &[
+                present(env, c"$node", Some(name.node.0))?,
+                present(env, c"$site", name.site.map(|site| site.to_vec()))?,
+                present(env, c"$span", Some(coord.span))?,
+                present(env, c"$type", coord.kind.map(|kind| u32::from(kind.0)))?,
+            ])
+        };
+    }
     // SAFETY: its caller passes the live `env` napi gave `to_napi_value`.
     unsafe {
         object_with_present(env, &[

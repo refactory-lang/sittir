@@ -1,15 +1,20 @@
 // Usage: node --expose-gc reference-worker.mjs <tree> <admitted.json> <out.json> <tool> <batches>
 // One fresh process timing one tool over every admitted file of one corpus:
 // <tool> is object or arena (sittir's corpus phases, corpus-batch.mjs, in that
-// node storage), deep-read (the arena whole read's two native calls alone, on
-// the addon: per file the parse, then readRecordStub(0, Infinity), each timed
-// apart, with the visible nodes the root's stub spans and the native bytes the
-// read adds, treeMemory's count, taken outside the timed calls) or oxfmt
+// node storage), deep-read (the arena whole read's native call alone, on the
+// addon: per file one parseRecords, which parses and reads the tree whole and
+// keeps no tree, with the bytes the engine's arena holds after each chunk's
+// reads, builtMemory's count, and the tree's visible nodes, backerParity's
+// count, both taken outside the timed call) or oxfmt
 // (format() in process, one file at a time, each call awaited before the next
 // starts, so one file is formatted at a time). sittir runs the corpus in
 // path-order chunks of about CHUNK_BYTES of source; after each chunk every
-// parse root and whole tree is released ([Symbol.dispose], or disposeTree for
-// deep-read, timed as treeReleaseMs), the chunk's trees are dropped and an
+// parse root and whole tree is released ([Symbol.dispose], timed as
+// treeReleaseMs; in arena storage, where a parsed node lives as long as its
+// engine, each chunk runs on an engine of its own and disposing that engine
+// is the release, timed as treeReleaseMs; deep-read reads each chunk on an
+// engine of its own and disposes it, timed as releaseMs), the chunk's trees
+// are dropped and an
 // event-loop yield is taken before the next. Each phase's time is its sum
 // over the chunks, so a batch never holds the whole corpus's trees. At least
 // two seconds and one batch of warmup, then <batches> timed batches with an
@@ -51,53 +56,55 @@ if (tool === 'oxfmt') {
   };
 } else if (tool === 'deep-read') {
   const native = loadNative(path.resolve(tree));
-  const engine = new native.SittirEngine();
   native.externalBuffers();
-  describe = { tool, buildProfile: engine.buildProfile };
-  dispose = () => engine.dispose();
+  const withEngine = (use) => {
+    const engine = new native.SittirEngine();
+    try { return use(engine); } finally { engine.dispose(); }
+  };
+  describe = { tool, buildProfile: withEngine((engine) => engine.buildProfile) };
+  const visibleNodes = chunks.reduce((n, chunk) => n + withEngine((engine) => chunk.reduce((m, source) => m + native.backerParity(engine.handle, source).nodes, 0)), 0);
   run = async () => {
-    const times = { parseMs: 0, deepReadMs: 0, treeReleaseMs: 0 };
-    const stubs = [];
+    const times = { wholeReadMs: 0, releaseMs: 0 };
+    const roots = [];
     let readBytes = 0;
     for (const chunk of chunks) {
-      const ids = [];
+      const engine = new native.SittirEngine();
       for (const source of chunk) {
         const start = performance.now();
-        const { treeId } = JSON.parse(engine.parse(source));
-        const parsed = performance.now();
-        ids.push(treeId);
-        const before = native.treeMemory().counted;
-        const read = performance.now();
-        const stub = native.readRecordStub(treeId, 0, Infinity);
-        const done = performance.now();
-        readBytes += native.treeMemory().counted - before;
-        assert(stub, 'a root with a record');
-        stubs.push(stub);
-        times.parseMs += parsed - start;
-        times.deepReadMs += done - read;
+        const read = native.parseRecords(engine.handle, source);
+        times.wholeReadMs += performance.now() - start;
+        const { root } = JSON.parse(read);
+        assert(root !== null, 'a root with a record');
+        roots.push(root);
       }
+      readBytes += native.builtMemory(engine.handle).chunks;
       const start = performance.now();
-      for (const id of ids) native.disposeTree(id);
-      times.treeReleaseMs += performance.now() - start;
+      engine.dispose();
+      times.releaseMs += performance.now() - start;
       await new Promise(setImmediate);
     }
-    times.wholeReadMs = times.parseMs + times.deepReadMs;
-    return { times, signature: { stubs: hash(stubs), entries: stubs.length, visibleNodes: stubs.reduce((n, [, , row, end]) => n + end - row, 0), readBytes, chunks: chunks.length } };
+    return { times, signature: { roots: hash(roots), entries: roots.length, visibleNodes, readBytes, chunks: chunks.length } };
   };
 } else {
   assert(tool === 'object' || tool === 'arena', `tool: ${tool}`);
-  const engine = await loadSittir(path.resolve(tree), tool);
-  describe = { tool: 'sittir', nodeStorage: tool, buildProfile: engine.diagnostics.buildProfile };
-  dispose = () => engine.dispose();
+  const first = await loadSittir(path.resolve(tree), tool);
+  describe = { tool: 'sittir', nodeStorage: tool, buildProfile: first.diagnostics.buildProfile };
+  const shared = tool === 'object' ? first : undefined;
+  if (shared === undefined) first.dispose();
+  dispose = () => shared?.dispose();
   run = async () => {
     const times = {};
     const renders = [];
     const editedRenders = [];
     for (const chunk of chunks) {
+      const engine = shared ?? await loadSittir(path.resolve(tree), tool);
       const pass = corpusBatch(engine, chunk);
       const start = performance.now();
-      for (const node of pass.roots) node[Symbol.dispose]?.();
-      for (const node of pass.wholes) node[Symbol.dispose]?.();
+      if (shared === undefined) engine.dispose();
+      else {
+        for (const node of pass.roots) node[Symbol.dispose]?.();
+        for (const node of pass.wholes) node[Symbol.dispose]?.();
+      }
       pass.times.treeReleaseMs = performance.now() - start;
       for (const [phase, ms] of Object.entries(pass.times)) times[phase] = (times[phase] ?? 0) + ms;
       renders.push(...pass.renders);
@@ -129,7 +136,7 @@ try {
   writeFileSync(out, JSON.stringify({
     at: new Date().toISOString(), tree, ...describe, corpus: manifest.name, commit: manifest.commit, files: sources.length, bytes,
     node: process.version, v8: process.versions.v8, cpu: cpuModel(), loadAverage: os.loadavg(),
-    protocol: `Every admitted file of one corpus per batch (sittir in path-order chunks of about ${CHUNK_BYTES / 1e6} MB, each phase summed over the chunks, every parse root and whole tree released after its chunk (treeReleaseMs), a yield between chunks; deep-read the addon's parse and readRecordStub(0, Infinity) per file, timed apart; oxfmt one awaited format() per file); at least two seconds and one batch of warmup, then the timed batches, an event-loop yield between batches, no forced GC; output hashes equal across batches.`,
+    protocol: `Every admitted file of one corpus per batch (sittir in path-order chunks of about ${CHUNK_BYTES / 1e6} MB, each phase summed over the chunks, every parse root and whole tree released after its chunk (treeReleaseMs; in arena storage each chunk on an engine of its own, disposed after it, which is the release), a yield between chunks; deep-read the addon's parseRecords per file, each chunk on an engine of its own, disposed after it (releaseMs); oxfmt one awaited format() per file); at least two seconds and one batch of warmup, then the timed batches, an event-loop yield between batches, no forced GC; output hashes equal across batches.`,
     warmupBatches, signature, rendersDifferingFromSource, samples, peakRssMB: peakRss / 2 ** 20,
   }, null, 1) + '\n');
   console.log(JSON.stringify({ tool, corpus: manifest.name, signature, samples: samples.length }));

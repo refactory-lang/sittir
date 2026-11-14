@@ -23,7 +23,9 @@ export function treeTokenOf(node: object): TreeToken | undefined {
 	const own = (node as Holder)[TREE];
 	if (own != null) return own;
 	const tree = (node as { readonly $tree?: TreeHandle }).$tree;
-	return tree !== undefined && tree.built === undefined && isHandle(node) ? tree.token : undefined;
+	if (tree === undefined || !isHandle(node)) return undefined;
+	const at = (node as { readonly $at?: unknown }).$at;
+	return tree.built === undefined || (typeof at === 'number' && tree.built.reads(at)) ? tree.token : undefined;
 }
 
 /**

@@ -1,4 +1,5 @@
-import type { AnyUntypedNode, ByteSpan, NodeLayout, NodeTrivia, NodeCoordinate, TriviaEntry, UnitSidesWire } from '@sittir/types';
+import type { AnyUntypedNode, ByteSpan, ErrorRegion, NodeLayout, NodeTrivia, NodeCoordinate, TriviaEntry, UnitSidesWire } from '@sittir/types';
+import type { CellSite } from './record-cell.ts';
 import { decodeIndex, isCoordinate, type TreeHandle, type TriviaSideName } from './read.ts';
 import { assertHoldsTree, carryTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
@@ -32,8 +33,11 @@ export function spanOf(node: object): ByteSpan | undefined {
 export function sourceTextOf(node: object, tree: TreeHandle | undefined = treeOf(node)): string | undefined {
 	const own = nodeText(node);
 	if (own !== undefined) return own;
-	const span = spanOf(node);
-	return span === undefined ? undefined : tree?.text?.(span);
+	const at = coordinateOf(node);
+	if (at === undefined || tree === undefined) return undefined;
+	const span = { start: at.$span.start, end: at.$span.end };
+	const read = (at as { readonly $node?: number }).$node;
+	return read !== undefined && tree.built !== undefined ? tree.built.readText(read, span) : tree.text?.(span);
 }
 
 export function mapSideEntries<S extends TriviaSides<unknown>>(sides: S, each: (entry: unknown) => unknown): S {
@@ -79,6 +83,14 @@ export function nodeText(value: unknown): string | undefined {
 	const text: unknown = (value as { readonly $text?: unknown }).$text;
 	const read = typeof text === 'function' ? (text as (this: object) => unknown).call(value) : text;
 	return typeof read === 'string' ? read : undefined;
+}
+
+/** The ERROR and MISSING regions of the parse a read node came from: its tree's, or, where its parse kept no tree, its arena's for that parse. `undefined` for a node no parse produced. */
+export function parseErrorsOf(node: object): readonly ErrorRegion[] | undefined {
+	const tree = treeOf(node);
+	const at = coordinateOf(node);
+	if (tree?.built === undefined || at === undefined || !('$node' in at)) return tree?.errors;
+	return tree.built.errorsOf(coordinateIndex(at)) as readonly ErrorRegion[];
 }
 
 /** The trivia a node owns: its layout's, read or written. */
@@ -213,8 +225,32 @@ export function sourceHandleOf(node: object): number | undefined {
 
 /** The descendant index a read node or a coordinate names itself by, in its tree. */
 export function indexOf(node: object): number | undefined {
-	const handle = treeHandleOf(node);
-	return handle === undefined ? undefined : decodeIndex(handle);
+	const at = coordinateOf(node);
+	return at === undefined ? undefined : coordinateIndex(at);
+}
+
+const SITE_WORDS = 2 ** 7;
+const SITE_ITEMS = 2 ** 16;
+const KEY_SITES = SITE_WORDS * SITE_ITEMS;
+const KEY_NODES = 2 ** 30;
+
+export function packedSite(site: CellSite | undefined): number {
+	if (site === undefined) return 0;
+	const [word, item] = site;
+	if (word <= 0 || word >= SITE_WORDS || item >= SITE_ITEMS) throw new Error(`the site at word ${word}, item ${item} is past what a node's key holds`);
+	return item * SITE_WORDS + word;
+}
+
+export function keyName(key: number): { readonly node: number; readonly site: number } {
+	return key >= 0 ? { node: key, site: 0 } : { node: Math.floor(-key / KEY_SITES), site: -key % KEY_SITES };
+}
+
+export function coordinateIndex(at: NodeCoordinate): number {
+	const { $node, $site } = at as { readonly $node?: number; readonly $site?: CellSite };
+	if ($node === undefined) return decodeIndex(at.$treeHandle);
+	if ($site === undefined) return $node;
+	if ($node >= KEY_NODES) throw new Error(`the record at ${$node} is past what a node's key holds`);
+	return -($node * KEY_SITES + packedSite($site));
 }
 
 /** Whether `key` names one of a node's slots (`_<name>`). */
@@ -280,6 +316,7 @@ export function markEdited<T extends object>(data: T): T {
  */
 export interface SourceIdentity {
 	readonly token: TreeToken;
+	readonly index: number;
 	readonly treeHandle: number;
 	readonly end: number;
 	readonly span: { readonly start: number; readonly end: number };
@@ -299,7 +336,7 @@ export function placeOf(node: object): SourceIdentity | undefined {
 	const token = treeTokenOf(node);
 	const at = coordinateOf(node);
 	if (token === undefined || at === undefined) return undefined;
-	return { token, treeHandle: at.$treeHandle, end: at.$end, span: at.$span, kind: at.$type };
+	return { token, index: coordinateIndex(at), treeHandle: at.$treeHandle, end: at.$end, span: at.$span, kind: at.$type };
 }
 
 /**
@@ -358,7 +395,7 @@ export function unitSidesOf(node: object): readonly UnitSidesWire[] | undefined 
 	if (tree?.unitSides !== undefined && index !== undefined) return tree.unitSides(index);
 	const source = placeOf(node);
 	const from = source === undefined ? undefined : sourceTree(source);
-	return source === undefined || from === undefined ? undefined : carriedUnitSides(node, decodeIndex(source.treeHandle), from);
+	return source === undefined || from === undefined ? undefined : carriedUnitSides(node, source.index, from);
 }
 
 /**
@@ -374,7 +411,7 @@ export function slotsOf(node: object): readonly unknown[] | undefined {
 	if (tree?.slotLayouts !== undefined && index !== undefined) return tree.slotLayouts(index);
 	const source = placeOf(node);
 	const from = source === undefined ? undefined : sourceTree(source);
-	return source === undefined ? undefined : from?.slotLayouts?.(decodeIndex(source.treeHandle));
+	return source === undefined ? undefined : from?.slotLayouts?.(source.index);
 }
 
 /**
@@ -390,7 +427,7 @@ export function separatorOf(node: object): number | undefined {
 	if (tree?.separatorBefore !== undefined && index !== undefined) return tree.separatorBefore(index);
 	const source = placeOf(node);
 	const from = source === undefined ? undefined : sourceTree(source);
-	return source === undefined ? undefined : from?.separatorBefore?.(decodeIndex(source.treeHandle));
+	return source === undefined ? undefined : from?.separatorBefore?.(source.index);
 }
 
 /**
@@ -404,7 +441,7 @@ export function slotSeparatorOf(node: object): number | undefined {
 	if (tree?.slotSeparator !== undefined && index !== undefined) return tree.slotSeparator(index);
 	const source = placeOf(node);
 	const from = source === undefined ? undefined : sourceTree(source);
-	return source === undefined ? undefined : from?.slotSeparator?.(decodeIndex(source.treeHandle));
+	return source === undefined ? undefined : from?.slotSeparator?.(source.index);
 }
 
 export function heldUnitSides(node: object): readonly UnitSidesWire[] | undefined {
@@ -553,7 +590,7 @@ export function sideRead(node: object, side: TriviaSideName): SideRead {
 	if (stored !== undefined) return { entries: stored, tree: undefined };
 	const source = envelopeKindOf(node) === undefined ? placeOf(node) : undefined;
 	const tree = source === undefined ? undefined : sourceTree(source);
-	const table = source === undefined ? undefined : tableOf(tree, decodeIndex(source.treeHandle));
+	const table = source === undefined ? undefined : tableOf(tree, source.index);
 	return table === undefined ? NO_SIDE : { entries: (table.tree.triviaSide(table.index, side) ?? []) as TriviaEntry[], tree };
 }
 
@@ -645,7 +682,9 @@ const BOTH_EDGES: ChangedEdges = { leading: true, trailing: true };
  */
 export function rootEdges(node: object): ChangedEdges {
 	const source = placeOf(node);
-	return source !== undefined && decodeIndex(source.treeHandle) === 0 ? NO_EDGES : BOTH_EDGES;
+	if (source === undefined) return BOTH_EDGES;
+	const arena = sourceTree(source)?.built;
+	return (arena === undefined ? source.index === 0 : arena.isRoot(source.index)) ? NO_EDGES : BOTH_EDGES;
 }
 
 /**
@@ -676,12 +715,10 @@ export function aliasContentOf(holder: object): Record<string, unknown> | undefi
 	return undefined;
 }
 
-function keepsNeighbour(siblings: readonly number[], at: number, neighbour: unknown, token: TreeToken, view: KindView): boolean {
+function keepsNeighbour(siblings: readonly number[], at: number, neighbour: unknown, other: SourceIdentity | undefined, sameParse: boolean): boolean {
 	if (siblings[at] === 0) return neighbour === undefined;
 	if (typeof neighbour === 'number') return neighbour === siblings[at + 1];
-	if (!isRecord(neighbour)) return false;
-	const other = placeOf(evidenceOf(neighbour, view));
-	return other !== undefined && other.token === token && other.span.start === siblings[at + 2] && other.span.end === siblings[at + 3];
+	return other !== undefined && sameParse && other.span.start === siblings[at + 2] && other.span.end === siblings[at + 3];
 }
 
 export function listEdges(list: readonly unknown[], view: KindView): readonly ChangedEdges[] | undefined {
@@ -702,10 +739,16 @@ export function listEdges(list: readonly unknown[], view: KindView): readonly Ch
 	});
 	const edges: ChangedEdges[] = list.map(() => NO_EDGES);
 	for (const [tree, items] of byTree) {
-		const siblings = tree.siblings!(items.map((n) => decodeIndex(sources[n]!.treeHandle)));
+		const siblings = tree.siblings!(items.map((n) => sources[n]!.index));
+		const parses = tree.sources?.(items.map((n) => sources[n]!.index));
+		const parseOf = new Map(items.map((n, k) => [n, parses?.[k]] as const));
 		items.forEach((n, k) => {
 			const { token } = sources[n]!;
-			edges[n] = { leading: !keepsNeighbour(siblings, 8 * k, list[n - 1], token, view), trailing: !keepsNeighbour(siblings, 8 * k + 4, list[n + 1], token, view) };
+			const sameParse = (m: number): boolean => sources[m]?.token === token && (parses === undefined || parseOf.get(m) === parses[k]);
+			edges[n] = {
+				leading: !keepsNeighbour(siblings, 8 * k, list[n - 1], sources[n - 1], sameParse(n - 1)),
+				trailing: !keepsNeighbour(siblings, 8 * k + 4, list[n + 1], sources[n + 1], sameParse(n + 1))
+			};
 		});
 	}
 	return edges;

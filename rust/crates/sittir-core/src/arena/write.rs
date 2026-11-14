@@ -9,7 +9,7 @@
 //! The derive writes each node type's `WriteCell` through these helpers.
 
 use crate::heap::HeapBytes;
-use super::{Address, ArenaError, BuiltChunks, BuiltWriter, CellWord, Row, SideRecord, SideSlot, Sides};
+use super::{Address, ArenaError, BuiltChunks, BuiltWriter, CellWord, SideRecord, SideSlot, Sides};
 use crate::layout::{NodeLayout, UnitSides};
 use crate::record::HEADER_WORDS;
 use crate::slot::{ChangedEdges, NodeCoordinate, SlotValue};
@@ -133,9 +133,10 @@ impl<T: Clone + HeapBytes> WriteCell<T> for VerbatimNode {
     }
 }
 
-/// The cell of an untouched node a coordinate names: a link record naming
-/// its row and its record in its tree's arena, with the edges whose
-/// neighbour the holder changed.
+/// The cell of an untouched node a coordinate names, with the edges whose
+/// neighbour the holder changed: its record itself when a read left it in
+/// the arena the sink writes, or, for a node with no record of its own
+/// that the coordinate names past the call, a link record naming it.
 ///
 /// # Errors
 ///
@@ -144,8 +145,14 @@ impl<T: Clone + HeapBytes> WriteCell<T> for VerbatimNode {
 pub fn coordinate_cell<T: Clone + HeapBytes>(sink: &mut RecordSink<'_, T>, coord: &NodeCoordinate) -> Result<CellWord, ArenaError> {
     let kind = coord.kind.ok_or(ArenaError::Unwritable("a coordinate with no stamped kind"))?;
     let changed = coord.changed();
+    match coord.name() {
+        Some(name @ crate::types::NodeName { site: Some(_), .. }) => return CellWord::of(sink.writer.link(kind, name, coord.span)?, changed),
+        Some(crate::types::NodeName { node, site: None }) if sink.writer.hold_read(Address(node.0))? => return CellWord::of(Address(node.0), changed),
+        _ => {}
+    }
     match (sink.link)(coord)? {
-        Linked::Record(record) => CellWord::of(sink.writer.link(kind, coord.tree, coord.index, coord.end, record, coord.span)?, changed),
+        Linked::Record(record) if sink.writer.hold_read(record)? => CellWord::of(record, changed),
+        Linked::Record(_) => Err(ArenaError::Unwritable("a node of a tree in a built record: a built record names only nodes whose records outlive their tree")),
         Linked::Leaf(_) => Err(ArenaError::Unwritable("a parsed leaf in a built record, which a link record names and only a builder writes")),
     }
 }
@@ -310,16 +317,17 @@ impl SideRecord {
             })
             .collect::<Result<_, ArenaError>>()?;
         Ok(SideRecord {
-            at: layout.at.as_ref().map(|at| Row { index: at.index, end: at.end, span: at.span }),
+            at: None,
             edges: layout.edges,
             span: layout.span,
-            sides: layout.sides.as_ref().map(|from| Sides { tree: from.tree, index: from.index, end: from.end, span: from.span }),
+            sides: layout.sides.as_ref().map(|from| from.name().map_or(Sides { tree: from.tree, index: from.index, end: from.end, span: from.span }, |name| Sides::named(name, from.span))),
             changed: layout.changed,
             separator: layout.separator,
             delimiter: None,
             separator_kind: None,
             flanks: layout.flanks,
             slots,
+            ..SideRecord::default()
         })
     }
 
@@ -335,12 +343,11 @@ mod tests {
     use crate::arena::{ArenaRead, Cell, ListCell};
     use crate::layout::SlotLayout;
     use crate::options::{EdgeArm, Edges};
-    use crate::slot::CoordinateWrites;
     use crate::trivia::{TriviaEntry, TriviaText};
     use crate::types::{NodeIndex, Span, TreeId};
 
     fn coordinate(index: u32, end: u32) -> NodeCoordinate {
-        NodeCoordinate { tree: TreeId(3), index: NodeIndex(index), end: NodeIndex(end), span: Span { start: 4, end: 9 }, kind: Some(KindId(5)), edges: None, writes: None }
+        NodeCoordinate { tree: TreeId(3), index: NodeIndex(index), end: NodeIndex(end), span: Span { start: 4, end: 9 }, kind: Some(KindId(5)), edges: None, carried: None }
     }
 
     fn layout() -> NodeLayout<TriviaText> {
@@ -363,7 +370,7 @@ mod tests {
     #[test]
     fn a_layout_s_facts_land_in_its_side_record_by_stamped_word() {
         let record = SideRecord::of(Some(&layout()), |key| (key == "_items").then_some(4)).expect("every slot is stamped");
-        assert_eq!(record.at, Some(Row { index: NodeIndex(6), end: NodeIndex(11), span: Span { start: 4, end: 9 } }));
+        assert_eq!(record.at, None);
         assert_eq!(record.edges, layout().edges);
         assert_eq!(record.sides, Some(Sides { tree: TreeId(3), index: NodeIndex(1), end: NodeIndex(2), span: Span { start: 4, end: 9 } }));
         assert_eq!(record.changed, ChangedEdges { leading: false, trailing: true });
@@ -547,18 +554,20 @@ mod tests {
     }
 
     #[test]
-    fn a_built_record_links_an_untouched_node_and_refuses_an_untouched_leaf() {
+    fn a_built_record_links_a_node_named_by_its_site_and_refuses_a_node_of_a_tree() {
         let (mut chunks, store) = (chunks(), TriviaStore::new());
-        let linked = Address::new(0, 1).expect("an address");
-        let mut link = |coord: &NodeCoordinate| Ok(if coord.index == NodeIndex(5) { Linked::Record(linked) } else { Linked::Leaf("y".to_owned()) });
+        let of_tree = Address::new(0, 1).expect("an address");
+        let mut link = |coord: &NodeCoordinate| Ok(if coord.index == NodeIndex(5) { Linked::Record(of_tree) } else { Linked::Leaf("y".to_owned()) });
         let changed = ChangedEdges { leading: true, trailing: false };
-        let moved = |index| NodeCoordinate { writes: Some(Box::new(CoordinateWrites { changed })), ..at(index, index + 1) };
-        let node = pair(None, SlotValue::Coord(moved(5)), Vec::new());
+        let moved = |index| at(index, index + 1).with_changed(changed);
+        let name = crate::types::NodeName { node: crate::types::NodeId(4_000), site: Some([3, 2]) };
+        let node = pair(None, SlotValue::Coord(moved(7).named(Some(name))), Vec::new());
         let cell = node.write_cell(&mut RecordSink::built(&mut chunks, &store, &mut link)).expect("written");
         let (_, _, _, left, _) = pair_record(&chunks, cell);
-        assert_eq!(left, Cell::Child { kind: NAME, at: linked, link: Some(TREE), changed });
-        let node = pair(None, SlotValue::Coord(moved(5)), vec![SlotValue::Coord(moved(6))]);
-        assert!(matches!(node.write_cell(&mut RecordSink::built(&mut chunks, &store, &mut link)), Err(ArenaError::Unwritable(_))));
+        assert!(matches!(left, Cell::ReadLeaf { kind: NAME, name: linked, changed: edges, .. } if linked == name && edges == changed), "{left:?}");
+        for refused in [pair(None, SlotValue::Coord(moved(5)), Vec::new()), pair(None, SlotValue::Coord(moved(7).named(Some(name))), vec![SlotValue::Coord(moved(6))])] {
+            assert!(matches!(refused.write_cell(&mut RecordSink::built(&mut chunks, &store, &mut link)), Err(ArenaError::Unwritable(_))));
+        }
     }
 
     #[test]

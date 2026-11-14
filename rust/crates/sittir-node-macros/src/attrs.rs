@@ -93,7 +93,6 @@ pub struct CellStamp {
     pub width: Option<u32>,
     pub run: Option<u32>,
     pub bit: Option<u32>,
-    pub inline: Option<u32>,
     /// The forms the cell holds in a parsed record (`record::form`).
     pub forms: Option<u8>,
     /// The cell's one word in a built record.
@@ -288,7 +287,6 @@ pub fn slot_attrs(attrs: &[Attribute]) -> syn::Result<Option<SlotAttrs>> {
             "width" => out.cell.width = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             "run" => out.cell.run = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             "bit" => out.cell.bit = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
-            "inline" => out.cell.inline = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             "forms" => out.cell.forms = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             "built" => out.cell.built = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             "seated" => out.seated = true,

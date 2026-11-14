@@ -64,7 +64,7 @@ describe.each([
 	['a variant arm', 'fn b() { let r = 0..1; let s = 2..3; }\n', engine.kinds.RangeExpressionBinary]
 ] as const)('a descendants query over %s', (_, source, kind) => {
 	it('reads only the matches not already registered, and no ancestor', () => {
-		const root = engine.parse(source, { depth: 1 });
+		const root = objects.parse(source, { depth: 1 });
 		const reads = countingReads(root);
 		const first = Array.from(root.$query().$descendants.ofType(kind));
 		expect(first.length).toBe(2);
@@ -103,16 +103,16 @@ describe.each([
 
 describe('a variant arm a query reached', () => {
 	it('is returned by its accessor with no native read of its own', () => {
-		const root = engine.parse('fn b() { let r = 0..1; }\n', { depth: 1 });
+		const root = objects.parse('fn b() { let r = 0..1; }\n', { depth: 1 });
 		const reads = countingReads(root);
-		const [arm] = root.$query().$descendants.ofType(engine.kinds.RangeExpressionBinary);
+		const [arm] = root.$query().$descendants.ofType(objects.kinds.RangeExpressionBinary);
 		const armReads = [...reads];
 		expect(armReads.length).toBe(1);
 		reads.length = 0;
 		const fn = root.statements()[0];
-		if (fn === undefined || !engine.is.functionItem(fn)) throw new Error('expected a function');
+		if (fn === undefined || !objects.is.functionItem(fn)) throw new Error('expected a function');
 		const statement = fn.body().statements()[0];
-		if (statement === undefined || !engine.is.letDeclaration(statement)) throw new Error('expected a let declaration');
+		if (statement === undefined || !objects.is.letDeclaration(statement)) throw new Error('expected a let declaration');
 		expect(statement.value()).toBe(arm);
 		expect(reads.filter((index) => armReads.includes(index))).toEqual([]);
 	});

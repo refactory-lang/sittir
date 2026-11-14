@@ -162,7 +162,7 @@ fn the_depth_moves_of_every_node_of_a_chain_walk_its_nodes_once() {
                 span: sittir_core::types::Span::of(&node),
                 kind: None,
                 edges: None,
-                writes: None,
+                carried: None,
             };
             assert_eq!(tree.seating().depth_move(&coord), 0, "{levels} levels: a chain of tuples opens no level");
         }

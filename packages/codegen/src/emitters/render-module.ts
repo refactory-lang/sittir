@@ -1347,7 +1347,7 @@ function recordsTs(lang: GrammarName, records: ReadonlyMap<string, RecordLayout>
 			const at =
 				'bit' in place
 					? `word: ${place.word}, bit: ${place.bit}`
-					: `word: ${place.word}, width: ${place.width}${place.run === undefined ? '' : `, run: ${place.run}`}${place.inline === undefined ? '' : `, inline: ${place.inline}`}, forms: ${place.forms}, built: ${place.built}`;
+					: `word: ${place.word}, width: ${place.width}${place.run === undefined ? '' : `, run: ${place.run}`}, forms: ${place.forms}, built: ${place.built}`;
 			return ` ${place.field}: { ${at} },`;
 		});
 		return `\t${name}: {${[` words: ${layout.words}, builtWords: ${layout.builtWords},`, ...places].join('')} },`;
@@ -2666,12 +2666,12 @@ function renderRecordFn(): string[] {
 	const view = rustRecordViewName('AnyNode');
 	const params = [
 		'    root: ::sittir_core::arena::CellAt,',
-		'    trees: &mut dyn ::sittir_core::arena::RecordTrees,',
+		'    reads: Option<&dyn ::sittir_core::arena::ArenaRead>,',
 		'    built: &dyn ::sittir_core::arena::ArenaRead,',
 		`    store: &::sittir_core::trivia_store::TriviaStore<${TRIVIA_NODE}>,`,
 		"    ctx: &::sittir_core::prepare::RenderContext<'_>,"
 	];
-	const sourceRoot = 'if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {';
+	const sourceRoot = 'if let Some(coord) = ::sittir_core::arena::source_root(root, built, reads, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {';
 	return [
 		'::sittir_core::records_codec! {',
 		'/// Render the record `root` names: a parsed root its source renders as',
@@ -2685,9 +2685,9 @@ function renderRecordFn(): string[] {
 		') -> Result<String, ::sittir_core::render::RenderError> {',
 		'    let (templates, baseline) = ::sittir_core::arena::Recording::parts(recording);',
 		`    ${sourceRoot}`,
-		'        return render_node_parts(::sittir_core::SlotValue::Coord(coord), &ctx.lending(&*trees), baseline).map(|(_, text)| text);',
+		'        return render_node_parts(::sittir_core::SlotValue::Coord(coord), &ctx.lending(reads), baseline).map(|(_, text)| text);',
 		'    }',
-		'    with_record_node(root, templates, trees, built, store, ctx, |node, ctx| render_root(ctx, baseline, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))',
+		'    with_record_node(root, templates, reads, built, store, ctx, |node, ctx| render_root(ctx, baseline, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))',
 		'}',
 		'',
 		'/// Write the built record `root` names into `w` as a trivia entry in',
@@ -2700,22 +2700,22 @@ function renderRecordFn(): string[] {
 		`    ${sourceRoot}`,
 		`        return ::sittir_core::render::Render::render(&::sittir_core::SlotValue::<${TRIVIA_NODE}>::Coord(coord), w);`,
 		'    }',
-		'    with_record_node(root, None, trees, built, store, ctx, |node, _| node.render(w))',
+		'    with_record_node(root, None, reads, built, store, ctx, |node, _| node.render(w))',
 		'}',
 		'',
 		'/// The record `root` names, prepared into a fresh overlay for a render',
 		'/// that renders `templates` from their templates, as `body` reads it',
-		'/// through its view, under `ctx` lending the arenas `trees` it holds.',
+		'/// through its view, under `ctx` lending the reads\' arena `reads`.',
 		'fn with_record_node<R>(',
 		'    root: ::sittir_core::arena::CellAt,',
 		'    templates: Option<::sittir_core::arena::Templates>,',
 		...params.slice(1),
 		`    body: impl FnOnce(&${view}<'_>, &::sittir_core::prepare::RenderContext<'_>) -> Result<R, ::sittir_core::render::RenderError>,`,
 		') -> Result<R, ::sittir_core::render::RenderError> {',
-		`    let prepared = ::sittir_core::arena::prepare_root::<${TRIVIA_NODE}, AnyNode>(trees, built, store, root, templates, ctx, kind::KIND_BITS)?;`,
-		'    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, &*trees, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;',
+		`    let prepared = ::sittir_core::arena::prepare_root::<${TRIVIA_NODE}, AnyNode>(reads, built, store, root, templates, ctx, kind::KIND_BITS)?;`,
+		'    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, reads, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;',
 		`    let node = <${view}<'_> as ::sittir_core::arena::RecordView<'_, ${TRIVIA_NODE}>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;`,
-		'    body(&node, &ctx.lending(&*trees))',
+		'    body(&node, &ctx.lending(reads))',
 		'}',
 		'}',
 		''
@@ -3630,7 +3630,6 @@ function isCompoundOf(node: AssembledNode): boolean {
 function recordLayoutOfSlots(
 	printedSlots: readonly StructSlot[],
 	nodeMap: NodeMap,
-	inline: (slot: AssembledNonterminal) => number,
 	verbatim: boolean
 ): RecordLayout {
 	return recordLayoutOf([
@@ -3638,10 +3637,10 @@ function recordLayoutOfSlots(
 			const shape = nodeSlotShapeOf(slot, nodeMap);
 			return {
 				field: rustFieldIdent(slot.storageName),
-				form: slotRecordForm(shape.tag === 'presence', slotStoredOf(slot, shape, nodeMap), isMultiple(slot), isMultiple(slot) ? 0 : inline(slot))
+				form: slotRecordForm(shape.tag === 'presence', slotStoredOf(slot, shape, nodeMap), isMultiple(slot))
 			};
 		}),
-		...(verbatim ? [{ field: VERBATIM_FIELD, form: slotRecordForm(false, STORED.text, false, 0) }] : [])
+		...(verbatim ? [{ field: VERBATIM_FIELD, form: slotRecordForm(false, STORED.text, false) }] : [])
 	]);
 }
 
@@ -3698,10 +3697,7 @@ function slotStoredOf(slot: AssembledNonterminal, shape: NodeSlotShape, nodeMap:
 	}
 }
 
-const recordLayouts = new WeakMap<
-	NodeMap,
-	{ layouts: Map<AssembledNode, RecordLayout>; recursive: ReadonlySet<string>; active: Set<AssembledNode> }
->();
+const recordLayouts = new WeakMap<NodeMap, Map<AssembledNode, RecordLayout>>();
 
 export function nodeRecordLayout(node: AssembledNode, nodeMap: NodeMap): RecordLayout | undefined {
 	if (node instanceof AssembledEnum || !isCompoundOf(node)) return undefined;
@@ -3710,28 +3706,16 @@ export function nodeRecordLayout(node: AssembledNode, nodeMap: NodeMap): RecordL
 		const layout = list === undefined ? undefined : nodeRecordLayout(list, nodeMap);
 		if (layout !== undefined) return layout;
 	}
-	let state = recordLayouts.get(nodeMap);
-	if (state === undefined) {
-		state = { layouts: new Map(), recursive: (nodeMap.scc ?? computeNodeSCC(nodeMap)).recursive, active: new Set() };
-		recordLayouts.set(nodeMap, state);
+	let layouts = recordLayouts.get(nodeMap);
+	if (layouts === undefined) {
+		layouts = new Map();
+		recordLayouts.set(nodeMap, layouts);
 	}
-	const cached = state.layouts.get(node);
-	if (cached !== undefined) return cached;
-	if (state.active.has(node)) throw new Error(`record layout cycle at ${node.kind}`);
-	state.active.add(node);
-	const recursive = state.recursive;
-	const layout = recordLayoutOfSlots(structSlotsOf(node, renderSlotModelOf(node), nodeMap), nodeMap, (slot) => {
-		const shape = nodeSlotShapeOf(slot, nodeMap);
-		if (shape.tag === 'presence' || shape.tag === 'text' || shape.tag === 'any') return 0;
-		const children = slotElementKinds(slot, nodeMap).map((kind) => nodeMap.nodes.get(kind));
-		if (children.some((child) => child === undefined || recursive.has(child.kind))) return 0;
-		return Math.max(
-			0,
-			...children.map((child) => (child === undefined ? 0 : (nodeRecordLayout(child, nodeMap)?.words ?? 0)))
-		);
-	}, interiorOf(node) !== undefined);
-	state.active.delete(node);
-	state.layouts.set(node, layout);
+	let layout = layouts.get(node);
+	if (layout === undefined) {
+		layout = recordLayoutOfSlots(structSlotsOf(node, renderSlotModelOf(node), nodeMap), nodeMap, interiorOf(node) !== undefined);
+		layouts.set(node, layout);
+	}
 	return layout;
 }
 

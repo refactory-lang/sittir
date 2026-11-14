@@ -22,16 +22,14 @@ pub struct RecordShape {
 }
 
 /// One slot's cell in a record: in a parsed record, its first word and
-/// width, the forms it holds (`record::form`), the words a bounded child's
-/// embedded record takes, and for a list (one word naming its run) the width
-/// of each item's cell in its run; in a built record, its one word. `key` is
+/// width, the forms it holds (`record::form`), and for a list (one word
+/// naming its run) the width of each item's cell in its run; in a built record, its one word. `key` is
 /// the slot's wire key, which a refusal of the slot names.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct CellShape {
     pub word: u32,
     pub width: u32,
     pub run: Option<u32>,
-    pub inline: u32,
     pub forms: u8,
     pub built: u32,
     pub key: &'static str,
@@ -140,8 +138,10 @@ pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<R
         SideRecord::read(arena, Address(words[1]))?;
         for_each_built_cell(arena, at, record, bits, |cell| {
             match cell {
+                Cell::Child { at: child, link: None, .. } if arena.read_record(child) => linked.push(TreeId(super::RunNodes::source_of(arena, child)?.0)),
                 Cell::Child { kind, at: child, link: None, .. } => pending.push(Step::Enter(child, kind)),
                 Cell::Child { link: Some(tree), .. } | Cell::LinkedLeaf { tree, .. } => linked.push(tree),
+                Cell::ReadLeaf { name, .. } => linked.push(TreeId(super::RunNodes::source_of(arena, Address(name.node.0))?.0)),
                 Cell::BuiltLeaf { kind, text, .. } => {
                     shape(kind).ok_or(malformed("built leaf kind", u32::from(kind.0)))?;
                     arena.text(text)?;
@@ -166,7 +166,6 @@ mod tests {
     use crate::arena::{BuiltChunks, BuiltWriter, StringRef, CHUNK_WORDS, MAX_BUILT_CHUNKS};
     use crate::record::form;
     use crate::slot::ChangedEdges;
-    use crate::types::{NodeIndex, Span};
 
     const BITS: u32 = 9;
     const PAIR: KindId = KindId(7);
@@ -178,12 +177,12 @@ mod tests {
     /// words 2 and 3; a list the cell naming its run, at word 2; a leaf is
     /// its header.
     fn shape(kind: KindId) -> Option<RecordShape> {
-        const PAIR_CELLS: &[CellShape] = &[CellShape { word: 2, width: 3, run: None, inline: 0, forms: form::NODE, built: 2, key: "_child" }];
+        const PAIR_CELLS: &[CellShape] = &[CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_child" }];
         const FORK_CELLS: &[CellShape] = &[
-            CellShape { word: 2, width: 3, run: None, inline: 0, forms: form::NODE, built: 2, key: "_first" },
-            CellShape { word: 5, width: 3, run: None, inline: 0, forms: form::NODE, built: 3, key: "_second" },
+            CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_first" },
+            CellShape { word: 5, width: 3, run: None, forms: form::NODE, built: 3, key: "_second" },
         ];
-        const LIST_CELLS: &[CellShape] = &[CellShape { word: 2, width: 1, run: Some(3), inline: 0, forms: form::NODE, built: 2, key: "_items" }];
+        const LIST_CELLS: &[CellShape] = &[CellShape { word: 2, width: 1, run: Some(3), forms: form::NODE, built: 2, key: "_items" }];
         match kind {
             PAIR => Some(RecordShape { words: 5, built_words: 3, cells: PAIR_CELLS }),
             FORK => Some(RecordShape { words: 8, built_words: 4, cells: FORK_CELLS }),
@@ -226,17 +225,6 @@ mod tests {
         let leaf = image.record(LEAF, HEADER_WORDS, &[]);
         let shared = image.record(FORK, 4, &[(2, cell(leaf)), (3, cell(leaf))]);
         assert_eq!(admit(&image, shared, shape, BITS), Ok(Vec::new()));
-    }
-
-    #[test]
-    fn the_trees_its_cells_link_are_answered_once_each_in_order() {
-        let mut image = BuiltImage::new(BITS);
-        let linked = |image: &mut BuiltImage, tree| cell(image.link(PAIR, TreeId(tree), NodeIndex(1), NodeIndex(2), Address(6), Span { start: 0, end: 1 }));
-        let (four, two) = (linked(&mut image, 4), linked(&mut image, 2));
-        let inner = image.record(FORK, 4, &[(2, four), (3, two)]);
-        let again = linked(&mut image, 4);
-        let outer = image.record(FORK, 4, &[(2, cell(inner)), (3, again)]);
-        assert_eq!(admit(&image, outer, shape, BITS), Ok(vec![TreeId(2), TreeId(4)]));
     }
 
     #[test]

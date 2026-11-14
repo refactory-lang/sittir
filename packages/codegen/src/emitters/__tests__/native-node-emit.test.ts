@@ -499,7 +499,7 @@ describe('native node emission', () => {
 		const structBody = emitted.nodeRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_content")]\n    #[slot(word = 2, width = 6, inline = 5, forms = 9, built = 2)]\n    pub content: ::sittir_core::SlotValue<SupertypeAliasParentContentNodeSlot>,'
+			'#[wire(key = "_content")]\n    #[slot(word = 2, width = 3, forms = 1, built = 2)]\n    pub content: ::sittir_core::SlotValue<SupertypeAliasParentContentNodeSlot>,'
 		);
 		expect(emitted.nodeRs.contents).toContain('pub enum SupertypeAliasParentContentNodeSlot {');
 		expect(emitted.nodeRs.contents).toContain('Identifier(IdentifierNode),');

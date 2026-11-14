@@ -1,11 +1,10 @@
 //! A render from templates renders a parsed node and every node under it
 //! that has a record from its template, and each leaf and unit from its
 //! source bytes (`ThroughTemplates`). For every round-trip source of each
-//! grammar, the root renders alike from its templates in both storages: as
-//! its coordinate (object) and as its record read one level down (arena),
-//! which the render reads through, writing every record a whole read writes
-//! but trivia's. A recording of the object render frames the root and slices
-//! no node with a record but trivia.
+//! grammar, the root renders alike from its templates both ways: as its
+//! coordinate, read from its tree (object), and as the record a read of the
+//! source left it, with no tree (arena). A recording of the object render
+//! frames the root and slices no node with a record but trivia.
 #![cfg(feature = "arena")]
 
 use sittir_core::arena::{HydrateNode, RecordCells, RecordGrammar};
@@ -13,7 +12,7 @@ use sittir_core::baseline::{Baseline, Written};
 use sittir_core::engine::{claim_tree_id, Engine, EngineGrammar, ParsedTree};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::prepare::RenderContext;
-use sittir_core::read::{display_id, grammar_id, Depth, ReadNode};
+use sittir_core::read::{display_id, grammar_id, ReadNode};
 use sittir_core::render::{RenderError, SourceTable, ThroughTemplates};
 use sittir_core::slot::ChangedEdges;
 use sittir_core::types::NodeIndex;
@@ -89,54 +88,29 @@ impl<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells> Renders<G, N> {
         Ok(through)
     }
 
-    /// The nodes of `tree` a read has written a record of, trivia aside,
-    /// which a render writes from its source.
-    fn written(tree: &ParsedTree<G>) -> Vec<bool> {
-        let count = sittir_core::read::descendant_count(&tree.tree().root_node());
-        (0..count)
-            .map(NodeIndex::new)
-            .map(|index| !sittir_core::engine::node_at_index(tree.tree(), index).is_some_and(|node| node.is_extra()) && tree.written_record::<N>(index).is_some())
-            .collect()
+    /// The root's record, read whole at parse into the engine's built
+    /// arena with no tree left, rendered from its templates; `None` when the
+    /// parser rejects the source whole.
+    fn records(&self, source: &str) -> Result<Option<String>, String> {
+        let mut engine = Engine::new(self.grammar, (self.options)()).expect("an engine");
+        let options = engine.options().clone();
+        let Some(root) = engine.parse_records::<N>(source)?.root else { return Ok(None) };
+        let built = engine.written().built();
+        engine.render_at(&built, root, ChangedEdges::default(), &options, true, |_| Ok(())).map(Some).map_err(|e| e.to_string())
     }
 
-    /// The root's record, read one level down, rendered from its templates,
-    /// checked to have written every record a whole read writes; `None`
-    /// when the parser rejects the source whole, so the model reads no root.
-    fn arena(&self, source: &str) -> Result<Option<String>, String> {
-        let (tree, options) = self.parse(source);
-        let Some(at) = tree.read_record::<N>(NodeIndex::ROOT, Depth::ONE)? else {
-            return if tree.tree().root_node().is_error() { Ok(None) } else { Err("arena: the model reads no root of a source the parser accepts".to_owned()) };
-        };
-        let through = tree.render_record(at, ChangedEdges::default(), &options, &ThroughTemplates(&tree.seating())).map_err(|e| e.to_string())?;
-        let (whole, _) = self.parse(source);
-        whole.hydrate_record::<N>(NodeIndex::ROOT, Depth::All)?;
-        let (rendered, read) = (Self::written(&tree), Self::written(&whole));
-        let apart: Vec<String> = rendered
-            .iter()
-            .zip(&read)
-            .enumerate()
-            .filter(|(_, (rendered, read))| rendered != read)
-            .map(|(index, (rendered, _))| (index, *rendered))
-            .map(|(index, rendered)| {
-                let node = sittir_core::engine::node_at_index(tree.tree(), NodeIndex::new(u32::try_from(index).expect("an index"))).expect("a node at every index");
-                let parent = node.parent().map_or("none", |parent| parent.kind());
-                format!("{index} {} under {parent}{} ({})", node.kind(), if node.is_extra() { " extra" } else { "" }, if rendered { "render only" } else { "whole read only" })
-            })
-            .collect();
-        if !apart.is_empty() {
-            return Err(format!("arena: a render from templates wrote other records than a whole read: {}", apart.join(", ")));
-        }
-        Ok(Some(through))
-    }
-
-    /// Whether `source` renders alike from its templates in both storages.
+    /// Whether `source` renders alike from its templates read from its
+    /// tree and from the records a parse leaves with no tree.
     fn alike(&self, source: &str) -> Result<Outcome, String> {
-        match (caught(|| self.object(source)), caught(|| self.arena(source))) {
+        if self.parse(source).0.tree().root_node().is_error() {
+            return Ok(Outcome::Unread);
+        }
+        match (caught(|| self.object(source)), caught(|| self.records(source))) {
             (Err(object), Err(arena)) if object == arena => Ok(Outcome::Panicking(object)),
             (Err(object), Err(arena)) => Ok(Outcome::Panicking(format!("object: {object}; arena: {arena}"))),
             (Err(object), Ok(_)) => Err(format!("the object render from templates panics ({object}), and the arena one does not")),
             (Ok(_), Err(arena)) => Err(format!("the arena render from templates panics ({arena}), and the object one does not")),
-            (Ok(Ok(_)), Ok(Ok(None))) => Ok(Outcome::Unread),
+            (Ok(Ok(_)), Ok(Ok(None))) => Err("records: a parse left no root of a source the parser accepts".to_owned()),
             (Ok(object), Ok(arena)) => {
                 let (object, arena) = (object?, arena?.expect("a root"));
                 if object != arena {

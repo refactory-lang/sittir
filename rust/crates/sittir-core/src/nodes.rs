@@ -103,6 +103,9 @@ impl Kid {
     }
 }
 
+/// A node's children, in order: one list, shared by each holder of it.
+pub type Kids = Arc<[Kid]>;
+
 /// Where a walk is (`Nodes::walk`): at a node it meets, or leaving a node
 /// it entered, once that node's children are walked.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -143,7 +146,7 @@ pub trait Nodes<'t> {
     /// The node at `index`.
     fn kid(&mut self, index: NodeIndex) -> Kid;
     /// The children of the node at `index`, in order.
-    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]>;
+    fn kids(&mut self, index: NodeIndex) -> Kids;
     /// The first child of the node at `index` (`Side::Before`) or its last
     /// (`Side::After`), `None` for a node with no children, found without
     /// listing them.
@@ -158,10 +161,21 @@ pub trait Nodes<'t> {
     /// token too.
     fn holds_error(&mut self, index: NodeIndex) -> bool;
 
+    /// How many indexes name a node, from 0 up, where that is known
+    /// before any is met.
+    fn bound(&mut self) -> Option<u32> {
+        Some(self.kid(NodeIndex::ROOT).count)
+    }
+
+    /// Whether `index` names a node.
+    fn names(&mut self, index: NodeIndex) -> bool {
+        self.bound().is_some_and(|bound| index.0 < bound)
+    }
+
     /// Walks the subtree of the node at `from` in preorder, telling `visit`
     /// each node it meets and each node it leaves.
     fn walk(&mut self, from: NodeIndex, visit: &mut dyn FnMut(Step, &Kid) -> Visit) {
-        let mut entered: Vec<(Kid, Arc<[Kid]>, usize)> = Vec::new();
+        let mut entered: Vec<(Kid, Kids, usize)> = Vec::new();
         let mut next = Some(self.kid(from));
         loop {
             if let Some(kid) = next.take() {
@@ -313,7 +327,7 @@ impl<'t> Nodes<'t> for TreeNodes<'t> {
         node.has_error() || shown_as_error(crate::read::display_id(&node))
     }
 
-    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
+    fn kids(&mut self, index: NodeIndex) -> Kids {
         let cursor = self.reader(index);
         let mut kids = Vec::new();
         if cursor.goto_first_child() {
@@ -398,103 +412,12 @@ impl<'t> Nodes<'t> for TreeNodes<'t> {
     }
 }
 
-/// Navigation over the rows a parsed tree's arena keeps for its nodes
-/// (`TreeArena::node_rows`), with no tree: each node's facts read from its
-/// row, its children by stepping from one subtree end to the next, and its
-/// parent from the rows' index of every node's parent.
-#[cfg(feature = "arena")]
-#[derive(Clone, Copy)]
-pub struct RecordNodes<'t> {
-    rows: &'t crate::arena::NodeRows,
-    text: &'t str,
-}
-
-#[cfg(feature = "arena")]
-impl<'t> RecordNodes<'t> {
-    /// Navigation over the rows of `tree`'s nodes, whose bytes index `text`;
-    /// `None` while some node of the tree has no row.
-    #[must_use]
-    pub fn new(tree: &'t crate::arena::TreeArena, text: &'t str) -> Option<Self> {
-        tree.node_rows().map(|rows| Self::over(rows, text))
-    }
-
-    /// Navigation over `rows`, every node's, whose bytes index `text`.
-    #[must_use]
-    pub fn over(rows: &'t crate::arena::NodeRows, text: &'t str) -> Self {
-        Self { rows, text }
-    }
-
-    /// Every node of the tree, in preorder: the rows in index order.
-    pub fn preorder(&self) -> impl Iterator<Item = Kid> + '_ {
-        (0..self.rows.len()).map(|index| self.rows.kid(NodeIndex(index)))
-    }
-}
-
-#[cfg(feature = "arena")]
-impl<'t> Nodes<'t> for RecordNodes<'t> {
-    fn text(&self) -> &'t str {
-        self.text
-    }
-
-    fn kid(&mut self, index: NodeIndex) -> Kid {
-        self.rows.kid(index)
-    }
-
-    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
-        let end = self.rows.subtree_end(index);
-        let mut kids = Vec::new();
-        let mut at = index + 1;
-        while at < end {
-            let kid = self.rows.kid(at);
-            at = at + kid.count;
-            kids.push(kid);
-        }
-        kids.into()
-    }
-
-    fn edge(&mut self, index: NodeIndex, side: Side) -> Option<Kid> {
-        let end = self.rows.subtree_end(index);
-        let mut at = index + 1;
-        if at >= end {
-            return None;
-        }
-        if side == Side::After {
-            loop {
-                let next = self.rows.subtree_end(at);
-                if next >= end {
-                    break;
-                }
-                at = next;
-            }
-        }
-        Some(self.rows.kid(at))
-    }
-
-    fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
-        self.rows.parent(index)
-    }
-
-    fn missing(&mut self, index: NodeIndex) -> bool {
-        self.rows.missing(index)
-    }
-
-    fn holds_error(&mut self, index: NodeIndex) -> bool {
-        self.rows.holds_error(index)
-    }
-
-    fn next(&mut self, index: NodeIndex) -> Option<Kid> {
-        let parent = self.rows.parent(index)?;
-        let at = index + self.rows.kid(index).count;
-        (at < self.rows.subtree_end(parent)).then(|| self.rows.kid(at))
-    }
-}
-
-/// Navigation of one parse for one call: over its rows once every node has
-/// one (`RecordNodes`), else over tree-sitter's tree (`TreeNodes`).
+/// Navigation of one parse for one call: over tree-sitter's tree
+/// (`TreeNodes`), or over the records a read left of it (`RunNodes`).
 pub enum Navigation<'t> {
     Tree(TreeNodes<'t>),
     #[cfg(feature = "arena")]
-    Records(RecordNodes<'t>),
+    Runs(crate::arena::RunNodes<'t>),
 }
 
 impl<'t> Navigation<'t> {
@@ -505,7 +428,7 @@ impl<'t> Navigation<'t> {
         match self {
             Self::Tree(tree) => Self::Tree(tree.region(nodes)),
             #[cfg(feature = "arena")]
-            Self::Records(records) => Self::Records(*records),
+            Self::Runs(runs) => Self::Runs(*runs),
         }
     }
 
@@ -516,7 +439,7 @@ impl<'t> Navigation<'t> {
         match self {
             Self::Tree(tree) => Self::Tree(tree.copy()),
             #[cfg(feature = "arena")]
-            Self::Records(records) => Self::Records(*records),
+            Self::Runs(runs) => Self::Runs(*runs),
         }
     }
 
@@ -527,7 +450,7 @@ impl<'t> Navigation<'t> {
         match self {
             Self::Tree(tree) => Some(tree.reader(index)),
             #[cfg(feature = "arena")]
-            Self::Records(_) => None,
+            Self::Runs(_) => None,
         }
     }
 
@@ -535,7 +458,7 @@ impl<'t> Navigation<'t> {
         match self {
             Self::Tree(tree) => tree,
             #[cfg(feature = "arena")]
-            Self::Records(records) => records,
+            Self::Runs(runs) => runs,
         }
     }
 }
@@ -545,7 +468,7 @@ impl<'t> Nodes<'t> for Navigation<'t> {
         match self {
             Self::Tree(tree) => tree.text(),
             #[cfg(feature = "arena")]
-            Self::Records(records) => records.text(),
+            Self::Runs(runs) => runs.text(),
         }
     }
 
@@ -553,7 +476,15 @@ impl<'t> Nodes<'t> for Navigation<'t> {
         self.nodes().kid(index)
     }
 
-    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
+    fn bound(&mut self) -> Option<u32> {
+        self.nodes().bound()
+    }
+
+    fn names(&mut self, index: NodeIndex) -> bool {
+        self.nodes().names(index)
+    }
+
+    fn kids(&mut self, index: NodeIndex) -> Kids {
         self.nodes().kids(index)
     }
 
