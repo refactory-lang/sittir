@@ -1,16 +1,38 @@
-import { describe, it, expect } from 'vitest';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { afterAll, beforeAll, describe, it, expect } from 'vitest';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { transpileOverrides } from '../transpile-overrides.ts';
 import { runTreeSitterCliCapturing } from '../tree-sitter-cli.ts';
-import { grammarPackage, layerPath, sittirDirOf } from '../../grammars.ts';
+import { type GrammarName, type GrammarPackage, grammarPackage, layerPath, packageRequire, sittirDirOf, upstreamPackage } from '../../grammars.ts';
 import { evaluateDsl } from '../../dsl/evaluate.ts';
+
+const copies: string[] = [];
+
+afterAll(() => {
+	for (const dir of copies) rmSync(dir, { recursive: true, force: true });
+});
+
+function packageCopy(name: GrammarName, generatedLayer: boolean): GrammarPackage {
+	const dir = mkdtempSync(join(tmpdir(), `sittir-${name}-`));
+	copies.push(dir);
+	writeFileSync(join(dir, 'grammar.sittir.ts'), '');
+	if (generatedLayer) writeFileSync(join(dir, 'grammar.bindings.ts'), '');
+	const upstream = dirname(packageRequire(grammarPackage(name)).resolve(`${upstreamPackage(name)}/package.json`));
+	mkdirSync(join(dir, 'node_modules'), { recursive: true });
+	symlinkSync(upstream, join(dir, 'node_modules', upstreamPackage(name)));
+	return grammarPackage(name, dir);
+}
 
 describe('transpileOverrides', () => {
 	const GRAMMAR = 'python';
-	const pkg = grammarPackage(GRAMMAR);
-	const outputDir = sittirDirOf(pkg);
+	let pkg: GrammarPackage;
+	let outputDir: string;
+
+	beforeAll(() => {
+		pkg = packageCopy(GRAMMAR, true);
+		outputDir = sittirDirOf(pkg);
+	});
 
 	it('writes grammar.js as a re-export of the top layer: the generated layer where the package has one', () => {
 		const result = transpileOverrides({ package: pkg });
@@ -19,7 +41,7 @@ describe('transpileOverrides', () => {
 	});
 
 	it('writes grammar.js as a re-export of grammar.sittir.ts where the package has no generated layer', () => {
-		const scm = grammarPackage('scm');
+		const scm = packageCopy('scm', false);
 		expect(readFileSync(transpileOverrides({ package: scm }).outputPath, 'utf8')).toBe("export { default } from '../grammar.sittir.ts';\n");
 	});
 
