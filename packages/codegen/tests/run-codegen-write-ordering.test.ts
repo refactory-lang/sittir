@@ -34,7 +34,7 @@ describe('runCodegen write ordering', () => {
 			process.chdir(repoRoot);
 			await expect(
 				runCodegen({
-					grammar: 'rust',
+					grammar: 'regex',
 					outputDir: join(outDir, 'src'),
 					testsDir: join(outDir, 'tests'),
 					all: true,
