@@ -67,6 +67,8 @@ pub trait DelimiterToken {
     }
     /// The token read as opaque text: its delimiters are its source's.
     fn opaque(&self) -> bool;
+    /// The token came from source and no write replaced it.
+    fn read(&self) -> bool;
     /// The text of the facet that decides whether the content's free text is
     /// checked (a python string's prefix), when the token holds one.
     fn gate(&self) -> Option<&str> {
@@ -85,13 +87,14 @@ pub struct TokenFacts {
     pub facet: Option<String>,
     pub content: Option<String>,
     pub opaque: bool,
+    pub read: bool,
     pub gate: Option<String>,
 }
 
 impl TokenFacts {
     #[must_use]
     pub fn of<T: DelimiterToken + ?Sized>(token: &T) -> Self {
-        Self { facet: token.facet().map(str::to_owned), content: token.content().map(str::to_owned), opaque: token.opaque(), gate: token.gate().map(str::to_owned) }
+        Self { facet: token.facet().map(str::to_owned), content: token.content().map(str::to_owned), opaque: token.opaque(), read: token.read(), gate: token.gate().map(str::to_owned) }
     }
 }
 
@@ -226,7 +229,7 @@ impl<T: SetFacet, const ADJACENT: bool> DelimiterSlot<()> for SlotValue<T, ADJAC
     fn token(&self, (): &(), ctx: &RenderContext<'_>) -> Option<TokenFacts> {
         match self {
             SlotValue::Node(node) => Some(TokenFacts::of(node)),
-            SlotValue::Coord(_) => read_token(self, ctx).map(|node| TokenFacts::of(&node)),
+            SlotValue::Coord(_) => read_token(self, ctx).map(|node| TokenFacts { read: true, ..TokenFacts::of(&node) }),
         }
     }
 
@@ -271,7 +274,7 @@ fn interpolates(spec: &DelimiterSpec, opener: &TokenFacts) -> bool {
     spec.gate.is_none_or(|spellings| opener.opaque || opener.gate.as_deref().is_some_and(|gate| spellings.contains(&gate)))
 }
 
-fn rendered(content: &dyn Render, spec: &DelimiterSpec, opener: &TokenFacts, ctx: &RenderContext<'_>) -> Result<String, RenderError> {
+fn rendered(content: &dyn Render, spec: &DelimiterSpec, opener: &TokenFacts, ctx: &RenderContext<'_>) -> Result<Option<String>, RenderError> {
     let mut out = String::new();
     let admitted = interpolates(spec, opener);
     let probe = LeafProbe { leaves: if admitted { spec.free_text } else { &[] }, excluded: spec.excluded, nested: spec.id, arms: spec.opened, refuses_arms: !admitted };
@@ -281,6 +284,7 @@ fn rendered(content: &dyn Render, spec: &DelimiterSpec, opener: &TokenFacts, ctx
     let refusal = |reason: String| RenderError::Delimiter(DelimiterRefusal { kind: spec.kind, reason });
     match w.leaf_probe_hit() {
         Some(ProbeHit::Text(leaf, char)) => Err(refusal(format!("its {} text holds `{char}`, which would open another part of it", leaf.name))),
+        Some(ProbeHit::Arm(_)) if opener.read && !admitted => rendered(content, spec, &TokenFacts { opaque: true, ..opener.clone() }, ctx).map(|_| None),
         Some(ProbeHit::Arm(arm)) => Err(refusal(format!(
             "its {} is no part of it under {}",
             arm.name,
@@ -288,7 +292,7 @@ fn rendered(content: &dyn Render, spec: &DelimiterSpec, opener: &TokenFacts, ctx
         ))),
         None => {
             drop(w);
-            Ok(out)
+            Ok(Some(out))
         }
     }
 }
@@ -312,7 +316,7 @@ pub fn fill<O, Open: DelimiterSlot<O>, Close: DelimiterSlot<O>>(
 ) -> Result<(), RenderError> {
     let (Some(opener), Some(closer)) = (open.token(overlay, ctx), close.token(overlay, ctx)) else { return Ok(()) };
     let held = &*overlay;
-    let rendered = rendered(&Content(|w: &mut dyn RenderSink| content(held, w)), spec, &opener, ctx)?;
+    let Some(rendered) = rendered(&Content(|w: &mut dyn RenderSink| content(held, w)), spec, &opener, ctx)? else { return Ok(()) };
     if opener.opaque || closer.opaque {
         return Ok(());
     }

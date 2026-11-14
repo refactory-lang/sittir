@@ -381,6 +381,9 @@ pub trait BodyLayout<'a>: Copy {
 
     /// `trivia::has_inner`.
     fn has_inner(self) -> bool;
+
+    /// Whether the node came from source: a read node, not a built one.
+    fn read(self) -> bool;
 }
 
 impl<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a> BodyLayout<'a> for Option<&'a NodeLayout<T>> {
@@ -412,6 +415,10 @@ impl<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a> BodyLayout<'a> for Optio
 
     fn has_inner(self) -> bool {
         crate::trivia::has_inner(self.and_then(|layout| layout.trivia.as_ref()))
+    }
+
+    fn read(self) -> bool {
+        self.is_some_and(|layout| layout.at.is_some())
     }
 }
 

@@ -41215,6 +41215,7 @@ fn prepare_raw_string_literal_start<N: RawStringLiteralStartPrepare + ?Sized>(no
 impl ::sittir_core::delimiters::DelimiterToken for RawStringLiteralStartNode {
     fn facet(&self) -> Option<&str> { RawStringLiteralStartFields::hashes(self) }
     fn opaque(&self) -> bool { RawStringLiteralStartFields::verbatim(self).is_some() }
+    fn read(&self) -> bool { ::sittir_core::layout::BodyLayout::read(RawStringLiteralStartFields::layout(self)) }
 }
 
 impl ::sittir_core::delimiters::SetFacet for RawStringLiteralStartNode {
@@ -41225,6 +41226,7 @@ impl ::sittir_core::delimiters::SetFacet for RawStringLiteralStartNode {
 impl ::sittir_core::delimiters::DelimiterToken for RawStringLiteralStartNodeRecord<'_> {
     fn facet(&self) -> Option<&str> { RawStringLiteralStartFields::hashes(self) }
     fn opaque(&self) -> bool { RawStringLiteralStartFields::verbatim(self).is_some() }
+    fn read(&self) -> bool { ::sittir_core::layout::BodyLayout::read(RawStringLiteralStartFields::layout(self)) }
 }
 
 }
@@ -41309,6 +41311,7 @@ fn prepare_raw_string_literal_end<N: RawStringLiteralEndPrepare + ?Sized>(node: 
 impl ::sittir_core::delimiters::DelimiterToken for RawStringLiteralEndNode {
     fn facet(&self) -> Option<&str> { RawStringLiteralEndFields::hashes(self) }
     fn opaque(&self) -> bool { RawStringLiteralEndFields::verbatim(self).is_some() }
+    fn read(&self) -> bool { ::sittir_core::layout::BodyLayout::read(RawStringLiteralEndFields::layout(self)) }
 }
 
 impl ::sittir_core::delimiters::SetFacet for RawStringLiteralEndNode {
@@ -41319,6 +41322,7 @@ impl ::sittir_core::delimiters::SetFacet for RawStringLiteralEndNode {
 impl ::sittir_core::delimiters::DelimiterToken for RawStringLiteralEndNodeRecord<'_> {
     fn facet(&self) -> Option<&str> { RawStringLiteralEndFields::hashes(self) }
     fn opaque(&self) -> bool { RawStringLiteralEndFields::verbatim(self).is_some() }
+    fn read(&self) -> bool { ::sittir_core::layout::BodyLayout::read(RawStringLiteralEndFields::layout(self)) }
 }
 
 }
