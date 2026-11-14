@@ -46,12 +46,13 @@
 **Status:** done.
 
 **Files:**
-- Modify: `packages/codegen/src/bootstrap/bootstrap.ts` (writes `scratchpad/pinned-types/tsconfig.json` into the checkout on every bootstrap)
+- Modify: `packages/codegen/src/bootstrap/bootstrap.ts` (writes `scratchpad/pinned-types/tsconfig.json` into the checkout on every bootstrap); create `bootstrap/pinned-types.ts` and `packages/codegen/scripts/check-pinned-types.ts` (the boundary)
 - Create: `packages/codegen/tsconfig.emitter.json`, extending it; `packages/codegen/src/emitters/overlays/portable/emit/` (the emitter's directory: `engine.ts` and the type fixture)
 - Modify: the root `type-check` script (`type-check:emitter`); the emitter's directory leaves codegen's own and build tsconfigs
 
 - [x] **Step 1: The failing case.** A fixture emitter call `t.switchCase({ value, body: [] })` type-checks today, though `body` isn't a key the pinned builder takes: the prototype typed its builders as `Record<string, any>`.
-- [x] **Step 2: Implement.** `sittir bootstrap` writes a tsconfig mapping every `@sittir/*` export of the pinned build to the declaration file its `types` condition names. It extends codegen's tsconfig, so only `paths` change. The emitter's directory type-checks under it.
+- [x] **Step 2: Implement.** `sittir bootstrap` writes a tsconfig mapping every `@sittir/*` export of the pinned build to the declaration file its `types` condition names, when the pin built it. It extends codegen's tsconfig, so only `paths` change. The emitter's directory type-checks under it.
+  - `paths` only redirects: an unmapped subpath or an unbuilt declaration falls through to the live checkout. So `type-check:emitter` first lists the emitter program's files (`tsc --explainFiles`) and fails on any `@sittir/*` import, the pinned declarations' own included, that resolves outside the pin (`pinned-types-escape`).
 - [x] **Step 3: Run it.** The fixture is an error (TS2345, "an unknown key: body"), held by `@ts-expect-error`; a correct call under the directive is TS2578. The loose config types refuse unknown keys.
 - [x] **Step 4: Commit.**
 

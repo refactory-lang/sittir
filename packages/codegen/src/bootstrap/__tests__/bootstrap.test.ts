@@ -53,6 +53,11 @@ describe('the pin', () => {
 		process.env.SITTIR_BOOTSTRAP_DIR = '/cache';
 		expect(bootstrapDir(checkout())).toBe(join('/cache', SHA));
 	});
+
+	it('takes a relative SITTIR_BOOTSTRAP_DIR from the working directory, and names it absolutely', () => {
+		process.env.SITTIR_BOOTSTRAP_DIR = join('relative', 'cache');
+		expect(bootstrapDir(checkout())).toBe(join(process.cwd(), 'relative', 'cache', SHA));
+	});
 });
 
 describe('the bootstrap build', () => {
@@ -93,12 +98,17 @@ describe('the pinned build loader', () => {
 });
 
 function pinnedPackages(dir: string = realpathSync(mkdtempSync(join(tmpdir(), 'sittir-pin-types-')))): string {
-	const manifest = (folder: string, contents: object): void => {
+	const manifest = (folder: string, contents: object, built: readonly string[] = []): void => {
 		mkdirSync(join(dir, 'packages', folder), { recursive: true });
 		writeFileSync(join(dir, 'packages', folder, 'package.json'), JSON.stringify(contents));
+		for (const file of built) {
+			mkdirSync(join(dir, 'packages', folder, file, '..'), { recursive: true });
+			writeFileSync(join(dir, 'packages', folder, file), '');
+		}
 	};
-	manifest('typescript', { name: '@sittir/typescript', exports: { '.': { types: './dist/index.d.ts', import: './dist/index.js' }, './api': { types: './dist/api.d.ts' } } });
-	manifest('types', { name: '@sittir/types', exports: { '.': { types: './src/index.ts' } } });
+	manifest('typescript', { name: '@sittir/typescript', exports: { '.': { types: './dist/index.d.ts', import: './dist/index.js' }, './api': { types: './dist/api.d.ts' } } }, ['dist/index.d.ts', 'dist/api.d.ts']);
+	manifest('types', { name: '@sittir/types', exports: { '.': { types: './src/index.ts' } } }, ['src/index.ts']);
+	manifest('rust', { name: '@sittir/rust', exports: { '.': { types: './dist/index.d.ts' } } });
 	manifest('vendored', { name: 'not-sittir', exports: { '.': { types: './index.d.ts' } } });
 	manifest('untyped', { name: '@sittir/untyped', exports: { '.': './index.js' } });
 	mkdirSync(join(dir, 'packages', 'no-manifest'), { recursive: true });
@@ -106,7 +116,7 @@ function pinnedPackages(dir: string = realpathSync(mkdtempSync(join(tmpdir(), 's
 }
 
 describe('the pinned build\'s declarations', () => {
-	it('map every @sittir export to the declaration file its types condition names', () => {
+	it('map every @sittir export to the declaration file its types condition names, when the pin built it', () => {
 		const dir = pinnedPackages();
 		expect(pinnedTypePaths(dir)).toEqual({
 			'@sittir/typescript': [join(dir, 'packages/typescript/dist/index.d.ts')],

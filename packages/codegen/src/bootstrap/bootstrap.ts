@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { REPO_ROOT } from '../grammars.ts';
 
 export const BOOTSTRAP_PACKAGES = ['scm', 'typescript'] as const;
@@ -28,7 +28,7 @@ function mainCheckout(root: string): string {
 }
 
 export function bootstrapDir(root: string = REPO_ROOT): string {
-	return join(process.env[BOOTSTRAP_DIR_ENV] ?? join(mainCheckout(root), 'scratchpad', 'bootstrap'), readPin(root));
+	return join(resolve(process.env[BOOTSTRAP_DIR_ENV] ?? join(mainCheckout(root), 'scratchpad', 'bootstrap')), readPin(root));
 }
 
 export function isBootstrapped(dir: string): boolean {
@@ -74,8 +74,9 @@ export function pinnedTypePaths(dir: string): Record<string, string[]> {
 		if (name === undefined || !name.startsWith('@sittir/')) return [];
 		return Object.entries(exports).flatMap(([subpath, target]): [string, string[]][] => {
 			const types = typeof target === 'string' ? undefined : target.types;
-			if (types === undefined) return [];
-			return [[subpath === '.' ? name : `${name}/${subpath.replace(/^\.\//, '')}`, [join(packages, folder, types)]]];
+			const declaration = types === undefined ? undefined : join(packages, folder, types);
+			if (declaration === undefined || !existsSync(declaration)) return [];
+			return [[subpath === '.' ? name : `${name}/${subpath.replace(/^\.\//, '')}`, [declaration]]];
 		});
 	});
 	return Object.fromEntries(entries);
