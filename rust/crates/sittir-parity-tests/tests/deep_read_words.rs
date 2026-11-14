@@ -1,19 +1,16 @@
-//! The deep read's records, word for word. A fixture tree per grammar is read
-//! to every depth through the deep read's entry point (`ParsedTree::read_record`
-//! at the root, `Depth::All`), and every word of every chunk of its arena
-//! hashes to the value recorded here. How a walk moves through the tree leaves
-//! these words as they are; a change to what a record holds changes them, and
-//! the values with it.
+//! A read's records, word for word. A fixture source per grammar is read
+//! (`Engine::parse_records`), and every word of every chunk the read wrote
+//! hashes to the value recorded here. How a walk moves through the tree
+//! leaves these words as they are; a change to what a record holds changes
+//! them, and the values with it.
 #![cfg(feature = "arena")]
 
-use sittir_core::arena::{HydrateNode, RecordCells};
-use sittir_core::engine::{claim_tree_id, Engine, EngineGrammar};
+use sittir_core::arena::{ArenaRead, HydrateNode, RecordCells, MAX_CHUNKS};
+use sittir_core::engine::{Engine, EngineGrammar};
 use sittir_core::options::ResolvedOptions;
-use sittir_core::read::Depth;
-use sittir_core::types::NodeIndex;
 
-/// A tree's arena after its deep read: its chunks, their words, and the
-/// FNV-1a hash of those words' little-endian bytes in chunk order.
+/// What a read wrote: its chunks, their words, and the FNV-1a hash of those
+/// words' little-endian bytes in chunk order.
 #[derive(Debug, PartialEq, Eq)]
 struct ArenaWords {
     chunks: u32,
@@ -23,11 +20,12 @@ struct ArenaWords {
 
 fn deep_read<G: EngineGrammar, N: HydrateNode + RecordCells>(grammar: G, options: ResolvedOptions, source: &str) -> ArenaWords {
     let mut engine = Engine::new(grammar, options).expect("an engine");
-    let tree = engine.parse(source, claim_tree_id().expect("a tree id")).expect("a parse");
-    assert!(!tree.tree().root_node().has_error(), "the fixture parses without an ERROR");
-    tree.read_record::<N>(NodeIndex::ROOT, Depth::All).expect("a whole read").expect("a root record");
+    let parsed = engine.parse_records::<N>(source).expect("a read");
+    assert!(parsed.errors.is_empty(), "the fixture parses without an ERROR");
+    parsed.root.expect("a root record");
+    let built = engine.written().built();
     let mut words = ArenaWords { chunks: 0, words: 0, hash: 0xcbf2_9ce4_8422_2325 };
-    while let Some(chunk) = tree.record_chunk(words.chunks) {
+    for chunk in (1..MAX_CHUNKS).filter(|&n| built.read_chunk(n)).filter_map(|n| built.chunk(n)) {
         for byte in chunk.iter().flat_map(|word| word.to_le_bytes()) {
             words.hash = (words.hash ^ u64::from(byte)).wrapping_mul(0x0100_0000_01b3);
         }

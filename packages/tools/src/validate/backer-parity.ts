@@ -1,7 +1,7 @@
 import { readFileSync, realpathSync } from 'node:fs';
 import { isAbsolute, relative, resolve } from 'node:path';
-import type { BackerParity, BaselineRun } from '@sittir/common/engine';
-import { withTreeOf } from './layout-runs.ts';
+import { nativeEngineOf, type BackerParity, type BaselineRun } from '@sittir/common/engine';
+import { nativeBackendOf, withTreeOf } from './layout-runs.ts';
 
 export interface BackerParityOptions {
 	readonly corpus: string;
@@ -17,7 +17,7 @@ export interface RunParity {
 	readonly firstRun?: number;
 }
 
-export interface BackerParityFile extends BackerParity, RunParity {
+export interface BackerParityFile extends Omit<BackerParity, 'runs'>, RunParity {
 	readonly file: string;
 }
 
@@ -83,10 +83,21 @@ export function censusPasses({ differing, measuredRuns, differingRuns }: BackerP
 	return differing === 0 && differingRuns === 0 && measuredRuns > 0;
 }
 
+function recordParity(native: Awaited<ReturnType<typeof nativeBackendOf>>, source: string): BackerParity {
+	const engine = nativeEngineOf(native);
+	try {
+		if (!engine.backerParity) throw new Error('backer-parity needs an addon built with arena storage');
+		return engine.backerParity(source);
+	} finally {
+		engine.dispose();
+	}
+}
+
 export async function computeBackerParity(root: string, paths: readonly string[]): Promise<BackerParityCensus> {
 	if (paths.length === 0) {
 		throw new Error('backer-parity has no corpus file to read; name them with --admitted or --files');
 	}
+	const native = await nativeBackendOf('typescript');
 	const withTree = await withTreeOf('typescript');
 	const failing: BackerParityFile[] = [];
 	let nodes = 0;
@@ -96,7 +107,7 @@ export async function computeBackerParity(root: string, paths: readonly string[]
 	let differingRuns = 0;
 	for (const path of paths) {
 		const source = readFileSync(corpusFile(root, path), 'utf8');
-		const { parity, fromRecords } = withTree(source, (engine, treeId) => ({ parity: engine.backerParity(treeId), fromRecords: engine.layoutBaseline(treeId) }));
+		const { runs: fromRecords, ...parity } = recordParity(native, source);
 		const run = runParity(withTree(source, (engine, treeId) => engine.layoutBaseline(treeId)), fromRecords);
 		nodes += parity.nodes;
 		differing += parity.differing;

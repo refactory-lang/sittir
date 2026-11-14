@@ -188,6 +188,16 @@ mod tests {
     }
 
     #[test]
+    fn a_source_is_written_after_the_last_one_of_the_open_chunk_is_released() {
+        let mut arena = chunks();
+        let source = Source { text: "fn f() {}\n", breaks_lf: true, inferred: InferredOptions::default() };
+        let first = arena.write_source(&source).expect("room");
+        arena.release(crate::arena::count::Held::Text(first), false, &mut |_| Vec::new()).expect("the source's one count");
+        let second = arena.write_source(&source).expect("a chunk to write in");
+        assert_eq!(Source::read(&arena, second), Ok(source));
+    }
+
+    #[test]
     fn an_address_no_source_is_at_is_refused() {
         let mut arena = chunks();
         let at = arena.write_source(&Source { text: "x", breaks_lf: true, inferred: InferredOptions::default() }).expect("room");

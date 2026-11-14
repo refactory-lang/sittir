@@ -73,14 +73,6 @@ impl<G: RecordGrammar> Engine<G> {
         self.read_named(crate::types::NodeName { node: crate::types::NodeId(at.0), site: None }, f)
     }
 
-    /// What `f` answers of the node a read left that `name` names: the tree
-    /// over its source's records, made for this call, and the id the call
-    /// gives the node. `None` for a name whose record no read wrote.
-    ///
-    /// # Errors
-    ///
-    /// What making the tree refuses, and `ArenaError::Malformed` for a name
-    /// its source's records hold no node of.
     /// The siblings that hold sides beside each node `names` names
     /// (`ParsedTree::siblings`), in order, each from the read that left it;
     /// the nodes of one source share one walk of its records.
@@ -121,6 +113,14 @@ impl<G: RecordGrammar> Engine<G> {
         names.iter().map(|name| super::RunNodes::source_of(built, Address(name.node.0))).collect()
     }
 
+    /// What `f` answers of the node a read left that `name` names: the tree
+    /// over its source's records, made for this call, and the id the call
+    /// gives the node. `None` for a name whose record no read wrote.
+    ///
+    /// # Errors
+    ///
+    /// What making the tree refuses, and `ArenaError::Malformed` for a name
+    /// its source's records hold no node of.
     pub fn read_named<R>(&self, name: crate::types::NodeName, f: impl FnOnce(&crate::engine::ParsedTree<G, crate::engine::Records<'_>>, NodeIndex) -> R) -> Result<Option<R>, ArenaError> {
         let built = self.written().built();
         built.readable()?;
@@ -332,7 +332,7 @@ impl<G: RecordGrammar> Engine<G> {
     ) -> Result<String, RenderError> {
         let cell = admitted_leaf::<G>(arena, kind, entry, changed).map_err(RenderError::Record)?;
         let store = self.written().root_leaf(sides);
-        let mut held = HeldArenas::of([]);
+        let mut held = HeldArenas::default();
         G::render_record(self.grammar(), CellAt { cell, tree: None, site: None }, &mut held, arena, &store, ctx, None)
     }
 }
@@ -420,7 +420,7 @@ fn root_at<G: RecordGrammar>(built: &super::BuiltChunks, at: Address, changed: C
         admit(built, at, G::shape, G::KIND_BITS).map_err(RenderError::Record)?;
         None
     };
-    Ok((CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree, site: None }, HeldArenas::of([]).with_reads(built)))
+    Ok((CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree, site: None }, HeldArenas::reading(built)))
 }
 
 fn admitted_root<'t, G: RecordGrammar>(
@@ -431,12 +431,8 @@ fn admitted_root<'t, G: RecordGrammar>(
 ) -> Result<(CellAt, HeldArenas<'t>), RenderError> {
     let kind = arena.header_kind(at, G::KIND_BITS).map_err(RenderError::Record)?;
     let linked = admit(arena, at, G::shape, G::KIND_BITS).map_err(RenderError::Record)?;
-    let held = linked
-        .into_iter()
-        .map(|tree| {
-            let parsed = trees.get(tree).ok_or(CoordinateError::UnknownTree { handle: encode_handle(tree, NodeIndex::ROOT), tree_id: tree })?;
-            Ok((tree, parsed.tree_arena()))
-        })
-        .collect::<Result<Vec<_>, CoordinateError>>()?;
-    Ok((CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree: None, site: None }, HeldArenas::of(held)))
+    for tree in linked {
+        trees.get(tree).ok_or(CoordinateError::UnknownTree { handle: encode_handle(tree, NodeIndex::ROOT), tree_id: tree })?;
+    }
+    Ok((CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree: None, site: None }, HeldArenas::default()))
 }

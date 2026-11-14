@@ -4,7 +4,7 @@
 //! prepared overlay; every word it reads is bounds-checked, and a cell no
 //! writer writes renders as a record refusal (`RenderError::Record`).
 
-use super::{Address, ArenaRead, ArenaError, Cell, CellShape, CellWord, ListCell, Prepared, PreparedNode, Sides, StringRef, TreeArena};
+use super::{Address, ArenaRead, ArenaError, Cell, CellShape, CellWord, ListCell, Prepared, PreparedNode, Sides, StringRef};
 use crate::layout::{list_units, render_framed, render_unit, BodyLayout, TriviaRole};
 use crate::options::Edges;
 use crate::render::{Render, RenderError, RenderResult, RenderSink, SourceTable};
@@ -43,11 +43,8 @@ pub fn through_record(sources: &dyn SourceTable, coord: &NodeCoordinate, cell: C
     sources.edited_within(coord) || (sources.reads_templates() && matches!(cell, Cell::Child { .. } | Cell::Coordinate { .. }))
 }
 
-/// The parsed trees' arenas a render reaches: the arena of each tree a record
-/// names.
+/// The arenas a render reaches.
 pub trait RecordArenas {
-    fn tree(&self, tree: TreeId) -> Option<&TreeArena>;
-
     /// The built arena that holds the records reads left of their sources,
     /// which outlive their trees, when the render reaches one.
     fn reads(&self) -> Option<&dyn ArenaRead> {
@@ -99,11 +96,8 @@ impl<'a, T> RecordCtx<'a, T> {
     ///
     /// `ArenaError::Malformed` when the render reaches no arena of `tree`.
     pub fn parsed(tree: TreeId, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>, bits: u32) -> Result<Self, ArenaError> {
-        let (arena, runs): (&dyn ArenaRead, bool) = match arenas.tree(tree) {
-            Some(own) => (own.arena(), false),
-            None => (arenas.reads().ok_or(malformed("record tree", tree.0))?, true),
-        };
-        Ok(Self { arena, tree: Some(tree), runs, arenas, sources, store, prepared, bits })
+        let arena = arenas.reads().ok_or(malformed("record tree", tree.0))?;
+        Ok(Self { arena, tree: Some(tree), runs: true, arenas, sources, store, prepared, bits })
     }
 
     /// The side record at `at`, the default for address 0, the node it was
@@ -322,10 +316,7 @@ impl<'a, T> RecordCtx<'a, T> {
         let row = self.cell_row(cell)?;
         let templated = |row: &ParsedRow| {
             matches!(cell, Cell::Child { .. } | Cell::ParsedLeaf { .. } | Cell::Unit { .. })
-                && self.prepared.templates().is_some_and(|templates| match self.arenas.tree(row.tree) {
-                    Some(arena) => arena.node_rows().is_some_and(|rows| templates.reach(row.tree, rows, row.row)),
-                    None => templates.reach_by(row.tree, |levels| self.sources.levels_below(row.tree, templates.root, row.row, levels)),
-                })
+                && self.prepared.templates().is_some_and(|templates| templates.reach_by(row.tree, |levels| self.sources.levels_below(row.tree, templates.root, row.row, levels)))
         };
         Ok(row.filter(|row| !templated(row)))
     }
@@ -579,7 +570,7 @@ pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) 
     if ctx.tree.is_none() && ctx.arena.released(at) {
         return Err(malformed("released record", at.0));
     }
-    if ctx.tree.is_some_and(|tree| if ctx.runs { !ctx.arena.read_chunk(at.chunk()) } else { ctx.arenas.tree(tree).is_none_or(|arena| !arena.contains_record(at)) }) {
+    if ctx.tree.is_some() && !ctx.arena.read_chunk(at.chunk()) {
         return Err(malformed("record address", at.0));
     }
     Ok((words, ctx.side(Address(words[1]))?))
@@ -949,11 +940,7 @@ mod tests {
     }
 
     struct NoTrees;
-    impl RecordArenas for NoTrees {
-        fn tree(&self, _: TreeId) -> Option<&TreeArena> {
-            None
-        }
-    }
+    impl RecordArenas for NoTrees {}
 
     struct Sources(HashMap<TreeId, Arc<str>>);
     impl SourceTable for Sources {

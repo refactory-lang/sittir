@@ -113,7 +113,7 @@ impl<T: Clone + sittir_core::heap::HeapBytes> Built<T> {
 
     /// `G`'s render of the root, its panic caught.
     fn render<G: RecordGrammar<Trivia = T>>(&self, tree: &ParsedTree<G>, ctx: &RenderContext<'_>) -> std::thread::Result<Result<String, RenderError>> {
-        let mut arenas = HeldArenas::of([(tree.tree_id(), tree.tree_arena())]);
+        let mut arenas = HeldArenas::default();
         std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| tree.grammar().render_record(self.root, &mut arenas, &self.image, &self.store, ctx, None)))
     }
 }

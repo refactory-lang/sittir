@@ -148,12 +148,6 @@ impl<'a> Lent<'a> {
         Self { arenas: Some(arenas) }
     }
 
-    /// The arena of `tree`, when one is lent.
-    #[must_use]
-    pub fn tree(self, tree: crate::types::TreeId) -> Option<&'a crate::arena::TreeArena> {
-        self.arenas?.tree(tree)
-    }
-
     /// The arenas lent.
     #[must_use]
     pub fn arenas(self) -> Option<&'a dyn crate::arena::RecordArenas> {

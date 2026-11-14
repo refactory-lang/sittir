@@ -10,18 +10,18 @@ use std::borrow::Cow;
 use std::marker::PhantomData;
 
 use super::view::ParsedRow;
-use super::{place_of, record_of, Address, PrepPlace, ArenaRead, ArenaError, Cell, HydrateNode, Prepared, RecordArenas, RecordCtx, RecordView, TreeArena};
+use super::{place_of, record_of, Address, PrepPlace, ArenaRead, ArenaError, Cell, HydrateNode, Prepared, RecordArenas, RecordCtx, RecordView};
 use crate::layout::{merge_source_sides, slots_or_source, SlotLayout, UnitSides};
 use crate::options::{ArmSite, Edges, Side};
 use crate::delimiters::{DelimiterSlot, DelimiterToken, SetFacet, TokenFacts};
 use super::HasRecord;
 use crate::render::{Render, RenderResult, RenderSink};
 use crate::prepare::{
-    coord_seat, coordinate_edges, fill_coordinate_gap, fill_gaps, fill_node_gap, fill_seats, seat_coordinate, seat_node, seat_read_node, seat_site, separators, unread, ArmOf, EdgeItem, EdgeItems, FromKindId, GapItems,
+    coord_seat, coordinate_edges, fill_coordinate_gap, fill_gaps, fill_node_gap, fill_seats, seat_coordinate, seat_node, seat_read_node, seat_site, separators, ArmOf, EdgeItem, EdgeItems, FromKindId, GapItems,
     LayoutTarget, Prepare, PresentItems, RenderContext, RenderSlot, SeatItems, SeatSlot, Setting, SlotTarget, SnapshotEdge, UnitSlot,
 };
 use crate::record::HEADER_WORDS;
-use crate::render::{CoordinateError, RenderError, SourceTable};
+use crate::render::{RenderError, SourceTable};
 use crate::slot::{ChangedEdges, NodeCoordinate, SeamArm};
 use crate::trivia::{NodeTrivia, TriviaSeam};
 use crate::trivia_store::{Place, Site, TriviaStore};
@@ -36,66 +36,42 @@ fn malformed(what: &'static str, word: u32) -> ArenaError {
     ArenaError::Malformed { what, word }
 }
 
-/// The parsed trees' arenas a render's prepare reaches, which it writes: a
-/// parsed node's record is written on its first read, and prepare reads a
-/// node a write lies in.
-pub trait RecordTrees: RecordArenas {
-    fn tree_mut(&mut self, tree: TreeId) -> Option<&mut TreeArena>;
-}
+/// The arenas a render's prepare reads.
+pub trait RecordTrees: RecordArenas {}
 
-/// The arenas of a render's parsed trees, each held for the render.
-pub struct HeldArenas<'t>(std::collections::HashMap<TreeId, std::sync::MutexGuard<'t, TreeArena>, crate::heap::IndexState>, Option<&'t dyn ArenaRead>);
+/// The arenas a render holds: the built arena that holds the records reads
+/// left, when it reads one.
+#[derive(Default)]
+pub struct HeldArenas<'t>(Option<&'t dyn ArenaRead>);
 
 impl<'t> HeldArenas<'t> {
-    /// The arenas `trees` holds, each by its tree.
-    pub fn of(trees: impl IntoIterator<Item = (TreeId, std::sync::MutexGuard<'t, TreeArena>)>) -> Self {
-        Self(trees.into_iter().collect(), None)
-    }
-
-    /// These arenas with `reads`, the built arena that holds the records
-    /// reads left.
+    /// Arenas with `reads`, the built arena that holds the records reads
+    /// left.
     #[must_use]
-    pub fn with_reads(self, reads: &'t dyn ArenaRead) -> Self {
-        Self(self.0, Some(reads))
+    pub fn reading(reads: &'t dyn ArenaRead) -> Self {
+        Self(Some(reads))
     }
 }
 
 impl RecordArenas for HeldArenas<'_> {
-    fn tree(&self, tree: TreeId) -> Option<&TreeArena> {
-        self.0.get(&tree).map(|arena| &**arena)
-    }
-
     fn reads(&self) -> Option<&dyn ArenaRead> {
-        self.1
+        self.0
     }
 }
 
-impl RecordTrees for HeldArenas<'_> {
-    fn tree_mut(&mut self, tree: TreeId) -> Option<&mut TreeArena> {
-        self.0.get_mut(&tree).map(|arena| &mut **arena)
-    }
-}
+impl RecordTrees for HeldArenas<'_> {}
 
-/// Arenas a render reads and writes nothing into: the arenas another render
-/// lent (`render::Lent`). A node whose record only a write could give it is
-/// refused (`ArenaError::ReadOnly`).
+/// The arenas another render lent (`render::Lent`), as a render's prepare
+/// reads them.
 pub struct ReadArenas<'a>(pub &'a dyn RecordArenas);
 
 impl RecordArenas for ReadArenas<'_> {
-    fn tree(&self, tree: TreeId) -> Option<&TreeArena> {
-        self.0.tree(tree)
-    }
-
     fn reads(&self) -> Option<&dyn ArenaRead> {
         self.0.reads()
     }
 }
 
-impl RecordTrees for ReadArenas<'_> {
-    fn tree_mut(&mut self, _: TreeId) -> Option<&mut TreeArena> {
-        None
-    }
-}
+impl RecordTrees for ReadArenas<'_> {}
 
 /// The overlay a render of the root record `root`, of node type `N`, renders
 /// with: the root prepared into a fresh one, for a render that renders
@@ -122,7 +98,7 @@ pub struct RecordPrep<'r, T> {
     store: &'r TriviaStore<T>,
     bits: u32,
     /// The record each kind of the render's node type is written as.
-    shape: super::reach::Shape,
+    shape: super::ShapeOf,
 }
 
 impl<'r, T> RecordPrep<'r, T> {
@@ -133,7 +109,7 @@ impl<'r, T> RecordPrep<'r, T> {
 
     /// This prepare, its node type's kinds written as `shape` gives.
     #[must_use]
-    pub fn with_shape(self, shape: super::reach::Shape) -> Self {
+    pub fn with_shape(self, shape: super::ShapeOf) -> Self {
         Self { shape, ..self }
     }
 
@@ -466,26 +442,14 @@ impl<T: Clone + 'static> LayoutAt<'_, T> {
         let (Some(templates), Some(record), Some(tree)) = (prep.prepared.templates(), self.key.at, self.key.tree) else { return Ok(Vec::new()) };
         let view = prep.view(Some(tree))?;
         let mut units = Vec::new();
-        let Some(arena) = prep.trees.tree(tree) else {
-            for (shape, item, cell) in super::view::parsed_cells(view.arena(), record, prep.shape, prep.bits)? {
-                let Cell::Unit { row: Some(row), .. } = cell else { continue };
-                let row = prep.sources.cell_row(tree, record, row.0).ok_or(malformed("cell row", row.0))?;
-                if !templates.reach_by(tree, |levels| prep.sources.levels_below(tree, templates.root, row, levels)) {
-                    continue;
-                }
-                if let Some(trivia) = source_sides(prep, &view.row_node(tree, row)?) {
-                    units.push(UnitSides { slot: shape.key.to_owned(), item: ItemIndex(item), trivia });
-                }
-            }
-            return Ok(units);
-        };
-        let Some(rows) = arena.node_rows() else { return Ok(Vec::new()) };
-        for (slot, item, _, row) in super::reach::units(arena, record, prep.shape)? {
-            if !templates.reach(tree, rows, row) {
+        for (shape, item, cell) in super::view::parsed_cells(view.arena(), record, prep.shape, prep.bits)? {
+            let Cell::Unit { row: Some(row), .. } = cell else { continue };
+            let row = prep.sources.cell_row(tree, record, row.0).ok_or(malformed("cell row", row.0))?;
+            if !templates.reach_by(tree, |levels| prep.sources.levels_below(tree, templates.root, row, levels)) {
                 continue;
             }
             if let Some(trivia) = source_sides(prep, &view.row_node(tree, row)?) {
-                units.push(UnitSides { slot: slot.to_owned(), item: ItemIndex(item), trivia });
+                units.push(UnitSides { slot: shape.key.to_owned(), item: ItemIndex(item), trivia });
             }
         }
         Ok(units)
@@ -573,14 +537,13 @@ pub struct SlotAt<'r, T, N, const ADJACENT: bool = false> {
     node: Marker<'r, (T, N)>,
 }
 
-/// One present item of a slot: its cell, its site, its row when it names a
-/// parsed node, and where its cell lies when its holder is parsed.
+/// One present item of a slot: its cell, its site, and its row when it names
+/// a parsed node.
 #[derive(Debug, Clone, Copy)]
 struct Item {
     at: CellAt,
     site: Site<PrepPlace>,
     row: Option<ParsedRow>,
-    cell: Option<super::reach::CellPlace>,
 }
 
 /// Scalar slots stay inline. Lists keep owned scratch so preparation can append to parsed arenas.
@@ -626,8 +589,7 @@ impl<T, N, const ADJACENT: bool> SlotAt<'_, T, N, ADJACENT> {
         let reach = if view.tree().is_none() { self.shape.built + 1 } else { word + self.shape.width };
         let words = view.words(record, reach)?;
         let place = self.key.place;
-        let parsed = view.tree().is_some();
-        let item = |cell: Cell, item: u32, cell_place: Option<super::reach::CellPlace>| -> Result<Option<Item>, ArenaError> {
+        let item = |cell: Cell, item: u32| -> Result<Option<Item>, ArenaError> {
             let site = Site { holder: place, word, item: ItemIndex(item) };
             let cell = match cell {
                 Cell::Absent => match prep.prepared.node(place).and_then(|node| node.slot(word)).and_then(|slot| slot.unit) {
@@ -637,15 +599,15 @@ impl<T, N, const ADJACENT: bool> SlotAt<'_, T, N, ADJACENT> {
                 cell => cell,
             };
             let at = CellAt { cell, tree: self.key.tree, site: Some(site) };
-            Ok(Some(Item { at, site, row: view.parsed_row(cell)?, cell: cell_place }))
+            Ok(Some(Item { at, site, row: view.parsed_row(cell)? }))
         };
         if self.shape.run.is_none() {
-            return Ok(Items::One([item(view.slot_cell(words, record, self.shape)?, 0, parsed.then(|| super::reach::CellPlace::slot(record, self.shape)))?]));
+            return Ok(Items::One([item(view.slot_cell(words, record, self.shape)?, 0)?]));
         }
         let (list, run) = view.slot_list(words, self.shape)?;
         list.items(view.arena(), run)?
             .zip(0..)
-            .map(|(words, at)| item(view.item_cell(words, record, self.shape)?, at, if parsed { Some(super::reach::CellPlace::item(list.run, at, self.shape)?) } else { None }))
+            .map(|(words, at)| item(view.item_cell(words, record, self.shape)?, at))
             .collect::<Result<_, _>>()
             .map(Items::Many)
     }
@@ -702,15 +664,14 @@ fn prepare_item_in_place<T: Clone + 'static, N: PrepareRecord<T> + Prepare + Hyd
     let coord = prep.row_coordinate(item.at.tree, row)?;
     coord.resolve(ctx.sources)?;
     if super::view::through_record(ctx.sources, &coord, item.at.cell) {
-        if let Some(record) = edited_record::<T, N>(prep, item, &coord, ctx)? {
-            if let Some(seated) = prep.prepared.coordinate_edges(item.site) {
-                if N::takes_gaps(record.cell) {
-                    let stored = stored_edges(prep, record);
-                    seat_read_node(prep.prepared.site_edges_mut(item.site, stored), seated);
-                }
+        let record = edited_record(item, &coord)?;
+        if let Some(seated) = prep.prepared.coordinate_edges(item.site) {
+            if N::takes_gaps(record.cell) {
+                let stored = stored_edges(prep, record);
+                seat_read_node(prep.prepared.site_edges_mut(item.site, stored), seated);
             }
-            return N::prepare_record(prep, record, ctx);
         }
+        return N::prepare_record(prep, record, ctx);
     }
     let edges = coordinate_edges(&coord, prep.prepared.coordinate_edges(item.site), ctx);
     prep.prepared.set_coordinate_edges(item.site, edges);
@@ -718,35 +679,14 @@ fn prepare_item_in_place<T: Clone + 'static, N: PrepareRecord<T> + Prepare + Hyd
 }
 
 /// The cell a parsed item renders from when a write lies in its rows: a
-/// record, leaf or unit cell is its own; a coordinate's is its row's
-/// record, written on this first read through its cell, which is rewritten
-/// to name it. `None` when the item's row has no record to write.
-fn edited_record<T: Clone + 'static, N: HydrateNode>(prep: &mut RecordPrep<'_, T>, item: Item, coord: &NodeCoordinate, ctx: &RenderContext<'_>) -> Result<Option<CellAt>, CoordinateError> {
-    let Cell::Coordinate { kind, .. } = item.at.cell else { return Ok(Some(item.at)) };
-    let tree = coord.tree;
-    if prep.trees.tree_mut(tree).is_none() {
-        return Err(match prep.trees.tree(tree) {
-            Some(_) => ArenaError::ReadOnly { index: coord.index, kind },
-            None => malformed("record tree", tree.0),
-        }
-        .into());
+/// record, leaf or unit cell is its own. A coordinate cell names a node
+/// whose record no read wrote, which a read that hydrates its source whole
+/// leaves none of, and is refused.
+fn edited_record(item: Item, coord: &NodeCoordinate) -> Result<CellAt, ArenaError> {
+    match item.at.cell {
+        Cell::Coordinate { .. } => Err(malformed("record tree", coord.tree.0)),
+        _ => Ok(item.at),
     }
-    let place = item.cell.ok_or(malformed("coordinate cell place", coord.index.0))?;
-    let mut hydrated = None;
-    ctx.sources.read_node(tree, coord.index, &mut |cursor, read| {
-        read.sides = None;
-        read.changed = None;
-        hydrated = Some(prep.trees.tree_mut(tree).ok_or_else(|| malformed("record tree", tree.0).into()).and_then(|arena| {
-            super::hydrate_at::<N>(cursor, read, coord.index, Some(kind), crate::read::Depth::ONE, arena).map_err(|error| match error {
-                super::HydrateError::Read(error) => unread(coord, &error),
-                super::HydrateError::Arena(error) => error.into(),
-            })
-        }));
-    });
-    let Some(record) = hydrated.transpose()?.flatten() else { return Ok(None) };
-    let arena = prep.trees.tree_mut(tree).ok_or(malformed("record tree", tree.0))?;
-    super::reach::patch(arena, place, record)?;
-    Ok(Some(CellAt { cell: Cell::Child { kind, at: record, link: None, changed: ChangedEdges::default() }, tree: Some(tree), site: item.at.site }))
 }
 
 /// A slot's present items as the gap and seat fills write them.
@@ -880,8 +820,7 @@ where
         }
         if let Some(row) = item.row {
             let coord = Self::coordinate(prep, item, row)?;
-            let Some(record) = edited_record::<T, N>(prep, item, &coord, ctx)? else { return Ok(()) };
-            N::prepare_record(prep, record, ctx)?;
+            N::prepare_record(prep, edited_record(item, &coord)?, ctx)?;
         }
         prep.prepared.set_facet(item.site, facet.to_owned());
         Ok(())
@@ -1057,7 +996,7 @@ mod tests {
         let at = arena.push(&[u32::from(kind.0), 0]).expect("room");
         let arena = CountedArena { arena, reads: Counter::new(0) };
         let mut prepared = Prepared::<()>::new();
-        let mut trees = HeldArenas::of([]);
+        let mut trees = HeldArenas::default();
         let store = TriviaStore::new();
         let prep = RecordPrep::new(&mut prepared, &mut trees, &arena, &NoSources, &store, crate::record::PARSED_KIND_BITS);
         let key = RecordKey::of(&prep, CellAt {

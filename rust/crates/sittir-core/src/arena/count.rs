@@ -330,7 +330,8 @@ impl BuiltChunks {
     /// record, and the records its sides in the store hold, which `sides`
     /// drops and answers. The tree of each link record and side record
     /// released is kept for `take_trees`. A sealed chunk left with no live
-    /// entry is freed.
+    /// entry is freed. A read's record takes no release, as a cell naming
+    /// one drops no count of it: it is freed with its arena.
     ///
     /// # Errors
     ///
@@ -344,6 +345,9 @@ impl BuiltChunks {
         let mut stack = Vec::new();
         if let Held::Text(at) = held {
             return self.drop_cell(CellWord(at.0 << 2), &mut stack);
+        }
+        if self.read_chunk(held.at().chunk()) {
+            return Ok(());
         }
         if owned {
             let byte = self.table(held.at().chunk())?.count(held.at().word())?;
@@ -535,6 +539,9 @@ impl BuiltChunks {
         };
         if dead {
             self.chunks[chunk as usize] = None;
+            if self.sources.is_some_and(|(open, _)| open == chunk) {
+                self.sources = None;
+            }
             self.overflow.retain(|&at, _| Address(at).chunk() != chunk);
             self.free.push_back(chunk);
             self.freed.push(chunk);
@@ -659,6 +666,17 @@ mod tests {
         let root = built.place(&[with_kind(PAIR, BITS).expect("a kind"), 0, read.0 << 2, 0], OWNED | 1);
         built.release(root, true).expect("a read's record takes no release");
         assert!(built.arena.released(root));
+        assert!(built.arena.read_chunk(chunk), "the read's chunk is still the arena's");
+    }
+
+    #[test]
+    fn releasing_a_read_s_record_itself_leaves_it_as_it_is() {
+        let mut built = Builder::new();
+        let chunk = built.arena.alloc_read_words(64).expect("a read's chunk");
+        let read = Address::new(chunk, 0).expect("an address");
+        for owned in [false, true] {
+            built.release(read, owned).expect("a read's record takes no release");
+        }
         assert!(built.arena.read_chunk(chunk), "the read's chunk is still the arena's");
     }
 

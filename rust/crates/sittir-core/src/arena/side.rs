@@ -57,6 +57,9 @@ mod mask {
     pub const ALL: u32 = (1 << 16) - 1;
 }
 
+/// The bits of a node's packed facts that hold its field id.
+pub const FIELD_BITS: u32 = 10;
+
 /// What a node's packed word holds: its grammar kind in its low 16 bits,
 /// its field id above it, then its flags; the kind it is shown as follows
 /// in a word of its own when it is an alias. A run entry with `RECORD` set
@@ -64,7 +67,7 @@ mod mask {
 mod packed {
     pub const KIND_MASK: u32 = 0xffff;
     pub const FIELD_SHIFT: u32 = 16;
-    pub const FIELD_MASK: u32 = (1 << 10) - 1;
+    pub const FIELD_MASK: u32 = (1 << super::FIELD_BITS) - 1;
     pub const NAMED: u32 = 1 << 26;
     pub const EXTRA: u32 = 1 << 27;
     pub const MISSING: u32 = 1 << 28;

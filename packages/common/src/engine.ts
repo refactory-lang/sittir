@@ -16,7 +16,7 @@ import type {
 	UnitSidesWire,
 	WireNode
 } from '@sittir/types';
-import { decodeIndex, decodeTree, readObject, type ChunkWords, type TreeHandle, type TriviaSideName } from './read.ts';
+import { decodeIndex, decodeTree, readObject, type TreeHandle, type TriviaSideName } from './read.ts';
 import { coordinateIndex, coordinateOf, holdReadTree, keyName, placeOf, rootEdges, sourceHandleOf, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
 import { mintTreeToken, registerTree, treeOfToken } from './tree-token.ts';
 import type { DescendantBatch, TreeQuery } from './query.ts';
@@ -113,11 +113,12 @@ export interface StoredLayout {
 	readonly separators: number;
 }
 
-/** Whether a tree's record backer answers its nodes as its tree backer does (`NativeEngineLike.backerParity`). */
+/** Whether the records a read of a source leaves answer its nodes as its tree does, with the records' layout baseline (`NativeEngineLike.backerParity`). */
 export interface BackerParity {
 	readonly nodes: number;
 	readonly differing: number;
 	readonly first?: number;
+	readonly runs: readonly BaselineRun[];
 }
 
 /** The work a tree's layout reads have done so far (`NativeEngineLike.layoutWork`), each count as the addon's `LayoutWork` names it. */
@@ -238,16 +239,6 @@ export interface NativeEngineLike<TNode = unknown> {
 	 * @throws when the tree is not live, or `span` is not a span of its source: past its end, reversed, or splitting a character.
 	 */
 	text(treeId: number, span: ByteSpan): string;
-	/** The address of the record of the node at `index`, read `depth` levels down, `null` for a node with none. Present when the addon carries the record codec. */
-	readRecord?(treeId: number, index: number, depth?: number): number | null;
-	readRecordStub?(treeId: number, index: number, depth?: number): number[] | null;
-	readLeaf?(treeId: number, index: number): number[] | null;
-	/** Materializes parsed records to `depth` (default one, Infinity for all), including children of cached parents. Returns only an address; chunk copies are requested separately. Present when the addon carries the record codec. */
-	hydrateRecord?(treeId: number, index: number, depth?: number): number | null;
-	/** Chunk `n` of the tree's arena over its native memory, every word of it, with no copy; disposing the tree detaches it. Present when the addon carries the record codec. */
-	chunk?(treeId: number, n: number): ChunkWords;
-	/** The address of the record the parsed cell at `word`, item `item`, of the record at `holder` names: on the first read through it, written `depth` levels down and the cell rewritten to name it. Present when the addon carries the record codec. */
-	readCell?(treeId: number, holder: number, word: number, item: number, depth?: number): number;
 	/** A new zeroed chunk of `length` words of the engine's built arena, over its native memory, its number, and its meta, where its entries' counts are kept, with the chunk it sealed and that chunk's meta, now sized for its entries. Present when the addon carries the record codec. */
 	builtWords?(length: number): { chunk: number; data: WritableWords; meta: Uint8Array; freed: number[]; sealed?: { chunk: number; meta: Uint8Array } };
 	/** A new zeroed chunk of `length` bytes of the engine's built arena's strings, over its native memory, its number, and its meta, its cell count. Present when the addon carries the record codec. */
@@ -294,10 +285,6 @@ export interface NativeEngineLike<TNode = unknown> {
 	builtMemory?(): { chunks: number; counts: number; live: number };
 	/** Refuses, by name, a runtime that does not allow external array buffers. Present when the addon carries the record codec. */
 	externalBuffers?(): void;
-	/** The kind and subtree end, as `[kind, end]`, a read of tree `treeId` names the node at `index` by. Present when the addon carries the record codec. */
-	coordinate?(treeId: number, index: number): number[];
-	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour; `templates` renders it and every parsed node under it that has a record from its template, each leaf and unit as its source. Present when the addon carries the record codec. */
-	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object, templates?: boolean): string;
 	renderBuilt?(owner: object, address: number, leading: boolean, trailing: boolean, source?: number, options?: object): string;
 	renderBuiltLeaf?(
 		owner: object,
@@ -308,8 +295,6 @@ export interface NativeEngineLike<TNode = unknown> {
 		trailing: boolean,
 		options?: object
 	): string;
-	/** {@link renderRecord}'s text written to `path`, answering whether it wrote. Present when the addon carries the record codec. */
-	renderRecordToFile?(treeId: number, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object): boolean;
 	/** {@link renderBuilt}'s text written to `path`, answering whether it wrote. Present when the addon carries the record codec. */
 	renderBuiltToFile?(owner: object, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, source?: number, options?: object): boolean;
 	/** {@link renderBuiltLeaf}'s text written to `path`, answering whether it wrote. Present when the addon carries the record codec. */
@@ -364,12 +349,14 @@ export interface NativeEngineLike<TNode = unknown> {
 	 */
 	layoutWork(treeId: number): LayoutWork;
 	/**
-	 * Reads tree `treeId` whole, then compares each node as arena storage's record backer and the tree backer
-	 * answer it: the nodes compared, how many differ, and the first that does. A diagnostic.
+	 * Parses `source` as a tree and as the records a read of it leaves, then compares each node of the tree with
+	 * the node the records answer in its place: the nodes compared, how many differ, the first that does, and the
+	 * records' layout baseline, its runs naming nodes by their indexes in the tree. The read's records stay in the
+	 * engine's arena. A diagnostic. Present when the addon carries the record codec.
 	 *
-	 * @throws when the tree is not live or its read is refused.
+	 * @throws when the engine is in use or disposed, or the read is refused.
 	 */
-	backerParity(treeId: number): BackerParity;
+	backerParity?(source: string): BackerParity;
 	descendants(
 		from: string,
 		kinds: number[] | undefined | null,
@@ -414,18 +401,10 @@ const TREE_FUNCTIONS = [
 	'editedWithin',
 	'isEmpty',
 	'text',
-	'readRecord',
-	'readRecordStub',
-	'readLeaf',
-	'hydrateRecord',
-	'chunk',
-	'readCell',
-	'coordinate',
 	'siblings',
 	'layoutBaseline',
 	'storedLayout',
 	'layoutWork',
-	'backerParity',
 	'descendants',
 	'planHolds',
 	'externalBuffers',
@@ -433,11 +412,10 @@ const TREE_FUNCTIONS = [
 ] as const satisfies readonly (keyof NativeEngineLike)[];
 
 const ENGINE_FUNCTIONS = [
+	'backerParity',
 	'render',
 	'renderAt',
 	'renderToFile',
-	'renderRecord',
-	'renderRecordToFile',
 	'renderBuilt',
 	'renderBuiltToFile',
 	'renderBuiltLeaf',

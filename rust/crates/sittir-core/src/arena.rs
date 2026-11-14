@@ -3,20 +3,16 @@
 //! allocated, at one length for its life, and never moved, so JavaScript
 //! reads a chunk in place through an external array buffer (`memory`).
 //!
-//! [`cell`] encodes and decodes one slot's cell, [`side`] a record's side
-//! record, and [`rows`] keeps a parsed tree's arena with the records no cell
-//! names; `reach` finds a parsed node's record through its cells. The
-//! record writer (`write_record`) writes a native node's records, children
-//! before parents. A built record's trivia is outside the arena, in the
+//! [`cell`] encodes and decodes one slot's cell and [`side`] a record's side
+//! record. The record writer (`write_record`) writes a native node's
+//! records, children before parents. A built record's trivia is outside the arena, in the
 //! engine's store of written sides (`trivia_store`), and what a render's
 //! prepare fills is in its overlay (`Prepared`). An engine's built records
 //! are in its `BuiltChunks`, which JavaScript's builders write.
 //!
 //! An arena only appends records: no record is freed or moved, so an address
-//! names one record for as long as the arena lives. A refused hydration's
-//! words were never named, and the arena takes them back (`rewind`). A parsed record's cell
-//! that holds a coordinate is rewritten once, to name the record the first
-//! read through it writes; nothing else in a written record changes.
+//! names one record for as long as the arena lives, and nothing in a
+//! written record changes.
 
 mod admit;
 mod borrowed;
@@ -31,8 +27,6 @@ pub mod memory;
 mod parsed;
 mod prep;
 mod prepared;
-mod reach;
-pub mod rows;
 pub mod run_nodes;
 mod view;
 pub mod side;
@@ -53,15 +47,13 @@ pub use borrowed::{ArenaRead, BorrowedArena};
 pub use built::{render_entry_at, render_record_entry};
 pub use built_write::{BuiltWriter, ReadWriter};
 pub use cell::{flag, header_of, kind_field, parsed_tag, with_kind, Cell, CellWord, ListCell, LINK_WORDS};
-pub use hydrate::{hydrate_at, hydrate_error, hydrate_whole, parsed_side, row_of as hydrated_row, Draft, Embed, HydrateError, HydrateInto, HydrateNode, HydrateSlot, Hydrated, Hydration, Walk};
+pub use hydrate::{hydrate_error, hydrate_whole, parsed_side, row_of as hydrated_row, Draft, Embed, HydrateError, HydrateInto, HydrateNode, HydrateSlot, Hydrated, Hydration, Walk};
 pub use memory::{ChunkMem, ChunkUnit};
-pub use parsed::{render_record_read, BackerParity, LeafRead, RecordGrammar, RecordRead, Recording};
-pub use reach::{deepen, reach, read_cell, written};
+pub use parsed::{render_record_read, runs_agree, BackerParity, BaselineRuns, RecordGrammar, RecordRead, Recording};
 pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, ReadArenas, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
 pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens, Templates};
 pub use view::{built_leaf_place, linked_leaf_place, held_changed, leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
 pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, captured_cell, coordinate_cell, leaf_cell, write_list, write_record, write_slot};
-pub use rows::{NodeRows, TreeArena, ROW_FIELD_BITS};
 pub use run_nodes::{NodeSite, RunNodes, RunTable};
 pub use side::{Row, SideRecord, SideSlot, Sides};
 
