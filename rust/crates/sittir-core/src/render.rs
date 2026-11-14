@@ -545,7 +545,11 @@ pub trait RenderSink {
     /// joining whatever is written after it (`JoinArm::next`).
     fn verbatim(&mut self, before: Option<&str>, text: &str, after: Option<&str>, at: Option<crate::types::Span>) -> RenderResult {
         let _ = at;
-        self.text(&[before.unwrap_or_default(), text, after.unwrap_or_default()].concat())
+        let s = [before.unwrap_or_default(), text, after.unwrap_or_default()].concat();
+        if !s.is_empty() {
+            self.join_arm(JoinArm::NEXT);
+        }
+        self.text(&s)
     }
     /// The next text is a leaf whose pattern takes layout text only of the
     /// `LayoutKinds` bits in `leading` before it and `trailing` after it.
