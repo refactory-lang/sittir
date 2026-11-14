@@ -309,6 +309,17 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                             #(#inits)*
                         })
                     }
+                    ::sittir_core::arena::Cell::Child { kind, at, link, changed } if #accepts => {
+                        let ctx = ctx.child(at, link)?;
+                        let (_, side) = ::sittir_core::arena::record_of(ctx, at, ::sittir_core::record::HEADER_WORDS, kind)?;
+                        let span = side.at.ok_or(#refused)?.span;
+                        let place = ::sittir_core::arena::place_of(ctx, at)?;
+                        ::core::result::Result::Ok(Self {
+                            __layout: ::sittir_core::arena::RecordLayout::new(ctx, place, site, ::sittir_core::options::Edges::default(), ::sittir_core::arena::held_changed(site.is_some(), changed, &side), side.sides),
+                            #text: ctx.source_text(span)?,
+                            #(#inits)*
+                        })
+                    }
                     _ => ::core::result::Result::Err(#refused),
                 }
             },

@@ -286,6 +286,22 @@ fn an_extra_with_structure_has_a_record_and_a_token_has_none() {
     assert!(python_read.name(nth_of_kind(&python_tree, "newline:0")).is_none(), "a newline token has no record");
 }
 
+/// An extra whose kind is a text leaf has a record no slot names, which
+/// renders as its source untouched and through the templates alike.
+#[test]
+fn an_extra_text_leaf_s_record_renders_as_its_source_through_the_templates() {
+    type Python = sittir_python::render::AnyNode;
+    let options = sittir_python::render::options::defaults();
+    let tree = parsed(sittir_python::PythonGrammar, options.clone(), "x = 1 + \\\n    2\n");
+    let read = OverRead::of::<Python>(sittir_python::PythonGrammar, &options, &tree);
+    let index = nth_of_kind(&tree, "line_continuation_newline:0");
+    let at = read.records[&index];
+    let source = &tree.source()[sittir_core::types::Span::of(&sittir_core::engine::node_at_index(tree.tree(), index).expect("its node")).range()];
+    for templates in [false, true] {
+        assert_eq!(read.render_at(at, sittir_core::slot::ChangedEdges::default(), &options, templates).map_err(|e| e.to_string()).as_deref(), Ok(source), "templates {templates}");
+    }
+}
+
 #[test]
 fn a_method_name_s_envelope_is_answered_as_the_tree_answers_it() {
     type Ts = sittir_typescript::render::AnyNode;
