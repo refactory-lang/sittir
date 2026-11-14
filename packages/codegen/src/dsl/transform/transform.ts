@@ -632,13 +632,12 @@ function buildHoistedVariants(plan: SiblingVariantHoistPlan, parentKind: string)
 		refs.push({ altIdx, ref: choiceMembers[altIdx]!, name: lift.liftName, declaredDefault: false });
 	}
 	refs.sort((a, b) => a.altIdx - b.altIdx);
-	const newChoice = refs.reduce(
-		(acc, r, i) => (r.declaredDefault ? clearSiblingDefaults(acc, [{ kind: 'index', value: i }]) : acc),
-		reconstructContainer(
-			choice,
-			refs.map((r) => r.ref)
-		)
+	const rebuilt = reconstructContainer(
+		choice,
+		refs.map((r) => r.ref)
 	);
+	const declared = refs.flatMap((r, i) => (r.declaredDefault ? [i] : []));
+	const newChoice = declared.length === 1 ? clearSiblingDefaults(rebuilt, [{ kind: 'index', value: declared[0]! }]) : rebuilt;
 	return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
 
