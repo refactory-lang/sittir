@@ -94,4 +94,16 @@ describe('variants of a choice a field holds', () => {
 		expect(shape(rules._declaration_optional1)).toEqual([',', arms]);
 		expect(shape(rules.declaration_b)).toEqual(['b', 'a']);
 	}, 120_000);
+
+	it('keep a default addressed from the end when each arm is patched in place', async () => {
+		const { rules } = await evaluateSittirGrammar(nestedModule, 'nestedtest', `edits: { declaration: { 'kind:/-2': variant('a'), 'kind:/-1': variant('b', { default: true }) } }`);
+		const defaults = (rule: unknown): unknown[] =>
+			((rule as { members: { type: string; content?: { members?: { name: string; annotations?: Record<string, unknown> }[] } }[] }).members.find((m) => m.type === 'FIELD')!.content!.members ?? []).map((m) => [m.name, m.annotations?.default === true]);
+		const expected = [
+			['declaration_a', false],
+			['declaration_b', true]
+		];
+		expect(defaults(rules.declaration)).toEqual(expected);
+		expect(defaults(rules._declaration_optional1)).toEqual(expected);
+	}, 120_000);
 });

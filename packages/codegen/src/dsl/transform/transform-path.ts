@@ -346,6 +346,10 @@ function reconstructAlias(rule: RuntimeRule, newContent: RuntimeRule): RuntimeRu
 	} as unknown as RuntimeRule;
 }
 
+export function memberIndex(index: number, length: number): number {
+	return index < 0 ? length + index : index;
+}
+
 export function namedFieldCount(rule: RuntimeRule, fieldName: string): number {
 	let count = 0;
 	walkMatches(
@@ -712,7 +716,7 @@ function applyToIndexedMember(
 	patch: RuntimeRule | ((member: RuntimeRule, enclosing?: readonly RuntimeRule[]) => RuntimeRule),
 	enclosing: readonly RuntimeRule[] | undefined
 ): RuntimeRule {
-	const idx = indexValue < 0 ? members.length + indexValue : indexValue;
+	const idx = memberIndex(indexValue, members.length);
 	if (idx < 0 || idx >= members.length) {
 		throw new ApplyPathSkip(`applyPath: index ${indexValue} out of bounds in ${rule.type} of length ${members.length}`);
 	}
