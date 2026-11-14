@@ -4,15 +4,25 @@ import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { explainFiles, pinnedTypeEscapes } from '../pinned-types.ts';
 
-function project(): { readonly checkout: string; readonly pinned: string } {
+function project(): { readonly checkout: string; readonly sibling: string; readonly pinned: string } {
 	const top = realpathSync(mkdtempSync(join(tmpdir(), 'sittir-pinned-types-')));
 	const checkout = join(top, 'checkout');
+	const sibling = join(top, 'sibling');
 	const pinned = join(top, 'pinned');
 	const file = (path: string, text: string): void => {
 		mkdirSync(dirname(path), { recursive: true });
 		writeFileSync(path, text);
 	};
+	file(join(pinned, 'packages', 'pinned', 'package.json'), JSON.stringify({ name: '@sittir/pinned' }));
 	file(join(pinned, 'packages', 'pinned', 'index.d.ts'), 'export declare const pinned: number;\n');
+	file(join(sibling, 'packages', 'common', 'package.json'), JSON.stringify({ name: '@sittir/common', types: './index.d.ts' }));
+	file(join(sibling, 'packages', 'common', 'index.d.ts'), 'export declare const common: number;\n');
+	mkdirSync(join(sibling, 'node_modules', '@sittir'), { recursive: true });
+	symlinkSync(join(sibling, 'packages', 'common'), join(sibling, 'node_modules', '@sittir', 'common'));
+	file(join(checkout, 'packages', 'codegen', 'package.json'), JSON.stringify({ name: '@sittir/codegen' }));
+	file(join(checkout, 'packages', 'other', 'package.json'), JSON.stringify({ name: '@sittir/other' }));
+	file(join(checkout, 'node_modules', 'third', 'package.json'), JSON.stringify({ name: 'third', types: './index.d.ts' }));
+	file(join(checkout, 'node_modules', 'third', 'index.d.ts'), 'export declare const third: number;\n');
 	file(join(checkout, 'packages', 'live', 'package.json'), JSON.stringify({ name: '@sittir/live', types: './index.d.ts', exports: { '.': { types: './index.d.ts' } } }));
 	file(join(checkout, 'packages', 'live', 'index.d.ts'), 'export declare const live: number;\n');
 	file(join(checkout, 'packages', 'live', 'ref.d.ts'), 'declare const referenced: number;\n');
@@ -25,9 +35,11 @@ function project(): { readonly checkout: string; readonly pinned: string } {
 			'/// <reference path="../../live/ref.d.ts" />',
 			"import { pinned } from '@sittir/pinned';",
 			"import { live } from '@sittir/live';",
-			"import { helper } from '../helper.ts';",
+			'import { helper } from "../helper.ts";',
 			"import { other } from '../../other/other.ts';",
-			'export const sum = pinned + live + helper + other + referenced + rooted;',
+			"import { common } from '../../../../sibling/packages/common/index.ts';",
+			"import { third } from 'third';",
+			'export const sum = pinned + live + helper + other + common + third + referenced + rooted;',
 			''
 		].join('\n')
 	);
@@ -41,19 +53,20 @@ function project(): { readonly checkout: string; readonly pinned: string } {
 				moduleResolution: 'nodenext',
 				noEmit: true,
 				allowImportingTsExtensions: true,
-				types: ['@sittir/live'],
+				types: ['@sittir/live', 'common'],
+				typeRoots: [join(checkout, 'node_modules'), join(sibling, 'node_modules', '@sittir')],
 				paths: { '@sittir/pinned': [join(pinned, 'packages', 'pinned', 'index.d.ts')] }
 			},
 			include: ['packages/codegen/emit'],
 			files: ['packages/live/root.d.ts']
 		})
 	);
-	return { checkout, pinned };
+	return { checkout, sibling, pinned };
 }
 
 describe('the pinned build\'s type boundary', () => {
 	it('names every live package file in the program, however it got there, and only those', () => {
-		const { checkout, pinned } = project();
+		const { checkout, sibling, pinned } = project();
 		const cwd = process.cwd();
 		const escapes = pinnedTypeEscapes(explainFiles(join(checkout, 'tsconfig.json'), cwd), { cwd, checkout, pinned });
 		expect(escapes.map(({ file }) => file).sort()).toEqual(
@@ -61,11 +74,13 @@ describe('the pinned build\'s type boundary', () => {
 				join(checkout, 'packages', 'live', 'index.d.ts'),
 				join(checkout, 'packages', 'live', 'ref.d.ts'),
 				join(checkout, 'packages', 'live', 'root.d.ts'),
-				join(checkout, 'packages', 'other', 'other.ts')
+				join(checkout, 'packages', 'other', 'other.ts'),
+				join(sibling, 'packages', 'common', 'index.d.ts')
 			].sort()
 		);
 		const reasons = escapes.map(({ reason }) => reason).join('\n');
 		expect(reasons).toMatch(/Referenced via/);
 		expect(reasons).toMatch(/files' list/);
+		expect(reasons).not.toMatch(/helper/);
 	});
 });
