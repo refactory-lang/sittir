@@ -4251,23 +4251,27 @@ export function buildMemberExpression(config: T.MemberExpression.Config): T.Memb
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _operator = kindIdStorage<NonNullable<T.MemberExpression['_operator']>>(config.operator);
+	const _optional_chain = strictBooleanStorage(config.optionalChain);
 	const _property = admitAliasContent<NonNullable<T.MemberExpression['_property']>>(
 		rejectReservedText(config.property, 'MemberExpression.property', TSKindId.Identifier, _reservedWordset_properties),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'member_expression', { object: _object, operator: _operator, property: _property });
+		admitChildren(handle, 'member_expression', {
+			object: _object,
+			optionalChain: _optional_chain,
+			property: _property
+		});
 	const node = {
 		$type: TSKindId.MemberExpression as const,
 		_object,
-		_operator,
+		_optional_chain,
 		_property,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		object: () => hydrateStoredSlot(node, '_object'),
-		operator: () => _operator,
+		optionalChain: () => _optional_chain,
 		property: () => hydrateStoredSlot(node, '_property'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4281,7 +4285,7 @@ export function buildMemberExpression(config: T.MemberExpression.Config): T.Memb
 	};
 	node.$with = {
 		object: buildMemberExpression$with$object,
-		operator: buildMemberExpression$with$operator,
+		optionalChain: buildMemberExpression$with$optionalChain,
 		property: buildMemberExpression$with$property,
 		[RECEIVER]: node
 	};
@@ -4297,9 +4301,9 @@ function buildMemberExpression$with(node: Held, setter: string, args: readonly u
 			return applySetter(args, (value: Admit<NonNullable<T.MemberExpression.Config>['object']>) =>
 				rebuilt(node, handle, () => buildMemberExpression({ ...config, object: value }))
 			);
-		case 'operator':
-			return applySetter(args, (value: Admit<NonNullable<T.MemberExpression.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildMemberExpression({ ...config, operator: value }))
+		case 'optionalChain':
+			return applySetter(args, (value?: Admit<NonNullable<T.MemberExpression.Config>['optionalChain']>) =>
+				rebuilt(node, handle, () => buildMemberExpression({ ...config, optionalChain: value }))
 			);
 		case 'property':
 			return applySetter(
@@ -4313,8 +4317,8 @@ function buildMemberExpression$with(node: Held, setter: string, args: readonly u
 function buildMemberExpression$with$object(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildMemberExpression$with(receiverOf(this, '$with.object'), 'object', args);
 }
-function buildMemberExpression$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildMemberExpression$with(receiverOf(this, '$with.operator'), 'operator', args);
+function buildMemberExpression$with$optionalChain(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildMemberExpression$with(receiverOf(this, '$with.optionalChain'), 'optionalChain', args);
 }
 function buildMemberExpression$with$property(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildMemberExpression$with(receiverOf(this, '$with.property'), 'property', args);
@@ -14855,6 +14859,8 @@ function buildImportStatementClauseFrom$with$source(this: Received<Held>, ...arg
 	return buildImportStatementClauseFrom$with(receiverOf(this, '$with.source'), 'source', args);
 }
 
+export const buildMemberExpressionDot: TSKindId.MemberExpressionDot = TSKindId.MemberExpressionDot;
+
 export function buildYieldExpressionDelegate<V extends Admit<T.Expression>>(
 	value: V & RefuseUndeclared<V>
 ): T.YieldExpressionDelegate.Bound;
@@ -20118,6 +20124,7 @@ export type FluentKindMap = {
 	index_signature_colon: T.IndexSignatureColon.Bound;
 	index_signature_mapped_type_clause: T.IndexSignatureMappedTypeClause.Bound;
 	import_statement_clause_from: T.ImportStatementClauseFrom.Bound;
+	member_expression_dot: T.MemberExpressionDot;
 	yield_expression_delegate: T.YieldExpressionDelegate.Bound;
 	optional_chain_marker: T.OptionalChainMarker;
 	import_specifier_name: T.ImportSpecifierName.Bound;
@@ -20399,6 +20406,7 @@ export const _factoryMap = {
 	index_signature_colon: buildIndexSignatureColon,
 	index_signature_mapped_type_clause: buildIndexSignatureMappedTypeClause,
 	import_statement_clause_from: buildImportStatementClauseFrom,
+	member_expression_dot: buildMemberExpressionDot,
 	yield_expression_delegate: buildYieldExpressionDelegate,
 	optional_chain_marker: buildOptionalChainMarker,
 	import_specifier_name: buildImportSpecifierName,

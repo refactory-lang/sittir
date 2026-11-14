@@ -441,7 +441,8 @@ export default grammar(enrich(base), wire({
 		},
 
 		member_expression: {
-			1: field('operator')
+			'1/0': variant('dot', { default: true }),
+			'1/1': variant('optional')
 		},
 
 		property_signature: {

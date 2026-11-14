@@ -5648,31 +5648,30 @@
             }
           },
           {
-            "type": "FIELD",
-            "name": "operator",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "."
-                },
-                {
-                  "type": "FIELD",
-                  "name": "operator",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "optional_chain"
-                  },
-                  "metadata": {
-                    "fieldSource": "override"
-                  }
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "member_expression_dot",
+                "annotations": {
+                  "variant": "dot",
+                  "variantOf": "member_expression",
+                  "default": true
                 }
-              ]
-            },
-            "metadata": {
-              "fieldSource": "override"
-            }
+              },
+              {
+                "type": "FIELD",
+                "name": "optional_chain",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "optional_chain"
+                },
+                "annotations": {
+                  "variantOf": "member_expression",
+                  "variant": "optional"
+                }
+              }
+            ]
           },
           {
             "type": "FIELD",
@@ -15637,6 +15636,17 @@
       "type": "STRING",
       "value": "type"
     },
+    "member_expression_dot": {
+      "type": "PREC",
+      "value": "member",
+      "content": {
+        "type": "STRING",
+        "value": ".",
+        "annotations": {
+          "variantOf": "member_expression"
+        }
+      }
+    },
     "_kw_optional": {
       "type": "STRING",
       "value": "?"
@@ -19561,6 +19571,10 @@
     [
       "_type_query_call_expression_in_type_annotation",
       "call_expression_call"
+    ],
+    [
+      "_type_query_member_expression_in_type_annotation",
+      "member_expression_dot"
     ],
     [
       "array",

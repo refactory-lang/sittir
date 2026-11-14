@@ -292,8 +292,8 @@ export const records = {
 	MemberExpressionNode: {
 		words: 13,
 		builtWords: 5,
-		object: { word: 2, width: 4, forms: 3, built: 2 },
-		operator: { word: 6, width: 1, forms: 2, built: 3 },
+		object: { word: 3, width: 4, forms: 3, built: 3 },
+		optional_chain: { word: 2, bit: 0 },
 		property: { word: 7, width: 6, inline: 6, forms: 8, built: 4 }
 	},
 	SubscriptExpressionNode: {

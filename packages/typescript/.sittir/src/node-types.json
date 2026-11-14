@@ -5478,14 +5478,10 @@
           }
         ]
       },
-      "operator": {
+      "optional_chain": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
-          {
-            "type": ".",
-            "named": false
-          },
           {
             "type": "optional_chain",
             "named": true
@@ -5506,7 +5502,22 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "member_expression_dot",
+          "named": true
+        }
+      ]
     }
+  },
+  {
+    "type": "member_expression_dot",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "meta_property_import_meta",

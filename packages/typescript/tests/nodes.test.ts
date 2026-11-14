@@ -1257,7 +1257,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.memberExpression({
 				object: TSKindId.Import as never,
-				operator: '.',
 				property: { $type: TSKindId.PrivatePropertyIdentifier, content: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.MemberExpression);
@@ -1266,11 +1265,26 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.memberExpression({
 				object: TSKindId.Import as never,
-				operator: '.',
 				property: { $type: TSKindId.PrivatePropertyIdentifier, content: 'test' } as never
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('member_expression sub-factories', () => {
+		it('optional builds the parent', () => {
+			const node = ir.memberExpression.optional({
+				object: TSKindId.Import as never,
+				property: { $type: TSKindId.PrivatePropertyIdentifier, content: 'test' } as never
+			});
+			expect(node.$type).toBe(TSKindId.MemberExpression);
+			const seated = (node as any).optionalChain();
+			expect(seated?.$text?.() ?? seated).toBe('?.');
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('dot builds the member_expression_dot form', () => {
+			expect(ir.memberExpression.dot).toBe(TSKindId.MemberExpressionDot);
 		});
 	});
 
@@ -1682,7 +1696,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('memberExpression builds the parent', () => {
 			const node = ir.restPattern.memberExpression({
 				object: TSKindId.Import as never,
-				operator: '.',
 				property: { $type: TSKindId.PrivatePropertyIdentifier, content: 'test' } as never
 			});
 			expect(node.$type).toBe(TSKindId.RestPattern);
@@ -1713,6 +1726,15 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('nonNullExpression builds the parent', () => {
 			const node = ir.restPattern.nonNullExpression(TSKindId.Undefined as never);
+			expect(node.$type).toBe(TSKindId.RestPattern);
+			expect((node as any).lhsExpression()).toBeDefined();
+			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+		it('memberExpression.optional builds the parent', () => {
+			const node = ir.restPattern.memberExpression.optional({
+				object: TSKindId.Import as never,
+				property: { $type: TSKindId.PrivatePropertyIdentifier, content: 'test' } as never
+			});
 			expect(node.$type).toBe(TSKindId.RestPattern);
 			expect((node as any).lhsExpression()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);
@@ -3953,6 +3975,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('member_expression_dot', () => {
+		it('is the kind id', () => {
+			expect(ir.memberExpressionDot).toBe(TSKindId.MemberExpressionDot);
 		});
 	});
 

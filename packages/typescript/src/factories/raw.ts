@@ -220,6 +220,7 @@ export const buildClassBodyMemberDeclaration = dispatched(() => backend().buildC
 export const buildIndexSignatureColon = dispatched(() => backend().buildIndexSignatureColon);
 export const buildIndexSignatureMappedTypeClause = dispatched(() => backend().buildIndexSignatureMappedTypeClause);
 export const buildImportStatementClauseFrom = dispatched(() => backend().buildImportStatementClauseFrom);
+export const buildMemberExpressionDot = O.buildMemberExpressionDot;
 export const buildYieldExpressionDelegate = dispatched(() => backend().buildYieldExpressionDelegate);
 export const buildOptionalChainMarker = O.buildOptionalChainMarker;
 export const buildImportSpecifierName = dispatched(() => backend().buildImportSpecifierName);
@@ -521,6 +522,7 @@ export const _factoryMap = {
 	index_signature_colon: buildIndexSignatureColon,
 	index_signature_mapped_type_clause: buildIndexSignatureMappedTypeClause,
 	import_statement_clause_from: buildImportStatementClauseFrom,
+	member_expression_dot: buildMemberExpressionDot,
 	yield_expression_delegate: buildYieldExpressionDelegate,
 	optional_chain_marker: buildOptionalChainMarker,
 	import_specifier_name: buildImportSpecifierName,

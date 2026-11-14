@@ -210,6 +210,7 @@ export {
 	buildIndexSignatureColon,
 	buildIndexSignatureMappedTypeClause,
 	buildImportStatementClauseFrom,
+	buildMemberExpressionDot,
 	buildYieldExpressionDelegate,
 	buildOptionalChainMarker,
 	buildImportSpecifierName,

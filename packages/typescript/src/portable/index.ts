@@ -4992,24 +4992,24 @@ const table: PortableTable = {
 				path: 'declaration.property.signature.abstract.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '460': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '460': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '461': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '461': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.abstract.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '460': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '460': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '461': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '461': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.abstract.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '460': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '460': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '461': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '461': 0 } } }
 				]
 			},
 			{ path: 'declaration.property.signature.abstract.getter', within: [], test: [] }
@@ -5019,24 +5019,24 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.abstract.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '459': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '459': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '460': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '460': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.abstract.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '459': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '459': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '460': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '460': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.abstract.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '459': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '459': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '460': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '460': 0 } } }
 				]
 			},
 			{ path: 'declaration.method.signature.abstract', within: [], test: [] }
@@ -5046,24 +5046,24 @@ const table: PortableTable = {
 				path: 'declaration.property.signature.abstract.setter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '461': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '461': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '462': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '462': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.abstract.setter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '461': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '461': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '462': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '462': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.abstract.setter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '461': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '461': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '462': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '462': 0 } } }
 				]
 			},
 			{ path: 'declaration.property.signature.abstract.setter', within: [], test: [] }
@@ -5298,7 +5298,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.call.member',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [259], slots: { '421': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [259], slots: { '422': 0 } } }]
 			},
 			{ path: 'expression.call', within: [], test: [] }
 		],
@@ -5327,24 +5327,24 @@ const table: PortableTable = {
 				path: 'declaration.constructor.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '464': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '464': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '465': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '465': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.constructor.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '464': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '464': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '465': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '465': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.constructor.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '464': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '464': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '465': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '465': 0 } } }
 				]
 			}
 		],
@@ -5378,7 +5378,7 @@ const table: PortableTable = {
 			{
 				path: 'statement.export.default',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [436], slots: { '432': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [437], slots: { '433': 1 } } }]
 			},
 			{ path: 'statement.export', within: [], test: [] }
 		],
@@ -5386,7 +5386,7 @@ const table: PortableTable = {
 			{
 				path: 'statement.export.all',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [433], slots: { '431': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [434], slots: { '432': 1 } } }]
 			},
 			{ path: 'statement.export', within: [], test: [] }
 		],
@@ -5420,7 +5420,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.import.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '418': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '419': 0 } } }]
 			},
 			{ path: 'clause.import.specifier', within: [], test: [] }
 		],
@@ -5428,7 +5428,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.import.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '417': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '418': 0 } } }]
 			},
 			{ path: 'clause.import.specifier', within: [], test: [] }
 		],
@@ -5453,8 +5453,8 @@ const table: PortableTable = {
 				path: 'declaration.interface',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '320': 3 } }], plan: { op: 'eq', text: '{', slots: { '498': 0 } } },
-					{ up: 0, via: [{ slots: { '320': 3 } }], plan: { op: 'eq', text: '}', slots: { '498': 2 } } }
+					{ up: 0, via: [{ slots: { '320': 3 } }], plan: { op: 'eq', text: '{', slots: { '499': 0 } } },
+					{ up: 0, via: [{ slots: { '320': 3 } }], plan: { op: 'eq', text: '}', slots: { '499': 2 } } }
 				]
 			}
 		],
@@ -5498,24 +5498,24 @@ const table: PortableTable = {
 				path: 'declaration.property.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '454': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '454': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '455': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '455': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '454': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '454': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '455': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '455': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '454': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '454': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '455': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '455': 0 } } }
 				]
 			},
 			{ path: 'declaration.property.getter', within: [], test: [] }
@@ -5525,24 +5525,24 @@ const table: PortableTable = {
 				path: 'declaration.method.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '453': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '453': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '454': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '454': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '453': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '453': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '454': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '454': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '453': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '453': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '454': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '454': 0 } } }
 				]
 			},
 			{ path: 'declaration.method', within: [], test: [] }
@@ -5552,24 +5552,24 @@ const table: PortableTable = {
 				path: 'declaration.property.setter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '455': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '455': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '456': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '456': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.setter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '455': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '455': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '456': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '456': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.setter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '455': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '455': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '456': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '456': 0 } } }
 				]
 			},
 			{ path: 'declaration.property.setter', within: [], test: [] }
@@ -5579,24 +5579,24 @@ const table: PortableTable = {
 				path: 'declaration.property.signature.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '457': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '457': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '458': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '458': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '457': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '457': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '458': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '458': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '457': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '457': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '458': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '458': 0 } } }
 				]
 			},
 			{ path: 'declaration.property.signature.getter', within: [], test: [] }
@@ -5606,24 +5606,24 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '456': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '456': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '457': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '457': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '456': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '456': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '457': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '457': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '456': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '456': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '457': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '457': 0 } } }
 				]
 			},
 			{ path: 'declaration.method.signature', within: [], test: [] }
@@ -5633,24 +5633,24 @@ const table: PortableTable = {
 				path: 'declaration.property.signature.setter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '458': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '458': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '459': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '459': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.setter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '458': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '458': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '459': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '459': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.setter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '458': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '458': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '459': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '459': 0 } } }
 				]
 			},
 			{ path: 'declaration.property.signature.setter', within: [], test: [] }
@@ -5811,30 +5811,30 @@ const table: PortableTable = {
 				path: 'declaration.property.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '463': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '463': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '464': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '464': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.property.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '463': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '463': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '464': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '464': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.property.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '463': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '463': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '464': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '464': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.abstract',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'present', slots: { '463': 3 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'present', slots: { '464': 3 } } }]
 			},
 			{ path: 'declaration.property', within: [], test: [] }
 		],
@@ -5843,24 +5843,24 @@ const table: PortableTable = {
 				path: 'declaration.field.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '462': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '462': 2 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '463': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '463': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.field.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '462': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '462': 2 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '463': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '463': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.field.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '462': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '462': 2 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '463': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '463': 2 } } }
 				]
 			},
 			{ path: 'declaration.field', within: [], test: [] }
@@ -5876,24 +5876,24 @@ const table: PortableTable = {
 				path: 'declaration.parameter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '468': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '468': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '469': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '469': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '468': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '468': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '469': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '469': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '468': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '468': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '469': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '469': 1 } } }
 				]
 			},
 			{ path: 'declaration.parameter', within: [], test: [] }
@@ -5943,24 +5943,24 @@ const table: PortableTable = {
 				path: 'declaration.parameter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '450': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '450': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '451': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '451': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '450': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '450': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '451': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '451': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '450': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '450': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [326, 34, 35, 36], slots: { '451': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '451': 1 } } }
 				]
 			},
 			{ path: 'declaration.parameter', within: [], test: [] }
@@ -6011,7 +6011,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '356': 0 } }, { slots: { '284': 0 }, anchor: 'only' }],
-						plan: { op: 'is', types: [424, 425], self: true }
+						plan: { op: 'is', types: [425, 426], self: true }
 					}
 				]
 			}
@@ -6025,7 +6025,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '336': 1 } }, { slots: { '284': 0 }, anchor: 'only' }],
-						plan: { op: 'is', types: [424, 425], self: true }
+						plan: { op: 'is', types: [425, 426], self: true }
 					}
 				]
 			}
@@ -6099,12 +6099,12 @@ const table: PortableTable = {
 			{
 				path: 'expression.update.increment',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '426': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '427': 1 } } }]
 			},
 			{
 				path: 'expression.update.decrement',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '426': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '427': 1 } } }]
 			},
 			{ path: 'expression.update', within: [], test: [] }
 		],
@@ -6112,12 +6112,12 @@ const table: PortableTable = {
 			{
 				path: 'expression.update.increment',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '427': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '428': 0 } } }]
 			},
 			{
 				path: 'expression.update.decrement',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '427': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '428': 0 } } }]
 			},
 			{ path: 'expression.update', within: [], test: [] }
 		],
@@ -6129,7 +6129,7 @@ const table: PortableTable = {
 			{
 				path: 'declaration.variable.pattern',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [243, 239], slots: { '438': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [243, 239], slots: { '439': 0 } } }]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
 		],
@@ -6144,7 +6144,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.yield.delegate',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [415], slots: { '237': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [416], slots: { '237': 0 } } }]
 			}
 		]
 	},
@@ -6162,6 +6162,7 @@ const table: PortableTable = {
 		[TSKindId.ExistentialType]: '*',
 		[TSKindId.UsingDeclarationArm]: 'await using',
 		[TSKindId.EmptyMember]: ';',
+		[TSKindId.MemberExpressionDot]: '.',
 		[TSKindId.OptionalChainMarker]: '?.',
 		[TSKindId.MetaPropertyNewTarget]: 'new.target',
 		[TSKindId.MetaPropertyImportMeta]: 'import.meta',
@@ -6328,21 +6329,21 @@ const table: PortableTable = {
 export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.AbstractClassDeclaration]: { abstract: { op: 'and', of: [] } },
 	[TSKindId.AbstractMethodSignatureGetter]: {
-		override: { op: 'present', slots: { '460': 1 } },
-		privateName: { op: 'is', types: [128], slots: { '460': 2 } },
-		computed: { op: 'is', types: [297], slots: { '460': 2 } }
-	},
-	[TSKindId.AbstractMethodSignaturePlain]: {
-		override: { op: 'present', slots: { '459': 1 } },
-		optional: { op: 'present', slots: { '459': 4 } },
-		generator: { op: 'present', slots: { '459': 2 } },
-		privateName: { op: 'is', types: [128], slots: { '459': 3 } },
-		computed: { op: 'is', types: [297], slots: { '459': 3 } }
-	},
-	[TSKindId.AbstractMethodSignatureSetter]: {
 		override: { op: 'present', slots: { '461': 1 } },
 		privateName: { op: 'is', types: [128], slots: { '461': 2 } },
 		computed: { op: 'is', types: [297], slots: { '461': 2 } }
+	},
+	[TSKindId.AbstractMethodSignaturePlain]: {
+		override: { op: 'present', slots: { '460': 1 } },
+		optional: { op: 'present', slots: { '460': 4 } },
+		generator: { op: 'present', slots: { '460': 2 } },
+		privateName: { op: 'is', types: [128], slots: { '460': 3 } },
+		computed: { op: 'is', types: [297], slots: { '460': 3 } }
+	},
+	[TSKindId.AbstractMethodSignatureSetter]: {
+		override: { op: 'present', slots: { '462': 1 } },
+		privateName: { op: 'is', types: [128], slots: { '462': 2 } },
+		computed: { op: 'is', types: [297], slots: { '462': 2 } }
 	},
 	[TSKindId.ArrowFunction]: { async: { op: 'present', slots: { '252': 0 } } },
 	[TSKindId.AssignmentExpression]: { disposable: { op: 'present', slots: { '262': 0 } } },
@@ -6351,7 +6352,7 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ConstructorType]: { abstract: { op: 'present', slots: { '345': 0 } } },
 	[TSKindId.EnumDeclaration]: { const: { op: 'present', slots: { '322': 0 } } },
 	[TSKindId.ExportSpecifier]: { typeOnly: { op: 'eq', text: 'type', slots: { '194': 0 } } },
-	[TSKindId.ExportStatementDefaultFrom]: { typeOnly: { op: 'present', slots: { '431': 0 } } },
+	[TSKindId.ExportStatementDefaultFrom]: { typeOnly: { op: 'present', slots: { '432': 0 } } },
 	[TSKindId.ForInStatement]: { async: { op: 'present', slots: { '216': 0 } } },
 	[TSKindId.FunctionDeclaration]: { async: { op: 'present', slots: { '249': 0 } } },
 	[TSKindId.FunctionExpression]: { async: { op: 'present', slots: { '248': 0 } } },
@@ -6361,8 +6362,8 @@ export const queryFlags: QueryFlags = Object.freeze({
 		async: { op: 'present', slots: { '251': 0 } },
 		generator: { op: 'and', of: [] }
 	},
-	[TSKindId.ImportSpecifierAs]: { typeOnly: { op: 'eq', text: 'type', slots: { '418': 0 } } },
-	[TSKindId.ImportSpecifierName]: { typeOnly: { op: 'eq', text: 'type', slots: { '417': 0 } } },
+	[TSKindId.ImportSpecifierAs]: { typeOnly: { op: 'eq', text: 'type', slots: { '419': 0 } } },
+	[TSKindId.ImportSpecifierName]: { typeOnly: { op: 'eq', text: 'type', slots: { '418': 0 } } },
 	[TSKindId.ImportStatement]: { typeOnly: { op: 'eq', text: 'type', slots: { '198': 0 } } },
 	[TSKindId.IndexSignatureColon]: { readonly: { op: 'present', slots: { '412': 1 } } },
 	[TSKindId.IndexSignatureMappedTypeClause]: { readonly: { op: 'present', slots: { '413': 1 } } },
@@ -6371,48 +6372,48 @@ export const queryFlags: QueryFlags = Object.freeze({
 		privateName: { op: 'is', types: [128], slots: { '259': 2 } }
 	},
 	[TSKindId.MethodDefinitionGetter]: {
-		static: { op: 'present', slots: { '454': 1 } },
-		override: { op: 'present', slots: { '454': 2 } },
-		privateName: { op: 'is', types: [128], slots: { '454': 3 } },
-		computed: { op: 'is', types: [297], slots: { '454': 3 } }
-	},
-	[TSKindId.MethodDefinitionPlain]: {
-		static: { op: 'present', slots: { '453': 1 } },
-		override: { op: 'present', slots: { '453': 2 } },
-		readonly: { op: 'present', slots: { '453': 3 } },
-		async: { op: 'present', slots: { '453': 4 } },
-		optional: { op: 'present', slots: { '453': 7 } },
-		generator: { op: 'present', slots: { '453': 5 } },
-		privateName: { op: 'is', types: [128], slots: { '453': 6 } },
-		computed: { op: 'is', types: [297], slots: { '453': 6 } }
-	},
-	[TSKindId.MethodDefinitionSetter]: {
 		static: { op: 'present', slots: { '455': 1 } },
 		override: { op: 'present', slots: { '455': 2 } },
 		privateName: { op: 'is', types: [128], slots: { '455': 3 } },
 		computed: { op: 'is', types: [297], slots: { '455': 3 } }
 	},
-	[TSKindId.MethodSignatureGetter]: {
-		static: { op: 'present', slots: { '457': 1 } },
-		override: { op: 'present', slots: { '457': 2 } },
-		privateName: { op: 'is', types: [128], slots: { '457': 3 } },
-		computed: { op: 'is', types: [297], slots: { '457': 3 } }
+	[TSKindId.MethodDefinitionPlain]: {
+		static: { op: 'present', slots: { '454': 1 } },
+		override: { op: 'present', slots: { '454': 2 } },
+		readonly: { op: 'present', slots: { '454': 3 } },
+		async: { op: 'present', slots: { '454': 4 } },
+		optional: { op: 'present', slots: { '454': 7 } },
+		generator: { op: 'present', slots: { '454': 5 } },
+		privateName: { op: 'is', types: [128], slots: { '454': 6 } },
+		computed: { op: 'is', types: [297], slots: { '454': 6 } }
 	},
-	[TSKindId.MethodSignaturePlain]: {
+	[TSKindId.MethodDefinitionSetter]: {
 		static: { op: 'present', slots: { '456': 1 } },
 		override: { op: 'present', slots: { '456': 2 } },
-		readonly: { op: 'present', slots: { '456': 3 } },
-		async: { op: 'present', slots: { '456': 4 } },
-		optional: { op: 'present', slots: { '456': 7 } },
-		generator: { op: 'present', slots: { '456': 5 } },
-		privateName: { op: 'is', types: [128], slots: { '456': 6 } },
-		computed: { op: 'is', types: [297], slots: { '456': 6 } }
+		privateName: { op: 'is', types: [128], slots: { '456': 3 } },
+		computed: { op: 'is', types: [297], slots: { '456': 3 } }
 	},
-	[TSKindId.MethodSignatureSetter]: {
+	[TSKindId.MethodSignatureGetter]: {
 		static: { op: 'present', slots: { '458': 1 } },
 		override: { op: 'present', slots: { '458': 2 } },
 		privateName: { op: 'is', types: [128], slots: { '458': 3 } },
 		computed: { op: 'is', types: [297], slots: { '458': 3 } }
+	},
+	[TSKindId.MethodSignaturePlain]: {
+		static: { op: 'present', slots: { '457': 1 } },
+		override: { op: 'present', slots: { '457': 2 } },
+		readonly: { op: 'present', slots: { '457': 3 } },
+		async: { op: 'present', slots: { '457': 4 } },
+		optional: { op: 'present', slots: { '457': 7 } },
+		generator: { op: 'present', slots: { '457': 5 } },
+		privateName: { op: 'is', types: [128], slots: { '457': 6 } },
+		computed: { op: 'is', types: [297], slots: { '457': 6 } }
+	},
+	[TSKindId.MethodSignatureSetter]: {
+		static: { op: 'present', slots: { '459': 1 } },
+		override: { op: 'present', slots: { '459': 2 } },
+		privateName: { op: 'is', types: [128], slots: { '459': 3 } },
+		computed: { op: 'is', types: [297], slots: { '459': 3 } }
 	},
 	[TSKindId.OptionalParameter]: {
 		override: { op: 'present', slots: { '329': 2 } },
@@ -6430,33 +6431,33 @@ export const queryFlags: QueryFlags = Object.freeze({
 		computed: { op: 'is', types: [297], slots: { '371': 4 } }
 	},
 	[TSKindId.PublicFieldDefinitionAccessor]: {
-		static: { op: 'present', slots: { '463': 2 } },
-		override: { op: 'present', slots: { '463': 4 } },
-		privateName: { op: 'is', types: [128], slots: { '463': 5 } },
-		computed: { op: 'is', types: [297], slots: { '463': 5 } }
+		static: { op: 'present', slots: { '464': 2 } },
+		override: { op: 'present', slots: { '464': 4 } },
+		privateName: { op: 'is', types: [128], slots: { '464': 5 } },
+		computed: { op: 'is', types: [297], slots: { '464': 5 } }
 	},
 	[TSKindId.PublicFieldDefinitionPlain]: {
-		declare: { op: 'present', slots: { '462': 1 } },
-		static: { op: 'present', slots: { '462': 3 } },
-		override: { op: 'present', slots: { '462': 4 } },
-		readonly: { op: 'present', slots: { '462': 5 } },
-		abstract: { op: 'present', slots: { '462': 6 } },
-		optional: { op: 'eq', text: '?', slots: { '462': 8 } },
-		definite: { op: 'eq', text: '!', slots: { '462': 8 } },
-		privateName: { op: 'is', types: [128], slots: { '462': 7 } },
-		computed: { op: 'is', types: [297], slots: { '462': 7 } }
+		declare: { op: 'present', slots: { '463': 1 } },
+		static: { op: 'present', slots: { '463': 3 } },
+		override: { op: 'present', slots: { '463': 4 } },
+		readonly: { op: 'present', slots: { '463': 5 } },
+		abstract: { op: 'present', slots: { '463': 6 } },
+		optional: { op: 'eq', text: '?', slots: { '463': 8 } },
+		definite: { op: 'eq', text: '!', slots: { '463': 8 } },
+		privateName: { op: 'is', types: [128], slots: { '463': 7 } },
+		computed: { op: 'is', types: [297], slots: { '463': 7 } }
 	},
 	[TSKindId.ReceiverParameterDeclaration]: {
-		override: { op: 'present', slots: { '468': 2 } },
-		readonly: { op: 'present', slots: { '468': 3 } }
+		override: { op: 'present', slots: { '469': 2 } },
+		readonly: { op: 'present', slots: { '469': 3 } }
 	},
 	[TSKindId.RequiredParameter]: {
 		override: { op: 'present', slots: { '328': 2 } },
 		readonly: { op: 'present', slots: { '328': 3 } }
 	},
 	[TSKindId.SetterParameter]: {
-		override: { op: 'present', slots: { '450': 2 } },
-		readonly: { op: 'present', slots: { '450': 3 } }
+		override: { op: 'present', slots: { '451': 2 } },
+		readonly: { op: 'present', slots: { '451': 3 } }
 	},
 	[TSKindId.SubscriptExpression]: { optionalChain: { op: 'is', types: [255], slots: { '260': 1 } } },
 	[TSKindId.TypeParameter]: { const: { op: 'present', slots: { '373': 0 } } },
@@ -6474,7 +6475,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [216, 249, 251, 303] },
 			const: { types: [], kinds: [322] },
 			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 431] }
+			typeOnly: { types: [], kinds: [198, 432] }
 		}
 	},
 	206: {
@@ -6482,21 +6483,21 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
-	207: { declarators: { definite: { types: [439], kinds: [] } } },
-	208: { declarators: { definite: { types: [439], kinds: [] } } },
-	209: { variableDeclarators: { definite: { types: [439], kinds: [] } } },
+	207: { declarators: { definite: { types: [440], kinds: [] } } },
+	208: { declarators: { definite: { types: [440], kinds: [] } } },
+	209: { variableDeclarators: { definite: { types: [440], kinds: [] } } },
 	211: {
 		statements: {
 			abstract: { types: [314], kinds: [] },
 			async: { types: [], kinds: [216, 249, 251, 303] },
 			const: { types: [], kinds: [322] },
 			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 431] }
+			typeOnly: { types: [], kinds: [198, 432] }
 		}
 	},
 	212: {
@@ -6505,7 +6506,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [216, 249, 251, 303] },
 			const: { types: [], kinds: [322] },
 			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 431] }
+			typeOnly: { types: [], kinds: [198, 432] }
 		}
 	},
 	213: {
@@ -6514,7 +6515,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [216, 249, 251, 303] },
 			const: { types: [], kinds: [322] },
 			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 431] }
+			typeOnly: { types: [], kinds: [198, 432] }
 		}
 	},
 	215: {
@@ -6522,24 +6523,24 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		},
 		condition: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		},
 		increment: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		},
 		body: {
@@ -6547,7 +6548,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [216, 249, 251, 303] },
 			const: { types: [], kinds: [322] },
 			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 431] }
+			typeOnly: { types: [], kinds: [198, 432] }
 		}
 	},
 	216: {
@@ -6556,7 +6557,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [216, 249, 251, 303] },
 			const: { types: [], kinds: [322] },
 			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 431] }
+			typeOnly: { types: [], kinds: [198, 432] }
 		}
 	},
 	218: {
@@ -6565,7 +6566,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [216, 249, 251, 303] },
 			const: { types: [], kinds: [322] },
 			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 431] }
+			typeOnly: { types: [], kinds: [198, 432] }
 		}
 	},
 	219: {
@@ -6574,7 +6575,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [216, 249, 251, 303] },
 			const: { types: [], kinds: [322] },
 			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 431] }
+			typeOnly: { types: [], kinds: [198, 432] }
 		}
 	},
 	221: {
@@ -6583,7 +6584,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [216, 249, 251, 303] },
 			const: { types: [], kinds: [322] },
 			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 431] }
+			typeOnly: { types: [], kinds: [198, 432] }
 		}
 	},
 	225: {
@@ -6591,8 +6592,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6601,8 +6602,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6612,7 +6613,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [216, 249, 251, 303] },
 			const: { types: [], kinds: [322] },
 			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 431] }
+			typeOnly: { types: [], kinds: [198, 432] }
 		}
 	},
 	230: {
@@ -6620,8 +6621,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		},
 		bodies: {
@@ -6629,7 +6630,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [216, 249, 251, 303] },
 			const: { types: [], kinds: [322] },
 			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 431] }
+			typeOnly: { types: [], kinds: [198, 432] }
 		}
 	},
 	231: {
@@ -6638,7 +6639,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [216, 249, 251, 303] },
 			const: { types: [], kinds: [322] },
 			generator: { types: [251], kinds: [] },
-			typeOnly: { types: [], kinds: [198, 431] }
+			typeOnly: { types: [], kinds: [198, 432] }
 		}
 	},
 	237: {
@@ -6646,21 +6647,21 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
 	238: {
 		properties: {
-			async: { types: [], kinds: [453] },
-			computed: { types: [], kinds: [294, 453, 454, 455] },
-			generator: { types: [], kinds: [453] },
-			optional: { types: [], kinds: [453] },
-			override: { types: [], kinds: [453, 454, 455] },
-			privateName: { types: [], kinds: [453, 454, 455] },
-			readonly: { types: [], kinds: [453] },
-			static: { types: [], kinds: [453, 454, 455] }
+			async: { types: [], kinds: [454] },
+			computed: { types: [], kinds: [294, 454, 455, 456] },
+			generator: { types: [], kinds: [454] },
+			optional: { types: [], kinds: [454] },
+			override: { types: [], kinds: [454, 455, 456] },
+			privateName: { types: [], kinds: [454, 455, 456] },
+			readonly: { types: [], kinds: [454] },
+			static: { types: [], kinds: [454, 455, 456] }
 		}
 	},
 	239: { properties: { computed: { types: [], kinds: [295] } } },
@@ -6669,8 +6670,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6679,8 +6680,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6689,8 +6690,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6699,8 +6700,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6708,7 +6709,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		function: {
 			async: { types: [], kinds: [248, 250, 252] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
+			optionalChain: { types: [424], kinds: [259, 260] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6717,8 +6718,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6727,8 +6728,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6737,16 +6738,16 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		},
 		index: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6756,8 +6757,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6767,8 +6768,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6777,8 +6778,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6787,24 +6788,24 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		},
 		consequence: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		},
 		alternative: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6813,16 +6814,16 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		},
 		right: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6831,8 +6832,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6841,8 +6842,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6851,8 +6852,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6861,8 +6862,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6872,8 +6873,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6882,8 +6883,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6892,8 +6893,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6902,8 +6903,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6912,8 +6913,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		},
 		type: { abstract: { types: [], kinds: [345] }, unique: { types: [144], kinds: [] } }
@@ -6923,8 +6924,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		},
 		type: { abstract: { types: [], kinds: [345] }, unique: { types: [144], kinds: [] } }
@@ -6934,8 +6935,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6944,8 +6945,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6963,8 +6964,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6974,8 +6975,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -6984,8 +6985,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -7034,7 +7035,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	},
 	383: { returnType: { abstract: { types: [], kinds: [345] }, unique: { types: [144], kinds: [] } } },
 	384: { items: { typeOnly: { types: [], kinds: [194] } } },
-	385: { items: { typeOnly: { types: [], kinds: [417, 418] } } },
+	385: { items: { typeOnly: { types: [], kinds: [418, 419] } } },
 	387: {
 		items: {
 			optional: { types: [329], kinds: [] },
@@ -7049,15 +7050,15 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	401: {
 		items: {
 			abstract: { types: [], kinds: [376] },
-			async: { types: [], kinds: [456] },
-			computed: { types: [], kinds: [371, 456, 457, 458] },
-			generator: { types: [], kinds: [456] },
-			optional: { types: [], kinds: [371, 456] },
-			override: { types: [], kinds: [371, 456, 457, 458] },
-			privateName: { types: [], kinds: [371, 456, 457, 458] },
-			readonly: { types: [], kinds: [371, 412, 413, 456] },
-			static: { types: [], kinds: [371, 456, 457, 458] },
-			typeOnly: { types: [], kinds: [431] }
+			async: { types: [], kinds: [457] },
+			computed: { types: [], kinds: [371, 457, 458, 459] },
+			generator: { types: [], kinds: [457] },
+			optional: { types: [], kinds: [371, 457] },
+			override: { types: [], kinds: [371, 457, 458, 459] },
+			privateName: { types: [], kinds: [371, 457, 458, 459] },
+			readonly: { types: [], kinds: [371, 412, 413, 457] },
+			static: { types: [], kinds: [371, 457, 458, 459] },
+			typeOnly: { types: [], kinds: [432] }
 		}
 	},
 	404: {
@@ -7065,8 +7066,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -7075,94 +7076,86 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		},
 		right: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
 	409: {
 		methodDefinition: {
-			async: { types: [], kinds: [453] },
-			computed: { types: [], kinds: [453, 454, 455] },
-			generator: { types: [], kinds: [453] },
-			optional: { types: [], kinds: [453] },
-			override: { types: [], kinds: [453, 454, 455] },
-			privateName: { types: [], kinds: [453, 454, 455] },
-			readonly: { types: [], kinds: [453] },
-			static: { types: [], kinds: [453, 454, 455] }
+			async: { types: [], kinds: [454] },
+			computed: { types: [], kinds: [454, 455, 456] },
+			generator: { types: [], kinds: [454] },
+			optional: { types: [], kinds: [454] },
+			override: { types: [], kinds: [454, 455, 456] },
+			privateName: { types: [], kinds: [454, 455, 456] },
+			readonly: { types: [], kinds: [454] },
+			static: { types: [], kinds: [454, 455, 456] }
 		}
 	},
 	410: {
 		methodSignature: {
-			async: { types: [], kinds: [456] },
-			computed: { types: [], kinds: [456, 457, 458] },
-			generator: { types: [], kinds: [456] },
-			optional: { types: [], kinds: [456] },
-			override: { types: [], kinds: [456, 457, 458] },
-			privateName: { types: [], kinds: [456, 457, 458] },
-			readonly: { types: [], kinds: [456] },
-			static: { types: [], kinds: [456, 457, 458] }
+			async: { types: [], kinds: [457] },
+			computed: { types: [], kinds: [457, 458, 459] },
+			generator: { types: [], kinds: [457] },
+			optional: { types: [], kinds: [457] },
+			override: { types: [], kinds: [457, 458, 459] },
+			privateName: { types: [], kinds: [457, 458, 459] },
+			readonly: { types: [], kinds: [457] },
+			static: { types: [], kinds: [457, 458, 459] }
 		}
 	},
 	411: {
 		member: {
-			abstract: { types: [], kinds: [462] },
-			async: { types: [], kinds: [456] },
-			computed: { types: [], kinds: [456, 457, 458, 459, 460, 461, 462, 463] },
-			declare: { types: [], kinds: [462] },
-			definite: { types: [], kinds: [462] },
-			generator: { types: [], kinds: [456, 459] },
-			optional: { types: [], kinds: [456, 459, 462] },
-			override: { types: [], kinds: [456, 457, 458, 459, 460, 461, 462, 463] },
-			privateName: { types: [], kinds: [456, 457, 458, 459, 460, 461, 462, 463] },
-			readonly: { types: [], kinds: [412, 413, 456, 462] },
-			static: { types: [], kinds: [456, 457, 458, 462, 463] }
+			abstract: { types: [], kinds: [463] },
+			async: { types: [], kinds: [457] },
+			computed: { types: [], kinds: [457, 458, 459, 460, 461, 462, 463, 464] },
+			declare: { types: [], kinds: [463] },
+			definite: { types: [], kinds: [463] },
+			generator: { types: [], kinds: [457, 460] },
+			optional: { types: [], kinds: [457, 460, 463] },
+			override: { types: [], kinds: [457, 458, 459, 460, 461, 462, 463, 464] },
+			privateName: { types: [], kinds: [457, 458, 459, 460, 461, 462, 463, 464] },
+			readonly: { types: [], kinds: [412, 413, 457, 463] },
+			static: { types: [], kinds: [457, 458, 459, 463, 464] }
 		}
 	},
 	412: { indexType: { abstract: { types: [], kinds: [345] }, unique: { types: [144], kinds: [] } } },
-	415: {
+	416: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
-	419: {
+	420: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		}
-	},
-	421: {
-		function: {
-			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
 	422: {
 		function: {
 			async: { types: [], kinds: [248, 250, 252] },
+			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -7170,17 +7163,15 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		function: {
 			async: { types: [], kinds: [248, 250, 252] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
+			optionalChain: { types: [424], kinds: [259, 260] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
-	426: {
-		argument: {
+	424: {
+		function: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -7189,20 +7180,22 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
-	432: {
-		content: {
-			abstract: { types: [314], kinds: [] },
-			async: { types: [], kinds: [249, 251, 303] },
-			const: { types: [], kinds: [322] },
-			generator: { types: [251], kinds: [] }
+	428: {
+		argument: {
+			async: { types: [], kinds: [248, 250, 252] },
+			disposable: { types: [], kinds: [262] },
+			generator: { types: [250], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [259] }
 		}
 	},
-	436: {
+	433: {
 		content: {
 			abstract: { types: [314], kinds: [] },
 			async: { types: [], kinds: [249, 251, 303] },
@@ -7211,13 +7204,11 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		}
 	},
 	437: {
-		value: {
-			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
-			privateName: { types: [], kinds: [259] }
+		content: {
+			abstract: { types: [314], kinds: [] },
+			async: { types: [], kinds: [249, 251, 303] },
+			const: { types: [], kinds: [322] },
+			generator: { types: [251], kinds: [] }
 		}
 	},
 	438: {
@@ -7225,46 +7216,46 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
-	442: {
-		right: {
-			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		}
-	},
-	443: {
+	439: {
 		value: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [259] }
+		}
+	},
+	443: {
+		right: {
+			async: { types: [], kinds: [248, 250, 252] },
+			disposable: { types: [], kinds: [262] },
+			generator: { types: [250], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [259] }
+		}
+	},
+	444: {
+		value: {
+			async: { types: [], kinds: [248, 250, 252] },
+			disposable: { types: [], kinds: [262] },
+			generator: { types: [250], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		},
 		right: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
-			privateName: { types: [], kinds: [259] }
-		}
-	},
-	444: {
-		right: {
-			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
-			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
@@ -7273,43 +7264,53 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
-	449: { item: { override: { types: [], kinds: [450] }, readonly: { types: [], kinds: [450] } } },
-	462: {
-		value: {
+	446: {
+		right: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
+	450: { item: { override: { types: [], kinds: [451] }, readonly: { types: [], kinds: [451] } } },
 	463: {
 		value: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
-	468: {
+	464: {
 		value: {
 			async: { types: [], kinds: [248, 250, 252] },
 			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
-			optionalChain: { types: [423], kinds: [259, 260] },
-			prefix: { types: [427], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		}
 	},
-	470: { receiver: { override: { types: [], kinds: [468] }, readonly: { types: [], kinds: [468] } } }
+	469: {
+		value: {
+			async: { types: [], kinds: [248, 250, 252] },
+			disposable: { types: [], kinds: [262] },
+			generator: { types: [250], kinds: [] },
+			optionalChain: { types: [424], kinds: [259, 260] },
+			prefix: { types: [428], kinds: [] },
+			privateName: { types: [], kinds: [259] }
+		}
+	},
+	471: { receiver: { override: { types: [], kinds: [469] }, readonly: { types: [], kinds: [469] } } }
 } satisfies QuerySlotFlags);
 
 declare module '../types.js' {

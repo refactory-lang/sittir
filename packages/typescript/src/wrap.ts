@@ -4009,8 +4009,8 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 		object() {
 			return hydrateSlot<T.Expression | T.PrimaryExpression | TSKindId.Import>(this, '_object', tree);
 		},
-		operator() {
-			return this._operator;
+		optionalChain() {
+			return this._optional_chain;
 		},
 		property() {
 			return hydrateSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, '_property', tree);
@@ -4032,7 +4032,7 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 	};
 	node.$with = {
 		object: wrapMemberExpression$with$object,
-		operator: wrapMemberExpression$with$operator,
+		optionalChain: wrapMemberExpression$with$optionalChain,
 		property: wrapMemberExpression$with$property,
 		[RECEIVER]: node
 	};
@@ -4050,11 +4050,11 @@ function wrapMemberExpression$with(node: Held, setter: string, args: readonly un
 					wrapMemberExpression({ ...$edited(data), _object: admitSlot(handle, 'member_expression', 'object', v) }, tree)
 				)
 			);
-		case 'operator':
-			return applySetter(args, (v: NonNullable<T.MemberExpression['_operator']>) =>
+		case 'optionalChain':
+			return applySetter(args, (v: NonNullable<T.MemberExpression['_optional_chain']>) =>
 				rebuilt(node, handle, () =>
 					wrapMemberExpression(
-						{ ...$edited(data), _operator: admitSlot(handle, 'member_expression', 'operator', v) },
+						{ ...$edited(data), _optional_chain: admitSlot(handle, 'member_expression', 'optionalChain', v) },
 						tree
 					)
 				)
@@ -4074,8 +4074,8 @@ function wrapMemberExpression$with(node: Held, setter: string, args: readonly un
 function wrapMemberExpression$with$object(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapMemberExpression$with(receiverOf(this, '$with.object'), 'object', args);
 }
-function wrapMemberExpression$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapMemberExpression$with(receiverOf(this, '$with.operator'), 'operator', args);
+function wrapMemberExpression$with$optionalChain(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapMemberExpression$with(receiverOf(this, '$with.optionalChain'), 'optionalChain', args);
 }
 function wrapMemberExpression$with$property(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapMemberExpression$with(receiverOf(this, '$with.property'), 'property', args);
@@ -20434,10 +20434,10 @@ function viewAwaitExpression(data: RecordPosition, tree: TreeHandle): T.AwaitExp
 }
 
 function viewMemberExpression$object(this: RecordHandle) {
-	return viewSlot<T.Expression | T.PrimaryExpression | TSKindId.Import>(this, 2, 4, 3, 0, 2);
+	return viewSlot<T.Expression | T.PrimaryExpression | TSKindId.Import>(this, 3, 4, 3, 0, 3);
 }
-function viewMemberExpression$operator(this: RecordHandle) {
-	return childSlot(this, 6, 1, 2, 0, 3);
+function viewMemberExpression$optionalChain(this: RecordHandle) {
+	return recordFlag(this, 2, 0);
 }
 function viewMemberExpression$property(this: RecordHandle) {
 	return viewSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, 7, 6, 8, 6, 4);
@@ -20451,7 +20451,7 @@ function viewMemberExpression(data: RecordPosition, tree: TreeHandle): T.MemberE
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		object: viewMemberExpression$object,
-		operator: viewMemberExpression$operator,
+		optionalChain: viewMemberExpression$optionalChain,
 		property: viewMemberExpression$property,
 		$with: undefined as unknown as object,
 		$render: handleRender,
@@ -20463,7 +20463,7 @@ function viewMemberExpression(data: RecordPosition, tree: TreeHandle): T.MemberE
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { object: $with$object, operator: $with$operator, property: $with$property, [RECEIVER]: node };
+	node.$with = { object: $with$object, optionalChain: $with$optionalChain, property: $with$property, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.MemberExpression.Parsed;
 }

@@ -6505,20 +6505,24 @@ export function buildMemberExpression(config: T.MemberExpression.Config): T.Memb
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _operator = kindIdStorage<NonNullable<T.MemberExpression['_operator']>>(config.operator);
+	const _optional_chain = strictBooleanStorage(config.optionalChain);
 	const _property = admitAliasContent<NonNullable<T.MemberExpression['_property']>>(
 		rejectReservedText(config.property, 'MemberExpression.property', TSKindId.Identifier, _reservedWordset_properties),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'member_expression', { object: _object, operator: _operator, property: _property });
+		admitChildren(handle, 'member_expression', {
+			object: _object,
+			optionalChain: _optional_chain,
+			property: _property
+		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.MemberExpression as const, { _object, _operator, _property });
+	handle?.verifyStored?.(TSKindId.MemberExpression as const, { _object, _optional_chain, _property });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.MemberExpression as const);
-		storeCell(arena, record, 2, 2, _object);
-		storeCell(arena, record, 3, 6, _operator);
+		storeCell(arena, record, 3, 3, _object);
+		if (_optional_chain) storeFlag(record.data, record.base + 2, 1);
 		storeCell(arena, record, 4, 7, _property);
 		const node = arena.view(record);
 		return node as unknown as T.MemberExpression.Bound;
@@ -6533,20 +6537,24 @@ function buildMemberExpression$patch(source: object, config: T.MemberExpression.
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _operator = kindIdStorage<NonNullable<T.MemberExpression['_operator']>>(config.operator);
+	const _optional_chain = strictBooleanStorage(config.optionalChain);
 	const _property = admitAliasContent<NonNullable<T.MemberExpression['_property']>>(
 		rejectReservedText(config.property, 'MemberExpression.property', TSKindId.Identifier, _reservedWordset_properties),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'member_expression', { object: _object, operator: _operator, property: _property });
+		admitChildren(handle, 'member_expression', {
+			object: _object,
+			optionalChain: _optional_chain,
+			property: _property
+		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.MemberExpression as const, { _object, _operator, _property });
+	handle?.verifyStored?.(TSKindId.MemberExpression as const, { _object, _optional_chain, _property });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.MemberExpression as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'object', _object));
-		patchCell(arena, record, 3, 6, carriedSlot(source, 'operator', _operator));
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'object', _object));
+		patchFlag(record, 2, 1, _optional_chain);
 		patchCell(arena, record, 4, 7, carriedSlot(source, 'property', _property));
 		const node = arena.view(record);
 		return node as unknown as T.MemberExpression.Bound;
@@ -6556,14 +6564,14 @@ function buildMemberExpression$set(
 	source: object,
 	...[slot, input]:
 		| ['object', Partial<T.MemberExpression.Config>]
-		| ['operator', Partial<T.MemberExpression.Config>]
+		| ['optionalChain', Partial<T.MemberExpression.Config>]
 		| ['property', Partial<T.MemberExpression.Config>]
 ): T.MemberExpression.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'object':
-			case 'operator':
+			case 'optionalChain':
 			case 'property':
 				return buildMemberExpression$patch(source, { ...(inputs.config as T.MemberExpression.Config), ...input });
 		}
@@ -6586,16 +6594,16 @@ function buildMemberExpression$set(
 				_object
 			) as unknown as T.MemberExpression.Bound;
 		}
-		case 'operator': {
+		case 'optionalChain': {
 			const config = input;
-			const _operator = kindIdStorage<NonNullable<T.MemberExpression['_operator']>>(config.operator);
+			const _optional_chain = strictBooleanStorage(config.optionalChain);
 			return setSlot(
 				source,
 				TSKindId.MemberExpression as const,
 				'member_expression',
 				1,
-				'operator',
-				_operator
+				'optionalChain',
+				_optional_chain
 			) as unknown as T.MemberExpression.Bound;
 		}
 		case 'property': {
@@ -6627,9 +6635,9 @@ function withMemberExpression(node: object, setter: string, args: readonly unkno
 			return applySetter(args, (value: Admit<NonNullable<T.MemberExpression.Config>['object']>) =>
 				rebuilt(node, handle, () => buildMemberExpression$set(node, 'object', { object: value }))
 			);
-		case 'operator':
-			return applySetter(args, (value: Admit<NonNullable<T.MemberExpression.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildMemberExpression$set(node, 'operator', { operator: value }))
+		case 'optionalChain':
+			return applySetter(args, (value?: Admit<NonNullable<T.MemberExpression.Config>['optionalChain']>) =>
+				rebuilt(node, handle, () => buildMemberExpression$set(node, 'optionalChain', { optionalChain: value }))
 			);
 		case 'property':
 			return applySetter(
@@ -22426,6 +22434,8 @@ function withImportStatementClauseFrom(node: object, setter: string, args: reado
 	throw new Error(`import_statement_clause_from has no $with.${setter}`);
 }
 
+export const buildMemberExpressionDot: TSKindId.MemberExpressionDot = TSKindId.MemberExpressionDot;
+
 export function buildYieldExpressionDelegate<V extends Admit<T.Expression>>(
 	value: V & RefuseUndeclared<V>
 ): T.YieldExpressionDelegate.Bound;
@@ -30900,6 +30910,7 @@ export type FluentKindMap = {
 	index_signature_colon: T.IndexSignatureColon.Bound;
 	index_signature_mapped_type_clause: T.IndexSignatureMappedTypeClause.Bound;
 	import_statement_clause_from: T.ImportStatementClauseFrom.Bound;
+	member_expression_dot: T.MemberExpressionDot;
 	yield_expression_delegate: T.YieldExpressionDelegate.Bound;
 	optional_chain_marker: T.OptionalChainMarker;
 	import_specifier_name: T.ImportSpecifierName.Bound;
@@ -31181,6 +31192,7 @@ export const _factoryMap = {
 	index_signature_colon: buildIndexSignatureColon,
 	index_signature_mapped_type_clause: buildIndexSignatureMappedTypeClause,
 	import_statement_clause_from: buildImportStatementClauseFrom,
+	member_expression_dot: buildMemberExpressionDot,
 	yield_expression_delegate: buildYieldExpressionDelegate,
 	optional_chain_marker: buildOptionalChainMarker,
 	import_specifier_name: buildImportSpecifierName,
@@ -31445,58 +31457,58 @@ export const builtViews: BuiltViews = Object.freeze({
 		412: withIndexSignatureColon,
 		413: withIndexSignatureMappedTypeClause,
 		414: withImportStatementClauseFrom,
-		415: withYieldExpressionDelegate,
-		417: withImportSpecifierName,
-		418: withImportSpecifierAs,
-		419: withParenthesizedExpressionTyped,
-		420: withParenthesizedExpressionSequence,
-		421: withCallExpressionCall,
-		422: withCallExpressionTemplateCall,
-		423: withCallExpressionMember,
-		424: withStringDouble,
-		425: withStringSingle,
-		426: withUpdateExpressionPostfix,
-		427: withUpdateExpressionPrefix,
-		428: withArrowFunctionParameter,
-		429: withClassHeritageExtendsClause,
-		430: withImportClauseDefaultImport,
-		431: withExportStatementDefaultFrom,
-		432: withExportStatementDefaultDeclaration,
-		433: withExportStatementDefaultFromStarFrom,
-		434: withExportStatementDefaultFromNsFrom,
-		435: withExportStatementDefaultFromClauseFrom,
-		436: withExportStatementDefaultDeclarationDefaultKw,
-		437: withExportStatementDefaultDeclarationDefaultKwValue,
-		438: withVariableDeclaratorPlain,
-		439: withVariableDeclaratorDefinite,
-		442: withForHeaderLhs,
-		443: withForHeaderVarKind,
-		444: withForHeaderLetConstKind,
-		445: withForHeaderUsingKind,
-		448: withFormalParametersSetAccessorSignature,
-		449: withFormalParametersElementsSetAccessorSignature,
-		450: withSetterParameter,
-		453: withMethodDefinitionPlain,
-		454: withMethodDefinitionGetter,
-		455: withMethodDefinitionSetter,
-		456: withMethodSignaturePlain,
-		457: withMethodSignatureGetter,
-		458: withMethodSignatureSetter,
-		459: withAbstractMethodSignaturePlain,
-		460: withAbstractMethodSignatureGetter,
-		461: withAbstractMethodSignatureSetter,
-		462: withPublicFieldDefinitionPlain,
-		463: withPublicFieldDefinitionAccessor,
-		464: withConstructorDeclaration,
-		468: withReceiverParameterDeclaration,
-		470: withFormalParametersElementsReceiver,
-		471: withFormalParametersElementsReceiverGroup,
-		498: withInterfaceBody,
-		500: withPropertyIdentifier,
-		501: withShorthandPropertyIdentifier,
-		502: withShorthandPropertyIdentifierPattern,
-		503: withStatementIdentifier,
-		505: withTypeIdentifier
+		416: withYieldExpressionDelegate,
+		418: withImportSpecifierName,
+		419: withImportSpecifierAs,
+		420: withParenthesizedExpressionTyped,
+		421: withParenthesizedExpressionSequence,
+		422: withCallExpressionCall,
+		423: withCallExpressionTemplateCall,
+		424: withCallExpressionMember,
+		425: withStringDouble,
+		426: withStringSingle,
+		427: withUpdateExpressionPostfix,
+		428: withUpdateExpressionPrefix,
+		429: withArrowFunctionParameter,
+		430: withClassHeritageExtendsClause,
+		431: withImportClauseDefaultImport,
+		432: withExportStatementDefaultFrom,
+		433: withExportStatementDefaultDeclaration,
+		434: withExportStatementDefaultFromStarFrom,
+		435: withExportStatementDefaultFromNsFrom,
+		436: withExportStatementDefaultFromClauseFrom,
+		437: withExportStatementDefaultDeclarationDefaultKw,
+		438: withExportStatementDefaultDeclarationDefaultKwValue,
+		439: withVariableDeclaratorPlain,
+		440: withVariableDeclaratorDefinite,
+		443: withForHeaderLhs,
+		444: withForHeaderVarKind,
+		445: withForHeaderLetConstKind,
+		446: withForHeaderUsingKind,
+		449: withFormalParametersSetAccessorSignature,
+		450: withFormalParametersElementsSetAccessorSignature,
+		451: withSetterParameter,
+		454: withMethodDefinitionPlain,
+		455: withMethodDefinitionGetter,
+		456: withMethodDefinitionSetter,
+		457: withMethodSignaturePlain,
+		458: withMethodSignatureGetter,
+		459: withMethodSignatureSetter,
+		460: withAbstractMethodSignaturePlain,
+		461: withAbstractMethodSignatureGetter,
+		462: withAbstractMethodSignatureSetter,
+		463: withPublicFieldDefinitionPlain,
+		464: withPublicFieldDefinitionAccessor,
+		465: withConstructorDeclaration,
+		469: withReceiverParameterDeclaration,
+		471: withFormalParametersElementsReceiver,
+		472: withFormalParametersElementsReceiverGroup,
+		499: withInterfaceBody,
+		501: withPropertyIdentifier,
+		502: withShorthandPropertyIdentifier,
+		503: withShorthandPropertyIdentifierPattern,
+		504: withStatementIdentifier,
+		506: withTypeIdentifier
 	}),
 	words: Object.freeze({
 		2: 4,
@@ -31686,58 +31698,58 @@ export const builtViews: BuiltViews = Object.freeze({
 		412: 7,
 		413: 6,
 		414: 4,
-		415: 3,
-		417: 4,
-		418: 5,
-		419: 4,
-		420: 3,
-		421: 5,
-		422: 4,
-		423: 5,
-		424: 3,
+		416: 3,
+		418: 4,
+		419: 5,
+		420: 4,
+		421: 3,
+		422: 5,
+		423: 4,
+		424: 5,
 		425: 3,
-		426: 4,
+		426: 3,
 		427: 4,
-		428: 3,
-		429: 4,
+		428: 4,
+		429: 3,
 		430: 4,
-		431: 5,
-		432: 4,
-		433: 3,
-		434: 4,
+		431: 4,
+		432: 5,
+		433: 4,
+		434: 3,
 		435: 4,
-		436: 3,
-		437: 4,
-		438: 5,
-		439: 4,
-		442: 5,
-		443: 6,
-		444: 7,
+		436: 4,
+		437: 3,
+		438: 4,
+		439: 5,
+		440: 4,
+		443: 5,
+		444: 6,
 		445: 7,
-		448: 3,
+		446: 7,
 		449: 3,
-		450: 7,
-		453: 9,
-		454: 7,
+		450: 3,
+		451: 7,
+		454: 9,
 		455: 7,
-		456: 8,
-		457: 6,
+		456: 7,
+		457: 8,
 		458: 6,
-		459: 8,
-		460: 6,
+		459: 6,
+		460: 8,
 		461: 6,
-		462: 9,
-		463: 8,
-		464: 5,
-		468: 7,
-		470: 4,
-		471: 3,
-		498: 5,
-		500: 3,
+		462: 6,
+		463: 9,
+		464: 8,
+		465: 5,
+		469: 7,
+		471: 4,
+		472: 3,
+		499: 5,
 		501: 3,
 		502: 3,
 		503: 3,
-		505: 3
+		504: 3,
+		506: 3
 	}),
 	cells: Object.freeze({
 		2: 2,
@@ -31808,7 +31820,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		252: 3,
 		257: 2,
 		258: 2,
-		259: 2,
+		259: 3,
 		260: 3,
 		261: 2,
 		262: 3,
@@ -31927,8 +31939,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		412: 3,
 		413: 3,
 		414: 2,
-		415: 2,
-		417: 2,
+		416: 2,
 		418: 2,
 		419: 2,
 		420: 2,
@@ -31942,8 +31953,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		428: 2,
 		429: 2,
 		430: 2,
-		431: 3,
-		432: 2,
+		431: 2,
+		432: 3,
 		433: 2,
 		434: 2,
 		435: 2,
@@ -31951,14 +31962,14 @@ export const builtViews: BuiltViews = Object.freeze({
 		437: 2,
 		438: 2,
 		439: 2,
-		442: 2,
+		440: 2,
 		443: 2,
 		444: 2,
 		445: 2,
-		448: 2,
+		446: 2,
 		449: 2,
-		450: 3,
-		453: 3,
+		450: 2,
+		451: 3,
 		454: 3,
 		455: 3,
 		456: 3,
@@ -31969,16 +31980,17 @@ export const builtViews: BuiltViews = Object.freeze({
 		461: 3,
 		462: 3,
 		463: 3,
-		464: 2,
-		468: 3,
-		470: 2,
+		464: 3,
+		465: 2,
+		469: 3,
 		471: 2,
-		498: 2,
-		500: 2,
+		472: 2,
+		499: 2,
 		501: 2,
 		502: 2,
 		503: 2,
-		505: 2
+		504: 2,
+		506: 2
 	}),
 	places: Object.freeze({
 		2: [[2, 2, 2, 4, 0, 0]],
@@ -32218,8 +32230,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		],
 		258: [[2, 2, 4, 3, 0, 0]],
 		259: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 1, 2, 0, 0],
+			[3, 3, 4, 3, 0, 0],
+			[2, 0],
 			[7, 4, 6, 8, 6, 0]
 		],
 		260: [
@@ -32612,103 +32624,96 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 2, 14, 8, 14, 0],
 			[16, 3, 3, 8, 3, 0]
 		],
-		415: [[2, 2, 4, 3, 0, 0]],
-		417: [
+		416: [[2, 2, 4, 3, 0, 0]],
+		418: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 3, 1, 0, 0]
 		],
-		418: [
+		419: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 4, 11, 3, 0],
 			[7, 4, 3, 1, 0, 0]
 		],
-		419: [
+		420: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0]
 		],
-		420: [[2, 2, 3, 8, 3, 0]],
-		421: [
+		421: [[2, 2, 3, 8, 3, 0]],
+		422: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0],
 			[11, 4, 3, 8, 3, 0]
-		],
-		422: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 8, 3, 0]
 		],
 		423: [
 			[2, 2, 4, 3, 0, 0],
+			[6, 3, 3, 8, 3, 0]
+		],
+		424: [
+			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0],
 			[11, 4, 3, 8, 3, 0]
 		],
-		424: [[2, 2, 1, 1, 0, 3]],
 		425: [[2, 2, 1, 1, 0, 3]],
-		426: [
+		426: [[2, 2, 1, 1, 0, 3]],
+		427: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0]
 		],
-		427: [
+		428: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 4, 3, 0, 0]
 		],
-		428: [[2, 2, 3, 1, 0, 0]],
-		429: [
+		429: [[2, 2, 3, 1, 0, 0]],
+		430: [
 			[2, 2, 3, 8, 3, 0],
 			[5, 3, 3, 8, 3, 0]
 		],
-		430: [
+		431: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 7, 8, 7, 0]
 		],
-		431: [
+		432: [
 			[2, 0],
 			[3, 3, 11, 8, 11, 0],
 			[14, 4, 1, 2, 0, 0]
 		],
-		432: [
+		433: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 3, 1, 0, 0]
 		],
-		433: [[2, 2, 3, 8, 3, 0]],
-		434: [
+		434: [[2, 2, 3, 8, 3, 0]],
+		435: [
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 3, 8, 3, 0]
 		],
-		435: [
+		436: [
 			[2, 2, 5, 8, 5, 0],
 			[7, 3, 3, 8, 3, 0]
 		],
-		436: [[2, 2, 3, 1, 0, 0]],
-		437: [
+		437: [[2, 2, 3, 1, 0, 0]],
+		438: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0]
 		],
-		438: [
+		439: [
 			[2, 2, 4, 9, 3, 0],
 			[6, 3, 3, 1, 0, 0],
 			[9, 4, 4, 3, 0, 0]
 		],
-		439: [
+		440: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		442: [
+		443: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 1, 2, 0, 0],
 			[6, 4, 4, 3, 0, 0]
 		],
-		443: [
+		444: [
 			[2, 2, 4, 9, 3, 0],
 			[6, 3, 4, 3, 0, 0],
 			[10, 4, 1, 2, 0, 0],
 			[11, 5, 4, 3, 0, 0]
-		],
-		444: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 4, 9, 3, 0],
-			[7, 4, 1, 18, 0, 0],
-			[8, 5, 1, 2, 0, 0],
-			[9, 6, 4, 3, 0, 0]
 		],
 		445: [
 			[2, 2, 1, 2, 0, 0],
@@ -32717,9 +32722,16 @@ export const builtViews: BuiltViews = Object.freeze({
 			[8, 5, 1, 2, 0, 0],
 			[9, 6, 4, 3, 0, 0]
 		],
-		448: [[2, 2, 14, 8, 14, 0]],
-		449: [[2, 2, 12, 8, 12, 0]],
-		450: [
+		446: [
+			[2, 2, 1, 2, 0, 0],
+			[3, 3, 4, 9, 3, 0],
+			[7, 4, 1, 18, 0, 0],
+			[8, 5, 1, 2, 0, 0],
+			[9, 6, 4, 3, 0, 0]
+		],
+		449: [[2, 2, 14, 8, 14, 0]],
+		450: [[2, 2, 12, 8, 12, 0]],
+		451: [
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0],
 			[2, 0],
@@ -32727,7 +32739,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[5, 5, 4, 3, 0, 0],
 			[9, 6, 3, 1, 0, 0]
 		],
-		453: [
+		454: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -32741,7 +32753,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[27, 7, 3, 1, 0, 0],
 			[30, 8, 4, 8, 4, 0]
 		],
-		454: [
+		455: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -32749,7 +32761,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[19, 5, 3, 1, 0, 0],
 			[22, 6, 4, 8, 4, 0]
 		],
-		455: [
+		456: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -32757,7 +32769,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[19, 5, 16, 8, 16, 0],
 			[35, 6, 4, 8, 4, 0]
 		],
-		456: [
+		457: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -32770,21 +32782,21 @@ export const builtViews: BuiltViews = Object.freeze({
 			[24, 6, 3, 1, 0, 0],
 			[27, 7, 3, 1, 0, 0]
 		],
-		457: [
+		458: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 3, 1, 0, 0]
 		],
-		458: [
+		459: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 16, 8, 16, 0]
 		],
-		459: [
+		460: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -32794,19 +32806,19 @@ export const builtViews: BuiltViews = Object.freeze({
 			[24, 6, 3, 1, 0, 0],
 			[27, 7, 3, 1, 0, 0]
 		],
-		460: [
+		461: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 3, 1, 0, 0]
 		],
-		461: [
+		462: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 16, 8, 16, 0]
 		],
-		462: [
+		463: [
 			[3, 3, 1, 1, 0, 3],
 			[2, 0],
 			[4, 4, 1, 2, 0, 0],
@@ -32819,7 +32831,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[21, 7, 3, 1, 0, 0],
 			[24, 8, 4, 3, 0, 0]
 		],
-		463: [
+		464: [
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0],
 			[2, 0],
@@ -32829,12 +32841,12 @@ export const builtViews: BuiltViews = Object.freeze({
 			[20, 6, 3, 1, 0, 0],
 			[23, 7, 4, 3, 0, 0]
 		],
-		464: [
+		465: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 3, 1, 0, 0],
 			[6, 4, 4, 8, 4, 0]
 		],
-		468: [
+		469: [
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0],
 			[2, 0],
@@ -32842,21 +32854,21 @@ export const builtViews: BuiltViews = Object.freeze({
 			[5, 5, 3, 1, 0, 0],
 			[8, 6, 4, 3, 0, 0]
 		],
-		470: [
+		471: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 5, 8, 5, 0]
 		],
-		471: [[2, 2, 3, 8, 3, 0]],
-		498: [
+		472: [[2, 2, 3, 8, 3, 0]],
+		499: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 3, 8, 3, 0],
 			[6, 4, 1, 2, 0, 0]
 		],
-		500: [[2, 2, 3, 1, 0, 0]],
 		501: [[2, 2, 3, 1, 0, 0]],
 		502: [[2, 2, 3, 1, 0, 0]],
 		503: [[2, 2, 3, 1, 0, 0]],
-		505: [[2, 2, 3, 1, 0, 0]]
+		504: [[2, 2, 3, 1, 0, 0]],
+		506: [[2, 2, 3, 1, 0, 0]]
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifier,

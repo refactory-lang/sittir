@@ -210,6 +210,7 @@ export {
 	coerceToIndexSignatureColon as buildIndexSignatureColon,
 	coerceToIndexSignatureMappedTypeClause as buildIndexSignatureMappedTypeClause,
 	coerceToImportStatementClauseFrom as buildImportStatementClauseFrom,
+	coerceToMemberExpressionDot as buildMemberExpressionDot,
 	coerceToYieldExpressionDelegate as buildYieldExpressionDelegate,
 	coerceToOptionalChainMarker as buildOptionalChainMarker,
 	coerceToImportSpecifierName as buildImportSpecifierName,

@@ -538,6 +538,46 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
+    "message": "conflict between _type_query_member_expression_in_type_annotation, member_expression_dot on identifier resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_type_query_member_expression_in_type_annotation",
+          "member_expression_dot"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "_type_query_member_expression_in_type_annotation"
+        ],
+        [
+          "member_expression_dot",
+          "member_expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'<'",
+          "'('",
+          "import",
+          "'.'"
+        ],
+        "lookahead": "identifier",
+        "interpretations": [
+          "member_expression_dot",
+          "_type_query_member_expression_in_type_annotation"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
     "message": "conflict between array, array_pattern, tuple_type on ')' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {

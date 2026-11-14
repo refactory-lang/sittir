@@ -5120,8 +5120,16 @@
 			"name": "object"
 		},
 		{
-			"kind": "slot",
-			"name": "operator"
+			"kind": "seam",
+			"field": "dot_before"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_after"
 		},
 		{
 			"kind": "slot",

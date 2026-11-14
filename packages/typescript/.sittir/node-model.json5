@@ -15,6 +15,7 @@
 		"import_clause_group": {"definedBy":"enrich","childKind":{"namespace_import":"namespace_import","named_imports":"named_imports"}},
 		"import_statement": {"definedBy":"override","childKind":{"import_statement_clause_from":"clause_from"}},
 		"literal_type": {"definedBy":"override","childKind":{"literal_type_negative_number":"negative_number","number":"number","string":"string","true":"true","false":"false","null":"null","undefined":"undefined"}},
+		"member_expression": {"definedBy":"override","childKind":{"member_expression_dot":"dot"}},
 		"yield_expression": {"definedBy":"override","childKind":{"yield_expression_delegate":"delegate"}}
 	},
 	"fieldAliasMap": {
@@ -153,10 +154,10 @@
 			]
 		},
 		"displays": [
-			{"display":503,"tokens":[32,33,7,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54]},
-			{"display":501,"tokens":[32,33,7,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54]},
+			{"display":504,"tokens":[32,33,7,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54]},
 			{"display":502,"tokens":[32,33,7,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54]},
-			{"display":500,"tokens":[27,56,57,64,68,28,29,9,69,25,17,45,70,71,58,20,65,18,10,72,73,47,74,30,75,19,76,31,77,26,8,14,78,24,12,48,49,50,51,52,53,32,33,7,34,35,36,37,38,39,40,41,42,43,44,46,54]}
+			{"display":503,"tokens":[32,33,7,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54]},
+			{"display":501,"tokens":[27,56,57,64,68,28,29,9,69,25,17,45,70,71,58,20,65,18,10,72,73,47,74,30,75,19,76,31,77,26,8,14,78,24,12,48,49,50,51,52,53,32,33,7,34,35,36,37,38,39,40,41,42,43,44,46,54]}
 		]
 	},
 	"nodes": [
@@ -414,7 +415,8 @@
 		{"kind":"lt_lt","modelType":"punctuation","typeName":"LtLt","unit":true,"text":"<<"},
 		{"kind":"lt_lt_eq","modelType":"punctuation","typeName":"LtLtEq","unit":true,"text":"<<="},
 		{"kind":"mapped_type_clause","modelType":"branch","typeName":"MappedTypeClause","irKey":"mappedTypeClause","builderPath":["mappedTypeClause"],"slots":[{"name":"name","accessor":"name","required":true,"multiple":false,"nonEmpty":false,"storage":"verbatim","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"type_identifier"}]},{"name":"type","accessor":"type","required":true,"multiple":false,"nonEmpty":false,"storage":"mixedEnum","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"type"}]},{"name":"alias","accessor":"alias","required":false,"multiple":false,"nonEmpty":false,"storage":"mixedEnum","values":[{"kind":"node-ref","multiplicity":"optional","parseKind":"type"}]}],"factoryShape":"config","factoryFields":["name","type","alias"]},
-		{"kind":"member_expression","modelType":"branch","typeName":"MemberExpression","irKey":"memberExpression","builderPath":["memberExpression"],"builderPathAlternates":[["primaryExpression","member"]],"slots":[{"name":"object","accessor":"object","required":true,"multiple":false,"nonEmpty":false,"storage":"mixedEnum","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"expression"},{"kind":"node-ref","multiplicity":"single","parseKind":"primary_expression"},{"kind":"node-ref","multiplicity":"single","parseKind":"import"}]},{"name":"operator","accessor":"operator","required":true,"multiple":false,"nonEmpty":false,"storage":"kindEnum","values":[{"kind":"terminal","multiplicity":"single","value":".","parseKind":"dot"},{"kind":"node-ref","multiplicity":"single","parseKind":"optional_chain"}]},{"name":"property","accessor":"property","required":true,"multiple":false,"nonEmpty":false,"storage":"verbatim","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"private_property_identifier"},{"kind":"node-ref","multiplicity":"single","parseKind":"property_identifier"}]}],"factoryShape":"config","factoryFields":["object","operator","property"]},
+		{"kind":"member_expression","modelType":"branch","typeName":"MemberExpression","irKey":"memberExpression","builderPath":["memberExpression"],"builderPathAlternates":[["primaryExpression","member"]],"slots":[{"name":"object","accessor":"object","required":true,"multiple":false,"nonEmpty":false,"storage":"mixedEnum","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"expression"},{"kind":"node-ref","multiplicity":"single","parseKind":"primary_expression"},{"kind":"node-ref","multiplicity":"single","parseKind":"import"}]},{"name":"optional_chain","accessor":"optionalChain","required":false,"multiple":false,"nonEmpty":false,"storage":"boolean","values":[{"kind":"node-ref","multiplicity":"optional","parseKind":"optional_chain"}]},{"name":"property","accessor":"property","required":true,"multiple":false,"nonEmpty":false,"storage":"verbatim","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"private_property_identifier"},{"kind":"node-ref","multiplicity":"single","parseKind":"property_identifier"}]}],"factoryShape":"config","factoryFields":["object","optional_chain","property"]},
+		{"kind":"member_expression_dot","modelType":"punctuation","typeName":"MemberExpressionDot","irKey":"memberExpressionDot","builderPath":["memberExpressionDot"],"builderPathAlternates":[["memberExpression","dot"],["primaryExpression","member","dot"]],"unit":true,"variantOf":"member_expression","text":".","factoryShape":"constant"},
 		{"kind":"meta_keyword","modelType":"keyword","typeName":"MetaKeyword","unit":true,"text":"meta","factoryShape":"text"},
 		{"kind":"meta_property","modelType":"supertype","typeName":"MetaProperty","irKey":"metaProperty","builderPath":["metaProperty"],"builderPathAlternates":[["primaryExpression","metaProperty"]],"variantOf":"primary_expression","subtypes":["meta_property_import_meta","meta_property_new_target"]},
 		{"kind":"meta_property_import_meta","modelType":"punctuation","typeName":"MetaPropertyImportMeta","irKey":"metaPropertyImportMeta","builderPath":["metaPropertyImportMeta"],"builderPathAlternates":[["metaProperty","importMeta"],["primaryExpression","metaProperty","importMeta"]],"seated":true,"unit":true,"variantOf":"meta_property","text":"import.meta","factoryShape":"constant"},

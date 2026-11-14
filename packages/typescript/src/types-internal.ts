@@ -113,6 +113,7 @@ export interface SubBuilderRowKind {
 	'importSpecifier.name': TSKindId.ImportSpecifierName;
 	'indexSignature.colon': TSKindId.IndexSignatureColon;
 	'indexSignature.mappedTypeClause': TSKindId.IndexSignatureMappedTypeClause;
+	'memberExpression.dot': TSKindId.MemberExpressionDot;
 	'metaProperty.importMeta': TSKindId.MetaPropertyImportMeta;
 	'metaProperty.newTarget': TSKindId.MetaPropertyNewTarget;
 	'methodDefinition.getter': TSKindId.MethodDefinitionGetter;
