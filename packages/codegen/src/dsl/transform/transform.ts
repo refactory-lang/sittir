@@ -419,13 +419,10 @@ function isMintedVariantArm(arm: RuntimeRule, parentKind: string): boolean {
 }
 
 interface SiblingVariantHoistPlan {
-	readonly core: RuntimeRule;
 	readonly precStack: ReadonlyArray<RuntimeRule>;
-	readonly seqMembers: RuntimeRule[];
-	readonly resolvedPos: number;
+	readonly body: (arm: RuntimeRule) => RuntimeRule;
 	readonly choice: RuntimeRule;
 	readonly choiceMembers: RuntimeRule[];
-	readonly place: (arm: RuntimeRule) => RuntimeRule;
 	readonly parsed: HoistVariantPath[];
 	readonly lifted: ReadonlyArray<{ altIdx: number; lift: NonNullable<ReturnType<typeof enrichLiftArmOf>> }>;
 }
@@ -453,14 +450,15 @@ function planSiblingVariantHoist(
 	const { site } = parsed[0]!;
 	if (parsed.some((p) => p.site.through !== site.through))
 		return bail('variant patches mix N/M, N/0/M and name:/M paths — hoist needs all siblings addressed the same way');
-	const seqMembers = [...membersOf(core)];
 	const positions = parsed.map((p) => hoistPositionOf(p.site, core));
-	const resolvedPos = positions[0];
-	if (resolvedPos === undefined) return bail(`variant patch '${parsed[0]!.key}' names a field that is not the rule's only field of that name, one member of the sequence`);
-	if (positions.some((p) => p !== resolvedPos))
-		return bail(`variant patches target mixed choice positions (${positions.join(',')}) — hoist needs all siblings at one choice`);
-	const hoistChoice = hoistChoiceOf(seqMembers[resolvedPos], site);
-	if (!hoistChoice) return bail(`position ${resolvedPos} is '${seqMembers[resolvedPos]?.type}', not a hoistable choice`);
+	const at = positions[0];
+	if (at === undefined) return bail(`variant patch '${parsed[0]!.key}' names a field that is not the rule's only field of that name, reached through its sequences`);
+	const position = at.join('/');
+	if (positions.some((p) => p?.join('/') !== position))
+		return bail(`variant patches target mixed choice positions (${positions.map((p) => p?.join('/')).join(',')}) — hoist needs all siblings at one choice`);
+	const member = memberAt(core, at);
+	const hoistChoice = hoistChoiceOf(member, site);
+	if (!hoistChoice) return bail(`position ${position} is '${member?.type}', not a hoistable choice`);
 	const { choice, choiceMembers, absent, place } = hoistChoice;
 	const armCount = site.through === 'optional' ? choiceMembers.length - 1 : choiceMembers.length;
 	for (const p of parsed) p.altIdx = memberIndex(p.altIdx, armCount);
@@ -468,8 +466,9 @@ function planSiblingVariantHoist(
 	for (const [key, v] of absentEntries) {
 		const segs = parsePath(key);
 		const head = segs[0];
-		const at = head?.kind === 'index' ? memberIndex(head.value, seqMembers.length) : undefined;
-		if (segs.length !== 1 || at !== resolvedPos) return bail(`absent variant '${v.name}' at '${key}' does not address the optional at ${resolvedPos}`);
+		const addressed = head?.kind === 'index' ? memberIndex(head.value, membersOf(core).length) : undefined;
+		if (segs.length !== 1 || addressed === undefined || String(addressed) !== position)
+			return bail(`absent variant '${v.name}' at '${key}' does not address the optional at ${position}`);
 		if (absent === undefined) return bail(`absent variant '${v.name}' at '${key}' addresses a choice that is not optional`);
 	}
 	const declared = absentEntries[0];
@@ -488,24 +487,42 @@ function planSiblingVariantHoist(
 		if (lift === null) return bail(`arm ${altIdx} has no variant() and no enrich lift to carry it`);
 		lifted.push({ altIdx, lift });
 	}
-	const scaffolding = seqMembers.filter((_, i) => i !== resolvedPos);
-	const emptyArm = choiceMembers.findIndex(
-		(arm) => matchesEmpty(place(arm)) && scaffolding.every((m) => matchesEmpty(m))
-	);
+	const body = (arm: RuntimeRule): RuntimeRule => replaceAt(core, at, isBlank(arm) ? undefined : place(arm));
+	const emptyArm = choiceMembers.findIndex((arm) => matchesEmpty(body(arm)));
 	if (emptyArm >= 0) return bail(`arm ${emptyArm} would hoist to a variant that matches the empty string`);
-	const bareArm = choiceMembers.findIndex((arm) =>
-		variantBranchIsUnmaterializable({ type: 'SEQ', members: [...scaffolding, ...(isBlank(arm) ? [] : [place(arm)])] } as unknown as RuntimeRule)
-	);
+	const bareArm = choiceMembers.findIndex((arm) => variantBranchIsUnmaterializable(body(arm)));
 	if (bareArm >= 0) return bail(`arm ${bareArm} would hoist to a variant with no token of its own and at most one named child`);
-	return { core, precStack, seqMembers, resolvedPos, choice, choiceMembers, place, parsed, lifted };
+	return { precStack, body, choice, choiceMembers, parsed, lifted };
 }
 
-function hoistPositionOf(site: HoistSite, core: RuntimeRule): number | undefined {
-	const seqMembers = membersOf(core);
-	if (site.through !== 'field') return memberIndex(site.at, seqMembers.length);
-	if (namedFieldCount(core, site.field) !== 1) return undefined;
-	const at = seqMembers.findIndex((member) => isFieldLike(member) && member.name === site.field);
-	return at < 0 ? undefined : at;
+function hoistPositionOf(site: HoistSite, core: RuntimeRule): readonly number[] | undefined {
+	if (site.through !== 'field') return [memberIndex(site.at, membersOf(core).length)];
+	return namedFieldCount(core, site.field) === 1 ? fieldPathOf(core, site.field) : undefined;
+}
+
+function fieldPathOf(seq: RuntimeRule, field: string): readonly number[] | undefined {
+	const members = membersOf(seq);
+	for (let i = 0; i < members.length; i++) {
+		const member = members[i]!;
+		if (isFieldLike(member) && member.name === field) return [i];
+		const inner = isSeqType(member.type) ? fieldPathOf(member, field) : undefined;
+		if (inner !== undefined) return [i, ...inner];
+	}
+	return undefined;
+}
+
+function memberAt(seq: RuntimeRule, at: readonly number[]): RuntimeRule | undefined {
+	return at.reduce<RuntimeRule | undefined>((node, i) => (node !== undefined && isSeqType(node.type) ? membersOf(node)[i] : undefined), seq);
+}
+
+function replaceAt(seq: RuntimeRule, at: readonly number[], replacement: RuntimeRule | undefined): RuntimeRule {
+	const [i, ...rest] = at;
+	const members = membersOf(seq);
+	const next = rest.length === 0 ? replacement : replaceAt(members[i!]!, rest, replacement);
+	return reconstructContainer(
+		seq,
+		members.flatMap((member, k) => (k !== i ? [member] : next === undefined ? [] : [next]))
+	);
 }
 
 interface HoistChoice {
@@ -605,11 +622,8 @@ function hoistPathOf(key: string, v: VariantPlaceholder, segs: readonly PathSegm
 }
 
 function buildHoistedVariants(plan: SiblingVariantHoistPlan, parentKind: string): { rule: RuntimeRule; consumed: Set<string> } {
-	const { core, precStack, seqMembers, resolvedPos, choice, choiceMembers, place, parsed, lifted } = plan;
-	const hoist = (altContent: RuntimeRule): RuntimeRule => {
-		const hoistedMembers = seqMembers.flatMap((m, i) => (i !== resolvedPos ? [m] : isBlank(altContent) ? [] : [place(altContent)]));
-		return wrapVariantBodyInParentPrec(withHoistedAnnotation(reconstructContainer(core, hoistedMembers)), precStack);
-	};
+	const { precStack, body, choice, choiceMembers, parsed, lifted } = plan;
+	const hoist = (altContent: RuntimeRule): RuntimeRule => wrapVariantBodyInParentPrec(withHoistedAnnotation(body(altContent)), precStack);
 	const refs: { altIdx: number; ref: RuntimeRule; name: string; declaredDefault: boolean }[] = [];
 	for (const p of parsed) {
 		const resolvedAlt = memberIndex(p.altIdx, choiceMembers.length);

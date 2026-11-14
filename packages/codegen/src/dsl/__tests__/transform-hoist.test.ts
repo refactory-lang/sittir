@@ -203,13 +203,27 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 			expect(shape(ctx.deposits.get('using_declaration_await'))).toEqual([{ kind: ['await', 'using'] }, { declarator: 'variable_declarator' }, ';']);
 		});
 
-		it('keeps the per-arm form when the field name is not one member of the sequence', () => {
+		it('keeps the per-arm form when the field sits under anything but sequences', () => {
 			const { result, ctx } = withWireContext('using_declaration', () => {
 				const g = globalThis as any;
-				return transform(g.seq({ type: 'STRING', value: '(' }, usingRule(g), { type: 'STRING', value: ')' }), variants) as any;
+				return transform(g.seq({ type: 'STRING', value: '(' }, g.repeat(usingRule(g)), { type: 'STRING', value: ')' }), variants) as any;
 			});
 			expect(result.type).toBe('SEQ');
 			expect(shape(ctx.deposits.get('using_declaration_await'))).toEqual(['await', 'using']);
+		});
+
+		it('hoists through a field nested in an inner sequence, keeping the inner sequence', () => {
+			const { result, ctx } = withWireContext('for_header_using_kind', () => {
+				const g = globalThis as any;
+				return transform(g.seq({ type: 'STRING', value: '(' }, usingRule(g), { type: 'STRING', value: ')' }), variants) as any;
+			});
+			expect(result.type).toBe('CHOICE');
+			expect(result.members.map((m: any) => [m.name, m.annotations?.variant, m.annotations?.default === true])).toEqual([
+				['for_header_using_kind_plain', 'plain', true],
+				['for_header_using_kind_await', 'await', false]
+			]);
+			expect(shape(ctx.deposits.get('for_header_using_kind_plain'))).toEqual(['(', [{ kind: 'using' }, { declarator: 'variable_declarator' }, ';'], ')']);
+			expect(shape(ctx.deposits.get('for_header_using_kind_await'))).toEqual(['(', [{ kind: ['await', 'using'] }, { declarator: 'variable_declarator' }, ';'], ')']);
 		});
 
 		it('keeps two declared defaults both, for the ir surface to refuse', () => {
