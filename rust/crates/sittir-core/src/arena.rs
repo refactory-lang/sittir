@@ -454,13 +454,6 @@ impl Arena {
         self.chunks.get(n as usize).map(Chunk::written)
     }
 
-    /// Chunk `n`'s storage, every word of it, written or not, to share with a
-    /// buffer JavaScript reads it through.
-    #[must_use]
-    pub fn chunk_memory(&self, n: u32) -> Option<Arc<ChunkMem<u32>>> {
-        self.chunks.get(n as usize).map(|chunk| Arc::clone(&chunk.mem))
-    }
-
     /// `text` in the string table, written once however often it is stored.
     pub fn intern(&mut self, text: &str) -> Result<StringRef, ArenaError> {
         if let Some(&at) = self.interned.get(text) {
