@@ -313,9 +313,10 @@ export type ConfigSeat<Loose, R, Signed extends boolean = false> = <const I exte
  * @typeParam R - the node the builder returns.
  * @typeParam Signed - whether a negative number can build one of the grammar's numeric literals.
  */
-export type OptionalConfigSeat<Loose, R, Signed extends boolean = false> = <const I extends Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, Loose, Signed>
-) => R;
+export type OptionalConfigSeat<Loose, R, Signed extends boolean = false> = {
+	<const I extends Loose | undefined>(input: I & RefuseUndeclared<Exclude<I, undefined>, Loose, Signed>): R;
+	(input?: undefined): R;
+};
 
 /**
  * A builder that also takes no argument and returns its kind's empty form.
