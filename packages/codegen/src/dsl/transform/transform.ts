@@ -7,6 +7,7 @@ import {
 	wrapInPrecStack,
 	isEnrichGroupLiftSymbol,
 	insideLexicalToken,
+	namedFieldCount,
 	ApplyPathSkip
 } from './transform-path.ts';
 import type { PathSegment } from './transform-path.ts';
@@ -452,9 +453,9 @@ function planSiblingVariantHoist(
 	if (parsed.some((p) => p.site.through !== site.through))
 		return bail('variant patches mix N/M, N/0/M and name:/M paths — hoist needs all siblings addressed the same way');
 	const seqMembers = [...membersOf(core)];
-	const positions = parsed.map((p) => hoistPositionOf(p.site, seqMembers));
+	const positions = parsed.map((p) => hoistPositionOf(p.site, core));
 	const resolvedPos = positions[0];
-	if (resolvedPos === undefined) return bail(`variant patch '${parsed[0]!.key}' names a field that is not one member of the sequence`);
+	if (resolvedPos === undefined) return bail(`variant patch '${parsed[0]!.key}' names a field that is not the rule's only field of that name, one member of the sequence`);
 	if (positions.some((p) => p !== resolvedPos))
 		return bail(`variant patches target mixed choice positions (${positions.join(',')}) — hoist needs all siblings at one choice`);
 	const hoistChoice = hoistChoiceOf(seqMembers[resolvedPos], site);
@@ -498,10 +499,12 @@ function planSiblingVariantHoist(
 	return { core, precStack, seqMembers, resolvedPos, choice, choiceMembers, place, parsed, lifted };
 }
 
-function hoistPositionOf(site: HoistSite, seqMembers: readonly RuntimeRule[]): number | undefined {
+function hoistPositionOf(site: HoistSite, core: RuntimeRule): number | undefined {
+	const seqMembers = membersOf(core);
 	if (site.through !== 'field') return site.at < 0 ? seqMembers.length + site.at : site.at;
-	const at = seqMembers.flatMap((member, i) => (isFieldLike(member) && member.name === site.field ? [i] : []));
-	return at.length === 1 ? at[0] : undefined;
+	if (namedFieldCount(core, site.field) !== 1) return undefined;
+	const at = seqMembers.findIndex((member) => isFieldLike(member) && member.name === site.field);
+	return at < 0 ? undefined : at;
 }
 
 interface HoistChoice {
@@ -606,7 +609,7 @@ function buildHoistedVariants(plan: SiblingVariantHoistPlan, parentKind: string)
 		const hoistedMembers = seqMembers.flatMap((m, i) => (i !== resolvedPos ? [m] : isBlank(altContent) ? [] : [place(altContent)]));
 		return wrapVariantBodyInParentPrec(withHoistedAnnotation(reconstructContainer(core, hoistedMembers)), precStack);
 	};
-	const refs: { altIdx: number; ref: RuntimeRule; name: string }[] = [];
+	const refs: { altIdx: number; ref: RuntimeRule; name: string; declaredDefault: boolean }[] = [];
 	for (const p of parsed) {
 		const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
 		const altMember = choiceMembers[resolvedAlt]!;
@@ -617,16 +620,24 @@ function buildHoistedVariants(plan: SiblingVariantHoistPlan, parentKind: string)
 		if (!wireRegisterSyntheticRule(name, hoist(lift === null ? altMember : lift.body))) {
 			throw new Error(`registerSyntheticRule('${name}'): no active wire() context`);
 		}
-		refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, variantOwnerKind(parentKind, p.v), p.v.default === true || isDefaultArm(altMember)), name });
+		refs.push({
+			altIdx: resolvedAlt,
+			ref: withVariantAnnotation(symbolRef(name), p.v.name, variantOwnerKind(parentKind, p.v), p.v.default === true || isDefaultArm(altMember)),
+			name,
+			declaredDefault: p.v.default === true
+		});
 	}
 	for (const { altIdx, lift } of lifted) {
 		wireSetLiftBody(lift.liftName, hoist(lift.body));
-		refs.push({ altIdx, ref: choiceMembers[altIdx]!, name: lift.liftName });
+		refs.push({ altIdx, ref: choiceMembers[altIdx]!, name: lift.liftName, declaredDefault: false });
 	}
 	refs.sort((a, b) => a.altIdx - b.altIdx);
-	const newChoice = reconstructContainer(
-		choice,
-		refs.map((r) => r.ref)
+	const newChoice = refs.reduce(
+		(acc, r, i) => (r.declaredDefault ? clearSiblingDefaults(acc, [{ kind: 'index', value: i }]) : acc),
+		reconstructContainer(
+			choice,
+			refs.map((r) => r.ref)
+		)
 	);
 	return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
