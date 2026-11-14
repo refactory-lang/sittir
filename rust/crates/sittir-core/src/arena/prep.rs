@@ -664,7 +664,7 @@ fn prepare_item_in_place<T: Clone + 'static, N: PrepareRecord<T> + Prepare + Hyd
     let coord = prep.row_coordinate(item.at.tree, row)?;
     coord.resolve(ctx.sources)?;
     if super::view::through_record(ctx.sources, &coord, item.at.cell) {
-        let record = edited_record(item, &coord)?;
+        let record = item.at;
         if let Some(seated) = prep.prepared.coordinate_edges(item.site) {
             if N::takes_gaps(record.cell) {
                 let stored = stored_edges(prep, record);
@@ -676,17 +676,6 @@ fn prepare_item_in_place<T: Clone + 'static, N: PrepareRecord<T> + Prepare + Hyd
     let edges = coordinate_edges(&coord, prep.prepared.coordinate_edges(item.site), ctx);
     prep.prepared.set_coordinate_edges(item.site, edges);
     Ok(())
-}
-
-/// The cell a parsed item renders from when a write lies in its rows: a
-/// record, leaf or unit cell is its own. A coordinate cell names a node
-/// whose record no read wrote, which a read that hydrates its source whole
-/// leaves none of, and is refused.
-fn edited_record(item: Item, coord: &NodeCoordinate) -> Result<CellAt, ArenaError> {
-    match item.at.cell {
-        Cell::Coordinate { .. } => Err(malformed("record tree", coord.tree.0)),
-        _ => Ok(item.at),
-    }
 }
 
 /// A slot's present items as the gap and seat fills write them.
@@ -811,16 +800,14 @@ where
     }
 
     /// The overlay holds the facet at the token's site. A parsed token the
-    /// facet changes renders through its record, which its first read here
-    /// writes and prepares.
+    /// facet changes renders through its record, which is prepared here.
     fn set_facet(&mut self, prep: &mut RecordPrep<'r, T>, facet: &str, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
         let Some(item) = self.sole(prep) else { return Ok(()) };
         if self.token(prep, ctx).is_some_and(|token| token.facet.as_deref() == Some(facet)) {
             return Ok(());
         }
-        if let Some(row) = item.row {
-            let coord = Self::coordinate(prep, item, row)?;
-            N::prepare_record(prep, edited_record(item, &coord)?, ctx)?;
+        if item.row.is_some() {
+            N::prepare_record(prep, item.at, ctx)?;
         }
         prep.prepared.set_facet(item.site, facet.to_owned());
         Ok(())
