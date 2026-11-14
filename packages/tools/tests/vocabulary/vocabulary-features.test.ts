@@ -177,6 +177,77 @@ describe('plan', () => {
 		expect(await issues({ ...CLEAN, ...generators('export interface Generators extends AsyncAwait {\n\treadonly generators: true;\n}') })).toEqual([]);
 	});
 
+	describe('a sub-kind that redeclares an inherited member under its own feature', () => {
+		const call = (restated: string): Record<string, string> => ({
+			'expression.ts': `export interface Expression<G extends GrammarMap, K extends Under<'expression'> = 'expression'> {
+	readonly $path: K;
+}
+export namespace Expression {
+	export interface Call<G extends GrammarMap, K extends Under<'expression.call'> = 'expression.call'> extends SubKindOf<V.Expression<G>> {
+		readonly $path: K;
+	}
+	export namespace Call {
+		export interface Construct<G extends GrammarMap, K extends Under<'expression.call.construct'> = 'expression.call.construct'> extends SubKindOf<V.Expression.Call<G>${restated}> {
+			readonly $path: K;
+		}
+	}
+}
+`
+		});
+		const signatures = feature('generic-signatures', 'export interface GenericSignatures {\n\treadonly genericSignatures: true;\n}', {
+			'expression.ts': `export namespace Expression {
+	export interface Call<G extends GrammarMap> {
+		readonly typeArguments?: readonly unknown[];
+	}
+}
+`
+		});
+		const expressions = feature('generic-expressions', 'export interface GenericExpressions extends GenericSignatures {\n\treadonly genericExpressions: true;\n}', {
+			'expression.ts': `export namespace Expression {
+	export namespace Call {
+		export interface Construct<G extends GrammarMap> {
+			readonly typeArguments?: readonly unknown[];
+		}
+	}
+}
+`
+		});
+
+		it('is refused unless its declaration names the member among the keys it restates', async () => {
+			expect(await issues({ ...call(''), ...signatures, ...expressions })).toEqual([
+				'GenericExpressions redeclares typeArguments at expression.call.construct, which inherits it from expression.call, where GenericSignatures owns it, and expression.call.construct does not name typeArguments among the keys it restates'
+			]);
+			expect(await issues({ ...call(", 'typeArguments'"), ...signatures, ...expressions })).toEqual([]);
+		});
+
+		it('is refused when the member keeps its type and only its gate differs', async () => {
+			const arrow = DECLARATION.replace(
+				'\t}\n}\n',
+				`\t}
+	export namespace Function {
+		export interface Arrow<G extends GrammarMap, K extends Under<'declaration.function.arrow'> = 'declaration.function.arrow'> extends SubKindOf<V.Declaration.Function<G>> {
+			readonly $path: K;
+		}
+	}
+}
+`
+			);
+			const arrows = feature('arrows', 'export interface Arrows extends AsyncAwait {\n\treadonly arrows: true;\n}', {
+				'declaration.ts': `export namespace Declaration {
+	export namespace Function {
+		export interface Arrow<G extends GrammarMap> {
+			readonly async?: Flag;
+		}
+	}
+}
+`
+			});
+			expect(await issues({ ...CLEAN, 'declaration.ts': arrow, ...arrows })).toEqual([
+				'Arrows redeclares async at declaration.function.arrow, which inherits it from declaration.function, where AsyncAwait owns it, and declaration.function.arrow does not name async among the keys it restates'
+			]);
+		});
+	});
+
 	it('reports a base declaration of a member a feature gates on the same line', async () => {
 		const arrow = DECLARATION.replace(
 			'\t}\n}\n',

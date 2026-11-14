@@ -14,6 +14,7 @@ import { describe, expect, it } from 'vitest';
 import type { ChoiceRule, Rule, SeqRule, StringRule, SymbolRule } from '../../types/rule.ts';
 import type { AssembledBranch, AssembledNonterminal, NodeOrTerminal } from '../../compiler/model/node-map.ts';
 import { emitBranchTemplate, type EmitCtx } from '../templates.ts';
+import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import { showBody } from './support/show-body.ts';
 
 const shown = (node: Parameters<typeof emitBranchTemplate>[0], ctx: EmitCtx): string => showBody(emitBranchTemplate(node, ctx));
@@ -27,7 +28,8 @@ function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 		} as unknown as EmitCtx['nodeMap'],
 		wordMatcher: /^\w+$/,
 		isWordChar: (c: string) => /\w/.test(c),
-		isLiteralMergePair: () => false,
+		isJoinPair: () => false,
+		joins: NO_JOINS,
 		externals: [],
 		rules: {},
 		visitingHelpers: new Set<string>(),

@@ -49400,10 +49400,12 @@ fn render_source_file<N: SourceFileFields + ?Sized>(node: &N, w: &mut dyn ::sitt
         head: Some(options::SITE_SOURCE_FILE_STATEMENTS_START),
         tail: Some(options::SITE_SOURCE_FILE_STATEMENTS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_statements"),
+        join: ::sittir_core::render::JoinArm::NEXT,
     };
     w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_shebang", ::sittir_core::types::ItemIndex(0), w, |w| shebang.render(w))?;
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    if statements.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
     statements.render(w)?;
     w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -49434,6 +49436,7 @@ fn render_token_binding_pattern<N: TokenBindingPatternFields + ?Sized>(node: &N,
     w.edge(::sittir_core::types::KindId(184), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_TOKEN_BINDING_PATTERN_COLON_BEFORE);
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     w.text(":")?;
     w.site_at(options::SITE_TOKEN_BINDING_PATTERN_COLON_AFTER);
     w.site_at(options::SITE_TOKEN_BINDING_PATTERN_FRAGMENT_BEFORE);
@@ -49457,6 +49460,7 @@ fn render_token_repetition_pattern<N: TokenRepetitionPatternFields + ?Sized>(nod
         head: Some(options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_START),
         tail: Some(options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_token_patterns"),
+        join: ::sittir_core::render::JoinArm::BOTH,
     };
     w.edge(::sittir_core::types::KindId(185), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("$")?;
@@ -49464,6 +49468,7 @@ fn render_token_repetition_pattern<N: TokenRepetitionPatternFields + ?Sized>(nod
     w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_LPAREN_BEFORE);
     w.text("(")?;
     w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_LPAREN_AFTER);
+    if token_patterns.is_present() { w.join_arm(::sittir_core::render::JoinArm::BOTH); }
     token_patterns.render(w)?;
     w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
@@ -49497,6 +49502,7 @@ fn render_token_repetition<N: TokenRepetitionFields + ?Sized>(node: &N, w: &mut 
         head: Some(options::SITE_TOKEN_REPETITION_TOKENS_START),
         tail: Some(options::SITE_TOKEN_REPETITION_TOKENS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_tokens"),
+        join: ::sittir_core::render::JoinArm::BOTH,
     };
     w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("$")?;
@@ -49504,6 +49510,7 @@ fn render_token_repetition<N: TokenRepetitionFields + ?Sized>(node: &N, w: &mut 
     w.site_at(options::SITE_TOKEN_REPETITION_LPAREN_BEFORE);
     w.text("(")?;
     w.site_at(options::SITE_TOKEN_REPETITION_LPAREN_AFTER);
+    if tokens.is_present() { w.join_arm(::sittir_core::render::JoinArm::BOTH); }
     tokens.render(w)?;
     w.site_at(options::SITE_TOKEN_REPETITION_RPAREN_BEFORE);
     w.text(")")?;
@@ -49580,6 +49587,7 @@ fn render_declaration_list<N: DeclarationListFields + ?Sized>(node: &N, w: &mut 
         head: Some(options::SITE_DECLARATION_LIST_DECLARATIONS_START),
         tail: Some(options::SITE_DECLARATION_LIST_DECLARATIONS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_declarations"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(195), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("{")?;
@@ -49654,6 +49662,7 @@ fn render_enum_variant<N: EnumVariantFields + ?Sized>(node: &N, w: &mut dyn ::si
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
     if value.is_present() {
         w.site_at(options::SITE_ENUM_VARIANT_EQ_BEFORE);
+        w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
         w.text("=")?;
         w.site_at(options::SITE_ENUM_VARIANT_EQ_AFTER);
         ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
@@ -49745,6 +49754,7 @@ fn render_const_item<N: ConstItemFields + ?Sized>(node: &N, w: &mut dyn ::sittir
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
     if value.is_present() {
         w.site_at(options::SITE_CONST_ITEM_EQ_BEFORE);
+        w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
         w.text("=")?;
         w.site_at(options::SITE_CONST_ITEM_EQ_AFTER);
         ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
@@ -49784,6 +49794,7 @@ fn render_static_item<N: StaticItemFields + ?Sized>(node: &N, w: &mut dyn ::sitt
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
     if value.is_present() {
         w.site_at(options::SITE_STATIC_ITEM_EQ_BEFORE);
+        w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
         w.text("=")?;
         w.site_at(options::SITE_STATIC_ITEM_EQ_AFTER);
         ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
@@ -49893,6 +49904,7 @@ fn render_function_modifiers<N: FunctionModifiersFields + ?Sized>(node: &N, w: &
         head: Some(options::SITE_FUNCTION_MODIFIERS_MODIFIER_START),
         tail: Some(options::SITE_FUNCTION_MODIFIERS_MODIFIER_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_modifier"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(210), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     modifier.render(w)?;
@@ -49915,6 +49927,7 @@ fn render_where_predicate<N: WherePredicateFields + ?Sized>(node: &N, w: &mut dy
     let left = node.left();
     w.edge(::sittir_core::types::KindId(212), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_bounds", ::sittir_core::types::ItemIndex(0), w, |w| bounds.render(w))?;
     w.edge(::sittir_core::types::KindId(212), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -49978,10 +49991,12 @@ fn render_trait_bounds<N: TraitBoundsFields + ?Sized>(node: &N, w: &mut dyn ::si
         head: Some(options::SITE_TRAIT_BOUNDS_BOUNDS_START),
         tail: Some(options::SITE_TRAIT_BOUNDS_BOUNDS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_bounds"),
+        join: ::sittir_core::render::JoinArm::PREVIOUS,
     };
     w.edge(::sittir_core::types::KindId(216), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text(":")?;
     w.site_at(options::SITE_TRAIT_BOUNDS_COLON_AFTER);
+    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     bounds.render(w)?;
     w.edge(::sittir_core::types::KindId(216), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -50049,6 +50064,7 @@ fn render_type_parameter<N: TypeParameterFields + ?Sized>(node: &N, w: &mut dyn 
     let name = node.name();
     w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    if bounds.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_bounds", ::sittir_core::types::ItemIndex(0), w, |w| bounds.render(w))?;
     if default.is_present() {
         w.site_at(options::SITE_TYPE_PARAMETER_EQ_BEFORE);
@@ -50084,15 +50100,19 @@ fn render_let_declaration<N: LetDeclarationFields + ?Sized>(node: &N, w: &mut dy
         mutable.render(w)?;
         w.site_at(options::SITE_LET_DECLARATION_MUTABLE_AFTER);
     }
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     if type_.is_present() {
         w.site_at(options::SITE_LET_DECLARATION_COLON_BEFORE);
+        w.join_arm(::sittir_core::render::JoinArm::NEXT);
         w.text(":")?;
         w.site_at(options::SITE_LET_DECLARATION_COLON_AFTER);
+        if type_.is_present() { w.join_arm(::sittir_core::render::JoinArm::PREVIOUS); }
         ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
     }
     if value.is_present() {
         w.site_at(options::SITE_LET_DECLARATION_EQ_BEFORE);
+        w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
         w.text("=")?;
         w.site_at(options::SITE_LET_DECLARATION_EQ_AFTER);
         ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
@@ -50218,6 +50238,7 @@ fn render_variadic_parameter<N: VariadicParameterFields + ?Sized>(node: &N, w: &
     if pattern.is_present() {
         ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
         w.site_at(options::SITE_VARIADIC_PARAMETER_COLON_BEFORE);
+        w.join_arm(::sittir_core::render::JoinArm::NEXT);
         w.text(":")?;
         w.site_at(options::SITE_VARIADIC_PARAMETER_COLON_AFTER);
     }
@@ -50238,8 +50259,10 @@ fn render_parameter<N: ParameterFields + ?Sized>(node: &N, w: &mut dyn ::sittir_
     }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_PARAMETER_COLON_BEFORE);
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     w.text(":")?;
     w.site_at(options::SITE_PARAMETER_COLON_AFTER);
+    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
     w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -50266,6 +50289,7 @@ fn render_bracketed_type<N: BracketedTypeFields + ?Sized>(node: &N, w: &mut dyn 
     w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("<")?;
     w.site_at(options::SITE_BRACKETED_TYPE_LT_AFTER);
+    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
     w.site_at(options::SITE_BRACKETED_TYPE_GT_BEFORE);
     w.text(">")?;
@@ -50379,6 +50403,7 @@ fn render_generic_type<N: GenericTypeFields + ?Sized>(node: &N, w: &mut dyn ::si
     let type_arguments = node.type_arguments();
     w.edge(::sittir_core::types::KindId(246), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type_arguments", ::sittir_core::types::ItemIndex(0), w, |w| type_arguments.render(w))?;
     w.edge(::sittir_core::types::KindId(246), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -50431,6 +50456,7 @@ fn render_type_arguments<N: TypeArgumentsFields + ?Sized>(node: &N, w: &mut dyn 
     w.edge(::sittir_core::types::KindId(250), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("<")?;
     w.site_at(options::SITE_TYPE_ARGUMENTS_LT_AFTER);
+    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
     w.site_at(options::SITE_TYPE_ARGUMENTS_GT_BEFORE);
     w.text(">")?;
@@ -50583,6 +50609,7 @@ fn render_binary_expression<N: BinaryExpressionFields + ?Sized>(node: &N, w: &mu
     w.site_at(options::SITE_BINARY_EXPRESSION_OPERATOR_BEFORE);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     w.site_at(options::SITE_BINARY_EXPRESSION_OPERATOR_AFTER);
+    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
     w.edge(::sittir_core::types::KindId(270), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -50594,6 +50621,7 @@ fn render_assignment_expression<N: AssignmentExpressionFields + ?Sized>(node: &N
     w.edge(::sittir_core::types::KindId(271), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
     w.site_at(options::SITE_ASSIGNMENT_EXPRESSION_EQ_BEFORE);
+    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     w.text("=")?;
     w.site_at(options::SITE_ASSIGNMENT_EXPRESSION_EQ_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
@@ -50633,6 +50661,7 @@ fn render_return_expression<N: ReturnExpressionFields + ?Sized>(node: &N, w: &mu
     w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("return")?;
     w.site_at(options::SITE_RETURN_EXPRESSION_RETURN_KEYWORD_AFTER);
+    if expression.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
     w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -50643,6 +50672,7 @@ fn render_yield_expression<N: YieldExpressionFields + ?Sized>(node: &N, w: &mut 
     w.edge(::sittir_core::types::KindId(275), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("yield")?;
     w.site_at(options::SITE_YIELD_EXPRESSION_YIELD_KEYWORD_AFTER);
+    if expression.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
     w.edge(::sittir_core::types::KindId(275), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -50733,6 +50763,7 @@ fn render_shorthand_field_initializer<N: ShorthandFieldInitializerFields + ?Size
         head: Some(options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_START),
         tail: Some(options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_attributes"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let field = node.field();
     w.edge(::sittir_core::types::KindId(284), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
@@ -50755,6 +50786,7 @@ fn render_field_initializer<N: FieldInitializerFields + ?Sized>(node: &N, w: &mu
         head: Some(options::SITE_FIELD_INITIALIZER_ATTRIBUTES_START),
         tail: Some(options::SITE_FIELD_INITIALIZER_ATTRIBUTES_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_attributes"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let field = node.field();
     let value = node.value();
@@ -50799,8 +50831,10 @@ fn render_let_condition<N: LetConditionFields + ?Sized>(node: &N, w: &mut dyn ::
     w.edge(::sittir_core::types::KindId(288), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("let")?;
     w.site_at(options::SITE_LET_CONDITION_LET_KEYWORD_AFTER);
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.site_at(options::SITE_LET_CONDITION_EQ_BEFORE);
+    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     w.text("=")?;
     w.site_at(options::SITE_LET_CONDITION_EQ_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
@@ -50822,6 +50856,7 @@ fn render_let_chain<N: LetChainFields + ?Sized>(node: &N, w: &mut dyn ::sittir_c
         head: None,
         tail: None,
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_right"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
     w.site_at(options::SITE__LET_CHAIN_AMP_AMP_BEFORE);
@@ -50859,6 +50894,7 @@ fn render_match_block<N: MatchBlockFields + ?Sized>(node: &N, w: &mut dyn ::sitt
     w.text("{")?;
     w.site_at(options::SITE_MATCH_BLOCK_LBRACE_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    if match_block_arms.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_match_block_arms", ::sittir_core::types::ItemIndex(0), w, |w| match_block_arms.render(w))?;
     w.site_at(options::SITE_MATCH_BLOCK_RBRACE_BEFORE);
     w.text("}")?;
@@ -50879,14 +50915,17 @@ fn render_last_match_arm<N: LastMatchArmFields + ?Sized>(node: &N, w: &mut dyn :
         head: Some(options::SITE_LAST_MATCH_ARM_ATTRIBUTES_START),
         tail: Some(options::SITE_LAST_MATCH_ARM_ATTRIBUTES_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_attributes"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let body = node.body();
     let match_ = node.match_();
     let trailing_comma = View::new(node.trailing_comma(), "{}");
     w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     attributes.render(w)?;
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_match", ::sittir_core::types::ItemIndex(0), w, |w| match_.render(w))?;
     w.site_at(options::SITE_LAST_MATCH_ARM_EQ_GT_BEFORE);
+    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     w.text("=>")?;
     w.site_at(options::SITE_LAST_MATCH_ARM_EQ_GT_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
@@ -50997,13 +51036,16 @@ fn render_closure_parameters<N: ClosureParametersFields + ?Sized>(node: &N, w: &
         head: Some(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_START),
         tail: Some(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_parameters"),
+        join: ::sittir_core::render::JoinArm::PREVIOUS,
     };
     w.edge(::sittir_core::types::KindId(302), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("|")?;
     w.site_at(options::SITE_CLOSURE_PARAMETERS_PIPE_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    if parameters.is_present() { w.join_arm(::sittir_core::render::JoinArm::PREVIOUS); }
     parameters.render(w)?;
     w.site_at(options::SITE_CLOSURE_PARAMETERS_PIPE_BEFORE);
+    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     w.text("|")?;
     w.edge(::sittir_core::types::KindId(302), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -51026,6 +51068,7 @@ fn render_break_expression<N: BreakExpressionFields + ?Sized>(node: &N, w: &mut 
     w.text("break")?;
     w.site_at(options::SITE_BREAK_EXPRESSION_BREAK_KEYWORD_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_label", ::sittir_core::types::ItemIndex(0), w, |w| label.render(w))?;
+    if expression.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
     w.edge(::sittir_core::types::KindId(304), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -51061,6 +51104,7 @@ fn render_await_expression<N: AwaitExpressionFields + ?Sized>(node: &N, w: &mut 
     w.edge(::sittir_core::types::KindId(307), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
     w.site_at(options::SITE_AWAIT_EXPRESSION_DOT_BEFORE);
+    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     w.text(".")?;
     w.site_at(options::SITE_AWAIT_EXPRESSION_DOT_AFTER);
     w.site_at(options::SITE_AWAIT_EXPRESSION_AWAIT_KEYWORD_BEFORE);
@@ -51075,6 +51119,7 @@ fn render_field_expression<N: FieldExpressionFields + ?Sized>(node: &N, w: &mut 
     w.edge(::sittir_core::types::KindId(308), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_object", ::sittir_core::types::ItemIndex(0), w, |w| object.render(w))?;
     w.site_at(options::SITE_FIELD_EXPRESSION_DOT_BEFORE);
+    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     w.text(".")?;
     w.site_at(options::SITE_FIELD_EXPRESSION_DOT_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_property", ::sittir_core::types::ItemIndex(0), w, |w| property.render(w))?;
@@ -51148,6 +51193,7 @@ fn render_block<N: BlockFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::re
         head: Some(options::SITE_BLOCK_STATEMENTS_START),
         tail: Some(options::SITE_BLOCK_STATEMENTS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_statements"),
+        join: ::sittir_core::render::JoinArm::NEXT,
     };
     let trailing_expression = View::new(node.trailing_expression(), "{}");
     w.edge(::sittir_core::types::KindId(313), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
@@ -51161,7 +51207,9 @@ fn render_block<N: BlockFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::re
     w.text("{")?;
     w.site_at(options::SITE_BLOCK_LBRACE_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    if statements.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
     statements.render(w)?;
+    if trailing_expression.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_trailing_expression", ::sittir_core::types::ItemIndex(0), w, |w| trailing_expression.render(w))?;
     w.site_at(options::SITE_BLOCK_RBRACE_BEFORE);
     w.text("}")?;
@@ -51243,6 +51291,7 @@ fn render_mut_pattern<N: MutPatternFields + ?Sized>(node: &N, w: &mut dyn ::sitt
     w.edge(::sittir_core::types::KindId(322), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("mut")?;
     w.site_at(options::SITE_MUT_PATTERN_MUTABLE_SPECIFIER_AFTER);
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.edge(::sittir_core::types::KindId(322), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -51253,6 +51302,7 @@ fn render_ref_pattern<N: RefPatternFields + ?Sized>(node: &N, w: &mut dyn ::sitt
     w.edge(::sittir_core::types::KindId(324), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("ref")?;
     w.site_at(options::SITE_REF_PATTERN_REF_KEYWORD_AFTER);
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.edge(::sittir_core::types::KindId(324), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -51266,6 +51316,7 @@ fn render_captured_pattern<N: CapturedPatternFields + ?Sized>(node: &N, w: &mut 
     w.site_at(options::SITE_CAPTURED_PATTERN_AT_BEFORE);
     w.text("@")?;
     w.site_at(options::SITE_CAPTURED_PATTERN_AT_AFTER);
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.edge(::sittir_core::types::KindId(325), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -51282,6 +51333,7 @@ fn render_reference_pattern<N: ReferencePatternFields + ?Sized>(node: &N, w: &mu
         exclusive.render(w)?;
         w.site_at(options::SITE_REFERENCE_PATTERN_EXCLUSIVE_AFTER);
     }
+    w.join_arm(::sittir_core::render::JoinArm::BOTH);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.edge(::sittir_core::types::KindId(326), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -51310,6 +51362,7 @@ fn render_string_literal<N: StringLiteralFields + ?Sized>(node: &N, w: &mut dyn 
         head: None,
         tail: None,
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let string_open = node.string_open();
     w.edge(::sittir_core::types::KindId(332), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
@@ -51397,6 +51450,7 @@ fn render_macro_rules<N: MacroRulesFields + ?Sized>(node: &N, w: &mut dyn ::sitt
         head: Some(options::SITE_MACRO_RULES_ITEM_START),
         tail: Some(options::SITE_MACRO_RULES_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(342), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51417,6 +51471,7 @@ fn render_enum_variant_list_elements<N: EnumVariantListElementsFields + ?Sized>(
         head: Some(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ITEM_START),
         tail: Some(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(343), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51437,6 +51492,7 @@ fn render_field_declaration_list_elements<N: FieldDeclarationListElementsFields 
         head: Some(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_START),
         tail: Some(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(344), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51457,6 +51513,7 @@ fn render_ordered_field_declaration_list_elements<N: OrderedFieldDeclarationList
         head: Some(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_START),
         tail: Some(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(345), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51477,6 +51534,7 @@ fn render_where_predicates<N: WherePredicatesFields + ?Sized>(node: &N, w: &mut 
         head: Some(options::SITE_WHERE_PREDICATES_ITEM_START),
         tail: Some(options::SITE_WHERE_PREDICATES_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(346), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51497,6 +51555,7 @@ fn render_type_parameters_elements<N: TypeParametersElementsFields + ?Sized>(nod
         head: Some(options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_START),
         tail: Some(options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(347), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51517,6 +51576,7 @@ fn render_use_clauses<N: UseClausesFields + ?Sized>(node: &N, w: &mut dyn ::sitt
         head: Some(options::SITE_USE_CLAUSES_ITEM_START),
         tail: Some(options::SITE_USE_CLAUSES_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(348), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51537,6 +51597,7 @@ fn render_parameters_elements<N: ParametersElementsFields + ?Sized>(node: &N, w:
         head: Some(options::SITE_PARAMETERS_ELEMENTS_ITEM_START),
         tail: Some(options::SITE_PARAMETERS_ELEMENTS_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(349), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51557,6 +51618,7 @@ fn render_lifetimes<N: LifetimesFields + ?Sized>(node: &N, w: &mut dyn ::sittir_
         head: Some(options::SITE_LIFETIMES_ITEM_START),
         tail: Some(options::SITE_LIFETIMES_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(350), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51577,6 +51639,7 @@ fn render_types<N: TypesFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::re
         head: Some(options::SITE_TYPES_ITEM_START),
         tail: Some(options::SITE_TYPES_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(351), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51597,6 +51660,7 @@ fn render_use_bounds_elements<N: UseBoundsElementsFields + ?Sized>(node: &N, w: 
         head: Some(options::SITE_USE_BOUNDS_ELEMENTS_ITEM_START),
         tail: Some(options::SITE_USE_BOUNDS_ELEMENTS_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(352), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51617,6 +51681,7 @@ fn render_type_arguments_elements<N: TypeArgumentsElementsFields + ?Sized>(node:
         head: Some(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ITEM_START),
         tail: Some(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(353), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51637,6 +51702,7 @@ fn render_arguments_elements<N: ArgumentsElementsFields + ?Sized>(node: &N, w: &
         head: Some(options::SITE_ARGUMENTS_ELEMENTS_ITEM_START),
         tail: Some(options::SITE_ARGUMENTS_ELEMENTS_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(354), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51657,6 +51723,7 @@ fn render_field_initializer_list_elements<N: FieldInitializerListElementsFields 
         head: Some(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM_START),
         tail: Some(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(355), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51677,6 +51744,7 @@ fn render_tuple_pattern_elements<N: TuplePatternElementsFields + ?Sized>(node: &
         head: Some(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_START),
         tail: Some(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(356), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51697,6 +51765,7 @@ fn render_patterns<N: PatternsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_co
         head: Some(options::SITE_PATTERNS_ITEM_START),
         tail: Some(options::SITE_PATTERNS_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(357), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51717,6 +51786,7 @@ fn render_struct_pattern_elements<N: StructPatternElementsFields + ?Sized>(node:
         head: Some(options::SITE_STRUCT_PATTERN_ELEMENTS_ITEM_START),
         tail: Some(options::SITE_STRUCT_PATTERN_ELEMENTS_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(358), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51764,6 +51834,7 @@ fn render_attributed_element<N: AttributedElementFields + ?Sized>(node: &N, w: &
         head: Some(options::SITE_ATTRIBUTED_ELEMENT_ATTRIBUTES_START),
         tail: Some(options::SITE_ATTRIBUTED_ELEMENT_ATTRIBUTES_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_attributes"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let expression = node.expression();
     w.edge(::sittir_core::types::KindId(363), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
@@ -51786,6 +51857,7 @@ fn render_array_expression_list_elements<N: ArrayExpressionListElementsFields + 
         head: Some(options::SITE_ARRAY_EXPRESSION_LIST_ELEMENTS_ITEM_START),
         tail: Some(options::SITE_ARRAY_EXPRESSION_LIST_ELEMENTS_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(364), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -51806,6 +51878,7 @@ fn render_tuple_expression_elements<N: TupleExpressionElementsFields + ?Sized>(n
         head: Some(options::SITE_TUPLE_EXPRESSION_ELEMENTS_ITEM_START),
         tail: Some(options::SITE_TUPLE_EXPRESSION_ELEMENTS_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(365), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     item.render(w)?;
@@ -52036,6 +52109,7 @@ fn render_closure_expression_expr<N: ClosureExpressionExprFields + ?Sized>(node:
         w.site_at(options::SITE_CLOSURE_EXPRESSION_EXPR_MOVE_AFTER);
     }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_parameters", ::sittir_core::types::ItemIndex(0), w, |w| parameters.render(w))?;
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     if body.kind_in(&*w, &[::sittir_core::types::KindId(136)]) { w.site_at(options::SITE_CLOSURE_EXPRESSION_EXPR_UNDERSCORE_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
     w.edge(::sittir_core::types::KindId(370), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -52092,6 +52166,7 @@ fn render_reference_expression_bare<N: ReferenceExpressionBareFields + ?Sized>(n
     w.edge(::sittir_core::types::KindId(374), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("&")?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_BARE_AMP_AFTER);
+    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_argument", ::sittir_core::types::ItemIndex(0), w, |w| argument.render(w))?;
     w.edge(::sittir_core::types::KindId(374), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -52253,6 +52328,7 @@ fn render_or_pattern_binary<N: OrPatternBinaryFields + ?Sized>(node: &N, w: &mut
     w.site_at(options::SITE_OR_PATTERN_BINARY_PIPE_BEFORE);
     w.text("|")?;
     w.site_at(options::SITE_OR_PATTERN_BINARY_PIPE_AFTER);
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
     w.edge(::sittir_core::types::KindId(386), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -52263,6 +52339,7 @@ fn render_or_pattern_prefix<N: OrPatternPrefixFields + ?Sized>(node: &N, w: &mut
     w.edge(::sittir_core::types::KindId(387), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("|")?;
     w.site_at(options::SITE_OR_PATTERN_PREFIX_PIPE_AFTER);
+    w.join_arm(::sittir_core::render::JoinArm::BOTH);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
     w.edge(::sittir_core::types::KindId(387), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -52301,8 +52378,10 @@ fn render_range_expression_binary<N: RangeExpressionBinaryFields + ?Sized>(node:
     w.edge(::sittir_core::types::KindId(390), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_start", ::sittir_core::types::ItemIndex(0), w, |w| start.render(w))?;
     w.site_at(options::SITE_RANGE_EXPRESSION_BINARY_OPERATOR_BEFORE);
+    w.join_arm(::sittir_core::render::JoinArm::BOTH);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     w.site_at(options::SITE_RANGE_EXPRESSION_BINARY_OPERATOR_AFTER);
+    w.join_arm(::sittir_core::render::JoinArm::BOTH);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_end", ::sittir_core::types::ItemIndex(0), w, |w| end.render(w))?;
     w.edge(::sittir_core::types::KindId(390), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -52313,6 +52392,7 @@ fn render_range_expression_postfix<N: RangeExpressionPostfixFields + ?Sized>(nod
     w.edge(::sittir_core::types::KindId(391), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_start", ::sittir_core::types::ItemIndex(0), w, |w| start.render(w))?;
     w.site_at(options::SITE_RANGE_EXPRESSION_POSTFIX_OPERATOR_BEFORE);
+    w.join_arm(::sittir_core::render::JoinArm::BOTH);
     w.text("..")?;
     w.edge(::sittir_core::types::KindId(391), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -52321,8 +52401,10 @@ fn render_range_expression_postfix<N: RangeExpressionPostfixFields + ?Sized>(nod
 fn render_range_expression_prefix<N: RangeExpressionPrefixFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let end = node.end();
     w.edge(::sittir_core::types::KindId(392), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.join_arm(::sittir_core::render::JoinArm::BOTH);
     w.text("..")?;
     w.site_at(options::SITE_RANGE_EXPRESSION_PREFIX_OPERATOR_AFTER);
+    w.join_arm(::sittir_core::render::JoinArm::BOTH);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_end", ::sittir_core::types::ItemIndex(0), w, |w| end.render(w))?;
     w.edge(::sittir_core::types::KindId(392), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -52386,13 +52468,16 @@ fn render_match_arm_with_comma<N: MatchArmWithCommaFields + ?Sized>(node: &N, w:
         head: Some(options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_START),
         tail: Some(options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_attributes"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let body = node.body();
     let match_ = node.match_();
     w.edge(::sittir_core::types::KindId(397), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     attributes.render(w)?;
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_match", ::sittir_core::types::ItemIndex(0), w, |w| match_.render(w))?;
     w.site_at(options::SITE_MATCH_ARM_WITH_COMMA_EQ_GT_BEFORE);
+    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     w.text("=>")?;
     w.site_at(options::SITE_MATCH_ARM_WITH_COMMA_EQ_GT_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
@@ -52415,13 +52500,16 @@ fn render_match_arm_block_ending<N: MatchArmBlockEndingFields + ?Sized>(node: &N
         head: Some(options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_START),
         tail: Some(options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_attributes"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let body = node.body();
     let match_ = node.match_();
     w.edge(::sittir_core::types::KindId(398), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     attributes.render(w)?;
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_match", ::sittir_core::types::ItemIndex(0), w, |w| match_.render(w))?;
     w.site_at(options::SITE_MATCH_ARM_BLOCK_ENDING_EQ_GT_BEFORE);
+    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     w.text("=>")?;
     w.site_at(options::SITE_MATCH_ARM_BLOCK_ENDING_EQ_GT_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
@@ -52485,11 +52573,13 @@ fn render_token_tree_pattern_paren<N: TokenTreePatternParenFields + ?Sized>(node
         head: Some(options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_START),
         tail: Some(options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_token_patterns"),
+        join: ::sittir_core::render::JoinArm::BOTH,
     };
     w.edge(::sittir_core::types::KindId(405), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_TOKEN_TREE_PATTERN_PAREN_LPAREN_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    if token_patterns.is_present() { w.join_arm(::sittir_core::render::JoinArm::BOTH); }
     token_patterns.render(w)?;
     w.site_at(options::SITE_TOKEN_TREE_PATTERN_PAREN_RPAREN_BEFORE);
     w.text(")")?;
@@ -52510,11 +52600,13 @@ fn render_token_tree_pattern_bracket<N: TokenTreePatternBracketFields + ?Sized>(
         head: Some(options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_START),
         tail: Some(options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_token_patterns"),
+        join: ::sittir_core::render::JoinArm::BOTH,
     };
     w.edge(::sittir_core::types::KindId(406), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("[")?;
     w.site_at(options::SITE_TOKEN_TREE_PATTERN_BRACKET_LBRACK_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    if token_patterns.is_present() { w.join_arm(::sittir_core::render::JoinArm::BOTH); }
     token_patterns.render(w)?;
     w.site_at(options::SITE_TOKEN_TREE_PATTERN_BRACKET_RBRACK_BEFORE);
     w.text("]")?;
@@ -52535,11 +52627,13 @@ fn render_token_tree_pattern_brace<N: TokenTreePatternBraceFields + ?Sized>(node
         head: Some(options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_START),
         tail: Some(options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_token_patterns"),
+        join: ::sittir_core::render::JoinArm::BOTH,
     };
     w.edge(::sittir_core::types::KindId(407), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("{")?;
     w.site_at(options::SITE_TOKEN_TREE_PATTERN_BRACE_LBRACE_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    if token_patterns.is_present() { w.join_arm(::sittir_core::render::JoinArm::BOTH); }
     token_patterns.render(w)?;
     w.site_at(options::SITE_TOKEN_TREE_PATTERN_BRACE_RBRACE_BEFORE);
     w.text("}")?;
@@ -52560,11 +52654,13 @@ fn render_token_tree_paren<N: TokenTreeParenFields + ?Sized>(node: &N, w: &mut d
         head: Some(options::SITE_TOKEN_TREE_PAREN_TOKENS_START),
         tail: Some(options::SITE_TOKEN_TREE_PAREN_TOKENS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_tokens"),
+        join: ::sittir_core::render::JoinArm::BOTH,
     };
     w.edge(::sittir_core::types::KindId(408), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_TOKEN_TREE_PAREN_LPAREN_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    if tokens.is_present() { w.join_arm(::sittir_core::render::JoinArm::BOTH); }
     tokens.render(w)?;
     w.site_at(options::SITE_TOKEN_TREE_PAREN_RPAREN_BEFORE);
     w.text(")")?;
@@ -52585,11 +52681,13 @@ fn render_token_tree_bracket<N: TokenTreeBracketFields + ?Sized>(node: &N, w: &m
         head: Some(options::SITE_TOKEN_TREE_BRACKET_TOKENS_START),
         tail: Some(options::SITE_TOKEN_TREE_BRACKET_TOKENS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_tokens"),
+        join: ::sittir_core::render::JoinArm::BOTH,
     };
     w.edge(::sittir_core::types::KindId(409), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("[")?;
     w.site_at(options::SITE_TOKEN_TREE_BRACKET_LBRACK_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    if tokens.is_present() { w.join_arm(::sittir_core::render::JoinArm::BOTH); }
     tokens.render(w)?;
     w.site_at(options::SITE_TOKEN_TREE_BRACKET_RBRACK_BEFORE);
     w.text("]")?;
@@ -52610,11 +52708,13 @@ fn render_token_tree_brace<N: TokenTreeBraceFields + ?Sized>(node: &N, w: &mut d
         head: Some(options::SITE_TOKEN_TREE_BRACE_TOKENS_START),
         tail: Some(options::SITE_TOKEN_TREE_BRACE_TOKENS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_tokens"),
+        join: ::sittir_core::render::JoinArm::BOTH,
     };
     w.edge(::sittir_core::types::KindId(410), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("{")?;
     w.site_at(options::SITE_TOKEN_TREE_BRACE_LBRACE_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    if tokens.is_present() { w.join_arm(::sittir_core::render::JoinArm::BOTH); }
     tokens.render(w)?;
     w.site_at(options::SITE_TOKEN_TREE_BRACE_RBRACE_BEFORE);
     w.text("}")?;
@@ -52635,11 +52735,13 @@ fn render_delim_token_tree_paren<N: DelimTokenTreeParenFields + ?Sized>(node: &N
         head: Some(options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_START),
         tail: Some(options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_delim_tokens"),
+        join: ::sittir_core::render::JoinArm::BOTH,
     };
     w.edge(::sittir_core::types::KindId(411), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_DELIM_TOKEN_TREE_PAREN_LPAREN_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    if delim_tokens.is_present() { w.join_arm(::sittir_core::render::JoinArm::BOTH); }
     delim_tokens.render(w)?;
     w.site_at(options::SITE_DELIM_TOKEN_TREE_PAREN_RPAREN_BEFORE);
     w.text(")")?;
@@ -52660,11 +52762,13 @@ fn render_delim_token_tree_bracket<N: DelimTokenTreeBracketFields + ?Sized>(node
         head: Some(options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_START),
         tail: Some(options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_delim_tokens"),
+        join: ::sittir_core::render::JoinArm::BOTH,
     };
     w.edge(::sittir_core::types::KindId(412), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("[")?;
     w.site_at(options::SITE_DELIM_TOKEN_TREE_BRACKET_LBRACK_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    if delim_tokens.is_present() { w.join_arm(::sittir_core::render::JoinArm::BOTH); }
     delim_tokens.render(w)?;
     w.site_at(options::SITE_DELIM_TOKEN_TREE_BRACKET_RBRACK_BEFORE);
     w.text("]")?;
@@ -52685,11 +52789,13 @@ fn render_delim_token_tree_brace<N: DelimTokenTreeBraceFields + ?Sized>(node: &N
         head: Some(options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_START),
         tail: Some(options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_delim_tokens"),
+        join: ::sittir_core::render::JoinArm::BOTH,
     };
     w.edge(::sittir_core::types::KindId(413), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("{")?;
     w.site_at(options::SITE_DELIM_TOKEN_TREE_BRACE_LBRACE_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    if delim_tokens.is_present() { w.join_arm(::sittir_core::render::JoinArm::BOTH); }
     delim_tokens.render(w)?;
     w.site_at(options::SITE_DELIM_TOKEN_TREE_BRACE_RBRACE_BEFORE);
     w.text("}")?;
@@ -52831,7 +52937,9 @@ fn render_range_pattern_with_left<N: RangePatternWithLeftFields + ?Sized>(node: 
     let content = node.content();
     let left = node.left();
     w.edge(::sittir_core::types::KindId(422), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     if content.kind_in(&*w, &[::sittir_core::types::KindId(100), ::sittir_core::types::KindId(421)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_DOT_DOT_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     w.edge(::sittir_core::types::KindId(422), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -52908,6 +53016,7 @@ fn render_attributed_field_declaration<N: AttributedFieldDeclarationFields + ?Si
         head: Some(options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_START),
         tail: Some(options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_attribute_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let field_declaration = node.field_declaration();
     w.edge(::sittir_core::types::KindId(427), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
@@ -52930,6 +53039,7 @@ fn render_attributed_enum_variant<N: AttributedEnumVariantFields + ?Sized>(node:
         head: Some(options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_START),
         tail: Some(options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_attribute_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let enum_variant = node.enum_variant();
     w.edge(::sittir_core::types::KindId(428), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
@@ -52963,6 +53073,7 @@ fn render_attributed_type_parameter<N: AttributedTypeParameterFields + ?Sized>(n
         head: Some(options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_START),
         tail: Some(options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_attribute_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let content = node.content();
     w.edge(::sittir_core::types::KindId(430), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
@@ -52985,6 +53096,7 @@ fn render_argument<N: ArgumentFields + ?Sized>(node: &N, w: &mut dyn ::sittir_co
         head: Some(options::SITE_ARGUMENT_ATTRIBUTE_ITEM_START),
         tail: Some(options::SITE_ARGUMENT_ATTRIBUTE_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_attribute_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let expression = node.expression();
     w.edge(::sittir_core::types::KindId(431), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
@@ -53007,6 +53119,7 @@ fn render_attributed_ordered_field<N: AttributedOrderedFieldFields + ?Sized>(nod
         head: Some(options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_START),
         tail: Some(options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_attribute_item"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let type_ = node.type_();
     let visibility_modifier = View::new(node.visibility_modifier(), "{}");
@@ -53023,6 +53136,7 @@ fn render_type_argument<N: TypeArgumentFields + ?Sized>(node: &N, w: &mut dyn ::
     let trait_bounds = View::new(node.trait_bounds(), "{}");
     w.edge(::sittir_core::types::KindId(433), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    if trait_bounds.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_trait_bounds", ::sittir_core::types::ItemIndex(0), w, |w| trait_bounds.render(w))?;
     w.edge(::sittir_core::types::KindId(433), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -53041,8 +53155,10 @@ fn render_match_block_arms<N: MatchBlockArmsFields + ?Sized>(node: &N, w: &mut d
         head: Some(options::SITE_MATCH_BLOCK_ARMS_ARMS_START),
         tail: Some(options::SITE_MATCH_BLOCK_ARMS_ARMS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_arms"),
+        join: ::sittir_core::render::JoinArm::NEXT,
     };
     w.edge(::sittir_core::types::KindId(434), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    if arms.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
     arms.render(w)?;
     w.edge(::sittir_core::types::KindId(434), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -53136,6 +53252,7 @@ fn render_trait_interface_declaration_body<N: TraitInterfaceDeclarationBodyField
         head: Some(options::SITE_TRAIT_INTERFACE_DECLARATION_BODY_DECLARATIONS_START),
         tail: Some(options::SITE_TRAIT_INTERFACE_DECLARATION_BODY_DECLARATIONS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_declarations"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(437), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("{")?;
@@ -53161,6 +53278,7 @@ fn render_extension_declaration_body<N: ExtensionDeclarationBodyFields + ?Sized>
         head: Some(options::SITE_EXTENSION_DECLARATION_BODY_DECLARATIONS_START),
         tail: Some(options::SITE_EXTENSION_DECLARATION_BODY_DECLARATIONS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_declarations"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(438), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("{")?;
@@ -53185,8 +53303,10 @@ fn render_receiver_parameter_declaration<N: ReceiverParameterDeclarationFields +
     w.text("self")?;
     w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_NAME_AFTER);
     w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_COLON_BEFORE);
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     w.text(":")?;
     w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_COLON_AFTER);
+    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
     w.edge(::sittir_core::types::KindId(439), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -54669,7 +54789,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false],
     char::is_alphanumeric,
 )
-.with_literal_merge_pairs(&[(33, 61), (37, 61), (38, 61), (42, 61), (43, 61), (45, 61), (45, 62), (46, 61), (47, 61), (58, 58), (60, 61), (61, 62), (62, 61), (94, 61), (124, 61)]); // "!=" "%=" "&=" "*=" "+=" "-=" "->" ".=" "/=" "::" "<=" "=>" ">=" "^=" "|="
+.with_join_pairs(&[(33, 61), (37, 61), (38, 38), (38, 61), (39, 39), (42, 61), (43, 61), (45, 61), (45, 62), (46, 46), (46, 61), (47, 42), (47, 47), (47, 61), (58, 58), (60, 60), (60, 61), (61, 61), (61, 62), (62, 61), (62, 62), (94, 61), (124, 61), (124, 124)]); // "!=" "%=" "&&" "&=" "''" "*=" "+=" "-=" "->" ".." ".=" "/*" "//" "/=" "::" "<<" "<=" "==" "=>" ">=" ">>" "^=" "|=" "||"
 
 /// Render a node tree to text. Takes the root's own `SlotValue`
 /// carrier, so the root renders through the SAME single `SpacingWriter`

@@ -900,7 +900,8 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('delegate.binary.in builds the parent', () => {
 			const node = ir.yieldExpression.delegate.binary.in({
-				binaryExpressionIn: { left: TSKindId.Undefined as never, right: TSKindId.Undefined as never }
+				left: TSKindId.Undefined as never,
+				right: TSKindId.Undefined as never
 			});
 			expect(node.$type).toBe(TSKindId.YieldExpression);
 			expect((node as any).expression()).toBeDefined();
@@ -1376,9 +1377,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('binary_expression sub-factories', () => {
 		it('in builds the parent', () => {
-			const node = ir.binaryExpression.in({
-				binaryExpressionIn: { left: TSKindId.Undefined as never, right: TSKindId.Undefined as never }
-			});
+			const node = ir.binaryExpression.in({ left: TSKindId.Undefined as never, right: TSKindId.Undefined as never });
 			expect(node.$type).toBe(TSKindId.BinaryExpression);
 			expect((node as any).binaryExpressionIn()?.$type).toBe(TSKindId.BinaryExpressionIn);
 		});

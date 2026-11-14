@@ -552,14 +552,51 @@ export function trailingChars(dfa: PatternDfa): CharSet {
 }
 
 export function shortestAccepted(dfa: PatternDfa): string | undefined {
-	const paths = new Map<number, string>([[0, '']]);
-	const queue = [0];
+	return shortestPathFrom(dfa, 0, lowestCode);
+}
+
+export function shortestPrintableAccepted(dfa: PatternDfa, prefix: string = ''): string | undefined {
+	const at = readFrom(dfa, 0, prefix);
+	if (at === undefined) return undefined;
+	const rest = shortestPathFrom(dfa, at, printableCode);
+	return rest === undefined ? undefined : prefix + rest;
+}
+
+export function longestAcceptedPrefix(dfa: PatternDfa, text: string): number {
+	let state: number | undefined = 0;
+	let longest = dfa.states[0]!.accepting ? 0 : -1;
+	let length = 0;
+	for (const char of text) {
+		const code = char.codePointAt(0)!;
+		state = dfa.states[state]!.edges.find(({ set }) => set.has(code))?.to;
+		if (state === undefined) break;
+		length += char.length;
+		if (dfa.states[state]!.accepting) longest = length;
+	}
+	return longest;
+}
+
+const lowestCode = (set: CharSet): number => set.ranges[0]![0];
+
+const PREFERRED_CODES = [...'ax0_A1'].map((char) => char.codePointAt(0)!);
+const FIRST_PRINTABLE = 0x21;
+
+function printableCode(set: CharSet): number {
+	const preferred = PREFERRED_CODES.find((code) => set.has(code));
+	if (preferred !== undefined) return preferred;
+	const range = set.ranges.find(([, hi]) => hi >= FIRST_PRINTABLE);
+	return range === undefined ? lowestCode(set) : Math.max(range[0], FIRST_PRINTABLE);
+}
+
+function shortestPathFrom(dfa: PatternDfa, start: number, pick: (set: CharSet) => number): string | undefined {
+	const paths = new Map<number, string>([[start, '']]);
+	const queue = [start];
 	for (let head = 0; head < queue.length; head++) {
 		const at = queue[head]!;
 		if (dfa.states[at]!.accepting) return paths.get(at);
 		for (const edge of dfa.states[at]!.edges) {
 			if (paths.has(edge.to) || edge.set.isEmpty()) continue;
-			paths.set(edge.to, paths.get(at)! + String.fromCodePoint(edge.set.ranges[0]![0]));
+			paths.set(edge.to, paths.get(at)! + String.fromCodePoint(pick(edge.set)));
 			queue.push(edge.to);
 		}
 	}

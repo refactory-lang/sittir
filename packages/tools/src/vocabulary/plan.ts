@@ -8,6 +8,7 @@ export interface Kind {
 	readonly refines: string | undefined;
 	readonly feature: Feature | undefined;
 	readonly text: boolean;
+	readonly restated: readonly string[];
 }
 
 export interface Owned {
@@ -85,7 +86,7 @@ export function plan(source: VocabularySource): Plan {
 		if (d.parent !== undefined && parent === undefined) issues.push(`${d.path} extends ${d.parent}, which is not a kind`);
 		if (d.refines !== undefined && !pathOf.has(d.refines)) issues.push(`${d.path} is refined by ${d.refines}, which is not a kind`);
 		if (parent !== undefined && (parent === d.path || !under(d.path, parent))) issues.push(`${d.path} extends ${parent}, which is not a level above it`);
-		const kind: Kind = { qname: d.qname, path: d.path, parent, refines: d.refines === undefined ? undefined : pathOf.get(d.refines)?.path, feature, text: d.text === true };
+		const kind: Kind = { qname: d.qname, path: d.path, parent, refines: d.refines === undefined ? undefined : pathOf.get(d.refines)?.path, feature, text: d.text === true, restated: d.restated };
 		kinds.set(d.path, kind);
 		byQname.set(d.qname, kind);
 		for (const member of d.members) declare(d.path, { gated: false, by: feature, member });
@@ -128,6 +129,11 @@ export function plan(source: VocabularySource): Plan {
 					issues.push(`${o.feature.name} owns ${name} at ${path}, and ${declarer} declares it at ${other}, which inherits it, without extending ${o.feature.name}`);
 				if (lines.get(path)?.includes(other) && !extending(o.feature, declaring))
 					issues.push(`${o.feature.name} owns ${name} at ${path}, and ${declarer} declares it at ${other}, which it inherits from, and ${o.feature.name} does not extend ${owner(declaring)}`);
+				const nearer = (lines.get(other) ?? []).some(
+					(at) => at !== other && at !== path && lines.get(at)?.includes(path) === true && declarations.get(at)?.has(name) === true
+				);
+				if (by !== undefined && lines.get(other)?.includes(path) === true && !nearer && extending(by, o.feature) && kinds.get(other)?.restated.includes(name) !== true)
+					issues.push(`${by.name} redeclares ${name} at ${other}, which inherits it from ${path}, where ${o.feature.name} owns it, and ${other} does not name ${name} among the keys it restates`);
 			}
 		}
 	}

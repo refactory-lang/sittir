@@ -47,7 +47,11 @@ graph by identity. Nested names join with `::` (`Owner::member`), as the
 graph spells them. The graph does not yet index class / interface fields or
 object-literal properties under their owner, so entries for those keep the
 dotted `Owner.member` form until it does; `infigraph doctor` lists them as
-unresolved meanwhile. File-level comments (a module header) sit under
+unresolved meanwhile. The undocumented count covers declarations and methods
+only (functions, classes, interfaces, type aliases, enums, variables,
+namespaces, methods, accessors and constructors); a field or property (a class
+or interface property, a parameter property, an enum member, an object-literal
+property) is never counted undocumented, whether or not an entry documents it. File-level comments (a module header) sit under
 `### \`<file>::module\``.
 
 ## Looking a comment up

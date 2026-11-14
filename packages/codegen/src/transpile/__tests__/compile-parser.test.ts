@@ -136,7 +136,7 @@ describe('builtParserWasm', () => {
 		const { dir, sittir } = copyOfPython('fresh');
 		const wasmPath = join(sittir, 'parser.wasm');
 		const parser = builtParserWasm(dir);
-		expect(parser).toMatchObject({ wasmPath, fresh: true, digest: sha256(readFileSync(wasmPath)) });
+		expect(parser).toMatchObject({ wasmPath, fresh: true, record: { source: parserSourceKey(sittir), wasm: sha256(readFileSync(wasmPath)) } });
 		expect(parser.fresh && Buffer.from(parser.bytes).equals(readFileSync(wasmPath))).toBe(true);
 		appendFileSync(join(sittir, 'src', 'parser.c'), '\n');
 		expect(builtParserWasm(dir)).toEqual({ wasmPath, fresh: false, reason: 'it was built from other sources than it reads now' });

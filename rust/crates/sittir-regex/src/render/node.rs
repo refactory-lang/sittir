@@ -6382,6 +6382,7 @@ fn render_alternation<N: AlternationFields + ?Sized>(node: &N, w: &mut dyn ::sit
         head: None,
         tail: None,
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_terms"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     terms.render(w)?;
     Ok(())
@@ -6400,6 +6401,7 @@ fn render_term<N: TermFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::rend
         head: None,
         tail: None,
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_term_group"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     term_group.render(w)?;
     Ok(())
@@ -6464,6 +6466,7 @@ fn render_character_class<N: CharacterClassFields + ?Sized>(node: &N, w: &mut dy
         head: None,
         tail: None,
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_class_atoms"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let leading = View::new(node.leading(), "-");
     let negation = View::new(::sittir_core::view::Presence::new(node.negation(), NegationNode::Negation), "{}");
@@ -6995,7 +6998,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
     char::is_alphanumeric,
 )
-.with_literal_merge_pairs(&[]); // no multi-char punctuation transitions in this grammar
+.with_join_pairs(&[]); // no two tokens of this grammar join into a third
 
 /// Render a node tree to text. Takes the root's own `SlotValue`
 /// carrier, so the root renders through the SAME single `SpacingWriter`

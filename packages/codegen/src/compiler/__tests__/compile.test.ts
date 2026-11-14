@@ -10,6 +10,7 @@ function makeCompilation(overrides: Partial<Compilation> = {}): Compilation {
 	return {
 		grammar: 'synth',
 		package: grammarPackage('synth'),
+		evaluated: {} as RawGrammar,
 		raw: {} as RawGrammar,
 		linked: {} as LinkedGrammar,
 		normalized: {} as NormalizedGrammar,

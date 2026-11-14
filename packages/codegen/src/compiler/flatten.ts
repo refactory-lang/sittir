@@ -20,7 +20,7 @@ import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { selfReferentialFoldOf, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import { runToFixpoint } from './fixpoint.ts';
 import { attributeBuilder, buildOptional, carryNodeFacts } from '../dsl/builders.ts';
-import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, structuralKey } from '../dsl/rule-attrs.ts';
+import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, absorbAlignedIds, structuralKey } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { reservedWordsetsOf, withReservedWordsets } from '../dsl/rule-metadata.ts';
 import { supertypeArmsOf } from '../dsl/symbol-table.ts';
@@ -106,7 +106,7 @@ function rebuiltLeaf<N extends Input, B extends Output>(node: N, built: B): N & 
 
 function rebuild(node: Input): Output {
 	const built = construct(node);
-	return withId(built, node.id ?? built.id);
+	return absorbIds(node.id === undefined ? built : withId(built, node.id), built, node);
 }
 
 export function flatten(rule: Input): Output {
@@ -173,13 +173,17 @@ function factorChoiceArms(rule: RenderRule): RenderRule {
 	}
 	if (differing.length !== 1) return rule;
 	const at = differing[0]!;
-	const seen = new Set<string>();
+	const variantAt = new Map<string, number>();
 	const variants: RenderRule[] = [];
 	for (const arm of seqArms) {
 		const m = arm.members[at]!;
 		const key = structuralKey(m);
-		if (seen.has(key)) continue;
-		seen.add(key);
+		const seen = variantAt.get(key);
+		if (seen !== undefined) {
+			variants[seen] = absorbAlignedIds(variants[seen]!, m);
+			continue;
+		}
+		variantAt.set(key, variants.length);
 		variants.push(m);
 	}
 	const shared = sharedArmAttrs({ type: CHOICE, members: variants });
@@ -188,8 +192,9 @@ function factorChoiceArms(rule: RenderRule): RenderRule {
 		...(shared.fieldName !== undefined ? { fieldName: shared.fieldName } : {}),
 		...(shared.multiplicity !== undefined ? { multiplicity: shared.multiplicity } : {})
 	};
-	const members = seqArms[0]!.members.map((m, i) => (i === at ? choice : m));
-	const factored = absorbIds({ ...seqArms[0]!, members }, ...seqArms.slice(1));
+	const others = seqArms.slice(1);
+	const members = seqArms[0]!.members.map((m, i) => (i === at ? choice : absorbAlignedIds(m, ...others.map((arm) => arm.members[i]!))));
+	const factored = absorbIds({ ...seqArms[0]!, members }, ...others);
 	if (seqArms.length === rule.members.length) return withAttrsFrom(rule, factored);
 	let placed = false;
 	const rebuilt: RenderRule[] = [];
@@ -222,9 +227,11 @@ function factorSharedLiterals(rule: RenderRule): RenderRule {
 		const members = arm.members.slice(prefix, arm.members.length - suffix);
 		const slots = members.filter((m) => !isLiteral(m));
 		const kept = slots.length > 0 ? slots : members;
-		return kept.length === 1 ? kept[0]! : absorbIds({ ...arm, members: kept });
+		const dropped = members.filter((m) => !kept.includes(m));
+		return kept.length === 1 ? absorbIds(kept[0]!, ...dropped) : absorbIds({ ...arm, members: kept }, ...dropped);
 	};
 	const first = seqArms[0]!;
+	const others = seqArms.slice(1);
 	const variants = seqArms.map(middle);
 	const shared = sharedArmAttrs({ type: CHOICE, members: variants });
 	const inner: RenderRule = {
@@ -232,8 +239,12 @@ function factorSharedLiterals(rule: RenderRule): RenderRule {
 		...(shared.fieldName !== undefined ? { fieldName: shared.fieldName } : {}),
 		...(shared.multiplicity !== undefined ? { multiplicity: shared.multiplicity } : {})
 	};
-	const members = [...first.members.slice(0, prefix), inner, ...first.members.slice(first.members.length - suffix)];
-	return withAttrsFrom(rule, absorbIds({ ...first, members }, ...seqArms.slice(1)));
+	const sharedMembers = (from: (arm: SeqRule<'normalize'>, offset: number) => RenderRule, count: number): RenderRule[] =>
+		Array.from({ length: count }, (_, offset) => absorbAlignedIds(from(first, offset), ...others.map((arm) => from(arm, offset))));
+	const head = sharedMembers((arm, i) => arm.members[i]!, prefix);
+	const tail = sharedMembers((arm, i) => arm.members[arm.members.length - 1 - i]!, suffix).reverse();
+	const members = [...head, inner, ...tail];
+	return withAttrsFrom(rule, absorbIds({ ...first, members }, ...others));
 }
 
 function permutationKey(rule: RenderRule): string {

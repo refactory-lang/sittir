@@ -2528,7 +2528,7 @@ which flushes only a whitespace-token payload; a plain seam payload still
 held at the end of the tree is dropped, so a root node gains no edge
 whitespace.
 
-Takes the generated kind entries so the emitted `with_literal_merge_pairs` table is derived from the tokens the parser actually lexes (`literalMergePairs`), not from every literal the node projection carries.
+Takes the generated kind entries. The emitted pair table holds the character pairs of the join checks the parse proves (`joins.pairs`), not every literal pair the node projection carries.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderRootFn`
 
@@ -4747,7 +4747,7 @@ choices are in front of the walk. A run without them (a unit fixture, a
 diagnostic probe) falls back to the normalized rules, which are the same
 rules before injection.
 
-`kindEntries` are the generated kind entries the merge-pair inventory is gated on (`literalMergePairs`); a run without them (a unit fixture) has no merge pairs, which is what the fixtures that stub `isLiteralMergePair` expect.
+`kindEntries` are the generated kind entries the template emitter reads. The pair decision is `isJoinPair`: a configuration built from the join analysis takes its pairs from `joins.pairs`, and a fixture that stubs the decision supplies `isJoinPair` directly.
 
 ### `packages/codegen/src/emitters/templates.ts::separatorTokenOf`
 
@@ -7941,50 +7941,6 @@ there, not by the hoisted flag here.
 // behaviour so classifyTemplateEmission is a strict superset of the legacy gate.
 ```
 
-### `packages/codegen/src/emitters/shared.ts::literalMergePairs`
-
-```text
-/**
- * Per-grammar punctuation merge-hazard pairs: every ordered pair of
- * DIFFERING ASCII punctuation characters that appear adjacent inside some
- * multi-character anonymous literal token. A seam whose boundary chars
- * form such a pair risks the same maximal-munch collision the word-class
- * table guards against — the lexer's munch at the seam continues past the
- * left char into the right exactly when some real token contains that
- * transition (e.g. a bare range-pattern `..` immediately followed by a
- * match arm's `=>` re-lexes as `..=` plus a dangling `>`, via the `.`→`=`
- * transition inside `..=`). A pair occurring in NO token (`!`→`[`, rust's
- * `#![...]`; `:`→`<`, the turbofish) cannot extend any munch and stays
- * tight. Derived from the grammar's own anonymous-literal inventory —
- * never hand-picked.
- *
- * An identical-char pair `c|c` is never derived from the literal
- * inventory: it comes from `sameCharMergePairs` over the grammar's render
- * rules (the `rules` argument), which admits it only when the doubled
- * token `cc` can begin what directly follows the single token `c`
- * (typescript's `--` after a unary `-`, rust's `::` after a type-annotation
- * `:`). A doubled token that begins nothing that follows its single char
- * (`>>` after a nested-generic `>`) yields no pair, so those seams stay
- * tight.
- *
- * Word-class and whitespace characters are excluded even when they occur
- * inside a multi-character literal (e.g. python's `alias($._not_in, 'not
- * in')` — a compound-keyword token whose spelling embeds a literal space
- * and letters): those characters are either already covered by the
- * word-class table or, for whitespace, never risk a token-fusion seam.
- *
- * This IS the literal-spanning seam check, reduced losslessly to the
- * junction chars: a literal spanning a seam always places its junction
- * transition adjacent inside itself, so testing the junction pair alone
- * misses nothing. Returns sorted `[left, right]` char-code pairs — the
- * single derivation behind BOTH the emitted SpacingWriter pair table
- * (render-module.ts) and the template emitter's static-seam join
- * (templates.ts).
- */
-```
-
-The inventory is the set of literals a parser token spells: a literal counts only when `findEntryForLiteralText` finds a kind entry for its text (an anonymous symbol or a named literal rule). A collapsed sequence's fixed text (`unit_expression`'s `()`) and a PATTERN's regex source are not lexer tokens and contribute no pairs; before this gate they did, and the writer spaced `(` from `)` and `{` from `}` for a hazard no token creates. The kind entries come from the caller: `renderTypedDispatch` receives them, `EmitTemplatesConfig.kindEntries` carries them into the template emitter.
-
 ### `packages/codegen/src/emitters/shared.ts::escForSource`
 
 ```text
@@ -8548,16 +8504,6 @@ Prints the type-only `__slotHints__` member of a kind interface: one `SlotHint` 
 token's grammar-wide face (origin `cascade`), beside the preference,
 literal-default and fallback counts.
 
-### `packages/codegen/src/emitters/templates.ts::EmitCtx::isLiteralMergePair`
-
-```text
-// Same merge-hazard pairs the emitted SpacingWriter table uses (one
-// derivation: literalMergePairs over the node literal inventory) —
-// consumed by the static-seam join so emit-time and render-time apply
-// ONE seam law: space only where the seam's char transition occurs
-// inside some real token of the grammar.
-```
-
 ### `packages/codegen/src/emitters/templates.ts::EmitCtx::emittedSlotNames`
 
 ```text
@@ -8586,25 +8532,6 @@ literal-default and fallback counts.
 ```text
 // Seam-census sink (optional so hand-built test ctx literals stay valid):
 // the SEQ join appends one record per boundary it classifies.
-```
-
-### `packages/codegen/src/emitters/templates.ts::EmitCtx::mergePairClassCombos`
-
-```text
-// Class combos (`${leftClass}\0${rightClass}`) for which at least one
-// literal-merge pair exists — a tag boundary with such a combo cannot be
-// declared glued from classes alone (only concrete characters decide),
-// so it stays `runtime-varying`. Optional for hand-built test ctx.
-```
-
-### `packages/codegen/src/emitters/templates.ts::EmitCtx::mergePairLeftChars`
-
-```text
-// The pair table's left/right character projections: a char absent from
-// the right set can never be seamed AGAINST (as a boundary's right
-// char), one absent from the left set can never seam FORWARD — the
-// separator-side static rule in `staticListInterior` quantifies over
-// these instead of unknown element edges. Optional for hand-built ctx.
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.slotSeamNames`
@@ -9027,32 +8954,9 @@ absent optional slot leaves no mark behind. The boundary is recorded as static-g
 
 ### `packages/codegen/src/emitters/templates.ts::staticListInterior`
 
-```text
-/**
- * The SpacingWriter's seam law — `word_seam(l, r) ∨
- * literal_merge_pair(l, r)`, same word table, same pair table (identical-char
- * pairs included exactly when `literalMergePairs` derives them) — applied
- * STATICALLY to a list's interior boundaries, for the census:
- *
- * - `runtime-derivable`: the checks' outcome is a statically-known
- *   constant — a separator whose own edge chars can never seam against
- *   any character, or a `""`-joined list whose derived element edge-char
- *   sets (`edgeCharSetsOfKind`) give the law one outcome over every
- *   combination.
- * - `runtime-varying`: unknown edges or a non-constant outcome — the
- *   true residue.
- *
- * Emission is NEVER changed here. A constant-space verdict statically
- * owes the writer's space between GRAMMAR edges, but a rendered element
- * may end in trailing trivia (a line comment's `'\n'`) that is not in
- * the derived sets — the writer would then NOT insert, so baking the
- * space into the separator would diverge (and a space after a newline is
- * an indentation error in python). Baking stays blocked until trivia
- * edges are modeled or ruled out; until then the verdict is census
- * information only, and the separator string remains the sole place a
- * space could ever be added.
- */
-```
+The census verdict for a list's interior boundaries, `runtime-derivable` or `runtime-varying`. It does not change emission: it only returns the verdict.
+
+With a separator, the verdict is derivable when neither the separator's first nor its last character is a word character and neither can join its neighbour: the first character is absent from the join pair table's right-character set, and the last is absent from its left-character set. Without a separator, each element contributes its edge characters: terminal text gives its first and last character, and any other value gives the edge character sets of its kind. An empty terminal or an edge set that is not known makes the verdict varying. Otherwise every (left, right) pair of edge characters is tested for a seam, where a seam is two word characters or a join pair. If no pair is a seam or every pair is, the verdict is derivable; a mix is varying.
 
 ### `packages/codegen/src/emitters/templates.ts::warnedMultiSlotGroups`
 

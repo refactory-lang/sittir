@@ -348,7 +348,7 @@ pub static EDGE_ROWS: &[Option<EdgeRow>] = &[
     Some(EdgeRow(19)),
 ];
 
-/// Per kind id, its `KindFlags`: `ANON` (the parser's anonymous token), `LINE_TERMINATED`, `LINE_BREAK_TERMINATED`, `ROOT`.
+/// Per kind id, its `KindFlags`: `ANON` (the parser's anonymous token), `LINE_TERMINATED`, `LINE_BREAK_TERMINATED`, `ROOT`, `JOINS_NEXT`.
 pub static KIND_FLAGS: &[KindFlags] = &[
     KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(2), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(0), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
     KindFlags(4), KindFlags(8), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),

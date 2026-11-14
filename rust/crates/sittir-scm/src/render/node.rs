@@ -5217,6 +5217,7 @@ fn render_program<N: ProgramFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core
         head: Some(options::SITE_PROGRAM_DEFINITIONS_START),
         tail: Some(options::SITE_PROGRAM_DEFINITIONS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_definitions"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(33), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
@@ -5288,6 +5289,7 @@ fn render_string_content<N: StringContentFields + ?Sized>(node: &N, w: &mut dyn 
         head: None,
         tail: None,
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_content"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     content.render(w)?;
     Ok(())
@@ -5306,6 +5308,7 @@ fn render_parameters<N: ParametersFields + ?Sized>(node: &N, w: &mut dyn ::sitti
         head: Some(options::SITE_PARAMETERS_ELEMENTS_START),
         tail: Some(options::SITE_PARAMETERS_ELEMENTS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(43), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     elements.render(w)?;
@@ -5334,6 +5337,7 @@ fn render_list<N: ListFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::rend
         head: None,
         tail: None,
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_definitions"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let elements = ListView {
         items: node.elements(),
@@ -5347,6 +5351,7 @@ fn render_list<N: ListFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::rend
         head: None,
         tail: None,
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(44), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("[")?;
@@ -5373,6 +5378,7 @@ fn render_grouping<N: GroupingFields + ?Sized>(node: &N, w: &mut dyn ::sittir_co
         head: None,
         tail: None,
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let grouping_group = ListView {
         items: node.grouping_group(),
@@ -5386,6 +5392,7 @@ fn render_grouping<N: GroupingFields + ?Sized>(node: &N, w: &mut dyn ::sittir_co
         head: None,
         tail: None,
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_grouping_group"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(45), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
@@ -5412,6 +5419,7 @@ fn render_missing_node<N: MissingNodeFields + ?Sized>(node: &N, w: &mut dyn ::si
         head: Some(options::SITE_MISSING_NODE_ELEMENTS_START),
         tail: Some(options::SITE_MISSING_NODE_ELEMENTS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let name = View::new(node.name(), "{}");
     w.edge(::sittir_core::types::KindId(46), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
@@ -5443,6 +5451,7 @@ fn render_anonymous_node<N: AnonymousNodeFields + ?Sized>(node: &N, w: &mut dyn 
         head: Some(options::SITE_ANONYMOUS_NODE_ELEMENTS_START),
         tail: Some(options::SITE_ANONYMOUS_NODE_ELEMENTS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let name = node.name();
     w.edge(::sittir_core::types::KindId(47), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
@@ -5564,6 +5573,7 @@ fn render_named_node_plain<N: NamedNodePlainFields + ?Sized>(node: &N, w: &mut d
         head: Some(options::SITE_NAMED_NODE_PLAIN_ELEMENTS_START),
         tail: Some(options::SITE_NAMED_NODE_PLAIN_ELEMENTS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let name = node.name();
     let named_node_group = View::new(node.named_node_group(), "{}");
@@ -5595,6 +5605,7 @@ fn render_named_node_supertyped<N: NamedNodeSupertypedFields + ?Sized>(node: &N,
         head: Some(options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_START),
         tail: Some(options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let name = node.name();
     let named_node_group = View::new(node.named_node_group(), "{}");
@@ -5630,6 +5641,7 @@ fn render_named_node_group_children<N: NamedNodeGroupChildrenFields + ?Sized>(no
         head: Some(options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_START),
         tail: Some(options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_named_node_expressions"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     if anchor.is_present() {
@@ -5656,6 +5668,7 @@ fn render_named_node_group_anchored_last<N: NamedNodeGroupAnchoredLastFields + ?
         head: Some(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_START),
         tail: Some(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_named_node_expressions"),
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     w.edge(::sittir_core::types::KindId(64), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     if anchor.is_present() {
@@ -5853,7 +5866,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
     char::is_alphanumeric,
 )
-.with_literal_merge_pairs(&[]); // no multi-char punctuation transitions in this grammar
+.with_join_pairs(&[]); // no two tokens of this grammar join into a third
 
 /// Render a node tree to text. Takes the root's own `SlotValue`
 /// carrier, so the root renders through the SAME single `SpacingWriter`
