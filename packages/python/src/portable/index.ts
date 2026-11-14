@@ -23,7 +23,6 @@ export interface PortableIds {
 		| TSKindId.ImportPrefix
 		| TSKindId.RelativeImport
 		| TSKindId.WildcardImport
-		| TSKindId.WithClause
 		| TSKindId.WithClauseBare
 		| TSKindId.WithClauseParen
 		| TSKindId.WithItem;
@@ -41,7 +40,7 @@ export interface PortableIds {
 	'clause.import.relative': TSKindId.ImportPrefix | TSKindId.RelativeImport;
 	'clause.import.relative.prefix': TSKindId.ImportPrefix;
 	'clause.import.wildcard': TSKindId.WildcardImport;
-	'clause.resource': TSKindId.WithClause | TSKindId.WithClauseBare | TSKindId.WithClauseParen | TSKindId.WithItem;
+	'clause.resource': TSKindId.WithClauseBare | TSKindId.WithClauseParen | TSKindId.WithItem;
 	'clause.resource.item': TSKindId.WithItem;
 	comment: TSKindId.Comment;
 	'comment.line': TSKindId.Comment;
@@ -252,7 +251,6 @@ export interface PortableIds {
 		| TSKindId.ConcatenatedString
 		| TSKindId.Ellipsis
 		| TSKindId.EscapeInterpolation
-		| TSKindId.EscapeSequence
 		| TSKindId.EscapeSequenceHex
 		| TSKindId.EscapeSequenceLineBreak
 		| TSKindId.EscapeSequenceNamed
@@ -337,7 +335,6 @@ export interface PortableIds {
 	'literal.string':
 		| TSKindId.ConcatenatedString
 		| TSKindId.EscapeInterpolation
-		| TSKindId.EscapeSequence
 		| TSKindId.EscapeSequenceHex
 		| TSKindId.EscapeSequenceLineBreak
 		| TSKindId.EscapeSequenceNamed
@@ -354,7 +351,6 @@ export interface PortableIds {
 	'literal.string.concatenated': TSKindId.ConcatenatedString;
 	'literal.string.escape':
 		| TSKindId.EscapeInterpolation
-		| TSKindId.EscapeSequence
 		| TSKindId.EscapeSequenceHex
 		| TSKindId.EscapeSequenceLineBreak
 		| TSKindId.EscapeSequenceNamed
@@ -2800,7 +2796,6 @@ const table: PortableTable = {
 				TSKindId.ImportPrefix,
 				TSKindId.RelativeImport,
 				TSKindId.WildcardImport,
-				TSKindId.WithClause,
 				TSKindId.WithClauseBare,
 				TSKindId.WithClauseParen,
 				TSKindId.WithItem
@@ -2827,10 +2822,7 @@ const table: PortableTable = {
 		'clause.import.relative': { ids: [TSKindId.ImportPrefix, TSKindId.RelativeImport], exact: true },
 		'clause.import.relative.prefix': { ids: [TSKindId.ImportPrefix], exact: true },
 		'clause.import.wildcard': { ids: [TSKindId.WildcardImport], exact: true },
-		'clause.resource': {
-			ids: [TSKindId.WithClause, TSKindId.WithClauseBare, TSKindId.WithClauseParen, TSKindId.WithItem],
-			exact: true
-		},
+		'clause.resource': { ids: [TSKindId.WithClauseBare, TSKindId.WithClauseParen, TSKindId.WithItem], exact: true },
 		'clause.resource.item': { ids: [TSKindId.WithItem], exact: true },
 		comment: { ids: [TSKindId.Comment], exact: true },
 		'comment.line': { ids: [TSKindId.Comment], exact: true },
@@ -3079,7 +3071,6 @@ const table: PortableTable = {
 				TSKindId.ConcatenatedString,
 				TSKindId.Ellipsis,
 				TSKindId.EscapeInterpolation,
-				TSKindId.EscapeSequence,
 				TSKindId.EscapeSequenceHex,
 				TSKindId.EscapeSequenceLineBreak,
 				TSKindId.EscapeSequenceNamed,
@@ -3190,7 +3181,6 @@ const table: PortableTable = {
 			ids: [
 				TSKindId.ConcatenatedString,
 				TSKindId.EscapeInterpolation,
-				TSKindId.EscapeSequence,
 				TSKindId.EscapeSequenceHex,
 				TSKindId.EscapeSequenceLineBreak,
 				TSKindId.EscapeSequenceNamed,
@@ -3211,7 +3201,6 @@ const table: PortableTable = {
 		'literal.string.escape': {
 			ids: [
 				TSKindId.EscapeInterpolation,
-				TSKindId.EscapeSequence,
 				TSKindId.EscapeSequenceHex,
 				TSKindId.EscapeSequenceLineBreak,
 				TSKindId.EscapeSequenceNamed,
@@ -3754,7 +3743,6 @@ const table: PortableTable = {
 		[TSKindId.Ellipsis]: [{ path: 'literal.ellipsis', within: [], test: [] }],
 		[TSKindId.ElseClause]: [{ path: 'clause.else', within: [], test: [] }],
 		[TSKindId.EscapeInterpolation]: [{ path: 'literal.string.escape', within: [], test: [] }],
-		[TSKindId.EscapeSequence]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.EscapeSequenceHex]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.EscapeSequenceLineBreak]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.EscapeSequenceNamed]: [{ path: 'literal.string.escape', within: [], test: [] }],
@@ -4075,7 +4063,6 @@ const table: PortableTable = {
 		[TSKindId.WhileStatement]: [{ path: 'statement.loop.while', within: [], test: [] }],
 		[TSKindId.WildcardImport]: [{ path: 'clause.import.wildcard', within: [], test: [] }],
 		[TSKindId.WildcardPattern]: [{ path: 'pattern.wildcard', within: [], test: [] }],
-		[TSKindId.WithClause]: [{ path: 'clause.resource', within: [], test: [] }],
 		[TSKindId.WithClauseBare]: [{ path: 'clause.resource', within: [], test: [] }],
 		[TSKindId.WithClauseParen]: [{ path: 'clause.resource', within: [], test: [] }],
 		[TSKindId.WithItem]: [{ path: 'clause.resource.item', within: [], test: [] }],
