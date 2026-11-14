@@ -4887,32 +4887,6 @@
         "list": true
       }
     },
-    "export_statement": {
-      "vocab": "statement.export",
-      "read": [
-        {
-          "vocab": "statement.export",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
-    "export_statement_default": {
-      "vocab": "statement.export",
-      "read": [
-        {
-          "vocab": "statement.export",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "export_statement_default_declaration": {
       "vocab": "statement.export",
       "read": [
@@ -7092,19 +7066,6 @@
         }
       ]
     },
-    "import_specifier": {
-      "vocab": "clause.import.specifier",
-      "read": [
-        {
-          "vocab": "clause.import.specifier",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "import_specifier_as": {
       "vocab": "clause.import.specifier",
       "read": [
@@ -7378,19 +7339,6 @@
           ]
         }
       ]
-    },
-    "index_signature": {
-      "vocab": "declaration.signature.index",
-      "read": [
-        {
-          "vocab": "declaration.signature.index",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "index_signature_colon": {
       "vocab": "declaration.signature.index",
@@ -8212,19 +8160,6 @@
           "flag": true
         }
       ]
-    },
-    "meta_property": {
-      "vocab": "expression.meta",
-      "read": [
-        {
-          "vocab": "expression.meta",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "meta_property_import_meta": {
       "vocab": "expression.meta",
@@ -10185,32 +10120,6 @@
       ],
       "members": []
     },
-    "number": {
-      "vocab": "literal.number",
-      "read": [
-        {
-          "vocab": "literal.number",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
-    "number_bigint": {
-      "vocab": "literal.number",
-      "read": [
-        {
-          "vocab": "literal.number",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "number_bigint_binary": {
       "vocab": "literal.number.integer.big.binary",
       "read": [
@@ -11316,19 +11225,6 @@
           "flag": true
         }
       ]
-    },
-    "parenthesized_expression": {
-      "vocab": "expression.parenthesized",
-      "read": [
-        {
-          "vocab": "expression.parenthesized",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "parenthesized_expression_sequence": {
       "vocab": "expression.parenthesized",
@@ -13246,19 +13142,6 @@
         "terminals": [],
         "list": false
       }
-    },
-    "string": {
-      "vocab": "literal.string",
-      "read": [
-        {
-          "vocab": "literal.string",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "string_double": {
       "vocab": "literal.string",
@@ -15299,13 +15182,13 @@
       {
         "depth": 2,
         "paths": 111,
-        "kinds": 152,
+        "kinds": 145,
         "refinements": 4
       },
       {
         "depth": 3,
         "paths": 108,
-        "kinds": 92,
+        "kinds": 90,
         "refinements": 82
       },
       {

@@ -164,19 +164,6 @@
         "list": true
       }
     },
-    "array_expression": {
-      "vocab": "expression.collection.list",
-      "read": [
-        {
-          "vocab": "expression.collection.list",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "array_expression_list": {
       "vocab": "expression.collection.list",
       "read": [
@@ -2392,33 +2379,7 @@
       ],
       "members": []
     },
-    "char_literal": {
-      "vocab": "literal.character",
-      "read": [
-        {
-          "vocab": "literal.character",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "char_literal_empty": {
-      "vocab": "literal.character",
-      "read": [
-        {
-          "vocab": "literal.character",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
-    "char_literal_escaped": {
       "vocab": "literal.character",
       "read": [
         {
@@ -2615,19 +2576,6 @@
           ]
         }
       ]
-    },
-    "closure_expression": {
-      "vocab": "expression.lambda",
-      "read": [
-        {
-          "vocab": "expression.lambda",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "closure_expression_block": {
       "vocab": "expression.lambda",
@@ -3816,19 +3764,6 @@
         "terminals": [],
         "list": true
       }
-    },
-    "delim_token_tree": {
-      "vocab": "element.macro.token_tree.delimited",
-      "read": [
-        {
-          "vocab": "element.macro.token_tree.delimited",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "delim_token_tree_brace": {
       "vocab": "element.macro.token_tree.delimited.brace",
@@ -6276,19 +6211,6 @@
         "list": true
       }
     },
-    "escape_sequence": {
-      "vocab": "literal.string.escape",
-      "read": [
-        {
-          "vocab": "literal.string.escape",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "escape_sequence_hex": {
       "vocab": "literal.string.escape",
       "read": [
@@ -7804,19 +7726,6 @@
         "list": true
       }
     },
-    "field_pattern": {
-      "vocab": "pattern.struct.field",
-      "read": [
-        {
-          "vocab": "pattern.struct.field",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "field_pattern_named": {
       "vocab": "pattern.struct.field",
       "read": [
@@ -8031,19 +7940,6 @@
         "terminals": [],
         "list": false
       }
-    },
-    "foreign_mod_item": {
-      "vocab": "declaration.module.foreign",
-      "read": [
-        {
-          "vocab": "declaration.module.foreign",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "foreign_mod_item_body": {
       "vocab": "declaration.module.foreign",
@@ -11374,19 +11270,6 @@
         }
       ]
     },
-    "macro_definition": {
-      "vocab": "declaration.macro",
-      "read": [
-        {
-          "vocab": "declaration.macro",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "macro_definition_brace": {
       "vocab": "declaration.macro.brace",
       "read": [
@@ -11597,19 +11480,6 @@
         "terminals": [],
         "list": true
       }
-    },
-    "match_arm": {
-      "vocab": "clause.case.match",
-      "read": [
-        {
-          "vocab": "clause.case.match",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "match_arm_block_ending": {
       "vocab": "clause.case.match",
@@ -12787,19 +12657,6 @@
         }
       ]
     },
-    "mod_item": {
-      "vocab": "declaration.module",
-      "read": [
-        {
-          "vocab": "declaration.module",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "mod_item_external": {
       "vocab": "declaration.module",
       "read": [
@@ -13964,19 +13821,6 @@
         "list": false
       }
     },
-    "or_pattern": {
-      "vocab": "pattern.or",
-      "read": [
-        {
-          "vocab": "pattern.or",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "or_pattern_binary": {
       "vocab": "pattern.or",
       "read": [
@@ -14237,19 +14081,6 @@
         "list": true
       }
     },
-    "pointer_type": {
-      "vocab": "type.pointer",
-      "read": [
-        {
-          "vocab": "type.pointer",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "pointer_type_const": {
       "vocab": "type.pointer",
       "read": [
@@ -14359,19 +14190,6 @@
           ]
         }
       ]
-    },
-    "range_expression": {
-      "vocab": "expression.range",
-      "read": [
-        {
-          "vocab": "expression.range",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "range_expression_bare": {
       "vocab": "expression.range.exclusive",
@@ -14583,19 +14401,6 @@
         "terminals": [],
         "list": false
       }
-    },
-    "range_pattern": {
-      "vocab": "pattern.range",
-      "read": [
-        {
-          "vocab": "pattern.range",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "range_pattern_prefix": {
       "vocab": "pattern.range",
@@ -15009,19 +14814,6 @@
         "terminals": [],
         "list": false
       }
-    },
-    "reference_expression": {
-      "vocab": "expression.reference",
-      "read": [
-        {
-          "vocab": "expression.reference",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "reference_expression_bare": {
       "vocab": "expression.reference",
@@ -17324,19 +17116,6 @@
         }
       ]
     },
-    "struct_item": {
-      "vocab": "declaration.struct",
-      "read": [
-        {
-          "vocab": "declaration.struct",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "struct_item_brace": {
       "vocab": "declaration.struct",
       "read": [
@@ -19214,19 +18993,6 @@
         }
       ]
     },
-    "token_tree": {
-      "vocab": "element.macro.token_tree",
-      "read": [
-        {
-          "vocab": "element.macro.token_tree",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "token_tree_brace": {
       "vocab": "element.macro.token_tree.brace",
       "read": [
@@ -19355,19 +19121,6 @@
         "terminals": [],
         "list": true
       }
-    },
-    "token_tree_pattern": {
-      "vocab": "element.macro.token_tree.pattern",
-      "read": [
-        {
-          "vocab": "element.macro.token_tree.pattern",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "token_tree_pattern_brace": {
       "vocab": "element.macro.token_tree.pattern.brace",
@@ -23303,19 +23056,19 @@
       {
         "depth": 2,
         "paths": 96,
-        "kinds": 145,
+        "kinds": 134,
         "refinements": 7
       },
       {
         "depth": 3,
         "paths": 109,
-        "kinds": 121,
+        "kinds": 115,
         "refinements": 83
       },
       {
         "depth": 4,
         "paths": 108,
-        "kinds": 60,
+        "kinds": 58,
         "refinements": 82
       },
       {
