@@ -40,7 +40,7 @@ pub fn source_root<T>(root: super::CellAt, built: &dyn ArenaRead, arenas: &dyn R
 /// which a leaf and a unit never do.
 #[must_use]
 pub fn through_record(sources: &dyn SourceTable, coord: &NodeCoordinate, cell: Cell) -> bool {
-    sources.edited_within(coord) || (sources.reads_templates() && matches!(cell, Cell::Child { .. } | Cell::Coordinate { .. }))
+    sources.edited_within(coord) || (sources.reads_templates() && matches!(cell, Cell::Child { .. }))
 }
 
 /// The arenas a render reaches.
@@ -213,7 +213,7 @@ impl<'a, T> RecordCtx<'a, T> {
             return self.built_cell(word);
         }
         let cell = words.get(shape.word as usize..(shape.word + shape.width) as usize).ok_or(malformed("cell word", shape.word))?;
-        self.named(at, Cell::decode_parsed(cell, at.offset(shape.word).unwrap_or(Address::NONE), shape, self.bits)?)
+        self.named(at, Cell::decode_parsed(cell, shape, self.bits)?)
     }
 
     /// The list of the slot of shape `shape` in `words`, and the words each
@@ -233,7 +233,7 @@ impl<'a, T> RecordCtx<'a, T> {
         if self.tree.is_none() {
             return self.built_cell(*item.first().ok_or(malformed("cell width", 0))?);
         }
-        self.named(holder, Cell::decode_parsed(item, Address::NONE, shape, self.bits)?)
+        self.named(holder, Cell::decode_parsed(item, shape, self.bits)?)
     }
 
     #[must_use]
@@ -327,7 +327,6 @@ impl<'a, T> RecordCtx<'a, T> {
     pub fn cell_row(self, cell: Cell) -> Result<Option<ParsedRow>, ArenaError> {
         let here = |row, kind| self.tree.map(|tree| ParsedRow { tree, row, kind, changed: ChangedEdges::default() });
         Ok(match cell {
-            Cell::Coordinate { kind, index, .. } => here(index, kind),
             Cell::ParsedLeaf { kind, row, .. } | Cell::Unit { kind, row: Some(row) } => here(row, kind),
             Cell::LinkedLeaf { kind, tree, row, changed, .. } => Some(ParsedRow { tree, row, kind, changed }),
             Cell::Child { kind, at, link, changed } => {
@@ -577,11 +576,11 @@ pub(super) fn parsed_cells(arena: &dyn ArenaRead, at: Address, shape: fn(KindId)
         if let Some(width) = shape.run {
             let list = ListCell::of_word(CellWord(*words.get(shape.word as usize).ok_or(malformed("cell word", shape.word))?), arena)?;
             for (item, n) in list.items(arena, width)?.zip(0..) {
-                cells.push((shape, n, Cell::decode_parsed(item, Address::NONE, shape, bits)?));
+                cells.push((shape, n, Cell::decode_parsed(item, shape, bits)?));
             }
         } else {
             let cell = words.get(shape.word as usize..(shape.word + shape.width) as usize).ok_or(malformed("cell word", shape.word))?;
-            cells.push((shape, 0, Cell::decode_parsed(cell, at.offset(shape.word).unwrap_or(Address::NONE), shape, bits)?));
+            cells.push((shape, 0, Cell::decode_parsed(cell, shape, bits)?));
         }
     }
     Ok(cells)
@@ -765,9 +764,6 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
     /// The view a parsed node renders through when a write lies in its rows:
     /// its cell's, which names its record once its prepare wrote it.
     fn edited(&self, cell: Cell) -> Result<V, ArenaError> {
-        if let Cell::Coordinate { index, .. } = cell {
-            return Err(malformed("edited coordinate record", index.0));
-        }
         V::from_cell(self.ctx, cell, Some(self.site))
     }
 }
@@ -945,8 +941,8 @@ mod tests {
         Site { holder: Place::Record(Address(1)).into(), word: 2, item: ItemIndex(item) }
     }
 
-    const SLOT: CellShape = CellShape { word: 2, width: 3, run: None, inline: 0, forms: crate::record::form::NODE, built: 2, key: "_slot" };
-    const LIST: CellShape = CellShape { word: 2, width: 1, run: Some(3), inline: 0, forms: crate::record::form::NODE, built: 2, key: "_items" };
+    const SLOT: CellShape = CellShape { word: 2, width: 3, run: None, forms: crate::record::form::NODE, built: 2, key: "_slot" };
+    const LIST: CellShape = CellShape { word: 2, width: 1, run: Some(3), forms: crate::record::form::NODE, built: 2, key: "_items" };
 
     fn holding(cell: u32) -> [u32; 3] {
         [0, 0, cell]

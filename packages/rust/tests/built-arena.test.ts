@@ -379,7 +379,7 @@ describe('a built arena', () => {
 		storeCell(arena, record, 2, 2, 'x');
 		const source = arena.view(record) as RecordHandle;
 		const copy = arena.copy(source, 9);
-		expect(childSlot(source, 2, 1, 0, 0, 2)).toBe('x');
+		expect(childSlot(source, 2, 1, 0, 2)).toBe('x');
 		patchCell(arena, copy, 2, 2, 'x');
 		expect(copy.patched).toBeUndefined();
 		expect(placed(arena, arena.view(copy), 3)).toEqual(placed(arena, source, 3));

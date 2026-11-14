@@ -7,23 +7,23 @@ export const RECORD_HEADER_WORDS = 2;
 
 export const records = {
 	SourceFileNode: {
-		words: 9,
+		words: 6,
 		builtWords: 4,
-		shebang: { word: 2, width: 6, inline: 6, forms: 8, built: 2 },
-		statements: { word: 8, width: 1, run: 4, forms: 3, built: 3 }
+		shebang: { word: 2, width: 3, forms: 1, built: 2 },
+		statements: { word: 5, width: 1, run: 4, forms: 3, built: 3 }
 	},
 	ExpressionStatementNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
 	MacroRuleNode: {
 		words: 8,
 		builtWords: 4,
-		left: { word: 2, width: 3, inline: 3, forms: 8, built: 2 },
-		right: { word: 5, width: 3, inline: 3, forms: 8, built: 3 }
+		left: { word: 2, width: 3, forms: 1, built: 2 },
+		right: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	TokenBindingPatternNode: {
-		words: 9,
+		words: 6,
 		builtWords: 4,
-		name: { word: 2, width: 6, inline: 6, forms: 8, built: 2 },
-		fragment: { word: 8, width: 1, forms: 2, built: 3 }
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		fragment: { word: 5, width: 1, forms: 2, built: 3 }
 	},
 	TokenRepetitionPatternNode: {
 		words: 7,
@@ -39,7 +39,7 @@ export const records = {
 		separator: { word: 3, width: 3, forms: 1, built: 3 },
 		operator: { word: 6, width: 1, forms: 2, built: 4 }
 	},
-	NonSpecialTokenNode: { words: 22, builtWords: 3, content: { word: 2, width: 20, inline: 19, forms: 11, built: 2 } },
+	NonSpecialTokenNode: { words: 6, builtWords: 3, content: { word: 2, width: 4, forms: 3, built: 2 } },
 	AttributeItemNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
 	InnerAttributeItemNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
 	AttributeNode: {
@@ -50,139 +50,135 @@ export const records = {
 	},
 	DeclarationListNode: { words: 3, builtWords: 3, declarations: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
 	UnionItemNode: {
-		words: 36,
+		words: 17,
 		builtWords: 7,
-		visibility_modifier: { word: 2, width: 14, inline: 14, forms: 8, built: 2 },
-		name: { word: 16, width: 5, inline: 5, forms: 8, built: 3 },
-		type_parameters: { word: 21, width: 5, inline: 5, forms: 8, built: 4 },
-		where_clause: { word: 26, width: 5, inline: 5, forms: 8, built: 5 },
-		body: { word: 31, width: 5, inline: 5, forms: 8, built: 6 }
+		visibility_modifier: { word: 2, width: 3, forms: 1, built: 2 },
+		name: { word: 5, width: 3, forms: 1, built: 3 },
+		type_parameters: { word: 8, width: 3, forms: 1, built: 4 },
+		where_clause: { word: 11, width: 3, forms: 1, built: 5 },
+		body: { word: 14, width: 3, forms: 1, built: 6 }
 	},
 	EnumItemNode: {
-		words: 36,
+		words: 17,
 		builtWords: 7,
-		visibility_modifier: { word: 2, width: 14, inline: 14, forms: 8, built: 2 },
-		name: { word: 16, width: 5, inline: 5, forms: 8, built: 3 },
-		type_parameters: { word: 21, width: 5, inline: 5, forms: 8, built: 4 },
-		where_clause: { word: 26, width: 5, inline: 5, forms: 8, built: 5 },
-		body: { word: 31, width: 5, inline: 5, forms: 8, built: 6 }
+		visibility_modifier: { word: 2, width: 3, forms: 1, built: 2 },
+		name: { word: 5, width: 3, forms: 1, built: 3 },
+		type_parameters: { word: 8, width: 3, forms: 1, built: 4 },
+		where_clause: { word: 11, width: 3, forms: 1, built: 5 },
+		body: { word: 14, width: 3, forms: 1, built: 6 }
 	},
-	EnumVariantListNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	EnumVariantListNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, forms: 1, built: 2 } },
 	EnumVariantNode: {
-		words: 28,
+		words: 15,
 		builtWords: 6,
-		visibility_modifier: { word: 2, width: 14, inline: 14, forms: 8, built: 2 },
-		name: { word: 16, width: 3, forms: 1, built: 3 },
-		body: { word: 19, width: 5, inline: 5, forms: 8, built: 4 },
-		value: { word: 24, width: 4, forms: 3, built: 5 }
+		visibility_modifier: { word: 2, width: 3, forms: 1, built: 2 },
+		name: { word: 5, width: 3, forms: 1, built: 3 },
+		body: { word: 8, width: 3, forms: 1, built: 4 },
+		value: { word: 11, width: 4, forms: 3, built: 5 }
 	},
-	FieldDeclarationListNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	FieldDeclarationListNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, forms: 1, built: 2 } },
 	FieldDeclarationNode: {
-		words: 25,
+		words: 12,
 		builtWords: 5,
-		visibility_modifier: { word: 2, width: 14, inline: 14, forms: 8, built: 2 },
-		name: { word: 16, width: 5, inline: 5, forms: 8, built: 3 },
-		type_: { word: 21, width: 4, forms: 3, built: 4 }
+		visibility_modifier: { word: 2, width: 3, forms: 1, built: 2 },
+		name: { word: 5, width: 3, forms: 1, built: 3 },
+		type_: { word: 8, width: 4, forms: 3, built: 4 }
 	},
-	OrderedFieldDeclarationListNode: {
-		words: 5,
-		builtWords: 3,
-		elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
-	},
+	OrderedFieldDeclarationListNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, forms: 1, built: 2 } },
 	ExternCrateDeclarationNode: {
-		words: 22,
+		words: 11,
 		builtWords: 5,
-		visibility_modifier: { word: 2, width: 14, inline: 14, forms: 8, built: 2 },
-		name: { word: 16, width: 3, forms: 1, built: 3 },
-		alias: { word: 19, width: 3, forms: 1, built: 4 }
+		visibility_modifier: { word: 2, width: 3, forms: 1, built: 2 },
+		name: { word: 5, width: 3, forms: 1, built: 3 },
+		alias: { word: 8, width: 3, forms: 1, built: 4 }
 	},
 	ConstItemNode: {
-		words: 27,
+		words: 16,
 		builtWords: 6,
-		visibility_modifier: { word: 2, width: 14, inline: 14, forms: 8, built: 2 },
-		name: { word: 16, width: 3, forms: 1, built: 3 },
-		type_: { word: 19, width: 4, forms: 3, built: 4 },
-		value: { word: 23, width: 4, forms: 3, built: 5 }
+		visibility_modifier: { word: 2, width: 3, forms: 1, built: 2 },
+		name: { word: 5, width: 3, forms: 1, built: 3 },
+		type_: { word: 8, width: 4, forms: 3, built: 4 },
+		value: { word: 12, width: 4, forms: 3, built: 5 }
 	},
 	StaticItemNode: {
-		words: 28,
+		words: 17,
 		builtWords: 7,
-		visibility_modifier: { word: 3, width: 14, inline: 14, forms: 8, built: 3 },
+		visibility_modifier: { word: 3, width: 3, forms: 1, built: 3 },
 		by_reference: { word: 2, bit: 0 },
 		mutable: { word: 2, bit: 1 },
-		name: { word: 17, width: 3, forms: 1, built: 4 },
-		type_: { word: 20, width: 4, forms: 3, built: 5 },
-		value: { word: 24, width: 4, forms: 3, built: 6 }
+		name: { word: 6, width: 3, forms: 1, built: 4 },
+		type_: { word: 9, width: 4, forms: 3, built: 5 },
+		value: { word: 13, width: 4, forms: 3, built: 6 }
 	},
 	TypeItemNode: {
-		words: 40,
+		words: 21,
 		builtWords: 8,
-		visibility_modifier: { word: 2, width: 14, inline: 14, forms: 8, built: 2 },
-		name: { word: 16, width: 5, inline: 5, forms: 8, built: 3 },
-		type_parameters: { word: 21, width: 5, inline: 5, forms: 8, built: 4 },
-		where_clause: { word: 26, width: 5, inline: 5, forms: 8, built: 5 },
-		value: { word: 31, width: 4, forms: 3, built: 6 },
-		trailing_where_clause: { word: 35, width: 5, inline: 5, forms: 8, built: 7 }
+		visibility_modifier: { word: 2, width: 3, forms: 1, built: 2 },
+		name: { word: 5, width: 3, forms: 1, built: 3 },
+		type_parameters: { word: 8, width: 3, forms: 1, built: 4 },
+		where_clause: { word: 11, width: 3, forms: 1, built: 5 },
+		value: { word: 14, width: 4, forms: 3, built: 6 },
+		trailing_where_clause: { word: 18, width: 3, forms: 1, built: 7 }
 	},
 	FunctionItemNode: {
-		words: 46,
+		words: 27,
 		builtWords: 10,
-		visibility_modifier: { word: 2, width: 14, inline: 14, forms: 8, built: 2 },
-		function_modifiers: { word: 16, width: 3, inline: 3, forms: 8, built: 3 },
-		name: { word: 19, width: 7, inline: 6, forms: 9, built: 4 },
-		type_parameters: { word: 26, width: 5, inline: 5, forms: 8, built: 5 },
-		parameters: { word: 31, width: 3, forms: 1, built: 6 },
-		return_type: { word: 34, width: 4, forms: 3, built: 7 },
-		where_clause: { word: 38, width: 5, inline: 5, forms: 8, built: 8 },
-		body: { word: 43, width: 3, forms: 1, built: 9 }
+		visibility_modifier: { word: 2, width: 3, forms: 1, built: 2 },
+		function_modifiers: { word: 5, width: 3, forms: 1, built: 3 },
+		name: { word: 8, width: 3, forms: 1, built: 4 },
+		type_parameters: { word: 11, width: 3, forms: 1, built: 5 },
+		parameters: { word: 14, width: 3, forms: 1, built: 6 },
+		return_type: { word: 17, width: 4, forms: 3, built: 7 },
+		where_clause: { word: 21, width: 3, forms: 1, built: 8 },
+		body: { word: 24, width: 3, forms: 1, built: 9 }
 	},
 	FunctionSignatureItemNode: {
-		words: 43,
+		words: 24,
 		builtWords: 9,
-		visibility_modifier: { word: 2, width: 14, inline: 14, forms: 8, built: 2 },
-		function_modifiers: { word: 16, width: 3, inline: 3, forms: 8, built: 3 },
-		name: { word: 19, width: 7, inline: 6, forms: 9, built: 4 },
-		type_parameters: { word: 26, width: 5, inline: 5, forms: 8, built: 5 },
-		parameters: { word: 31, width: 3, forms: 1, built: 6 },
-		return_type: { word: 34, width: 4, forms: 3, built: 7 },
-		where_clause: { word: 38, width: 5, inline: 5, forms: 8, built: 8 }
+		visibility_modifier: { word: 2, width: 3, forms: 1, built: 2 },
+		function_modifiers: { word: 5, width: 3, forms: 1, built: 3 },
+		name: { word: 8, width: 3, forms: 1, built: 4 },
+		type_parameters: { word: 11, width: 3, forms: 1, built: 5 },
+		parameters: { word: 14, width: 3, forms: 1, built: 6 },
+		return_type: { word: 17, width: 4, forms: 3, built: 7 },
+		where_clause: { word: 21, width: 3, forms: 1, built: 8 }
 	},
 	FunctionModifiersNode: { words: 3, builtWords: 3, modifier: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
-	WhereClauseNode: { words: 5, builtWords: 3, where_predicates: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	WhereClauseNode: { words: 5, builtWords: 3, where_predicates: { word: 2, width: 3, forms: 1, built: 2 } },
 	WherePredicateNode: {
 		words: 9,
 		builtWords: 4,
 		left: { word: 2, width: 4, forms: 3, built: 2 },
-		bounds: { word: 6, width: 3, inline: 3, forms: 8, built: 3 }
+		bounds: { word: 6, width: 3, forms: 1, built: 3 }
 	},
 	TraitItemNode: {
-		words: 38,
+		words: 21,
 		builtWords: 9,
-		visibility_modifier: { word: 3, width: 14, inline: 14, forms: 8, built: 3 },
+		visibility_modifier: { word: 3, width: 3, forms: 1, built: 3 },
 		unsafe_: { word: 2, bit: 0 },
-		name: { word: 17, width: 5, inline: 5, forms: 8, built: 4 },
-		type_parameters: { word: 22, width: 5, inline: 5, forms: 8, built: 5 },
-		bounds: { word: 27, width: 3, inline: 3, forms: 8, built: 6 },
-		where_clause: { word: 30, width: 5, inline: 5, forms: 8, built: 7 },
-		body: { word: 35, width: 3, inline: 3, forms: 8, built: 8 }
+		name: { word: 6, width: 3, forms: 1, built: 4 },
+		type_parameters: { word: 9, width: 3, forms: 1, built: 5 },
+		bounds: { word: 12, width: 3, forms: 1, built: 6 },
+		where_clause: { word: 15, width: 3, forms: 1, built: 7 },
+		body: { word: 18, width: 3, forms: 1, built: 8 }
 	},
 	AssociatedTypeNode: {
-		words: 20,
+		words: 14,
 		builtWords: 6,
-		name: { word: 2, width: 5, inline: 5, forms: 8, built: 2 },
-		type_parameters: { word: 7, width: 5, inline: 5, forms: 8, built: 3 },
-		bounds: { word: 12, width: 3, inline: 3, forms: 8, built: 4 },
-		where_clause: { word: 15, width: 5, inline: 5, forms: 8, built: 5 }
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		type_parameters: { word: 5, width: 3, forms: 1, built: 3 },
+		bounds: { word: 8, width: 3, forms: 1, built: 4 },
+		where_clause: { word: 11, width: 3, forms: 1, built: 5 }
 	},
 	TraitBoundsNode: { words: 3, builtWords: 3, bounds: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
 	HigherRankedTraitBoundNode: {
-		words: 11,
+		words: 9,
 		builtWords: 4,
-		type_parameters: { word: 2, width: 5, inline: 5, forms: 8, built: 2 },
-		type_: { word: 7, width: 4, forms: 3, built: 3 }
+		type_parameters: { word: 2, width: 3, forms: 1, built: 2 },
+		type_: { word: 5, width: 4, forms: 3, built: 3 }
 	},
 	RemovedTraitBoundNode: { words: 6, builtWords: 3, type_: { word: 2, width: 4, forms: 3, built: 2 } },
-	TypeParametersNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	TypeParametersNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, forms: 1, built: 2 } },
 	ConstParameterNode: {
 		words: 13,
 		builtWords: 5,
@@ -191,17 +187,17 @@ export const records = {
 		default: { word: 9, width: 4, forms: 3, built: 4 }
 	},
 	TypeParameterNode: {
-		words: 14,
+		words: 12,
 		builtWords: 5,
-		name: { word: 2, width: 5, inline: 5, forms: 8, built: 2 },
-		bounds: { word: 7, width: 3, inline: 3, forms: 8, built: 3 },
-		default: { word: 10, width: 4, forms: 3, built: 4 }
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		bounds: { word: 5, width: 3, forms: 1, built: 3 },
+		default: { word: 8, width: 4, forms: 3, built: 4 }
 	},
 	LifetimeParameterNode: {
-		words: 10,
+		words: 8,
 		builtWords: 4,
-		name: { word: 2, width: 5, inline: 5, forms: 8, built: 2 },
-		bounds: { word: 7, width: 3, inline: 3, forms: 8, built: 3 }
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		bounds: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	LetDeclarationNode: {
 		words: 18,
@@ -213,35 +209,31 @@ export const records = {
 		alternative: { word: 15, width: 3, forms: 1, built: 6 }
 	},
 	UseDeclarationNode: {
-		words: 20,
+		words: 9,
 		builtWords: 4,
-		visibility_modifier: { word: 2, width: 14, inline: 14, forms: 8, built: 2 },
-		argument: { word: 16, width: 4, forms: 3, built: 3 }
+		visibility_modifier: { word: 2, width: 3, forms: 1, built: 2 },
+		argument: { word: 5, width: 4, forms: 3, built: 3 }
 	},
 	ScopedUseListNode: {
-		words: 11,
+		words: 9,
 		builtWords: 4,
 		path: { word: 2, width: 4, forms: 3, built: 2 },
-		list: { word: 6, width: 5, inline: 5, forms: 8, built: 3 }
+		list: { word: 6, width: 3, forms: 1, built: 3 }
 	},
-	UseListNode: { words: 5, builtWords: 3, use_clauses: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	UseListNode: { words: 5, builtWords: 3, use_clauses: { word: 2, width: 3, forms: 1, built: 2 } },
 	UseAsClauseNode: {
 		words: 9,
 		builtWords: 4,
 		name: { word: 2, width: 4, forms: 3, built: 2 },
 		alias: { word: 6, width: 3, forms: 1, built: 3 }
 	},
-	UseWildcardNode: {
-		words: 8,
-		builtWords: 3,
-		use_wildcard_group: { word: 2, width: 6, inline: 6, forms: 8, built: 2 }
-	},
+	UseWildcardNode: { words: 5, builtWords: 3, use_wildcard_group: { word: 2, width: 3, forms: 1, built: 2 } },
 	ParametersNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, forms: 1, built: 2 } },
 	SelfParameterNode: {
-		words: 8,
+		words: 6,
 		builtWords: 4,
 		reference: { word: 2, bit: 0 },
-		lifetime: { word: 3, width: 5, inline: 5, forms: 8, built: 3 },
+		lifetime: { word: 3, width: 3, forms: 1, built: 3 },
 		mutable: { word: 2, bit: 1 }
 	},
 	VariadicParameterNode: {
@@ -257,12 +249,8 @@ export const records = {
 		name: { word: 3, width: 4, forms: 3, built: 3 },
 		type_: { word: 7, width: 4, forms: 3, built: 4 }
 	},
-	ExternModifierNode: { words: 8, builtWords: 3, abi: { word: 2, width: 6, inline: 6, forms: 8, built: 2 } },
-	VisibilityModifierNode: {
-		words: 14,
-		builtWords: 3,
-		content: { word: 2, width: 12, inline: 11, forms: 10, built: 2 }
-	},
+	ExternModifierNode: { words: 5, builtWords: 3, abi: { word: 2, width: 3, forms: 1, built: 2 } },
+	VisibilityModifierNode: { words: 6, builtWords: 3, content: { word: 2, width: 4, forms: 3, built: 2 } },
 	BracketedTypeNode: { words: 6, builtWords: 3, type_: { word: 2, width: 4, forms: 3, built: 2 } },
 	QualifiedTypeNode: {
 		words: 10,
@@ -277,33 +265,33 @@ export const records = {
 		element: { word: 2, width: 4, forms: 3, built: 2 },
 		length: { word: 6, width: 4, forms: 3, built: 3 }
 	},
-	ForLifetimesNode: { words: 5, builtWords: 3, lifetimes: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	ForLifetimesNode: { words: 5, builtWords: 3, lifetimes: { word: 2, width: 3, forms: 1, built: 2 } },
 	FunctionTypeNode: {
-		words: 17,
+		words: 15,
 		builtWords: 6,
-		for_lifetimes: { word: 2, width: 5, inline: 5, forms: 8, built: 2 },
-		content: { word: 7, width: 3, forms: 1, built: 3 },
-		parameters: { word: 10, width: 3, forms: 1, built: 4 },
-		return_type: { word: 13, width: 4, forms: 3, built: 5 }
+		for_lifetimes: { word: 2, width: 3, forms: 1, built: 2 },
+		content: { word: 5, width: 3, forms: 1, built: 3 },
+		parameters: { word: 8, width: 3, forms: 1, built: 4 },
+		return_type: { word: 11, width: 4, forms: 3, built: 5 }
 	},
-	TupleTypeNode: { words: 5, builtWords: 3, types: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	TupleTypeNode: { words: 5, builtWords: 3, types: { word: 2, width: 3, forms: 1, built: 2 } },
 	GenericFunctionNode: {
-		words: 10,
+		words: 8,
 		builtWords: 4,
 		function: { word: 2, width: 3, forms: 1, built: 2 },
-		type_arguments: { word: 5, width: 5, inline: 5, forms: 8, built: 3 }
+		type_arguments: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	GenericTypeNode: {
-		words: 10,
+		words: 8,
 		builtWords: 4,
 		type_: { word: 2, width: 3, forms: 1, built: 2 },
-		type_arguments: { word: 5, width: 5, inline: 5, forms: 8, built: 3 }
+		type_arguments: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	GenericTypeWithTurbofishNode: {
-		words: 10,
+		words: 8,
 		builtWords: 4,
 		type_: { word: 2, width: 3, forms: 1, built: 2 },
-		type_arguments: { word: 5, width: 5, inline: 5, forms: 8, built: 3 }
+		type_arguments: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	BoundedTypeNode: {
 		words: 10,
@@ -311,34 +299,34 @@ export const records = {
 		left: { word: 2, width: 4, forms: 3, built: 2 },
 		right: { word: 6, width: 4, forms: 3, built: 3 }
 	},
-	UseBoundsNode: { words: 5, builtWords: 3, bounds: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
-	TypeArgumentsNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	UseBoundsNode: { words: 5, builtWords: 3, bounds: { word: 2, width: 3, forms: 1, built: 2 } },
+	TypeArgumentsNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, forms: 1, built: 2 } },
 	TypeBindingNode: {
-		words: 16,
-		builtWords: 5,
-		name: { word: 2, width: 5, inline: 5, forms: 8, built: 2 },
-		type_arguments: { word: 7, width: 5, inline: 5, forms: 8, built: 3 },
-		type_: { word: 12, width: 4, forms: 3, built: 4 }
-	},
-	ReferenceTypeNode: {
 		words: 12,
 		builtWords: 5,
-		lifetime: { word: 3, width: 5, inline: 5, forms: 8, built: 3 },
-		exclusive: { word: 2, bit: 0 },
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		type_arguments: { word: 5, width: 3, forms: 1, built: 3 },
 		type_: { word: 8, width: 4, forms: 3, built: 4 }
 	},
-	AbstractTypeNode: {
+	ReferenceTypeNode: {
 		words: 10,
+		builtWords: 5,
+		lifetime: { word: 3, width: 3, forms: 1, built: 3 },
+		exclusive: { word: 2, bit: 0 },
+		type_: { word: 6, width: 4, forms: 3, built: 4 }
+	},
+	AbstractTypeNode: {
+		words: 8,
 		builtWords: 4,
-		type_parameters: { word: 2, width: 5, inline: 5, forms: 8, built: 2 },
-		trait_: { word: 7, width: 3, forms: 1, built: 3 }
+		type_parameters: { word: 2, width: 3, forms: 1, built: 2 },
+		trait_: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	DynamicTypeNode: { words: 5, builtWords: 3, trait_: { word: 2, width: 3, forms: 1, built: 2 } },
 	MacroInvocationNode: {
 		words: 8,
 		builtWords: 4,
 		function: { word: 2, width: 3, forms: 1, built: 2 },
-		arguments: { word: 5, width: 3, inline: 3, forms: 8, built: 3 }
+		arguments: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	ScopedIdentifierNode: {
 		words: 10,
@@ -347,16 +335,16 @@ export const records = {
 		name: { word: 6, width: 4, forms: 3, built: 3 }
 	},
 	ScopedTypeIdentifierInExpressionPositionNode: {
-		words: 11,
+		words: 9,
 		builtWords: 4,
 		qualifier: { word: 2, width: 4, forms: 3, built: 2 },
-		name: { word: 6, width: 5, inline: 5, forms: 8, built: 3 }
+		name: { word: 6, width: 3, forms: 1, built: 3 }
 	},
 	ScopedTypeIdentifierNode: {
-		words: 11,
+		words: 9,
 		builtWords: 4,
 		qualifier: { word: 2, width: 4, forms: 3, built: 2 },
-		name: { word: 6, width: 5, inline: 5, forms: 8, built: 3 }
+		name: { word: 6, width: 3, forms: 1, built: 3 }
 	},
 	UnaryExpressionNode: {
 		words: 7,
@@ -394,25 +382,21 @@ export const records = {
 	ReturnExpressionNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
 	YieldExpressionNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
 	CallExpressionNode: {
-		words: 11,
+		words: 9,
 		builtWords: 4,
 		function: { word: 2, width: 4, forms: 3, built: 2 },
-		arguments: { word: 6, width: 5, inline: 5, forms: 8, built: 3 }
+		arguments: { word: 6, width: 3, forms: 1, built: 3 }
 	},
-	ArgumentsNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	ArgumentsNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, forms: 1, built: 2 } },
 	ParenthesizedExpressionNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
-	TupleExpressionNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	TupleExpressionNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, forms: 1, built: 2 } },
 	StructExpressionNode: {
-		words: 10,
+		words: 8,
 		builtWords: 4,
 		name: { word: 2, width: 3, forms: 1, built: 2 },
-		body: { word: 5, width: 5, inline: 5, forms: 8, built: 3 }
+		body: { word: 5, width: 3, forms: 1, built: 3 }
 	},
-	FieldInitializerListNode: {
-		words: 5,
-		builtWords: 3,
-		initializers: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
-	},
+	FieldInitializerListNode: { words: 5, builtWords: 3, initializers: { word: 2, width: 3, forms: 1, built: 2 } },
 	ShorthandFieldInitializerNode: {
 		words: 6,
 		builtWords: 4,
@@ -420,11 +404,11 @@ export const records = {
 		field: { word: 3, width: 3, forms: 1, built: 3 }
 	},
 	FieldInitializerNode: {
-		words: 15,
+		words: 10,
 		builtWords: 5,
 		attributes: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		field: { word: 3, width: 8, inline: 8, forms: 8, built: 3 },
-		value: { word: 11, width: 4, forms: 3, built: 4 }
+		field: { word: 3, width: 3, forms: 1, built: 3 },
+		value: { word: 6, width: 4, forms: 3, built: 4 }
 	},
 	BaseFieldInitializerNode: { words: 6, builtWords: 3, value: { word: 2, width: 4, forms: 3, built: 2 } },
 	IfExpressionNode: {
@@ -448,19 +432,19 @@ export const records = {
 	},
 	ElseClauseNode: { words: 5, builtWords: 3, body: { word: 2, width: 3, forms: 1, built: 2 } },
 	MatchExpressionNode: {
-		words: 11,
+		words: 9,
 		builtWords: 4,
 		subject: { word: 2, width: 4, forms: 3, built: 2 },
-		body: { word: 6, width: 5, inline: 5, forms: 8, built: 3 }
+		body: { word: 6, width: 3, forms: 1, built: 3 }
 	},
-	MatchBlockNode: { words: 5, builtWords: 3, match_block_arms: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	MatchBlockNode: { words: 5, builtWords: 3, match_block_arms: { word: 2, width: 3, forms: 1, built: 2 } },
 	LastMatchArmNode: {
-		words: 18,
+		words: 11,
 		builtWords: 6,
 		attributes: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		match_: { word: 3, width: 10, inline: 10, forms: 8, built: 3 },
-		body: { word: 13, width: 4, forms: 3, built: 4 },
-		trailing_comma: { word: 17, width: 1, forms: 18, built: 5 }
+		match_: { word: 3, width: 3, forms: 1, built: 3 },
+		body: { word: 6, width: 4, forms: 3, built: 4 },
+		trailing_comma: { word: 10, width: 1, forms: 18, built: 5 }
 	},
 	MatchPatternNode: {
 		words: 10,
@@ -469,36 +453,36 @@ export const records = {
 		condition: { word: 6, width: 4, forms: 3, built: 3 }
 	},
 	WhileExpressionNode: {
-		words: 14,
+		words: 12,
 		builtWords: 5,
-		label: { word: 2, width: 5, inline: 5, forms: 8, built: 2 },
-		condition: { word: 7, width: 4, forms: 3, built: 3 },
-		body: { word: 11, width: 3, forms: 1, built: 4 }
+		label: { word: 2, width: 3, forms: 1, built: 2 },
+		condition: { word: 5, width: 4, forms: 3, built: 3 },
+		body: { word: 9, width: 3, forms: 1, built: 4 }
 	},
 	LoopExpressionNode: {
-		words: 10,
+		words: 8,
 		builtWords: 4,
-		label: { word: 2, width: 5, inline: 5, forms: 8, built: 2 },
-		body: { word: 7, width: 3, forms: 1, built: 3 }
+		label: { word: 2, width: 3, forms: 1, built: 2 },
+		body: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	ForExpressionNode: {
-		words: 18,
+		words: 16,
 		builtWords: 6,
-		label: { word: 2, width: 5, inline: 5, forms: 8, built: 2 },
-		left: { word: 7, width: 4, forms: 3, built: 3 },
-		right: { word: 11, width: 4, forms: 3, built: 4 },
-		body: { word: 15, width: 3, forms: 1, built: 5 }
+		label: { word: 2, width: 3, forms: 1, built: 2 },
+		left: { word: 5, width: 4, forms: 3, built: 3 },
+		right: { word: 9, width: 4, forms: 3, built: 4 },
+		body: { word: 13, width: 3, forms: 1, built: 5 }
 	},
 	ConstBlockNode: { words: 5, builtWords: 3, body: { word: 2, width: 3, forms: 1, built: 2 } },
 	ClosureParametersNode: { words: 3, builtWords: 3, parameters: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	LabelNode: { words: 5, builtWords: 3, name: { word: 2, width: 3, forms: 1, built: 2 } },
 	BreakExpressionNode: {
-		words: 11,
+		words: 9,
 		builtWords: 4,
-		label: { word: 2, width: 5, inline: 5, forms: 8, built: 2 },
-		expression: { word: 7, width: 4, forms: 3, built: 3 }
+		label: { word: 2, width: 3, forms: 1, built: 2 },
+		expression: { word: 5, width: 4, forms: 3, built: 3 }
 	},
-	ContinueExpressionNode: { words: 7, builtWords: 3, label: { word: 2, width: 5, inline: 5, forms: 8, built: 2 } },
+	ContinueExpressionNode: { words: 5, builtWords: 3, label: { word: 2, width: 3, forms: 1, built: 2 } },
 	IndexExpressionNode: {
 		words: 10,
 		builtWords: 4,
@@ -507,10 +491,10 @@ export const records = {
 	},
 	AwaitExpressionNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
 	FieldExpressionNode: {
-		words: 14,
+		words: 9,
 		builtWords: 4,
 		object: { word: 2, width: 4, forms: 3, built: 2 },
-		property: { word: 6, width: 8, inline: 8, forms: 8, built: 3 }
+		property: { word: 6, width: 3, forms: 1, built: 3 }
 	},
 	UnsafeBlockNode: { words: 5, builtWords: 3, body: { word: 2, width: 3, forms: 1, built: 2 } },
 	AsyncBlockNode: {
@@ -527,31 +511,31 @@ export const records = {
 	},
 	TryBlockNode: { words: 5, builtWords: 3, body: { word: 2, width: 3, forms: 1, built: 2 } },
 	BlockNode: {
-		words: 12,
+		words: 10,
 		builtWords: 5,
-		label: { word: 2, width: 5, inline: 5, forms: 8, built: 2 },
-		statements: { word: 7, width: 1, run: 4, forms: 3, built: 3 },
-		trailing_expression: { word: 8, width: 4, forms: 3, built: 4 }
+		label: { word: 2, width: 3, forms: 1, built: 2 },
+		statements: { word: 5, width: 1, run: 4, forms: 3, built: 3 },
+		trailing_expression: { word: 6, width: 4, forms: 3, built: 4 }
 	},
 	GenericPatternNode: {
-		words: 10,
+		words: 8,
 		builtWords: 4,
 		name: { word: 2, width: 3, forms: 1, built: 2 },
-		type_arguments: { word: 5, width: 5, inline: 5, forms: 8, built: 3 }
+		type_arguments: { word: 5, width: 3, forms: 1, built: 3 }
 	},
-	TuplePatternNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
-	SlicePatternNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	TuplePatternNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, forms: 1, built: 2 } },
+	SlicePatternNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, forms: 1, built: 2 } },
 	TupleStructPatternNode: {
 		words: 8,
 		builtWords: 4,
 		type_: { word: 2, width: 3, forms: 1, built: 2 },
-		fields: { word: 5, width: 3, inline: 3, forms: 8, built: 3 }
+		fields: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	StructPatternNode: {
 		words: 8,
 		builtWords: 4,
 		type_: { word: 2, width: 3, forms: 1, built: 2 },
-		fields: { word: 5, width: 3, inline: 3, forms: 8, built: 3 }
+		fields: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	MutPatternNode: { words: 6, builtWords: 3, pattern: { word: 2, width: 4, forms: 3, built: 2 } },
 	RefPatternNode: { words: 6, builtWords: 3, pattern: { word: 2, width: 4, forms: 3, built: 2 } },
@@ -567,7 +551,7 @@ export const records = {
 		exclusive: { word: 2, bit: 0 },
 		pattern: { word: 3, width: 4, forms: 3, built: 3 }
 	},
-	NegativeLiteralNode: { words: 11, builtWords: 3, value: { word: 2, width: 9, inline: 8, forms: 9, built: 2 } },
+	NegativeLiteralNode: { words: 5, builtWords: 3, value: { word: 2, width: 3, forms: 1, built: 2 } },
 	StringLiteralNode: {
 		words: 6,
 		builtWords: 4,
@@ -575,14 +559,14 @@ export const records = {
 		elements: { word: 5, width: 1, run: 3, forms: 1, built: 3 }
 	},
 	RawStringLiteralNode: {
-		words: 19,
+		words: 11,
 		builtWords: 5,
-		raw_string_literal_start: { word: 2, width: 8, inline: 8, forms: 8, built: 2 },
-		string_content: { word: 10, width: 3, forms: 1, built: 3 },
-		raw_string_literal_end: { word: 13, width: 6, inline: 6, forms: 8, built: 4 }
+		raw_string_literal_start: { word: 2, width: 3, forms: 1, built: 2 },
+		string_content: { word: 5, width: 3, forms: 1, built: 3 },
+		raw_string_literal_end: { word: 8, width: 3, forms: 1, built: 4 }
 	},
-	LineCommentNode: { words: 8, builtWords: 3, content: { word: 2, width: 6, inline: 5, forms: 9, built: 2 } },
-	BlockCommentNode: { words: 8, builtWords: 3, content: { word: 2, width: 6, inline: 5, forms: 9, built: 2 } },
+	LineCommentNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
+	BlockCommentNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
 	IdentifierNode: { words: 2, builtWords: 2 },
 	ShebangNode: {
 		words: 6,
@@ -728,7 +712,7 @@ export const records = {
 		words: 9,
 		builtWords: 4,
 		value: { word: 2, width: 4, forms: 3, built: 2 },
-		arguments: { word: 6, width: 3, inline: 3, forms: 8, built: 3 }
+		arguments: { word: 6, width: 3, forms: 1, built: 3 }
 	},
 	ClosureExpressionBlockNode: {
 		words: 13,
@@ -736,7 +720,7 @@ export const records = {
 		static_: { word: 2, bit: 0 },
 		async_: { word: 2, bit: 1 },
 		move_: { word: 2, bit: 2 },
-		parameters: { word: 3, width: 3, inline: 3, forms: 8, built: 3 },
+		parameters: { word: 3, width: 3, forms: 1, built: 3 },
 		return_type: { word: 6, width: 4, forms: 3, built: 4 },
 		body: { word: 10, width: 3, forms: 1, built: 5 }
 	},
@@ -746,7 +730,7 @@ export const records = {
 		static_: { word: 2, bit: 0 },
 		async_: { word: 2, bit: 1 },
 		move_: { word: 2, bit: 2 },
-		parameters: { word: 3, width: 3, inline: 3, forms: 8, built: 3 },
+		parameters: { word: 3, width: 3, forms: 1, built: 3 },
 		body: { word: 6, width: 4, forms: 3, built: 4 }
 	},
 	ReferenceExpressionRawConstNode: { words: 6, builtWords: 3, argument: { word: 2, width: 4, forms: 3, built: 2 } },
@@ -756,53 +740,45 @@ export const records = {
 	ImplItemPositiveClauseNode: { words: 5, builtWords: 3, trait_: { word: 2, width: 3, forms: 1, built: 2 } },
 	ImplItemNegativeClauseNode: { words: 5, builtWords: 3, trait_: { word: 2, width: 3, forms: 1, built: 2 } },
 	ImplItemBodyNode: {
-		words: 25,
+		words: 19,
 		builtWords: 8,
 		unsafe_: { word: 2, bit: 0 },
-		type_parameters: { word: 3, width: 5, inline: 5, forms: 8, built: 3 },
-		trait_clause: { word: 8, width: 5, inline: 5, forms: 8, built: 4 },
-		type_: { word: 13, width: 4, forms: 3, built: 5 },
-		where_clause: { word: 17, width: 5, inline: 5, forms: 8, built: 6 },
-		body: { word: 22, width: 3, inline: 3, forms: 8, built: 7 }
+		type_parameters: { word: 3, width: 3, forms: 1, built: 3 },
+		trait_clause: { word: 6, width: 3, forms: 1, built: 4 },
+		type_: { word: 9, width: 4, forms: 3, built: 5 },
+		where_clause: { word: 13, width: 3, forms: 1, built: 6 },
+		body: { word: 16, width: 3, forms: 1, built: 7 }
 	},
 	ImplItemSemiNode: {
-		words: 22,
+		words: 16,
 		builtWords: 7,
 		unsafe_: { word: 2, bit: 0 },
-		type_parameters: { word: 3, width: 5, inline: 5, forms: 8, built: 3 },
-		trait_clause: { word: 8, width: 5, inline: 5, forms: 8, built: 4 },
-		type_: { word: 13, width: 4, forms: 3, built: 5 },
-		where_clause: { word: 17, width: 5, inline: 5, forms: 8, built: 6 }
+		type_parameters: { word: 3, width: 3, forms: 1, built: 3 },
+		trait_clause: { word: 6, width: 3, forms: 1, built: 4 },
+		type_: { word: 9, width: 4, forms: 3, built: 5 },
+		where_clause: { word: 13, width: 3, forms: 1, built: 6 }
 	},
 	VisibilityModifierPubScopeInPathNode: { words: 6, builtWords: 3, path: { word: 2, width: 4, forms: 3, built: 2 } },
-	VisibilityModifierPubScopeNode: {
-		words: 9,
-		builtWords: 3,
-		content: { word: 2, width: 7, inline: 6, forms: 10, built: 2 }
-	},
+	VisibilityModifierPubScopeNode: { words: 6, builtWords: 3, content: { word: 2, width: 4, forms: 3, built: 2 } },
 	VisibilityModifierPubNode: {
-		words: 11,
-		builtWords: 3,
-		visibility_modifier_pub_scope: { word: 2, width: 9, inline: 9, forms: 8, built: 2 }
-	},
-	FunctionTypeTraitFormNode: { words: 5, builtWords: 3, trait_: { word: 2, width: 3, forms: 1, built: 2 } },
-	FunctionTypeFnFormNode: {
 		words: 5,
 		builtWords: 3,
-		function_modifiers: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
+		visibility_modifier_pub_scope: { word: 2, width: 3, forms: 1, built: 2 }
 	},
+	FunctionTypeTraitFormNode: { words: 5, builtWords: 3, trait_: { word: 2, width: 3, forms: 1, built: 2 } },
+	FunctionTypeFnFormNode: { words: 5, builtWords: 3, function_modifiers: { word: 2, width: 3, forms: 1, built: 2 } },
 	ModItemExternalNode: {
-		words: 19,
+		words: 8,
 		builtWords: 4,
-		visibility_modifier: { word: 2, width: 14, inline: 14, forms: 8, built: 2 },
-		name: { word: 16, width: 3, forms: 1, built: 3 }
+		visibility_modifier: { word: 2, width: 3, forms: 1, built: 2 },
+		name: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	ModItemInlineNode: {
-		words: 22,
+		words: 11,
 		builtWords: 5,
-		visibility_modifier: { word: 2, width: 14, inline: 14, forms: 8, built: 2 },
-		name: { word: 16, width: 3, forms: 1, built: 3 },
-		body: { word: 19, width: 3, inline: 3, forms: 8, built: 4 }
+		visibility_modifier: { word: 2, width: 3, forms: 1, built: 2 },
+		name: { word: 5, width: 3, forms: 1, built: 3 },
+		body: { word: 8, width: 3, forms: 1, built: 4 }
 	},
 	OrPatternBinaryNode: {
 		words: 10,
@@ -825,31 +801,31 @@ export const records = {
 	RangeExpressionBareNode: { words: 2, builtWords: 2 },
 	ExpressionStatementWithSemiNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
 	ForeignModItemSemiNode: {
-		words: 11,
+		words: 6,
 		builtWords: 4,
 		unsafe_: { word: 2, bit: 0 },
-		extern_modifier: { word: 3, width: 8, inline: 8, forms: 8, built: 3 }
+		extern_modifier: { word: 3, width: 3, forms: 1, built: 3 }
 	},
 	ForeignModItemBodyNode: {
-		words: 14,
+		words: 9,
 		builtWords: 5,
 		unsafe_: { word: 2, bit: 0 },
-		extern_modifier: { word: 3, width: 8, inline: 8, forms: 8, built: 3 },
-		body: { word: 11, width: 3, inline: 3, forms: 8, built: 4 }
+		extern_modifier: { word: 3, width: 3, forms: 1, built: 3 },
+		body: { word: 6, width: 3, forms: 1, built: 4 }
 	},
 	MatchArmWithCommaNode: {
-		words: 17,
+		words: 10,
 		builtWords: 5,
 		attributes: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		match_: { word: 3, width: 10, inline: 10, forms: 8, built: 3 },
-		body: { word: 13, width: 4, forms: 3, built: 4 }
+		match_: { word: 3, width: 3, forms: 1, built: 3 },
+		body: { word: 6, width: 4, forms: 3, built: 4 }
 	},
 	MatchArmBlockEndingNode: {
-		words: 16,
+		words: 9,
 		builtWords: 5,
 		attributes: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		match_: { word: 3, width: 10, inline: 10, forms: 8, built: 3 },
-		body: { word: 13, width: 3, forms: 1, built: 4 }
+		match_: { word: 3, width: 3, forms: 1, built: 3 },
+		body: { word: 6, width: 3, forms: 1, built: 4 }
 	},
 	LineCommentExtraSlashesNode: { words: 2, builtWords: 2 },
 	LineCommentDocOuterNode: { words: 5, builtWords: 3, doc: { word: 2, width: 3, forms: 1, built: 2 } },
@@ -884,37 +860,37 @@ export const records = {
 	},
 	DelimTokenTreeBraceNode: { words: 3, builtWords: 3, delim_tokens: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
 	FieldPatternShorthandNode: {
-		words: 8,
+		words: 6,
 		builtWords: 4,
 		by_reference: { word: 2, bit: 0 },
 		mutable: { word: 2, bit: 1 },
-		name: { word: 3, width: 5, inline: 5, forms: 8, built: 3 }
+		name: { word: 3, width: 3, forms: 1, built: 3 }
 	},
 	FieldPatternNamedNode: {
-		words: 12,
+		words: 10,
 		builtWords: 5,
 		by_reference: { word: 2, bit: 0 },
 		mutable: { word: 2, bit: 1 },
-		name: { word: 3, width: 5, inline: 5, forms: 8, built: 3 },
-		pattern: { word: 8, width: 4, forms: 3, built: 4 }
+		name: { word: 3, width: 3, forms: 1, built: 3 },
+		pattern: { word: 6, width: 4, forms: 3, built: 4 }
 	},
 	MacroDefinitionParenNode: {
 		words: 8,
 		builtWords: 4,
 		name: { word: 2, width: 3, forms: 1, built: 2 },
-		macro_rules: { word: 5, width: 3, inline: 3, forms: 8, built: 3 }
+		macro_rules: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	MacroDefinitionBracketNode: {
 		words: 8,
 		builtWords: 4,
 		name: { word: 2, width: 3, forms: 1, built: 2 },
-		macro_rules: { word: 5, width: 3, inline: 3, forms: 8, built: 3 }
+		macro_rules: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	MacroDefinitionBraceNode: {
 		words: 8,
 		builtWords: 4,
 		name: { word: 2, width: 3, forms: 1, built: 2 },
-		macro_rules: { word: 5, width: 3, inline: 3, forms: 8, built: 3 }
+		macro_rules: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	RangePatternPrefixNode: {
 		words: 7,
@@ -935,41 +911,41 @@ export const records = {
 		content: { word: 6, width: 4, forms: 3, built: 3 }
 	},
 	StructItemBraceNode: {
-		words: 36,
+		words: 17,
 		builtWords: 7,
-		visibility_modifier: { word: 2, width: 14, inline: 14, forms: 8, built: 2 },
-		name: { word: 16, width: 5, inline: 5, forms: 8, built: 3 },
-		type_parameters: { word: 21, width: 5, inline: 5, forms: 8, built: 4 },
-		where_clause: { word: 26, width: 5, inline: 5, forms: 8, built: 5 },
-		body: { word: 31, width: 5, inline: 5, forms: 8, built: 6 }
+		visibility_modifier: { word: 2, width: 3, forms: 1, built: 2 },
+		name: { word: 5, width: 3, forms: 1, built: 3 },
+		type_parameters: { word: 8, width: 3, forms: 1, built: 4 },
+		where_clause: { word: 11, width: 3, forms: 1, built: 5 },
+		body: { word: 14, width: 3, forms: 1, built: 6 }
 	},
 	StructItemTupleNode: {
-		words: 36,
+		words: 17,
 		builtWords: 7,
-		visibility_modifier: { word: 2, width: 14, inline: 14, forms: 8, built: 2 },
-		name: { word: 16, width: 5, inline: 5, forms: 8, built: 3 },
-		type_parameters: { word: 21, width: 5, inline: 5, forms: 8, built: 4 },
-		body: { word: 26, width: 5, inline: 5, forms: 8, built: 5 },
-		where_clause: { word: 31, width: 5, inline: 5, forms: 8, built: 6 }
+		visibility_modifier: { word: 2, width: 3, forms: 1, built: 2 },
+		name: { word: 5, width: 3, forms: 1, built: 3 },
+		type_parameters: { word: 8, width: 3, forms: 1, built: 4 },
+		body: { word: 11, width: 3, forms: 1, built: 5 },
+		where_clause: { word: 14, width: 3, forms: 1, built: 6 }
 	},
 	StructItemUnitNode: {
-		words: 26,
+		words: 11,
 		builtWords: 5,
-		visibility_modifier: { word: 2, width: 14, inline: 14, forms: 8, built: 2 },
-		name: { word: 16, width: 5, inline: 5, forms: 8, built: 3 },
-		type_parameters: { word: 21, width: 5, inline: 5, forms: 8, built: 4 }
+		visibility_modifier: { word: 2, width: 3, forms: 1, built: 2 },
+		name: { word: 5, width: 3, forms: 1, built: 3 },
+		type_parameters: { word: 8, width: 3, forms: 1, built: 4 }
 	},
 	AttributedFieldDeclarationNode: {
-		words: 28,
+		words: 6,
 		builtWords: 4,
 		attribute_item: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		field_declaration: { word: 3, width: 25, inline: 25, forms: 8, built: 3 }
+		field_declaration: { word: 3, width: 3, forms: 1, built: 3 }
 	},
 	AttributedEnumVariantNode: {
-		words: 31,
+		words: 6,
 		builtWords: 4,
 		attribute_item: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		enum_variant: { word: 3, width: 28, inline: 28, forms: 8, built: 3 }
+		enum_variant: { word: 3, width: 3, forms: 1, built: 3 }
 	},
 	AttributedParameterNode: {
 		words: 9,
@@ -978,10 +954,10 @@ export const records = {
 		content: { word: 5, width: 4, forms: 3, built: 3 }
 	},
 	AttributedTypeParameterNode: {
-		words: 17,
+		words: 6,
 		builtWords: 4,
 		attribute_item: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		content: { word: 3, width: 14, inline: 14, forms: 8, built: 3 }
+		content: { word: 3, width: 3, forms: 1, built: 3 }
 	},
 	ArgumentNode: {
 		words: 7,
@@ -990,17 +966,17 @@ export const records = {
 		expression: { word: 3, width: 4, forms: 3, built: 3 }
 	},
 	AttributedOrderedFieldNode: {
-		words: 21,
+		words: 10,
 		builtWords: 5,
 		attribute_item: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		visibility_modifier: { word: 3, width: 14, inline: 14, forms: 8, built: 3 },
-		type_: { word: 17, width: 4, forms: 3, built: 4 }
+		visibility_modifier: { word: 3, width: 3, forms: 1, built: 3 },
+		type_: { word: 6, width: 4, forms: 3, built: 4 }
 	},
 	TypeArgumentNode: {
 		words: 9,
 		builtWords: 4,
 		content: { word: 2, width: 4, forms: 3, built: 2 },
-		trait_bounds: { word: 6, width: 3, inline: 3, forms: 8, built: 3 }
+		trait_bounds: { word: 6, width: 3, forms: 1, built: 3 }
 	},
 	MatchBlockArmsNode: { words: 3, builtWords: 3, arms: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	ArrayExpressionSemiNode: {
@@ -1009,7 +985,7 @@ export const records = {
 		element: { word: 2, width: 4, forms: 3, built: 2 },
 		length: { word: 6, width: 4, forms: 3, built: 3 }
 	},
-	ArrayExpressionListNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	ArrayExpressionListNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, forms: 1, built: 2 } },
 	FloatLiteralNode: { words: 2, builtWords: 2 },
 	StringContentNode: { words: 2, builtWords: 2 },
 	RawStringLiteralContentNode: { words: 2, builtWords: 2 },
@@ -1051,16 +1027,12 @@ export const records = {
 		content: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	ParametersElementsReceiverNode: {
-		words: 10,
+		words: 8,
 		builtWords: 4,
 		receiver: { word: 2, width: 3, forms: 1, built: 2 },
-		parameters_elements_receiver_group: { word: 5, width: 5, inline: 5, forms: 8, built: 3 }
+		parameters_elements_receiver_group: { word: 5, width: 3, forms: 1, built: 3 }
 	},
-	ParametersElementsReceiverGroupNode: {
-		words: 5,
-		builtWords: 3,
-		elements: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
-	},
+	ParametersElementsReceiverGroupNode: { words: 5, builtWords: 3, elements: { word: 2, width: 3, forms: 1, built: 2 } },
 	ErrorSentinelNode: { words: 2, builtWords: 2 },
 	TypeIdentifierNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
 	FieldIdentifierNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },

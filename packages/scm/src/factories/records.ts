@@ -712,7 +712,7 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.MissingNode as const);
 		storeCell(arena, record, 2, 2, _name);
-		storeList(arena, record, 3, 8, _elements);
+		storeList(arena, record, 3, 5, _elements);
 		const node = arena.view(record);
 		return node as unknown as T.MissingNode.Bound;
 	});
@@ -729,7 +729,7 @@ function buildMissingNode$patch(source: object, config: Partial<T.MissingNode.Co
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.MissingNode as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-		patchList(arena, record, 3, 8, _elements);
+		patchList(arena, record, 3, 5, _elements);
 		const node = arena.view(record);
 		return node as unknown as T.MissingNode.Bound;
 	});
@@ -803,7 +803,7 @@ export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousN
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.AnonymousNode as const);
 		storeCell(arena, record, 2, 2, _name);
-		storeList(arena, record, 3, 8, _elements);
+		storeList(arena, record, 3, 6, _elements);
 		const node = arena.view(record);
 		return node as unknown as T.AnonymousNode.Bound;
 	});
@@ -820,7 +820,7 @@ function buildAnonymousNode$patch(source: object, config: T.AnonymousNode.Config
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.AnonymousNode as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-		patchList(arena, record, 3, 8, _elements);
+		patchList(arena, record, 3, 6, _elements);
 		const node = arena.view(record);
 		return node as unknown as T.AnonymousNode.Bound;
 	});
@@ -1674,8 +1674,8 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 		const record = arena.record(TSKindId.NamedNodeSupertyped as const);
 		storeCell(arena, record, 2, 2, _supertype);
 		storeCell(arena, record, 3, 5, _name);
-		storeCell(arena, record, 4, 11, _named_node_group);
-		storeList(arena, record, 5, 14, _elements);
+		storeCell(arena, record, 4, 8, _named_node_group);
+		storeList(arena, record, 5, 11, _elements);
 		const node = arena.view(record);
 		return node as unknown as T.NamedNodeSupertyped.Bound;
 	});
@@ -1704,8 +1704,8 @@ function buildNamedNodeSupertyped$patch(
 		const record = arena.copy(source, TSKindId.NamedNodeSupertyped as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'supertype', _supertype));
 		patchCell(arena, record, 3, 5, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 4, 11, carriedSlot(source, 'namedNodeGroup', _named_node_group));
-		patchList(arena, record, 5, 14, _elements);
+		patchCell(arena, record, 4, 8, carriedSlot(source, 'namedNodeGroup', _named_node_group));
+		patchList(arena, record, 5, 11, _elements);
 		const node = arena.view(record);
 		return node as unknown as T.NamedNodeSupertyped.Bound;
 	});
@@ -2250,73 +2250,73 @@ export const builtViews: BuiltViews = Object.freeze({
 		64: 3
 	}),
 	places: Object.freeze({
-		1: [[2, 2, 2, 4, 0, 0]],
-		11: [[2, 2, 2, 4, 0, 0]],
-		33: [[2, 2, 1, 1, 0, 3]],
-		39: [[2, 2, 3, 1, 0, 0]],
-		40: [[2, 2, 3, 8, 3, 0]],
-		41: [[2, 2, 3, 8, 3, 0]],
-		42: [[2, 2, 1, 1, 0, 3]],
-		43: [[2, 2, 1, 1, 0, 3]],
+		1: [[2, 2, 2, 4, 0]],
+		11: [[2, 2, 2, 4, 0]],
+		33: [[2, 2, 1, 1, 3]],
+		39: [[2, 2, 3, 1, 0]],
+		40: [[2, 2, 3, 1, 0]],
+		41: [[2, 2, 3, 1, 0]],
+		42: [[2, 2, 1, 1, 3]],
+		43: [[2, 2, 1, 1, 3]],
 		44: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 1, 0, 3]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 1, 3]
 		],
 		45: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 1, 0, 3]
+			[2, 2, 1, 1, 3],
+			[3, 3, 1, 1, 3]
 		],
 		46: [
-			[2, 2, 6, 9, 5, 0],
-			[8, 3, 1, 1, 0, 3]
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 1, 3]
 		],
 		47: [
-			[2, 2, 6, 10, 5, 0],
-			[8, 3, 1, 1, 0, 3]
+			[2, 2, 4, 3, 0],
+			[6, 3, 1, 1, 3]
 		],
 		50: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
-		51: [[2, 2, 3, 1, 0, 0]],
+		51: [[2, 2, 3, 1, 0]],
 		52: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 3, 1, 0, 0],
-			[6, 4, 1, 2, 0, 0],
-			[7, 5, 3, 8, 3, 0]
+			[2, 2, 1, 2, 0],
+			[3, 3, 3, 1, 0],
+			[6, 4, 1, 2, 0],
+			[7, 5, 3, 1, 0]
 		],
-		54: [[2, 2, 1, 2, 0, 0]],
+		54: [[2, 2, 1, 2, 0]],
 		56: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		57: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		58: [
-			[3, 3, 3, 1, 0, 0],
+			[3, 3, 3, 1, 0],
 			[2, 0]
 		],
 		61: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 1, 0, 0],
-			[9, 4, 1, 1, 0, 3]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0],
+			[9, 4, 1, 1, 3]
 		],
 		62: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 6, 9, 5, 0],
-			[11, 4, 3, 1, 0, 0],
-			[14, 5, 1, 1, 0, 3]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0],
+			[8, 4, 3, 1, 0],
+			[11, 5, 1, 1, 3]
 		],
 		63: [
 			[2, 0],
-			[3, 3, 1, 1, 0, 3]
+			[3, 3, 1, 1, 3]
 		],
 		64: [
 			[2, 0],
-			[3, 3, 1, 1, 0, 3],
-			[4, 4, 3, 1, 0, 0]
+			[3, 3, 1, 1, 3],
+			[4, 4, 3, 1, 0]
 		]
 	} as const),
 	leaves: Object.freeze({ 5: leafIdentifier, 6: leafImmediateIdentifier, 23: leafStringContentText })

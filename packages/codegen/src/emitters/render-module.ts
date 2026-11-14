@@ -1347,7 +1347,7 @@ function recordsTs(lang: GrammarName, records: ReadonlyMap<string, RecordLayout>
 			const at =
 				'bit' in place
 					? `word: ${place.word}, bit: ${place.bit}`
-					: `word: ${place.word}, width: ${place.width}${place.run === undefined ? '' : `, run: ${place.run}`}${place.inline === undefined ? '' : `, inline: ${place.inline}`}, forms: ${place.forms}, built: ${place.built}`;
+					: `word: ${place.word}, width: ${place.width}${place.run === undefined ? '' : `, run: ${place.run}`}, forms: ${place.forms}, built: ${place.built}`;
 			return ` ${place.field}: { ${at} },`;
 		});
 		return `\t${name}: {${[` words: ${layout.words}, builtWords: ${layout.builtWords},`, ...places].join('')} },`;
@@ -3630,7 +3630,6 @@ function isCompoundOf(node: AssembledNode): boolean {
 function recordLayoutOfSlots(
 	printedSlots: readonly StructSlot[],
 	nodeMap: NodeMap,
-	inline: (slot: AssembledNonterminal) => number,
 	verbatim: boolean
 ): RecordLayout {
 	return recordLayoutOf([
@@ -3638,10 +3637,10 @@ function recordLayoutOfSlots(
 			const shape = nodeSlotShapeOf(slot, nodeMap);
 			return {
 				field: rustFieldIdent(slot.storageName),
-				form: slotRecordForm(shape.tag === 'presence', slotStoredOf(slot, shape, nodeMap), isMultiple(slot), isMultiple(slot) ? 0 : inline(slot))
+				form: slotRecordForm(shape.tag === 'presence', slotStoredOf(slot, shape, nodeMap), isMultiple(slot))
 			};
 		}),
-		...(verbatim ? [{ field: VERBATIM_FIELD, form: slotRecordForm(false, STORED.text, false, 0) }] : [])
+		...(verbatim ? [{ field: VERBATIM_FIELD, form: slotRecordForm(false, STORED.text, false) }] : [])
 	]);
 }
 
@@ -3698,10 +3697,7 @@ function slotStoredOf(slot: AssembledNonterminal, shape: NodeSlotShape, nodeMap:
 	}
 }
 
-const recordLayouts = new WeakMap<
-	NodeMap,
-	{ layouts: Map<AssembledNode, RecordLayout>; recursive: ReadonlySet<string>; active: Set<AssembledNode> }
->();
+const recordLayouts = new WeakMap<NodeMap, Map<AssembledNode, RecordLayout>>();
 
 export function nodeRecordLayout(node: AssembledNode, nodeMap: NodeMap): RecordLayout | undefined {
 	if (node instanceof AssembledEnum || !isCompoundOf(node)) return undefined;
@@ -3710,28 +3706,16 @@ export function nodeRecordLayout(node: AssembledNode, nodeMap: NodeMap): RecordL
 		const layout = list === undefined ? undefined : nodeRecordLayout(list, nodeMap);
 		if (layout !== undefined) return layout;
 	}
-	let state = recordLayouts.get(nodeMap);
-	if (state === undefined) {
-		state = { layouts: new Map(), recursive: (nodeMap.scc ?? computeNodeSCC(nodeMap)).recursive, active: new Set() };
-		recordLayouts.set(nodeMap, state);
+	let layouts = recordLayouts.get(nodeMap);
+	if (layouts === undefined) {
+		layouts = new Map();
+		recordLayouts.set(nodeMap, layouts);
 	}
-	const cached = state.layouts.get(node);
-	if (cached !== undefined) return cached;
-	if (state.active.has(node)) throw new Error(`record layout cycle at ${node.kind}`);
-	state.active.add(node);
-	const recursive = state.recursive;
-	const layout = recordLayoutOfSlots(structSlotsOf(node, renderSlotModelOf(node), nodeMap), nodeMap, (slot) => {
-		const shape = nodeSlotShapeOf(slot, nodeMap);
-		if (shape.tag === 'presence' || shape.tag === 'text' || shape.tag === 'any') return 0;
-		const children = slotElementKinds(slot, nodeMap).map((kind) => nodeMap.nodes.get(kind));
-		if (children.some((child) => child === undefined || recursive.has(child.kind))) return 0;
-		return Math.max(
-			0,
-			...children.map((child) => (child === undefined ? 0 : (nodeRecordLayout(child, nodeMap)?.words ?? 0)))
-		);
-	}, interiorOf(node) !== undefined);
-	state.active.delete(node);
-	state.layouts.set(node, layout);
+	let layout = layouts.get(node);
+	if (layout === undefined) {
+		layout = recordLayoutOfSlots(structSlotsOf(node, renderSlotModelOf(node), nodeMap), nodeMap, interiorOf(node) !== undefined);
+		layouts.set(node, layout);
+	}
 	return layout;
 }
 

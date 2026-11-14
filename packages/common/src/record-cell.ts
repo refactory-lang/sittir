@@ -11,11 +11,9 @@ export interface RecordCodecConstants {
 	readonly CELL_TAG_NODE: number;
 	readonly CELL_TAG_UNIT: number;
 	readonly CELL_TAG_TEXT: number;
-	readonly CELL_TAG_INLINE: number;
 	readonly CELL_FORM_NODE: number;
 	readonly CELL_FORM_UNIT: number;
 	readonly CELL_FORM_TEXT: number;
-	readonly CELL_FORM_INLINE: number;
 	readonly CELL_FORM_BLANK: number;
 	readonly CELL_LEAF_BIT: number;
 	readonly CELL_BLANK_UNIT: number;
@@ -57,7 +55,6 @@ export interface CellForms {
 	readonly node: number;
 	readonly unit: number;
 	readonly text: number;
-	readonly inline: number;
 	/** Not a form: the slot admits a choice's blank arm, which a read takes for no child, so a tagless unit cell of 0 is that arm. */
 	readonly blank: number;
 }
@@ -65,7 +62,7 @@ export interface CellForms {
 /** The cell tags and address packing a record's words are read with. */
 export interface CellFormat {
 	/** The tag word a parsed cell opens with when its slot holds more than one form. */
-	readonly tag: { readonly absent: number; readonly node: number; readonly unit: number; readonly text: number; readonly inline: number };
+	readonly tag: { readonly absent: number; readonly node: number; readonly unit: number; readonly text: number };
 	readonly forms: CellForms;
 	/** The bit a node cell's span end carries for a leaf. */
 	readonly leafBit: number;
@@ -102,7 +99,6 @@ export interface SideRow {
 /** One slot's cell, decoded. */
 export type RecordCell =
 	| { readonly form: 'absent' }
-	| { readonly form: 'coordinate'; readonly kind: number; readonly index: number; readonly span: ByteSpan }
 	| { readonly form: 'parsedLeaf'; readonly kind: number; readonly span: ByteSpan; readonly row: number }
 	| { readonly form: 'parsedText'; readonly span: ByteSpan }
 	| {
@@ -142,11 +138,9 @@ const CODEC_KEYS = [
 	'CELL_TAG_NODE',
 	'CELL_TAG_UNIT',
 	'CELL_TAG_TEXT',
-	'CELL_TAG_INLINE',
 	'CELL_FORM_NODE',
 	'CELL_FORM_UNIT',
 	'CELL_FORM_TEXT',
-	'CELL_FORM_INLINE',
 	'CELL_FORM_BLANK',
 	'CELL_LEAF_BIT',
 	'CELL_BLANK_UNIT',
@@ -183,8 +177,8 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 	if (!CODEC_KEYS.every((key) => typeof exported[key] === 'number')) return undefined;
 	const codec = exported as RecordCodecConstants;
 	return {
-		tag: { absent: codec.CELL_TAG_ABSENT, node: codec.CELL_TAG_NODE, unit: codec.CELL_TAG_UNIT, text: codec.CELL_TAG_TEXT, inline: codec.CELL_TAG_INLINE },
-		forms: { node: codec.CELL_FORM_NODE, unit: codec.CELL_FORM_UNIT, text: codec.CELL_FORM_TEXT, inline: codec.CELL_FORM_INLINE, blank: codec.CELL_FORM_BLANK },
+		tag: { absent: codec.CELL_TAG_ABSENT, node: codec.CELL_TAG_NODE, unit: codec.CELL_TAG_UNIT, text: codec.CELL_TAG_TEXT },
+		forms: { node: codec.CELL_FORM_NODE, unit: codec.CELL_FORM_UNIT, text: codec.CELL_FORM_TEXT, blank: codec.CELL_FORM_BLANK },
 		leafBit: codec.CELL_LEAF_BIT,
 		blankUnit: codec.CELL_BLANK_UNIT,
 		kindBits: codec.KIND_BITS,
@@ -261,8 +255,6 @@ function taggedForm(tag: number, at: number, format: CellFormat): number {
 			return forms.unit;
 		case tags.text:
 			return forms.text;
-		case tags.inline:
-			return forms.inline;
 		default:
 			throw new Error(`word ${at} holds cell tag ${tag}, which no record writer writes`);
 	}
@@ -282,11 +274,11 @@ function parsedRecord(first: number, address: number, end: number, at: number, f
 }
 
 /**
- * The parsed cell of a slot of `forms` whose words start at `at` in `words`, as the native hydration writes it. A bounded child's embedded record is read where it lies: `address` is the cell's own address, and `inline` the words its slot stamps for it.
+ * The parsed cell of a slot of `forms` whose words start at `at` in `words`, as the native hydration writes it.
  *
  * @throws When the cell holds a tag or a form its slot does not, a kind or row no parsed cell holds, or runs past `words`.
  */
-export function decodeParsedCell(words: ArrayLike<number>, at: number, forms: number, format: CellFormat, inline = 0, address = 0): RecordCell {
+export function decodeParsedCell(words: ArrayLike<number>, at: number, forms: number, format: CellFormat): RecordCell {
 	const first = words[at];
 	if (first === undefined) throw new Error(`no cell at word ${at}`);
 	const tagged = isTagged(forms, format);
@@ -306,8 +298,8 @@ export function decodeParsedCell(words: ArrayLike<number>, at: number, forms: nu
 			if (word(0) >>> format.kindBits === 0) return parsedRecord(word(0), word(1), word(2), at, format);
 			const { kind, row } = packed(word(0), at, format);
 			const end = word(2);
-			const span = { start: word(1), end: (end & ~format.leafBit) >>> 0 };
-			return (end & format.leafBit) === 0 ? { form: 'coordinate', kind, index: row, span } : { form: 'parsedLeaf', kind, span, row };
+			if ((end & format.leafBit) === 0) throw new Error(`a node cell at word ${at} names a node by its row alone, which no parsed cell does`);
+			return { form: 'parsedLeaf', kind, span: { start: word(1), end: (end & ~format.leafBit) >>> 0 }, row };
 		}
 		case format.forms.unit:
 			return { form: 'unit', ...packed(word(0), at, format) };
@@ -315,19 +307,6 @@ export function decodeParsedCell(words: ArrayLike<number>, at: number, forms: nu
 			const end = word(1);
 			if ((end & format.leafBit) !== 0) throw new Error(`a text cell at word ${at} ends at ${end >>> 0}, which no span does`);
 			return { form: 'parsedText', span: { start: word(0) - 1, end } };
-		}
-		case format.forms.inline: {
-			const offset = start - at;
-			if (address === 0 || inline < format.headerWords || start + inline > words.length || wordOf(address, format) + offset + inline > 2 ** format.chunkShift) {
-				throw new Error(`inline cell at word ${at} exceeds its stamped capacity ${inline}`);
-			}
-			return {
-				form: 'child',
-				kind: headerKind(word(0), format.kindBits),
-				at: addressOf(chunkOf(address, format), wordOf(address, format) + offset, format),
-				link: undefined,
-				changed: { leading: false, trailing: false }
-			};
 		}
 		default:
 			throw new Error(`a slot of forms ${forms} names no form a parsed cell holds`);

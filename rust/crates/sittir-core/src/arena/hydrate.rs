@@ -3,12 +3,9 @@
 //! The derive writes each node type's walk (`HydrateNode`) beside its typed
 //! read, through the same router; a slot's cells come from its stamps alone.
 //!
-//! A child with a record of its own is held by its record's address within
-//! the read's depth, its record published as its own walk ends, and past it
-//! by its coordinate. A bounded child, whose slot
-//! stamps an embedded capacity, is written into its holder's record at any
-//! depth. A leaf, a unit and a captured string have no record and are held
-//! whole. An extra no cell names: the walk that meets it among its node's
+//! A child with a record of its own is held by its record's address, its
+//! record published as its own walk ends. A leaf, a unit and a captured
+//! string have no record and are held whole. An extra no cell names: the walk that meets it among its node's
 //! children writes it whole when the walk's reader reads it as a record, and
 //! its tree holds the record. A walk writes only the nodes its holder's cell
 //! names and those extras, and a holder's walk is the one walk that does, so
@@ -16,14 +13,13 @@
 //!
 //! A record is written in place: its walk reserves its words in one chunk
 //! when it starts, and writes each cell there as its slot closes. A list's
-//! run is reserved when its slot closes, its length known then; a bounded
-//! child's walk writes its record into its holder's cell; a side record is
-//! written when its record's walk ends. What a refused walk wrote before
+//! run is reserved when its slot closes, its length known then; a side
+//! record is written when its record's walk ends. What a refused walk wrote before
 //! it was refused stays written.
 
 use super::side::{NodeFacts, RunEntry};
 use super::{Address, ArenaError, Cell, CellShape, ListCell, RecordSpace, Row, SideRecord};
-use crate::read::{Depth, Elided, ReadCtx, ReadError, ReadNode, ReadSlot, SlotSite};
+use crate::read::{Elided, ReadCtx, ReadError, ReadNode, ReadSlot, SlotSite};
 use crate::record::{stored, Stored, HEADER_WORDS};
 use crate::slot::SlotValue;
 use crate::types::{KindId, NodeIndex, Span};
@@ -63,38 +59,32 @@ impl HydrateError {
 /// What a parsed child is held as in its holder's record.
 #[derive(Debug)]
 pub enum Hydrated {
-    /// A node with a record, by its coordinate, or a leaf (`leaf`): its
-    /// stored kind, its row and its byte span.
-    Node { kind: KindId, row: NodeIndex, span: Span, leaf: bool },
+    /// A leaf: its stored kind, its row and its byte span.
+    Leaf { kind: KindId, row: NodeIndex, span: Span },
     /// A node whose record its walk published: its stored kind and record.
     Record { kind: KindId, at: Address },
     /// A unit and the row it was read at; the blank arm has none.
     Unit { kind: KindId, row: Option<NodeIndex> },
     /// A captured string.
     Text { span: Span },
-    /// A bounded child's record, which its walk wrote into its holder's
-    /// cell.
-    Embedded,
 }
 
 impl Hydrated {
     /// The blank arm.
     pub const BLANK: Hydrated = Hydrated::Unit { kind: KindId::BLANK, row: None };
 
-    fn cell(&self) -> Result<Cell, ArenaError> {
-        Ok(match *self {
-            Hydrated::Node { kind, row, span, leaf: false } => Cell::Coordinate { kind, index: row, span },
-            Hydrated::Node { kind, row, span, leaf: true } => Cell::ParsedLeaf { kind, span, row },
+    fn cell(&self) -> Cell {
+        match *self {
+            Hydrated::Leaf { kind, row, span } => Cell::ParsedLeaf { kind, span, row },
             Hydrated::Record { kind, at } => Cell::Child { kind, at, link: None, changed: crate::slot::ChangedEdges::default() },
             Hydrated::Unit { kind, row } => Cell::Unit { kind, row },
             Hydrated::Text { span } => Cell::ParsedText { span },
-            Hydrated::Embedded => return Err(ArenaError::Unwritable("an embedded record outside its holder's cell")),
-        })
+        }
     }
 }
 
 /// A record its walk writes in place: where its words are, reserved when
-/// the walk started or in its holder's cell, and how many.
+/// the walk started, and how many.
 #[derive(Debug, Clone, Copy)]
 pub struct Draft {
     at: Address,
@@ -114,14 +104,6 @@ impl Draft {
         }
         self.at.offset(word).ok_or(malformed)
     }
-}
-
-/// Where a bounded child's walk writes its record: the payload of its
-/// holder's cell, and the words it holds.
-#[derive(Debug, Clone, Copy)]
-pub struct Embed {
-    at: Address,
-    words: u32,
 }
 
 /// The walk of the extra a walk meets with the cursor on it (`kid`), as the
@@ -298,19 +280,10 @@ fn extra_walk<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>
     if N::router(kid.grammar, kid.display).is_none() {
         return Ok(false);
     }
-    if let Hydrated::Record { at, .. } = crate::stack::grown(|| N::hydrate(cursor, ctx, Some(Depth::All), records, None))? {
+    if let Hydrated::Record { at, .. } = crate::stack::grown(|| N::hydrate(cursor, ctx, records))? {
         records.tree.hold(kid.index, at)?;
     }
     Ok(true)
-}
-
-/// What a walk does for a node with a record of its own.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Walk {
-    /// Nothing: its holder holds its coordinate.
-    Skip,
-    /// Writes its record.
-    Write,
 }
 
 impl<'a> Hydration<'a> {
@@ -355,65 +328,34 @@ impl<'a> Hydration<'a> {
         if !read && self.tree.rows_by_run() && self.met_at == Some(kid.index) {
             self.entering = self.met.map(|facts| (kid.index, facts));
             let kind = ctx.stamped_kind(kid.grammar, kid.display);
-            let draft = self.open_record(kind, HEADER_WORDS, None)?;
+            let draft = self.open_record(kind, HEADER_WORDS)?;
             self.errors.push((draft, kid.index.get() + kid.count, Row { kind, span: kid.span() }));
         }
         Ok(read)
     }
 
-    /// Whether the walk of a node with a record, read at `depth` (`None` past
-    /// the read's depth), embedded in its holder's cell at `inline`, writes
-    /// its record.
-    #[must_use]
-    pub fn walk(&self, depth: Option<Depth>, inline: Option<Embed>) -> Walk {
-        if inline.is_some() || depth.is_some() { Walk::Write } else { Walk::Skip }
-    }
-
-    /// Where the bounded child the slot of shape `shape` of `holder` holds
-    /// writes its record: its cell's payload, `None` for a slot that embeds
-    /// no record.
-    ///
-    /// # Errors
-    ///
-    /// What `Cell::inline_payload` refuses, and a cell past its holder's
-    /// words.
-    pub fn embed(&self, holder: Draft, shape: CellShape) -> Result<Option<Embed>, HydrateError> {
-        if shape.forms & crate::record::form::INLINE == 0 {
-            return Ok(None);
-        }
-        let cell = holder.place(shape.word, shape.width)?;
-        let payload = Cell::inline_payload(self.tree.words(cell, shape.width)?, shape)?;
-        let at = cell.offset(u32::try_from(payload.start).map_err(|_| ArenaError::Full)?).ok_or(ArenaError::Malformed { what: "inline record address", word: shape.word })?;
-        Ok(Some(Embed { at, words: shape.inline }))
-    }
-
     /// The record of `kind`, `words` words, its header written: reserved in
-    /// one chunk, or in its holder's cell at `inline`.
+    /// one chunk.
     ///
     /// # Errors
     ///
-    /// `ArenaError::Malformed` for a record narrower than its header, wider
-    /// than the cell it is embedded in, or of a kind its arena's kind field
-    /// cannot hold; and what the arena refuses.
-    pub fn draft(&mut self, kind: KindId, words: u32, inline: Option<Embed>) -> Result<Draft, HydrateError> {
+    /// `ArenaError::Malformed` for a record narrower than its header, or of
+    /// a kind its arena's kind field cannot hold; and what the arena refuses.
+    pub fn draft(&mut self, kind: KindId, words: u32) -> Result<Draft, HydrateError> {
         if kind == KindId::ERROR {
             return Err(ArenaError::Malformed { what: "record header", word: u32::from(kind.0) }.into());
         }
-        self.open_record(kind, words, inline)
+        self.open_record(kind, words)
     }
 
     /// `draft`, for any kind a header holds: an `ERROR`'s record is the
     /// hydration's own to write.
-    fn open_record(&mut self, kind: KindId, words: u32, inline: Option<Embed>) -> Result<Draft, HydrateError> {
+    fn open_record(&mut self, kind: KindId, words: u32) -> Result<Draft, HydrateError> {
         if words < HEADER_WORDS || kind == KindId::BLANK {
             return Err(ArenaError::Malformed { what: "record header", word: u32::from(kind.0) }.into());
         }
         let header = super::with_kind(kind, self.tree.kind_bits())?;
-        let at = match inline {
-            Some(embed) if words > embed.words => return Err(ArenaError::Malformed { what: "inline cell width", word: embed.words }.into()),
-            Some(embed) => embed.at,
-            None => self.tree.alloc(words)?,
-        };
+        let at = self.tree.alloc(words)?;
         self.tree.words_mut(at, 1)?[0] = header;
         let entering = self.entering.take().or_else(|| self.met_at.zip(self.met));
         let own = entering.map_or(0, |(_, facts)| self.depth_of(facts.kind));
@@ -444,8 +386,7 @@ impl<'a> Hydration<'a> {
             Ok(NodeIndex(open.met[found].1 + 2))
         };
         Ok(match value {
-            Hydrated::Node { kind, row, span, leaf: true } => Hydrated::Node { kind, row: in_run(row)?, span, leaf: true },
-            Hydrated::Node { leaf: false, .. } => return Err(ArenaError::Unwritable("a coordinate in records that outlive their tree")),
+            Hydrated::Leaf { kind, row, span } => Hydrated::Leaf { kind, row: in_run(row)?, span },
             Hydrated::Unit { kind, row: Some(row) } => Hydrated::Unit { kind, row: Some(in_run(row)?) },
             value => value,
         })
@@ -461,10 +402,7 @@ impl<'a> Hydration<'a> {
         let bits = self.tree.kind_bits();
         let value = value.map(|value| self.held(draft, value)).transpose()?;
         let out = self.tree.words_mut(draft.place(shape.word, shape.width)?, shape.width)?;
-        match value {
-            Some(Hydrated::Embedded) => Cell::inline_tag(out, shape)?,
-            value => value.map_or(Ok(Cell::Absent), |value| value.cell())?.encode_parsed(out, shape, bits)?,
-        }
+        value.map_or(Cell::Absent, |value| value.cell()).encode_parsed(out, shape, bits)?;
         Ok(())
     }
 
@@ -490,7 +428,7 @@ impl<'a> Hydration<'a> {
         let out = self.tree.words_mut(run, words)?;
         out[0] = len;
         for (item, out) in items.into_iter().zip(out[1..].chunks_exact_mut(width as usize)) {
-            item.map_or(Ok(Cell::Absent), |item| item.cell())?.encode_parsed(out, shape, bits)?;
+            item.map_or(Cell::Absent, |item| item.cell()).encode_parsed(out, shape, bits)?;
         }
         self.tree.words_mut(cell, 1)?[0] = ListCell::word(run)?.0;
         Ok(())
@@ -516,7 +454,7 @@ impl<'a> Hydration<'a> {
         self.met_at = Some(kid.index);
         if kid.error() && self.tree.rows_by_run() {
             self.entering = Some((kid.index, facts));
-            let draft = self.open_record(KindId::ERROR, HEADER_WORDS, None)?;
+            let draft = self.open_record(KindId::ERROR, HEADER_WORDS)?;
             let kind = self.stamp.map_or(facts.kind, |(shows, relaxes)| crate::read::stamp(facts.kind, facts.display(), shows, relaxes));
             self.errors.push((draft, kid.index.get() + kid.count, Row { kind, span: kid.span() }));
         }
@@ -532,7 +470,7 @@ impl<'a> Hydration<'a> {
                 break;
             }
             self.errors.pop();
-            self.finish(draft, &parsed_side(row, None), KindId::ERROR, None)?;
+            self.finish(draft, &parsed_side(row, None), KindId::ERROR)?;
         }
         Ok(())
     }
@@ -618,20 +556,19 @@ impl<'a> Hydration<'a> {
     }
 
     /// Ends the walk of the record `draft` of `kind`: writes its side record
-    /// `side`, and answers what its holder holds, the record, or, written in
-    /// its holder's cell at `inline`, that cell's embedded record.
+    /// `side`, and answers what its holder holds, the record.
     ///
     /// # Errors
     ///
     /// What the arena refuses.
-    pub fn finish(&mut self, draft: Draft, side: &SideRecord, kind: KindId, inline: Option<Embed>) -> Result<Hydrated, HydrateError> {
+    pub fn finish(&mut self, draft: Draft, side: &SideRecord, kind: KindId) -> Result<Hydrated, HydrateError> {
         let opened = |open: &[OpenRun], at: Address| open.iter().rposition(|open| open.at == at);
         while let Some(&(error, _, row)) = self.errors.last() {
             if opened(&self.open, error.at) <= opened(&self.open, draft.at) {
                 break;
             }
             self.errors.pop();
-            self.finish(error, &parsed_side(row, None), KindId::ERROR, None)?;
+            self.finish(error, &parsed_side(row, None), KindId::ERROR)?;
         }
         let run = self.open.iter().rposition(|open| open.at == draft.at).and_then(|found| {
             self.open.truncate(found + 1);
@@ -654,7 +591,7 @@ impl<'a> Hydration<'a> {
             self.tree.words_mut(draft.place(1, 1)?, 1)?[0] = side.0;
         }
         self.tree.keep_record(draft.at);
-        Ok(if inline.is_some() { Hydrated::Embedded } else { Hydrated::Record { kind, at: draft.at } })
+        Ok(Hydrated::Record { kind, at: draft.at })
     }
 }
 
@@ -680,16 +617,14 @@ pub fn row_of(at: &crate::read::Kid, ctx: &ReadCtx<'_>) -> Row {
 
 /// A node type's direct hydration: what the node the cursor is on is held as
 /// in its holder's record, its own record written as its walk goes when it
-/// has one. `depth` is the levels the read reaches from the node, `None` past
-/// them; `inline` is where in its holder's cell its record is written. The
-/// derive writes every impl. The cursor ends where it started, whether the
+/// has one. The derive writes every impl. The cursor ends where it started, whether the
 /// walk stands or is refused.
 pub trait HydrateNode: ReadNode + Stored {
     /// # Errors
     ///
     /// What the node's read refuses, by the same router, and what the arena
     /// refuses.
-    fn hydrate(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, records: &mut Hydration<'_>, inline: Option<Embed>) -> Result<Hydrated, HydrateError>;
+    fn hydrate(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, records: &mut Hydration<'_>) -> Result<Hydrated, HydrateError>;
 
     /// The walk of the node the cursor is on, as the kind its parent's cell
     /// stamped: an enum picks the member that claims `stamped`, and the
@@ -700,27 +635,25 @@ pub trait HydrateNode: ReadNode + Stored {
     ///
     /// What `hydrate` refuses, and `ReadError::Unadmitted` for a stamped kind
     /// no member claims.
-    fn hydrate_stamped(stamped: KindId, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, records: &mut Hydration<'_>, inline: Option<Embed>) -> Result<Hydrated, HydrateError> {
+    fn hydrate_stamped(stamped: KindId, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, records: &mut Hydration<'_>) -> Result<Hydrated, HydrateError> {
         let _ = stamped;
-        Self::hydrate(cursor, ctx, depth, records, inline)
+        Self::hydrate(cursor, ctx, records)
     }
 }
 
 impl<T: HydrateNode> HydrateNode for Box<T> {
-    fn hydrate(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, records: &mut Hydration<'_>, inline: Option<Embed>) -> Result<Hydrated, HydrateError> {
-        T::hydrate(cursor, ctx, depth, records, inline)
+    fn hydrate(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, records: &mut Hydration<'_>) -> Result<Hydrated, HydrateError> {
+        T::hydrate(cursor, ctx, records)
     }
 
-    fn hydrate_stamped(stamped: KindId, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, records: &mut Hydration<'_>, inline: Option<Embed>) -> Result<Hydrated, HydrateError> {
-        T::hydrate_stamped(stamped, cursor, ctx, depth, records, inline)
+    fn hydrate_stamped(stamped: KindId, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, records: &mut Hydration<'_>) -> Result<Hydrated, HydrateError> {
+        T::hydrate_stamped(stamped, cursor, ctx, records)
     }
 }
 
-/// The child the cursor is on, as the slot of shape `shape` of `holder`
-/// holds it, within a holder read at `depth`.
-fn hydrate_value<T: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, records: &mut Hydration<'_>, shape: CellShape, holder: Draft) -> Result<Hydrated, HydrateError> {
-    let inline = records.embed(holder, shape)?;
-    crate::stack::grown(|| T::hydrate(cursor, ctx, depth.and_then(Depth::below), records, inline))
+/// The child the cursor is on, as its holder's slot holds it.
+fn hydrate_value<T: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, records: &mut Hydration<'_>) -> Result<Hydrated, HydrateError> {
+    crate::stack::grown(|| T::hydrate(cursor, ctx, records))
 }
 
 fn one(acc: &mut Option<Hydrated>, at: SlotSite, value: impl FnOnce() -> Result<Hydrated, HydrateError>) -> Result<(), HydrateError> {
@@ -740,15 +673,13 @@ fn missing(at: SlotSite) -> HydrateError {
 pub trait HydrateSlot: ReadSlot {
     type Held;
     fn held() -> Self::Held;
-    /// Takes the child the cursor is on into `held`, for the slot of shape
-    /// `shape` of the record `holder`.
+    /// Takes the child the cursor is on into `held`.
     ///
     /// # Errors
     ///
     /// A second child of a single slot, and what the child's hydration
     /// refuses.
-    #[allow(clippy::too_many_arguments, reason = "the walk's state, the slot and its holder, each passed once")]
-    fn take_held(held: &mut Self::Held, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, at: SlotSite, records: &mut Hydration<'_>, shape: CellShape, holder: Draft) -> Result<(), HydrateError>;
+    fn take_held(held: &mut Self::Held, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, at: SlotSite, records: &mut Hydration<'_>) -> Result<(), HydrateError>;
     fn separator_held(held: &mut Self::Held, tagged: bool) {
         let _ = (held, tagged);
     }
@@ -766,8 +697,8 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for SlotValue<T, A> {
     fn held() -> Self::Held {
         None
     }
-    fn take_held(held: &mut Self::Held, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, at: SlotSite, records: &mut Hydration<'_>, shape: CellShape, holder: Draft) -> Result<(), HydrateError> {
-        one(held, at, || hydrate_value::<T>(cursor, ctx, depth, records, shape, holder))
+    fn take_held(held: &mut Self::Held, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, at: SlotSite, records: &mut Hydration<'_>) -> Result<(), HydrateError> {
+        one(held, at, || hydrate_value::<T>(cursor, ctx, records))
     }
     fn finish_held(held: Self::Held, at: SlotSite, shape: CellShape, holder: Draft, records: &mut Hydration<'_>) -> Result<(), HydrateError> {
         let value = held.ok_or_else(|| missing(at))?;
@@ -782,8 +713,8 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for Option<SlotValue<T, A>> {
     fn held() -> Self::Held {
         None
     }
-    fn take_held(held: &mut Self::Held, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, at: SlotSite, records: &mut Hydration<'_>, shape: CellShape, holder: Draft) -> Result<(), HydrateError> {
-        one(held, at, || hydrate_value::<T>(cursor, ctx, depth, records, shape, holder))
+    fn take_held(held: &mut Self::Held, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, at: SlotSite, records: &mut Hydration<'_>) -> Result<(), HydrateError> {
+        one(held, at, || hydrate_value::<T>(cursor, ctx, records))
     }
     fn finish_held(held: Self::Held, _: SlotSite, shape: CellShape, holder: Draft, records: &mut Hydration<'_>) -> Result<(), HydrateError> {
         let value = held.or_else(|| (T::STORED & stored::BLANK != 0).then_some(Hydrated::BLANK));
@@ -796,8 +727,8 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for Vec<SlotValue<T, A>> {
     fn held() -> Self::Held {
         Vec::new()
     }
-    fn take_held(held: &mut Self::Held, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, _: SlotSite, records: &mut Hydration<'_>, shape: CellShape, holder: Draft) -> Result<(), HydrateError> {
-        held.push(hydrate_value::<T>(cursor, ctx, depth, records, shape, holder)?);
+    fn take_held(held: &mut Self::Held, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, _: SlotSite, records: &mut Hydration<'_>) -> Result<(), HydrateError> {
+        held.push(hydrate_value::<T>(cursor, ctx, records)?);
         Ok(())
     }
     fn finish_held(held: Self::Held, _: SlotSite, shape: CellShape, holder: Draft, records: &mut Hydration<'_>) -> Result<(), HydrateError> {
@@ -810,8 +741,8 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<SlotValue<T, A>>
     fn held() -> Self::Held {
         Vec::new()
     }
-    fn take_held(held: &mut Self::Held, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, at: SlotSite, records: &mut Hydration<'_>, shape: CellShape, holder: Draft) -> Result<(), HydrateError> {
-        <Vec<SlotValue<T, A>> as HydrateSlot>::take_held(held, cursor, ctx, depth, at, records, shape, holder)
+    fn take_held(held: &mut Self::Held, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, at: SlotSite, records: &mut Hydration<'_>) -> Result<(), HydrateError> {
+        <Vec<SlotValue<T, A>> as HydrateSlot>::take_held(held, cursor, ctx, at, records)
     }
     fn finish_held(held: Self::Held, at: SlotSite, shape: CellShape, holder: Draft, records: &mut Hydration<'_>) -> Result<(), HydrateError> {
         if held.is_empty() {
@@ -826,8 +757,8 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for Vec<Option<SlotValue<T, A>>>
     fn held() -> Self::Held {
         Elided::default()
     }
-    fn take_held(held: &mut Self::Held, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, _: SlotSite, records: &mut Hydration<'_>, shape: CellShape, holder: Draft) -> Result<(), HydrateError> {
-        held.push(hydrate_value::<T>(cursor, ctx, depth, records, shape, holder)?);
+    fn take_held(held: &mut Self::Held, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, _: SlotSite, records: &mut Hydration<'_>) -> Result<(), HydrateError> {
+        held.push(hydrate_value::<T>(cursor, ctx, records)?);
         Ok(())
     }
     fn separator_held(held: &mut Self::Held, tagged: bool) {
@@ -843,8 +774,8 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
     fn held() -> Self::Held {
         Elided::default()
     }
-    fn take_held(held: &mut Self::Held, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, depth: Option<Depth>, at: SlotSite, records: &mut Hydration<'_>, shape: CellShape, holder: Draft) -> Result<(), HydrateError> {
-        <Vec<Option<SlotValue<T, A>>> as HydrateSlot>::take_held(held, cursor, ctx, depth, at, records, shape, holder)
+    fn take_held(held: &mut Self::Held, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, at: SlotSite, records: &mut Hydration<'_>) -> Result<(), HydrateError> {
+        <Vec<Option<SlotValue<T, A>>> as HydrateSlot>::take_held(held, cursor, ctx, at, records)
     }
     fn separator_held(held: &mut Self::Held, tagged: bool) {
         held.separator(tagged);
@@ -867,7 +798,15 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 ///
 /// What the hydration refuses; what it wrote before stays written.
 pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
-    hydrate_into::<N>(cursor, ctx, NodeIndex::ROOT, None, Depth::All, (source, Some(kinds)), into)
+    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, kinds: Some(kinds), stamp: Some((ctx.shows, ctx.relaxes)), ..Hydration::new(into) };
+    crate::read::goto(cursor, NodeIndex::ROOT);
+    records.meet(cursor)?;
+    ctx.begin_read();
+    ctx.at = None;
+    Ok(match N::hydrate(cursor, ctx, records)? {
+        Hydrated::Record { at, .. } => Some(at),
+        _ => None,
+    })
 }
 
 /// The tree `cursor` walks, whose root is an `ERROR`, written into `into`
@@ -884,20 +823,4 @@ pub fn hydrate_error(cursor: &mut TreeCursor<'_>, source: Option<Address>, kinds
     let root = records.errors.first().map(|&(draft, ..)| draft.at);
     records.leave_errors(u32::MAX)?;
     Ok(root)
-}
-
-fn hydrate_into<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, stamped: Option<KindId>, depth: Depth, (source, kinds): (Option<Address>, Option<crate::trivia_table::SurfaceKinds>), into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
-    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, kinds, stamp: Some((ctx.shows, ctx.relaxes)), ..Hydration::new(into) };
-    crate::read::goto(cursor, index);
-    records.meet(cursor)?;
-    ctx.begin_read();
-    ctx.at = None;
-    let walked = match stamped {
-        Some(kind) => N::hydrate_stamped(kind, cursor, ctx, Some(depth), records, None),
-        None => N::hydrate(cursor, ctx, Some(depth), records, None),
-    };
-    Ok(match walked? {
-        Hydrated::Record { at, .. } => Some(at),
-        _ => None,
-    })
 }

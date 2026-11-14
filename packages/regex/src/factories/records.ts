@@ -719,7 +719,7 @@ export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Bound
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ClassRange as const);
 		storeCell(arena, record, 2, 2, _start);
-		storeCell(arena, record, 3, 21, _end);
+		storeCell(arena, record, 3, 6, _end);
 		const node = arena.view(record);
 		return node as unknown as T.ClassRange.Bound;
 	});
@@ -736,7 +736,7 @@ function buildClassRange$patch(source: object, config: T.ClassRange.Config): T.C
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ClassRange as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'start', _start));
-		patchCell(arena, record, 3, 21, carriedSlot(source, 'end', _end));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'end', _end));
 		const node = arena.view(record);
 		return node as unknown as T.ClassRange.Bound;
 	});
@@ -1595,7 +1595,7 @@ export function buildUnicodePropertyValueExpression(
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.UnicodePropertyValueExpression as const);
 		storeCell(arena, record, 2, 2, _unicode_property_value_expression_group);
-		storeCell(arena, record, 3, 7, _unicode_property_value);
+		storeCell(arena, record, 3, 5, _unicode_property_value);
 		const node = arena.view(record);
 		return node as unknown as T.UnicodePropertyValueExpression.Bound;
 	});
@@ -1628,7 +1628,7 @@ function buildUnicodePropertyValueExpression$patch(
 			2,
 			carriedSlot(source, 'unicodePropertyValueExpressionGroup', _unicode_property_value_expression_group)
 		);
-		patchCell(arena, record, 3, 7, carriedSlot(source, 'unicodePropertyValue', _unicode_property_value));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'unicodePropertyValue', _unicode_property_value));
 		const node = arena.view(record);
 		return node as unknown as T.UnicodePropertyValueExpression.Bound;
 	});
@@ -1925,7 +1925,7 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.TermGroup as const);
 		storeCell(arena, record, 2, 2, _content);
-		storeCell(arena, record, 3, 21, _quantifier);
+		storeCell(arena, record, 3, 6, _quantifier);
 		const node = arena.view(record);
 		return node as unknown as T.TermGroup.Bound;
 	});
@@ -1942,7 +1942,7 @@ function buildTermGroup$patch(source: object, config: T.TermGroup.Config): T.Ter
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.TermGroup as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
-		patchCell(arena, record, 3, 21, carriedSlot(source, 'quantifier', _quantifier));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'quantifier', _quantifier));
 		const node = arena.view(record);
 		return node as unknown as T.TermGroup.Bound;
 	});
@@ -2982,77 +2982,77 @@ export const builtViews: BuiltViews = Object.freeze({
 		86: 2
 	}),
 	places: Object.freeze({
-		37: [[2, 2, 2, 4, 0, 0]],
-		51: [[2, 2, 3, 8, 3, 0]],
-		52: [[2, 2, 1, 1, 0, 3]],
-		53: [[2, 2, 1, 1, 0, 3]],
-		55: [[2, 2, 8, 8, 8, 0]],
+		37: [[2, 2, 2, 4, 0]],
+		51: [[2, 2, 3, 1, 0]],
+		52: [[2, 2, 1, 1, 3]],
+		53: [[2, 2, 1, 1, 3]],
+		55: [[2, 2, 3, 1, 0]],
 		56: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 5, 8, 5, 0]
+			[2, 2, 1, 2, 0],
+			[3, 3, 3, 1, 0]
 		],
 		57: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 5, 8, 5, 0]
+			[2, 2, 1, 2, 0],
+			[3, 3, 3, 1, 0]
 		],
 		58: [
 			[2, 0],
 			[2, 1],
-			[3, 3, 1, 1, 0, 3],
+			[3, 3, 1, 1, 3],
 			[2, 2]
 		],
-		59: [[2, 2, 3, 1, 0, 0]],
+		59: [[2, 2, 3, 1, 0]],
 		61: [
-			[2, 2, 19, 11, 18, 0],
-			[21, 3, 19, 11, 18, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 4, 3, 0]
 		],
-		62: [[2, 2, 5, 8, 5, 0]],
+		62: [[2, 2, 3, 1, 0]],
 		63: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 3, 1, 0, 0],
-			[6, 4, 5, 8, 5, 0]
+			[2, 2, 1, 2, 0],
+			[3, 3, 3, 1, 0],
+			[6, 4, 3, 1, 0]
 		],
-		64: [[2, 2, 5, 8, 5, 0]],
+		64: [[2, 2, 3, 1, 0]],
 		67: [[2, 0]],
 		68: [[2, 0]],
 		69: [[2, 0]],
 		70: [
-			[3, 3, 11, 9, 10, 0],
+			[3, 3, 3, 1, 0],
 			[2, 0]
 		],
-		71: [[2, 2, 3, 1, 0, 0]],
-		72: [[2, 2, 3, 1, 0, 0]],
-		73: [[2, 2, 16, 9, 15, 0]],
+		71: [[2, 2, 3, 1, 0]],
+		72: [[2, 2, 3, 1, 0]],
+		73: [[2, 2, 3, 1, 0]],
 		75: [
-			[2, 2, 5, 8, 5, 0],
-			[7, 3, 3, 1, 0, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		78: [
-			[2, 2, 19, 11, 18, 0],
-			[21, 3, 14, 8, 14, 0]
+			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
 		],
-		79: [[2, 2, 3, 1, 0, 0]],
+		79: [[2, 2, 3, 1, 0]],
 		80: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 5, 8, 5, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		81: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 10, 8, 10, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
-		82: [[2, 2, 3, 1, 0, 0]],
+		82: [[2, 2, 3, 1, 0]],
 		84: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 5, 8, 5, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		85: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0],
-			[8, 4, 5, 8, 5, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0],
+			[8, 4, 3, 1, 0]
 		],
 		86: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 5, 8, 5, 0]
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		]
 	} as const),
 	leaves: Object.freeze({

@@ -362,8 +362,8 @@ export function setSlot(source: object, kind: number, kindName: string, at: numb
 		const record = arena.copy(source, kind, at);
 		const place = arena.placeAt(kind, at);
 		if (place.length === 2) patchFlag(record, place[0], 2 ** place[1], value);
-		else if (place.length === 6) {
-			if (place[5] === 0) patchCell(arena, record, place[1], place[0], carriedSlot(source, accessor, value));
+		else if (place.length === 5) {
+			if (place[4] === 0) patchCell(arena, record, place[1], place[0], carriedSlot(source, accessor, value));
 			else patchList(arena, record, place[1], place[0], value as readonly unknown[]);
 		}
 		arena.carry(source, record, at);
@@ -894,20 +894,20 @@ export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wra
 	return hydrateSlotBy(node, key, (value) => hydrateWith(value, tree, wrap, undefined, role));
 }
 
-export function childSlot(node: RecordHandle, word: number, width: number, forms: number, inline: number, built: number, wrap?: WrapNode, aliasContent = false, spellings?: Readonly<Record<string, string>>): unknown {
+export function childSlot(node: RecordHandle, word: number, width: number, forms: number, built: number, wrap?: WrapNode, aliasContent = false, spellings?: Readonly<Record<string, string>>): unknown {
 	const cache = cacheOf(node);
 	if (word in cache) return cache[word];
-	const value = recordSlot(node, word, width, forms, inline, built);
+	const value = recordSlot(node, word, width, forms, built);
 	const role = aliasContent ? contentRole(node, () => value) : 'node';
 	const child = wrap === undefined ? value : hydrateWith(value, node.$tree, wrap, undefined, role);
 	undoIfFillFails(cache, word, undefined);
 	return (cache[word] = spelledMember(child, spellings));
 }
 
-export function childItems(node: RecordHandle, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number, wrap?: WrapNode): readonly unknown[] {
+export function childItems(node: RecordHandle, word: number, width: number, run: number | undefined, forms: number, built: number, wrap?: WrapNode): readonly unknown[] {
 	const cache = cacheOf(node);
 	if (word in cache) return cache[word] as readonly unknown[];
-	const items = recordSlots(node, word, width, run, forms, inline, built, wrap === undefined ? undefined : (item) => hydrateWith(item, node.$tree, wrap));
+	const items = recordSlots(node, word, width, run, forms, built, wrap === undefined ? undefined : (item) => hydrateWith(item, node.$tree, wrap));
 	undoIfFillFails(cache, word, undefined);
 	return (cache[word] = Object.freeze(items)) as readonly unknown[];
 }

@@ -202,7 +202,7 @@ function placeIn(places: RecordPlaces, storageKey: string): RecordPlace {
 function cellArgs(place: RecordPlace, list = false): string {
 	if ('bit' in place) throw new Error(`emitWrap: presence word ${place.word} bit ${place.bit} is not a cell`);
 	if (!list && place.run !== undefined) throw new Error(`emitWrap: the list cell at word ${place.word} is read as one item`);
-	return `${place.word}, ${place.width}, ${list ? `${place.run ?? 'undefined'}, ` : ''}${place.forms}, ${place.inline ?? 0}, ${place.built}`;
+	return `${place.word}, ${place.width}, ${list ? `${place.run ?? 'undefined'}, ` : ''}${place.forms}, ${place.built}`;
 }
 
 interface SlotAccessorConfig {
@@ -761,11 +761,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'function hydrateSlots<T>(node: object, key: string, tree: TreeHandle): readonly ParsedOfData<T>[] {',
 			'  return hydrateSlotsWith(node, key, tree, _wrap) as readonly ParsedOfData<T>[];',
 			'}',
-			'function viewSlot<T>(view: RecordHandle, word: number, width: number, forms: number, inline: number, built: number, aliasContent = false, spellings?: Readonly<Record<string, string>>): ParsedOfData<T> {',
-			'  return childSlot(view, word, width, forms, inline, built, _wrap, aliasContent, spellings) as ParsedOfData<T>;',
+			'function viewSlot<T>(view: RecordHandle, word: number, width: number, forms: number, built: number, aliasContent = false, spellings?: Readonly<Record<string, string>>): ParsedOfData<T> {',
+			'  return childSlot(view, word, width, forms, built, _wrap, aliasContent, spellings) as ParsedOfData<T>;',
 			'}',
-			'function viewSlots<T>(view: RecordHandle, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number): readonly ParsedOfData<T>[] {',
-			'  return childItems(view, word, width, run, forms, inline, built, _wrap) as readonly ParsedOfData<T>[];',
+			'function viewSlots<T>(view: RecordHandle, word: number, width: number, run: number | undefined, forms: number, built: number): readonly ParsedOfData<T>[] {',
+			'  return childItems(view, word, width, run, forms, built, _wrap) as readonly ParsedOfData<T>[];',
 			'}',
 			''
 		];

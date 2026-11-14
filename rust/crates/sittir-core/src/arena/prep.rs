@@ -775,28 +775,16 @@ impl<T, N, const ADJACENT: bool> SlotAt<'_, T, N, ADJACENT> {
     }
 }
 
-/// A token read from the source its parsed coordinate names, as a native
-/// slot reads one (`delimiters`).
-fn read_token<N: Prepare>(coord: &NodeCoordinate, ctx: &RenderContext<'_>) -> Option<N> {
-    let mut node = None;
-    ctx.sources.read_node(coord.tree, coord.index, &mut |cursor, read| node = N::read_coordinate(cursor, read));
-    node?.ok()
-}
-
 impl<'r, T: Clone + 'static, N, const ADJACENT: bool> DelimiterSlot<RecordPrep<'r, T>> for SlotAt<'r, T, N, ADJACENT>
 where
     N: SetFacet + PrepareRecord<T> + HydrateNode + HasRecord,
     for<'a> N::Record<'a>: RecordView<'a, T> + DelimiterToken,
 {
     /// A token is read through its view, which renders the facet prepare
-    /// gave its site; a parsed one no read has written a record for, from
-    /// its source.
-    fn token(&self, prep: &RecordPrep<'r, T>, ctx: &RenderContext<'_>) -> Option<TokenFacts> {
+    /// gave its site.
+    fn token(&self, prep: &RecordPrep<'r, T>, _: &RenderContext<'_>) -> Option<TokenFacts> {
         let item = self.sole(prep)?;
-        match item.row {
-            Some(row) if matches!(item.at.cell, Cell::Coordinate { .. }) => read_token::<N>(&Self::coordinate(prep, item, row).ok()?, ctx).map(|node| TokenFacts::of(&node)),
-            _ => <N::Record<'_> as RecordView<'_, T>>::from_cell(prep.view(item.at.tree).ok()?, item.at.cell, Some(item.site)).ok().map(|view| TokenFacts::of(&view)),
-        }
+        <N::Record<'_> as RecordView<'_, T>>::from_cell(prep.view(item.at.tree).ok()?, item.at.cell, Some(item.site)).ok().map(|view| TokenFacts::of(&view))
     }
 
     /// The overlay holds the facet at the token's site. A parsed token the

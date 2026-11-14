@@ -16,12 +16,8 @@ export const records = {
 	IdentifierNode: { words: 2, builtWords: 2 },
 	ImmediateIdentifierNode: { words: 2, builtWords: 2 },
 	CaptureNode: { words: 5, builtWords: 3, name: { word: 2, width: 3, forms: 1, built: 2 } },
-	StringNode: { words: 5, builtWords: 3, string_content: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
-	ImmediateStringNode: {
-		words: 5,
-		builtWords: 3,
-		string_content: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
-	},
+	StringNode: { words: 5, builtWords: 3, string_content: { word: 2, width: 3, forms: 1, built: 2 } },
+	ImmediateStringNode: { words: 5, builtWords: 3, string_content: { word: 2, width: 3, forms: 1, built: 2 } },
 	StringContentNode: { words: 3, builtWords: 3, content: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	ParametersNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	CommentNode: {
@@ -43,16 +39,16 @@ export const records = {
 		elements: { word: 3, width: 1, run: 3, forms: 1, built: 3 }
 	},
 	MissingNodeNode: {
-		words: 9,
+		words: 6,
 		builtWords: 4,
-		name: { word: 2, width: 6, inline: 5, forms: 9, built: 2 },
-		elements: { word: 8, width: 1, run: 3, forms: 1, built: 3 }
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		elements: { word: 5, width: 1, run: 3, forms: 1, built: 3 }
 	},
 	AnonymousNodeNode: {
-		words: 9,
+		words: 7,
 		builtWords: 4,
-		name: { word: 2, width: 6, inline: 5, forms: 10, built: 2 },
-		elements: { word: 8, width: 1, run: 3, forms: 1, built: 3 }
+		name: { word: 2, width: 4, forms: 3, built: 2 },
+		elements: { word: 6, width: 1, run: 3, forms: 1, built: 3 }
 	},
 	FieldDefinitionNode: {
 		words: 8,
@@ -67,7 +63,7 @@ export const records = {
 		prefix: { word: 2, width: 1, forms: 2, built: 2 },
 		name: { word: 3, width: 3, forms: 1, built: 3 },
 		type_: { word: 6, width: 1, forms: 2, built: 4 },
-		parameters: { word: 7, width: 3, inline: 3, forms: 8, built: 5 }
+		parameters: { word: 7, width: 3, forms: 1, built: 5 }
 	},
 	ListElementQuantifierNode: { words: 3, builtWords: 3, quantifier: { word: 2, width: 1, forms: 2, built: 2 } },
 	GroupExpressionArmNode: {
@@ -97,12 +93,12 @@ export const records = {
 		elements: { word: 9, width: 1, run: 3, forms: 1, built: 4 }
 	},
 	NamedNodeSupertypedNode: {
-		words: 15,
+		words: 12,
 		builtWords: 6,
 		supertype: { word: 2, width: 3, forms: 1, built: 2 },
-		name: { word: 5, width: 6, inline: 5, forms: 9, built: 3 },
-		named_node_group: { word: 11, width: 3, forms: 1, built: 4 },
-		elements: { word: 14, width: 1, run: 3, forms: 1, built: 5 }
+		name: { word: 5, width: 3, forms: 1, built: 3 },
+		named_node_group: { word: 8, width: 3, forms: 1, built: 4 },
+		elements: { word: 11, width: 1, run: 3, forms: 1, built: 5 }
 	},
 	NamedNodeGroupChildrenNode: {
 		words: 4,

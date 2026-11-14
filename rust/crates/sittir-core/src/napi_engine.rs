@@ -763,8 +763,6 @@ macro_rules! napi_engine {
             pub const CELL_TAG_UNIT: u32 = $crate::arena::cell::parsed_tag::UNIT;
             #[::napi_derive::napi]
             pub const CELL_TAG_TEXT: u32 = $crate::arena::cell::parsed_tag::TEXT;
-            #[::napi_derive::napi]
-            pub const CELL_TAG_INLINE: u32 = $crate::arena::cell::parsed_tag::INLINE;
             /// The forms a slot's `forms` stamp names (`record::form`).
             #[::napi_derive::napi]
             pub const CELL_FORM_NODE: u32 = $crate::record::form::NODE as u32;
@@ -772,8 +770,6 @@ macro_rules! napi_engine {
             pub const CELL_FORM_UNIT: u32 = $crate::record::form::UNIT as u32;
             #[::napi_derive::napi]
             pub const CELL_FORM_TEXT: u32 = $crate::record::form::TEXT as u32;
-            #[::napi_derive::napi]
-            pub const CELL_FORM_INLINE: u32 = $crate::record::form::INLINE as u32;
             #[::napi_derive::napi]
             pub const CELL_FORM_BLANK: u32 = $crate::record::form::BLANK as u32;
             /// The bit a node cell's span end carries for a leaf

@@ -235,7 +235,7 @@ export type BuiltWith = (node: object, name: string, args: readonly unknown[]) =
 export type BuiltPlaceRow =
 	| readonly [word: number, bit: number]
 	| readonly [side: 'side', delimiter: boolean, separator: boolean]
-	| readonly [word: number, built: number, width: number, forms: number, inline: number, run: number];
+	| readonly [word: number, built: number, width: number, forms: number, run: number];
 
 export interface BuiltViews {
 	readonly withs: Readonly<Record<number, BuiltWith>>;
@@ -847,7 +847,7 @@ export class BuiltArena {
 		const source = record.copyOfParsed;
 		if (source === undefined) return;
 		const kind = headerKind(record.data[record.base]!, this.format.kindBits);
-		const place = this.#placesOf(kind).find((row) => row.length === 6 && row[0] === word);
+		const place = this.#placesOf(kind).find((row) => row.length === 5 && row[0] === word);
 		if (place === undefined) throw new Error(`a kind ${kind} record keeps no cell at word ${word}`);
 		this.#carryPlace(source, record, place);
 	}
@@ -869,10 +869,10 @@ export class BuiltArena {
 			storeListOptions(this, record, delimiter ? recordDelimiter(source) : undefined, separator ? recordSeparator(source) : undefined);
 			return;
 		}
-		const [word, built, width, forms, inline, run] = place;
+		const [word, built, width, forms, run] = place;
 		const read = (value: unknown): unknown => (typeof value === 'object' && value !== null ? carryTree(source, value) : value);
-		if (run === 0) storeCell(this, record, built, word, read(recordSlot(source, word, width, forms, inline, built)));
-		else storeList(this, record, built, word, recordSlots(source, word, width, run, forms, inline, built, read));
+		if (run === 0) storeCell(this, record, built, word, read(recordSlot(source, word, width, forms, built)));
+		else storeList(this, record, built, word, recordSlots(source, word, width, run, forms, built, read));
 	}
 
 	/** The words of a run of `length` one-word cells after its length word, which it holds. */

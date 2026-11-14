@@ -100,15 +100,12 @@ pub mod form {
     pub const UNIT: u8 = 2;
     /// A captured string: `[start + 1, end]`.
     pub const TEXT: u8 = 4;
-    /// A bounded child's record, embedded: its header (whose kind is never
-    /// 0), its side word and its cells, in the slot's `inline` words.
-    pub const INLINE: u8 = 8;
     /// Not a form: the slot admits a choice's blank arm, which a read takes
     /// for no child, so it never holds absent, and a tagless unit cell of 0
     /// is that arm.
     pub const BLANK: u8 = 16;
     /// The bits that name forms, `BLANK` left out.
-    pub const ALL: u8 = NODE | UNIT | TEXT | INLINE;
+    pub const ALL: u8 = NODE | UNIT | TEXT;
 
     /// The words a `NODE` cell takes.
     pub const NODE_WORDS: u32 = 3;
@@ -120,15 +117,11 @@ pub mod form {
     pub const LEAF: u32 = 1 << 31;
 }
 
-/// The forms a slot holds whose values are stored as `stored`, a bounded
-/// child's record embedded when `inline`.
+/// The forms a slot holds whose values are stored as `stored`.
 #[must_use]
-pub const fn forms_of(stored: u8, inline: bool) -> u8 {
+pub const fn forms_of(stored: u8) -> u8 {
     let mut forms = 0;
-    if stored & stored::RECORD != 0 {
-        forms |= if inline { form::INLINE } else { form::NODE };
-    }
-    if stored & stored::LEAF != 0 {
+    if stored & (stored::RECORD | stored::LEAF) != 0 {
         forms |= form::NODE;
     }
     if stored & stored::UNIT != 0 {
@@ -149,9 +142,9 @@ pub const fn tagged(forms: u8) -> bool {
     (forms & form::ALL).count_ones() > 1
 }
 
-/// The words a cell of `forms` takes, an embedded record taking `inline`.
+/// The words a cell of `forms` takes.
 #[must_use]
-pub const fn parsed_width(forms: u8, inline: u32) -> u32 {
+pub const fn parsed_width(forms: u8) -> u32 {
     let mut widest = 0;
     if forms & form::NODE != 0 && form::NODE_WORDS > widest {
         widest = form::NODE_WORDS;
@@ -161,9 +154,6 @@ pub const fn parsed_width(forms: u8, inline: u32) -> u32 {
     }
     if forms & form::TEXT != 0 && form::TEXT_WORDS > widest {
         widest = form::TEXT_WORDS;
-    }
-    if forms & form::INLINE != 0 && inline > widest {
-        widest = inline;
     }
     if tagged(forms) { widest + 1 } else { widest }
 }
@@ -224,18 +214,14 @@ impl<T: RecordCell> RecordCell for NonEmptyVec<T> {
     const LIST: bool = true;
 }
 
-/// Whether `T` is held in a cell of `forms` and `width` words, a bounded
-/// child's record embedded in `inline` of them, or for a list in one word
-/// naming a run of `run`-word item cells.
+/// Whether `T` is held in a cell of `forms` and `width` words, or for a
+/// list in one word naming a run of `run`-word item cells.
 #[must_use]
-pub const fn fits_cell<T: RecordCell>(forms: u8, width: u32, run: u32, inline: u32) -> bool {
-    if T::PRESENCE {
+pub const fn fits_cell<T: RecordCell>(forms: u8, width: u32, run: u32) -> bool {
+    if T::PRESENCE || forms != forms_of(T::STORED) {
         return false;
     }
-    if T::LIST {
-        return inline == 0 && width == 1 && forms == forms_of(T::STORED, false) && run == parsed_width(forms, 0);
-    }
-    run == 0 && forms == forms_of(T::STORED, inline > 0) && width == parsed_width(forms, inline)
+    if T::LIST { width == 1 && run == parsed_width(forms) } else { run == 0 && width == parsed_width(forms) }
 }
 
 /// Whether `T` is a presence, which a stamped bit holds.
@@ -266,46 +252,41 @@ mod tests {
 
     #[test]
     fn a_child_with_a_record_or_a_leaf_takes_a_three_word_node_cell() {
-        assert!(fits_cell::<SlotValue<Branch>>(form::NODE, 3, 0, 0));
-        assert!(fits_cell::<Option<SlotValue<Box<Leaf>>>>(form::NODE, 3, 0, 0));
-        assert!(!fits_cell::<SlotValue<Branch>>(form::NODE, 4, 0, 0));
-        assert!(!fits_cell::<SlotValue<Branch>>(form::UNIT, 3, 0, 0));
+        assert!(fits_cell::<SlotValue<Branch>>(form::NODE, 3, 0));
+        assert!(fits_cell::<Option<SlotValue<Box<Leaf>>>>(form::NODE, 3, 0));
+        assert!(!fits_cell::<SlotValue<Branch>>(form::NODE, 4, 0));
+        assert!(!fits_cell::<SlotValue<Branch>>(form::UNIT, 3, 0));
     }
 
-    #[test]
-    fn a_bounded_child_is_embedded_in_its_capacity() {
-        assert!(fits_cell::<SlotValue<Branch>>(form::INLINE, 6, 0, 6));
-        assert!(!fits_cell::<SlotValue<Branch>>(form::NODE, 6, 0, 6));
-    }
 
     #[test]
     fn a_slot_of_more_than_one_form_opens_with_a_tag() {
-        let forms = forms_of(Choice::STORED, false);
+        let forms = forms_of(Choice::STORED);
         assert_eq!(forms, form::NODE | form::UNIT | form::BLANK);
         assert!(tagged(forms));
-        assert!(fits_cell::<SlotValue<Choice>>(forms, 4, 0, 0));
+        assert!(fits_cell::<SlotValue<Choice>>(forms, 4, 0));
         assert!(!tagged(form::UNIT | form::BLANK));
     }
 
     #[test]
     fn text_takes_two_words() {
-        assert!(fits_cell::<String>(form::TEXT, 2, 0, 0));
-        assert!(fits_cell::<Option<String>>(form::TEXT, 2, 0, 0));
-        assert!(!fits_cell::<String>(form::TEXT, 1, 0, 0));
+        assert!(fits_cell::<String>(form::TEXT, 2, 0));
+        assert!(fits_cell::<Option<String>>(form::TEXT, 2, 0));
+        assert!(!fits_cell::<String>(form::TEXT, 1, 0));
     }
 
     #[test]
     fn a_list_takes_one_word_and_a_run_as_wide_as_its_item() {
-        assert!(fits_cell::<Vec<SlotValue<Branch>>>(form::NODE, 1, 3, 0));
-        assert!(fits_cell::<NonEmptyVec<Option<SlotValue<Leaf>>>>(form::NODE, 1, 3, 0));
-        assert!(!fits_cell::<Vec<SlotValue<Branch>>>(form::NODE, 1, 2, 0));
-        assert!(!fits_cell::<Vec<SlotValue<Branch>>>(form::NODE, 2, 3, 0));
+        assert!(fits_cell::<Vec<SlotValue<Branch>>>(form::NODE, 1, 3));
+        assert!(fits_cell::<NonEmptyVec<Option<SlotValue<Leaf>>>>(form::NODE, 1, 3));
+        assert!(!fits_cell::<Vec<SlotValue<Branch>>>(form::NODE, 1, 2));
+        assert!(!fits_cell::<Vec<SlotValue<Branch>>>(form::NODE, 2, 3));
     }
 
     #[test]
     fn a_presence_is_a_bit_never_a_cell() {
         assert!(fits_bit::<bool>());
-        assert!(!fits_cell::<bool>(form::NODE, 3, 0, 0));
+        assert!(!fits_cell::<bool>(form::NODE, 3, 0));
         assert!(!fits_bit::<SlotValue<Branch>>());
     }
 }

@@ -171,8 +171,6 @@ function cellData(holder: RecordPosition, cell: RecordCell, word: number, item: 
 	switch (cell.form) {
 		case 'absent':
 			return undefined;
-		case 'coordinate':
-			throw new Error(`the record at ${holder.$at} names a node its read left unread, and a read leaves none`);
 		case 'parsedLeaf':
 			return readLeaf(arena, holder.$at, cell.kind, cell.span, cell.row === 1 ? undefined : [word, item]);
 		case 'parsedText':
@@ -192,12 +190,12 @@ function cellData(holder: RecordPosition, cell: RecordCell, word: number, item: 
 }
 
 /** The value of the one-cell slot whose parsed cell is at `word`, `width` words holding `forms`, and whose built cell is `built`, of the record `holder` is at, as read data. */
-export function recordSlot(holder: RecordPosition, word: number, width: number, forms: number, inline: number, built: number): unknown {
-	return cellData(holder, slotCell(holder, word, width, forms, inline, built), word, 0);
+export function recordSlot(holder: RecordPosition, word: number, width: number, forms: number, built: number): unknown {
+	return cellData(holder, slotCell(holder, word, width, forms, built), word, 0);
 }
 
-export function recordPresent(holder: RecordPosition, word: number, width: number, forms: number, inline: number, built: number): boolean {
-	return slotCell(holder, word, width, forms, inline, built).form !== 'absent';
+export function recordPresent(holder: RecordPosition, word: number, width: number, forms: number, built: number): boolean {
+	return slotCell(holder, word, width, forms, built).form !== 'absent';
 }
 
 function builtLayout(holder: RecordPosition): BuiltArena | undefined {
@@ -205,14 +203,14 @@ function builtLayout(holder: RecordPosition): BuiltArena | undefined {
 	return arena === undefined || arena.reads(holder.$at) ? undefined : arena;
 }
 
-function slotCell(holder: RecordPosition, word: number, width: number, forms: number, inline: number, built: number): RecordCell {
+function slotCell(holder: RecordPosition, word: number, width: number, forms: number, built: number): RecordCell {
 	const arena = builtLayout(holder);
 	if (arena !== undefined) {
 		const { words, start } = holderWords(holder, built + 1);
 		return decodeBuiltCell(arena, words[start + built]!);
 	}
 	const { words, start, records } = holderWords(holder, word + width);
-	return decodeParsedCell(words.subarray(0, start + word + width), start + word, forms, records.format, inline, holder.$at + word);
+	return decodeParsedCell(words.subarray(0, start + word + width), start + word, forms, records.format);
 }
 
 /** The list one word of a holder names: the built cell `built` of a built record, else the parsed cell at `word`. */
@@ -229,10 +227,10 @@ function itemData(holder: RecordPosition, cell: RecordCell, word: number, item: 
 }
 
 /** The items of the list slot whose parsed cell is at `word`, each item's cell `run` words holding `forms`, and whose built cell is `built`, of the record `holder` is at, each as read data. */
-export function recordSlots(holder: RecordPosition, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number, hydrate?: (value: unknown) => unknown): readonly unknown[] {
+export function recordSlots(holder: RecordPosition, word: number, width: number, run: number | undefined, forms: number, built: number, hydrate?: (value: unknown) => unknown): readonly unknown[] {
 	const mapped = (value: unknown): unknown => hydrate === undefined ? value : hydrate(value);
 	if (run === undefined) {
-		const value = recordSlot(holder, word, width, forms, inline, built);
+		const value = recordSlot(holder, word, width, forms, built);
 		return value === undefined ? [] : [mapped(value)];
 	}
 	const arena = builtLayout(holder);
@@ -247,8 +245,8 @@ export function recordSlots(holder: RecordPosition, word: number, width: number,
 }
 
 /** The number of items the list slot whose parsed cell is at `word` and whose built cell is `built` of the record `holder` is at holds. */
-export function recordLength(holder: RecordPosition, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number): number {
-	if (run === undefined) return recordPresent(holder, word, width, forms, inline, built) ? 1 : 0;
+export function recordLength(holder: RecordPosition, word: number, width: number, run: number | undefined, forms: number, built: number): number {
+	if (run === undefined) return recordPresent(holder, word, width, forms, built) ? 1 : 0;
 	return listOf(holder, word, built).len;
 }
 

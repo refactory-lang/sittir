@@ -61,9 +61,8 @@ pub(crate) fn cell_shape(field: &Field<'_>, cell: &crate::attrs::CellStamp) -> s
     let built = cell.built.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its built cell (`built = …`)")))?;
     let forms = cell.forms.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its cell's forms (`forms = …`)")))?;
     let width = cell.width.unwrap_or(1);
-    let inline = cell.inline.unwrap_or(0);
     let run = cell.run.map_or_else(|| quote!(::core::option::Option::None), |run| quote!(::core::option::Option::Some(#run)));
-    Ok(quote!(::sittir_core::arena::CellShape { word: #word, width: #width, run: #run, inline: #inline, forms: #forms, built: #built, key: #key }))
+    Ok(quote!(::sittir_core::arena::CellShape { word: #word, width: #width, run: #run, forms: #forms, built: #built, key: #key }))
 }
 
 fn view_of(node: &Type) -> TokenStream {
@@ -586,13 +585,13 @@ mod tests {
         assert!(has(&out, "let layout = ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), ::sittir_core::arena::held_changed(site.is_some(), held, &side), side.sides);"));
         assert!(has(&out, "__layout: layout, __words: words, __at: at,"));
         assert!(has(&out, "r#async: (words[2usize] >> 3u32) & 1 != 0,"));
-        assert!(has(&out, r#"statements: ::sittir_core::arena::RecordItems::of_shape(ctx, place, at, words, ::sittir_core::arena::CellShape { word: 6u32, width: 1u32, run: ::core::option::Option::Some(3u32), inline: 0u32, forms: 1u8, built: 4u32, key: "_statements" })?,"#));
+        assert!(has(&out, r#"statements: ::sittir_core::arena::RecordItems::of_shape(ctx, place, at, words, ::sittir_core::arena::CellShape { word: 6u32, width: 1u32, run: ::core::option::Option::Some(3u32), forms: 1u8, built: 4u32, key: "_statements" })?,"#));
         assert!(has(&out, "delimiter: layout.delimiter(side.delimiter),"));
         assert!(has(&out, "statements_separator_space: layout.space(6u32, false, side.slots.iter().find(|slot| slot.word == 6u32).and_then(|slot| slot.space_after)),"));
         assert!(has(&out, "impl<'a> BlockFields for BlockNodeRecord<'a> {"));
         assert!(has(&out, "fn layout(&self) -> Self::Layout<'_> { self.__layout }"));
         assert!(has(&out, "type Label<'b> = ::sittir_core::arena::RecordSlot<'a, <Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, <LabelNode as ::sittir_core::arena::HasRecord>::Record<'a>, false> where Self: 'b;"));
-        assert!(has(&out, r#"let site = ::sittir_core::trivia_store::Site { holder: self.__layout.place(), word: 3u32, item: ::sittir_core::types::ItemIndex(0) }; ::sittir_core::arena::RecordSlot::of_shape(self.__layout.context(), site, self.__words, self.__at, ::sittir_core::arena::CellShape { word: 3u32, width: 3u32, run: ::core::option::Option::None, inline: 0u32, forms: 1u8, built: 3u32, key: "_label" })"#));
+        assert!(has(&out, r#"let site = ::sittir_core::trivia_store::Site { holder: self.__layout.place(), word: 3u32, item: ::sittir_core::types::ItemIndex(0) }; ::sittir_core::arena::RecordSlot::of_shape(self.__layout.context(), site, self.__words, self.__at, ::sittir_core::arena::CellShape { word: 3u32, width: 3u32, run: ::core::option::Option::None, forms: 1u8, built: 3u32, key: "_label" })"#));
         assert!(has(&out, "::sittir_core::arena::RecordItems<'a, <Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, <StatementNode as ::sittir_core::arena::HasRecord>::Record<'a>, true>"));
     }
 
@@ -612,7 +611,7 @@ mod tests {
             }
         })
         .expect("expands");
-        assert!(has(&out, r#"statements: ::sittir_core::arena::RecordItems::of_shape(ctx, place, at, words, ::sittir_core::arena::CellShape { word: 2u32, width: 1u32, run: ::core::option::Option::Some(3u32), inline: 0u32, forms: 1u8, built: 2u32, key: "_statements" })?.non_empty("BlockNode")?,"#));
+        assert!(has(&out, r#"statements: ::sittir_core::arena::RecordItems::of_shape(ctx, place, at, words, ::sittir_core::arena::CellShape { word: 2u32, width: 1u32, run: ::core::option::Option::Some(3u32), forms: 1u8, built: 2u32, key: "_statements" })?.non_empty("BlockNode")?,"#));
     }
 
     #[test]
@@ -730,7 +729,7 @@ mod tests {
             }
         })
         .expect("expands");
-        assert!(has(&out, r#"whole: ctx.cell_text(ctx.slot_cell(words, at, ::sittir_core::arena::CellShape { word: 2u32, width: 2u32, run: ::core::option::Option::None, inline: 0u32, forms: 4u8, built: 2u32, key: "_whole" })?)?,"#));
+        assert!(has(&out, r#"whole: ctx.cell_text(ctx.slot_cell(words, at, ::sittir_core::arena::CellShape { word: 2u32, width: 2u32, run: ::core::option::Option::None, forms: 4u8, built: 2u32, key: "_whole" })?)?,"#));
         assert!(has(&out, "::sittir_core::arena::Cell::Absent => ::core::option::Option::None, cell => ::core::option::Option::Some(ctx.cell_text(cell)?),"));
         assert!(!has(&out, "__words: &'a [u32]"));
     }

@@ -224,8 +224,6 @@ export declare const CELL_BLANK_UNIT: number
 
 export declare const CELL_FORM_BLANK: number
 
-export declare const CELL_FORM_INLINE: number
-
 /** r" The forms a slot's `forms` stamp names (`record::form`). */
 export declare const CELL_FORM_NODE: number
 
@@ -244,8 +242,6 @@ export declare const CELL_LEAF_BIT: number
  * r" form (`arena::cell::parsed_tag`).
  */
 export declare const CELL_TAG_ABSENT: number
-
-export declare const CELL_TAG_INLINE: number
 
 export declare const CELL_TAG_NODE: number
 

@@ -49,12 +49,12 @@ pub fn site_row(arena: &dyn ArenaRead, holder: Address, shape: fn(KindId) -> Opt
     let (shape, words) = shape_of(arena, holder, shape, bits)?;
     let cell = *shape.cells.iter().find(|cell| cell.word == site.word).ok_or(malformed("cell site word", site.word))?;
     let decoded = match cell.run {
-        None if site.item == 0 => Cell::decode_parsed(slot_words(words, cell)?, holder.offset(cell.word).unwrap_or(Address::NONE), cell, bits)?,
+        None if site.item == 0 => Cell::decode_parsed(slot_words(words, cell)?, cell, bits)?,
         None => return Err(malformed("cell site item", site.item)),
         Some(width) => {
             let list = ListCell::of_word(CellWord(slot_words(words, CellShape { width: 1, ..cell })?[0]), arena)?;
             let item = list.items(arena, width)?.nth(site.item as usize).ok_or(malformed("cell site item", site.item))?;
-            Cell::decode_parsed(item, Address::NONE, cell, bits)?
+            Cell::decode_parsed(item, cell, bits)?
         }
     };
     leaf_row(&decoded).ok_or(malformed("cell site", site.word))
@@ -73,7 +73,7 @@ pub fn row_sites(arena: &dyn ArenaRead, holder: Address, shape: fn(KindId) -> Op
     for &cell in shape.cells {
         match cell.run {
             None => {
-                let decoded = Cell::decode_parsed(slot_words(words, cell)?, holder.offset(cell.word).unwrap_or(Address::NONE), cell, bits)?;
+                let decoded = Cell::decode_parsed(slot_words(words, cell)?, cell, bits)?;
                 sites.extend(leaf_row(&decoded).map(|row| (row, CellSite { word: cell.word, item: 0 })));
             }
             Some(width) => {
@@ -82,7 +82,7 @@ pub fn row_sites(arena: &dyn ArenaRead, holder: Address, shape: fn(KindId) -> Op
                     continue;
                 }
                 for (item, held) in ListCell::of_word(CellWord(word), arena)?.items(arena, width)?.enumerate() {
-                    let decoded = Cell::decode_parsed(held, Address::NONE, cell, bits)?;
+                    let decoded = Cell::decode_parsed(held, cell, bits)?;
                     sites.extend(leaf_row(&decoded).map(|row| (row, CellSite { word: cell.word, item: crate::types::narrow(item) })));
                 }
             }

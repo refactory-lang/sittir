@@ -22,16 +22,14 @@ pub struct RecordShape {
 }
 
 /// One slot's cell in a record: in a parsed record, its first word and
-/// width, the forms it holds (`record::form`), the words a bounded child's
-/// embedded record takes, and for a list (one word naming its run) the width
-/// of each item's cell in its run; in a built record, its one word. `key` is
+/// width, the forms it holds (`record::form`), and for a list (one word
+/// naming its run) the width of each item's cell in its run; in a built record, its one word. `key` is
 /// the slot's wire key, which a refusal of the slot names.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct CellShape {
     pub word: u32,
     pub width: u32,
     pub run: Option<u32>,
-    pub inline: u32,
     pub forms: u8,
     pub built: u32,
     pub key: &'static str,
@@ -179,12 +177,12 @@ mod tests {
     /// words 2 and 3; a list the cell naming its run, at word 2; a leaf is
     /// its header.
     fn shape(kind: KindId) -> Option<RecordShape> {
-        const PAIR_CELLS: &[CellShape] = &[CellShape { word: 2, width: 3, run: None, inline: 0, forms: form::NODE, built: 2, key: "_child" }];
+        const PAIR_CELLS: &[CellShape] = &[CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_child" }];
         const FORK_CELLS: &[CellShape] = &[
-            CellShape { word: 2, width: 3, run: None, inline: 0, forms: form::NODE, built: 2, key: "_first" },
-            CellShape { word: 5, width: 3, run: None, inline: 0, forms: form::NODE, built: 3, key: "_second" },
+            CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_first" },
+            CellShape { word: 5, width: 3, run: None, forms: form::NODE, built: 3, key: "_second" },
         ];
-        const LIST_CELLS: &[CellShape] = &[CellShape { word: 2, width: 1, run: Some(3), inline: 0, forms: form::NODE, built: 2, key: "_items" }];
+        const LIST_CELLS: &[CellShape] = &[CellShape { word: 2, width: 1, run: Some(3), forms: form::NODE, built: 2, key: "_items" }];
         match kind {
             PAIR => Some(RecordShape { words: 5, built_words: 3, cells: PAIR_CELLS }),
             FORK => Some(RecordShape { words: 8, built_words: 4, cells: FORK_CELLS }),
