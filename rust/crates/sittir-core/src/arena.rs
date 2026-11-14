@@ -227,7 +227,7 @@ pub const ARENA_RELEASED: ArenaError = ArenaError::Unwritable("the arena that bu
 impl fmt::Display for ArenaError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ArenaError::Full => write!(f, "the arena holds its {MAX_CHUNKS} chunks, or a chunk past {MOST_CHUNK_UNITS} elements was asked for"),
+            ArenaError::Full => write!(f, "the arena has no chunk number left to give, or a chunk past {MOST_CHUNK_UNITS} elements was asked for"),
             ArenaError::OutOfBounds { chunk, word, len } => {
                 write!(f, "words {word}..{} of chunk {chunk} are past what the arena wrote", u64::from(*word) + u64::from(*len))
             }

@@ -750,12 +750,18 @@ impl InferredOptions {
     /// Never: every site address the tables hold has at least one key.
     #[must_use]
     pub fn to_json(&self, tables: &OptionTables) -> serde_json::Value {
+        self.to_json_by(|site| site_address(tables, site))
+    }
+
+    /// `to_json`, each edge under the address `address` gives its site; an
+    /// edge whose site it gives no address is left out.
+    pub(crate) fn to_json_by(&self, mut address: impl FnMut(SiteId) -> Option<Vec<&'static str>>) -> serde_json::Value {
         let mut root = serde_json::Map::new();
         if let Some(indent) = &self.indent {
             root.insert(LAYOUT_KEY.to_owned(), serde_json::json!({ "indent": indent }));
         }
         for &(site, arm) in &self.edges {
-            let Some(path) = address_of(tables.addresses, site) else { continue };
+            let Some(path) = address(site) else { continue };
             let mut level = &mut root;
             for key in &path[..path.len() - 1] {
                 level = level
@@ -771,6 +777,12 @@ impl InferredOptions {
 }
 
 /// The keys that address `site` alone, from the root of `nodes`.
+/// The keys under which `tables` address the spacing site `site`, outermost
+/// first; none for a site no address names alone.
+pub(crate) fn site_address(tables: &OptionTables, site: SiteId) -> Option<Vec<&'static str>> {
+    address_of(tables.addresses, site)
+}
+
 fn address_of(nodes: &'static [AddressNode], site: SiteId) -> Option<Vec<&'static str>> {
     nodes.iter().find_map(|node| match node {
         AddressNode::Spacing { key, sites: [only] } if only.site == site => Some(vec![*key]),

@@ -2656,6 +2656,10 @@ pub struct Engine<G: EngineGrammar> {
     /// The sides a write set on any node this engine renders, shared with
     /// every tree it parses.
     written: TriviaStore<G::Trivia>,
+    /// The option address of each edge site a parse inferred an arm for,
+    /// found once.
+    #[cfg(feature = "arena")]
+    edge_addresses: Vec<(crate::types::SiteId, Option<Vec<&'static str>>)>,
 }
 
 impl<G: EngineGrammar> Engine<G> {
@@ -2678,7 +2682,14 @@ impl<G: EngineGrammar> Engine<G> {
         if let Some(fields) = parser.language().map(|language| language.field_count()).filter(|&fields| fields >> crate::arena::side::FIELD_BITS != 0) {
             return Err(format!("the grammar has {fields} field ids, more than a node's {} field bits hold", crate::arena::side::FIELD_BITS));
         }
-        Ok(Self { grammar, parser, options, written })
+        Ok(Self {
+            grammar,
+            parser,
+            options,
+            written,
+            #[cfg(feature = "arena")]
+            edge_addresses: Vec::new(),
+        })
     }
 
     pub fn options(&self) -> &ResolvedOptions {
@@ -2765,7 +2776,14 @@ impl<G: EngineGrammar> Engine<G> {
         let (whitespace, _) = self.grammar.whitespace();
         let root = tree.root_node();
         let inferred = crate::options::InferredOptions::infer(source, crate::read::grammar_id(&root), &self.options, self.grammar.option_tables(), whitespace);
-        let options = inferred.to_json(self.grammar.option_tables());
+        let (tables, known) = (self.grammar.option_tables(), &mut self.edge_addresses);
+        let options = inferred.to_json_by(|site| {
+            let at = known.iter().position(|(seen, _)| *seen == site).unwrap_or_else(|| {
+                known.push((site, crate::options::site_address(tables, site)));
+                known.len() - 1
+            });
+            known[at].1.clone()
+        });
         let work = crate::layout::LayoutWorkCounter::default();
         let errors = error_regions(&mut TreeNodes::new(&tree, source, &work));
         let grammar = self.grammar;
