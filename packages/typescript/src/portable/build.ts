@@ -25547,9 +25547,8 @@ export const build: PortableBuildTable = {
 									key: 'binaryExpressionIn',
 									builder: 'binaryExpression.in',
 									mounted: {
-										call: 'keyed',
-										key: 'binaryExpressionIn',
-										seats: 'config'
+										call: 'child',
+										key: 'binaryExpressionIn'
 									}
 								},
 								{
@@ -25590,9 +25589,8 @@ export const build: PortableBuildTable = {
 									key: 'binaryExpressionIn',
 									builder: 'binaryExpression.in',
 									mounted: {
-										call: 'keyed',
-										key: 'binaryExpressionIn',
-										seats: 'config'
+										call: 'child',
+										key: 'binaryExpressionIn'
 									}
 								},
 								{
@@ -25635,9 +25633,8 @@ export const build: PortableBuildTable = {
 									optional: true,
 									builder: 'binaryExpression.in',
 									mounted: {
-										call: 'keyed',
-										key: 'binaryExpressionIn',
-										seats: 'config'
+										call: 'child',
+										key: 'binaryExpressionIn'
 									}
 								}
 							]
