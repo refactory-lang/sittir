@@ -70,6 +70,7 @@ const MODULES = {
 	rulePatterns: '../../codegen/src/dsl/rule-patterns.ts',
 	types: '../../codegen/src/emitters/types.ts',
 	templates: '../../codegen/src/emitters/templates.ts',
+	joinSeams: '../../codegen/src/compiler/model/join-seams/index.ts',
 	from: '../../codegen/src/emitters/from.ts',
 	sitePreferences: '../../codegen/src/compiler/model/site-preferences.ts',
 	bind: '../../codegen/src/dsl/bind.ts',
@@ -126,6 +127,7 @@ export interface CodegenSurface {
 	rulePatterns: typeof import('../../codegen/src/dsl/rule-patterns.ts');
 	types: typeof import('../../codegen/src/emitters/types.ts');
 	templates: typeof import('../../codegen/src/emitters/templates.ts');
+	joinSeams: typeof import('../../codegen/src/compiler/model/join-seams/index.ts');
 	from: typeof import('../../codegen/src/emitters/from.ts');
 	sitePreferences: typeof import('../../codegen/src/compiler/model/site-preferences.ts');
 	bind: typeof import('../../codegen/src/dsl/bind.ts');

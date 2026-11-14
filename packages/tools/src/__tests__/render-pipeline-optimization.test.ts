@@ -1,3 +1,4 @@
+import { NO_JOINS } from '../../../codegen/src/compiler/model/join-seams/index.ts';
 import type { GeneratedKindEntry } from '../../../codegen/src/dsl/symbol-table.ts';
 import { CHOICE, PATTERN, SEQ, STRING, SYMBOL } from '../../../codegen/src/types/rule-types.ts'; // @rule-type-consts
 import { readFileSync } from 'node:fs';
@@ -200,7 +201,7 @@ describe('render pipeline optimization — retained baseline convergence', () =>
 		const files = emittedTemplates({ function_item: slot('name') });
 
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap);
-		const emitted = emitRenderModule('rust', files, nodeMap, generatedIdTables);
+		const emitted = emitRenderModule('rust', files, nodeMap, generatedIdTables, { joins: NO_JOINS });
 		expect(emitted.hashRs.path).toBe('rust/crates/sittir-rust/src/render/hash.rs');
 		expect(emitted.hashTs.path).toBe('packages/rust/src/hash.ts');
 		expect(emitted.nodeRs.path).toBe('rust/crates/sittir-rust/src/render/node.rs');
@@ -227,7 +228,7 @@ describe('render pipeline optimization — views built as locals in the kind ren
 		const files = emittedTemplates({ function_item: concat(gate('name', slot('name')), text(' ')) });
 
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap);
-		const emitted = emitRenderModule('rust', files, nodeMap, generatedIdTables);
+		const emitted = emitRenderModule('rust', files, nodeMap, generatedIdTables, { joins: NO_JOINS });
 		expect(emitted.nodeRs.contents).not.toContain("Template<'a> {");
 		expect(emitted.nodeRs.contents).toContain('let name = node.name();');
 		expect(emitted.nodeRs.contents).not.toContain("    pub text: &'a str,");
@@ -247,19 +248,22 @@ describe('render pipeline optimization — views built as locals in the kind ren
 			'rust',
 			emittedTemplates({ required_child_parent: slot('identifier') }),
 			required.nodeMap,
-			required.generatedIdTables
+			required.generatedIdTables,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 		const optionalRs = emitRenderModule(
 			'rust',
 			emittedTemplates({ optional_child_parent: gate('identifier', slot('identifier')) }),
 			optional.nodeMap,
-			optional.generatedIdTables
+			optional.generatedIdTables,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 		const repeatedRs = emitRenderModule(
 			'rust',
 			emittedTemplates({ repeated_child_parent: slot('identifier') }),
 			repeated.nodeMap,
-			repeated.generatedIdTables
+			repeated.generatedIdTables,
+			{ joins: NO_JOINS }
 		).nodeRs.contents;
 
 		expect(requiredRs).toContain('let identifier = node.identifier();');
@@ -279,7 +283,8 @@ describe('render pipeline optimization — views built as locals in the kind ren
 			'rust',
 			emittedTemplates({ token_child_parent: slot('kw_j') }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		);
 
 		expect(emitted.nodeRs.contents).toContain('let kw_j = node.kw_j();');
@@ -296,7 +301,8 @@ describe('render pipeline optimization — views built as locals in the kind ren
 			'rust',
 			emittedTemplates({ expression: slot('content') }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		);
 		const renderStart = emitted.nodeRs.contents.indexOf('fn render_expression<');
 		const renderEnd = emitted.nodeRs.contents.indexOf('\n}', renderStart) + 2;
@@ -312,7 +318,8 @@ describe('render pipeline optimization — views built as locals in the kind ren
 			'rust',
 			emittedTemplates({ optional_repeated_child_parent: slot('identifier') }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		);
 		const renderStart = emitted.nodeRs.contents.indexOf('fn render_optional_repeated_child_parent<');
 		const renderEnd = emitted.nodeRs.contents.indexOf('\n}', renderStart) + 2;
@@ -329,7 +336,7 @@ describe('render pipeline optimization — views built as locals in the kind ren
 		// Same kind-named slot (`identifier`, a possibly empty `Vec`) as the
 		// test above, exercised via the fallback (no custom jinja) render path.
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeOptionalRepeatedChildrenNodeMap);
-		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, generatedIdTables);
+		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, generatedIdTables, { joins: NO_JOINS });
 		const renderStart = emitted.nodeRs.contents.indexOf('fn render_optional_repeated_child_parent<N: OptionalRepeatedChildParentFields + ?Sized>(');
 		expect(renderStart).toBeGreaterThan(-1);
 		const renderEnd = emitted.nodeRs.contents.indexOf('\n}', renderStart) + 2;
@@ -347,7 +354,8 @@ describe('render pipeline optimization — views built as locals in the kind ren
 			'rust',
 			emittedTemplates({ expression: slot('content') }),
 			nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		);
 		const source = readFileSync(resolve(repoRoot, 'packages/codegen/src/emitters/render-module.ts'), 'utf8');
 
@@ -405,7 +413,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 			sourceArtifact: 'parser.wasm', parser: null
 		};
 
-		const emitted = emitRenderModule('rust', files, withGeneratedIdTables((kindEntries) => makeMinimalNodeMap(kindEntries)).nodeMap, generatedIdTables);
+		const emitted = emitRenderModule('rust', files, withGeneratedIdTables((kindEntries) => makeMinimalNodeMap(kindEntries)).nodeMap, generatedIdTables, { joins: NO_JOINS });
 
 		expect(emitted.nodeRs.contents).toContain(
 			'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables, reason = "One template serves every grammar: a grammar need not use every emitted item, import or binding, and type names follow tree-sitter kind spellings")]'
@@ -434,7 +442,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		const files = emittedTemplates({ function_item: concat(slot('name'), text(' ')) });
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap);
 
-		const emitted = emitRenderModule('rust', files, nodeMap, generatedIdTables);
+		const emitted = emitRenderModule('rust', files, nodeMap, generatedIdTables, { joins: NO_JOINS });
 
 		// Per-kind render logic is in node.rs (bridge.rs retired in PR-E2).
 		expect(emitted.nodeRs.contents).toContain('render_function_item(');
@@ -473,7 +481,8 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 			'rust',
 			emittedTemplates({ required_child_parent: slot('identifier') }),
 			withGeneratedIdTables((kindEntries) => makeRequiredChildrenNodeMap(kindEntries)).nodeMap,
-			generatedIdTables
+			generatedIdTables,
+			{ joins: NO_JOINS }
 		);
 
 		// bridge.rs retired (PR-E2) — render_nodedata_into/SlotAccessor no longer emitted.

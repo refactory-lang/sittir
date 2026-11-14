@@ -74,7 +74,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "arguments"
+							"name": "arguments",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						}
 					]
 				}
@@ -96,7 +100,11 @@
 	"argument_list_elements": [
 		{
 			"kind": "slot",
-			"name": "item"
+			"name": "item",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		}
 	],
 	"as_pattern": [
@@ -338,7 +346,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -368,7 +380,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "right",
+			"join": {
+				"previous": true,
+				"next": false
+			}
 		},
 		{
 			"kind": "seam",
@@ -1290,7 +1306,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "elements"
+							"name": "elements",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						}
 					]
 				}
@@ -1324,7 +1344,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "slot",
@@ -1346,7 +1370,11 @@
 	"dictionary_elements": [
 		{
 			"kind": "slot",
-			"name": "item"
+			"name": "item",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		}
 	],
 	"dictionary_splat": [
@@ -2284,7 +2312,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "expression",
+			"join": {
+				"previous": true,
+				"next": false
+			}
 		},
 		{
 			"kind": "if",
@@ -2542,7 +2574,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "slot",
@@ -2891,7 +2927,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "expression",
+			"join": {
+				"previous": true,
+				"next": false
+			}
 		},
 		{
 			"kind": "if",
@@ -3067,7 +3107,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "parameters"
+							"name": "parameters",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						}
 					]
 				}
@@ -3121,7 +3165,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "parameters"
+							"name": "parameters",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						}
 					]
 				}
@@ -3283,7 +3331,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "expression",
+			"join": {
+				"previous": true,
+				"next": false
+			}
 		},
 		{
 			"kind": "seam",
@@ -3305,7 +3357,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "pattern"
+			"name": "pattern",
+			"join": {
+				"previous": true,
+				"next": false
+			}
 		},
 		{
 			"kind": "seam",
@@ -3353,7 +3409,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "subject"
+			"name": "subject",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -3657,7 +3717,11 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "elements"
+							"name": "elements",
+							"join": {
+								"previous": false,
+								"next": true
+							}
 						}
 					]
 				}
@@ -3679,7 +3743,11 @@
 	"parameters_elements": [
 		{
 			"kind": "slot",
-			"name": "item"
+			"name": "item",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		}
 	],
 	"parenthesized_expression": [
@@ -3853,7 +3921,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "arguments"
+			"name": "arguments",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -4003,7 +4075,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "elements"
+			"name": "elements",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",
@@ -4033,7 +4109,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "slot",
@@ -4253,11 +4333,19 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "content",
+			"join": {
+				"previous": true,
+				"next": true
+			}
 		},
 		{
 			"kind": "slot",
-			"name": "string_end"
+			"name": "string_end",
+			"join": {
+				"previous": true,
+				"next": false
+			}
 		},
 		{
 			"kind": "seam",
@@ -4267,7 +4355,11 @@
 	"string_content": [
 		{
 			"kind": "slot",
-			"name": "elements"
+			"name": "elements",
+			"join": {
+				"previous": true,
+				"next": false
+			}
 		}
 	],
 	"string_end": [

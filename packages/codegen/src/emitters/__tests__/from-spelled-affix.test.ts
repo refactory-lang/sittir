@@ -5,6 +5,7 @@ import { assemblePredicted, rawIdTablesOf, withFixtureLexicalRanks } from '../..
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
 import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { computeNodeSCC } from '../../compiler/scc.ts';
+import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import { resolveRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import { collectSitePreferences } from '../../compiler/model/site-preferences.ts';
 import { collectKindEntries } from '../kind-discriminant.ts';
@@ -30,7 +31,7 @@ async function emittedFor(grammar: { extras: string; rules: string }, wired: str
 	nodeMap.scc = computeNodeSCC(nodeMap);
 	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	const rulesConfig = { nodeMap, kindEntries, options: raw.options, whitespaceText: whitespaceTextOf(raw.renderAs, nodeMap) };
-	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, 'demo', spaced, kindEntries)).seamed;
+	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, 'demo', spaced, kindEntries, NO_JOINS)).seamed;
 	collectSitePreferences({ nodeMap, kindEntries, renderRules, options: raw.options });
 	return emitFrom({ grammar: 'demo', nodeMap, generatedIdTables });
 }

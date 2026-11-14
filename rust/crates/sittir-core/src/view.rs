@@ -289,6 +289,8 @@ pub struct ListView<'a, L: SlotItems> {
     /// The list's slot (its wire key) and the layout holding its unit
     /// items' sides, each item framed by them (`UnitFrames`).
     pub units: Option<(&'a str, &'a dyn UnitFrames)>,
+    /// The join arms each item's first write takes (`RenderSink::join_arm`).
+    pub join: crate::render::JoinArm,
 }
 
 /// The items of a list slot, each handed out as a slot: a borrowed slice of
@@ -376,6 +378,7 @@ impl<L: SlotItems> Render for ListView<'_, L> {
                 w.text(own.unwrap_or(self.token))?;
                 w.site(self.after);
             }
+            w.join_arm(self.join);
             match self.units {
                 Some((slot, units)) => units.frame_unit(slot, item_index(i)?, w, &mut |w| item.write_slot("", "", w))?,
                 None => item.write_slot("", "", w)?,
