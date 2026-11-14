@@ -97,12 +97,14 @@ const PRELUDE = [
 	'',
 	'type ViewOfKind<K> = K extends keyof ViewByKind ? ViewByKind[K] : unknown;',
 	'',
+	'type Spread<V> = V extends readonly (infer E)[] ? E : V;',
+	'',
 	'export type ViewOf<N> = N extends undefined | null',
 	'\t? N',
 	'\t: N extends { readonly $type: infer K }',
 	'\t\t? ViewOfKind<K>',
 	'\t\t: N extends readonly (infer E)[]',
-	'\t\t\t? readonly ViewOf<E>[]',
+	'\t\t\t? readonly Spread<ViewOf<E>>[]',
 	'\t\t\t: N extends keyof ViewByKind',
 	'\t\t\t\t? ViewByKind[N]',
 	'\t\t\t\t: N extends string | boolean',
@@ -166,7 +168,7 @@ const PRELUDE = [
 const VALUE_READERS: Readonly<Record<ValueRead, string>> = { text: 'value', true: 'trueValue', false: 'falseValue', float: 'floatValue', integer: 'integerValue', bigint: 'bigintValue' };
 
 export function emitPortableTyped(typedInput: PortableTypedInput): PortableTypedOutput {
-	const { routes, input, nodeMap, kindEntries } = typedInput;
+	const { routes, input, nodeMap, kindEntries, freeTextClosedBy } = typedInput;
 	const { model, vocabulary } = input;
 	const reads = exactReadsOf(typedInput);
 	const exact = exactSlotsOf(typedInput, reads);
@@ -337,7 +339,7 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 		readonly optional: boolean;
 		readonly present: readonly PresentStep[];
 	}
-	const readOf = (kind: string, route: MemberRoute, sure: Guaranteed): RouteRead | { readonly reason: string } | null => {
+	const readOf = (kind: string, route: MemberRoute, sure: Guaranteed, closed: ReadonlySet<string>): RouteRead | { readonly reason: string } | null => {
 		if (route.route === 'presence') return { reason: 'a presence member that is not a flag' };
 		if (route.path === undefined) return { reason: `no path for its ${route.route} route` };
 		const chain = chainOf(kind, route.path, sure, route.list === false);
@@ -352,7 +354,7 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 			return id === undefined ? { reason: `${selected} has no kind id` } : { body: `${reader}(of(${chain.expr}, ${id}))`, list: listsOnly({ ...chain.last, kinds: [selected] }), optional, present };
 		}
 		if (chain.last.storage === 'boolean') return { body: chain.expr, list: false, optional: false, present };
-		const except = route.route === 'slot' ? (route.except ?? []).flatMap((k) => concreteKinds(model, [k]).flatMap((c) => idOf(c) ?? [])) : [];
+		const except = [...(route.route === 'slot' ? (route.except ?? []) : []), ...chain.last.kinds.filter((k) => closed.has(k))].flatMap((k) => concreteKinds(model, [k]).flatMap((c) => idOf(c) ?? []));
 		const read = except.length > 0 ? `${reader}(without(${chain.expr}, ${[...new Set(except)].join(', ')}))` : `${reader}(${chain.expr})`;
 		const holdsList = chain.last.multiple || listsOnly(chain.last);
 		const body = route.list === true && !holdsList ? `listed(${read})` : read;
@@ -399,10 +401,11 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 			const pins = new Map(entry.pins.map((pin) => [pin.member, pin.text]));
 			const readsByName = new Map<string, RouteRead[]>();
 			const sure = guaranteedBy(model, entry);
+			const closed = new Set(freeTextClosedBy.get(entry) ?? []);
 			for (const route of token(kind) ? [] : entry.members) {
 				if (route.flag === true) continue;
 				const pin = pins.get(route.name);
-				const read = pin !== undefined ? { body: q(pin), list: false, optional: false, present: [] } : readOf(kind, route, sure);
+				const read = pin !== undefined ? { body: q(pin), list: false, optional: false, present: [] } : readOf(kind, route, sure, closed);
 				if (read === null) continue;
 				if ('reason' in read) {
 					unemitted.push({ kind, vocab: entry.vocab, member: route.name, reason: read.reason });
