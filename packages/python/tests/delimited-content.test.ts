@@ -242,10 +242,9 @@ describe.each([
 
 describe('a string read with an interpolation its prefix does not admit', () => {
 	const source = `print(f"a"'b {c}")\n`;
-	type Recovered = ReadString & { readonly $with: { prefix(prefix: string): { $render(): unknown }; contents(...items: unknown[]): { $render(): unknown } } };
-	const unadmitted = (): Recovered => {
+	const unadmitted = () => {
 		const tree = py.parse(source);
-		const found = (Array.from(tree.$query().$descendants.ofType(py.kinds.String)) as unknown as Recovered[]).find((string) => string.prefix() === undefined);
+		const found = Array.from(tree.$query().$descendants.ofType(py.kinds.String)).find((string) => string.prefix() === undefined);
 		if (found === undefined) throw new Error('the recovered string is not read');
 		return found;
 	};
