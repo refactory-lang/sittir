@@ -237,6 +237,16 @@ function extrasDiff(a: TSNode, b: TSNode, tolerance?: AstTolerance): string | nu
 	return `extras[${index}]: ${show(aExtras[index])} ≠ ${show(bExtras[index])}`;
 }
 
+export interface ReadRenderParseMismatch {
+	kind: string;
+	entry?: string;
+	message: string;
+	input?: string;
+	rendered?: string;
+	start: number;
+	end: number;
+}
+
 /**
  * What an AST compare accepts as semantically neutral, and the cases it
  * accepted: a list separator that is another of the separators its list may
@@ -383,15 +393,8 @@ export interface ReadRenderParseResult {
 		rendered?: string;
 	}[];
 	/** Structural mismatches — distinct from render / reparse errors. */
-	astMismatches: {
-		kind: string;
-		entry?: string;
-		message: string;
-		input?: string;
-		rendered?: string;
-		start: number;
-		end: number;
-	}[];
+	astMismatches: ReadRenderParseMismatch[];
+	foldedMismatches: ReadRenderParseMismatch[];
 	skips: ValidatorSkip[];
 	excluded: ValidatorSkip[];
 	trivia: ValidatorSkip[];
@@ -980,7 +983,7 @@ export async function validateReadRenderParse(
 
 	const readNode = await readNodeOf(grammar).catch((e: unknown) => new Error(`[validate-read-render-parse] ${(e as Error).message}`));
 	if (readNode instanceof Error)
-		return { grammar, ...FAILED_RUN, astMatchPass: 0, errors: [{ name: '(wrap-module-load)', message: readNode.message }], astMismatches: [], skips: [], excluded: [], trivia: [], spellingNormalized: [] };
+		return { grammar, ...FAILED_RUN, astMatchPass: 0, errors: [{ name: '(wrap-module-load)', message: readNode.message }], astMismatches: [], foldedMismatches: [], skips: [], excluded: [], trivia: [], spellingNormalized: [] };
 	const isLeafKind = await loadIsLeafKind(grammar);
 	const canonicalKindNameFromId = await loadStorageKindNameFromId(grammar);
 	const { recursive } = options;
@@ -991,15 +994,8 @@ export async function validateReadRenderParse(
 		input?: string;
 		rendered?: string;
 	}[] = [];
-	const astMismatches: {
-		kind: string;
-		entry?: string;
-		message: string;
-		input?: string;
-		rendered?: string;
-		start: number;
-		end: number;
-	}[] = [];
+	const astMismatches: ReadRenderParseMismatch[] = [];
+	const foldedMismatches: ReadRenderParseMismatch[] = [];
 	const skips: ValidatorSkip[] = [];
 	const excluded: ValidatorSkip[] = [];
 	const trivia: ValidatorSkip[] = [];
@@ -1328,7 +1324,7 @@ export async function validateReadRenderParse(
 				if (!kindAstMatch) {
 					astMismatches.push(...kindAstMismatches);
 					entryAstMatch = false;
-				}
+				} else foldedMismatches.push(...kindAstMismatches);
 			}
 			for (const failure of refusalsOf(entry)) reportThrown(failure);
 
@@ -1378,6 +1374,7 @@ export async function validateReadRenderParse(
 		astMatchPass,
 		errors,
 		astMismatches: dedupeMismatchesByContainment(astMismatches),
+		foldedMismatches,
 		skips,
 		excluded,
 		trivia,
