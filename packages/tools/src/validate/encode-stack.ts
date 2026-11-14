@@ -360,7 +360,7 @@ export const DYNAMIC_CLASSES: readonly DynamicClass[] = [
 const OUTLINED = /^_?OUTLINED_FUNCTION_\d+$/;
 const RIP_ADDRESS = /^leaq? -?0x[0-9a-f]+\(%rip\), %(\w+) ##? 0x([0-9a-f]+)\b/;
 const TABLE_ENTRY = /^movslq \(%(\w+),%(\w+),4\), %(\w+)$/;
-const TABLE_RANGE = /^cmp[qlwb]? \$(-?(?:0x)?[0-9a-f]+), %(\w+)$/;
+const TABLE_RANGE = /^cmpq \$((?:0x)?[0-9a-f]+), %(r(?:[a-d]x|[sd]i|[bs]p|\d+))$/;
 const TABLE_RANGE_BRANCH = /^(ja|jae)$/;
 const TABLE_ADD = /^addq %(\w+), %(\w+)$/;
 const TABLE_REACH = 12;
@@ -753,11 +753,22 @@ function x86TableEntries(body: readonly Instruction[], entry: number, index: str
 		const op = mnemonic(ins);
 		if (TABLE_RANGE_BRANCH.test(op)) {
 			const range = TABLE_RANGE.exec(body[back - 1]!.ins);
-			return range && wide(range[2]!) === index ? imm(range[1]!) + (op === 'ja' ? 1 : 0) : undefined;
+			if (range === null || range[2] !== index || !skipsTable(body, back, entry)) return undefined;
+			return imm(range[1]!) + (op === 'ja' ? 1 : 0);
 		}
 		if (BRANCH.test(op) || ENDS.test(op) || written(ins).includes(index)) return undefined;
 	}
 	return undefined;
+}
+
+function skipsTable(body: readonly Instruction[], check: number, entry: number): boolean {
+	const at = new Map(body.map(({ address }, position) => [address, position] as const));
+	const lands = (position: number): boolean => position > check && position <= entry;
+	return body.every(({ ins }, position) => {
+		if (!BRANCH.test(mnemonic(ins)) || operands(ins).includes('*')) return true;
+		const target = at.get(hex(ADDRESS.exec(operands(ins))?.[1] ?? ''));
+		return target === undefined || !lands(target);
+	});
 }
 
 function x86Table(body: readonly Instruction[], jump: number, written: Isa['written']): TableJump | undefined {

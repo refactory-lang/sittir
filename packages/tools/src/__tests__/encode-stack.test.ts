@@ -611,15 +611,15 @@ describe('disassemble on x86-64', () => {
 		expect(unread.unresolved.map((site) => site.offset)).toEqual([0x20, 0x28]);
 	});
 
-	it('ends a function\'s last jump table at the entries its range check states', async () => {
-		const listing = [
+	describe('reads a function\'s last jump table past the entries a comparison states only when the comparison bounds the whole index', () => {
+		const lastTable = (check: string, branch: string) => [
 			...ELF,
 			...x86(0x4000, 'sittir_x::t', [
 				'leaq 0x1000(%rip), %rbx # 0x5000 <table>',
 				'movq 0x10(%rip), %r13 # 0x3000 <x>',
 				'movq (%rdi), %rax',
-				'cmpq $0x1, %rax',
-				'ja @12',
+				check,
+				branch,
 				'movslq (%rbx,%rax,4), %rax',
 				'addq %rbx, %rax',
 				'jmpq *%rax',
@@ -638,8 +638,23 @@ describe('disassemble on x86-64', () => {
 			[0x5004, 0x4028 - 0x5000],
 			[0x5008, 0x4034 - 0x5000]
 		]);
-		const read = named(await disassemble(listing, image(table)), 'sittir_x::t');
-		expect(read.unresolved.map((site) => site.offset)).toEqual([0x34]);
+		const unresolvedOf = async (listing: ReturnType<typeof lastTable>) => named(await disassemble(listing, image(table)), 'sittir_x::t').unresolved.map((site) => site.offset);
+
+		it('bounds the table by a full-width comparison', async () => {
+			expect(await unresolvedOf(lastTable('cmpq $0x1, %rax', 'ja @12'))).toEqual([0x34]);
+		});
+
+		it('keeps reading past a comparison of only the low byte, whose upper bits stay free', async () => {
+			expect(await unresolvedOf(lastTable('cmpb $0x1, %al', 'ja @12'))).toEqual([]);
+		});
+
+		it('keeps reading when the branch lands on the load itself', async () => {
+			expect(await unresolvedOf(lastTable('cmpq $0x1, %rax', 'ja @5'))).toEqual([]);
+		});
+
+		it('keeps reading past a comparison with a negative immediate, which the branch reads as unsigned', async () => {
+			expect(await unresolvedOf(lastTable('cmpq $-1, %rax', 'ja @12'))).toEqual([]);
+		});
 	});
 
 	it('ends a jump table where the next table the function reads begins', async () => {
