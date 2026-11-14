@@ -3179,7 +3179,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: true,
 							seats: [
 								{
 									at: [361, 'parameters'],
@@ -3339,7 +3338,6 @@ export const build: PortableBuildTable = {
 							reads: [253]
 						}
 					],
-					empty: ['parameters'],
 					owners: [
 						[0, 1, 2, 3, 4],
 						[0, 1, 2, 4, 5]

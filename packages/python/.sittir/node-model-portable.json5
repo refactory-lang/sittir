@@ -6140,6 +6140,17 @@
           ]
         },
         {
+          "name": "parameters",
+          "route": "slot",
+          "slot": "parameters",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "parameters"
+            }
+          ]
+        },
+        {
           "name": "returnType",
           "route": "slot",
           "slot": "return_type",

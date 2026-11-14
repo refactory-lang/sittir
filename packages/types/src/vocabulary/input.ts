@@ -13,6 +13,11 @@ type Inputs<R, G extends GrammarMap> = { readonly [M in keyof R]: MemberInput<R[
 
 export type InputOf<R, G extends GrammarMap> = Inputs<NamedFlags<G, Formed<G, R>>, G>;
 
+export type BuildInput<G extends GrammarMap, P extends keyof Paths<G>> = InputOf<Paths<G>[P], G>;
+
+export type BuildItem<G extends GrammarMap, P extends keyof Paths<G>, M extends keyof BuildInput<G, P>> =
+	NonNullable<BuildInput<G, P>[M]> extends readonly (infer I)[] ? I : NonNullable<BuildInput<G, P>[M]>;
+
 type TextReads<G extends GrammarMap> = {
 	readonly [P in keyof G['overrides']]: G['overrides'][P] extends { readonly $text: infer T } ? T : never;
 }[keyof G['overrides']];
