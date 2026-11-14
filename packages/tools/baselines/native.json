@@ -2,126 +2,60 @@
     "backend": "native",
     "baselineCounterChange": {
         "grammars": {
-            "python": {
+            "typescript": {
                 "builtRenderParse": {
                     "cases": {
-                        "constrained_type": {
-                            "from": 2,
-                            "to": 0
+                        "expression_statement": {
+                            "from": 50,
+                            "to": 48
                         }
                     },
                     "from": {
-                        "pass": 2643,
-                        "total": 2643
+                        "pass": 2560,
+                        "total": 2560
                     },
                     "to": {
-                        "pass": 2661,
-                        "total": 2661
+                        "pass": 2558,
+                        "total": 2558
                     }
                 },
                 "factoryStorage": {
                     "cases": {
-                        "constrained_type": {
-                            "from": 1,
-                            "to": 0
+                        "expression_statement": {
+                            "from": 25,
+                            "to": 24
                         }
                     },
                     "from": {
-                        "pass": 1374,
-                        "total": 1374
+                        "pass": 1355,
+                        "total": 1355
                     },
                     "to": {
-                        "pass": 1383,
-                        "total": 1383
-                    }
-                },
-                "from": {
-                    "cases": {
-                        "constrained_type": {
-                            "from": 1,
-                            "to": 0
-                        },
-                        "string_end": {
-                            "from": 1,
-                            "to": 0
-                        },
-                        "string_start": {
-                            "from": 1,
-                            "to": 0
-                        }
-                    },
-                    "from": {
-                        "pass": 183,
-                        "total": 183
-                    },
-                    "to": {
-                        "pass": 185,
-                        "total": 185
+                        "pass": 1354,
+                        "total": 1354
                     }
                 },
                 "parityFixtures": {
                     "cases": {
-                        "constrained_type": {
-                            "from": 2,
-                            "to": 0
-                        },
-                        "generic_type": {
-                            "from": 21,
-                            "to": 15
-                        },
-                        "splat_type": {
-                            "from": 9,
-                            "to": 3
-                        },
-                        "type": {
-                            "from": 72,
-                            "to": 52
-                        },
-                        "type_parameter": {
-                            "from": 22,
-                            "to": 15
-                        },
-                        "types": {
-                            "from": 22,
-                            "to": 15
+                        "expression_statement": {
+                            "from": 47,
+                            "to": 45
                         }
                     },
                     "from": {
-                        "pass": 3746,
-                        "total": 3746
+                        "pass": 2990,
+                        "total": 2990
                     },
                     "to": {
-                        "pass": 3723,
-                        "total": 3723
-                    }
-                }
-            },
-            "rust": {
-                "from": {
-                    "cases": {
-                        "raw_string_literal_end": {
-                            "from": 1,
-                            "to": 0
-                        },
-                        "raw_string_literal_start": {
-                            "from": 1,
-                            "to": 0
-                        }
-                    },
-                    "from": {
-                        "pass": 258,
-                        "total": 258
-                    },
-                    "to": {
-                        "pass": 256,
-                        "total": 256
+                        "pass": 2988,
+                        "total": 2988
                     }
                 }
             }
         },
-        "reason": "Python's declaration-site type parameters read as their own forms. On master, tree-sitter-python's type_parameter served both a generic type's arguments (list[int]) and a definition's or alias's parameters (def f[T]), and an alias head was a type: type Point[T] = ... read Point[T] as a generic_type, T: Hashable as a constrained_type, and *Ts and **P as splat_type. Those sites now hold type_params, type_params_items and the three type_param forms. No node goes untested: every lost case is a declaration-site misread, found by diffing the parity fixtures. The parity fixtures count each site: type_parameter 22 -> 15, types 22 -> 15 and generic_type 21 -> 15 lose the 7 parameter lists and the 6 alias heads, constrained_type 2 -> 0 its two bounds, splat_type 9 -> 3 the six starred declarations (the three left are argument sites, *Ts in tuple[...]), and type 72 -> 52 the 20 types those sites wrapped. The corpus entries holding T: Hashable and T: (int, str) lose constrained_type in from (1 -> 0), factory storage (1 -> 0) and the built render (2 -> 0, two cases per entry). A derived string delimiter has no from() input: a python string's quote and a rust raw string's hash run are derived from its content, so the delimiter tokens string_start and string_end (python) and raw_string_literal_start and raw_string_literal_end (rust) leave the from lane, as the kind lanes skip delimiter tokens by delimiterOf. Each held one from case (1 -> 0): python from 187 -> 185 (183 -> 185 against master), rust from 258 -> 256."
+        "reason": "A TypeScript namespace is a declaration, never an expression. On master, expression listed internal_module among its arms, so namespace Foo {} before a newline or the end of a file read as expression_statement(internal_module, automatic_semicolon). That form no longer exists: such a namespace reads as internal_module, a statement. No node goes untested: every lost case is a fixture of the removed form, the expression_statement cases taken from the corpus entry \"Namespaces as internal modules\" (namespace Foo {} and namespace Bar { var x; }). factoryStorage loses 1 (25 -> 24), builtRenderParse 2 (50 -> 48) and parityFixtures 2 (47 -> 45), and each row's total drops by the same count, with every remaining case passing."
     },
-    "commit": "a78b9fa",
+    "commit": "2609b97",
     "grammars": {
         "python": {
             "kinds": [
@@ -211,9 +145,15 @@
                 "import_from_statement",
                 "import_list",
                 "import_statement",
-                "integer_binary",
-                "integer_hex",
-                "integer_octal",
+                "integer_binary_long",
+                "integer_binary_plain",
+                "integer_decimal_long",
+                "integer_hex_long",
+                "integer_hex_plain",
+                "integer_legacy_octal_long",
+                "integer_legacy_octal_plain",
+                "integer_octal_long",
+                "integer_octal_plain",
                 "interpolation",
                 "key_value_pattern",
                 "keyword_argument",
@@ -378,9 +318,10 @@
                     "import_from_statement": 8,
                     "import_list": 10,
                     "import_statement": 3,
-                    "integer_binary": 3,
-                    "integer_hex": 2,
-                    "integer_octal": 3,
+                    "integer_binary_plain": 3,
+                    "integer_decimal_long": 1,
+                    "integer_hex_plain": 2,
+                    "integer_octal_plain": 3,
                     "interpolation": 31,
                     "key_value_pattern": 15,
                     "keyword_argument": 7,
@@ -462,12 +403,12 @@
                 "failingByKind": {},
                 "formatDeferredByKind": {},
                 "leftOutByKind": {},
-                "pass": 3723,
-                "total": 3723
+                "pass": 3724,
+                "total": 3724
             },
             "validators": {
                 "builtRenderParse": {
-                    "astMatchPass": 2661,
+                    "astMatchPass": 2663,
                     "casesByKind": {
                         "_simple_pattern": 38,
                         "_simple_statements": 230,
@@ -545,9 +486,10 @@
                         "import_from_statement": 2,
                         "import_list": 4,
                         "import_statement": 2,
-                        "integer_binary": 2,
-                        "integer_hex": 2,
-                        "integer_octal": 2,
+                        "integer_binary_plain": 2,
+                        "integer_decimal_long": 2,
+                        "integer_hex_plain": 2,
+                        "integer_octal_plain": 2,
                         "interpolation": 14,
                         "key_value_pattern": 4,
                         "keyword_argument": 12,
@@ -628,8 +570,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 2661,
-                    "total": 2661
+                    "pass": 2663,
+                    "total": 2663
                 },
                 "coverage": {
                     "casesByKind": {
@@ -798,7 +740,7 @@
                     "total": 158
                 },
                 "factoryStorage": {
-                    "astMatchPass": 1383,
+                    "astMatchPass": 1384,
                     "casesByKind": {
                         "_simple_pattern": 19,
                         "_simple_statements": 115,
@@ -882,9 +824,10 @@
                         "import_from_statement": 1,
                         "import_list": 2,
                         "import_statement": 1,
-                        "integer_binary": 1,
-                        "integer_hex": 1,
-                        "integer_octal": 1,
+                        "integer_binary_plain": 1,
+                        "integer_decimal_long": 1,
+                        "integer_hex_plain": 1,
+                        "integer_octal_plain": 1,
                         "interpolation": 7,
                         "key_value_pattern": 2,
                         "keyword_argument": 6,
@@ -967,8 +910,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1383,
-                    "total": 1383
+                    "pass": 1384,
+                    "total": 1384
                 },
                 "from": {
                     "casesByKind": {
@@ -1061,12 +1004,12 @@
                         "import_list": 1,
                         "import_prefix": 1,
                         "import_statement": 1,
-                        "integer_binary": 1,
+                        "integer_binary_plain": 1,
                         "integer_decimal_imaginary": 1,
                         "integer_decimal_long": 1,
                         "integer_decimal_plain": 1,
-                        "integer_hex": 1,
-                        "integer_octal": 1,
+                        "integer_hex_plain": 1,
+                        "integer_octal_plain": 1,
                         "interpolation": 1,
                         "key_value_pattern": 1,
                         "keyword_argument": 1,
@@ -1216,7 +1159,7 @@
                     "count_quantifier": 9,
                     "count_quantifier_arm": 9,
                     "count_quantifier_group": 5,
-                    "identity_escape": 15,
+                    "identity_escape": 16,
                     "inline_flags_group_disable": 2,
                     "inline_flags_group_enable": 2,
                     "inline_flags_group_toggle": 1,
@@ -1239,8 +1182,8 @@
                 "failingByKind": {},
                 "formatDeferredByKind": {},
                 "leftOutByKind": {},
-                "pass": 450,
-                "total": 450
+                "pass": 451,
+                "total": 451
             },
             "validators": {
                 "builtRenderParse": {
@@ -1439,7 +1382,7 @@
                 "attribute",
                 "attribute_input",
                 "attribute_item",
-                "attributed_argument",
+                "attributed_element",
                 "attributed_enum_variant",
                 "attributed_field_declaration",
                 "attributed_ordered_field",
@@ -1488,7 +1431,6 @@
                 "escape_sequence_unicode_fixed",
                 "expression_statement",
                 "expression_statement_with_semi",
-                "expressions",
                 "extension_declaration_body",
                 "extern_crate_declaration",
                 "extern_modifier",
@@ -1627,6 +1569,7 @@
                 "try_block",
                 "try_expression",
                 "tuple_expression",
+                "tuple_expression_elements",
                 "tuple_pattern",
                 "tuple_pattern_elements",
                 "tuple_struct_pattern",
@@ -1681,7 +1624,7 @@
                     "attribute": 28,
                     "attribute_input": 18,
                     "attribute_item": 24,
-                    "attributed_argument": 17,
+                    "attributed_element": 4,
                     "attributed_enum_variant": 8,
                     "attributed_field_declaration": 15,
                     "attributed_ordered_field": 9,
@@ -1724,7 +1667,6 @@
                     "escape_sequence_simple": 4,
                     "expression_statement": 214,
                     "expression_statement_with_semi": 166,
-                    "expressions": 6,
                     "extension_declaration_body": 17,
                     "extern_crate_declaration": 3,
                     "extern_modifier": 8,
@@ -1854,6 +1796,7 @@
                     "try_block": 1,
                     "try_expression": 9,
                     "tuple_expression": 6,
+                    "tuple_expression_elements": 6,
                     "tuple_pattern": 10,
                     "tuple_pattern_elements": 10,
                     "tuple_struct_pattern": 26,
@@ -1894,8 +1837,8 @@
                 "failingByKind": {},
                 "formatDeferredByKind": {},
                 "leftOutByKind": {},
-                "pass": 3808,
-                "total": 3808
+                "pass": 3795,
+                "total": 3795
             },
             "validators": {
                 "builtRenderParse": {
@@ -1916,7 +1859,7 @@
                         "attribute": 26,
                         "attribute_input": 8,
                         "attribute_item": 22,
-                        "attributed_argument": 4,
+                        "attributed_element": 4,
                         "attributed_enum_variant": 3,
                         "attributed_field_declaration": 5,
                         "attributed_ordered_field": 5,
@@ -1959,7 +1902,6 @@
                         "escape_sequence_simple": 2,
                         "expression_statement": 130,
                         "expression_statement_with_semi": 49,
-                        "expressions": 8,
                         "extension_declaration_body": 20,
                         "extern_crate_declaration": 2,
                         "extern_modifier": 6,
@@ -2089,6 +2031,7 @@
                         "try_block": 2,
                         "try_expression": 8,
                         "tuple_expression": 8,
+                        "tuple_expression_elements": 8,
                         "tuple_pattern": 14,
                         "tuple_pattern_elements": 14,
                         "tuple_struct_pattern": 22,
@@ -2148,7 +2091,7 @@
                         "attribute": 1,
                         "attribute_input": 1,
                         "attribute_item": 1,
-                        "attributed_argument": 1,
+                        "attributed_element": 1,
                         "attributed_enum_variant": 1,
                         "attributed_field_declaration": 1,
                         "attributed_ordered_field": 1,
@@ -2188,7 +2131,6 @@
                         "enum_variant_list_elements": 1,
                         "expression_statement": 1,
                         "expression_statement_with_semi": 1,
-                        "expressions": 1,
                         "extension_declaration_body": 1,
                         "extern_crate_declaration": 1,
                         "extern_modifier": 1,
@@ -2316,6 +2258,7 @@
                         "try_block": 1,
                         "try_expression": 1,
                         "tuple_expression": 1,
+                        "tuple_expression_elements": 1,
                         "tuple_pattern": 1,
                         "tuple_pattern_elements": 1,
                         "tuple_struct_pattern": 1,
@@ -2358,7 +2301,7 @@
                     "total": 218
                 },
                 "factoryStorage": {
-                    "astMatchPass": 1698,
+                    "astMatchPass": 1696,
                     "casesByKind": {
                         "_let_chain": 3,
                         "abstract_type": 7,
@@ -2375,7 +2318,7 @@
                         "attribute": 13,
                         "attribute_input": 8,
                         "attribute_item": 11,
-                        "attributed_argument": 4,
+                        "attributed_element": 2,
                         "attributed_enum_variant": 3,
                         "attributed_field_declaration": 5,
                         "attributed_ordered_field": 5,
@@ -2418,7 +2361,6 @@
                         "escape_sequence_simple": 1,
                         "expression_statement": 65,
                         "expression_statement_with_semi": 49,
-                        "expressions": 4,
                         "extension_declaration_body": 10,
                         "extern_crate_declaration": 1,
                         "extern_modifier": 3,
@@ -2548,6 +2490,7 @@
                         "try_block": 1,
                         "try_expression": 4,
                         "tuple_expression": 4,
+                        "tuple_expression_elements": 4,
                         "tuple_pattern": 7,
                         "tuple_pattern_elements": 7,
                         "tuple_struct_pattern": 11,
@@ -2587,8 +2530,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1698,
-                    "total": 1698
+                    "pass": 1696,
+                    "total": 1696
                 },
                 "from": {
                     "casesByKind": {
@@ -2606,7 +2549,7 @@
                         "attribute": 1,
                         "attribute_input": 1,
                         "attribute_item": 1,
-                        "attributed_argument": 1,
+                        "attributed_element": 1,
                         "attributed_enum_variant": 1,
                         "attributed_field_declaration": 1,
                         "attributed_ordered_field": 1,
@@ -2657,7 +2600,6 @@
                         "escape_sequence_simple": 1,
                         "expression_statement": 1,
                         "expression_statement_with_semi": 1,
-                        "expressions": 1,
                         "extension_declaration_body": 1,
                         "extern_crate_declaration": 1,
                         "extern_modifier": 1,
@@ -2809,6 +2751,7 @@
                         "try_block": 1,
                         "try_expression": 1,
                         "tuple_expression": 1,
+                        "tuple_expression_elements": 1,
                         "tuple_pattern": 1,
                         "tuple_pattern_elements": 1,
                         "tuple_struct_pattern": 1,
@@ -3211,6 +3154,7 @@
                 "number_float_point",
                 "number_float_scientific",
                 "number_hex",
+                "number_legacy_octal",
                 "number_octal",
                 "object",
                 "object_assignment_pattern",
@@ -3359,7 +3303,7 @@
                     "export_statement_default_from_ns_from": 1,
                     "export_statement_default_from_star_from": 1,
                     "export_statement_equals_export": 2,
-                    "expression_statement": 47,
+                    "expression_statement": 45,
                     "extends_clause": 12,
                     "extends_clause_single": 13,
                     "extends_type_clause": 2,
@@ -3486,12 +3430,12 @@
                 "failingByKind": {},
                 "formatDeferredByKind": {},
                 "leftOutByKind": {},
-                "pass": 2990,
-                "total": 2990
+                "pass": 2988,
+                "total": 2988
             },
             "validators": {
                 "builtRenderParse": {
-                    "astMatchPass": 2560,
+                    "astMatchPass": 2558,
                     "casesByKind": {
                         "_lhs_expression": 56,
                         "abstract_class_declaration": 6,
@@ -3554,7 +3498,7 @@
                         "export_statement_default_from_ns_from": 1,
                         "export_statement_default_from_star_from": 1,
                         "export_statement_equals_export": 2,
-                        "expression_statement": 50,
+                        "expression_statement": 48,
                         "extends_clause": 12,
                         "extends_clause_single": 12,
                         "extends_type_clause": 2,
@@ -3680,8 +3624,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 2560,
-                    "total": 2560
+                    "pass": 2558,
+                    "total": 2558
                 },
                 "coverage": {
                     "casesByKind": {
@@ -3909,7 +3853,7 @@
                     "total": 217
                 },
                 "factoryStorage": {
-                    "astMatchPass": 1355,
+                    "astMatchPass": 1354,
                     "casesByKind": {
                         "_lhs_expression": 28,
                         "abstract_class_declaration": 3,
@@ -3972,7 +3916,7 @@
                         "export_statement_default_from_ns_from": 1,
                         "export_statement_default_from_star_from": 1,
                         "export_statement_equals_export": 1,
-                        "expression_statement": 25,
+                        "expression_statement": 24,
                         "extends_clause": 6,
                         "extends_clause_single": 6,
                         "extends_type_clause": 1,
@@ -4098,8 +4042,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1355,
-                    "total": 1355
+                    "pass": 1354,
+                    "total": 1354
                 },
                 "from": {
                     "casesByKind": {
@@ -4321,7 +4265,7 @@
     },
     "totals": {
         "fail": 2,
-        "pass": 26830,
-        "total": 26832
+        "pass": 26815,
+        "total": 26817
     }
 }
