@@ -145,19 +145,8 @@ pub struct Hydration<'a> {
 /// shows, and whether a grammar kind relaxes to a display kind.
 type Stamp = (fn(KindId) -> bool, fn(KindId, KindId) -> bool);
 
-/// What a hydration writes into: the space its records take, and, for a
-/// tree that keeps them, each node's row and the records no cell names by
-/// their rows.
+/// What a hydration writes into: the space its records take.
 pub trait HydrateInto: RecordSpace {
-    /// Writes the row of `kid`, `missing` as its tree answers.
-    ///
-    /// # Errors
-    ///
-    /// What the rows refuse.
-    fn write_row(&mut self, _kid: &crate::nodes::Kid, _missing: bool) -> Result<(), ArenaError> {
-        Ok(())
-    }
-
     /// Holds the record at `at` for the node at `row`, which no cell names.
     ///
     /// # Errors
@@ -167,28 +156,11 @@ pub trait HydrateInto: RecordSpace {
         Ok(())
     }
 
-    /// The record held for the node at `row`.
-    fn held(&self, _row: NodeIndex) -> Option<Address> {
-        None
-    }
-
     /// Notes the record written at `at`.
     fn keep_record(&mut self, _at: Address) {}
-
-    /// Whether a leaf's or a unit's cell names its node by its holder's
-    /// run, as records that outlive their tree do: 1 for the holder's own
-    /// node, else two past the node's entry there, since a cell packs no
-    /// row 0. A tree's arena names it by its descendant index.
-    fn rows_by_run(&self) -> bool {
-        false
-    }
 }
 
-impl HydrateInto for super::ReadWriter<'_> {
-    fn rows_by_run(&self) -> bool {
-        true
-    }
-}
+impl HydrateInto for super::ReadWriter<'_> {}
 
 /// A record whose walk is open: where it is, the node it is of, and the run
 /// of its children so far. `rows` holds the rows still open, each by its
@@ -321,11 +293,11 @@ impl<'a> Hydration<'a> {
     /// What the extra's hydration and the arena refuse.
     pub fn extra(&mut self, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, kid: &crate::nodes::Kid) -> Result<bool, HydrateError> {
         let Some(walk) = self.extras else { return Ok(false) };
-        if !kid.extra || kid.error() || self.tree.held(kid.index).is_some() {
+        if !kid.extra || kid.error() {
             return Ok(false);
         }
         let read = walk(cursor, ctx, self, kid)?;
-        if !read && self.tree.rows_by_run() && self.met_at == Some(kid.index) {
+        if !read && self.met_at == Some(kid.index) {
             self.entering = self.met.map(|facts| (kid.index, facts));
             let kind = ctx.stamped_kind(kid.grammar, kid.display);
             let draft = self.open_record(kind, HEADER_WORDS)?;
@@ -364,18 +336,13 @@ impl<'a> Hydration<'a> {
     }
 
     /// `value` as the record `draft` holds it: a leaf or a unit named by
-    /// the record's run where the records outlive their tree
-    /// (`HydrateInto::rows_by_run`).
+    /// the record's run, 1 for the record's own node, else two past the
+    /// node's entry there, since a cell packs no row 0.
     ///
     /// # Errors
     ///
-    /// `ArenaError::Malformed` for a node the record's walk did not meet,
-    /// and `ArenaError::Unwritable` for a coordinate, which names a row of
-    /// a tree.
+    /// `ArenaError::Malformed` for a node the record's walk did not meet.
     fn held(&self, draft: Draft, value: Hydrated) -> Result<Hydrated, ArenaError> {
-        if !self.tree.rows_by_run() {
-            return Ok(value);
-        }
         let in_run = |row: NodeIndex| {
             let outside = ArenaError::Malformed { what: "cell row outside its holder's run", word: row.0 };
             let open = self.open.iter().rfind(|open| open.at == draft.at).ok_or(outside.clone())?;
@@ -434,17 +401,16 @@ impl<'a> Hydration<'a> {
         Ok(())
     }
 
-    /// The facts of the node `cursor` stands on (`Kid::at`), its row
-    /// written unless the tree has one for it.
+    /// The facts of the node `cursor` stands on (`Kid::at`), met by the
+    /// record open over it.
     ///
     /// # Errors
     ///
-    /// What writing the row refuses.
+    /// What ending an `ERROR`'s record or opening one refuses.
     pub fn meet(&mut self, cursor: &TreeCursor<'_>) -> Result<crate::nodes::Kid, HydrateError> {
         let node = cursor.node();
         let kid = crate::nodes::Kid::of(&node, crate::read::index_of(cursor), crate::read::field_id(cursor));
         self.leave_errors(kid.index.get())?;
-        self.tree.write_row(&kid, node.is_missing())?;
         let facts = facts_of(&kid, &node);
         let depth = self.depth_of(kid.grammar);
         if let Some(open) = self.open.last_mut() {
@@ -452,7 +418,7 @@ impl<'a> Hydration<'a> {
         }
         self.met = Some(facts);
         self.met_at = Some(kid.index);
-        if kid.error() && self.tree.rows_by_run() {
+        if kid.error() {
             self.entering = Some((kid.index, facts));
             let draft = self.open_record(KindId::ERROR, HEADER_WORDS)?;
             let kind = self.stamp.map_or(facts.kind, |(shows, relaxes)| crate::read::stamp(facts.kind, facts.display(), shows, relaxes));
@@ -626,28 +592,11 @@ pub trait HydrateNode: ReadNode + Stored {
     /// refuses.
     fn hydrate(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, records: &mut Hydration<'_>) -> Result<Hydrated, HydrateError>;
 
-    /// The walk of the node the cursor is on, as the kind its parent's cell
-    /// stamped: an enum picks the member that claims `stamped`, and the
-    /// node's grammar id only chooses among that member's own claims; a
-    /// struct has the one kind.
-    ///
-    /// # Errors
-    ///
-    /// What `hydrate` refuses, and `ReadError::Unadmitted` for a stamped kind
-    /// no member claims.
-    fn hydrate_stamped(stamped: KindId, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, records: &mut Hydration<'_>) -> Result<Hydrated, HydrateError> {
-        let _ = stamped;
-        Self::hydrate(cursor, ctx, records)
-    }
 }
 
 impl<T: HydrateNode> HydrateNode for Box<T> {
     fn hydrate(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, records: &mut Hydration<'_>) -> Result<Hydrated, HydrateError> {
         T::hydrate(cursor, ctx, records)
-    }
-
-    fn hydrate_stamped(stamped: KindId, cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, records: &mut Hydration<'_>) -> Result<Hydrated, HydrateError> {
-        T::hydrate_stamped(stamped, cursor, ctx, records)
     }
 }
 

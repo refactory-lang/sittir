@@ -232,12 +232,6 @@ export declare const CELL_FORM_TEXT: number
 export declare const CELL_FORM_UNIT: number
 
 /**
- * r" The bit a node cell's span end carries for a leaf
- * r" (`record::form::LEAF`).
- */
-export declare const CELL_LEAF_BIT: number
-
-/**
  * r" The tag words of a parsed cell whose slot holds more than one
  * r" form (`arena::cell::parsed_tag`).
  */

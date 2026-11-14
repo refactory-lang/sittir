@@ -92,9 +92,9 @@ pub mod stored {
 /// holds more than one form (`tagged`); an absent slot is then its absent
 /// tag, else an all-zero cell, since no present form's first word is zero.
 pub mod form {
-    /// A parsed node by its row and span: a node with a record, by its
-    /// coordinate, or a leaf. `[kind | row << bits, start, end | LEAF]`; a
-    /// child's row is never 0.
+    /// A parsed node: a leaf, by its row and span,
+    /// `[kind | row << bits, start, end]`, its row never 0; or a child with
+    /// a record, `[kind, address, 0]`.
     pub const NODE: u8 = 1;
     /// A unit: `[kind | row << bits]`; the blank arm is 0.
     pub const UNIT: u8 = 2;
@@ -113,8 +113,6 @@ pub mod form {
     pub const UNIT_WORDS: u32 = 1;
     /// The words a `TEXT` cell takes.
     pub const TEXT_WORDS: u32 = 2;
-    /// The bit a `NODE` cell's span end carries for a leaf.
-    pub const LEAF: u32 = 1 << 31;
 }
 
 /// The forms a slot holds whose values are stored as `stored`.

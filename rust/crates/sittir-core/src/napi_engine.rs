@@ -772,10 +772,6 @@ macro_rules! napi_engine {
             pub const CELL_FORM_TEXT: u32 = $crate::record::form::TEXT as u32;
             #[::napi_derive::napi]
             pub const CELL_FORM_BLANK: u32 = $crate::record::form::BLANK as u32;
-            /// The bit a node cell's span end carries for a leaf
-            /// (`record::form::LEAF`).
-            #[::napi_derive::napi]
-            pub const CELL_LEAF_BIT: u32 = $crate::record::form::LEAF;
             /// The chunk-0 offset a built blank arm's cell names
             /// (`arena::cell::BLANK_UNIT`).
             #[::napi_derive::napi]

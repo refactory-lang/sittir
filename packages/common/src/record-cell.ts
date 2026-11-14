@@ -15,7 +15,6 @@ export interface RecordCodecConstants {
 	readonly CELL_FORM_UNIT: number;
 	readonly CELL_FORM_TEXT: number;
 	readonly CELL_FORM_BLANK: number;
-	readonly CELL_LEAF_BIT: number;
 	readonly CELL_BLANK_UNIT: number;
 	readonly KIND_BITS: number;
 	readonly RECORD_FLAG_LINK: number;
@@ -64,8 +63,6 @@ export interface CellFormat {
 	/** The tag word a parsed cell opens with when its slot holds more than one form. */
 	readonly tag: { readonly absent: number; readonly node: number; readonly unit: number; readonly text: number };
 	readonly forms: CellForms;
-	/** The bit a node cell's span end carries for a leaf. */
-	readonly leafBit: number;
 	/** The chunk-0 offset a built blank arm's cell names: apart from word 0, an unset slot, and from every unit's kind. */
 	readonly blankUnit: number;
 	/** The bits a kind field takes, packed with its word's neighbours, in either arena. */
@@ -142,7 +139,6 @@ const CODEC_KEYS = [
 	'CELL_FORM_UNIT',
 	'CELL_FORM_TEXT',
 	'CELL_FORM_BLANK',
-	'CELL_LEAF_BIT',
 	'CELL_BLANK_UNIT',
 	'KIND_BITS',
 	'RECORD_FLAG_LINK',
@@ -179,7 +175,6 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 	return {
 		tag: { absent: codec.CELL_TAG_ABSENT, node: codec.CELL_TAG_NODE, unit: codec.CELL_TAG_UNIT, text: codec.CELL_TAG_TEXT },
 		forms: { node: codec.CELL_FORM_NODE, unit: codec.CELL_FORM_UNIT, text: codec.CELL_FORM_TEXT, blank: codec.CELL_FORM_BLANK },
-		leafBit: codec.CELL_LEAF_BIT,
 		blankUnit: codec.CELL_BLANK_UNIT,
 		kindBits: codec.KIND_BITS,
 		linkFlag: codec.RECORD_FLAG_LINK,
@@ -297,16 +292,12 @@ export function decodeParsedCell(words: ArrayLike<number>, at: number, forms: nu
 		case format.forms.node: {
 			if (word(0) >>> format.kindBits === 0) return parsedRecord(word(0), word(1), word(2), at, format);
 			const { kind, row } = packed(word(0), at, format);
-			const end = word(2);
-			if ((end & format.leafBit) === 0) throw new Error(`a node cell at word ${at} names a node by its row alone, which no parsed cell does`);
-			return { form: 'parsedLeaf', kind, span: { start: word(1), end: (end & ~format.leafBit) >>> 0 }, row };
+			return { form: 'parsedLeaf', kind, span: { start: word(1), end: word(2) }, row };
 		}
 		case format.forms.unit:
 			return { form: 'unit', ...packed(word(0), at, format) };
 		case format.forms.text: {
-			const end = word(1);
-			if ((end & format.leafBit) !== 0) throw new Error(`a text cell at word ${at} ends at ${end >>> 0}, which no span does`);
-			return { form: 'parsedText', span: { start: word(0) - 1, end } };
+			return { form: 'parsedText', span: { start: word(0) - 1, end: word(1) } };
 		}
 		default:
 			throw new Error(`a slot of forms ${forms} names no form a parsed cell holds`);

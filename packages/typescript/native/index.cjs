@@ -709,7 +709,6 @@ module.exports.CELL_FORM_BLANK = nativeBinding.CELL_FORM_BLANK
 module.exports.CELL_FORM_NODE = nativeBinding.CELL_FORM_NODE
 module.exports.CELL_FORM_TEXT = nativeBinding.CELL_FORM_TEXT
 module.exports.CELL_FORM_UNIT = nativeBinding.CELL_FORM_UNIT
-module.exports.CELL_LEAF_BIT = nativeBinding.CELL_LEAF_BIT
 module.exports.CELL_TAG_ABSENT = nativeBinding.CELL_TAG_ABSENT
 module.exports.CELL_TAG_NODE = nativeBinding.CELL_TAG_NODE
 module.exports.CELL_TAG_TEXT = nativeBinding.CELL_TAG_TEXT

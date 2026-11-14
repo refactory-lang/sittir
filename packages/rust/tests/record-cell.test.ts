@@ -107,6 +107,5 @@ describe('the record cell decoder reads what the native codec writes', () => {
 		expect(() => decodeParsedCell([format!.tag.unit, 0, 0, 0], 0, tagged, format!)).toThrow(/which its slot of forms 5 does not hold/);
 		const leaf = fixture.parsed.cells.find((cell) => cell.form === 'parsedLeaf' && cell.forms === tagged)!;
 		expect(() => decodeParsedCell(leaf.words.slice(0, -1), 0, tagged, format!)).toThrow(/ends at word 3/);
-		expect(() => decodeParsedCell([...leaf.words.slice(0, -1), 7], 0, tagged, format!)).toThrow(/names a node by its row alone/);
 	});
 });

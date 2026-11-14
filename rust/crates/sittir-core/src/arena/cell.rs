@@ -286,11 +286,11 @@ impl CellShape {
     }
 }
 
-fn end_word(span: Span, leaf: bool) -> Result<u32, ArenaError> {
-    if span.end & form::LEAF != 0 || span.start > span.end {
-        return Err(ArenaError::Unwritable("a span past what a parsed cell holds"));
+fn end_word(span: Span) -> Result<u32, ArenaError> {
+    if span.start > span.end {
+        return Err(ArenaError::Unwritable("a span that ends before it starts"));
     }
-    Ok(if leaf { span.end | form::LEAF } else { span.end })
+    Ok(span.end)
 }
 
 impl Cell {
@@ -310,11 +310,11 @@ impl Cell {
                 out.fill(0);
                 return Ok(());
             }
-            Cell::ParsedLeaf { kind, span, row } => (form::NODE, &[CellShape::pack(kind, row.0, bits)?, span.start, end_word(span, true)?]),
+            Cell::ParsedLeaf { kind, span, row } => (form::NODE, &[CellShape::pack(kind, row.0, bits)?, span.start, end_word(span)?]),
             Cell::Child { kind, at, link: None, changed } if changed == ChangedEdges::default() => (form::NODE, &[record_kind(kind, bits)?, record(at.0)?.0, 0]),
             Cell::Unit { kind: KindId::BLANK, row: None } if shape.forms & form::BLANK != 0 => (form::UNIT, &[0]),
             Cell::Unit { kind, row: Some(row) } => (form::UNIT, &[CellShape::pack(kind, row.0, bits)?]),
-            Cell::ParsedText { span } => (form::TEXT, &[span.start.checked_add(1).ok_or(ArenaError::Unwritable("a span past what a parsed cell holds"))?, end_word(span, false)?]),
+            Cell::ParsedText { span } => (form::TEXT, &[span.start.checked_add(1).ok_or(ArenaError::Unwritable("a span past what a parsed cell holds"))?, end_word(span)?]),
             _ => return Err(ArenaError::Unwritable("a value no parsed record holds")),
         };
         if shape.forms & form == 0 {
@@ -362,11 +362,7 @@ impl Cell {
             form::NODE if field(0)? >> bits == 0 => parsed_record(field(0)?, field(1)?, field(2)?, bits),
             form::NODE => {
                 let (kind, row) = CellShape::unpack(field(0)?, bits)?;
-                let end = field(2)?;
-                if end & form::LEAF == 0 {
-                    return Err(malformed("cell span end", end));
-                }
-                Ok(Cell::ParsedLeaf { kind, span: span(field(1)?, end & !form::LEAF)?, row: NodeIndex(row) })
+                Ok(Cell::ParsedLeaf { kind, span: span(field(1)?, field(2)?)?, row: NodeIndex(row) })
             }
             form::UNIT => {
                 let (kind, row) = CellShape::unpack(field(0)?, bits)?;
@@ -374,11 +370,7 @@ impl Cell {
             }
             form::TEXT => {
                 let start = field(0)?.checked_sub(1).ok_or(malformed("text cell start", 0))?;
-                let end = field(1)?;
-                if end & form::LEAF != 0 {
-                    return Err(malformed("cell span end", end));
-                }
-                Ok(Cell::ParsedText { span: span(start, end)? })
+                Ok(Cell::ParsedText { span: span(start, field(1)?)? })
             }
             _ => Err(malformed("cell forms", u32::from(shape.forms))),
         }
@@ -669,7 +661,7 @@ mod tests {
         assert_eq!(Cell::BuiltText { text }.encode_parsed(&mut words, node, BITS), Err(ArenaError::Unwritable("a value no parsed record holds")));
         for cell in [
             Cell::ParsedLeaf { kind: KindId::BLANK, span, row: NodeIndex(1) },
-            Cell::ParsedLeaf { kind: KindId(3), span: Span { start: 0, end: form::LEAF }, row: NodeIndex(1) },
+            Cell::ParsedLeaf { kind: KindId(3), span: Span { start: 2, end: 1 }, row: NodeIndex(1) },
             Cell::Child { kind: KindId::BLANK, at: Address(4), link: None, changed: ChangedEdges::default() },
             Cell::Child { kind: KindId(2), at: Address::NONE, link: None, changed: ChangedEdges::default() },
             Cell::Child { kind: KindId(2), at: Address(4), link: Some(TreeId(1)), changed: ChangedEdges::default() },
@@ -690,11 +682,10 @@ mod tests {
             (vec![3 | 1 << BITS, 0], node),
             (vec![u32::MAX, 0, 0], node),
             (vec![3, 0, 0], node),
-            (vec![3 | 1 << BITS, 0, 1], node),
+            (vec![3 | 1 << BITS, 2, 1], node),
             (vec![7, 0, 0, 0], tagged),
             (vec![parsed_tag::UNIT, 0, 0, 0], tagged),
             (vec![parsed_tag::TEXT, 0, 1, 0], tagged),
-            (vec![parsed_tag::TEXT, 1, 1 | form::LEAF, 0], tagged),
             (vec![parsed_tag::ABSENT, 0, 1, 0], tagged),
         ] {
             assert!(Cell::decode_parsed(&words, shape, BITS).is_err(), "{words:?}");
