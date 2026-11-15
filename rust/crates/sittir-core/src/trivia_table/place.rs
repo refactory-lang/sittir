@@ -523,7 +523,8 @@ impl Placement {
             state.published += published.allocation();
             published
         });
-        let mut placer = Placer { nodes, lines, kinds: self.kinds, unit: self.unit.max(1), state: &mut state, published, kids: HashMap::default(), plans: HashMap::default(), placed: PlacedSides::new(), ranks: HashMap::default() };
+        let counted = nodes.bound().is_some();
+        let mut placer = Placer { nodes, lines, kinds: self.kinds, unit: self.unit.max(1), state: &mut state, published, kids: HashMap::default(), plans: HashMap::default(), placed: PlacedSides::new(), ranks: HashMap::default(), counted };
         f(&mut placer)
     }
 
@@ -685,6 +686,9 @@ struct Placer<'t, 's, 'n> {
     /// Each node's rank at a byte, for the bytes a token with no width was
     /// asked at.
     ranks: HashMap<u32, HashMap<NodeIndex, Rank, IndexState>, IndexState>,
+    /// Whether the tree numbers its nodes in walk order and counts each
+    /// one's (`Nodes::bound`), so a node's rank is its index and count.
+    counted: bool,
 }
 
 impl<'t> Placer<'t, '_, '_> {
@@ -696,23 +700,31 @@ impl<'t> Placer<'t, '_, '_> {
         narrow(self.text().len())
     }
 
-    /// The rank at `byte` of the node at `index`, which touches it: every
-    /// node touching the byte is ranked on the first ask, in one walk from
-    /// the root that enters only those.
-    fn rank(&mut self, byte: u32, index: NodeIndex) -> Rank {
+    /// The rank at `byte` of `node`, which touches it. A counted tree's is
+    /// its index and the index past its last node; elsewhere every node
+    /// touching the byte is ranked on the first ask, in one walk from the
+    /// root that enters only those, found among each node's children by
+    /// their order in the source.
+    fn rank(&mut self, byte: u32, node: &Kid) -> Rank {
+        let index = node.index;
+        if self.counted {
+            return Rank { enter: index.get(), exit: index.get() + node.count };
+        }
         if !self.ranks.contains_key(&byte) {
             let mut ranks: HashMap<NodeIndex, Rank, IndexState> = HashMap::default();
-            let mut entered: Vec<(NodeIndex, u32, crate::nodes::Kids, usize)> = vec![(NodeIndex::ROOT, 0, self.nodes.kids(NodeIndex::ROOT), 0)];
+            let touching = |kids: &crate::nodes::Kids| kids.partition_point(|kid| kid.end < byte);
+            let root = self.nodes.kids(NodeIndex::ROOT);
+            let from = touching(&root);
+            let mut entered: Vec<(NodeIndex, u32, crate::nodes::Kids, usize)> = vec![(NodeIndex::ROOT, 0, root, from)];
             let mut count = 1;
             while let Some((node, enter, kids, next)) = entered.last_mut() {
-                if let Some(kid) = kids.get(*next) {
+                if let Some(kid) = kids.get(*next).filter(|kid| kid.start <= byte) {
                     *next += 1;
-                    if kid.start <= byte && byte <= kid.end {
-                        let (kid, enter) = (kid.index, count);
-                        count += 1;
-                        let kids = self.nodes.kids(kid);
-                        entered.push((kid, enter, kids, 0));
-                    }
+                    let (kid, enter) = (kid.index, count);
+                    count += 1;
+                    let kids = self.nodes.kids(kid);
+                    let from = touching(&kids);
+                    entered.push((kid, enter, kids, from));
                 } else {
                     ranks.insert(*node, Rank { enter: *enter, exit: count });
                     entered.pop();
@@ -726,16 +738,16 @@ impl<'t> Placer<'t, '_, '_> {
     }
 
     fn leaf_tok(&mut self, kid: &Kid) -> Tok {
-        let rank = (kid.start == kid.end).then(|| self.rank(kid.start, kid.index));
+        let rank = (kid.start == kid.end).then(|| self.rank(kid.start, kid));
         Tok { start: kid.start, end: kid.end, key: Key::leaf(kid.start, kid.end, rank) }
     }
 
     fn start_edge(&mut self, node: &Kid) -> Tok {
-        Tok::edge(node.start, self.rank(node.start, node.index), 1)
+        Tok::edge(node.start, self.rank(node.start, node), 1)
     }
 
     fn end_edge(&mut self, node: &Kid) -> Tok {
-        Tok::edge(node.end, self.rank(node.end, node.index), 2)
+        Tok::edge(node.end, self.rank(node.end, node), 2)
     }
 
     /// What the placement reads of the node at `index`: from the shape of
@@ -1129,7 +1141,7 @@ impl<'t> Placer<'t, '_, '_> {
             }
             if entry != last {
                 let (node, side) = self.restore_side(&shape);
-                let inner = u32::MAX - self.rank(shape.node.end, member).enter;
+                let inner = u32::MAX - self.rank(shape.node.end, &shape.node).enter;
                 events.push((Order { from: shape.node.end, gap: false, left: None, step: inner }, Event::Restore { place: Place::Side(node, side), depth: entry - last }));
             }
         }
