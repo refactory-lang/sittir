@@ -90,6 +90,8 @@ export const readsList = (route: MemberRoute, slotHoldsList: boolean): boolean =
 
 export const VALUE = '$value';
 
+export const entryRoutes = (entry: Pick<ReadEntry, 'members' | 'value'>): readonly MemberRoute[] => (entry.value === undefined ? entry.members : [...entry.members, entry.value]);
+
 const declaredArity = (vocabulary: Vocabulary, path: string, route: MemberRoute): MemberRoute => {
 	const declared = vocabulary.members(path).get(route.name);
 	return declared === undefined || declared.arity === 'either' ? route : { ...route, list: declared.arity === 'list' };
@@ -1359,16 +1361,16 @@ function liftMounted(model: SlotModel, refined: readonly RefinedClaim[], readEnt
 		if (tests > 0 || entry.separated === true || entry.template !== undefined)
 			throw new Error(`bindings: ${entry.vocab} reads ${kind} at its holder ${holder}, so its claim tests nothing of ${kind} itself`);
 		const at = stepOf(holder, mount.slot, null);
-		const members = entry.members.map((route): MemberRoute => {
+		const lift = (route: MemberRoute): MemberRoute => {
 			if ((route.route !== 'slot' && route.route !== 'kind') || route.path === undefined)
 				throw new Error(`bindings: ${entry.vocab} reads ${kind} at its holder ${holder}, which routes no ${route.route} member ${route.name} through ${kind}`);
 			return { ...route, path: [at, ...route.path] };
-		});
+		};
 		const subject: CaptureSite = { up: 0, down: [{ field: mount.slot, kind: null, after: null, anchor: null }] };
 		const children = childTestsOf(model, holder, { subject, kinds: [kind], captured: false }, []);
 		const into = readEntries.get(holder);
 		if (into === undefined) throw new Error(`bindings: ${entry.vocab} reads ${kind} at its holder ${holder}, which no claim reads`);
-		into.push({ ...entry, kind: holder, children, present: [], members });
+		into.push({ ...entry, kind: holder, children, present: [], members: entry.members.map(lift), ...(entry.value === undefined ? {} : { value: lift(entry.value) }) });
 		order(holder, into);
 	}
 	for (const { kind, entry } of lifts) {

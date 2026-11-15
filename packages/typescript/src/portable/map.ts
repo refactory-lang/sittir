@@ -27953,10 +27953,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly pattern: never;
 		};
 		readonly 'literal.string': {
-			readonly elements:
-				| V.Read<TypeScriptMap, 'literal.string.escape'>
-				| V.Read<TypeScriptMap, 'literal.string.text'>
-				| T.EscapeSequence.Parsed;
+			readonly elements: V.Read<TypeScriptMap, 'literal.string.escape'> | V.Read<TypeScriptMap, 'literal.string.text'>;
 		};
 		readonly 'literal.string.escape': {
 			readonly elements: never;
@@ -27967,7 +27964,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.interpolation'>
 				| V.Read<TypeScriptMap, 'literal.string.escape'>
 				| V.Read<TypeScriptMap, 'literal.string.text'>
-				| T.EscapeSequence.Parsed
 				| T.TemplateSubstitution.Parsed;
 		};
 		readonly 'literal.string.text': {

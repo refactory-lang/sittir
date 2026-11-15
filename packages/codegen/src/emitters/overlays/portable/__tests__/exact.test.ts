@@ -56,9 +56,11 @@ describe('exactSlotsOf', () => {
 	});
 
 	it('keeps a kind its nullary builder builds whole out of raw: the bare range reads as its path and builds back', () => {
-		const raw = setAt('argument', 'value').raw.map((arm) => arm.kind);
-		expect(raw).not.toContain('range_expression_bare');
-		expect(raw).toContain('metavariable');
+		expect(setAt('argument', 'value').raw.map((arm) => arm.kind)).not.toContain('range_expression_bare');
+	});
+
+	it('keeps a kind out of raw when the text it reads is always there: a metavariable reads its name as its $value', () => {
+		expect(setAt('argument', 'value').raw.map((arm) => arm.kind)).not.toContain('metavariable');
 	});
 
 	it("keeps the preset reason where the build picks a form the read doesn't record", () => {

@@ -26,7 +26,7 @@ import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics
 import { Delimiter } from '@sittir/common/delimiter';
 import { holds, portablePathHasFacts, readableEntries } from '@sittir/common/engine';
 import type { ChildTest, GrammarRoutes, MemberRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
-import { concreteKinds, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reachedBy, shownSlots, VALUE, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
+import { concreteKinds, entryRoutes, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reachedBy, shownSlots, VALUE, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
 import { slotSubjectOf, tableReadEntries, type PortableFactRecord } from './read-tests.ts';
 import { portableSpelledFactOf } from './spelled-facts.ts';
 import type { ModelMount, ModelSlot, SlotModel, TemplateFact } from '../../../bindings/facts.ts';
@@ -214,7 +214,6 @@ const sortedIds = (ids: Iterable<number>): readonly number[] => [...new Set(ids)
 const disjoint = (sets: readonly ReadonlySet<number>[]): boolean =>
 	sets.every((a, i) => sets.every((b, j) => i === j || [...a].every((id) => !b.has(id))));
 
-const routesOf = (entry: ReadEntry): readonly MemberRoute[] => (entry.value === undefined ? entry.members : [...entry.members, entry.value]);
 
 const builtMembers = (arm: Pick<PortableBuildArm, 'members' | 'content'>): readonly PortableMemberStep[] => (arm.content === undefined ? arm.members : [...arm.members, arm.content]);
 
@@ -869,7 +868,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const forms = refined.filter((pin) => pin.own).length;
 		const guaranteed = guaranteedBy(model, entry);
 		const pinnedOut = new Set<readonly SlotStep[]>();
-		const routedAll = routesOf(entry).flatMap((route) => {
+		const routedAll = entryRoutes(entry).flatMap((route) => {
 			const path = route.path;
 			if (path === undefined) return [];
 			if (outOfForms(path, refined)) return (pinnedOut.add(path), []);
@@ -1047,7 +1046,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				);
 			const required = new Set([
 				...[...tested].filter((name) => survivors.some((member) => member.name === name)),
-				...routesOf(entry).flatMap((route) =>
+				...entryRoutes(entry).flatMap((route) =>
 					route.flag !== true &&
 					route.spelled !== true &&
 					route.path !== undefined &&
