@@ -47,7 +47,6 @@ napi-derive = { workspace = true, optional = true }
 # ast-grep-core is only exercised by Phase 3 T022+ (pattern search via
 # `find_and_read`); the integration work belongs in that task.
 # ast-grep-core = "0.42"
-sha2 = { workspace = true }
 
 [dev-dependencies]
 # Grammar crates used only by the engine's tree-query tests. Kept as

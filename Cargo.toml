@@ -91,14 +91,7 @@ serde_json = "1"
 # semver-stable ABI bridge with no `links` field), so they stay compatible.
 tree-sitter = "0.27"
 tree-sitter-language = "0.1.7"
-sha2 = "0.11"
 cc = "1"
-# Insertion-order-preserving map for UntypedNode.fields (sittir-core) —
-# std::collections::HashMap's per-instance random iteration order made
-# native slot-key serialization order (and therefore "first node of
-# kind K" candidate selection during validation) nondeterministic
-# across parses. IndexMap preserves tree-sitter child insertion order.
-indexmap = { version = "2", features = ["serde"] }
 # The N-API level is the highest the Node floor in package.json provides: N-API 10
 # is in Node 22.14+ and 23.6+. Arena chunks cross as external array buffers
 # and are detached when freed, which needs N-API 7.
