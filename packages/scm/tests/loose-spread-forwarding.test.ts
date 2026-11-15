@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import scm from '../src/index.ts';
+import { sharedEngine } from '@sittir/common/testing';
 
-const sc = await createEngine(scm);
+const sc = await sharedEngine(() => createEngine(scm));
 
 describe('a loose entry whose one slot holds a child built from spread elements', () => {
 	it('takes the spread elements the strict builder takes', () => {

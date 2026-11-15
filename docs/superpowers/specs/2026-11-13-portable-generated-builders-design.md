@@ -164,7 +164,7 @@ TS2322: Type 'PythonNode' is not assignable to type 'string | ({ readonly $type:
 ```
 
 **Answer (approved 2026-11-14).** In an input, a member's node arm is the language's node types for the kinds its paths read, never `{ $type: number }`.
-- `map.ts` gains `nodes`, one entry per path, written from the generated `PortableIds`: `readonly 'statement.block': T.Block.Bound | T.Block.Parsed | T.SuiteEmpty.Bound | …`.
+- `map.ts` gains `nodes`, one entry per path: the kinds whose read entries read as that path, never a subpath's (approved 2026-11-15). `readonly 'statement.block': T.Block.Bound | T.Block.Parsed | T.SuiteEmpty.Bound | …`. `PortableIds` keeps the whole family, because the `is` guards test a family. A path's nodes come from the same read entries its read arms do, so python's `identifier` takes an `Identifier` node and refuses a `DottedName`, which reads as `identifier.qualified`.
 - An unmapped kind keeps its `UnmappedKinds` entry, which is already a real node type.
 - `engine.isNode` then narrows to exactly those types, and the generated code places the node by its kind:
 
@@ -291,6 +291,29 @@ if (typeof value === 'bigint') return literal_number_integer({ $value: value });
 if (typeof value === 'string') return b.identifier(value);
 ```
 
+### 8. A path built from text
+
+**The case.** `identifier` is built from its text, but its interface held only `$path`, so `{ $path: 'identifier' }` type-checked and the build threw (`identifier: text must be a string: undefined`), while `{ $path: 'identifier', $value: 'x' }`, which builds, was refused. The reader returns an identifier as its bare text (`X: int = 1` reads `name: 'X'`), but the map typed every identifier read as `{ $path }`. The same held for every path a grammar builds from text alone. `x = "ab"` reads `{ $path: 'literal.string.text', $value: 'ab' }`, which the read type refused.
+
+**Answer (approved 2026-11-15).**
+- A path that a grammar builds from text alone declares `readonly $value: string`. Those paths are `identifier`, `literal.string.text`, `comment.text`, `comment.html`, `literal.regex.flags`, `literal.regex.pattern`, `clause.import.relative.prefix` and `expression.interpolation.conversion`. Rust's `identifier.metavariable` (`$x`) builds from its name's text too, through a content arm, so it keeps the `$value` it inherits from `identifier`.
+- A guard derives the set from the build tables. A path whose build arms include one that takes a text `$value` (a text arm or a content arm), and none of which needs a member or builds another value, declares the text `$value`, and no other path does.
+- Its read and its input are its bare text or `{ $path, $value }`. `{ $path }` alone is a type error.
+- `Read<G, P>`, `InputOf` and a slot's default all add the bare text for such a path. The reader is unchanged.
+- The identifier subkinds that are structures (`identifier.qualified`, `.label`, `.lifetime`) restate `$value` away.
+- The fixed-word text paths keep `{ $path }`, because every grammar builds them from it: `statement.break`, `statement.continue`, `modifier.visibility.*`, `expression.meta` and `clause.import.wildcard`.
+- A path whose text arm sits beside structural arms (python `literal.string.escape`, rust `literal.character`), or whose `$value` is a number (python `literal.number.integer`, rust `literal.number.float`, typescript `literal.number`), is left out. Its input needs forms, each stating either `$value` or the members.
+
+| input | before | after |
+|---|---|---|
+| `{ $path: 'identifier' }` | accepted; the build throws | TS2322 |
+| `{ $path: 'identifier', $value: 'x' }` | TS2353 | accepted; builds `x` |
+| python constant `name` read as `'X'` | TS2322 | accepted |
+| `{ $path: 'literal.string.text', $value: 'ab' }` as a read | TS2353 | accepted |
+| `{ $path: 'statement.break' }` | accepted | accepted |
+| rust `{ $path: 'identifier.metavariable', $value: 'y' }` as a macro binding's `name` | TS2353 | accepted; builds `$y:expr` |
+| rust `{ $path: 'identifier.metavariable' }` | accepted; the build throws | TS2322 |
+
 ## Diagnostics and the MVP sets
 
 Generation reports, by name:
@@ -322,7 +345,9 @@ Approved by the user, 2026-11-14.
 | `@sittir/types` | `PortableStructure` | removed: `BuildInput<G, P>` and `ReadOf<G>` type the structures |
 | `@sittir/types` | `PortableEngine<API>`, `PortableSurface` | changed: the generated engine's type (`build`, `parse`, `project`, `render`, `kinds`, `is`); `PortableEngine<C>` over a composition is the same shape; `parse` returns `File<G>` |
 | `@sittir/types/vocabulary` | `BuildInput<G, P>` | added: a path's input |
-| `@sittir/types/vocabulary` | `GrammarMap` | changed: gains `nodes` (decision 2) and the per-path flag sets (decision 3) |
+| `@sittir/types/vocabulary` | `GrammarMap` | changed: gains `nodes` (decision 2: each path's own kinds, approved 2026-11-15) and the per-path flag sets (decision 3) |
+| `@sittir/types/vocabulary` | `Identifier`, `Literal.String.Text`, `Comment.Text`, `Comment.Html`, `Literal.Regex.Flags`, `Literal.Regex.Pattern`, `Clause.Import.Relative.Prefix`, `Expression.Interpolation.Conversion` | changed: gain `readonly $value: string`; the structural identifier subkinds declare `$value?: never` (decision 8, approved 2026-11-15) |
+| `@sittir/types/vocabulary` | `Read<G, P>`, `InputOf<R, G>`, `BuildInput<G, P>`, `Slot` | changed: a path that declares a text `$value` also reads and builds from its bare text (decision 8, approved 2026-11-15) |
 | `@sittir/types/vocabulary` | `Unmapped` | changed: in an input, a member's node arm is `G['nodes'][P]` |
 | generated `<lang>/src/portable/build.ts` | `build` (the table) | replaced: `portableBuild(engine)` |
 | generated `<lang>/src/portable/project.ts` | `project` | added |

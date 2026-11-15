@@ -9,7 +9,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 	readonly overrides: {
 		readonly 'attribute.content.call': {
 			readonly arguments:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'element.spread'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -506,7 +505,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -1536,7 +1534,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.enum_member': {
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -1648,7 +1645,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -1788,7 +1784,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.field': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -1954,7 +1949,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -2094,7 +2088,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.field.private': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -2260,7 +2253,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -2400,7 +2392,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.field.protected': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -2566,7 +2557,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -2706,7 +2696,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.field.public': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -2872,7 +2861,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -3012,7 +3000,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.field.signature': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -3178,7 +3165,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -3285,7 +3271,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.field.signature.private': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -3451,7 +3436,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -3558,7 +3542,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.field.signature.protected': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -3724,7 +3707,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -3831,7 +3813,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.field.signature.public': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -3997,7 +3978,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -4313,7 +4293,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -4499,7 +4478,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -4685,7 +4663,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -4871,7 +4848,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -5057,7 +5033,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -5243,7 +5218,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -5429,7 +5403,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -5615,7 +5588,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -5801,7 +5773,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -5987,7 +5958,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -6173,7 +6143,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -6359,7 +6328,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -6638,7 +6606,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.parameter': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly default:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -6846,7 +6813,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.parameter.private': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly default:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -7054,7 +7020,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.parameter.protected': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly default:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -7262,7 +7227,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.parameter.public': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly default:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -7470,7 +7434,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.parameter.receiver': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly default:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -7662,7 +7625,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -7827,7 +7789,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -7968,7 +7929,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -8133,7 +8093,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -8241,7 +8200,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -8406,7 +8364,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -8514,7 +8471,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -8679,7 +8635,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -8787,7 +8742,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -8952,7 +8906,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -9059,7 +9012,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.private': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -9224,7 +9176,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -9364,7 +9315,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.protected': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -9529,7 +9479,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -9669,7 +9618,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.public': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -9834,7 +9782,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -9975,7 +9922,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -10134,7 +10080,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'type.tuple'>
 				| V.Read<TypeScriptMap, 'type.union'>;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -10242,7 +10187,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -10401,7 +10345,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'type.tuple'>
 				| V.Read<TypeScriptMap, 'type.union'>;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -10509,7 +10452,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -10668,7 +10610,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'type.tuple'>
 				| V.Read<TypeScriptMap, 'type.union'>;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -10776,7 +10717,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -10935,7 +10875,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'type.tuple'>
 				| V.Read<TypeScriptMap, 'type.union'>;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -11042,7 +10981,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.abstract': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -11207,7 +11145,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -11347,7 +11284,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.abstract.getter': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -11512,7 +11448,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -11619,7 +11554,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.abstract.getter.private': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -11784,7 +11718,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -11891,7 +11824,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.abstract.getter.protected': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -12056,7 +11988,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -12163,7 +12094,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.abstract.getter.public': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -12328,7 +12258,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -12435,7 +12364,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.abstract.setter': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -12594,7 +12522,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'type.tuple'>
 				| V.Read<TypeScriptMap, 'type.union'>;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -12701,7 +12628,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.abstract.setter.private': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -12860,7 +12786,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'type.tuple'>
 				| V.Read<TypeScriptMap, 'type.union'>;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -12967,7 +12892,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.abstract.setter.protected': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -13126,7 +13050,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'type.tuple'>
 				| V.Read<TypeScriptMap, 'type.union'>;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -13233,7 +13156,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.abstract.setter.public': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -13392,7 +13314,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'type.tuple'>
 				| V.Read<TypeScriptMap, 'type.union'>;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -13499,7 +13420,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.getter': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -13664,7 +13584,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -13771,7 +13690,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.getter.private': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -13936,7 +13854,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -14043,7 +13960,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.getter.protected': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -14208,7 +14124,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -14315,7 +14230,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.getter.public': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -14480,7 +14394,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -14587,7 +14500,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.setter': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -14746,7 +14658,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'type.tuple'>
 				| V.Read<TypeScriptMap, 'type.union'>;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -14853,7 +14764,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.setter.private': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -15012,7 +14922,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'type.tuple'>
 				| V.Read<TypeScriptMap, 'type.union'>;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -15119,7 +15028,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.setter.protected': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -15278,7 +15186,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'type.tuple'>
 				| V.Read<TypeScriptMap, 'type.union'>;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -15385,7 +15292,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.property.signature.setter.public': {
 			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
 			readonly name:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -15544,7 +15450,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'type.tuple'>
 				| V.Read<TypeScriptMap, 'type.union'>;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -16213,7 +16118,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -16408,7 +16312,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'type.tuple'>
 				| V.Read<TypeScriptMap, 'type.union'>;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -16577,7 +16480,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'unknown'
 				| 'void';
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -16772,7 +16674,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'type.tuple'>
 				| V.Read<TypeScriptMap, 'type.union'>;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -16934,7 +16835,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'type.tuple'>
 				| V.Read<TypeScriptMap, 'type.union'>;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -17040,7 +16940,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'element.pair': {
 			readonly key:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -17152,7 +17051,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -17291,7 +17189,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'element.spread': {
 			readonly expression:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -17612,7 +17509,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'pattern.object'>
 				| T.ParenthesizedExpressionTyped.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -17766,7 +17662,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SubscriptExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -17919,7 +17814,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SubscriptExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -18073,7 +17967,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SubscriptExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -18227,7 +18120,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SubscriptExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -18381,7 +18273,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SubscriptExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -18535,7 +18426,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SubscriptExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -18689,7 +18579,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SubscriptExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -18843,7 +18732,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SubscriptExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -18997,7 +18885,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SubscriptExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -19151,7 +19038,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SubscriptExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -19305,7 +19191,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SubscriptExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -19459,7 +19344,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SubscriptExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -19613,7 +19497,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SubscriptExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -19767,7 +19650,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SubscriptExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -19921,7 +19803,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SubscriptExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -20075,7 +19956,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed
 				| T.SubscriptExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -20214,7 +20094,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.await': {
 			readonly expression:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -20353,7 +20232,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -20489,7 +20367,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -20627,7 +20504,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.arithmetic.add': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -20763,7 +20639,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -20901,7 +20776,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.arithmetic.divide': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -21037,7 +20911,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -21175,7 +21048,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.arithmetic.exponent': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -21311,7 +21183,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -21449,7 +21320,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.arithmetic.modulo': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -21585,7 +21455,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -21723,7 +21592,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.arithmetic.multiply': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -21859,7 +21727,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -21997,7 +21864,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.arithmetic.subtract': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -22133,7 +21999,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -22271,7 +22136,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.bitwise.and': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -22407,7 +22271,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -22545,7 +22408,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.bitwise.or': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -22681,7 +22543,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -22819,7 +22680,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.bitwise.xor': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -22955,7 +22815,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -23093,7 +22952,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.coalesce': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -23229,7 +23087,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -23367,7 +23224,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.comparison.equal': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -23503,7 +23359,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -23641,7 +23496,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.comparison.greater': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -23777,7 +23631,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -23915,7 +23768,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.comparison.greater_equal': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -24051,7 +23903,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -24189,7 +24040,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.comparison.less': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -24325,7 +24175,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -24463,7 +24312,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.comparison.less_equal': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -24599,7 +24447,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -24737,7 +24584,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.comparison.loose_equal': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -24873,7 +24719,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -25011,7 +24856,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.comparison.loose_not_equal': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -25147,7 +24991,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -25285,7 +25128,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.comparison.not_equal': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -25421,7 +25263,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -25559,7 +25400,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.logical.and': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -25695,7 +25535,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -25833,7 +25672,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.logical.or': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -25969,7 +25807,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -26107,7 +25944,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.membership.in': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -26243,7 +26079,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -26382,7 +26217,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.membership.instanceof': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -26518,7 +26352,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -26656,7 +26489,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.shift.left': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -26792,7 +26624,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -26930,7 +26761,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.shift.right': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -27066,7 +26896,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -27204,7 +27033,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.binary.shift.right_unsigned': {
 			readonly left:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -27340,7 +27168,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -27478,7 +27305,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.call': {
 			readonly arguments:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'element.spread'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -27586,7 +27412,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'super'
 				| 'this';
 			readonly function:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -27780,7 +27605,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.call.construct': {
 			readonly arguments:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'element.spread'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -28117,7 +27941,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.call.member': {
 			readonly arguments:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'element.spread'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -28225,7 +28048,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'super'
 				| 'this';
 			readonly function:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -28518,7 +28340,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.cast.assertion': {
 			readonly expression:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -28714,7 +28535,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.cast.assertion.angle_bracket': {
 			readonly expression:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -28906,7 +28726,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.cast.non_null': {
 			readonly expression:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -29045,7 +28864,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.cast.satisfies': {
 			readonly expression:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -29363,7 +29181,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.collection.list': {
 			readonly elements:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'element.spread'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -29531,7 +29348,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.conditional': {
 			readonly alternative:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -29667,7 +29483,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly condition:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -29803,7 +29618,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly consequence:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -30022,7 +29836,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.instantiation': {
 			readonly function:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -30217,7 +30030,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.interpolation': {
 			readonly expression:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -30358,7 +30170,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.lambda': {
 			readonly body:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -30566,7 +30377,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.member': {
 			readonly object:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -30717,7 +30527,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.parenthesized': {
 			readonly expression:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -30918,7 +30727,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 						never,
 						{
 							readonly expression:
-								| V.Read<TypeScriptMap, 'declaration.module'>
 								| V.Read<TypeScriptMap, 'expression.assignment'>
 								| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 								| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
@@ -31053,7 +30861,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.sequence': {
 			readonly expressions:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -31192,7 +30999,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.subscript': {
 			readonly index:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -31330,7 +31136,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly object:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -31469,7 +31274,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.unary': {
 			readonly argument:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -31607,7 +31411,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.unary.bitwise_not': {
 			readonly argument:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -31746,7 +31549,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.unary.delete': {
 			readonly argument:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -31885,7 +31687,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.unary.negation': {
 			readonly argument:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -32024,7 +31825,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.unary.not': {
 			readonly argument:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -32163,7 +31963,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.unary.plus': {
 			readonly argument:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -32302,7 +32101,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.unary.typeof': {
 			readonly argument:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -32441,7 +32239,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.unary.void': {
 			readonly argument:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -32580,7 +32377,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.update': {
 			readonly argument:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -32718,7 +32514,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.update.decrement': {
 			readonly argument:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -32857,7 +32652,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.update.increment': {
 			readonly argument:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -32996,7 +32790,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.yield': {
 			readonly expression:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -33134,7 +32927,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'expression.yield.delegate': {
 			readonly expression:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -33612,7 +33404,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'pattern.object'>
 				| V.Read<TypeScriptMap, 'pattern.rest'>;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -33802,7 +33593,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'pattern.object.pair'>
 				| V.Read<TypeScriptMap, 'pattern.rest'>;
 			readonly right:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -33941,7 +33731,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'pattern.object.pair': {
 			readonly key:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -34423,7 +34212,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier.super'>;
 			readonly source: V.Read<TypeScriptMap, 'literal.string'> | T.StringDouble.Parsed | T.StringSingle.Parsed;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -34657,7 +34445,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier.super'>;
 			readonly source: V.Read<TypeScriptMap, 'literal.string'> | T.StringDouble.Parsed | T.StringSingle.Parsed;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -34855,7 +34642,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier.super'>;
 			readonly source: V.Read<TypeScriptMap, 'literal.string'>;
 			readonly value:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -34993,7 +34779,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'statement.expression': {
 			readonly expression:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -35514,7 +35299,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ReturnStatement.Parsed
 				| T.ThrowStatement.Parsed;
 			readonly condition:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -35654,7 +35438,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly increment:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -35792,7 +35575,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
 			readonly initializer:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'declaration.variable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.constant'>
 				| V.Read<TypeScriptMap, 'declaration.variable.pattern'>
@@ -36290,7 +36072,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'statement.return': {
 			readonly expression:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -36549,7 +36330,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'statement.throw': {
 			readonly expression:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -37219,7 +36999,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'type.import': {
 			readonly source:
-				| V.Read<TypeScriptMap, 'declaration.module'>
 				| V.Read<TypeScriptMap, 'element.spread'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -37376,7 +37155,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 						never,
 						{
 							readonly source:
-								| V.Read<TypeScriptMap, 'declaration.module'>
 								| V.Read<TypeScriptMap, 'element.spread'>
 								| V.Read<TypeScriptMap, 'expression.assignment'>
 								| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>

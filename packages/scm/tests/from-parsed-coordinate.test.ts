@@ -4,8 +4,9 @@ import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { isCoordinate } from '@sittir/common/utils';
 import scm from '../src/index.ts';
+import { sharedEngine } from '@sittir/common/testing';
 
-const query = await createEngine(scm, { nodeStorage: 'object' });
+const query = await sharedEngine(() => createEngine(scm, { nodeStorage: 'object' }));
 
 type Definitions = { readonly _definitions: readonly unknown[] };
 
