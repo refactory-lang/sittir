@@ -220,6 +220,19 @@ mod tests {
     }
 
     #[test]
+    fn a_record_whose_side_record_holds_a_malformed_run_is_refused() {
+        const RUN: u32 = 1 << 15;
+        const RECORD_ENTRY: u32 = 1 << 31;
+        let mut image = BuiltImage::new(BITS);
+        let whole = BuiltImage::words(&mut image, &[RUN, 2, RECORD_ENTRY, 0]);
+        let cut = BuiltImage::words(&mut image, &[RUN, 1, RECORD_ENTRY]);
+        for (side, refusal) in [(whole, RECORD_ENTRY), (cut, RECORD_ENTRY)] {
+            let record = image.record(LEAF, HEADER_WORDS, &[(1, side.0)]);
+            assert_eq!(admit(&image, record, shape, BITS), Err(ArenaError::Malformed { what: "run record entry", word: refusal }));
+        }
+    }
+
+    #[test]
     fn a_record_two_cells_name_is_admitted_once() {
         let mut image = BuiltImage::new(BITS);
         let leaf = image.record(LEAF, HEADER_WORDS, &[]);
