@@ -52559,7 +52559,6 @@ fn render_regex<N: RegexFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::re
     w.text("/")?;
     w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
-    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     w.text("/")?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_flags", ::sittir_core::types::ItemIndex(0), w, |w| flags.render(w))?;
     w.edge(::sittir_core::types::KindId(276), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);

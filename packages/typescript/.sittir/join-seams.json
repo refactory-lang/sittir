@@ -68,7 +68,7 @@
 		{"seam":"binary_expression:members.0/members.2","next":"proven"},
 		{"seam":"binary_expression:members.1/members.2","next":"proven"},
 		{"seam":"binary_expression:members.10/members.2","next":"proven"},
-		{"seam":"binary_expression:members.11/members.1","previous":"unproven","next":"proven"},
+		{"seam":"binary_expression:members.11/members.1","next":"proven"},
 		{"seam":"binary_expression:members.11/members.2","previous":"proven","next":"proven"},
 		{"seam":"binary_expression:members.12/members.2","next":"proven"},
 		{"seam":"binary_expression:members.13/members.2","next":"proven"},
@@ -190,7 +190,6 @@
 		{"seam":"program:members.1/content","next":"proven"},
 		{"seam":"readonly_type:members.1","next":"proven"},
 		{"seam":"regex:members.1","previous":"unproven"},
-		{"seam":"regex:members.2","next":"unproven"},
 		{"seam":"required_parameter:members.2","previous":"proven"},
 		{"seam":"required_parameter:members.2/members.0","previous":"proven"},
 		{"seam":"rest_pattern:members.1","next":"proven"},
@@ -410,7 +409,6 @@
 		"|"
 	],
 	"blocked": [
-		{"seam":"binary_expression:members.11/members.1","state":7629,"previous":"/","next":"/","reason":"spaced text has a parse error at the seam"},
 		{"seam":"flow_maybe_type:members.1","state":198,"previous":"?","next":".0","reason":"the instance lexed the token in another state"},
 		{"seam":"flow_maybe_type:members.1","state":198,"previous":"?","next":"?","reason":"the instance lexed the token in another state"},
 		{"seam":"flow_maybe_type:members.1","state":2,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},

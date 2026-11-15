@@ -8144,11 +8144,7 @@
 		},
 		{
 			"kind": "text",
-			"text": "/",
-			"join": {
-				"previous": false,
-				"next": true
-			}
+			"text": "/"
 		},
 		{
 			"kind": "if",
