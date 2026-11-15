@@ -1,7 +1,8 @@
 import { expect, it } from 'vitest';
 import scm from '../src/index.ts';
+import { sharedEngine } from '@sittir/common/testing';
 
-const engine = await scm.createEngine();
+const engine = await sharedEngine(() => scm.createEngine());
 
 it('a parsed leaf carries $query like any node; its facet is empty', () => {
 	const leaf = engine.parse('(identifier) @x\n').$query().$descendants.ofType(engine.kinds.Identifier).find()!;

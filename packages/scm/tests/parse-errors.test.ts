@@ -3,8 +3,9 @@ import { ParseErrors } from '@sittir/common';
 import { ERROR_KIND_ID } from '@sittir/common/utils';
 import scm from '../src/index.ts';
 import { TSKindId } from '../src/kinds.ts';
+import { sharedEngine } from '@sittir/common/testing';
 
-const engine = await scm.createEngine();
+const engine = await sharedEngine(() => scm.createEngine());
 
 const error = (start: number, end: number) => ({ kind: 'error', span: { start, end } });
 const missing = (at: number, kind: TSKindId, start: number, end: number) => ({ kind: 'missing', span: { start: at, end: at }, holder: { kind, span: { start, end } } });
