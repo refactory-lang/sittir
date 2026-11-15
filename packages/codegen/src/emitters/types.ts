@@ -1341,14 +1341,13 @@ function emitNamespaceSugarBlock(
 	wires: PolymorphWires
 ): void {
 	lines.push(`export namespace ${node.typeName} {`);
+	const declaredDefault = refineDefaultOf(nodeMap, kind);
 	if (refineInfo && refineInfo.forms.length > 0) {
 		emitRefineFormSubNamespaces(lines, node, refineInfo, nsKey, nodeMap, kindEntries);
-		const declared = refineDefaultOf(nodeMap, kind);
-		if (declared !== undefined) {
-			const pinnedProperties = node.slots.filter((slot) => declared.pinned.has(slot.name)).map((slot) => slot.propertyName);
+		if (declaredDefault !== undefined) {
 			const fullConfig = widenSlotInputs(omitRegistered(`ConfigFor<${nsKey}>`, node), node, nodeMap);
-			lines.push(`  /** Default form: '${declared.form.name}' (declared). */`);
-			lines.push(`  export type Config = ${omittableWithDefault(fullConfig, pinnedProperties)};`);
+			lines.push(`  /** Default form: '${declaredDefault.form.name}' (declared). */`);
+			lines.push(`  export type Config = ${omittableWithDefault(fullConfig, declaredDefault.pinnedProperties)};`);
 		} else {
 			const defaultForm = refineInfo.forms[0]!;
 			const defaultShortName = refineFormTypeName(node.typeName, defaultForm.name).slice(node.typeName.length);
@@ -1378,12 +1377,11 @@ function emitNamespaceSugarBlock(
 	const bareShape = kindNumberShape(kind, node);
 	const bareSlot = fromBareInput(node, nodeMap) === 'value' ? bareValueSlot(node, nodeMap) : undefined;
 	const bareEnvelope = bareSlot === undefined ? undefined : splicedEnvelopeType(bareSlot, nodeMap);
-	const declaredDefault = refineDefaultOf(nodeMap, kind);
 	const looseFull = omitRegistered(`LooseFor<${nsKey}>`, node);
 	const looseHead =
 		declaredDefault === undefined
 			? looseFull
-			: omittableWithDefault(looseFull, node.slots.filter((slot) => declaredDefault.pinned.has(slot.name)).map((slot) => slot.propertyName));
+			: omittableWithDefault(looseFull, declaredDefault.pinnedProperties);
 	lines.push(
 		`  export type Loose = ${looseHead}${looseWidened}${bareText}${bareShape === undefined ? '' : ` | ${numberInputType(bareShape)}`}${bareEnvelope === undefined ? '' : ` | ${bareEnvelope}`};`
 	);

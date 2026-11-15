@@ -9,7 +9,7 @@ import { stampIrSurface } from '../../compiler/model/ir-surface.ts';
 import { emitTypes } from '../types.ts';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 
-function bracesRaw(forms: RefineForm[]): RawGrammar {
+function bracesRaw(forms: RefineForm[], defaultName?: string): RawGrammar {
 	return {
 		name: 'synth',
 		fileTypes: [],
@@ -35,7 +35,8 @@ function bracesRaw(forms: RefineForm[]): RawGrammar {
 		precedences: [],
 		word: null,
 		references: [],
-		refineForms: new Map([['braces', forms]])
+		refineForms: new Map([['braces', forms]]),
+		...(defaultName === undefined ? {} : { refineDefaults: new Map([['braces', defaultName]]) })
 	};
 }
 
@@ -49,37 +50,37 @@ function emit(raw: RawGrammar) {
 	};
 }
 
-const withDefault = (name: string | undefined): RefineForm[] => [
-	{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' }, ...(name === undefined ? {} : { defaultName: name }) },
-	{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' }, ...(name === undefined ? {} : { defaultName: name }) }
+const FORMS: RefineForm[] = [
+	{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
+	{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
 ];
 
 describe('refine() declares a default form', () => {
 	it('refuses a default that names no form', () => {
 		const diagnostics = new DiagnosticSink();
-		linkPredicted(bracesRaw(withDefault('square')), { diagnostics });
+		linkPredicted(bracesRaw(FORMS, 'square'), { diagnostics });
 		expect(diagnostics.all().filter((d) => d.code === 'refine-config-invalid').map((d) => d.message)).toEqual([
 			"refine(braces): default 'square' names no form (forms: 'curly', 'flow')"
 		]);
 	});
 
 	it('types the namespace config as the full config with the pinned fields omittable together, and names the default', () => {
-		const { typesSrc } = emit(bracesRaw(withDefault('curly')));
+		const { typesSrc } = emit(bracesRaw(FORMS, 'curly'));
 		expect(typesSrc).toMatch(/Default form: 'curly' \(declared\)/);
 		expect(typesSrc).toMatch(/export type Config = Omit<[^;]*"opening" \| "closing">[^;]*\|[^;]*;/);
 	});
 
 	it('builds the default when the pinned fields are omitted, uses them when given, and refuses part of them', () => {
-		const { factoriesSrc } = emit(bracesRaw(withDefault('curly')));
+		const { factoriesSrc } = emit(bracesRaw(FORMS, 'curly'));
 		expect(factoriesSrc).toMatch(/_pinned\.opening === undefined \? TSKindId\.Lbrace as const/);
 		expect(factoriesSrc).toMatch(/refine\(braces\): give 'opening' and 'closing', or neither/);
 	});
 });
 
 describe('without a declared default', () => {
-  it('keeps the first form as the namespace config', () => {
-    const { typesSrc, factoriesSrc } = emit(bracesRaw(withDefault(undefined)));
-    expect(typesSrc).toMatch(/Default form: 'curly' \(first-declared\)/);
-    expect(factoriesSrc).not.toMatch(/give 'opening'/);
-  });
+	it('keeps the first form as the namespace config', () => {
+		const { typesSrc, factoriesSrc } = emit(bracesRaw(FORMS));
+		expect(typesSrc).toMatch(/Default form: 'curly' \(first-declared\)/);
+		expect(factoriesSrc).not.toMatch(/give 'opening'/);
+	});
 });

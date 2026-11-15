@@ -129,6 +129,7 @@ import {
 	refineFormTypeName,
 	refineFormFactoryName,
 	type RefineKindInfo,
+	type RefineDefault,
 	type RefineFormInfo
 } from './refine-emit.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
@@ -1325,6 +1326,7 @@ interface FactorySurfaceFields {
 	readonly directParamType?: string;
 	readonly directParamOptional: boolean;
 	readonly configType?: string;
+	readonly refineDefault?: RefineDefault;
 	readonly opt: '' | '?';
 	readonly spellingType?: string;
 	readonly leadingOptions?: LeadingOptions;
@@ -1605,16 +1607,13 @@ function resolveConfigFactorySurface(
 	const allOptional = opt === '?' && hasConfigReads;
 	const widen = (type: string): string => widenSlotInputs(type, node, nodeMap);
 	const declaredDefault = refineDefaultOf(nodeMap, node.kind);
-	const publicConfigType =
-		declaredDefault === undefined
-			? configType
-			: omittableWithDefault(configType, node.slots.filter((slot) => declaredDefault.pinned.has(slot.name)).map((slot) => slot.propertyName));
+	const publicConfigType = declaredDefault === undefined ? configType : omittableWithDefault(configType, declaredDefault.pinnedProperties);
 	const strictType = allOptional ? `Partial<${widen(publicConfigType)}>` : widen(publicConfigType);
 	const rowConfig = omitRegistered(`ConfigOf<T.${node.typeName}>`, node, 'OmitRegistered');
 	const rowConfigType =
 		declaredDefault === undefined
 			? rowConfig
-			: omittableWithDefault(rowConfig, node.slots.filter((slot) => declaredDefault.pinned.has(slot.name)).map((slot) => slot.propertyName));
+			: omittableWithDefault(rowConfig, declaredDefault.pinnedProperties);
 	const numericSlots = numericConfigSlots(node);
 	const configParam: FactoryParam = {
 		label: 'config',
@@ -1639,6 +1638,7 @@ function resolveConfigFactorySurface(
 		...renderSurfaceParams(param),
 		args: 'config',
 		configType,
+		refineDefault: declaredDefault,
 		directParamOptional: false,
 		opt
 	};
@@ -2040,7 +2040,7 @@ function fieldCarryingFactoryText(
 		patchParams = [{ local: 'value' }, { local: 'options' }];
 	} else {
 		const configAccess = 'config';
-		const declaredDefault = refineDefaultOf(nodeMap, node.kind);
+		const declaredDefault = surface.refineDefault;
 		const defaultedStorage = (f: AssembledNonterminal): string => {
 			const pinned = declaredDefault?.pinned.get(f.name);
 			if (pinned === undefined) return slotStorageExpr(f, configAccess, nodeMap, kindEntries, node.typeName);
@@ -2096,9 +2096,9 @@ function fieldCarryingFactoryText(
 		lines.push(...leadingOptionsSplit(surface.leadingOptions, 'children', strictParamType(surface.param)));
 	}
 	lines.push(...admitStatement(node.kind, nodeMap, kindEntries, surface.spreadFacts === null ? '[config]' : surface.leadingOptions === undefined ? 'children' : 'args'));
-	const pinnedByDefault = singleField === undefined && spreadFacts === null ? refineDefaultOf(nodeMap, node.kind) : undefined;
+	const pinnedByDefault = singleField === undefined && spreadFacts === null ? surface.refineDefault : undefined;
 	if (pinnedByDefault !== undefined) {
-		const properties = slotsToEmit.filter((f) => pinnedByDefault.pinned.has(f.name)).map((f) => f.propertyName);
+		const properties = pinnedByDefault.pinnedProperties;
 		const values = `[${properties.map((name) => `_pinned.${name}`).join(', ')}]`;
 		lines.push(`  const _pinned: Partial<${configType}> = config;`);
 		if (properties.length > 1)

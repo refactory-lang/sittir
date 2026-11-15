@@ -46,9 +46,9 @@ export function refine(
 		if (formList.some((f) => f.name === name)) {
 			throw new Error(`refine(): duplicate form name '${name}' on rule '${kind}'`);
 		}
-		formList.push({ name, selections: { ...selections }, ...(defaultName === undefined ? {} : { defaultName }) });
+		formList.push({ name, selections: { ...selections } });
 	}
-	if (!wireRegisterRefineForms(kind, formList)) {
+	if (!wireRegisterRefineForms(kind, formList, defaultName)) {
 		throw new Error('refine(): wire context rejected registration — unexpected');
 	}
 	return original;
