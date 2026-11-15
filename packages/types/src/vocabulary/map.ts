@@ -4,12 +4,16 @@ export interface GrammarMap {
 	readonly features: object;
 	readonly overrides: { readonly [path: string]: { readonly [member: string]: unknown } };
 	readonly inputs: object;
+	readonly nodes: object;
+	readonly flags: object;
 }
 
 export interface Contract<F extends object> extends GrammarMap {
 	readonly features: F;
 	readonly overrides: {};
 	readonly inputs: { readonly [P in keyof TextPaths['texts']]: string };
+	readonly nodes: {};
+	readonly flags: {};
 }
 
 export interface Paths<G extends GrammarMap> {}
@@ -43,11 +47,19 @@ type Override<G extends GrammarMap, P extends string, M extends string, D> = [P]
 		: D
 	: D;
 
+type NodeOf<I, Bound, Parsed> = I extends keyof Bound ? Bound[I] | (I extends keyof Parsed ? Parsed[I] : never) : I;
+
+export type NodesOf<Ids, Bound, Parsed> = { readonly [P in keyof Ids]: NodeOf<Ids[P], Bound, Parsed> };
+
+export type NodesAt<G extends GrammarMap, P> = P extends keyof G['nodes'] ? G['nodes'][P] : never;
+
+type NodeArm<G extends GrammarMap, D> = {} extends G['nodes'] ? Unmapped : D extends { readonly $path: infer P } ? NodesAt<G, P> : never;
+
 export type Slot<G extends GrammarMap, P extends string, M extends string, D> = Override<
 	G,
 	P,
 	M,
-	NamedFlags<G, D> | Unmapped
+	NamedFlags<G, D> | NodeArm<G, D>
 >;
 
 export type Text<G extends GrammarMap, P extends string> = Override<G, P, '$text', string>;

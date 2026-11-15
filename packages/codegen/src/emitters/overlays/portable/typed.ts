@@ -7,7 +7,7 @@ import type { PortableBuildTable, PortableCondition } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { hasCatalogEntry, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { exactReadsOf, exactSlotsOf, type ExactSlots, type ValueRead } from './exact.ts';
-import { emitGrammarMap, grammarMapName, unmappedKindsBlock, unmappedName, type UnformedTest } from './grammar-map.ts';
+import { emitGrammarMap, grammarMapName, mapNeverOf, unmappedKindsBlock, unmappedName, type UnformedTest } from './grammar-map.ts';
 
 export interface PortableTypedInput {
 	readonly routes: GrammarRoutes;
@@ -172,6 +172,7 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 	const { model, vocabulary } = input;
 	const reads = exactReadsOf(typedInput);
 	const exact = exactSlotsOf(typedInput, reads);
+	const never = mapNeverOf(typedInput, reads, exact);
 	const { entries, readPathsOf, entriesFor, token, textual, claimersOf, viewed, valueOf, viewClassOf } = reads;
 	const leafAt = (path: string): boolean => (claimersOf.get(path) ?? []).every((kind) => valueOf(path, kind) === 'text');
 	const tokenTypeOf = reads.textTypeOf;
@@ -417,12 +418,13 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 			const held = tree.size === 0 ? low : `${name}$Held`;
 			if (tree.size > 0) emit(`type ${held} = Present<${low}, ${presentTypeOf(tree)}>;`, '');
 			for (const [member, reads] of readsByName) {
-				const fn = `${name}$${member}`;
+				if (never(entry.vocab, member)) continue;
+				const fn =`${name}$${member}`;
 				emit(`function ${fn}(this: Held<${held}>) {`, `\treturn ${memberBody(reads)};`, '}', '');
 				fields.push(`${member}: ${fn}`);
 				written.add(member);
 			}
-			for (const [member, facts] of declared) if (!facts.flag && facts.optional && !written.has(member)) fields.push(`${member}: none`);
+			for (const [member, facts] of declared) if (!facts.flag && facts.optional && !written.has(member) && !never(entry.vocab, member)) fields.push(`${member}: none`);
 			const value = valueOf(entry.vocab, kind);
 			if (value !== undefined && (value !== 'text' || leafAt(entry.vocab))) fields.push(`$value: ${VALUE_READERS[value]}`);
 			emit(

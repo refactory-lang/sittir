@@ -58,23 +58,30 @@
 
 ### Task 3: The grammar map carries what the generated signatures need
 
+**Status:** done.
+- The tests are `packages/{python,typescript}/tests/build-input.portable.test-d.ts`, in the lane that already holds the map-backed portable tests.
+- The node arm types reads as well as inputs, since a read is an input.
+- Every routed member's exact set comes from its read routes, narrowed by its claim's tests. The typed module writes no member the map types `never`.
+- The user widened `declaration.constant.value` and `expression.yield(.delegate).expression` to what python reads, and allowed python's raw-arm ceilings 145 and 2332 for this change.
+- Python's getter `parameters` moved to Task 4.
+
 **Files:**
 - Modify: `packages/types/src/vocabulary/{map,input,utils}.ts` (`BuildInput`, `nodes`, the flag sets), `packages/codegen/src/emitters/overlays/portable/grammar-map.ts`
 - Modify: the getter vocabulary (`accessors/declaration.ts`, `accessor-signatures/declaration.ts`): a getter takes no `parameters`; setters keep them
 - Test: `packages/types/tests/build-input.test-d.ts`
 
-- [ ] **Step 1: The failing tests:**
+- [x] **Step 1: The failing tests:**
   - python `BuildInput<PythonMap, 'declaration.property.getter'>['$flags']` admits `'async'` (decision 3);
   - a `T.Block.Bound` is assignable to the getter's `body`, and a typescript node isn't (decision 2);
   - typescript `{ $path: 'literal.number', $value: 1 }` is assignable to an array element (decision 1);
   - the getter's input has no `parameters`.
-- [ ] **Step 2: Run** `pnpm run type-check:tests`. It fails.
-- [ ] **Step 3: Implement.**
+- [x] **Step 2: Run** `pnpm run type-check:tests`. It fails.
+- [x] **Step 3: Implement.**
   - Emit `nodes` from `PortableIds` and the flag sets from the arms and facts.
   - Emit the `inputs` additions from the build rows with `builds`.
   - Add `BuildInput`.
   - Make the getter vocabulary edits, and run `tool bindings-inventory --write` for each grammar and `tool vocabulary-features --write`.
-- [ ] **Step 4: Three-way verification,** then commit.
+- [x] **Step 4: Three-way verification,** then commit.
 
 ### Task 4: The build emitter
 
@@ -87,6 +94,7 @@
   - The known differences are rows: python's root getter and static method, which the interpreter refuses. Every other difference stops the task for review.
 - [ ] **Step 2: Implement** the emitter over every path:
   - decisions 1, 4 and 5;
+  - python's getter takes no `parameters`, and its generated build writes `self`. The vocabulary edit to `accessors/declaration.ts` comes from Task 3. It lands here because the interpreted build table takes that member's list arity from the vocabulary. The type tests gain "the getter's input has no `parameters`" for python and typescript;
   - the four emit diagnostics;
   - the header comment through `$trivia.leading`;
   - number spelling (exponent forms included) through one shared value helper.

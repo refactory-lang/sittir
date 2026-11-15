@@ -2,7 +2,7 @@
 
 import type * as V from '@sittir/types/vocabulary';
 import type * as T from '../types.js';
-import type { PortableTexts } from './index.js';
+import type { PortableIds, PortableTexts } from './index.js';
 
 export interface RustMap extends V.GrammarMap {
 	readonly features: V.RustFeatures;
@@ -6565,7 +6565,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.generic'>
 				| T.ScopedTypeIdentifier.Parsed;
-			readonly traitClause: V.Unmapped<'rust:impl_item_negative_clause'>;
+			readonly traitClause: never;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
@@ -26208,8 +26208,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'literal.boolean.false'>
-				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
 				| V.Read<RustMap, 'literal.number.float'>
 				| V.Read<RustMap, 'literal.number.integer'>
@@ -26218,9 +26216,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.number.integer.octal'>
 				| V.Read<RustMap, 'literal.string'>
 				| V.Read<RustMap, 'literal.string.bytes'>
-				| V.Read<RustMap, 'literal.string.bytes.raw'>
 				| V.Read<RustMap, 'literal.string.c'>
-				| V.Read<RustMap, 'literal.string.c.raw'>
 				| V.Read<RustMap, 'literal.string.raw'>
 				| V.Read<RustMap, 'statement.block'>
 				| V.Read<RustMap, 'statement.break'>
@@ -26231,49 +26227,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'statement.loop.while'>
 				| V.Read<RustMap, 'statement.match'>
 				| V.Read<RustMap, 'statement.return'>
-				| '()'
-				| 'false'
-				| 'self'
-				| 'true'
-				| T.ArrayExpressionSemi.Parsed
-				| T.AssignmentExpression.Parsed
-				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
-				| T.Block.Parsed
-				| T.BreakExpression.Parsed
-				| T.CallExpression.Parsed
-				| T.CharLiteralEscapedHex.Parsed
-				| T.CharLiteralEscapedSimple.Parsed
-				| T.CharLiteralEscapedUnicodeBraced.Parsed
-				| T.CharLiteralEscapedUnicodeFixed.Parsed
-				| T.CharLiteralPlain.Parsed
-				| T.ClosureExpressionBlock.Parsed
-				| T.ClosureExpressionExpr.Parsed
-				| T.CompoundAssignmentExpr.Parsed
 				| T.FieldExpression.Parsed
-				| T.FloatLiteral.Parsed
-				| T.ForExpression.Parsed
-				| T.IfExpression.Parsed
-				| T.IndexExpression.Parsed
-				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralHex.Parsed
-				| T.IntegerLiteralOctal.Parsed
-				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
-				| T.ParenthesizedExpression.Parsed
-				| T.RawStringLiteral.Parsed
-				| T.ReferenceExpressionBare.Parsed
-				| T.ReferenceExpressionMut.Parsed
-				| T.ReferenceExpressionRawConst.Parsed
-				| T.ReferenceExpressionRawMut.Parsed
-				| T.ReturnExpression.Parsed
-				| T.ScopedIdentifier.Parsed
-				| T.StringLiteral.Parsed
-				| T.TryExpression.Parsed
-				| T.TypeCastExpression.Parsed
-				| T.UnaryExpression.Parsed
-				| T.WhileExpression.Parsed
-				| T.YieldExpression.Parsed;
+				| T.ScopedIdentifier.Parsed;
 			readonly typeArguments: V.Read<RustMap, 'element.type_argument'>;
 			readonly $forms: V.Form<'arguments' | 'function'>;
 		};
@@ -26443,8 +26398,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'literal.boolean.false'>
-				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
 				| V.Read<RustMap, 'literal.number.float'>
 				| V.Read<RustMap, 'literal.number.integer'>
@@ -26453,9 +26406,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.number.integer.octal'>
 				| V.Read<RustMap, 'literal.string'>
 				| V.Read<RustMap, 'literal.string.bytes'>
-				| V.Read<RustMap, 'literal.string.bytes.raw'>
 				| V.Read<RustMap, 'literal.string.c'>
-				| V.Read<RustMap, 'literal.string.c.raw'>
 				| V.Read<RustMap, 'literal.string.raw'>
 				| V.Read<RustMap, 'statement.block'>
 				| V.Read<RustMap, 'statement.break'>
@@ -26466,49 +26417,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'statement.loop.while'>
 				| V.Read<RustMap, 'statement.match'>
 				| V.Read<RustMap, 'statement.return'>
-				| '()'
-				| 'false'
-				| 'self'
-				| 'true'
-				| T.ArrayExpressionSemi.Parsed
-				| T.AssignmentExpression.Parsed
-				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
-				| T.Block.Parsed
-				| T.BreakExpression.Parsed
-				| T.CallExpression.Parsed
-				| T.CharLiteralEscapedHex.Parsed
-				| T.CharLiteralEscapedSimple.Parsed
-				| T.CharLiteralEscapedUnicodeBraced.Parsed
-				| T.CharLiteralEscapedUnicodeFixed.Parsed
-				| T.CharLiteralPlain.Parsed
-				| T.ClosureExpressionBlock.Parsed
-				| T.ClosureExpressionExpr.Parsed
-				| T.CompoundAssignmentExpr.Parsed
 				| T.FieldExpression.Parsed
-				| T.FloatLiteral.Parsed
-				| T.ForExpression.Parsed
-				| T.IfExpression.Parsed
-				| T.IndexExpression.Parsed
-				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralHex.Parsed
-				| T.IntegerLiteralOctal.Parsed
-				| T.MatchExpression.Parsed
-				| T.Metavariable.Parsed
-				| T.ParenthesizedExpression.Parsed
-				| T.RawStringLiteral.Parsed
-				| T.ReferenceExpressionBare.Parsed
-				| T.ReferenceExpressionMut.Parsed
-				| T.ReferenceExpressionRawConst.Parsed
-				| T.ReferenceExpressionRawMut.Parsed
-				| T.ReturnExpression.Parsed
-				| T.ScopedIdentifier.Parsed
-				| T.StringLiteral.Parsed
-				| T.TryExpression.Parsed
-				| T.TypeCastExpression.Parsed
-				| T.UnaryExpression.Parsed
-				| T.WhileExpression.Parsed
-				| T.YieldExpression.Parsed;
+				| T.ScopedIdentifier.Parsed;
 			readonly typeArguments: V.Read<RustMap, 'element.type_argument'>;
 			readonly $forms: V.Form<'arguments' | 'function'>;
 		};
@@ -30704,6 +30614,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly elements: V.Read<RustMap, 'literal.string.escape'> | V.Read<RustMap, 'literal.string.text'>;
 		};
 		readonly 'literal.string.bytes.raw': {
+			readonly content: V.Read<RustMap, 'literal.string.text'>;
 			readonly elements: V.Read<RustMap, 'literal.string.escape'> | V.Read<RustMap, 'literal.string.text'>;
 			readonly $forms: V.Form<'content'>;
 		};
@@ -30711,6 +30622,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly elements: V.Read<RustMap, 'literal.string.escape'> | V.Read<RustMap, 'literal.string.text'>;
 		};
 		readonly 'literal.string.c.raw': {
+			readonly content: V.Read<RustMap, 'literal.string.text'>;
 			readonly elements: V.Read<RustMap, 'literal.string.escape'> | V.Read<RustMap, 'literal.string.text'>;
 			readonly $forms: V.Form<'content'>;
 		};
@@ -34301,6 +34213,338 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'literal.character': string;
 		readonly 'literal.number.float': string;
 		readonly 'literal.string.text': string;
+	};
+	readonly nodes: V.NodesOf<PortableIds, T.BoundByKindId, T.ParsedByKindId>;
+	readonly flags: {
+		readonly argument: never;
+		readonly attribute: never;
+		readonly 'attribute.content': never;
+		readonly 'attribute.inner': never;
+		readonly 'clause.bounds': never;
+		readonly 'clause.bounds.higher_ranked': never;
+		readonly 'clause.bounds.removed': never;
+		readonly 'clause.bounds.use': never;
+		readonly 'clause.case.match': never;
+		readonly 'clause.else': never;
+		readonly 'clause.import.alias': never;
+		readonly 'clause.import.list': never;
+		readonly 'clause.import.list.scoped': never;
+		readonly 'clause.import.wildcard': never;
+		readonly 'clause.let': never;
+		readonly 'clause.let.chain': never;
+		readonly 'clause.lifetimes': never;
+		readonly 'clause.macro.rule': never;
+		readonly 'clause.where': never;
+		readonly 'clause.where.predicate': never;
+		readonly 'comment.block': never;
+		readonly 'comment.block.doc': never;
+		readonly 'comment.block.doc.inner': never;
+		readonly 'comment.line': never;
+		readonly 'comment.line.doc': never;
+		readonly 'comment.line.doc.inner': never;
+		readonly 'comment.text': never;
+		readonly 'declaration.constant': never;
+		readonly 'declaration.constant.private': never;
+		readonly 'declaration.constant.public': never;
+		readonly 'declaration.constant.public.internal': never;
+		readonly 'declaration.constant.public.parent': never;
+		readonly 'declaration.constant.public.restricted': never;
+		readonly 'declaration.enum': never;
+		readonly 'declaration.enum.private': never;
+		readonly 'declaration.enum.public': never;
+		readonly 'declaration.enum.public.internal': never;
+		readonly 'declaration.enum.public.parent': never;
+		readonly 'declaration.enum.public.restricted': never;
+		readonly 'declaration.enum_member': never;
+		readonly 'declaration.enum_member.private': never;
+		readonly 'declaration.enum_member.public': never;
+		readonly 'declaration.enum_member.public.internal': never;
+		readonly 'declaration.enum_member.public.parent': never;
+		readonly 'declaration.enum_member.public.restricted': never;
+		readonly 'declaration.enum_member.struct': never;
+		readonly 'declaration.enum_member.struct.private': never;
+		readonly 'declaration.enum_member.struct.public': never;
+		readonly 'declaration.enum_member.struct.public.internal': never;
+		readonly 'declaration.enum_member.struct.public.parent': never;
+		readonly 'declaration.enum_member.struct.public.restricted': never;
+		readonly 'declaration.enum_member.tuple': never;
+		readonly 'declaration.enum_member.tuple.private': never;
+		readonly 'declaration.enum_member.tuple.public': never;
+		readonly 'declaration.enum_member.tuple.public.internal': never;
+		readonly 'declaration.enum_member.tuple.public.parent': never;
+		readonly 'declaration.enum_member.tuple.public.restricted': never;
+		readonly 'declaration.extension': 'unsafe';
+		readonly 'declaration.extension.conformance': 'unsafe';
+		readonly 'declaration.field': never;
+		readonly 'declaration.field.private': never;
+		readonly 'declaration.field.public': never;
+		readonly 'declaration.field.public.internal': never;
+		readonly 'declaration.field.public.parent': never;
+		readonly 'declaration.field.public.restricted': never;
+		readonly 'declaration.function': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.function.private': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.function.public': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.function.public.internal': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.function.public.parent': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.function.public.restricted': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.function.signature': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.function.signature.private': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.function.signature.public': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.function.signature.public.internal': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.function.signature.public.parent': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.function.signature.public.restricted': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.interface.trait': 'unsafe';
+		readonly 'declaration.interface.trait.private': 'unsafe';
+		readonly 'declaration.interface.trait.public': 'unsafe';
+		readonly 'declaration.interface.trait.public.internal': 'unsafe';
+		readonly 'declaration.interface.trait.public.parent': 'unsafe';
+		readonly 'declaration.interface.trait.public.restricted': 'unsafe';
+		readonly 'declaration.macro': never;
+		readonly 'declaration.macro.brace': never;
+		readonly 'declaration.macro.bracket': never;
+		readonly 'declaration.macro.paren': never;
+		readonly 'declaration.method': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.method.private': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.method.public': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.method.public.internal': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.method.public.parent': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.method.public.restricted': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.method.signature': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.method.signature.private': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.method.signature.public': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.method.signature.public.internal': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.method.signature.public.parent': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.method.signature.public.restricted': 'async' | 'const' | 'default' | 'unsafe';
+		readonly 'declaration.module': never;
+		readonly 'declaration.module.foreign': 'unsafe';
+		readonly 'declaration.module.private': never;
+		readonly 'declaration.module.public': never;
+		readonly 'declaration.module.public.internal': never;
+		readonly 'declaration.module.public.parent': never;
+		readonly 'declaration.module.public.restricted': never;
+		readonly 'declaration.parameter': 'mutable';
+		readonly 'declaration.parameter.receiver': 'mutable' | 'reference';
+		readonly 'declaration.parameter.variadic': 'mutable';
+		readonly 'declaration.struct': never;
+		readonly 'declaration.struct.private': never;
+		readonly 'declaration.struct.public': never;
+		readonly 'declaration.struct.public.internal': never;
+		readonly 'declaration.struct.public.parent': never;
+		readonly 'declaration.struct.public.restricted': never;
+		readonly 'declaration.struct.tuple': never;
+		readonly 'declaration.struct.tuple.private': never;
+		readonly 'declaration.struct.tuple.public': never;
+		readonly 'declaration.struct.tuple.public.internal': never;
+		readonly 'declaration.struct.tuple.public.parent': never;
+		readonly 'declaration.struct.tuple.public.restricted': never;
+		readonly 'declaration.struct.unit': never;
+		readonly 'declaration.struct.unit.private': never;
+		readonly 'declaration.struct.unit.public': never;
+		readonly 'declaration.struct.unit.public.internal': never;
+		readonly 'declaration.struct.unit.public.parent': never;
+		readonly 'declaration.struct.unit.public.restricted': never;
+		readonly 'declaration.type_alias': never;
+		readonly 'declaration.type_alias.associated': never;
+		readonly 'declaration.type_alias.private': never;
+		readonly 'declaration.type_alias.public': never;
+		readonly 'declaration.type_alias.public.internal': never;
+		readonly 'declaration.type_alias.public.parent': never;
+		readonly 'declaration.type_alias.public.restricted': never;
+		readonly 'declaration.type_parameter': never;
+		readonly 'declaration.type_parameter.lifetime': never;
+		readonly 'declaration.type_parameter.value': never;
+		readonly 'declaration.union': never;
+		readonly 'declaration.union.private': never;
+		readonly 'declaration.union.public': never;
+		readonly 'declaration.union.public.internal': never;
+		readonly 'declaration.union.public.parent': never;
+		readonly 'declaration.union.public.restricted': never;
+		readonly 'declaration.variable': 'byReference' | 'mutable' | 'static';
+		readonly 'declaration.variable.private': 'byReference' | 'mutable';
+		readonly 'declaration.variable.public': 'byReference' | 'mutable';
+		readonly 'declaration.variable.public.internal': 'byReference' | 'mutable';
+		readonly 'declaration.variable.public.parent': 'byReference' | 'mutable';
+		readonly 'declaration.variable.public.restricted': 'byReference' | 'mutable';
+		readonly 'element.attributed': never;
+		readonly 'element.macro.fragment': never;
+		readonly 'element.macro.token_binding': never;
+		readonly 'element.macro.token_repetition': never;
+		readonly 'element.macro.token_repetition.pattern': never;
+		readonly 'element.macro.token_tree': never;
+		readonly 'element.macro.token_tree.brace': never;
+		readonly 'element.macro.token_tree.bracket': never;
+		readonly 'element.macro.token_tree.delimited': never;
+		readonly 'element.macro.token_tree.delimited.brace': never;
+		readonly 'element.macro.token_tree.delimited.bracket': never;
+		readonly 'element.macro.token_tree.delimited.paren': never;
+		readonly 'element.macro.token_tree.paren': never;
+		readonly 'element.macro.token_tree.pattern': never;
+		readonly 'element.macro.token_tree.pattern.brace': never;
+		readonly 'element.macro.token_tree.pattern.bracket': never;
+		readonly 'element.macro.token_tree.pattern.paren': never;
+		readonly 'element.struct.base': never;
+		readonly 'element.struct.field': never;
+		readonly 'element.type_argument': never;
+		readonly 'element.type_binding': never;
+		readonly 'expression.assignment': never;
+		readonly 'expression.assignment.compound': never;
+		readonly 'expression.assignment.compound.add': never;
+		readonly 'expression.assignment.compound.bitwise_and': never;
+		readonly 'expression.assignment.compound.bitwise_or': never;
+		readonly 'expression.assignment.compound.bitwise_xor': never;
+		readonly 'expression.assignment.compound.divide': never;
+		readonly 'expression.assignment.compound.modulo': never;
+		readonly 'expression.assignment.compound.multiply': never;
+		readonly 'expression.assignment.compound.shift_left': never;
+		readonly 'expression.assignment.compound.shift_right': never;
+		readonly 'expression.assignment.compound.subtract': never;
+		readonly 'expression.await': never;
+		readonly 'expression.binary': never;
+		readonly 'expression.binary.arithmetic.add': never;
+		readonly 'expression.binary.arithmetic.divide': never;
+		readonly 'expression.binary.arithmetic.modulo': never;
+		readonly 'expression.binary.arithmetic.multiply': never;
+		readonly 'expression.binary.arithmetic.subtract': never;
+		readonly 'expression.binary.bitwise.and': never;
+		readonly 'expression.binary.bitwise.or': never;
+		readonly 'expression.binary.bitwise.xor': never;
+		readonly 'expression.binary.comparison.equal': never;
+		readonly 'expression.binary.comparison.greater': never;
+		readonly 'expression.binary.comparison.greater_equal': never;
+		readonly 'expression.binary.comparison.less': never;
+		readonly 'expression.binary.comparison.less_equal': never;
+		readonly 'expression.binary.comparison.not_equal': never;
+		readonly 'expression.binary.logical.and': never;
+		readonly 'expression.binary.logical.or': never;
+		readonly 'expression.binary.shift.left': never;
+		readonly 'expression.binary.shift.right': never;
+		readonly 'expression.block.async': 'move';
+		readonly 'expression.block.const': never;
+		readonly 'expression.block.generator': 'move';
+		readonly 'expression.block.try': never;
+		readonly 'expression.block.unsafe': never;
+		readonly 'expression.call': never;
+		readonly 'expression.call.macro': never;
+		readonly 'expression.call.member': never;
+		readonly 'expression.call.qualified': never;
+		readonly 'expression.cast.conversion': never;
+		readonly 'expression.collection.list': never;
+		readonly 'expression.collection.list.repeat': never;
+		readonly 'expression.collection.struct': never;
+		readonly 'expression.collection.tuple': never;
+		readonly 'expression.instantiation': never;
+		readonly 'expression.lambda': 'async' | 'move' | 'static';
+		readonly 'expression.member': never;
+		readonly 'expression.parenthesized': never;
+		readonly 'expression.propagate': never;
+		readonly 'expression.range': never;
+		readonly 'expression.range.exclusive': never;
+		readonly 'expression.range.inclusive': never;
+		readonly 'expression.range.inclusive.legacy': never;
+		readonly 'expression.reference': 'exclusive' | 'raw' | 'writable';
+		readonly 'expression.subscript': never;
+		readonly 'expression.unary': never;
+		readonly 'expression.unary.deref': never;
+		readonly 'expression.unary.negation': never;
+		readonly 'expression.unary.not': never;
+		readonly 'expression.unit': never;
+		readonly 'expression.yield': never;
+		readonly file: never;
+		readonly identifier: never;
+		readonly 'identifier.label': never;
+		readonly 'identifier.lifetime': never;
+		readonly 'identifier.metavariable': never;
+		readonly 'identifier.qualified': never;
+		readonly 'identifier.receiver': never;
+		readonly 'literal.boolean': never;
+		readonly 'literal.boolean.false': never;
+		readonly 'literal.boolean.true': never;
+		readonly 'literal.character': never;
+		readonly 'literal.number.float': never;
+		readonly 'literal.number.integer': never;
+		readonly 'literal.number.integer.binary': never;
+		readonly 'literal.number.integer.hex': never;
+		readonly 'literal.number.integer.octal': never;
+		readonly 'literal.number.negative': never;
+		readonly 'literal.string': never;
+		readonly 'literal.string.bytes': never;
+		readonly 'literal.string.bytes.raw': never;
+		readonly 'literal.string.c': never;
+		readonly 'literal.string.c.raw': never;
+		readonly 'literal.string.escape': never;
+		readonly 'literal.string.raw': never;
+		readonly 'literal.string.text': never;
+		readonly 'modifier.extern': never;
+		readonly 'modifier.visibility.private': never;
+		readonly 'modifier.visibility.public': never;
+		readonly 'modifier.visibility.public.internal': never;
+		readonly 'modifier.visibility.public.parent': never;
+		readonly 'modifier.visibility.public.restricted': never;
+		readonly 'pattern.as': never;
+		readonly 'pattern.generic': never;
+		readonly 'pattern.list': never;
+		readonly 'pattern.mutable': never;
+		readonly 'pattern.or': never;
+		readonly 'pattern.range': never;
+		readonly 'pattern.range.exclusive': never;
+		readonly 'pattern.range.inclusive': never;
+		readonly 'pattern.range.inclusive.legacy': never;
+		readonly 'pattern.reference': never;
+		readonly 'pattern.reference.value': 'exclusive';
+		readonly 'pattern.struct': never;
+		readonly 'pattern.struct.field': 'byReference' | 'mutable';
+		readonly 'pattern.struct.rest': never;
+		readonly 'pattern.tuple': never;
+		readonly 'pattern.wildcard': never;
+		readonly 'statement.block': never;
+		readonly 'statement.break': never;
+		readonly 'statement.continue': never;
+		readonly 'statement.empty': never;
+		readonly 'statement.expression': never;
+		readonly 'statement.if': never;
+		readonly 'statement.import': never;
+		readonly 'statement.import.package': never;
+		readonly 'statement.import.package.private': never;
+		readonly 'statement.import.package.public': never;
+		readonly 'statement.import.package.public.internal': never;
+		readonly 'statement.import.package.public.parent': never;
+		readonly 'statement.import.package.public.restricted': never;
+		readonly 'statement.import.private': never;
+		readonly 'statement.import.public': never;
+		readonly 'statement.import.public.internal': never;
+		readonly 'statement.import.public.parent': never;
+		readonly 'statement.import.public.restricted': never;
+		readonly 'statement.loop': never;
+		readonly 'statement.loop.for_each': never;
+		readonly 'statement.loop.while': never;
+		readonly 'statement.match': never;
+		readonly 'statement.return': never;
+		readonly 'type.abstract': never;
+		readonly 'type.array': never;
+		readonly 'type.bounded': never;
+		readonly 'type.bracketed': never;
+		readonly 'type.dynamic': never;
+		readonly 'type.function': 'unsafe';
+		readonly 'type.generic': never;
+		readonly 'type.generic.turbofish': never;
+		readonly 'type.pointer': 'writable';
+		readonly 'type.primitive': never;
+		readonly 'type.primitive.boolean': never;
+		readonly 'type.primitive.character': never;
+		readonly 'type.primitive.floating.float32': never;
+		readonly 'type.primitive.floating.float64': never;
+		readonly 'type.primitive.integral.int128': never;
+		readonly 'type.primitive.integral.int16': never;
+		readonly 'type.primitive.integral.int32': never;
+		readonly 'type.primitive.integral.int64': never;
+		readonly 'type.primitive.integral.int8': never;
+		readonly 'type.primitive.integral.size': never;
+		readonly 'type.primitive.never': never;
+		readonly 'type.primitive.string': never;
+		readonly 'type.qualified': never;
+		readonly 'type.reference': 'exclusive';
+		readonly 'type.tuple': never;
+		readonly 'type.unit': never;
 	};
 }
 
