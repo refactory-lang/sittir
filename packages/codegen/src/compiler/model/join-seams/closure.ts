@@ -27,7 +27,7 @@ export interface ConcreteSeam {
 	readonly node: GrammarRule;
 	readonly lexed: ReadonlySet<number>;
 	readonly pairs: ReadonlySet<number>;
-	sighting(pair: number): ConcreteSighting | undefined;
+	sightings(pair: number): readonly ConcreteSighting[];
 }
 
 interface Step {
@@ -447,34 +447,32 @@ export class SeamClosure {
 				}
 			}
 		}
-		const chosen = new Map<number, ConcreteSighting | undefined>();
+		const listed = new Map<number, readonly ConcreteSighting[]>();
 		return {
 			key,
 			node: seam.node,
 			lexed,
 			pairs,
-			sighting: (pair) => {
-				if (!chosen.has(pair)) chosen.set(pair, this.bestSighting(seam, pair));
-				return chosen.get(pair);
+			sightings: (pair) => {
+				let list = listed.get(pair);
+				if (list === undefined) listed.set(pair, (list = this.sightingsOf(seam, pair)));
+				return list;
 			}
 		};
 	}
 
-	private bestSighting(seam: Seam, pair: number): ConcreteSighting | undefined {
+	private sightingsOf(seam: Seam, pair: number): ConcreteSighting[] {
 		const { walk } = this;
 		const { witnesses } = walk;
 		const { tables } = walk.view;
 		const state = walk.sourceOfPair(pair);
 		const symbol = walk.symbolOfPair(pair);
 		const entryPair = walk.pairKey(ENTRY, symbol);
-		let best: ConcreteSighting | undefined;
-		let fallback: ConcreteSighting | undefined;
+		const unentered: ConcreteSighting[] = [];
+		const entered: ConcreteSighting[] = [];
 		const offer = (from: Sighting, entry: number, cost: number, witness: () => number): void => {
-			const current = entry === NO_ENTRY ? best : fallback;
-			if (current !== undefined && current.cost <= cost) return;
 			const sighting = { scope: from.scope, cont: from.cont, entry, cost, witness: memo(witness) };
-			if (entry === NO_ENTRY) best = sighting;
-			else fallback = sighting;
+			(entry === NO_ENTRY ? unentered : entered).push(sighting);
 		};
 		const entersIn = (from: Sighting): boolean => {
 			const bits = this.entryLex(from.scope);
@@ -517,7 +515,8 @@ export class SeamClosure {
 			if (lead !== undefined && entersIn(from))
 				offer(from, state, witnesses.cost(lead) + tail.cost, () => prepend(walk, lead, tail.witness()));
 		}
-		return best ?? fallback;
+		const byCost = (a: ConcreteSighting, b: ConcreteSighting): number => a.cost - b.cost;
+		return [...unentered.sort(byCost), ...entered.sort(byCost)];
 	}
 }
 
