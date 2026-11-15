@@ -9,7 +9,7 @@ import type { NodeMap } from '../../types.ts';
 import { lineEndingsOf } from '../line-endings.ts';
 import type { CharSet } from '../pattern-automaton.ts';
 import { lineTerminated } from '../trivia.ts';
-import { SeamClosure, type ConcreteSeam } from './closure.ts';
+import { SeamClosure, type ConcreteSeam, type ConcreteSighting } from './closure.ts';
 import {
 	joinSeamsFileOf,
 	unprovenArms,
@@ -128,6 +128,7 @@ interface SeamArms {
 const PRINTABLE_FIRST = 0x21;
 const PRINTABLE_LAST = 0x7e;
 const MAX_RESPELLINGS = 16;
+const MAX_SIGHTINGS = 16;
 const FORK_REASON = 'the target is a fork state; the instance lexed the token in another state';
 
 function kindsJoiningNext(view: GrammarView, joining: ReadonlySet<number>): Set<string> {
@@ -270,12 +271,14 @@ export function deriveJoinSeams(input: JoinSeamInput): JoinSeamsFile {
 	const resolved = new Map<string, 'differs' | 'same'>();
 	const checkKey = (seam: string, state: number, symbol: number, next: string): string =>
 		`${seam}|${state}|${symbol}|${next}`;
-	const attempt = (check: JoinCheck, override?: Context, respell?: readonly [number, string]): void => {
+	const attempt = (
+		check: JoinCheck,
+		sighting: ConcreteSighting,
+		override?: Context,
+		respell?: readonly [number, string]
+	): void => {
 		check.reason = undefined;
-		const seam = bySeam.get(check)!;
-		const sighting = seam.sighting(walk.pairKey(check.state, check.symbol));
-		if (sighting === undefined) return fail(check, 'no sighting');
-		const built = builder.build(sighting, seam.node, check.next, override);
+		const built = builder.build(sighting, bySeam.get(check)!.node, check.next, override);
 		if (typeof built === 'string') return fail(check, built);
 		const instance: Instance =
 			respell === undefined
@@ -347,16 +350,20 @@ export function deriveJoinSeams(input: JoinSeamInput): JoinSeamsFile {
 			check.verdict = prior;
 			continue;
 		}
-		attempt(check);
+		const seam = bySeam.get(check)!;
+		const [sighting, ...others] = seam.sightings(walk.pairKey(check.state, check.symbol));
+		if (sighting === undefined) {
+			fail(check, 'no sighting');
+			continue;
+		}
+		attempt(check, sighting);
 		if (check.verdict !== 'unbuildable' || check.reason === FORK_REASON) continue;
 		const first = check.reason;
-		const seam = bySeam.get(check)!;
-		const sighting = seam.sighting(walk.pairKey(check.state, check.symbol));
-		for (const context of sighting === undefined ? [] : builder.alternativeContexts(sighting)) {
-			attempt(check, context);
+		for (const context of builder.alternativeContexts(sighting)) {
+			attempt(check, sighting, context);
 			if (check.verdict !== 'unbuildable') break;
 		}
-		if (check.verdict === 'unbuildable' && sighting !== undefined) {
+		if (check.verdict === 'unbuildable') {
 			const base = builder.build(sighting, seam.node, check.next);
 			let tries = 0;
 			for (
@@ -370,10 +377,14 @@ export function deriveJoinSeams(input: JoinSeamInput): JoinSeamsFile {
 				if (k === base.seamAt || k === base.seamAt - 1) continue;
 				for (const spelling of base.tokens[k]!.spellings) {
 					tries++;
-					attempt(check, undefined, [k, spelling]);
+					attempt(check, sighting, undefined, [k, spelling]);
 					if (check.verdict !== 'unbuildable' || tries >= MAX_RESPELLINGS) break;
 				}
 			}
+		}
+		for (const other of others.slice(0, MAX_SIGHTINGS)) {
+			if (check.verdict !== 'unbuildable') break;
+			attempt(check, other);
 		}
 		if (check.verdict === 'unbuildable') check.reason = first;
 	}

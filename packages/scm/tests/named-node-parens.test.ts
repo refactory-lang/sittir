@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import scm from '../src/index.ts';
+import { sharedEngine } from '@sittir/common/testing';
 
-const engine = await createEngine(scm);
+const engine = await sharedEngine(() => createEngine(scm));
 
 describe('a named node', () => {
 	it('renders its parentheses unpadded, built or after a leading comment', () => {

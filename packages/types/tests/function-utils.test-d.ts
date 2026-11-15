@@ -1,5 +1,6 @@
 /**
- * Type-level tests for ArgsOf<F>, OmitEach<T,K> and Seat<Args,R> — the
+ * Type-level tests for ArgsOf<F>, OmitEach<T,K>, OmitLeadingOption<Args,K>
+ * and Seat<Args,R> — the
  * generic factory-shape utilities every grammar package imports rather
  * than re-declaring.
  *
@@ -9,7 +10,7 @@
  * Run with: pnpm --filter @sittir/types type-check
  */
 
-import type { ArgsOf, OmitEach, Seat } from '../src/index.ts';
+import type { ArgsOf, OmitEach, OmitLeadingOption, Seat } from '../src/index.ts';
 
 // ---------------------------------------------------------------------------
 // Helper: assert types are equal
@@ -116,3 +117,21 @@ export const seated: number = seat({ a: 'x' });
 export const seatedEmpty: number = seat();
 // @ts-expect-error a key the row does not declare
 export const refused = seat({ a: 'x', b: 1 });
+
+// ---------------------------------------------------------------------------
+// 7. OmitLeadingOption<Args, K> — a positional builder's tuples with K taken
+//    out of the options a tuple leads with: a tuple whose options keep
+//    another key keeps the rest, one whose options hold only K goes, and
+//    one that leads with a child stays as it is.
+// ---------------------------------------------------------------------------
+
+type Child = { readonly $type: 1 };
+type Positional =
+	| readonly [options: { readonly k?: 'a'; readonly other?: 1 }, ...children: Child[]]
+	| readonly [options: { readonly k?: 'a' }, child: Child]
+	| readonly [child: Child, ...children: Child[]];
+type Routed = OmitLeadingOption<Positional, 'k'>;
+type _t7 = Expect<Equal<Routed, readonly [{ readonly other?: 1 }, ...Child[]] | readonly [Child, ...Child[]]>>;
+type _t7b = Expect<Equal<OmitLeadingOption<readonly [options: { readonly k?: 'a' }, ...children: Child[]], 'k'>, never>>;
+type _t7c = Expect<Equal<OmitLeadingOption<readonly [config: { readonly k?: 'a'; readonly items: readonly Child[] }], 'k'>, readonly [{ readonly items: readonly Child[] }]>>;
+

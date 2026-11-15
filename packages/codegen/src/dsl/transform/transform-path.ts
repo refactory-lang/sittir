@@ -346,6 +346,29 @@ function reconstructAlias(rule: RuntimeRule, newContent: RuntimeRule): RuntimeRu
 	} as unknown as RuntimeRule;
 }
 
+export function memberIndex(index: number, length: number): number {
+	return index < 0 ? length + index : index;
+}
+
+export function namedFieldCount(rule: RuntimeRule, fieldName: string): number {
+	let count = 0;
+	walkMatches(
+		rule,
+		undefined,
+		false,
+		namedFieldLeaf(fieldName, (node) => {
+			count += 1;
+			return { rule: node, matched: false };
+		})
+	);
+	return count;
+}
+
+function namedFieldLeaf(fieldName: string, onMatch: (field: RuntimeRule, enclosing: readonly RuntimeRule[] | undefined) => WalkResult): WalkLeaf {
+	return (node, enclosing) =>
+		node.type !== 'FIELD' ? undefined : (node as unknown as { name: string }).name === fieldName ? onMatch(node, enclosing) : { rule: node, matched: false };
+}
+
 function descendThroughNamedField(
 	rule: RuntimeRule,
 	fieldName: string,
@@ -354,12 +377,11 @@ function descendThroughNamedField(
 	enclosing: readonly RuntimeRule[] | undefined
 ): RuntimeRule {
 	if (!isFieldType(rule.type)) {
-		const found = walkMatches(rule, enclosing, false, (node, stack) =>
-			node.type !== 'FIELD'
-				? undefined
-				: (node as unknown as { name: string }).name === fieldName
-					? { rule: reconstructWrapper(node, applyPath(contentOf(node), rest, patch, stack)), matched: true }
-					: { rule: node, matched: false }
+		const found = walkMatches(
+			rule,
+			enclosing,
+			false,
+			namedFieldLeaf(fieldName, (node, stack) => ({ rule: reconstructWrapper(node, applyPath(contentOf(node), rest, patch, stack)), matched: true }))
 		);
 		if (!found.matched) throw new ApplyPathSkip(`applyPath: path segment '${fieldName}:' names no field of this subtree`);
 		return found.rule;
@@ -694,7 +716,7 @@ function applyToIndexedMember(
 	patch: RuntimeRule | ((member: RuntimeRule, enclosing?: readonly RuntimeRule[]) => RuntimeRule),
 	enclosing: readonly RuntimeRule[] | undefined
 ): RuntimeRule {
-	const idx = indexValue < 0 ? members.length + indexValue : indexValue;
+	const idx = memberIndex(indexValue, members.length);
 	if (idx < 0 || idx >= members.length) {
 		throw new ApplyPathSkip(`applyPath: index ${indexValue} out of bounds in ${rule.type} of length ${members.length}`);
 	}
