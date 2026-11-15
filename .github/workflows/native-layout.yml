@@ -128,7 +128,7 @@ jobs:
           RUSTFLAGS="$(npx tsx packages/tools/src/scripts/native-rustflags.ts '${{ matrix.target }}')"
           export RUSTFLAGS
           echo "RUSTFLAGS=${RUSTFLAGS}"
-          cargo "$NATIVE_CARGO" -p sittir-engine --release --target '${{ matrix.target }}'
+          cargo "$NATIVE_CARGO" -p sittir-engine --release --target '${{ matrix.target }}' --message-format=json-render-diagnostics > engine-build.json
       - name: The image exports exactly the runtime list
         shell: bash
         run: |
@@ -138,7 +138,7 @@ jobs:
             *) image=libsittir_engine.so ;;
           esac
           dir='target/${{ matrix.target }}/release'
-          list=$(ls -t "$dir"/build/sittir-engine-*/out/runtime-exports.txt | head -1)
+          list=$(npx tsx scripts/ci/cargo-built-file.mts engine-build.json rust/crates/sittir-engine/Cargo.toml runtime-exports.txt)
           tr -d '\r' < "$list" | LC_ALL=C sort > listed.txt
           npx tsx packages/cli/src/cli.ts tool native-images "$dir/$image" --defined ts_ \
             | node -e 'let s = ""; process.stdin.on("data", (d) => (s += d)).on("end", () => { for (const name of JSON.parse(s)[0].defined) console.log(name); });' \

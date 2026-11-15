@@ -65,6 +65,11 @@ describe('exactSlotsOf', () => {
 		expect(reasonsAt(exact, 'clause.bounds', 'bounds', 'function_type')).toContain('preset');
 	});
 
+	it("narrows a member to the kinds its claim's tests guarantee: a conformance's trait clause is the positive one, which implements reads, so the member holds nothing", () => {
+		const set = setAt('declaration.extension.conformance', 'traitClause');
+		expect([...set.kinds, ...set.unmapped, ...set.raw.map((arm) => arm.kind)]).toEqual([]);
+	});
+
 	it('puts a raw arm whose reasons are all decided per value in the per-value group', () => {
 		expect(rawGroupOf(['preset', 'scalar'])).toBe('value');
 		expect(rawGroupOf(['opaque', 'unread'])).toBe('kind');
@@ -84,6 +89,16 @@ describe('exactSlotsOf, python', () => {
 
 	it("gives no preset reason to a string's delimiters, which its claim spells", () => {
 		expect(reasonsAt(python, 'argument.named', 'value', 'string')).not.toContain('preset');
+	});
+
+	it("takes a member's set from its read routes where no claim's level declares the member: a constant's value", () => {
+		const set = setIn(python, 'declaration.constant', 'value');
+		expect(set.unmapped).toEqual(['python:as_pattern']);
+		expect(set.kinds).toContain('declaration.variable');
+	});
+
+	it("narrows a member to the kind its claim's pattern pins: a constant's name is an identifier", () => {
+		expect(setIn(python, 'declaration.constant', 'name').kinds).toEqual(['identifier']);
 	});
 });
 

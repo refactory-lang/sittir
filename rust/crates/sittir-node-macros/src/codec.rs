@@ -491,6 +491,7 @@ fn framed(ident: &Ident, fields: &[WireField<'_>], height: &Ident) -> syn::Resul
             }
         }
         impl #codec::Dismantle<#w> for __DecodeWait {
+            #[allow(unreachable_code, reason = "a nodeless value waits on and frames nothing: its `!` wait is proved dead by its type")]
             fn dismantle(self, out: &mut ::std::vec::Vec<#whole>) {
                 match self {
                     #(#decode_releases)*
@@ -505,6 +506,7 @@ fn framed(ident: &Ident, fields: &[WireField<'_>], height: &Ident) -> syn::Resul
             }
         }
         impl #codec::Dismantle<#w> for __EncodeWait {
+            #[allow(unreachable_code, reason = "a nodeless value waits on and frames nothing: its `!` wait is proved dead by its type")]
             fn dismantle(self, out: &mut ::std::vec::Vec<#whole>) {
                 match self {
                     #(#encode_releases)*
@@ -515,6 +517,7 @@ fn framed(ident: &Ident, fields: &[WireField<'_>], height: &Ident) -> syn::Resul
         impl #codec::Steps<#w> for #ident {
             type Decoding = __Decoding;
             type Encoding = __Encoding;
+            #[allow(unreachable_code, reason = "a nodeless value waits on and frames nothing: its `!` wait is proved dead by its type")]
             unsafe fn decode_step(
                 frame: &mut __Decoding,
                 env: #napi::sys::napi_env,
@@ -552,6 +555,7 @@ fn framed(ident: &Ident, fields: &[WireField<'_>], height: &Ident) -> syn::Resul
                     __DecodeWait::None => err,
                 }
             }
+            #[allow(unreachable_code, reason = "a nodeless value waits on and frames nothing: its `!` wait is proved dead by its type")]
             unsafe fn encode_step(
                 frame: &mut __Encoding,
                 env: #napi::sys::napi_env,
@@ -866,6 +870,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
             #(#encode_waits,)*
         }
         impl #codec::Dismantle<#w> for __DecodeWait {
+            #[allow(unreachable_code, reason = "a nodeless value waits on and frames nothing: its `!` wait is proved dead by its type")]
             #[allow(unused_variables, reason = "a choice with no node payload waits on nothing")]
             fn dismantle(self, out: &mut ::std::vec::Vec<#whole>) {
                 match self {
@@ -874,6 +879,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
             }
         }
         impl #codec::Dismantle<#w> for __EncodeWait {
+            #[allow(unreachable_code, reason = "a nodeless value waits on and frames nothing: its `!` wait is proved dead by its type")]
             #[allow(unused_variables, reason = "a choice with no node payload waits on nothing")]
             fn dismantle(self, out: &mut ::std::vec::Vec<#whole>) {
                 match self {
@@ -881,6 +887,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
                 }
             }
         }
+        #[allow(unreachable_code, reason = "a nodeless value waits on and frames nothing: its `!` wait is proved dead by its type")]
         unsafe fn __decode_id(
             env: #napi::sys::napi_env,
             napi_val: #napi::sys::napi_value,
@@ -899,6 +906,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         impl #codec::Codec<#w> for #ident {
             type DecodeWait = __DecodeWait;
             type EncodeWait = __EncodeWait;
+            #[allow(unreachable_code, reason = "a nodeless value waits on and frames nothing: its `!` wait is proved dead by its type")]
             unsafe fn decode(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value, above: &mut ::core::option::Option<#decode_frame>) -> #napi::Result<#begun<Self, __DecodeWait>> {
                 match unsafe { ::sittir_core::slot::node_value_type(env, napi_val)? } {
                     #napi::ValueType::Number => {
@@ -916,17 +924,20 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
                     _ => ::core::result::Result::Err(#napi::Error::from_reason(#expected)),
                 }
             }
+            #[allow(unreachable_code, reason = "a nodeless value waits on and frames nothing: its `!` wait is proved dead by its type")]
             #[allow(unused_variables, reason = "a choice of units waits on nothing")]
             unsafe fn decoded(env: #napi::sys::napi_env, wait: __DecodeWait, child: #whole, above: &mut ::core::option::Option<#decode_frame>) -> #napi::Result<#begun<Self, __DecodeWait>> {
                 match wait {
                     #(#resumes)*
                 }
             }
+            #[allow(unreachable_code, reason = "a nodeless value waits on and frames nothing: its `!` wait is proved dead by its type")]
             unsafe fn encode(self, env: #napi::sys::napi_env, above: &mut ::core::option::Option<#encode_frame>) -> #napi::Result<#begun<#napi::sys::napi_value, __EncodeWait>> {
                 match self {
                     #(#encodes)*
                 }
             }
+            #[allow(unreachable_code, reason = "a nodeless value waits on and frames nothing: its `!` wait is proved dead by its type")]
             #[allow(unused_variables, reason = "a choice of units waits on nothing")]
             unsafe fn encoded(env: #napi::sys::napi_env, wait: __EncodeWait, child: #napi::sys::napi_value, above: &mut ::core::option::Option<#encode_frame>) -> #napi::Result<#begun<#napi::sys::napi_value, __EncodeWait>> {
                 match wait {

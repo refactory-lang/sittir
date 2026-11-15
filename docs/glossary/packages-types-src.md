@@ -1818,6 +1818,18 @@ The `Expression` namespace of coercive equality. It groups the `Binary` namespac
 
 The `Binary` namespace of coercive equality. It groups the `Comparison` namespace, whose `LooseEqual` and `LooseNotEqual` arms are claimed by the `t` claim tag and set `operator` to never. The namespace declares no slots of its own.
 
+### `packages/types/src/vocabulary/features/coercive-equality/expression.ts::Expression::Binary::Comparison`
+
+The `Comparison` namespace of coercive equality. It groups the `LooseEqual` and `LooseNotEqual` arms. The namespace declares no slots of its own.
+
+### `packages/types/src/vocabulary/features/coercive-equality/expression.ts::Expression::Binary::Comparison::LooseEqual`
+
+The `==` arm of coercive equality: a binary expression whose `operator` slot is set to never. The arm is claimed by the `t` claim tag, and the `$path` is the `expression.binary.comparison.loose_equal` kind.
+
+### `packages/types/src/vocabulary/features/coercive-equality/expression.ts::Expression::Binary::Comparison::LooseNotEqual`
+
+The `!=` arm of coercive equality: a binary expression whose `operator` slot is set to never. The arm is claimed by the `t` claim tag, and the `$path` is the `expression.binary.comparison.loose_not_equal` kind.
+
 ### `packages/types/src/vocabulary/features/coercive-equality/index.ts::CoerciveEquality`
 
 Coercive equality: an interface marked `'coercive-equality': true`. `==` and `!=` convert their operands' types before comparing.
@@ -1857,3 +1869,23 @@ The `Statement` namespace of counted loops. It groups the `Loop` namespace. The 
 ### `packages/types/src/vocabulary/features/counted-loops/statement.ts::Statement::Loop`
 
 The `Loop` namespace of counted loops. It groups the `Counted` arm, a loop with `initializer`, `condition`, optional `increment` and `body` slots, claimed by the `t` claim tag. The namespace declares no slots of its own.
+
+### `packages/types/src/vocabulary/input.ts::BuildInput`
+
+The input type of the build for path `P` in grammar `G`: the input shape of that path's type, looked up through `Paths<G>`.
+
+### `packages/types/src/vocabulary/map.ts::NodesAt`
+
+The node type the grammar map records for path `P`, or `never` when the grammar has no `nodes` entry for it.
+
+### `packages/types/src/vocabulary/map.ts::NodesOf`
+
+Maps each key of `Ids` to its node type, bound by `Bound` and parsed as `Parsed`.
+
+### `packages/types/src/vocabulary/map.ts::TextInput`
+
+The string input accepted for path `P`: the string members of its input type, or `never` when the grammar has no input entry for `P`.
+
+### `packages/types/src/vocabulary/map.ts::Valued`
+
+For a type `D` shaped `{ $path; $value: string }`, the text input of that path. Any other `D` gives `never`.

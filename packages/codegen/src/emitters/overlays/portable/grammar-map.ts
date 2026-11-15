@@ -4,6 +4,7 @@ import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { textBuilt } from '@sittir/common/engine';
 import type { PortableBuildArm, PortablePickTest } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
+import { kindDiscriminantExpr } from '../../kind-discriminant.ts';
 import { exactReadsOf, type ExactReads, type ExactSet, type ExactSlots } from './exact.ts';
 import type { PortableTypedInput } from './typed.ts';
 
@@ -77,6 +78,15 @@ export function mapArmsOf(typedInput: PortableTypedInput, reads: ExactReads, map
 		])
 	];
 	return { armsOf, pathArms };
+}
+
+export function mapNeverOf(typedInput: PortableTypedInput, reads: ExactReads, exact: ExactSlots): (path: string, member: string) => boolean {
+	const { armsOf } = mapArmsOf(typedInput, reads, grammarMapName(typedInput.input.grammar));
+	const slots = mapSlots(typedInput, exact);
+	return (path, member) => {
+		const set = slots.get(path)?.get(member);
+		return set !== undefined && armsOf(set).length === 0;
+	};
 }
 
 export interface UnformedTest {
@@ -173,6 +183,49 @@ export const textBuiltPaths = ({ table }: PortableTypedInput): readonly string[]
 		.map(([path]) => path)
 		.sort(byCodepoint);
 
+const armFlagsOf = (arm: PortableBuildArm): readonly string[] => [
+	...Object.keys(arm.flags),
+	...(arm.facts ?? []).flatMap((fact) => (fact.flag === undefined ? [] : [fact.flag])),
+	...arm.when.flatMap((test) => ('flag' in test ? [test.flag] : []))
+];
+
+export const mapFlagsOf = ({ table }: PortableTypedInput): readonly (readonly [path: string, flags: readonly string[]])[] =>
+	Object.keys(table.paths)
+		.sort(byCodepoint)
+		.map((path) => [path, [...new Set(table.paths[path]!.arms.flatMap(armFlagsOf))].sort(byCodepoint)]);
+
+const SCALAR_TYPES = { integer: 'number', float: 'number', bigint: 'bigint' } as const;
+
+export function mapInputsOf(typedInput: PortableTypedInput): readonly (readonly [path: string, inputs: readonly string[]])[] {
+	const { table } = typedInput;
+	const inputs = new Map<string, string[]>(textBuiltPaths(typedInput).map((path) => [path, ['string']]));
+	const add = (path: string, input: string): void => {
+		const at = inputs.get(path) ?? inputs.set(path, []).get(path)!;
+		if (!at.includes(input)) at.push(input);
+	};
+	for (const [path, built] of Object.entries(table.paths).sort(([a], [b]) => byCodepoint(a, b))) {
+		if (!built.root || Object.keys(built.builds ?? {}).length < 2) continue;
+		for (const [scalar, kind] of Object.entries(built.builds!) as [keyof typeof SCALAR_TYPES, number][])
+			for (const [target, other] of Object.entries(table.paths))
+				if (target !== path && other.builds?.[scalar] === kind) add(target, `{ readonly $path: ${q(path)}; readonly $value: ${SCALAR_TYPES[scalar]} }`);
+	}
+	return [...inputs].sort(([a], [b]) => byCodepoint(a, b));
+}
+
+export function mapNodesOf({ nodeMap, kindEntries }: PortableTypedInput, reads: ExactReads): readonly (readonly [path: string, ids: readonly string[]])[] {
+	const ids = new Map<string, string[]>();
+	for (const [kind, list] of reads.entries) {
+		const id = kindDiscriminantExpr(kind, nodeMap, kindEntries);
+		for (const path of reads.readPathsOf(list)) {
+			const at = ids.get(path) ?? ids.set(path, []).get(path)!;
+			if (!at.includes(id)) at.push(id);
+		}
+	}
+	return [...ids].sort(([a], [b]) => byCodepoint(a, b));
+}
+
+const unionOf = (arms: readonly string[]): string => (arms.length === 0 ? 'never' : arms.join(' | '));
+
 export interface GrammarMapOutput {
 	readonly source: string;
 	readonly unformed: readonly UnformedTest[];
@@ -190,6 +243,7 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 		'',
 		`import type * as V from ${q(VOCABULARY_MODULE)};`,
 		`import type * as T from '${moduleSpecifier(PORTABLE_MAP_FILE, 'types.ts')}';`,
+		`import type { TSKindId } from '${moduleSpecifier(PORTABLE_MAP_FILE, 'kinds.ts')}';`,
 		`import type { PortableTexts } from '${moduleSpecifier(PORTABLE_MAP_FILE, PORTABLE_SURFACE_FILE)}';`,
 		'',
 		`export interface ${map} extends V.GrammarMap {`,
@@ -214,7 +268,13 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 	lines.push(
 		'\t};',
 		'\treadonly inputs: {',
-		...textBuiltPaths(typedInput).map((path) => `\t\treadonly ${q(path)}: string;`),
+		...mapInputsOf(typedInput).map(([path, inputs]) => `\t\treadonly ${q(path)}: ${unionOf(inputs)};`),
+		'\t};',
+		'\treadonly nodes: V.NodesOf<{',
+		...mapNodesOf(typedInput, reads).map(([path, ids]) => `\t\treadonly ${q(path)}: ${ids.join(' | ')};`),
+		'\t}, T.BoundByKindId, T.ParsedByKindId>;',
+		'\treadonly flags: {',
+		...mapFlagsOf(typedInput).map(([path, flags]) => `\t\treadonly ${q(path)}: ${unionOf(flags.map(q))};`),
 		'\t};',
 		'}',
 		'',

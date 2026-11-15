@@ -2017,12 +2017,14 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     /// Whether these lookups navigate the tree's rows
     /// (`Navigation::Records`), which a call outside a render lends the
     /// tree's arena for.
-    #[cfg_attr(not(feature = "arena"), allow(clippy::unused_self, reason = "only the arena build navigates rows"))]
+    #[cfg(feature = "arena")]
     fn reads_records(&self) -> bool {
-        #[cfg(feature = "arena")]
-        if matches!(self.nodes, Navigation::Runs(_)) {
-            return true;
-        }
+        matches!(self.nodes, Navigation::Runs(_))
+    }
+
+    #[cfg(not(feature = "arena"))]
+    #[allow(clippy::unused_self, reason = "only the arena build navigates rows")]
+    fn reads_records(&self) -> bool {
         false
     }
 
@@ -3384,6 +3386,34 @@ mod tests {
 
     crate::refuse_napi_codec!(TestTrivia);
     crate::grammar_nodes!(TestTrivia; TestTrivia);
+
+    #[cfg(feature = "napi-bindings")]
+    mod nodeless {
+        use super::TestTrivia;
+        use crate::codec::{Codec, Steps};
+        use crate::trivia::TriviaText;
+
+        fn no_decode_wait(wait: <TriviaText as Codec<TestTrivia>>::DecodeWait) -> ! {
+            match wait {}
+        }
+
+        fn no_encode_wait(wait: <TriviaText as Codec<TestTrivia>>::EncodeWait) -> ! {
+            match wait {}
+        }
+
+        fn no_decoding(frame: <TestTrivia as Steps<TestTrivia>>::Decoding) -> ! {
+            match frame {}
+        }
+
+        fn no_encoding(frame: <TestTrivia as Steps<TestTrivia>>::Encoding) -> ! {
+            match frame {}
+        }
+
+        #[test]
+        fn a_nodeless_value_waits_on_and_frames_nothing() {
+            let _ = (no_decode_wait, no_encode_wait, no_decoding, no_encoding);
+        }
+    }
 
     impl FromTriviaText for TestTrivia {
         fn from_text(text: TriviaText) -> Self {

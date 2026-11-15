@@ -426,8 +426,8 @@ macro_rules! refuse_napi_codec {
             }
             $crate::nodeless_steps!($trivia; $trivia);
             impl $crate::codec::Codec<$trivia> for $trivia {
-                type DecodeWait = ::core::convert::Infallible;
-                type EncodeWait = ::core::convert::Infallible;
+                type DecodeWait = !;
+                type EncodeWait = !;
                 unsafe fn decode(env: $crate::__napi::sys::napi_env, value: $crate::__napi::sys::napi_value, _: &mut ::core::option::Option<<$trivia as $crate::codec::Frames>::DecodeFrame>) -> $crate::__napi::Result<$crate::codec::Begun<Self, Self::DecodeWait>> {
                     // SAFETY: this fn requires `value` to be live in `env`.
                     unsafe { <Self as $crate::__napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, value) }.map($crate::codec::Begun::Whole)
