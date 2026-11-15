@@ -640,6 +640,7 @@ export function ownRecordsOf(wire: WireContext, facts: OwnRecordFacts): LayerRec
 		upstreamAliasSites: wire.upstreamAliasSites.length === 0 ? undefined : wire.upstreamAliasSites,
 		reparseHosts: wire.reparseHosts,
 		refineForms: wire.refineForms.size === 0 ? undefined : new Map(wire.refineForms),
+		refineDefaults: wire.refineDefaults.size === 0 ? undefined : new Map(wire.refineDefaults),
 		ruleCauses: wire.ruleCauses.size === 0 ? undefined : Object.fromEntries(wire.ruleCauses),
 		undeclaredRules: undeclaredRules.length === 0 ? undefined : undeclaredRules,
 		patchSites: patchSites.length === 0 ? undefined : patchSites,

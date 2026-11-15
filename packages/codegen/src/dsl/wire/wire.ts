@@ -91,6 +91,7 @@ export interface WireContext {
 	readonly inlineRemovals: Set<string>;
 	readonly liftNames: Map<string, LiftName>;
 	readonly refineForms: Map<string, RefineForm[]>;
+	readonly refineDefaults: Map<string, string>;
 	readonly groups?: GroupsConfig;
 	readonly renderAs?: Readonly<Record<string, unknown>>;
 	readonly visibleAs?: Readonly<Record<string, string>>;
@@ -161,6 +162,7 @@ export const WIRE_ENTRY_ROLES = {
 	inlineRemovals: 'outside',
 	liftNames: 'undone',
 	refineForms: 'undone',
+	refineDefaults: 'undone',
 	groups: 'outside',
 	renderAs: 'outside',
 	visibleAs: 'outside',
@@ -326,9 +328,10 @@ export function wireHasAuthoredRule(name: string): boolean {
 	return currentContext?.authoredRuleNames.has(name) ?? false;
 }
 
-export function wireRegisterRefineForms(kind: string, forms: RefineForm[]): boolean {
+export function wireRegisterRefineForms(kind: string, forms: RefineForm[], defaultName?: string): boolean {
 	if (!currentContext) return false;
 	currentContext.refineForms.set(kind, forms);
+	if (defaultName !== undefined) currentContext.refineDefaults.set(kind, defaultName);
 	return true;
 }
 
@@ -819,6 +822,7 @@ export function withWireContext<T>(
 		inlineRemovals: new Set(),
 		liftNames: new Map(),
 		refineForms: new Map(),
+		refineDefaults: new Map(),
 		groups: undefined,
 		renderAs: undefined,
 		externalNames: new Set(),
@@ -1062,6 +1066,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		inlineRemovals: new Set(),
 		liftNames: new Map(),
 		refineForms: new Map(),
+		refineDefaults: new Map(),
 		groups: cfg.groups,
 		renderAs,
 		visibleAs,

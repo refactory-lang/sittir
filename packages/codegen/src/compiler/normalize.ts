@@ -290,7 +290,8 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		visibleAliasTargets: linked.visibleAliasTargets,
 		displayLexemes: linked.displayLexemes,
 		variantChildren: linked.variantChildren,
-		refineForms: linked.refineForms
+		refineForms: linked.refineForms,
+		refineDefaults: linked.refineDefaults
 	};
 	const simplifiedRules = computeSimplifiedRules(
 		new SimplifyCtx({
@@ -362,6 +363,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		externalRoles: linked.externalRoles,
 		terminalAliasWireIds: linked.terminalAliasWireIds,
 		refineForms: withAliasEnvelopeEntries(linked.refineForms, aliasStorages),
+		refineDefaults: withAliasEnvelopeEntries(linked.refineDefaults, aliasStorages),
 		parentAliasedKinds: linked.parentAliasedKinds,
 		visibleAliasTargets: linked.visibleAliasTargets,
 		displayLexemes: linked.displayLexemes,

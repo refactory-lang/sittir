@@ -22,6 +22,13 @@ describe('emitPortableTyped', () => {
 		expect(typed.source).toContain('\t"declaration.function": ViewForm<V.Declaration.Function<RustMap>>;');
 	});
 
+	it('writes no member the map types never: a conformance reads its trait clause as implements, and has no traitClause', () => {
+		const name = /function (ImplItemBodyAsDeclarationExtensionConformance\d*)\(n: /.exec(typed.source)?.[1];
+		expect(name).toBeDefined();
+		expect(typed.source).not.toContain(`${name}$traitClause`);
+		expect(typed.source).toContain(`implements: ${name}$implements`);
+	});
+
 	it('prints each read entry as a literal whose only data member is $type, naming member functions written once, its symbol keys last', () => {
 		const name = /function (FunctionItemAsDeclarationFunction\d*)\(n: T\.FunctionItem\.Parsed/.exec(typed.source)?.[1];
 		expect(name).toBeDefined();

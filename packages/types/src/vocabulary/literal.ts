@@ -92,6 +92,7 @@ export namespace Literal {
 		export interface Text<G extends GrammarMap, K extends Under<'literal.string.text'> = 'literal.string.text'> extends SubKindOf<V.Literal.String<G, K>> {
 			// claimed by prt
 			readonly $path: K;
+			readonly $value: string;
 		}
 	}
 }
