@@ -1,6 +1,6 @@
 # Refine forms: node arms, a declared default, kept routes
 
-**Status:** proposed, 2026-11-14. The user ruled "Post-parse: extend refine" on 2026-11-14 for typescript's `member_expression`, `using_declaration` and the for-header's `using`. The choice slot stays in the grammar, and the default and named forms come from `refine()`, not from parser variants.
+**Status:** approved, 2026-11-14: the user approved the design for the three sites and `object_type` declaring `default: 'curly'`. The user ruled "Post-parse: extend refine" on 2026-11-14 for typescript's `member_expression`, `using_declaration` and the for-header's `using`. The choice slot stays in the grammar, and the default and named forms come from `refine()`, not from parser variants.
 
 ## The end state
 
@@ -75,6 +75,8 @@ export namespace MemberExpression {
 
 The bare builder takes `T.MemberExpression.Config`. Each form's builder returns `T.MemberExpression.Bound`, the same node type a read gives.
 
+Every form's config, and the bare builder's, is built from the kind's emitted `Config` (`ConfigFor<…>`), never from the structural `ConfigOf<T.X>`. A preference slot such as `using_declaration`'s `automaticSemicolon` stays in `options`, so `coerceToUsingDeclaration` and the strict builder table's `BuildArgs` row still match the builder.
+
 ## A form selects a fixed-text node arm
 
 **Today.** A selection is a string matched against the choice's string arms, or an arm index. A form fixes a field only when the arm it selects is a string.
@@ -135,4 +137,5 @@ The variant hoist of `_for_header` mints `for_header_using_kind`. Naming it in `
 
 - The route fix, node-arm selection, the declared default and the minted-kind order each land before any grammar uses them. Each regenerates all five grammars byte-identical, and each is proved by a synthetic grammar test that's red before it.
 - The grammar change regenerates `grammar.json`, `parser.c` and `kind_ids.rs` unchanged. Its generated diff holds only the new builders, routes and types. The validation counts equal the base's.
+- typescript's type-check passes with the three sites refined, `coerce.ts` and `strict-args-row-is-the-call.test-d.ts` included.
 - The route fix goes first, since it's a defect today.
