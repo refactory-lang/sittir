@@ -51,11 +51,12 @@
 // and it changes no allocated byte of the image. The flag names no path, so
 // RUSTFLAGS is the same for every grammar and cargo keeps one build of the
 // dependencies; the linker writes the map beside the image in cargo's
-// `deps` directory, where the image's own link last left it.
+// output directory (`build/<package>/<hash>/out`), where the image's own link last left it.
 import { spawnSync } from 'node:child_process';
 import { chmodSync, copyFileSync, existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
 import { NATIVE_LOADER, NATIVE_NAPI_CONFIG, NATIVE_TYPINGS, REPO_ROOT, assertGrammar, nativeBinaryName, nativeBindingDir, nativeBuildEnv, nativeCrateDir } from '../packages/codegen/src/grammars.ts';
+import { CARGO_MESSAGE_FORMAT, artifactFile, linkerMapFile, parseCargoArtifacts } from '../packages/codegen/src/scripts/native-artifacts.ts';
 import { type NativeProfile, linkerMapOf, llvmTool, nativeBuildFingerprint, rustHost, unstrippedBinaryPath, writeNativeBuildStamp } from '../packages/codegen/src/scripts/native-binary-freshness.ts';
 import { addonFileName, engineLibraryName, engineStampOf, hostPlatform, isStdLibrary, platformSuffix, targetSuffix } from '../packages/common/src/native-binding.ts';
 
@@ -74,13 +75,17 @@ function run(command: string, args: readonly string[], cwd: string, shell = fals
 	if (result.status !== 0) process.exit(result.status ?? 1);
 }
 
+function runCapturing(command: string, args: readonly string[], cwd: string, shell: boolean, env: NodeJS.ProcessEnv): string {
+	const result = spawnSync(command, args, { cwd, stdio: ['inherit', 'pipe', 'inherit'], shell, env, encoding: 'utf8', maxBuffer: 1 << 30 });
+	if (result.status !== 0) process.exit(result.status ?? 1);
+	return result.stdout;
+}
+
 interface CargoMetadata {
-	readonly target_directory: string;
 	readonly packages: readonly {
 		readonly name: string;
 		readonly version: string;
 		readonly manifest_path: string;
-		readonly targets: readonly { readonly name: string; readonly kind: readonly string[] }[];
 	}[];
 }
 
@@ -90,10 +95,16 @@ function gitHead(): string {
 	return result.stdout.trim();
 }
 
-function engineVersion(metadata: CargoMetadata): string {
-	const version = metadata.packages.find((pkg) => pkg.name === 'sittir-engine')?.version;
-	if (version === undefined) throw new Error('cargo metadata names no sittir-engine package');
-	return version;
+function packageOf(name: string): CargoMetadata['packages'][number] {
+	const found = metadata.packages.find((pkg) => pkg.name === name);
+	if (found === undefined) throw new Error(`cargo metadata names no ${name} package`);
+	return found;
+}
+
+function packageAt(dir: string): CargoMetadata['packages'][number] {
+	const found = metadata.packages.find((pkg) => resolve(dirname(pkg.manifest_path)) === resolve(dir));
+	if (found === undefined) throw new Error(`cargo metadata names no package at ${dir}`);
+	return found;
 }
 
 function assertOneEngine(addon: string, engine: string, source: string, version: string): void {
@@ -111,8 +122,6 @@ function assertOneEngine(addon: string, engine: string, source: string, version:
 	);
 }
 
-const PROFILE_DIR: Readonly<Record<NativeProfile, string>> = { release: 'release', gate: 'gate', dev: 'debug' };
-
 // A full resolve, not `--no-deps`: it settles Cargo.lock after a manifest
 // change before the build's fingerprint reads it, so the build doesn't
 // rewrite an input its own stamp has already hashed.
@@ -120,14 +129,6 @@ function cargoMetadata(crateDir: string): CargoMetadata {
 	const result = spawnSync('cargo', ['metadata', '--format-version', '1'], { cwd: crateDir, encoding: 'utf8', maxBuffer: 1 << 28 });
 	if (result.status !== 0) throw new Error(`cargo metadata exited ${result.status} in ${crateDir}`);
 	return JSON.parse(result.stdout) as CargoMetadata;
-}
-
-function writtenLinkerMap(metadata: CargoMetadata, crateDir: string, cargoOut: string): string {
-	const library = metadata.packages
-		.find((pkg) => resolve(dirname(pkg.manifest_path)) === resolve(crateDir))
-		?.targets.find((built) => built.kind.includes('cdylib'))?.name;
-	if (library === undefined) throw new Error(`cargo metadata names no cdylib for ${crateDir}`);
-	return join(cargoOut, 'deps', `${library.replaceAll('-', '_')}.map`);
 }
 
 function stdLibrary(triple: string): string {
@@ -172,19 +173,22 @@ const linkerMap = release && suffix.endsWith('-msvc') ? linkerMapOf(copy) : unde
 const triple = flags.includes('--target') && target !== undefined ? target : rustHost();
 const crateDir = nativeCrateDir(grammar);
 const metadata = cargoMetadata(crateDir);
-const cargoOut = join(metadata.target_directory, triple, PROFILE_DIR[profile]);
 const engineLibrary = engineLibraryName(suffix);
 mkdirSync(dirname(copy), { recursive: true });
 const built = nativeBuildFingerprint(REPO_ROOT, grammar);
-run(
+const output = runCapturing(
 	'pnpm',
-	['exec', 'napi', 'build', '--config-path', NATIVE_NAPI_CONFIG, '--platform', '--features', 'arena', ...flags, '--output-dir', outDir, '--js', NATIVE_LOADER, '--dts', NATIVE_TYPINGS],
+	['exec', 'napi', 'build', '--config-path', NATIVE_NAPI_CONFIG, '--platform', '--features', 'arena', ...flags, '--output-dir', outDir, '--js', NATIVE_LOADER, '--dts', NATIVE_TYPINGS, '--', CARGO_MESSAGE_FORMAT],
 	crateDir,
 	process.platform === 'win32',
 	nativeBuildEnv(triple, { ...process.env, SITTIR_BUILD_PROFILE: profile, ...(release ? { SITTIR_ENGINE_COMMIT: gitHead() } : {}) }, linkerMap === undefined ? [] : ['-C link-arg=/MAP'])
 );
+for (const line of output.split('\n')) if (line !== '' && !line.startsWith('{')) console.log(line);
+const artifacts = parseCargoArtifacts(output);
+const engineBuilt = artifactFile(artifacts, packageOf('sittir-engine').manifest_path, engineLibrary);
 if (linkerMap !== undefined) {
-	const written = writtenLinkerMap(metadata, crateDir, cargoOut);
+	const crate = packageAt(crateDir);
+	const written = linkerMapFile(artifacts, crate.manifest_path, crate.name);
 	if (!existsSync(written)) throw new Error(`the release link wrote no linker map at ${written}`);
 	copyFileSync(written, linkerMap);
 }
@@ -192,7 +196,7 @@ if (linkerMap !== undefined) {
 const shipped = join(outDir, binary);
 const std = stdLibrary(triple);
 for (const stale of readdirSync(outDir).filter((file) => isStdLibrary(file) && file !== basename(std))) rmSync(join(outDir, stale));
-const libraries = [shipLibrary(join(cargoOut, 'deps', engineLibrary)), shipLibrary(std)];
+const libraries = [shipLibrary(engineBuilt), shipLibrary(std)];
 const images = [shipped, ...libraries];
 const signs = apple && process.platform === 'darwin';
 if (signs) nameStdByRpath([shipped, libraries[0]!], libraries[1]!);
@@ -207,5 +211,5 @@ if (release) {
 	}
 }
 if (signs) for (const image of images) run('codesign', ['--force', '--sign', '-', image], outDir);
-assertOneEngine(shipped, libraries[0]!, join(cargoOut, 'deps', engineLibrary), engineVersion(metadata));
+assertOneEngine(shipped, libraries[0]!, engineBuilt, packageOf('sittir-engine').version);
 writeNativeBuildStamp(REPO_ROOT, grammar, profile, binary, built, unstripped, linkerMap);
