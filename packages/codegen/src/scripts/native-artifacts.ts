@@ -4,37 +4,64 @@ import { basename, dirname, join, resolve } from 'node:path';
 export const CARGO_MESSAGE_FORMAT = '--message-format=json-render-diagnostics';
 
 export interface CargoArtifact {
+	readonly packageId: string;
 	readonly manifestPath: string;
 	readonly target: string;
 	readonly kinds: readonly string[];
 	readonly filenames: readonly string[];
 }
 
+export interface BuildScriptOutput {
+	readonly packageId: string;
+	readonly outDir: string;
+}
+
 interface CompilerArtifactMessage {
 	readonly reason?: string;
+	readonly package_id?: string;
+	readonly out_dir?: string;
 	readonly manifest_path?: string;
 	readonly target?: { readonly name?: string; readonly kind?: readonly string[] };
 	readonly filenames?: readonly string[];
 }
 
-function artifactOf(line: string): CargoArtifact | undefined {
+function messageOf(line: string): CompilerArtifactMessage | undefined {
 	if (!line.startsWith('{')) return undefined;
-	let message: CompilerArtifactMessage;
 	try {
-		message = JSON.parse(line) as CompilerArtifactMessage;
+		return JSON.parse(line) as CompilerArtifactMessage;
 	} catch {
 		return undefined;
 	}
-	const { manifest_path: manifestPath, target, filenames } = message;
-	if (message.reason !== 'compiler-artifact' || manifestPath === undefined || target?.name === undefined || target.kind === undefined || filenames === undefined) return undefined;
-	return { manifestPath, target: target.name, kinds: target.kind, filenames };
+}
+
+function artifactOf(message: CompilerArtifactMessage): CargoArtifact | undefined {
+	const { package_id: packageId, manifest_path: manifestPath, target, filenames } = message;
+	if (message.reason !== 'compiler-artifact' || packageId === undefined || manifestPath === undefined || target?.name === undefined || target.kind === undefined || filenames === undefined) return undefined;
+	return { packageId, manifestPath, target: target.name, kinds: target.kind, filenames };
 }
 
 export function parseCargoArtifacts(stdout: string): readonly CargoArtifact[] {
 	return stdout
 		.split('\n')
-		.map(artifactOf)
+		.map(messageOf)
+		.flatMap((message) => (message === undefined ? [] : [artifactOf(message)]))
 		.filter((artifact): artifact is CargoArtifact => artifact !== undefined);
+}
+
+export function parseBuildScriptOutputs(stdout: string): readonly BuildScriptOutput[] {
+	return stdout
+		.split('\n')
+		.map(messageOf)
+		.flatMap((message) => (message?.reason === 'build-script-executed' && message.package_id !== undefined && message.out_dir !== undefined ? [{ packageId: message.package_id, outDir: message.out_dir }] : []));
+}
+
+export function buildScriptFile(artifacts: readonly CargoArtifact[], outputs: readonly BuildScriptOutput[], manifestPath: string, file: string): string {
+	const ids = new Set(artifactsOf(artifacts, manifestPath).map((artifact) => artifact.packageId));
+	const found = outputs.find((output) => ids.has(output.packageId));
+	if (found === undefined) throw new Error(`cargo reported no build script output for ${manifestPath}`);
+	const path = join(found.outDir, file);
+	if (!existsSync(path)) throw new Error(`the build script of ${manifestPath} wrote no ${file} in ${found.outDir}`);
+	return path;
 }
 
 function artifactsOf(artifacts: readonly CargoArtifact[], manifestPath: string): readonly CargoArtifact[] {

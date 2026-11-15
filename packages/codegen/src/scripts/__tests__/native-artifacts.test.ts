@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSy
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { CARGO_MESSAGE_FORMAT, artifactFile, linkerMapFile, parseCargoArtifacts, type CargoArtifact } from '../native-artifacts.ts';
+import { CARGO_MESSAGE_FORMAT, artifactFile, buildScriptFile, linkerMapFile, parseBuildScriptOutputs, parseCargoArtifacts } from '../native-artifacts.ts';
 
 const PACKAGE = 'native-fixture';
 const LIBRARY = process.platform === 'win32' ? 'native_fixture.dll' : process.platform === 'darwin' ? 'libnative_fixture.dylib' : 'libnative_fixture.so';
@@ -12,15 +12,19 @@ let root: string;
 let manifest: string;
 let targetDir: string;
 
-function build(feature: string): readonly CargoArtifact[] {
+function cargo(feature: string): string {
 	const result = spawnSync('cargo', ['build', CARGO_MESSAGE_FORMAT, '--features', feature], {
 		cwd: root,
 		encoding: 'utf8',
-		env: { ...process.env, CARGO_TARGET_DIR: targetDir },
+		env: { ...process.env, CARGO_TARGET_DIR: targetDir, RUSTC_WRAPPER: '' },
 		maxBuffer: 1 << 26
 	});
 	if (result.status !== 0) throw new Error(`cargo build failed: ${result.stderr}`);
-	return parseCargoArtifacts(result.stdout);
+	return result.stdout;
+}
+
+function build(feature: string): ReturnType<typeof parseCargoArtifacts> {
+	return parseCargoArtifacts(cargo(feature));
 }
 
 beforeAll(() => {
@@ -31,6 +35,10 @@ beforeAll(() => {
 	writeFileSync(
 		manifest,
 		['[package]', 'name = "native-fixture"', 'version = "0.0.0"', 'edition = "2021"', '', '[lib]', 'crate-type = ["cdylib", "rlib"]', '', '[features]', 'a = []', 'b = []', '', '[workspace]', ''].join('\n')
+	);
+	writeFileSync(
+		join(root, 'build.rs'),
+		['fn main() {', '    let which = if std::env::var_os("CARGO_FEATURE_A").is_some() { "a" } else { "b" };', '    let out = std::path::PathBuf::from(std::env::var_os("OUT_DIR").unwrap());', '    std::fs::write(out.join("built.txt"), which).unwrap();', '}', ''].join('\n')
 	);
 	writeFileSync(
 		join(root, 'src', 'lib.rs'),
@@ -57,6 +65,17 @@ describe('the artifacts cargo names for a build', () => {
 		expect(dirname(linkerMapFile(build('a'), manifest, PACKAGE))).not.toBe(dirname(linkerMapFile(build('b'), manifest, PACKAGE)));
 	}, 120_000);
 
+	it('name the build script output of the feature set just built, though another built after it', () => {
+		cargo('a');
+		cargo('b');
+		const again = cargo('a');
+		const file = buildScriptFile(parseCargoArtifacts(again), parseBuildScriptOutputs(again), manifest, 'built.txt');
+		expect(readFileSync(file, 'utf8')).toBe('a');
+		const other = cargo('b');
+		expect(readFileSync(buildScriptFile(parseCargoArtifacts(other), parseBuildScriptOutputs(other), manifest, 'built.txt'), 'utf8')).toBe('b');
+		expect(() => buildScriptFile(parseCargoArtifacts(other), parseBuildScriptOutputs(other), manifest, 'absent.txt')).toThrow('wrote no absent.txt');
+	}, 120_000);
+
 	it('refuse a file cargo did not name, with the manifest', () => {
 		expect(() => artifactFile(build('a'), manifest, 'libabsent.dylib')).toThrow(`cargo named no libabsent.dylib among the artifacts it built for ${manifest}`);
 	}, 120_000);
@@ -65,9 +84,9 @@ describe('the artifacts cargo names for a build', () => {
 		const lines = [
 			'warning: rendered diagnostics are not JSON',
 			JSON.stringify({ reason: 'build-finished', success: true }),
-			JSON.stringify({ reason: 'compiler-artifact', manifest_path: '/m/Cargo.toml', target: { name: 'one', kind: ['lib'] }, filenames: ['/t/libone.rlib'] }),
+			JSON.stringify({ reason: 'compiler-artifact', package_id: 'one 0.0.0', manifest_path: '/m/Cargo.toml', target: { name: 'one', kind: ['lib'] }, filenames: ['/t/libone.rlib'] }),
 			'{ not json'
 		].join('\n');
-		expect(parseCargoArtifacts(lines)).toEqual([{ manifestPath: '/m/Cargo.toml', target: 'one', kinds: ['lib'], filenames: ['/t/libone.rlib'] }]);
+		expect(parseCargoArtifacts(lines)).toEqual([{ packageId: 'one 0.0.0', manifestPath: '/m/Cargo.toml', target: 'one', kinds: ['lib'], filenames: ['/t/libone.rlib'] }]);
 	});
 });
