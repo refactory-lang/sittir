@@ -2,21 +2,26 @@
 // same-value edit of each root's settable members (each edit result released
 // after the timed edit, releaseMs), then a whole-tree read (depth: Infinity).
 // The roots, renders, edit renders and whole trees stay live until the caller
-// drops the result.
+// drops the result. The parse and render phases are exported on their own, so
+// a probe of one phase runs the code this pass times.
 import { createHash } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 
 export const hash = (texts) => createHash('sha256').update(JSON.stringify(texts)).digest('hex');
 
+export const parsePhase = (engine, sources) => sources.map((source) => engine.parse(source));
+
+export const renderPhase = (engine, roots) => roots.map((node) => {
+  const rendered = engine.render(node);
+  try { return rendered.toString(); } finally { rendered[Symbol.dispose]?.(); }
+});
+
 export function corpusBatch(engine, sources) {
   let start = performance.now();
-  const roots = sources.map((source) => engine.parse(source));
+  const roots = parsePhase(engine, sources);
   const parseMs = performance.now() - start;
   start = performance.now();
-  const renders = roots.map((node) => {
-    const rendered = engine.render(node);
-    try { return rendered.toString(); } finally { rendered[Symbol.dispose]?.(); }
-  });
+  const renders = renderPhase(engine, roots);
   const renderMs = performance.now() - start;
   start = performance.now();
   const changed = roots.flatMap((node) => Object.keys(node.$with ?? {}).sort().flatMap((key) => {

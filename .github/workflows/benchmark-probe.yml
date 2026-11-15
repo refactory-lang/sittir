@@ -31,6 +31,10 @@ on:
       script:
         type: string
         required: true
+      native-profiler:
+        description: Build every addon with line tables and frame pointers, and install perf and llvm, for a native sampling profiler.
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -58,6 +62,29 @@ jobs:
       - uses: ./.github/actions/rust-toolchain
         with:
           components: llvm-tools
+      # The same flags on every tree, so the build stamps still agree: line
+      # tables name inlined functions, frame pointers give perf the call chain.
+      - name: Build for a native profiler, and install perf and llvm
+        if: inputs.native-profiler
+        shell: bash
+        env:
+          PROFILE: ${{ inputs.profile }}
+        run: |
+          profile=${PROFILE^^}
+          {
+            echo "CARGO_PROFILE_${profile}_DEBUG=line-tables-only"
+            echo "CARGO_PROFILE_${profile}_STRIP=false"
+            echo "RUSTFLAGS=-C force-frame-pointers=yes"
+          } >> "$GITHUB_ENV"
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq llvm "linux-tools-$(uname -r)" || sudo apt-get install -y -qq llvm linux-tools-generic
+          perf=/usr/lib/linux-tools/$(uname -r)/perf
+          installed=(/usr/lib/linux-tools/*/perf)
+          [[ -x $perf ]] || perf=${installed[0]}
+          echo "PERF=$perf" >> "$GITHUB_ENV"
+          sudo sysctl -w kernel.perf_event_paranoid=-1 kernel.kptr_restrict=0 kernel.perf_event_max_stack=512
+          "$perf" --version
+          llvm-symbolizer --version
       - name: Test the build path placement
         run: node --test scripts/ci/paired-refs/build-path.test.mjs
       - name: Resolve the commits
