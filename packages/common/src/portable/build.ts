@@ -20,7 +20,7 @@ import type {
 	PortableValueBuild
 } from '@sittir/types';
 import { hasKind } from './classify.ts';
-import { isNumberSlots, leafSeatOf, numberMembers, spells, textBuilt, tokenKind, tokenText } from './facts.ts';
+import { isNumberSlots, leafSeatOf, numberMembers, spells, takesTextValue, textBuilt, tokenKind, tokenText } from './facts.ts';
 import { vocabularyPathFeatures } from './vocabulary-paths.ts';
 
 export interface PortableBuildContext {
@@ -771,7 +771,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 				else for (const [key, part] of decimalParts(scalar, arm.numeric, arm, structure.$path)) frame.config[key] = part;
 			}
 			if (arm.content !== undefined && typeof structure.$value !== 'string') throw new Error(`portable build: ${structure.$path} takes its ${nameOf(arm.kind)} as a text $value`);
-			if ((arm.content !== undefined || textBuilt(table, arm)) && typeof structure.$value === 'string') frame.input = structure.$value;
+			if (takesTextValue(table, arm) && typeof structure.$value === 'string') frame.input = structure.$value;
 			const routed = [...values.keys()].map((name) => {
 				const routes = routesOf(arm, name);
 				if (routes.length === 0) throw new Error(`portable build: ${structure.$path}: ${nameOf(arm.kind)} has no member ${name}`);

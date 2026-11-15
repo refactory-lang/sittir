@@ -415,7 +415,7 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 			if (tree.size > 0) emit(`type ${held} = Present<${low}, ${presentTypeOf(tree)}>;`, '');
 			for (const [member, reads] of readsByName) {
 				if (never(entry.vocab, member)) continue;
-				const fn =`${name}$${member}`;
+				const fn = `${name}$${member}`;
 				emit(`function ${fn}(this: Held<${held}>) {`, `\treturn ${memberBody(reads)};`, '}', '');
 				fields.push(`${member}: ${fn}`);
 				written.add(member);
