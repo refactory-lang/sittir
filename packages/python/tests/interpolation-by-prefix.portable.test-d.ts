@@ -1,7 +1,7 @@
 /**
  * Type-level pins: a portable string path decides its prefix, so it decides whether its `elements` hold interpolations. The
- * `literal.string.interpolated` paths hold them; every other `literal.string` path, and the paths that inherit `elements` from
- * `literal.string`, hold text only.
+ * `literal.string.interpolated` paths hold them, and every other `literal.string` path holds text only. An escape reads its
+ * `content` and a concatenation its `strings`, so neither reads `elements`.
  *
  * Compile-time only: `pnpm --filter @sittir/python type-check`.
  */
@@ -29,11 +29,13 @@ export const rawInterpolated: In<'literal.string.raw.multiline'> = { $path: 'lit
 
 export const readFormatted: ElementAt<'literal.string.interpolated.multiline'> = interpolation;
 export const readUnicodeText: ElementAt<'literal.string.unicode'> = text;
+// @ts-expect-error an escape reads its content, not elements
 export const readEscapeText: ElementAt<'literal.string.escape'> = text;
+// @ts-expect-error a concatenation reads its strings, not elements
 export const readConcatenatedText: ElementAt<'literal.string.concatenated'> = text;
 // @ts-expect-error a unicode string reads no interpolation
 export const readUnicode: ElementAt<'literal.string.unicode'> = interpolation;
-// @ts-expect-error an escape inherits `literal.string`'s elements
+// @ts-expect-error an escape reads no elements
 export const readEscape: ElementAt<'literal.string.escape'> = interpolation;
-// @ts-expect-error a concatenation inherits `literal.string`'s elements; its interpolations are in its `strings`
+// @ts-expect-error a concatenation reads no elements; its interpolations are in its `strings`
 export const readConcatenated: ElementAt<'literal.string.concatenated'> = interpolation;
