@@ -20,9 +20,26 @@ describe.skipIf(backend.name !== 'native')("a read node's sides in one call", ()
 				expect(engine.readSides(node)).toEqual({
 					leading: engine.readTriviaSide!(node, 'leading'),
 					trailing: engine.readTriviaSide!(node, 'trailing'),
-					inner: engine.readTriviaSide!(node, 'inner'),
-					units: engine.readUnitSides!(node)
+					inner: engine.readTriviaSide!(node, 'inner')
 				});
+			}
+		} finally {
+			engine.dispose();
+		}
+	});
+
+	it("renders a read's record with its sides, as the render and the side call answer apart", () => {
+		if (backend.name !== 'native') return;
+		const engine = nativeEngineOf(backend.native);
+		try {
+			if (engine.parseRecords === undefined) return;
+			if (engine.renderBuiltSides === undefined) throw new Error('an addon with the record codec has no renderBuiltSides');
+			for (const source of ['// only\n', 'fn f() {\n    g(a,  b); // tail\n}\n']) {
+				const { root } = JSON.parse(engine.parseRecords(source)) as { root: number };
+				const rendered = engine.renderBuiltSides(engine.handle, root, false, false);
+				expect(rendered.text).toBe(engine.renderBuilt!(engine.handle, root, false, false));
+				expect(rendered.text).toBe(source);
+				expect(rendered.sides).toEqual(engine.readSides!(root));
 			}
 		} finally {
 			engine.dispose();

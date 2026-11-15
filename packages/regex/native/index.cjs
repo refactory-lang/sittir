@@ -760,6 +760,7 @@ module.exports.renderAt = nativeBinding.renderAt
 module.exports.renderBuilt = nativeBinding.renderBuilt
 module.exports.renderBuiltLeaf = nativeBinding.renderBuiltLeaf
 module.exports.renderBuiltLeafToFile = nativeBinding.renderBuiltLeafToFile
+module.exports.renderBuiltSides = nativeBinding.renderBuiltSides
 module.exports.renderBuiltToFile = nativeBinding.renderBuiltToFile
 module.exports.renderToFile = nativeBinding.renderToFile
 module.exports.separatorBefore = nativeBinding.separatorBefore

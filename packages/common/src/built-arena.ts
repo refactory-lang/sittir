@@ -84,11 +84,9 @@ export interface BuiltRecords {
 	};
 }
 
-export type ReadNodes = Required<Pick<TreeHandle, 'snapshotLayouts' | 'writeTriviaSide' | 'slotLayouts' | 'slotSeparator' | 'separatorBefore' | 'editedWithin' | 'isEmpty' | 'siblings' | 'sources'>> & { sides(node: number): ReadSides };
+export type ReadNodes = Required<Pick<TreeHandle, 'snapshotLayouts' | 'writeTriviaSide' | 'slotLayouts' | 'slotSeparator' | 'separatorBefore' | 'editedWithin' | 'isEmpty' | 'siblings' | 'sources' | 'unitSides'>> & { sides(node: number): ReadSides };
 
-export interface ReadSides extends Readonly<Record<TriviaSideName, readonly WireNode[]>> {
-	readonly units: readonly UnitSidesWire[];
-}
+export type ReadSides = Readonly<Record<TriviaSideName, readonly WireNode[]>>;
 
 export interface ParsedRecords {
 	readonly root: number | null;
@@ -275,6 +273,7 @@ export class BuiltArena {
 	readonly #sources: ReadNodes['sources'];
 	readonly #reads: (WritableWords | undefined)[] = [];
 	readonly #readSides = new Map<number, ReadSides>();
+	readonly #readUnits = new Map<number, readonly UnitSidesWire[]>();
 	readonly #roots = new Set<number>();
 	readonly #errors = new Map<number, readonly unknown[]>();
 	readonly #entries: (Map<string, BuiltText> | undefined)[] = [];
@@ -326,7 +325,11 @@ export class BuiltArena {
 			this.#readSides.set(node, read);
 			return read;
 		};
-		const unitsOf = (node: number): UnitSidesWire[] => sidesOf(node).units.map((unit) => ({ ...unit, ...mapTriviaEntries(unit, (entries) => entries.slice()) }));
+		const unitsOf = (node: number): UnitSidesWire[] => {
+			let held = this.#readUnits.get(node);
+			if (held === undefined) this.#readUnits.set(node, (held = reads.unitSides(node)));
+			return held.map((unit) => ({ ...unit, ...mapTriviaEntries(unit, (entries) => entries.slice()) }));
+		};
 		this.tree = {
 			built: this,
 			token: this.token,
@@ -347,10 +350,10 @@ export class BuiltArena {
 			},
 			writeTriviaSide: (at, side, entries) => {
 				if (at < 0) {
-					this.#readSides.clear();
+					this.#forgetReadSides();
 					return reads.writeTriviaSide(at, side, entries);
 				}
-				this.#readSides.delete(at);
+				this.#forgetReadSides(at);
 				trivia.writeTriviaSide(at, side, entries);
 				const sided = (this.#sided[chunkOf(at, format)] ??= new Map());
 				sided.set(at, (sided.get(at) ?? 0) | SIDE_BITS[side]);
@@ -363,7 +366,7 @@ export class BuiltArena {
 			},
 			writeUnitSides: (at, units) => {
 				this.#undefer(at);
-				this.#readSides.delete(at);
+				this.#forgetReadSides(at);
 				trivia.writeUnitSides(at, units);
 				(this.#unitSided[chunkOf(at, format)] ??= new Set()).add(at);
 			}
@@ -983,6 +986,16 @@ export class BuiltArena {
 		return this.#chunk(at, length);
 	}
 
+	/** Whether a render of the record at `at` should ask for its sides: a read wrote it and the arena keeps none for it yet. */
+	wantsSides(at: number): boolean {
+		return !this.#readSides.has(at) && this.reads(at);
+	}
+
+	/** Keeps `sides` as the sides of the read node `node` names, as its render answered them, when the arena keeps none for it yet. */
+	keepSides(node: number, sides: ReadSides): void {
+		if (!this.#readSides.has(node)) this.#readSides.set(node, sides);
+	}
+
 	/** Whether a read wrote the record at `at`, as against a builder. */
 	reads(at: number): boolean {
 		return this.#readChunk(chunkOf(at, this.format)) !== undefined;
@@ -1071,13 +1084,20 @@ export class BuiltArena {
 		if (parked !== undefined && this.#scopes > 0) this.#undos[this.#undosCount++] = () => this.#park(leaf, parked);
 	}
 
+	#forgetReadSides(at?: number): void {
+		for (const held of [this.#readSides, this.#readUnits]) {
+			if (at === undefined) held.clear();
+			else held.delete(at);
+		}
+	}
+
 	leafSites(leaf: object): readonly number[] | undefined {
 		return leafSitesOf(leaf, this.#siteAlive);
 	}
 
 	/** Replaces `side` of the built leaf at each site `sites` names, `[holder, word, item]` after another, with `entries`. */
 	writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly WireNode[]): void {
-		this.#readSides.clear();
+		this.#forgetReadSides();
 		this.#trivia.writeLeafSide(sites, side, entries);
 		for (let n = 0; n < sites.length; n += 3) (this.#leafSited[chunkOf(sites[n]!, this.format)] ??= new Set()).add(sites[n]!);
 	}
@@ -1297,7 +1317,7 @@ export function sideEntryOf(entry: object, arena: BuiltArena | undefined, holder
 	if (built === undefined) return unreadRecordOf(entry, arena) ?? readCoordinateOf(entry);
 	if (built.arena !== arena) throw new Error(OTHER_ENGINE_RECORD);
 	built.arena.refuseReleased(built.at);
-	built.arena.settle();
+	if (!built.arena.reads(built.at)) built.arena.settle();
 	return { $type: (entry as { readonly $type: number }).$type, $record: built.at };
 }
 

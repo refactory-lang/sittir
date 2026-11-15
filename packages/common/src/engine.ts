@@ -267,8 +267,8 @@ export interface NativeEngineLike<TNode = unknown> {
 	writeReadTriviaSide?(node: number, side: string, entries: readonly WireNode[]): void;
 	/** `unitSides` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
 	readUnitSides?(node: number): UnitSidesWire<ReadOutput>[];
-	/** The three trivia sides and the unit sides of the node a read left in the built arena that the key `node` names, from one read of its source's records. Present when the addon carries the record codec. */
-	readSides?(node: number): { leading: WireNode<ReadOutput>[]; trailing: WireNode<ReadOutput>[]; inner: WireNode<ReadOutput>[]; units: UnitSidesWire<ReadOutput>[] };
+	/** The three trivia sides of the node a read left in the built arena that the key `node` names, from one read of its source's records. Present when the addon carries the record codec. */
+	readSides?(node: number): { leading: WireNode<ReadOutput>[]; trailing: WireNode<ReadOutput>[]; inner: WireNode<ReadOutput>[] };
 	/** `slotLayouts` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
 	readSlotLayouts?(node: number): SlotLayoutWire[];
 	/** `slotSeparator` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
@@ -288,6 +288,8 @@ export interface NativeEngineLike<TNode = unknown> {
 	/** Refuses, by name, a runtime that does not allow external array buffers. Present when the addon carries the record codec. */
 	externalBuffers?(): void;
 	renderBuilt?(owner: object, address: number, leading: boolean, trailing: boolean, source?: number, options?: object): string;
+	/** {@link renderBuilt}'s text, and for a record a read left what {@link readSides} answers for it, from the same read of its source's records; `sides` is absent for a built record. Present when the addon carries the record codec. */
+	renderBuiltSides?(owner: object, address: number, leading: boolean, trailing: boolean, source?: number, options?: object): { text: string; sides?: ReturnType<NonNullable<NativeEngineLike['readSides']>> };
 	renderBuiltLeaf?(
 		owner: object,
 		kind: number,
@@ -419,6 +421,7 @@ const ENGINE_FUNCTIONS = [
 	'renderAt',
 	'renderToFile',
 	'renderBuilt',
+	'renderBuiltSides',
 	'renderBuiltToFile',
 	'renderBuiltLeaf',
 	'renderBuiltLeafToFile',
@@ -717,8 +720,8 @@ export function createNativeEngine<
 			const built = typeof node === 'number' ? undefined : builtRefOf(node);
 			if (built !== undefined) {
 				const changed = rootEdges(node as object);
-				const { renderBuilt, renderBuiltLeaf, renderBuiltToFile, renderBuiltLeafToFile } = engine;
-				if (renderBuilt === undefined || renderBuiltLeaf === undefined || renderBuiltToFile === undefined || renderBuiltLeafToFile === undefined)
+				const { renderBuilt, renderBuiltSides, renderBuiltLeaf, renderBuiltToFile, renderBuiltLeafToFile } = engine;
+				if (renderBuilt === undefined || renderBuiltSides === undefined || renderBuiltLeaf === undefined || renderBuiltToFile === undefined || renderBuiltLeafToFile === undefined)
 					throw new Error(ARENA_FEATURE_REFUSED);
 				const at = built.at;
 				if (at !== undefined) {
@@ -727,8 +730,15 @@ export function createNativeEngine<
 						built.arena.settle();
 						return at;
 					};
+					const text = (): string => {
+						const record = settled();
+						if (!built.arena.wantsSides(record)) return renderBuilt.call(engine, built.arena.owner, record, changed.leading, changed.trailing, sourceRecordOf(node as object), perCall);
+						const rendered = renderBuiltSides.call(engine, built.arena.owner, record, changed.leading, changed.trailing, sourceRecordOf(node as object), perCall);
+						if (rendered.sides !== undefined) built.arena.keepSides(record, rendered.sides);
+						return rendered.text;
+					};
 					return createRenderHandle(
-						() => renderBuilt.call(engine, built.arena.owner, settled(), changed.leading, changed.trailing, sourceRecordOf(node as object), perCall),
+						text,
 						(path, create) => renderBuiltToFile.call(engine, built.arena.owner, settled(), changed.leading, changed.trailing, path, create, sourceRecordOf(node as object), perCall),
 						writeText
 					);
@@ -824,7 +834,7 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
-	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, builtBump, releaseBuilt, parseRecords, readWords, readText, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSides, readSlotLayouts, readSlotSeparator, readSeparatorBefore, readEditedWithin, readIsEmpty, readSiblings, readSources } = engine;
+	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, builtBump, releaseBuilt, parseRecords, readWords, readText, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSides, readUnitSides, readSlotLayouts, readSlotSeparator, readSeparatorBefore, readEditedWithin, readIsEmpty, readSiblings, readSources } = engine;
 	if (
 		builtBump === undefined ||
 		releaseBuilt === undefined ||
@@ -845,6 +855,7 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		readSnapshotLayouts === undefined ||
 		writeReadTriviaSide === undefined ||
 		readSides === undefined ||
+		readUnitSides === undefined ||
 		readSlotLayouts === undefined ||
 		readSlotSeparator === undefined ||
 		readSeparatorBefore === undefined ||
@@ -869,6 +880,7 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		reads: {
 			snapshotLayouts: (node, holderByte) => readSnapshotLayouts.call(engine, node, holderByte),
 			sides: (node) => readSides.call(engine, node),
+			unitSides: (node) => readUnitSides.call(engine, node),
 			writeTriviaSide: (node, side, entries) => writeReadTriviaSide.call(engine, node, side, entries),
 			slotLayouts: (node) => readSlotLayouts.call(engine, node),
 			slotSeparator: (node) => readSlotSeparator.call(engine, node) ?? undefined,

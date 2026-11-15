@@ -478,11 +478,11 @@ export declare function readSeparatorBefore(engine: object, node: number): impor
 export declare function readSiblings(engine: object, nodes: Array<number>): Array<number>
 
 /**
- * r" `{ leading, trailing, inner, units }`: `triviaSide` of each
- * r" side and `unitSides` for the node a read left that the key
- * r" `node` names, all from one tree over its source's records.
+ * r" `{ leading, trailing, inner }`: `triviaSide` of each side for
+ * r" the node a read left that the key `node` names, all from one
+ * r" tree over its source's records.
  */
-export declare function readSides(engine: object, node: number): { leading: import('@sittir/types').WireNode[]; trailing: import('@sittir/types').WireNode[]; inner: import('@sittir/types').WireNode[]; units: import('@sittir/types').UnitSidesWire[] }
+export declare function readSides(engine: object, node: number): { leading: import('@sittir/types').WireNode[]; trailing: import('@sittir/types').WireNode[]; inner: import('@sittir/types').WireNode[] }
 
 /** r" `slotLayouts` for the node a read left that the key `node` names. */
 export declare function readSlotLayouts(engine: object, node: number): import('@sittir/types').SlotLayoutWire[]
@@ -611,6 +611,14 @@ export declare function renderBuiltLeaf(engine: object, owner: object, kind: num
  * r" (`save_rendered`), answering whether it wrote.
  */
 export declare function renderBuiltLeafToFile(engine: object, owner: object, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object | undefined | null): boolean
+
+/**
+ * r" `{ text, sides }`: `renderBuilt`'s text, and for a record a
+ * r" read left what `readSides` answers for it, read from the
+ * r" tree the render made over its source; `sides` is absent for
+ * r" a built record. Refuses as `renderBuilt` does.
+ */
+export declare function renderBuiltSides(engine: object, owner: object, address: number, leading: boolean, trailing: boolean, source?: number | undefined | null, options?: object | undefined | null): { text: string; sides?: { leading: import('@sittir/types').WireNode[]; trailing: import('@sittir/types').WireNode[]; inner: import('@sittir/types').WireNode[] } }
 
 /**
  * r" `render_built`'s text written to `path` (`save_rendered`),

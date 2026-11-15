@@ -264,7 +264,8 @@ export function writeUnitSides(node: object, units: readonly UnitSidesWire[]): v
 
 function carryUnitSides(from: object, to: object): void {
 	const built = builtRefOf(to);
-	if (built?.at !== undefined && builtRefOf(from) === undefined) built.arena.defer(built.at, () => carryUnitSidesNow(from, to));
+	const source = builtRefOf(from);
+	if (built?.at !== undefined && (source === undefined || (source.at !== undefined && source.arena.reads(source.at)))) built.arena.defer(built.at, () => carryUnitSidesNow(from, to));
 	else carryUnitSidesNow(from, to);
 }
 
