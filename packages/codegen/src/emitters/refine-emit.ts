@@ -64,3 +64,21 @@ export function narrowedLiteralsOf(form: RefineFormInfo, nodeMap: NodeMap, owner
 		})
 	);
 }
+
+export interface RefineDefault {
+	readonly form: LinkedRefineForm;
+	readonly pinned: ReadonlyMap<string, string>;
+}
+
+export function refineDefaultOf(nodeMap: NodeMap, kind: string): RefineDefault | undefined {
+	const forms = nodeMap.refineForms?.get(kind);
+	const defaultName = forms?.find((form) => form.defaultName !== undefined)?.defaultName;
+	const form = forms?.find((candidate) => candidate.name === defaultName);
+	if (form === undefined) return undefined;
+	const pinned = narrowedLiteralsOf({ name: form.name, form, narrowedFields: form.narrowedFields }, nodeMap, kind);
+	return pinned.size === 0 ? undefined : { form, pinned };
+}
+
+export function omittableWithDefault(fullConfig: string, pinnedProperties: readonly string[]): string {
+	return `Omit<${fullConfig}, ${pinnedProperties.map((name) => JSON.stringify(name)).join(' | ')}> | ${fullConfig}`;
+}

@@ -290,9 +290,25 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 			return issue === undefined;
 		});
 		if (validForms.length === 0) continue;
+		const declaredDefault = forms.find((form) => form.defaultName !== undefined)?.defaultName;
+		const defaultName = declaredDefault !== undefined && validForms.some((form) => form.name === declaredDefault) ? declaredDefault : undefined;
+		if (declaredDefault !== undefined && defaultName === undefined) {
+			recordConfigIssue(
+				'refine-config-invalid',
+				{
+					ownerKind: kind,
+					message: `refine(${kind}): default '${declaredDefault}' names no form (forms: ${validForms.map((form) => `'${form.name}'`).join(', ')})`
+				},
+				linkCtx
+			);
+		}
 		refineForms.set(
 			kind,
-			validForms.map((form) => ({ ...form, narrowedFields: narrowedFieldLiteralsForForm(rule, form, rules) }))
+			validForms.map(({ defaultName: _declared, ...form }) => ({
+				...form,
+				...(defaultName === undefined ? {} : { defaultName }),
+				narrowedFields: narrowedFieldLiteralsForForm(rule, form, rules)
+			}))
 		);
 	}
 

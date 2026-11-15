@@ -114,7 +114,7 @@ import {
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import { BLANK_KIND_ID } from '@sittir/common/blank-arm';
 import { resolveBitflagConstName } from './consts.ts';
-import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
+import { refineFormTypeName, collectRefineKindInfos, refineDefaultOf, omittableWithDefault } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
 import { layoutKindAliasesOf, hintEmitterOf, type AddressTables, type HintEmitter, type HintRoot } from './options.ts';
 import type { SitePreference } from '../compiler/model/site-preferences.ts';
@@ -1343,10 +1343,18 @@ function emitNamespaceSugarBlock(
 	lines.push(`export namespace ${node.typeName} {`);
 	if (refineInfo && refineInfo.forms.length > 0) {
 		emitRefineFormSubNamespaces(lines, node, refineInfo, nsKey, nodeMap, kindEntries);
-		const defaultForm = refineInfo.forms[0]!;
-		const defaultShortName = refineFormTypeName(node.typeName, defaultForm.name).slice(node.typeName.length);
-		lines.push(`  /** Default form: '${defaultForm.name}' (first-declared). */`);
-		lines.push(`  export type Config = ${defaultShortName}.Config;`);
+		const declared = refineDefaultOf(nodeMap, kind);
+		if (declared !== undefined) {
+			const pinnedProperties = node.slots.filter((slot) => declared.pinned.has(slot.name)).map((slot) => slot.propertyName);
+			const fullConfig = widenSlotInputs(omitRegistered(`ConfigFor<${nsKey}>`, node), node, nodeMap);
+			lines.push(`  /** Default form: '${declared.form.name}' (declared). */`);
+			lines.push(`  export type Config = ${omittableWithDefault(fullConfig, pinnedProperties)};`);
+		} else {
+			const defaultForm = refineInfo.forms[0]!;
+			const defaultShortName = refineFormTypeName(node.typeName, defaultForm.name).slice(node.typeName.length);
+			lines.push(`  /** Default form: '${defaultForm.name}' (first-declared). */`);
+			lines.push(`  export type Config = ${defaultShortName}.Config;`);
+		}
 	} else {
 		lines.push(`  export type Config = ${widenSlotInputs(omitRegistered(`ConfigFor<${nsKey}>`, node), node, nodeMap)};`);
 	}
@@ -1370,8 +1378,14 @@ function emitNamespaceSugarBlock(
 	const bareShape = kindNumberShape(kind, node);
 	const bareSlot = fromBareInput(node, nodeMap) === 'value' ? bareValueSlot(node, nodeMap) : undefined;
 	const bareEnvelope = bareSlot === undefined ? undefined : splicedEnvelopeType(bareSlot, nodeMap);
+	const declaredDefault = refineDefaultOf(nodeMap, kind);
+	const looseFull = omitRegistered(`LooseFor<${nsKey}>`, node);
+	const looseHead =
+		declaredDefault === undefined
+			? looseFull
+			: omittableWithDefault(looseFull, node.slots.filter((slot) => declaredDefault.pinned.has(slot.name)).map((slot) => slot.propertyName));
 	lines.push(
-		`  export type Loose = ${omitRegistered(`LooseFor<${nsKey}>`, node)}${looseWidened}${bareText}${bareShape === undefined ? '' : ` | ${numberInputType(bareShape)}`}${bareEnvelope === undefined ? '' : ` | ${bareEnvelope}`};`
+		`  export type Loose = ${looseHead}${looseWidened}${bareText}${bareShape === undefined ? '' : ` | ${numberInputType(bareShape)}`}${bareEnvelope === undefined ? '' : ` | ${bareEnvelope}`};`
 	);
 	lines.push(`  export type LooseConfig = ${widenedLooseConfig};`);
 	if (surface !== undefined) {

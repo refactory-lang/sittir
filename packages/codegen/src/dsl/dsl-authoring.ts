@@ -3,7 +3,7 @@ import { field as fieldImpl, type FieldPlaceholder } from './primitives/field.ts
 import { alias as aliasImpl, type AliasPlaceholder } from './primitives/alias.ts';
 import { rule as ruleImpl, type RulePlaceholder } from './primitives/rule.ts';
 import { role as roleImpl } from './primitives/role.ts';
-import { refine as refineImpl, type FormMap, type RefinePlaceholder } from './primitives/refine.ts';
+import { refine as refineImpl, type FormMap, type RefineOptions, type RefinePlaceholder } from './primitives/refine.ts';
 import { edit as editImpl, replace as replaceImpl } from './transform/transform.ts';
 import { copy as copyImpl } from './primitives/copy.ts';
 import { spellings as spellingsImpl, type SpellingOptions, type SpellingRule } from './primitives/spellings.ts';
@@ -63,8 +63,8 @@ interface AuthoringRole {
 export const role = roleImpl as unknown as AuthoringRole;
 
 interface AuthoringRefine {
-	(forms: FormMap): RefinePlaceholder;
-	<R extends AuthoringRule>(original: R, forms: FormMap): R;
+	(forms: FormMap, options?: RefineOptions): RefinePlaceholder;
+	<R extends AuthoringRule>(original: R, forms: FormMap, options?: RefineOptions): R;
 }
 export const refine = refineImpl as unknown as AuthoringRefine;
 

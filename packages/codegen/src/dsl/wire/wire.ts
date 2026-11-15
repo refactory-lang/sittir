@@ -232,6 +232,7 @@ export interface WireLists {
 export interface RefineForm {
 	readonly name: string;
 	readonly selections: Record<string, number | string>;
+	readonly defaultName?: string;
 }
 
 let currentContext: WireContext | null = null;
