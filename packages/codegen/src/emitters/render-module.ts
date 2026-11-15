@@ -1648,6 +1648,9 @@ function commonRustUseImports(): string {
 		'#![allow(clippy::large_enum_variant, reason = "Choice payload sizes are checked by the generated pinned ceiling assertions")]'
 	);
 	lines.push(
+		'#![allow(clippy::used_underscore_items, reason = "A hidden kind\'s const is named for its grammar rule, whose leading underscore marks it hidden, not unused")]'
+	);
+	lines.push(
 		'#![allow(clippy::unnecessary_wraps, clippy::trivially_copy_pass_by_ref, clippy::needless_pass_by_value, reason = "each generated function role has one signature: a render function takes its node by reference and returns RenderResult, and a conversion into AnyNode takes its node by value, whatever one body needs")]'
 	);
 	lines.push('');

@@ -297,6 +297,13 @@ if (typeof value === 'string') return b.identifier(value);
 
 **Answer (approved 2026-11-15).**
 - A path that a grammar builds from text alone declares `readonly $value: string`. Those paths are `identifier`, `literal.string.text`, `comment.text`, `comment.html`, `literal.regex.flags`, `literal.regex.pattern`, `clause.import.relative.prefix` and `expression.interpolation.conversion`. Rust's `identifier.metavariable` (`$x`) builds from its name's text too, through a content arm, so it keeps the `$value` it inherits from `identifier`.
+- A node whose one slot holds a text-built kind is built from text too. Its content arm names that slot, and the build makes the child from the text, then the node around it. A lexed token whose only slot is its interior text is the simplest case. These paths therefore declare `$value: string` too, and lose `content` (the user, 2026-11-15):
+  - the comment paths: `comment.line`, `.block`, `.block.doc`, `.line.doc`, `.line.doc.inner` and `.block.doc.inner`;
+  - rust's and typescript's `literal.string.escape`;
+  - rust's `literal.string.raw`, `.bytes.raw` and `.c.raw`.
+
+  Rust's `//x` reads `{ $path: 'comment.line', $value: 'x' }`, and its `r"a"` reads `{ $path: 'literal.string.raw', $value: 'a' }`.
+- One predicate, `takesTextValue`, says which arms take a text `$value`: a text arm or a content arm. The build, the guard and the typed views all use it.
 - A guard derives the set from the build tables. A path whose build arms include one that takes a text `$value` (a text arm or a content arm), and none of which needs a member or builds another value, declares the text `$value`, and no other path does.
 - Its read and its input are its bare text or `{ $path, $value }`. `{ $path }` alone is a type error.
 - `Read<G, P>`, `InputOf` and a slot's default all add the bare text for such a path. The reader is unchanged.
