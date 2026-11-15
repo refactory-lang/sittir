@@ -1,9 +1,10 @@
 // Usage: node [--perf-basic-prof] phase-profile.mjs <tree> <grammar> <render|edit> <receipt.json> <warmup batches> <batches> <batches per engine>
 // One corpus phase alone, in arena storage, for a profiler. Each batch parses
 // <grammar>'s corpus (corpus-batch.mjs's parsePhase), runs the phase over every
-// parsed root (renderPhase: render, toString, dispose; or editPhase: a
-// same-value edit of each root's settable members, each result rendered and
-// released after the timed phase, as corpusBatch does), then releases the
+// parsed root (renderPhase: render, toString, dispose; or editPhase, after an
+// untimed renderPhase as in corpusBatch: a same-value edit of each root's
+// settable members, each result rendered and released after the timed
+// phase, as corpusBatch does), then releases the
 // roots. A fresh engine every <batches per engine> batches, since an arena
 // parse's records live until their engine is disposed. A profiler samples only
 // while a timed batch runs the phase: when PERF_CTL and PERF_ACK name perf
@@ -32,8 +33,8 @@ const language = (await import(`${root}/packages/${grammar}/dist/index.js`)).def
 
 let engine;
 const phases = {
-  render: { run: (roots) => renderPhase(engine, roots), texts: (renders) => renders, release() {} },
-  edit: { run: editPhase, texts: (changed) => changed.map((node) => node.$render()), release: (changed) => { for (const node of changed) node[Symbol.dispose]?.(); } }
+  render: { before() {}, run: (roots) => renderPhase(engine, roots), texts: (renders) => renders, release() {} },
+  edit: { before: (roots) => renderPhase(engine, roots), run: editPhase, texts: (changed) => changed.map((node) => node.$render()), release: (changed) => { for (const node of changed) node[Symbol.dispose]?.(); } }
 };
 const timed = phases[phase];
 assert.ok(timed, `phase ${phase} is not one of ${Object.keys(phases).join(', ')}`);
@@ -137,6 +138,7 @@ async function batch(index, sampled) {
     mapped ??= mappedImages();
   }
   const roots = parsePhase(engine, sources);
+  timed.before(roots);
   if (sampled) await sampler?.open();
   const start = performance.now();
   const result = timed.run(roots);
