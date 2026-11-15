@@ -123,6 +123,7 @@ import {
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
+	narrowedLiteralsOf,
 	refineFormTypeName,
 	refineFormFactoryName,
 	type RefineKindInfo,
@@ -2354,8 +2355,7 @@ function emitRefineFormFactory(
 	const baseFn = node.rawFactoryName;
 	if (!baseFn) return undefined;
 	const formFn = refineFormFactoryName(baseFn, form.name);
-	const narrowed = new Map<string, string>();
-	for (const n of form.narrowedFields) narrowed.set(n.fieldName, n.literal);
+	const narrowed = narrowedLiteralsOf(form, nodeMap, node.kind);
 	const allSlots = node.slots;
 	const slots = node.configSlots;
 	const registered = registeredSlots(node);
@@ -2459,7 +2459,7 @@ export function refineFormBuiltTypeSurfaceOf(
 	const opt = resolveRefineFormConfigOptional(
 		node.configSlots,
 		nodeMap,
-		new Map(form.narrowedFields.map((n) => [n.fieldName, n.literal]))
+		narrowedLiteralsOf(form, nodeMap, node.kind)
 	);
 	const registered = registeredSlots(node);
 	const setters = [

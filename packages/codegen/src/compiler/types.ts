@@ -188,7 +188,8 @@ export type { RefineForm };
 
 export interface NarrowedField {
 	readonly fieldName: string;
-	readonly literal: string;
+	readonly literal?: string;
+	readonly arm?: string;
 }
 
 export interface LinkedRefineForm extends RefineForm {
