@@ -2717,12 +2717,27 @@ export function narrowedFieldLiteralsForForm(
 		const resolution = resolveRefinePath('<emit>', form.name, pathStr, rule, rules);
 		if (!resolution.fieldName) continue;
 		const literal = resolveSelectionLiteral(resolution.choice, selection);
+		const nodeArms = resolution.choice.members.filter(isNodeArm);
+		if (typeof selection === 'string' && nodeArms.length > 0) {
+			const stringTexts = resolution.choice.members.map(unwrapToStringValue).filter((v): v is string => v !== undefined);
+			if (!stringTexts.includes(selection)) {
+				out.push({
+					via: 'text',
+					fieldName: resolution.fieldName,
+					path: pathStr,
+					text: selection,
+					stringTexts,
+					nodeArms: nodeArms.map((arm) => arm.name)
+				});
+				continue;
+			}
+		}
 		if (literal !== undefined) {
-			out.push({ fieldName: resolution.fieldName, literal });
+			out.push({ via: 'literal', fieldName: resolution.fieldName, literal });
 			continue;
 		}
 		const arm = typeof selection === 'number' ? resolution.choice.members[selection] : undefined;
-		if (arm !== undefined && isNodeArm(arm)) out.push({ fieldName: resolution.fieldName, arm: arm.name });
+		if (arm !== undefined && isNodeArm(arm)) out.push({ via: 'arm', fieldName: resolution.fieldName, arm: arm.name });
 	}
 	return out;
 }

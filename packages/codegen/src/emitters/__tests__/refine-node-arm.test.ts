@@ -78,4 +78,9 @@ describe('a refine() form selects a fixed-text node arm', () => {
 		const structured: Rule<'evaluate'> = { type: PATTERN, value: '[?]+' };
 		expect(() => emit(chainRaw([{ name: 'optional', selections: { 'operator:': 1 } }], structured))).toThrow(/optional_chain/);
 	});
+
+	it('refuses a text that no string arm and no node arm carries, naming the form, the path and the available texts', () => {
+		const typo: RefineForm[] = [{ name: 'coalesce', selections: { 'operator:': '??' } }];
+		expect(() => emit(chainRaw(typo))).toThrow(/form 'coalesce': path 'operator:' of 'chain\.operator' selection '\?\?'.*available: '\.', '\?\.'/);
+	});
 });

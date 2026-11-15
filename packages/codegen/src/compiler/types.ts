@@ -186,11 +186,17 @@ import type { PatchSite, RefineForm } from '../dsl/wire/wire.ts';
 import type { DerivationRecords } from '../dsl/wire/derivation-records.ts';
 export type { RefineForm };
 
-export interface NarrowedField {
-	readonly fieldName: string;
-	readonly literal?: string;
-	readonly arm?: string;
-}
+export type NarrowedField =
+	| { readonly via: 'literal'; readonly fieldName: string; readonly literal: string }
+	| { readonly via: 'arm'; readonly fieldName: string; readonly arm: string }
+	| {
+			readonly via: 'text';
+			readonly fieldName: string;
+			readonly path: string;
+			readonly text: string;
+			readonly stringTexts: readonly string[];
+			readonly nodeArms: readonly string[];
+	  };
 
 export interface LinkedRefineForm extends RefineForm {
 	readonly narrowedFields: readonly NarrowedField[];
