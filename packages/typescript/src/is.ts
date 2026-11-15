@@ -80,7 +80,6 @@ export interface KindMembers {
 		| TSKindId.AsExpression
 		| TSKindId.SatisfiesExpression
 		| TSKindId.InstantiationExpression
-		| TSKindId.InternalModule
 		| TSKindId.TypeAssertion
 		| TSKindId.SubscriptExpression
 		| TSKindId.MemberExpression
@@ -1601,9 +1600,9 @@ const _supertype_variableDeclarator_ids = new Set<number>([438, 439]);
 const _supertype_forHeader_ids = new Set<number>([442, 443, 444, 445]);
 const _supertype_parenthesizedExpression_ids = new Set<number>([419, 420]);
 const _supertype_expression_ids = new Set<number>([
-	306, 307, 308, 316, 305, 260, 259, 419, 420, 129, 1, 279, 280, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165,
-	166, 424, 425, 274, 276, 281, 282, 283, 238, 242, 248, 252, 250, 245, 440, 441, 421, 422, 423, 300, 262, 264, 258,
-	270, 269, 268, 426, 427, 257, 237
+	306, 307, 308, 305, 260, 259, 419, 420, 129, 1, 279, 280, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166,
+	424, 425, 274, 276, 281, 282, 283, 238, 242, 248, 252, 250, 245, 440, 441, 421, 422, 423, 300, 262, 264, 258, 270,
+	269, 268, 426, 427, 257, 237
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
 	260, 259, 419, 420, 129, 1, 279, 280, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 424, 425, 274, 276,

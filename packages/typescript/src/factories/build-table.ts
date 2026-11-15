@@ -1901,10 +1901,6 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Table['buildInstantiationExpression']>,
 		ReturnType<typeof F.buildYieldExpressionDelegate>
 	>;
-	readonly yieldExpressionDelegate$internalModule: Seat<
-		ArgsOf<Table['buildInternalModule']>,
-		ReturnType<typeof F.buildYieldExpressionDelegate>
-	>;
 	readonly yieldExpressionDelegate$typeAssertion: Seat<
 		ArgsOf<Table['buildTypeAssertion']>,
 		ReturnType<typeof F.buildYieldExpressionDelegate>
@@ -1961,7 +1957,6 @@ export interface Routes<Table extends AnyTable> {
 		readonly as: Routes<Table>['yieldExpressionDelegate$as'];
 		readonly satisfies: Routes<Table>['yieldExpressionDelegate$satisfies'];
 		readonly instantiation: Routes<Table>['yieldExpressionDelegate$instantiation'];
-		readonly internalModule: Routes<Table>['yieldExpressionDelegate$internalModule'];
 		readonly typeAssertion: Routes<Table>['yieldExpressionDelegate$typeAssertion'];
 		readonly assignment: Routes<Table>['yieldExpressionDelegate$assignment'];
 		readonly augmentedAssignment: Routes<Table>['yieldExpressionDelegate$augmentedAssignment'];
@@ -1992,10 +1987,6 @@ export interface Routes<Table extends AnyTable> {
 	>;
 	readonly yieldExpression$delegate$instantiation: Seat<
 		ArgsOf<Routes<Table>['yieldExpressionDelegate$instantiation']>,
-		ReturnType<typeof F.buildYieldExpression>
-	>;
-	readonly yieldExpression$delegate$internalModule: Seat<
-		ArgsOf<Routes<Table>['yieldExpressionDelegate$internalModule']>,
 		ReturnType<typeof F.buildYieldExpression>
 	>;
 	readonly yieldExpression$delegate$typeAssertion: Seat<
@@ -2064,7 +2055,6 @@ export interface Routes<Table extends AnyTable> {
 			readonly as: Routes<Table>['yieldExpression$delegate$as'];
 			readonly satisfies: Routes<Table>['yieldExpression$delegate$satisfies'];
 			readonly instantiation: Routes<Table>['yieldExpression$delegate$instantiation'];
-			readonly internalModule: Routes<Table>['yieldExpression$delegate$internalModule'];
 			readonly typeAssertion: Routes<Table>['yieldExpression$delegate$typeAssertion'];
 			readonly assignment: Routes<Table>['yieldExpression$delegate$assignment'];
 			readonly augmentedAssignment: Routes<Table>['yieldExpression$delegate$augmentedAssignment'];
@@ -2517,7 +2507,6 @@ export interface Ir<Table extends AnyTable> {
 		readonly as: Table['buildAsExpression'];
 		readonly satisfies: Table['buildSatisfiesExpression'];
 		readonly instantiation: Table['buildInstantiationExpression'];
-		readonly internalModule: Table['buildInternalModule'];
 		readonly typeAssertion: Table['buildTypeAssertion'];
 		readonly assignment: Table['buildAssignmentExpression'];
 		readonly augmentedAssignment: Table['buildAugmentedAssignmentExpression'];
@@ -3736,8 +3725,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		K.yieldExpressionDelegate$satisfies(F.buildYieldExpressionDelegate, $at('buildSatisfiesExpression'));
 	const yieldExpressionDelegate$instantiation: Routes<Table>['yieldExpressionDelegate$instantiation'] =
 		K.yieldExpressionDelegate$instantiation(F.buildYieldExpressionDelegate, $at('buildInstantiationExpression'));
-	const yieldExpressionDelegate$internalModule: Routes<Table>['yieldExpressionDelegate$internalModule'] =
-		K.yieldExpressionDelegate$internalModule(F.buildYieldExpressionDelegate, $at('buildInternalModule'));
 	const yieldExpressionDelegate$typeAssertion: Routes<Table>['yieldExpressionDelegate$typeAssertion'] =
 		K.yieldExpressionDelegate$typeAssertion(F.buildYieldExpressionDelegate, $at('buildTypeAssertion'));
 	const yieldExpressionDelegate$assignment: Routes<Table>['yieldExpressionDelegate$assignment'] =
@@ -3779,7 +3766,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		as: yieldExpressionDelegate$as,
 		satisfies: yieldExpressionDelegate$satisfies,
 		instantiation: yieldExpressionDelegate$instantiation,
-		internalModule: yieldExpressionDelegate$internalModule,
 		typeAssertion: yieldExpressionDelegate$typeAssertion,
 		assignment: yieldExpressionDelegate$assignment,
 		augmentedAssignment: yieldExpressionDelegate$augmentedAssignment,
@@ -3810,8 +3796,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		K.yieldExpression$delegate$satisfies(F.buildYieldExpression, yieldExpressionDelegate.satisfies);
 	const yieldExpression$delegate$instantiation: Routes<Table>['yieldExpression$delegate$instantiation'] =
 		K.yieldExpression$delegate$instantiation(F.buildYieldExpression, yieldExpressionDelegate.instantiation);
-	const yieldExpression$delegate$internalModule: Routes<Table>['yieldExpression$delegate$internalModule'] =
-		K.yieldExpression$delegate$internalModule(F.buildYieldExpression, yieldExpressionDelegate.internalModule);
 	const yieldExpression$delegate$typeAssertion: Routes<Table>['yieldExpression$delegate$typeAssertion'] =
 		K.yieldExpression$delegate$typeAssertion(F.buildYieldExpression, yieldExpressionDelegate.typeAssertion);
 	const yieldExpression$delegate$assignment: Routes<Table>['yieldExpression$delegate$assignment'] =
@@ -3847,7 +3831,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 					as: yieldExpression$delegate$as,
 					satisfies: yieldExpression$delegate$satisfies,
 					instantiation: yieldExpression$delegate$instantiation,
-					internalModule: yieldExpression$delegate$internalModule,
 					typeAssertion: yieldExpression$delegate$typeAssertion,
 					assignment: yieldExpression$delegate$assignment,
 					augmentedAssignment: yieldExpression$delegate$augmentedAssignment,
@@ -4347,7 +4330,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			as: $at('buildAsExpression'),
 			satisfies: $at('buildSatisfiesExpression'),
 			instantiation: $at('buildInstantiationExpression'),
-			internalModule: $at('buildInternalModule'),
 			typeAssertion: $at('buildTypeAssertion'),
 			assignment: $at('buildAssignmentExpression'),
 			augmentedAssignment: $at('buildAugmentedAssignmentExpression'),

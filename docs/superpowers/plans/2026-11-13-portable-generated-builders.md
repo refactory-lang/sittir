@@ -59,25 +59,31 @@
 ### Task 3: The grammar map carries what the generated signatures need
 
 **Status:** done.
-- The tests are `packages/{python,typescript}/tests/build-input.portable.test-d.ts`, in the lane that already holds the map-backed portable tests.
+- The tests are `packages/{python,rust,typescript}/tests/build-input.portable.test-d.ts`, in the lane that already holds the map-backed portable tests.
 - The node arm types reads as well as inputs, since a read is an input.
 - Every routed member's exact set comes from its read routes, narrowed by its claim's tests. The typed module writes no member the map types `never`.
 - The user widened `declaration.constant.value` and `expression.yield(.delegate).expression` to what python reads, and allowed python's raw-arm ceilings 145 and 2332 for this change.
 - Python's getter `parameters` moved to Task 4.
+- A map path's `nodes` are the kinds that read as it. `PortableIds` stays family-wide for the guards.
+- A path built from text alone declares `$value: string` (decision 8). The bare-text arm keys on the map's `inputs`. `packages/tools/tests/portable/text-values.test.ts` derives the set from the build tables, where an arm that takes a text `$value` is a text arm or a content arm (rust's metavariable).
 
 **Files:**
 - Modify: `packages/types/src/vocabulary/{map,input,utils}.ts` (`BuildInput`, `nodes`, the flag sets), `packages/codegen/src/emitters/overlays/portable/grammar-map.ts`
 - Modify: the getter vocabulary (`accessors/declaration.ts`, `accessor-signatures/declaration.ts`): a getter takes no `parameters`; setters keep them
+- Modify: the vocabulary interfaces of the paths built from text (spec decision 8), `packages/codegen/src/bindings/vocabulary.ts` (a member's text type), `packages/codegen/src/emitters/overlays/portable/typed.ts` (a view's text `$value` comes from the vocabulary)
+- Test: `packages/tools/tests/portable/text-values.test.ts` (the text-value set, derived from the build tables)
 - Test: `packages/types/tests/build-input.test-d.ts`
 
 - [x] **Step 1: The failing tests:**
   - python `BuildInput<PythonMap, 'declaration.property.getter'>['$flags']` admits `'async'` (decision 3);
   - a `T.Block.Bound` is assignable to the getter's `body`, and a typescript node isn't (decision 2);
   - typescript `{ $path: 'literal.number', $value: 1 }` is assignable to an array element (decision 1);
-  - the getter's input has no `parameters`.
+  - the getter's input has no `parameters`;
+  - python `{ $path: 'identifier' }` is refused, `{ $path: 'identifier', $value: 'x' }` and `'x'` are accepted, and a constant's `name` reads as `'X'` (decision 8).
 - [x] **Step 2: Run** `pnpm run type-check:tests`. It fails.
 - [x] **Step 3: Implement.**
-  - Emit `nodes` from `PortableIds` and the flag sets from the arms and facts.
+  - Emit `nodes` per path, from the kinds whose read entries read as that path (`readPathsOf`, the read arms' derivation). `PortableIds` stays family-wide for the guards. Emit the flag sets from the arms and facts.
+  - Give each path built from text alone `readonly $value: string` (decision 8). `Read`, `InputOf` and the slot default add its bare text, and the typed views take their `$value` from the vocabulary.
   - Emit the `inputs` additions from the build rows with `builds`.
   - Add `BuildInput`.
   - Make the getter vocabulary edits, and run `tool bindings-inventory --write` for each grammar and `tool vocabulary-features --write`.
