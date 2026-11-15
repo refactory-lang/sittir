@@ -465,11 +465,6 @@ export const records = {
 		arguments: { word: 8, width: 3, inline: 3, forms: 8, built: 3 }
 	},
 	PrintStatementPlainNode: { words: 5, builtWords: 3, arguments: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
-	ParenthesizedImportListNode: {
-		words: 5,
-		builtWords: 3,
-		import_list: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
-	},
 	ComprehensionClausesNode: { words: 3, builtWords: 3, content: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	IntegerHexLongNode: {
 		words: 10,
@@ -623,6 +618,11 @@ export const records = {
 		words: 12,
 		builtWords: 3,
 		content: { word: 2, width: 10, inline: 10, forms: 8, built: 2 }
+	},
+	ParenthesizedImportListNode: {
+		words: 5,
+		builtWords: 3,
+		import_list: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
 	},
 	SplatPatternListNode: { words: 6, builtWords: 3, pattern: { word: 2, width: 4, forms: 3, built: 2 } },
 	SplatPatternDictionaryNode: { words: 6, builtWords: 3, pattern: { word: 2, width: 4, forms: 3, built: 2 } },

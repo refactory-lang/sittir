@@ -278,12 +278,12 @@ export interface KindMembers {
 		| TSKindId.ClassBodyMemberDeclaration
 		| TSKindId.EmptyMember;
 	[TSKindId.EnumBodyElement]: TSKindId.EnumBodyElementName | TSKindId.EnumAssignment;
-	[TSKindId.ExportStatementDefault]: TSKindId.ExportStatementDefaultFrom | TSKindId.ExportStatementDefaultDeclaration;
 	[TSKindId.NumberBigint]:
 		| TSKindId.NumberBigintHex
 		| TSKindId.NumberBigintBinary
 		| TSKindId.NumberBigintOctal
 		| TSKindId.NumberBigintDecimal;
+	[TSKindId.ExportStatementDefault]: TSKindId.ExportStatementDefaultFrom | TSKindId.ExportStatementDefaultDeclaration;
 	[TSKindId.MethodDefinitionClassBodyMemberMethod]:
 		| TSKindId.MethodDefinitionPlain
 		| TSKindId.ConstructorDeclaration
@@ -848,12 +848,6 @@ export interface IsGuards {
 	objectTypeContent<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ObjectTypeContent };
-	exportStatementNamespaceExport<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementNamespaceExport };
-	exportStatementEqualsExport<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementEqualsExport };
 	commentLine<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CommentLine };
@@ -932,6 +926,12 @@ export interface IsGuards {
 	parenthesizedExpressionSequence<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ParenthesizedExpressionSequence };
+	exportStatementEqualsExport<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementEqualsExport };
+	exportStatementNamespaceExport<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementNamespaceExport };
 	callExpressionCall<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CallExpressionCall };
@@ -1455,6 +1455,21 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EnumAssignment };
 	};
+	readonly numberBigint: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.NumberBigint]>;
+		hex<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberBigintHex };
+		binary<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberBigintBinary };
+		octal<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberBigintOctal };
+		decimal<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberBigintDecimal };
+	};
 	readonly exportStatementDefault: {
 		<T extends { readonly $type: number } | number>(
 			v: T
@@ -1486,21 +1501,6 @@ export interface IsGuards {
 				): v is T & { readonly $type: TSKindId.ExportStatementDefaultDeclaration };
 			};
 		};
-	};
-	readonly numberBigint: {
-		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.NumberBigint]>;
-		hex<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberBigintHex };
-		binary<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberBigintBinary };
-		octal<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberBigintOctal };
-		decimal<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberBigintDecimal };
 	};
 	layout<T extends { readonly $type: number } | number>(
 		v: T
@@ -1587,25 +1587,25 @@ export interface IsGuards {
 	thisType<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.ThisType>;
 }
 
-const _supertype_exportStatement_ids = new Set<number>([431, 432, 404, 403]);
+const _supertype_exportStatement_ids = new Set<number>([431, 432, 419, 420]);
 const _supertype_declaration_ids = new Set<number>([
 	249, 251, 246, 208, 207, 209, 303, 314, 315, 316, 325, 322, 320, 318, 313
 ]);
-const _supertype_importSpecifier_ids = new Set<number>([417, 418]);
+const _supertype_importSpecifier_ids = new Set<number>([414, 415]);
 const _supertype_statement_ids = new Set<number>([
-	431, 432, 404, 403, 198, 224, 206, 249, 251, 246, 208, 207, 209, 303, 314, 315, 316, 325, 322, 320, 318, 313, 211,
+	431, 432, 419, 420, 198, 224, 206, 249, 251, 246, 208, 207, 209, 303, 314, 315, 316, 325, 322, 320, 318, 313, 211,
 	213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 225, 226, 227, 228
 ]);
 const _supertype_variableDeclarator_ids = new Set<number>([438, 439]);
 const _supertype_forHeader_ids = new Set<number>([442, 443, 444, 445]);
-const _supertype_parenthesizedExpression_ids = new Set<number>([419, 420]);
+const _supertype_parenthesizedExpression_ids = new Set<number>([416, 417]);
 const _supertype_expression_ids = new Set<number>([
-	306, 307, 308, 305, 260, 259, 419, 420, 129, 1, 279, 280, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166,
+	306, 307, 308, 305, 260, 259, 416, 417, 129, 1, 279, 280, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166,
 	424, 425, 274, 276, 281, 282, 283, 238, 242, 248, 252, 250, 245, 440, 441, 421, 422, 423, 300, 262, 264, 258, 270,
 	269, 268, 426, 427, 257, 237
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	260, 259, 419, 420, 129, 1, 279, 280, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 424, 425, 274, 276,
+	260, 259, 416, 417, 129, 1, 279, 280, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 424, 425, 274, 276,
 	281, 282, 283, 238, 242, 248, 252, 250, 245, 440, 441, 421, 422, 423, 300
 ]);
 const _supertype_callExpression_ids = new Set<number>([421, 422, 423]);
@@ -1627,11 +1627,11 @@ const _supertype_primaryType_ids = new Set<number>([
 	505, 244, 504, 366, 40, 41, 42, 43, 44, 144, 78, 145, 146, 46, 319, 351, 369, 378, 379, 365, 358, 359, 364, 362, 360,
 	350, 348, 382, 381
 ]);
-const _supertype_indexSignature_ids = new Set<number>([412, 413]);
-const _supertype_classBodyMember_ids = new Set<number>([409, 410, 290, 411, 408]);
+const _supertype_indexSignature_ids = new Set<number>([409, 410]);
+const _supertype_classBodyMember_ids = new Set<number>([406, 407, 290, 408, 405]);
 const _supertype_enumBodyElement_ids = new Set<number>([388, 324]);
-const _supertype_exportStatementDefault_ids = new Set<number>([431, 432]);
 const _supertype_numberBigint_ids = new Set<number>([163, 164, 165, 166]);
+const _supertype_exportStatementDefault_ids = new Set<number>([431, 432]);
 const _supertype_layout_ids = new Set<number>([182, 183, 184, 185, 186, 187, 188, 189]);
 const _supertype_methodDefinitionClassBodyMemberMethod_ids = new Set<number>([453, 464, 454, 455]);
 
@@ -1660,8 +1660,8 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.IndexSignature, _supertype_indexSignature_ids],
 	[TSKindId.ClassBodyMember, _supertype_classBodyMember_ids],
 	[TSKindId.EnumBodyElement, _supertype_enumBodyElement_ids],
-	[TSKindId.ExportStatementDefault, _supertype_exportStatementDefault_ids],
 	[TSKindId.NumberBigint, _supertype_numberBigint_ids],
+	[TSKindId.ExportStatementDefault, _supertype_exportStatementDefault_ids],
 	[TSKindId.MethodDefinitionClassBodyMemberMethod, _supertype_methodDefinitionClassBodyMemberMethod_ids],
 	[TSKindId.AccessibilityModifier, new Set<number>([34, 35, 36])],
 	[TSKindId.PredefinedType, new Set<number>([40, 41, 42, 43, 44, 144, 78, 145, 146, 46])]
@@ -1801,6 +1801,10 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_EmptyMember_guard = _mg(TSKindId.EmptyMember);
 	const _kind_EnumBodyElementName_guard = _g(TSKindId.EnumBodyElementName);
 	const _kind_EnumAssignment_guard = _g(TSKindId.EnumAssignment);
+	const _kind_NumberBigintHex_guard = _g(TSKindId.NumberBigintHex);
+	const _kind_NumberBigintBinary_guard = _g(TSKindId.NumberBigintBinary);
+	const _kind_NumberBigintOctal_guard = _g(TSKindId.NumberBigintOctal);
+	const _kind_NumberBigintDecimal_guard = _g(TSKindId.NumberBigintDecimal);
 	const _kind_ExportStatementDefaultFromStarFrom_guard = _g(TSKindId.ExportStatementDefaultFromStarFrom);
 	const _kind_ExportStatementDefaultFrom_guard = _g(TSKindId.ExportStatementDefaultFrom);
 	const _kind_ExportStatementDefaultFromNsFrom_guard = _g(TSKindId.ExportStatementDefaultFromNsFrom);
@@ -1812,10 +1816,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		TSKindId.ExportStatementDefaultDeclarationDefaultKw
 	);
 	const _kind_ExportStatementDefaultDeclaration_guard = _g(TSKindId.ExportStatementDefaultDeclaration);
-	const _kind_NumberBigintHex_guard = _g(TSKindId.NumberBigintHex);
-	const _kind_NumberBigintBinary_guard = _g(TSKindId.NumberBigintBinary);
-	const _kind_NumberBigintOctal_guard = _g(TSKindId.NumberBigintOctal);
-	const _kind_NumberBigintDecimal_guard = _g(TSKindId.NumberBigintDecimal);
 	const _kind_Program_guard = _g(TSKindId.Program);
 	const _kind_HashBangLine_guard = _g(TSKindId.HashBangLine);
 	const _kind_NamespaceExport_guard = _g(TSKindId.NamespaceExport);
@@ -2151,15 +2151,15 @@ export function guardsWith(test: KindTest): IsGuards {
 		name: _kind_EnumBodyElementName_guard,
 		assignment: _kind_EnumAssignment_guard
 	});
-	const _supertype_exportStatementDefault_guard = _vg(_mg(402), {
-		from: _form_ExportStatementDefaultFrom_guard,
-		declaration: _form_ExportStatementDefaultDeclaration_guard
-	});
-	const _supertype_numberBigint_guard = _vg(_mg(406), {
+	const _supertype_numberBigint_guard = _vg(_mg(403), {
 		hex: _kind_NumberBigintHex_guard,
 		binary: _kind_NumberBigintBinary_guard,
 		octal: _kind_NumberBigintOctal_guard,
 		decimal: _kind_NumberBigintDecimal_guard
+	});
+	const _supertype_exportStatementDefault_guard = _vg(_mg(418), {
+		from: _form_ExportStatementDefaultFrom_guard,
+		declaration: _form_ExportStatementDefaultDeclaration_guard
 	});
 	const _supertype_exportStatement_guard = _vg(_mg(191), {
 		default: _supertype_exportStatementDefault_guard,
@@ -2364,8 +2364,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		ambientDeclarationGlobal: _kind_AmbientDeclarationGlobal_guard,
 		ambientDeclarationModule: _kind_AmbientDeclarationModule_guard,
 		objectTypeContent: _kind_ObjectTypeContent_guard,
-		exportStatementNamespaceExport: _kind_ExportStatementNamespaceExport_guard,
-		exportStatementEqualsExport: _kind_ExportStatementEqualsExport_guard,
 		commentLine: _kind_CommentLine_guard,
 		commentBlock: _kind_CommentBlock_guard,
 		literalTypeNegativeNumber: _kind_LiteralTypeNegativeNumber_guard,
@@ -2392,6 +2390,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		importSpecifierAs: _kind_ImportSpecifierAs_guard,
 		parenthesizedExpressionTyped: _kind_ParenthesizedExpressionTyped_guard,
 		parenthesizedExpressionSequence: _kind_ParenthesizedExpressionSequence_guard,
+		exportStatementEqualsExport: _kind_ExportStatementEqualsExport_guard,
+		exportStatementNamespaceExport: _kind_ExportStatementNamespaceExport_guard,
 		callExpressionCall: _kind_CallExpressionCall_guard,
 		callExpressionTemplateCall: _kind_CallExpressionTemplateCall_guard,
 		callExpressionMember: _kind_CallExpressionMember_guard,
@@ -2465,8 +2465,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		indexSignature: _supertype_indexSignature_guard,
 		classBodyMember: _supertype_classBodyMember_guard,
 		enumBodyElement: _supertype_enumBodyElement_guard,
-		exportStatementDefault: _supertype_exportStatementDefault_guard,
 		numberBigint: _supertype_numberBigint_guard,
+		exportStatementDefault: _supertype_exportStatementDefault_guard,
 		layout: _sg(_supertype_layout_ids),
 		import: _kind_Import_guard,
 		emptyStatement: _kind_EmptyStatement_guard,

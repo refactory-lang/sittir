@@ -19544,269 +19544,6 @@ function withObjectTypeContent(node: object, setter: string, args: readonly unkn
 	throw new Error(`object_type_content has no $with.${setter}`);
 }
 
-export function buildExportStatementNamespaceExport<V extends Admit<T.Identifier>>(
-	value: V & RefuseUndeclared<V>,
-	options?: T.ExportStatementNamespaceExport.Options
-): T.ExportStatementNamespaceExport.Bound;
-export function buildExportStatementNamespaceExport(
-	value: Admit<T.Identifier>,
-	options?: T.ExportStatementNamespaceExport.Options
-): T.ExportStatementNamespaceExport.Bound {
-	const _name = rejectReservedText(
-		value,
-		'ExportStatementNamespaceExport.name',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementNamespaceExport['_terminator']>>(
-		options?.terminator,
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'export_statement_namespace_export', { name: _name, terminator: _terminator });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ExportStatementNamespaceExport as const, { _name, _terminator });
-	return arena.scope(() => {
-		const record = arena.record(TSKindId.ExportStatementNamespaceExport as const);
-		storeCell(arena, record, 2, 2, _name);
-		storeCell(arena, record, 3, 5, _terminator);
-		const node = arena.view(record);
-		return node as unknown as T.ExportStatementNamespaceExport.Bound;
-	});
-}
-
-function buildExportStatementNamespaceExport$patch(
-	source: object,
-	value: Admit<T.Identifier>,
-	options?: T.ExportStatementNamespaceExport.Options
-): T.ExportStatementNamespaceExport.Bound {
-	const _name = rejectReservedText(
-		value,
-		'ExportStatementNamespaceExport.name',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementNamespaceExport['_terminator']>>(
-		options?.terminator,
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'export_statement_namespace_export', { name: _name, terminator: _terminator });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ExportStatementNamespaceExport as const, { _name, _terminator });
-	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.ExportStatementNamespaceExport as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 3, 5, carriedSlot(source, 'terminator', _terminator));
-		const node = arena.view(record);
-		return node as unknown as T.ExportStatementNamespaceExport.Bound;
-	});
-}
-function buildExportStatementNamespaceExport$set(
-	source: object,
-	...[slot, input]: ['name', Admit<T.Identifier>] | ['terminator', T.ExportStatementNamespaceExport.Options]
-): T.ExportStatementNamespaceExport.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		switch (slot) {
-			case 'name':
-				return buildExportStatementNamespaceExport$patch(
-					source,
-					input,
-					inputs.options as T.ExportStatementNamespaceExport.Options
-				);
-			case 'terminator':
-				return buildExportStatementNamespaceExport$patch(source, inputs.config['name'] as Admit<T.Identifier>, {
-					...(inputs.options as T.ExportStatementNamespaceExport.Options),
-					...input
-				});
-		}
-	}
-	switch (slot) {
-		case 'name': {
-			const value = input;
-			const _name = rejectReservedText(
-				value,
-				'ExportStatementNamespaceExport.name',
-				TSKindId.Identifier,
-				_reservedWords_buildIdentifier
-			);
-			return setSlot(
-				source,
-				TSKindId.ExportStatementNamespaceExport as const,
-				'export_statement_namespace_export',
-				0,
-				'name',
-				_name
-			) as unknown as T.ExportStatementNamespaceExport.Bound;
-		}
-		case 'terminator': {
-			const options = input;
-			const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementNamespaceExport['_terminator']>>(
-				options?.terminator,
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			);
-			return setSlot(
-				source,
-				TSKindId.ExportStatementNamespaceExport as const,
-				'export_statement_namespace_export',
-				1,
-				'terminator',
-				_terminator
-			) as unknown as T.ExportStatementNamespaceExport.Bound;
-		}
-	}
-}
-function withExportStatementNamespaceExport(node: object, setter: string, args: readonly unknown[]): unknown {
-	const handle = handleOf(node as RecordHandle);
-	switch (setter) {
-		case 'name':
-			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildExportStatementNamespaceExport$set(node, 'name', value))
-			);
-		case 'terminator':
-			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-				rebuilt(node, handle, () =>
-					buildExportStatementNamespaceExport$set(node, 'terminator', { terminator: spelling })
-				)
-			);
-	}
-	throw new Error(`export_statement_namespace_export has no $with.${setter}`);
-}
-
-export function buildExportStatementEqualsExport<V extends Admit<T.Expression>>(
-	value: V & RefuseUndeclared<V>,
-	options?: T.ExportStatementEqualsExport.Options
-): T.ExportStatementEqualsExport.Bound;
-export function buildExportStatementEqualsExport(
-	value: Admit<T.Expression>,
-	options?: T.ExportStatementEqualsExport.Options
-): T.ExportStatementEqualsExport.Bound {
-	const _value = rejectReservedText(
-		kindIdStorage<NonNullable<T.ExportStatementEqualsExport['_value']>>(value),
-		'ExportStatementEqualsExport.value',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementEqualsExport['_terminator']>>(
-		options?.terminator,
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'export_statement_equals_export', { value: _value, terminator: _terminator });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ExportStatementEqualsExport as const, { _value, _terminator });
-	return arena.scope(() => {
-		const record = arena.record(TSKindId.ExportStatementEqualsExport as const);
-		storeCell(arena, record, 2, 2, _value);
-		storeCell(arena, record, 3, 6, _terminator);
-		const node = arena.view(record);
-		return node as unknown as T.ExportStatementEqualsExport.Bound;
-	});
-}
-
-function buildExportStatementEqualsExport$patch(
-	source: object,
-	value: Admit<T.Expression>,
-	options?: T.ExportStatementEqualsExport.Options
-): T.ExportStatementEqualsExport.Bound {
-	const _value = rejectReservedText(
-		kindIdStorage<NonNullable<T.ExportStatementEqualsExport['_value']>>(value),
-		'ExportStatementEqualsExport.value',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementEqualsExport['_terminator']>>(
-		options?.terminator,
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'export_statement_equals_export', { value: _value, terminator: _terminator });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ExportStatementEqualsExport as const, { _value, _terminator });
-	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.ExportStatementEqualsExport as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'value', _value));
-		patchCell(arena, record, 3, 6, carriedSlot(source, 'terminator', _terminator));
-		const node = arena.view(record);
-		return node as unknown as T.ExportStatementEqualsExport.Bound;
-	});
-}
-function buildExportStatementEqualsExport$set(
-	source: object,
-	...[slot, input]: ['value', Admit<NonNullable<T.Expression>>] | ['terminator', T.ExportStatementEqualsExport.Options]
-): T.ExportStatementEqualsExport.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		switch (slot) {
-			case 'value':
-				return buildExportStatementEqualsExport$patch(
-					source,
-					input,
-					inputs.options as T.ExportStatementEqualsExport.Options
-				);
-			case 'terminator':
-				return buildExportStatementEqualsExport$patch(
-					source,
-					inputs.config['value'] as Admit<NonNullable<T.Expression>>,
-					{ ...(inputs.options as T.ExportStatementEqualsExport.Options), ...input }
-				);
-		}
-	}
-	switch (slot) {
-		case 'value': {
-			const value = input;
-			const _value = rejectReservedText(
-				kindIdStorage<NonNullable<T.ExportStatementEqualsExport['_value']>>(value),
-				'ExportStatementEqualsExport.value',
-				TSKindId.Identifier,
-				_reservedWords_buildIdentifier
-			);
-			return setSlot(
-				source,
-				TSKindId.ExportStatementEqualsExport as const,
-				'export_statement_equals_export',
-				0,
-				'value',
-				_value
-			) as unknown as T.ExportStatementEqualsExport.Bound;
-		}
-		case 'terminator': {
-			const options = input;
-			const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementEqualsExport['_terminator']>>(
-				options?.terminator,
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			);
-			return setSlot(
-				source,
-				TSKindId.ExportStatementEqualsExport as const,
-				'export_statement_equals_export',
-				1,
-				'terminator',
-				_terminator
-			) as unknown as T.ExportStatementEqualsExport.Bound;
-		}
-	}
-}
-function withExportStatementEqualsExport(node: object, setter: string, args: readonly unknown[]): unknown {
-	const handle = handleOf(node as RecordHandle);
-	switch (setter) {
-		case 'value':
-			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
-				rebuilt(node, handle, () => buildExportStatementEqualsExport$set(node, 'value', value))
-			);
-		case 'terminator':
-			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-				rebuilt(node, handle, () => buildExportStatementEqualsExport$set(node, 'terminator', { terminator: spelling }))
-			);
-	}
-	throw new Error(`export_statement_equals_export has no $with.${setter}`);
-}
-
 export function buildCommentLine(content: string, affix?: true): T.CommentLine.Bound;
 export function buildCommentLine(text: `//${string}`, affix: false): T.CommentLine.Bound;
 export function buildCommentLine(input: string, affix: boolean = true): T.CommentLine.Bound {
@@ -22942,6 +22679,269 @@ function withParenthesizedExpressionSequence(node: object, setter: string, args:
 			);
 	}
 	throw new Error(`parenthesized_expression_sequence has no $with.${setter}`);
+}
+
+export function buildExportStatementEqualsExport<V extends Admit<T.Expression>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.ExportStatementEqualsExport.Options
+): T.ExportStatementEqualsExport.Bound;
+export function buildExportStatementEqualsExport(
+	value: Admit<T.Expression>,
+	options?: T.ExportStatementEqualsExport.Options
+): T.ExportStatementEqualsExport.Bound {
+	const _value = rejectReservedText(
+		kindIdStorage<NonNullable<T.ExportStatementEqualsExport['_value']>>(value),
+		'ExportStatementEqualsExport.value',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementEqualsExport['_terminator']>>(
+		options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'export_statement_equals_export', { value: _value, terminator: _terminator });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ExportStatementEqualsExport as const, { _value, _terminator });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ExportStatementEqualsExport as const);
+		storeCell(arena, record, 2, 2, _value);
+		storeCell(arena, record, 3, 6, _terminator);
+		const node = arena.view(record);
+		return node as unknown as T.ExportStatementEqualsExport.Bound;
+	});
+}
+
+function buildExportStatementEqualsExport$patch(
+	source: object,
+	value: Admit<T.Expression>,
+	options?: T.ExportStatementEqualsExport.Options
+): T.ExportStatementEqualsExport.Bound {
+	const _value = rejectReservedText(
+		kindIdStorage<NonNullable<T.ExportStatementEqualsExport['_value']>>(value),
+		'ExportStatementEqualsExport.value',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementEqualsExport['_terminator']>>(
+		options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'export_statement_equals_export', { value: _value, terminator: _terminator });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ExportStatementEqualsExport as const, { _value, _terminator });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ExportStatementEqualsExport as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'value', _value));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'terminator', _terminator));
+		const node = arena.view(record);
+		return node as unknown as T.ExportStatementEqualsExport.Bound;
+	});
+}
+function buildExportStatementEqualsExport$set(
+	source: object,
+	...[slot, input]: ['value', Admit<NonNullable<T.Expression>>] | ['terminator', T.ExportStatementEqualsExport.Options]
+): T.ExportStatementEqualsExport.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'value':
+				return buildExportStatementEqualsExport$patch(
+					source,
+					input,
+					inputs.options as T.ExportStatementEqualsExport.Options
+				);
+			case 'terminator':
+				return buildExportStatementEqualsExport$patch(
+					source,
+					inputs.config['value'] as Admit<NonNullable<T.Expression>>,
+					{ ...(inputs.options as T.ExportStatementEqualsExport.Options), ...input }
+				);
+		}
+	}
+	switch (slot) {
+		case 'value': {
+			const value = input;
+			const _value = rejectReservedText(
+				kindIdStorage<NonNullable<T.ExportStatementEqualsExport['_value']>>(value),
+				'ExportStatementEqualsExport.value',
+				TSKindId.Identifier,
+				_reservedWords_buildIdentifier
+			);
+			return setSlot(
+				source,
+				TSKindId.ExportStatementEqualsExport as const,
+				'export_statement_equals_export',
+				0,
+				'value',
+				_value
+			) as unknown as T.ExportStatementEqualsExport.Bound;
+		}
+		case 'terminator': {
+			const options = input;
+			const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementEqualsExport['_terminator']>>(
+				options?.terminator,
+				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+			);
+			return setSlot(
+				source,
+				TSKindId.ExportStatementEqualsExport as const,
+				'export_statement_equals_export',
+				1,
+				'terminator',
+				_terminator
+			) as unknown as T.ExportStatementEqualsExport.Bound;
+		}
+	}
+}
+function withExportStatementEqualsExport(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'value':
+			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+				rebuilt(node, handle, () => buildExportStatementEqualsExport$set(node, 'value', value))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildExportStatementEqualsExport$set(node, 'terminator', { terminator: spelling }))
+			);
+	}
+	throw new Error(`export_statement_equals_export has no $with.${setter}`);
+}
+
+export function buildExportStatementNamespaceExport<V extends Admit<T.Identifier>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.ExportStatementNamespaceExport.Options
+): T.ExportStatementNamespaceExport.Bound;
+export function buildExportStatementNamespaceExport(
+	value: Admit<T.Identifier>,
+	options?: T.ExportStatementNamespaceExport.Options
+): T.ExportStatementNamespaceExport.Bound {
+	const _name = rejectReservedText(
+		value,
+		'ExportStatementNamespaceExport.name',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementNamespaceExport['_terminator']>>(
+		options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'export_statement_namespace_export', { name: _name, terminator: _terminator });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ExportStatementNamespaceExport as const, { _name, _terminator });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ExportStatementNamespaceExport as const);
+		storeCell(arena, record, 2, 2, _name);
+		storeCell(arena, record, 3, 5, _terminator);
+		const node = arena.view(record);
+		return node as unknown as T.ExportStatementNamespaceExport.Bound;
+	});
+}
+
+function buildExportStatementNamespaceExport$patch(
+	source: object,
+	value: Admit<T.Identifier>,
+	options?: T.ExportStatementNamespaceExport.Options
+): T.ExportStatementNamespaceExport.Bound {
+	const _name = rejectReservedText(
+		value,
+		'ExportStatementNamespaceExport.name',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementNamespaceExport['_terminator']>>(
+		options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'export_statement_namespace_export', { name: _name, terminator: _terminator });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ExportStatementNamespaceExport as const, { _name, _terminator });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ExportStatementNamespaceExport as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'terminator', _terminator));
+		const node = arena.view(record);
+		return node as unknown as T.ExportStatementNamespaceExport.Bound;
+	});
+}
+function buildExportStatementNamespaceExport$set(
+	source: object,
+	...[slot, input]: ['name', Admit<T.Identifier>] | ['terminator', T.ExportStatementNamespaceExport.Options]
+): T.ExportStatementNamespaceExport.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'name':
+				return buildExportStatementNamespaceExport$patch(
+					source,
+					input,
+					inputs.options as T.ExportStatementNamespaceExport.Options
+				);
+			case 'terminator':
+				return buildExportStatementNamespaceExport$patch(source, inputs.config['name'] as Admit<T.Identifier>, {
+					...(inputs.options as T.ExportStatementNamespaceExport.Options),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'name': {
+			const value = input;
+			const _name = rejectReservedText(
+				value,
+				'ExportStatementNamespaceExport.name',
+				TSKindId.Identifier,
+				_reservedWords_buildIdentifier
+			);
+			return setSlot(
+				source,
+				TSKindId.ExportStatementNamespaceExport as const,
+				'export_statement_namespace_export',
+				0,
+				'name',
+				_name
+			) as unknown as T.ExportStatementNamespaceExport.Bound;
+		}
+		case 'terminator': {
+			const options = input;
+			const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementNamespaceExport['_terminator']>>(
+				options?.terminator,
+				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+			);
+			return setSlot(
+				source,
+				TSKindId.ExportStatementNamespaceExport as const,
+				'export_statement_namespace_export',
+				1,
+				'terminator',
+				_terminator
+			) as unknown as T.ExportStatementNamespaceExport.Bound;
+		}
+	}
+}
+function withExportStatementNamespaceExport(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildExportStatementNamespaceExport$set(node, 'name', value))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () =>
+					buildExportStatementNamespaceExport$set(node, 'terminator', { terminator: spelling })
+				)
+			);
+	}
+	throw new Error(`export_statement_namespace_export has no $with.${setter}`);
 }
 
 export function buildCallExpressionCall<
@@ -30875,8 +30875,6 @@ export type FluentKindMap = {
 	ambient_declaration_global: T.AmbientDeclarationGlobal.Bound;
 	ambient_declaration_module: T.AmbientDeclarationModule.Bound;
 	object_type_content: T.ObjectTypeContent.Bound;
-	export_statement_namespace_export: T.ExportStatementNamespaceExport.Bound;
-	export_statement_equals_export: T.ExportStatementEqualsExport.Bound;
 	comment_line: T.CommentLine.Bound;
 	comment_block: T.CommentBlock.Bound;
 	literal_type_negative_number: T.LiteralTypeNegativeNumber.Bound;
@@ -30906,6 +30904,8 @@ export type FluentKindMap = {
 	import_specifier_as: T.ImportSpecifierAs.Bound;
 	parenthesized_expression_typed: T.ParenthesizedExpressionTyped.Bound;
 	parenthesized_expression_sequence: T.ParenthesizedExpressionSequence.Bound;
+	export_statement_equals_export: T.ExportStatementEqualsExport.Bound;
+	export_statement_namespace_export: T.ExportStatementNamespaceExport.Bound;
 	call_expression_call: T.CallExpressionCall.Bound;
 	call_expression_template_call: T.CallExpressionTemplateCall.Bound;
 	call_expression_member: T.CallExpressionMember.Bound;
@@ -31156,8 +31156,6 @@ export const _factoryMap = {
 	ambient_declaration_global: buildAmbientDeclarationGlobal,
 	ambient_declaration_module: buildAmbientDeclarationModule,
 	object_type_content: buildObjectTypeContent,
-	export_statement_namespace_export: buildExportStatementNamespaceExport,
-	export_statement_equals_export: buildExportStatementEqualsExport,
 	comment_line: buildCommentLine,
 	comment_block: buildCommentBlock,
 	literal_type_negative_number: buildLiteralTypeNegativeNumber,
@@ -31187,6 +31185,8 @@ export const _factoryMap = {
 	import_specifier_as: buildImportSpecifierAs,
 	parenthesized_expression_typed: buildParenthesizedExpressionTyped,
 	parenthesized_expression_sequence: buildParenthesizedExpressionSequence,
+	export_statement_equals_export: buildExportStatementEqualsExport,
+	export_statement_namespace_export: buildExportStatementNamespaceExport,
 	call_expression_call: buildCallExpressionCall,
 	call_expression_template_call: buildCallExpressionTemplateCall,
 	call_expression_member: buildCallExpressionMember,
@@ -31435,21 +31435,21 @@ export const builtViews: BuiltViews = Object.freeze({
 		399: withAmbientDeclarationGlobal,
 		400: withAmbientDeclarationModule,
 		401: withObjectTypeContent,
-		403: withExportStatementNamespaceExport,
-		404: withExportStatementEqualsExport,
-		405: withLiteralTypeNegativeNumber,
-		407: withBinaryExpressionIn,
-		409: withClassBodyMemberMethod,
-		410: withClassBodyMemberMethodSig,
-		411: withClassBodyMemberDeclaration,
-		412: withIndexSignatureColon,
-		413: withIndexSignatureMappedTypeClause,
-		414: withImportStatementClauseFrom,
-		415: withYieldExpressionDelegate,
-		417: withImportSpecifierName,
-		418: withImportSpecifierAs,
-		419: withParenthesizedExpressionTyped,
-		420: withParenthesizedExpressionSequence,
+		402: withLiteralTypeNegativeNumber,
+		404: withBinaryExpressionIn,
+		406: withClassBodyMemberMethod,
+		407: withClassBodyMemberMethodSig,
+		408: withClassBodyMemberDeclaration,
+		409: withIndexSignatureColon,
+		410: withIndexSignatureMappedTypeClause,
+		411: withImportStatementClauseFrom,
+		412: withYieldExpressionDelegate,
+		414: withImportSpecifierName,
+		415: withImportSpecifierAs,
+		416: withParenthesizedExpressionTyped,
+		417: withParenthesizedExpressionSequence,
+		419: withExportStatementEqualsExport,
+		420: withExportStatementNamespaceExport,
 		421: withCallExpressionCall,
 		422: withCallExpressionTemplateCall,
 		423: withCallExpressionMember,
@@ -31676,21 +31676,21 @@ export const builtViews: BuiltViews = Object.freeze({
 		399: 3,
 		400: 5,
 		401: 3,
-		403: 4,
+		402: 3,
 		404: 4,
-		405: 3,
+		406: 5,
 		407: 4,
-		409: 5,
-		410: 4,
+		408: 4,
+		409: 7,
+		410: 6,
 		411: 4,
-		412: 7,
-		413: 6,
+		412: 3,
 		414: 4,
-		415: 3,
-		417: 4,
-		418: 5,
+		415: 5,
+		416: 4,
+		417: 3,
 		419: 4,
-		420: 3,
+		420: 4,
 		421: 5,
 		422: 4,
 		423: 5,
@@ -31917,19 +31917,19 @@ export const builtViews: BuiltViews = Object.freeze({
 		399: 2,
 		400: 2,
 		401: 2,
-		403: 2,
+		402: 2,
 		404: 2,
-		405: 2,
+		406: 2,
 		407: 2,
-		409: 2,
-		410: 2,
+		408: 2,
+		409: 3,
+		410: 3,
 		411: 2,
-		412: 3,
-		413: 3,
+		412: 2,
 		414: 2,
 		415: 2,
+		416: 2,
 		417: 2,
-		418: 2,
 		419: 2,
 		420: 2,
 		421: 2,
@@ -32569,64 +32569,64 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 2, 1, 1, 0, 3],
 			['side', true, true]
 		],
-		403: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 1, 2, 0, 0]
-		],
+		402: [[2, 2, 15, 9, 14, 0]],
 		404: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 1, 2, 0, 0]
-		],
-		405: [[2, 2, 15, 9, 14, 0]],
-		407: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0]
 		],
-		409: [
+		406: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 39, 8, 39, 0],
 			[42, 4, 1, 18, 0, 0]
 		],
-		410: [
+		407: [
 			[2, 2, 35, 8, 35, 0],
 			[37, 3, 1, 2, 0, 0]
 		],
-		411: [
+		408: [
 			[2, 2, 35, 8, 35, 0],
 			[37, 3, 1, 2, 0, 0]
 		],
-		412: [
+		409: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 3, 1, 0, 0],
 			[7, 5, 4, 3, 0, 0],
 			[11, 6, 3, 1, 0, 0]
 		],
-		413: [
+		410: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 15, 8, 15, 0],
 			[19, 5, 3, 1, 0, 0]
 		],
-		414: [
+		411: [
 			[2, 2, 14, 8, 14, 0],
 			[16, 3, 3, 8, 3, 0]
 		],
-		415: [[2, 2, 4, 3, 0, 0]],
-		417: [
+		412: [[2, 2, 4, 3, 0, 0]],
+		414: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 3, 1, 0, 0]
 		],
-		418: [
+		415: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 4, 11, 3, 0],
 			[7, 4, 3, 1, 0, 0]
 		],
-		419: [
+		416: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0]
 		],
-		420: [[2, 2, 3, 8, 3, 0]],
+		417: [[2, 2, 3, 8, 3, 0]],
+		419: [
+			[2, 2, 4, 3, 0, 0],
+			[6, 3, 1, 2, 0, 0]
+		],
+		420: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 1, 2, 0, 0]
+		],
 		421: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0],

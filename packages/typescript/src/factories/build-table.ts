@@ -2116,10 +2116,6 @@ export interface Routes<Table extends AnyTable> {
 		readonly name: Table['buildEnumBodyElementName'];
 		readonly assignment: Table['buildEnumAssignment'];
 	};
-	readonly exportStatementDefault: {
-		readonly from: Routes<Table>['exportStatementDefaultFrom'];
-		readonly declaration: Routes<Table>['exportStatementDefaultDeclaration'];
-	};
 	readonly numberBigint: typeof F.buildNumberBigintDecimal & {
 		readonly hex: typeof F.buildNumberBigintHex;
 		readonly binary: typeof F.buildNumberBigintBinary;
@@ -2193,6 +2189,10 @@ export interface Routes<Table extends AnyTable> {
 		readonly false: Routes<Table>['literalType$false'];
 		readonly null: Routes<Table>['literalType$null'];
 		readonly undefined: Routes<Table>['literalType$undefined'];
+	};
+	readonly exportStatementDefault: {
+		readonly from: Routes<Table>['exportStatementDefaultFrom'];
+		readonly declaration: Routes<Table>['exportStatementDefaultDeclaration'];
 	};
 	readonly exportStatement: {
 		readonly default: Routes<Table>['exportStatementDefault'];
@@ -2393,8 +2393,6 @@ export interface Ir<Table extends AnyTable> {
 	readonly ambientDeclarationGlobal: Table['buildAmbientDeclarationGlobal'];
 	readonly ambientDeclarationModule: Table['buildAmbientDeclarationModule'];
 	readonly objectTypeContent: Table['buildObjectTypeContent'];
-	readonly exportStatementNamespaceExport: Table['buildExportStatementNamespaceExport'];
-	readonly exportStatementEqualsExport: Table['buildExportStatementEqualsExport'];
 	readonly numberHex: Table['buildNumberHex'];
 	readonly numberFloatPoint: Table['buildNumberFloatPoint'];
 	readonly numberFloatLeadingPoint: Table['buildNumberFloatLeadingPoint'];
@@ -2410,6 +2408,8 @@ export interface Ir<Table extends AnyTable> {
 	readonly importSpecifierAs: Routes<Table>['importSpecifierAs'];
 	readonly parenthesizedExpressionTyped: Table['buildParenthesizedExpressionTyped'];
 	readonly parenthesizedExpressionSequence: Routes<Table>['parenthesizedExpressionSequence'];
+	readonly exportStatementEqualsExport: Table['buildExportStatementEqualsExport'];
+	readonly exportStatementNamespaceExport: Table['buildExportStatementNamespaceExport'];
 	readonly callExpressionCall: Table['buildCallExpressionCall'];
 	readonly callExpressionTemplateCall: Table['buildCallExpressionTemplateCall'];
 	readonly callExpressionMember: Table['buildCallExpressionMember'];
@@ -2460,8 +2460,8 @@ export interface Ir<Table extends AnyTable> {
 	readonly indexSignature: Routes<Table>['indexSignature'];
 	readonly classBodyMember: Routes<Table>['classBodyMember'];
 	readonly enumBodyElement: Routes<Table>['enumBodyElement'];
-	readonly exportStatementDefault: Routes<Table>['exportStatementDefault'];
 	readonly numberBigint: Routes<Table>['numberBigint'];
+	readonly exportStatementDefault: Routes<Table>['exportStatementDefault'];
 	readonly exportStatement: Routes<Table>['exportStatement'];
 	readonly statement: Routes<Table>['statement'];
 	readonly number: Routes<Table>['number'];
@@ -3898,10 +3898,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		name: $at('buildEnumBodyElementName'),
 		assignment: $at('buildEnumAssignment')
 	} as const);
-	const exportStatementDefault: Routes<Table>['exportStatementDefault'] = Object.freeze({
-		from: exportStatementDefaultFrom,
-		declaration: exportStatementDefaultDeclaration
-	} as const);
 	const numberBigint: Routes<Table>['numberBigint'] = Object.freeze(
 		Object.assign(delegate(F.buildNumberBigintDecimal), {
 			hex: F.buildNumberBigintHex,
@@ -4017,6 +4013,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			undefined: literalType$undefined
 		} as const)
 	);
+	const exportStatementDefault: Routes<Table>['exportStatementDefault'] = Object.freeze({
+		from: exportStatementDefaultFrom,
+		declaration: exportStatementDefaultDeclaration
+	} as const);
 	const exportStatement: Routes<Table>['exportStatement'] = Object.freeze({
 		default: exportStatementDefault,
 		equalsExport: $at('buildExportStatementEqualsExport'),
@@ -4216,8 +4216,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		ambientDeclarationGlobal: $at('buildAmbientDeclarationGlobal'),
 		ambientDeclarationModule: $at('buildAmbientDeclarationModule'),
 		objectTypeContent: $at('buildObjectTypeContent'),
-		exportStatementNamespaceExport: $at('buildExportStatementNamespaceExport'),
-		exportStatementEqualsExport: $at('buildExportStatementEqualsExport'),
 		numberHex: $at('buildNumberHex'),
 		numberFloatPoint: $at('buildNumberFloatPoint'),
 		numberFloatLeadingPoint: $at('buildNumberFloatLeadingPoint'),
@@ -4233,6 +4231,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		importSpecifierAs: importSpecifierAs,
 		parenthesizedExpressionTyped: $at('buildParenthesizedExpressionTyped'),
 		parenthesizedExpressionSequence: parenthesizedExpressionSequence,
+		exportStatementEqualsExport: $at('buildExportStatementEqualsExport'),
+		exportStatementNamespaceExport: $at('buildExportStatementNamespaceExport'),
 		callExpressionCall: $at('buildCallExpressionCall'),
 		callExpressionTemplateCall: $at('buildCallExpressionTemplateCall'),
 		callExpressionMember: $at('buildCallExpressionMember'),
@@ -4283,8 +4283,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		indexSignature: indexSignature,
 		classBodyMember: classBodyMember,
 		enumBodyElement: enumBodyElement,
-		exportStatementDefault: exportStatementDefault,
 		numberBigint: numberBigint,
+		exportStatementDefault: exportStatementDefault,
 		exportStatement: exportStatement,
 		statement: statement,
 		number: number,

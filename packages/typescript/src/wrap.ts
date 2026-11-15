@@ -11892,146 +11892,6 @@ function wrapObjectTypeContent$with$delimiter(this: Received<Held>, ...args: unk
 	return wrapObjectTypeContent$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 
-export function wrapExportStatementNamespaceExport(
-	data: T.ExportStatementNamespaceExport,
-	tree: TreeHandle
-): T.ExportStatementNamespaceExport.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.ExportStatementNamespaceExport as const,
-		name() {
-			return hydrateSlot<T.Identifier>(this, '_name', tree);
-		},
-		terminator() {
-			return this._terminator;
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		name: wrapExportStatementNamespaceExport$with$name,
-		terminator: wrapExportStatementNamespaceExport$with$terminator,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ExportStatementNamespaceExport.Parsed;
-}
-function wrapExportStatementNamespaceExport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ExportStatementNamespaceExport;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'name':
-			return applySetter(args, (v: NonNullable<T.ExportStatementNamespaceExport['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapExportStatementNamespaceExport(
-						{ ...$edited(data), _name: admitSlot(handle, 'export_statement_namespace_export', 'name', v) },
-						tree
-					)
-				)
-			);
-		case 'terminator':
-			return applySetter(args, (v: NonNullable<T.ExportStatementNamespaceExport['_terminator']>) =>
-				rebuilt(node, handle, () =>
-					wrapExportStatementNamespaceExport(
-						{ ...$edited(data), _terminator: admitSlot(handle, 'export_statement_namespace_export', 'terminator', v) },
-						tree
-					)
-				)
-			);
-	}
-	throw new Error(`export_statement_namespace_export has no $with.${setter}`);
-}
-function wrapExportStatementNamespaceExport$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapExportStatementNamespaceExport$with(receiverOf(this, '$with.name'), 'name', args);
-}
-function wrapExportStatementNamespaceExport$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapExportStatementNamespaceExport$with(receiverOf(this, '$with.terminator'), 'terminator', args);
-}
-
-export function wrapExportStatementEqualsExport(
-	data: T.ExportStatementEqualsExport,
-	tree: TreeHandle
-): T.ExportStatementEqualsExport.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.ExportStatementEqualsExport as const,
-		value() {
-			return hydrateSlot<T.Expression>(this, '_value', tree);
-		},
-		terminator() {
-			return this._terminator;
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		value: wrapExportStatementEqualsExport$with$value,
-		terminator: wrapExportStatementEqualsExport$with$terminator,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.ExportStatementEqualsExport.Parsed;
-}
-function wrapExportStatementEqualsExport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.ExportStatementEqualsExport;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'value':
-			return applySetter(args, (v: NonNullable<T.ExportStatementEqualsExport['_value']>) =>
-				rebuilt(node, handle, () =>
-					wrapExportStatementEqualsExport(
-						{ ...$edited(data), _value: admitSlot(handle, 'export_statement_equals_export', 'value', v) },
-						tree
-					)
-				)
-			);
-		case 'terminator':
-			return applySetter(args, (v: NonNullable<T.ExportStatementEqualsExport['_terminator']>) =>
-				rebuilt(node, handle, () =>
-					wrapExportStatementEqualsExport(
-						{ ...$edited(data), _terminator: admitSlot(handle, 'export_statement_equals_export', 'terminator', v) },
-						tree
-					)
-				)
-			);
-	}
-	throw new Error(`export_statement_equals_export has no $with.${setter}`);
-}
-function wrapExportStatementEqualsExport$with$value(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapExportStatementEqualsExport$with(receiverOf(this, '$with.value'), 'value', args);
-}
-function wrapExportStatementEqualsExport$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapExportStatementEqualsExport$with(receiverOf(this, '$with.terminator'), 'terminator', args);
-}
-
 export function wrapCommentLine(data: T.CommentLine, tree: TreeHandle): T.CommentLine.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -13848,6 +13708,146 @@ function wrapParenthesizedExpressionSequence$with$sequenceExpression(
 		'sequenceExpression',
 		args
 	);
+}
+
+export function wrapExportStatementEqualsExport(
+	data: T.ExportStatementEqualsExport,
+	tree: TreeHandle
+): T.ExportStatementEqualsExport.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ExportStatementEqualsExport as const,
+		value() {
+			return hydrateSlot<T.Expression>(this, '_value', tree);
+		},
+		terminator() {
+			return this._terminator;
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		value: wrapExportStatementEqualsExport$with$value,
+		terminator: wrapExportStatementEqualsExport$with$terminator,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ExportStatementEqualsExport.Parsed;
+}
+function wrapExportStatementEqualsExport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.ExportStatementEqualsExport;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'value':
+			return applySetter(args, (v: NonNullable<T.ExportStatementEqualsExport['_value']>) =>
+				rebuilt(node, handle, () =>
+					wrapExportStatementEqualsExport(
+						{ ...$edited(data), _value: admitSlot(handle, 'export_statement_equals_export', 'value', v) },
+						tree
+					)
+				)
+			);
+		case 'terminator':
+			return applySetter(args, (v: NonNullable<T.ExportStatementEqualsExport['_terminator']>) =>
+				rebuilt(node, handle, () =>
+					wrapExportStatementEqualsExport(
+						{ ...$edited(data), _terminator: admitSlot(handle, 'export_statement_equals_export', 'terminator', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`export_statement_equals_export has no $with.${setter}`);
+}
+function wrapExportStatementEqualsExport$with$value(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapExportStatementEqualsExport$with(receiverOf(this, '$with.value'), 'value', args);
+}
+function wrapExportStatementEqualsExport$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapExportStatementEqualsExport$with(receiverOf(this, '$with.terminator'), 'terminator', args);
+}
+
+export function wrapExportStatementNamespaceExport(
+	data: T.ExportStatementNamespaceExport,
+	tree: TreeHandle
+): T.ExportStatementNamespaceExport.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ExportStatementNamespaceExport as const,
+		name() {
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
+		},
+		terminator() {
+			return this._terminator;
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		name: wrapExportStatementNamespaceExport$with$name,
+		terminator: wrapExportStatementNamespaceExport$with$terminator,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ExportStatementNamespaceExport.Parsed;
+}
+function wrapExportStatementNamespaceExport$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.ExportStatementNamespaceExport;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (v: NonNullable<T.ExportStatementNamespaceExport['_name']>) =>
+				rebuilt(node, handle, () =>
+					wrapExportStatementNamespaceExport(
+						{ ...$edited(data), _name: admitSlot(handle, 'export_statement_namespace_export', 'name', v) },
+						tree
+					)
+				)
+			);
+		case 'terminator':
+			return applySetter(args, (v: NonNullable<T.ExportStatementNamespaceExport['_terminator']>) =>
+				rebuilt(node, handle, () =>
+					wrapExportStatementNamespaceExport(
+						{ ...$edited(data), _terminator: admitSlot(handle, 'export_statement_namespace_export', 'terminator', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`export_statement_namespace_export has no $with.${setter}`);
+}
+function wrapExportStatementNamespaceExport$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapExportStatementNamespaceExport$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function wrapExportStatementNamespaceExport$with$terminator(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapExportStatementNamespaceExport$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
 export function wrapCallExpressionCall(data: T.CallExpressionCall, tree: TreeHandle): T.CallExpressionCall.Parsed {
@@ -24592,71 +24592,6 @@ function viewObjectTypeContent(data: RecordPosition, tree: TreeHandle): T.Object
 	return node as unknown as T.ObjectTypeContent.Parsed;
 }
 
-function viewExportStatementNamespaceExport$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
-}
-function viewExportStatementNamespaceExport$terminator(this: RecordHandle) {
-	return childSlot(this, 5, 1, 2, 0, 3);
-}
-function viewExportStatementNamespaceExport(
-	data: RecordPosition,
-	tree: TreeHandle
-): T.ExportStatementNamespaceExport.Parsed {
-	const node = {
-		$type: TSKindId.ExportStatementNamespaceExport as const,
-		$tree: tree,
-		$at: data.$at,
-		$words: positionWords(data),
-		$cache: undefined as Record<number, unknown> | undefined,
-		$_layout: data.$_layout,
-		name: viewExportStatementNamespaceExport$name,
-		terminator: viewExportStatementNamespaceExport$terminator,
-		$with: undefined as unknown as object,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
-		$engine: handleEngine,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$with = { name: $with$name, terminator: $with$terminator, [RECEIVER]: node };
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.ExportStatementNamespaceExport.Parsed;
-}
-
-function viewExportStatementEqualsExport$value(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
-}
-function viewExportStatementEqualsExport$terminator(this: RecordHandle) {
-	return childSlot(this, 6, 1, 2, 0, 3);
-}
-function viewExportStatementEqualsExport(data: RecordPosition, tree: TreeHandle): T.ExportStatementEqualsExport.Parsed {
-	const node = {
-		$type: TSKindId.ExportStatementEqualsExport as const,
-		$tree: tree,
-		$at: data.$at,
-		$words: positionWords(data),
-		$cache: undefined as Record<number, unknown> | undefined,
-		$_layout: data.$_layout,
-		value: viewExportStatementEqualsExport$value,
-		terminator: viewExportStatementEqualsExport$terminator,
-		$with: undefined as unknown as object,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
-		$engine: handleEngine,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$with = { value: $with$value, terminator: $with$terminator, [RECEIVER]: node };
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.ExportStatementEqualsExport.Parsed;
-}
-
 function viewCommentLine$content(this: RecordHandle) {
 	return viewSlot<string>(this, 2, 2, 4, 0, 2);
 }
@@ -25566,6 +25501,71 @@ function viewParenthesizedExpressionSequence(
 	node.$with = { sequenceExpression: $with$sequenceExpression, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ParenthesizedExpressionSequence.Parsed;
+}
+
+function viewExportStatementEqualsExport$value(this: RecordHandle) {
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+}
+function viewExportStatementEqualsExport$terminator(this: RecordHandle) {
+	return childSlot(this, 6, 1, 2, 0, 3);
+}
+function viewExportStatementEqualsExport(data: RecordPosition, tree: TreeHandle): T.ExportStatementEqualsExport.Parsed {
+	const node = {
+		$type: TSKindId.ExportStatementEqualsExport as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		value: viewExportStatementEqualsExport$value,
+		terminator: viewExportStatementEqualsExport$terminator,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { value: $with$value, terminator: $with$terminator, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	return node as unknown as T.ExportStatementEqualsExport.Parsed;
+}
+
+function viewExportStatementNamespaceExport$name(this: RecordHandle) {
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
+}
+function viewExportStatementNamespaceExport$terminator(this: RecordHandle) {
+	return childSlot(this, 5, 1, 2, 0, 3);
+}
+function viewExportStatementNamespaceExport(
+	data: RecordPosition,
+	tree: TreeHandle
+): T.ExportStatementNamespaceExport.Parsed {
+	const node = {
+		$type: TSKindId.ExportStatementNamespaceExport as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		name: viewExportStatementNamespaceExport$name,
+		terminator: viewExportStatementNamespaceExport$terminator,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { name: $with$name, terminator: $with$terminator, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	return node as unknown as T.ExportStatementNamespaceExport.Parsed;
 }
 
 function viewCallExpressionCall$function(this: RecordHandle) {
@@ -28184,10 +28184,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.AmbientDeclarationModule]: (d, t) =>
 		wrapAmbientDeclarationModule(d as unknown as T.AmbientDeclarationModule, t),
 	[TSKindId.ObjectTypeContent]: (d, t) => wrapObjectTypeContent(d as unknown as T.ObjectTypeContent, t),
-	[TSKindId.ExportStatementNamespaceExport]: (d, t) =>
-		wrapExportStatementNamespaceExport(d as unknown as T.ExportStatementNamespaceExport, t),
-	[TSKindId.ExportStatementEqualsExport]: (d, t) =>
-		wrapExportStatementEqualsExport(d as unknown as T.ExportStatementEqualsExport, t),
 	[TSKindId.CommentLine]: (d, t) => wrapCommentLine(d as unknown as T.CommentLine, t),
 	[TSKindId.CommentBlock]: (d, t) => wrapCommentBlock(d as unknown as T.CommentBlock, t),
 	[TSKindId.LiteralTypeNegativeNumber]: (d, t) =>
@@ -28223,6 +28219,10 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 		wrapParenthesizedExpressionTyped(d as unknown as T.ParenthesizedExpressionTyped, t),
 	[TSKindId.ParenthesizedExpressionSequence]: (d, t) =>
 		wrapParenthesizedExpressionSequence(d as unknown as T.ParenthesizedExpressionSequence, t),
+	[TSKindId.ExportStatementEqualsExport]: (d, t) =>
+		wrapExportStatementEqualsExport(d as unknown as T.ExportStatementEqualsExport, t),
+	[TSKindId.ExportStatementNamespaceExport]: (d, t) =>
+		wrapExportStatementNamespaceExport(d as unknown as T.ExportStatementNamespaceExport, t),
 	[TSKindId.CallExpressionCall]: (d, t) => wrapCallExpressionCall(d as unknown as T.CallExpressionCall, t),
 	[TSKindId.CallExpressionTemplateCall]: (d, t) =>
 		wrapCallExpressionTemplateCall(d as unknown as T.CallExpressionTemplateCall, t),
@@ -28475,8 +28475,6 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.AmbientDeclarationGlobal]: viewAmbientDeclarationGlobal,
 	[TSKindId.AmbientDeclarationModule]: viewAmbientDeclarationModule,
 	[TSKindId.ObjectTypeContent]: viewObjectTypeContent,
-	[TSKindId.ExportStatementNamespaceExport]: viewExportStatementNamespaceExport,
-	[TSKindId.ExportStatementEqualsExport]: viewExportStatementEqualsExport,
 	[TSKindId.CommentLine]: viewCommentLine,
 	[TSKindId.CommentBlock]: viewCommentBlock,
 	[TSKindId.LiteralTypeNegativeNumber]: viewLiteralTypeNegativeNumber,
@@ -28503,6 +28501,8 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.ImportSpecifierAs]: viewImportSpecifierAs,
 	[TSKindId.ParenthesizedExpressionTyped]: viewParenthesizedExpressionTyped,
 	[TSKindId.ParenthesizedExpressionSequence]: viewParenthesizedExpressionSequence,
+	[TSKindId.ExportStatementEqualsExport]: viewExportStatementEqualsExport,
+	[TSKindId.ExportStatementNamespaceExport]: viewExportStatementNamespaceExport,
 	[TSKindId.CallExpressionCall]: viewCallExpressionCall,
 	[TSKindId.CallExpressionTemplateCall]: viewCallExpressionTemplateCall,
 	[TSKindId.CallExpressionMember]: viewCallExpressionMember,

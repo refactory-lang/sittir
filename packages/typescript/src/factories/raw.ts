@@ -195,8 +195,6 @@ export const buildGetAccessorSignature = dispatched(() => backend().buildGetAcce
 export const buildAmbientDeclarationGlobal = dispatched(() => backend().buildAmbientDeclarationGlobal);
 export const buildAmbientDeclarationModule = dispatched(() => backend().buildAmbientDeclarationModule);
 export const buildObjectTypeContent = dispatched(() => backend().buildObjectTypeContent);
-export const buildExportStatementNamespaceExport = dispatched(() => backend().buildExportStatementNamespaceExport);
-export const buildExportStatementEqualsExport = dispatched(() => backend().buildExportStatementEqualsExport);
 export const buildCommentLine = dispatched(() => backend().buildCommentLine);
 export const buildCommentBlock = dispatched(() => backend().buildCommentBlock);
 export const buildLiteralTypeNegativeNumber = dispatched(() => backend().buildLiteralTypeNegativeNumber);
@@ -226,6 +224,8 @@ export const buildImportSpecifierName = dispatched(() => backend().buildImportSp
 export const buildImportSpecifierAs = dispatched(() => backend().buildImportSpecifierAs);
 export const buildParenthesizedExpressionTyped = dispatched(() => backend().buildParenthesizedExpressionTyped);
 export const buildParenthesizedExpressionSequence = dispatched(() => backend().buildParenthesizedExpressionSequence);
+export const buildExportStatementEqualsExport = dispatched(() => backend().buildExportStatementEqualsExport);
+export const buildExportStatementNamespaceExport = dispatched(() => backend().buildExportStatementNamespaceExport);
 export const buildCallExpressionCall = dispatched(() => backend().buildCallExpressionCall);
 export const buildCallExpressionTemplateCall = dispatched(() => backend().buildCallExpressionTemplateCall);
 export const buildCallExpressionMember = dispatched(() => backend().buildCallExpressionMember);
@@ -496,8 +496,6 @@ export const _factoryMap = {
 	ambient_declaration_global: buildAmbientDeclarationGlobal,
 	ambient_declaration_module: buildAmbientDeclarationModule,
 	object_type_content: buildObjectTypeContent,
-	export_statement_namespace_export: buildExportStatementNamespaceExport,
-	export_statement_equals_export: buildExportStatementEqualsExport,
 	comment_line: buildCommentLine,
 	comment_block: buildCommentBlock,
 	literal_type_negative_number: buildLiteralTypeNegativeNumber,
@@ -527,6 +525,8 @@ export const _factoryMap = {
 	import_specifier_as: buildImportSpecifierAs,
 	parenthesized_expression_typed: buildParenthesizedExpressionTyped,
 	parenthesized_expression_sequence: buildParenthesizedExpressionSequence,
+	export_statement_equals_export: buildExportStatementEqualsExport,
+	export_statement_namespace_export: buildExportStatementNamespaceExport,
 	call_expression_call: buildCallExpressionCall,
 	call_expression_template_call: buildCallExpressionTemplateCall,
 	call_expression_member: buildCallExpressionMember,

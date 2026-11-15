@@ -3471,42 +3471,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
-	describe('export_statement_namespace_export', () => {
-		it('factory produces correct type', () => {
-			const node = ir.exportStatementNamespaceExport({ $type: TSKindId.Identifier, text: 'test' } as never, {
-				terminator: TSKindId.AutomaticSemicolon
-			});
-			expect(node.$type).toBe(TSKindId.ExportStatementNamespaceExport);
-			expectBuiltNode(node);
-		});
-		it('render produces non-empty string', () => {
-			const node = ir.exportStatementNamespaceExport({ $type: TSKindId.Identifier, text: 'test' } as never, {
-				terminator: TSKindId.AutomaticSemicolon
-			});
-			const rendered = node.$render!();
-			expect(rendered.length).toBeGreaterThan(0);
-			expect(rendered).toContain('test');
-		});
-	});
-
-	describe('export_statement_equals_export', () => {
-		it('factory produces correct type', () => {
-			const node = ir.exportStatementEqualsExport(TSKindId.Undefined as never, {
-				terminator: TSKindId.AutomaticSemicolon
-			});
-			expect(node.$type).toBe(TSKindId.ExportStatementEqualsExport);
-			expectBuiltNode(node);
-		});
-		it('render produces non-empty string', () => {
-			const node = ir.exportStatementEqualsExport(TSKindId.Undefined as never, {
-				terminator: TSKindId.AutomaticSemicolon
-			});
-			const rendered = node.$render!();
-			expect(rendered.length).toBeGreaterThan(0);
-			expect(rendered).toContain('undefined');
-		});
-	});
-
 	describe('comment_line', () => {
 		it('factory produces correct type', () => {
 			const node = ir.commentLine('test');
@@ -4035,6 +3999,42 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect(node.$type).toBe(TSKindId.ParenthesizedExpressionSequence);
 			expect((node as any).sequenceExpression()?.$type).toBe(TSKindId.SequenceExpression);
 			expect(node.$render!().length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('export_statement_equals_export', () => {
+		it('factory produces correct type', () => {
+			const node = ir.exportStatementEqualsExport(TSKindId.Undefined as never, {
+				terminator: TSKindId.AutomaticSemicolon
+			});
+			expect(node.$type).toBe(TSKindId.ExportStatementEqualsExport);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.exportStatementEqualsExport(TSKindId.Undefined as never, {
+				terminator: TSKindId.AutomaticSemicolon
+			});
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).toContain('undefined');
+		});
+	});
+
+	describe('export_statement_namespace_export', () => {
+		it('factory produces correct type', () => {
+			const node = ir.exportStatementNamespaceExport({ $type: TSKindId.Identifier, text: 'test' } as never, {
+				terminator: TSKindId.AutomaticSemicolon
+			});
+			expect(node.$type).toBe(TSKindId.ExportStatementNamespaceExport);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.exportStatementNamespaceExport({ $type: TSKindId.Identifier, text: 'test' } as never, {
+				terminator: TSKindId.AutomaticSemicolon
+			});
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).toContain('test');
 		});
 	});
 

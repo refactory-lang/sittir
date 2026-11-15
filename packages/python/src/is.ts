@@ -649,9 +649,6 @@ export interface IsGuards {
 	printStatementPlain<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementPlain };
-	parenthesizedImportList<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ParenthesizedImportList };
 	comprehensionClauses<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ComprehensionClauses };
@@ -721,6 +718,9 @@ export interface IsGuards {
 	exceptClauseException<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExceptClauseException };
+	parenthesizedImportList<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ParenthesizedImportList };
 	splatPatternList<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SplatPatternList };
@@ -1760,23 +1760,23 @@ export function guardsWith(test: KindTest): IsGuards {
 		typeVarTuple: _kind_TypeParamTypeVarTuple_guard,
 		paramSpec: _kind_TypeParamParamSpec_guard
 	});
-	const _supertype_integerHex_guard = _vg(_mg(292), {
+	const _supertype_integerHex_guard = _vg(_mg(291), {
 		long: _kind_IntegerHexLong_guard,
 		plain: _kind_IntegerHexPlain_guard
 	});
-	const _supertype_integerOctal_guard = _vg(_mg(293), {
+	const _supertype_integerOctal_guard = _vg(_mg(292), {
 		long: _kind_IntegerOctalLong_guard,
 		plain: _kind_IntegerOctalPlain_guard
 	});
-	const _supertype_integerBinary_guard = _vg(_mg(294), {
+	const _supertype_integerBinary_guard = _vg(_mg(293), {
 		long: _kind_IntegerBinaryLong_guard,
 		plain: _kind_IntegerBinaryPlain_guard
 	});
-	const _supertype_integerLegacyOctal_guard = _vg(_mg(295), {
+	const _supertype_integerLegacyOctal_guard = _vg(_mg(294), {
 		long: _kind_IntegerLegacyOctalLong_guard,
 		plain: _kind_IntegerLegacyOctalPlain_guard
 	});
-	const _supertype_integerDecimal_guard = _vg(_mg(296), {
+	const _supertype_integerDecimal_guard = _vg(_mg(295), {
 		long: _kind_IntegerDecimalLong_guard,
 		imaginary: _kind_IntegerDecimalImaginary_guard,
 		plain: _kind_IntegerDecimalPlain_guard
@@ -1957,7 +1957,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		printChevronArguments: _kind_PrintChevronArguments_guard,
 		printStatementChevron: _kind_PrintStatementChevron_guard,
 		printStatementPlain: _kind_PrintStatementPlain_guard,
-		parenthesizedImportList: _kind_ParenthesizedImportList_guard,
 		comprehensionClauses: _kind_ComprehensionClauses_guard,
 		integerHexLong: _kind_IntegerHexLong_guard,
 		integerHexPlain: _kind_IntegerHexPlain_guard,
@@ -1981,6 +1980,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		simplePatternNegative: _kind_SimplePatternNegative_guard,
 		exceptClauseExceptionList: _kind_ExceptClauseExceptionList_guard,
 		exceptClauseException: _kind_ExceptClauseException_guard,
+		parenthesizedImportList: _kind_ParenthesizedImportList_guard,
 		splatPatternList: _kind_SplatPatternList_guard,
 		splatPatternDictionary: _kind_SplatPatternDictionary_guard,
 		assignmentEq: _kind_AssignmentEq_guard,
