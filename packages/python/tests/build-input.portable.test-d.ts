@@ -24,3 +24,27 @@ declare const dotted: T.DottedName.Bound;
 export const identifierName: Constant['name'] = identifier;
 // @ts-expect-error a dotted name reads as identifier.qualified, which a constant's name never holds
 export const dottedName: Constant['name'] = dotted;
+
+type ConstantRead = V.Read<PythonMap, 'declaration.constant'>;
+
+export const readName: ConstantRead['name'] = 'X';
+export const readValuedName: ConstantRead['name'] = { $path: 'identifier', $value: 'X' };
+export const valuedName: Constant['name'] = { $path: 'identifier', $value: 'x' };
+// @ts-expect-error an identifier builds from its text, so a path without a $value builds nothing
+export const pathOnlyName: Constant['name'] = { $path: 'identifier' };
+
+export const valuedIdentifier: V.BuildInput<PythonMap, 'identifier'> = { $path: 'identifier', $value: 'x' };
+// @ts-expect-error an identifier builds from its text, so a path without a $value builds nothing
+export const pathOnlyIdentifier: V.BuildInput<PythonMap, 'identifier'> = { $path: 'identifier' };
+
+export const qualified: V.BuildInput<PythonMap, 'identifier.qualified'> = { $path: 'identifier.qualified', name: 'y' };
+// @ts-expect-error a qualified identifier builds from its members, never from a text
+export const valuedQualified: V.BuildInput<PythonMap, 'identifier.qualified'> = { $path: 'identifier.qualified', name: 'y', $value: 'x.y' };
+
+type StringRead = V.Read<PythonMap, 'literal.string'>;
+
+export const readText: NonNullable<StringRead['elements']>[number] = { $path: 'literal.string.text', $value: 'ab' };
+// @ts-expect-error a string's text builds from its text, so a path without a $value builds nothing
+export const pathOnlyText: V.BuildInput<PythonMap, 'literal.string.text'> = { $path: 'literal.string.text' };
+
+export const breakStatement: V.BuildInput<PythonMap, 'statement.break'> = { $path: 'statement.break' };

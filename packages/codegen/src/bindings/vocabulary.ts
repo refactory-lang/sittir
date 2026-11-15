@@ -93,6 +93,7 @@ export interface VocabularyMember {
 	readonly features?: readonly string[];
 	readonly excluded?: true;
 	readonly scalar?: VocabularyScalar;
+	readonly text?: true;
 }
 
 export type VocabularyScalar = 'number' | 'bigint';
@@ -102,6 +103,8 @@ const scalarOf = (type: string): { readonly scalar?: VocabularyScalar } => {
 	if (arms.length === 0 || !arms.every((arm) => arm === 'number' || arm === 'bigint')) return {};
 	return { scalar: arms.includes('number') ? 'number' : 'bigint' };
 };
+
+const textOf = (m: Member): { readonly text?: true } => (m.name === '$value' && m.type === 'string' ? { text: true } : {});
 
 export interface VocabularyKind {
 	readonly name: string;
@@ -250,6 +253,11 @@ export function pathChildren(paths: Iterable<string>): ReadonlyMap<string, Reado
 	return children;
 }
 
+export const textValued = (vocabulary: Vocabulary, path: string): boolean => {
+	const kind = vocabulary.kinds.get(path);
+	return kind !== undefined && kind.text !== true && vocabulary.members(path).get('$value')?.text === true;
+};
+
 export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const source = await readVocabularySource(dir);
 	const stubs = source.features.flatMap((feature) => feature.stubs);
@@ -257,7 +265,7 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const featureOf = new Map(source.features.flatMap((feature) => feature.stubs.filter(isKind).map((stub) => [stub.qname, feature.name] as const)));
 	const pathByName = new Map(declared.map((d) => [d.qname, d.path]));
 	const slotted = (m: Member): { readonly slot?: true } => (m.slotted === true ? { slot: true } : {});
-	const own = new Map<string, Map<string, VocabularyMember>>(declared.map((d) => [d.qname, new Map(d.members.map((m) => [m.name, { optional: m.optional, ...(m.arity === undefined ? {} : { arity: m.arity }), flag: m.flag, ...slotted(m), ...scalarOf(m.type), ...(m.type === NEVER ? { excluded: true as const } : {}) }]))]));
+	const own = new Map<string, Map<string, VocabularyMember>>(declared.map((d) => [d.qname, new Map(d.members.map((m) => [m.name, { optional: m.optional, ...(m.arity === undefined ? {} : { arity: m.arity }), flag: m.flag, ...slotted(m), ...scalarOf(m.type), ...textOf(m), ...(m.type === NEVER ? { excluded: true as const } : {}) }]))]));
 	for (const feature of source.features)
 		for (const stub of feature.stubs) {
 			const members = own.get(stub.qname);
@@ -265,7 +273,7 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 			for (const m of stub.members) {
 				const held = members.get(m.name);
 				const features = held === undefined ? [feature.name] : held.features === undefined ? undefined : [...held.features, feature.name];
-				members.set(m.name, { optional: m.optional || held?.optional === true, ...((m.arity ?? held?.arity) === undefined ? {} : { arity: m.arity ?? held?.arity }), flag: m.flag, ...slotted(m), ...scalarOf(m.type), ...(features === undefined ? {} : { features }), ...(m.type === NEVER ? { excluded: true as const } : {}) });
+				members.set(m.name, { optional: m.optional || held?.optional === true, ...((m.arity ?? held?.arity) === undefined ? {} : { arity: m.arity ?? held?.arity }), flag: m.flag, ...slotted(m), ...scalarOf(m.type), ...textOf(m), ...(features === undefined ? {} : { features }), ...(m.type === NEVER ? { excluded: true as const } : {}) });
 			}
 		}
 	const kinds = new Map<string, VocabularyKind>();

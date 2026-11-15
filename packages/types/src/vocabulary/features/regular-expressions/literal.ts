@@ -12,10 +12,12 @@ export namespace Literal {
 		export interface Flags<G extends GrammarMap, K extends Under<'literal.regex.flags'> = 'literal.regex.flags'> extends SubKindOf<V.Literal.Regex<G, K>> {
 			// claimed by t
 			readonly $path: K;
+			readonly $value: string;
 		}
 		export interface Pattern<G extends GrammarMap, K extends Under<'literal.regex.pattern'> = 'literal.regex.pattern'> extends SubKindOf<V.Literal.Regex<G, K>> {
 			// claimed by t
 			readonly $path: K;
+			readonly $value: string;
 		}
 	}
 }
