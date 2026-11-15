@@ -29,7 +29,7 @@ struct Ceilings {
 
 const CEILINGS: &[Ceilings] = &[
     Ceilings { os: "macos", arch: "aarch64", release: true, levels: [7, 7, 39, 199] },
-    Ceilings { os: "macos", arch: "aarch64", release: false, levels: [39, 71, 167, 727] },
+    Ceilings { os: "macos", arch: "aarch64", release: false, levels: [39, 71, 167, 695] },
     Ceilings { os: "linux", arch: "x86_64", release: true, levels: [23, 31, 63, 207] },
     Ceilings { os: "linux", arch: "x86_64", release: false, levels: [55, 87, 183, 703] },
     Ceilings { os: "windows", arch: "x86_64", release: true, levels: [7, 7, 71, 199] },

@@ -51,9 +51,9 @@
 // and it changes no allocated byte of the image. The flag names no path, so
 // RUSTFLAGS is the same for every grammar and cargo keeps one build of the
 // dependencies; the linker writes the map beside the image in cargo's
-// `deps` directory, where the image's own link last left it.
+// output directory (`build/<package>/<hash>/out`), where the image's own link last left it.
 import { spawnSync } from 'node:child_process';
-import { chmodSync, copyFileSync, existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
+import { chmodSync, copyFileSync, existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
 import { NATIVE_LOADER, NATIVE_NAPI_CONFIG, NATIVE_TYPINGS, REPO_ROOT, assertGrammar, nativeBinaryName, nativeBindingDir, nativeBuildEnv, nativeCrateDir } from '../packages/codegen/src/grammars.ts';
 import { type NativeProfile, linkerMapOf, llvmTool, nativeBuildFingerprint, rustHost, unstrippedBinaryPath, writeNativeBuildStamp } from '../packages/codegen/src/scripts/native-binary-freshness.ts';
@@ -122,12 +122,24 @@ function cargoMetadata(crateDir: string): CargoMetadata {
 	return JSON.parse(result.stdout) as CargoMetadata;
 }
 
+function builtFile(cargoOut: string, packageName: string, file: string): string {
+	const uplifted = join(cargoOut, file);
+	if (existsSync(uplifted)) return uplifted;
+	const buildRoot = join(cargoOut, 'build', packageName);
+	const written = existsSync(buildRoot)
+		? readdirSync(buildRoot)
+				.map((hash) => join(buildRoot, hash, 'out', file))
+				.filter((candidate) => existsSync(candidate))
+				.sort((a, b) => statSync(b).mtimeMs - statSync(a).mtimeMs)
+		: [];
+	return written[0] ?? join(cargoOut, 'deps', file);
+}
+
 function writtenLinkerMap(metadata: CargoMetadata, crateDir: string, cargoOut: string): string {
-	const library = metadata.packages
-		.find((pkg) => resolve(dirname(pkg.manifest_path)) === resolve(crateDir))
-		?.targets.find((built) => built.kind.includes('cdylib'))?.name;
-	if (library === undefined) throw new Error(`cargo metadata names no cdylib for ${crateDir}`);
-	return join(cargoOut, 'deps', `${library.replaceAll('-', '_')}.map`);
+	const built = metadata.packages.find((pkg) => resolve(dirname(pkg.manifest_path)) === resolve(crateDir));
+	const library = built?.targets.find((target) => target.kind.includes('cdylib'))?.name;
+	if (built === undefined || library === undefined) throw new Error(`cargo metadata names no cdylib for ${crateDir}`);
+	return builtFile(cargoOut, built.name, `${library.replaceAll('-', '_')}.map`);
 }
 
 function stdLibrary(triple: string): string {
@@ -174,6 +186,7 @@ const crateDir = nativeCrateDir(grammar);
 const metadata = cargoMetadata(crateDir);
 const cargoOut = join(metadata.target_directory, triple, PROFILE_DIR[profile]);
 const engineLibrary = engineLibraryName(suffix);
+const engineBuilt = (): string => builtFile(cargoOut, 'sittir-engine', engineLibrary);
 mkdirSync(dirname(copy), { recursive: true });
 const built = nativeBuildFingerprint(REPO_ROOT, grammar);
 run(
@@ -192,7 +205,7 @@ if (linkerMap !== undefined) {
 const shipped = join(outDir, binary);
 const std = stdLibrary(triple);
 for (const stale of readdirSync(outDir).filter((file) => isStdLibrary(file) && file !== basename(std))) rmSync(join(outDir, stale));
-const libraries = [shipLibrary(join(cargoOut, 'deps', engineLibrary)), shipLibrary(std)];
+const libraries = [shipLibrary(engineBuilt()), shipLibrary(std)];
 const images = [shipped, ...libraries];
 const signs = apple && process.platform === 'darwin';
 if (signs) nameStdByRpath([shipped, libraries[0]!], libraries[1]!);
@@ -207,5 +220,5 @@ if (release) {
 	}
 }
 if (signs) for (const image of images) run('codesign', ['--force', '--sign', '-', image], outDir);
-assertOneEngine(shipped, libraries[0]!, join(cargoOut, 'deps', engineLibrary), engineVersion(metadata));
+assertOneEngine(shipped, libraries[0]!, engineBuilt(), engineVersion(metadata));
 writeNativeBuildStamp(REPO_ROOT, grammar, profile, binary, built, unstripped, linkerMap);

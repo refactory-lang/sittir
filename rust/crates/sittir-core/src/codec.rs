@@ -177,7 +177,7 @@ impl<W: Nodes> Dismantle<W> for () {
     fn dismantle(self, _: &mut Vec<W::Whole>) {}
 }
 
-impl<W: Nodes> Dismantle<W> for core::convert::Infallible {
+impl<W: Nodes> Dismantle<W> for ! {
     fn dismantle(self, _: &mut Vec<W::Whole>) {
         match self {}
     }
@@ -213,8 +213,8 @@ macro_rules! nodeless_codec {
             }
             $crate::napi_codec! {
                 impl<W: $crate::codec::Frames> $crate::codec::Codec<W> for $ty {
-                    type DecodeWait = ::core::convert::Infallible;
-                    type EncodeWait = ::core::convert::Infallible;
+                    type DecodeWait = !;
+                    type EncodeWait = !;
                     unsafe fn decode(env: $crate::__napi::sys::napi_env, value: $crate::__napi::sys::napi_value, _: &mut ::core::option::Option<W::DecodeFrame>) -> $crate::__napi::Result<$crate::codec::Begun<Self, Self::DecodeWait>> {
                         // SAFETY: this fn requires `value` to be live in `env`.
                         unsafe { <Self as $crate::__napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, value) }.map($crate::codec::Begun::Whole)
@@ -260,8 +260,8 @@ impl Height for crate::trivia::TriviaText {
 macro_rules! nodeless_steps {
     ($node:ty; $grammar:ty) => {
         impl $crate::codec::Steps<$grammar> for $node {
-            type Decoding = ::core::convert::Infallible;
-            type Encoding = ::core::convert::Infallible;
+            type Decoding = !;
+            type Encoding = !;
             unsafe fn decode_step(
                 frame: &mut Self::Decoding,
                 _: $crate::__napi::sys::napi_env,
@@ -380,6 +380,7 @@ macro_rules! grammar_nodes {
             }
 
             impl $crate::codec::Dismantle<$trivia> for __DecodeFrame {
+                #[allow(unreachable_code, reason = "a nodeless value waits on and frames nothing: its `!` wait is proved dead by its type")]
                 fn dismantle(self, out: &mut ::std::vec::Vec<__Whole>) {
                     match self {
                         $(Self::$node(frame) => $crate::codec::Dismantle::<$trivia>::dismantle(frame, out),)*
@@ -388,6 +389,7 @@ macro_rules! grammar_nodes {
             }
 
             impl $crate::codec::Dismantle<$trivia> for __EncodeFrame {
+                #[allow(unreachable_code, reason = "a nodeless value waits on and frames nothing: its `!` wait is proved dead by its type")]
                 fn dismantle(self, out: &mut ::std::vec::Vec<__Whole>) {
                     match self {
                         $(Self::$node(frame) => $crate::codec::Dismantle::<$trivia>::dismantle(frame, out),)*
@@ -396,9 +398,11 @@ macro_rules! grammar_nodes {
             }
 
             $(impl $crate::codec::Framed<$trivia> for $node {
+                #[allow(unreachable_code, reason = "a nodeless value waits on and frames nothing: its `!` wait is proved dead by its type")]
                 fn decoding(frame: <Self as $crate::codec::Steps<$trivia>>::Decoding) -> __DecodeFrame {
                     __DecodeFrame::$node(frame)
                 }
+                #[allow(unreachable_code, reason = "a nodeless value waits on and frames nothing: its `!` wait is proved dead by its type")]
                 fn encoding(frame: <Self as $crate::codec::Steps<$trivia>>::Encoding) -> __EncodeFrame {
                     __EncodeFrame::$node(frame)
                 }
@@ -469,7 +473,7 @@ mod wire {
 
     /// A node's frames: the struct partly decoded and partly encoded, each
     /// stepped by the loop. A node with no child slot has none
-    /// (`Infallible`).
+    /// (`!`).
     pub trait Steps<W: Frames> {
         type Decoding: Dismantle<W>;
         type Encoding: Dismantle<W>;
