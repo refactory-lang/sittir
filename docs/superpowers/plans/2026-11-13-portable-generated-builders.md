@@ -65,6 +65,7 @@
 - The user widened `declaration.constant.value` and `expression.yield(.delegate).expression` to what python reads, and allowed python's raw-arm ceilings 145 and 2332 for this change.
 - Python's getter `parameters` moved to Task 4.
 - A map path's `nodes` are the kinds that read as it. `PortableIds` stays family-wide for the guards.
+- A member's exact set is what its read routes return: its own routes, the members a container contributes, a route slot's fixed texts, a claimed text path, and a varying text as `string`. Derivation arms add nothing (a follow-up PR; python's per-value raw arms 2337 by the user's exception, conformance python 6).
 - A path built from text alone declares `$value: string` (decision 8). The bare-text arm keys on the map's `inputs`. `packages/tools/tests/portable/text-values.test.ts` derives the set from the build tables, where an arm that takes a text `$value` is a text arm or a content arm (rust's metavariable).
 
 **Files:**
@@ -89,6 +90,42 @@
   - Make the getter vocabulary edits, and run `tool bindings-inventory --write` for each grammar and `tool vocabulary-features --write`.
 - [x] **Step 4: Three-way verification,** then commit.
 
+### Task 3b: No member is named `content`
+
+**Status:** ruled by the user 2026-11-15. It starts after the route-only exact-set PR and the rust toolchain PR merge, because `validate:native` needs a local native build.
+
+The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 here, hold the rulings.
+- (a) and (b) are bindings and vocabulary only: container patterns and captures, with no compiler change and no new bindings directive.
+- (c)'s widened text rule changes the build table and `takesTextValue`.
+
+**Files:**
+- Modify: `packages/{python,rust,typescript}/bindings.scm`:
+  - container patterns for `decorator`, rust's `attribute_item` and `inner_attribute_item` (`"!" @inner`), and python's `type`;
+  - one capture per renamed member.
+- Modify: the vocabulary interfaces that declare `content`:
+  - `Attribute`, `Attribute.Decorator` and `Type` go;
+  - `Statement.Import.From` and `.Future`, `Clause.Import.Names`, `Expression.Yield`, `Element.Spread.Parenthesized`, `Statement.Expression`, `Declaration.Ambient`, `Element.TypeArgument` and `Type.Literal` take the spec's names;
+  - the comment kinds, `Literal.String.Escape` and the raw strings declare `$value: string`;
+  - `decorators` and `attributes` admit what the wrappers hold, and rust's attribute gains the `inner` flag.
+- Modify: `packages/common/src/portable/facts.ts` (`takesTextValue`) and `packages/codegen/src/emitters/overlays/portable/build.ts`. The content arm covers a node whose one slot holds a text-built kind, and the arm names the child kind it makes.
+- Modify: the interpreter's content arm in `packages/common/src/portable/build.ts`, which makes the child from the text.
+- Test: `packages/{python,rust,typescript}/tests/build-input.portable.test-d.ts`, `packages/tools/tests/portable/text-values.test.ts`, and read and build tests per shape.
+
+- [ ] **Step 1: The failing tests, one per shape:**
+  - a decorator reads as its expression in `decorators`;
+  - rust's `#![a]` reads as the attribute with `inner`, and builds back;
+  - python's `x: int` reads `type: 'int'`;
+  - each renamed member reads under its new name, and `content` is refused in the types;
+  - python's `# x` (a lexed token) and rust's `//x` and `r"a"` (a node whose one slot holds a text-built kind) read `{ $path, $value }`, and each builds back from `$value` and from bare text.
+- [ ] **Step 2: Run them.** They fail.
+- [ ] **Step 3: Implement.** Bindings and vocabulary for (a) and (b). For (c), widen the content arm in the build table and keep `takesTextValue` the one predicate. The build table is what Task 4's emitter reads, so the widened arm survives the interpreter's removal in Task 6. The interpreter's content arm makes the child from the text until then.
+- [ ] **Step 4: Regenerate.** Run the type tests, the text-values guard, `validate:native` (the rows must hold), validate history and the suite.
+- [ ] **Step 5: Bring the open rows to brainstorm before pushing,** each with before and after:
+  - whether python's `literal.string.escape` joins the text paths, as the guard decides (if it does, amend decision 8's list);
+  - whether the reader and the interpreter keep rust's container-set `inner` (if either drops it, report before fixing);
+  - the `attribute.content` path segment rename;
+  - the API rows for the whole task.
+
 ### Task 4: The build emitter
 
 **Files:**
@@ -101,7 +138,12 @@
 - [ ] **Step 2: Implement** the emitter over every path:
   - decisions 1, 4 and 5;
   - python's getter takes no `parameters`, and its generated build writes `self`. The vocabulary edit to `accessors/declaration.ts` comes from Task 3. It lands here because the interpreted build table takes that member's list arity from the vocabulary. The type tests gain "the getter's input has no `parameters`" for python and typescript;
-  - the four emit diagnostics;
+  - decision 9's tails. Each slot's tails are computed beside its exact set, written as `$path` spellings on the map's input side and as `case` labels in the member function, and checked by `portable-emit-tail-is-path`. The type and build tests gain:
+    - rust `declaration.function.name` accepts `{ $path: 'metavariable', $value: 'y' }`, and the generated build gives `$y`;
+    - rust `statement.return.expression` accepts `'arithmetic.add'` and refuses `'add'` and `'binary.arithmetic.add'`;
+    - python `statement.return.expression` accepts `'add'`;
+    - a root build refuses a tail;
+  - the five emit diagnostics;
   - the header comment through `$trivia.leading`;
   - number spelling (exponent forms included) through one shared value helper.
 - [ ] **Step 3: Regenerate.** The generated modules type-check with 0 errors, or each error is a `portable-emit-type` row. Record the per-grammar counts of every emit diagnostic as the ceilings.
