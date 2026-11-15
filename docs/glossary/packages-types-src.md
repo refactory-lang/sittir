@@ -1869,3 +1869,23 @@ The `Statement` namespace of counted loops. It groups the `Loop` namespace. The 
 ### `packages/types/src/vocabulary/features/counted-loops/statement.ts::Statement::Loop`
 
 The `Loop` namespace of counted loops. It groups the `Counted` arm, a loop with `initializer`, `condition`, optional `increment` and `body` slots, claimed by the `t` claim tag. The namespace declares no slots of its own.
+
+### `packages/types/src/vocabulary/input.ts::BuildInput`
+
+The input type of the build for path `P` in grammar `G`: the input shape of that path's type, looked up through `Paths<G>`.
+
+### `packages/types/src/vocabulary/map.ts::NodesAt`
+
+The node type the grammar map records for path `P`, or `never` when the grammar has no `nodes` entry for it.
+
+### `packages/types/src/vocabulary/map.ts::NodesOf`
+
+Maps each key of `Ids` to its node type, bound by `Bound` and parsed as `Parsed`.
+
+### `packages/types/src/vocabulary/map.ts::TextInput`
+
+The string input accepted for path `P`: the string members of its input type, or `never` when the grammar has no input entry for `P`.
+
+### `packages/types/src/vocabulary/map.ts::Valued`
+
+For a type `D` shaped `{ $path; $value: string }`, the text input of that path. Any other `D` gives `never`.

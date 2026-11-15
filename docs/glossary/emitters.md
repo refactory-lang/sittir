@@ -7972,6 +7972,18 @@ there, not by the hoisted flag here.
 
 The narrowed-field values of a refine form, as a map from each field name to the text it narrows to. A field selected by a literal takes that literal. A field selected by a node arm takes the arm's fixed text, and fails with `refine-config-invalid` when the arm has none. A field selected by a path takes its selection text, which must match a string arm or a node arm's fixed text; otherwise it fails with the same diagnostic, naming the available texts.
 
+### `packages/codegen/src/emitters/refine-emit.ts::omittableWithDefault`
+
+The type text for a refine form that has a default: the full config, or the full config with the pinned properties omitted. The union lets the builder accept either shape.
+
+### `packages/codegen/src/emitters/refine-emit.ts::RefineDefault`
+
+A kind's default refine form: the form, the pinned literal for each narrowed field, and the property names of the pinned slots.
+
+### `packages/codegen/src/emitters/refine-emit.ts::refineDefaultOf`
+
+Resolves a kind's default refine form. Returns undefined when the kind has no default, the default names no form, the kind is not a compound node, or the form pins nothing. Otherwise it returns the form with its pinned values and the property names those pins cover.
+
 ### `packages/codegen/src/emitters/factory-map.ts::module`
 
 ```text

@@ -446,6 +446,10 @@ A copy referenced by its own name, `$._copy`, showing no display: the reference 
  */
 ```
 
+### `packages/codegen/src/dsl/primitives/refine.ts::RefineOptions`
+
+The options object of a refine form. `default` names the refine form the emitted builder uses when the caller gives no form.
+
 ### `packages/codegen/src/dsl/primitives/role.ts::module`
 
 ```text
