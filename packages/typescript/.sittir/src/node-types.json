@@ -246,10 +246,6 @@
         "named": true
       },
       {
-        "type": "internal_module",
-        "named": true
-      },
-      {
         "type": "new_expression",
         "named": true
       },
