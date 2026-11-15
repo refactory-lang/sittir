@@ -297,6 +297,13 @@ if (typeof value === 'string') return b.identifier(value);
 
 **Answer (approved 2026-11-15).**
 - A path that a grammar builds from text alone declares `readonly $value: string`. Those paths are `identifier`, `literal.string.text`, `comment.text`, `comment.html`, `literal.regex.flags`, `literal.regex.pattern`, `clause.import.relative.prefix` and `expression.interpolation.conversion`. Rust's `identifier.metavariable` (`$x`) builds from its name's text too, through a content arm, so it keeps the `$value` it inherits from `identifier`.
+- A node whose one slot holds a text-built kind is built from text too. Its content arm names that slot, and the build makes the child from the text, then the node around it. A lexed token whose only slot is its interior text is the simplest case. These paths therefore declare `$value: string` too, and lose `content` (the user, 2026-11-15):
+  - the comment paths: `comment.line`, `.block`, `.block.doc`, `.line.doc`, `.line.doc.inner` and `.block.doc.inner`;
+  - rust's and typescript's `literal.string.escape`;
+  - rust's `literal.string.raw`, `.bytes.raw` and `.c.raw`.
+
+  Rust's `//x` reads `{ $path: 'comment.line', $value: 'x' }`, and its `r"a"` reads `{ $path: 'literal.string.raw', $value: 'a' }`.
+- One predicate, `takesTextValue`, says which arms take a text `$value`: a text arm or a content arm. The build, the guard and the typed views all use it.
 - A guard derives the set from the build tables. A path whose build arms include one that takes a text `$value` (a text arm or a content arm), and none of which needs a member or builds another value, declares the text `$value`, and no other path does.
 - Its read and its input are its bare text or `{ $path, $value }`. `{ $path }` alone is a type error.
 - `Read<G, P>`, `InputOf` and a slot's default all add the bare text for such a path. The reader is unchanged.
@@ -314,6 +321,65 @@ if (typeof value === 'string') return b.identifier(value);
 | rust `{ $path: 'identifier.metavariable', $value: 'y' }` as a macro binding's `name` | TS2353 | accepted; builds `$y:expr` |
 | rust `{ $path: 'identifier.metavariable' }` | accepted; the build throws | TS2322 |
 
+### 9. A slot's `$path` may be its tail
+
+**The case.** A slot that admits several paths needs `$path` to choose among them, but the full path repeats what the slot already says. Rust's function `name` admits `identifier` and `identifier.metavariable`, and `metavariable` alone tells them apart. Even so, the input had to spell out `identifier.metavariable`.
+
+**Answer (approved 2026-11-15).**
+- In a slot that admits two or more paths, each admitted path has a tail: its shortest dot-suffix that is not a suffix of another path the slot admits. The slot accepts the tail and the full path, and no suffix in between. The full path works in every slot and every grammar; the tail is a local convenience.
+- Codegen computes the tails once, beside the slot's exact set (the set its map type is written from), and writes each one twice:
+  - as another `$path` spelling on the map's input side;
+  - as another `case` label in the generated member function.
+
+  Nothing maps a tail at run time.
+- A tail adds a spelling to its path's variant, not a variant. Rust's return `expression` keeps 90 variants, and each `$path` gains at most one spelling.
+- Reads return the full path, so a read stays a valid input. A root build has no slot, so it takes the full path. A slot with one path keeps decision 7: `$path` may be left out.
+- A path that is itself the tail of another admitted path (`x` beside `a.x`) means itself, and `a.x` gets no shorter tail. A tail that is the full name of another path in the grammar fails generation (`portable-emit-tail-is-path`), so a `$path` that names a path always means that path. Neither case occurs in the three grammars today.
+- **The cost.** A tail depends on the slot's whole set:
+  - the same path's tail differs between slots and grammars (table 4);
+  - admitting a new path in a slot can lengthen a tail, and an input written with the shorter tail then stops type-checking.
+
+  The full path never breaks.
+
+Table 1. One tail: rust `declaration.function.name` admits `identifier` and `identifier.metavariable`.
+
+| input | type | builds |
+|---|---|---|
+| `{ $path: 'metavariable', $value: 'y' }` | accepted | `$y` |
+| `{ $path: 'identifier.metavariable', $value: 'y' }` | accepted | `$y` |
+| `'y'` | accepted | `y` |
+| `{ $path: 'identifier', $value: 'y' }` | accepted: a one-segment path is its own tail | `y` |
+
+Table 2. Two paths share a last segment: rust `statement.return.expression` admits `expression.binary.arithmetic.add` and `expression.assignment.compound.add`.
+
+| input | type | builds |
+|---|---|---|
+| `{ $path: 'arithmetic.add', left: 'a', right: 'b' }` | accepted | `return a + b` |
+| `{ $path: 'compound.add', left: 'a', right: 'b' }` | accepted | `return a += b` |
+| `{ $path: 'add', left: 'a', right: 'b' }` | TS2322 | refused: the member function has no `case 'add'` |
+| `{ $path: 'binary.arithmetic.add', left: 'a', right: 'b' }` | TS2322 | refused: neither the tail nor the full path |
+
+Table 3. One path is a prefix of another. A tail is a suffix, so a prefix never collides.
+
+| slot | admitted path | tail |
+|---|---|---|
+| rust `declaration.function.parameters` | `identifier` | `identifier` |
+| | `identifier.qualified` | `qualified` |
+| | `identifier.metavariable` | `metavariable` |
+| rust `statement.return.expression` | `expression.call` | `call` |
+| | `expression.call.member` | `call.member` (`member` is also `expression.member`'s tail) |
+
+Table 4. The same path in different slots: `expression.binary.arithmetic.add`'s tail.
+
+| slot | also admits `expression.assignment.compound.add` | tail |
+|---|---|---|
+| python `statement.return.expression` | no | `add` |
+| python `statement.expression.content` | yes | `arithmetic.add` |
+| rust `statement.return.expression` | yes | `arithmetic.add` |
+| typescript `statement.return.expression` | yes | `arithmetic.add` |
+
+Python's tail is `add` in 148 slots and `arithmetic.add` in 1. Rust and typescript need `arithmetic.add` in all of theirs (143 and 187 slots).
+
 ## Diagnostics and the MVP sets
 
 Generation reports, by name:
@@ -324,10 +390,12 @@ Generation reports, by name:
 | `portable-emit-unfit-member` | a member route the emitter doesn't compile (several steps, a mounted step, a template-spelled member, a sole-item delimiter) |
 | `portable-emit-pinned-gap` | the pinned builders can't express a construct |
 | `portable-emit-type` | the generated module fails its type-check |
+| `portable-emit-tail-is-path` | a slot's tail is the full name of another path in the grammar (decision 9) |
 
 The conformance ruling ("an MVP set per language") maps onto them like this:
 - On a path in the language's MVP set, any of them fails generation.
 - Outside the set, it's a warning, the path isn't generated, and the ratchet counts it per grammar at today's ceilings. Ratchets only tighten.
+- `portable-emit-tail-is-path` fails generation on every path, in the set or not.
 
 The MVP sets themselves are the user's choice. Until they're named, every path generated today counts as outside, and the ratchet holds the line.
 

@@ -1902,6 +1902,10 @@ The synonyms the vocabulary source declares.
 
 `true` on a vocabulary member excluded from the vocabulary's own reads.
 
+### `packages/codegen/src/bindings/vocabulary.ts::textValued`
+
+Whether a vocabulary path carries a text-valued `$value`: the path is a kind that is not itself a text kind, and its `$value` member is marked text. Callers share this one test for text-valued paths.
+
 ### `packages/codegen/src/bindings/facts.ts::ModelNode::unit`
 
 Whether the model node is a unit.

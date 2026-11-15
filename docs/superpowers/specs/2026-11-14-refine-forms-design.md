@@ -8,7 +8,7 @@
 - A `refine()` can declare one default form. The bare builder then builds the default when the form's fields are omitted, and still takes them when they're given.
 - A kind's forms are added beside its value routes and seats instead of replacing them.
 - Naming a minted kind in `edits:` leaves the grammar's rule order as it was.
-- The parser doesn't change: no kinds, kind ids, precedence lists or conflicts. A reader sees every node as it does today.
+- The three sites don't change the parser: no kinds, kind ids, precedence lists or conflicts. A reader sees every node as it does today. The minted-kind order fix is the one exception, and it moves only numeric ids (see "A minted kind keeps its place").
 
 ## The three sites
 
@@ -113,7 +113,7 @@ Every form's config, and the bare builder's, is built from the kind's emitted `C
 
 The variant hoist of `_for_header` mints `for_header_using_kind`. Naming it in `edits:` today moves its rule ahead of the unedited mints in the rule order. That shifts 41 kind ids, though rule bodies, precedences and conflicts don't change. Wire assembles the evaluated bodies in callback order and appends unedited deposits after them, so an edited mint takes its callback's place.
 
-**After.** An edited mint keeps its deposit position. This is fixed rather than avoided. Avoiding it would mean attaching the forms at the minting `variant()`, which is a second spelling of `refine` for minted kinds.
+**After.** An edited mint keeps its deposit position. typescript and python already edit minted kinds, so the fix puts those back in deposit order and renumbers them once: 19 of typescript's 504 kinds and 10 of python's 362. Rule bodies, precedences, conflicts and supertype membership are equal; rust, regex and scm don't move. This is fixed rather than avoided. Avoiding it would mean attaching the forms at the minting `variant()`, which is a second spelling of `refine` for minted kinds.
 
 ## Not in scope
 
@@ -135,7 +135,7 @@ The variant hoist of `_for_header` mints `for_header_using_kind`. Naming it in `
 
 ## Verification
 
-- The route fix, node-arm selection, the declared default and the minted-kind order each land before any grammar uses them. Each regenerates all five grammars byte-identical, and each is proved by a synthetic grammar test that's red before it.
+- The route fix, node-arm selection, the declared default and the minted-kind order each land before any grammar uses them, and each is proved by a synthetic grammar test that's red before it. The first three regenerate all five grammars byte-identical. The minted-kind order regenerates rust, regex and scm byte-identical and changes only kind numbering in typescript and python, with `grammar.json` rules equal modulo order and the validation counts equal to the base's.
 - The grammar change regenerates `grammar.json`, `parser.c` and `kind_ids.rs` unchanged. Its generated diff holds only the new builders, routes and types. The validation counts equal the base's.
 - typescript's type-check passes with the three sites refined, `coerce.ts` and `strict-args-row-is-the-call.test-d.ts` included.
 - The route fix goes first, since it's a defect today.
