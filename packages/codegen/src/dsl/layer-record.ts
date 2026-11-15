@@ -17,6 +17,7 @@ export type LayerRecords = Pick<
 	| 'visibleAs'
 	| 'reparseHosts'
 	| 'refineForms'
+	| 'refineDefaults'
 	| 'spellings'
 	| 'ruleCauses'
 	| 'undeclaredRules'
@@ -106,6 +107,7 @@ const RECORD_MERGES: { readonly [K in keyof LayerRecords]-?: RecordMerge<K> } = 
 	visibleAs: mergedEntries,
 	reparseHosts: (inherited, own) => own ?? inherited,
 	refineForms: mergedMap,
+	refineDefaults: mergedMap,
 	spellings: mergedMap,
 	ruleCauses: mergedEntries,
 	undeclaredRules: (inherited, own) => (inherited === undefined && own === undefined ? undefined : namesOf(inherited, own)),

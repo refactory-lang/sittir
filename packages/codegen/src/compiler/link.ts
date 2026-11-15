@@ -271,6 +271,7 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 	stampCopyRefs(rules, linkCtx.copyBase);
 	const variantChildren = deriveVariantChildren(rules, linkCtx.copyBase);
 	const refineForms = new Map<string, readonly LinkedRefineForm[]>();
+	const refineDefaults = new Map<string, string>();
 	for (const [kind, forms] of raw.refineForms ?? []) {
 		const rule = rules[kind];
 		if (!rule) {
@@ -290,6 +291,19 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 			return issue === undefined;
 		});
 		if (validForms.length === 0) continue;
+		const declaredDefault = raw.refineDefaults?.get(kind);
+		if (declaredDefault !== undefined) {
+			if (validForms.some((form) => form.name === declaredDefault)) refineDefaults.set(kind, declaredDefault);
+			else
+				recordConfigIssue(
+					'refine-config-invalid',
+					{
+						ownerKind: kind,
+						message: `refine(${kind}): default '${declaredDefault}' names no form (forms: ${validForms.map((form) => `'${form.name}'`).join(', ')})`
+					},
+					linkCtx
+				);
+		}
 		refineForms.set(
 			kind,
 			validForms.map((form) => ({ ...form, narrowedFields: narrowedFieldLiteralsForForm(rule, form, rules) }))
@@ -322,6 +336,7 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 		displayLexemes: displayLexemes.size > 0 ? displayLexemes : undefined,
 		terminalAliasWireIds: terminalAliasWireIds.size > 0 ? terminalAliasWireIds : undefined,
 		refineForms: refineForms.size > 0 ? refineForms : undefined,
+		refineDefaults: refineDefaults.size > 0 ? refineDefaults : undefined,
 		parentAliasedKinds,
 		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined,
 		variantChildren: variantChildren.size > 0 ? variantChildren : undefined,
@@ -874,6 +889,7 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 				: Object.fromEntries(Object.entries(raw.reserved).map(([wordset, members]) => [wordset, members.map(renameRule)])),
 		externalRoles: renameMap(raw.externalRoles),
 		refineForms: renameMap(raw.refineForms),
+		refineDefaults: renameMap(raw.refineDefaults),
 	spellings: renameMap(raw.spellings),
 		groups:
 			raw.groups === undefined
