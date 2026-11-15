@@ -3,13 +3,14 @@ import { createEngine } from '@sittir/common';
 import { scopeBuilders } from '@sittir/common/engine';
 import { _factoryMap } from '../src/factories/raw.ts';
 import scm from '../src/index.ts';
+import { sharedEngine } from '@sittir/common/testing';
 
 type Built = { $render(): string };
 type Read = Built & Record<string, () => unknown>;
 
 const engines = {
-	trusting: await createEngine(scm),
-	verifying: await createEngine(scm, { verifyStructure: 'runtime' })
+	trusting: await sharedEngine(() => createEngine(scm)),
+	verifying: await sharedEngine(() => createEngine(scm, { verifyStructure: 'runtime' }))
 };
 type Engine = (typeof engines)['trusting'];
 const builders = (engine: Engine) => scopeBuilders(engine, _factoryMap) as unknown as Record<string, (...args: unknown[]) => Built>;
