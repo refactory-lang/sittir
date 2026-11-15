@@ -101,7 +101,12 @@
 - [ ] **Step 2: Implement** the emitter over every path:
   - decisions 1, 4 and 5;
   - python's getter takes no `parameters`, and its generated build writes `self`. The vocabulary edit to `accessors/declaration.ts` comes from Task 3. It lands here because the interpreted build table takes that member's list arity from the vocabulary. The type tests gain "the getter's input has no `parameters`" for python and typescript;
-  - the four emit diagnostics;
+  - decision 9's tails. Each slot's tails are computed beside its exact set, written as `$path` spellings on the map's input side and as `case` labels in the member function, and checked by `portable-emit-tail-is-path`. The type and build tests gain:
+    - rust `declaration.function.name` accepts `{ $path: 'metavariable', $value: 'y' }`, and the generated build gives `$y`;
+    - rust `statement.return.expression` accepts `'arithmetic.add'` and refuses `'add'` and `'binary.arithmetic.add'`;
+    - python `statement.return.expression` accepts `'add'`;
+    - a root build refuses a tail;
+  - the five emit diagnostics;
   - the header comment through `$trivia.leading`;
   - number spelling (exponent forms included) through one shared value helper.
 - [ ] **Step 3: Regenerate.** The generated modules type-check with 0 errors, or each error is a `portable-emit-type` row. Record the per-grammar counts of every emit diagnostic as the ceilings.
