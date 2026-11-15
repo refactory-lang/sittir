@@ -20,7 +20,7 @@ import type {
 	PortableValueBuild
 } from '@sittir/types';
 import { hasKind } from './classify.ts';
-import { isNumberSlots, leafSeatOf, numberMembers, spells, takesTextValue, textBuilt, tokenKind, tokenText } from './facts.ts';
+import { isNumberSlots, leafSeatOf, numberMembers, spells, takesTextValue, tokenKind, tokenText } from './facts.ts';
 import { vocabularyPathFeatures } from './vocabulary-paths.ts';
 
 export interface PortableBuildContext {
