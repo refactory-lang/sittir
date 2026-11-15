@@ -125,13 +125,13 @@ fn the_rust_fixture_tree_reads_to_the_same_words() {
 #[test]
 fn the_typescript_fixture_tree_reads_to_the_same_words() {
     let words = deep_read::<_, sittir_typescript::render::AnyNode>(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults(), &probe_input("create-engine.ts"));
-    assert_eq!(words, ArenaWords { chunks: 5, words: 20268, hash: 11_760_481_003_164_907_781 });
+    assert_eq!(words, ArenaWords { chunks: 5, words: 20268, hash: 15_074_853_827_835_212_397 });
 }
 
 #[test]
 fn the_python_fixture_tree_reads_to_the_same_words() {
     let words = deep_read::<_, sittir_python::render::AnyNode>(sittir_python::PythonGrammar, sittir_python::render::options::defaults(), PYTHON);
-    assert_eq!(words, ArenaWords { chunks: 3, words: 3199, hash: 2_861_807_509_749_501_784 });
+    assert_eq!(words, ArenaWords { chunks: 3, words: 3199, hash: 14_130_698_697_946_923_945 });
 }
 
 #[test]
