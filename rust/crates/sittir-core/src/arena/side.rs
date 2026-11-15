@@ -498,8 +498,19 @@ impl SideRecord {
 
     /// The side record at `at`; an empty one at `Address::NONE`.
     pub fn read(arena: &dyn ArenaRead, at: Address) -> Result<SideRecord, ArenaError> {
+        Self::read_parts(arena, at, true).map(|(record, _)| record)
+    }
+
+    /// The side record at `at` without its lists, its slots and its run
+    /// left empty, and where its run lies: what naming a node and finding
+    /// its parent read.
+    pub(super) fn read_facts(arena: &dyn ArenaRead, at: Address) -> Result<(SideRecord, Option<RunAt>), ArenaError> {
+        Self::read_parts(arena, at, false)
+    }
+
+    fn read_parts(arena: &dyn ArenaRead, at: Address, lists: bool) -> Result<(SideRecord, Option<RunAt>), ArenaError> {
         if at == Address::NONE {
-            return Ok(SideRecord::default());
+            return Ok((SideRecord::default(), None));
         }
         let mut fields = Fields { arena, at, offset: 0 };
         let [flags] = fields.array()?;
@@ -550,7 +561,7 @@ impl SideRecord {
             let [count] = fields.array()?;
             let entries = fields.take(count.checked_mul(SLOT_WORDS).ok_or(malformed("side record slot count", count))?)?;
             let (entries, _) = entries.as_chunks::<{ SLOT_WORDS as usize }>();
-            record.slots = entries
+            record.slots = entries[..if lists { entries.len() } else { 0 }]
                 .iter()
                 .map(|&[word, before, after, separator, space_before, space_after, run, len]| {
                     let tokens = match (run, len) {
@@ -601,19 +612,45 @@ impl SideRecord {
             }
             record.depth = depth.cast_signed();
         }
+        let mut run = None;
         if has(mask::RUN) {
             let [len] = fields.array()?;
-            let mut words = fields.take(len)?;
-            if words.is_empty() {
+            let found = RunAt { at: at.offset(fields.offset).ok_or(malformed("side record run", len))?, len };
+            if fields.take(len)?.is_empty() {
                 return Err(malformed("side record run", len));
             }
-            while !words.is_empty() {
-                let (entry, taken) = RunEntry::take(words)?;
-                record.run.push(entry);
-                words = &words[taken..];
+            if lists {
+                record.run = found.entries(arena)?;
             }
+            run = Some(found);
         }
-        Ok(record)
+        Ok((record, run))
+    }
+}
+
+/// Where a side record's run lies: its first word and its words.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) struct RunAt {
+    at: Address,
+    len: u32,
+}
+
+impl RunAt {
+    /// The run's first entry.
+    pub(super) fn first(self, arena: &dyn ArenaRead) -> Result<RunEntry, ArenaError> {
+        RunEntry::take(arena.words(self.at, self.len)?).map(|(entry, _)| entry)
+    }
+
+    /// The run's entries, in document order.
+    pub(super) fn entries(self, arena: &dyn ArenaRead) -> Result<Vec<RunEntry>, ArenaError> {
+        let mut words = arena.words(self.at, self.len)?;
+        let mut run = Vec::new();
+        while !words.is_empty() {
+            let (entry, taken) = RunEntry::take(words)?;
+            run.push(entry);
+            words = &words[taken..];
+        }
+        Ok(run)
     }
 }
 
@@ -683,6 +720,20 @@ mod tests {
         assert_eq!(record.write_in(&mut in_place), Ok(at), "the token runs, then the record, at the same words");
         assert_eq!(in_place.chunk(0), placed.chunk(0));
         assert_eq!(SideRecord::default().write_in(&mut in_place), Ok(Address::NONE));
+    }
+
+    #[test]
+    fn a_read_of_its_facts_leaves_the_lists_where_they_lie() {
+        let mut arena = Arena::new();
+        let record = full();
+        let at = record.write(&mut |words| arena.push(words)).expect("room");
+        let (facts, run) = SideRecord::read_facts(&arena, at).expect("its facts");
+        let entries = record.run.clone();
+        assert_eq!(facts, SideRecord { slots: Vec::new(), run: Vec::new(), ..record });
+        let run = run.expect("a run");
+        assert_eq!(run.first(&arena), Ok(entries[0]));
+        assert_eq!(run.entries(&arena), Ok(entries));
+        assert_eq!(SideRecord::read_facts(&arena, Address::NONE), Ok((SideRecord::default(), None)));
     }
 
     #[test]
