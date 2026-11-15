@@ -296,11 +296,11 @@ if (typeof value === 'string') return b.identifier(value);
 **The case.** `identifier` is built from its text, but its interface held only `$path`, so `{ $path: 'identifier' }` type-checked and the build threw (`identifier: text must be a string: undefined`), while `{ $path: 'identifier', $value: 'x' }`, which builds, was refused. The reader returns an identifier as its bare text (`X: int = 1` reads `name: 'X'`), but the map typed every identifier read as `{ $path }`. The same held for every path a grammar builds from text alone. `x = "ab"` reads `{ $path: 'literal.string.text', $value: 'ab' }`, which the read type refused.
 
 **Answer (approved 2026-11-15).**
-- A path that a grammar builds from text alone declares `readonly $value: string`. Those paths are `identifier`, `literal.string.text`, `comment.text`, `comment.html`, `literal.regex.flags`, `literal.regex.pattern`, `clause.import.relative.prefix` and `expression.interpolation.conversion`.
-- A guard derives the set from the build tables. A path whose build arms include a text arm, and none of which needs a member or builds another value, declares the text `$value`, and no other path does.
+- A path that a grammar builds from text alone declares `readonly $value: string`. Those paths are `identifier`, `literal.string.text`, `comment.text`, `comment.html`, `literal.regex.flags`, `literal.regex.pattern`, `clause.import.relative.prefix` and `expression.interpolation.conversion`. Rust's `identifier.metavariable` (`$x`) builds from its name's text too, through a content arm, so it keeps the `$value` it inherits from `identifier`.
+- A guard derives the set from the build tables. A path whose build arms include one that takes a text `$value` (a text arm or a content arm), and none of which needs a member or builds another value, declares the text `$value`, and no other path does.
 - Its read and its input are its bare text or `{ $path, $value }`. `{ $path }` alone is a type error.
 - `Read<G, P>`, `InputOf` and a slot's default all add the bare text for such a path. The reader is unchanged.
-- The identifier subkinds that are structures (`identifier.qualified`, `.label`, `.lifetime`, `.metavariable`) restate `$value` away.
+- The identifier subkinds that are structures (`identifier.qualified`, `.label`, `.lifetime`) restate `$value` away.
 - The fixed-word text paths keep `{ $path }`, because every grammar builds them from it: `statement.break`, `statement.continue`, `modifier.visibility.*`, `expression.meta` and `clause.import.wildcard`.
 - A path whose text arm sits beside structural arms (python `literal.string.escape`, rust `literal.character`), or whose `$value` is a number (python `literal.number.integer`, rust `literal.number.float`, typescript `literal.number`), is left out. Its input needs forms, each stating either `$value` or the members.
 
@@ -311,6 +311,8 @@ if (typeof value === 'string') return b.identifier(value);
 | python constant `name` read as `'X'` | TS2322 | accepted |
 | `{ $path: 'literal.string.text', $value: 'ab' }` as a read | TS2353 | accepted |
 | `{ $path: 'statement.break' }` | accepted | accepted |
+| rust `{ $path: 'identifier.metavariable', $value: 'y' }` as a macro binding's `name` | TS2353 | accepted; builds `$y:expr` |
+| rust `{ $path: 'identifier.metavariable' }` | accepted; the build throws | TS2322 |
 
 ## Diagnostics and the MVP sets
 

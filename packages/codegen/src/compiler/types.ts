@@ -132,6 +132,7 @@ export interface RawGrammar {
 	readonly references: SymbolRef[];
 	readonly externalRoles?: Map<string, ExternalRole>;
 	readonly refineForms?: Map<string, RefineForm[]>;
+	readonly refineDefaults?: Map<string, string>;
 	readonly spellings?: SpellingFields;
 	readonly groups?: Record<string, Record<string, string> | undefined>;
 	readonly renderAs?: Record<string, Rule<'evaluate'>>;
@@ -186,10 +187,17 @@ import type { PatchSite, RefineForm } from '../dsl/wire/wire.ts';
 import type { DerivationRecords } from '../dsl/wire/derivation-records.ts';
 export type { RefineForm };
 
-export interface NarrowedField {
-	readonly fieldName: string;
-	readonly literal: string;
-}
+export type NarrowedField =
+	| { readonly via: 'literal'; readonly fieldName: string; readonly literal: string }
+	| { readonly via: 'arm'; readonly fieldName: string; readonly arm: string }
+	| {
+			readonly via: 'text';
+			readonly fieldName: string;
+			readonly path: string;
+			readonly text: string;
+			readonly stringTexts: readonly string[];
+			readonly nodeArms: readonly string[];
+	  };
 
 export interface LinkedRefineForm extends RefineForm {
 	readonly narrowedFields: readonly NarrowedField[];
@@ -218,6 +226,7 @@ export interface LinkedGrammar {
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly leafTextPatterns?: ReadonlyMap<string, string>;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
+	readonly refineDefaults?: ReadonlyMap<string, string>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	readonly displayLexemes?: ReadonlyMap<string, readonly string[]>;
@@ -256,6 +265,7 @@ export interface NormalizedGrammar {
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly externalRoles?: ReadonlyMap<string, ExternalRole>;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
+	readonly refineDefaults?: ReadonlyMap<string, string>;
 }
 
 export interface SimplifiedGrammar {
@@ -286,6 +296,7 @@ export interface SimplifiedGrammar {
 	readonly nodelessExtrasRun?: RegExp;
 	readonly lineEndings: LineEndings;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
+	readonly refineDefaults?: ReadonlyMap<string, string>;
 	readonly splicedNames: ReadonlySet<string>;
 	readonly generatedIdTables: GeneratedIdTables;
 }
@@ -333,6 +344,7 @@ export interface NodeMap {
 	readonly nodelessExtrasRun?: RegExp;
 	readonly lineEndings?: LineEndings;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
+	readonly refineDefaults?: ReadonlyMap<string, string>;
 	scc?: SCCAnalysis;
 	irSurface?: IrSurface;
 	wordLeafReserved?: readonly string[];

@@ -34,7 +34,7 @@ An existing hook sittir does not manage is kept as `<name>.pre-sittir`.
 ```bash
 pnpm test                     # all vitest suites (records test history)
 pnpm test:watch               # watch mode
-pnpm type-check               # tsc --noEmit across the workspace
+pnpm type-check               # tsrs --noEmit across the workspace
 pnpm run type-check:examples  # type-check the example modules
 pnpm run type-check:emitter   # type-check the portable emitter against the pinned build's declarations (bootstraps first)
 pnpm lint                     # oxlint
@@ -321,7 +321,7 @@ both stamps.
 (`packages/types/tsdown.config.ts`), with the `type-fest` types it uses
 inlined, so `type-fest` stays a devDependency. The bundle may take nothing
 else from `node_modules` and may import no package. The package's own
-`tsc` build writes to `build/` for the workspace's project references, and
+`tsrs` build writes to `build/` for the workspace's project references, and
 in the workspace its `exports` keep pointing at `src`; `publishConfig`
 points them at `dist`. The check type-checks the installed package in a
 consumer that has no `type-fest`.

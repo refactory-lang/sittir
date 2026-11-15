@@ -151,6 +151,7 @@ describe('post-evaluate invariant', () => {
 				'bindingEffects',
 				// refine() form metadata — populated per ADR-0010 phase 2.
 				'refineForms',
+				'refineDefaults',
 				// wire() config sidecars — drained from __wireContext__ in evaluate.ts.
 				'groups',
 				'renderAs',

@@ -271,6 +271,7 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 	stampCopyRefs(rules, linkCtx.copyBase);
 	const variantChildren = deriveVariantChildren(rules, linkCtx.copyBase);
 	const refineForms = new Map<string, readonly LinkedRefineForm[]>();
+	const refineDefaults = new Map<string, string>();
 	for (const [kind, forms] of raw.refineForms ?? []) {
 		const rule = rules[kind];
 		if (!rule) {
@@ -290,6 +291,19 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 			return issue === undefined;
 		});
 		if (validForms.length === 0) continue;
+		const declaredDefault = raw.refineDefaults?.get(kind);
+		if (declaredDefault !== undefined) {
+			if (validForms.some((form) => form.name === declaredDefault)) refineDefaults.set(kind, declaredDefault);
+			else
+				recordConfigIssue(
+					'refine-config-invalid',
+					{
+						ownerKind: kind,
+						message: `refine(${kind}): default '${declaredDefault}' names no form (forms: ${validForms.map((form) => `'${form.name}'`).join(', ')})`
+					},
+					linkCtx
+				);
+		}
 		refineForms.set(
 			kind,
 			validForms.map((form) => ({ ...form, narrowedFields: narrowedFieldLiteralsForForm(rule, form, rules) }))
@@ -322,6 +336,7 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 		displayLexemes: displayLexemes.size > 0 ? displayLexemes : undefined,
 		terminalAliasWireIds: terminalAliasWireIds.size > 0 ? terminalAliasWireIds : undefined,
 		refineForms: refineForms.size > 0 ? refineForms : undefined,
+		refineDefaults: refineDefaults.size > 0 ? refineDefaults : undefined,
 		parentAliasedKinds,
 		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined,
 		variantChildren: variantChildren.size > 0 ? variantChildren : undefined,
@@ -874,6 +889,7 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 				: Object.fromEntries(Object.entries(raw.reserved).map(([wordset, members]) => [wordset, members.map(renameRule)])),
 		externalRoles: renameMap(raw.externalRoles),
 		refineForms: renameMap(raw.refineForms),
+		refineDefaults: renameMap(raw.refineDefaults),
 	spellings: renameMap(raw.spellings),
 		groups:
 			raw.groups === undefined
@@ -2694,11 +2710,14 @@ function validateSelection(
 		return;
 	}
 	const stringValues = arms.map(unwrapToStringValue).filter((v): v is string => v !== undefined);
-	if (!stringValues.includes(selection)) {
+	if (!stringValues.includes(selection) && !arms.some(isNodeArm)) {
 		throw new ConfigError(
 			`refine(${kind}) form '${formName}': path '${pathStr}' selection '${selection}' does not match any string branch of the choice (available: ${stringValues.map((v) => `'${v}'`).join(', ') || '<none>'})`
 		);
 	}
+}
+function isNodeArm(rule: Rule<'link'>): rule is SymbolRule<'link'> {
+	return isSymbol(rule) && unwrapToStringValue(rule) === undefined;
 }
 function unwrapToStringValue(rule: Rule<'link'>): string | undefined {
 	return literalTextOf(rule);
@@ -2714,8 +2733,27 @@ export function narrowedFieldLiteralsForForm(
 		const resolution = resolveRefinePath('<emit>', form.name, pathStr, rule, rules);
 		if (!resolution.fieldName) continue;
 		const literal = resolveSelectionLiteral(resolution.choice, selection);
-		if (literal === undefined) continue;
-		out.push({ fieldName: resolution.fieldName, literal });
+		const nodeArms = resolution.choice.members.filter(isNodeArm);
+		if (typeof selection === 'string' && nodeArms.length > 0) {
+			const stringTexts = resolution.choice.members.map(unwrapToStringValue).filter((v): v is string => v !== undefined);
+			if (!stringTexts.includes(selection)) {
+				out.push({
+					via: 'text',
+					fieldName: resolution.fieldName,
+					path: pathStr,
+					text: selection,
+					stringTexts,
+					nodeArms: nodeArms.map((arm) => arm.name)
+				});
+				continue;
+			}
+		}
+		if (literal !== undefined) {
+			out.push({ via: 'literal', fieldName: resolution.fieldName, literal });
+			continue;
+		}
+		const arm = typeof selection === 'number' ? resolution.choice.members[selection] : undefined;
+		if (arm !== undefined && isNodeArm(arm)) out.push({ via: 'arm', fieldName: resolution.fieldName, arm: arm.name });
 	}
 	return out;
 }

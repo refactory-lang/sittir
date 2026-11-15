@@ -3033,10 +3033,6 @@ that may be absent. A choice is immediate when every arm is.
 
 The join-seams grammar view (`join-seams/grammar-view.ts`) keeps its own nullable rule set for the FIRST walk over the render rules.
 
-### `packages/codegen/src/compiler/model/first-tokens.ts`
-
-Token-level FIRST and direct-follow sets over the render rules (`NodeMap.normalizedRules`). They are grammar facts about which token can open a rule and which token can come straight after another; the lexer-merge guard is their consumer.
-
 ### `packages/codegen/src/compiler/model/node-map.ts::EdgeClassCtx`
 
 ```text

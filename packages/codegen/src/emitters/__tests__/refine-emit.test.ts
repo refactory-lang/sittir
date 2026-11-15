@@ -279,8 +279,8 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 		const rule = linkPredicted(raw).rules.iface_body!;
 		const narrowed = narrowedFieldLiteralsForForm(rule, form);
 		expect(narrowed).toEqual([
-			{ fieldName: 'opening', literal: '{' },
-			{ fieldName: 'closing', literal: '}' }
+			{ via: 'literal', fieldName: 'opening', literal: '{' },
+			{ via: 'literal', fieldName: 'closing', literal: '}' }
 		]);
 	});
 
@@ -293,8 +293,8 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 		const rule = linkPredicted(raw).rules.iface_body!;
 		const narrowed = narrowedFieldLiteralsForForm(rule, form);
 		expect(narrowed).toEqual([
-			{ fieldName: 'opening', literal: '{|' },
-			{ fieldName: 'closing', literal: '|}' }
+			{ via: 'literal', fieldName: 'opening', literal: '{|' },
+			{ via: 'literal', fieldName: 'closing', literal: '|}' }
 		]);
 	});
 
@@ -308,8 +308,8 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 		expect(() => (linked = linkPredicted(raw))).not.toThrow();
 		const narrowed = narrowedFieldLiteralsForForm(linked!.rules.string!, form);
 		expect(narrowed).toEqual([
-			{ fieldName: 'opening', literal: '"' },
-			{ fieldName: 'closing', literal: '"' }
+			{ via: 'literal', fieldName: 'opening', literal: '"' },
+			{ via: 'literal', fieldName: 'closing', literal: '"' }
 		]);
 	});
 
@@ -322,8 +322,8 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 		const linked = linkPredicted(raw);
 		const narrowed = narrowedFieldLiteralsForForm(linked.rules.iface_body!, form, linked.rules);
 		expect(narrowed).toEqual([
-			{ fieldName: 'opening', literal: '{|' },
-			{ fieldName: 'closing', literal: '|}' }
+			{ via: 'literal', fieldName: 'opening', literal: '{|' },
+			{ via: 'literal', fieldName: 'closing', literal: '|}' }
 		]);
 	});
 });

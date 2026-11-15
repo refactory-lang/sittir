@@ -1787,6 +1787,14 @@ uses the same property preservation operation as container and other wrapper
 reconstruction. Annotations and metadata survive both flat and path patches,
 including a hoisted rule whose annotation lives on a named precedence wrapper.
 
+### `packages/codegen/src/dsl/transform/transform-path.ts::memberIndex`
+
+Resolves a member index against a member count. A negative index counts from the end (`length + index`); any other index is returned unchanged.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::namedFieldCount`
+
+The number of occurrences of a named field in a rule. It walks the rule and counts each leaf that carries the field name; the rule is not changed.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::peelPrecs`
 
 The precedence wrappers above a rule, outermost first, and the rule beneath them.
