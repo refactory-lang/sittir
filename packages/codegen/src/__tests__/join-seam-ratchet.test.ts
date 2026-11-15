@@ -8,7 +8,7 @@ const CEILINGS: Record<
 > = {
 	rust: { previous: 1, next: 2, pairs: 1, blocked: 85 },
 	python: { previous: 4, next: 2, pairs: 4, blocked: 107 },
-	typescript: { previous: 2, next: 7, pairs: 2, blocked: 17 },
+	typescript: { previous: 2, next: 5, pairs: 2, blocked: 17 },
 	regex: { previous: 0, next: 0, pairs: 0, blocked: 0 },
 	scm: { previous: 0, next: 0, pairs: 0, blocked: 0 }
 };

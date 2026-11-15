@@ -95,6 +95,54 @@ describe('enumerateDeclarations', { timeout: 120_000 }, () => {
 	});
 });
 
+describe('declaration kinds', { timeout: 120_000 }, () => {
+	const kindsOf = (source: string): Record<string, string> =>
+		Object.fromEntries(
+			enumerateSource('packages/common/src/probe.ts', source).map((declaration) => [
+				`${declaration.path.join('::')}${declaration.isStatic ? ' (static)' : ''}`,
+				declaration.kind
+			])
+		);
+
+	it('names a field by its syntax, not its type: a property, a parameter property, an enum member, an object-literal property', () => {
+		const kinds = kindsOf(SOURCE);
+		expect(kinds).toMatchObject({
+			'Box::width': 'field',
+			'Box::label': 'field',
+			'Box::label::short': 'field',
+			'Shape::sides': 'field',
+			'Color::Red': 'field',
+			'TABLE::alpha': 'field',
+			'TABLE::gamma': 'field'
+		});
+	});
+
+	it('names a method, a constructor and an accessor a method, and everything that holds a body or a type a declaration', () => {
+		const kinds = kindsOf(SOURCE);
+		expect(kinds).toMatchObject({
+			'Box::constructor': 'method',
+			'Box::open': 'method',
+			'Box::size': 'method',
+			'Shape::area': 'method',
+			Box: 'declaration',
+			Shape: 'declaration',
+			Config: 'declaration',
+			Color: 'declaration',
+			TABLE: 'declaration',
+			over: 'declaration',
+			Outer: 'declaration',
+			'Outer::inner': 'declaration'
+		});
+	});
+
+	it('keeps a static field a field', () => {
+		expect(kindsOf('export class C { static EMPTY = 1; static make(): void {} }')).toMatchObject({
+			'C::EMPTY (static)': 'field',
+			'C::make (static)': 'method'
+		});
+	});
+});
+
 describe('classifyKey', { timeout: 120_000 }, () => {
 	let root: string;
 	beforeEach(() => {
@@ -344,7 +392,7 @@ describe('the ratchet on edge-case trees', { timeout: 120_000 }, () => {
 		expect(result.undocumented).not.toContain(`${FILE}::Only::make (static)`);
 	});
 
-	it('counts exported declarations and their direct members as undocumented, and not the nested trees below', () => {
+	it('counts exported declarations and their direct methods as undocumented, and not the nested trees below', () => {
 		writeSource(
 			root,
 			FILE,
@@ -355,10 +403,36 @@ describe('the ratchet on edge-case trees', { timeout: 120_000 }, () => {
 		expect([...result.undocumented].sort()).toEqual([
 			`${FILE}::N`,
 			`${FILE}::N::inner`,
-			`${FILE}::TABLE`,
-			`${FILE}::TABLE::alpha`
+			`${FILE}::TABLE`
 		]);
 		expect(result.valid['ok-owner-qualified']).toBe(1);
+	});
+
+	it('counts a declaration and a method undocumented, and no field or property beside them', () => {
+		writeSource(
+			root,
+			FILE,
+			[
+				'export class Box { constructor(public readonly width: number) {} static LIMIT = 1; label = 1; open(): void {} get size(): number { return 1; } }',
+				'export interface Shape { readonly sides: number; area(): number; }',
+				'export enum Color { Red }',
+				'export const TABLE = { alpha: 1, act() {} };',
+				''
+			].join('\n')
+		);
+		const result = measure(root);
+		expect([...result.undocumented].sort()).toEqual([
+			`${FILE}::Box`,
+			`${FILE}::Box::constructor`,
+			`${FILE}::Box::open`,
+			`${FILE}::Box::size`,
+			`${FILE}::Color`,
+			`${FILE}::Shape`,
+			`${FILE}::Shape::area`,
+			`${FILE}::TABLE`,
+			`${FILE}::TABLE::act`
+		]);
+		expect(result.exported).toBe(9);
 	});
 
 	it('does not let a line that merely starts with a fence marker close a fence', () => {

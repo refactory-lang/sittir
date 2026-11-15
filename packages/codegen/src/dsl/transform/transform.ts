@@ -7,6 +7,8 @@ import {
 	wrapInPrecStack,
 	isEnrichGroupLiftSymbol,
 	insideLexicalToken,
+	memberIndex,
+	namedFieldCount,
 	ApplyPathSkip
 } from './transform-path.ts';
 import type { PathSegment } from './transform-path.ts';
@@ -307,7 +309,7 @@ function clearSiblingDefaults(rule: RuntimeRule, segments: readonly PathSegment[
 		if (members === undefined) return parent;
 		return {
 			...parent,
-			members: members.map((m, i) => (i === last.value || !isDefaultArm(m) ? m : dropDefault(m)))
+			members: members.map((m, i) => (i === memberIndex(last.value, members.length) || !isDefaultArm(m) ? m : dropDefault(m)))
 		} as RuntimeRule;
 	});
 }
@@ -393,7 +395,9 @@ function applyVariantPatches(
 		}
 	}
 	registerIfPureVariantChoice(result);
-	for (const [key, value] of variantEntries) if (value.default === true && !missed.has(key)) result = clearSiblingDefaults(result, parsePath(key));
+	for (const [key, value] of variantEntries) {
+		if (value.default === true && !missed.has(key) && !hoisted?.consumed.has(key)) result = clearSiblingDefaults(result, parsePath(key));
+	}
 	return result;
 }
 
@@ -415,10 +419,8 @@ function isMintedVariantArm(arm: RuntimeRule, parentKind: string): boolean {
 }
 
 interface SiblingVariantHoistPlan {
-	readonly core: RuntimeRule;
 	readonly precStack: ReadonlyArray<RuntimeRule>;
-	readonly seqMembers: RuntimeRule[];
-	readonly resolvedPos: number;
+	readonly body: (arm: RuntimeRule) => RuntimeRule;
 	readonly choice: RuntimeRule;
 	readonly choiceMembers: RuntimeRule[];
 	readonly parsed: HoistVariantPath[];
@@ -445,36 +447,37 @@ function planSiblingVariantHoist(
 	);
 	if (parsed === null) return null;
 	if (parsed.length === 0) return bail('no variant arms to hoist');
-	const { choicePos, throughOptional } = parsed[0]!;
-	if (parsed.some((p) => p.choicePos !== choicePos))
-		return bail(
-			`variant patches target mixed choice positions (${parsed.map((p) => p.choicePos).join(',')}) — hoist needs all siblings at one choice`
-		);
-	if (parsed.some((p) => p.throughOptional !== throughOptional))
-		return bail('variant patches mix N/M and N/0/M paths — hoist needs all siblings addressed the same way');
-	const seqMembers = [...membersOf(core)];
-	const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
-	const hoistChoice = hoistChoiceOf(seqMembers[resolvedPos], throughOptional);
-	if (!hoistChoice) return bail(`position ${resolvedPos} is '${seqMembers[resolvedPos]?.type}', not a hoistable choice`);
-	const { choice, choiceMembers, absentIdx } = hoistChoice;
-	const armCount = throughOptional ? choiceMembers.length - 1 : choiceMembers.length;
-	for (const p of parsed) if (p.altIdx < 0) p.altIdx += armCount;
+	const { site } = parsed[0]!;
+	if (parsed.some((p) => p.site.through !== site.through))
+		return bail('variant patches mix N/M, N/0/M and name:/M paths — hoist needs all siblings addressed the same way');
+	const positions = parsed.map((p) => hoistPositionOf(p.site, core));
+	const at = positions[0];
+	if (at === undefined) return bail(`variant patch '${parsed[0]!.key}' names a field that is not the rule's only field of that name, reached through its sequences`);
+	const position = at.join('/');
+	if (positions.some((p) => p?.join('/') !== position))
+		return bail(`variant patches target mixed choice positions (${positions.map((p) => p?.join('/')).join(',')}) — hoist needs all siblings at one choice`);
+	const member = memberAt(core, at);
+	const hoistChoice = hoistChoiceOf(member, site);
+	if (!hoistChoice) return bail(`position ${position} is '${member?.type}', not a hoistable choice`);
+	const { choice, choiceMembers, absent, place } = hoistChoice;
+	const armCount = site.through === 'optional' ? choiceMembers.length - 1 : choiceMembers.length;
+	for (const p of parsed) p.altIdx = memberIndex(p.altIdx, armCount);
 	if (absentEntries.length > 1) return bail(`more than one absent variant declared (${absentEntries.map(([k]) => k).join(', ')})`);
 	for (const [key, v] of absentEntries) {
 		const segs = parsePath(key);
 		const head = segs[0];
-		const at = head?.kind === 'index' ? (head.value < 0 ? seqMembers.length + head.value : head.value) : undefined;
-		if (segs.length !== 1 || at !== resolvedPos) return bail(`absent variant '${v.name}' at '${key}' does not address the optional at ${resolvedPos}`);
-		if (absentIdx === undefined) return bail(`absent variant '${v.name}' at '${key}' addresses a choice that is not optional`);
+		const addressed = head?.kind === 'index' ? memberIndex(head.value, membersOf(core).length) : undefined;
+		if (segs.length !== 1 || addressed === undefined || String(addressed) !== position)
+			return bail(`absent variant '${v.name}' at '${key}' does not address the optional at ${position}`);
+		if (absent === undefined) return bail(`absent variant '${v.name}' at '${key}' addresses a choice that is not optional`);
 	}
 	const declared = absentEntries[0];
-	if (absentIdx !== undefined && (throughOptional || declared !== undefined) && !parsed.some((p) => p.altIdx === absentIdx)) {
+	if (absent !== undefined && (site.through === 'optional' || declared !== undefined) && !parsed.some((p) => p.altIdx === absent.idx)) {
 		parsed.push({
-			key: declared?.[0] ?? String(choicePos),
+			key: declared?.[0] ?? absent.key,
 			v: declared?.[1] ?? variant(ABSENT_VARIANT_NAME),
-			choicePos,
-			altIdx: absentIdx,
-			throughOptional
+			site,
+			altIdx: absent.idx
 		});
 	}
 	const targeted = new Set(parsed.map((p) => p.altIdx));
@@ -484,32 +487,73 @@ function planSiblingVariantHoist(
 		if (lift === null) return bail(`arm ${altIdx} has no variant() and no enrich lift to carry it`);
 		lifted.push({ altIdx, lift });
 	}
-	const scaffolding = seqMembers.filter((_, i) => i !== resolvedPos);
-	const emptyArm = choiceMembers.findIndex(
-		(arm) => matchesEmpty(arm) && scaffolding.every((m) => matchesEmpty(m))
-	);
+	const body = (arm: RuntimeRule): RuntimeRule => replaceAt(core, at, isBlank(arm) ? undefined : place(arm));
+	const emptyArm = choiceMembers.findIndex((arm) => matchesEmpty(body(arm)));
 	if (emptyArm >= 0) return bail(`arm ${emptyArm} would hoist to a variant that matches the empty string`);
-	const bareArm = choiceMembers.findIndex((arm) =>
-		variantBranchIsUnmaterializable({ type: 'SEQ', members: [...scaffolding, ...(isBlank(arm) ? [] : [arm])] } as unknown as RuntimeRule)
-	);
+	const bareArm = choiceMembers.findIndex((arm) => variantBranchIsUnmaterializable(body(arm)));
 	if (bareArm >= 0) return bail(`arm ${bareArm} would hoist to a variant with no token of its own and at most one named child`);
-	return { core, precStack, seqMembers, resolvedPos, choice, choiceMembers, parsed, lifted };
+	return { precStack, body, choice, choiceMembers, parsed, lifted };
 }
 
-function hoistChoiceOf(
-	rule: RuntimeRule | undefined,
-	throughOptional: boolean
-): { choice: RuntimeRule; choiceMembers: RuntimeRule[]; absentIdx: number | undefined } | null {
+function hoistPositionOf(site: HoistSite, core: RuntimeRule): readonly number[] | undefined {
+	if (site.through !== 'field') return [memberIndex(site.at, membersOf(core).length)];
+	return namedFieldCount(core, site.field) === 1 ? fieldPathOf(core, site.field) : undefined;
+}
+
+function fieldPathOf(seq: RuntimeRule, field: string): readonly number[] | undefined {
+	const members = membersOf(seq);
+	for (let i = 0; i < members.length; i++) {
+		const member = members[i]!;
+		if (isFieldLike(member) && member.name === field) return [i];
+		const inner = isSeqType(member.type) ? fieldPathOf(member, field) : undefined;
+		if (inner !== undefined) return [i, ...inner];
+	}
+	return undefined;
+}
+
+function memberAt(seq: RuntimeRule, at: readonly number[]): RuntimeRule | undefined {
+	return at.reduce<RuntimeRule | undefined>((node, i) => (node !== undefined && isSeqType(node.type) ? membersOf(node)[i] : undefined), seq);
+}
+
+function replaceAt(seq: RuntimeRule, at: readonly number[], replacement: RuntimeRule | undefined): RuntimeRule {
+	const [i, ...rest] = at;
+	const members = membersOf(seq);
+	const next = rest.length === 0 ? replacement : replaceAt(members[i!]!, rest, replacement);
+	return reconstructContainer(
+		seq,
+		members.flatMap((member, k) => (k !== i ? [member] : next === undefined ? [] : [next]))
+	);
+}
+
+interface HoistChoice {
+	readonly choice: RuntimeRule;
+	readonly choiceMembers: RuntimeRule[];
+	readonly absent: { readonly idx: number; readonly key: string } | undefined;
+	readonly place: (arm: RuntimeRule) => RuntimeRule;
+}
+
+function hoistChoiceOf(rule: RuntimeRule | undefined, site: HoistSite): HoistChoice | null {
 	if (!rule) return null;
+	if (site.through === 'field') {
+		const content = isFieldLike(rule) ? contentOf(rule) : undefined;
+		if (content === undefined || !isChoiceType(content.type)) return null;
+		return { choice: content, choiceMembers: [...membersOf(content)], absent: undefined, place: (arm) => reconstructWrapper(rule, arm) };
+	}
+	const place = (arm: RuntimeRule): RuntimeRule => arm;
 	const blank = { type: 'BLANK' } as unknown as RuntimeRule;
 	const content = optionalContentOf(rule);
 	if (content !== undefined) {
-		const members = throughOptional ? (isChoiceType(content.type) ? [...membersOf(content), blank] : null) : [content, blank];
+		const members = site.through === 'optional' ? (isChoiceType(content.type) ? [...membersOf(content), blank] : null) : [content, blank];
 		if (members === null) return null;
-		return { choice: { type: 'CHOICE', members } as unknown as RuntimeRule, choiceMembers: members, absentIdx: members.length - 1 };
+		return {
+			choice: { type: 'CHOICE', members } as unknown as RuntimeRule,
+			choiceMembers: members,
+			absent: { idx: members.length - 1, key: String(site.at) },
+			place
+		};
 	}
-	if (throughOptional || !isChoiceType(rule.type)) return null;
-	return { choice: rule, choiceMembers: [...membersOf(rule)], absentIdx: undefined };
+	if (site.through === 'optional' || !isChoiceType(rule.type)) return null;
+	return { choice: rule, choiceMembers: [...membersOf(rule)], absent: undefined, place };
 }
 
 function tryHoistSiblingVariants(
@@ -521,13 +565,12 @@ function tryHoistSiblingVariants(
 	if (!parentKind) return bail('no current rule kind (variant()/transform() called outside rule callback?)');
 	const plan = planSiblingVariantHoist(rule, variantEntries, (reason) => bail(reason));
 	if (plan === null) return null;
-	const { core, precStack, seqMembers, resolvedPos, choice, choiceMembers, parsed, lifted } = plan;
 	if (wireIsExtraRule(parentKind)) return bail(`'${parentKind}' is an extra; a non-token rule may not appear inside an extra`);
 	if (wireIsPrecedenceRankedRule(parentKind))
 		return bail(`'${parentKind}' is ranked by name in the grammar's precedences; its variants would reduce unranked`);
-	const authored = parsed.map((p) => polymorphVisibleName(parentKind, variantMintName(p.v))).find((name) => wireHasAuthoredRule(name));
+	const authored = plan.parsed.map((p) => polymorphVisibleName(parentKind, variantMintName(p.v))).find((name) => wireHasAuthoredRule(name));
 	if (authored !== undefined) return bail(`'${authored}' is an authored rule and would not carry the hoisted scaffolding`);
-	return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, lifted, parentKind, precStack);
+	return buildHoistedVariants(plan, parentKind);
 }
 
 function peelPrecWrappersFromRule(rule: RuntimeRule): {
@@ -545,12 +588,15 @@ function peelPrecWrappersFromRule(rule: RuntimeRule): {
 	return { bail, precStack, core };
 }
 
+type HoistSite =
+	| { readonly through: 'choice' | 'optional'; readonly at: number }
+	| { readonly through: 'field'; readonly field: string };
+
 interface HoistVariantPath {
 	key: string;
 	v: VariantPlaceholder;
-	choicePos: number;
+	site: HoistSite;
 	altIdx: number;
-	throughOptional: boolean;
 }
 
 function parseVariantPathsForHoist(
@@ -559,39 +605,28 @@ function parseVariantPathsForHoist(
 ): HoistVariantPath[] | null {
 	const parsed: HoistVariantPath[] = [];
 	for (const [key, v] of variantEntries) {
-		const segs = parsePath(key);
-		if (segs.some((s) => s.kind !== 'index'))
-			return bail(`variant patch '${key}' uses non-index segments (kind-match / wildcard not supported for hoist)`);
-		const values = segs.map((s) => (s as { value: number }).value);
-		if (values.length === 2) {
-			parsed.push({ key, v, choicePos: values[0]!, altIdx: values[1]!, throughOptional: false });
-		} else if (values.length === 3 && values[1] === 0) {
-			parsed.push({ key, v, choicePos: values[0]!, altIdx: values[2]!, throughOptional: true });
-		} else {
-			return bail(`variant patch '${key}' has ${segs.length} segments (expected N/M, or N/0/M through an optional)`);
-		}
+		const path = hoistPathOf(key, v, parsePath(key));
+		if (path === null) return bail(`variant patch '${key}' is not N/M, N/0/M through an optional, or name:/M through a field`);
+		parsed.push(path);
 	}
 	return parsed;
 }
 
-function buildHoistedVariants(
-	core: RuntimeRule,
-	seqMembers: RuntimeRule[],
-	choiceMembers: RuntimeRule[],
-	resolvedPos: number,
-	choice: RuntimeRule,
-	parsed: ReadonlyArray<HoistVariantPath>,
-	lifted: SiblingVariantHoistPlan['lifted'],
-	parentKind: string,
-	precStack: ReadonlyArray<RuntimeRule>
-): { rule: RuntimeRule; consumed: Set<string> } {
-	const hoist = (altContent: RuntimeRule): RuntimeRule => {
-		const hoistedMembers = seqMembers.flatMap((m, i) => (i !== resolvedPos ? [m] : isBlank(altContent) ? [] : [altContent]));
-		return wrapVariantBodyInParentPrec(withHoistedAnnotation(reconstructContainer(core, hoistedMembers)), precStack);
-	};
-	const refs: { altIdx: number; ref: RuntimeRule; name: string }[] = [];
+function hoistPathOf(key: string, v: VariantPlaceholder, segs: readonly PathSegment[]): HoistVariantPath | null {
+	const [head, second, third] = segs;
+	if (segs.length === 2 && head?.kind === 'fieldName' && second?.kind === 'index') return { key, v, site: { through: 'field', field: head.name }, altIdx: second.value };
+	if (head?.kind !== 'index' || second?.kind !== 'index') return null;
+	if (segs.length === 2) return { key, v, site: { through: 'choice', at: head.value }, altIdx: second.value };
+	if (segs.length === 3 && second.value === 0 && third?.kind === 'index') return { key, v, site: { through: 'optional', at: head.value }, altIdx: third.value };
+	return null;
+}
+
+function buildHoistedVariants(plan: SiblingVariantHoistPlan, parentKind: string): { rule: RuntimeRule; consumed: Set<string> } {
+	const { precStack, body, choice, choiceMembers, parsed, lifted } = plan;
+	const hoist = (altContent: RuntimeRule): RuntimeRule => wrapVariantBodyInParentPrec(withHoistedAnnotation(body(altContent)), precStack);
+	const refs: { altIdx: number; ref: RuntimeRule; name: string; declaredDefault: boolean }[] = [];
 	for (const p of parsed) {
-		const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
+		const resolvedAlt = memberIndex(p.altIdx, choiceMembers.length);
 		const altMember = choiceMembers[resolvedAlt]!;
 		refuseSameSite(altMember, p.key);
 		const name = polymorphVisibleName(parentKind, variantMintName(p.v));
@@ -600,17 +635,24 @@ function buildHoistedVariants(
 		if (!wireRegisterSyntheticRule(name, hoist(lift === null ? altMember : lift.body))) {
 			throw new Error(`registerSyntheticRule('${name}'): no active wire() context`);
 		}
-		refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, variantOwnerKind(parentKind, p.v), p.v.default === true || isDefaultArm(altMember)), name });
+		refs.push({
+			altIdx: resolvedAlt,
+			ref: withVariantAnnotation(symbolRef(name), p.v.name, variantOwnerKind(parentKind, p.v), p.v.default === true || isDefaultArm(altMember)),
+			name,
+			declaredDefault: p.v.default === true
+		});
 	}
 	for (const { altIdx, lift } of lifted) {
 		wireSetLiftBody(lift.liftName, hoist(lift.body));
-		refs.push({ altIdx, ref: choiceMembers[altIdx]!, name: lift.liftName });
+		refs.push({ altIdx, ref: choiceMembers[altIdx]!, name: lift.liftName, declaredDefault: false });
 	}
 	refs.sort((a, b) => a.altIdx - b.altIdx);
-	const newChoice = reconstructContainer(
+	const rebuilt = reconstructContainer(
 		choice,
 		refs.map((r) => r.ref)
 	);
+	const declared = refs.flatMap((r, i) => (r.declaredDefault ? [i] : []));
+	const newChoice = declared.length === 1 ? clearSiblingDefaults(rebuilt, [{ kind: 'index', value: declared[0]! }]) : rebuilt;
 	return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
 

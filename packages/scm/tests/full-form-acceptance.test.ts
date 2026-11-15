@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import scm from '../src/index.ts';
 import { createEngine } from '@sittir/common';
+import { sharedEngine } from '@sittir/common/testing';
 
-const sc = await createEngine(scm);
+const sc = await sharedEngine(() => createEngine(scm));
 
 describe('builders and their kind spelled in full', () => {
 	it('takes the delimiters in the text only when told they are there', () => {

@@ -1614,6 +1614,10 @@ Block comments: a comment between delimiters that can span lines.
 
 The bounds of a bound clause, claimed by the runtime tree. Its `bounds` slot is a list of constraint nodes: a macro call, an identifier, a higher-ranked bound, a removed bound, or a type. Each is a `clause.bounds` path under the `Clause` interface.
 
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/bound-clauses/clause.ts::Clause`
+
+The `Clause` namespace of bound clauses. It groups the `Bounds` arm, the constraints a bound clause places on a type parameter. The namespace declares no slots of its own; the arm is documented under its own key.
+
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/bound-clauses/index.ts::BoundClauses`
 
 The bound-clauses feature marker: an interface extending `BoundedQuantification` with `'bound-clauses': true`. A declaration that carries the marker admits the bounds written as a clause, and it adds no slots of its own.
@@ -1654,9 +1658,17 @@ The `declaration.type_parameter` node under bounded quantification. Its `bounds`
 
 The `declaration.union` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration`
+
+The `Declaration` namespace of bounded quantification. It groups the declaration arms that can carry bounds on their type parameters: enum, extension, function, interface, method, type alias, type parameter and union. The namespace declares no slots of its own; each arm is documented under its own key.
+
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/element.ts::Element::TypeArgument`
 
 The `element.type_argument` node: a type argument at a use site. Its `bounds` slot lists the constraints on the argument, using the same node kinds as a type parameter's bounds.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/element.ts::Element`
+
+The `Element` namespace of bounded quantification. It groups the `TypeArgument` arm, a type argument at a use site with its bounds. The namespace declares no slots of its own; the arm is documented under its own key.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/higher-rank-polymorphism/index.ts::HigherRankPolymorphism`
 
@@ -1737,3 +1749,107 @@ The `expression.class` node, a class written as an expression, with an `implemen
 ### `packages/types/src/vocabulary/features/interface-conformance/index.ts::InterfaceConformance`
 
 Nominal interface conformance: an interface marked `'interface-conformance': true`. A class declares the interfaces it implements through the `implements` slot.
+
+### `packages/types/src/vocabulary/features/annotated-lambdas/expression.ts::Expression`
+
+The `Expression` namespace of annotated lambdas. It groups the `Lambda` arm. The namespace declares no slots of its own.
+
+### `packages/types/src/vocabulary/features/annotated-lambdas/expression.ts::Expression::Lambda`
+
+The `Lambda` arm of annotated lambdas, claimed by the `r` claim tag only. Its optional `returnType` slot holds the lambda's return type: a removed bounds clause, a macro call, an identifier, or a type.
+
+### `packages/types/src/vocabulary/features/assertions/statement.ts::Statement`
+
+The `Statement` namespace of assertions. It groups the `Assert` arm. The namespace declares no slots of its own.
+
+### `packages/types/src/vocabulary/features/assertions/statement.ts::Statement::Assert`
+
+The `statement.assert` node, claimed by the `p` claim tag. Its `expressions` slot lists the conditions asserted, each an expression, identifier, literal or pattern.
+
+### `packages/types/src/vocabulary/features/block-comments/comment.ts::Comment`
+
+The `Comment` namespace of block comments. It groups the `Block` arm. The namespace declares no slots of its own.
+
+### `packages/types/src/vocabulary/features/block-comments/comment.ts::Comment::Block`
+
+The `comment.block` node, claimed by the `rt` claim tag. Its optional `content` slot is claimed by the `r` claim tag only.
+
+### `packages/types/src/vocabulary/features/type-expressions/index.ts::TypeExpressions`
+
+Type expressions: an interface marked `'type-expressions': true`. A type is read where an expression stands.
+
+### `packages/types/src/vocabulary/features/type-expressions/type.ts::Type`
+
+The `type` node read as an expression, claimed by the `prt` claim tag only. Its optional `content` slot holds the type.
+
+### `packages/types/src/vocabulary/features/c-family-expression-statements/index.ts::CFamilyExpressionStatements`
+
+C-family expression statements: an interface marked `'c-family-expression-statements': true`. An expression statement whose expression is its member.
+
+### `packages/types/src/vocabulary/features/c-family-expression-statements/statement.ts::Statement`
+
+The `Statement` namespace of C-family expression statements. It groups the `Expression` arm. The namespace declares no slots of its own.
+
+### `packages/types/src/vocabulary/features/c-family-expression-statements/statement.ts::Statement::Expression`
+
+The `statement.expression` node, claimed by the `t` claim tag only. Its optional `expression` slot holds a module declaration, an expression, an identifier or a literal.
+
+### `packages/types/src/vocabulary/features/c-family-unary-operators/expression.ts::Expression`
+
+The `Expression` namespace of C-family unary operators. It groups the `Unary` namespace. The namespace declares no slots of its own.
+
+### `packages/types/src/vocabulary/features/c-family-unary-operators/expression.ts::Expression::Unary`
+
+The `Unary` namespace of C-family unary operators. It groups the `BitwiseNot` and `Plus` arms, each a unary expression with no slots of its own.
+
+### `packages/types/src/vocabulary/features/c-family-unary-operators/index.ts::CFamilyUnaryOperators`
+
+C-family unary operators: an interface marked `'c-family-unary-operators': true`, covering bitwise not and unary plus.
+
+### `packages/types/src/vocabulary/features/coercive-equality/expression.ts::Expression`
+
+The `Expression` namespace of coercive equality. It groups the `Binary` namespace. The namespace declares no slots of its own.
+
+### `packages/types/src/vocabulary/features/coercive-equality/expression.ts::Expression::Binary`
+
+The `Binary` namespace of coercive equality. It groups the `Comparison` namespace, whose `LooseEqual` and `LooseNotEqual` arms are claimed by the `t` claim tag and set `operator` to never. The namespace declares no slots of its own.
+
+### `packages/types/src/vocabulary/features/coercive-equality/index.ts::CoerciveEquality`
+
+Coercive equality: an interface marked `'coercive-equality': true`. `==` and `!=` convert their operands' types before comparing.
+
+### `packages/types/src/vocabulary/features/conditional-expressions/expression.ts::Expression`
+
+The `Expression` namespace of conditional expressions. It groups the `Conditional` arm. The namespace declares no slots of its own.
+
+### `packages/types/src/vocabulary/features/conditional-expressions/expression.ts::Expression::Conditional`
+
+The `expression.conditional` node, claimed by the `pt` claim tag. Its `condition`, `consequence` and `alternative` slots each hold a module declaration, an expression, an identifier, a literal or a pattern.
+
+### `packages/types/src/vocabulary/features/conditional-expressions/index.ts::ConditionalExpressions`
+
+Conditional expressions: an interface marked `'conditional-expressions': true`. An expression that evaluates one of two operands by a condition.
+
+### `packages/types/src/vocabulary/features/constants/declaration.ts::Declaration`
+
+The `Declaration` namespace of constants. It groups the `Constant` arm. The namespace declares no slots of its own.
+
+### `packages/types/src/vocabulary/features/constants/declaration.ts::Declaration::Constant`
+
+The `declaration.constant` node, claimed by the `pr` claim tag. Its `name` slot holds an identifier, and its optional `value` slot holds an expression, an identifier, a literal or a statement. The `name` and `value` slots are claimed by the `r` claim tag only.
+
+### `packages/types/src/vocabulary/features/constants/index.ts::Constants`
+
+Constants: an interface marked `constants: true`. A binding declared as constant.
+
+### `packages/types/src/vocabulary/features/counted-loops/index.ts::CountedLoops`
+
+Counted loops: an interface marked `'counted-loops': true`. A loop with an initializer, a condition and an update.
+
+### `packages/types/src/vocabulary/features/counted-loops/statement.ts::Statement`
+
+The `Statement` namespace of counted loops. It groups the `Loop` namespace. The namespace declares no slots of its own.
+
+### `packages/types/src/vocabulary/features/counted-loops/statement.ts::Statement::Loop`
+
+The `Loop` namespace of counted loops. It groups the `Counted` arm, a loop with `initializer`, `condition`, optional `increment` and `body` slots, claimed by the `t` claim tag. The namespace declares no slots of its own.
