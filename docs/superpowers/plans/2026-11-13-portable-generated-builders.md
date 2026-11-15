@@ -61,16 +61,20 @@
 **Files:**
 - Modify: `packages/types/src/vocabulary/{map,input,utils}.ts` (`BuildInput`, `nodes`, the flag sets), `packages/codegen/src/emitters/overlays/portable/grammar-map.ts`
 - Modify: the getter vocabulary (`accessors/declaration.ts`, `accessor-signatures/declaration.ts`): a getter takes no `parameters`; setters keep them
+- Modify: the vocabulary interfaces of the paths built from text (spec decision 8), `packages/codegen/src/bindings/vocabulary.ts` (a member's text type), `packages/codegen/src/emitters/overlays/portable/typed.ts` (a view's text `$value` comes from the vocabulary)
+- Test: `packages/tools/tests/portable/text-values.test.ts` (the text-value set, derived from the build tables)
 - Test: `packages/types/tests/build-input.test-d.ts`
 
 - [ ] **Step 1: The failing tests:**
   - python `BuildInput<PythonMap, 'declaration.property.getter'>['$flags']` admits `'async'` (decision 3);
   - a `T.Block.Bound` is assignable to the getter's `body`, and a typescript node isn't (decision 2);
   - typescript `{ $path: 'literal.number', $value: 1 }` is assignable to an array element (decision 1);
-  - the getter's input has no `parameters`.
+  - the getter's input has no `parameters`;
+  - python `{ $path: 'identifier' }` is refused, `{ $path: 'identifier', $value: 'x' }` and `'x'` are accepted, and a constant's `name` reads as `'X'` (decision 8).
 - [ ] **Step 2: Run** `pnpm run type-check:tests`. It fails.
 - [ ] **Step 3: Implement.**
-  - Emit `nodes` from `PortableIds` and the flag sets from the arms and facts.
+  - Emit `nodes` per path, from the kinds whose read entries read as that path (`readPathsOf`, the read arms' derivation). `PortableIds` stays family-wide for the guards. Emit the flag sets from the arms and facts.
+  - Give each path built from text alone `readonly $value: string` (decision 8). `Read`, `InputOf` and the slot default add its bare text, and the typed views take their `$value` from the vocabulary.
   - Emit the `inputs` additions from the build rows with `builds`.
   - Add `BuildInput`.
   - Make the getter vocabulary edits, and run `tool bindings-inventory --write` for each grammar and `tool vocabulary-features --write`.

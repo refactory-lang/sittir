@@ -66,6 +66,10 @@ const METHOD_SIGNATURE_WITNESSES = [
 const ABSTRACT_METHOD_SIGNATURE_WITNESSES = [
 	{ text: 'export abstract class A { abstract set x(a, b); }\n', form: ['abstract', 'set', { symbol: 'identifier' }, { symbol: 'formal_parameters' }], kind: 'abstract_method_signature', production: 'ECMAScript 15.4 PropertySetParameterList: FormalParameter, in an abstract signature' }
 ] as const;
+const NAMESPACE_EXPRESSION = 'TypeScript NamespaceDeclaration: `namespace` IdentifierPath `{` NamespaceBody `}` is a declaration, never an expression; in an expression `namespace` is an identifier (tsc TS1005)';
+const NAMESPACE_EXPRESSION_WITNESSES = [
+	{ text: 'x = namespace Foo {};\n', form: [{ symbol: 'internal_module' }], kind: 'expression', production: NAMESPACE_EXPRESSION }
+] as const;
 const TYPE_QUERY_CALL = 'TypeScript TypeQuery: `typeof` takes an entity name or an import call, never another call (tsc TS1005)';
 const TYPE_QUERY_CALL_WITNESSES = [
 	{ text: 'export type A = typeof f();\n', form: ['typeof', { symbol: 'identifier' }, { symbol: 'arguments' }], kind: 'type_query', production: TYPE_QUERY_CALL },
@@ -673,6 +677,9 @@ export default grammar(enrich(base), wire({
 			const [point, leadingPoint, scientific, digits] = decimal.members;
 			return token(choice(hex, point, leadingPoint, scientific, seq('0', /0*[1-7][0-7]*/), digits, ...radixes));
 		}),
+		expression: reauthored('accepts-invalid-syntax', NAMESPACE_EXPRESSION_WITNESSES, ($, original) =>
+			choice(...original.members.filter((member: GrammarRule) => !(member.type === 'SYMBOL' && member.name === 'internal_module')))
+		),
 		_type_query_call_expression: reauthored('accepts-invalid-syntax', TYPE_QUERY_CALL_WITNESSES, ($) => seq(field('function', $.import), field('arguments', $.arguments))),
 		abstract_method_signature: reauthored('accepts-invalid-syntax', ABSTRACT_METHOD_SIGNATURE_WITNESSES, ($, original) =>
 			accessorArms($, original, { override: 2, dropped: [], kind: 3, optional: 5, signature: 6 })
