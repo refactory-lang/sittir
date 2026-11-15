@@ -179,7 +179,7 @@ function derive(
 	visiting: ReadonlySet<string>
 ): SubFactorySet {
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return EMPTY;
-	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return EMPTY;
+	if (node.rawFactoryName === undefined) return EMPTY;
 	const nextVisiting = new Set([...visiting, node.kind]);
 	const direct: SubFactory[] = [];
 	for (const slot of node.slots) {
@@ -344,7 +344,7 @@ function seatKeySpellsSeat(grammar: string, owner: string, group: string, seat: 
 
 export function flattenSeatsOf(node: AssembledNode, nodeMap: NodeMap): readonly FlattenedSeat[] {
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return [];
-	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return [];
+	if (node.rawFactoryName === undefined) return [];
 	const found: (FlattenSeat & { readonly fields: readonly string[] })[] = [];
 	for (const slot of node.slots) {
 		if (isMultiple(slot) || slot.values.length !== 1) continue;
@@ -407,7 +407,7 @@ export function emittedElementsSeats(
 
 export function elementsSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly FlattenSeat[] {
 	if (!isSlotBearingCompound(node)) return [];
-	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return [];
+	if (node.rawFactoryName === undefined) return [];
 	const seats: FlattenSeat[] = [];
 	for (const slot of node.slots) {
 		if (!isMultiple(slot) || slot.values.length === 0) continue;
@@ -426,7 +426,7 @@ export function elementsSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 
 export function tupleSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly FlattenSeat[] {
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return [];
-	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return [];
+	if (node.rawFactoryName === undefined) return [];
 	const parentShape = classifyFactoryShape(node, nodeMap);
 	if (parentShape !== 'config' && parentShape !== 'forwarded') return [];
 	const seats: FlattenSeat[] = [];

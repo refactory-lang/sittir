@@ -806,7 +806,6 @@ export function resolveDirectFactorySlot(node: AssembledNode, nodeMap: NodeMap):
 export function forwardedTargetKind(node: AssembledNode, nodeMap: NodeMap): string | null {
 	if (!isSlotBearingCompound(node)) return null;
 	if (node instanceof AssembledAlias) return null;
-	if (nodeMap.refineForms?.has(node.kind)) return null;
 	const slot = node.soleSlot;
 	if (slot === undefined || isMultiple(slot)) return null;
 	if (slotLiteralValues(slot).length > 0) return null;
