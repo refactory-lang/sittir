@@ -7968,6 +7968,10 @@ there, not by the hoisted flag here.
  */
 ```
 
+### `packages/codegen/src/emitters/refine-emit.ts::narrowedLiteralsOf`
+
+The narrowed-field values of a refine form, as a map from each field name to the text it narrows to. A field selected by a literal takes that literal. A field selected by a node arm takes the arm's fixed text, and fails with `refine-config-invalid` when the arm has none. A field selected by a path takes its selection text, which must match a string arm or a node arm's fixed text; otherwise it fails with the same diagnostic, naming the available texts.
+
 ### `packages/codegen/src/emitters/factory-map.ts::module`
 
 ```text

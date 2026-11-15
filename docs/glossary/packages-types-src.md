@@ -1350,6 +1350,10 @@ The alternative spellings of a qualified identifier.
 
 Omits the keys of a type that are registered, leaving the rest.
 
+### `packages/types/src/index.ts::OmitLeadingOption`
+
+A positional builder's argument tuples with a key removed from the options object the tuple leads with. A tuple whose options keep no key other than `$type` after the removal becomes `never`. A tuple that leads with a child rather than an options object is left unchanged.
+
 ### `packages/types/src/portable.ts::PortableSlotStep::flatten`
 
 Whether the step flattens its slot.
