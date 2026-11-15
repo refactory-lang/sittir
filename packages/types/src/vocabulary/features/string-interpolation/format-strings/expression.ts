@@ -6,6 +6,7 @@ export namespace Expression {
 		export interface Conversion<G extends GrammarMap, K extends Under<'expression.interpolation.conversion'> = 'expression.interpolation.conversion'> extends SubKindOf<V.Expression.Interpolation<G, K>> {
 			// claimed by p
 			readonly $path: K;
+			readonly $value: string;
 		}
 		export interface Format<G extends GrammarMap, K extends Under<'expression.interpolation.format'> = 'expression.interpolation.format'> extends SubKindOf<V.Expression.Interpolation<G, K>> {
 			// claimed by p

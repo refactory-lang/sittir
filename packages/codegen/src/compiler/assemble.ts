@@ -370,6 +370,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		nodelessExtrasRun: normalized.nodelessExtrasRun,
 		lineEndings: normalized.lineEndings,
 		refineForms: normalized.refineForms,
+		refineDefaults: normalized.refineDefaults,
 		parseKindCollisions: assembleDiagnostics.parseKindCollisions.all,
 		assembleWarnings: assembleDiagnostics.assembleWarnings.all,
 		namingEvents: assembleDiagnostics.namingEvents.all,

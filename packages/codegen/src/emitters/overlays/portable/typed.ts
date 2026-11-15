@@ -1,5 +1,6 @@
 import { type ModelNode, type ModelSlot } from '../../../bindings/facts.ts';
 import { tsname } from '../../../bindings/names.ts';
+import { textValued } from '../../../bindings/vocabulary.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { PORTABLE_MAP_FILE, PORTABLE_TS6_TYPE_TESTS, PORTABLE_TYPE_TESTS } from '../../../grammars.ts';
 import { concreteKinds, guaranteedBy, modelNode, readsList, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
@@ -7,7 +8,7 @@ import type { PortableBuildTable, PortableCondition } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { hasCatalogEntry, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { exactReadsOf, exactSlotsOf, type ExactSlots, type ValueRead } from './exact.ts';
-import { emitGrammarMap, grammarMapName, unmappedKindsBlock, unmappedName, type UnformedTest } from './grammar-map.ts';
+import { emitGrammarMap, grammarMapName, mapNeverOf, unmappedKindsBlock, unmappedName, type UnformedTest } from './grammar-map.ts';
 
 export interface PortableTypedInput {
 	readonly routes: GrammarRoutes;
@@ -63,10 +64,6 @@ const PRELUDE = [
 	'\treadonly $type: TSKindId;',
 	'\treadonly [low]: unknown;',
 	'\treadonly [flags]: readonly string[];',
-	'}',
-	'',
-	'interface PortableLeaf {',
-	'\treadonly $value: () => string;',
 	'}',
 	'',
 	'type Member<I, P extends keyof I> = I[P];',
@@ -172,8 +169,8 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 	const { model, vocabulary } = input;
 	const reads = exactReadsOf(typedInput);
 	const exact = exactSlotsOf(typedInput, reads);
-	const { entries, readPathsOf, entriesFor, token, textual, claimersOf, viewed, valueOf, viewClassOf } = reads;
-	const leafAt = (path: string): boolean => (claimersOf.get(path) ?? []).every((kind) => valueOf(path, kind) === 'text');
+	const never = mapNeverOf(typedInput, reads, exact);
+	const { entries, readPathsOf, entriesFor, token, textual, viewed, valueOf, viewClassOf } = reads;
 	const tokenTypeOf = reads.textTypeOf;
 	const map = grammarMapName(input.grammar);
 	const unemitted: PortableTypedUnemitted[] = [];
@@ -252,7 +249,7 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 
 	emit('export interface VocabViews {');
 	for (const path of viewed) {
-		emit(`\t${q(path)}: ViewForm<${interfaceOf(path)}>${leafAt(path) ? ' & PortableLeaf' : ''};`);
+		emit(`\t${q(path)}: ViewForm<${interfaceOf(path)}>;`);
 	}
 	emit('}', '');
 
@@ -417,14 +414,15 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 			const held = tree.size === 0 ? low : `${name}$Held`;
 			if (tree.size > 0) emit(`type ${held} = Present<${low}, ${presentTypeOf(tree)}>;`, '');
 			for (const [member, reads] of readsByName) {
+				if (never(entry.vocab, member)) continue;
 				const fn = `${name}$${member}`;
 				emit(`function ${fn}(this: Held<${held}>) {`, `\treturn ${memberBody(reads)};`, '}', '');
 				fields.push(`${member}: ${fn}`);
 				written.add(member);
 			}
-			for (const [member, facts] of declared) if (!facts.flag && facts.optional && !written.has(member)) fields.push(`${member}: none`);
-			const value = valueOf(entry.vocab, kind);
-			if (value !== undefined && (value !== 'text' || leafAt(entry.vocab))) fields.push(`$value: ${VALUE_READERS[value]}`);
+			for (const [member, facts] of declared) if (!facts.flag && facts.optional && !written.has(member) && !never(entry.vocab, member)) fields.push(`${member}: none`);
+			const value = valueOf(entry.vocab, kind) ?? (textValued(vocabulary, entry.vocab) ? 'text' : undefined);
+			if (value !== undefined && (value !== 'text' || textValued(vocabulary, entry.vocab))) fields.push(`$value: ${VALUE_READERS[value]}`);
 			emit(
 				`function ${name}(n: ${held}, set: readonly string[] = []): VocabViews[${q(entry.vocab)}] {`,
 				`\treturn { $type: kindOf(n)${fields.map((f) => `, ${f}`).join('')}, [low]: n, [flags]: set };`,

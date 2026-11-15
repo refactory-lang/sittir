@@ -50,6 +50,13 @@ The maintainer settled tree lifetime on 2026-11-10 and 2026-11-12. A proposal st
 - **A link to another engine's nodes is refused** in arena storage, as a cross-engine side entry is.
 - **A snapshot is canonical** (2026-11-12: "Canonical: renders `ur"a"`"). A detached snapshot holds a spelled slot's canonical member and no source spelling, so a snapshot of python `UR"a"` renders `ur"a"`. Both storages read the canonical member, per the 2026-11-09 ruling that spelling is its own channel, so object storage's read of a spelled slot follows it too.
 
+The maintainer settled how a parsed node's sides are read once no tree outlives a call, on 2026-11-14 and 2026-11-15:
+- **The landing gate** is one CI paired run: render and edit, this design's arena over master's arena, at most 1; parse plus whole read, arena over object storage, at most 1; parse alone is reduced and reported; no object-storage row moves.
+- **A node's three trivia sides are one read.** `readSides(node)` answers `{ leading, trailing, inner }` from one tree over the source's records, and the JS arena keeps the answer by the node's key until one of its sides is written.
+- **Unit sides are read apart** (`readUnitSides`, `ReadNodes.unitSides`), because they need the baseline measure and the three sides don't. An edit doesn't ask for them: a copy of a parsed node takes its source's unit sides when the copy is next rendered or read. A parsed node lives until its engine is disposed, so the source is there when the copy asks.
+- **A render hands the three sides back.** `renderBuiltSides` answers `{ text, sides }` for a parsed record, the sides read from the tree the render already made and placed, so the first edit after a render makes no side call. `renderBuilt` is unchanged. A render measures no more for it than the root's own inner side, where that side holds layout runs.
+- **Nothing is kept past the call for it.** Keeping the placement or the measure between calls stays excluded by the tree-lifetime rulings above.
+
 ## What lives after an arena parse call
 
 - **Records** for every node, from the single cursor pass. Leaves stay coordinates inside their holder's record.

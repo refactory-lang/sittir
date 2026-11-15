@@ -11,9 +11,11 @@ export namespace Declaration {
 			G,
 			K,
 			'value',
+			| V.Declaration.Any<G>
 			| V.Expression.Any<G>
 			| V.Identifier.Any<G>
 			| V.Literal.Any<G>
+			| V.Pattern.Any<G>
 			| V.Statement.Any<G>
 		>;
 		// r only

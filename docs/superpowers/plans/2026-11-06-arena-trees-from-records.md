@@ -251,7 +251,7 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 
 ### Task 6: Hydrate at parse and drop the tree inside the read call
 
-**Status:** open as #1183, which builds the held-parse slots this task no longer has. It is reworked to this task's shape, census first.
+**Status:** open as #1227 (the codec stage and the tree dropped inside the read call; #1183 is superseded and closes when #1227 lands). Its landing gate, set 2026-11-14, is measured on CI: render and edit against master's arena, parse plus whole read against object storage. Head `b3dd0c4ad` (2026-11-15) takes the side reads off the edit path, as the spec's Decided section records; its paired run is pending.
 
 This is tree lifetime only, as the spec's Tree lifetime section rules. It adds no per-tree owner, slot, table or count, and it designs no node release.
 

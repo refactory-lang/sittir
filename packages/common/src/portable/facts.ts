@@ -31,6 +31,8 @@ export function readableEntries<E extends Placement>(entries: readonly E[]): rea
 export const textBuilt = (table: PortableBuildTable, arm: PortableBuildArm): boolean =>
 	arm.members.length === 0 && arm.builder !== undefined && table.builders[arm.builder] === 'text';
 
+export const takesTextValue = (table: PortableBuildTable, arm: PortableBuildArm): boolean => arm.content !== undefined || textBuilt(table, arm);
+
 export const nullaryBuilt = (table: PortableBuildTable, arm: PortableBuildArm): boolean =>
 	arm.members.length === 0 && arm.builder !== undefined && table.builders[arm.builder] === 'nullary';
 

@@ -2,7 +2,7 @@ import { builtFlags, nullaryBuilt, readableEntries, textBuilt, type PortableCarr
 import type { PortableBuildArm } from '@sittir/types';
 import { type ModelNode } from '../../../bindings/facts.ts';
 import { armClass, derive, isScalar, levelMembers, type Derivation, type Scalar } from '../../../bindings/derive.ts';
-import { concreteKinds, modelNode, valueTokensOf, type ReadEntry } from '../../../bindings/routes.ts';
+import { concreteKinds, guaranteedBy, modelNode, valueTokensOf, type ReadEntry } from '../../../bindings/routes.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { findKindEntry, fixedTextKinds } from '../../kind-discriminant.ts';
 import type { PortableTypedInput } from './typed.ts';
@@ -235,6 +235,7 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 			for (const entry of list) {
 				if (entry.vocab !== path) continue;
 				const closes = new Set(freeTextClosedBy.get(entry) ?? []);
+				const sure = guaranteedBy(model, entry);
 				for (const route of entry.members) {
 					if (route.name !== member || route.flag === true) continue;
 					const except = new Set(route.route === 'slot' ? (route.except ?? []) : []);
@@ -244,7 +245,9 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 					if (owner?.modelType === 'lexedPattern' && owner.slots.find((at) => at.name === last?.slot)?.storage !== 'boolean') interior = true;
 					const pinned = route.route === 'nested' ? route.selector.kind : null;
 					const held = new Set(concreteKinds(model, slotKinds));
-					for (const k of pinned === null ? slotKinds : concreteKinds(model, [pinned]).filter((at) => held.has(at))) (closes.has(nodeOf(k)?.kind ?? k) ? closed : kinds).add(k);
+					const tested = route.path === undefined ? undefined : sure.present(route.path);
+					const read = tested !== undefined && tested.length > 0 ? tested.filter((at) => held.has(at)) : pinned === null ? slotKinds : concreteKinds(model, [pinned]).filter((at) => held.has(at));
+					for (const k of read) (closes.has(nodeOf(k)?.kind ?? k) ? closed : kinds).add(k);
 				}
 			}
 		return { kinds: [...kinds].sort(), closed: [...closed].filter((k) => !kinds.has(k)).sort(), interior };
@@ -264,11 +267,11 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 		for (const [member, declared] of vocabulary.members(path)) {
 			if (declared.flag) continue;
 			const level = memberLevelOf(path, member);
-			if (level === undefined) continue;
-			const arms = [...levelMembers(own, level).get(member)!.kinds];
-			const closed = closedPathsOf(level, member);
-			const kinds = new Set<string>();
 			const { kinds: routed, interior } = routeKinds(path, member);
+			if (level === undefined && routed.length === 0 && !interior) continue;
+			const arms = level === undefined ? [] : [...levelMembers(own, level).get(member)!.kinds];
+			const closed = level === undefined ? new Set<string>() : closedPathsOf(level, member);
+			const kinds = new Set<string>();
 			const read = readsIn(routed);
 			const unmapped = read.unmapped.map((kind) => `${grammarInput.grammar}:${kind}`);
 			const texts = new Set<string>(read.texts);

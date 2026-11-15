@@ -23,5 +23,6 @@ export namespace Comment {
 	export interface Text<G extends GrammarMap, K extends Under<'comment.text'> = 'comment.text'> extends SubKindOf<V.Comment<G, K>> {
 		// claimed by r
 		readonly $path: K;
+		readonly $value: string;
 	}
 }

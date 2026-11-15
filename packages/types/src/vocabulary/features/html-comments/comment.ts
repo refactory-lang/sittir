@@ -5,5 +5,6 @@ export namespace Comment {
 	export interface Html<G extends GrammarMap, K extends Under<'comment.html'> = 'comment.html'> extends SubKindOf<V.Comment<G, K>> {
 		// claimed by t
 		readonly $path: K;
+		readonly $value: string;
 	}
 }

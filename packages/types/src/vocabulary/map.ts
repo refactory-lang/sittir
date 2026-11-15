@@ -4,15 +4,21 @@ export interface GrammarMap {
 	readonly features: object;
 	readonly overrides: { readonly [path: string]: { readonly [member: string]: unknown } };
 	readonly inputs: object;
+	readonly nodes: object;
+	readonly flags: object;
 }
 
 export interface Contract<F extends object> extends GrammarMap {
 	readonly features: F;
 	readonly overrides: {};
-	readonly inputs: { readonly [P in keyof TextPaths['texts']]: string };
+	readonly inputs: { readonly [P in keyof TextPaths['texts'] | TextValued<Contract<F>>]: string };
+	readonly nodes: {};
+	readonly flags: {};
 }
 
 export interface Paths<G extends GrammarMap> {}
+
+type TextValued<G extends GrammarMap> = { readonly [P in keyof Paths<G>]-?: Paths<G>[P] extends { readonly $value: string } ? P : never }[keyof Paths<G>];
 
 export interface TextPaths {
 	readonly texts: {
@@ -43,11 +49,23 @@ type Override<G extends GrammarMap, P extends string, M extends string, D> = [P]
 		: D
 	: D;
 
+type NodeOf<I, Bound, Parsed> = I extends keyof Bound ? Bound[I] | (I extends keyof Parsed ? Parsed[I] : never) : I;
+
+export type NodesOf<Ids, Bound, Parsed> = { readonly [P in keyof Ids]: NodeOf<Ids[P], Bound, Parsed> };
+
+export type NodesAt<G extends GrammarMap, P> = P extends keyof G['nodes'] ? G['nodes'][P] : never;
+
+type NodeArm<G extends GrammarMap, D> = {} extends G['nodes'] ? Unmapped : D extends { readonly $path: infer P } ? NodesAt<G, P> : never;
+
+export type TextInput<G extends GrammarMap, P> = P extends keyof G['inputs'] ? Extract<G['inputs'][P], string> : never;
+
+export type Valued<G extends GrammarMap, D> = D extends { readonly $path: infer P; readonly $value: string } ? TextInput<G, P> : never;
+
 export type Slot<G extends GrammarMap, P extends string, M extends string, D> = Override<
 	G,
 	P,
 	M,
-	NamedFlags<G, D> | Unmapped
+	NamedFlags<G, D> | NodeArm<G, D> | Valued<G, D>
 >;
 
 export type Text<G extends GrammarMap, P extends string> = Override<G, P, '$text', string>;
@@ -77,7 +95,7 @@ export type Formed<G extends GrammarMap, R> = R extends { readonly $path: infer 
 		: R
 	: R;
 
-export type Read<G extends GrammarMap, P extends keyof Paths<G>> = NamedFlags<G, Formed<G, Paths<G>[P]>>;
+export type Read<G extends GrammarMap, P extends keyof Paths<G>> = NamedFlags<G, Formed<G, Paths<G>[P]>> | Valued<G, Paths<G>[P]>;
 
 type Defaults<G extends GrammarMap> = Paths<Contract<G['features']>>;
 

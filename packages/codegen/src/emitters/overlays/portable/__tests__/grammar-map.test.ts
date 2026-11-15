@@ -132,8 +132,22 @@ describe('emitGrammarMap, python', () => {
 		expect(entryOf(map, 'statement.block') ?? '').not.toContain('$forms');
 	});
 
+	it("names each path's nodes by the kinds that read as that path, never a subpath's, and its flags from what its build arms set", () => {
+		const nodes = map.slice(map.indexOf('\treadonly nodes: V.NodesOf<{\n'), map.indexOf('\n\t}, T.BoundByKindId, T.ParsedByKindId>;\n'));
+		expect(nodes).toContain('\t\treadonly "identifier": TSKindId.Identifier;');
+		expect(nodes).toContain('\t\treadonly "identifier.qualified": TSKindId.DottedName | TSKindId.MemberType;');
+		const flags = map.slice(map.indexOf('\treadonly flags: {\n'), map.indexOf('\n\t};\n}', map.indexOf('\treadonly flags: {\n')));
+		expect(flags).toContain('\t\treadonly "declaration.property.getter": "async" | "override";');
+		expect(flags).toContain('\t\treadonly "declaration.constant": never;');
+	});
+
+	it("types a member no claim's level declares by what its routes read: a constant's value admits the node no path claims", () => {
+		expect(armsAt(map, 'declaration.constant', 'value')).toContain('V.Unmapped<"python:as_pattern">');
+		expect(armsAt(map, 'declaration.constant', 'name')).toEqual(['V.Read<PythonMap, "identifier">']);
+	});
+
 	it('takes bare text as the input of a path the grammar builds from text', () => {
-		const inputs = map.slice(map.indexOf('\treadonly inputs: {\n'), map.indexOf('\n\t};\n}', map.indexOf('\treadonly inputs: {\n')));
+		const inputs = map.slice(map.indexOf('\treadonly inputs: {\n'), map.indexOf('\n\t};\n', map.indexOf('\treadonly inputs: {\n')));
 		expect(inputs).toContain('\t\treadonly "identifier": string;');
 		expect(inputs).not.toContain('"declaration.constant"');
 	});
@@ -148,5 +162,20 @@ describe('emitGrammarMap, typescript', () => {
 
 	it('overrides no member of a path the vocabulary declares as text', () => {
 		expect(entryOf(map, 'expression.call.import')?.split('\n').slice(1)).toEqual(['\t\t\treadonly $text: PortableTexts["expression.call.import"];']);
+	});
+});
+
+describe('emitGrammarMap, typescript', () => {
+	let map: string;
+
+	beforeAll(async () => {
+		map = await mapOf('typescript');
+	}, 120_000);
+
+	it("admits a root path that builds by its value's type at each path it builds through, with that value's type", () => {
+		const inputs = map.slice(map.indexOf('\treadonly inputs: {\n'), map.indexOf('\n\t};\n', map.indexOf('\treadonly inputs: {\n')));
+		expect(inputs).toContain('\t\treadonly "literal.number.float": { readonly $path: "literal.number"; readonly $value: number };');
+		expect(inputs).toContain('\t\treadonly "literal.number.integer.big": { readonly $path: "literal.number"; readonly $value: bigint };');
+		expect(inputs).toContain('\t\treadonly "literal.number": string;');
 	});
 });
