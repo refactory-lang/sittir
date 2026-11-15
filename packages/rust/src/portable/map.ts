@@ -9,10 +9,7 @@ export interface RustMap extends V.GrammarMap {
 	readonly features: V.RustFeatures;
 	readonly overrides: {
 		readonly argument: {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -79,8 +76,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -160,7 +155,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'content'>;
 		};
 		readonly 'attribute.content': {
-			readonly content: V.Read<RustMap, 'attribute.content'>;
+			readonly content: never;
 			readonly input:
 				| V.Read<RustMap, 'element.macro.token_tree.delimited.brace'>
 				| V.Read<RustMap, 'element.macro.token_tree.delimited.bracket'>
@@ -230,8 +225,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -307,11 +300,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly path:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -330,11 +320,9 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -342,7 +330,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -378,38 +377,14 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'bounds'>;
 		};
 		readonly 'clause.bounds.higher_ranked': {
-			readonly bounds:
-				| V.Read<RustMap, 'clause.bounds.higher_ranked'>
-				| V.Read<RustMap, 'clause.bounds.removed'>
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'type.abstract'>
-				| V.Read<RustMap, 'type.array'>
-				| V.Read<RustMap, 'type.bounded'>
-				| V.Read<RustMap, 'type.dynamic'>
-				| V.Read<RustMap, 'type.function'>
-				| V.Read<RustMap, 'type.generic'>
-				| V.Read<RustMap, 'type.pointer'>
-				| V.Text<RustMap, 'type.primitive.never'>
-				| V.Read<RustMap, 'type.reference'>
-				| V.Read<RustMap, 'type.tuple'>
-				| V.Text<RustMap, 'type.unit'>;
+			readonly bounds: never;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -417,7 +392,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -457,38 +443,14 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'type' | 'typeParameters'>;
 		};
 		readonly 'clause.bounds.removed': {
-			readonly bounds:
-				| V.Read<RustMap, 'clause.bounds.higher_ranked'>
-				| V.Read<RustMap, 'clause.bounds.removed'>
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'type.abstract'>
-				| V.Read<RustMap, 'type.array'>
-				| V.Read<RustMap, 'type.bounded'>
-				| V.Read<RustMap, 'type.dynamic'>
-				| V.Read<RustMap, 'type.function'>
-				| V.Read<RustMap, 'type.generic'>
-				| V.Read<RustMap, 'type.pointer'>
-				| V.Text<RustMap, 'type.primitive.never'>
-				| V.Read<RustMap, 'type.reference'>
-				| V.Read<RustMap, 'type.tuple'>
-				| V.Text<RustMap, 'type.unit'>;
+			readonly bounds: never;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -496,7 +458,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -534,17 +507,10 @@ export interface RustMap extends V.GrammarMap {
 			readonly bounds:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+				| V.Read<RustMap, 'identifier.lifetime'>;
 		};
 		readonly 'clause.case.match': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'> | V.Read<RustMap, 'attribute.inner'>;
 			readonly body:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -611,8 +577,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -753,8 +717,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -834,11 +796,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -1069,22 +1027,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body'>;
 		};
 		readonly 'clause.import.alias': {
-			readonly alias:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly alias: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -1100,11 +1048,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'clause.import.wildcard'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super';
@@ -1114,28 +1059,14 @@ export interface RustMap extends V.GrammarMap {
 			readonly path:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
 				| T.Metavariable.Parsed
 				| T.ScopedIdentifier.Parsed;
-			readonly useClauses:
-				| V.Read<RustMap, 'clause.import.alias'>
-				| V.Read<RustMap, 'clause.import.list'>
-				| V.Read<RustMap, 'clause.import.list.scoped'>
-				| V.Read<RustMap, 'clause.import.wildcard'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly useClauses: never;
 			readonly $forms: V.Form<'list'>;
 		};
 		readonly 'clause.import.wildcard': {
@@ -1147,11 +1078,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -1273,8 +1200,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -1418,8 +1343,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -1494,42 +1417,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly pattern:
-				| V.Read<RustMap, 'expression.block.const'>
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'literal.character'>
-				| V.Read<RustMap, 'literal.number.float'>
-				| V.Read<RustMap, 'literal.number.integer'>
-				| V.Read<RustMap, 'literal.number.integer.binary'>
-				| V.Read<RustMap, 'literal.number.integer.hex'>
-				| V.Read<RustMap, 'literal.number.integer.octal'>
-				| V.Read<RustMap, 'literal.number.negative'>
-				| V.Read<RustMap, 'literal.string'>
-				| V.Read<RustMap, 'literal.string.bytes'>
-				| V.Read<RustMap, 'literal.string.c'>
-				| V.Read<RustMap, 'literal.string.raw'>
-				| V.Read<RustMap, 'pattern.as'>
-				| V.Read<RustMap, 'pattern.generic'>
-				| V.Read<RustMap, 'pattern.list'>
-				| V.Read<RustMap, 'pattern.mutable'>
-				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
-				| V.Read<RustMap, 'pattern.range.exclusive'>
-				| V.Read<RustMap, 'pattern.range.inclusive'>
-				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
-				| V.Read<RustMap, 'pattern.reference'>
-				| V.Read<RustMap, 'pattern.reference.value'>
-				| V.Read<RustMap, 'pattern.struct'>
-				| V.Text<RustMap, 'pattern.struct.rest'>
-				| V.Read<RustMap, 'pattern.tuple'>
-				| V.Text<RustMap, 'pattern.wildcard'>;
+			readonly pattern: never;
 			readonly rights:
 				| V.Read<RustMap, 'clause.let'>
 				| V.Read<RustMap, 'expression.assignment'>
@@ -1597,8 +1485,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -1672,96 +1558,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly value:
-				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
-				| V.Read<RustMap, 'expression.assignment.compound.add'>
-				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
-				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
-				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
-				| V.Read<RustMap, 'expression.assignment.compound.divide'>
-				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
-				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
-				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
-				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
-				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
-				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
-				| V.Read<RustMap, 'expression.binary.bitwise.and'>
-				| V.Read<RustMap, 'expression.binary.bitwise.or'>
-				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
-				| V.Read<RustMap, 'expression.binary.comparison.equal'>
-				| V.Read<RustMap, 'expression.binary.comparison.greater'>
-				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
-				| V.Read<RustMap, 'expression.binary.comparison.less'>
-				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
-				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
-				| V.Read<RustMap, 'expression.binary.logical.and'>
-				| V.Read<RustMap, 'expression.binary.logical.or'>
-				| V.Read<RustMap, 'expression.binary.shift.left'>
-				| V.Read<RustMap, 'expression.binary.shift.right'>
-				| V.Read<RustMap, 'expression.block.async'>
-				| V.Read<RustMap, 'expression.block.const'>
-				| V.Read<RustMap, 'expression.block.generator'>
-				| V.Read<RustMap, 'expression.block.try'>
-				| V.Read<RustMap, 'expression.block.unsafe'>
-				| V.Read<RustMap, 'expression.call'>
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Read<RustMap, 'expression.call.member'>
-				| V.Read<RustMap, 'expression.call.qualified'>
-				| V.Read<RustMap, 'expression.cast.conversion'>
-				| V.Read<RustMap, 'expression.collection.list'>
-				| V.Read<RustMap, 'expression.collection.list.repeat'>
-				| V.Read<RustMap, 'expression.collection.struct'>
-				| V.Read<RustMap, 'expression.collection.tuple'>
-				| V.Read<RustMap, 'expression.instantiation'>
-				| V.Read<RustMap, 'expression.lambda'>
-				| V.Read<RustMap, 'expression.member'>
-				| V.Read<RustMap, 'expression.parenthesized'>
-				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
-				| V.Read<RustMap, 'expression.range.exclusive'>
-				| V.Read<RustMap, 'expression.range.inclusive'>
-				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
-				| V.Read<RustMap, 'expression.reference'>
-				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
-				| V.Read<RustMap, 'expression.unary.deref'>
-				| V.Read<RustMap, 'expression.unary.negation'>
-				| V.Read<RustMap, 'expression.unary.not'>
-				| V.Text<RustMap, 'expression.unit'>
-				| V.Read<RustMap, 'expression.yield'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'literal.character'>
-				| V.Read<RustMap, 'literal.number.float'>
-				| V.Read<RustMap, 'literal.number.integer'>
-				| V.Read<RustMap, 'literal.number.integer.binary'>
-				| V.Read<RustMap, 'literal.number.integer.hex'>
-				| V.Read<RustMap, 'literal.number.integer.octal'>
-				| V.Read<RustMap, 'literal.string'>
-				| V.Read<RustMap, 'literal.string.bytes'>
-				| V.Read<RustMap, 'literal.string.c'>
-				| V.Read<RustMap, 'literal.string.raw'>
-				| V.Read<RustMap, 'statement.block'>
-				| V.Read<RustMap, 'statement.break'>
-				| V.Read<RustMap, 'statement.continue'>
-				| V.Read<RustMap, 'statement.if'>
-				| V.Read<RustMap, 'statement.loop'>
-				| V.Read<RustMap, 'statement.loop.for_each'>
-				| V.Read<RustMap, 'statement.loop.while'>
-				| V.Read<RustMap, 'statement.match'>
-				| V.Read<RustMap, 'statement.return'>;
+			readonly value: never;
 			readonly $forms: V.Form<'left'>;
 		};
 		readonly 'clause.lifetimes': {
@@ -1795,11 +1592,9 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -1807,7 +1602,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -1844,14 +1650,22 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'clause.bounds.higher_ranked'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
 				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| 'bool'
@@ -1877,7 +1691,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.PointerTypeMut.Parsed
 				| T.ReferenceType.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
-			readonly wherePredicates: V.Read<RustMap, 'clause.where.predicate'>;
+			readonly wherePredicates: never;
 			readonly $forms: V.Form<'bounds' | 'left'>;
 		};
 		readonly 'comment.block': {
@@ -1904,24 +1718,14 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'content'>;
 		};
 		readonly 'declaration.constant': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -1929,7 +1733,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -2027,8 +1842,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -2104,24 +1917,14 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
 		readonly 'declaration.constant.private': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -2129,7 +1932,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -2227,8 +2041,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -2304,24 +2116,14 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
 		readonly 'declaration.constant.public': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -2329,7 +2131,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -2427,8 +2240,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -2504,24 +2315,14 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
 		readonly 'declaration.constant.public.internal': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -2529,7 +2330,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -2627,8 +2439,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -2704,24 +2514,14 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
 		readonly 'declaration.constant.public.parent': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -2729,7 +2529,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -2827,8 +2638,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -2904,22 +2713,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
 		readonly 'declaration.constant.public.restricted': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -2930,11 +2729,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -2942,7 +2738,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -3040,8 +2847,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -3136,14 +2941,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.internal'>
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.parent'>
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -3172,14 +2970,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.internal'>
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.parent'>
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -3208,14 +2999,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.internal'>
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.parent'>
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -3244,14 +3028,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.internal'>
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.parent'>
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -3280,14 +3057,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.internal'>
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.parent'>
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -3316,22 +3086,12 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.internal'>
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.parent'>
 				| V.Read<RustMap, 'declaration.enum_member.tuple.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -3346,10 +3106,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name' | 'scope'>;
 		};
 		readonly 'declaration.enum_member': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -3357,14 +3114,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -3431,8 +3181,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -3508,10 +3256,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.enum_member.private': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -3519,14 +3264,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -3593,8 +3331,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -3670,10 +3406,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.enum_member.public': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -3681,14 +3414,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -3755,8 +3481,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -3832,10 +3556,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.enum_member.public.internal': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -3843,14 +3564,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -3917,8 +3631,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -3994,10 +3706,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.enum_member.public.parent': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -4005,14 +3714,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -4079,8 +3781,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -4156,10 +3856,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.enum_member.public.restricted': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -4167,22 +3864,12 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -4254,8 +3941,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -4331,10 +4016,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'scope'>;
 		};
 		readonly 'declaration.enum_member.struct': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -4342,14 +4024,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -4416,8 +4091,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -4493,10 +4166,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.enum_member.struct.private': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -4504,14 +4174,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -4578,8 +4241,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -4655,10 +4316,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.enum_member.struct.public': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -4666,14 +4324,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -4740,8 +4391,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -4817,10 +4466,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.enum_member.struct.public.internal': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -4828,14 +4474,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -4902,8 +4541,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -4979,10 +4616,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.enum_member.struct.public.parent': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -4990,14 +4624,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -5064,8 +4691,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -5141,10 +4766,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.enum_member.struct.public.restricted': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -5152,22 +4774,12 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -5239,8 +4851,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -5316,10 +4926,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name' | 'scope'>;
 		};
 		readonly 'declaration.enum_member.tuple': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -5327,14 +4934,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -5401,8 +5001,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -5478,10 +5076,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.enum_member.tuple.private': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -5489,14 +5084,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -5563,8 +5151,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -5640,10 +5226,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.enum_member.tuple.public': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -5651,14 +5234,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -5725,8 +5301,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -5802,10 +5376,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.enum_member.tuple.public.internal': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -5813,14 +5384,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -5887,8 +5451,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -5964,10 +5526,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.enum_member.tuple.public.parent': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -5975,14 +5534,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -6049,8 +5601,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -6126,10 +5676,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.enum_member.tuple.public.restricted': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly body:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
@@ -6137,22 +5684,12 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -6224,8 +5761,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -6303,7 +5838,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.extension': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -6405,11 +5939,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -6417,7 +5948,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -6460,7 +6002,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.extension.conformance': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -6559,11 +6100,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly implements:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.generic'>
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly traitClause: never;
@@ -6572,11 +6109,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -6584,7 +6118,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -6625,28 +6170,15 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'type'>;
 		};
 		readonly 'declaration.field': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -6654,7 +6186,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -6689,28 +6232,15 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type', 'attributes'> | V.Form<'type', 'name'>;
 		};
 		readonly 'declaration.field.private': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -6718,7 +6248,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -6753,28 +6294,15 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type', 'attributes'> | V.Form<'type', 'name'>;
 		};
 		readonly 'declaration.field.public': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -6782,7 +6310,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -6817,28 +6356,15 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type', 'attributes'> | V.Form<'type', 'name'>;
 		};
 		readonly 'declaration.field.public.internal': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -6846,7 +6372,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -6881,28 +6418,15 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type', 'attributes'> | V.Form<'type', 'name'>;
 		};
 		readonly 'declaration.field.public.parent': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -6910,7 +6434,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -6945,26 +6480,13 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type', 'attributes'> | V.Form<'type', 'name'>;
 		};
 		readonly 'declaration.field.public.restricted': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -6975,11 +6497,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -6987,7 +6506,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7027,11 +6557,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -7041,11 +6567,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7053,7 +6576,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7077,17 +6611,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7095,7 +6626,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7141,11 +6683,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -7155,11 +6693,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7167,7 +6702,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7191,17 +6737,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7209,7 +6752,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7255,11 +6809,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -7269,11 +6819,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7281,7 +6828,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7305,17 +6863,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7323,7 +6878,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7369,11 +6935,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -7383,11 +6945,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7395,7 +6954,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7419,17 +6989,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7437,7 +7004,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7483,11 +7061,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -7497,11 +7071,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7509,7 +7080,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7533,17 +7115,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7551,7 +7130,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7597,11 +7187,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -7611,11 +7197,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7623,7 +7206,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7647,17 +7241,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7665,7 +7256,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7700,11 +7302,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -7719,16 +7318,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name' | 'scope'>;
 		};
 		readonly 'declaration.function.signature': {
-			readonly body: V.Read<RustMap, 'statement.block'>;
+			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -7738,11 +7333,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7750,7 +7342,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7774,17 +7377,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7792,7 +7392,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7833,16 +7444,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.function.signature.private': {
-			readonly body: V.Read<RustMap, 'statement.block'>;
+			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -7852,11 +7459,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7864,7 +7468,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7888,17 +7503,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7906,7 +7518,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -7947,16 +7570,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.function.signature.public': {
-			readonly body: V.Read<RustMap, 'statement.block'>;
+			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -7966,11 +7585,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -7978,7 +7594,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -8002,17 +7629,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -8020,7 +7644,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -8061,16 +7696,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.function.signature.public.internal': {
-			readonly body: V.Read<RustMap, 'statement.block'>;
+			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -8080,11 +7711,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -8092,7 +7720,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -8116,17 +7755,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -8134,7 +7770,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -8175,16 +7822,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.function.signature.public.parent': {
-			readonly body: V.Read<RustMap, 'statement.block'>;
+			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -8194,11 +7837,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -8206,7 +7846,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -8230,17 +7881,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -8248,7 +7896,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -8289,16 +7948,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.function.signature.public.restricted': {
-			readonly body: V.Read<RustMap, 'statement.block'>;
+			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -8308,11 +7963,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -8320,7 +7972,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -8344,17 +8007,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -8362,7 +8022,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -8397,11 +8068,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -8418,7 +8086,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.interface.trait': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -8520,11 +8187,9 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -8532,7 +8197,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -8565,14 +8241,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -8584,7 +8253,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.interface.trait.private': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -8686,11 +8354,9 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -8698,7 +8364,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -8731,14 +8408,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -8750,7 +8420,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.interface.trait.public': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -8852,11 +8521,9 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -8864,7 +8531,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -8897,14 +8575,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -8916,7 +8587,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.interface.trait.public.internal': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -9018,11 +8688,9 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -9030,7 +8698,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -9063,14 +8742,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -9082,7 +8754,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.interface.trait.public.parent': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -9184,11 +8855,9 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -9196,7 +8865,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -9229,14 +8909,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -9248,7 +8921,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.interface.trait.public.restricted': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -9350,11 +9022,9 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -9362,7 +9032,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -9395,22 +9076,12 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -9428,38 +9099,17 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.macro.brace': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly rules: V.Read<RustMap, 'clause.macro.rule'>;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.macro.bracket': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly rules: V.Read<RustMap, 'clause.macro.rule'>;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.macro.paren': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly rules: V.Read<RustMap, 'clause.macro.rule'>;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -9469,11 +9119,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -9483,11 +9129,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -9495,7 +9138,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -9519,17 +9173,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -9537,7 +9188,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -9583,11 +9245,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -9597,11 +9255,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -9609,7 +9264,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -9633,17 +9299,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -9651,7 +9314,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -9697,11 +9371,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -9711,11 +9381,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -9723,7 +9390,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -9747,17 +9425,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -9765,7 +9440,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -9811,11 +9497,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -9825,11 +9507,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -9837,7 +9516,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -9861,17 +9551,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -9879,7 +9566,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -9925,11 +9623,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -9939,11 +9633,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -9951,7 +9642,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -9975,17 +9677,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -9993,7 +9692,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -10039,11 +9749,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -10053,11 +9759,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -10065,7 +9768,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -10089,17 +9803,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -10107,7 +9818,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -10142,11 +9864,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -10161,16 +9880,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name' | 'scope'>;
 		};
 		readonly 'declaration.method.signature': {
-			readonly body: V.Read<RustMap, 'statement.block'>;
+			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -10180,11 +9895,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -10192,7 +9904,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -10216,17 +9939,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -10234,7 +9954,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -10275,16 +10006,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.method.signature.private': {
-			readonly body: V.Read<RustMap, 'statement.block'>;
+			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -10294,11 +10021,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -10306,7 +10030,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -10330,17 +10065,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -10348,7 +10080,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -10389,16 +10132,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.method.signature.public': {
-			readonly body: V.Read<RustMap, 'statement.block'>;
+			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -10408,11 +10147,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -10420,7 +10156,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -10444,17 +10191,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -10462,7 +10206,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -10503,16 +10258,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.method.signature.public.internal': {
-			readonly body: V.Read<RustMap, 'statement.block'>;
+			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -10522,11 +10273,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -10534,7 +10282,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -10558,17 +10317,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -10576,7 +10332,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -10617,16 +10384,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.method.signature.public.parent': {
-			readonly body: V.Read<RustMap, 'statement.block'>;
+			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -10636,11 +10399,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -10648,7 +10408,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -10672,17 +10443,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -10690,7 +10458,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -10731,16 +10510,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.method.signature.public.restricted': {
-			readonly body: V.Read<RustMap, 'statement.block'>;
+			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.Metavariable.Parsed;
 			readonly parameters:
 				| V.Read<RustMap, 'clause.bounds.removed'>
@@ -10750,11 +10525,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -10762,7 +10534,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -10786,17 +10569,14 @@ export interface RustMap extends V.GrammarMap {
 				| 'u64'
 				| 'u8'
 				| 'usize';
-			readonly receiver: V.Read<RustMap, 'declaration.parameter'> | V.Read<RustMap, 'declaration.parameter.receiver'>;
+			readonly receiver: V.Read<RustMap, 'declaration.parameter.receiver'>;
 			readonly returnType:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -10804,7 +10584,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -10839,11 +10630,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -10860,7 +10648,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.module': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -10956,20 +10743,12 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'statement.import.public.parent'>
 				| V.Read<RustMap, 'statement.import.public.restricted'>
 				| ';';
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly $forms: V.Form<'name', 'body'> | V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.module.foreign': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -11066,20 +10845,12 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'statement.import.public.restricted'>
 				| ';';
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: never;
 			readonly $forms: V.Form<'extern', 'body'> | V.Form<'body' | 'extern'>;
 		};
 		readonly 'declaration.module.private': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -11175,20 +10946,12 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'statement.import.public.parent'>
 				| V.Read<RustMap, 'statement.import.public.restricted'>
 				| ';';
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly $forms: V.Form<'name', 'body'> | V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.module.public': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -11284,20 +11047,12 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'statement.import.public.parent'>
 				| V.Read<RustMap, 'statement.import.public.restricted'>
 				| ';';
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly $forms: V.Form<'name', 'body'> | V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.module.public.internal': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -11393,20 +11148,12 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'statement.import.public.parent'>
 				| V.Read<RustMap, 'statement.import.public.restricted'>
 				| ';';
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly $forms: V.Form<'name', 'body'> | V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.module.public.parent': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -11502,20 +11249,12 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'statement.import.public.parent'>
 				| V.Read<RustMap, 'statement.import.public.restricted'>
 				| ';';
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly $forms: V.Form<'name', 'body'> | V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.module.public.restricted': {
 			readonly body:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -11611,22 +11350,12 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'statement.import.public.parent'>
 				| V.Read<RustMap, 'statement.import.public.restricted'>
 				| ';';
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -11635,20 +11364,13 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'scope', 'body'> | V.Form<'body' | 'name' | 'scope'>;
 		};
 		readonly 'declaration.parameter': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly name:
 				| V.Read<RustMap, 'expression.block.const'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -11709,11 +11431,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -11721,7 +11440,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -11756,21 +11486,15 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'type', 'name'> | V.Form<'name', 'type'> | V.Form<'name' | 'type'>;
 		};
 		readonly 'declaration.parameter.receiver': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly lifetime: V.Read<RustMap, 'identifier.lifetime'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -11778,7 +11502,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -11813,56 +11548,14 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'type', 'lifetime'> | V.Form<never, 'type'>;
 		};
 		readonly 'declaration.parameter.variadic': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
-			readonly name:
-				| V.Read<RustMap, 'expression.block.const'>
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'literal.character'>
-				| V.Read<RustMap, 'literal.number.float'>
-				| V.Read<RustMap, 'literal.number.integer'>
-				| V.Read<RustMap, 'literal.number.integer.binary'>
-				| V.Read<RustMap, 'literal.number.integer.hex'>
-				| V.Read<RustMap, 'literal.number.integer.octal'>
-				| V.Read<RustMap, 'literal.number.negative'>
-				| V.Read<RustMap, 'literal.string'>
-				| V.Read<RustMap, 'literal.string.bytes'>
-				| V.Read<RustMap, 'literal.string.c'>
-				| V.Read<RustMap, 'literal.string.raw'>
-				| V.Read<RustMap, 'pattern.as'>
-				| V.Read<RustMap, 'pattern.generic'>
-				| V.Read<RustMap, 'pattern.list'>
-				| V.Read<RustMap, 'pattern.mutable'>
-				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
-				| V.Read<RustMap, 'pattern.range.exclusive'>
-				| V.Read<RustMap, 'pattern.range.inclusive'>
-				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
-				| V.Read<RustMap, 'pattern.reference'>
-				| V.Read<RustMap, 'pattern.reference.value'>
-				| V.Read<RustMap, 'pattern.struct'>
-				| V.Text<RustMap, 'pattern.struct.rest'>
-				| V.Read<RustMap, 'pattern.tuple'>
-				| V.Text<RustMap, 'pattern.wildcard'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
+			readonly name: never;
 			readonly pattern:
 				| V.Read<RustMap, 'expression.block.const'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -11918,27 +11611,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferencePattern.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.StringLiteral.Parsed;
-			readonly type:
-				| V.Read<RustMap, 'clause.bounds.removed'>
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'type.abstract'>
-				| V.Read<RustMap, 'type.array'>
-				| V.Read<RustMap, 'type.bounded'>
-				| V.Read<RustMap, 'type.dynamic'>
-				| V.Read<RustMap, 'type.function'>
-				| V.Read<RustMap, 'type.generic'>
-				| V.Read<RustMap, 'type.pointer'>
-				| V.Text<RustMap, 'type.primitive.never'>
-				| V.Read<RustMap, 'type.reference'>
-				| V.Read<RustMap, 'type.tuple'>
-				| V.Text<RustMap, 'type.unit'>;
+			readonly type: never;
 		};
 		readonly 'declaration.struct': {
 			readonly body:
@@ -11948,14 +11621,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -11987,14 +11653,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12011,14 +11670,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12035,14 +11687,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12059,14 +11704,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12083,22 +11721,12 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -12120,14 +11748,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12144,14 +11765,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12168,14 +11782,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12192,14 +11799,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12216,14 +11816,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -12240,22 +11833,12 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -12270,149 +11853,68 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name' | 'scope'>;
 		};
 		readonly 'declaration.struct.unit': {
-			readonly body:
-				| V.Read<RustMap, 'declaration.field'>
-				| V.Read<RustMap, 'declaration.field.private'>
-				| V.Read<RustMap, 'declaration.field.public'>
-				| V.Read<RustMap, 'declaration.field.public.internal'>
-				| V.Read<RustMap, 'declaration.field.public.parent'>
-				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly body: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
 				| V.Read<RustMap, 'declaration.type_parameter.value'>
 				| V.Read<RustMap, 'identifier.metavariable'>;
-			readonly whereClause: V.Read<RustMap, 'clause.where'>;
+			readonly whereClause: never;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.struct.unit.private': {
-			readonly body:
-				| V.Read<RustMap, 'declaration.field'>
-				| V.Read<RustMap, 'declaration.field.private'>
-				| V.Read<RustMap, 'declaration.field.public'>
-				| V.Read<RustMap, 'declaration.field.public.internal'>
-				| V.Read<RustMap, 'declaration.field.public.parent'>
-				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly body: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
 				| V.Read<RustMap, 'declaration.type_parameter.value'>
 				| V.Read<RustMap, 'identifier.metavariable'>;
-			readonly whereClause: V.Read<RustMap, 'clause.where'>;
+			readonly whereClause: never;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.struct.unit.public': {
-			readonly body:
-				| V.Read<RustMap, 'declaration.field'>
-				| V.Read<RustMap, 'declaration.field.private'>
-				| V.Read<RustMap, 'declaration.field.public'>
-				| V.Read<RustMap, 'declaration.field.public.internal'>
-				| V.Read<RustMap, 'declaration.field.public.parent'>
-				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly body: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
 				| V.Read<RustMap, 'declaration.type_parameter.value'>
 				| V.Read<RustMap, 'identifier.metavariable'>;
-			readonly whereClause: V.Read<RustMap, 'clause.where'>;
+			readonly whereClause: never;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.struct.unit.public.internal': {
-			readonly body:
-				| V.Read<RustMap, 'declaration.field'>
-				| V.Read<RustMap, 'declaration.field.private'>
-				| V.Read<RustMap, 'declaration.field.public'>
-				| V.Read<RustMap, 'declaration.field.public.internal'>
-				| V.Read<RustMap, 'declaration.field.public.parent'>
-				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly body: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
 				| V.Read<RustMap, 'declaration.type_parameter.value'>
 				| V.Read<RustMap, 'identifier.metavariable'>;
-			readonly whereClause: V.Read<RustMap, 'clause.where'>;
+			readonly whereClause: never;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.struct.unit.public.parent': {
-			readonly body:
-				| V.Read<RustMap, 'declaration.field'>
-				| V.Read<RustMap, 'declaration.field.private'>
-				| V.Read<RustMap, 'declaration.field.public'>
-				| V.Read<RustMap, 'declaration.field.public.internal'>
-				| V.Read<RustMap, 'declaration.field.public.parent'>
-				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly body: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
 				| V.Read<RustMap, 'declaration.type_parameter.value'>
 				| V.Read<RustMap, 'identifier.metavariable'>;
-			readonly whereClause: V.Read<RustMap, 'clause.where'>;
+			readonly whereClause: never;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.struct.unit.public.restricted': {
-			readonly body:
-				| V.Read<RustMap, 'declaration.field'>
-				| V.Read<RustMap, 'declaration.field.private'>
-				| V.Read<RustMap, 'declaration.field.public'>
-				| V.Read<RustMap, 'declaration.field.public.internal'>
-				| V.Read<RustMap, 'declaration.field.public.parent'>
-				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly body: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -12423,18 +11925,11 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
 				| V.Read<RustMap, 'declaration.type_parameter.value'>
 				| V.Read<RustMap, 'identifier.metavariable'>;
-			readonly whereClause: V.Read<RustMap, 'clause.where'>;
+			readonly whereClause: never;
 			readonly $forms: V.Form<'name' | 'scope'>;
 		};
 		readonly 'declaration.type_alias': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly trailingWhereClause: V.Read<RustMap, 'clause.where'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -12446,11 +11941,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -12458,7 +11950,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -12500,11 +12003,9 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -12512,7 +12013,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -12545,53 +12057,19 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
-			readonly trailingWhereClause: V.Read<RustMap, 'clause.where'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
+			readonly trailingWhereClause: never;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
 				| V.Read<RustMap, 'declaration.type_parameter.value'>
 				| V.Read<RustMap, 'identifier.metavariable'>;
-			readonly value:
-				| V.Read<RustMap, 'clause.bounds.removed'>
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'type.abstract'>
-				| V.Read<RustMap, 'type.array'>
-				| V.Read<RustMap, 'type.bounded'>
-				| V.Read<RustMap, 'type.dynamic'>
-				| V.Read<RustMap, 'type.function'>
-				| V.Read<RustMap, 'type.generic'>
-				| V.Read<RustMap, 'type.pointer'>
-				| V.Text<RustMap, 'type.primitive.never'>
-				| V.Read<RustMap, 'type.reference'>
-				| V.Read<RustMap, 'type.tuple'>
-				| V.Text<RustMap, 'type.unit'>;
+			readonly value: never;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.type_alias.private': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly trailingWhereClause: V.Read<RustMap, 'clause.where'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -12603,11 +12081,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -12615,7 +12090,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -12651,14 +12137,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'value'>;
 		};
 		readonly 'declaration.type_alias.public': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly trailingWhereClause: V.Read<RustMap, 'clause.where'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -12670,11 +12149,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -12682,7 +12158,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -12718,14 +12205,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'value'>;
 		};
 		readonly 'declaration.type_alias.public.internal': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly trailingWhereClause: V.Read<RustMap, 'clause.where'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -12737,11 +12217,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -12749,7 +12226,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -12785,14 +12273,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'value'>;
 		};
 		readonly 'declaration.type_alias.public.parent': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly trailingWhereClause: V.Read<RustMap, 'clause.where'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -12804,11 +12285,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -12816,7 +12294,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -12852,22 +12341,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'value'>;
 		};
 		readonly 'declaration.type_alias.public.restricted': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -12884,11 +12363,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -12896,7 +12372,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -12932,21 +12419,16 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'scope' | 'value'>;
 		};
 		readonly 'declaration.type_parameter': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly bounds:
 				| V.Read<RustMap, 'clause.bounds.higher_ranked'>
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -12954,7 +12436,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -12992,23 +12485,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'literal.character'>
-				| V.Read<RustMap, 'literal.number.float'>
-				| V.Read<RustMap, 'literal.number.integer'>
-				| V.Read<RustMap, 'literal.number.integer.binary'>
-				| V.Read<RustMap, 'literal.number.integer.hex'>
-				| V.Read<RustMap, 'literal.number.integer.octal'>
-				| V.Read<RustMap, 'literal.number.negative'>
-				| V.Read<RustMap, 'literal.string'>
-				| V.Read<RustMap, 'literal.string.bytes'>
-				| V.Read<RustMap, 'literal.string.c'>
-				| V.Read<RustMap, 'literal.string.raw'>
-				| V.Read<RustMap, 'statement.block'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -13016,7 +12494,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -13048,32 +12537,20 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.type_parameter.lifetime': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly bounds:
 				| V.Read<RustMap, 'clause.bounds.higher_ranked'>
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -13081,7 +12558,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -13118,18 +12606,10 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.type_parameter.value': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly default:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -13161,24 +12641,14 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.StringLiteral.Parsed;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -13186,7 +12656,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -13228,14 +12709,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -13252,14 +12726,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -13276,14 +12743,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -13300,14 +12760,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -13324,14 +12777,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -13348,22 +12794,12 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -13384,11 +12820,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -13449,11 +12881,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -13461,7 +12890,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -13559,8 +12999,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -13636,25 +13074,15 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type', 'alternative'> | V.Form<'name'>;
 		};
 		readonly 'declaration.variable.private': {
-			readonly alternative: V.Read<RustMap, 'statement.block'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly alternative: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -13662,7 +13090,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -13760,8 +13199,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -13837,25 +13274,15 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
 		readonly 'declaration.variable.public': {
-			readonly alternative: V.Read<RustMap, 'statement.block'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly alternative: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -13863,7 +13290,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -13961,8 +13399,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -14038,25 +13474,15 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
 		readonly 'declaration.variable.public.internal': {
-			readonly alternative: V.Read<RustMap, 'statement.block'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly alternative: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -14064,7 +13490,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -14162,8 +13599,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -14239,25 +13674,15 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
 		readonly 'declaration.variable.public.parent': {
-			readonly alternative: V.Read<RustMap, 'statement.block'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly alternative: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -14265,7 +13690,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -14363,8 +13799,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -14440,23 +13874,13 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
 		readonly 'declaration.variable.public.restricted': {
-			readonly alternative: V.Read<RustMap, 'statement.block'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly alternative: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -14467,11 +13891,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -14479,7 +13900,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -14577,8 +14009,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -14654,10 +14084,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'scope' | 'type'>;
 		};
 		readonly 'element.attributed': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -14724,8 +14151,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -14805,6 +14230,7 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'element.macro.token_binding': {
 			readonly fragment:
+				| V.Text<RustMap, 'element.macro.fragment'>
 				| 'block'
 				| 'expr'
 				| 'expr_2021'
@@ -14825,7 +14251,7 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'element.macro.token_repetition': {
 			readonly operator: '*' | '+' | '?';
-			readonly separator: '[^+*?]+';
+			readonly separator: string;
 			readonly tokens:
 				| V.Read<RustMap, 'element.macro.token_repetition'>
 				| V.Read<RustMap, 'element.macro.token_tree.brace'>
@@ -14833,10 +14259,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'element.macro.token_tree.paren'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
@@ -14852,6 +14275,17 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.string.c'>
 				| V.Read<RustMap, 'literal.string.c.raw'>
 				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| '!'
 				| '!='
 				| '#'
@@ -14957,7 +14391,7 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'element.macro.token_repetition.pattern': {
 			readonly operator: '*' | '+' | '?';
-			readonly separator: '[^+*?]+';
+			readonly separator: string;
 			readonly tokenPatterns:
 				| V.Read<RustMap, 'element.macro.token_binding'>
 				| V.Read<RustMap, 'element.macro.token_repetition.pattern'>
@@ -14966,10 +14400,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'element.macro.token_tree.pattern.paren'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
@@ -14985,6 +14416,17 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.string.c'>
 				| V.Read<RustMap, 'literal.string.c.raw'>
 				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| '!'
 				| '!='
 				| '#'
@@ -15087,119 +14529,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.TokenTreePatternBrace.Parsed
 				| T.TokenTreePatternBracket.Parsed
 				| T.TokenTreePatternParen.Parsed;
-			readonly tokens:
-				| V.Read<RustMap, 'element.macro.token_repetition'>
-				| V.Read<RustMap, 'element.macro.token_tree.brace'>
-				| V.Read<RustMap, 'element.macro.token_tree.bracket'>
-				| V.Read<RustMap, 'element.macro.token_tree.paren'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'literal.character'>
-				| V.Read<RustMap, 'literal.number.float'>
-				| V.Read<RustMap, 'literal.number.integer'>
-				| V.Read<RustMap, 'literal.number.integer.binary'>
-				| V.Read<RustMap, 'literal.number.integer.hex'>
-				| V.Read<RustMap, 'literal.number.integer.octal'>
-				| V.Read<RustMap, 'literal.string'>
-				| V.Read<RustMap, 'literal.string.bytes'>
-				| V.Read<RustMap, 'literal.string.c'>
-				| V.Read<RustMap, 'literal.string.raw'>
-				| '!'
-				| '!='
-				| '#'
-				| '%'
-				| '%='
-				| '&'
-				| '&&'
-				| '&='
-				| "'"
-				| '*'
-				| '*='
-				| '+'
-				| '+='
-				| ','
-				| '-'
-				| '-='
-				| '->'
-				| '.'
-				| '..'
-				| '...'
-				| '..='
-				| '/'
-				| '/='
-				| ':'
-				| '::'
-				| ';'
-				| '<'
-				| '<<'
-				| '<<='
-				| '<='
-				| '='
-				| '=='
-				| '=>'
-				| '>'
-				| '>='
-				| '>>'
-				| '>>='
-				| '?'
-				| '@'
-				| '^'
-				| '^='
-				| '_'
-				| 'as'
-				| 'async'
-				| 'await'
-				| 'bool'
-				| 'break'
-				| 'char'
-				| 'const'
-				| 'continue'
-				| 'default'
-				| 'enum'
-				| 'f32'
-				| 'f64'
-				| 'fn'
-				| 'for'
-				| 'gen'
-				| 'i128'
-				| 'i16'
-				| 'i32'
-				| 'i64'
-				| 'i8'
-				| 'if'
-				| 'impl'
-				| 'isize'
-				| 'let'
-				| 'loop'
-				| 'match'
-				| 'mod'
-				| 'mut'
-				| 'pub'
-				| 'return'
-				| 'static'
-				| 'str'
-				| 'struct'
-				| 'trait'
-				| 'type'
-				| 'u128'
-				| 'u16'
-				| 'u32'
-				| 'u64'
-				| 'u8'
-				| 'union'
-				| 'unsafe'
-				| 'use'
-				| 'usize'
-				| 'where'
-				| 'while'
-				| '|'
-				| '|='
-				| '||';
+			readonly tokens: never;
 			readonly $forms: V.Form<'operator'>;
 		};
 		readonly 'element.macro.token_tree.brace': {
@@ -15210,10 +14540,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'element.macro.token_tree.paren'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
@@ -15229,6 +14556,17 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.string.c'>
 				| V.Read<RustMap, 'literal.string.c.raw'>
 				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| '!'
 				| '!='
 				| '#'
@@ -15339,10 +14677,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'element.macro.token_tree.paren'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
@@ -15358,6 +14693,17 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.string.c'>
 				| V.Read<RustMap, 'literal.string.c.raw'>
 				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| '!'
 				| '!='
 				| '#'
@@ -15467,10 +14813,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'element.macro.token_tree.delimited.paren'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
@@ -15486,6 +14828,17 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.string.c'>
 				| V.Read<RustMap, 'literal.string.c.raw'>
 				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| '!'
 				| '!='
 				| '#'
@@ -15591,10 +14944,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'element.macro.token_tree.delimited.paren'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
@@ -15610,6 +14959,17 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.string.c'>
 				| V.Read<RustMap, 'literal.string.c.raw'>
 				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| '!'
 				| '!='
 				| '#'
@@ -15715,10 +15075,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'element.macro.token_tree.delimited.paren'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
@@ -15734,6 +15090,17 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.string.c'>
 				| V.Read<RustMap, 'literal.string.c.raw'>
 				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| '!'
 				| '!='
 				| '#'
@@ -15840,10 +15207,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'element.macro.token_tree.paren'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
@@ -15859,6 +15223,17 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.string.c'>
 				| V.Read<RustMap, 'literal.string.c.raw'>
 				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| '!'
 				| '!='
 				| '#'
@@ -15970,10 +15345,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'element.macro.token_tree.pattern.paren'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
@@ -15989,6 +15361,17 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.string.c'>
 				| V.Read<RustMap, 'literal.string.c.raw'>
 				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| '!'
 				| '!='
 				| '#'
@@ -16101,10 +15484,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'element.macro.token_tree.pattern.paren'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
@@ -16120,6 +15500,17 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.string.c'>
 				| V.Read<RustMap, 'literal.string.c.raw'>
 				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| '!'
 				| '!='
 				| '#'
@@ -16232,10 +15623,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'element.macro.token_tree.pattern.paren'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
@@ -16251,6 +15639,17 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'literal.string.c'>
 				| V.Read<RustMap, 'literal.string.c.raw'>
 				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| '!'
 				| '!='
 				| '#'
@@ -16421,8 +15820,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -16498,18 +15895,10 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'value'>;
 		};
 		readonly 'element.struct.field': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 			readonly field:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.number.integer'>
 				| V.Read<RustMap, 'literal.number.integer.binary'>
 				| V.Read<RustMap, 'literal.number.integer.hex'>
@@ -16583,8 +15972,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -16666,11 +16053,9 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -16678,7 +16063,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -16717,11 +16113,9 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -16744,7 +16138,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -16794,24 +16199,14 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'content'>;
 		};
 		readonly 'element.type_binding': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly type:
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -16819,7 +16214,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -16921,8 +16327,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -17061,8 +16465,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -17204,8 +16606,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -17344,8 +16744,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -17486,8 +16884,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -17626,8 +17022,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -17769,8 +17163,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -17909,8 +17301,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -18052,8 +17442,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -18192,8 +17580,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -18335,8 +17721,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -18475,8 +17859,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -18618,8 +18000,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -18758,8 +18138,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -18901,8 +18279,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -19041,8 +18417,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -19184,8 +18558,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -19324,8 +18696,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -19467,8 +18837,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -19607,8 +18975,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -19750,8 +19116,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -19890,8 +19254,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -20033,8 +19395,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -20173,8 +19533,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -20316,8 +19674,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -20459,8 +19815,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -20599,8 +19953,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -20741,8 +20093,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -20881,8 +20231,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -21024,8 +20372,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -21164,8 +20510,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -21307,8 +20651,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -21447,8 +20789,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -21590,8 +20930,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -21730,8 +21068,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -21873,8 +21209,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -22013,8 +21347,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -22156,8 +21488,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -22296,8 +21626,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -22439,8 +21767,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -22579,8 +21905,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -22722,8 +22046,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -22862,8 +22184,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -23005,8 +22325,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -23145,8 +22463,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -23288,8 +22604,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -23428,8 +22742,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -23571,8 +22883,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -23711,8 +23021,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -23854,8 +23162,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -23994,8 +23300,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -24137,8 +23441,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -24277,8 +23579,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -24420,8 +23720,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -24560,8 +23858,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -24703,8 +23999,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -24843,8 +24137,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -24986,8 +24278,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -25126,8 +24416,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -25269,8 +24557,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -25409,8 +24695,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -25552,8 +24836,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -25692,8 +24974,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -25791,9 +25071,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.call': {
 			readonly arguments:
 				| V.Read<RustMap, 'argument'>
-				| V.Read<RustMap, 'element.macro.token_tree.delimited.brace'>
-				| V.Read<RustMap, 'element.macro.token_tree.delimited.bracket'>
-				| V.Read<RustMap, 'element.macro.token_tree.delimited.paren'>
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
@@ -25859,8 +25136,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -25952,8 +25227,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -26034,13 +25307,9 @@ export interface RustMap extends V.GrammarMap {
 			readonly function:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.ScopedIdentifier.Parsed;
-			readonly typeArguments: V.Read<RustMap, 'element.type_argument'>;
+			readonly typeArguments: never;
 			readonly $forms: V.Form<'arguments' | 'function'>;
 		};
 		readonly 'expression.call.member': {
@@ -26111,8 +25380,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -26144,90 +25411,10 @@ export interface RustMap extends V.GrammarMap {
 				| 'self'
 				| 'true';
 			readonly function:
-				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
-				| V.Read<RustMap, 'expression.assignment.compound.add'>
-				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
-				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
-				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
-				| V.Read<RustMap, 'expression.assignment.compound.divide'>
-				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
-				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
-				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
-				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
-				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
-				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
-				| V.Read<RustMap, 'expression.binary.bitwise.and'>
-				| V.Read<RustMap, 'expression.binary.bitwise.or'>
-				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
-				| V.Read<RustMap, 'expression.binary.comparison.equal'>
-				| V.Read<RustMap, 'expression.binary.comparison.greater'>
-				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
-				| V.Read<RustMap, 'expression.binary.comparison.less'>
-				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
-				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
-				| V.Read<RustMap, 'expression.binary.logical.and'>
-				| V.Read<RustMap, 'expression.binary.logical.or'>
-				| V.Read<RustMap, 'expression.binary.shift.left'>
-				| V.Read<RustMap, 'expression.binary.shift.right'>
-				| V.Read<RustMap, 'expression.block.async'>
-				| V.Read<RustMap, 'expression.block.const'>
-				| V.Read<RustMap, 'expression.block.generator'>
-				| V.Read<RustMap, 'expression.block.try'>
-				| V.Read<RustMap, 'expression.block.unsafe'>
-				| V.Read<RustMap, 'expression.call'>
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Read<RustMap, 'expression.call.member'>
-				| V.Read<RustMap, 'expression.call.qualified'>
-				| V.Read<RustMap, 'expression.cast.conversion'>
-				| V.Read<RustMap, 'expression.collection.list'>
-				| V.Read<RustMap, 'expression.collection.list.repeat'>
-				| V.Read<RustMap, 'expression.collection.struct'>
-				| V.Read<RustMap, 'expression.collection.tuple'>
-				| V.Read<RustMap, 'expression.lambda'>
 				| V.Read<RustMap, 'expression.member'>
-				| V.Read<RustMap, 'expression.parenthesized'>
-				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.reference'>
-				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
-				| V.Read<RustMap, 'expression.unary.deref'>
-				| V.Read<RustMap, 'expression.unary.negation'>
-				| V.Read<RustMap, 'expression.unary.not'>
-				| V.Text<RustMap, 'expression.unit'>
-				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'literal.character'>
-				| V.Read<RustMap, 'literal.number.float'>
-				| V.Read<RustMap, 'literal.number.integer'>
-				| V.Read<RustMap, 'literal.number.integer.binary'>
-				| V.Read<RustMap, 'literal.number.integer.hex'>
-				| V.Read<RustMap, 'literal.number.integer.octal'>
-				| V.Read<RustMap, 'literal.string'>
-				| V.Read<RustMap, 'literal.string.bytes'>
-				| V.Read<RustMap, 'literal.string.c'>
-				| V.Read<RustMap, 'literal.string.raw'>
-				| V.Read<RustMap, 'statement.block'>
-				| V.Read<RustMap, 'statement.break'>
-				| V.Read<RustMap, 'statement.continue'>
-				| V.Read<RustMap, 'statement.if'>
-				| V.Read<RustMap, 'statement.loop'>
-				| V.Read<RustMap, 'statement.loop.for_each'>
-				| V.Read<RustMap, 'statement.loop.while'>
-				| V.Read<RustMap, 'statement.match'>
-				| V.Read<RustMap, 'statement.return'>
 				| T.FieldExpression.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly typeArguments: V.Read<RustMap, 'element.type_argument'>;
@@ -26301,8 +25488,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -26334,90 +25519,10 @@ export interface RustMap extends V.GrammarMap {
 				| 'self'
 				| 'true';
 			readonly function:
-				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
-				| V.Read<RustMap, 'expression.assignment.compound.add'>
-				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
-				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
-				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
-				| V.Read<RustMap, 'expression.assignment.compound.divide'>
-				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
-				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
-				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
-				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
-				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
-				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
-				| V.Read<RustMap, 'expression.binary.bitwise.and'>
-				| V.Read<RustMap, 'expression.binary.bitwise.or'>
-				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
-				| V.Read<RustMap, 'expression.binary.comparison.equal'>
-				| V.Read<RustMap, 'expression.binary.comparison.greater'>
-				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
-				| V.Read<RustMap, 'expression.binary.comparison.less'>
-				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
-				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
-				| V.Read<RustMap, 'expression.binary.logical.and'>
-				| V.Read<RustMap, 'expression.binary.logical.or'>
-				| V.Read<RustMap, 'expression.binary.shift.left'>
-				| V.Read<RustMap, 'expression.binary.shift.right'>
-				| V.Read<RustMap, 'expression.block.async'>
-				| V.Read<RustMap, 'expression.block.const'>
-				| V.Read<RustMap, 'expression.block.generator'>
-				| V.Read<RustMap, 'expression.block.try'>
-				| V.Read<RustMap, 'expression.block.unsafe'>
-				| V.Read<RustMap, 'expression.call'>
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Read<RustMap, 'expression.call.member'>
-				| V.Read<RustMap, 'expression.call.qualified'>
-				| V.Read<RustMap, 'expression.cast.conversion'>
-				| V.Read<RustMap, 'expression.collection.list'>
-				| V.Read<RustMap, 'expression.collection.list.repeat'>
-				| V.Read<RustMap, 'expression.collection.struct'>
-				| V.Read<RustMap, 'expression.collection.tuple'>
-				| V.Read<RustMap, 'expression.lambda'>
 				| V.Read<RustMap, 'expression.member'>
-				| V.Read<RustMap, 'expression.parenthesized'>
-				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.reference'>
-				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
-				| V.Read<RustMap, 'expression.unary.deref'>
-				| V.Read<RustMap, 'expression.unary.negation'>
-				| V.Read<RustMap, 'expression.unary.not'>
-				| V.Text<RustMap, 'expression.unit'>
-				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'literal.character'>
-				| V.Read<RustMap, 'literal.number.float'>
-				| V.Read<RustMap, 'literal.number.integer'>
-				| V.Read<RustMap, 'literal.number.integer.binary'>
-				| V.Read<RustMap, 'literal.number.integer.hex'>
-				| V.Read<RustMap, 'literal.number.integer.octal'>
-				| V.Read<RustMap, 'literal.string'>
-				| V.Read<RustMap, 'literal.string.bytes'>
-				| V.Read<RustMap, 'literal.string.c'>
-				| V.Read<RustMap, 'literal.string.raw'>
-				| V.Read<RustMap, 'statement.block'>
-				| V.Read<RustMap, 'statement.break'>
-				| V.Read<RustMap, 'statement.continue'>
-				| V.Read<RustMap, 'statement.if'>
-				| V.Read<RustMap, 'statement.loop'>
-				| V.Read<RustMap, 'statement.loop.for_each'>
-				| V.Read<RustMap, 'statement.loop.while'>
-				| V.Read<RustMap, 'statement.match'>
-				| V.Read<RustMap, 'statement.return'>
 				| T.FieldExpression.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly typeArguments: V.Read<RustMap, 'element.type_argument'>;
@@ -26490,8 +25595,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -26569,11 +25672,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -26581,7 +25681,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -26683,8 +25794,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -26783,8 +25892,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -26857,97 +25964,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly elements:
-				| V.Read<RustMap, 'element.attributed'>
-				| V.Read<RustMap, 'expression.assignment'>
-				| V.Read<RustMap, 'expression.assignment.compound'>
-				| V.Read<RustMap, 'expression.assignment.compound.add'>
-				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
-				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
-				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
-				| V.Read<RustMap, 'expression.assignment.compound.divide'>
-				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
-				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
-				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
-				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
-				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
-				| V.Read<RustMap, 'expression.await'>
-				| V.Read<RustMap, 'expression.binary'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
-				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
-				| V.Read<RustMap, 'expression.binary.bitwise.and'>
-				| V.Read<RustMap, 'expression.binary.bitwise.or'>
-				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
-				| V.Read<RustMap, 'expression.binary.comparison.equal'>
-				| V.Read<RustMap, 'expression.binary.comparison.greater'>
-				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
-				| V.Read<RustMap, 'expression.binary.comparison.less'>
-				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
-				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
-				| V.Read<RustMap, 'expression.binary.logical.and'>
-				| V.Read<RustMap, 'expression.binary.logical.or'>
-				| V.Read<RustMap, 'expression.binary.shift.left'>
-				| V.Read<RustMap, 'expression.binary.shift.right'>
-				| V.Read<RustMap, 'expression.block.async'>
-				| V.Read<RustMap, 'expression.block.const'>
-				| V.Read<RustMap, 'expression.block.generator'>
-				| V.Read<RustMap, 'expression.block.try'>
-				| V.Read<RustMap, 'expression.block.unsafe'>
-				| V.Read<RustMap, 'expression.call'>
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Read<RustMap, 'expression.call.member'>
-				| V.Read<RustMap, 'expression.call.qualified'>
-				| V.Read<RustMap, 'expression.cast.conversion'>
-				| V.Read<RustMap, 'expression.collection.list'>
-				| V.Read<RustMap, 'expression.collection.list.repeat'>
-				| V.Read<RustMap, 'expression.collection.struct'>
-				| V.Read<RustMap, 'expression.collection.tuple'>
-				| V.Read<RustMap, 'expression.instantiation'>
-				| V.Read<RustMap, 'expression.lambda'>
-				| V.Read<RustMap, 'expression.member'>
-				| V.Read<RustMap, 'expression.parenthesized'>
-				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
-				| V.Read<RustMap, 'expression.range.exclusive'>
-				| V.Read<RustMap, 'expression.range.inclusive'>
-				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
-				| V.Read<RustMap, 'expression.reference'>
-				| V.Read<RustMap, 'expression.subscript'>
-				| V.Read<RustMap, 'expression.unary'>
-				| V.Read<RustMap, 'expression.unary.deref'>
-				| V.Read<RustMap, 'expression.unary.negation'>
-				| V.Read<RustMap, 'expression.unary.not'>
-				| V.Text<RustMap, 'expression.unit'>
-				| V.Read<RustMap, 'expression.yield'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'literal.character'>
-				| V.Read<RustMap, 'literal.number.float'>
-				| V.Read<RustMap, 'literal.number.integer'>
-				| V.Read<RustMap, 'literal.number.integer.binary'>
-				| V.Read<RustMap, 'literal.number.integer.hex'>
-				| V.Read<RustMap, 'literal.number.integer.octal'>
-				| V.Read<RustMap, 'literal.string'>
-				| V.Read<RustMap, 'literal.string.bytes'>
-				| V.Read<RustMap, 'literal.string.c'>
-				| V.Read<RustMap, 'literal.string.raw'>
-				| V.Read<RustMap, 'statement.block'>
-				| V.Read<RustMap, 'statement.break'>
-				| V.Read<RustMap, 'statement.continue'>
-				| V.Read<RustMap, 'statement.if'>
-				| V.Read<RustMap, 'statement.loop'>
-				| V.Read<RustMap, 'statement.loop.for_each'>
-				| V.Read<RustMap, 'statement.loop.while'>
-				| V.Read<RustMap, 'statement.match'>
-				| V.Read<RustMap, 'statement.return'>;
+			readonly elements: never;
 			readonly length:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound'>
@@ -27014,8 +26031,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -27095,11 +26110,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.generic.turbofish'>
 				| T.ScopedTypeIdentifierInExpressionPosition.Parsed;
 			readonly $forms: V.Form<'body' | 'name'>;
@@ -27172,8 +26183,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -27211,11 +26220,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.FieldExpression.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly typeArguments: V.Read<RustMap, 'element.type_argument'>;
@@ -27288,8 +26293,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -27369,11 +26372,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -27381,7 +26381,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -27625,8 +26636,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -27702,11 +26711,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly property:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.number.integer'>
 				| V.Read<RustMap, 'literal.number.integer.binary'>
 				| V.Read<RustMap, 'literal.number.integer.hex'>
@@ -27783,8 +26787,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -27926,8 +26928,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -28069,8 +27069,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -28209,8 +27207,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -28352,8 +27348,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -28492,8 +27486,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -28639,8 +27631,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -28779,8 +27769,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -28922,8 +27910,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -29062,8 +28048,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -29205,8 +28189,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -29348,8 +28330,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -29488,8 +28468,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -29631,8 +28609,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -29773,8 +28749,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -29916,8 +28890,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -30059,8 +29031,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -30205,8 +29175,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -30283,7 +29251,6 @@ export interface RustMap extends V.GrammarMap {
 		readonly file: {
 			readonly statements:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -30394,51 +29361,23 @@ export interface RustMap extends V.GrammarMap {
 			readonly $text: PortableTexts['identifier'];
 		};
 		readonly 'identifier.label': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'identifier.lifetime': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'identifier.metavariable': {
-			readonly attributes:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
-				| V.Read<RustMap, 'attribute.inner'>;
+			readonly attributes: V.Read<RustMap, 'attribute'>;
 		};
 		readonly 'identifier.qualified': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| 'super';
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'> | 'super';
 			readonly qualifier:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.bracketed'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.generic.turbofish'>
@@ -30616,7 +29555,7 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'literal.string.bytes.raw': {
 			readonly content: V.Read<RustMap, 'literal.string.text'>;
-			readonly elements: V.Read<RustMap, 'literal.string.escape'> | V.Read<RustMap, 'literal.string.text'>;
+			readonly elements: never;
 			readonly $forms: V.Form<'content'>;
 		};
 		readonly 'literal.string.c': {
@@ -30624,21 +29563,21 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'literal.string.c.raw': {
 			readonly content: V.Read<RustMap, 'literal.string.text'>;
-			readonly elements: V.Read<RustMap, 'literal.string.escape'> | V.Read<RustMap, 'literal.string.text'>;
+			readonly elements: never;
 			readonly $forms: V.Form<'content'>;
 		};
 		readonly 'literal.string.escape': {
 			readonly content: string;
-			readonly elements: V.Read<RustMap, 'literal.string.escape'> | V.Read<RustMap, 'literal.string.text'>;
+			readonly elements: never;
 			readonly $forms: V.Form<'content'>;
 		};
 		readonly 'literal.string.raw': {
 			readonly content: V.Read<RustMap, 'literal.string.text'>;
-			readonly elements: V.Read<RustMap, 'literal.string.escape'> | V.Read<RustMap, 'literal.string.text'>;
+			readonly elements: never;
 			readonly $forms: V.Form<'content'>;
 		};
 		readonly 'literal.string.text': {
-			readonly elements: V.Read<RustMap, 'literal.string.escape'> | V.Read<RustMap, 'literal.string.text'>;
+			readonly elements: never;
 		};
 		readonly 'modifier.extern': {
 			readonly abi:
@@ -30654,11 +29593,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -30667,24 +29603,13 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'scope'>;
 		};
 		readonly 'pattern.as': {
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly pattern:
 				| V.Read<RustMap, 'expression.block.const'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -30746,11 +29671,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.ScopedIdentifier.Parsed;
 			readonly typeArguments: V.Read<RustMap, 'element.type_argument'>;
 			readonly $forms: V.Form<'name' | 'typeArguments'>;
@@ -30761,11 +29682,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -30807,11 +29724,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -30875,11 +29788,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -30940,11 +29849,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -31006,11 +29911,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly left:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -31048,11 +29950,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly right:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -31092,11 +29991,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly left:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -31134,11 +30030,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly right:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -31179,11 +30072,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly left:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -31221,11 +30111,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly right:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -31266,11 +30153,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly left:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -31308,11 +30192,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly right:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -31355,11 +30236,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -31423,11 +30300,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -31491,11 +30364,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -31534,11 +30403,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly type:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.generic.turbofish'>
 				| T.ScopedIdentifier.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
@@ -31568,61 +30433,14 @@ export interface RustMap extends V.GrammarMap {
 				  >;
 		};
 		readonly 'pattern.struct.field': {
-			readonly fields:
-				| V.Read<RustMap, 'expression.block.const'>
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'literal.character'>
-				| V.Read<RustMap, 'literal.number.float'>
-				| V.Read<RustMap, 'literal.number.integer'>
-				| V.Read<RustMap, 'literal.number.integer.binary'>
-				| V.Read<RustMap, 'literal.number.integer.hex'>
-				| V.Read<RustMap, 'literal.number.integer.octal'>
-				| V.Read<RustMap, 'literal.number.negative'>
-				| V.Read<RustMap, 'literal.string'>
-				| V.Read<RustMap, 'literal.string.bytes'>
-				| V.Read<RustMap, 'literal.string.c'>
-				| V.Read<RustMap, 'literal.string.raw'>
-				| V.Read<RustMap, 'pattern.as'>
-				| V.Read<RustMap, 'pattern.generic'>
-				| V.Read<RustMap, 'pattern.list'>
-				| V.Read<RustMap, 'pattern.mutable'>
-				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range'>
-				| V.Read<RustMap, 'pattern.range.exclusive'>
-				| V.Read<RustMap, 'pattern.range.inclusive'>
-				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
-				| V.Read<RustMap, 'pattern.reference'>
-				| V.Read<RustMap, 'pattern.reference.value'>
-				| V.Read<RustMap, 'pattern.struct'>
-				| V.Read<RustMap, 'pattern.struct.field'>
-				| V.Text<RustMap, 'pattern.struct.rest'>
-				| V.Read<RustMap, 'pattern.tuple'>
-				| V.Text<RustMap, 'pattern.wildcard'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly fields: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly pattern:
 				| V.Read<RustMap, 'expression.block.const'>
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -31678,15 +30496,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferencePattern.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.StringLiteral.Parsed;
-			readonly type:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
-				| V.Read<RustMap, 'type.generic.turbofish'>;
+			readonly type: never;
 			readonly $forms: V.Form<'name', 'pattern'> | V.Form<'name' | 'pattern'>;
 		};
 		readonly 'pattern.struct.rest': {
@@ -31699,11 +30509,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.lambda'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -31746,7 +30552,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly label: V.Read<RustMap, 'identifier.label'>;
 			readonly statements:
 				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'attribute.content'>
 				| V.Read<RustMap, 'attribute.inner'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -31918,8 +30723,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -32060,8 +30863,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -32209,8 +31010,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -32318,8 +31117,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -32405,11 +31202,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'clause.import.wildcard'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -32420,197 +31214,44 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'argument'>;
 		};
 		readonly 'statement.import.package': {
-			readonly alias:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
-			readonly argument:
-				| V.Read<RustMap, 'clause.import.alias'>
-				| V.Read<RustMap, 'clause.import.list'>
-				| V.Read<RustMap, 'clause.import.list.scoped'>
-				| V.Read<RustMap, 'clause.import.wildcard'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly alias: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
+			readonly argument: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'statement.import.package.private': {
-			readonly alias:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
-			readonly argument:
-				| V.Read<RustMap, 'clause.import.alias'>
-				| V.Read<RustMap, 'clause.import.list'>
-				| V.Read<RustMap, 'clause.import.list.scoped'>
-				| V.Read<RustMap, 'clause.import.wildcard'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly alias: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
+			readonly argument: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'statement.import.package.public': {
-			readonly alias:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
-			readonly argument:
-				| V.Read<RustMap, 'clause.import.alias'>
-				| V.Read<RustMap, 'clause.import.list'>
-				| V.Read<RustMap, 'clause.import.list.scoped'>
-				| V.Read<RustMap, 'clause.import.wildcard'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly alias: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
+			readonly argument: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'statement.import.package.public.internal': {
-			readonly alias:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
-			readonly argument:
-				| V.Read<RustMap, 'clause.import.alias'>
-				| V.Read<RustMap, 'clause.import.list'>
-				| V.Read<RustMap, 'clause.import.list.scoped'>
-				| V.Read<RustMap, 'clause.import.wildcard'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly alias: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
+			readonly argument: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'statement.import.package.public.parent': {
-			readonly alias:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
-			readonly argument:
-				| V.Read<RustMap, 'clause.import.alias'>
-				| V.Read<RustMap, 'clause.import.list'>
-				| V.Read<RustMap, 'clause.import.list.scoped'>
-				| V.Read<RustMap, 'clause.import.wildcard'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly alias: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
+			readonly argument: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'statement.import.package.public.restricted': {
-			readonly alias:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
-			readonly argument:
-				| V.Read<RustMap, 'clause.import.alias'>
-				| V.Read<RustMap, 'clause.import.list'>
-				| V.Read<RustMap, 'clause.import.list.scoped'>
-				| V.Read<RustMap, 'clause.import.wildcard'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
-			readonly name:
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>;
+			readonly alias: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
+			readonly argument: never;
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -32626,11 +31267,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'clause.import.wildcard'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -32648,11 +31286,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'clause.import.wildcard'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -32670,11 +31305,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'clause.import.wildcard'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -32692,11 +31324,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'clause.import.wildcard'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -32714,11 +31343,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'clause.import.wildcard'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -32729,11 +31355,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| 'crate'
 				| 'self'
 				| 'super'
@@ -32754,11 +31377,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'literal.boolean.false'>
 				| V.Read<RustMap, 'literal.boolean.true'>
 				| V.Read<RustMap, 'literal.character'>
@@ -32880,8 +31499,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -33026,8 +31643,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -33173,8 +31788,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -33316,8 +31929,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -33396,11 +32007,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'clause.bounds.removed'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.bounded'>
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
@@ -33422,11 +32029,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -33434,7 +32038,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -33532,8 +32147,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.yield'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Text<RustMap, 'identifier.receiver'>
@@ -33615,11 +32228,9 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -33627,7 +32238,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -33665,11 +32287,9 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
 				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -33677,7 +32297,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -33717,11 +32348,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -33729,7 +32357,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.qualified'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
@@ -33770,11 +32409,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'clause.bounds.higher_ranked'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.tuple'>
@@ -33794,11 +32429,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -33806,7 +32438,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -33835,11 +32478,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -33847,7 +32487,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -33882,11 +32533,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly trait:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly $forms: V.Form<never, 'trait'> | V.Form<'trait', 'extern'>;
 		};
@@ -33894,11 +32541,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly type:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeArguments: V.Read<RustMap, 'element.type_argument'>;
 			readonly $forms: V.Form<'type' | 'typeArguments'>;
@@ -33907,11 +32550,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly type:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
-				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| T.ScopedIdentifier.Parsed;
 			readonly typeArguments: V.Read<RustMap, 'element.type_argument'>;
 			readonly $forms: V.Form<'type' | 'typeArguments'>;
@@ -33922,11 +32561,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -33934,7 +32570,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -34013,11 +32660,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -34025,7 +32669,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -34062,11 +32717,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -34074,7 +32726,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -34115,11 +32778,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -34127,7 +32787,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>
@@ -34167,11 +32838,8 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.call.macro'>
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.label'>
-				| V.Read<RustMap, 'identifier.lifetime'>
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Text<RustMap, 'identifier.receiver'>
 				| V.Read<RustMap, 'type.abstract'>
 				| V.Read<RustMap, 'type.array'>
 				| V.Read<RustMap, 'type.bounded'>
@@ -34179,7 +32847,18 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'type.function'>
 				| V.Read<RustMap, 'type.generic'>
 				| V.Read<RustMap, 'type.pointer'>
+				| V.Text<RustMap, 'type.primitive.boolean'>
+				| V.Text<RustMap, 'type.primitive.character'>
+				| V.Text<RustMap, 'type.primitive.floating.float32'>
+				| V.Text<RustMap, 'type.primitive.floating.float64'>
+				| V.Text<RustMap, 'type.primitive.integral.int128'>
+				| V.Text<RustMap, 'type.primitive.integral.int16'>
+				| V.Text<RustMap, 'type.primitive.integral.int32'>
+				| V.Text<RustMap, 'type.primitive.integral.int64'>
+				| V.Text<RustMap, 'type.primitive.integral.int8'>
+				| V.Text<RustMap, 'type.primitive.integral.size'>
 				| V.Text<RustMap, 'type.primitive.never'>
+				| V.Text<RustMap, 'type.primitive.string'>
 				| V.Read<RustMap, 'type.reference'>
 				| V.Read<RustMap, 'type.tuple'>
 				| V.Text<RustMap, 'type.unit'>

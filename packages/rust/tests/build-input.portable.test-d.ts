@@ -10,3 +10,9 @@ export const valuedName: Binding['name'] = { $path: 'identifier.metavariable', $
 export const pathOnlyName: Binding['name'] = { $path: 'identifier.metavariable' };
 // @ts-expect-error no route seats a metavariable's bare text
 export const textName: Binding['name'] = 'y';
+
+export const repetitionSeparator: V.Read<RustMap, 'element.macro.token_repetition.pattern'>['separator'] = ',';
+
+declare const lifetimeRead: V.Read<RustMap, 'identifier.lifetime'>;
+// @ts-expect-error a function's name never reads as a lifetime
+export const lifetimeFunctionName: V.BuildInput<RustMap, 'declaration.function'>['name'] = lifetimeRead;

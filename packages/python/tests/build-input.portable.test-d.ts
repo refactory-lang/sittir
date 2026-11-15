@@ -48,3 +48,19 @@ export const readText: NonNullable<StringRead['elements']>[number] = { $path: 'l
 export const pathOnlyText: V.BuildInput<PythonMap, 'literal.string.text'> = { $path: 'literal.string.text' };
 
 export const breakStatement: V.BuildInput<PythonMap, 'statement.break'> = { $path: 'statement.break' };
+
+type Function = V.BuildInput<PythonMap, 'declaration.function'>;
+declare const dottedRead: V.Read<PythonMap, 'identifier.qualified'>;
+
+export const functionName: Function['name'] = 'f';
+// @ts-expect-error a function's name reads only as an identifier, never a dotted name
+export const dottedFunctionName: Function['name'] = dottedRead;
+
+declare const aliasRead: V.Read<PythonMap, 'clause.import.alias'>;
+// @ts-expect-error a from-import reads what it imports as its content, never as names
+export const fromImportNames: V.BuildInput<PythonMap, 'statement.import.from'>['names'] = [aliasRead];
+
+declare const decoratorRead: V.Read<PythonMap, 'attribute.decorator'>;
+export const classDecorators: V.Read<PythonMap, 'declaration.class'>['decorators'] = [decoratorRead];
+
+export const formatSpec: NonNullable<V.Read<PythonMap, 'expression.interpolation.format'>['elements']>[number] = '>10';
