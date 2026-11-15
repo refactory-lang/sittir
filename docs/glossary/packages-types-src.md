@@ -1818,6 +1818,18 @@ The `Expression` namespace of coercive equality. It groups the `Binary` namespac
 
 The `Binary` namespace of coercive equality. It groups the `Comparison` namespace, whose `LooseEqual` and `LooseNotEqual` arms are claimed by the `t` claim tag and set `operator` to never. The namespace declares no slots of its own.
 
+### `packages/types/src/vocabulary/features/coercive-equality/expression.ts::Expression::Binary::Comparison`
+
+The `Comparison` namespace of coercive equality. It groups the `LooseEqual` and `LooseNotEqual` arms. The namespace declares no slots of its own.
+
+### `packages/types/src/vocabulary/features/coercive-equality/expression.ts::Expression::Binary::Comparison::LooseEqual`
+
+The `==` arm of coercive equality: a binary expression whose `operator` slot is set to never. The arm is claimed by the `t` claim tag, and the `$path` is the `expression.binary.comparison.loose_equal` kind.
+
+### `packages/types/src/vocabulary/features/coercive-equality/expression.ts::Expression::Binary::Comparison::LooseNotEqual`
+
+The `!=` arm of coercive equality: a binary expression whose `operator` slot is set to never. The arm is claimed by the `t` claim tag, and the `$path` is the `expression.binary.comparison.loose_not_equal` kind.
+
 ### `packages/types/src/vocabulary/features/coercive-equality/index.ts::CoerciveEquality`
 
 Coercive equality: an interface marked `'coercive-equality': true`. `==` and `!=` convert their operands' types before comparing.
