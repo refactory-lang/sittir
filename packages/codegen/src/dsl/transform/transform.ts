@@ -959,7 +959,7 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 		return originalMember;
 	}
 	if (typeof patch === 'function') return resolvePatch(patch(replacingDollar(key), originalMember), originalMember, key, enclosing);
-	if (isRefinePlaceholder(patch)) return refine(originalMember, patch.forms);
+	if (isRefinePlaceholder(patch)) return refine(originalMember, patch.forms, patch.default === undefined ? undefined : { default: patch.default });
 	if (isRulePlaceholder(patch)) {
 		return resolveRulePlaceholder(patch, key);
 	}

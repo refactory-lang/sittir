@@ -1,5 +1,5 @@
 import type { NodeMap, LinkedRefineForm, NarrowedField } from '../compiler/types.ts';
-import type { AssembledNode } from '../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, type AssembledNode } from '../compiler/model/node-map.ts';
 import { pascalCase } from '../compiler/model/casing.ts';
 import { fixedTextOfKind } from '../compiler/model/node-map.ts';
 import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
@@ -63,4 +63,24 @@ export function narrowedLiteralsOf(form: RefineFormInfo, nodeMap: NodeMap, owner
 			return [field.fieldName, field.text] as const;
 		})
 	);
+}
+
+export interface RefineDefault {
+	readonly form: LinkedRefineForm;
+	readonly pinned: ReadonlyMap<string, string>;
+	readonly pinnedProperties: readonly string[];
+}
+
+export function refineDefaultOf(nodeMap: NodeMap, kind: string): RefineDefault | undefined {
+	const defaultName = nodeMap.refineDefaults?.get(kind);
+	const form = nodeMap.refineForms?.get(kind)?.find((candidate) => candidate.name === defaultName);
+	const node = nodeMap.nodes.get(kind);
+	if (form === undefined || !(node instanceof AbstractAssembledCompound)) return undefined;
+	const pinned = narrowedLiteralsOf({ name: form.name, form, narrowedFields: form.narrowedFields }, nodeMap, kind);
+	if (pinned.size === 0) return undefined;
+	return { form, pinned, pinnedProperties: node.slots.filter((slot) => pinned.has(slot.name)).map((slot) => slot.propertyName) };
+}
+
+export function omittableWithDefault(fullConfig: string, pinnedProperties: readonly string[]): string {
+	return `Omit<${fullConfig}, ${pinnedProperties.map((name) => JSON.stringify(name)).join(' | ')}> | ${fullConfig}`;
 }
