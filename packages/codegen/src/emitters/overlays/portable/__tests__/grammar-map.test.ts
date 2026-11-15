@@ -132,8 +132,10 @@ describe('emitGrammarMap, python', () => {
 		expect(entryOf(map, 'statement.block') ?? '').not.toContain('$forms');
 	});
 
-	it("names each path's nodes from the generated ids, and its flags from what its build arms set", () => {
-		expect(map).toContain('\treadonly nodes: V.NodesOf<PortableIds, T.BoundByKindId, T.ParsedByKindId>;\n');
+	it("names each path's nodes by the kinds that read as that path, never a subpath's, and its flags from what its build arms set", () => {
+		const nodes = map.slice(map.indexOf('\treadonly nodes: V.NodesOf<{\n'), map.indexOf('\n\t}, T.BoundByKindId, T.ParsedByKindId>;\n'));
+		expect(nodes).toContain('\t\treadonly "identifier": TSKindId.Identifier;');
+		expect(nodes).toContain('\t\treadonly "identifier.qualified": TSKindId.DottedName | TSKindId.MemberType;');
 		const flags = map.slice(map.indexOf('\treadonly flags: {\n'), map.indexOf('\n\t};\n}', map.indexOf('\treadonly flags: {\n')));
 		expect(flags).toContain('\t\treadonly "declaration.property.getter": "async" | "override";');
 		expect(flags).toContain('\t\treadonly "declaration.constant": never;');

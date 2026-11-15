@@ -2,7 +2,8 @@
 
 import type * as V from '@sittir/types/vocabulary';
 import type * as T from '../types.js';
-import type { PortableIds, PortableTexts } from './index.js';
+import type { TSKindId } from '../kinds.js';
+import type { PortableTexts } from './index.js';
 
 export interface PythonMap extends V.GrammarMap {
 	readonly features: V.PythonFeatures;
@@ -18983,7 +18984,229 @@ export interface PythonMap extends V.GrammarMap {
 		readonly 'literal.string.escape': string;
 		readonly 'literal.string.text': string;
 	};
-	readonly nodes: V.NodesOf<PortableIds, T.BoundByKindId, T.ParsedByKindId>;
+	readonly nodes: V.NodesOf<
+		{
+			readonly 'argument.named': TSKindId.KeywordArgument;
+			readonly 'attribute.decorator': TSKindId.Decorator;
+			readonly 'clause.case.match': TSKindId.CaseClause;
+			readonly 'clause.catch': TSKindId.ExceptClause;
+			readonly 'clause.comprehension': TSKindId.ComprehensionClauses;
+			readonly 'clause.comprehension.for': TSKindId.ForInClause;
+			readonly 'clause.comprehension.if': TSKindId.IfClause;
+			readonly 'clause.else': TSKindId.ElseClause;
+			readonly 'clause.else_if': TSKindId.ElifClause;
+			readonly 'clause.finally': TSKindId.FinallyClause;
+			readonly 'clause.import.alias': TSKindId.AliasedImport;
+			readonly 'clause.import.relative': TSKindId.RelativeImport;
+			readonly 'clause.import.relative.prefix': TSKindId.ImportPrefix;
+			readonly 'clause.import.wildcard': TSKindId.WildcardImport;
+			readonly 'clause.resource': TSKindId.WithClauseBare | TSKindId.WithClauseParen;
+			readonly 'clause.resource.item': TSKindId.WithItem;
+			readonly 'comment.line': TSKindId.Comment;
+			readonly 'declaration.class': TSKindId.ClassDefinition;
+			readonly 'declaration.constant': TSKindId.AssignmentEq | TSKindId.AssignmentType | TSKindId.AssignmentTyped;
+			readonly 'declaration.constructor': TSKindId.ConstructorDeclaration | TSKindId.MethodDeclaration;
+			readonly 'declaration.function': TSKindId.FunctionDefinition;
+			readonly 'declaration.method': TSKindId.MethodDeclaration;
+			readonly 'declaration.method.special': TSKindId.MethodDeclaration;
+			readonly 'declaration.parameter.default': TSKindId.DefaultParameter;
+			readonly 'declaration.parameter.typed': TSKindId.TypedParameter;
+			readonly 'declaration.parameter.typed_default': TSKindId.TypedDefaultParameter;
+			readonly 'declaration.type_alias': TSKindId.TypeAliasStatement;
+			readonly 'declaration.type_parameter': TSKindId.TypeParamTypeVar;
+			readonly 'declaration.type_parameter.parameters': TSKindId.TypeParamParamSpec;
+			readonly 'declaration.type_parameter.variadic': TSKindId.TypeParamTypeVarTuple;
+			readonly 'declaration.variable': TSKindId.AssignmentEq | TSKindId.AssignmentType | TSKindId.AssignmentTyped;
+			readonly 'element.comparator': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.comparison.equal': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.comparison.greater': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.comparison.greater_equal': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.comparison.less': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.comparison.less_equal': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.comparison.not_equal': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.comparison.not_equal.legacy': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.identity.is': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.identity.is_not': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.membership.in': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.membership.not_in': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.pair': TSKindId.Pair;
+			readonly 'element.spread': TSKindId.ListSplat;
+			readonly 'element.spread.map': TSKindId.DictionarySplat;
+			readonly 'element.spread.parenthesized': TSKindId.ParenthesizedListSplat;
+			readonly 'expression.assignment': TSKindId.NamedExpression;
+			readonly 'expression.assignment.compound': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.add': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.bitwise_and': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.bitwise_or': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.bitwise_xor': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.divide': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.exponent': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.floor_divide': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.matrix_multiply': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.modulo': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.multiply': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.shift_left': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.shift_right': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.subtract': TSKindId.AugmentedAssignment;
+			readonly 'expression.await': TSKindId.Await;
+			readonly 'expression.binary': TSKindId.BinaryOperator | TSKindId.ComparisonOperator;
+			readonly 'expression.binary.arithmetic.add': TSKindId.BinaryOperator;
+			readonly 'expression.binary.arithmetic.divide': TSKindId.BinaryOperator;
+			readonly 'expression.binary.arithmetic.exponent': TSKindId.BinaryOperator;
+			readonly 'expression.binary.arithmetic.floor_divide': TSKindId.BinaryOperator;
+			readonly 'expression.binary.arithmetic.modulo': TSKindId.BinaryOperator;
+			readonly 'expression.binary.arithmetic.multiply': TSKindId.BinaryOperator;
+			readonly 'expression.binary.arithmetic.subtract': TSKindId.BinaryOperator;
+			readonly 'expression.binary.bitwise.and': TSKindId.BinaryOperator;
+			readonly 'expression.binary.bitwise.or': TSKindId.BinaryOperator;
+			readonly 'expression.binary.bitwise.xor': TSKindId.BinaryOperator;
+			readonly 'expression.binary.comparison.chain': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.comparison.equal': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.comparison.greater': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.comparison.greater_equal': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.comparison.less': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.comparison.less_equal': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.comparison.not_equal': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.comparison.not_equal.legacy': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.identity.is': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.identity.is_not': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.logical': TSKindId.BooleanOperator;
+			readonly 'expression.binary.logical.and': TSKindId.BooleanOperator;
+			readonly 'expression.binary.logical.or': TSKindId.BooleanOperator;
+			readonly 'expression.binary.matrix_multiply': TSKindId.BinaryOperator;
+			readonly 'expression.binary.membership.in': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.membership.not_in': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.shift.left': TSKindId.BinaryOperator;
+			readonly 'expression.binary.shift.right': TSKindId.BinaryOperator;
+			readonly 'expression.call': TSKindId.Call;
+			readonly 'expression.call.member': TSKindId.Call;
+			readonly 'expression.collection.list': TSKindId.List;
+			readonly 'expression.collection.map': TSKindId.Dictionary;
+			readonly 'expression.collection.set': TSKindId.Set;
+			readonly 'expression.collection.tuple': TSKindId.Tuple;
+			readonly 'expression.collection.tuple.bare':
+				| TSKindId.ExpressionList
+				| TSKindId.ExpressionStatementTuple
+				| TSKindId.Subjects
+				| TSKindId.Subscripts;
+			readonly 'expression.comprehension.generator': TSKindId.GeneratorExpression;
+			readonly 'expression.comprehension.list': TSKindId.ListComprehension;
+			readonly 'expression.comprehension.map': TSKindId.DictionaryComprehension;
+			readonly 'expression.comprehension.set': TSKindId.SetComprehension;
+			readonly 'expression.conditional': TSKindId.ConditionalExpression;
+			readonly 'expression.interpolation': TSKindId.FormatExpression | TSKindId.Interpolation;
+			readonly 'expression.interpolation.conversion': TSKindId.TypeConversion;
+			readonly 'expression.interpolation.format': TSKindId.FormatSpecifier;
+			readonly 'expression.lambda': TSKindId.Lambda | TSKindId.LambdaWithinForInClause;
+			readonly 'expression.member': TSKindId.Attribute;
+			readonly 'expression.parenthesized': TSKindId.ParenthesizedExpression;
+			readonly 'expression.slice': TSKindId.Slice;
+			readonly 'expression.subscript': TSKindId.Subscript;
+			readonly 'expression.unary': TSKindId.UnaryOperator;
+			readonly 'expression.unary.bitwise_not': TSKindId.UnaryOperator;
+			readonly 'expression.unary.negation': TSKindId.UnaryOperator;
+			readonly 'expression.unary.not': TSKindId.NotOperator;
+			readonly 'expression.unary.plus': TSKindId.UnaryOperator;
+			readonly 'expression.yield': TSKindId.Yield;
+			readonly 'expression.yield.delegate': TSKindId.Yield;
+			readonly file: TSKindId.Module;
+			readonly identifier: TSKindId.Identifier;
+			readonly 'identifier.qualified': TSKindId.DottedName | TSKindId.MemberType;
+			readonly 'literal.boolean.false': TSKindId.False;
+			readonly 'literal.boolean.true': TSKindId.True;
+			readonly 'literal.ellipsis': TSKindId.Ellipsis;
+			readonly 'literal.null': TSKindId.None;
+			readonly 'literal.number.float': TSKindId.FloatPoint;
+			readonly 'literal.number.float.leading_point': TSKindId.FloatLeadingPoint;
+			readonly 'literal.number.float.scientific': TSKindId.FloatScientific;
+			readonly 'literal.number.integer': TSKindId.IntegerDecimalPlain;
+			readonly 'literal.number.integer.big': TSKindId.IntegerDecimalLong;
+			readonly 'literal.number.integer.big.binary': TSKindId.IntegerBinaryLong;
+			readonly 'literal.number.integer.big.hex': TSKindId.IntegerHexLong;
+			readonly 'literal.number.integer.big.octal': TSKindId.IntegerLegacyOctalLong | TSKindId.IntegerOctalLong;
+			readonly 'literal.number.integer.binary': TSKindId.IntegerBinaryPlain;
+			readonly 'literal.number.integer.hex': TSKindId.IntegerHexPlain;
+			readonly 'literal.number.integer.imaginary': TSKindId.IntegerDecimalImaginary;
+			readonly 'literal.number.integer.octal': TSKindId.IntegerLegacyOctalPlain | TSKindId.IntegerOctalPlain;
+			readonly 'literal.number.negative': TSKindId.SimplePatternNegative;
+			readonly 'literal.string': TSKindId.String;
+			readonly 'literal.string.bytes': TSKindId.String;
+			readonly 'literal.string.bytes.multiline': TSKindId.String;
+			readonly 'literal.string.bytes.raw': TSKindId.String;
+			readonly 'literal.string.bytes.raw.multiline': TSKindId.String;
+			readonly 'literal.string.concatenated': TSKindId.ConcatenatedString;
+			readonly 'literal.string.escape':
+				| TSKindId.EscapeInterpolation
+				| TSKindId.EscapeSequenceHex
+				| TSKindId.EscapeSequenceLineBreak
+				| TSKindId.EscapeSequenceNamed
+				| TSKindId.EscapeSequenceOctal
+				| TSKindId.EscapeSequenceSimple
+				| TSKindId.EscapeSequenceUnicodeFixed
+				| TSKindId.EscapeSequenceUnicodeWide;
+			readonly 'literal.string.interpolated': TSKindId.String;
+			readonly 'literal.string.interpolated.deferred': TSKindId.String;
+			readonly 'literal.string.interpolated.deferred.multiline': TSKindId.String;
+			readonly 'literal.string.interpolated.deferred.raw': TSKindId.String;
+			readonly 'literal.string.interpolated.deferred.raw.multiline': TSKindId.String;
+			readonly 'literal.string.interpolated.multiline': TSKindId.String;
+			readonly 'literal.string.interpolated.raw': TSKindId.String;
+			readonly 'literal.string.interpolated.raw.multiline': TSKindId.String;
+			readonly 'literal.string.multiline': TSKindId.String;
+			readonly 'literal.string.raw': TSKindId.String;
+			readonly 'literal.string.raw.multiline': TSKindId.String;
+			readonly 'literal.string.text': TSKindId.StringFragment;
+			readonly 'literal.string.unicode': TSKindId.String;
+			readonly 'pattern.as': TSKindId.CaseAsPattern;
+			readonly 'pattern.complex': TSKindId.ComplexPattern;
+			readonly 'pattern.complex.add': TSKindId.ComplexPattern;
+			readonly 'pattern.complex.subtract': TSKindId.ComplexPattern;
+			readonly 'pattern.list': TSKindId.CaseListPattern | TSKindId.ListPattern;
+			readonly 'pattern.map': TSKindId.DictPattern;
+			readonly 'pattern.or': TSKindId.UnionPattern;
+			readonly 'pattern.rest': TSKindId.ListSplatPattern | TSKindId.SplatPatternList;
+			readonly 'pattern.rest.map': TSKindId.DictionarySplatPattern | TSKindId.SplatPatternDictionary;
+			readonly 'pattern.struct': TSKindId.ClassPattern;
+			readonly 'pattern.struct.field': TSKindId.KeywordPattern;
+			readonly 'pattern.tuple': TSKindId.CaseTuplePattern | TSKindId.TuplePattern;
+			readonly 'pattern.tuple.bare': TSKindId.CasePatternList | TSKindId.PatternList;
+			readonly 'pattern.wildcard': TSKindId.WildcardPattern;
+			readonly 'statement.assert': TSKindId.AssertStatement;
+			readonly 'statement.block':
+				| TSKindId.Block
+				| TSKindId.BlockClassDeclaration
+				| TSKindId.SuiteEmpty
+				| TSKindId.SuiteInline;
+			readonly 'statement.break': TSKindId.BreakStatement;
+			readonly 'statement.continue': TSKindId.ContinueStatement;
+			readonly 'statement.delete': TSKindId.DeleteStatement;
+			readonly 'statement.empty': TSKindId.PassStatement;
+			readonly 'statement.exec': TSKindId.ExecStatement;
+			readonly 'statement.expression': TSKindId.ExpressionStatement;
+			readonly 'statement.global': TSKindId.GlobalStatement;
+			readonly 'statement.if': TSKindId.IfStatement;
+			readonly 'statement.import': TSKindId.ImportStatement;
+			readonly 'statement.import.from': TSKindId.ImportFromStatement;
+			readonly 'statement.import.future': TSKindId.FutureImportStatement;
+			readonly 'statement.loop.for_each': TSKindId.ForStatement;
+			readonly 'statement.loop.while': TSKindId.WhileStatement;
+			readonly 'statement.match': TSKindId.MatchStatement;
+			readonly 'statement.nonlocal': TSKindId.NonlocalStatement;
+			readonly 'statement.print': TSKindId.PrintStatementChevron | TSKindId.PrintStatementPlain;
+			readonly 'statement.resource': TSKindId.WithStatement;
+			readonly 'statement.return': TSKindId.ReturnStatement;
+			readonly 'statement.throw': TSKindId.RaiseStatement;
+			readonly 'statement.try': TSKindId.TryStatement;
+			readonly type: TSKindId.Type;
+			readonly 'type.constrained': TSKindId.ConstrainedType;
+			readonly 'type.generic': TSKindId.GenericType;
+			readonly 'type.nullable': TSKindId.GenericType;
+			readonly 'type.rest': TSKindId.SplatType;
+			readonly 'type.union': TSKindId.UnionType;
+		},
+		T.BoundByKindId,
+		T.ParsedByKindId
+	>;
 	readonly flags: {
 		readonly 'argument.named': never;
 		readonly 'attribute.decorator': never;

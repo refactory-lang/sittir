@@ -4,6 +4,7 @@ import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { textBuilt } from '@sittir/common/engine';
 import type { PortableBuildArm, PortablePickTest } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
+import { kindDiscriminantExpr } from '../../kind-discriminant.ts';
 import { exactReadsOf, type ExactReads, type ExactSet, type ExactSlots } from './exact.ts';
 import type { PortableTypedInput } from './typed.ts';
 
@@ -211,6 +212,18 @@ export function mapInputsOf(typedInput: PortableTypedInput): readonly (readonly 
 	return [...inputs].sort(([a], [b]) => byCodepoint(a, b));
 }
 
+export function mapNodesOf({ nodeMap, kindEntries }: PortableTypedInput, reads: ExactReads): readonly (readonly [path: string, ids: readonly string[]])[] {
+	const ids = new Map<string, string[]>();
+	for (const [kind, list] of reads.entries) {
+		const id = kindDiscriminantExpr(kind, nodeMap, kindEntries);
+		for (const path of reads.readPathsOf(list)) {
+			const at = ids.get(path) ?? ids.set(path, []).get(path)!;
+			if (!at.includes(id)) at.push(id);
+		}
+	}
+	return [...ids].sort(([a], [b]) => byCodepoint(a, b));
+}
+
 const unionOf = (arms: readonly string[]): string => (arms.length === 0 ? 'never' : arms.join(' | '));
 
 export interface GrammarMapOutput {
@@ -230,7 +243,8 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 		'',
 		`import type * as V from ${q(VOCABULARY_MODULE)};`,
 		`import type * as T from '${moduleSpecifier(PORTABLE_MAP_FILE, 'types.ts')}';`,
-		`import type { PortableIds, PortableTexts } from '${moduleSpecifier(PORTABLE_MAP_FILE, PORTABLE_SURFACE_FILE)}';`,
+		`import type { TSKindId } from '${moduleSpecifier(PORTABLE_MAP_FILE, 'kinds.ts')}';`,
+		`import type { PortableTexts } from '${moduleSpecifier(PORTABLE_MAP_FILE, PORTABLE_SURFACE_FILE)}';`,
 		'',
 		`export interface ${map} extends V.GrammarMap {`,
 		`\treadonly features: V.${compositionOf(input.grammar)};`,
@@ -256,7 +270,9 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 		'\treadonly inputs: {',
 		...mapInputsOf(typedInput).map(([path, inputs]) => `\t\treadonly ${q(path)}: ${unionOf(inputs)};`),
 		'\t};',
-		'\treadonly nodes: V.NodesOf<PortableIds, T.BoundByKindId, T.ParsedByKindId>;',
+		'\treadonly nodes: V.NodesOf<{',
+		...mapNodesOf(typedInput, reads).map(([path, ids]) => `\t\treadonly ${q(path)}: ${ids.join(' | ')};`),
+		'\t}, T.BoundByKindId, T.ParsedByKindId>;',
 		'\treadonly flags: {',
 		...mapFlagsOf(typedInput).map(([path, flags]) => `\t\treadonly ${q(path)}: ${unionOf(flags.map(q))};`),
 		'\t};',

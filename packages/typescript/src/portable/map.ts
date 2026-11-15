@@ -2,7 +2,8 @@
 
 import type * as V from '@sittir/types/vocabulary';
 import type * as T from '../types.js';
-import type { PortableIds, PortableTexts } from './index.js';
+import type { TSKindId } from '../kinds.js';
+import type { PortableTexts } from './index.js';
 
 export interface TypeScriptMap extends V.GrammarMap {
 	readonly features: V.TypeScriptFeatures;
@@ -38444,7 +38445,336 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'literal.regex.pattern': string;
 		readonly 'literal.string.text': string;
 	};
-	readonly nodes: V.NodesOf<PortableIds, T.BoundByKindId, T.ParsedByKindId>;
+	readonly nodes: V.NodesOf<
+		{
+			readonly 'attribute.content.call': TSKindId.DecoratorCallExpression;
+			readonly 'attribute.content.member': TSKindId.DecoratorMemberExpression;
+			readonly 'attribute.content.parenthesized': TSKindId.DecoratorParenthesizedExpression;
+			readonly 'attribute.decorator': TSKindId.Decorator;
+			readonly 'clause.bounds': TSKindId.Constraint;
+			readonly 'clause.case.default': TSKindId.SwitchDefault;
+			readonly 'clause.case.switch': TSKindId.SwitchCase;
+			readonly 'clause.catch': TSKindId.CatchClause;
+			readonly 'clause.default': TSKindId.DefaultType;
+			readonly 'clause.else': TSKindId.ElseClause;
+			readonly 'clause.export': TSKindId.ExportClause;
+			readonly 'clause.export.namespace': TSKindId.NamespaceExport;
+			readonly 'clause.export.specifier': TSKindId.ExportSpecifier;
+			readonly 'clause.export.specifier.typeof': TSKindId.ExportSpecifier;
+			readonly 'clause.extends': TSKindId.ExtendsClause;
+			readonly 'clause.extends.type': TSKindId.ExtendsTypeClause;
+			readonly 'clause.finally': TSKindId.FinallyClause;
+			readonly 'clause.implements': TSKindId.ImplementsClause;
+			readonly 'clause.import.attribute': TSKindId.ImportAttribute;
+			readonly 'clause.import.names': TSKindId.ImportClause;
+			readonly 'clause.import.namespace': TSKindId.NamespaceImport;
+			readonly 'clause.import.require': TSKindId.ImportRequireClause;
+			readonly 'clause.import.specifier': TSKindId.ImportSpecifierAs | TSKindId.ImportSpecifierName;
+			readonly 'clause.import.specifier.typeof': TSKindId.ImportSpecifierAs | TSKindId.ImportSpecifierName;
+			readonly 'clause.mapped_type': TSKindId.MappedTypeClause;
+			readonly 'comment.block': TSKindId.CommentBlock;
+			readonly 'comment.block.doc': TSKindId.CommentBlock;
+			readonly 'comment.html': TSKindId.HtmlComment;
+			readonly 'comment.line': TSKindId.CommentLine;
+			readonly 'declaration.ambient': TSKindId.AmbientDeclaration;
+			readonly 'declaration.class': TSKindId.AbstractClassDeclaration | TSKindId.ClassDeclaration;
+			readonly 'declaration.constructor': TSKindId.ConstructorDeclaration;
+			readonly 'declaration.constructor.private': TSKindId.ConstructorDeclaration;
+			readonly 'declaration.constructor.protected': TSKindId.ConstructorDeclaration;
+			readonly 'declaration.constructor.public': TSKindId.ConstructorDeclaration;
+			readonly 'declaration.enum': TSKindId.EnumDeclaration;
+			readonly 'declaration.enum_member': TSKindId.EnumAssignment | TSKindId.EnumBodyElementName;
+			readonly 'declaration.field': TSKindId.PublicFieldDefinitionPlain;
+			readonly 'declaration.field.private': TSKindId.PublicFieldDefinitionPlain;
+			readonly 'declaration.field.protected': TSKindId.PublicFieldDefinitionPlain;
+			readonly 'declaration.field.public': TSKindId.PublicFieldDefinitionPlain;
+			readonly 'declaration.field.signature': TSKindId.PropertySignature;
+			readonly 'declaration.field.signature.private': TSKindId.PropertySignature;
+			readonly 'declaration.field.signature.protected': TSKindId.PropertySignature;
+			readonly 'declaration.field.signature.public': TSKindId.PropertySignature;
+			readonly 'declaration.function': TSKindId.FunctionDeclaration | TSKindId.GeneratorFunctionDeclaration;
+			readonly 'declaration.function.signature': TSKindId.FunctionSignature;
+			readonly 'declaration.interface': TSKindId.InterfaceDeclaration;
+			readonly 'declaration.method': TSKindId.MethodDefinitionPlain;
+			readonly 'declaration.method.private': TSKindId.MethodDefinitionPlain;
+			readonly 'declaration.method.protected': TSKindId.MethodDefinitionPlain;
+			readonly 'declaration.method.public': TSKindId.MethodDefinitionPlain;
+			readonly 'declaration.method.signature': TSKindId.MethodSignaturePlain;
+			readonly 'declaration.method.signature.abstract': TSKindId.AbstractMethodSignaturePlain;
+			readonly 'declaration.method.signature.abstract.private': TSKindId.AbstractMethodSignaturePlain;
+			readonly 'declaration.method.signature.abstract.protected': TSKindId.AbstractMethodSignaturePlain;
+			readonly 'declaration.method.signature.abstract.public': TSKindId.AbstractMethodSignaturePlain;
+			readonly 'declaration.method.signature.private': TSKindId.MethodSignaturePlain;
+			readonly 'declaration.method.signature.protected': TSKindId.MethodSignaturePlain;
+			readonly 'declaration.method.signature.public': TSKindId.MethodSignaturePlain;
+			readonly 'declaration.module': TSKindId.InternalModule;
+			readonly 'declaration.module.external': TSKindId.Module;
+			readonly 'declaration.module_property': TSKindId.AmbientDeclarationModule;
+			readonly 'declaration.parameter':
+				| TSKindId.OptionalParameter
+				| TSKindId.RequiredParameter
+				| TSKindId.SetterParameter;
+			readonly 'declaration.parameter.private':
+				| TSKindId.OptionalParameter
+				| TSKindId.RequiredParameter
+				| TSKindId.SetterParameter;
+			readonly 'declaration.parameter.protected':
+				| TSKindId.OptionalParameter
+				| TSKindId.RequiredParameter
+				| TSKindId.SetterParameter;
+			readonly 'declaration.parameter.public':
+				| TSKindId.OptionalParameter
+				| TSKindId.RequiredParameter
+				| TSKindId.SetterParameter;
+			readonly 'declaration.parameter.receiver': TSKindId.ReceiverParameterDeclaration | TSKindId.RequiredParameter;
+			readonly 'declaration.property': TSKindId.PublicFieldDefinitionAccessor;
+			readonly 'declaration.property.getter': TSKindId.MethodDefinitionGetter;
+			readonly 'declaration.property.getter.private': TSKindId.MethodDefinitionGetter;
+			readonly 'declaration.property.getter.protected': TSKindId.MethodDefinitionGetter;
+			readonly 'declaration.property.getter.public': TSKindId.MethodDefinitionGetter;
+			readonly 'declaration.property.private': TSKindId.PublicFieldDefinitionAccessor;
+			readonly 'declaration.property.protected': TSKindId.PublicFieldDefinitionAccessor;
+			readonly 'declaration.property.public': TSKindId.PublicFieldDefinitionAccessor;
+			readonly 'declaration.property.setter': TSKindId.MethodDefinitionSetter;
+			readonly 'declaration.property.setter.private': TSKindId.MethodDefinitionSetter;
+			readonly 'declaration.property.setter.protected': TSKindId.MethodDefinitionSetter;
+			readonly 'declaration.property.setter.public': TSKindId.MethodDefinitionSetter;
+			readonly 'declaration.property.signature.abstract': TSKindId.PublicFieldDefinitionAccessor;
+			readonly 'declaration.property.signature.abstract.getter': TSKindId.AbstractMethodSignatureGetter;
+			readonly 'declaration.property.signature.abstract.getter.private': TSKindId.AbstractMethodSignatureGetter;
+			readonly 'declaration.property.signature.abstract.getter.protected': TSKindId.AbstractMethodSignatureGetter;
+			readonly 'declaration.property.signature.abstract.getter.public': TSKindId.AbstractMethodSignatureGetter;
+			readonly 'declaration.property.signature.abstract.setter': TSKindId.AbstractMethodSignatureSetter;
+			readonly 'declaration.property.signature.abstract.setter.private': TSKindId.AbstractMethodSignatureSetter;
+			readonly 'declaration.property.signature.abstract.setter.protected': TSKindId.AbstractMethodSignatureSetter;
+			readonly 'declaration.property.signature.abstract.setter.public': TSKindId.AbstractMethodSignatureSetter;
+			readonly 'declaration.property.signature.getter': TSKindId.MethodSignatureGetter;
+			readonly 'declaration.property.signature.getter.private': TSKindId.MethodSignatureGetter;
+			readonly 'declaration.property.signature.getter.protected': TSKindId.MethodSignatureGetter;
+			readonly 'declaration.property.signature.getter.public': TSKindId.MethodSignatureGetter;
+			readonly 'declaration.property.signature.setter': TSKindId.MethodSignatureSetter;
+			readonly 'declaration.property.signature.setter.private': TSKindId.MethodSignatureSetter;
+			readonly 'declaration.property.signature.setter.protected': TSKindId.MethodSignatureSetter;
+			readonly 'declaration.property.signature.setter.public': TSKindId.MethodSignatureSetter;
+			readonly 'declaration.signature.call': TSKindId.CallSignature;
+			readonly 'declaration.signature.construct': TSKindId.ConstructSignature;
+			readonly 'declaration.signature.index': TSKindId.IndexSignatureColon;
+			readonly 'declaration.signature.index.mapped': TSKindId.IndexSignatureMappedTypeClause;
+			readonly 'declaration.type_alias': TSKindId.TypeAliasDeclaration;
+			readonly 'declaration.type_parameter': TSKindId.TypeParameter;
+			readonly 'declaration.variable':
+				| TSKindId.LexicalDeclaration
+				| TSKindId.VariableDeclaratorDefinite
+				| TSKindId.VariableDeclaratorPlain;
+			readonly 'declaration.variable.constant': TSKindId.LexicalDeclaration;
+			readonly 'declaration.variable.pattern': TSKindId.VariableDeclaratorPlain;
+			readonly 'declaration.variable.reassignable': TSKindId.LexicalDeclaration;
+			readonly 'declaration.variable.reassignable.function_scoped': TSKindId.VariableDeclaration;
+			readonly 'element.pair': TSKindId.Pair;
+			readonly 'element.spread': TSKindId.SpreadElement;
+			readonly 'element.template.substitution': TSKindId.TemplateType;
+			readonly 'element.tuple.member': TSKindId.TupleParameter;
+			readonly 'element.tuple.member.optional': TSKindId.OptionalTupleParameter;
+			readonly 'expression.assignment': TSKindId.AssignmentExpression;
+			readonly 'expression.assignment.compound': TSKindId.AugmentedAssignmentExpression;
+			readonly 'expression.assignment.compound.add': TSKindId.AugmentedAssignmentExpression;
+			readonly 'expression.assignment.compound.and': TSKindId.AugmentedAssignmentExpression;
+			readonly 'expression.assignment.compound.bitwise_and': TSKindId.AugmentedAssignmentExpression;
+			readonly 'expression.assignment.compound.bitwise_or': TSKindId.AugmentedAssignmentExpression;
+			readonly 'expression.assignment.compound.bitwise_xor': TSKindId.AugmentedAssignmentExpression;
+			readonly 'expression.assignment.compound.coalesce': TSKindId.AugmentedAssignmentExpression;
+			readonly 'expression.assignment.compound.divide': TSKindId.AugmentedAssignmentExpression;
+			readonly 'expression.assignment.compound.exponent': TSKindId.AugmentedAssignmentExpression;
+			readonly 'expression.assignment.compound.modulo': TSKindId.AugmentedAssignmentExpression;
+			readonly 'expression.assignment.compound.multiply': TSKindId.AugmentedAssignmentExpression;
+			readonly 'expression.assignment.compound.or': TSKindId.AugmentedAssignmentExpression;
+			readonly 'expression.assignment.compound.shift_left': TSKindId.AugmentedAssignmentExpression;
+			readonly 'expression.assignment.compound.shift_right': TSKindId.AugmentedAssignmentExpression;
+			readonly 'expression.assignment.compound.shift_right_unsigned': TSKindId.AugmentedAssignmentExpression;
+			readonly 'expression.assignment.compound.subtract': TSKindId.AugmentedAssignmentExpression;
+			readonly 'expression.await': TSKindId.AwaitExpression;
+			readonly 'expression.binary': TSKindId.BinaryExpression;
+			readonly 'expression.binary.arithmetic.add': TSKindId.BinaryExpression;
+			readonly 'expression.binary.arithmetic.divide': TSKindId.BinaryExpression;
+			readonly 'expression.binary.arithmetic.exponent': TSKindId.BinaryExpression;
+			readonly 'expression.binary.arithmetic.modulo': TSKindId.BinaryExpression;
+			readonly 'expression.binary.arithmetic.multiply': TSKindId.BinaryExpression;
+			readonly 'expression.binary.arithmetic.subtract': TSKindId.BinaryExpression;
+			readonly 'expression.binary.bitwise.and': TSKindId.BinaryExpression;
+			readonly 'expression.binary.bitwise.or': TSKindId.BinaryExpression;
+			readonly 'expression.binary.bitwise.xor': TSKindId.BinaryExpression;
+			readonly 'expression.binary.coalesce': TSKindId.BinaryExpression;
+			readonly 'expression.binary.comparison.equal': TSKindId.BinaryExpression;
+			readonly 'expression.binary.comparison.greater': TSKindId.BinaryExpression;
+			readonly 'expression.binary.comparison.greater_equal': TSKindId.BinaryExpression;
+			readonly 'expression.binary.comparison.less': TSKindId.BinaryExpression;
+			readonly 'expression.binary.comparison.less_equal': TSKindId.BinaryExpression;
+			readonly 'expression.binary.comparison.loose_equal': TSKindId.BinaryExpression;
+			readonly 'expression.binary.comparison.loose_not_equal': TSKindId.BinaryExpression;
+			readonly 'expression.binary.comparison.not_equal': TSKindId.BinaryExpression;
+			readonly 'expression.binary.logical.and': TSKindId.BinaryExpression;
+			readonly 'expression.binary.logical.or': TSKindId.BinaryExpression;
+			readonly 'expression.binary.membership.in': TSKindId.BinaryExpression;
+			readonly 'expression.binary.membership.instanceof': TSKindId.BinaryExpression;
+			readonly 'expression.binary.shift.left': TSKindId.BinaryExpression;
+			readonly 'expression.binary.shift.right': TSKindId.BinaryExpression;
+			readonly 'expression.binary.shift.right_unsigned': TSKindId.BinaryExpression;
+			readonly 'expression.call': TSKindId.CallExpressionCall | TSKindId.CallExpressionMember;
+			readonly 'expression.call.construct': TSKindId.NewExpression;
+			readonly 'expression.call.construct.bare': TSKindId.NewExpression;
+			readonly 'expression.call.import': TSKindId.Import;
+			readonly 'expression.call.member': TSKindId.CallExpressionCall;
+			readonly 'expression.call.template': TSKindId.CallExpressionTemplateCall;
+			readonly 'expression.cast.assertion': TSKindId.AsExpression;
+			readonly 'expression.cast.assertion.angle_bracket': TSKindId.TypeAssertion;
+			readonly 'expression.cast.non_null': TSKindId.NonNullExpression;
+			readonly 'expression.cast.satisfies': TSKindId.SatisfiesExpression;
+			readonly 'expression.class': TSKindId.Class;
+			readonly 'expression.collection.list': TSKindId.Array;
+			readonly 'expression.collection.object': TSKindId.Object;
+			readonly 'expression.conditional': TSKindId.TernaryExpression;
+			readonly 'expression.function': TSKindId.FunctionExpression | TSKindId.GeneratorFunction;
+			readonly 'expression.instantiation': TSKindId.InstantiationExpression | TSKindId.TypeQueryInstantiationExpression;
+			readonly 'expression.interpolation': TSKindId.TemplateSubstitution;
+			readonly 'expression.lambda': TSKindId.ArrowFunction;
+			readonly 'expression.member': TSKindId.MemberExpression;
+			readonly 'expression.meta': TSKindId.MetaPropertyImportMeta | TSKindId.MetaPropertyNewTarget;
+			readonly 'expression.parenthesized':
+				| TSKindId.ParenthesizedExpressionSequence
+				| TSKindId.ParenthesizedExpressionTyped;
+			readonly 'expression.sequence': TSKindId.SequenceExpression;
+			readonly 'expression.subscript': TSKindId.SubscriptExpression;
+			readonly 'expression.unary': TSKindId.UnaryExpression;
+			readonly 'expression.unary.bitwise_not': TSKindId.UnaryExpression;
+			readonly 'expression.unary.delete': TSKindId.UnaryExpression;
+			readonly 'expression.unary.negation': TSKindId.UnaryExpression;
+			readonly 'expression.unary.not': TSKindId.UnaryExpression;
+			readonly 'expression.unary.plus': TSKindId.UnaryExpression;
+			readonly 'expression.unary.typeof': TSKindId.UnaryExpression;
+			readonly 'expression.unary.void': TSKindId.UnaryExpression;
+			readonly 'expression.update': TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix;
+			readonly 'expression.update.decrement': TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix;
+			readonly 'expression.update.increment': TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix;
+			readonly 'expression.yield': TSKindId.YieldExpression;
+			readonly 'expression.yield.delegate': TSKindId.YieldExpression;
+			readonly file: TSKindId.Program;
+			readonly identifier:
+				| TSKindId.DefaultKeyword
+				| TSKindId.Identifier
+				| TSKindId.PrivatePropertyIdentifier
+				| TSKindId.PropertyIdentifier
+				| TSKindId.ShorthandPropertyIdentifier
+				| TSKindId.ShorthandPropertyIdentifierPattern
+				| TSKindId.TypeIdentifier;
+			readonly 'identifier.label': TSKindId.StatementIdentifier;
+			readonly 'identifier.qualified':
+				| TSKindId.NestedIdentifier
+				| TSKindId.NestedTypeIdentifier
+				| TSKindId.TypeQueryMemberExpression
+				| TSKindId.TypeQueryMemberExpressionInTypeAnnotation;
+			readonly 'identifier.receiver': TSKindId.This;
+			readonly 'identifier.super': TSKindId.Super;
+			readonly 'literal.boolean.false': TSKindId.False;
+			readonly 'literal.boolean.true': TSKindId.True;
+			readonly 'literal.null': TSKindId.Null;
+			readonly 'literal.null.undefined': TSKindId.Undefined;
+			readonly 'literal.number.float': TSKindId.NumberFloatPoint;
+			readonly 'literal.number.float.leading_point': TSKindId.NumberFloatLeadingPoint;
+			readonly 'literal.number.float.scientific': TSKindId.NumberFloatScientific;
+			readonly 'literal.number.integer': TSKindId.NumberDecimal;
+			readonly 'literal.number.integer.big': TSKindId.NumberBigintDecimal;
+			readonly 'literal.number.integer.big.binary': TSKindId.NumberBigintBinary;
+			readonly 'literal.number.integer.big.hex': TSKindId.NumberBigintHex;
+			readonly 'literal.number.integer.big.octal': TSKindId.NumberBigintOctal;
+			readonly 'literal.number.integer.binary': TSKindId.NumberBinary;
+			readonly 'literal.number.integer.hex': TSKindId.NumberHex;
+			readonly 'literal.number.integer.octal': TSKindId.NumberLegacyOctal | TSKindId.NumberOctal;
+			readonly 'literal.number.negative': TSKindId.LiteralTypeNegativeNumber;
+			readonly 'literal.regex': TSKindId.Regex;
+			readonly 'literal.regex.flags': TSKindId.RegexFlags;
+			readonly 'literal.regex.pattern': TSKindId.RegexPattern;
+			readonly 'literal.string': TSKindId.StringDouble | TSKindId.StringSingle;
+			readonly 'literal.string.escape': TSKindId.EscapeSequence;
+			readonly 'literal.string.interpolated': TSKindId.TemplateString;
+			readonly 'literal.string.text':
+				| TSKindId.TemplateChars
+				| TSKindId.UnescapedDoubleStringFragment
+				| TSKindId.UnescapedSingleStringFragment;
+			readonly 'modifier.visibility.private': TSKindId.PrivateKeyword;
+			readonly 'modifier.visibility.protected': TSKindId.ProtectedKeyword;
+			readonly 'modifier.visibility.public': TSKindId.PublicKeyword;
+			readonly 'pattern.assignment': TSKindId.AssignmentPattern;
+			readonly 'pattern.list': TSKindId.ArrayPattern;
+			readonly 'pattern.object': TSKindId.ObjectPattern;
+			readonly 'pattern.object.assignment': TSKindId.ObjectAssignmentPattern;
+			readonly 'pattern.object.pair': TSKindId.PairPattern;
+			readonly 'pattern.rest': TSKindId.RestPattern;
+			readonly 'statement.block': TSKindId.StatementBlock;
+			readonly 'statement.block.static': TSKindId.ClassStaticBlock;
+			readonly 'statement.break': TSKindId.BreakStatement;
+			readonly 'statement.continue': TSKindId.ContinueStatement;
+			readonly 'statement.debugger': TSKindId.DebuggerStatement;
+			readonly 'statement.empty': TSKindId.EmptyStatement;
+			readonly 'statement.export':
+				| TSKindId.ExportStatementDefaultDeclaration
+				| TSKindId.ExportStatementDefaultFrom
+				| TSKindId.ExportStatementEqualsExport
+				| TSKindId.ExportStatementNamespaceExport;
+			readonly 'statement.export.all': TSKindId.ExportStatementDefaultFrom;
+			readonly 'statement.export.default': TSKindId.ExportStatementDefaultDeclaration;
+			readonly 'statement.expression': TSKindId.ExpressionStatement;
+			readonly 'statement.if': TSKindId.IfStatement;
+			readonly 'statement.import': TSKindId.ImportStatement;
+			readonly 'statement.import.alias': TSKindId.ImportAlias;
+			readonly 'statement.import.typeof': TSKindId.ImportStatement;
+			readonly 'statement.labeled': TSKindId.LabeledStatement;
+			readonly 'statement.loop.counted': TSKindId.ForStatement;
+			readonly 'statement.loop.do_while': TSKindId.DoStatement;
+			readonly 'statement.loop.for_each': TSKindId.ForInStatement;
+			readonly 'statement.loop.while': TSKindId.WhileStatement;
+			readonly 'statement.return': TSKindId.ReturnStatement;
+			readonly 'statement.scope': TSKindId.WithStatement;
+			readonly 'statement.switch': TSKindId.SwitchStatement;
+			readonly 'statement.throw': TSKindId.ThrowStatement;
+			readonly 'statement.try': TSKindId.TryStatement;
+			readonly 'type.array': TSKindId.ArrayType;
+			readonly 'type.conditional': TSKindId.ConditionalType;
+			readonly 'type.existential': TSKindId.ExistentialType;
+			readonly 'type.function': TSKindId.FunctionType;
+			readonly 'type.function.constructor': TSKindId.ConstructorType;
+			readonly 'type.generic': TSKindId.GenericType;
+			readonly 'type.import': TSKindId.TypeQueryCallExpression | TSKindId.TypeQueryCallExpressionInTypeAnnotation;
+			readonly 'type.index_query': TSKindId.IndexTypeQuery;
+			readonly 'type.infer': TSKindId.InferType;
+			readonly 'type.intersection': TSKindId.IntersectionType;
+			readonly 'type.literal': TSKindId.LiteralType;
+			readonly 'type.lookup': TSKindId.LookupType;
+			readonly 'type.nullable': TSKindId.FlowMaybeType;
+			readonly 'type.object': TSKindId.ObjectType;
+			readonly 'type.optional': TSKindId.OptionalType;
+			readonly 'type.parenthesized': TSKindId.ParenthesizedType;
+			readonly 'type.predicate': TSKindId.TypePredicate;
+			readonly 'type.predicate.asserts': TSKindId.Asserts;
+			readonly 'type.primitive.boolean': TSKindId.BooleanKeyword;
+			readonly 'type.primitive.floating.float64': TSKindId.NumberKeyword;
+			readonly 'type.primitive.never': TSKindId.NeverKeyword;
+			readonly 'type.primitive.object': TSKindId.ObjectKeyword;
+			readonly 'type.primitive.string': TSKindId.StringKeyword;
+			readonly 'type.primitive.symbol': TSKindId.SymbolKeyword | TSKindId.Unique;
+			readonly 'type.primitive.unchecked': TSKindId.AnyKeyword;
+			readonly 'type.primitive.unknown': TSKindId.UnknownKeyword;
+			readonly 'type.primitive.void': TSKindId.VoidKeyword;
+			readonly 'type.query': TSKindId.TypeQuery;
+			readonly 'type.readonly': TSKindId.ReadonlyType;
+			readonly 'type.receiver': TSKindId.ThisType;
+			readonly 'type.rest': TSKindId.RestType;
+			readonly 'type.template': TSKindId.TemplateLiteralType;
+			readonly 'type.tuple': TSKindId.TupleType;
+			readonly 'type.union': TSKindId.UnionType;
+		},
+		T.BoundByKindId,
+		T.ParsedByKindId
+	>;
 	readonly flags: {
 		readonly 'attribute.content.call': never;
 		readonly 'attribute.content.member': never;
