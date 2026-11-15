@@ -10,6 +10,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
 import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
+import type { AbstractAssembledCompound } from '../../compiler/model/node-map.ts';
 import { stampAutomaticVariants } from '../../dsl/automatic-variants.ts';
 import { predictedSymbolSourceOf } from '../../dsl/symbol-table.ts';
 import { assemblePredicted } from '../../__tests__/helpers/linked.ts';
@@ -555,5 +556,45 @@ describe('a keyword literal arm named by its text', () => {
 		expect(wiring).not.toContain('junction$and');
 		expect(combinators).not.toContain('junction$and');
 		warn.mockRestore();
+	});
+});
+
+function positionalOptionNodeMap(withKind: boolean): NodeMapWithIdTables {
+	const kind: Rule<'evaluate'>[] = withKind
+		? [{ type: FIELD, name: 'kind', content: { type: CHOICE, members: [{ type: STRING, value: 'let' }, { type: STRING, value: 'var' }] } }]
+		: [];
+	const tables = assembledNodeMap({
+		decl: {
+			type: SEQ,
+			members: [
+				...kind,
+				{ type: REPEAT1, content: { type: SYMBOL, name: 'word' } },
+				{ type: CHOICE, members: [{ type: STRING, value: 'end' }, { type: STRING, value: 'stop' }] }
+			]
+		},
+		word: { type: PATTERN, value: '[a-z]+' }
+	});
+	stampIrSurface(tables.nodeMap, tables.generatedIdTables);
+	for (const slot of (tables.nodeMap.nodes.get('decl') as AbstractAssembledCompound).slots) {
+		if (slot.name === 'word') continue;
+		slot.registeredOption = 'choice';
+		slot.storageInfo = undefined;
+	}
+	return tables;
+}
+
+describe('an option route of a positional builder takes the builder\'s own arguments', () => {
+	it('passes its children through after the routed option', () => {
+		const { wiring, combinators } = emitTables(positionalOptionNodeMap(false).nodeMap);
+		expect(combinators).toContain('(...children: readonly unknown[]): ReturnType<PF> => _s<ReturnType<PF>>(parent)({ operator: value }, ...children);');
+		expect(wiring).toContain("readonly decl$end: Seat<OmitLeadingOption<ArgsOf<Table['buildDecl']>, 'operator'>, ReturnType<Table['buildDecl']>>;");
+	});
+
+	it('splits the options the caller leads with and merges the routed option into them', () => {
+		const { wiring, combinators } = emitTables(positionalOptionNodeMap(true).nodeMap);
+		expect(combinators).toContain('Object.keys(args[0] as object).every((k) => ["kind"].includes(k));');
+		expect(combinators).toContain('return _s<ReturnType<PF>>(parent)(_m(options, { operator: value }), ...children);');
+		expect(combinators).not.toContain('({ operator: value }, ...children)');
+		expect(wiring).toContain("readonly decl$stop: Seat<OmitLeadingOption<ArgsOf<Table['buildDecl']>, 'operator'>, ReturnType<Table['buildDecl']>>;");
 	});
 });
