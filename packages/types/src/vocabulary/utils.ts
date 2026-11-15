@@ -44,16 +44,18 @@ export interface FlagFeatures {}
 
 type Has<C, F, N> = C extends F ? N : never;
 
-type FlagsAt<G extends GrammarMap, P> = P extends keyof FlagFeatures
+type FeatureFlagsAt<G extends GrammarMap, P> = P extends keyof FlagFeatures
 	? { readonly [N in keyof FlagFeatures[P]]-?: Has<G['features'], FlagFeatures[P][N], N> }[keyof FlagFeatures[P]] & string
 	: never;
 
+type FlagsAt<G extends GrammarMap, P> = P extends keyof G['flags'] ? G['flags'][P] & string : FeatureFlagsAt<G, P>;
+
 type Dropped<T, N> = { readonly [M in keyof T as M extends N ? never : M]: T[M] };
 
-type Named<T, N extends string> = [N] extends [never] ? T : Dropped<T & { readonly $flags?: readonly N[] }, N>;
+type Named<T, D extends string, N extends string> = [D | N] extends [never] ? T : Dropped<T & { readonly $flags?: readonly N[] }, D | N>;
 
 export type NamedFlags<G extends GrammarMap, T> = T extends readonly unknown[]
 	? { readonly [I in keyof T]: NamedFlags<G, T[I]> }
 	: T extends { readonly $path: infer P }
-		? Named<T, FlagsAt<G, P>>
+		? Named<T, FeatureFlagsAt<G, P>, FlagsAt<G, P>>
 		: T;

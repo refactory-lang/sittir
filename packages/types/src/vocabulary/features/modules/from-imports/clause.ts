@@ -13,6 +13,7 @@ export namespace Clause {
 			export interface Prefix<G extends GrammarMap, K extends Under<'clause.import.relative.prefix'> = 'clause.import.relative.prefix'> extends SubKindOf<V.Clause.Import.Relative<G, K>> {
 				// claimed by p
 				readonly $path: K;
+				readonly $value: string;
 			}
 		}
 	}

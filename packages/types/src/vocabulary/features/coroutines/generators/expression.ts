@@ -16,6 +16,7 @@ export namespace Expression {
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
 				| V.Literal.Any<G>
+				| V.Pattern.Rest<G>
 			>;
 		}
 	}

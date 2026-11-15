@@ -2,6 +2,7 @@
 
 import type * as V from '@sittir/types/vocabulary';
 import type * as T from '../types.js';
+import type { TSKindId } from '../kinds.js';
 import type { PortableTexts } from './index.js';
 
 export interface PythonMap extends V.GrammarMap {
@@ -1346,6 +1347,127 @@ export interface PythonMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.constant': {
+			readonly name: V.Read<PythonMap, 'identifier'>;
+			readonly type: V.Read<PythonMap, 'type'> | T.Type.Parsed;
+			readonly value:
+				| V.Read<PythonMap, 'declaration.constant'>
+				| V.Read<PythonMap, 'declaration.variable'>
+				| V.Read<PythonMap, 'expression.assignment'>
+				| V.Read<PythonMap, 'expression.await'>
+				| V.Read<PythonMap, 'expression.binary'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.add'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.and'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.or'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.xor'>
+				| V.Read<PythonMap, 'expression.binary.comparison.chain'>
+				| V.Read<PythonMap, 'expression.binary.comparison.equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.greater'>
+				| V.Read<PythonMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.less'>
+				| V.Read<PythonMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+				| V.Read<PythonMap, 'expression.binary.identity.is'>
+				| V.Read<PythonMap, 'expression.binary.identity.is_not'>
+				| V.Read<PythonMap, 'expression.binary.logical'>
+				| V.Read<PythonMap, 'expression.binary.logical.and'>
+				| V.Read<PythonMap, 'expression.binary.logical.or'>
+				| V.Read<PythonMap, 'expression.binary.matrix_multiply'>
+				| V.Read<PythonMap, 'expression.binary.membership.in'>
+				| V.Read<PythonMap, 'expression.binary.membership.not_in'>
+				| V.Read<PythonMap, 'expression.binary.shift.left'>
+				| V.Read<PythonMap, 'expression.binary.shift.right'>
+				| V.Read<PythonMap, 'expression.call'>
+				| V.Read<PythonMap, 'expression.call.member'>
+				| V.Read<PythonMap, 'expression.collection.list'>
+				| V.Read<PythonMap, 'expression.collection.map'>
+				| V.Read<PythonMap, 'expression.collection.set'>
+				| V.Read<PythonMap, 'expression.collection.tuple'>
+				| V.Read<PythonMap, 'expression.collection.tuple.bare'>
+				| V.Read<PythonMap, 'expression.comprehension.generator'>
+				| V.Read<PythonMap, 'expression.comprehension.list'>
+				| V.Read<PythonMap, 'expression.comprehension.map'>
+				| V.Read<PythonMap, 'expression.comprehension.set'>
+				| V.Read<PythonMap, 'expression.conditional'>
+				| V.Read<PythonMap, 'expression.lambda'>
+				| V.Read<PythonMap, 'expression.member'>
+				| V.Read<PythonMap, 'expression.parenthesized'>
+				| V.Read<PythonMap, 'expression.subscript'>
+				| V.Read<PythonMap, 'expression.unary'>
+				| V.Read<PythonMap, 'expression.unary.bitwise_not'>
+				| V.Read<PythonMap, 'expression.unary.negation'>
+				| V.Read<PythonMap, 'expression.unary.not'>
+				| V.Read<PythonMap, 'expression.unary.plus'>
+				| V.Read<PythonMap, 'expression.yield'>
+				| V.Read<PythonMap, 'expression.yield.delegate'>
+				| V.Read<PythonMap, 'identifier'>
+				| V.Read<PythonMap, 'literal.boolean.false'>
+				| V.Read<PythonMap, 'literal.boolean.true'>
+				| V.Read<PythonMap, 'literal.ellipsis'>
+				| V.Read<PythonMap, 'literal.null'>
+				| V.Read<PythonMap, 'literal.number.float'>
+				| V.Read<PythonMap, 'literal.number.float.leading_point'>
+				| V.Read<PythonMap, 'literal.number.float.scientific'>
+				| V.Read<PythonMap, 'literal.number.integer'>
+				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
+				| V.Read<PythonMap, 'literal.number.integer.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
+				| V.Read<PythonMap, 'literal.number.integer.octal'>
+				| V.Read<PythonMap, 'literal.string'>
+				| V.Read<PythonMap, 'literal.string.bytes'>
+				| V.Read<PythonMap, 'literal.string.bytes.multiline'>
+				| V.Read<PythonMap, 'literal.string.bytes.raw'>
+				| V.Read<PythonMap, 'literal.string.bytes.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.concatenated'>
+				| V.Read<PythonMap, 'literal.string.interpolated'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.raw'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.raw'>
+				| V.Read<PythonMap, 'literal.string.interpolated.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.multiline'>
+				| V.Read<PythonMap, 'literal.string.raw'>
+				| V.Read<PythonMap, 'literal.string.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.unicode'>
+				| V.Read<PythonMap, 'pattern.rest'>
+				| V.Read<PythonMap, 'pattern.tuple.bare'>
+				| V.Unmapped<'python:as_pattern'>
+				| T.AssignmentEq.Parsed
+				| T.AssignmentTyped.Parsed
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.ExpressionList.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.Yield.Parsed;
 			readonly $forms:
 				| V.Form<'name' | 'value', 'type'>
 				| V.Form<'name' | 'type', 'value'>
@@ -11970,89 +12092,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.rest'>
 				| V.Unmapped<'python:as_pattern'>
 				| T.GeneratorExpression.Parsed;
-			readonly function:
-				| V.Read<PythonMap, 'expression.await'>
-				| V.Read<PythonMap, 'expression.binary'>
-				| V.Read<PythonMap, 'expression.binary.arithmetic.add'>
-				| V.Read<PythonMap, 'expression.binary.arithmetic.divide'>
-				| V.Read<PythonMap, 'expression.binary.arithmetic.exponent'>
-				| V.Read<PythonMap, 'expression.binary.arithmetic.floor_divide'>
-				| V.Read<PythonMap, 'expression.binary.arithmetic.modulo'>
-				| V.Read<PythonMap, 'expression.binary.arithmetic.multiply'>
-				| V.Read<PythonMap, 'expression.binary.arithmetic.subtract'>
-				| V.Read<PythonMap, 'expression.binary.bitwise.and'>
-				| V.Read<PythonMap, 'expression.binary.bitwise.or'>
-				| V.Read<PythonMap, 'expression.binary.bitwise.xor'>
-				| V.Read<PythonMap, 'expression.binary.matrix_multiply'>
-				| V.Read<PythonMap, 'expression.binary.shift.left'>
-				| V.Read<PythonMap, 'expression.binary.shift.right'>
-				| V.Read<PythonMap, 'expression.call'>
-				| V.Read<PythonMap, 'expression.call.member'>
-				| V.Read<PythonMap, 'expression.collection.list'>
-				| V.Read<PythonMap, 'expression.collection.map'>
-				| V.Read<PythonMap, 'expression.collection.set'>
-				| V.Read<PythonMap, 'expression.collection.tuple'>
-				| V.Read<PythonMap, 'expression.comprehension.generator'>
-				| V.Read<PythonMap, 'expression.comprehension.list'>
-				| V.Read<PythonMap, 'expression.comprehension.map'>
-				| V.Read<PythonMap, 'expression.comprehension.set'>
-				| V.Read<PythonMap, 'expression.member'>
-				| V.Read<PythonMap, 'expression.parenthesized'>
-				| V.Read<PythonMap, 'expression.subscript'>
-				| V.Read<PythonMap, 'expression.unary'>
-				| V.Read<PythonMap, 'expression.unary.bitwise_not'>
-				| V.Read<PythonMap, 'expression.unary.negation'>
-				| V.Read<PythonMap, 'expression.unary.plus'>
-				| V.Read<PythonMap, 'identifier'>
-				| V.Read<PythonMap, 'literal.boolean.false'>
-				| V.Read<PythonMap, 'literal.boolean.true'>
-				| V.Read<PythonMap, 'literal.ellipsis'>
-				| V.Read<PythonMap, 'literal.null'>
-				| V.Read<PythonMap, 'literal.number.float'>
-				| V.Read<PythonMap, 'literal.number.float.leading_point'>
-				| V.Read<PythonMap, 'literal.number.float.scientific'>
-				| V.Read<PythonMap, 'literal.number.integer'>
-				| V.Read<PythonMap, 'literal.number.integer.big'>
-				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
-				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
-				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
-				| V.Read<PythonMap, 'literal.number.integer.binary'>
-				| V.Read<PythonMap, 'literal.number.integer.hex'>
-				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
-				| V.Read<PythonMap, 'literal.number.integer.octal'>
-				| V.Read<PythonMap, 'literal.string'>
-				| V.Read<PythonMap, 'literal.string.bytes'>
-				| V.Read<PythonMap, 'literal.string.bytes.multiline'>
-				| V.Read<PythonMap, 'literal.string.bytes.raw'>
-				| V.Read<PythonMap, 'literal.string.bytes.raw.multiline'>
-				| V.Read<PythonMap, 'literal.string.concatenated'>
-				| V.Read<PythonMap, 'literal.string.interpolated'>
-				| V.Read<PythonMap, 'literal.string.interpolated.deferred'>
-				| V.Read<PythonMap, 'literal.string.interpolated.deferred.multiline'>
-				| V.Read<PythonMap, 'literal.string.interpolated.deferred.raw'>
-				| V.Read<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
-				| V.Read<PythonMap, 'literal.string.interpolated.multiline'>
-				| V.Read<PythonMap, 'literal.string.interpolated.raw'>
-				| V.Read<PythonMap, 'literal.string.interpolated.raw.multiline'>
-				| V.Read<PythonMap, 'literal.string.multiline'>
-				| V.Read<PythonMap, 'literal.string.raw'>
-				| V.Read<PythonMap, 'literal.string.raw.multiline'>
-				| V.Read<PythonMap, 'literal.string.unicode'>
-				| V.Read<PythonMap, 'pattern.rest'>
-				| T.Attribute.Parsed
-				| T.Await.Parsed
-				| T.BinaryOperator.Parsed
-				| T.Call.Parsed
-				| T.FloatLeadingPoint.Parsed
-				| T.FloatPoint.Parsed
-				| T.FloatScientific.Parsed
-				| T.GeneratorExpression.Parsed
-				| T.ListComprehension.Parsed
-				| T.ParenthesizedExpression.Parsed
-				| T.SetComprehension.Parsed
-				| T.String.Parsed
-				| T.Subscript.Parsed
-				| T.UnaryOperator.Parsed;
+			readonly function: V.Read<PythonMap, 'expression.member'> | T.Attribute.Parsed;
 			readonly $forms: V.Form<'arguments' | 'function'>;
 		};
 		readonly 'expression.collection.list': {
@@ -15500,6 +15540,115 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.raw.multiline'>
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>;
+			readonly expression:
+				| V.Read<PythonMap, 'expression.assignment'>
+				| V.Read<PythonMap, 'expression.await'>
+				| V.Read<PythonMap, 'expression.binary'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.add'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.and'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.or'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.xor'>
+				| V.Read<PythonMap, 'expression.binary.comparison.chain'>
+				| V.Read<PythonMap, 'expression.binary.comparison.equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.greater'>
+				| V.Read<PythonMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.less'>
+				| V.Read<PythonMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+				| V.Read<PythonMap, 'expression.binary.identity.is'>
+				| V.Read<PythonMap, 'expression.binary.identity.is_not'>
+				| V.Read<PythonMap, 'expression.binary.logical'>
+				| V.Read<PythonMap, 'expression.binary.logical.and'>
+				| V.Read<PythonMap, 'expression.binary.logical.or'>
+				| V.Read<PythonMap, 'expression.binary.matrix_multiply'>
+				| V.Read<PythonMap, 'expression.binary.membership.in'>
+				| V.Read<PythonMap, 'expression.binary.membership.not_in'>
+				| V.Read<PythonMap, 'expression.binary.shift.left'>
+				| V.Read<PythonMap, 'expression.binary.shift.right'>
+				| V.Read<PythonMap, 'expression.call'>
+				| V.Read<PythonMap, 'expression.call.member'>
+				| V.Read<PythonMap, 'expression.collection.list'>
+				| V.Read<PythonMap, 'expression.collection.map'>
+				| V.Read<PythonMap, 'expression.collection.set'>
+				| V.Read<PythonMap, 'expression.collection.tuple'>
+				| V.Read<PythonMap, 'expression.comprehension.generator'>
+				| V.Read<PythonMap, 'expression.comprehension.list'>
+				| V.Read<PythonMap, 'expression.comprehension.map'>
+				| V.Read<PythonMap, 'expression.comprehension.set'>
+				| V.Read<PythonMap, 'expression.conditional'>
+				| V.Read<PythonMap, 'expression.lambda'>
+				| V.Read<PythonMap, 'expression.member'>
+				| V.Read<PythonMap, 'expression.parenthesized'>
+				| V.Read<PythonMap, 'expression.subscript'>
+				| V.Read<PythonMap, 'expression.unary'>
+				| V.Read<PythonMap, 'expression.unary.bitwise_not'>
+				| V.Read<PythonMap, 'expression.unary.negation'>
+				| V.Read<PythonMap, 'expression.unary.not'>
+				| V.Read<PythonMap, 'expression.unary.plus'>
+				| V.Read<PythonMap, 'identifier'>
+				| V.Read<PythonMap, 'literal.boolean.false'>
+				| V.Read<PythonMap, 'literal.boolean.true'>
+				| V.Read<PythonMap, 'literal.ellipsis'>
+				| V.Read<PythonMap, 'literal.null'>
+				| V.Read<PythonMap, 'literal.number.float'>
+				| V.Read<PythonMap, 'literal.number.float.leading_point'>
+				| V.Read<PythonMap, 'literal.number.float.scientific'>
+				| V.Read<PythonMap, 'literal.number.integer'>
+				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
+				| V.Read<PythonMap, 'literal.number.integer.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
+				| V.Read<PythonMap, 'literal.number.integer.octal'>
+				| V.Read<PythonMap, 'literal.string'>
+				| V.Read<PythonMap, 'literal.string.bytes'>
+				| V.Read<PythonMap, 'literal.string.bytes.multiline'>
+				| V.Read<PythonMap, 'literal.string.bytes.raw'>
+				| V.Read<PythonMap, 'literal.string.bytes.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.concatenated'>
+				| V.Read<PythonMap, 'literal.string.interpolated'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.raw'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.raw'>
+				| V.Read<PythonMap, 'literal.string.interpolated.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.multiline'>
+				| V.Read<PythonMap, 'literal.string.raw'>
+				| V.Read<PythonMap, 'literal.string.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.unicode'>
+				| V.Read<PythonMap, 'pattern.rest'>
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly $forms: V.Form<'expression'>;
 		};
 		readonly file: {
@@ -18609,6 +18758,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.generic'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>;
+			readonly type: V.Read<PythonMap, 'type'> | T.Type.Parsed;
 			readonly $forms: V.Form<'type'>;
 		};
 		readonly 'type.rest': {
@@ -18833,6 +18983,434 @@ export interface PythonMap extends V.GrammarMap {
 		readonly 'literal.number.integer.imaginary': string;
 		readonly 'literal.string.escape': string;
 		readonly 'literal.string.text': string;
+	};
+	readonly nodes: V.NodesOf<
+		{
+			readonly 'argument.named': TSKindId.KeywordArgument;
+			readonly 'attribute.decorator': TSKindId.Decorator;
+			readonly 'clause.case.match': TSKindId.CaseClause;
+			readonly 'clause.catch': TSKindId.ExceptClause;
+			readonly 'clause.comprehension': TSKindId.ComprehensionClauses;
+			readonly 'clause.comprehension.for': TSKindId.ForInClause;
+			readonly 'clause.comprehension.if': TSKindId.IfClause;
+			readonly 'clause.else': TSKindId.ElseClause;
+			readonly 'clause.else_if': TSKindId.ElifClause;
+			readonly 'clause.finally': TSKindId.FinallyClause;
+			readonly 'clause.import.alias': TSKindId.AliasedImport;
+			readonly 'clause.import.relative': TSKindId.RelativeImport;
+			readonly 'clause.import.relative.prefix': TSKindId.ImportPrefix;
+			readonly 'clause.import.wildcard': TSKindId.WildcardImport;
+			readonly 'clause.resource': TSKindId.WithClauseBare | TSKindId.WithClauseParen;
+			readonly 'clause.resource.item': TSKindId.WithItem;
+			readonly 'comment.line': TSKindId.Comment;
+			readonly 'declaration.class': TSKindId.ClassDefinition;
+			readonly 'declaration.constant': TSKindId.AssignmentEq | TSKindId.AssignmentType | TSKindId.AssignmentTyped;
+			readonly 'declaration.constructor': TSKindId.ConstructorDeclaration | TSKindId.MethodDeclaration;
+			readonly 'declaration.function': TSKindId.FunctionDefinition;
+			readonly 'declaration.method': TSKindId.MethodDeclaration;
+			readonly 'declaration.method.special': TSKindId.MethodDeclaration;
+			readonly 'declaration.parameter.default': TSKindId.DefaultParameter;
+			readonly 'declaration.parameter.typed': TSKindId.TypedParameter;
+			readonly 'declaration.parameter.typed_default': TSKindId.TypedDefaultParameter;
+			readonly 'declaration.type_alias': TSKindId.TypeAliasStatement;
+			readonly 'declaration.type_parameter': TSKindId.TypeParamTypeVar;
+			readonly 'declaration.type_parameter.parameters': TSKindId.TypeParamParamSpec;
+			readonly 'declaration.type_parameter.variadic': TSKindId.TypeParamTypeVarTuple;
+			readonly 'declaration.variable': TSKindId.AssignmentEq | TSKindId.AssignmentType | TSKindId.AssignmentTyped;
+			readonly 'element.comparator': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.comparison.equal': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.comparison.greater': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.comparison.greater_equal': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.comparison.less': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.comparison.less_equal': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.comparison.not_equal': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.comparison.not_equal.legacy': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.identity.is': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.identity.is_not': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.membership.in': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.comparator.membership.not_in': TSKindId.ComparisonOperatorComparator;
+			readonly 'element.pair': TSKindId.Pair;
+			readonly 'element.spread': TSKindId.ListSplat;
+			readonly 'element.spread.map': TSKindId.DictionarySplat;
+			readonly 'element.spread.parenthesized': TSKindId.ParenthesizedListSplat;
+			readonly 'expression.assignment': TSKindId.NamedExpression;
+			readonly 'expression.assignment.compound': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.add': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.bitwise_and': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.bitwise_or': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.bitwise_xor': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.divide': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.exponent': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.floor_divide': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.matrix_multiply': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.modulo': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.multiply': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.shift_left': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.shift_right': TSKindId.AugmentedAssignment;
+			readonly 'expression.assignment.compound.subtract': TSKindId.AugmentedAssignment;
+			readonly 'expression.await': TSKindId.Await;
+			readonly 'expression.binary': TSKindId.BinaryOperator | TSKindId.ComparisonOperator;
+			readonly 'expression.binary.arithmetic.add': TSKindId.BinaryOperator;
+			readonly 'expression.binary.arithmetic.divide': TSKindId.BinaryOperator;
+			readonly 'expression.binary.arithmetic.exponent': TSKindId.BinaryOperator;
+			readonly 'expression.binary.arithmetic.floor_divide': TSKindId.BinaryOperator;
+			readonly 'expression.binary.arithmetic.modulo': TSKindId.BinaryOperator;
+			readonly 'expression.binary.arithmetic.multiply': TSKindId.BinaryOperator;
+			readonly 'expression.binary.arithmetic.subtract': TSKindId.BinaryOperator;
+			readonly 'expression.binary.bitwise.and': TSKindId.BinaryOperator;
+			readonly 'expression.binary.bitwise.or': TSKindId.BinaryOperator;
+			readonly 'expression.binary.bitwise.xor': TSKindId.BinaryOperator;
+			readonly 'expression.binary.comparison.chain': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.comparison.equal': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.comparison.greater': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.comparison.greater_equal': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.comparison.less': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.comparison.less_equal': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.comparison.not_equal': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.comparison.not_equal.legacy': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.identity.is': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.identity.is_not': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.logical': TSKindId.BooleanOperator;
+			readonly 'expression.binary.logical.and': TSKindId.BooleanOperator;
+			readonly 'expression.binary.logical.or': TSKindId.BooleanOperator;
+			readonly 'expression.binary.matrix_multiply': TSKindId.BinaryOperator;
+			readonly 'expression.binary.membership.in': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.membership.not_in': TSKindId.ComparisonOperator;
+			readonly 'expression.binary.shift.left': TSKindId.BinaryOperator;
+			readonly 'expression.binary.shift.right': TSKindId.BinaryOperator;
+			readonly 'expression.call': TSKindId.Call;
+			readonly 'expression.call.member': TSKindId.Call;
+			readonly 'expression.collection.list': TSKindId.List;
+			readonly 'expression.collection.map': TSKindId.Dictionary;
+			readonly 'expression.collection.set': TSKindId.Set;
+			readonly 'expression.collection.tuple': TSKindId.Tuple;
+			readonly 'expression.collection.tuple.bare':
+				| TSKindId.ExpressionList
+				| TSKindId.ExpressionStatementTuple
+				| TSKindId.Subjects
+				| TSKindId.Subscripts;
+			readonly 'expression.comprehension.generator': TSKindId.GeneratorExpression;
+			readonly 'expression.comprehension.list': TSKindId.ListComprehension;
+			readonly 'expression.comprehension.map': TSKindId.DictionaryComprehension;
+			readonly 'expression.comprehension.set': TSKindId.SetComprehension;
+			readonly 'expression.conditional': TSKindId.ConditionalExpression;
+			readonly 'expression.interpolation': TSKindId.FormatExpression | TSKindId.Interpolation;
+			readonly 'expression.interpolation.conversion': TSKindId.TypeConversion;
+			readonly 'expression.interpolation.format': TSKindId.FormatSpecifier;
+			readonly 'expression.lambda': TSKindId.Lambda | TSKindId.LambdaWithinForInClause;
+			readonly 'expression.member': TSKindId.Attribute;
+			readonly 'expression.parenthesized': TSKindId.ParenthesizedExpression;
+			readonly 'expression.slice': TSKindId.Slice;
+			readonly 'expression.subscript': TSKindId.Subscript;
+			readonly 'expression.unary': TSKindId.UnaryOperator;
+			readonly 'expression.unary.bitwise_not': TSKindId.UnaryOperator;
+			readonly 'expression.unary.negation': TSKindId.UnaryOperator;
+			readonly 'expression.unary.not': TSKindId.NotOperator;
+			readonly 'expression.unary.plus': TSKindId.UnaryOperator;
+			readonly 'expression.yield': TSKindId.Yield;
+			readonly 'expression.yield.delegate': TSKindId.Yield;
+			readonly file: TSKindId.Module;
+			readonly identifier: TSKindId.Identifier;
+			readonly 'identifier.qualified': TSKindId.DottedName | TSKindId.MemberType;
+			readonly 'literal.boolean.false': TSKindId.False;
+			readonly 'literal.boolean.true': TSKindId.True;
+			readonly 'literal.ellipsis': TSKindId.Ellipsis;
+			readonly 'literal.null': TSKindId.None;
+			readonly 'literal.number.float': TSKindId.FloatPoint;
+			readonly 'literal.number.float.leading_point': TSKindId.FloatLeadingPoint;
+			readonly 'literal.number.float.scientific': TSKindId.FloatScientific;
+			readonly 'literal.number.integer': TSKindId.IntegerDecimalPlain;
+			readonly 'literal.number.integer.big': TSKindId.IntegerDecimalLong;
+			readonly 'literal.number.integer.big.binary': TSKindId.IntegerBinaryLong;
+			readonly 'literal.number.integer.big.hex': TSKindId.IntegerHexLong;
+			readonly 'literal.number.integer.big.octal': TSKindId.IntegerLegacyOctalLong | TSKindId.IntegerOctalLong;
+			readonly 'literal.number.integer.binary': TSKindId.IntegerBinaryPlain;
+			readonly 'literal.number.integer.hex': TSKindId.IntegerHexPlain;
+			readonly 'literal.number.integer.imaginary': TSKindId.IntegerDecimalImaginary;
+			readonly 'literal.number.integer.octal': TSKindId.IntegerLegacyOctalPlain | TSKindId.IntegerOctalPlain;
+			readonly 'literal.number.negative': TSKindId.SimplePatternNegative;
+			readonly 'literal.string': TSKindId.String;
+			readonly 'literal.string.bytes': TSKindId.String;
+			readonly 'literal.string.bytes.multiline': TSKindId.String;
+			readonly 'literal.string.bytes.raw': TSKindId.String;
+			readonly 'literal.string.bytes.raw.multiline': TSKindId.String;
+			readonly 'literal.string.concatenated': TSKindId.ConcatenatedString;
+			readonly 'literal.string.escape':
+				| TSKindId.EscapeInterpolation
+				| TSKindId.EscapeSequenceHex
+				| TSKindId.EscapeSequenceLineBreak
+				| TSKindId.EscapeSequenceNamed
+				| TSKindId.EscapeSequenceOctal
+				| TSKindId.EscapeSequenceSimple
+				| TSKindId.EscapeSequenceUnicodeFixed
+				| TSKindId.EscapeSequenceUnicodeWide;
+			readonly 'literal.string.interpolated': TSKindId.String;
+			readonly 'literal.string.interpolated.deferred': TSKindId.String;
+			readonly 'literal.string.interpolated.deferred.multiline': TSKindId.String;
+			readonly 'literal.string.interpolated.deferred.raw': TSKindId.String;
+			readonly 'literal.string.interpolated.deferred.raw.multiline': TSKindId.String;
+			readonly 'literal.string.interpolated.multiline': TSKindId.String;
+			readonly 'literal.string.interpolated.raw': TSKindId.String;
+			readonly 'literal.string.interpolated.raw.multiline': TSKindId.String;
+			readonly 'literal.string.multiline': TSKindId.String;
+			readonly 'literal.string.raw': TSKindId.String;
+			readonly 'literal.string.raw.multiline': TSKindId.String;
+			readonly 'literal.string.text': TSKindId.StringFragment;
+			readonly 'literal.string.unicode': TSKindId.String;
+			readonly 'pattern.as': TSKindId.CaseAsPattern;
+			readonly 'pattern.complex': TSKindId.ComplexPattern;
+			readonly 'pattern.complex.add': TSKindId.ComplexPattern;
+			readonly 'pattern.complex.subtract': TSKindId.ComplexPattern;
+			readonly 'pattern.list': TSKindId.CaseListPattern | TSKindId.ListPattern;
+			readonly 'pattern.map': TSKindId.DictPattern;
+			readonly 'pattern.or': TSKindId.UnionPattern;
+			readonly 'pattern.rest': TSKindId.ListSplatPattern | TSKindId.SplatPatternList;
+			readonly 'pattern.rest.map': TSKindId.DictionarySplatPattern | TSKindId.SplatPatternDictionary;
+			readonly 'pattern.struct': TSKindId.ClassPattern;
+			readonly 'pattern.struct.field': TSKindId.KeywordPattern;
+			readonly 'pattern.tuple': TSKindId.CaseTuplePattern | TSKindId.TuplePattern;
+			readonly 'pattern.tuple.bare': TSKindId.CasePatternList | TSKindId.PatternList;
+			readonly 'pattern.wildcard': TSKindId.WildcardPattern;
+			readonly 'statement.assert': TSKindId.AssertStatement;
+			readonly 'statement.block':
+				| TSKindId.Block
+				| TSKindId.BlockClassDeclaration
+				| TSKindId.SuiteEmpty
+				| TSKindId.SuiteInline;
+			readonly 'statement.break': TSKindId.BreakStatement;
+			readonly 'statement.continue': TSKindId.ContinueStatement;
+			readonly 'statement.delete': TSKindId.DeleteStatement;
+			readonly 'statement.empty': TSKindId.PassStatement;
+			readonly 'statement.exec': TSKindId.ExecStatement;
+			readonly 'statement.expression': TSKindId.ExpressionStatement;
+			readonly 'statement.global': TSKindId.GlobalStatement;
+			readonly 'statement.if': TSKindId.IfStatement;
+			readonly 'statement.import': TSKindId.ImportStatement;
+			readonly 'statement.import.from': TSKindId.ImportFromStatement;
+			readonly 'statement.import.future': TSKindId.FutureImportStatement;
+			readonly 'statement.loop.for_each': TSKindId.ForStatement;
+			readonly 'statement.loop.while': TSKindId.WhileStatement;
+			readonly 'statement.match': TSKindId.MatchStatement;
+			readonly 'statement.nonlocal': TSKindId.NonlocalStatement;
+			readonly 'statement.print': TSKindId.PrintStatementChevron | TSKindId.PrintStatementPlain;
+			readonly 'statement.resource': TSKindId.WithStatement;
+			readonly 'statement.return': TSKindId.ReturnStatement;
+			readonly 'statement.throw': TSKindId.RaiseStatement;
+			readonly 'statement.try': TSKindId.TryStatement;
+			readonly type: TSKindId.Type;
+			readonly 'type.constrained': TSKindId.ConstrainedType;
+			readonly 'type.generic': TSKindId.GenericType;
+			readonly 'type.nullable': TSKindId.GenericType;
+			readonly 'type.rest': TSKindId.SplatType;
+			readonly 'type.union': TSKindId.UnionType;
+		},
+		T.BoundByKindId,
+		T.ParsedByKindId
+	>;
+	readonly flags: {
+		readonly 'argument.named': never;
+		readonly 'attribute.decorator': never;
+		readonly 'clause.case.match': never;
+		readonly 'clause.catch': 'group';
+		readonly 'clause.comprehension': never;
+		readonly 'clause.comprehension.for': 'async' | 'trailingComma';
+		readonly 'clause.comprehension.if': never;
+		readonly 'clause.else': never;
+		readonly 'clause.else_if': never;
+		readonly 'clause.finally': never;
+		readonly 'clause.import.alias': never;
+		readonly 'clause.import.relative': never;
+		readonly 'clause.import.relative.prefix': never;
+		readonly 'clause.import.wildcard': never;
+		readonly 'clause.resource': never;
+		readonly 'clause.resource.item': never;
+		readonly 'comment.line': never;
+		readonly 'declaration.class': never;
+		readonly 'declaration.constant': never;
+		readonly 'declaration.constructor': 'async';
+		readonly 'declaration.function': 'async';
+		readonly 'declaration.method': 'async' | 'override' | 'privateName' | 'static';
+		readonly 'declaration.method.special': 'async' | 'override' | 'static';
+		readonly 'declaration.parameter.default': never;
+		readonly 'declaration.parameter.typed': never;
+		readonly 'declaration.parameter.typed_default': never;
+		readonly 'declaration.property.getter': 'async' | 'override';
+		readonly 'declaration.property.setter': 'async' | 'override';
+		readonly 'declaration.type_alias': never;
+		readonly 'declaration.type_parameter': never;
+		readonly 'declaration.type_parameter.parameters': never;
+		readonly 'declaration.type_parameter.variadic': never;
+		readonly 'declaration.variable': never;
+		readonly 'element.comparator': never;
+		readonly 'element.comparator.comparison.equal': never;
+		readonly 'element.comparator.comparison.greater': never;
+		readonly 'element.comparator.comparison.greater_equal': never;
+		readonly 'element.comparator.comparison.less': never;
+		readonly 'element.comparator.comparison.less_equal': never;
+		readonly 'element.comparator.comparison.not_equal': never;
+		readonly 'element.comparator.comparison.not_equal.legacy': never;
+		readonly 'element.comparator.identity.is': never;
+		readonly 'element.comparator.identity.is_not': never;
+		readonly 'element.comparator.membership.in': never;
+		readonly 'element.comparator.membership.not_in': never;
+		readonly 'element.pair': never;
+		readonly 'element.spread': never;
+		readonly 'element.spread.map': never;
+		readonly 'element.spread.parenthesized': never;
+		readonly 'expression.assignment': never;
+		readonly 'expression.assignment.compound': never;
+		readonly 'expression.assignment.compound.add': never;
+		readonly 'expression.assignment.compound.bitwise_and': never;
+		readonly 'expression.assignment.compound.bitwise_or': never;
+		readonly 'expression.assignment.compound.bitwise_xor': never;
+		readonly 'expression.assignment.compound.divide': never;
+		readonly 'expression.assignment.compound.exponent': never;
+		readonly 'expression.assignment.compound.floor_divide': never;
+		readonly 'expression.assignment.compound.matrix_multiply': never;
+		readonly 'expression.assignment.compound.modulo': never;
+		readonly 'expression.assignment.compound.multiply': never;
+		readonly 'expression.assignment.compound.shift_left': never;
+		readonly 'expression.assignment.compound.shift_right': never;
+		readonly 'expression.assignment.compound.subtract': never;
+		readonly 'expression.await': never;
+		readonly 'expression.binary': never;
+		readonly 'expression.binary.arithmetic.add': never;
+		readonly 'expression.binary.arithmetic.divide': never;
+		readonly 'expression.binary.arithmetic.exponent': never;
+		readonly 'expression.binary.arithmetic.floor_divide': never;
+		readonly 'expression.binary.arithmetic.modulo': never;
+		readonly 'expression.binary.arithmetic.multiply': never;
+		readonly 'expression.binary.arithmetic.subtract': never;
+		readonly 'expression.binary.bitwise.and': never;
+		readonly 'expression.binary.bitwise.or': never;
+		readonly 'expression.binary.bitwise.xor': never;
+		readonly 'expression.binary.comparison.chain': never;
+		readonly 'expression.binary.comparison.equal': never;
+		readonly 'expression.binary.comparison.greater': never;
+		readonly 'expression.binary.comparison.greater_equal': never;
+		readonly 'expression.binary.comparison.less': never;
+		readonly 'expression.binary.comparison.less_equal': never;
+		readonly 'expression.binary.comparison.not_equal': never;
+		readonly 'expression.binary.comparison.not_equal.legacy': never;
+		readonly 'expression.binary.identity.is': never;
+		readonly 'expression.binary.identity.is_not': never;
+		readonly 'expression.binary.logical': never;
+		readonly 'expression.binary.logical.and': never;
+		readonly 'expression.binary.logical.or': never;
+		readonly 'expression.binary.matrix_multiply': never;
+		readonly 'expression.binary.membership.in': never;
+		readonly 'expression.binary.membership.not_in': never;
+		readonly 'expression.binary.shift.left': never;
+		readonly 'expression.binary.shift.right': never;
+		readonly 'expression.call': never;
+		readonly 'expression.call.member': never;
+		readonly 'expression.collection.list': never;
+		readonly 'expression.collection.map': never;
+		readonly 'expression.collection.set': never;
+		readonly 'expression.collection.tuple': never;
+		readonly 'expression.collection.tuple.bare': 'trailingComma';
+		readonly 'expression.comprehension.generator': never;
+		readonly 'expression.comprehension.list': never;
+		readonly 'expression.comprehension.map': never;
+		readonly 'expression.comprehension.set': never;
+		readonly 'expression.conditional': never;
+		readonly 'expression.interpolation': 'debug';
+		readonly 'expression.interpolation.conversion': never;
+		readonly 'expression.interpolation.format': never;
+		readonly 'expression.lambda': never;
+		readonly 'expression.member': 'privateName';
+		readonly 'expression.parenthesized': never;
+		readonly 'expression.slice': never;
+		readonly 'expression.subscript': never;
+		readonly 'expression.unary': never;
+		readonly 'expression.unary.bitwise_not': never;
+		readonly 'expression.unary.negation': never;
+		readonly 'expression.unary.not': never;
+		readonly 'expression.unary.plus': never;
+		readonly 'expression.yield': never;
+		readonly 'expression.yield.delegate': never;
+		readonly file: never;
+		readonly identifier: never;
+		readonly 'identifier.qualified': never;
+		readonly 'literal.boolean.false': never;
+		readonly 'literal.boolean.true': never;
+		readonly 'literal.ellipsis': never;
+		readonly 'literal.null': never;
+		readonly 'literal.number.float': never;
+		readonly 'literal.number.float.leading_point': never;
+		readonly 'literal.number.float.scientific': never;
+		readonly 'literal.number.integer': never;
+		readonly 'literal.number.integer.big': never;
+		readonly 'literal.number.integer.big.binary': never;
+		readonly 'literal.number.integer.big.hex': never;
+		readonly 'literal.number.integer.big.octal': never;
+		readonly 'literal.number.integer.binary': never;
+		readonly 'literal.number.integer.hex': never;
+		readonly 'literal.number.integer.imaginary': never;
+		readonly 'literal.number.integer.octal': never;
+		readonly 'literal.number.negative': never;
+		readonly 'literal.string': never;
+		readonly 'literal.string.bytes': never;
+		readonly 'literal.string.bytes.multiline': never;
+		readonly 'literal.string.bytes.raw': never;
+		readonly 'literal.string.bytes.raw.multiline': never;
+		readonly 'literal.string.concatenated': never;
+		readonly 'literal.string.escape': never;
+		readonly 'literal.string.interpolated': never;
+		readonly 'literal.string.interpolated.deferred': never;
+		readonly 'literal.string.interpolated.deferred.multiline': never;
+		readonly 'literal.string.interpolated.deferred.raw': never;
+		readonly 'literal.string.interpolated.deferred.raw.multiline': never;
+		readonly 'literal.string.interpolated.multiline': never;
+		readonly 'literal.string.interpolated.raw': never;
+		readonly 'literal.string.interpolated.raw.multiline': never;
+		readonly 'literal.string.multiline': never;
+		readonly 'literal.string.raw': never;
+		readonly 'literal.string.raw.multiline': never;
+		readonly 'literal.string.text': never;
+		readonly 'literal.string.unicode': never;
+		readonly 'pattern.as': never;
+		readonly 'pattern.complex': never;
+		readonly 'pattern.complex.add': 'sign';
+		readonly 'pattern.complex.subtract': 'sign';
+		readonly 'pattern.list': never;
+		readonly 'pattern.map': never;
+		readonly 'pattern.or': never;
+		readonly 'pattern.rest': never;
+		readonly 'pattern.rest.map': never;
+		readonly 'pattern.struct': never;
+		readonly 'pattern.struct.field': never;
+		readonly 'pattern.tuple': never;
+		readonly 'pattern.tuple.bare': 'trailingComma';
+		readonly 'pattern.wildcard': never;
+		readonly 'statement.assert': never;
+		readonly 'statement.block': never;
+		readonly 'statement.break': never;
+		readonly 'statement.continue': never;
+		readonly 'statement.delete': never;
+		readonly 'statement.empty': never;
+		readonly 'statement.exec': never;
+		readonly 'statement.expression': never;
+		readonly 'statement.global': never;
+		readonly 'statement.if': never;
+		readonly 'statement.import': never;
+		readonly 'statement.import.from': never;
+		readonly 'statement.import.future': never;
+		readonly 'statement.loop.for_each': 'async';
+		readonly 'statement.loop.while': never;
+		readonly 'statement.match': never;
+		readonly 'statement.nonlocal': never;
+		readonly 'statement.print': 'trailingComma';
+		readonly 'statement.resource': 'async';
+		readonly 'statement.return': never;
+		readonly 'statement.throw': never;
+		readonly 'statement.try': never;
+		readonly type: never;
+		readonly 'type.constrained': never;
+		readonly 'type.generic': never;
+		readonly 'type.nullable': never;
+		readonly 'type.rest': never;
+		readonly 'type.union': never;
 	};
 }
 

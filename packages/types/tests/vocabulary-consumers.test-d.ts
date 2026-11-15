@@ -100,7 +100,7 @@ export function bareMarked(name: Declaration.Property<Bare>['name']): Declaratio
 export function crateFn(name: Identifier.Any<Composed>): Declaration.Function.Public.Internal<Composed> {
 	return { $path: 'declaration.function.public.internal', name, parameters: [] };
 }
-export const anyPublic: Declaration.Function.Public.Any<Composed> = crateFn({ $path: 'identifier' });
+export const anyPublic: Declaration.Function.Public.Any<Composed> = crateFn({ $path: 'identifier', $value: 'f' });
 export function privateFn(name: Identifier.Any<Composed>): Declaration.Function.Private<Composed> {
 	return {
 		$path: 'declaration.function.private',
@@ -115,7 +115,7 @@ export function superFn(name: Identifier.Any<Composed>, scope: Identifier.Any<Co
 	return { $path: 'declaration.function.public.restricted', name, parameters: [], scope };
 }
 // @ts-expect-error a context without scoped visibility has no scope
-export const noScope: Declaration.Function.Public.Restricted<Bare>['scope'] = { $path: 'identifier' };
+export const noScope: Declaration.Function.Public.Restricted<Bare>['scope'] = { $path: 'identifier', $value: 'crate' };
 
 // A member the contract's features lack holds no value: code over the core reads it as the feature it needs or
 // undefined, and a contract without the feature refuses a value for it.
@@ -125,7 +125,7 @@ export function asyncOf(f: Declaration.Function<Core>): Missing<AsyncAwait> | un
 declare const asyncFlag: Flag;
 export const bareAsync: Declaration.Function<Bare> = {
 	$path: 'declaration.function',
-	name: { $path: 'identifier' },
+	name: { $path: 'identifier', $value: 'f' },
 	parameters: [],
 	// @ts-expect-error a contract without async-await has no async
 	async: asyncFlag
@@ -260,7 +260,7 @@ interface Narrowed extends GrammarMap {
 	readonly inputs: {};
 }
 export type NarrowedFits = Assert<Fits<Narrowed>>;
-const self: Identifier<Narrowed> = { $path: 'identifier' };
+const self: Identifier<Narrowed> = { $path: 'identifier', $value: 'self' };
 export const narrowed: Declaration.Function<Narrowed> = { $path: 'declaration.function', name: self, parameters: [self] };
 // @ts-expect-error the narrowed name refuses an arm the grammar leaves out
 export const textName: Declaration.Function<Narrowed> = { ...narrowed, name: 'self' };
