@@ -4945,20 +4945,20 @@ export interface Arguments {
 
 export interface Decorator {
 	readonly $type: TSKindId.Decorator;
-	readonly _content:
+	readonly _expression:
 		| Identifier
 		| DecoratorMemberExpression
 		| DecoratorCallExpression
 		| DecoratorParenthesizedExpression;
 	readonly __slotNames__?: {
-		readonly _content: 'content';
+		readonly _expression: 'expression';
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<
+		readonly expression: SlotHint<
 			T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 		>;
 	};
-	readonly content: () =>
+	readonly expression: () =>
 		| Identifier
 		| DecoratorMemberExpression
 		| DecoratorCallExpression
@@ -15224,7 +15224,7 @@ export interface DecoratorNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	Decorator.Bound,
-	'content',
+	'expression',
 	TSKindId.Decorator,
 	Decorator.Parsed,
 	never

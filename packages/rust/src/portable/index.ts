@@ -7,9 +7,8 @@ import { querySlots } from '../utils.js';
 
 export interface PortableIds {
 	argument: TSKindId.Argument;
-	attribute: TSKindId.Attribute | TSKindId.AttributeItem | TSKindId.InnerAttributeItem;
+	attribute: TSKindId.Attribute;
 	'attribute.content': TSKindId.Attribute;
-	'attribute.inner': TSKindId.InnerAttributeItem;
 	clause:
 		| TSKindId.LetChain
 		| TSKindId.ElseClause
@@ -765,7 +764,6 @@ export interface PortableTexts {
 	argument: never;
 	attribute: never;
 	'attribute.content': never;
-	'attribute.inner': never;
 	clause: never;
 	'clause.bounds': never;
 	'clause.bounds.higher_ranked': never;
@@ -1217,13 +1215,8 @@ export interface PortableTexts {
 
 export interface PortableKindsAt {
 	argument: { readonly $path: 'argument' };
-	attribute: {
-		readonly $path: 'attribute';
-		readonly content: PortableKindsAt['attribute.content'];
-		readonly inner: PortableKindsAt['attribute.inner'];
-	};
+	attribute: { readonly $path: 'attribute'; readonly content: PortableKindsAt['attribute.content'] };
 	'attribute.content': { readonly $path: 'attribute.content' };
-	'attribute.inner': { readonly $path: 'attribute.inner' };
 	clause: {
 		readonly $path: 'clause';
 		readonly bounds: PortableKindsAt['clause.bounds'];
@@ -2121,19 +2114,12 @@ export interface PortableIsAt {
 	argument: PortableGuard<PortableIds['argument'], RustNode, TSKindId, PortableTexts['argument']> & {};
 	attribute: PortableGuard<PortableIds['attribute'], RustNode, TSKindId, PortableTexts['attribute']> & {
 		readonly content: PortableIsAt['attribute.content'];
-		readonly inner: PortableIsAt['attribute.inner'];
 	};
 	'attribute.content': PortableGuard<
 		PortableIds['attribute.content'],
 		RustNode,
 		TSKindId,
 		PortableTexts['attribute.content']
-	> & {};
-	'attribute.inner': PortableGuard<
-		PortableIds['attribute.inner'],
-		RustNode,
-		TSKindId,
-		PortableTexts['attribute.inner']
 	> & {};
 	clause: PortableGuard<PortableIds['clause'], RustNode, TSKindId, PortableTexts['clause']> & {
 		readonly bounds: PortableIsAt['clause.bounds'];
@@ -4512,9 +4498,8 @@ export interface PortableIs {
 const table: PortableTable = {
 	paths: {
 		argument: { ids: [TSKindId.Argument], exact: false },
-		attribute: { ids: [TSKindId.Attribute, TSKindId.AttributeItem, TSKindId.InnerAttributeItem], exact: true },
+		attribute: { ids: [TSKindId.Attribute], exact: true },
 		'attribute.content': { ids: [TSKindId.Attribute], exact: true },
-		'attribute.inner': { ids: [TSKindId.InnerAttributeItem], exact: true },
 		clause: {
 			ids: [
 				TSKindId.LetChain,
@@ -5481,7 +5466,6 @@ const table: PortableTable = {
 		[TSKindId.AssociatedType]: [{ path: 'declaration.type_alias.associated', within: [], test: [] }],
 		[TSKindId.AsyncBlock]: [{ path: 'expression.block.async', within: [], test: [] }],
 		[TSKindId.Attribute]: [{ path: 'attribute.content', within: [], test: [] }],
-		[TSKindId.AttributeItem]: [{ path: 'attribute', within: [], test: [] }],
 		[TSKindId.AttributedElement]: [{ path: 'element.attributed', within: [], test: [] }],
 		[TSKindId.AttributedOrderedField]: [
 			{
@@ -6714,7 +6698,6 @@ const table: PortableTable = {
 		],
 		[TSKindId.ImplItemSemi]: [{ path: 'declaration.extension', within: [], test: [] }],
 		[TSKindId.IndexExpression]: [{ path: 'expression.subscript', within: [], test: [] }],
-		[TSKindId.InnerAttributeItem]: [{ path: 'attribute.inner', within: [], test: [] }],
 		[TSKindId.IntegerLiteralBinary]: [{ path: 'literal.number.integer.binary', within: [], test: [] }],
 		[TSKindId.IntegerLiteralDecimal]: [{ path: 'literal.number.integer', within: [], test: [] }],
 		[TSKindId.IntegerLiteralHex]: [{ path: 'literal.number.integer.hex', within: [], test: [] }],

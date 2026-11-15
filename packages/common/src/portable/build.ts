@@ -770,8 +770,10 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 				else if (isNumberSlots(arm.numeric)) frame.config[arm.numeric.at(-1)!] = scalar;
 				else for (const [key, part] of decimalParts(scalar, arm.numeric, arm, structure.$path)) frame.config[key] = part;
 			}
-			if (arm.content !== undefined && typeof structure.$value !== 'string') throw new Error(`portable build: ${structure.$path} takes its ${nameOf(arm.kind)} as a text $value`);
-			if (takesTextValue(table, arm) && typeof structure.$value === 'string') frame.input = structure.$value;
+			const text = takesTextValue(table, arm) && typeof structure.$value === 'string' ? structure.$value : undefined;
+			if (arm.content !== undefined && text === undefined) throw new Error(`portable build: ${structure.$path} takes its ${nameOf(arm.kind)} as a text $value`);
+			if (text !== undefined && arm.content === undefined) frame.input = text;
+			if (text !== undefined && arm.content !== undefined) placeMember(frame, arm.content, text, structure.$path);
 			const routed = [...values.keys()].map((name) => {
 				const routes = routesOf(arm, name);
 				if (routes.length === 0) throw new Error(`portable build: ${structure.$path}: ${nameOf(arm.kind)} has no member ${name}`);

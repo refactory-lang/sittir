@@ -173,7 +173,6 @@ import type * as tuples from './features/tuples/index.ts';
 import type * as typeAlgebra from './features/type-annotations/type-algebra/index.ts';
 import type * as typeAliases from './features/type-aliases/index.ts';
 import type * as typeAnnotations from './features/type-annotations/index.ts';
-import type * as typeExpressions from './features/type-expressions/index.ts';
 import type * as typeOnlyImports from './features/modules/type-only-imports/index.ts';
 import type * as typeclasses from './features/open-type-extension/typeclasses/index.ts';
 import type * as typedReceivers from './features/explicit-receivers/typed-receivers/index.ts';
@@ -209,6 +208,7 @@ declare module './attribute.ts' {
 			G extends GrammarMap,
 			K extends gate.Under<'attribute.content'> = 'attribute.content'
 		> extends fieldsAndModifiers.Attribute.Content<G, K> {
+			readonly inner?: gate.In<G, features.RustDeclarations, rustDeclarations.Attribute.Content<G, K>['inner']>;
 			readonly input?: gate.In<G, features.RustDeclarations, rustDeclarations.Attribute.Content<G, K>['input']>;
 			readonly path?: gate.In<G, features.RustDeclarations, rustDeclarations.Attribute.Content<G, K>['path']>;
 		}
@@ -231,22 +231,12 @@ declare module './attribute.ts' {
 				| V.Attribute.Content.Member<G>
 				| V.Attribute.Content.Parenthesized<G>;
 		}
-		interface Decorator<
-			G extends GrammarMap,
-			K extends gate.Under<'attribute.decorator'> = 'attribute.decorator'
-		> extends decorators.Attribute.Decorator<G, K> {}
-		interface Inner<
-			G extends GrammarMap,
-			K extends gate.Under<'attribute.inner'> = 'attribute.inner'
-		> extends attributes.Attribute.Inner<G, K> {}
 		type Any<G extends GrammarMap> =
 			| V.Attribute<G>
 			| V.Attribute.Content<G>
 			| V.Attribute.Content.Call<G>
 			| V.Attribute.Content.Member<G>
-			| V.Attribute.Content.Parenthesized<G>
-			| V.Attribute.Decorator<G>
-			| V.Attribute.Inner<G>;
+			| V.Attribute.Content.Parenthesized<G>;
 	}
 }
 
@@ -4517,7 +4507,6 @@ declare module './statement.ts' {
 				| V.Statement.Export.Default<G>;
 		}
 		interface Expression<G extends GrammarMap, K extends gate.Under<'statement.expression'> = 'statement.expression'> {
-			readonly content?: gate.In<G, features.ForEachTargets, forEachTargets.Statement.Expression<G, K>['content']>;
 			readonly expression?: gate.In<
 				G,
 				features.CFamilyExpressionStatements,
@@ -4778,9 +4767,6 @@ declare module './statement.ts' {
 }
 
 declare module './type.ts' {
-	interface Type<G extends GrammarMap, K extends gate.Under<'type'> = 'type'> {
-		readonly content?: gate.In<G, features.TypeExpressions, typeExpressions.Type<G, K>['content']>;
-	}
 	namespace Type {
 		interface Abstract<
 			G extends GrammarMap,
@@ -5065,8 +5051,6 @@ declare module './map.ts' {
 			features.MemberDecorators,
 			V.Attribute.Content.Parenthesized<G>
 		>;
-		readonly 'attribute.decorator': gate.In<G, features.Decorators, V.Attribute.Decorator<G>>;
-		readonly 'attribute.inner': gate.In<G, features.Attributes, V.Attribute.Inner<G>>;
 		readonly clause: V.Clause<G>;
 		readonly 'clause.bounds': gate.In<G, features.BoundClauses, V.Clause.Bounds<G>>;
 		readonly 'clause.bounds.higher_ranked': gate.In<
@@ -6552,6 +6536,10 @@ declare module './map.ts' {
 
 declare module './utils.ts' {
 	interface FlagFeatures {
+		readonly 'attribute.content': { readonly inner: features.RustDeclarations };
+		readonly 'attribute.content.call': { readonly inner: features.RustDeclarations };
+		readonly 'attribute.content.member': { readonly inner: features.RustDeclarations };
+		readonly 'attribute.content.parenthesized': { readonly inner: features.RustDeclarations };
 		readonly 'clause.catch': { readonly group: object };
 		readonly 'clause.comprehension.for': { readonly async: features.AsyncContexts; readonly trailingComma: object };
 		readonly 'clause.export.specifier': { readonly typeOnly: features.TypeOnlyImports };

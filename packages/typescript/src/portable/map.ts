@@ -184,15 +184,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly $forms: V.Form<'expression'>;
 		};
-		readonly 'attribute.decorator': {
-			readonly content:
-				| V.Read<TypeScriptMap, 'attribute.content.call'>
-				| V.Read<TypeScriptMap, 'attribute.content.member'>
-				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
-				| V.Read<TypeScriptMap, 'identifier'>
-				| V.Text<TypeScriptMap, 'identifier'>;
-			readonly $forms: V.Form<'content'>;
-		};
 		readonly 'clause.bounds': {
 			readonly bounds:
 				| V.Read<TypeScriptMap, 'identifier'>
@@ -753,11 +744,11 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'attributeKind' | 'object'>;
 		};
 		readonly 'clause.import.names': {
-			readonly content:
+			readonly default: V.Read<TypeScriptMap, 'identifier'> | V.Text<TypeScriptMap, 'identifier'>;
+			readonly names:
 				| V.Read<TypeScriptMap, 'clause.import.namespace'>
 				| V.Read<TypeScriptMap, 'clause.import.specifier'>
 				| V.Read<TypeScriptMap, 'clause.import.specifier.typeof'>;
-			readonly default: V.Read<TypeScriptMap, 'identifier'> | V.Text<TypeScriptMap, 'identifier'>;
 		};
 		readonly 'clause.import.namespace': {
 			readonly name: V.Read<TypeScriptMap, 'identifier'> | V.Text<TypeScriptMap, 'identifier'>;
@@ -893,19 +884,16 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
 		readonly 'comment.block': {
-			readonly content: string;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'comment.block.doc': {
-			readonly content: string;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'comment.line': {
-			readonly content: string;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'declaration.ambient': {
-			readonly content:
+			readonly body:
 				| V.Read<TypeScriptMap, 'declaration.ambient'>
 				| V.Read<TypeScriptMap, 'declaration.class'>
 				| V.Read<TypeScriptMap, 'declaration.enum'>
@@ -923,7 +911,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'statement.block'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
 				| V.Unmapped<'typescript:using_declaration'>;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'body'>;
 		};
 		readonly 'declaration.class': {
 			readonly body:
@@ -980,7 +968,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.signature.index.mapped'>
 				| V.Read<TypeScriptMap, 'statement.block.static'>
 				| ';';
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly extends: V.Read<TypeScriptMap, 'clause.extends'>;
 			readonly implements:
 				| V.Read<TypeScriptMap, 'identifier'>
@@ -1037,7 +1030,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.constructor': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -1050,7 +1048,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.constructor.private': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -1063,7 +1066,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.constructor.protected': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -1076,7 +1084,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.constructor.public': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -1338,7 +1351,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name', 'value'> | V.Form<'name' | 'value'>;
 		};
 		readonly 'declaration.field': {
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -1631,7 +1649,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.field.private': {
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -1924,7 +1947,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.field.protected': {
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -2217,7 +2245,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.field.public': {
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -3324,7 +3357,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.method': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -3498,7 +3536,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.method.private': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -3672,7 +3715,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.method.protected': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -3846,7 +3894,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.method.public': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -5486,7 +5539,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
 		readonly 'declaration.parameter': {
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly default:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -5681,7 +5739,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'> | V.Form<never, 'name'> | V.Form<'name', 'default'>;
 		};
 		readonly 'declaration.parameter.private': {
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly default:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -5876,7 +5939,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'> | V.Form<never, 'name'> | V.Form<'name', 'default'>;
 		};
 		readonly 'declaration.parameter.protected': {
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly default:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -6071,7 +6139,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'> | V.Form<never, 'name'> | V.Form<'name', 'default'>;
 		};
 		readonly 'declaration.parameter.public': {
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly default:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -6266,7 +6339,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'> | V.Form<never, 'name'> | V.Form<'name', 'default'>;
 		};
 		readonly 'declaration.parameter.receiver': {
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly default:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -6448,7 +6526,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'void';
 		};
 		readonly 'declaration.property': {
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -6741,7 +6824,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.property.getter': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -6904,7 +6992,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.property.getter.private': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -7067,7 +7160,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.property.getter.protected': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -7230,7 +7328,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.property.getter.public': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -7392,7 +7495,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.property.private': {
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -7684,7 +7792,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.property.protected': {
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -7976,7 +8089,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.property.public': {
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -8269,7 +8387,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.property.setter': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -8390,7 +8513,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.property.setter.private': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -8511,7 +8639,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.property.setter.protected': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -8632,7 +8765,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'declaration.property.setter.public': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -8752,7 +8890,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name' | 'parameters'>;
 		};
 		readonly 'declaration.property.signature.abstract': {
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
@@ -23784,7 +23927,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.signature.index.mapped'>
 				| V.Read<TypeScriptMap, 'statement.block.static'>
 				| ';';
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly extends: V.Read<TypeScriptMap, 'clause.extends'>;
 			readonly implements:
 				| V.Read<TypeScriptMap, 'identifier'>
@@ -27805,18 +27953,21 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly pattern: never;
 		};
 		readonly 'literal.string': {
-			readonly elements: V.Read<TypeScriptMap, 'literal.string.escape'> | V.Read<TypeScriptMap, 'literal.string.text'>;
+			readonly elements:
+				| V.Read<TypeScriptMap, 'literal.string.escape'>
+				| V.Read<TypeScriptMap, 'literal.string.text'>
+				| T.EscapeSequence.Parsed;
 		};
 		readonly 'literal.string.escape': {
-			readonly content: string;
 			readonly elements: never;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.string.interpolated': {
 			readonly elements:
 				| V.Read<TypeScriptMap, 'expression.interpolation'>
 				| V.Read<TypeScriptMap, 'literal.string.escape'>
 				| V.Read<TypeScriptMap, 'literal.string.text'>
+				| T.EscapeSequence.Parsed
 				| T.TemplateSubstitution.Parsed;
 		};
 		readonly 'literal.string.text': {
@@ -28365,7 +28516,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
 				| V.Unmapped<'typescript:using_declaration'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly exportClause: V.Read<TypeScriptMap, 'clause.export'> | V.Read<TypeScriptMap, 'clause.export.namespace'>;
 			readonly name: V.Read<TypeScriptMap, 'identifier'> | V.Text<TypeScriptMap, 'identifier'>;
 			readonly source: V.Read<TypeScriptMap, 'literal.string'> | T.StringDouble.Parsed | T.StringSingle.Parsed;
@@ -28534,7 +28690,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'statement.import.alias'>
 				| V.Unmapped<'typescript:using_declaration'>;
-			readonly decorators: V.Read<TypeScriptMap, 'attribute.decorator'>;
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.content.call'>
+				| V.Read<TypeScriptMap, 'attribute.content.member'>
+				| V.Read<TypeScriptMap, 'attribute.content.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly exportClause: never;
 			readonly name: never;
 			readonly source: never;
@@ -30524,7 +30685,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'right'>;
 		};
 		readonly 'type.literal': {
-			readonly content:
+			readonly value:
 				| V.Read<TypeScriptMap, 'literal.boolean.false'>
 				| V.Read<TypeScriptMap, 'literal.boolean.true'>
 				| V.Read<TypeScriptMap, 'literal.null'>
@@ -30548,7 +30709,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.NumberFloatScientific.Parsed
 				| T.StringDouble.Parsed
 				| T.StringSingle.Parsed;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'value'>;
 		};
 		readonly 'type.lookup': {
 			readonly indexType:
@@ -31234,7 +31395,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly 'attribute.content.call': TSKindId.DecoratorCallExpression;
 			readonly 'attribute.content.member': TSKindId.DecoratorMemberExpression;
 			readonly 'attribute.content.parenthesized': TSKindId.DecoratorParenthesizedExpression;
-			readonly 'attribute.decorator': TSKindId.Decorator;
 			readonly 'clause.bounds': TSKindId.Constraint;
 			readonly 'clause.case.default': TSKindId.SwitchDefault;
 			readonly 'clause.case.switch': TSKindId.SwitchCase;
@@ -31563,7 +31723,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'attribute.content.call': never;
 		readonly 'attribute.content.member': never;
 		readonly 'attribute.content.parenthesized': never;
-		readonly 'attribute.decorator': never;
 		readonly 'clause.bounds': never;
 		readonly 'clause.case.default': never;
 		readonly 'clause.case.switch': never;

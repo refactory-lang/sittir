@@ -339,7 +339,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['flags', 1, undefined, '_flags']
 	],
 	284: [['elements', 0, undefined, '_elements']],
-	285: [['content', 0, undefined, '_content']],
+	285: [['expression', 0, undefined, '_expression']],
 	286: [
 		['object', 0, undefined, '_object'],
 		['property', 1, undefined, '_property']
@@ -1879,9 +1879,9 @@ export const structure: StructureTable = Object.freeze({
 	},
 	285: {
 		kind: 'decorator',
-		required: [['_content', 'content']],
-		single: [['_content', 'Decorator.content']],
-		nodeOnly: [['_content', 'Decorator.content', 'buildIdentifier(…)', [1, 286, 287, 304]]]
+		required: [['_expression', 'expression']],
+		single: [['_expression', 'Decorator.expression']],
+		nodeOnly: [['_expression', 'Decorator.expression', 'buildIdentifier(…)', [1, 286, 287, 304]]]
 	},
 	286: {
 		kind: 'decorator_member_expression',

@@ -7,7 +7,6 @@ import { querySlots } from '../utils.js';
 
 export interface PortableIds {
 	attribute:
-		| TSKindId.Decorator
 		| TSKindId.DecoratorCallExpression
 		| TSKindId.DecoratorMemberExpression
 		| TSKindId.DecoratorParenthesizedExpression;
@@ -18,7 +17,6 @@ export interface PortableIds {
 	'attribute.content.call': TSKindId.DecoratorCallExpression;
 	'attribute.content.member': TSKindId.DecoratorMemberExpression;
 	'attribute.content.parenthesized': TSKindId.DecoratorParenthesizedExpression;
-	'attribute.decorator': TSKindId.Decorator;
 	clause:
 		| TSKindId.CatchClause
 		| TSKindId.Constraint
@@ -728,7 +726,6 @@ export interface PortableTexts {
 	'attribute.content.call': never;
 	'attribute.content.member': never;
 	'attribute.content.parenthesized': never;
-	'attribute.decorator': never;
 	clause: never;
 	'clause.bounds': never;
 	'clause.case': never;
@@ -1069,11 +1066,7 @@ export interface PortableTexts {
 }
 
 export interface PortableKindsAt {
-	attribute: {
-		readonly $path: 'attribute';
-		readonly content: PortableKindsAt['attribute.content'];
-		readonly decorator: PortableKindsAt['attribute.decorator'];
-	};
+	attribute: { readonly $path: 'attribute'; readonly content: PortableKindsAt['attribute.content'] };
 	'attribute.content': {
 		readonly $path: 'attribute.content';
 		readonly call: PortableKindsAt['attribute.content.call'];
@@ -1083,7 +1076,6 @@ export interface PortableKindsAt {
 	'attribute.content.call': { readonly $path: 'attribute.content.call' };
 	'attribute.content.member': { readonly $path: 'attribute.content.member' };
 	'attribute.content.parenthesized': { readonly $path: 'attribute.content.parenthesized' };
-	'attribute.decorator': { readonly $path: 'attribute.decorator' };
 	clause: {
 		readonly $path: 'clause';
 		readonly bounds: PortableKindsAt['clause.bounds'];
@@ -1864,7 +1856,6 @@ export interface PortableKindsAt {
 export interface PortableIsAt {
 	attribute: PortableGuard<PortableIds['attribute'], TypescriptNode, TSKindId, PortableTexts['attribute']> & {
 		readonly content: PortableIsAt['attribute.content'];
-		readonly decorator: PortableIsAt['attribute.decorator'];
 	};
 	'attribute.content': PortableGuard<
 		PortableIds['attribute.content'],
@@ -1893,12 +1884,6 @@ export interface PortableIsAt {
 		TypescriptNode,
 		TSKindId,
 		PortableTexts['attribute.content.parenthesized']
-	> & {};
-	'attribute.decorator': PortableGuard<
-		PortableIds['attribute.decorator'],
-		TypescriptNode,
-		TSKindId,
-		PortableTexts['attribute.decorator']
 	> & {};
 	clause: PortableGuard<PortableIds['clause'], TypescriptNode, TSKindId, PortableTexts['clause']> & {
 		readonly bounds: PortableIsAt['clause.bounds'];
@@ -4048,7 +4033,6 @@ const table: PortableTable = {
 	paths: {
 		attribute: {
 			ids: [
-				TSKindId.Decorator,
 				TSKindId.DecoratorCallExpression,
 				TSKindId.DecoratorMemberExpression,
 				TSKindId.DecoratorParenthesizedExpression
@@ -4066,7 +4050,6 @@ const table: PortableTable = {
 		'attribute.content.call': { ids: [TSKindId.DecoratorCallExpression], exact: true },
 		'attribute.content.member': { ids: [TSKindId.DecoratorMemberExpression], exact: true },
 		'attribute.content.parenthesized': { ids: [TSKindId.DecoratorParenthesizedExpression], exact: true },
-		'attribute.decorator': { ids: [TSKindId.Decorator], exact: true },
 		clause: {
 			ids: [
 				TSKindId.CatchClause,
@@ -5351,7 +5334,6 @@ const table: PortableTable = {
 		[TSKindId.ConstructorType]: [{ path: 'type.function.constructor', within: [], test: [] }],
 		[TSKindId.ContinueStatement]: [{ path: 'statement.continue', within: [], test: [] }],
 		[TSKindId.DebuggerStatement]: [{ path: 'statement.debugger', within: [], test: [] }],
-		[TSKindId.Decorator]: [{ path: 'attribute.decorator', within: [], test: [] }],
 		[TSKindId.DecoratorCallExpression]: [{ path: 'attribute.content.call', within: [], test: [] }],
 		[TSKindId.DecoratorMemberExpression]: [{ path: 'attribute.content.member', within: [], test: [] }],
 		[TSKindId.DecoratorParenthesizedExpression]: [{ path: 'attribute.content.parenthesized', within: [], test: [] }],

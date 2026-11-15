@@ -16,14 +16,23 @@ export function portableSpellingOf(entry: ReadEntry, model: SlotModel, routes: G
 		return route?.name ?? refuse(`${holder}'s ${slot}, a slot its item spells, is no member of ${holder}'s path`);
 	};
 	const placed = entry.claim.predicates.filter((predicate) => predicate.subject?.up === 1);
-	const itemKind = placed[0]?.subject?.down[0]?.kind ?? refuse('its tests name no kind of item');
+	const [held, element] = placed[0]?.subject?.down ?? [];
+	const wrapper = held?.kind ?? refuse('its tests name no kind of item');
+	const through = !routes.vocabOf.has(wrapper) && element?.kind != null;
+	const itemKind = through ? element!.kind! : wrapper;
+	const reached = through ? 2 : 1;
 	const item: Record<string, unknown> = { $path: vocabOf(itemKind) };
 	const holes: Record<string, string[]> = {};
 	for (const predicate of placed) {
-		const [first, ...down] = predicate.subject!.down;
-		if (first?.kind !== itemKind) refuse('its tests reach more than one kind of item');
+		const steps = predicate.subject!.down;
+		if (steps[0]?.kind !== wrapper || (through && steps[1]?.kind !== itemKind)) refuse('its tests reach more than one kind of item');
+		const down = steps.slice(reached);
 		const [argument] = predicate.arguments;
 		if (predicate.operator !== 'eq' || argument === undefined || predicate.arguments.length > 1) refuse(`#${predicate.operator}? spells no text`);
+		if (down.length === 0) {
+			item.$value = 'text' in argument! ? argument.text : refuse("its item's own text is a capture");
+			continue;
+		}
 		let into = item;
 		let holder = itemKind;
 		const keys: string[] = [];

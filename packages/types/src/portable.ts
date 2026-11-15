@@ -291,7 +291,7 @@ export interface PortableBuildArm {
 	readonly template?: PortableTemplate;
 	readonly facts?: readonly PortableSpelledFact[];
 	readonly sole?: { readonly member: string; readonly delimiter: number };
-	readonly content?: string;
+	readonly content?: PortableMemberStep;
 }
 
 /**

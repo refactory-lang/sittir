@@ -5,10 +5,10 @@ export namespace Element {
 	export interface TypeArgument<G extends GrammarMap, K extends Under<'element.type_argument'> = 'element.type_argument'> extends SubKindOf<V.Element<G, K>> {
 		// claimed by r
 		readonly $path: K;
-		readonly content: Slot<
+		readonly value: Slot<
 			G,
 			K,
-			'content',
+			'value',
 			| V.Clause.Bounds.Removed<G>
 			| V.Element.TypeBinding<G>
 			| V.Expression.Call.Macro<G>

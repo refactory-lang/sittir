@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "683d90a141596e34e6521356c3cf27786b689d117326684d6d67290da4dbbe95";
+export const hash = "bbb38dfedaf01af5e9b75cf72ff858a4c44fa86df2c3654f7f630af343cc2b03";
 
 export const renames = {
 	module: "file",
@@ -89,7 +89,6 @@ export const renames = {
 	true: "true_boolean_literal",
 	false: "false_boolean_literal",
 	none: "null_literal",
-	decorator: "decorator_attribute",
 	comment: "line_comment"
 };
 
@@ -132,6 +131,7 @@ export default grammar(
 			member_type: { "0": field("qualifier") },
 			named_expression: { "0": field("left"), "2": field("right") },
 			parameter: { "-5": alias("rest_pattern"), "-1": alias("map_rest_pattern") },
+			parenthesized_list_splat: { "1": field("expression") },
 			pattern: { "-3": alias("rest_pattern") },
 			pattern_list: { "0": field("elements"), "1/1/0/0/1": field("elements") },
 			primary_expression: { "-1": alias("rest_pattern") },

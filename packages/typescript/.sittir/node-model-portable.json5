@@ -971,7 +971,7 @@
       ],
       "members": [
         {
-          "name": "content",
+          "name": "body",
           "route": "slot",
           "slot": "content",
           "path": [
@@ -3621,19 +3621,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "comment_block",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "comment_line": {
       "vocab": "comment.line",
@@ -3646,19 +3634,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "comment_line",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "computed_property_name": {
       "container": {
@@ -4343,29 +4319,17 @@
       "members": []
     },
     "decorator": {
-      "vocab": "attribute.decorator",
-      "read": [
-        {
-          "vocab": "attribute.decorator",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "decorator",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "container": {
+        "slot": "expression",
+        "kinds": [
+          "identifier",
+          "decorator_member_expression",
+          "decorator_call_expression",
+          "decorator_parenthesized_expression"
+        ],
+        "terminals": [],
+        "list": false
+      }
     },
     "decorator_call_expression": {
       "vocab": "attribute.content.call",
@@ -4743,19 +4707,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "escape_sequence",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "existential_type": {
       "vocab": "type.existential",
@@ -6934,7 +6886,7 @@
       ],
       "members": [
         {
-          "name": "content",
+          "name": "names",
           "route": "slot",
           "slot": "content",
           "except": [
@@ -6973,7 +6925,7 @@
           ]
         },
         {
-          "name": "content",
+          "name": "names",
           "route": "nested",
           "via": [
             {
@@ -7959,7 +7911,7 @@
       ],
       "members": [
         {
-          "name": "content",
+          "name": "value",
           "route": "slot",
           "slot": "content",
           "path": [
@@ -15181,8 +15133,8 @@
       },
       {
         "depth": 2,
-        "paths": 111,
-        "kinds": 145,
+        "paths": 110,
+        "kinds": 144,
         "refinements": 4
       },
       {

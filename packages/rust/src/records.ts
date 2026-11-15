@@ -40,8 +40,8 @@ export const records = {
 		operator: { word: 6, width: 1, forms: 2, built: 4 }
 	},
 	NonSpecialTokenNode: { words: 22, builtWords: 3, content: { word: 2, width: 20, inline: 19, forms: 11, built: 2 } },
-	AttributeItemNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
-	InnerAttributeItemNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
+	AttributeItemNode: { words: 5, builtWords: 3, attribute: { word: 2, width: 3, forms: 1, built: 2 } },
+	InnerAttributeItemNode: { words: 5, builtWords: 3, attribute: { word: 2, width: 3, forms: 1, built: 2 } },
 	AttributeNode: {
 		words: 9,
 		builtWords: 4,

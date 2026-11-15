@@ -3415,9 +3415,9 @@ export const coerceToNonSpecialToken: ConfigSeat<T.NonSpecialToken.Loose, Return
 	);
 };
 
-export function resolveAttributeItem_content(
-	value: T.AttributeItem.LooseConfig['content']
-): Admit<T.AttributeItem['_content']> {
+export function resolveAttributeItem_attribute(
+	value: T.AttributeItem.LooseConfig['attribute']
+): Admit<T.AttributeItem['_attribute']> {
 	return _resolveOneBranch<T.Attribute>(value, 'attribute');
 }
 
@@ -3427,15 +3427,15 @@ export const coerceToAttributeItem: ConfigSeat<T.AttributeItem.Loose, ReturnType
 	if (isNodeOfKind(input, TSKindId.AttributeItem)) return input as unknown as ReturnType<typeof F.buildAttributeItem>;
 	return F.buildAttributeItem(
 		_resolveOneBranch<T.Attribute>(
-			configFieldOr(input, 'content', () => input, TSKindId.AttributeItem),
+			configFieldOr(input, 'attribute', () => input, TSKindId.AttributeItem),
 			'attribute'
 		)
 	);
 };
 
-export function resolveInnerAttributeItem_content(
-	value: T.InnerAttributeItem.LooseConfig['content']
-): Admit<T.InnerAttributeItem['_content']> {
+export function resolveInnerAttributeItem_attribute(
+	value: T.InnerAttributeItem.LooseConfig['attribute']
+): Admit<T.InnerAttributeItem['_attribute']> {
 	return _resolveOneBranch<T.Attribute>(value, 'attribute');
 }
 
@@ -3447,7 +3447,7 @@ export const coerceToInnerAttributeItem: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildInnerAttributeItem>;
 	return F.buildInnerAttributeItem(
 		_resolveOneBranch<T.Attribute>(
-			configFieldOr(input, 'content', () => input, TSKindId.InnerAttributeItem),
+			configFieldOr(input, 'attribute', () => input, TSKindId.InnerAttributeItem),
 			'attribute'
 		)
 	);

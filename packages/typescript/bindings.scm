@@ -139,6 +139,7 @@
 (type_parameter value: (_)? @default) @declaration.type_parameter
 (type_parameter constraint: (constraint type: (_) @bounds))
 (ambient_declaration) @declaration.ambient
+(ambient_declaration (_) @body)
 (ambient_declaration_module) @declaration.module_property
 (internal_module) @declaration.module
 (module) @declaration.module.external
@@ -237,8 +238,9 @@
 (implements_clause) @clause.implements
 (export_clause) @clause.export
 (import_clause) @clause.import.names
+(import_clause [(namespace_import) (named_imports)] @names)
 (import_clause (import_clause_default_import (identifier) @default))
-(import_clause (import_clause_default_import (import_clause_group (_) @content)))
+(import_clause (import_clause_default_import (import_clause_group (_) @names)))
 (import_require_clause) @clause.import.require
 (namespace_import) @clause.import.namespace
 (import_specifier) @clause.import.specifier
@@ -409,6 +411,7 @@
 (constructor_type "abstract" @abstract)
 (object_type) @type.object
 (literal_type) @type.literal
+(literal_type (_) @value)
 (lookup_type) @type.lookup
 (conditional_type) @type.conditional
 (infer_type) @type.infer
@@ -484,7 +487,7 @@
 (accessibility_modifier "public") @modifier.visibility.public
 
 ; ── attribute ──────────────────────────────────────────────────────────────────
-(decorator (_)? @content) @attribute.decorator
+(decorator (_) @element)
 
 ; ── comment ────────────────────────────────────────────────────────────────────
 (comment_block) @comment.block

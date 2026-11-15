@@ -16,10 +16,10 @@ export namespace Element {
 				| V.Pattern.Any<G>
 			>;
 		}
-		export interface Parenthesized<G extends GrammarMap, K extends Under<'element.spread.parenthesized'> = 'element.spread.parenthesized'> extends SubKindOf<V.Element.Spread<G, K>> {
+		export interface Parenthesized<G extends GrammarMap, K extends Under<'element.spread.parenthesized'> = 'element.spread.parenthesized'> extends SubKindOf<V.Element.Spread<G, K>, 'expression'> {
 			// claimed by p
 			readonly $path: K;
-			readonly content: Slot<G, K, 'content', V.Element.Spread<G> | V.Element.Spread.Parenthesized<G>>;
+			readonly expression: Slot<G, K, 'expression', V.Element.Spread<G> | V.Element.Spread.Parenthesized<G>>;
 		}
 	}
 }

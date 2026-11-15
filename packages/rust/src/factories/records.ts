@@ -1346,28 +1346,28 @@ export function buildAttributeItem(...args: unknown[]) {
 			);
 }
 function _buildAttributeItem(value: Admit<T.Attribute>): T.AttributeItem.Bound {
-	const _content = value;
+	const _attribute = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'attribute_item', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'attribute_item', { attribute: _attribute });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.AttributeItem as const, { _content });
+	handle?.verifyStored?.(TSKindId.AttributeItem as const, { _attribute });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.AttributeItem as const);
-		storeCell(arena, record, 2, 2, _content);
+		storeCell(arena, record, 2, 2, _attribute);
 		const node = arena.view(record);
 		return node as unknown as T.AttributeItem.Bound;
 	});
 }
 
 function _buildAttributeItem$patch(source: object, value: Admit<T.Attribute>): T.AttributeItem.Bound {
-	const _content = value;
+	const _attribute = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'attribute_item', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'attribute_item', { attribute: _attribute });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.AttributeItem as const, { _content });
+	handle?.verifyStored?.(TSKindId.AttributeItem as const, { _attribute });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.AttributeItem as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'attribute', _attribute));
 		const node = arena.view(record);
 		return node as unknown as T.AttributeItem.Bound;
 	});
@@ -1375,7 +1375,7 @@ function _buildAttributeItem$patch(source: object, value: Admit<T.Attribute>): T
 function withAttributeItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'content':
+		case 'attribute':
 			return applySetter(args, (value: Admit<T.Attribute>) =>
 				rebuilt(node, handle, () => _buildAttributeItem$patch(node, value))
 			);
@@ -1408,28 +1408,28 @@ export function buildInnerAttributeItem(...args: unknown[]) {
 			);
 }
 function _buildInnerAttributeItem(value: Admit<T.Attribute>): T.InnerAttributeItem.Bound {
-	const _content = value;
+	const _attribute = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'inner_attribute_item', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'inner_attribute_item', { attribute: _attribute });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.InnerAttributeItem as const, { _content });
+	handle?.verifyStored?.(TSKindId.InnerAttributeItem as const, { _attribute });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.InnerAttributeItem as const);
-		storeCell(arena, record, 2, 2, _content);
+		storeCell(arena, record, 2, 2, _attribute);
 		const node = arena.view(record);
 		return node as unknown as T.InnerAttributeItem.Bound;
 	});
 }
 
 function _buildInnerAttributeItem$patch(source: object, value: Admit<T.Attribute>): T.InnerAttributeItem.Bound {
-	const _content = value;
+	const _attribute = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'inner_attribute_item', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'inner_attribute_item', { attribute: _attribute });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.InnerAttributeItem as const, { _content });
+	handle?.verifyStored?.(TSKindId.InnerAttributeItem as const, { _attribute });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.InnerAttributeItem as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'attribute', _attribute));
 		const node = arena.view(record);
 		return node as unknown as T.InnerAttributeItem.Bound;
 	});
@@ -1437,7 +1437,7 @@ function _buildInnerAttributeItem$patch(source: object, value: Admit<T.Attribute
 function withInnerAttributeItem(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'content':
+		case 'attribute':
 			return applySetter(args, (value: Admit<T.Attribute>) =>
 				rebuilt(node, handle, () => _buildInnerAttributeItem$patch(node, value))
 			);

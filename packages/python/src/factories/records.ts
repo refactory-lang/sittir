@@ -3680,14 +3680,14 @@ export function buildParenthesizedListSplat<V extends Admit<T.ParenthesizedListS
 export function buildParenthesizedListSplat(
 	value: Admit<T.ParenthesizedListSplat | T.ListSplat>
 ): T.ParenthesizedListSplat.Bound {
-	const _content = value;
+	const _expression = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'parenthesized_list_splat', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'parenthesized_list_splat', { expression: _expression });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ParenthesizedListSplat as const, { _content });
+	handle?.verifyStored?.(TSKindId.ParenthesizedListSplat as const, { _expression });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ParenthesizedListSplat as const);
-		storeCell(arena, record, 2, 2, _content);
+		storeCell(arena, record, 2, 2, _expression);
 		const node = arena.view(record);
 		return node as unknown as T.ParenthesizedListSplat.Bound;
 	});
@@ -3697,14 +3697,14 @@ function buildParenthesizedListSplat$patch(
 	source: object,
 	value: Admit<T.ParenthesizedListSplat | T.ListSplat>
 ): T.ParenthesizedListSplat.Bound {
-	const _content = value;
+	const _expression = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'parenthesized_list_splat', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'parenthesized_list_splat', { expression: _expression });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ParenthesizedListSplat as const, { _content });
+	handle?.verifyStored?.(TSKindId.ParenthesizedListSplat as const, { _expression });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ParenthesizedListSplat as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'expression', _expression));
 		const node = arena.view(record);
 		return node as unknown as T.ParenthesizedListSplat.Bound;
 	});
@@ -3712,7 +3712,7 @@ function buildParenthesizedListSplat$patch(
 function withParenthesizedListSplat(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'content':
+		case 'expression':
 			return applySetter(args, (value: Admit<T.ParenthesizedListSplat | T.ListSplat>) =>
 				rebuilt(node, handle, () => buildParenthesizedListSplat$patch(node, value))
 			);

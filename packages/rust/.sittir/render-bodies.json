@@ -570,7 +570,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "attribute"
 		},
 		{
 			"kind": "seam",
@@ -3904,7 +3904,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "attribute"
 		},
 		{
 			"kind": "seam",

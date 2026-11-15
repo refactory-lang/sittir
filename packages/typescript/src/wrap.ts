@@ -5041,10 +5041,10 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle): T.Decorator.
 	const node = {
 		...data,
 		$type: TSKindId.Decorator as const,
-		content() {
+		expression() {
 			return hydrateSlot<
 				T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
-			>(this, '_content', tree);
+			>(this, '_expression', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -5061,7 +5061,7 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle): T.Decorator.
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { content: wrapDecorator$with$content, [RECEIVER]: node };
+	node.$with = { expression: wrapDecorator$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Decorator.Parsed;
 }
@@ -5070,17 +5070,17 @@ function wrapDecorator$with(node: Held, setter: string, args: readonly unknown[]
 	const data = node[INPUT] as T.Decorator;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.Decorator['_content']>) =>
+		case 'expression':
+			return applySetter(args, (v: NonNullable<T.Decorator['_expression']>) =>
 				rebuilt(node, handle, () =>
-					wrapDecorator({ ...$edited(data), _content: admitSlot(handle, 'decorator', 'content', v) }, tree)
+					wrapDecorator({ ...$edited(data), _expression: admitSlot(handle, 'decorator', 'expression', v) }, tree)
 				)
 			);
 	}
 	throw new Error(`decorator has no $with.${setter}`);
 }
-function wrapDecorator$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapDecorator$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapDecorator$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapDecorator$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 export function wrapDecoratorMemberExpression(
@@ -20953,7 +20953,7 @@ function viewArguments(data: RecordPosition, tree: TreeHandle): T.Arguments.Pars
 	return node as unknown as T.Arguments.Parsed;
 }
 
-function viewDecorator$content(this: RecordHandle) {
+function viewDecorator$expression(this: RecordHandle) {
 	return viewSlot<
 		T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 	>(this, 2, 3, 1, 0, 2);
@@ -20966,7 +20966,7 @@ function viewDecorator(data: RecordPosition, tree: TreeHandle): T.Decorator.Pars
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		content: viewDecorator$content,
+		expression: viewDecorator$expression,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -20977,7 +20977,7 @@ function viewDecorator(data: RecordPosition, tree: TreeHandle): T.Decorator.Pars
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$with = { expression: $with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.Decorator.Parsed;
 }

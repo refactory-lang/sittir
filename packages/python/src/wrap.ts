@@ -2901,8 +2901,8 @@ export function wrapParenthesizedListSplat(
 	const node = {
 		...data,
 		$type: TSKindId.ParenthesizedListSplat as const,
-		content() {
-			return hydrateSlot<T.ParenthesizedListSplat | T.ListSplat>(this, '_content', tree);
+		expression() {
+			return hydrateSlot<T.ParenthesizedListSplat | T.ListSplat>(this, '_expression', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -2919,7 +2919,7 @@ export function wrapParenthesizedListSplat(
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { content: wrapParenthesizedListSplat$with$content, [RECEIVER]: node };
+	node.$with = { expression: wrapParenthesizedListSplat$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ParenthesizedListSplat.Parsed;
 }
@@ -2928,11 +2928,11 @@ function wrapParenthesizedListSplat$with(node: Held, setter: string, args: reado
 	const data = node[INPUT] as T.ParenthesizedListSplat;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.ParenthesizedListSplat['_content']>) =>
+		case 'expression':
+			return applySetter(args, (v: NonNullable<T.ParenthesizedListSplat['_expression']>) =>
 				rebuilt(node, handle, () =>
 					wrapParenthesizedListSplat(
-						{ ...$edited(data), _content: admitSlot(handle, 'parenthesized_list_splat', 'content', v) },
+						{ ...$edited(data), _expression: admitSlot(handle, 'parenthesized_list_splat', 'expression', v) },
 						tree
 					)
 				)
@@ -2940,8 +2940,8 @@ function wrapParenthesizedListSplat$with(node: Held, setter: string, args: reado
 	}
 	throw new Error(`parenthesized_list_splat has no $with.${setter}`);
 }
-function wrapParenthesizedListSplat$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapParenthesizedListSplat$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapParenthesizedListSplat$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapParenthesizedListSplat$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 function wrapArgumentList$listRead(this: { readonly arguments: () => unknown }): readonly unknown[] {
@@ -14777,7 +14777,7 @@ function viewTypeParameter(data: RecordPosition, tree: TreeHandle): T.TypeParame
 	return node as unknown as T.TypeParameter.Parsed;
 }
 
-function viewParenthesizedListSplat$content(this: RecordHandle) {
+function viewParenthesizedListSplat$expression(this: RecordHandle) {
 	return viewSlot<T.ParenthesizedListSplat | T.ListSplat>(this, 2, 3, 1, 0, 2);
 }
 function viewParenthesizedListSplat(data: RecordPosition, tree: TreeHandle): T.ParenthesizedListSplat.Parsed {
@@ -14788,7 +14788,7 @@ function viewParenthesizedListSplat(data: RecordPosition, tree: TreeHandle): T.P
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		content: viewParenthesizedListSplat$content,
+		expression: viewParenthesizedListSplat$expression,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -14799,7 +14799,7 @@ function viewParenthesizedListSplat(data: RecordPosition, tree: TreeHandle): T.P
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$with = { expression: $with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ParenthesizedListSplat.Parsed;
 }

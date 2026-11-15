@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "b22a3322dfebb84d5fddba9f8f640ceefb4e9b3e1ff608918a0543882dbebc24";
+export const hash = "43d843ccd15d2d3a8777e10a472ea3dfc344f6712ddee9976a9d6d9befb6a671";
 
 export const renames = {
 	source_file: "file",
@@ -117,8 +117,6 @@ export const renames = {
 	label: "label_identifier",
 	self: "receiver_identifier",
 	visibility_modifier_pub: "public_visibility_modifier",
-	attribute_item: "attribute",
-	inner_attribute_item: "inner_attribute",
 	attribute: "content_attribute",
 	line_comment_regular: "text_comment"
 };
@@ -133,7 +131,6 @@ export default grammar(
 			_pattern: { "-20": alias("qualified_identifier") },
 			_type: { "-12": alias("qualified_identifier") },
 			abstract_type: { "2/0/1": alias("qualified_identifier") },
-			attribute_item: { "2": field("content") },
 			attributed_element: { "0": field("attributes") },
 			const_parameter: { "4/0/1": field("default") },
 			dynamic_type: { "1/0/2": alias("qualified_identifier") },
@@ -150,7 +147,6 @@ export default grammar(
 			generic_type_with_turbofish: { "0/0/1": alias("qualified_identifier") },
 			impl_item_negative_clause: { "1/0/1": alias("qualified_identifier") },
 			impl_item_positive_clause: { "0/0/1": alias("qualified_identifier") },
-			inner_attribute_item: { "3": field("content") },
 			last_match_arm: { "3": field("body") },
 			let_declaration: { "2": field("name") },
 			macro_invocation: [{ "0": field("function") }, { "0/0/0": alias("qualified_identifier") }],

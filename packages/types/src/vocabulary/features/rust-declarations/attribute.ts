@@ -1,5 +1,5 @@
 import type { GrammarMap, Slot } from '../../map.ts';
-import type { Under } from '../../utils.ts';
+import type { Flag, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Attribute {
 	export interface Content<G extends GrammarMap, K extends Under<'attribute.content'> = 'attribute.content'> {
@@ -16,6 +16,7 @@ export namespace Attribute {
 			| V.Statement.Any<G>
 			| V.Type.Primitive<G>
 		>;
+		readonly inner?: Flag;
 		readonly path?: Slot<G, K, 'path', V.Identifier.Any<G>>;
 	}
 }

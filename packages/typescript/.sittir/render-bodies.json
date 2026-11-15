@@ -2172,7 +2172,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "expression"
 		},
 		{
 			"kind": "seam",

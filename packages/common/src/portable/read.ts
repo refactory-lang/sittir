@@ -314,7 +314,8 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		if (scalar === undefined) {
 			const content = arms.find((arm) => arm.content !== undefined)?.content;
 			if (content !== undefined) {
-				const spelled = textOf(accessed(node, content));
+				const found = routeValue(node, content)?.value;
+				const spelled = found === undefined ? (arms.some((arm) => arm.content === undefined) ? '' : undefined) : textOf(found);
 				return spelled === undefined ? kept(node, { reason: 'text' }, carried) : { $path: path, $value: spelled };
 			}
 			const textAt = (text: string | undefined): unknown => (text === undefined ? undefined : spelledAs(kind, path, arms, text, seats)) ?? kept(node, { reason: 'text' }, carried);

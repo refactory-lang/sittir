@@ -8,8 +8,6 @@ import { querySlots } from '../utils.js';
 export interface PortableIds {
 	argument: TSKindId.KeywordArgument;
 	'argument.named': TSKindId.KeywordArgument;
-	attribute: TSKindId.Decorator;
-	'attribute.decorator': TSKindId.Decorator;
 	clause:
 		| TSKindId.AliasedImport
 		| TSKindId.CaseClause
@@ -457,7 +455,7 @@ export interface PortableIds {
 	'statement.return': TSKindId.ReturnStatement;
 	'statement.throw': TSKindId.RaiseStatement;
 	'statement.try': TSKindId.TryStatement;
-	type: TSKindId.ConstrainedType | TSKindId.GenericType | TSKindId.SplatType | TSKindId.Type | TSKindId.UnionType;
+	type: TSKindId.ConstrainedType | TSKindId.GenericType | TSKindId.SplatType | TSKindId.UnionType;
 	'type.constrained': TSKindId.ConstrainedType;
 	'type.generic': TSKindId.GenericType;
 	'type.nullable': TSKindId.GenericType;
@@ -468,8 +466,6 @@ export interface PortableIds {
 export interface PortableTexts {
 	argument: never;
 	'argument.named': never;
-	attribute: never;
-	'attribute.decorator': never;
 	clause: '*';
 	'clause.case': never;
 	'clause.case.match': never;
@@ -702,8 +698,6 @@ export interface PortableTexts {
 export interface PortableKindsAt {
 	argument: { readonly $path: 'argument'; readonly named: PortableKindsAt['argument.named'] };
 	'argument.named': { readonly $path: 'argument.named' };
-	attribute: { readonly $path: 'attribute'; readonly decorator: PortableKindsAt['attribute.decorator'] };
-	'attribute.decorator': { readonly $path: 'attribute.decorator' };
 	clause: {
 		readonly $path: 'clause';
 		readonly case: PortableKindsAt['clause.case'];
@@ -1266,15 +1260,6 @@ export interface PortableIsAt {
 		PythonNode,
 		TSKindId,
 		PortableTexts['argument.named']
-	> & {};
-	attribute: PortableGuard<PortableIds['attribute'], PythonNode, TSKindId, PortableTexts['attribute']> & {
-		readonly decorator: PortableIsAt['attribute.decorator'];
-	};
-	'attribute.decorator': PortableGuard<
-		PortableIds['attribute.decorator'],
-		PythonNode,
-		TSKindId,
-		PortableTexts['attribute.decorator']
 	> & {};
 	clause: PortableGuard<PortableIds['clause'], PythonNode, TSKindId, PortableTexts['clause']> & {
 		readonly case: PortableIsAt['clause.case'];
@@ -2746,7 +2731,6 @@ export interface PortableIsAt {
 
 export interface PortableKinds {
 	readonly argument: PortableKindsAt['argument'];
-	readonly attribute: PortableKindsAt['attribute'];
 	readonly clause: PortableKindsAt['clause'];
 	readonly comment: PortableKindsAt['comment'];
 	readonly declaration: PortableKindsAt['declaration'];
@@ -2762,7 +2746,6 @@ export interface PortableKinds {
 
 export interface PortableIs {
 	readonly argument: PortableIsAt['argument'];
-	readonly attribute: PortableIsAt['attribute'];
 	readonly clause: PortableIsAt['clause'];
 	readonly comment: PortableIsAt['comment'];
 	readonly declaration: PortableIsAt['declaration'];
@@ -2780,8 +2763,6 @@ const table: PortableTable = {
 	paths: {
 		argument: { ids: [TSKindId.KeywordArgument], exact: true },
 		'argument.named': { ids: [TSKindId.KeywordArgument], exact: true },
-		attribute: { ids: [TSKindId.Decorator], exact: true },
-		'attribute.decorator': { ids: [TSKindId.Decorator], exact: true },
 		clause: {
 			ids: [
 				TSKindId.AliasedImport,
@@ -3332,7 +3313,7 @@ const table: PortableTable = {
 		'statement.throw': { ids: [TSKindId.RaiseStatement], exact: true },
 		'statement.try': { ids: [TSKindId.TryStatement], exact: true },
 		type: {
-			ids: [TSKindId.ConstrainedType, TSKindId.GenericType, TSKindId.SplatType, TSKindId.Type, TSKindId.UnionType],
+			ids: [TSKindId.ConstrainedType, TSKindId.GenericType, TSKindId.SplatType, TSKindId.UnionType],
 			exact: true
 		},
 		'type.constrained': { ids: [TSKindId.ConstrainedType], exact: true },
@@ -3730,7 +3711,6 @@ const table: PortableTable = {
 		[TSKindId.ConstrainedType]: [{ path: 'type.constrained', within: [], test: [] }],
 		[TSKindId.ConstructorDeclaration]: [{ path: 'declaration.constructor', within: [], test: [] }],
 		[TSKindId.ContinueStatement]: [{ path: 'statement.continue', within: [], test: [] }],
-		[TSKindId.Decorator]: [{ path: 'attribute.decorator', within: [], test: [] }],
 		[TSKindId.DefaultParameter]: [{ path: 'declaration.parameter.default', within: [], test: [] }],
 		[TSKindId.DeleteStatement]: [{ path: 'statement.delete', within: [], test: [] }],
 		[TSKindId.DictPattern]: [{ path: 'pattern.map', within: [], test: [] }],
@@ -4032,7 +4012,6 @@ const table: PortableTable = {
 		[TSKindId.TryStatement]: [{ path: 'statement.try', within: [], test: [] }],
 		[TSKindId.Tuple]: [{ path: 'expression.collection.tuple', within: [], test: [] }],
 		[TSKindId.TuplePattern]: [{ path: 'pattern.tuple', within: [], test: [] }],
-		[TSKindId.Type]: [{ path: 'type', within: [], test: [] }],
 		[TSKindId.TypeAliasStatement]: [{ path: 'declaration.type_alias', within: [], test: [] }],
 		[TSKindId.TypeConversion]: [{ path: 'expression.interpolation.conversion', within: [], test: [] }],
 		[TSKindId.TypeParamParamSpec]: [{ path: 'declaration.type_parameter.parameters', within: [], test: [] }],

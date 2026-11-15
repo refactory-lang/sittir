@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "c230235fd844d561bfeae6d7975684e790b9c8a61d68ed07cb8ebb2dd4733e33";
+export const hash = "0373e09c5d17a536241c09466ee9fb20be39a86e61eac25a0cda52cb18afc1b2";
 
 export const renames = {
 	program: "file",
@@ -112,7 +112,6 @@ export const renames = {
 	this: "receiver_identifier",
 	super: "super_identifier",
 	accessibility_modifier: "visibility_modifier",
-	decorator: "decorator_attribute",
 	comment_block: "block_comment",
 	comment_line: "line_comment"
 };
@@ -133,7 +132,6 @@ export default grammar(
 			assignment_expression: { "0/0": field("disposable") },
 			call_expression_member: { "1": field("optional_chain") },
 			constraint: { "1": field("bounds") },
-			decorator: { "1": field("content") },
 			export_clause: { "1/0": field("export_specifiers") },
 			export_statement_default_from: { "1": field("type_only") },
 			export_statement_equals_export: { "2": field("value") },

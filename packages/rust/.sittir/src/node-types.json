@@ -1196,7 +1196,7 @@
     "type": "attribute_item",
     "named": true,
     "fields": {
-      "content": {
+      "attribute": {
         "multiple": false,
         "required": true,
         "types": [
@@ -4068,7 +4068,7 @@
     "type": "inner_attribute_item",
     "named": true,
     "fields": {
-      "content": {
+      "attribute": {
         "multiple": false,
         "required": true,
         "types": [

@@ -3185,9 +3185,9 @@ export const coerceToTypeParameter: Seat<T.Types.LooseArgs, ReturnType<typeof F.
 	);
 };
 
-export function resolveParenthesizedListSplat_content(
-	value: T.ParenthesizedListSplat.LooseConfig['content']
-): Admit<T.ParenthesizedListSplat['_content']> {
+export function resolveParenthesizedListSplat_expression(
+	value: T.ParenthesizedListSplat.LooseConfig['expression']
+): Admit<T.ParenthesizedListSplat['_expression']> {
 	return _resolveOne<T.ParenthesizedListSplat | T.ListSplat>(value, _K0, _K16);
 }
 
@@ -3197,7 +3197,7 @@ export const coerceToParenthesizedListSplat: ConfigSeat<
 > = (input: T.ParenthesizedListSplat.Loose): ReturnType<typeof F.buildParenthesizedListSplat> => {
 	return F.buildParenthesizedListSplat(
 		_resolveOne<T.ParenthesizedListSplat | T.ListSplat>(
-			configFieldOr(input, 'content', () => input, TSKindId.ParenthesizedListSplat),
+			configFieldOr(input, 'expression', () => input, TSKindId.ParenthesizedListSplat),
 			_K0,
 			_K16
 		)

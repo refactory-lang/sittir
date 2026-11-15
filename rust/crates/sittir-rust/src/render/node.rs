@@ -20999,9 +20999,9 @@ pub struct AttributeItemNode {
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_content")]
-    #[slot(field = field::CONTENT, word = 2, width = 3, forms = 1, built = 2)]
-    pub content: ::sittir_core::SlotValue<Box<AttributeNode>>,
+    #[wire(key = "_attribute")]
+    #[slot(field = field::ATTRIBUTE, word = 2, width = 3, forms = 1, built = 2)]
+    pub attribute: ::sittir_core::SlotValue<Box<AttributeNode>>,
 }
 
 impl ::sittir_core::view::KindOf for AttributeItemNode {
@@ -21065,7 +21065,7 @@ fn prepare_attribute_item<N: AttributeItemPrepare + ?Sized>(node: &mut N, overla
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(190), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attribute, overlay, ctx)?;
     Ok(())
 }
 
@@ -21077,9 +21077,9 @@ pub struct InnerAttributeItemNode {
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_content")]
-    #[slot(field = field::CONTENT, word = 2, width = 3, forms = 1, built = 2)]
-    pub content: ::sittir_core::SlotValue<AttributeNode>,
+    #[wire(key = "_attribute")]
+    #[slot(field = field::ATTRIBUTE, word = 2, width = 3, forms = 1, built = 2)]
+    pub attribute: ::sittir_core::SlotValue<AttributeNode>,
 }
 
 impl ::sittir_core::view::KindOf for InnerAttributeItemNode {
@@ -21143,7 +21143,7 @@ fn prepare_inner_attribute_item<N: InnerAttributeItemPrepare + ?Sized>(node: &mu
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(191), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attribute, overlay, ctx)?;
     Ok(())
 }
 
@@ -49532,14 +49532,14 @@ fn render_non_special_token<N: NonSpecialTokenFields + ?Sized>(node: &N, w: &mut
 }
 
 fn render_attribute_item<N: AttributeItemFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = node.content();
+    let attribute = node.attribute();
     w.edge(::sittir_core::types::KindId(190), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("#")?;
     w.site_at(options::SITE_ATTRIBUTE_ITEM_POUND_AFTER);
     w.site_at(options::SITE_ATTRIBUTE_ITEM_LBRACK_BEFORE);
     w.text("[")?;
     w.site_at(options::SITE_ATTRIBUTE_ITEM_LBRACK_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_attribute", ::sittir_core::types::ItemIndex(0), w, |w| attribute.render(w))?;
     w.site_at(options::SITE_ATTRIBUTE_ITEM_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(190), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -49547,7 +49547,7 @@ fn render_attribute_item<N: AttributeItemFields + ?Sized>(node: &N, w: &mut dyn 
 }
 
 fn render_inner_attribute_item<N: InnerAttributeItemFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = node.content();
+    let attribute = node.attribute();
     w.edge(::sittir_core::types::KindId(191), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("#")?;
     w.site_at(options::SITE_INNER_ATTRIBUTE_ITEM_POUND_AFTER);
@@ -49557,7 +49557,7 @@ fn render_inner_attribute_item<N: InnerAttributeItemFields + ?Sized>(node: &N, w
     w.site_at(options::SITE_INNER_ATTRIBUTE_ITEM_LBRACK_BEFORE);
     w.text("[")?;
     w.site_at(options::SITE_INNER_ATTRIBUTE_ITEM_LBRACK_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_attribute", ::sittir_core::types::ItemIndex(0), w, |w| attribute.render(w))?;
     w.site_at(options::SITE_INNER_ATTRIBUTE_ITEM_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(191), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);

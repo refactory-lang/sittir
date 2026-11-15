@@ -508,31 +508,8 @@
       ]
     },
     "attribute_item": {
-      "vocab": "attribute",
-      "read": [
-        {
-          "vocab": "attribute",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "attribute_item",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
       "container": {
-        "slot": "content",
+        "slot": "attribute",
         "kinds": [
           "attribute"
         ],
@@ -1914,19 +1891,7 @@
           ]
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "block_comment",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
+      "members": [],
       "container": {
         "slot": "content",
         "kinds": [
@@ -6222,19 +6187,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "escape_sequence_hex",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "escape_sequence_simple": {
       "vocab": "literal.string.escape",
@@ -6247,19 +6200,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "escape_sequence_simple",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "escape_sequence_unicode_braced": {
       "vocab": "literal.string.escape",
@@ -6272,19 +6213,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "escape_sequence_unicode_braced",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "escape_sequence_unicode_fixed": {
       "vocab": "literal.string.escape",
@@ -6297,19 +6226,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "escape_sequence_unicode_fixed",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "expr_2021_keyword": {
       "vocab": "element.macro.fragment",
@@ -6350,7 +6267,7 @@
       ],
       "members": [
         {
-          "name": "content",
+          "name": "expression",
           "route": "slot",
           "slot": "content",
           "path": [
@@ -10557,31 +10474,8 @@
       ]
     },
     "inner_attribute_item": {
-      "vocab": "attribute.inner",
-      "read": [
-        {
-          "vocab": "attribute.inner",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "inner_attribute_item",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
       "container": {
-        "slot": "content",
+        "slot": "attribute",
         "kinds": [
           "attribute"
         ],
@@ -11150,19 +11044,7 @@
           ]
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "line_comment",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
+      "members": [],
       "container": {
         "slot": "content",
         "kinds": [
@@ -20183,7 +20065,7 @@
       ],
       "members": [
         {
-          "name": "content",
+          "name": "value",
           "route": "slot",
           "slot": "content",
           "path": [
@@ -23050,14 +22932,14 @@
       {
         "depth": 1,
         "paths": 14,
-        "kinds": 10,
+        "kinds": 9,
         "refinements": 0
       },
       {
         "depth": 2,
-        "paths": 96,
-        "kinds": 134,
-        "refinements": 7
+        "paths": 95,
+        "kinds": 133,
+        "refinements": 5
       },
       {
         "depth": 3,

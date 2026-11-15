@@ -19,6 +19,16 @@ export namespace Identifier {
 		readonly $path: K;
 		readonly $value?: never;
 		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
-		readonly qualifier?: Slot<G, K, 'qualifier', V.Identifier.Any<G> | string | V.Type.Any<G>>;
+		readonly qualifier?: Slot<
+			G,
+			K,
+			'qualifier',
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
+			| string
+			| V.Type.Any<G>
+		>;
 	}
 }

@@ -2677,7 +2677,7 @@
     "type": "decorator",
     "named": true,
     "fields": {
-      "content": {
+      "expression": {
         "multiple": false,
         "required": true,
         "types": [

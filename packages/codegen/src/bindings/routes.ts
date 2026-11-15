@@ -2,7 +2,7 @@ import { WILDCARD, isFixedText, literalClaimOf, refineClaims, type RefinedClaim,
 import { Delimiter } from '@sittir/common/delimiter';
 import { boundKindName, camel, snake } from './names.ts';
 import { isParserHiddenName } from '../dsl/rule-patterns.ts';
-import type { Vocabulary } from './vocabulary.ts';
+import { textValued, type Vocabulary } from './vocabulary.ts';
 
 export interface LayoutSlot {
 	readonly kind: string | null;
@@ -50,6 +50,7 @@ export interface ReadEntry {
 	readonly children: readonly ChildTest[];
 	readonly template: TemplateFact | undefined;
 	readonly members: readonly MemberRoute[];
+	readonly value?: MemberRoute;
 	readonly separated?: true;
 	readonly spelled?: true;
 	readonly decided?: true;
@@ -86,6 +87,8 @@ export type MemberRoute = (
 ) & { readonly flag?: true; readonly spelled?: true; readonly list?: boolean };
 
 export const readsList = (route: MemberRoute, slotHoldsList: boolean): boolean => route.list ?? slotHoldsList;
+
+export const VALUE = '$value';
 
 const declaredArity = (vocabulary: Vocabulary, path: string, route: MemberRoute): MemberRoute => {
 	const declared = vocabulary.members(path).get(route.name);
@@ -897,6 +900,7 @@ function membersOf(
 		}
 	};
 	const identifier = entries.some((entry) => isIdentifierPath(entry.vocab));
+	const textual = !identifier && textValued(input.vocabulary, entry.vocab);
 	const shaping = input.bindings.members.filter((m) => routesHere(m) && m.route !== 'rename' && m.route !== 'dropped');
 	const deep = shaping.filter((m) => attaches(m, inherited));
 	const paths = new Map(shaping.flatMap((m) => (isDeep(m) ? [[m, deepRoutes(m)] as const] : [])));
@@ -980,7 +984,7 @@ function membersOf(
 				: pin !== undefined
 					? { ...rest, required: true, terminals: rest.terminals.filter((t) => t === pin), kinds: concreteKinds(input.model, rest.kinds).filter((k) => textOfKind(input.model, k) === pin) }
 					: undefined;
-		const name = memberNameOf(slotNames, slot.name, slot.propertyName);
+		const name = textual && !captured ? VALUE : memberNameOf(slotNames, slot.name, slot.propertyName);
 		const flag = entries.some((entry) => input.bindings.flagsByPath?.get(entry.vocab)?.has(name) === true) ? { flag: true as const } : {};
 		if (captured && flag.flag !== true && !slot.multiple && (pin ?? onlyTextOf(input.model, guaranteed.present(pathTo(slot)) ?? [])) !== undefined) {
 			unrouted(slot, 'is pinned to one fixed text by the same claim', capturesOf(slot).filter((m) => m.claims?.includes(entry.index) === true));
@@ -1454,12 +1458,18 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	for (const [kind, entries] of readEntries)
 		readEntries.set(
 			kind,
-			entries.map((entry) => ({
-				...entry,
-				members: membersOf(input, kind, entries, entry, slotNamesOf, (held) => reads.has(held))
-					.filter(routesDeclared(kind, entry))
-					.map((route) => declaredArity(input.vocabulary, entry.vocab, flaggedDelimiter(kind, route)))
-			}))
+			entries.map((entry) => {
+				const routed = membersOf(input, kind, entries, entry, slotNamesOf, (held) => reads.has(held));
+				const value = routed.find((route) => route.name === VALUE);
+				return {
+					...entry,
+					members: routed
+						.filter((route) => route !== value)
+						.filter(routesDeclared(kind, entry))
+						.map((route) => declaredArity(input.vocabulary, entry.vocab, flaggedDelimiter(kind, route))),
+					...(value === undefined ? {} : { value })
+				};
+			})
 		);
 	const claims = refineClaims(input.bindings.claims, (kind) => formsOf(input.model, kind), (kind) => mountHoldersOf(input.model, kind).map(({ holder }) => holder));
 	liftMounted(input.model, claims, readEntries, order);

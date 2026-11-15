@@ -3572,7 +3572,7 @@
     "type": "parenthesized_list_splat",
     "named": true,
     "fields": {
-      "content": {
+      "expression": {
         "multiple": false,
         "required": true,
         "types": [

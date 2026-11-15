@@ -256,8 +256,9 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 			const reasons = reasonsOf(kind);
 			return reasons.length === 0 ? [] : [{ kind, reasons }];
 		});
+	const claimed = new Set([...routes.readEntries.values()].flatMap((list) => list.map((entry) => entry.vocab)));
 	const out = new Map<string, Map<string, ExactSet>>();
-	for (const path of [...vocabulary.kinds.keys()].filter((p) => readPaths.has(p)).sort())
+	for (const path of [...vocabulary.kinds.keys()].filter((p) => readPaths.has(p) || claimed.has(p)).sort())
 		for (const [member, declared] of vocabulary.members(path)) {
 			if (declared.flag) continue;
 			const level = memberLevelOf(path, member);

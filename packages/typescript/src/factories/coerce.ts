@@ -4635,7 +4635,9 @@ export const coerceToArguments: EmptyForm<
 	);
 });
 
-export function resolveDecorator_content(value: T.Decorator.LooseConfig['content']): Admit<T.Decorator['_content']> {
+export function resolveDecorator_expression(
+	value: T.Decorator.LooseConfig['expression']
+): Admit<T.Decorator['_expression']> {
 	return _resolveOne<
 		T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 	>(value, _K3, _K32);
@@ -4649,7 +4651,7 @@ export const coerceToDecorator: ConfigSeat<T.Decorator.Loose, ReturnType<typeof 
 		_resolveOne<
 			T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 		>(
-			configFieldOr(input, 'content', () => input, TSKindId.Decorator),
+			configFieldOr(input, 'expression', () => input, TSKindId.Decorator),
 			_K3,
 			_K32
 		)

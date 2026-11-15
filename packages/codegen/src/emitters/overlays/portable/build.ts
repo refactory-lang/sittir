@@ -26,7 +26,7 @@ import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics
 import { Delimiter } from '@sittir/common/delimiter';
 import { holds, portablePathHasFacts, readableEntries } from '@sittir/common/engine';
 import type { ChildTest, GrammarRoutes, MemberRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
-import { concreteKinds, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reachedBy, shownSlots, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
+import { concreteKinds, guaranteedBy, heldSteps, modelNode, mountHoldersOf, reachedBy, shownSlots, VALUE, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
 import { slotSubjectOf, tableReadEntries, type PortableFactRecord } from './read-tests.ts';
 import { portableSpelledFactOf } from './spelled-facts.ts';
 import type { ModelMount, ModelSlot, SlotModel, TemplateFact } from '../../../bindings/facts.ts';
@@ -213,6 +213,10 @@ const sortedIds = (ids: Iterable<number>): readonly number[] => [...new Set(ids)
 
 const disjoint = (sets: readonly ReadonlySet<number>[]): boolean =>
 	sets.every((a, i) => sets.every((b, j) => i === j || [...a].every((id) => !b.has(id))));
+
+const routesOf = (entry: ReadEntry): readonly MemberRoute[] => (entry.value === undefined ? entry.members : [...entry.members, entry.value]);
+
+const builtMembers = (arm: Pick<PortableBuildArm, 'members' | 'content'>): readonly PortableMemberStep[] => (arm.content === undefined ? arm.members : [...arm.members, arm.content]);
 
 export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPlans, features, factOf, readTest, declaresFlag, valueScalarOf }: PortableBuildInput): PortableBuildOutput {
 	const typeOf = (kind: string): number | undefined => findKindEntry(kindEntries, kind)?.id;
@@ -865,7 +869,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const forms = refined.filter((pin) => pin.own).length;
 		const guaranteed = guaranteedBy(model, entry);
 		const pinnedOut = new Set<readonly SlotStep[]>();
-		const routedAll = entry.members.flatMap((route) => {
+		const routedAll = routesOf(entry).flatMap((route) => {
 			const path = route.path;
 			if (path === undefined) return [];
 			if (outOfForms(path, refined)) return (pinnedOut.add(path), []);
@@ -1043,7 +1047,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				);
 			const required = new Set([
 				...[...tested].filter((name) => survivors.some((member) => member.name === name)),
-				...entry.members.flatMap((route) =>
+				...routesOf(entry).flatMap((route) =>
 					route.flag !== true &&
 					route.spelled !== true &&
 					route.path !== undefined &&
@@ -1092,8 +1096,13 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					formDiagnostics.push({ code: 'portable-integer-partial', path: entry.vocab, kinds: [kind] });
 				}
 			}
-			const armMembers = completed.map(({ member }) => member);
-			const content = node instanceof AssembledLexedPattern && armMembers.length === 0 && shape === undefined && builder !== undefined && builders.get(builder) === 'direct' ? contentSlot?.propertyName : undefined;
+			const valued = completed.find(({ member }) => member.name === VALUE)?.member;
+			const armMembers = completed.flatMap(({ member }) => (member === valued ? [] : [member]));
+			const lexed =
+				valued === undefined && contentSlot !== undefined && node instanceof AssembledLexedPattern && armMembers.length === 0 && shape === undefined && builder !== undefined && builders.get(builder) === 'direct'
+					? { name: VALUE, steps: [{ key: contentSlot.propertyName }], multiple: false, list: false, seats: [{ at: [builtId, contentSlot.propertyName] as const, kinds: [], text: true as const }] }
+					: undefined;
+			const content: PortableMemberStep | undefined = valued ?? lexed;
 			const owners = ownersOf(armMembers);
 			for (const [i, a] of owners.entries())
 				for (const b of owners.slice(i + 1)) {
@@ -1271,7 +1280,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			return ordered.map((arm): Part => [{ variant: found.supertype.kind, value: arm.arm.kind, ...(variantOf(arm) === found.kind ? { default: true as const } : {}) }, [arm]]);
 		},
 		(group) => {
-			const names = (arm: Arm): string[] => arm.arm.members.map((m) => m.name).sort();
+			const names = (arm: Arm): string[] => builtMembers(arm.arm).map((m) => m.name).sort();
 			const parts = new Map<string, Arm[]>();
 			for (const arm of group) (parts.get(names(arm).join(',')) ?? parts.set(names(arm).join(','), []).get(names(arm).join(','))!).push(arm);
 			if (parts.size < 2) return undefined;
@@ -1311,7 +1320,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				const nested = sets.every((x, i) => sets.every((y, j) => i === j || disjoint([x, y]) || subset(x, y) || subset(y, x)));
 				return nested ? [...parts.values()].sort((x, y) => x[0]!.memberKinds.get(name)!.size - y[0]!.memberKinds.get(name)!.size) : undefined;
 			};
-			const member = group[0]!.arm.members.map((m) => m.name).find((name) => partsBy(name) !== undefined);
+			const member = builtMembers(group[0]!.arm).map((m) => m.name).find((name) => partsBy(name) !== undefined);
 			return member === undefined
 				? undefined
 				: partsBy(member)!.map((arms): Part => [{ member, kinds: sortedIds(arms[0]!.memberKinds.get(member)!) }, arms]);
@@ -1360,7 +1369,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			if (!leaves && group.every((arm) => admittedAt(arm).length === 0)) diagnostics.push({ code: 'portable-pick-undecided', path, kinds: group.map((arm) => arm.kind) });
 			return group;
 		};
-		const memberNames = (arm: Arm): readonly string[] => arm.arm.members.map((member) => member.name);
+		const memberNames = (arm: Arm): readonly string[] => builtMembers(arm.arm).map((member) => member.name);
 		const stated = new Set(arms.flatMap(memberNames));
 		const listed = new Set(arms.flatMap((arm) => arm.arm.members.filter((member) => member.list ?? member.multiple).map((member) => member.name)));
 		const missingOf = (arm: Arm): string[] => [...stated].filter((name) => !memberNames(arm).includes(name)).sort();

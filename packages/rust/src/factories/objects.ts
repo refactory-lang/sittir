@@ -965,15 +965,15 @@ export function buildAttributeItem(...args: unknown[]) {
 			);
 }
 function _buildAttributeItem(value: Admit<T.Attribute>): T.AttributeItem.Bound {
-	const _content = value;
+	const _attribute = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'attribute_item', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'attribute_item', { attribute: _attribute });
 	const node = {
 		$type: TSKindId.AttributeItem as const,
-		_content,
+		_attribute,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		content: () => hydrateStoredSlot(node, '_content'),
+		attribute: () => hydrateStoredSlot(node, '_attribute'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -983,7 +983,7 @@ function _buildAttributeItem(value: Admit<T.Attribute>): T.AttributeItem.Bound {
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { content: buildAttributeItem$with$content, [RECEIVER]: node };
+	node.$with = { attribute: buildAttributeItem$with$attribute, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AttributeItem.Bound;
 }
@@ -991,13 +991,13 @@ function _buildAttributeItem(value: Admit<T.Attribute>): T.AttributeItem.Bound {
 function buildAttributeItem$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	switch (setter) {
-		case 'content':
+		case 'attribute':
 			return applySetter(args, (value: Admit<T.Attribute>) => rebuilt(node, handle, () => _buildAttributeItem(value)));
 	}
 	throw new Error(`attribute_item has no $with.${setter}`);
 }
-function buildAttributeItem$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildAttributeItem$with(receiverOf(this, '$with.content'), 'content', args);
+function buildAttributeItem$with$attribute(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAttributeItem$with(receiverOf(this, '$with.attribute'), 'attribute', args);
 }
 
 export function buildInnerAttributeItem<V extends Admit<T.Attribute>>(
@@ -1025,15 +1025,15 @@ export function buildInnerAttributeItem(...args: unknown[]) {
 			);
 }
 function _buildInnerAttributeItem(value: Admit<T.Attribute>): T.InnerAttributeItem.Bound {
-	const _content = value;
+	const _attribute = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'inner_attribute_item', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'inner_attribute_item', { attribute: _attribute });
 	const node = {
 		$type: TSKindId.InnerAttributeItem as const,
-		_content,
+		_attribute,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		content: () => hydrateStoredSlot(node, '_content'),
+		attribute: () => hydrateStoredSlot(node, '_attribute'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -1043,7 +1043,7 @@ function _buildInnerAttributeItem(value: Admit<T.Attribute>): T.InnerAttributeIt
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { content: buildInnerAttributeItem$with$content, [RECEIVER]: node };
+	node.$with = { attribute: buildInnerAttributeItem$with$attribute, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.InnerAttributeItem.Bound;
 }
@@ -1051,15 +1051,15 @@ function _buildInnerAttributeItem(value: Admit<T.Attribute>): T.InnerAttributeIt
 function buildInnerAttributeItem$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	switch (setter) {
-		case 'content':
+		case 'attribute':
 			return applySetter(args, (value: Admit<T.Attribute>) =>
 				rebuilt(node, handle, () => _buildInnerAttributeItem(value))
 			);
 	}
 	throw new Error(`inner_attribute_item has no $with.${setter}`);
 }
-function buildInnerAttributeItem$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildInnerAttributeItem$with(receiverOf(this, '$with.content'), 'content', args);
+function buildInnerAttributeItem$with$attribute(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildInnerAttributeItem$with(receiverOf(this, '$with.attribute'), 'attribute', args);
 }
 
 export function buildAttribute<

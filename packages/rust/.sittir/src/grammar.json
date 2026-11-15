@@ -875,13 +875,13 @@
         },
         {
           "type": "FIELD",
-          "name": "content",
+          "name": "attribute",
           "content": {
             "type": "SYMBOL",
             "name": "attribute"
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -907,13 +907,13 @@
         },
         {
           "type": "FIELD",
-          "name": "content",
+          "name": "attribute",
           "content": {
             "type": "SYMBOL",
             "name": "attribute"
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {

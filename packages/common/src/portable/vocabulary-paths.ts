@@ -8,8 +8,6 @@ export const vocabularyPaths = Object.freeze([
 	'attribute.content.call',
 	'attribute.content.member',
 	'attribute.content.parenthesized',
-	'attribute.decorator',
-	'attribute.inner',
 	'clause',
 	'clause.bounds',
 	'clause.bounds.higher_ranked',
@@ -638,8 +636,6 @@ export const vocabularyPathFeatures: Readonly<Record<string, string>> = Object.f
 	'attribute.content.call': 'MemberDecorators',
 	'attribute.content.member': 'MemberDecorators',
 	'attribute.content.parenthesized': 'MemberDecorators',
-	'attribute.decorator': 'Decorators',
-	'attribute.inner': 'Attributes',
 	'clause.bounds': 'BoundClauses',
 	'clause.bounds.higher_ranked': 'HigherRankPolymorphism',
 	'clause.bounds.removed': 'WhereClauses',
@@ -1174,6 +1170,10 @@ export const vocabularyPathFeatures: Readonly<Record<string, string>> = Object.f
 });
 
 export const vocabularyFlags = Object.freeze([
+	['attribute.content.call', 'inner', 'inner'],
+	['attribute.content', 'inner', 'inner'],
+	['attribute.content.member', 'inner', 'inner'],
+	['attribute.content.parenthesized', 'inner', 'inner'],
 	['clause.catch', 'group', 'group'],
 	['clause.comprehension.for', 'async', 'async'],
 	['clause.comprehension.for', 'trailing_comma', 'trailingComma'],

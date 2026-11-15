@@ -8594,7 +8594,7 @@
         },
         {
           "type": "FIELD",
-          "name": "content",
+          "name": "expression",
           "content": {
             "type": "CHOICE",
             "members": [

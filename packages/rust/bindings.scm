@@ -229,6 +229,7 @@
 (use_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (super))))) @statement.use.public.parent
 (use_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (visibility_modifier_pub_scope_in_path (_) @scope))))) @statement.use.public.restricted
 (expression_statement) @statement.expression
+(expression_statement (_) @expression)
 (empty_statement) @statement.empty
 (break_expression) @statement.break
 (continue_expression) @statement.continue
@@ -414,6 +415,7 @@
 (generic_type) @type.generic
 (generic_type_with_turbofish) @type.generic.turbofish
 (type_argument) @element.type_argument
+(type_argument . (_) @value)
 (type_argument (trait_bounds bounds: (_) @bounds))
 (reference_type) @type.reference
 (reference_type (mutable_specifier) @exclusive)
@@ -484,8 +486,8 @@
 (extern_modifier) @modifier.extern
 
 ; ── attribute ──────────────────────────────────────────────────────────────────
-(attribute_item (attribute)? @content) @attribute
-(inner_attribute_item (attribute)? @content) @attribute.inner
+(attribute_item (attribute) @element)
+(inner_attribute_item "!" @inner (attribute) @element)
 (attribute) @attribute.content
 (attribute input: (attribute_input value: (_) @input))
 (attribute input: (attribute_input arguments: (_) @input))

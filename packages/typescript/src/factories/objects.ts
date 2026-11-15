@@ -5470,15 +5470,20 @@ export function buildDecorator(
 		T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 	>
 ): T.Decorator.Bound {
-	const _content = rejectReservedText(value, 'Decorator.content', TSKindId.Identifier, _reservedWords_buildIdentifier);
+	const _expression = rejectReservedText(
+		value,
+		'Decorator.expression',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'decorator', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'decorator', { expression: _expression });
 	const node = {
 		$type: TSKindId.Decorator as const,
-		_content,
+		_expression,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		content: () => hydrateStoredSlot(node, '_content'),
+		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -5488,7 +5493,7 @@ export function buildDecorator(
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { content: buildDecorator$with$content, [RECEIVER]: node };
+	node.$with = { expression: buildDecorator$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.Decorator.Bound;
 }
@@ -5496,7 +5501,7 @@ export function buildDecorator(
 function buildDecorator$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	switch (setter) {
-		case 'content':
+		case 'expression':
 			return applySetter(
 				args,
 				(
@@ -5508,8 +5513,8 @@ function buildDecorator$with(node: Held, setter: string, args: readonly unknown[
 	}
 	throw new Error(`decorator has no $with.${setter}`);
 }
-function buildDecorator$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildDecorator$with(receiverOf(this, '$with.content'), 'content', args);
+function buildDecorator$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildDecorator$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 export function buildDecoratorMemberExpression<

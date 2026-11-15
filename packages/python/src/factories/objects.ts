@@ -2909,15 +2909,15 @@ export function buildParenthesizedListSplat<V extends Admit<T.ParenthesizedListS
 export function buildParenthesizedListSplat(
 	value: Admit<T.ParenthesizedListSplat | T.ListSplat>
 ): T.ParenthesizedListSplat.Bound {
-	const _content = value;
+	const _expression = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'parenthesized_list_splat', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'parenthesized_list_splat', { expression: _expression });
 	const node = {
 		$type: TSKindId.ParenthesizedListSplat as const,
-		_content,
+		_expression,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		content: () => hydrateStoredSlot(node, '_content'),
+		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -2927,7 +2927,7 @@ export function buildParenthesizedListSplat(
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { content: buildParenthesizedListSplat$with$content, [RECEIVER]: node };
+	node.$with = { expression: buildParenthesizedListSplat$with$expression, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.ParenthesizedListSplat.Bound;
 }
@@ -2935,15 +2935,15 @@ export function buildParenthesizedListSplat(
 function buildParenthesizedListSplat$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	switch (setter) {
-		case 'content':
+		case 'expression':
 			return applySetter(args, (value: Admit<T.ParenthesizedListSplat | T.ListSplat>) =>
 				rebuilt(node, handle, () => buildParenthesizedListSplat(value))
 			);
 	}
 	throw new Error(`parenthesized_list_splat has no $with.${setter}`);
 }
-function buildParenthesizedListSplat$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildParenthesizedListSplat$with(receiverOf(this, '$with.content'), 'content', args);
+function buildParenthesizedListSplat$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildParenthesizedListSplat$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
 export function buildArgumentList(): T.EmptyArgumentList;

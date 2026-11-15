@@ -142,8 +142,8 @@ export const querySlots: QuerySlots = Object.freeze({
 		['operator', 2, undefined, '_operator']
 	],
 	189: [['content', 0, undefined, '_content']],
-	190: [['content', 0, undefined, '_content']],
-	191: [['content', 0, undefined, '_content']],
+	190: [['attribute', 0, undefined, '_attribute']],
+	191: [['attribute', 0, undefined, '_attribute']],
 	192: [
 		['path', 0, undefined, '_path'],
 		['input', 1, undefined, '_input']
@@ -994,15 +994,15 @@ export const structure: StructureTable = Object.freeze({
 	},
 	190: {
 		kind: 'attribute_item',
-		required: [['_content', 'content']],
-		single: [['_content', 'AttributeItem.content']],
-		nodeOnly: [['_content', 'AttributeItem.content', 'a built Attribute', [192]]]
+		required: [['_attribute', 'attribute']],
+		single: [['_attribute', 'AttributeItem.attribute']],
+		nodeOnly: [['_attribute', 'AttributeItem.attribute', 'a built Attribute', [192]]]
 	},
 	191: {
 		kind: 'inner_attribute_item',
-		required: [['_content', 'content']],
-		single: [['_content', 'InnerAttributeItem.content']],
-		nodeOnly: [['_content', 'InnerAttributeItem.content', 'a built Attribute', [192]]]
+		required: [['_attribute', 'attribute']],
+		single: [['_attribute', 'InnerAttributeItem.attribute']],
+		nodeOnly: [['_attribute', 'InnerAttributeItem.attribute', 'a built Attribute', [192]]]
 	},
 	192: {
 		kind: 'attribute',

@@ -3702,26 +3702,26 @@ export interface NonSpecialToken {
 
 export interface AttributeItem {
 	readonly $type: TSKindId.AttributeItem;
-	readonly _content: Attribute;
+	readonly _attribute: Attribute;
 	readonly __slotNames__?: {
-		readonly _content: 'content';
+		readonly _attribute: 'attribute';
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<T.Attribute>;
+		readonly attribute: SlotHint<T.Attribute>;
 	};
-	readonly content: () => Attribute;
+	readonly attribute: () => Attribute;
 }
 
 export interface InnerAttributeItem {
 	readonly $type: TSKindId.InnerAttributeItem;
-	readonly _content: Attribute;
+	readonly _attribute: Attribute;
 	readonly __slotNames__?: {
-		readonly _content: 'content';
+		readonly _attribute: 'attribute';
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<T.Attribute>;
+		readonly attribute: SlotHint<T.Attribute>;
 	};
-	readonly content: () => Attribute;
+	readonly attribute: () => Attribute;
 }
 
 export interface Attribute {
@@ -15147,7 +15147,7 @@ export interface AttributeItemNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	AttributeItem.Bound,
-	'content',
+	'attribute',
 	TSKindId.AttributeItem,
 	AttributeItem.Parsed,
 	never
@@ -15161,7 +15161,7 @@ export interface InnerAttributeItemNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	InnerAttributeItem.Bound,
-	'content',
+	'attribute',
 	TSKindId.InnerAttributeItem,
 	InnerAttributeItem.Parsed,
 	never

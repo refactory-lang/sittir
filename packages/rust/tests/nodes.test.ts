@@ -2865,7 +2865,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				attributes: [
 					{
 						$type: TSKindId.AttributeItem,
-						content: { $type: TSKindId.Attribute, path: TSKindId.SelfModule as never } as never
+						attribute: { $type: TSKindId.Attribute, path: TSKindId.SelfModule as never } as never
 					} as never
 				],
 				expression: { $type: TSKindId.Identifier, text: 'test' } as never
@@ -2878,7 +2878,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				attributes: [
 					{
 						$type: TSKindId.AttributeItem,
-						content: { $type: TSKindId.Attribute, path: TSKindId.SelfModule as never } as never
+						attribute: { $type: TSKindId.Attribute, path: TSKindId.SelfModule as never } as never
 					} as never
 				],
 				expression: { $type: TSKindId.Identifier, text: 'test' } as never

@@ -86,9 +86,9 @@ describe('emitGrammarMap, python', () => {
 	}, 120_000);
 
 	it("overrides a slot holding a token claimed as a path with the text it reads as, not the path's view", () => {
-		const content = armsAt(map, 'statement.import.from', 'content');
-		expect(content).toContain('V.Text<PythonMap, "clause.import.wildcard">');
-		expect(content).not.toContain('V.Read<PythonMap, "clause.import.wildcard">');
+		const names = armsAt(map, 'statement.import.from', 'names');
+		expect(names).toContain('V.Text<PythonMap, "clause.import.wildcard">');
+		expect(names).not.toContain('V.Read<PythonMap, "clause.import.wildcard">');
 	});
 
 	it('overrides a text path with the texts the grammar reads at it', () => {
@@ -113,7 +113,12 @@ describe('emitGrammarMap, python', () => {
 	});
 
 	it("reads a lexed pattern's text group as text", () => {
-		expect(armsAt(map, 'literal.string.escape', 'content')).toContain('string');
+		expect(armsAt(map, 'literal.number.float', 'fraction')).toContain('string');
+	});
+
+	it('builds a path whose unnamed slot holds its text from its $value, with no member for that slot', () => {
+		expect(typeAt(map, 'literal.string.escape', '$forms')).toBe('V.Form<"$value">');
+		expect(entryOf(map, 'literal.string.escape')).not.toContain('content');
 	});
 
 	it('states the forms a path builds once, at the path, by the members each form states and leaves out', () => {
@@ -123,9 +128,10 @@ describe('emitGrammarMap, python', () => {
 	});
 
 	it('narrows a member a form tests by kind to the reads of those kinds', () => {
-		expect(typeAt(map, 'identifier.qualified', '$forms')).toBe(
-			'V.Form<"name", never, { readonly qualifier: V.Read<PythonMap, "type"> | T.Type.Parsed }> | V.Form<"name", never, { readonly qualifier?: V.Read<PythonMap, "identifier.qualified"> }>'
-		);
+		const forms = typeAt(map, 'identifier.qualified', '$forms');
+		expect(forms).toContain('V.Form<"name", never, { readonly qualifier?: V.Read<PythonMap, "identifier.qualified"> }>');
+		expect(forms).toMatch(/V\.Form<"name", never, \{ readonly qualifier: V\.Read<PythonMap, "expression\./);
+		expect(forms).not.toContain('V.Read<PythonMap, "type">');
 	});
 
 	it('states no forms where one of the path\'s builds tests nothing a type states', () => {
