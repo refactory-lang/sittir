@@ -35,6 +35,10 @@ on:
         description: Build every addon with line tables and frame pointers, and install perf and llvm, for a native sampling profiler.
         type: boolean
         default: false
+      phase:
+        description: The corpus phase a phase profile runs, render or edit.
+        type: string
+        default: render
 
 permissions:
   contents: read
@@ -126,6 +130,7 @@ jobs:
           ARENA: ${{ inputs.arena }}
           GRAMMARS: ${{ inputs.grammars }}
           SCRIPT: ${{ inputs.script }}
+          PHASE: ${{ inputs.phase }}
         run: |
           versions=(base="$RUNNER_TEMP/trees/base" feature="$RUNNER_TEMP/trees/feature")
           if [[ $ARENA == true ]]; then versions+=(feature-arena="$RUNNER_TEMP/trees/feature@arena"); fi

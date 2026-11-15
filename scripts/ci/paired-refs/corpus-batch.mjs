@@ -2,8 +2,8 @@
 // same-value edit of each root's settable members (each edit result released
 // after the timed edit, releaseMs), then a whole-tree read (depth: Infinity).
 // The roots, renders, edit renders and whole trees stay live until the caller
-// drops the result. The parse and render phases are exported on their own, so
-// a probe of one phase runs the code this pass times.
+// drops the result. The parse, render and edit phases are exported on their own,
+// so a probe of one phase runs the code this pass times.
 import { createHash } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 
@@ -16,6 +16,13 @@ export const renderPhase = (engine, roots) => roots.map((node) => {
   try { return rendered.toString(); } finally { rendered[Symbol.dispose]?.(); }
 });
 
+export const editPhase = (roots) => roots.flatMap((node) => Object.keys(node.$with ?? {}).sort().flatMap((key) => {
+  const setter = node.$with[key];
+  if (typeof setter !== 'function' || typeof node[key] !== 'function') return [];
+  const value = node[key]();
+  return [Array.isArray(value) && setter.length === 0 ? setter.call(node.$with, ...value) : setter.call(node.$with, value)];
+}));
+
 export function corpusBatch(engine, sources) {
   let start = performance.now();
   const roots = parsePhase(engine, sources);
@@ -24,12 +31,7 @@ export function corpusBatch(engine, sources) {
   const renders = renderPhase(engine, roots);
   const renderMs = performance.now() - start;
   start = performance.now();
-  const changed = roots.flatMap((node) => Object.keys(node.$with ?? {}).sort().flatMap((key) => {
-    const setter = node.$with[key];
-    if (typeof setter !== 'function' || typeof node[key] !== 'function') return [];
-    const value = node[key]();
-    return [Array.isArray(value) && setter.length === 0 ? setter.call(node.$with, ...value) : setter.call(node.$with, value)];
-  }));
+  const changed = editPhase(roots);
   const editMs = performance.now() - start;
   const editedRenders = changed.map((node) => node.$render());
   start = performance.now();
