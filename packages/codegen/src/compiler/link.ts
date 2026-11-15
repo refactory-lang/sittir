@@ -2694,11 +2694,14 @@ function validateSelection(
 		return;
 	}
 	const stringValues = arms.map(unwrapToStringValue).filter((v): v is string => v !== undefined);
-	if (!stringValues.includes(selection)) {
+	if (!stringValues.includes(selection) && !arms.some(isNodeArm)) {
 		throw new ConfigError(
 			`refine(${kind}) form '${formName}': path '${pathStr}' selection '${selection}' does not match any string branch of the choice (available: ${stringValues.map((v) => `'${v}'`).join(', ') || '<none>'})`
 		);
 	}
+}
+function isNodeArm(rule: Rule<'link'>): rule is SymbolRule<'link'> {
+	return isSymbol(rule) && unwrapToStringValue(rule) === undefined;
 }
 function unwrapToStringValue(rule: Rule<'link'>): string | undefined {
 	return literalTextOf(rule);
@@ -2714,8 +2717,27 @@ export function narrowedFieldLiteralsForForm(
 		const resolution = resolveRefinePath('<emit>', form.name, pathStr, rule, rules);
 		if (!resolution.fieldName) continue;
 		const literal = resolveSelectionLiteral(resolution.choice, selection);
-		if (literal === undefined) continue;
-		out.push({ fieldName: resolution.fieldName, literal });
+		const nodeArms = resolution.choice.members.filter(isNodeArm);
+		if (typeof selection === 'string' && nodeArms.length > 0) {
+			const stringTexts = resolution.choice.members.map(unwrapToStringValue).filter((v): v is string => v !== undefined);
+			if (!stringTexts.includes(selection)) {
+				out.push({
+					via: 'text',
+					fieldName: resolution.fieldName,
+					path: pathStr,
+					text: selection,
+					stringTexts,
+					nodeArms: nodeArms.map((arm) => arm.name)
+				});
+				continue;
+			}
+		}
+		if (literal !== undefined) {
+			out.push({ via: 'literal', fieldName: resolution.fieldName, literal });
+			continue;
+		}
+		const arm = typeof selection === 'number' ? resolution.choice.members[selection] : undefined;
+		if (arm !== undefined && isNodeArm(arm)) out.push({ via: 'arm', fieldName: resolution.fieldName, arm: arm.name });
 	}
 	return out;
 }

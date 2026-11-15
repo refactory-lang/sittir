@@ -99,7 +99,7 @@ function formsShape(forms: readonly LinkedRefineForm[] | undefined): string {
 		(forms ?? []).map((form) => [
 			form.name,
 			Object.entries(form.selections),
-			form.narrowedFields.map((field) => [field.fieldName, field.literal])
+			form.narrowedFields
 		])
 	);
 }
