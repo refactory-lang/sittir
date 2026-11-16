@@ -4,6 +4,19 @@
 
 **Groundwork approved, 2026-11-16** (the maintainer: "Allocator groundwork now"). Two parts depend on nothing in flight and start now: the allocation count by call site (Verification, step 1), and the `Scratch` type of "The allocator" with the tests of "Safety", in a file of its own with no consumer. The rank stamp this draft waited for was measured and dropped; what changes the picture instead is the deletion of the placer, the largest per-call allocator, in the parsed-comments design. So every row of "What moves" waits for that deletion and is re-read against the allocation count taken after it.
 
+## Ruled 2026-11-16: it is the `NodeAllocator`
+
+The maintainer, after approving the groundwork: "we should call this the NodeAllocator (for list of nodes/and boxed enums)", "NodeAllocator would be used whenever a node is created", and "i'm fine with not having a source allocator". Where the sections below say `Scratch`, read `NodeAllocator`; they are rewritten when the allocation count is in.
+
+What that changes:
+
+- **Its first consumer is the typed nodes a call creates.** A build or an edit decodes its value from JavaScript into boxed enums and lists of slot values, then writes them into records. Those typed nodes die when the call returns, and `Vec` and `Box` are exactly what stable Rust lets an allocator back. The draft below aimed first at the navigation table and the placer's lists; those come second, if the count still shows them after the placer is deleted.
+- **There is no allocator for source text.** The string pool's chunks are native memory JavaScript reads in place, as the record arena's are, and stay as they are.
+- **What it cannot back, in arena storage:** a node that lasts. A parsed or built node is a record in the chunked arena, which JavaScript views and counts, and no Rust allocator owns that memory. A parse and a render make no typed node at all. So "whenever a node is created" means whenever a call makes a typed node natively, which today is a build and an edit.
+- **Object storage is still out,** as ruled on 2026-11-15: its typed nodes live as long as their tree, so a per-call allocator cannot hold them.
+
+Open until the count is read: whether the per-call tables share the same allocator or stay on the global one, and the name of the scope type (the approved rows named `Scratch` and `Scope`; the renamed rows go back to the maintainer before code).
+
 ## Why
 
 A native call builds short-lived tables and frees every one before it returns. The render profile of arena storage against master's arena, on python and typescript, shows:
