@@ -402,7 +402,17 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						...(builder === undefined && flattens(owner, slot.name, kind) ? { flatten: true as const } : {}),
 						...(outer === undefined ? {} : { through: [...(outer.through ?? []), outer.key] }),
 						...(members.length === 0 ? {} : { members }),
-						...(node.kindId === undefined || (unwrap?.flags ?? []).length === 0 ? {} : { sets: { kind: node.kindId, flags: unwrap!.flags! } })
+						...(node.kindId === undefined || (unwrap?.flags ?? []).length === 0
+							? {}
+							: {
+									sets: {
+										kind: node.kindId,
+										flags: unwrap!.flags!,
+										...(unwrap!.flagged === undefined
+											? {}
+											: { elements: [...new Set(concreteKinds(model, unwrap!.flagged).flatMap((flagged) => nodeMap.nodes.get(flagged)?.kindId ?? []))].sort((a, b) => a - b) })
+									}
+								})
 					};
 					if (mount !== undefined && mounted === undefined && mount.mounted.call !== 'child')
 						throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${kind} in ${owner}'s ${slot.name} builds through ${mount.builder}, which takes ${mount.mounted.call} input inside another container` });

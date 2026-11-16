@@ -33,7 +33,7 @@ const RECORD = {
 
 describe('slotModelOf', () => {
 	it('reads each node\'s slots with their accessors and terminals, deriving the kinds the record leaves out', () => {
-		const model = slotModelOf(RECORD);
+		const model = slotModelOf(RECORD, {});
 		expect(model.get('binary')?.slots).toEqual([
 			{ name: 'left', propertyName: 'left', required: true, multiple: false, storage: 'verbatim', kinds: ['expr'], terminals: [] },
 			{ name: 'operator', propertyName: 'operator', required: true, multiple: false, storage: 'verbatim', kinds: ['minus'], terminals: ['+'] },

@@ -311,8 +311,9 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 					(arm.holders === undefined || arm.holders.some(([holder, key]) => holder === seat.at[0] && key === seat.at[1])) &&
 					seat.kinds.includes(arm.kind)
 			);
-			const setting = new Set(holding.flatMap(seatSets));
-			const fitting = structure === undefined || setting.size === 0 ? holding : holding.filter((seat) => [...setting].every((flag) => (structure.$flags ?? []).includes(flag) === seatSets(seat).includes(flag)));
+			const setting = new Set(holding.flatMap((seat) => seatSets(seat, arm.kind)));
+			const fitting =
+				structure === undefined || setting.size === 0 ? holding : holding.filter((seat) => [...setting].every((flag) => (structure.$flags ?? []).includes(flag) === seatSets(seat, arm.kind).includes(flag)));
 			if (structure === undefined || fitting.length < 2) return fitting[0];
 			const named = [...memberKeys(structure).filter((name) => structure[name] !== undefined), ...factsSet(arm, structure).map((fact) => fact.member)];
 			const stated = named.filter((name) => fitting.some((seat) => ownedBy(seat).has(name)));
@@ -737,7 +738,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs, 
 			const listed: (readonly [string, PortableFlagStep])[] = [];
 			for (const flag of structure.$flags ?? []) {
 				const steps = arm.flags[flag];
-				if (steps === undefined && (facts.some((fact) => fact.flag === flag) || (seat !== undefined && seatSets(seat).includes(flag)))) continue;
+				if (steps === undefined && (facts.some((fact) => fact.flag === flag) || (seat !== undefined && seatSets(seat, arm.kind).includes(flag)))) continue;
 				if (steps === undefined && !arm.when.some((test) => 'flag' in test && test.flag === flag && test.set))
 					throw new Error(`portable build: ${structure.$path}: ${flag} is not a flag of ${nameOf(arm.kind)}`);
 				for (const step of steps?.presets ?? []) preset(frame, step, structure.$path);

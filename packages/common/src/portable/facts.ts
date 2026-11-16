@@ -1,4 +1,4 @@
-import type { PortableBuildArm, PortableBuildTable, PortableCondition, PortableMemberStep, PortableReadEntry, PortableSeat } from '@sittir/types';
+import type { PortableBuildArm, PortableBuildTable, PortableCondition, PortableContainer, PortableMemberStep, PortableReadEntry, PortableSeat } from '@sittir/types';
 
 export function portablePathHasFacts(path: string, read: string | undefined): boolean {
 	if (read === undefined) return false;
@@ -44,7 +44,10 @@ export const builtFlags = (arm: PortableBuildArm): readonly string[] => [
 	...(arm.facts ?? []).flatMap((fact) => fact.flag ?? [])
 ];
 
-export const seatSets = (seat: PortableSeat): readonly string[] => (seat.within ?? []).flatMap((container) => container.sets?.flags ?? []);
+export const setsOn = (container: PortableContainer, kind: number): readonly string[] =>
+	container.sets === undefined || (container.sets.elements !== undefined && !container.sets.elements.includes(kind)) ? [] : container.sets.flags;
+
+export const seatSets = (seat: PortableSeat, kind: number): readonly string[] => (seat.within ?? []).flatMap((container) => setsOn(container, kind));
 
 export const tableMembers = (table: PortableBuildTable): readonly PortableMemberStep[] => {
 	const out: PortableMemberStep[] = [];
@@ -60,10 +63,7 @@ export const tableSeats = (table: PortableBuildTable): readonly PortableSeat[] =
 
 export const containerSetFlags = (table: PortableBuildTable): ReadonlyMap<number, ReadonlySet<string>> => {
 	const out = new Map<number, Set<string>>();
-	for (const seat of tableSeats(table)) {
-		const flags = seatSets(seat);
-		for (const kind of flags.length === 0 ? [] : seat.kinds) for (const flag of flags) (out.get(kind) ?? out.set(kind, new Set()).get(kind)!).add(flag);
-	}
+	for (const seat of tableSeats(table)) for (const kind of seat.kinds) for (const flag of seatSets(seat, kind)) (out.get(kind) ?? out.set(kind, new Set()).get(kind)!).add(flag);
 	return out;
 };
 

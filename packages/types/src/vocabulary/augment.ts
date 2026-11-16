@@ -7343,7 +7343,10 @@ declare module './utils.ts' {
 		readonly 'expression.call.construct': { readonly optionalChain: features.OptionalChaining };
 		readonly 'expression.call.construct.bare': { readonly optionalChain: features.OptionalChaining };
 		readonly 'expression.call.import': { readonly optionalChain: features.OptionalChaining };
-		readonly 'expression.call.macro': { readonly optionalChain: features.OptionalChaining };
+		readonly 'expression.call.macro': {
+			readonly optionalChain: features.OptionalChaining;
+			readonly terminated: object;
+		};
 		readonly 'expression.call.member': { readonly optionalChain: features.OptionalChaining };
 		readonly 'expression.call.qualified': { readonly optionalChain: features.OptionalChaining };
 		readonly 'expression.call.template': { readonly optionalChain: features.OptionalChaining };

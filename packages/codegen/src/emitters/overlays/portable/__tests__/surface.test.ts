@@ -18,7 +18,7 @@ const input = async (scm: string): Promise<GrammarInput> => ({
 			{ kind: 'block', slots: [] },
 			{ kind: 'assign', slots: [] }
 		]
-	}),
+	}, {}),
 	textTokens: new Set(),
 	layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 });
@@ -90,7 +90,7 @@ describe('emitPortableSurface', () => {
 						]
 					}
 				]
-			}),
+			}, {}),
 			textTokens: new Set(),
 			layoutSlots: [], vocabulary: EMPTY_VOCABULARY
 		});

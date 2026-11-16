@@ -33,7 +33,8 @@ const node = (kind: string, slots: readonly ModelSlot[] = []): ModelNode => ({
 	aliasStorage: null,
 	interiorPart: null,
 	textLeavesThrough: [],
-	shownAs: []
+	shownAs: [],
+	spells: []
 });
 
 const MODEL = new Map(

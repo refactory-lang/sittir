@@ -33570,7 +33570,7 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'expression.block.try': never;
 		readonly 'expression.block.unsafe': never;
 		readonly 'expression.call': never;
-		readonly 'expression.call.macro': never;
+		readonly 'expression.call.macro': 'terminated';
 		readonly 'expression.call.member': never;
 		readonly 'expression.call.qualified': never;
 		readonly 'expression.cast.conversion': never;

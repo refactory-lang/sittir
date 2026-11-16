@@ -34,6 +34,7 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<Mod
 	interiorPart: null,
 	textLeavesThrough: [],
 	shownAs: [],
+	spells: [],
 	...extra
 });
 
@@ -658,6 +659,36 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const [named, wildcard] = (await readBindings('(holder_x "@" @static definition: (fn_x) @element)\n(holder_x "@" @static definition: (_) @element)')).containers;
 		expect(envelopeTargets(model, named!, vocabOf)).toEqual(['declaration.method']);
 		expect(envelopeTargets(model, wildcard!, vocabOf)).toEqual(['declaration.method', 'declaration.class']);
+	});
+
+	it("sets a container's flags on the element kind its line names where that narrows the element slot, and on every element otherwise", async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		model.set('fn_x', node('fn_x'));
+		model.set('cls_x', node('cls_x'));
+		model.set('holder_x', node('holder_x', [slot('mark', [], { terminals: ['@'] }), slot('definition', ['fn_x', 'cls_x'])]));
+		model.set('holder_fn', node('holder_fn', [slot('mark', [], { terminals: ['@'] }), slot('definition', ['fn_x'])]));
+		const holder = async (kind: string, element: string) =>
+			resolveRoutes({ ...(await grammar(`(fn_x) @declaration.method\n(cls_x) @declaration.class\n(${kind} "@" @static definition: (${element}) @element)`)), model }).containers.get(kind);
+		expect(await holder('holder_x', 'fn_x')).toMatchObject({ flags: ['static'], flagged: ['fn_x'] });
+		for (const [kind, element] of [['holder_x', '_'], ['holder_fn', 'fn_x']] as const) {
+			const unscoped = await holder(kind, element);
+			expect(unscoped, `${kind} ${element}`).toMatchObject({ flags: ['static'] });
+			expect(unscoped, `${kind} ${element}`).not.toHaveProperty('flagged');
+		}
+		const both = '(fn_x) @declaration.method\n(holder_x "@" @static definition: (fn_x) @element)\n(holder_x "@" @static definition: (_) @element)';
+		await expect(grammar(both).then((input) => resolveRoutes({ ...input, model }))).rejects.toThrow(
+			"bindings: holder_x's container lines set flags both on every element and on fn_x alone; one container's flags land on one set of elements"
+		);
+	});
+
+	it("holds a container's token capture by a token every form of the container spells, not by position", async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		model.set('fn_x', node('fn_x'));
+		const line = '(fn_x) @declaration.method\n(holder_y definition: (fn_x) @element ";" @terminated)';
+		model.set('holder_y', node('holder_y', [slot('definition', ['fn_x'])], { spells: [';'] }));
+		expect(resolveRoutes({ ...(await grammar(line)), model }).containers.get('holder_y')).toMatchObject({ flags: ['terminated'] });
+		model.set('holder_y', node('holder_y', [slot('definition', ['fn_x'])]));
+		await expect(grammar(line).then((input) => resolveRoutes({ ...input, model }))).rejects.toThrow(`bindings: holder_y's container selects the token ";", which no form of holder_y holds`);
 	});
 
 	it("stamps a container's data member with the arity its element paths declare, and refuses paths that disagree", async () => {

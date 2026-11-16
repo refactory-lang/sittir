@@ -46929,7 +46929,12 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'expressionStatement.withSemi',
 											key: 'expression',
-											through: ['content']
+											through: ['content'],
+											sets: {
+												kind: 394,
+												flags: ['terminated'],
+												elements: [259]
+											}
 										}
 									]
 								},
@@ -50512,7 +50517,12 @@ export const build: PortableBuildTable = {
 										{
 											builder: 'expressionStatement.withSemi',
 											key: 'expression',
-											through: ['content']
+											through: ['content'],
+											sets: {
+												kind: 394,
+												flags: ['terminated'],
+												elements: [259]
+											}
 										}
 									]
 								},

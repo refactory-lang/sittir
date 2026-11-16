@@ -229,6 +229,8 @@
 (use_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (super))))) @statement.use.public.parent
 (use_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (visibility_modifier_pub_scope_in_path (_) @scope))))) @statement.use.public.restricted
 (expression_statement (_) @element)
+(expression_statement_with_semi expression: (_) @element)
+(expression_statement_with_semi expression: (macro_invocation) @element ";" @terminated)
 (empty_statement) @statement.empty
 (break_expression) @statement.break
 (continue_expression) @statement.continue

@@ -104,6 +104,7 @@ export interface ContainerUnwrap {
 	readonly list: boolean;
 	readonly members?: readonly ContainerDataMember[];
 	readonly flags?: readonly string[];
+	readonly flagged?: readonly string[];
 	readonly refined?: true;
 	readonly named?: true;
 }
@@ -181,15 +182,29 @@ function capturedSlot(model: SlotModel, member: SlotCapture, form: string): Mode
 
 export const holdsCapture = (model: SlotModel, member: SlotCapture): boolean => heldForms(model, member.owner).some((form) => capturedSlot(model, member, form) !== undefined);
 
-const holdsSelector = (model: SlotModel, kind: string, selector: SlotSelector): boolean =>
-	heldForms(model, kind).some((form) => slotFor(model, modelNode(model, form)?.slots ?? [], selector) !== undefined);
+const tokenOf = (selector: SlotSelector | ContainerCapture): string | null => ('token' in selector ? selector.token : null);
 
-const containerSelectors = (container: ContainerFact): readonly SlotSelector[] => [container.element, ...container.captures, ...container.dropped];
+function spellsToken(model: SlotModel, form: string, token: string): boolean {
+	const node = modelNode(model, form);
+	return node !== undefined && (node.spells.includes(token) || slotHoldingText(model, node.slots, token) !== undefined);
+}
+
+function holdsSelector(model: SlotModel, kind: string, selector: SlotSelector | ContainerCapture): boolean {
+	const forms = heldForms(model, kind);
+	const token = tokenOf(selector);
+	if (token !== null) return forms.length > 0 && forms.every((form) => spellsToken(model, form, token));
+	return forms.some((form) => slotFor(model, modelNode(model, form)?.slots ?? [], selector) !== undefined);
+}
+
+const containerSelectors = (container: ContainerFact): readonly (SlotSelector | ContainerCapture)[] => [container.element, ...container.captures, ...container.dropped];
 
 export const holdsContainer = (model: SlotModel, container: ContainerFact): boolean => containerSelectors(container).every((selector) => holdsSelector(model, container.kind, selector));
 
-const selectorText = (selector: SlotSelector): string =>
-	selector.field !== null ? `the field ${selector.field}` : selector.kind !== null ? `a ${selector.kind} child` : 'a child by position';
+function selectorText(selector: SlotSelector | ContainerCapture): string {
+	const token = tokenOf(selector);
+	if (token !== null) return `the token "${token}"`;
+	return selector.field !== null ? `the field ${selector.field}` : selector.kind !== null ? `a ${selector.kind} child` : 'a child by position';
+}
 
 export function slotFor(model: SlotModel, slots: readonly ModelSlot[], n: SlotSelector): ModelSlot | undefined {
 	if (n.field !== null) return slotByField(slots, n.field);
@@ -361,17 +376,31 @@ function containerDataMembers(input: GrammarInput, node: ModelNode, vocabOf: Rea
 	return [...members.values()];
 }
 
-function containerFlags(input: GrammarInput, node: ModelNode, vocabOf: ReadonlyMap<string, string>): readonly string[] {
+function narrowedTo(model: SlotModel, node: ModelNode, element: SlotSelector): string | null {
+	const { kind } = element;
+	const slot = slotFor(model, node.slots, element);
+	if (kind === null || kind === WILDCARD || slot === undefined) return null;
+	const named = concreteKinds(model, [kind]);
+	return concreteKinds(model, slot.kinds).every((held) => named.includes(held)) ? null : kind;
+}
+
+function containerFlags(input: GrammarInput, node: ModelNode, vocabOf: ReadonlyMap<string, string>): { readonly flags: readonly string[]; readonly flagged?: readonly string[] } {
 	const flags = new Set<string>();
+	const scopes: (string | null)[] = [];
 	for (const container of declaredContainersOf(input, node)) {
 		const resolved = containerMembers(input, container, vocabOf);
 		if (resolved.targets.length === 0) continue;
-		for (const { capture, name, slot, flag } of resolved.members) {
-			const spelled = slot === undefined || (slot.required && slot.kinds.length === 0 && slot.terminals.every((terminal) => terminal === capture.token));
-			if (flag && spelled) flags.add(name);
-		}
+		const set = resolved.members.filter(
+			({ capture, slot, flag }) => flag && (slot === undefined || (slot.required && slot.kinds.length === 0 && slot.terminals.every((terminal) => terminal === capture.token)))
+		);
+		if (set.length === 0) continue;
+		for (const { name } of set) flags.add(name);
+		scopes.push(narrowedTo(input.model, node, container.element));
 	}
-	return [...flags];
+	if (scopes.includes(null) && scopes.some((scope) => scope !== null))
+		throw new Error(`bindings: ${node.kind}'s container lines set flags both on every element and on ${scopes.filter((scope) => scope !== null).join(', ')} alone; one container's flags land on one set of elements`);
+	const flagged = [...new Set(scopes.filter((scope): scope is string => scope !== null))];
+	return { flags: [...flags], ...(flagged.length === 0 ? {} : { flagged }) };
 }
 
 function declaredListAt(vocabulary: Vocabulary, kind: string, targets: readonly string[], name: string): boolean | undefined {
@@ -1336,7 +1365,7 @@ export interface ContainerMember {
 
 export function containerCaptureSlot(model: SlotModel, slots: readonly ModelSlot[], capture: ContainerCapture): ModelSlot | undefined {
 	const { token } = capture;
-	return token !== null ? slots.find((slot) => slot.terminals.includes(token)) : slotFor(model, slots, capture);
+	return token !== null ? slotHoldingText(model, slots, token) : slotFor(model, slots, capture);
 }
 
 export function containerMembers(
@@ -1521,12 +1550,12 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 		const unwrap = containerOf(input, node);
 		if (unwrap === undefined) continue;
 		const members = containerDataMembers(input, node, vocabOf);
-		const flags = containerFlags(input, node, vocabOf);
+		const { flags, flagged } = containerFlags(input, node, vocabOf);
 		const isRefined = refined.has(node.kind);
 		const separated = (readEntries.get(node.kind) ?? []).some((entry) => entry.separated === true);
 		if (isRefined && unwrap.list && !separated)
 			throw new Error(`bindings: ${node.kind} is claimed and also unwraps to its elements, a list; only a list claimed by its own separator holds one element when the claim fails`);
-		containers.set(node.kind, { ...unwrap, ...(isRefined && separated ? { list: false } : {}), ...(members.length === 0 ? {} : { members }), ...(flags.length === 0 ? {} : { flags }), ...(isRefined ? { refined: true as const } : {}) });
+		containers.set(node.kind, { ...unwrap, ...(isRefined && separated ? { list: false } : {}), ...(members.length === 0 ? {} : { members }), ...(flags.length === 0 ? {} : { flags }), ...(flagged === undefined ? {} : { flagged }), ...(isRefined ? { refined: true as const } : {}) });
 	}
 
 	const placed = new Set([...readEntries.values()].flatMap((entries) => entries.map((entry) => entry.claim)));

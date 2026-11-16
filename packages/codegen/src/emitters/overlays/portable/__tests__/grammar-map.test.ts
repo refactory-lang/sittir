@@ -41,6 +41,11 @@ describe('emitGrammarMap, rust', () => {
 		expect(flagsAt(map, 'attribute')).toBe('"inner"');
 	});
 
+	it('types a flag a container sets only on the element kind its line names: an expression statement terminates a macro call, not a call', () => {
+		expect(flagsAt(map, 'expression.call.macro')).toBe('"terminated"');
+		expect(flagsAt(map, 'expression.call')).toBe('never');
+	});
+
 	it('declares the map over the grammar features and ends by asserting it fits the vocabulary', () => {
 		expect(map).toContain(
 			'export interface RustMap extends V.GrammarMap {\n\treadonly features: V.RustFeatures;\n\treadonly overrides: {\n'

@@ -6304,7 +6304,13 @@
           "_expression"
         ],
         "terminals": [],
-        "list": false
+        "list": false,
+        "flags": [
+          "terminated"
+        ],
+        "flagged": [
+          "macro_invocation"
+        ]
       }
     },
     "extension_declaration_body": {

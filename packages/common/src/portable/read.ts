@@ -5,7 +5,7 @@ import { isErrorNode } from '../utils.ts';
 import { treeOf } from '../tree-token.ts';
 import { spelledMember } from '../spelled.ts';
 import { hasKind, type HoldingFact, type PortableClassifier } from './classify.ts';
-import { builtFlags, containerMembers, isNumberSlots, leafSeatOf, numberMembers, textBuilt, tokenText } from './facts.ts';
+import { builtFlags, containerMembers, isNumberSlots, leafSeatOf, numberMembers, setsOn, textBuilt, tokenText } from './facts.ts';
 import { slotItems } from '../query-holds.ts';
 
 type Node = { readonly $type: number };
@@ -169,7 +169,8 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 			if (!Array.isArray(next)) heldBy(value as Node, result.found, pending.flatMap(({ containers }) => (containers[0]?.key === key ? (containers[0].members ?? []) : [])));
 			if (!Array.isArray(next) && hasKind(result.found)) {
 				enclosing.set(result.found, value as Node);
-				const sets = pending.flatMap(({ containers }) => (containers[0]?.key === key && containers[0].sets?.kind === value.$type ? containers[0].sets.flags : []));
+				const found = result.found;
+				const sets = pending.flatMap(({ containers }) => (containers[0]?.key === key && containers[0].sets?.kind === value.$type ? setsOn(containers[0], found.$type) : []));
 				if (sets.length > 0) containerSet.set(result.found, [...new Set(sets)]);
 			}
 			return Array.isArray(next) ? { ...result, many: true } : result;

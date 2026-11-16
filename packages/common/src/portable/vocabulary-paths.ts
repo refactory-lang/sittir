@@ -1821,6 +1821,7 @@ export const vocabularyFlags = Object.freeze([
 	['expression.call.construct', 'optional_chain', 'optionalChain'],
 	['expression.call.import', 'optional_chain', 'optionalChain'],
 	['expression.call.macro', 'optional_chain', 'optionalChain'],
+	['expression.call.macro', 'terminated', 'terminated'],
 	['expression.call.member', 'optional_chain', 'optionalChain'],
 	['expression.call', 'optional_chain', 'optionalChain'],
 	['expression.call.qualified', 'optional_chain', 'optionalChain'],
