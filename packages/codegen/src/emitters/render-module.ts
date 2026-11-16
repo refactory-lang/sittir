@@ -11,7 +11,6 @@ import { NEWLINE_KINDS, PREFERRED_NEWLINE, breakingKindsOfText, TIGHT_KINDS, lay
 import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { computeNodeSCC } from '../compiler/scc.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import type { AssembledNode, RenderTemplateSurface, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import {
@@ -79,8 +78,7 @@ import {
 	findSupertypeKindByTypeName,
 	rustFieldIdent,
 	rustTypeIdent,
-	supertypeNodeKinds,
-	slotElementKinds
+	supertypeNodeKinds
 } from './node-common.ts';
 import {
 	slotLiteralValues,

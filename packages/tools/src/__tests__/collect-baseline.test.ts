@@ -242,13 +242,14 @@ describe('collect-baseline', () => {
 		expect(seen).toEqual(['rust']);
 	});
 
-	it('replays each parity fixture with the options its tree recorded', async () => {
-		const recorded: unknown[] = [];
-		await baseline.collectParityFixtures('python', 'native', async () => (_node, options) => {
-			recorded.push(options);
-			return '';
+	it('replays each parity fixture in the style of its source', async () => {
+		const styles: string[] = [];
+		await baseline.collectParityFixtures('python', 'native', async () => (_node, styled) => {
+			styles.push(styled);
+			return styled;
 		});
-		expect(recorded.some((options) => (options as { layout?: { indent?: string } } | undefined)?.layout?.indent === '  ')).toBe(true);
+		expect(styles.length).toBeGreaterThan(0);
+		expect(styles.some((styled) => /\n {2}\S/.test(styled))).toBe(true);
 	});
 
 	it('reproduces every python parity fixture, indent unit and root edges included', async () => {

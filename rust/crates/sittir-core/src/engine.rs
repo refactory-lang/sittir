@@ -431,9 +431,6 @@ pub struct ParsedTree<G: EngineGrammar, B: Backing = tree_sitter::Tree> {
     /// the records a read left of it.
     tree: B,
     source: B::Text,
-    /// What the parse read off the source's layout: the tree's layer of the
-    /// render options (`InferredOptions`).
-    inferred: crate::options::InferredOptions,
     /// Whether the source spells every line break `\n`, holding no `\r`
     /// (`SourceTable::breaks_spelled_lf`).
     breaks_lf: bool,
@@ -454,9 +451,9 @@ pub struct ParsedTree<G: EngineGrammar, B: Backing = tree_sitter::Tree> {
     /// The tree's depth members, found on its first depth move
     /// (`Lookups::depth_move`).
     depth_members: std::sync::OnceLock<crate::trivia_table::DepthMembers>,
-    /// The options in effect when the tree was read: its inferred layer over
-    /// the engine's. What its regions record under.
-    read_options: ResolvedOptions,
+    /// The engine's options when the tree was read: what its regions record
+    /// under.
+    options: ResolvedOptions,
     /// Each record of the tree, by its node's index and the depth it was
     /// read to (`recorded`).
     records: std::sync::Mutex<crate::heap::CountedMap<(NodeIndex, crate::read::Depth), Record>>,
@@ -660,10 +657,10 @@ impl<'a, G: crate::arena::RecordGrammar> ParsedTree<G, Records<'a>> {
     /// source.
     pub fn over_records(engine: &Engine<G>, built: &'a crate::arena::BuiltChunks, record: crate::arena::Address) -> Result<Self, crate::arena::ArenaError> {
         let tree = TreeId(crate::arena::RunNodes::source_of(built, record)?.0);
-        let crate::arena::source::Source { text, breaks_lf, inferred } = crate::arena::source::Source::read(built, crate::arena::Address(tree.0))?;
+        let crate::arena::source::Source { text, breaks_lf } = crate::arena::source::Source::read(built, crate::arena::Address(tree.0))?;
         let table = crate::arena::RunTable::default();
         crate::arena::RunNodes::holding(built, text, record, &table)?;
-        Ok(engine.tree_of(Records { built, table, shape: (G::shape, G::KIND_BITS), sites: PerCall::default() }, text, inferred, breaks_lf, 0, tree))
+        Ok(engine.tree_of(Records { built, table, shape: (G::shape, G::KIND_BITS), sites: PerCall::default() }, text, breaks_lf, 0, tree))
     }
 
     /// The arena the records this tree is over lie in.
@@ -877,14 +874,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
             grammar: _,
             tree: _,
             source,
-            inferred,
             breaks_lf: _,
             nodes: _,
             tree_id: _,
             lines,
             trivia,
             depth_members,
-            read_options,
+            options,
             records,
             slots,
             items,
@@ -897,11 +893,10 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let tables = owned(records).allocation() + owned(slots).allocation() + owned(items).allocation();
         std::mem::size_of::<Self>()
             + source.heap_bytes()
-            + inferred.heap_bytes()
             + lines.get().map_or(0, HeapBytes::heap_bytes)
             + trivia.heap_bytes()
             + depth_members.get().map_or(0, HeapBytes::heap_bytes)
-            + read_options.heap_bytes()
+            + options.heap_bytes()
             + tables
             + cached.load(std::sync::atomic::Ordering::Relaxed)
             + sides.bytes()
@@ -1369,17 +1364,6 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     /// Every ERROR and MISSING region of the parse (`error_regions`).
     pub fn error_regions(&self) -> Vec<ErrorRegion> {
         error_regions(&mut self.nodes())
-    }
-
-    /// The tree's layer of the render options: what its source sets apart
-    /// from the engine's (`InferredOptions`).
-    pub fn inferred(&self) -> &crate::options::InferredOptions {
-        &self.inferred
-    }
-
-    /// The tree's layer as the options object a render takes.
-    pub fn inferred_options(&self) -> serde_json::Value {
-        self.inferred.to_json(self.grammar.option_tables())
     }
 
     /// Access the source string.
@@ -1947,7 +1931,7 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     /// What `ParsedTree::slot_separator` answers.
     fn slot_separator(&mut self, index: NodeIndex, lent: Lent<'_>) -> Option<KindId> {
         let stored = self.node_slots(index, lent).layouts.iter().find_map(|layout| layout.separator);
-        stored.or_else(|| self.tree.read_options.separator_of(self.kid(index)?.grammar))
+        stored.or_else(|| self.tree.options.separator_of(self.kid(index)?.grammar))
     }
 
     /// What `ParsedTree::slot_layouts` answers.
@@ -1981,7 +1965,7 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
         }
         let sides = Seating::without_layout(self.around(index));
         let mut recorded = crate::baseline::Baseline::default();
-        let render = crate::prepare::RenderContext::new(&tree.read_options, &sides);
+        let render = crate::prepare::RenderContext::new(&tree.options, &sides);
         #[cfg(feature = "arena")]
         let rendered = self.record_read(index, depth, lent).and_then(|read| tree.grammar.render_record_read(read, &tree.store, &render, &mut recorded));
         #[cfg(not(feature = "arena"))]
@@ -2652,16 +2636,12 @@ impl<G: EngineGrammar, B: Backing> SourceTable for Seating<'_, G, B> {
 pub struct Engine<G: EngineGrammar> {
     grammar: G,
     parser: tree_sitter::Parser,
-    /// The render options resolved once at construction; a render call may
-    /// resolve another table over this one.
+    /// The render options: resolved at construction, replaced by
+    /// `set_options`; a render call may resolve another table over them.
     options: ResolvedOptions,
     /// The sides a write set on any node this engine renders, shared with
     /// every tree it parses.
     written: TriviaStore<G::Trivia>,
-    /// The option address of each edge site a parse inferred an arm for,
-    /// found once.
-    #[cfg(feature = "arena")]
-    edge_addresses: Vec<(crate::types::SiteId, Option<Vec<&'static str>>)>,
 }
 
 impl<G: EngineGrammar> Engine<G> {
@@ -2689,13 +2669,18 @@ impl<G: EngineGrammar> Engine<G> {
             parser,
             options,
             written,
-            #[cfg(feature = "arena")]
-            edge_addresses: Vec::new(),
         })
     }
 
     pub fn options(&self) -> &ResolvedOptions {
         &self.options
+    }
+
+    /// Replace the engine's render options with `table`. Trees parsed
+    /// earlier read their nodes under the options they were read with; a
+    /// render takes the engine's options as they stand when it runs.
+    pub fn set_options(&mut self, table: ResolvedOptions) {
+        self.options = table;
     }
 
     /// The grammar the engine parses and renders with.
@@ -2725,32 +2710,29 @@ impl<G: EngineGrammar> Engine<G> {
             let snippet: String = source.chars().take(80).collect();
             format!("parse failed (source: {snippet:?})")
         })?;
-        let (whitespace, _) = self.grammar.whitespace();
-        let root = crate::read::grammar_id(&tree.root_node());
-        let inferred = crate::options::InferredOptions::infer(source, root, &self.options, self.grammar.option_tables(), whitespace);
         let nodes = crate::read::descendant_count(&tree.root_node());
-        Ok(self.tree_of(tree, Arc::from(source), inferred, !source.contains('\r'), nodes, tree_id))
+        Ok(self.tree_of(tree, Arc::from(source), !source.contains('\r'), nodes, tree_id))
     }
 
-    /// A tree of this engine over `tree` and its `source`, with what its
-    /// parse inferred.
-    fn tree_of<B: Backing>(&self, tree: B, source: B::Text, inferred: crate::options::InferredOptions, breaks_lf: bool, nodes: u32, tree_id: TreeId) -> ParsedTree<G, B> {
-        let indent = inferred.indent.as_deref().unwrap_or(&self.options.indent);
+    /// A tree of this engine over `tree` and its `source`, read under the
+    /// engine's options. Its trivia measures a level by the source's own
+    /// indentation unit, else the engine's.
+    fn tree_of<B: Backing>(&self, tree: B, source: B::Text, breaks_lf: bool, nodes: u32, tree_id: TreeId) -> ParsedTree<G, B> {
+        let unit = crate::options::indent_unit(&source);
+        let indent = unit.as_deref().unwrap_or(&self.options.indent);
         let spaces = |unit: &str| u32::try_from(unit.chars().filter(|&c| c == ' ').count()).unwrap_or(u32::MAX);
         let level_width = [spaces(indent), spaces(&self.options.indent), 1].into_iter().find(|&width| width > 0).unwrap_or(1);
-        let read_options = inferred.over(&self.options);
         ParsedTree {
             grammar: self.grammar,
             nodes,
             tree,
             source,
-            inferred,
             breaks_lf,
             tree_id,
             lines: std::sync::OnceLock::new(),
             trivia: Placement::new(self.grammar.surface_kinds(), level_width),
             depth_members: std::sync::OnceLock::new(),
-            read_options,
+            options: self.options.clone(),
             records: std::sync::Mutex::default(),
             slots: std::sync::Mutex::default(),
             items: std::sync::Mutex::default(),
@@ -2787,22 +2769,12 @@ impl<G: EngineGrammar> Engine<G> {
             let snippet: String = source.chars().take(80).collect();
             format!("parse failed (source: {snippet:?})")
         })?;
-        let (whitespace, _) = self.grammar.whitespace();
         let root = tree.root_node();
-        let inferred = crate::options::InferredOptions::infer(source, crate::read::grammar_id(&root), &self.options, self.grammar.option_tables(), whitespace);
-        let (tables, known) = (self.grammar.option_tables(), &mut self.edge_addresses);
-        let options = inferred.to_json_by(|site| {
-            let at = known.iter().position(|(seen, _)| *seen == site).unwrap_or_else(|| {
-                known.push((site, crate::options::site_address(tables, site)));
-                known.len() - 1
-            });
-            known[at].1.clone()
-        });
         let work = crate::layout::LayoutWorkCounter::default();
         let errors = error_regions(&mut TreeNodes::new(&tree, source, &work));
         let grammar = self.grammar;
         let mut built = self.written.built_mut();
-        let entry = built.write_source(&crate::arena::source::Source { text: source, breaks_lf: !source.contains('\r'), inferred }).map_err(|refusal| refusal.to_string())?;
+        let entry = built.write_source(&crate::arena::source::Source { text: source, breaks_lf: !source.contains('\r') }).map_err(|refusal| refusal.to_string())?;
         let root = if root.is_error() {
             let span = crate::types::Span::of(&root);
             let at = crate::arena::hydrate_error(&mut tree.walk(), Some(entry), grammar.surface_kinds(), &mut crate::arena::ReadWriter::new(&mut built)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
@@ -2818,7 +2790,7 @@ impl<G: EngineGrammar> Engine<G> {
             self.place_extras(crate::types::TreeId(entry.0), placed);
             root
         };
-        Ok(ParsedRecords { root, source: entry, options, errors })
+        Ok(ParsedRecords { root, source: entry, errors })
     }
 
     /// Parses `source` twice, as a tree and as the records a read of it
@@ -2859,15 +2831,13 @@ impl<G: EngineGrammar> Engine<G> {
 }
 
 /// What an arena parse leaves: the root's record, none for a root its
-/// reader writes none for, the source's entry, the source's layer of the
-/// render options (`ParsedTree::inferred_options`), and the parse's `ERROR`
-/// and `MISSING` regions.
+/// reader writes none for, the source's entry, and the parse's `ERROR` and
+/// `MISSING` regions.
 #[cfg(feature = "arena")]
 #[derive(Debug)]
 pub struct ParsedRecords {
     pub root: Option<crate::arena::Address>,
     pub source: crate::arena::Address,
-    pub options: serde_json::Value,
     pub errors: Vec<ErrorRegion>,
 }
 

@@ -696,12 +696,11 @@ pub fn indent_unit(source: &str) -> Option<String> {
     Some(unit.to_string())
 }
 
-/// What a parse reads off its source's layout, as render options: the
-/// tree's layer of the precedence, which a render of the tree resolves over
-/// the engine's options and under the call's own. Each entry is one the
-/// source sets apart from the options it was read against: the indentation
-/// unit (`indent_unit`), and the arm of each of the root's edges
-/// that the source's whitespace at the file's start and end classifies to.
+/// What a source's layout sets apart from a base table, as render options:
+/// the indentation unit (`indent_unit`), and the arm of each of the root's
+/// edges that the source's whitespace at the file's start and end
+/// classifies to. A parse that adopts its source's style lays it over the
+/// engine's defaults.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct InferredOptions {
     pub indent: Option<String>,
@@ -746,57 +745,6 @@ impl InferredOptions {
         }
         table
     }
-
-    /// The layer as the options object a render takes: `layout.indent`, and
-    /// each edge under its site's address.
-    ///
-    /// # Panics
-    ///
-    /// Never: every site address the tables hold has at least one key.
-    #[must_use]
-    pub fn to_json(&self, tables: &OptionTables) -> serde_json::Value {
-        self.to_json_by(|site| site_address(tables, site))
-    }
-
-    /// `to_json`, each edge under the address `address` gives its site; an
-    /// edge whose site it gives no address is left out.
-    pub(crate) fn to_json_by(&self, mut address: impl FnMut(SiteId) -> Option<Vec<&'static str>>) -> serde_json::Value {
-        let mut root = serde_json::Map::new();
-        if let Some(indent) = &self.indent {
-            root.insert(LAYOUT_KEY.to_owned(), serde_json::json!({ "indent": indent }));
-        }
-        for &(site, arm) in &self.edges {
-            let Some(path) = address(site) else { continue };
-            let mut level = &mut root;
-            for key in &path[..path.len() - 1] {
-                level = level
-                    .entry((*key).to_owned())
-                    .or_insert_with(|| serde_json::Value::Object(serde_json::Map::new()))
-                    .as_object_mut()
-                    .expect("an address branch is an object");
-            }
-            level.insert(path[path.len() - 1].to_owned(), serde_json::json!(arm));
-        }
-        serde_json::Value::Object(root)
-    }
-}
-
-/// The keys that address `site` alone, from the root of `nodes`.
-/// The keys under which `tables` address the spacing site `site`, outermost
-/// first; none for a site no address names alone.
-pub(crate) fn site_address(tables: &OptionTables, site: SiteId) -> Option<Vec<&'static str>> {
-    address_of(tables.addresses, site)
-}
-
-fn address_of(nodes: &'static [AddressNode], site: SiteId) -> Option<Vec<&'static str>> {
-    nodes.iter().find_map(|node| match node {
-        AddressNode::Spacing { key, sites: [only] } if only.site == site => Some(vec![*key]),
-        AddressNode::Branch { key, children, .. } => address_of(children, site).map(|mut path| {
-            path.insert(0, *key);
-            path
-        }),
-        _ => None,
-    })
 }
 
 #[cfg(test)]

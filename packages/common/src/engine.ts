@@ -17,8 +17,8 @@ import type {
 	WireNode
 } from '@sittir/types';
 import { decodeIndex, decodeTree, readObject, type TreeHandle, type TriviaSideName } from './read.ts';
-import { coordinateIndex, coordinateOf, holdReadTree, keyName, placeOf, rootEdges, sourceHandleOf, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
-import { mintTreeToken, registerTree, treeOfToken } from './tree-token.ts';
+import { coordinateIndex, coordinateOf, holdReadTree, rootEdges, toNodeData, type KindView, type ReadOutput } from './node-data.ts';
+import { mintTreeToken, registerTree } from './tree-token.ts';
 import type { DescendantBatch, TreeQuery } from './query.ts';
 import { cellFormatOf, type CellFormat } from './record-cell.ts';
 import { readOwnEntries, readOwnUnits, type BuiltRecords, type ParsedRecords, type WritableWords } from './built-arena.ts';
@@ -86,17 +86,6 @@ export function saverOf(rendered: Rendered): RenderSaver {
 	return saver;
 }
 
-function sourceRecordOf(node: object): number | undefined {
-	const source = placeOf(node);
-	if (source === undefined || treeOfToken(source.token)?.built === undefined) return undefined;
-	return keyName(source.index).node;
-}
-
-function renderTreeOf(node: object): number | undefined {
-	const handle = sourceHandleOf(node);
-	return handle === undefined ? undefined : decodeTree(handle);
-}
-
 /** The level count a read takes: one by default. */
 function depthOf(options: ParseOptions | undefined): number {
 	return options?.depth ?? 1;
@@ -150,12 +139,11 @@ export interface NativeEngineLike<TNode = unknown> {
 	/** The handle of the engine's state its module's engine functions take. */
 	readonly handle: EngineHandle;
 	/**
-	 * Parse `source` and keep its tree.
+	 * Parse `source` and keep its tree, adopting its style as the engine's options under `options.adoptStyle`.
 	 *
-	 * @returns JSON `{ treeId, options, errors }`: the id {@link read} and `disposeTree` take, the
-	 *   tree's layer of the render options (`NativeParseResult.options`), and the parse's error regions.
+	 * @returns JSON `{ treeId, errors }`: the id {@link read} and `disposeTree` take, and the parse's error regions.
 	 */
-	parse(source: string): string;
+	parse(source: string, options?: ParseOptions): string;
 	/**
 	 * Read the node at descendant `index` of tree `treeId` into its native node, `depth` levels down
 	 * (one when absent, `Infinity` for every level); index 0 is the root.
@@ -247,8 +235,8 @@ export interface NativeEngineLike<TNode = unknown> {
 	builtBump?(address: number): void;
 	/** Releases a count of the built entry at `address` of form `held`, the count its builder's handle holds when `owned`; answers the trees released link and side records named. Present when the addon carries the record codec. */
 	releaseBuilt?(address: number, held: number, owned: boolean): number[];
-	/** Parses `source` and keeps no tree: as JSON `{ root, source, options, errors }`, the address of the root's record in the built arena, null when its reader writes none, the address of the source's entry, the source's layer of the render options, and its error regions. Present when the addon carries the record codec. */
-	parseRecords?(source: string): string;
+	/** Parses `source` and keeps no tree, adopting its style as the engine's options under `options.adoptStyle`: as JSON `{ root, source, errors }`, the address of the root's record in the built arena, null when its reader writes none, the address of the source's entry, and its error regions. Present when the addon carries the record codec. */
+	parseRecords?(source: string, options?: ParseOptions): string;
 	/** Chunk `chunk` of the built arena, which a read wrote, over its native memory with no copy; null for a chunk no read wrote. Present when the addon carries the record codec. */
 	readWords?(chunk: number): WritableWords | null;
 	/** `renderAt` for the node a read left in the built arena that the key `node` names, from the arena alone. Present when the addon carries the record codec. */
@@ -287,9 +275,9 @@ export interface NativeEngineLike<TNode = unknown> {
 	builtMemory?(): { chunks: number; counts: number; live: number };
 	/** Refuses, by name, a runtime that does not allow external array buffers. Present when the addon carries the record codec. */
 	externalBuffers?(): void;
-	renderBuilt?(owner: object, address: number, leading: boolean, trailing: boolean, source?: number, options?: object): string;
+	renderBuilt?(owner: object, address: number, leading: boolean, trailing: boolean, options?: object): string;
 	/** {@link renderBuilt}'s text, and for a record a read left what {@link readSides} answers for it, from the same read of its source's records; `sides` is absent for a built record. Present when the addon carries the record codec. */
-	renderBuiltSides?(owner: object, address: number, leading: boolean, trailing: boolean, source?: number, options?: object): { text: string; sides?: ReturnType<NonNullable<NativeEngineLike['readSides']>> };
+	renderBuiltSides?(owner: object, address: number, leading: boolean, trailing: boolean, options?: object): { text: string; sides?: ReturnType<NonNullable<NativeEngineLike['readSides']>> };
 	renderBuiltLeaf?(
 		owner: object,
 		kind: number,
@@ -300,7 +288,7 @@ export interface NativeEngineLike<TNode = unknown> {
 		options?: object
 	): string;
 	/** {@link renderBuilt}'s text written to `path`, answering whether it wrote. Present when the addon carries the record codec. */
-	renderBuiltToFile?(owner: object, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, source?: number, options?: object): boolean;
+	renderBuiltToFile?(owner: object, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object): boolean;
 	/** {@link renderBuiltLeaf}'s text written to `path`, answering whether it wrote. Present when the addon carries the record codec. */
 	renderBuiltLeafToFile?(
 		owner: object,
@@ -370,11 +358,11 @@ export interface NativeEngineLike<TNode = unknown> {
 		depth?: number | null
 	): string;
 	planHolds(addresses: string, plan: string): boolean[];
-	render(node: WireNode, treeId?: number, options?: object): string;
+	render(node: WireNode, options?: object): string;
 	/** The node at descendant `index` of tree `treeId` rendered as a render root whose `leading` and `trailing` edges have no neighbour, as {@link render} renders the node a read of it gives; `templates` renders it and every node under it that has a record from its template, each leaf and unit as its source. */
 	renderAt(treeId: number, index: number, leading: boolean, trailing: boolean, options?: object, templates?: boolean): string;
 	/** {@link render}'s text written to `path`: a new file when `create`, refusing a file at the path, and otherwise a replacement that leaves a file already holding the text untouched. Answers whether it wrote. */
-	renderToFile(node: WireNode, path: string, create: boolean, treeId?: number, options?: object): boolean;
+	renderToFile(node: WireNode, path: string, create: boolean, options?: object): boolean;
 	/** `text` written to `path` as {@link renderToFile} writes a render's text, answering whether it wrote. */
 	writeText(path: string, text: string, create: boolean): boolean;
 	/** The profile build-native built the binary with; `undefined` for a binary build-native didn't build. */
@@ -388,7 +376,7 @@ export type EngineHandle = object;
 /** A native `SittirEngine`: its lifecycle and parse, and the handle its module's engine functions take. */
 export interface NativeEngineInstance {
 	readonly handle: EngineHandle;
-	parse(source: string): string;
+	parse(source: string, options?: ParseOptions): string;
 	dispose(): void;
 	readonly buildProfile?: EngineDiagnostics['buildProfile'];
 }
@@ -483,7 +471,7 @@ export function nativeEngineOf<TNode, TEngine extends NativeEngineInstance>(nati
 	const engine: Record<string, unknown> = {
 		handle,
 		buildProfile: instance.buildProfile,
-		parse: (source: string) => instance.parse(source),
+		parse: (source: string, options?: ParseOptions) => instance.parse(source, options),
 		dispose: () => instance.dispose()
 	};
 	for (const name of TREE_FUNCTIONS) engine[name] = native[name];
@@ -652,8 +640,8 @@ export function createNativeEngine<
 			isWrapper: (kindId) => config.rebuildWrappers.has(kindId)
 		};
 
-		const parseTree = (source: string): TreeHandle => {
-			const parsed = JSON.parse(engine.parse(source)) as NativeParseResult;
+		const parseTree = (source: string, parseOptions?: ParseOptions): TreeHandle => {
+			const parsed = JSON.parse(engine.parse(source, parseOptions)) as NativeParseResult;
 			const liveToken = mintTreeToken(parsed.treeId);
 			treeDisposalRegistry.register(liveToken, {
 				release: status.native.disposeTree,
@@ -679,7 +667,6 @@ export function createNativeEngine<
 					}
 					return cached;
 				},
-				options: parsed.options,
 				errors,
 				snapshotLayouts: (index, holderByte) => engine.snapshotLayouts(parsed.treeId, index, holderByte),
 				triviaSide: (index, side) => readOwnEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
@@ -732,14 +719,14 @@ export function createNativeEngine<
 					};
 					const text = (): string => {
 						const record = settled();
-						if (!built.arena.wantsSides(record)) return renderBuilt.call(engine, built.arena.owner, record, changed.leading, changed.trailing, sourceRecordOf(node as object), perCall);
-						const rendered = renderBuiltSides.call(engine, built.arena.owner, record, changed.leading, changed.trailing, sourceRecordOf(node as object), perCall);
+						if (!built.arena.wantsSides(record)) return renderBuilt.call(engine, built.arena.owner, record, changed.leading, changed.trailing, perCall);
+						const rendered = renderBuiltSides.call(engine, built.arena.owner, record, changed.leading, changed.trailing, perCall);
 						if (rendered.sides !== undefined) built.arena.keepSides(record, rendered.sides);
 						return rendered.text;
 					};
 					return createRenderHandle(
 						text,
-						(path, create) => renderBuiltToFile.call(engine, built.arena.owner, settled(), changed.leading, changed.trailing, path, create, sourceRecordOf(node as object), perCall),
+						(path, create) => renderBuiltToFile.call(engine, built.arena.owner, settled(), changed.leading, changed.trailing, path, create, perCall),
 						writeText
 					);
 				}
@@ -757,15 +744,14 @@ export function createNativeEngine<
 				return createRenderHandle(text, (path, create) => writeText(path, text(), create), writeText);
 			}
 			const data = typeof node === 'number' ? node : toNodeData(node, kindView);
-			const treeId = typeof node === 'number' ? undefined : renderTreeOf(node);
 			return createRenderHandle(
 				() => {
 					holdsTrees();
-					return engine.render(data, treeId, perCall);
+					return engine.render(data, perCall);
 				},
 				(path, create) => {
 					holdsTrees();
-					return engine.renderToFile(data, path, create, treeId, perCall);
+					return engine.renderToFile(data, path, create, perCall);
 				},
 				writeText
 			);
@@ -797,7 +783,7 @@ export function createNativeEngine<
 					renderTemplates,
 					parseTree,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
-						const tree = parseTree(source);
+						const tree = parseTree(source, parseOptions);
 						return { tree, root: tree.read!(0, depthOf(parseOptions)) as TRoot & ParsedRoot };
 					}
 				}
@@ -874,7 +860,7 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		bump: (at) => builtBump.call(engine, at),
 		release: (at, held, owned) => releaseBuilt.call(engine, at, held, owned),
 		read: (chunk) => readWords.call(engine, chunk) ?? undefined,
-		parse: (source) => JSON.parse(parseRecords.call(engine, source)) as ParsedRecords,
+		parse: (source, options) => JSON.parse(parseRecords.call(engine, source, options)) as ParsedRecords,
 		text: (node, start, end) => readText.call(engine, node, start, end),
 		query: queryOver(readDescendants.bind(engine), readPlanHolds.bind(engine)),
 		reads: {
@@ -909,8 +895,8 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 		render(node, options) {
 			return options === undefined || Object.keys(options).length === 0 ? engine.render(node) : engine.render(node, { options });
 		},
-		parseTree(source) {
-			return engine.diagnostics.parseTree(source);
+		parseTree(source, options) {
+			return engine.diagnostics.parseTree(source, options);
 		},
 		parseAndRead(source, options) {
 			return engine.diagnostics.parseAndRead(source, options);

@@ -5,6 +5,7 @@ import { createEngine } from '@sittir/common';
 import typescript from '../src/index.ts';
 
 const ts = await createEngine(typescript);
+const adopting = await createEngine(typescript);
 
 function leadLastStatementOfFirstBody(root: ReturnType<typeof ts.parse>): void {
 	const [loop] = root.statements();
@@ -121,8 +122,9 @@ describe('an empty container whose inside is only layout takes its first child',
 		expect(() => body.$with.statements(x())).toThrow(/holds inner comments/);
 	});
 
-	it('gives a program of blank lines its first statement', () => {
-		expect(ts.parse('\n').$with.statements(x()).$render()).toBe('\nx;\n');
+	it('gives a program of blank lines its first statement, in the adopted style', () => {
+		const statement = adopting.build.expressionStatement(adopting.build.identifier('x'));
+		expect(adopting.parse('\n', { adoptStyle: true }).$with.statements(statement).$render()).toBe('\nx;\n');
 	});
 });
 

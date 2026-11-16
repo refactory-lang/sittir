@@ -1,8 +1,8 @@
 //! A read's source text in a built arena's string chunks: one whole string
-//! an entry, with what the read found of the source beside it. An entry is
-//! `[len][found]`, the text's bytes padded to a word, then what the read
-//! inferred of the render options: `found` holds the bytes of that after the
-//! text, and its top bit whether the source spells every line break `\n`.
+//! an entry. An entry is `[len][found]` then the text's bytes padded to a
+//! word: `found`'s top bit is whether the source spells every line break
+//! `\n`, and the bit below it is set in every entry a writer wrote, so
+//! zeroed bytes hold none.
 //! An entry names no record: a source's nodes are found from a record that
 //! names the entry.
 //! Small sources share a chunk the arena keeps open for them; a source too
@@ -10,11 +10,10 @@
 //! entry's address.
 
 use super::{Address, ArenaError, ArenaRead, BuiltChunk, BuiltChunks, ChunkMem, STRING_CHUNK_BYTES};
-use crate::options::InferredOptions;
-use crate::types::{KindId, SiteId};
 
 const HEAD_BYTES: u32 = 8;
 const BREAKS_LF: u32 = 1 << 31;
+const WRITTEN: u32 = 1 << 30;
 
 fn malformed(what: &'static str, at: Address) -> ArenaError {
     ArenaError::Malformed { what, word: at.0 }
@@ -29,26 +28,6 @@ fn padded(len: u32) -> u32 {
 pub struct Source<'a> {
     pub text: &'a str,
     pub breaks_lf: bool,
-    pub inferred: InferredOptions,
-}
-
-fn inferred_bytes(inferred: &InferredOptions) -> Vec<u8> {
-    let mut out = Vec::new();
-    let word = |out: &mut Vec<u8>, word: u32| out.extend_from_slice(&word.to_le_bytes());
-    match &inferred.indent {
-        Some(indent) => {
-            word(&mut out, crate::types::narrow(indent.len()) + 1);
-            out.extend_from_slice(indent.as_bytes());
-            out.resize(out.len().next_multiple_of(4), 0);
-        }
-        None => word(&mut out, 0),
-    }
-    word(&mut out, crate::types::narrow(inferred.edges.len()));
-    for &(site, kind) in &inferred.edges {
-        word(&mut out, u32::from(site.0));
-        word(&mut out, u32::from(kind.0));
-    }
-    out
 }
 
 struct Words<'a> {
@@ -80,23 +59,11 @@ impl<'a> Source<'a> {
         let chunk = arena.string_chunk(at.chunk()).ok_or(malformed("source chunk", at))?;
         let mut words = Words { bytes: chunk.get(at.word() as usize..).ok_or(malformed("source entry", at))?, at };
         let (len, found) = (words.word()?, words.word()?);
+        if found & !BREAKS_LF != WRITTEN {
+            return Err(malformed("source entry", at));
+        }
         let text = std::str::from_utf8(&words.take(padded(len) as usize)?[..len as usize]).map_err(|_| malformed("source text", at))?;
-        let mut words = Words { bytes: words.take((found & !BREAKS_LF) as usize)?, at };
-        let indent = match words.word()? {
-            0 => None,
-            held => {
-                let len = held - 1;
-                Some(std::str::from_utf8(&words.take(padded(len) as usize)?[..len as usize]).map_err(|_| malformed("source indent", at))?.to_owned())
-            }
-        };
-        let edges = (0..words.word()?)
-            .map(|_| {
-                let (site, kind) = (words.word()?, words.word()?);
-                let narrow = |word: u32| u16::try_from(word).map_err(|_| malformed("source edge", at));
-                Ok((SiteId(narrow(site)?), KindId(narrow(kind)?)))
-            })
-            .collect::<Result<_, ArenaError>>()?;
-        Ok(Source { text, breaks_lf: found & BREAKS_LF != 0, inferred: InferredOptions { indent, edges } })
+        Ok(Source { text, breaks_lf: found & BREAKS_LF != 0 })
     }
 }
 
@@ -117,10 +84,8 @@ impl BuiltChunks {
     /// `ArenaError::Full` for a source past what a chunk holds, and what the
     /// arena refuses a new chunk for.
     pub fn write_source(&mut self, source: &Source<'_>) -> Result<Address, ArenaError> {
-        let inferred = inferred_bytes(&source.inferred);
         let len = u32::try_from(source.text.len()).map_err(|_| ArenaError::Full)?;
-        let found = u32::try_from(inferred.len()).ok().filter(|found| found & BREAKS_LF == 0).ok_or(ArenaError::Full)?;
-        let size = HEAD_BYTES.checked_add(padded(len)).and_then(|size| size.checked_add(found)).ok_or(ArenaError::Full)?;
+        let size = HEAD_BYTES.checked_add(padded(len)).ok_or(ArenaError::Full)?;
         let (chunk, byte) = match self.sources {
             _ if size > STRING_CHUNK_BYTES => (self.alloc_read_bytes(size)?, 0),
             Some((chunk, used)) if used + size <= STRING_CHUNK_BYTES => {
@@ -140,10 +105,9 @@ impl BuiltChunks {
         // the chunk is live, and a native call runs no JavaScript.
         let out = unsafe { &mut mem.slice_mut()[byte as usize..(byte + size) as usize] };
         out[..4].copy_from_slice(&len.to_le_bytes());
-        out[4..8].copy_from_slice(&(found | if source.breaks_lf { BREAKS_LF } else { 0 }).to_le_bytes());
+        out[4..8].copy_from_slice(&(WRITTEN | if source.breaks_lf { BREAKS_LF } else { 0 }).to_le_bytes());
         let text = HEAD_BYTES as usize;
         out[text..text + len as usize].copy_from_slice(source.text.as_bytes());
-        out[(HEAD_BYTES + padded(len)) as usize..].copy_from_slice(&inferred);
         Ok(at)
     }
 
@@ -165,8 +129,8 @@ mod tests {
     #[test]
     fn a_source_reads_back_as_written_and_small_sources_share_a_chunk() {
         let mut arena = chunks();
-        let plain = Source { text: "fn f() {}\n", breaks_lf: true, inferred: InferredOptions::default() };
-        let found = Source { text: "a\r\n\tb é", breaks_lf: false, inferred: InferredOptions { indent: Some("\t".to_owned()), edges: vec![(SiteId(3), KindId(40)), (SiteId(9), KindId::BLANK)] } };
+        let plain = Source { text: "fn f() {}\n", breaks_lf: true };
+        let found = Source { text: "a\r\n\tb é", breaks_lf: false };
         let (first, second) = (arena.write_source(&plain).expect("room"), arena.write_source(&found).expect("room"));
         assert_eq!(first.chunk(), second.chunk(), "two small sources share a chunk");
         assert_ne!(first, second);
@@ -177,9 +141,9 @@ mod tests {
     #[test]
     fn a_source_too_long_for_a_shared_chunk_takes_its_own() {
         let mut arena = chunks();
-        let small = Source { text: "x", breaks_lf: true, inferred: InferredOptions::default() };
+        let small = Source { text: "x", breaks_lf: true };
         let text = "y".repeat(STRING_CHUNK_BYTES as usize);
-        let long = Source { text: &text, breaks_lf: true, inferred: InferredOptions::default() };
+        let long = Source { text: &text, breaks_lf: true };
         let (first, own, after) = (arena.write_source(&small).expect("room"), arena.write_source(&long).expect("room"), arena.write_source(&small).expect("room"));
         assert_ne!(own.chunk(), first.chunk());
         assert_eq!(own.word(), 0);
@@ -190,7 +154,7 @@ mod tests {
     #[test]
     fn a_source_is_written_after_the_last_one_of_the_open_chunk_is_released() {
         let mut arena = chunks();
-        let source = Source { text: "fn f() {}\n", breaks_lf: true, inferred: InferredOptions::default() };
+        let source = Source { text: "fn f() {}\n", breaks_lf: true };
         let first = arena.write_source(&source).expect("room");
         arena.release(crate::arena::count::Held::Text(first), false, &mut |_| Vec::new()).expect("the source's one count");
         let second = arena.write_source(&source).expect("a chunk to write in");
@@ -200,7 +164,7 @@ mod tests {
     #[test]
     fn an_address_no_source_is_at_is_refused() {
         let mut arena = chunks();
-        let at = arena.write_source(&Source { text: "x", breaks_lf: true, inferred: InferredOptions::default() }).expect("room");
+        let at = arena.write_source(&Source { text: "x", breaks_lf: true }).expect("room");
         assert!(Source::read(&arena, Address::new(at.chunk() + 1, 0).expect("an address")).is_err());
         assert!(Source::read(&arena, Address::new(at.chunk(), STRING_CHUNK_BYTES - 8).expect("an address")).is_err(), "zeroed bytes hold no entry");
     }

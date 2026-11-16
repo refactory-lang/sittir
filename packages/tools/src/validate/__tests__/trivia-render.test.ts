@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, it, vi } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { carryReadTree, isCoordinate, sidesOf } from '@sittir/common/utils';
-import { loadNativeEngine, loadSlotAccessorOf, readNodeOf, materializeDetached, parseNativeTree, nativeLanguageEngineOf } from '../common.ts';
+import { loadNativeEngine, loadSlotAccessorOf, readNodeOf, materializeDetached, parseNativeTree, fixtureReplayOf } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../../languages.ts';
@@ -58,7 +58,7 @@ describe('read trivia layout, rendered detached', () => {
 		const comment = sidesOf(binary._right)?.leading?.find(isCoordinate);
 		if (comment === undefined) throw new Error('expected the comment as a coordinate');
 		binary._operator = carryReadTree(comment, { $type: binary._operator, $treeHandle: comment.$treeHandle, $end: comment.$end, $span: { start: at, end: at + 1 } });
-		expect(engine.render(data as never as AnyUntypedNode).toString()).toBe(source);
+		expect((await fixtureReplayOf('rust'))(data as never as AnyUntypedNode, source)).toBe(source);
 	});
 
 	it('keeps a same-line trailing entry on its owner\'s row, before the separator', async () => {
@@ -107,10 +107,10 @@ describe('in-line spacing the options do not write is a deviation, rendered deta
 	it('keeps the layout of a token tree item whose neighbour is a bare token, read live', async () => {
 		const engine = await loadNativeEngine('rust');
 		const readNode = await readNodeOf('rust');
-		const native = await nativeLanguageEngineOf('rust');
+		const replay = await fixtureReplayOf('rust');
 		const source = "foo!($/';()*()+.);\n";
 		const tree = parseNativeTree(engine, source);
-		expect(native.render(materializeDetached(readNode(tree), await loadSlotAccessorOf('rust')) as AnyUntypedNode, tree.options).toString()).toBe(source);
+		expect(replay(materializeDetached(readNode(tree), await loadSlotAccessorOf('rust')) as AnyUntypedNode, source)).toBe(source);
 	});
 
 	it('keeps a rust token tree tight where its source is', async () => {

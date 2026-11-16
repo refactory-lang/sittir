@@ -5,7 +5,7 @@ import { sidesOf } from '@sittir/common/utils';
 import type { AnyUntypedNode } from '@sittir/types';
 import python from '../../python/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
-import { loadNativeEngine, loadSlotAccessorOf, materializeDetached, disposeNativeEngines } from '../src/validate/common.ts';
+import { fixtureReplayOf, loadNativeEngine, loadSlotAccessorOf, materializeDetached, disposeNativeEngines } from '../src/validate/common.ts';
 import { leadingTriviaRenderedWidth } from '../src/validate/read-render-parse.ts';
 
 afterAll(disposeNativeEngines);
@@ -54,10 +54,11 @@ describe('leadingTriviaRenderedWidth on a detached alias envelope', () => {
 describe('leadingTriviaRenderedWidth through the first-descendant chain', () => {
 	it('counts the comments the block and its first statement print before the first token', async () => {
 		using py = await createEngine(python, { nodeStorage: 'object' });
-		const nativePy = await loadNativeEngine('python');
-		const renderPy = (node: AnyUntypedNode): string => nativePy.render(node).toString();
+		const source = 'if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c\n';
+		const replay = await fixtureReplayOf('python');
+		const renderPy = (node: AnyUntypedNode): string => replay(node, source);
 		const triviaPy = (node: object) => sidesOf(node);
-		const statement = py.parse('if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c\n').statements()[0];
+		const statement = py.parse(source).statements()[0];
 		if (statement === undefined || !py.is.ifStatement(statement)) throw new Error('expected an if statement');
 		const suite = statement.consequence();
 		if (!py.is.suiteBlock(suite)) throw new Error('expected a block suite');

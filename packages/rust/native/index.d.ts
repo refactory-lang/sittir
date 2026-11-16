@@ -125,12 +125,12 @@ export declare class SittirEngine {
   get buildProfile(): import('@sittir/types').EngineDiagnostics['buildProfile']
   findAndRead(source: string, pattern: string): string
   /**
-   * Parse `source` and keep its tree. As JSON `{ treeId, options,
-   * errors }`: the id `read` and `disposeTree` take, the tree's
-   * layer of the render options (`ParsedTree::inferred_options`),
-   * and its error regions.
+   * Parse `source` and keep its tree, adopting its style when
+   * `options` asks (`NativeParseOptions::adopt_style`). As JSON
+   * `{ treeId, errors }`: the id `read` and `disposeTree` take, and
+   * its error regions.
    */
-  parse(source: string): string
+  parse(source: string, options?: NativeParseOptions | undefined | null): string
   /**
    * Release the engine: it frees its built arena's chunks and
    * detaches every buffer over them (`builtWords`, `builtBytes`),
@@ -297,10 +297,11 @@ export declare function editedWithin(treeId: TreeId, index: NodeIndex, ownSides:
 
 export interface EngineOptions {
   /**
-   * Resolved once here against the grammar's site table at
-   * construction; only the resolved ids are kept. A `render` call
-   * carrying its own options resolves again, per call, over the
-   * engine's table — the engine's own table never changes.
+   * Resolved against the grammar's site table at construction. A
+   * `render` call carrying its own options resolves them, per
+   * call, over the engine's table; an adopting parse
+   * (`NativeParseOptions::adopt_style`) replaces the engine's table
+   * with these over the defaults and its source's style.
    */
   options?: object
 }
@@ -394,20 +395,30 @@ export declare const LINK_RECORD_WORDS: number
  */
 export declare function liveTreeCount(): number
 
+/** What a parse is asked to do beyond reading its source. */
+export interface NativeParseOptions {
+  /**
+   * Lay the indentation unit and the root's edges the source shows
+   * over the engine's defaults, under the options it was created
+   * with, until another adopting parse replaces them.
+   */
+  adoptStyle?: boolean
+}
+
 /** A node index as JavaScript holds it: a whole number. */
 export type NodeIndex = number
 
 /**
  * r" Parse `source` with `engine` and keep no tree: the read
  * r" leaves the source's text and every node's record in the
- * r" engine's built arena (`Engine::parse_records`). As JSON
- * r" `{ root, source, options, errors }`: the address of the
- * r" root's record, null when its reader writes none; the address
- * r" of the source's entry; the source's layer of the render
- * r" options; and its error regions. Refuses an engine in use, a
- * r" parse that fails, and what the read or the arena refuses.
+ * r" engine's built arena (`Engine::parse_records`), adopting the
+ * r" source's style when `options` asks. As JSON `{ root, source,
+ * r" errors }`: the address of the root's record, null when its
+ * r" reader writes none; the address of the source's entry; and its
+ * r" error regions. Refuses an engine in use, a parse that fails,
+ * r" and what the read or the arena refuses.
  */
-export declare function parseRecords(engine: object, source: string): string
+export declare function parseRecords(engine: object, source: string, options?: NativeParseOptions | undefined | null): string
 
 /**
  * Whether each node `addresses` names (a JSON array of
@@ -458,8 +469,7 @@ export declare function readPlanHolds(engine: object, addresses: string, plan: s
  * r" `renderAt` for the node a read left in the built arena that
  * r" the key `node` names: rendered as a render root whose
  * r" `leading` and `trailing` edges have no neighbour, under
- * r" `options` over the layer its source's read inferred over the
- * r" engine's, from the arena alone; `templates` as `renderAt`.
+ * r" `options` over the engine's, from the arena alone; `templates` as `renderAt`.
  * r" Refuses an engine already disposed, a number that is no key,
  * r" a name no read's record holds, and a node whose render
  * r" refuses.
@@ -558,18 +568,16 @@ export declare function releaseBuilt(engine: object, address: number, held: numb
 /**
  * Render a typed node object (napi-native, numeric `$type`).
  *
- * The options a render takes are the call's own over the layer
- * of the tree `treeId` names (`ParsedTree::inferred`), over the
- * engine's. `treeId` is the tree the node was read from; a built
- * node belongs to no tree and renders by the engine's options.
+ * The options a render takes are the call's own over the
+ * engine's.
  */
-export declare function render(engine: object, node: import('@sittir/types').WireNode, treeId?: number | undefined | null, options?: object | undefined | null): string
+export declare function render(engine: object, node: import('@sittir/types').WireNode, options?: object | undefined | null): string
 
 /**
  * The node at `index` of the live tree `treeId` rendered as `render`
  * renders the node a read of it gives: a render root whose
  * `leading` and `trailing` edges have no neighbour, under `options`
- * over the tree's layer over the engine's; `templates` renders it
+ * over the engine's; `templates` renders it
  * and each node under it that has a record from its template, each
  * leaf and unit as its source (`render::ThroughTemplates`). Refuses a
  * tree that is not live, an index naming no node of it, and a node
@@ -583,16 +591,13 @@ export declare function renderAt(engine: object, treeId: number, index: number, 
  * r" `leading` and `trailing` edges have no neighbour, from the
  * r" arena alone (`Engine::render_at`), with the sides `owner`
  * r" holds: the engine that built the arena, which its records'
- * r" side writes went to. Its options are `options` over the layer
- * r" a source's read inferred over this engine's: the source of
- * r" the record itself when a read left it, else of the record at
- * r" `source`, the one the root was rebuilt from; a root of no
- * r" source takes `options` over the engine's. Its line endings
+ * r" side writes went to. Its options are `options` over this
+ * r" engine's. Its line endings
  * r" are spelled. Refuses an address naming no record its words
  * r" admit, a `source` no read wrote, and a record whose render
  * r" refuses.
  */
-export declare function renderBuilt(engine: object, owner: object, address: number, leading: boolean, trailing: boolean, source?: number | undefined | null, options?: object | undefined | null): string
+export declare function renderBuilt(engine: object, owner: object, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
 
 /**
  * r" The lone built leaf of `kind` whose leaf entry the built
@@ -618,20 +623,20 @@ export declare function renderBuiltLeafToFile(engine: object, owner: object, kin
  * r" tree the render made over its source; `sides` is absent for
  * r" a built record. Refuses as `renderBuilt` does.
  */
-export declare function renderBuiltSides(engine: object, owner: object, address: number, leading: boolean, trailing: boolean, source?: number | undefined | null, options?: object | undefined | null): { text: string; sides?: { leading: import('@sittir/types').WireNode[]; trailing: import('@sittir/types').WireNode[]; inner: import('@sittir/types').WireNode[] } }
+export declare function renderBuiltSides(engine: object, owner: object, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): { text: string; sides?: { leading: import('@sittir/types').WireNode[]; trailing: import('@sittir/types').WireNode[]; inner: import('@sittir/types').WireNode[] } }
 
 /**
  * r" `render_built`'s text written to `path` (`save_rendered`),
  * r" answering whether it wrote.
  */
-export declare function renderBuiltToFile(engine: object, owner: object, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, source?: number | undefined | null, options?: object | undefined | null): boolean
+export declare function renderBuiltToFile(engine: object, owner: object, address: number, leading: boolean, trailing: boolean, path: string, create: boolean, options?: object | undefined | null): boolean
 
 /**
  * `render`'s text written to `path` (`save_rendered`), answering
  * whether it wrote: `create` refuses a file at the path, and
  * otherwise a file already holding the text is left untouched.
  */
-export declare function renderToFile(engine: object, node: import('@sittir/types').WireNode, path: string, create: boolean, treeId?: number | undefined | null, options?: object | undefined | null): boolean
+export declare function renderToFile(engine: object, node: import('@sittir/types').WireNode, path: string, create: boolean, options?: object | undefined | null): boolean
 
 /**
  * The separator before the node at `index` of the live tree

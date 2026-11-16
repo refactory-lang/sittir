@@ -34,7 +34,7 @@ function fieldName(ts: Engine, source: string) {
 }
 
 function editedBody(ts: Engine, source: string, edit: (statements: readonly unknown[]) => readonly unknown[]): string {
-	const file = ts.parse(source);
+	const file = ts.parse(source, { adoptStyle: true });
 	const declaration = file.statements()[0];
 	if (declaration === undefined || !ts.is.functionDeclaration(declaration)) throw new Error('expected a function');
 	const body = declaration.body();

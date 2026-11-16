@@ -307,13 +307,10 @@ export interface CSTNode {
 // ---------------------------------------------------------------------------
 
 /**
- * Return value of the native (NAPI) `parse` call: the tree it keeps, the
- * render options its source infers and its error regions. It reads nothing;
- * the root is read from the tree at index 0.
+ * Return value of the native (NAPI) `parse` call: the tree it keeps and its
+ * error regions. It reads nothing; the root is read from the tree at index 0.
  */
 export interface NativeParseResult {
-	/** The tree's layer of the render options: the ones its source infers where they differ from the engine's (the indent unit, the root's edges), shaped like the grammar's `Options`. */
-	readonly options: Readonly<Record<string, unknown>>;
 	/** The tree this parse produced, released once nothing reads from it. */
 	readonly treeId: number;
 	/** The parse's ERROR and MISSING regions; empty for a clean parse. */

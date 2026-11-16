@@ -15,8 +15,6 @@ export interface TreeHandle {
 	id?: number;
 	/** The node at descendant `index` read into its native node, `depth` levels down (one when absent, `Infinity` for all); index 0 is the root. A unit variant's native node is its kind id. */
 	read?(index: number, depth?: number): unknown;
-	/** The tree's layer of the render options (`NativeParseResult.options`). */
-	options?: Readonly<Record<string, unknown>>;
 	/** The parse's ERROR and MISSING regions (`NativeParseResult.errors`); absent for a tree no parse produced. */
 	errors?: readonly ErrorRegion[];
 	query?: TreeQuery;

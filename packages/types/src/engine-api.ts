@@ -79,6 +79,16 @@ export interface ParseOptions {
 	 * the regions.
 	 */
 	readonly errors?: 'throw';
+	/**
+	 * `true` makes the engine adopt the style `source` is written in: its
+	 * indentation unit and the line breaks at the start and end of the file
+	 * become the engine's render options for every later render, over the
+	 * grammar's defaults and under the options `createEngine` was given and
+	 * those a render call gives. A later adopting parse replaces them; a parse
+	 * without it leaves them. A node an edit never touched renders its source
+	 * bytes whatever style is in effect.
+	 */
+	readonly adoptStyle?: boolean;
 }
 
 export interface EngineIdentity<API extends LanguageAPI = LanguageAPI> {
@@ -318,8 +328,8 @@ export interface EngineDiagnostics<TRoot = unknown, TTree extends object = objec
 	 * @throws For a node built or edited, a node whose tree is gone, and a node whose read or render refuses.
 	 */
 	renderTemplates(node: AnyUntypedNode): string;
-	/** Parses and retains a tree without reading any of it. */
-	parseTree(source: string): TTree;
+	/** Parses and retains a tree without reading any of it, adopting its style under `options.adoptStyle`. */
+	parseTree(source: string, options?: ParseOptions): TTree;
 	/** Parses and retains a tree, and reads its root to `options.depth`. */
 	parseAndRead(source: string, options?: ParseOptions): ParsedRead<TRoot & ParsedRoot, TTree>;
 }

@@ -138,8 +138,9 @@ fn the_record_of_a_chain_of_blocks_tallies_the_same_text_at_each_level() {
 fn the_record_of_blocks_under_a_wide_indentation_unit_tallies_the_unit_once() {
     let [one, two, four] = [100, 200, 400].map(|levels| {
         on_deep_stack(move || {
-            let tree = parsed_rust(&wide_unit_blocks(levels));
-            assert_eq!(tree.inferred().indent.as_ref().map(String::len), Some(levels), "the unit is the line's indentation");
+            let source = wide_unit_blocks(levels);
+            assert_eq!(sittir_core::options::indent_unit(&source).as_ref().map(String::len), Some(levels), "the unit is the line's indentation");
+            let tree = parsed_rust(&source);
             tree.snapshot_layouts(NodeIndex::ROOT, None).expect("a root").expect("a snapshot");
             tree.records_scanned()
         })

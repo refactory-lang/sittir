@@ -1,4 +1,4 @@
-import type { CommitScope, EngineIdentity, NodeCoordinate, NodeTrivia, UnitSidesWire, WireNode } from '@sittir/types';
+import type { CommitScope, EngineIdentity, NodeCoordinate, NodeTrivia, ParseOptions, UnitSidesWire, WireNode } from '@sittir/types';
 import { bindTree, engineOf, isLive, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered } from './identity.ts';
 import { asReadOutput, type ChangedEdges, coordinateOf, holdReadCoordinate, holdReadTree, isRead, type KindView, listEdges, keyName, type ReadOutput, triviaOf } from './node-data.ts';
@@ -69,7 +69,7 @@ export interface BuiltRecords {
 	bump(at: number): void;
 	release(at: number, held: number, owned: boolean): readonly number[];
 	read(chunk: number): WritableWords | undefined;
-	parse(source: string): ParsedRecords;
+	parse(source: string, options?: ParseOptions): ParsedRecords;
 	text(node: number, start: number, end: number): string;
 	readonly query: TreeQuery;
 	readonly reads: ReadNodes;
@@ -91,7 +91,6 @@ export type ReadSides = Readonly<Record<TriviaSideName, readonly WireNode[]>>;
 export interface ParsedRecords {
 	readonly root: number | null;
 	readonly source: number;
-	readonly options: unknown;
 	readonly errors: readonly unknown[];
 }
 
@@ -1141,8 +1140,8 @@ export class BuiltArena {
 	}
 
 	/** The root of `source`, parsed: a handle on the record its read left in this arena, with the source's error regions as `$errors`. No tree outlives the call. */
-	parse(source: string): object {
-		const { root, errors, source: entry } = this.#parse(source);
+	parse(source: string, options?: ParseOptions): object {
+		const { root, errors, source: entry } = this.#parse(source, options);
 		if (root === null) throw new Error("the source's root has no record, so the arena holds no node of it");
 		this.#roots.add(root);
 		const regions = Object.freeze(errors);
