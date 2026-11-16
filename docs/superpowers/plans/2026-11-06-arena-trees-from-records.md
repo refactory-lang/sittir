@@ -314,10 +314,17 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It was to follow Task 6 a
 - Consumes: Task 6's native source write.
 - Produces: the addon's intern call and `BuiltArena.entry`'s new internals. Their API rows go to the maintainer before code.
 
-- [ ] **Step 1: The proposal, before code.** The shape that crosses less than once per `entry()` call, with the call and miss counts on the rebuilt, codemod and many-names cases, and its API rows.
+- [x] **Step 1: The proposal, before code.** The shape that crosses less than once per `entry()` call, with the call and miss counts on the rebuilt, codemod and many-names cases, and its API rows.
   - **Counts on Task 6's branch** (arena storage; a miss is an entry not returned before): building 2,000 functions each with its own `x` node, 2,000 calls and 1 miss; editing each name to `g`, 2,000 and 1; building `x0`…`x1999`, 2,000 and 2,000; the corpus parse, render and same-value edit, none. Today's crossings for strings are whole-chunk fetches (`builtBytes`): 1 for the one-name build, 5 for 2,000 distinct names, 9 for 8,000.
   - **Ruled 2026-11-16, replacing a shape approved earlier the same day** (one addon call per miss, `writeBuiltEntry`, which would have made 2,000 crossings where today makes 5): "it shouldn't be a call into native, it should be a write into shared memory". A miss writes the entry into the pool's native memory through JavaScript's view of it, with no crossing; a crossing happens only when a chunk has to be opened. Arena storage already refuses a runtime without external array buffers (Electron's memory cage), so this needs no second path.
-  - **Still to propose, with rows:** where the pool's one write position lives so that native's writers and JavaScript's append through the same one (a word in shared memory, not a JavaScript field), whether both append to one open chunk, and writing the text once (`encodeInto` the chunk) instead of encoding and then copying. `writeBuiltEntry` and the removal of `builtBytes` are withdrawn.
+  - **Scope, ruled 2026-11-16: "One position for built text; sources keep their own chunks".**
+    - Each string chunk's `used` is a word in its meta, beside the cell count JavaScript already views; the meta grows from 4 bytes to 8 (`count::CELLS_META_BYTES`). Every writer of built text appends at that word.
+    - Which string chunk is open is one word in a store header JavaScript views, exposed once per engine.
+    - The addon's `builtBytes(engine, least)`: native picks the size by its own growth rule and answers the open chunk when it still has `least` bytes of room. One crossing per chunk, as before. JavaScript's `FIRST_STRING_BYTES` goes; native's rule is the only one.
+    - `BuiltChunks::alloc_bytes` is renamed `open_strings(least)`. The test-path writer's own position goes.
+    - JavaScript encodes straight into the chunk at the position (`encodeInto`), one copy instead of two.
+    - **Sources stay in chunks of their own.** Task 6's "the read leaves the builders' open chunk alone" stands, so a parsed source's bytes are never kept alive by an unrelated built entry.
+    - **Expected effect, measured locally:** little on the many-names case (the single copy is the only gain); this is a cleanup from three write positions for built text to one. The entry format's writer stays in both languages; its constants are the encoding-constants issue's ground.
   - **Built in parallel** on a branch cut from Task 6's branch, merged into it last; one paired run on this task alone before that merge, so its effect is separable from placement's.
 - [ ] **Step 2: Failing tests:** the pool's write position is native's alone; a built string interned twice has one entry; a build's text renders byte-identical.
 - [ ] **Step 3:** Run them. They fail.
