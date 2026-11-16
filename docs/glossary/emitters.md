@@ -7984,6 +7984,10 @@ A kind's default refine form: the form, the pinned literal for each narrowed fie
 
 Resolves a kind's default refine form. Returns undefined when the kind has no default, the default names no form, the kind is not a compound node, or the form pins nothing. Otherwise it returns the form with its pinned values and the property names those pins cover.
 
+### `packages/codegen/src/emitters/refine-emit.ts::formDefinedProperties`
+
+The property names that the refine forms of a kind pin, across all of its forms. Returns an empty set when the kind has no refine forms or is not a compound node.
+
 ### `packages/codegen/src/emitters/factory-map.ts::module`
 
 ```text
