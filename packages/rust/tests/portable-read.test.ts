@@ -11,6 +11,13 @@ const readFirst = (source: string): Read => runtime.read(statementsOf(source)[0]
 const roundTrip = (source: string): string => String(runtime.engine.render(runtime.build(runtime.read(runtime.engine.parse(source)) as Read) as never));
 
 describe('the portable read', () => {
+	it('reads the expressions a block holds as statements as themselves, an assignment and a binary included, and builds them back', () => {
+		const source = 'fn f() {\n    a = 1;\n    a + b;\n}\n';
+		const fn = ((runtime.read(runtime.engine.parse(source)) as Read).statements as readonly Read[])[0]!;
+		expect(((fn.body as Read).statements as readonly Read[]).map(({ $path }) => $path)).toEqual(['expression.assignment', 'expression.binary.arithmetic.add']);
+		expect(roundTrip(source)).toBe(source);
+	});
+
 	it.each(['true;', 'a;', '1;', 'a!();'])('reads the statement node of %j on its own as the file read reads it, a unit literal included', (source) => {
 		expect(readFirst(`${source}\n`)).toEqual(((runtime.read(runtime.engine.parse(`${source}\n`)) as Read).statements as readonly Read[])[0]);
 	});
