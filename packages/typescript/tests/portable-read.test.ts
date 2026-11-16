@@ -11,6 +11,10 @@ const roundTrip = (source: string): string => String(runtime.engine.render(runti
 const firstOf = (source: string): unknown => (read(source).statements as readonly Read[])[0];
 
 describe('the portable read', () => {
+	it.each(['true;', 'null;', 'a;'])('reads the statement node of %j on its own as the file read reads it, a unit literal included', (source) => {
+		expect(runtime.read(runtime.engine.parse(`${source}\n`).statements()[0]!)).toEqual(firstOf(`${source}\n`));
+	});
+
 	it.each(['function* f() {\n  yield* x;\n}\n', 'type T = -1;\n'])('reads a kind its holder mounts as its own path, carrying nothing, and builds it back through the mount: %j', (source) => {
 		const parsed = read(source);
 		expect(JSON.stringify(parsed)).not.toContain('"$type"');

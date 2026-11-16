@@ -679,6 +679,11 @@ describe("keptKinds over a supertype the slot holds", () => {
 		await expect(grammar(both).then((input) => resolveRoutes({ ...input, model }))).rejects.toThrow(
 			"bindings: holder_x's container lines set flags both on every element and on fn_x alone; one container's flags land on one set of elements"
 		);
+		model.set('holder_two', node('holder_two', [slot('definition', ['fn_x', 'cls_x'])], { spells: ['@', '#'] }));
+		const split = '(fn_x) @declaration.method\n(cls_x) @declaration.class\n(holder_two "@" @static definition: (fn_x) @element)\n(holder_two "#" @readonly definition: (cls_x) @element)';
+		await expect(grammar(split).then((input) => resolveRoutes({ ...input, model }))).rejects.toThrow(
+			"bindings: holder_two's container lines set static on fn_x but not on cls_x; one container's flags land on one set of elements"
+		);
 	});
 
 	it("holds a container's token capture by a token every form of the container spells, not by position", async () => {

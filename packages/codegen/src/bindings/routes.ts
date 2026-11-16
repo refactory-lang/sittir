@@ -385,22 +385,27 @@ function narrowedTo(model: SlotModel, node: ModelNode, element: SlotSelector): s
 }
 
 function containerFlags(input: GrammarInput, node: ModelNode, vocabOf: ReadonlyMap<string, string>): { readonly flags: readonly string[]; readonly flagged?: readonly string[] } {
-	const flags = new Set<string>();
-	const scopes: (string | null)[] = [];
+	const lines: { readonly flags: readonly string[]; readonly scope: string | null }[] = [];
 	for (const container of declaredContainersOf(input, node)) {
 		const resolved = containerMembers(input, container, vocabOf);
 		if (resolved.targets.length === 0) continue;
 		const set = resolved.members.filter(
 			({ capture, slot, flag }) => flag && (slot === undefined || (slot.required && slot.kinds.length === 0 && slot.terminals.every((terminal) => terminal === capture.token)))
 		);
-		if (set.length === 0) continue;
-		for (const { name } of set) flags.add(name);
-		scopes.push(narrowedTo(input.model, node, container.element));
+		if (set.length > 0) lines.push({ flags: set.map(({ name }) => name), scope: narrowedTo(input.model, node, container.element) });
 	}
+	const scopes = lines.map(({ scope }) => scope);
 	if (scopes.includes(null) && scopes.some((scope) => scope !== null))
 		throw new Error(`bindings: ${node.kind}'s container lines set flags both on every element and on ${scopes.filter((scope) => scope !== null).join(', ')} alone; one container's flags land on one set of elements`);
+	const flags = [...new Set(lines.flatMap((line) => line.flags))];
 	const flagged = [...new Set(scopes.filter((scope): scope is string => scope !== null))];
-	return { flags: [...flags], ...(flagged.length === 0 ? {} : { flagged }) };
+	for (const flag of flags) {
+		const on = new Set(lines.filter((line) => line.flags.includes(flag)).map(({ scope }) => scope));
+		const missing = flagged.filter((scope) => !on.has(scope));
+		if (missing.length > 0)
+			throw new Error(`bindings: ${node.kind}'s container lines set ${flag} on ${[...on].join(', ')} but not on ${missing.join(', ')}; one container's flags land on one set of elements`);
+	}
+	return { flags, ...(flagged.length === 0 ? {} : { flagged }) };
 }
 
 function declaredListAt(vocabulary: Vocabulary, kind: string, targets: readonly string[], name: string): boolean | undefined {

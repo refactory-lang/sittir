@@ -12,6 +12,11 @@ const roundTrip = (source: string): string => String(runtime.engine.render(runti
 const firstOf = (source: string): unknown => (read(source).statements as readonly Read[])[0];
 
 describe('the portable read', () => {
+	it.each(['True', 'None', 'a'])('reads the expression statement node of %j on its own as the file read reads it, a unit literal included', (source) => {
+		const line = runtime.engine.parse(`${source}\n`).statements()[0]! as unknown as { statements(): { items(): readonly unknown[] } };
+		expect(runtime.read(line.statements().items()[0] as never)).toEqual(firstOf(`${source}\n`));
+	});
+
 	it('reads the wildcard case pattern as the wildcard pattern, by its text', () => {
 		const source = 'match x:\n    case _:\n        pass\n';
 		expect(firstOf(source)).toMatchObject({ body: [{ $path: 'clause.case.match', pattern: '_' }] });

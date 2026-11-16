@@ -314,7 +314,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		if (path === undefined || claimed.length === 0) {
 			const unwrap = typeof value === 'number' || seats !== undefined ? [] : unwrapOf(kind);
 			const element = unwrap.length === 0 ? undefined : resolve(value, unwrap);
-			if (element !== undefined && !element.many && hasKind(element.found)) return read(element.found, carried, [...new Set(unwrap.map(({ seat }) => seat))]);
+			if (element !== undefined && !element.many && kindOfValue(element.found) !== undefined) return read(element.found, carried, [...new Set(unwrap.map(({ seat }) => seat))]);
 			const content = typeof value === 'number' ? undefined : seats?.find((seat) => seat.contents?.[kind] !== undefined)?.contents?.[kind];
 			const spelled = content === undefined ? undefined : textOf(accessed(value as object, content));
 			const own = typeof value === 'number' || seats === undefined ? undefined : nodeText(value);

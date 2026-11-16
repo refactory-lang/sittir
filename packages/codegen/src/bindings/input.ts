@@ -5,7 +5,7 @@ import { boundNameAt, boundNameOf } from '../dsl/bind.ts';
 import { groupLiftNames } from '../dsl/rule-metadata.ts';
 import { isParserHiddenName } from '../dsl/rule-patterns.ts';
 import type { Rule } from '../types/rule.ts';
-import { CHOICE, REPEAT1, SEQ, STRING, SYMBOL } from '../types/rule-types.ts';
+import { CHOICE, REPEAT1, SEQ, STRING, SYMBOL, TOKEN } from '../types/rule-types.ts';
 import { boundFieldNameOf, leadEffectsOf, type BindingEffect } from '../dsl/verbs/effects.ts';
 import { parsePreferencePath } from '../dsl/primitives/preference-path.ts';
 import { type OptionsConfig, readOptionsBlock } from '../dsl/wire/options-block.ts';
@@ -88,9 +88,22 @@ const seatShapesOf = (slot: NodeModelSlot): { readonly flattens?: readonly strin
 	return { ...(flattens.length === 0 ? {} : { flattens }), ...(tuples.length === 0 ? {} : { tuples }) };
 };
 
+function unprecedented(rule: Rule<'evaluate'>): Rule<'evaluate'> {
+	switch (rule.type) {
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+		case 'PREC_DYNAMIC':
+			return unprecedented(rule.content);
+		default:
+			return rule;
+	}
+}
+
 function spelledTokens(rules: Readonly<Record<string, Rule<'evaluate'>>>, supertypes: ReadonlySet<string>): (kind: string) => readonly string[] {
 	const entered = new Set<string>();
-	const of = (rule: Rule<'evaluate'>): readonly string[] => {
+	const of = (given: Rule<'evaluate'>): readonly string[] => {
+		const rule = unprecedented(given);
 		switch (rule.type) {
 			case STRING:
 				return [rule.value];
@@ -100,11 +113,12 @@ function spelledTokens(rules: Readonly<Record<string, Rule<'evaluate'>>>, supert
 				const [first = [], ...rest] = rule.members.map(of);
 				return first.filter((token) => rest.every((arm) => arm.includes(token)));
 			}
+			case TOKEN:
+			case 'IMMEDIATE_TOKEN': {
+				const lexed = unprecedented(rule.content);
+				return lexed.type === STRING ? [lexed.value] : [];
+			}
 			case REPEAT1:
-			case 'PREC':
-			case 'PREC_LEFT':
-			case 'PREC_RIGHT':
-			case 'PREC_DYNAMIC':
 			case 'RESERVED':
 				return of(rule.content);
 			case SYMBOL:
