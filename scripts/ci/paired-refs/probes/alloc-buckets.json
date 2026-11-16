@@ -1,0 +1,10 @@
+[
+  {"bucket": "text: strings and formatting", "match": "alloc::string::|alloc::str::|alloc::fmt::format|ToString::to_string|str::to_owned|std::ffi::os_str|utf8"},
+  {"bucket": "node lists and boxes: writing built records and decoding values", "match": "arena::write::|arena::built_write|write_record|write_list|write_slot|WriteCell|FromNapiValue|from_napi_value"},
+  {"bucket": "hydration", "match": "arena::hydrate::"},
+  {"bucket": "placer and place_gaps_of lists", "match": "place_gaps_of|Placer|spacing::"},
+  {"bucket": "prepared overlay and prepare", "match": "arena::prep::|arena::prepared|::prepare::|prepare_root"},
+  {"bucket": "navigation table and record reads", "match": "arena::view|arena::reach|arena::parsed|arena::rows|::nodes::|Nodes::"},
+  {"bucket": "layout and render frames", "match": "::layout::|::render::|render_record"},
+  {"bucket": "trivia", "match": "trivia"}
+]

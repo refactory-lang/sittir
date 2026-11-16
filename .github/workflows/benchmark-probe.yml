@@ -39,6 +39,10 @@ on:
         description: The corpus phase a phase profile runs, render or edit.
         type: string
         default: render
+      measure:
+        description: What a phase profile records, samples of time or a count of allocations.
+        type: string
+        default: samples
 
 permissions:
   contents: read
@@ -131,6 +135,7 @@ jobs:
           GRAMMARS: ${{ inputs.grammars }}
           SCRIPT: ${{ inputs.script }}
           PHASE: ${{ inputs.phase }}
+          MEASURE: ${{ inputs.measure }}
         run: |
           versions=(base="$RUNNER_TEMP/trees/base" feature="$RUNNER_TEMP/trees/feature")
           if [[ $ARENA == true ]]; then versions+=(feature-arena="$RUNNER_TEMP/trees/feature@arena"); fi

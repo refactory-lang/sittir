@@ -17,6 +17,20 @@
 # PHASE=edit samples JavaScript frames: the inspector's Profiler, a sample every
 # JS_INTERVAL_US. A frame is its function and its script, relative to the tree
 # or this checkout, with the line; the comparison between trees drops the line.
+# MEASURE=allocs counts allocations instead of sampling time, for either phase:
+# perf record (under sudo, which uprobes need) with uprobes on libc's malloc,
+# calloc, realloc, posix_memalign, aligned_alloc and memalign (the arguments by
+# register, so the size asked for is recorded), enabled only while a timed
+# batch runs the phase, with frame-pointer call chains, and fewer batches (the
+# probes slow the phase). A stack at a function's entry lacks the frame that
+# called it, so the frame that called libc is absent. Folding and naming are
+# the render profile's. Each allocation is put in the first bucket of
+# alloc-buckets.json (rules in order, each a pattern on a function's name) that
+# a frame matches, looking from the allocation outward; the site is the nearest
+# sittir function. Writes <phase>-allocs.md: per tree the allocations and bytes
+# per batch, per root, and by bucket, native callback, site and function, each
+# tree beside the first, and, per tree, <grammar>-<name>.bytes.collapsed.gz
+# (the bytes asked for, folded the same way) and the head of perf's output.
 # Writes, per grammar and tree:
 #   <grammar>-<name>.json               the driver's receipt
 #   <grammar>-<name>.collapsed.gz       folded stacks (render: the thread's name at the root, inlined frames expanded)
@@ -32,7 +46,7 @@
 # Fails once everything is written if a tree's process did not map its
 # unstripped copy or no stack reaches a callback (render), or no stack reaches
 # editPhase (edit).
-import gzip, json, os, re, subprocess, sys, tempfile
+import atexit, gzip, json, os, platform, re, shutil, subprocess, sys, tempfile
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -50,9 +64,12 @@ names = list(trees)
 out.mkdir(parents=True, exist_ok=True)
 PHASE = os.environ.get('PHASE') or 'render'
 assert PHASE in ('render', 'edit'), f'PHASE {PHASE} is not render or edit'
-NATIVE = PHASE == 'render'
+MEASURE = os.environ.get('MEASURE') or 'samples'
+assert MEASURE in ('samples', 'allocs'), f'MEASURE {MEASURE} is not samples or allocs'
+ALLOCS = MEASURE == 'allocs'
+NATIVE = ALLOCS or PHASE == 'render'
 PERF = os.environ.get('PERF', 'perf')
-WARMUP, BATCHES, PER_ENGINE = 100, 2000, 50
+WARMUP, BATCHES, PER_ENGINE = (50, 200, 50) if ALLOCS else (100, 2000, 50)
 PERIOD_NS = 100_000
 JS_INTERVAL_US = 50
 FRESHNESS = 'packages/codegen/src/scripts/native-binary-freshness.ts'
@@ -62,6 +79,11 @@ FRAME = re.compile(r'^\s*[0-9a-f]+ (.+) \(([^()]*)\)$')
 OFFSET = re.compile(r'^(.*)\+0x([0-9a-f]+)$')
 LEGACY_ESCAPE = re.compile(r'\$(?:SP|BP|RF|LT|GT|LP|RP|C|u[0-9a-f]+)\$')
 LEGACY = {'$SP$': '@', '$BP$': '*', '$RF$': '&', '$LT$': '<', '$GT$': '>', '$LP$': '(', '$RP$': ')', '$C$': ','}
+ALLOC_FUNCTIONS = ['malloc', 'calloc', 'realloc', 'posix_memalign', 'aligned_alloc', 'memalign']
+EVENT = re.compile(r'^(.*?)\s+probe_libc:(\w+):\s*\([0-9a-f]+\)\s*(.*)$')
+SITTIR = re.compile(r'^<?sittir')
+BUCKETS = [(rule['bucket'], re.compile(rule['match'])) for rule in json.loads((here / 'alloc-buckets.json').read_text())]
+UNMATCHED = 'no bucket matches'
 JS_LINE = re.compile(r':\d+\)$')
 failures = []
 
@@ -130,14 +152,19 @@ def record(grammar, name, tree, copy):
             ctl, ack = Path(fifos) / 'ctl', Path(fifos) / 'ack'
             os.mkfifo(ctl)
             os.mkfifo(ack)
-            argv = [PERF, 'record', '-e', 'cpu-clock', '-c', str(PERIOD_NS), '--call-graph', 'fp', '--delay=-1', '--control', f'fifo:{ctl},{ack}', '-o', str(profile), '--',
-                    'node', '--perf-basic-prof', *driver]
+            events = [arg for fn in ALLOC_FUNCTIONS for arg in ('-e', f'probe_libc:{fn}')] if ALLOCS else ['-e', 'cpu-clock', '-c', str(PERIOD_NS)]
+            argv = [PERF, 'record', *events, '--call-graph', 'fp', '--delay=-1', '--control', f'fifo:{ctl},{ack}', '-o', str(profile), '--',
+                    shutil.which('node') if ALLOCS else 'node', '--perf-basic-prof', *driver]
+            if ALLOCS:
+                argv = ['sudo', '-n', '-E', *argv]
             env.update(NAPI_RS_NATIVE_LIBRARY_PATH=str(copy), PERF_CTL=str(ctl), PERF_ACK=str(ack))
         else:
             profile = out / f'{label}.cpuprofile'
             argv = ['node', *driver]
             env.update(JS_PROFILE=str(profile), JS_PROFILE_INTERVAL_US=str(JS_INTERVAL_US))
         done = subprocess.run(argv, cwd=tree, env=env, capture_output=True, text=True)
+    if ALLOCS:
+        run(['sudo', '-n', 'chown', '-R', f'{os.getuid()}:{os.getgid()}', str(out)])
     print(label, done.returncode, done.stdout.strip()[-600:], flush=True)
     if done.returncode or not receipt.exists():
         sys.stderr.write(done.stderr[-6000:])
@@ -148,25 +175,69 @@ def record(grammar, name, tree, copy):
     return profile, facts
 
 
+def libcPath():
+    for line in Path('/proc/self/maps').read_text().splitlines():
+        parts = line.split(maxsplit=5)
+        path = parts[5].strip() if len(parts) == 6 else ''
+        if re.search(r'/libc(\.so\.6|-[\d.]+\.so)$', path):
+            return str(Path(path).resolve())
+    raise SystemExit('no libc is mapped into this process')
+
+
+def installProbes():
+    registers = {'aarch64': ('x0', 'x1', 'x2'), 'x86_64': ('di', 'si', 'dx')}[platform.machine()]
+    first, second, third = (f'%{r}' for r in registers)
+    arguments = {'malloc': f'size={first}', 'calloc': f'nmemb={first} size={second}', 'realloc': f'size={second}',
+                 'posix_memalign': f'size={third}', 'aligned_alloc': f'size={second}', 'memalign': f'size={second}'}
+    assert set(arguments) == set(ALLOC_FUNCTIONS)
+    libc = libcPath()
+    subprocess.run(['sudo', '-n', PERF, 'probe', '-x', libc, '-d', 'probe_libc:*'], capture_output=True)
+    for function, args in arguments.items():
+        run(['sudo', '-n', PERF, 'probe', '-x', libc, '--add', f'{function} {args}'])
+    atexit.register(lambda: subprocess.run(['sudo', '-n', PERF, 'probe', '-x', libc, '-d', 'probe_libc:*'], capture_output=True))
+    print(f'uprobes on {libc}: {", ".join(arguments)}', flush=True)
+
+
+def header(line):
+    text = line.strip()
+    if not ALLOCS:
+        return text, 0, None
+    event = EVENT.match(text)
+    if not event:
+        return text, 0, None
+    comm, kind, args = event.groups()
+    values = {key: int(value, 0) for key, value in re.findall(r'(\w+)=(0x[0-9a-f]+|\d+)', args)}
+    return comm, values.get('nmemb', 1) * values.get('size', 0), kind
+
+
 def stacks(data, label):
-    with open(out / f'{label}.perf-script.err', 'w') as errors:
-        script = subprocess.Popen([PERF, 'script', '-i', str(data), '-F', 'comm,ip,sym,symoff,dso', '--no-demangle', '--no-inline', '--max-stack', '512'],
+    fields = 'comm,ip,sym,symoff,dso' + (',trace' if ALLOCS else '')
+    with open(out / f'{label}.perf-script.err', 'w') as errors, open(out / f'{label}.perf-script.head', 'w') as head:
+        script = subprocess.Popen([PERF, 'script', '-i', str(data), '-F', fields, '--no-demangle', '--no-inline', '--max-stack', '512'],
                                   stdout=subprocess.PIPE, stderr=errors, text=True, errors='replace')
-        counts, comm, frames = Counter(), None, []
-        for line in script.stdout:
+        counts, weights, kinds, comm, frames, size, kind = Counter(), Counter(), Counter(), None, [], 0, None
+
+        def finish():
+            counts[(comm, tuple(frames))] += 1
+            weights[(comm, tuple(frames))] += size
+            kinds[kind] += 1
+
+        for number, line in enumerate(script.stdout):
+            if ALLOCS and number < 60:
+                head.write(line)
             if not line.strip():
                 if comm is not None:
-                    counts[(comm, tuple(frames))] += 1
+                    finish()
                 comm, frames = None, []
             elif comm is None:
-                comm = line.strip()
+                comm, size, kind = header(line)
             elif match := FRAME.match(line.rstrip('\n')):
                 frames.append((match[1], match[2]))
         if comm is not None:
-            counts[(comm, tuple(frames))] += 1
+            finish()
         if script.wait():
             raise SystemExit(f'perf script exited {script.returncode} on {data}')
-    return counts
+    return counts, weights, kinds
 
 
 def jsStacks(path, tree):
@@ -197,7 +268,7 @@ def symbolOffset(symoff):
     return (match[1], int(match[2], 16)) if match else (symoff, 0)
 
 
-def fold(counts, tree, images):
+def fold(counts, tree, images, weights=None):
     tables = {}
     for image in images:
         table = {}
@@ -235,7 +306,7 @@ def fold(counts, tree, images):
         symbol = symbolOffset(symoff)[0]
         return f'[unknown] {Path(dso).name}' if symbol == '[unknown]' else clean(demangled.get(symbol, symbol), tree)
 
-    expanded, plain, coverage = Counter(), Counter(), Counter()
+    expanded, plain, coverage, expandedWeights = Counter(), Counter(), Counter(), Counter()
     for (comm, frames), count in counts.items():
         leafFirst, perfLeafFirst = [], []
         for depth, (symoff, dso) in enumerate(frames):
@@ -246,8 +317,9 @@ def fold(counts, tree, images):
                 coverage['frames'] += count
                 coverage['expanded'] += count if names else 0
         expanded[(comm, *reversed(leafFirst))] += count
+        expandedWeights[(comm, *reversed(leafFirst))] += (weights or {}).get((comm, frames), 0)
         plain[(comm, *reversed(perfLeafFirst))] += count
-    return expanded, plain, coverage
+    return expanded, plain, coverage, expandedWeights
 
 
 def writeFolded(path, folded):
@@ -274,6 +346,70 @@ def analyse(folded):
     return result
 
 
+def bucketOf(frames):
+    for frame in reversed(frames):
+        for bucket, rule in BUCKETS:
+            if rule.search(frame):
+                return bucket
+    return UNMATCHED
+
+
+def allocAnalysis(folded, weights, kinds):
+    result = {'events': 0, 'bytes': 0, 'kinds': kinds, 'buckets': defaultdict(lambda: [0, 0]), 'sites': defaultdict(lambda: [0, 0]),
+              'callbacks': defaultdict(lambda: [0, 0]), 'inclusive': defaultdict(lambda: [0, 0])}
+    for stack, count in folded.items():
+        size, frames = weights.get(stack, 0), stack[1:]
+        result['events'] += count
+        result['bytes'] += size
+        at = next((i for i, frame in enumerate(frames) if CALLBACK.search(frame)), None)
+        site = next((frame for frame in reversed(frames) if SITTIR.match(frame)), frames[at] if at is not None else OUTSIDE)
+        for table, key in ((result['buckets'], bucketOf(frames)), (result['sites'], site), (result['callbacks'], frames[at] if at is not None else OUTSIDE)):
+            table[key][0] += count
+            table[key][1] += size
+        for frame in set(frames):
+            result['inclusive'][frame][0] += count
+            result['inclusive'][frame][1] += size
+    return result
+
+
+def allocReport(grammar, names, results):
+    first = names[0]
+    firstFacts, firstAnalysis = results[first][0], results[first][1]
+    perRoot = lambda n, facts: f'{n / BATCHES / facts["entries"]:.2f}'
+    lines = [f'### {grammar} ({firstFacts["cpu"]}, {firstFacts["entries"]} roots per batch)', '',
+             f'| tree | commit | allocations per batch | per root | × {first} | bytes per batch | × {first} | {PHASE} text | reallocs | callocs | aligned |',
+             '|---|---|---|---|---|---|---|---|---|---|---|']
+    for name in names:
+        facts, analysis, commit = results[name][:3]
+        kinds = analysis['kinds']
+        lines.append(f'| {name} | `{commit}` | {perBatch(analysis["events"])} | {perRoot(analysis["events"], facts)} | ×{analysis["events"] / max(firstAnalysis["events"], 1):.3f} | '
+                     f'{analysis["bytes"] / BATCHES:.0f} | ×{analysis["bytes"] / max(firstAnalysis["bytes"], 1):.3f} | '
+                     f'{"same as " + first if facts["texts"] == firstFacts["texts"] else "differs from " + first} | {perBatch(kinds["realloc"])} | {perBatch(kinds["calloc"])} | '
+                     f'{perBatch(kinds["posix_memalign"] + kinds["aligned_alloc"] + kinds["memalign"])} |')
+    lines.append('')
+
+    def comparison(heading, key, limit, floor=0):
+        tables = {name: results[name][1][key] for name in names}
+        keys = sorted({k for table in tables.values() for k in table}, key=lambda k: -max(table[k][0] for table in tables.values() if k in table))
+        shown = [k for k in keys if max(table[k][0] for table in tables.values() if k in table) >= floor * max(results[n][1]['events'] for n in names)][:limit]
+        header = ' | '.join(f'{name} allocs | {name} share | {name} bytes' for name in names)
+        rows = [f'#### {grammar}: {heading}', '', f'Per batch; share is of the tree\'s {PHASE} allocations.', '', f'| | {header} |', '|---|' + '---|---|---|' * len(names)]
+        for k in shown:
+            cells = []
+            for name in names:
+                count, size = tables[name].get(k, (0, 0))
+                total = max(results[name][1]['events'], 1)
+                cells.append(f'{perBatch(count)} | {count / total:.1%} | {size / BATCHES:.0f}' if count else '— | — | —')
+            rows.append(f'| {code(k)} | ' + ' | '.join(cells) + ' |')
+        return rows + ['']
+
+    lines += comparison('allocations by bucket (the nearest frame to the allocation that a rule of `alloc-buckets.json` names)', 'buckets', 20)
+    lines += comparison('allocations by native callback (the stack\'s outermost `*_c_callback` frame)', 'callbacks', 20)
+    lines += comparison('allocations by site (the nearest sittir function to the allocation)', 'sites', 60, 0.002)
+    lines += comparison('allocations by function, inclusive (every function on the stack)', 'inclusive', 60, 0.01)
+    return lines
+
+
 def withoutLines(folded):
     result = Counter()
     for stack, count in folded.items():
@@ -294,7 +430,12 @@ def functionTables(heading, intro, inclusive, own, samples):
 code = lambda name: '`' + name.replace('|', '\\|') + '`'
 perBatch = lambda n: f'{n / BATCHES:.2f}'
 lines = [(out.parent / 'build-path.md').read_text().strip() if (out.parent / 'build-path.md').exists() else '', '']
-if NATIVE:
+if ALLOCS:
+    installProbes()
+    lines += [f'Arena {PHASE} allocations: uprobes on libc\'s {", ".join(ALLOC_FUNCTIONS)} ({run([PERF, "--version"]).strip()}), enabled only while a timed batch runs the phase, with frame-pointer call chains '
+              f'(the frame that called libc is not in a call chain taken at a function\'s entry); {BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}. '
+              f'Inlined functions are expanded from the line tables; generic arguments are dropped. Bytes are the size asked for, not malloc\'s usable size.', '']
+elif NATIVE:
     lines += [f'Arena render profile ({run([PERF, "--version"]).strip()}): cpu-clock every {PERIOD_NS / 1000:g} µs with frame-pointer call chains, enabled only while a timed batch renders; '
               f'{BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}. Inlined functions are expanded from the line tables; generic arguments are dropped.', '']
 for grammar in grammars:
@@ -306,12 +447,23 @@ for grammar in grammars:
         profile, facts = record(grammar, name, tree, copy)
         if NATIVE:
             images = sorted(str(p.resolve()) for p in copy.parent.iterdir() if p.is_file() and re.search(r'\.node$|\.so(\.|$)', p.name))
-            expanded, plain, coverage = fold(stacks(profile, label), tree, images)
+            counts, weights, kinds = stacks(profile, label)
+            expanded, plain, coverage, expandedWeights = fold(counts, tree, images, weights)
             profile.unlink()
             writeFolded(out / f'{label}.perf.collapsed.gz', plain)
+            if ALLOCS:
+                writeFolded(out / f'{label}.bytes.collapsed.gz', expandedWeights)
         else:
             expanded, coverage = jsStacks(profile, tree), None
         writeFolded(out / f'{label}.collapsed.gz', expanded)
+        if ALLOCS:
+            allocs = allocAnalysis(expanded, expandedWeights, kinds)
+            if not allocs['events']:
+                failures.append(f'{label}: no allocation was recorded; read {label}.perf-script.head and {label}.perf-script.err')
+            elif not any(CALLBACK.search(frame) for frame in allocs['inclusive']):
+                failures.append(f'{label}: no allocation stack reaches a `*_c_callback` frame; read {label}.collapsed.gz')
+            results[name] = (facts, allocs, run(['git', '-C', str(tree), 'rev-parse', '--short=9', 'HEAD']).strip())
+            continue
         analysis = analyse(expanded)
         compared = analysis if NATIVE else analyse(withoutLines(expanded))
         if NATIVE and not analysis['under']:
@@ -321,6 +473,9 @@ for grammar in grammars:
         results[name] = (facts, analysis, run(['git', '-C', str(tree), 'rev-parse', '--short=9', 'HEAD']).strip(), coverage, compared)
     first = names[0]
     firstFacts = results[first][0]
+    if ALLOCS:
+        lines += allocReport(grammar, names, results)
+        continue
     if not NATIVE:
         dropped = ', '.join(f'{n} {results[n][0]["sampling"]["controlSamples"]}' for n in names)
         lines += [f'Arena {PHASE} profile (node {firstFacts["node"]}, the inspector\'s Profiler): a sample every {JS_INTERVAL_US} µs, the profiler running only while a timed batch runs the phase; '
@@ -367,10 +522,10 @@ for grammar in grammars:
         lines.append('')
 lines += [f'**Failed:** {failure}' for failure in failures]
 markdown = '\n'.join(lines) + '\n'
-(out / f'{PHASE}-profile.md').write_text(markdown)
+(out / (f'{PHASE}-allocs.md' if ALLOCS else f'{PHASE}-profile.md')).write_text(markdown)
 if os.environ.get('GITHUB_STEP_SUMMARY'):
     with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
         summary.write(markdown)
-print('\n'.join(failures) if failures else f'{PHASE} profile written', flush=True)
+print('\n'.join(failures) if failures else f'{PHASE} {"allocation count" if ALLOCS else "profile"} written', flush=True)
 if failures:
     raise SystemExit(1)
