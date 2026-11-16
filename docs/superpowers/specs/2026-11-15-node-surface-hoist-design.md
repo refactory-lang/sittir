@@ -12,6 +12,7 @@
 - **"Set through the existing wrapper"** (2026-11-15). The setter replaces what the wrapper already there holds, so the wrapper's own facts stay, and it builds a wrapper only when the holder has none. See §3.
 - **"Hoist all that meet the rule"** (2026-11-15). No wrapper that meets the rule is held back, including the polymorphs that hold their own forms, the parameter lists with a receiver form, and the wrappers that are the thing read. See §5 and §7.
 - **"Through the tree only"** (2026-11-15). A wrapper node is reached through the tree, with no second getter. See §3.
+- **"Hoist; separator via the tree"** (2026-11-16). A list whose trailing separator is optional still hoists, and the separator stays on the wrapper. See §1.
 
 ## 1. The rule
 
@@ -26,7 +27,16 @@ Two cases fail condition 2 although every token is fixed:
 - **The wrapper's presence is a fact** when its slot may be empty and the holder's slot is optional. Typescript's `new Foo` and `new Foo()` differ only in whether `arguments` is there.
 - **A leaf is never a wrapper.** Rust's `'a` is a `lifetime` holding an `identifier` behind an always-spelled quote. Hoisted, it would read as an `Identifier`, and a lifetime read there couldn't be told from an identifier read anywhere else. The same holds for `label`. An alias leaf such as `type_identifier` has no child in the parse tree at all.
 
+Condition 2 accepts these tokens:
+
+- **A separator a list wrapper spells between its items, or before each one.** The items rebuild it, so it carries no fact. Python's `print >> f, a, b` spells a comma before each argument.
+- **An optional trailing separator.** It is a fact, but the list still hoists, and the separator stays on the wrapper. A set through the wrapper keeps it (§3), a read walks to the wrapper to see it, and a new build's options decide it. So python's `c[1,]` and `c[1]` both read `index: [1]`, and only the `subscripts` wrapper shows the comma.
+- **A zero-width token the parser always produces**, such as python's `_indent` and `_dedent`, which open and close a block.
+- **The tokens around a polymorph's forms.** A polymorph whose forms sit between tokens it always spells is an ordinary wrapper, and conditions 1–3 decide it. An example is rust's `visibility_modifier_pub_scope`, `(` … `)`.
+
 The rule composes. When the wrapper's own slot admits only another wrapper that meets the rule, the holder reads through both (§6). A chain stops at a slot that admits more than one kind, so the read there is that slot's node.
+
+A wrapper reached under an alias meets the rule as the kind its alias site names in the holder's rule, a hidden rule the holder inlines included. Python's `block_statement` is `block` under `suite_block` and `suite_inline` elsewhere. Typescript's setter signatures reach `formal_parameters` as the hidden `_formal_parameters_set_accessor_signature`, whose one slot admits only a one-parameter envelope (§7).
 
 ## 2. Client side only
 
@@ -45,6 +55,8 @@ The hoist is a view the TypeScript wrap layer gives. Nothing below it changes.
 
 Codegen decides the rule once per holder slot, at model time, and stamps the slot with its chain: the wrapper kinds, outermost first (`[type_parameters, type_parameters_elements]`). Every consumer in §2 reads the stamp, and none re-derives the three conditions. A slot the rule doesn't hold for carries no stamp.
 
+Every slot the rule holds for is stamped, a wrapper's own slot included. §5 and §6 list a chain once, at its outermost holder slot. A wrapper reached through the tree reads its own slot through the rest of its chain, so a `TypeParameters` node's `elements` reads `TypeParameter[]`. A wrapper that hoists at none of its holders, because their slots admit other kinds, is a holder like any other. Python's `list` keeps its node, and its `elements` reads through `collection_elements`.
+
 - **Get.** The getter keeps the holder slot's name. It reads the holder's native slot, then each wrapper's one slot in turn, and returns the last read. It returns a list when any step holds a list.
 - **Set.** The setter takes the hoisted type. When the holder already has the wrapper, it replaces what the innermost wrapper holds and leaves every wrapper on the chain in place, with its own facts: `$with.parameters([a, b, c])` on `def f(a, b,):` writes `def f(a, b, c,):`. When the holder has none, it builds each wrapper with that wrapper's own builder, innermost first, and each spells its fixed tokens.
 - **Build.** A factory and a loose `from` input take the hoisted type and wrap it the same way.
@@ -58,7 +70,12 @@ The two layers apply the same idea on their own terms. The portable layer flatte
 
 ## 5. Hoisted wrappers
 
-Master's models. The holder slots are named `Type.getter`. The rule holds at 221 holder slots in all: python 44 through 17 wrappers, rust 85 through 23, and typescript 92 through 22. This section lists the single wrappers and §6 the chains. Rows marked §7 have their exact reads and setters there.
+Master's models. The holder slots are named `Type.getter`. The rule holds at 276 slots: python 71, rust 103 and typescript 102.
+
+- **221 are approved.** Python 44 go through 17 wrappers, rust 85 through 23, and typescript 92 through 22. This section lists their single wrappers, §6 their chains, and rows marked §7 have their exact reads and setters there. Three of them, the typescript setter signatures, read differently from the row first approved (§7).
+- **55 are not yet approved**, listed at the end of this section. Of these, 37 slots are in no approved row, and 18 are chain hops, a wrapper's own slot on an approved chain (§3).
+
+`sittir tool hoist-census` prints these tables from the stamp (§3), and a test pins the counts.
 
 **Python**
 
@@ -120,6 +137,75 @@ Master's models. The holder slots are named `Type.getter`. The rule holds at 221
 
 A polymorph that holds its own forms reads as the form. Each such wrapper is a choice of forms with no token of its own, and its slot is required. Three of them have optional holders: rust's `visibility_modifier` (`fn f()` has none), typescript's `class_heritage` (`class A {}`) and python's `except_clause_exception` (a bare `except:`). The hoisted value is absent exactly when the wrapper is, and a set on a holder without one builds it. Python's `simple_pattern` is an alias site of the hidden `_simple_pattern`, and it reads as it does today.
 
+### Not yet approved
+
+The rule holds at these slots too. The user hasn't seen them yet. A ⚑ marks a list with an optional trailing separator, which stays on the wrapper (§1).
+
+These 37 are in no approved row. In most, the holder is a wrapper that hoists at none of its holders, because their slots admit other kinds (§3). `PrintStatementChevron.arguments` is a multi-slot holder whose list spells a comma before each item (§1).
+
+| holder slot | grammar | chain | before → after |
+|---|---|---|---|
+| `ArgumentList.arguments` | p | `argument_list_elements` | `ArgumentListElements` → `(DictionarySplat \| Expression \| KeywordArgument \| ListSplat \| ParenthesizedListSplat)[]` ⚑ |
+| `SuiteBlock.block` | p | `block` | `Block` → `Statement[]` |
+| `SuiteBlockClassDeclaration.blockClassDeclaration` | p | `block_class_declaration` | `BlockClassDeclaration` → `StatementClassDefinition[]` |
+| `CasePatternList.elements` | p | `case_pattern` | `CasePattern[]` → `(CaseAsPattern \| KeywordPattern \| simple_pattern)[]` |
+| `List.elements` | p | `collection_elements` | `CollectionElements` → `(Expression \| ListSplat \| ParenthesizedListSplat \| Yield)[]` ⚑ |
+| `Set.elements` | p | `collection_elements` | `CollectionElements` → `(Expression \| ListSplat \| ParenthesizedListSplat \| Yield)[]` ⚑ |
+| `DictPattern.elements` | p | `dict_pattern_elements` | `DictPatternElements` → `(KeyValuePattern \| SplatPattern)[]` ⚑ |
+| `Dictionary.elements` | p | `dictionary_elements` | `DictionaryElements` → `(DictionarySplat \| Pair)[]` ⚑ |
+| `ParenthesizedImportList.importList` | p | `import_list` | `ImportList` → `(AliasedImport \| qualified_identifier)[]` ⚑ |
+| `CaseListPattern.elements` | p | `list_pattern_case_patterns → case_pattern` | `ListPatternCasePatterns` → `(CaseAsPattern \| KeywordPattern \| simple_pattern)[]` ⚑ |
+| `CaseTuplePattern.elements` | p | `list_pattern_case_patterns → case_pattern` | `ListPatternCasePatterns` → `(CaseAsPattern \| KeywordPattern \| simple_pattern)[]` ⚑ |
+| `ImportStatement.names` | p | `names` | `Names` → `(AliasedImport \| qualified_identifier)[]` ⚑ |
+| `ListPattern.elements` | p | `patterns` | `Patterns` → `Pattern[]` ⚑ |
+| `PrintStatementPlain.arguments` | p | `print_arguments` | `PrintArguments` → `Expression[]` ⚑ |
+| `PrintStatementChevron.arguments` | p | `print_chevron_arguments` | `PrintChevronArguments` → `Expression[]` ⚑ |
+| `SuiteInline.statements` | p | `simple_statements_elements` | `SimpleStatementsElements` → `SimpleStatement[]` ⚑ |
+| `Tuple.elements` | p | `tuple_elements` | `TupleElements` → `(Expression \| ListSplat \| ParenthesizedListSplat \| Yield)[]` ⚑ |
+| `TuplePattern.elements` | p | `tuple_pattern_elements` | `TuplePatternElements` → `Pattern[]` ⚑ |
+| `Types.items` | p | `type` | `Type[]` → `(ConstrainedType \| Expression \| GenericType \| SplatType \| UnionType \| …)[]` |
+| `WithClauseParen.items` | p | `with_clause_with_items → with_item` | `WithClauseWithItems` → `Expression[]` ⚑ |
+| `WithClauseBare.items` | p | `with_item` | `WithItem[]` → `Expression[]` |
+| `WithClauseWithItems.items` | p | `with_item` | `WithItem[]` → `Expression[]` |
+| `ArrayExpressionList.elements` | r | `array_expression_list_elements` | `ArrayExpressionListElements` → `(AttributedElement \| Expression)[]` ⚑ |
+| `ParametersElementsReceiverGroup.elements` | r | `parameters_elements` | `ParametersElements` → `AttributedParameter[]` ⚑ |
+| `SlicePattern.elements` | r | `patterns` | `Patterns` → `Pattern[]` ⚑ |
+| `TupleExpression.elements` | r | `tuple_expression_elements` | `TupleExpressionElements` → `(AttributedElement \| Expression)[]` ⚑ |
+| `TuplePattern.elements` | r | `tuple_pattern_elements` | `TuplePatternElements` → `(ClosureExpression \| Pattern)[]` ⚑ |
+| `TupleType.types` | r | `types` | `Types` → `Type[]` ⚑ |
+| `UseBounds.bounds` | r | `use_bounds_elements` | `UseBoundsElements` → `(Lifetime \| TypeIdentifier)[]` ⚑ |
+| `VisibilityModifierPub.visibilityModifierPubScope` | r | `visibility_modifier_pub_scope` | `VisibilityModifierPubScope` → `Crate \| SelfModule \| Super \| VisibilityModifierPubScopeInPath` |
+| `WhereClause.wherePredicates` | r | `where_predicates` | `WherePredicates` → `WherePredicate[]` ⚑ |
+| `TypeQueryCallExpression.arguments` | t | `arguments` | `Arguments` → `(Expression \| SpreadElement)[]` |
+| `AssertsAnnotation.asserts` | t | `asserts` | `Asserts` → `Identifier \| This \| TypePredicate` |
+| `FormalParametersElementsReceiverGroup.elements` | t | `formal_parameters_elements` | `FormalParametersElements` → `(OptionalParameter \| RequiredParameter)[]` ⚑ |
+| `NamedImports.importSpecifiers` | t | `import_specifiers` | `ImportSpecifiers` → `ImportSpecifier[]` ⚑ |
+| `ParenthesizedExpressionSequence.sequenceExpression` | t | `sequence_expression` | `SequenceExpression` → `Expression[]` |
+| `TupleType.tupleTypeMembers` | t | `tuple_type_members` | `TupleTypeMembers` → `(OptionalTupleParameter \| OptionalType \| RestType \| TupleParameter \| Type)[]` ⚑ |
+
+These 18 are chain hops. The wrapper hoists at its holders under an approved row, and its own slot reads through the rest of the chain when the wrapper is reached through the tree (§3).
+
+| wrapper slot | grammar | chain | before → after |
+|---|---|---|---|
+| `ListPatternCasePatterns.items` | p | `case_pattern` | `CasePattern[]` → `(CaseAsPattern \| KeywordPattern \| simple_pattern)[]` |
+| `LambdaParameters.parametersElements` | p | `parameters_elements` | `ParametersElements` → `Parameter[]` ⚑ |
+| `Parameters.elements` | p | `parameters_elements` | `ParametersElements` → `Parameter[]` ⚑ |
+| `TypeParams.items` | p | `type_params_items` | `TypeParamsItems` → `TypeParam[]` ⚑ |
+| `TypeParameter.types` | p | `types → type` | `Types` → `(ConstrainedType \| Expression \| GenericType \| SplatType \| UnionType \| …)[]` ⚑ |
+| `Arguments.elements` | r | `arguments_elements` | `ArgumentsElements` → `Argument[]` ⚑ |
+| `EnumVariantList.elements` | r | `enum_variant_list_elements` | `EnumVariantListElements` → `AttributedEnumVariant[]` ⚑ |
+| `FieldDeclarationList.elements` | r | `field_declaration_list_elements` | `FieldDeclarationListElements` → `AttributedFieldDeclaration[]` ⚑ |
+| `FieldInitializerList.initializers` | r | `field_initializer_list_elements` | `FieldInitializerListElements` → `(BaseFieldInitializer \| FieldInitializer \| ShorthandFieldInitializer)[]` ⚑ |
+| `ForLifetimes.lifetimes` | r | `lifetimes` | `Lifetimes` → `Lifetime[]` ⚑ |
+| `OrderedFieldDeclarationList.elements` | r | `ordered_field_declaration_list_elements` | `OrderedFieldDeclarationListElements` → `AttributedOrderedField[]` ⚑ |
+| `TypeArguments.elements` | r | `type_arguments_elements` | `TypeArgumentsElements` → `TypeArgument[]` ⚑ |
+| `TypeParameters.elements` | r | `type_parameters_elements` | `TypeParametersElements` → `AttributedTypeParameter[]` ⚑ |
+| `UseList.useClauses` | r | `use_clauses` | `UseClauses` → `(Crate \| Identifier \| Metavariable \| ScopedUseList \| SelfModule \| …)[]` ⚑ |
+| `EnumBody.elements` | t | `enum_body_elements` | `EnumBodyElements` → `EnumBodyElement[]` ⚑ |
+| `ExportClause.exportSpecifiers` | t | `export_specifiers` | `ExportSpecifiers` → `ExportSpecifier[]` ⚑ |
+| `TypeParameters.elements` | t | `type_parameters_elements` | `TypeParametersElements` → `TypeParameter[]` ⚑ |
+| `TypeArguments.types` | t | `types` | `Types` → `Type[]` ⚑ |
+
 ## 6. Composed chains
 
 Each chain reads through every wrapper on it. Most end in a list that sittir mints for the separated items (`…_elements`).
@@ -150,7 +236,11 @@ Each chain reads through every wrapper on it. Most end in a list that sittir min
 
 These five read something other than a plain list or a single node, so their getters and setters are written out in full. Each setter follows the maintainer's ruling: it replaces what the wrapper already there holds and keeps the wrapper with its facts.
 
-**Typescript `formal_parameters`** (16 holder slots, all required). The node is `seq('(', optional(elements: formal_parameters_elements | formal_parameters_elements_receiver), ')')`. Its slot admits two kinds, so the chain stops there, and the read is a list node, not an array.
+**Typescript `formal_parameters`** (16 holder slots, all required). The node is `seq('(', optional(elements: formal_parameters_elements | formal_parameters_elements_receiver), ')')`. At 13 holder slots its slot admits two kinds, so the chain stops there, and the read is a list node, not an array.
+
+The other three are the setter signatures: `MethodDefinitionSetter`, `MethodSignatureSetter` and `AbstractMethodSignatureSetter`. Each reaches `formal_parameters` as the hidden `_formal_parameters_set_accessor_signature`. Its one slot admits only a `formal_parameters_elements` that holds exactly one parameter (§1, aliases), so the chain continues. `set x(v) {}` reads `parameters()` as the `SetterParameter` `v`, and `$with.parameters(w)` replaces it inside the parentheses already there. The read changes from the row first approved, which showed the list node.
+
+The 13 other holder slots read as follows:
 
 | source | `parameters()` | `$with.parameters(x)` |
 |---|---|---|
