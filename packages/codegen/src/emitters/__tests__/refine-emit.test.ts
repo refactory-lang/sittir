@@ -365,9 +365,8 @@ describe('types emitter — per-form namespace sugar', () => {
 			/Curly \{\s+export type Config = Omit<ConfigFor<TSKindId.IfaceBody>, "opening" \| "closing">/
 		);
 		expect(typesSrc).not.toMatch(/\bIfaceBody\w*Tree\b/);
-		// Default Config points at the first-declared form.
-		expect(typesSrc).toMatch(/Default form: 'curly' \(first-declared\)/);
-		expect(typesSrc).toMatch(/export type Config = Curly\.Config;/);
+		expect(typesSrc).toMatch(/No default form: every form field is required\./);
+		expect(typesSrc).not.toMatch(/export type Config = Curly\.Config;/);
 	});
 
 	it('narrows Config through synthesized enum-symbol indirection', () => {

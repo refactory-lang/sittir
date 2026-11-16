@@ -461,7 +461,6 @@ export const records = {
 		arguments: { word: 5, width: 3, forms: 1, built: 3 }
 	},
 	PrintStatementPlainNode: { words: 5, builtWords: 3, arguments: { word: 2, width: 3, forms: 1, built: 2 } },
-	ParenthesizedImportListNode: { words: 5, builtWords: 3, import_list: { word: 2, width: 3, forms: 1, built: 2 } },
 	ComprehensionClausesNode: { words: 3, builtWords: 3, content: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	IntegerHexLongNode: {
 		words: 10,
@@ -608,6 +607,7 @@ export const records = {
 	SimplePatternNegativeNode: { words: 5, builtWords: 3, value: { word: 2, width: 3, forms: 1, built: 2 } },
 	ExceptClauseExceptionListNode: { words: 3, builtWords: 3, value: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
 	ExceptClauseExceptionNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
+	ParenthesizedImportListNode: { words: 5, builtWords: 3, import_list: { word: 2, width: 3, forms: 1, built: 2 } },
 	SplatPatternListNode: { words: 6, builtWords: 3, pattern: { word: 2, width: 4, forms: 3, built: 2 } },
 	SplatPatternDictionaryNode: { words: 6, builtWords: 3, pattern: { word: 2, width: 4, forms: 3, built: 2 } },
 	AssignmentEqNode: {

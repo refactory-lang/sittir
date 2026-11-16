@@ -26,7 +26,7 @@ export const triviaFacts = Object.freeze({
 	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([
 		90, 91, 92, 93, 94, 95, 96, 97, 98, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 265, 266, 267, 268, 269, 270,
-		271, 272, 273, 274, 290, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314,
+		271, 272, 273, 274, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314,
 		315, 319, 359
 	]),
 	listKinds: new Set<number>([
@@ -500,11 +500,11 @@ export const querySlots: QuerySlots = Object.freeze({
 		['arguments', 1, undefined, '_arguments']
 	],
 	288: [['arguments', 0, undefined, '_arguments']],
-	290: [['importList', 0, undefined, '_import_list']],
-	291: [['contents', 0, undefined, '_content']],
-	297: [['value', 0, undefined, '_value']],
-	298: [['values', 0, undefined, '_value']],
-	299: [['content', 0, undefined, '_content']],
+	290: [['contents', 0, undefined, '_content']],
+	296: [['value', 0, undefined, '_value']],
+	297: [['values', 0, undefined, '_value']],
+	298: [['content', 0, undefined, '_content']],
+	299: [['importList', 0, undefined, '_import_list']],
 	300: [['pattern', 0, undefined, '_pattern']],
 	301: [['pattern', 0, undefined, '_pattern']],
 	302: [
@@ -817,7 +817,7 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_content', 'content']],
 		single: [['_content', 'FutureImportStatement.content']],
 		nodeOnly: [
-			['_content', 'FutureImportStatement.content', 'a built ImportList / ParenthesizedImportList', [141, 290]]
+			['_content', 'FutureImportStatement.content', 'a built ImportList / ParenthesizedImportList', [141, 299]]
 		]
 	},
 	140: {
@@ -1081,7 +1081,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'ExceptClause.body']
 		],
 		nodeOnly: [
-			['_exception', 'ExceptClause.exception', 'a built ExceptClauseException', [299]],
+			['_exception', 'ExceptClause.exception', 'a built ExceptClauseException', [298]],
 			['_body', 'ExceptClause.body', 'a built Suite']
 		],
 		booleans: [['_group', 'ExceptClause.group']],
@@ -1856,7 +1856,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_body', 'ListComprehension.body', 'a built Expression', [210]],
-			['_clauses', 'ListComprehension.clauses', 'a built ComprehensionClauses', [291]]
+			['_clauses', 'ListComprehension.clauses', 'a built ComprehensionClauses', [290]]
 		],
 		config: ['body', 'clauses']
 	},
@@ -1872,7 +1872,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_body', 'DictionaryComprehension.body', 'a built Pair', [242]],
-			['_clauses', 'DictionaryComprehension.clauses', 'a built ComprehensionClauses', [291]]
+			['_clauses', 'DictionaryComprehension.clauses', 'a built ComprehensionClauses', [290]]
 		],
 		config: ['body', 'clauses']
 	},
@@ -1888,7 +1888,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_body', 'SetComprehension.body', 'a built Expression', [210]],
-			['_clauses', 'SetComprehension.clauses', 'a built ComprehensionClauses', [291]]
+			['_clauses', 'SetComprehension.clauses', 'a built ComprehensionClauses', [290]]
 		],
 		config: ['body', 'clauses']
 	},
@@ -1904,7 +1904,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_body', 'GeneratorExpression.body', 'a built Expression', [210]],
-			['_clauses', 'GeneratorExpression.clauses', 'a built ComprehensionClauses', [291]]
+			['_clauses', 'GeneratorExpression.clauses', 'a built ComprehensionClauses', [290]]
 		],
 		config: ['body', 'clauses']
 	},
@@ -2187,30 +2187,24 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [['_arguments', 'PrintStatementPlain.arguments', 'a built PrintArguments', [285]]]
 	},
 	290: {
-		kind: 'parenthesized_import_list',
-		required: [['_import_list', 'importList']],
-		single: [['_import_list', 'ParenthesizedImportList.importList']],
-		nodeOnly: [['_import_list', 'ParenthesizedImportList.importList', 'a built ImportList', [141]]]
-	},
-	291: {
 		kind: 'comprehension_clauses',
 		nonEmpty: [['_content', 'comprehension_clauses.children']],
 		nodeOnly: [['_content', 'ComprehensionClauses.contents', 'a built ForInClause / IfClause', [249, 250]]],
 		lists: [['contents', false, 0]]
 	},
-	297: {
+	296: {
 		kind: 'simple_pattern_negative',
 		required: [['_value', 'value']],
 		single: [['_value', 'SimplePatternNegative.value']],
 		nodeOnly: [['_value', 'SimplePatternNegative.value', 'a built Integer / Float', [260, 261]]]
 	},
-	298: {
+	297: {
 		kind: 'except_clause_exception_list',
 		nonEmpty: [['_value', 'except_clause_exception_list.children']],
 		nodeOnly: [['_value', 'ExceptClauseExceptionList.values', 'a built Expression', [210]]],
 		lists: [['values', false, 0]]
 	},
-	299: {
+	298: {
 		kind: 'except_clause_exception',
 		required: [['_content', 'content']],
 		single: [['_content', 'ExceptClauseException.content']],
@@ -2219,9 +2213,15 @@ export const structure: StructureTable = Object.freeze({
 				'_content',
 				'ExceptClauseException.content',
 				'a built ExceptClauseExceptionAs / ExceptClauseExceptionList',
-				[282, 298]
+				[282, 297]
 			]
 		]
+	},
+	299: {
+		kind: 'parenthesized_import_list',
+		required: [['_import_list', 'importList']],
+		single: [['_import_list', 'ParenthesizedImportList.importList']],
+		nodeOnly: [['_import_list', 'ParenthesizedImportList.importList', 'a built ImportList', [141]]]
 	},
 	300: {
 		kind: 'splat_pattern_list',

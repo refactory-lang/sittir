@@ -251,7 +251,7 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 
 ### Task 6: Hydrate at parse and drop the tree inside the read call
 
-**Status:** open as #1227 (the codec stage and the tree dropped inside the read call; #1183 is superseded and closes when #1227 lands). Its landing gate, set 2026-11-14, is measured on CI: render and edit against master's arena, parse plus whole read against object storage. Head `b3dd0c4ad` (2026-11-15) takes the side reads off the edit path, as the spec's Decided section records; its paired run is pending.
+**Status:** open as #1227 (the codec stage and the tree dropped inside the read call; #1183 is superseded and closes when #1227 lands). Its landing gate, set 2026-11-14, is measured on CI: render and edit against master's arena, parse plus whole read against object storage. On `6664f9dbe` (paired run, Rust 1.100.0): parse plus whole read is ×0.63–0.70 of object, so that gate holds; render is ×1.31–1.46 of master's arena, so that gate does not. The render gap is placement-time navigation, which Task 6c's steps 3 and 4 delete. **Ruled 2026-11-16: "Keep the gate; fold placement into #1227".** Task 6c is built on this branch and the two land as one PR when render and edit meet the gate. Head `b30da527d` carries the edit fix; its paired run is in progress.
 
 This is tree lifetime only, as the spec's Tree lifetime section rules. It adds no per-tree owner, slot, table or count, and it designs no node release.
 
@@ -314,6 +314,43 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It follows Task 6 as its 
 - [ ] **Step 4: Implement.**
 - [ ] **Step 5: Run the three-way verification** in arena storage, and the speed gate: arena is not slower on any CI CPU on the rebuilt, codemod and many-names cases.
 - [ ] **Step 6: Commit:** `feat(arena): the string pool is interned natively`.
+
+### Task 6c: A parse places comments; whitespace placement is deleted
+
+**Status:** step 1 committed locally on `feat/comments-at-parse` (cut from Task 6's branch), 2026-11-16. Approved by the maintainer 2026-11-15. **It lands inside Task 6's PR** (ruled 2026-11-16), not after it: its steps 3 and 4 are what bring Task 6's render under its gate.
+
+**Spec:** `docs/superpowers/specs/2026-11-15-parsed-comments-at-parse-design.md`. Its "Order" section is this task's step list, and each step is measured on a paired run against master's arena before the next.
+
+- [ ] **Step 1:** comments and ERRORs placed in the hydration walk, stored where no render reads them, with the parity test green on every fixture. No output change.
+- [ ] **Step 2:** the blank-line entry between list items. Waits for the maintainer to see parse time and retained bytes.
+- [ ] **Step 3:** a render reads the parse-placed sides; the baseline, deviations and runs are deleted; expectations retaken once.
+- [ ] **Step 4:** the placer and per-tree placement are deleted.
+- [ ] **Step 5:** a census of what still reads the plain token rows.
+
+### Task 6d: One release for parsed and built records
+
+**Status:** ruled 2026-11-16, not designed. A proposal goes to the maintainer before any code; the spec's "Rulings since" section names the two sentences it replaces.
+
+### Task 6e: One reader for each fact a record's words hold
+
+**Status:** ruled 2026-11-16 ("let's fix the 14 functions"); outline accepted 2026-11-16; no code until Task 6 merges, since these files change there. The list is re-checked against Task 6 as merged.
+
+A census on Task 6's head (`b30da527d`) found 15 functions in 7 files that read a record's words by hand: a literal index, a shift or a mask, beside the function that already knows that fact. The count first reported from master, 14, was wrong in both directions; several of those read through the views already, or are writers.
+
+None of the 15 can go through a typed, derived view: each walks a record by its kind's shape, not as a node type. What each can do is read a fact through the one function that owns it. Three shared untyped readers, plus the existing `parsed_cells`:
+
+1. **`ArenaRead::side_of(at)`,** beside `header_kind` in `borrowed.rs`: the side record's address, header word 1. Replaces the literal `words[1]` or `header[1]` in `admit.rs` `admit`, `count.rs` `release_record`, `run_nodes.rs` `source_of` and `read`, `prep.rs` `SlotAt::of`, and `view.rs` `record_of` and `linked_leaf_place`.
+2. **`CellWord` accessors in `cell.rs`** (`address()`, `edges()`, a constructor from an address or an entry): the built cell word's bits. Replaces `word >> 2`, `word & 3`, `at << 2` and `entry * 4` in `count.rs` `drop_cell`, `release`, `release_record` and `reaches`, and `built.rs` `admitted_leaf`.
+3. **One walker over a built record's cells,** yielding each cell's shape, item and raw word, with decoding left to the caller: `admit.rs` `for_each_built_cell`, moved beside `view.rs` `parsed_cells`. Admission decodes what it yields, since it validates bytes JavaScript wrote before a view may trust them. Release counts the raw words and decodes no text. `count.rs` `reaches` and `release_record` use it in place of their own walks.
+4. **`parsed_cells`,** as it is, for `site.rs` `site_row` and `row_sites`; and `cell.rs` `linked` and `ListCell::items`, as they are, for `count.rs` `release_held`.
+
+Any new `pub` item among these is a row for the maintainer before code.
+
+- [x] **Step 1: The outline.** Accepted 2026-11-16.
+- [ ] **Step 2:** the list re-taken on Task 6 as merged.
+- [ ] **Step 3: Implement,** one commit per reader, then one per file moved onto it, in the order above. Renders and record goldens stay byte-identical.
+- [ ] **Step 4: A guard:** a source scan that fails on a shift or mask against a cell word, a literal index into a record's header, or a cell decode, anywhere outside `cell.rs`, `side.rs`, `borrowed.rs`, the two walkers and the derived views. Its list of exceptions is empty when the task ends.
+- [ ] **Step 5: The three-way verification** and a paired run; a refactor with no behaviour change moves no row.
 
 ### Task 7: The measurements
 

@@ -753,3 +753,35 @@ The command that checks every workspace crate compiles together, as an argument 
 ### `packages/codegen/src/scripts/workspace-check.ts::runWorkspaceCheck`
 
 Runs `WORKSPACE_CHECK` in `cwd` with inherited output and returns its exit status (1 when it has none), printing a diagnostic when it fails. A native build runs it after building its binding unless told not to (`runNativeBuild`), and `regenerateGrammars` runs it once itself when no grammar was regenerated, since no native build ran it then.
+
+### `packages/codegen/src/scripts/native-artifacts.ts::BuildScriptOutput`
+
+One build-script result that cargo reported: the package it ran for and the output directory it wrote to.
+
+### `packages/codegen/src/scripts/native-artifacts.ts::CARGO_MESSAGE_FORMAT`
+
+The cargo flag that makes cargo print its build messages as JSON lines with rendered diagnostics, the format the artifact parsers read.
+
+### `packages/codegen/src/scripts/native-artifacts.ts::CargoArtifact`
+
+One compiled artifact that cargo reported: its package, its manifest, its target, its crate kinds and the files it produced.
+
+### `packages/codegen/src/scripts/native-artifacts.ts::artifactFile`
+
+The path of the named file among the files cargo produced for a manifest. Throws when cargo named no file with that basename, so a missing artifact fails at the call and not later.
+
+### `packages/codegen/src/scripts/native-artifacts.ts::buildScriptFile`
+
+The path of a file that a manifest's build script wrote into its output directory. Throws when cargo reported no build-script output for the manifest or the file does not exist.
+
+### `packages/codegen/src/scripts/native-artifacts.ts::linkerMapFile`
+
+The path of the linker map that cargo writes beside a cdylib's build output. It finds that output by matching the cdylib file against the package's build directories, and throws when no build output matches, since the map cannot be placed without it.
+
+### `packages/codegen/src/scripts/native-artifacts.ts::parseBuildScriptOutputs`
+
+Reads cargo's JSON stdout and keeps the build-script-executed messages, each as a package id and output directory. Other messages are dropped.
+
+### `packages/codegen/src/scripts/native-artifacts.ts::parseCargoArtifacts`
+
+Reads cargo's JSON stdout and returns one CargoArtifact for each compiler-artifact message. Other messages are dropped.

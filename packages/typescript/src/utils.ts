@@ -26,7 +26,7 @@ export const triviaFacts = Object.freeze({
 	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([
 		153, 154, 155, 156, 157, 158, 159, 161, 162, 163, 164, 165, 166, 384, 385, 387, 388, 390, 391, 392, 393, 394, 396,
-		403, 404, 405, 407, 409, 410, 411, 412, 413, 414, 415, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428,
+		402, 404, 406, 407, 408, 409, 410, 411, 412, 414, 415, 416, 417, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428,
 		429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 442, 443, 444, 445, 449, 453, 454, 455, 456, 457, 458, 459,
 		460, 461, 462, 463, 464, 471, 500, 501, 502, 503, 505
 	]),
@@ -49,7 +49,7 @@ export const triviaFacts = Object.freeze({
 		[379, ['_tuple_type_members']]
 	]),
 	namedUnits: new Set<number>([
-		54, 129, 175, 180, 197, 227, 255, 279, 280, 281, 282, 283, 327, 364, 395, 408, 416, 440, 441, 447, 504
+		54, 129, 175, 180, 197, 227, 255, 279, 280, 281, 282, 283, 327, 364, 395, 405, 413, 440, 441, 447, 504
 	]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\x09-\x0D\x20\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
@@ -525,7 +525,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	355: [
 		['object', 0, undefined, '_object'],
-		['optionalChain', 1, '?.', '_optional_chain', 416],
+		['optionalChain', 1, '?.', '_optional_chain', 413],
 		['index', 2, undefined, '_index']
 	],
 	356: [['arguments', 0, undefined, '_arguments']],
@@ -622,64 +622,64 @@ export const querySlots: QuerySlots = Object.freeze({
 		['terminator', 2, undefined, '_terminator', undefined, true]
 	],
 	401: [['items', 0, undefined, '_item']],
-	403: [
-		['name', 0, undefined, '_name'],
-		['terminator', 1, undefined, '_terminator']
-	],
+	402: [['value', 0, undefined, '_value']],
 	404: [
-		['value', 0, undefined, '_value'],
-		['terminator', 1, undefined, '_terminator']
-	],
-	405: [['value', 0, undefined, '_value']],
-	407: [
 		['left', 0, undefined, '_left'],
 		['right', 1, undefined, '_right']
 	],
-	409: [
+	406: [
 		['decorators', 0, undefined, '_decorator'],
 		['methodDefinition', 1, undefined, '_method_definition'],
 		['terminator', 2, undefined, '_terminator', undefined, true]
 	],
-	410: [
+	407: [
 		['methodSignature', 0, undefined, '_method_signature'],
 		['terminator', 1, undefined, '_terminator']
 	],
-	411: [
+	408: [
 		['member', 0, undefined, '_member'],
 		['terminator', 1, undefined, '_terminator']
 	],
-	412: [
+	409: [
 		['sign', 0, undefined, '_sign'],
 		['readonly', 1, 'readonly', '_readonly', 38],
 		['name', 2, undefined, '_name'],
 		['indexType', 3, undefined, '_index_type'],
 		['type', 4, undefined, '_type']
 	],
-	413: [
+	410: [
 		['sign', 0, undefined, '_sign'],
 		['readonly', 1, 'readonly', '_readonly', 38],
 		['mappedTypeClause', 2, undefined, '_mapped_type_clause'],
 		['type', 3, undefined, '_type']
 	],
-	414: [
+	411: [
 		['importClause', 0, undefined, '_import_clause'],
 		['source', 1, undefined, '_source']
 	],
-	415: [['expression', 0, undefined, '_expression']],
-	417: [
+	412: [['expression', 0, undefined, '_expression']],
+	414: [
 		['typeKeyword', 0, undefined, '_type_keyword'],
 		['name', 1, undefined, '_name']
 	],
-	418: [
+	415: [
 		['typeKeyword', 0, undefined, '_type_keyword'],
 		['name', 1, undefined, '_name'],
 		['alias', 2, undefined, '_alias']
 	],
-	419: [
+	416: [
 		['expression', 0, undefined, '_expression'],
 		['type', 1, undefined, '_type']
 	],
-	420: [['sequenceExpression', 0, undefined, '_sequence_expression']],
+	417: [['sequenceExpression', 0, undefined, '_sequence_expression']],
+	419: [
+		['value', 0, undefined, '_value'],
+		['terminator', 1, undefined, '_terminator']
+	],
+	420: [
+		['name', 0, undefined, '_name'],
+		['terminator', 1, undefined, '_terminator']
+	],
 	421: [
 		['function', 0, undefined, '_function'],
 		['typeArguments', 1, undefined, '_type_arguments'],
@@ -1065,7 +1065,7 @@ export const structure: StructureTable = Object.freeze({
 				'_from_clause',
 				'ImportStatement.fromClause',
 				'a built ImportStatementClauseFrom / ImportRequireClause / String',
-				[273, 309, 414]
+				[273, 309, 411]
 			],
 			['_import_attribute', 'ImportStatement.importAttribute', 'a built ImportAttribute', [204]]
 		],
@@ -1404,7 +1404,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'yield_expression',
 		single: [['_expression', 'YieldExpression.expression']],
 		nodeOnly: [
-			['_expression', 'YieldExpression.expression', 'a built YieldExpressionDelegate / Expression', [235, 415]]
+			['_expression', 'YieldExpression.expression', 'a built YieldExpressionDelegate / Expression', [235, 412]]
 		]
 	},
 	238: {
@@ -1818,7 +1818,7 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_left', 'BinaryExpression.left', 'a built Expression', [235]],
 			['_right', 'BinaryExpression.right', 'a built Expression', [235]],
-			['_binary_expression_in', 'BinaryExpression.binaryExpressionIn', 'a built BinaryExpressionIn', [407]]
+			['_binary_expression_in', 'BinaryExpression.binaryExpressionIn', 'a built BinaryExpressionIn', [404]]
 		],
 		kindIds: [
 			[
@@ -3041,29 +3041,13 @@ export const structure: StructureTable = Object.freeze({
 		],
 		lists: [['items', false, 0]]
 	},
-	403: {
-		kind: 'export_statement_namespace_export',
-		required: [['_name', 'name']],
-		single: [['_name', 'ExportStatementNamespaceExport.name']],
-		nodeOnly: [['_name', 'ExportStatementNamespaceExport.name', 'buildIdentifier(…)', [1]]],
-		kindIds: [['_terminator', 'ExportStatementNamespaceExport.terminator', [22, 175]]],
-		options: ['terminator']
-	},
-	404: {
-		kind: 'export_statement_equals_export',
-		required: [['_value', 'value']],
-		single: [['_value', 'ExportStatementEqualsExport.value']],
-		nodeOnly: [['_value', 'ExportStatementEqualsExport.value', 'a built Expression', [235]]],
-		kindIds: [['_terminator', 'ExportStatementEqualsExport.terminator', [22, 175]]],
-		options: ['terminator']
-	},
-	405: {
+	402: {
 		kind: 'literal_type_negative_number',
 		required: [['_value', 'value']],
 		single: [['_value', 'LiteralTypeNegativeNumber.value']],
 		nodeOnly: [['_value', 'LiteralTypeNegativeNumber.value', 'a built Number', [277]]]
 	},
-	407: {
+	404: {
 		kind: 'binary_expression_in',
 		required: [
 			['_left', 'left'],
@@ -3079,7 +3063,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['left', 'right']
 	},
-	409: {
+	406: {
 		kind: 'class_body_member_method',
 		required: [['_method_definition', 'methodDefinition']],
 		single: [['_method_definition', 'ClassBodyMemberMethod.methodDefinition']],
@@ -3097,7 +3081,7 @@ export const structure: StructureTable = Object.freeze({
 		lists: [['decorators', false, 'key']],
 		options: ['terminator']
 	},
-	410: {
+	407: {
 		kind: 'class_body_member_method_sig',
 		required: [['_method_signature', 'methodSignature']],
 		single: [['_method_signature', 'ClassBodyMemberMethodSig.methodSignature']],
@@ -3105,7 +3089,7 @@ export const structure: StructureTable = Object.freeze({
 		kindIds: [['_terminator', 'ClassBodyMemberMethodSig.terminator', [15, 180]]],
 		options: ['terminator']
 	},
-	411: {
+	408: {
 		kind: 'class_body_member_declaration',
 		required: [['_member', 'member']],
 		single: [['_member', 'ClassBodyMemberDeclaration.member']],
@@ -3120,7 +3104,7 @@ export const structure: StructureTable = Object.freeze({
 		kindIds: [['_terminator', 'ClassBodyMemberDeclaration.terminator', [15, 22, 175]]],
 		options: ['terminator']
 	},
-	412: {
+	409: {
 		kind: 'index_signature_colon',
 		required: [
 			['_name', 'name'],
@@ -3146,7 +3130,7 @@ export const structure: StructureTable = Object.freeze({
 		kindIds: [['_sign', 'IndexSignatureColon.sign', [103, 104]]],
 		config: ['sign', 'readonly', 'name', 'indexType', 'type']
 	},
-	413: {
+	410: {
 		kind: 'index_signature_mapped_type_clause',
 		required: [
 			['_mapped_type_clause', 'mappedTypeClause'],
@@ -3169,7 +3153,7 @@ export const structure: StructureTable = Object.freeze({
 		kindIds: [['_sign', 'IndexSignatureMappedTypeClause.sign', [103, 104]]],
 		config: ['sign', 'readonly', 'mappedTypeClause', 'type']
 	},
-	414: {
+	411: {
 		kind: 'import_statement_clause_from',
 		required: [
 			['_import_clause', 'importClause'],
@@ -3185,13 +3169,13 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['importClause', 'source']
 	},
-	415: {
+	412: {
 		kind: 'yield_expression_delegate',
 		required: [['_expression', 'expression']],
 		single: [['_expression', 'YieldExpressionDelegate.expression']],
 		nodeOnly: [['_expression', 'YieldExpressionDelegate.expression', 'a built Expression', [235]]]
 	},
-	417: {
+	414: {
 		kind: 'import_specifier_name',
 		required: [['_name', 'name']],
 		single: [['_name', 'ImportSpecifierName.name']],
@@ -3199,7 +3183,7 @@ export const structure: StructureTable = Object.freeze({
 		kindIds: [['_type_keyword', 'ImportSpecifierName.typeKeyword', [7, 8]]],
 		config: ['typeKeyword', 'name']
 	},
-	418: {
+	415: {
 		kind: 'import_specifier_as',
 		required: [
 			['_name', 'name'],
@@ -3216,7 +3200,7 @@ export const structure: StructureTable = Object.freeze({
 		kindIds: [['_type_keyword', 'ImportSpecifierAs.typeKeyword', [7, 8]]],
 		config: ['typeKeyword', 'name', 'alias']
 	},
-	419: {
+	416: {
 		kind: 'parenthesized_expression_typed',
 		required: [['_expression', 'expression']],
 		single: [
@@ -3229,7 +3213,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['expression', 'type']
 	},
-	420: {
+	417: {
 		kind: 'parenthesized_expression_sequence',
 		required: [['_sequence_expression', 'sequenceExpression']],
 		single: [['_sequence_expression', 'ParenthesizedExpressionSequence.sequenceExpression']],
@@ -3241,6 +3225,22 @@ export const structure: StructureTable = Object.freeze({
 				[272]
 			]
 		]
+	},
+	419: {
+		kind: 'export_statement_equals_export',
+		required: [['_value', 'value']],
+		single: [['_value', 'ExportStatementEqualsExport.value']],
+		nodeOnly: [['_value', 'ExportStatementEqualsExport.value', 'a built Expression', [235]]],
+		kindIds: [['_terminator', 'ExportStatementEqualsExport.terminator', [22, 175]]],
+		options: ['terminator']
+	},
+	420: {
+		kind: 'export_statement_namespace_export',
+		required: [['_name', 'name']],
+		single: [['_name', 'ExportStatementNamespaceExport.name']],
+		nodeOnly: [['_name', 'ExportStatementNamespaceExport.name', 'buildIdentifier(…)', [1]]],
+		kindIds: [['_terminator', 'ExportStatementNamespaceExport.terminator', [22, 175]]],
+		options: ['terminator']
 	},
 	421: {
 		kind: 'call_expression_call',

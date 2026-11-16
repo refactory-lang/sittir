@@ -10,7 +10,7 @@ import { stampIrSurface } from '../../compiler/model/ir-surface.ts';
 import { emitTypes } from '../types.ts';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 
-function chainRaw(forms: RefineForm[], armRule: Rule<'evaluate'> = { type: STRING, value: '?.' }): RawGrammar {
+function chainRaw(forms: RefineForm[], armRule: Rule<'evaluate'> = { type: STRING, value: '?.' }, fieldWrapped = false): RawGrammar {
 	return {
 		name: 'synth',
 		fileTypes: [],
@@ -18,7 +18,7 @@ function chainRaw(forms: RefineForm[], armRule: Rule<'evaluate'> = { type: STRIN
 			chain: {
 				type: SEQ,
 				members: [
-					{ type: FIELD, name: 'operator', content: { type: CHOICE, members: [{ type: STRING, value: '.' }, { type: SYMBOL, name: 'optional_chain' }] } },
+					{ type: FIELD, name: 'operator', content: { type: CHOICE, members: [{ type: STRING, value: '.' }, fieldWrapped ? { type: FIELD, name: 'operator', content: { type: SYMBOL, name: 'optional_chain' } } : { type: SYMBOL, name: 'optional_chain' }] } },
 					{ type: FIELD, name: 'property', content: { type: SYMBOL, name: 'name' } }
 				]
 			},
@@ -67,6 +67,14 @@ describe('a refine() form selects a fixed-text node arm', () => {
 		expect(factoriesSrc).toMatch(/buildChainOptional[\s\S]*_operator = TSKindId\.OptionalChain as const;/);
 		expect(factoriesSrc).toMatch(/buildChainDot[\s\S]*_operator = TSKindId\.Dot as const;/);
 		expect(typesSrc).toMatch(/Optional \{\s+export type Config = Omit<ConfigFor<TSKindId\.Chain>, "operator">/);
+	});
+
+	it('reaches a node arm wrapped in a field, accepting it by text and pinning its kind', () => {
+		const diagnostics = new DiagnosticSink();
+		linkPredicted(chainRaw(DOT_OPTIONAL, undefined, true), { diagnostics });
+		expect(diagnostics.all().filter((d) => d.code === 'refine-config-invalid').map((d) => d.message)).toEqual([]);
+		const { factoriesSrc } = emit(chainRaw(DOT_OPTIONAL, undefined, true));
+		expect(factoriesSrc).toMatch(/buildChainOptional[\s\S]*_operator = TSKindId\.OptionalChain as const;/);
 	});
 
 	it('pins the same arm when it is selected by index', () => {

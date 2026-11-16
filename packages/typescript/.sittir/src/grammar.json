@@ -14125,110 +14125,6 @@
         }
       ]
     },
-    "export_statement_default": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "export_statement_default_from",
-          "annotations": {
-            "variant": "from",
-            "variantOf": "export_statement_default"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "export_statement_default_declaration",
-          "annotations": {
-            "variant": "declaration",
-            "variantOf": "export_statement_default"
-          }
-        }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
-    },
-    "export_statement_namespace_export": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "export"
-        },
-        {
-          "type": "STRING",
-          "value": "as"
-        },
-        {
-          "type": "STRING",
-          "value": "namespace"
-        },
-        {
-          "type": "FIELD",
-          "name": "name",
-          "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "terminator",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_semicolon"
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
-        }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
-    },
-    "export_statement_equals_export": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "export"
-        },
-        {
-          "type": "STRING",
-          "value": "="
-        },
-        {
-          "type": "FIELD",
-          "name": "value",
-          "content": {
-            "type": "SYMBOL",
-            "name": "expression"
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "terminator",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_semicolon"
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
-        }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
-    },
     "comment_line": {
       "type": "TOKEN",
       "content": {
@@ -15856,6 +15752,110 @@
         {
           "type": "STRING",
           "value": ")"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "export_statement_default": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "export_statement_default_from",
+          "annotations": {
+            "variant": "from",
+            "variantOf": "export_statement_default"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "export_statement_default_declaration",
+          "annotations": {
+            "variant": "declaration",
+            "variantOf": "export_statement_default"
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "export_statement_equals_export": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "export"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "expression"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "terminator",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "export_statement_namespace_export": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "export"
+        },
+        {
+          "type": "STRING",
+          "value": "as"
+        },
+        {
+          "type": "STRING",
+          "value": "namespace"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "terminator",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ],
       "annotations": {
@@ -20542,10 +20542,10 @@
     "call_expression",
     "string",
     "update_expression",
-    "export_statement_default",
     "variable_declarator",
     "meta_property",
     "_for_header",
+    "export_statement_default",
     "_method_definition_class_body_member_method"
   ],
   "reserved": {

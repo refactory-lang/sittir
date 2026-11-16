@@ -22,6 +22,8 @@ export const buildExpressionStatement = dispatched(() => backend().buildExpressi
 export const buildVariableDeclaration = dispatched(() => backend().buildVariableDeclaration);
 export const buildLexicalDeclaration = dispatched(() => backend().buildLexicalDeclaration);
 export const buildUsingDeclaration = dispatched(() => backend().buildUsingDeclaration);
+export const buildUsingDeclarationPlain = dispatched(() => backend().buildUsingDeclarationPlain);
+export const buildUsingDeclarationAwait = dispatched(() => backend().buildUsingDeclarationAwait);
 export const buildStatementBlock = dispatched(() => backend().buildStatementBlock);
 export const buildElseClause = dispatched(() => backend().buildElseClause);
 export const buildIfStatement = dispatched(() => backend().buildIfStatement);
@@ -64,6 +66,8 @@ export const buildOptionalChain = O.buildOptionalChain;
 export const buildNewExpression = dispatched(() => backend().buildNewExpression);
 export const buildAwaitExpression = dispatched(() => backend().buildAwaitExpression);
 export const buildMemberExpression = dispatched(() => backend().buildMemberExpression);
+export const buildMemberExpressionDot = dispatched(() => backend().buildMemberExpressionDot);
+export const buildMemberExpressionOptional = dispatched(() => backend().buildMemberExpressionOptional);
 export const buildSubscriptExpression = dispatched(() => backend().buildSubscriptExpression);
 export const buildLhsExpression = dispatched(() => backend().buildLhsExpression);
 export const buildAssignmentExpression = dispatched(() => backend().buildAssignmentExpression);
@@ -195,8 +199,6 @@ export const buildGetAccessorSignature = dispatched(() => backend().buildGetAcce
 export const buildAmbientDeclarationGlobal = dispatched(() => backend().buildAmbientDeclarationGlobal);
 export const buildAmbientDeclarationModule = dispatched(() => backend().buildAmbientDeclarationModule);
 export const buildObjectTypeContent = dispatched(() => backend().buildObjectTypeContent);
-export const buildExportStatementNamespaceExport = dispatched(() => backend().buildExportStatementNamespaceExport);
-export const buildExportStatementEqualsExport = dispatched(() => backend().buildExportStatementEqualsExport);
 export const buildCommentLine = dispatched(() => backend().buildCommentLine);
 export const buildCommentBlock = dispatched(() => backend().buildCommentBlock);
 export const buildLiteralTypeNegativeNumber = dispatched(() => backend().buildLiteralTypeNegativeNumber);
@@ -226,6 +228,8 @@ export const buildImportSpecifierName = dispatched(() => backend().buildImportSp
 export const buildImportSpecifierAs = dispatched(() => backend().buildImportSpecifierAs);
 export const buildParenthesizedExpressionTyped = dispatched(() => backend().buildParenthesizedExpressionTyped);
 export const buildParenthesizedExpressionSequence = dispatched(() => backend().buildParenthesizedExpressionSequence);
+export const buildExportStatementEqualsExport = dispatched(() => backend().buildExportStatementEqualsExport);
+export const buildExportStatementNamespaceExport = dispatched(() => backend().buildExportStatementNamespaceExport);
 export const buildCallExpressionCall = dispatched(() => backend().buildCallExpressionCall);
 export const buildCallExpressionTemplateCall = dispatched(() => backend().buildCallExpressionTemplateCall);
 export const buildCallExpressionMember = dispatched(() => backend().buildCallExpressionMember);
@@ -261,6 +265,8 @@ export const buildForHeaderLhs = dispatched(() => backend().buildForHeaderLhs);
 export const buildForHeaderVarKind = dispatched(() => backend().buildForHeaderVarKind);
 export const buildForHeaderLetConstKind = dispatched(() => backend().buildForHeaderLetConstKind);
 export const buildForHeaderUsingKind = dispatched(() => backend().buildForHeaderUsingKind);
+export const buildForHeaderUsingKindPlain = dispatched(() => backend().buildForHeaderUsingKindPlain);
+export const buildForHeaderUsingKindAwait = dispatched(() => backend().buildForHeaderUsingKindAwait);
 export const buildFormalParametersGetAccessorSignature = O.buildFormalParametersGetAccessorSignature;
 export const buildFormalParametersSetAccessorSignature = dispatched(
 	() => backend().buildFormalParametersSetAccessorSignature
@@ -496,8 +502,6 @@ export const _factoryMap = {
 	ambient_declaration_global: buildAmbientDeclarationGlobal,
 	ambient_declaration_module: buildAmbientDeclarationModule,
 	object_type_content: buildObjectTypeContent,
-	export_statement_namespace_export: buildExportStatementNamespaceExport,
-	export_statement_equals_export: buildExportStatementEqualsExport,
 	comment_line: buildCommentLine,
 	comment_block: buildCommentBlock,
 	literal_type_negative_number: buildLiteralTypeNegativeNumber,
@@ -527,6 +531,8 @@ export const _factoryMap = {
 	import_specifier_as: buildImportSpecifierAs,
 	parenthesized_expression_typed: buildParenthesizedExpressionTyped,
 	parenthesized_expression_sequence: buildParenthesizedExpressionSequence,
+	export_statement_equals_export: buildExportStatementEqualsExport,
+	export_statement_namespace_export: buildExportStatementNamespaceExport,
 	call_expression_call: buildCallExpressionCall,
 	call_expression_template_call: buildCallExpressionTemplateCall,
 	call_expression_member: buildCallExpressionMember,

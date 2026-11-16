@@ -30,6 +30,7 @@ import {
 	spelledReadExpr,
 	spelledReadImports
 } from './shared.ts';
+import { formDefinedProperties } from './refine-emit.ts';
 import { builtTypeSurfaceOf, delimitedCheck, delimitedSpecName, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType, type GroupSeatHint, type ListViewPlan, type SeatPlan } from './factories.ts';
 import { collectKindEntries, errorKindEntry, findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
@@ -553,7 +554,8 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 			.filter((setter) => setter.rest)
 			.map((setter) => setter.name)
 	);
-	return node.slots.map((f) => {
+	const formDefined = formDefinedProperties(nodeMap, node.kind);
+	return node.slots.filter((f) => !formDefined.has(f.propertyName)).map((f) => {
 		const method = f.propertyName;
 		const envelopeType = splicedEnvelopeType(f, nodeMap);
 		const admitted = envelopeType === undefined ? '' : ` | ${envelopeType}`;

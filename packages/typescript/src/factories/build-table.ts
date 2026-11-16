@@ -10,9 +10,17 @@ import type * as StrictTable from './strict.js';
 export type AnyTable = typeof LooseTable | typeof StrictTable;
 
 export interface Routes<Table extends AnyTable> {
+	readonly memberExpression: Table['buildMemberExpression'] & {
+		readonly dot: typeof F.buildMemberExpressionDot;
+		readonly optional: typeof F.buildMemberExpressionOptional;
+	};
 	readonly objectType: Table['buildObjectType'] & {
 		readonly curly: typeof F.buildObjectTypeCurly;
 		readonly flow: typeof F.buildObjectTypeFlow;
+	};
+	readonly forHeaderUsingKind: Table['buildForHeaderUsingKind'] & {
+		readonly plain: typeof F.buildForHeaderUsingKindPlain;
+		readonly await: typeof F.buildForHeaderUsingKindAwait;
 	};
 	readonly interfaceBody: Table['buildInterfaceBody'] & {
 		readonly curly: typeof F.buildInterfaceBodyCurly;
@@ -148,6 +156,8 @@ export interface Routes<Table extends AnyTable> {
 		options?: OptionsArg<Table['buildUsingDeclaration']>
 	) => ReturnType<Table['buildUsingDeclaration']>;
 	readonly usingDeclaration: Table['buildUsingDeclaration'] & {
+		readonly plain: typeof F.buildUsingDeclarationPlain;
+		readonly await: typeof F.buildUsingDeclarationAwait;
 		readonly automaticSemicolon: Routes<Table>['usingDeclaration$automaticSemicolon'];
 		readonly semi: Routes<Table>['usingDeclaration$semi'];
 	};
@@ -1874,7 +1884,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly lhs: Table['buildForHeaderLhs'];
 		readonly varKind: Table['buildForHeaderVarKind'];
 		readonly letConstKind: Table['buildForHeaderLetConstKind'];
-		readonly usingKind: Table['buildForHeaderUsingKind'];
+		readonly usingKind: Routes<Table>['forHeaderUsingKind'];
 	};
 	readonly parenthesizedExpression: {
 		readonly typed: Table['buildParenthesizedExpressionTyped'];
@@ -2116,10 +2126,6 @@ export interface Routes<Table extends AnyTable> {
 		readonly name: Table['buildEnumBodyElementName'];
 		readonly assignment: Table['buildEnumAssignment'];
 	};
-	readonly exportStatementDefault: {
-		readonly from: Routes<Table>['exportStatementDefaultFrom'];
-		readonly declaration: Routes<Table>['exportStatementDefaultDeclaration'];
-	};
 	readonly numberBigint: typeof F.buildNumberBigintDecimal & {
 		readonly hex: typeof F.buildNumberBigintHex;
 		readonly binary: typeof F.buildNumberBigintBinary;
@@ -2193,6 +2199,10 @@ export interface Routes<Table extends AnyTable> {
 		readonly false: Routes<Table>['literalType$false'];
 		readonly null: Routes<Table>['literalType$null'];
 		readonly undefined: Routes<Table>['literalType$undefined'];
+	};
+	readonly exportStatementDefault: {
+		readonly from: Routes<Table>['exportStatementDefaultFrom'];
+		readonly declaration: Routes<Table>['exportStatementDefaultDeclaration'];
 	};
 	readonly exportStatement: {
 		readonly default: Routes<Table>['exportStatementDefault'];
@@ -2287,7 +2297,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly arrowFunction: Routes<Table>['arrowFunction'];
 	readonly newExpression: Table['buildNewExpression'];
 	readonly awaitExpression: Table['buildAwaitExpression'];
-	readonly memberExpression: Table['buildMemberExpression'];
+	readonly memberExpression: Routes<Table>['memberExpression'];
 	readonly subscriptExpression: Table['buildSubscriptExpression'];
 	readonly lhsExpression: Routes<Table>['lhsExpression'];
 	readonly assignmentExpression: Table['buildAssignmentExpression'];
@@ -2393,8 +2403,6 @@ export interface Ir<Table extends AnyTable> {
 	readonly ambientDeclarationGlobal: Table['buildAmbientDeclarationGlobal'];
 	readonly ambientDeclarationModule: Table['buildAmbientDeclarationModule'];
 	readonly objectTypeContent: Table['buildObjectTypeContent'];
-	readonly exportStatementNamespaceExport: Table['buildExportStatementNamespaceExport'];
-	readonly exportStatementEqualsExport: Table['buildExportStatementEqualsExport'];
 	readonly numberHex: Table['buildNumberHex'];
 	readonly numberFloatPoint: Table['buildNumberFloatPoint'];
 	readonly numberFloatLeadingPoint: Table['buildNumberFloatLeadingPoint'];
@@ -2410,6 +2418,8 @@ export interface Ir<Table extends AnyTable> {
 	readonly importSpecifierAs: Routes<Table>['importSpecifierAs'];
 	readonly parenthesizedExpressionTyped: Table['buildParenthesizedExpressionTyped'];
 	readonly parenthesizedExpressionSequence: Routes<Table>['parenthesizedExpressionSequence'];
+	readonly exportStatementEqualsExport: Table['buildExportStatementEqualsExport'];
+	readonly exportStatementNamespaceExport: Table['buildExportStatementNamespaceExport'];
 	readonly callExpressionCall: Table['buildCallExpressionCall'];
 	readonly callExpressionTemplateCall: Table['buildCallExpressionTemplateCall'];
 	readonly callExpressionMember: Table['buildCallExpressionMember'];
@@ -2424,7 +2434,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly forHeaderLhs: Table['buildForHeaderLhs'];
 	readonly forHeaderVarKind: Table['buildForHeaderVarKind'];
 	readonly forHeaderLetConstKind: Table['buildForHeaderLetConstKind'];
-	readonly forHeaderUsingKind: Table['buildForHeaderUsingKind'];
+	readonly forHeaderUsingKind: Routes<Table>['forHeaderUsingKind'];
 	readonly formalParametersSetAccessorSignature: Routes<Table>['formalParametersSetAccessorSignature'];
 	readonly setterParameter: Table['buildSetterParameter'];
 	readonly methodDefinitionPlain: Table['buildMethodDefinitionPlain'];
@@ -2460,8 +2470,8 @@ export interface Ir<Table extends AnyTable> {
 	readonly indexSignature: Routes<Table>['indexSignature'];
 	readonly classBodyMember: Routes<Table>['classBodyMember'];
 	readonly enumBodyElement: Routes<Table>['enumBodyElement'];
-	readonly exportStatementDefault: Routes<Table>['exportStatementDefault'];
 	readonly numberBigint: Routes<Table>['numberBigint'];
+	readonly exportStatementDefault: Routes<Table>['exportStatementDefault'];
 	readonly exportStatement: Routes<Table>['exportStatement'];
 	readonly statement: Routes<Table>['statement'];
 	readonly number: Routes<Table>['number'];
@@ -2520,7 +2530,7 @@ export interface Ir<Table extends AnyTable> {
 	};
 	readonly primaryExpression: {
 		readonly subscript: Table['buildSubscriptExpression'];
-		readonly member: Table['buildMemberExpression'];
+		readonly member: Routes<Table>['memberExpression'];
 		readonly parenthesized: Routes<Table>['parenthesizedExpression'];
 		readonly undefined: typeof F.buildUndefined;
 		readonly identifier: typeof F.buildIdentifier;
@@ -2584,10 +2594,22 @@ export interface Ir<Table extends AnyTable> {
 
 export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	const $at = <K extends keyof Table>(key: K): Table[K] => $table[key];
+	const memberExpression: Routes<Table>['memberExpression'] = Object.freeze(
+		Object.assign(delegate($at('buildMemberExpression')), {
+			dot: F.buildMemberExpressionDot,
+			optional: F.buildMemberExpressionOptional
+		} as const)
+	);
 	const objectType: Routes<Table>['objectType'] = Object.freeze(
 		Object.assign(delegate($at('buildObjectType')), {
 			curly: F.buildObjectTypeCurly,
 			flow: F.buildObjectTypeFlow
+		} as const)
+	);
+	const forHeaderUsingKind: Routes<Table>['forHeaderUsingKind'] = Object.freeze(
+		Object.assign(delegate($at('buildForHeaderUsingKind')), {
+			plain: F.buildForHeaderUsingKindPlain,
+			await: F.buildForHeaderUsingKindAwait
 		} as const)
 	);
 	const interfaceBody: Routes<Table>['interfaceBody'] = Object.freeze(
@@ -2686,6 +2708,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const usingDeclaration: Routes<Table>['usingDeclaration'] = Object.freeze(
 		Object.assign(delegate($at('buildUsingDeclaration')), {
+			plain: F.buildUsingDeclarationPlain,
+			await: F.buildUsingDeclarationAwait,
 			automaticSemicolon: usingDeclaration$automaticSemicolon,
 			semi: usingDeclaration$semi
 		} as const)
@@ -3700,7 +3724,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		lhs: $at('buildForHeaderLhs'),
 		varKind: $at('buildForHeaderVarKind'),
 		letConstKind: $at('buildForHeaderLetConstKind'),
-		usingKind: $at('buildForHeaderUsingKind')
+		usingKind: forHeaderUsingKind
 	} as const);
 	const parenthesizedExpression: Routes<Table>['parenthesizedExpression'] = Object.freeze({
 		typed: $at('buildParenthesizedExpressionTyped'),
@@ -3898,10 +3922,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		name: $at('buildEnumBodyElementName'),
 		assignment: $at('buildEnumAssignment')
 	} as const);
-	const exportStatementDefault: Routes<Table>['exportStatementDefault'] = Object.freeze({
-		from: exportStatementDefaultFrom,
-		declaration: exportStatementDefaultDeclaration
-	} as const);
 	const numberBigint: Routes<Table>['numberBigint'] = Object.freeze(
 		Object.assign(delegate(F.buildNumberBigintDecimal), {
 			hex: F.buildNumberBigintHex,
@@ -4017,6 +4037,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			undefined: literalType$undefined
 		} as const)
 	);
+	const exportStatementDefault: Routes<Table>['exportStatementDefault'] = Object.freeze({
+		from: exportStatementDefaultFrom,
+		declaration: exportStatementDefaultDeclaration
+	} as const);
 	const exportStatement: Routes<Table>['exportStatement'] = Object.freeze({
 		default: exportStatementDefault,
 		equalsExport: $at('buildExportStatementEqualsExport'),
@@ -4110,7 +4134,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		arrowFunction: arrowFunction,
 		newExpression: $at('buildNewExpression'),
 		awaitExpression: $at('buildAwaitExpression'),
-		memberExpression: $at('buildMemberExpression'),
+		memberExpression: memberExpression,
 		subscriptExpression: $at('buildSubscriptExpression'),
 		lhsExpression: lhsExpression,
 		assignmentExpression: $at('buildAssignmentExpression'),
@@ -4216,8 +4240,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		ambientDeclarationGlobal: $at('buildAmbientDeclarationGlobal'),
 		ambientDeclarationModule: $at('buildAmbientDeclarationModule'),
 		objectTypeContent: $at('buildObjectTypeContent'),
-		exportStatementNamespaceExport: $at('buildExportStatementNamespaceExport'),
-		exportStatementEqualsExport: $at('buildExportStatementEqualsExport'),
 		numberHex: $at('buildNumberHex'),
 		numberFloatPoint: $at('buildNumberFloatPoint'),
 		numberFloatLeadingPoint: $at('buildNumberFloatLeadingPoint'),
@@ -4233,6 +4255,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		importSpecifierAs: importSpecifierAs,
 		parenthesizedExpressionTyped: $at('buildParenthesizedExpressionTyped'),
 		parenthesizedExpressionSequence: parenthesizedExpressionSequence,
+		exportStatementEqualsExport: $at('buildExportStatementEqualsExport'),
+		exportStatementNamespaceExport: $at('buildExportStatementNamespaceExport'),
 		callExpressionCall: $at('buildCallExpressionCall'),
 		callExpressionTemplateCall: $at('buildCallExpressionTemplateCall'),
 		callExpressionMember: $at('buildCallExpressionMember'),
@@ -4247,7 +4271,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		forHeaderLhs: $at('buildForHeaderLhs'),
 		forHeaderVarKind: $at('buildForHeaderVarKind'),
 		forHeaderLetConstKind: $at('buildForHeaderLetConstKind'),
-		forHeaderUsingKind: $at('buildForHeaderUsingKind'),
+		forHeaderUsingKind: forHeaderUsingKind,
 		formalParametersSetAccessorSignature: formalParametersSetAccessorSignature,
 		setterParameter: $at('buildSetterParameter'),
 		methodDefinitionPlain: $at('buildMethodDefinitionPlain'),
@@ -4283,8 +4307,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		indexSignature: indexSignature,
 		classBodyMember: classBodyMember,
 		enumBodyElement: enumBodyElement,
-		exportStatementDefault: exportStatementDefault,
 		numberBigint: numberBigint,
+		exportStatementDefault: exportStatementDefault,
 		exportStatement: exportStatement,
 		statement: statement,
 		number: number,
@@ -4343,7 +4367,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const),
 		primaryExpression: Object.freeze({
 			subscript: $at('buildSubscriptExpression'),
-			member: $at('buildMemberExpression'),
+			member: memberExpression,
 			parenthesized: parenthesizedExpression,
 			undefined: F.buildUndefined,
 			identifier: F.buildIdentifier,

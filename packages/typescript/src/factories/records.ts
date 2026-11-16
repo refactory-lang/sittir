@@ -10,6 +10,7 @@ import type {
 	NonEmptyArray,
 	NumericConfig,
 	NumericLiteral,
+	OmitEach,
 	RefuseUndeclared,
 	RefusingConfig,
 	WidenSlots
@@ -1432,16 +1433,28 @@ function withLexicalDeclaration(node: object, setter: string, args: readonly unk
 	throw new Error(`lexical_declaration has no $with.${setter}`);
 }
 
-export function buildUsingDeclaration<VariableDeclaratorsSlot extends T.UsingDeclaration.Config['variableDeclarators']>(
-	config: RefusingConfig<T.UsingDeclaration.Config, { variableDeclarators: VariableDeclaratorsSlot }>,
+export function buildUsingDeclaration<
+	VariableDeclaratorsSlot extends OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>['variableDeclarators']
+>(
+	config: RefusingConfig<
+		| (OmitEach<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>, 'kind'> & { readonly kind?: never })
+		| OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>,
+		{ variableDeclarators: VariableDeclaratorsSlot }
+	>,
 	options?: T.UsingDeclaration.Options
 ): T.UsingDeclaration.Bound;
 export function buildUsingDeclaration(
-	config: T.UsingDeclaration.Config,
+	config:
+		| (OmitEach<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>, 'kind'> & { readonly kind?: never })
+		| OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>,
 	options?: T.UsingDeclaration.Options
 ): T.UsingDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.UsingDeclaration, [config]);
-	const _kind = kindIdStorage<NonNullable<T.UsingDeclaration['_kind']>>(config.kind);
+	const _pinned: Partial<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>> = config;
+	const _kind =
+		_pinned.kind === undefined
+			? (TSKindId.UsingKeyword as const)
+			: kindIdStorage<NonNullable<T.UsingDeclaration['_kind']>>(_pinned.kind);
 	const _variable_declarator = listStorage<NonNullable<T.UsingDeclaration['_variable_declarator']>>(
 		config.variableDeclarators
 	);
@@ -1470,11 +1483,17 @@ export function buildUsingDeclaration(
 
 function buildUsingDeclaration$patch(
 	source: object,
-	config: T.UsingDeclaration.Config,
+	config:
+		| (OmitEach<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>, 'kind'> & { readonly kind?: never })
+		| OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>,
 	options?: T.UsingDeclaration.Options
 ): T.UsingDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.UsingDeclaration, [config]);
-	const _kind = kindIdStorage<NonNullable<T.UsingDeclaration['_kind']>>(config.kind);
+	const _pinned: Partial<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>> = config;
+	const _kind =
+		_pinned.kind === undefined
+			? (TSKindId.UsingKeyword as const)
+			: kindIdStorage<NonNullable<T.UsingDeclaration['_kind']>>(_pinned.kind);
 	const _variable_declarator = listStorage<NonNullable<T.UsingDeclaration['_variable_declarator']>>(
 		config.variableDeclarators
 	);
@@ -1503,40 +1522,27 @@ function buildUsingDeclaration$patch(
 function buildUsingDeclaration$set(
 	source: object,
 	...[slot, input]:
-		| ['kind', Partial<T.UsingDeclaration.Config>]
-		| ['variableDeclarators', Partial<T.UsingDeclaration.Config>]
+		| ['variableDeclarators', Partial<OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>>]
 		| ['automaticSemicolon', T.UsingDeclaration.Options]
 ): T.UsingDeclaration.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
-			case 'kind':
 			case 'variableDeclarators':
 				return buildUsingDeclaration$patch(
 					source,
-					{ ...(inputs.config as T.UsingDeclaration.Config), ...input },
+					{ ...(inputs.config as OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>), ...input },
 					inputs.options as T.UsingDeclaration.Options
 				);
 			case 'automaticSemicolon':
-				return buildUsingDeclaration$patch(source, inputs.config as T.UsingDeclaration.Config, {
-					...(inputs.options as T.UsingDeclaration.Options),
-					...input
-				});
+				return buildUsingDeclaration$patch(
+					source,
+					inputs.config as OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>,
+					{ ...(inputs.options as T.UsingDeclaration.Options), ...input }
+				);
 		}
 	}
 	switch (slot) {
-		case 'kind': {
-			const config = input;
-			const _kind = kindIdStorage<NonNullable<T.UsingDeclaration['_kind']>>(config.kind);
-			return setSlot(
-				source,
-				TSKindId.UsingDeclaration as const,
-				'using_declaration',
-				0,
-				'kind',
-				_kind
-			) as unknown as T.UsingDeclaration.Bound;
-		}
 		case 'variableDeclarators': {
 			const config = input;
 			const _variable_declarator = listStorage<NonNullable<T.UsingDeclaration['_variable_declarator']>>(
@@ -1571,10 +1577,6 @@ function buildUsingDeclaration$set(
 function withUsingDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'kind':
-			return applySetter(args, (value: Admit<NonNullable<T.UsingDeclaration.Config>['kind']>) =>
-				rebuilt(node, handle, () => buildUsingDeclaration$set(node, 'kind', { kind: value }))
-			);
 		case 'variableDeclarators':
 			return applySetter(args, (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
 				rebuilt(node, handle, () =>
@@ -1591,6 +1593,82 @@ function withUsingDeclaration(node: object, setter: string, args: readonly unkno
 			);
 	}
 	throw new Error(`using_declaration has no $with.${setter}`);
+}
+
+export function buildUsingDeclarationPlain<
+	VariableDeclaratorsSlot extends T.UsingDeclaration.Plain.Config['variableDeclarators']
+>(
+	config: RefusingConfig<T.UsingDeclaration.Plain.Config, { variableDeclarators: VariableDeclaratorsSlot }>,
+	options?: T.UsingDeclaration.Plain.Options
+): T.UsingDeclaration.Plain.Bound;
+export function buildUsingDeclarationPlain(
+	config: T.UsingDeclaration.Plain.Config,
+	options?: T.UsingDeclaration.Plain.Options
+): T.UsingDeclaration.Plain.Bound {
+	currentHandle()?.admit(TSKindId.UsingDeclaration, [config], ['variableDeclarators']);
+	const _kind = TSKindId.UsingKeyword as const;
+	const _variable_declarator = listStorage<NonNullable<T.UsingDeclaration['_variable_declarator']>>(
+		config.variableDeclarators
+	);
+	const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.UsingDeclaration['_automatic_semicolon']>>(
+		options?.automaticSemicolon,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'using_declaration', {
+			kind: _kind,
+			variableDeclarators: _variable_declarator,
+			automaticSemicolon: _automatic_semicolon
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.UsingDeclaration as const, { _kind, _variable_declarator, _automatic_semicolon });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.UsingDeclaration as const);
+		storeCell(arena, record, 2, 2, _kind);
+		storeList(arena, record, 3, 3, _variable_declarator);
+		storeCell(arena, record, 4, 4, _automatic_semicolon);
+		const node = arena.view(record);
+		return node as unknown as T.UsingDeclaration.Plain.Bound;
+	});
+}
+
+export function buildUsingDeclarationAwait<
+	VariableDeclaratorsSlot extends T.UsingDeclaration.Await.Config['variableDeclarators']
+>(
+	config: RefusingConfig<T.UsingDeclaration.Await.Config, { variableDeclarators: VariableDeclaratorsSlot }>,
+	options?: T.UsingDeclaration.Await.Options
+): T.UsingDeclaration.Await.Bound;
+export function buildUsingDeclarationAwait(
+	config: T.UsingDeclaration.Await.Config,
+	options?: T.UsingDeclaration.Await.Options
+): T.UsingDeclaration.Await.Bound {
+	currentHandle()?.admit(TSKindId.UsingDeclaration, [config], ['variableDeclarators']);
+	const _kind = TSKindId.UsingDeclarationArm as const;
+	const _variable_declarator = listStorage<NonNullable<T.UsingDeclaration['_variable_declarator']>>(
+		config.variableDeclarators
+	);
+	const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.UsingDeclaration['_automatic_semicolon']>>(
+		options?.automaticSemicolon,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'using_declaration', {
+			kind: _kind,
+			variableDeclarators: _variable_declarator,
+			automaticSemicolon: _automatic_semicolon
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.UsingDeclaration as const, { _kind, _variable_declarator, _automatic_semicolon });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.UsingDeclaration as const);
+		storeCell(arena, record, 2, 2, _kind);
+		storeList(arena, record, 3, 3, _variable_declarator);
+		storeCell(arena, record, 4, 4, _automatic_semicolon);
+		const node = arena.view(record);
+		return node as unknown as T.UsingDeclaration.Await.Bound;
+	});
 }
 
 export function buildStatementBlock(): T.EmptyStatementBlock;
@@ -6492,20 +6570,31 @@ function withAwaitExpression(node: object, setter: string, args: readonly unknow
 }
 
 export function buildMemberExpression<
-	ObjectSlot extends T.MemberExpression.Config['object'],
-	PropertySlot extends T.MemberExpression.Config['property']
+	ObjectSlot extends ConfigOf<T.MemberExpression>['object'],
+	PropertySlot extends ConfigOf<T.MemberExpression>['property']
 >(
-	config: RefusingConfig<T.MemberExpression.Config, { object: ObjectSlot; property: PropertySlot }>
+	config: RefusingConfig<
+		(OmitEach<ConfigOf<T.MemberExpression>, 'operator'> & { readonly operator?: never }) | ConfigOf<T.MemberExpression>,
+		{ object: ObjectSlot; property: PropertySlot }
+	>
 ): T.MemberExpression.Bound;
-export function buildMemberExpression(config: T.MemberExpression.Config): T.MemberExpression.Bound {
+export function buildMemberExpression(
+	config:
+		| (OmitEach<ConfigOf<T.MemberExpression>, 'operator'> & { readonly operator?: never })
+		| ConfigOf<T.MemberExpression>
+): T.MemberExpression.Bound {
 	currentHandle()?.admit(TSKindId.MemberExpression, [config]);
+	const _pinned: Partial<ConfigOf<T.MemberExpression>> = config;
 	const _object = rejectReservedText(
 		kindIdStorage<NonNullable<T.MemberExpression['_object']>>(config.object),
 		'MemberExpression.object',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _operator = kindIdStorage<NonNullable<T.MemberExpression['_operator']>>(config.operator);
+	const _operator =
+		_pinned.operator === undefined
+			? (TSKindId.Dot as const)
+			: kindIdStorage<NonNullable<T.MemberExpression['_operator']>>(_pinned.operator);
 	const _property = admitAliasContent<NonNullable<T.MemberExpression['_property']>>(
 		rejectReservedText(config.property, 'MemberExpression.property', TSKindId.Identifier, _reservedWordset_properties),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
@@ -6525,15 +6614,24 @@ export function buildMemberExpression(config: T.MemberExpression.Config): T.Memb
 	});
 }
 
-function buildMemberExpression$patch(source: object, config: T.MemberExpression.Config): T.MemberExpression.Bound {
+function buildMemberExpression$patch(
+	source: object,
+	config:
+		| (OmitEach<ConfigOf<T.MemberExpression>, 'operator'> & { readonly operator?: never })
+		| ConfigOf<T.MemberExpression>
+): T.MemberExpression.Bound {
 	currentHandle()?.admit(TSKindId.MemberExpression, [config]);
+	const _pinned: Partial<ConfigOf<T.MemberExpression>> = config;
 	const _object = rejectReservedText(
 		kindIdStorage<NonNullable<T.MemberExpression['_object']>>(config.object),
 		'MemberExpression.object',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _operator = kindIdStorage<NonNullable<T.MemberExpression['_operator']>>(config.operator);
+	const _operator =
+		_pinned.operator === undefined
+			? (TSKindId.Dot as const)
+			: kindIdStorage<NonNullable<T.MemberExpression['_operator']>>(_pinned.operator);
 	const _property = admitAliasContent<NonNullable<T.MemberExpression['_property']>>(
 		rejectReservedText(config.property, 'MemberExpression.property', TSKindId.Identifier, _reservedWordset_properties),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
@@ -6555,17 +6653,15 @@ function buildMemberExpression$patch(source: object, config: T.MemberExpression.
 function buildMemberExpression$set(
 	source: object,
 	...[slot, input]:
-		| ['object', Partial<T.MemberExpression.Config>]
-		| ['operator', Partial<T.MemberExpression.Config>]
-		| ['property', Partial<T.MemberExpression.Config>]
+		| ['object', Partial<ConfigOf<T.MemberExpression>>]
+		| ['property', Partial<ConfigOf<T.MemberExpression>>]
 ): T.MemberExpression.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'object':
-			case 'operator':
 			case 'property':
-				return buildMemberExpression$patch(source, { ...(inputs.config as T.MemberExpression.Config), ...input });
+				return buildMemberExpression$patch(source, { ...(inputs.config as ConfigOf<T.MemberExpression>), ...input });
 		}
 	}
 	switch (slot) {
@@ -6584,18 +6680,6 @@ function buildMemberExpression$set(
 				0,
 				'object',
 				_object
-			) as unknown as T.MemberExpression.Bound;
-		}
-		case 'operator': {
-			const config = input;
-			const _operator = kindIdStorage<NonNullable<T.MemberExpression['_operator']>>(config.operator);
-			return setSlot(
-				source,
-				TSKindId.MemberExpression as const,
-				'member_expression',
-				1,
-				'operator',
-				_operator
 			) as unknown as T.MemberExpression.Bound;
 		}
 		case 'property': {
@@ -6624,12 +6708,8 @@ function withMemberExpression(node: object, setter: string, args: readonly unkno
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'object':
-			return applySetter(args, (value: Admit<NonNullable<T.MemberExpression.Config>['object']>) =>
+			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.MemberExpression>>['object']>) =>
 				rebuilt(node, handle, () => buildMemberExpression$set(node, 'object', { object: value }))
-			);
-		case 'operator':
-			return applySetter(args, (value: Admit<NonNullable<T.MemberExpression.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildMemberExpression$set(node, 'operator', { operator: value }))
 			);
 		case 'property':
 			return applySetter(
@@ -6639,6 +6719,76 @@ function withMemberExpression(node: object, setter: string, args: readonly unkno
 			);
 	}
 	throw new Error(`member_expression has no $with.${setter}`);
+}
+
+export function buildMemberExpressionDot<
+	ObjectSlot extends T.MemberExpression.Dot.Config['object'],
+	PropertySlot extends T.MemberExpression.Dot.Config['property']
+>(
+	config: RefusingConfig<T.MemberExpression.Dot.Config, { object: ObjectSlot; property: PropertySlot }>
+): T.MemberExpression.Dot.Bound;
+export function buildMemberExpressionDot(config: T.MemberExpression.Dot.Config): T.MemberExpression.Dot.Bound {
+	currentHandle()?.admit(TSKindId.MemberExpression, [config], ['object', 'property']);
+	const _object = rejectReservedText(
+		kindIdStorage<NonNullable<T.MemberExpression['_object']>>(config.object),
+		'MemberExpression.object',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _operator = TSKindId.Dot as const;
+	const _property = admitAliasContent<NonNullable<T.MemberExpression['_property']>>(
+		rejectReservedText(config.property, 'MemberExpression.property', TSKindId.Identifier, _reservedWordset_properties),
+		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'member_expression', { object: _object, operator: _operator, property: _property });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.MemberExpression as const, { _object, _operator, _property });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.MemberExpression as const);
+		storeCell(arena, record, 2, 2, _object);
+		storeCell(arena, record, 3, 6, _operator);
+		storeCell(arena, record, 4, 7, _property);
+		const node = arena.view(record);
+		return node as unknown as T.MemberExpression.Dot.Bound;
+	});
+}
+
+export function buildMemberExpressionOptional<
+	ObjectSlot extends T.MemberExpression.Optional.Config['object'],
+	PropertySlot extends T.MemberExpression.Optional.Config['property']
+>(
+	config: RefusingConfig<T.MemberExpression.Optional.Config, { object: ObjectSlot; property: PropertySlot }>
+): T.MemberExpression.Optional.Bound;
+export function buildMemberExpressionOptional(
+	config: T.MemberExpression.Optional.Config
+): T.MemberExpression.Optional.Bound {
+	currentHandle()?.admit(TSKindId.MemberExpression, [config], ['object', 'property']);
+	const _object = rejectReservedText(
+		kindIdStorage<NonNullable<T.MemberExpression['_object']>>(config.object),
+		'MemberExpression.object',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _operator = TSKindId.OptionalChain as const;
+	const _property = admitAliasContent<NonNullable<T.MemberExpression['_property']>>(
+		rejectReservedText(config.property, 'MemberExpression.property', TSKindId.Identifier, _reservedWordset_properties),
+		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'member_expression', { object: _object, operator: _operator, property: _property });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.MemberExpression as const, { _object, _operator, _property });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.MemberExpression as const);
+		storeCell(arena, record, 2, 2, _object);
+		storeCell(arena, record, 3, 6, _operator);
+		storeCell(arena, record, 4, 7, _property);
+		const node = arena.view(record);
+		return node as unknown as T.MemberExpression.Optional.Bound;
+	});
 }
 
 export function buildSubscriptExpression<
@@ -15941,13 +16091,33 @@ function withTypeArguments(node: object, setter: string, args: readonly unknown[
 }
 
 export function buildObjectType<MembersSlot extends ConfigOf<T.ObjectType>['members']>(
-	config: RefusingConfig<ConfigOf<T.ObjectType>, { members: MembersSlot }>
+	config: RefusingConfig<
+		| (OmitEach<ConfigOf<T.ObjectType>, 'opening' | 'closing'> & { readonly opening?: never; readonly closing?: never })
+		| ConfigOf<T.ObjectType>,
+		{ members: MembersSlot }
+	>
 ): T.ObjectType.Bound;
-export function buildObjectType(config: ConfigOf<T.ObjectType>): T.ObjectType.Bound {
+export function buildObjectType(
+	config:
+		| (OmitEach<ConfigOf<T.ObjectType>, 'opening' | 'closing'> & { readonly opening?: never; readonly closing?: never })
+		| ConfigOf<T.ObjectType>
+): T.ObjectType.Bound {
 	currentHandle()?.admit(TSKindId.ObjectType, [config]);
-	const _opening = kindIdStorage<NonNullable<T.ObjectType['_opening']>>(config.opening);
+	const _pinned: Partial<ConfigOf<T.ObjectType>> = config;
+	if (
+		[_pinned.opening, _pinned.closing].some((v) => v !== undefined) &&
+		[_pinned.opening, _pinned.closing].some((v) => v === undefined)
+	)
+		throw new TypeError("refine(object_type): give 'opening' and 'closing', or neither");
+	const _opening =
+		_pinned.opening === undefined
+			? (TSKindId.Lbrace as const)
+			: kindIdStorage<NonNullable<T.ObjectType['_opening']>>(_pinned.opening);
 	const _members = config.members;
-	const _closing = kindIdStorage<NonNullable<T.ObjectType['_closing']>>(config.closing);
+	const _closing =
+		_pinned.closing === undefined
+			? (TSKindId.Rbrace as const)
+			: kindIdStorage<NonNullable<T.ObjectType['_closing']>>(_pinned.closing);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'object_type', { opening: _opening, members: _members, closing: _closing });
@@ -15963,11 +16133,28 @@ export function buildObjectType(config: ConfigOf<T.ObjectType>): T.ObjectType.Bo
 	});
 }
 
-function buildObjectType$patch(source: object, config: ConfigOf<T.ObjectType>): T.ObjectType.Bound {
+function buildObjectType$patch(
+	source: object,
+	config:
+		| (OmitEach<ConfigOf<T.ObjectType>, 'opening' | 'closing'> & { readonly opening?: never; readonly closing?: never })
+		| ConfigOf<T.ObjectType>
+): T.ObjectType.Bound {
 	currentHandle()?.admit(TSKindId.ObjectType, [config]);
-	const _opening = kindIdStorage<NonNullable<T.ObjectType['_opening']>>(config.opening);
+	const _pinned: Partial<ConfigOf<T.ObjectType>> = config;
+	if (
+		[_pinned.opening, _pinned.closing].some((v) => v !== undefined) &&
+		[_pinned.opening, _pinned.closing].some((v) => v === undefined)
+	)
+		throw new TypeError("refine(object_type): give 'opening' and 'closing', or neither");
+	const _opening =
+		_pinned.opening === undefined
+			? (TSKindId.Lbrace as const)
+			: kindIdStorage<NonNullable<T.ObjectType['_opening']>>(_pinned.opening);
 	const _members = config.members;
-	const _closing = kindIdStorage<NonNullable<T.ObjectType['_closing']>>(config.closing);
+	const _closing =
+		_pinned.closing === undefined
+			? (TSKindId.Rbrace as const)
+			: kindIdStorage<NonNullable<T.ObjectType['_closing']>>(_pinned.closing);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'object_type', { opening: _opening, members: _members, closing: _closing });
@@ -15984,33 +16171,16 @@ function buildObjectType$patch(source: object, config: ConfigOf<T.ObjectType>): 
 }
 function buildObjectType$set(
 	source: object,
-	...[slot, input]:
-		| ['opening', Partial<ConfigOf<T.ObjectType>>]
-		| ['members', Partial<ConfigOf<T.ObjectType>>]
-		| ['closing', Partial<ConfigOf<T.ObjectType>>]
+	...[slot, input]: ['members', Partial<ConfigOf<T.ObjectType>>]
 ): T.ObjectType.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
-			case 'opening':
 			case 'members':
-			case 'closing':
 				return buildObjectType$patch(source, { ...(inputs.config as ConfigOf<T.ObjectType>), ...input });
 		}
 	}
 	switch (slot) {
-		case 'opening': {
-			const config = input;
-			const _opening = kindIdStorage<NonNullable<T.ObjectType['_opening']>>(config.opening);
-			return setSlot(
-				source,
-				TSKindId.ObjectType as const,
-				'object_type',
-				0,
-				'opening',
-				_opening
-			) as unknown as T.ObjectType.Bound;
-		}
 		case 'members': {
 			const config = input;
 			const _members = config.members;
@@ -16023,27 +16193,11 @@ function buildObjectType$set(
 				_members
 			) as unknown as T.ObjectType.Bound;
 		}
-		case 'closing': {
-			const config = input;
-			const _closing = kindIdStorage<NonNullable<T.ObjectType['_closing']>>(config.closing);
-			return setSlot(
-				source,
-				TSKindId.ObjectType as const,
-				'object_type',
-				2,
-				'closing',
-				_closing
-			) as unknown as T.ObjectType.Bound;
-		}
 	}
 }
 function withObjectType(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'opening':
-			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.ObjectType>>['opening']>) =>
-				rebuilt(node, handle, () => buildObjectType$set(node, 'opening', { opening: value }))
-			);
 		case 'members':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -16053,10 +16207,6 @@ function withObjectType(node: object, setter: string, args: readonly unknown[]):
 						(value?: Admit<T.ObjectTypeContent>) => buildObjectType$set(node, 'members', { members: value })
 					)
 				)
-			);
-		case 'closing':
-			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.ObjectType>>['closing']>) =>
-				rebuilt(node, handle, () => buildObjectType$set(node, 'closing', { closing: value }))
 			);
 	}
 	throw new Error(`object_type has no $with.${setter}`);
@@ -19544,269 +19694,6 @@ function withObjectTypeContent(node: object, setter: string, args: readonly unkn
 	throw new Error(`object_type_content has no $with.${setter}`);
 }
 
-export function buildExportStatementNamespaceExport<V extends Admit<T.Identifier>>(
-	value: V & RefuseUndeclared<V>,
-	options?: T.ExportStatementNamespaceExport.Options
-): T.ExportStatementNamespaceExport.Bound;
-export function buildExportStatementNamespaceExport(
-	value: Admit<T.Identifier>,
-	options?: T.ExportStatementNamespaceExport.Options
-): T.ExportStatementNamespaceExport.Bound {
-	const _name = rejectReservedText(
-		value,
-		'ExportStatementNamespaceExport.name',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementNamespaceExport['_terminator']>>(
-		options?.terminator,
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'export_statement_namespace_export', { name: _name, terminator: _terminator });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ExportStatementNamespaceExport as const, { _name, _terminator });
-	return arena.scope(() => {
-		const record = arena.record(TSKindId.ExportStatementNamespaceExport as const);
-		storeCell(arena, record, 2, 2, _name);
-		storeCell(arena, record, 3, 5, _terminator);
-		const node = arena.view(record);
-		return node as unknown as T.ExportStatementNamespaceExport.Bound;
-	});
-}
-
-function buildExportStatementNamespaceExport$patch(
-	source: object,
-	value: Admit<T.Identifier>,
-	options?: T.ExportStatementNamespaceExport.Options
-): T.ExportStatementNamespaceExport.Bound {
-	const _name = rejectReservedText(
-		value,
-		'ExportStatementNamespaceExport.name',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementNamespaceExport['_terminator']>>(
-		options?.terminator,
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'export_statement_namespace_export', { name: _name, terminator: _terminator });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ExportStatementNamespaceExport as const, { _name, _terminator });
-	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.ExportStatementNamespaceExport as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 3, 5, carriedSlot(source, 'terminator', _terminator));
-		const node = arena.view(record);
-		return node as unknown as T.ExportStatementNamespaceExport.Bound;
-	});
-}
-function buildExportStatementNamespaceExport$set(
-	source: object,
-	...[slot, input]: ['name', Admit<T.Identifier>] | ['terminator', T.ExportStatementNamespaceExport.Options]
-): T.ExportStatementNamespaceExport.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		switch (slot) {
-			case 'name':
-				return buildExportStatementNamespaceExport$patch(
-					source,
-					input,
-					inputs.options as T.ExportStatementNamespaceExport.Options
-				);
-			case 'terminator':
-				return buildExportStatementNamespaceExport$patch(source, inputs.config['name'] as Admit<T.Identifier>, {
-					...(inputs.options as T.ExportStatementNamespaceExport.Options),
-					...input
-				});
-		}
-	}
-	switch (slot) {
-		case 'name': {
-			const value = input;
-			const _name = rejectReservedText(
-				value,
-				'ExportStatementNamespaceExport.name',
-				TSKindId.Identifier,
-				_reservedWords_buildIdentifier
-			);
-			return setSlot(
-				source,
-				TSKindId.ExportStatementNamespaceExport as const,
-				'export_statement_namespace_export',
-				0,
-				'name',
-				_name
-			) as unknown as T.ExportStatementNamespaceExport.Bound;
-		}
-		case 'terminator': {
-			const options = input;
-			const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementNamespaceExport['_terminator']>>(
-				options?.terminator,
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			);
-			return setSlot(
-				source,
-				TSKindId.ExportStatementNamespaceExport as const,
-				'export_statement_namespace_export',
-				1,
-				'terminator',
-				_terminator
-			) as unknown as T.ExportStatementNamespaceExport.Bound;
-		}
-	}
-}
-function withExportStatementNamespaceExport(node: object, setter: string, args: readonly unknown[]): unknown {
-	const handle = handleOf(node as RecordHandle);
-	switch (setter) {
-		case 'name':
-			return applySetter(args, (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildExportStatementNamespaceExport$set(node, 'name', value))
-			);
-		case 'terminator':
-			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-				rebuilt(node, handle, () =>
-					buildExportStatementNamespaceExport$set(node, 'terminator', { terminator: spelling })
-				)
-			);
-	}
-	throw new Error(`export_statement_namespace_export has no $with.${setter}`);
-}
-
-export function buildExportStatementEqualsExport<V extends Admit<T.Expression>>(
-	value: V & RefuseUndeclared<V>,
-	options?: T.ExportStatementEqualsExport.Options
-): T.ExportStatementEqualsExport.Bound;
-export function buildExportStatementEqualsExport(
-	value: Admit<T.Expression>,
-	options?: T.ExportStatementEqualsExport.Options
-): T.ExportStatementEqualsExport.Bound {
-	const _value = rejectReservedText(
-		kindIdStorage<NonNullable<T.ExportStatementEqualsExport['_value']>>(value),
-		'ExportStatementEqualsExport.value',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementEqualsExport['_terminator']>>(
-		options?.terminator,
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'export_statement_equals_export', { value: _value, terminator: _terminator });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ExportStatementEqualsExport as const, { _value, _terminator });
-	return arena.scope(() => {
-		const record = arena.record(TSKindId.ExportStatementEqualsExport as const);
-		storeCell(arena, record, 2, 2, _value);
-		storeCell(arena, record, 3, 6, _terminator);
-		const node = arena.view(record);
-		return node as unknown as T.ExportStatementEqualsExport.Bound;
-	});
-}
-
-function buildExportStatementEqualsExport$patch(
-	source: object,
-	value: Admit<T.Expression>,
-	options?: T.ExportStatementEqualsExport.Options
-): T.ExportStatementEqualsExport.Bound {
-	const _value = rejectReservedText(
-		kindIdStorage<NonNullable<T.ExportStatementEqualsExport['_value']>>(value),
-		'ExportStatementEqualsExport.value',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementEqualsExport['_terminator']>>(
-		options?.terminator,
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'export_statement_equals_export', { value: _value, terminator: _terminator });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ExportStatementEqualsExport as const, { _value, _terminator });
-	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.ExportStatementEqualsExport as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'value', _value));
-		patchCell(arena, record, 3, 6, carriedSlot(source, 'terminator', _terminator));
-		const node = arena.view(record);
-		return node as unknown as T.ExportStatementEqualsExport.Bound;
-	});
-}
-function buildExportStatementEqualsExport$set(
-	source: object,
-	...[slot, input]: ['value', Admit<NonNullable<T.Expression>>] | ['terminator', T.ExportStatementEqualsExport.Options]
-): T.ExportStatementEqualsExport.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		switch (slot) {
-			case 'value':
-				return buildExportStatementEqualsExport$patch(
-					source,
-					input,
-					inputs.options as T.ExportStatementEqualsExport.Options
-				);
-			case 'terminator':
-				return buildExportStatementEqualsExport$patch(
-					source,
-					inputs.config['value'] as Admit<NonNullable<T.Expression>>,
-					{ ...(inputs.options as T.ExportStatementEqualsExport.Options), ...input }
-				);
-		}
-	}
-	switch (slot) {
-		case 'value': {
-			const value = input;
-			const _value = rejectReservedText(
-				kindIdStorage<NonNullable<T.ExportStatementEqualsExport['_value']>>(value),
-				'ExportStatementEqualsExport.value',
-				TSKindId.Identifier,
-				_reservedWords_buildIdentifier
-			);
-			return setSlot(
-				source,
-				TSKindId.ExportStatementEqualsExport as const,
-				'export_statement_equals_export',
-				0,
-				'value',
-				_value
-			) as unknown as T.ExportStatementEqualsExport.Bound;
-		}
-		case 'terminator': {
-			const options = input;
-			const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementEqualsExport['_terminator']>>(
-				options?.terminator,
-				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-			);
-			return setSlot(
-				source,
-				TSKindId.ExportStatementEqualsExport as const,
-				'export_statement_equals_export',
-				1,
-				'terminator',
-				_terminator
-			) as unknown as T.ExportStatementEqualsExport.Bound;
-		}
-	}
-}
-function withExportStatementEqualsExport(node: object, setter: string, args: readonly unknown[]): unknown {
-	const handle = handleOf(node as RecordHandle);
-	switch (setter) {
-		case 'value':
-			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
-				rebuilt(node, handle, () => buildExportStatementEqualsExport$set(node, 'value', value))
-			);
-		case 'terminator':
-			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-				rebuilt(node, handle, () => buildExportStatementEqualsExport$set(node, 'terminator', { terminator: spelling }))
-			);
-	}
-	throw new Error(`export_statement_equals_export has no $with.${setter}`);
-}
-
 export function buildCommentLine(content: string, affix?: true): T.CommentLine.Bound;
 export function buildCommentLine(text: `//${string}`, affix: false): T.CommentLine.Bound;
 export function buildCommentLine(input: string, affix: boolean = true): T.CommentLine.Bound {
@@ -22944,6 +22831,269 @@ function withParenthesizedExpressionSequence(node: object, setter: string, args:
 	throw new Error(`parenthesized_expression_sequence has no $with.${setter}`);
 }
 
+export function buildExportStatementEqualsExport<V extends Admit<T.Expression>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.ExportStatementEqualsExport.Options
+): T.ExportStatementEqualsExport.Bound;
+export function buildExportStatementEqualsExport(
+	value: Admit<T.Expression>,
+	options?: T.ExportStatementEqualsExport.Options
+): T.ExportStatementEqualsExport.Bound {
+	const _value = rejectReservedText(
+		kindIdStorage<NonNullable<T.ExportStatementEqualsExport['_value']>>(value),
+		'ExportStatementEqualsExport.value',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementEqualsExport['_terminator']>>(
+		options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'export_statement_equals_export', { value: _value, terminator: _terminator });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ExportStatementEqualsExport as const, { _value, _terminator });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ExportStatementEqualsExport as const);
+		storeCell(arena, record, 2, 2, _value);
+		storeCell(arena, record, 3, 6, _terminator);
+		const node = arena.view(record);
+		return node as unknown as T.ExportStatementEqualsExport.Bound;
+	});
+}
+
+function buildExportStatementEqualsExport$patch(
+	source: object,
+	value: Admit<T.Expression>,
+	options?: T.ExportStatementEqualsExport.Options
+): T.ExportStatementEqualsExport.Bound {
+	const _value = rejectReservedText(
+		kindIdStorage<NonNullable<T.ExportStatementEqualsExport['_value']>>(value),
+		'ExportStatementEqualsExport.value',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementEqualsExport['_terminator']>>(
+		options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'export_statement_equals_export', { value: _value, terminator: _terminator });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ExportStatementEqualsExport as const, { _value, _terminator });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ExportStatementEqualsExport as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'value', _value));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'terminator', _terminator));
+		const node = arena.view(record);
+		return node as unknown as T.ExportStatementEqualsExport.Bound;
+	});
+}
+function buildExportStatementEqualsExport$set(
+	source: object,
+	...[slot, input]: ['value', Admit<NonNullable<T.Expression>>] | ['terminator', T.ExportStatementEqualsExport.Options]
+): T.ExportStatementEqualsExport.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'value':
+				return buildExportStatementEqualsExport$patch(
+					source,
+					input,
+					inputs.options as T.ExportStatementEqualsExport.Options
+				);
+			case 'terminator':
+				return buildExportStatementEqualsExport$patch(
+					source,
+					inputs.config['value'] as Admit<NonNullable<T.Expression>>,
+					{ ...(inputs.options as T.ExportStatementEqualsExport.Options), ...input }
+				);
+		}
+	}
+	switch (slot) {
+		case 'value': {
+			const value = input;
+			const _value = rejectReservedText(
+				kindIdStorage<NonNullable<T.ExportStatementEqualsExport['_value']>>(value),
+				'ExportStatementEqualsExport.value',
+				TSKindId.Identifier,
+				_reservedWords_buildIdentifier
+			);
+			return setSlot(
+				source,
+				TSKindId.ExportStatementEqualsExport as const,
+				'export_statement_equals_export',
+				0,
+				'value',
+				_value
+			) as unknown as T.ExportStatementEqualsExport.Bound;
+		}
+		case 'terminator': {
+			const options = input;
+			const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementEqualsExport['_terminator']>>(
+				options?.terminator,
+				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+			);
+			return setSlot(
+				source,
+				TSKindId.ExportStatementEqualsExport as const,
+				'export_statement_equals_export',
+				1,
+				'terminator',
+				_terminator
+			) as unknown as T.ExportStatementEqualsExport.Bound;
+		}
+	}
+}
+function withExportStatementEqualsExport(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'value':
+			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
+				rebuilt(node, handle, () => buildExportStatementEqualsExport$set(node, 'value', value))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildExportStatementEqualsExport$set(node, 'terminator', { terminator: spelling }))
+			);
+	}
+	throw new Error(`export_statement_equals_export has no $with.${setter}`);
+}
+
+export function buildExportStatementNamespaceExport<V extends Admit<T.Identifier>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.ExportStatementNamespaceExport.Options
+): T.ExportStatementNamespaceExport.Bound;
+export function buildExportStatementNamespaceExport(
+	value: Admit<T.Identifier>,
+	options?: T.ExportStatementNamespaceExport.Options
+): T.ExportStatementNamespaceExport.Bound {
+	const _name = rejectReservedText(
+		value,
+		'ExportStatementNamespaceExport.name',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementNamespaceExport['_terminator']>>(
+		options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'export_statement_namespace_export', { name: _name, terminator: _terminator });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ExportStatementNamespaceExport as const, { _name, _terminator });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ExportStatementNamespaceExport as const);
+		storeCell(arena, record, 2, 2, _name);
+		storeCell(arena, record, 3, 5, _terminator);
+		const node = arena.view(record);
+		return node as unknown as T.ExportStatementNamespaceExport.Bound;
+	});
+}
+
+function buildExportStatementNamespaceExport$patch(
+	source: object,
+	value: Admit<T.Identifier>,
+	options?: T.ExportStatementNamespaceExport.Options
+): T.ExportStatementNamespaceExport.Bound {
+	const _name = rejectReservedText(
+		value,
+		'ExportStatementNamespaceExport.name',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementNamespaceExport['_terminator']>>(
+		options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'export_statement_namespace_export', { name: _name, terminator: _terminator });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ExportStatementNamespaceExport as const, { _name, _terminator });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ExportStatementNamespaceExport as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'terminator', _terminator));
+		const node = arena.view(record);
+		return node as unknown as T.ExportStatementNamespaceExport.Bound;
+	});
+}
+function buildExportStatementNamespaceExport$set(
+	source: object,
+	...[slot, input]: ['name', Admit<T.Identifier>] | ['terminator', T.ExportStatementNamespaceExport.Options]
+): T.ExportStatementNamespaceExport.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'name':
+				return buildExportStatementNamespaceExport$patch(
+					source,
+					input,
+					inputs.options as T.ExportStatementNamespaceExport.Options
+				);
+			case 'terminator':
+				return buildExportStatementNamespaceExport$patch(source, inputs.config['name'] as Admit<T.Identifier>, {
+					...(inputs.options as T.ExportStatementNamespaceExport.Options),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'name': {
+			const value = input;
+			const _name = rejectReservedText(
+				value,
+				'ExportStatementNamespaceExport.name',
+				TSKindId.Identifier,
+				_reservedWords_buildIdentifier
+			);
+			return setSlot(
+				source,
+				TSKindId.ExportStatementNamespaceExport as const,
+				'export_statement_namespace_export',
+				0,
+				'name',
+				_name
+			) as unknown as T.ExportStatementNamespaceExport.Bound;
+		}
+		case 'terminator': {
+			const options = input;
+			const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementNamespaceExport['_terminator']>>(
+				options?.terminator,
+				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+			);
+			return setSlot(
+				source,
+				TSKindId.ExportStatementNamespaceExport as const,
+				'export_statement_namespace_export',
+				1,
+				'terminator',
+				_terminator
+			) as unknown as T.ExportStatementNamespaceExport.Bound;
+		}
+	}
+}
+function withExportStatementNamespaceExport(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildExportStatementNamespaceExport$set(node, 'name', value))
+			);
+		case 'terminator':
+			return applySetter(args, (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () =>
+					buildExportStatementNamespaceExport$set(node, 'terminator', { terminator: spelling })
+				)
+			);
+	}
+	throw new Error(`export_statement_namespace_export has no $with.${setter}`);
+}
+
 export function buildCallExpressionCall<
 	FunctionSlot extends T.CallExpressionCall.Config['function'],
 	TypeArgumentsSlot extends T.CallExpressionCall.Config['typeArguments'],
@@ -25596,18 +25746,28 @@ function withForHeaderLetConstKind(node: object, setter: string, args: readonly 
 }
 
 export function buildForHeaderUsingKind<
-	LeftSlot extends T.ForHeaderUsingKind.Config['left'],
-	RightSlot extends T.ForHeaderUsingKind.Config['right']
+	LeftSlot extends OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>['left'],
+	RightSlot extends OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>['right']
 >(
-	config: RefusingConfig<T.ForHeaderUsingKind.Config, { left: LeftSlot; right: RightSlot }>,
+	config: RefusingConfig<
+		| (OmitEach<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>, 'kind'> & { readonly kind?: never })
+		| OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>,
+		{ left: LeftSlot; right: RightSlot }
+	>,
 	options?: T.ForHeaderUsingKind.Options
 ): T.ForHeaderUsingKind.Bound;
 export function buildForHeaderUsingKind(
-	config: T.ForHeaderUsingKind.Config,
+	config:
+		| (OmitEach<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>, 'kind'> & { readonly kind?: never })
+		| OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>,
 	options?: T.ForHeaderUsingKind.Options
 ): T.ForHeaderUsingKind.Bound {
 	currentHandle()?.admit(TSKindId.ForHeaderUsingKind, [config]);
-	const _kind = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_kind']>>(config.kind);
+	const _pinned: Partial<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>> = config;
+	const _kind =
+		_pinned.kind === undefined
+			? (TSKindId.UsingKeyword as const)
+			: kindIdStorage<NonNullable<T.ForHeaderUsingKind['_kind']>>(_pinned.kind);
 	const _left = rejectReservedText(
 		config.left,
 		'ForHeaderUsingKind.left',
@@ -25650,11 +25810,17 @@ export function buildForHeaderUsingKind(
 
 function buildForHeaderUsingKind$patch(
 	source: object,
-	config: T.ForHeaderUsingKind.Config,
+	config:
+		| (OmitEach<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>, 'kind'> & { readonly kind?: never })
+		| OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>,
 	options?: T.ForHeaderUsingKind.Options
 ): T.ForHeaderUsingKind.Bound {
 	currentHandle()?.admit(TSKindId.ForHeaderUsingKind, [config]);
-	const _kind = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_kind']>>(config.kind);
+	const _pinned: Partial<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>> = config;
+	const _kind =
+		_pinned.kind === undefined
+			? (TSKindId.UsingKeyword as const)
+			: kindIdStorage<NonNullable<T.ForHeaderUsingKind['_kind']>>(_pinned.kind);
 	const _left = rejectReservedText(
 		config.left,
 		'ForHeaderUsingKind.left',
@@ -25697,44 +25863,31 @@ function buildForHeaderUsingKind$patch(
 function buildForHeaderUsingKind$set(
 	source: object,
 	...[slot, input]:
-		| ['kind', Partial<T.ForHeaderUsingKind.Config>]
-		| ['left', Partial<T.ForHeaderUsingKind.Config>]
-		| ['operator', Partial<T.ForHeaderUsingKind.Config>]
-		| ['right', Partial<T.ForHeaderUsingKind.Config>]
+		| ['left', Partial<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>>]
+		| ['operator', Partial<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>>]
+		| ['right', Partial<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>>]
 		| ['terminator', T.ForHeaderUsingKind.Options]
 ): T.ForHeaderUsingKind.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
-			case 'kind':
 			case 'left':
 			case 'operator':
 			case 'right':
 				return buildForHeaderUsingKind$patch(
 					source,
-					{ ...(inputs.config as T.ForHeaderUsingKind.Config), ...input },
+					{ ...(inputs.config as OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>), ...input },
 					inputs.options as T.ForHeaderUsingKind.Options
 				);
 			case 'terminator':
-				return buildForHeaderUsingKind$patch(source, inputs.config as T.ForHeaderUsingKind.Config, {
-					...(inputs.options as T.ForHeaderUsingKind.Options),
-					...input
-				});
+				return buildForHeaderUsingKind$patch(
+					source,
+					inputs.config as OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>,
+					{ ...(inputs.options as T.ForHeaderUsingKind.Options), ...input }
+				);
 		}
 	}
 	switch (slot) {
-		case 'kind': {
-			const config = input;
-			const _kind = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_kind']>>(config.kind);
-			return setSlot(
-				source,
-				TSKindId.ForHeaderUsingKind as const,
-				'for_header_using_kind',
-				0,
-				'kind',
-				_kind
-			) as unknown as T.ForHeaderUsingKind.Bound;
-		}
 		case 'left': {
 			const config = input;
 			const _left = rejectReservedText(
@@ -25801,10 +25954,6 @@ function buildForHeaderUsingKind$set(
 function withForHeaderUsingKind(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'kind':
-			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['kind']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind$set(node, 'kind', { kind: value }))
-			);
 		case 'left':
 			return applySetter(args, (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
 				rebuilt(node, handle, () => buildForHeaderUsingKind$set(node, 'left', { left: value }))
@@ -25814,15 +25963,125 @@ function withForHeaderUsingKind(node: object, setter: string, args: readonly unk
 				rebuilt(node, handle, () => buildForHeaderUsingKind$set(node, 'terminator', { terminator: spelling }))
 			);
 		case 'operator':
-			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind$set(node, 'operator', { operator: value }))
+			return applySetter(
+				args,
+				(value: Admit<NonNullable<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>>['operator']>) =>
+					rebuilt(node, handle, () => buildForHeaderUsingKind$set(node, 'operator', { operator: value }))
 			);
 		case 'right':
-			return applySetter(args, (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['right']>) =>
-				rebuilt(node, handle, () => buildForHeaderUsingKind$set(node, 'right', { right: value }))
+			return applySetter(
+				args,
+				(value: Admit<NonNullable<OmitEach<ConfigOf<T.ForHeaderUsingKind>, 'terminator'>>['right']>) =>
+					rebuilt(node, handle, () => buildForHeaderUsingKind$set(node, 'right', { right: value }))
 			);
 	}
 	throw new Error(`for_header_using_kind has no $with.${setter}`);
+}
+
+export function buildForHeaderUsingKindPlain<
+	LeftSlot extends T.ForHeaderUsingKind.Plain.Config['left'],
+	RightSlot extends T.ForHeaderUsingKind.Plain.Config['right']
+>(
+	config: RefusingConfig<T.ForHeaderUsingKind.Plain.Config, { left: LeftSlot; right: RightSlot }>,
+	options?: T.ForHeaderUsingKind.Plain.Options
+): T.ForHeaderUsingKind.Plain.Bound;
+export function buildForHeaderUsingKindPlain(
+	config: T.ForHeaderUsingKind.Plain.Config,
+	options?: T.ForHeaderUsingKind.Plain.Options
+): T.ForHeaderUsingKind.Plain.Bound {
+	currentHandle()?.admit(TSKindId.ForHeaderUsingKind, [config], ['left', 'operator', 'right']);
+	const _kind = TSKindId.UsingKeyword as const;
+	const _left = rejectReservedText(
+		config.left,
+		'ForHeaderUsingKind.left',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKind['_terminator']>>(
+		blankArmStored(options?.terminator),
+		[['\n', TSKindId.AutomaticSemicolon] as const]
+	);
+	const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_operator']>>(config.operator);
+	const _right = rejectReservedText(
+		kindIdStorage<NonNullable<T.ForHeaderUsingKind['_right']>>(config.right),
+		'ForHeaderUsingKind.right',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_header_using_kind', {
+			kind: _kind,
+			left: _left,
+			terminator: _terminator,
+			operator: _operator,
+			right: _right
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ForHeaderUsingKind as const, { _kind, _left, _terminator, _operator, _right });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ForHeaderUsingKind as const);
+		storeCell(arena, record, 2, 2, _kind);
+		storeCell(arena, record, 3, 3, _left);
+		storeCell(arena, record, 4, 6, _terminator);
+		storeCell(arena, record, 5, 7, _operator);
+		storeCell(arena, record, 6, 8, _right);
+		const node = arena.view(record);
+		return node as unknown as T.ForHeaderUsingKind.Plain.Bound;
+	});
+}
+
+export function buildForHeaderUsingKindAwait<
+	LeftSlot extends T.ForHeaderUsingKind.Await.Config['left'],
+	RightSlot extends T.ForHeaderUsingKind.Await.Config['right']
+>(
+	config: RefusingConfig<T.ForHeaderUsingKind.Await.Config, { left: LeftSlot; right: RightSlot }>,
+	options?: T.ForHeaderUsingKind.Await.Options
+): T.ForHeaderUsingKind.Await.Bound;
+export function buildForHeaderUsingKindAwait(
+	config: T.ForHeaderUsingKind.Await.Config,
+	options?: T.ForHeaderUsingKind.Await.Options
+): T.ForHeaderUsingKind.Await.Bound {
+	currentHandle()?.admit(TSKindId.ForHeaderUsingKind, [config], ['left', 'operator', 'right']);
+	const _kind = TSKindId.UsingDeclarationArm as const;
+	const _left = rejectReservedText(
+		config.left,
+		'ForHeaderUsingKind.left',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderUsingKind['_terminator']>>(
+		blankArmStored(options?.terminator),
+		[['\n', TSKindId.AutomaticSemicolon] as const]
+	);
+	const _operator = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_operator']>>(config.operator);
+	const _right = rejectReservedText(
+		kindIdStorage<NonNullable<T.ForHeaderUsingKind['_right']>>(config.right),
+		'ForHeaderUsingKind.right',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_header_using_kind', {
+			kind: _kind,
+			left: _left,
+			terminator: _terminator,
+			operator: _operator,
+			right: _right
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ForHeaderUsingKind as const, { _kind, _left, _terminator, _operator, _right });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ForHeaderUsingKind as const);
+		storeCell(arena, record, 2, 2, _kind);
+		storeCell(arena, record, 3, 3, _left);
+		storeCell(arena, record, 4, 6, _terminator);
+		storeCell(arena, record, 5, 7, _operator);
+		storeCell(arena, record, 6, 8, _right);
+		const node = arena.view(record);
+		return node as unknown as T.ForHeaderUsingKind.Await.Bound;
+	});
 }
 
 export const buildFormalParametersGetAccessorSignature: TSKindId.FormalParametersGetAccessorSignature =
@@ -30524,13 +30783,39 @@ function withTypeIdentifier(node: object, setter: string, args: readonly unknown
 }
 
 export function buildInterfaceBody<MembersSlot extends ConfigOf<T.InterfaceBody>['members']>(
-	config: RefusingConfig<ConfigOf<T.InterfaceBody>, { members: MembersSlot }>
+	config: RefusingConfig<
+		| (OmitEach<ConfigOf<T.InterfaceBody>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
+		| ConfigOf<T.InterfaceBody>,
+		{ members: MembersSlot }
+	>
 ): T.InterfaceBody.Bound;
-export function buildInterfaceBody(config: ConfigOf<T.InterfaceBody>): T.InterfaceBody.Bound {
+export function buildInterfaceBody(
+	config:
+		| (OmitEach<ConfigOf<T.InterfaceBody>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
+		| ConfigOf<T.InterfaceBody>
+): T.InterfaceBody.Bound {
 	currentHandle()?.admit(TSKindId.InterfaceBody, [config]);
-	const _opening = kindIdStorage<NonNullable<T.InterfaceBody['_opening']>>(config.opening);
+	const _pinned: Partial<ConfigOf<T.InterfaceBody>> = config;
+	if (
+		[_pinned.opening, _pinned.closing].some((v) => v !== undefined) &&
+		[_pinned.opening, _pinned.closing].some((v) => v === undefined)
+	)
+		throw new TypeError("refine(interface_body): give 'opening' and 'closing', or neither");
+	const _opening =
+		_pinned.opening === undefined
+			? (TSKindId.Lbrace as const)
+			: kindIdStorage<NonNullable<T.InterfaceBody['_opening']>>(_pinned.opening);
 	const _members = config.members;
-	const _closing = kindIdStorage<NonNullable<T.InterfaceBody['_closing']>>(config.closing);
+	const _closing =
+		_pinned.closing === undefined
+			? (TSKindId.Rbrace as const)
+			: kindIdStorage<NonNullable<T.InterfaceBody['_closing']>>(_pinned.closing);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'interface_body', { opening: _opening, members: _members, closing: _closing });
@@ -30546,11 +30831,31 @@ export function buildInterfaceBody(config: ConfigOf<T.InterfaceBody>): T.Interfa
 	});
 }
 
-function buildInterfaceBody$patch(source: object, config: ConfigOf<T.InterfaceBody>): T.InterfaceBody.Bound {
+function buildInterfaceBody$patch(
+	source: object,
+	config:
+		| (OmitEach<ConfigOf<T.InterfaceBody>, 'opening' | 'closing'> & {
+				readonly opening?: never;
+				readonly closing?: never;
+		  })
+		| ConfigOf<T.InterfaceBody>
+): T.InterfaceBody.Bound {
 	currentHandle()?.admit(TSKindId.InterfaceBody, [config]);
-	const _opening = kindIdStorage<NonNullable<T.InterfaceBody['_opening']>>(config.opening);
+	const _pinned: Partial<ConfigOf<T.InterfaceBody>> = config;
+	if (
+		[_pinned.opening, _pinned.closing].some((v) => v !== undefined) &&
+		[_pinned.opening, _pinned.closing].some((v) => v === undefined)
+	)
+		throw new TypeError("refine(interface_body): give 'opening' and 'closing', or neither");
+	const _opening =
+		_pinned.opening === undefined
+			? (TSKindId.Lbrace as const)
+			: kindIdStorage<NonNullable<T.InterfaceBody['_opening']>>(_pinned.opening);
 	const _members = config.members;
-	const _closing = kindIdStorage<NonNullable<T.InterfaceBody['_closing']>>(config.closing);
+	const _closing =
+		_pinned.closing === undefined
+			? (TSKindId.Rbrace as const)
+			: kindIdStorage<NonNullable<T.InterfaceBody['_closing']>>(_pinned.closing);
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'interface_body', { opening: _opening, members: _members, closing: _closing });
@@ -30567,33 +30872,16 @@ function buildInterfaceBody$patch(source: object, config: ConfigOf<T.InterfaceBo
 }
 function buildInterfaceBody$set(
 	source: object,
-	...[slot, input]:
-		| ['opening', Partial<ConfigOf<T.InterfaceBody>>]
-		| ['members', Partial<ConfigOf<T.InterfaceBody>>]
-		| ['closing', Partial<ConfigOf<T.InterfaceBody>>]
+	...[slot, input]: ['members', Partial<ConfigOf<T.InterfaceBody>>]
 ): T.InterfaceBody.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
-			case 'opening':
 			case 'members':
-			case 'closing':
 				return buildInterfaceBody$patch(source, { ...(inputs.config as ConfigOf<T.InterfaceBody>), ...input });
 		}
 	}
 	switch (slot) {
-		case 'opening': {
-			const config = input;
-			const _opening = kindIdStorage<NonNullable<T.InterfaceBody['_opening']>>(config.opening);
-			return setSlot(
-				source,
-				TSKindId.InterfaceBody as const,
-				'interface_body',
-				0,
-				'opening',
-				_opening
-			) as unknown as T.InterfaceBody.Bound;
-		}
 		case 'members': {
 			const config = input;
 			const _members = config.members;
@@ -30606,27 +30894,11 @@ function buildInterfaceBody$set(
 				_members
 			) as unknown as T.InterfaceBody.Bound;
 		}
-		case 'closing': {
-			const config = input;
-			const _closing = kindIdStorage<NonNullable<T.InterfaceBody['_closing']>>(config.closing);
-			return setSlot(
-				source,
-				TSKindId.InterfaceBody as const,
-				'interface_body',
-				2,
-				'closing',
-				_closing
-			) as unknown as T.InterfaceBody.Bound;
-		}
 	}
 }
 function withInterfaceBody(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'opening':
-			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['opening']>) =>
-				rebuilt(node, handle, () => buildInterfaceBody$set(node, 'opening', { opening: value }))
-			);
 		case 'members':
 			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -30636,10 +30908,6 @@ function withInterfaceBody(node: object, setter: string, args: readonly unknown[
 						(value?: Admit<T.ObjectTypeContent>) => buildInterfaceBody$set(node, 'members', { members: value })
 					)
 				)
-			);
-		case 'closing':
-			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['closing']>) =>
-				rebuilt(node, handle, () => buildInterfaceBody$set(node, 'closing', { closing: value }))
 			);
 	}
 	throw new Error(`interface_body has no $with.${setter}`);
@@ -30875,8 +31143,6 @@ export type FluentKindMap = {
 	ambient_declaration_global: T.AmbientDeclarationGlobal.Bound;
 	ambient_declaration_module: T.AmbientDeclarationModule.Bound;
 	object_type_content: T.ObjectTypeContent.Bound;
-	export_statement_namespace_export: T.ExportStatementNamespaceExport.Bound;
-	export_statement_equals_export: T.ExportStatementEqualsExport.Bound;
 	comment_line: T.CommentLine.Bound;
 	comment_block: T.CommentBlock.Bound;
 	literal_type_negative_number: T.LiteralTypeNegativeNumber.Bound;
@@ -30906,6 +31172,8 @@ export type FluentKindMap = {
 	import_specifier_as: T.ImportSpecifierAs.Bound;
 	parenthesized_expression_typed: T.ParenthesizedExpressionTyped.Bound;
 	parenthesized_expression_sequence: T.ParenthesizedExpressionSequence.Bound;
+	export_statement_equals_export: T.ExportStatementEqualsExport.Bound;
+	export_statement_namespace_export: T.ExportStatementNamespaceExport.Bound;
 	call_expression_call: T.CallExpressionCall.Bound;
 	call_expression_template_call: T.CallExpressionTemplateCall.Bound;
 	call_expression_member: T.CallExpressionMember.Bound;
@@ -31156,8 +31424,6 @@ export const _factoryMap = {
 	ambient_declaration_global: buildAmbientDeclarationGlobal,
 	ambient_declaration_module: buildAmbientDeclarationModule,
 	object_type_content: buildObjectTypeContent,
-	export_statement_namespace_export: buildExportStatementNamespaceExport,
-	export_statement_equals_export: buildExportStatementEqualsExport,
 	comment_line: buildCommentLine,
 	comment_block: buildCommentBlock,
 	literal_type_negative_number: buildLiteralTypeNegativeNumber,
@@ -31187,6 +31453,8 @@ export const _factoryMap = {
 	import_specifier_as: buildImportSpecifierAs,
 	parenthesized_expression_typed: buildParenthesizedExpressionTyped,
 	parenthesized_expression_sequence: buildParenthesizedExpressionSequence,
+	export_statement_equals_export: buildExportStatementEqualsExport,
+	export_statement_namespace_export: buildExportStatementNamespaceExport,
 	call_expression_call: buildCallExpressionCall,
 	call_expression_template_call: buildCallExpressionTemplateCall,
 	call_expression_member: buildCallExpressionMember,
@@ -31435,21 +31703,21 @@ export const builtViews: BuiltViews = Object.freeze({
 		399: withAmbientDeclarationGlobal,
 		400: withAmbientDeclarationModule,
 		401: withObjectTypeContent,
-		403: withExportStatementNamespaceExport,
-		404: withExportStatementEqualsExport,
-		405: withLiteralTypeNegativeNumber,
-		407: withBinaryExpressionIn,
-		409: withClassBodyMemberMethod,
-		410: withClassBodyMemberMethodSig,
-		411: withClassBodyMemberDeclaration,
-		412: withIndexSignatureColon,
-		413: withIndexSignatureMappedTypeClause,
-		414: withImportStatementClauseFrom,
-		415: withYieldExpressionDelegate,
-		417: withImportSpecifierName,
-		418: withImportSpecifierAs,
-		419: withParenthesizedExpressionTyped,
-		420: withParenthesizedExpressionSequence,
+		402: withLiteralTypeNegativeNumber,
+		404: withBinaryExpressionIn,
+		406: withClassBodyMemberMethod,
+		407: withClassBodyMemberMethodSig,
+		408: withClassBodyMemberDeclaration,
+		409: withIndexSignatureColon,
+		410: withIndexSignatureMappedTypeClause,
+		411: withImportStatementClauseFrom,
+		412: withYieldExpressionDelegate,
+		414: withImportSpecifierName,
+		415: withImportSpecifierAs,
+		416: withParenthesizedExpressionTyped,
+		417: withParenthesizedExpressionSequence,
+		419: withExportStatementEqualsExport,
+		420: withExportStatementNamespaceExport,
 		421: withCallExpressionCall,
 		422: withCallExpressionTemplateCall,
 		423: withCallExpressionMember,
@@ -31676,21 +31944,21 @@ export const builtViews: BuiltViews = Object.freeze({
 		399: 3,
 		400: 5,
 		401: 3,
-		403: 4,
+		402: 3,
 		404: 4,
-		405: 3,
+		406: 5,
 		407: 4,
-		409: 5,
-		410: 4,
+		408: 4,
+		409: 7,
+		410: 6,
 		411: 4,
-		412: 7,
-		413: 6,
+		412: 3,
 		414: 4,
-		415: 3,
-		417: 4,
-		418: 5,
+		415: 5,
+		416: 4,
+		417: 3,
 		419: 4,
-		420: 3,
+		420: 4,
 		421: 5,
 		422: 4,
 		423: 5,
@@ -31917,19 +32185,19 @@ export const builtViews: BuiltViews = Object.freeze({
 		399: 2,
 		400: 2,
 		401: 2,
-		403: 2,
+		402: 2,
 		404: 2,
-		405: 2,
+		406: 2,
 		407: 2,
-		409: 2,
-		410: 2,
+		408: 2,
+		409: 3,
+		410: 3,
 		411: 2,
-		412: 3,
-		413: 3,
+		412: 2,
 		414: 2,
 		415: 2,
+		416: 2,
 		417: 2,
-		418: 2,
 		419: 2,
 		420: 2,
 		421: 2,
@@ -32569,64 +32837,64 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 2, 1, 1, 3],
 			['side', true, true]
 		],
-		403: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 1, 2, 0]
-		],
+		402: [[2, 2, 3, 1, 0]],
 		404: [
-			[2, 2, 4, 3, 0],
-			[6, 3, 1, 2, 0]
-		],
-		405: [[2, 2, 3, 1, 0]],
-		407: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 4, 3, 0]
 		],
-		409: [
+		406: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0],
 			[6, 4, 1, 18, 0]
 		],
-		410: [
+		407: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 2, 0]
 		],
-		411: [
+		408: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 2, 0]
 		],
-		412: [
+		409: [
 			[3, 3, 1, 2, 0],
 			[2, 0],
 			[4, 4, 3, 1, 0],
 			[7, 5, 4, 3, 0],
 			[11, 6, 3, 1, 0]
 		],
-		413: [
+		410: [
 			[3, 3, 1, 2, 0],
 			[2, 0],
 			[4, 4, 3, 1, 0],
 			[7, 5, 3, 1, 0]
 		],
-		414: [
+		411: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		415: [[2, 2, 4, 3, 0]],
-		417: [
+		412: [[2, 2, 4, 3, 0]],
+		414: [
 			[2, 2, 1, 2, 0],
 			[3, 3, 3, 1, 0]
 		],
-		418: [
+		415: [
 			[2, 2, 1, 2, 0],
 			[3, 3, 4, 3, 0],
 			[7, 4, 3, 1, 0]
 		],
-		419: [
+		416: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		420: [[2, 2, 3, 1, 0]],
+		417: [[2, 2, 3, 1, 0]],
+		419: [
+			[2, 2, 4, 3, 0],
+			[6, 3, 1, 2, 0]
+		],
+		420: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 2, 0]
+		],
 		421: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0],
