@@ -100,7 +100,8 @@ LEGACY = {'$SP$': '@', '$BP$': '*', '$RF$': '&', '$LT$': '<', '$GT$': '>', '$LP$
 ALLOC_FUNCTIONS = ['malloc', 'calloc', 'realloc', 'posix_memalign', 'aligned_alloc', 'memalign']
 PROBED = [*ALLOC_FUNCTIONS, 'free']
 DECODED = re.compile(r'^<(.+?) as (?:[\w:]*::)?FromNapiValue>::')
-EVENT = re.compile(r'^(.*?)\s+probe_libc:(\w+):\s*\([0-9a-f]+\)\s*(.*)$')
+EVENT = re.compile(r'^\s*(.+?)\s+(?:\S+:(\w+):\s+)?\([0-9a-f]+\)\s*(.*)$')
+INLINE_FRAME = re.compile(r'\s+([0-9a-f]+) (\S+) \(([^()]*)\)$')
 SITTIR = re.compile(r'^<?sittir')
 BUCKETS = [(rule['bucket'], re.compile(rule['match'])) for rule in json.loads((here / 'alloc-buckets.json').read_text())]
 UNMATCHED = 'no bucket matches'
@@ -293,26 +294,35 @@ def installProbes():
     print(f'uprobes on {libc}: {", ".join(arguments)}', flush=True)
 
 
+def allocKind(symbol):
+    name = symbolOffset(symbol)[0].removeprefix('__libc_')
+    return 'free' if name == 'cfree' else name
+
+
 def header(line):
-    text = line.strip()
+    text = line.rstrip('\n')
     if not ALLOCS:
-        return text, 0, None
+        return text.strip(), 0, None, []
     event = EVENT.match(text)
     if not event:
-        return text, 0, None
+        return text.strip(), 0, None, []
     comm, kind, args = event.groups()
-    values = {key: int(value, 0) for key, value in re.findall(r'(\w+)=(0x[0-9a-f]+|\d+)', args)}
-    return comm, values.get('nmemb', 1) * values.get('size', 0), kind
+    inline = INLINE_FRAME.search(args)
+    frames = [(inline[2], inline[3])] if inline else []
+    values = {key: int(value, 0) for key, value in re.findall(r'(\w+)=(0x[0-9a-f]+|\d+)', args[:inline.start()] if inline else args)}
+    return comm, values.get('nmemb', 1) * values.get('size', 0), kind, frames
 
 
 def stacks(data, label):
-    fields = 'comm,ip,sym,symoff,dso' + (',trace' if ALLOCS else '')
+    fields = 'comm,ip,sym,symoff,dso' + (',event,trace' if ALLOCS else '')
     with open(out / f'{label}.perf-script.err', 'w') as errors, open(out / f'{label}.perf-script.head', 'w') as head:
         script = subprocess.Popen([PERF, 'script', '-i', str(data), '-F', fields, '--no-demangle', '--no-inline', '--max-stack', '512'],
                                   stdout=subprocess.PIPE, stderr=errors, text=True, errors='replace')
         counts, weights, kinds, comm, frames, size, kind = Counter(), Counter(), Counter(), None, [], 0, None
 
         def finish():
+            nonlocal kind
+            kind = kind or (allocKind(frames[0][0]) if frames else None)
             kinds[kind] += 1
             if kind == 'free':
                 return
@@ -326,12 +336,10 @@ def stacks(data, label):
                 if comm is not None:
                     finish()
                 comm, frames = None, []
-            elif comm is None:
-                comm, size, kind = header(line)
-            elif ALLOCS and EVENT.match(line.strip()):
-                finish()
-                frames = []
-                comm, size, kind = header(line)
+            elif not line.startswith('\t'):
+                if comm is not None:
+                    finish()
+                comm, size, kind, frames = header(line)
             elif match := FRAME.match(line.rstrip('\n')):
                 frames.append((match[1], match[2]))
         if comm is not None:
