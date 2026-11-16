@@ -40,14 +40,20 @@ struct Met {
     kids: Option<Kids>,
 }
 
-/// A record's side record as a navigation has read it: its facts, where
-/// its run lies, whether the run's entries are read into it yet, and each
-/// entry's place in the walk once the run is placed (`Walk::placed`).
+/// A record's side record as a navigation has read it: where the record
+/// is, its facts, where its run lies, whether the run's entries are read
+/// into it yet and with them the contents it shares its node with, each
+/// entry's place in the walk once the run is placed (`Walk::placed`), and
+/// where the table keeps the record that is its node, once found
+/// (`Walk::node_of`).
 struct Read {
+    at: Address,
     side: SideRecord,
     run: Option<super::side::RunAt>,
     listed: bool,
+    shared: Vec<Address>,
     places: Option<Vec<Order>>,
+    node: Option<usize>,
 }
 
 const PAGE: usize = 64;
@@ -81,7 +87,6 @@ struct Table {
     met: Pages,
     sides: HashMap<Address, usize, crate::heap::IndexState>,
     read: Vec<Read>,
-    shared: HashMap<Address, Vec<Address>, crate::heap::IndexState>,
     refused: Option<ArenaError>,
 }
 
@@ -269,7 +274,7 @@ impl Walk<'_> {
         }
         let header = self.arena.words(at, crate::record::HEADER_WORDS)?;
         let (side, run) = SideRecord::read_facts(self.arena, Address(header[1]))?;
-        self.table.read.push(Read { side, run, listed: false, places: None });
+        self.table.read.push(Read { at, side, run, listed: false, shared: Vec::new(), places: None, node: None });
         self.table.sides.insert(at, self.table.read.len() - 1);
         Ok(self.table.read.len() - 1)
     }
@@ -281,77 +286,86 @@ impl Walk<'_> {
         Ok(&self.table.read[read].side)
     }
 
-    /// The run of the record at `at`, its entries read on the first ask.
-    fn run(&mut self, at: Address) -> Result<&[RunEntry], ArenaError> {
-        let read = self.read(at)?;
-        let Read { side, run, listed, .. } = &mut self.table.read[read];
+    /// Reads the entries of the run of the record kept at `read`, on the
+    /// first ask, and with them the contents the record shares its node
+    /// with.
+    fn list(&mut self, read: usize) -> Result<(), ArenaError> {
+        let Read { side, run, listed, shared, .. } = &mut self.table.read[read];
         if !*listed {
             if let Some(run) = run {
                 side.run = run.entries(self.arena)?;
             }
+            shared.extend(side.run.iter().filter_map(|entry| match *entry {
+                RunEntry::Record { at, shared: true } => Some(at),
+                _ => None,
+            }));
             *listed = true;
         }
-        Ok(&side.run)
+        Ok(())
     }
 
-    /// The record that is the node of the record at `at`: itself, or, for a
-    /// content read from its envelope's own node, its envelope's.
-    fn node_record(&mut self, mut at: Address) -> Result<Address, ArenaError> {
-        loop {
-            let Some(parent) = self.side(at)?.parent else { return Ok(at) };
-            if !self.shares(parent, at)? {
-                return Ok(at);
+    /// The run of the record at `at`, its entries read on the first ask.
+    fn run(&mut self, at: Address) -> Result<&[RunEntry], ArenaError> {
+        let read = self.read(at)?;
+        self.list(read)?;
+        Ok(&self.table.read[read].side.run)
+    }
+
+    /// Where the table keeps the record that is the node of the record
+    /// kept at `read`: itself, or, for a content read from its envelope's
+    /// own node, its envelope's.
+    fn node_of(&mut self, read: usize) -> Result<usize, ArenaError> {
+        if let Some(node) = self.table.read[read].node {
+            return Ok(node);
+        }
+        let mut node = read;
+        while let Some(parent) = self.table.read[node].side.parent {
+            let parent = self.read(parent)?;
+            self.list(parent)?;
+            if !self.table.read[parent].shared.contains(&self.table.read[node].at) {
+                break;
             }
-            at = parent;
+            node = parent;
         }
-    }
-
-    /// Whether the record at `content` is a content the record at `holder`
-    /// reads from its own node: the contents its run marks shared, found
-    /// once.
-    fn shares(&mut self, holder: Address, content: Address) -> Result<bool, ArenaError> {
-        if !self.table.shared.contains_key(&holder) {
-            let contents = self
-                .run(holder)?
-                .iter()
-                .filter_map(|entry| match *entry {
-                    RunEntry::Record { at, shared: true } => Some(at),
-                    _ => None,
-                })
-                .collect();
-            self.table.shared.insert(holder, contents);
-        }
-        Ok(self.table.shared.get(&holder).is_some_and(|contents| contents.contains(&content)))
+        self.table.read[read].node = Some(node);
+        Ok(node)
     }
 
     /// The place in the walk of the entry at `entry` of the run of the
-    /// record at `holder`. A run is placed whole on the first ask, from its
-    /// record's own place: each entry follows the one before it, a row
+    /// record at `holder` (`placed_at`).
+    fn placed(&mut self, holder: Address, entry: u32) -> Result<Order, ArenaError> {
+        let read = self.read(holder)?;
+        self.placed_at(read, entry)
+    }
+
+    /// The place in the walk of the entry at `entry` of the run of the
+    /// record kept at `read`. A run is placed whole on the first ask, from
+    /// its record's own place: each entry follows the one before it, a row
     /// taking one index and then its inner entries, a child's record the
     /// count its side record stamps. A content sharing its envelope's node
     /// is placed by its envelope's run, where its entries lie.
-    fn placed(&mut self, holder: Address, entry: u32) -> Result<Order, ArenaError> {
-        let read = self.read(holder)?;
+    fn placed_at(&mut self, read: usize, entry: u32) -> Result<Order, ArenaError> {
         if self.table.read[read].places.is_none() {
-            let node = self.node_record(holder)?;
-            let Order { index, count } = self.side(node)?.order.ok_or(malformed("parsed record order", node))?;
+            let node = self.node_of(read)?;
+            let at = self.table.read[node].at;
+            let Order { index, count } = self.table.read[node].side.order.ok_or(malformed("parsed record order", at))?;
             let mut next = index.0 + 1;
             self.place_run(node, &mut next)?;
             if next != index.0 + count {
-                return Err(malformed("parsed record count", node));
+                return Err(malformed("parsed record count", at));
             }
         }
-        self.table.read[read].places.as_ref().and_then(|places| places.get(entry as usize)).copied().ok_or(malformed("run entry", holder))
+        let Read { at, places, .. } = &self.table.read[read];
+        places.as_ref().and_then(|places| places.get(entry as usize)).copied().ok_or(malformed("run entry", *at))
     }
 
-    fn place_run(&mut self, at: Address, next: &mut u32) -> Result<(), ArenaError> {
-        self.run(at)?;
-        let read = self.read(at)?;
+    fn place_run(&mut self, read: usize, next: &mut u32) -> Result<(), ArenaError> {
+        self.list(read)?;
         let run = std::mem::take(&mut self.table.read[read].side.run);
         let placed = self.place_entries(&run, next);
-        let read = &mut self.table.read[read];
-        read.side.run = run;
-        read.places = Some(placed?);
+        let kept = &mut self.table.read[read];
+        kept.side.run = run;
+        kept.places = Some(placed?);
         Ok(())
     }
 
@@ -372,7 +386,10 @@ impl Walk<'_> {
                     *next += 1;
                     open.push((at, at + 1 + inner as usize));
                 }
-                RunEntry::Record { at: content, shared: true } => self.place_run(content, next)?,
+                RunEntry::Record { at: content, shared: true } => {
+                    let content = self.read(content)?;
+                    self.place_run(content, next)?;
+                }
                 RunEntry::Record { at: child, shared: false } => {
                     let order = self.side(child)?.order.ok_or(malformed("parsed record order", child))?;
                     if order.index.0 != *next {
@@ -401,49 +418,67 @@ impl Walk<'_> {
         index
     }
 
+    /// The id of the node of the record at `at`.
     fn record(&mut self, at: Address, parent: Parent) -> Result<NodeIndex, ArenaError> {
-        let at = self.node_record(at)?;
-        let side = self.side(at)?;
-        let facts = side.node.ok_or(malformed("parsed record facts", at))?;
-        let span = side.at.ok_or(malformed("parsed record row", at))?.span;
-        let order = side.order.ok_or(malformed("parsed record order", at))?;
-        Ok(self.meet(NodeSite::Record(at), order, facts, span, parent))
+        let read = self.read(at)?;
+        let node = self.node_of(read)?;
+        self.met_record(node, parent)
     }
 
-    /// The entries of the children of the node whose record is at `at`,
-    /// each with the record whose run holds it and its place there: its
-    /// own run's, a shared content's in place of the content.
-    fn entries(&mut self, at: Address) -> Result<Vec<(Address, u32, RunEntry)>, ArenaError> {
+    /// The id of the node the record kept at `read` is.
+    fn met_record(&mut self, read: usize, parent: Parent) -> Result<NodeIndex, ArenaError> {
+        let Read { at, side, .. } = &self.table.read[read];
+        let facts = side.node.ok_or(malformed("parsed record facts", *at))?;
+        let span = side.at.ok_or(malformed("parsed record row", *at))?.span;
+        let order = side.order.ok_or(malformed("parsed record order", *at))?;
+        Ok(self.meet(NodeSite::Record(*at), order, facts, span, parent))
+    }
+
+    /// The entries of the children of the node whose record is kept at
+    /// `read`, each with where the record whose run holds it is kept and
+    /// its place there: its own run's, a shared content's in place of the
+    /// content.
+    fn entries(&mut self, read: usize) -> Result<Vec<(usize, u32, RunEntry)>, ArenaError> {
         let mut out = Vec::new();
-        self.entries_into(at, &mut out)?;
+        self.entries_into(read, &mut out)?;
         Ok(out)
     }
 
-    fn entries_into(&mut self, at: Address, out: &mut Vec<(Address, u32, RunEntry)>) -> Result<(), ArenaError> {
+    fn entries_into(&mut self, read: usize, out: &mut Vec<(usize, u32, RunEntry)>) -> Result<(), ArenaError> {
+        self.list(read)?;
+        let run = std::mem::take(&mut self.table.read[read].side.run);
+        let mut walked = Ok(());
         let mut entry = 0;
-        while let Some(&found) = self.run(at)?.get(entry) {
+        while let Some(&found) = run.get(entry) {
             match found {
-                RunEntry::Record { at: content, shared: true } => self.entries_into(content, out)?,
-                found => out.push((at, crate::types::narrow(entry), found)),
+                RunEntry::Record { at: content, shared: true } => {
+                    walked = self.read(content).and_then(|content| self.entries_into(content, out));
+                    if walked.is_err() {
+                        break;
+                    }
+                }
+                found => out.push((read, crate::types::narrow(entry), found)),
             }
             entry += 1 + match found {
                 RunEntry::Row { inner, .. } => inner as usize,
                 RunEntry::Record { .. } => 0,
             };
         }
-        Ok(())
+        self.table.read[read].side.run = run;
+        walked
     }
 
-    /// The entries inside the row at `entry` of the run of `holder`, one
-    /// level down.
-    fn inside(&mut self, holder: Address, entry: u32) -> Result<Vec<(Address, u32, RunEntry)>, ArenaError> {
-        let run = self.run(holder)?;
-        let Some(&RunEntry::Row { inner, .. }) = run.get(entry as usize) else { return Err(malformed("run row", holder)) };
+    /// The entries inside the row at `entry` of the run of the record kept
+    /// at `read`, one level down.
+    fn inside(&mut self, read: usize, entry: u32) -> Result<Vec<(usize, u32, RunEntry)>, ArenaError> {
+        self.list(read)?;
+        let Read { at: holder, side, .. } = &self.table.read[read];
+        let Some(&RunEntry::Row { inner, .. }) = side.run.get(entry as usize) else { return Err(malformed("run row", *holder)) };
         let (mut at, end) = (entry as usize + 1, entry as usize + 1 + inner as usize);
         let mut out = Vec::new();
         while at < end {
-            let found = *run.get(at).ok_or(malformed("run row entries", holder))?;
-            out.push((holder, crate::types::narrow(at), found));
+            let found = *side.run.get(at).ok_or(malformed("run row entries", *holder))?;
+            out.push((read, crate::types::narrow(at), found));
             at += 1 + match found {
                 RunEntry::Row { inner, .. } => inner as usize,
                 RunEntry::Record { .. } => 0,
@@ -455,15 +490,26 @@ impl Walk<'_> {
     fn kids_of(&mut self, index: NodeIndex) -> Result<Kids, ArenaError> {
         let site = self.site(index).ok_or(ArenaError::Malformed { what: "node id", word: index.0 })?;
         let entries = match site {
-            NodeSite::Record(at) => self.entries(at)?,
-            NodeSite::Row { holder, entry } => self.inside(holder, entry)?,
+            NodeSite::Record(at) => {
+                let read = self.read(at)?;
+                self.entries(read)?
+            }
+            NodeSite::Row { holder, entry } => {
+                let read = self.read(holder)?;
+                self.inside(read, entry)?
+            }
         };
         let mut kids = Vec::with_capacity(entries.len());
-        for (holder, entry, found) in entries {
+        for (read, entry, found) in entries {
             let kid = match found {
-                RunEntry::Record { at, .. } => self.record(at, Parent::Node(index))?,
+                RunEntry::Record { at, .. } => {
+                    let child = self.read(at)?;
+                    self.table.read[child].node.get_or_insert(child);
+                    self.met_record(child, Parent::Node(index))?
+                }
                 RunEntry::Row { facts, span, .. } => {
-                    let order = self.placed(holder, entry)?;
+                    let order = self.placed_at(read, entry)?;
+                    let holder = self.table.read[read].at;
                     self.meet(NodeSite::Row { holder, entry }, order, facts, span, Parent::Node(index))
                 }
             };
