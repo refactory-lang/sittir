@@ -12,7 +12,7 @@ For every peer:
 4. **Your plan task's Status line is the tracker.** A PR ticks its task and updates that line.
 
 5. **A table that compares alternatives bolds the winning cell in each row** (lowest for time, memory and failures; highest for passes; every tied cell on a tie), in reports, PR bodies, specs and plans.
-6. **A logical flow, a memory layout, or a class or architecture structure is drawn in Mermaid,** as a fenced `mermaid` block in the markdown file or the report, with a sentence above it saying what it shows.
+6. **Code and architecture are drawn in Mermaid:** a flow through the code, a memory or record layout, a class, type or module structure. A fenced `mermaid` block in the markdown file or the report, with a sentence above it saying what it shows. Not for work plans, task order or merge decisions; those stay prose, lists and tables.
 
 For `sittir-brainstorm`:
 
