@@ -7,7 +7,7 @@ import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import type { SpacingAddress } from '../types/spacing.ts';
 import { isFixedTextLeaf, isLexicalToken, isTerminalNode, layoutDisplaysOf, layoutNodeOf, separatorCandidateTexts } from '../compiler/model/node-map.ts';
-import { CONTINUATION_KINDS, NEWLINE_KINDS, PREFERRED_NEWLINE, breakingKindsOfText, TIGHT_KINDS, layoutKindsOfText, leafEdgesOf } from '../compiler/model/layout-kinds.ts';
+import { NEWLINE_KINDS, PREFERRED_NEWLINE, breakingKindsOfText, TIGHT_KINDS, layoutKindsOfText, leafEdgesOf } from '../compiler/model/layout-kinds.ts';
 import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -2872,21 +2872,12 @@ function renderTriviaNodeSupport(
 	lines.push('        None', '    }', '}', '');
 
 	lines.push('impl ::sittir_core::trivia::TriviaSeam for TriviaNode {');
-	lines.push('    fn seam_gap(&self) -> Option<(::sittir_core::layout_kinds::LayoutKinds, Option<&str>)> {');
+	lines.push('    fn seam_gap(&self) -> Option<::sittir_core::layout_kinds::LayoutKinds> {');
 	lines.push('        match self {');
 	for (const node of extrasNodes) {
-		if (continuationKinds.has(node.kind)) {
-			const unit = unitOf(node);
-			lines.push(
-				unit === undefined
-					? `            TriviaNode::${rustNodeVariantName(node)}(t) if !t.verbatim() => Some((${CONTINUATION_KINDS}, Some(&t.text))),`
-					: `            TriviaNode::${unit.variant} => Some((${CONTINUATION_KINDS}, Some(${rustStringLiteral(unit.text)}))),`
-			);
-			continue;
-		}
 		if (!whitespaceKinds.has(node.kind)) continue;
 		const unit = fixedLiteralOf(fixed, node.kind);
-		lines.push(`            TriviaNode::${unit.variant} => Some((${layoutKindsOfText(unit.text)}, None)),`);
+		lines.push(`            TriviaNode::${unit.variant} => Some(${layoutKindsOfText(unit.text)}),`);
 	}
 	lines.push('            _ => None,');
 	lines.push('        }');
