@@ -17,6 +17,7 @@
 # PHASE=edit samples JavaScript frames: the inspector's Profiler, a sample every
 # JS_INTERVAL_US. A frame is its function and its script, relative to the tree
 # or this checkout, with the line; the comparison between trees drops the line.
+# STORAGE=object runs the phase in object storage, where the typed nodes are.
 # MEASURE=allocs counts allocations instead of sampling time, for either phase:
 # perf record (under sudo, which uprobes need) with uprobes on libc's malloc,
 # calloc, realloc, posix_memalign, aligned_alloc and memalign (the arguments by
@@ -66,6 +67,8 @@ names = list(trees)
 out.mkdir(parents=True, exist_ok=True)
 PHASE = os.environ.get('PHASE') or 'render'
 assert PHASE in ('render', 'edit'), f'PHASE {PHASE} is not render or edit'
+STORAGE = os.environ.get('STORAGE') or 'arena'
+assert STORAGE in ('arena', 'object'), f'STORAGE {STORAGE} is not arena or object'
 MEASURE = os.environ.get('MEASURE') or 'samples'
 assert MEASURE in ('samples', 'allocs'), f'MEASURE {MEASURE} is not samples or allocs'
 ALLOCS = MEASURE == 'allocs'
@@ -149,7 +152,7 @@ def record(grammar, name, tree, copy):
     label = f'{grammar}-{name}'
     receipt = out / f'{label}.json'
     driver = [str(here / 'phase-profile.mjs'), str(tree), grammar, PHASE, str(receipt), str(WARMUP), str(BATCHES), str(PER_ENGINE)]
-    env = dict(os.environ, NODE_ENV='production')
+    env = dict(os.environ, NODE_ENV='production', STORAGE=STORAGE)
     with tempfile.TemporaryDirectory() as fifos:
         if NATIVE:
             profile = out / f'{label}.perf.data'
@@ -443,7 +446,7 @@ perBatch = lambda n: f'{n / BATCHES:.2f}'
 lines = [(out.parent / 'build-path.md').read_text().strip() if (out.parent / 'build-path.md').exists() else '', '']
 if ALLOCS:
     installProbes()
-    lines += [f'Arena {PHASE} allocations: uprobes on libc\'s {", ".join(ALLOC_FUNCTIONS)} ({run([PERF, "--version"]).strip()}), enabled only while a timed batch runs the phase, with frame-pointer call chains '
+    lines += [f'{STORAGE.capitalize()} {PHASE} allocations: uprobes on libc\'s {", ".join(ALLOC_FUNCTIONS)} ({run([PERF, "--version"]).strip()}), enabled only while a timed batch runs the phase, with frame-pointer call chains '
               f'(the frame that called libc is not in a call chain taken at a function\'s entry); {BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}. '
               f'Inlined functions are expanded from the line tables; generic arguments are dropped. Bytes are the size asked for, not malloc\'s usable size.', '']
 elif NATIVE:

@@ -39,6 +39,11 @@ on:
         type: choice
         default: render
         options: [render, edit]
+      storage:
+        description: phase-profile and alloc-count. The node storage the phase runs in.
+        type: choice
+        default: arena
+        options: [arena, object]
       candidates:
         description: paired-refs and probe. More trees beside feature, space-separated name=ref, each also read in arena storage when arena is on.
         type: string
@@ -155,6 +160,7 @@ jobs:
       native-profiler: ${{ inputs.benchmark == 'alloc-count' || inputs.benchmark == 'phase-profile' && inputs.phase == 'render' }}
       phase: ${{ inputs.phase }}
       measure: ${{ inputs.benchmark == 'alloc-count' && 'allocs' || 'samples' }}
+      storage: ${{ inputs.storage }}
       feature-ref: ${{ inputs.feature-ref }}
       master-ref: ${{ inputs.master-ref }}
       profile: ${{ inputs.profile }}

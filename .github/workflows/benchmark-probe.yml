@@ -39,6 +39,10 @@ on:
         description: The corpus phase a phase profile runs, render or edit.
         type: string
         default: render
+      storage:
+        description: The node storage a phase profile runs in, arena or object.
+        type: string
+        default: arena
       measure:
         description: What a phase profile records, samples of time or a count of allocations.
         type: string
@@ -136,6 +140,7 @@ jobs:
           SCRIPT: ${{ inputs.script }}
           PHASE: ${{ inputs.phase }}
           MEASURE: ${{ inputs.measure }}
+          STORAGE: ${{ inputs.storage }}
         run: |
           versions=(base="$RUNNER_TEMP/trees/base" feature="$RUNNER_TEMP/trees/feature")
           if [[ $ARENA == true ]]; then versions+=(feature-arena="$RUNNER_TEMP/trees/feature@arena"); fi

@@ -1,5 +1,5 @@
 // Usage: node [--perf-basic-prof] phase-profile.mjs <tree> <grammar> <render|edit> <receipt.json> <warmup batches> <batches> <batches per engine>
-// One corpus phase alone, in arena storage, for a profiler. Each batch parses
+// One corpus phase alone, in arena storage (STORAGE=object for object storage), for a profiler. Each batch parses
 // <grammar>'s corpus (corpus-batch.mjs's parsePhase), runs the phase over every
 // parsed root (renderPhase: render, toString, dispose; or editPhase, after an
 // untimed renderPhase as in corpusBatch: a same-value edit of each root's
@@ -26,6 +26,8 @@ import { cpuModel } from '../../arena-benchmark-cpu.mjs';
 import { editPhase, hash, parsePhase, renderPhase } from '../corpus-batch.mjs';
 
 const [root, grammar, phase, receipt, warmupArg, batchesArg, perEngineArg] = process.argv.slice(2);
+const storage = process.env.STORAGE ?? 'arena';
+assert.ok(['arena', 'object'].includes(storage), `STORAGE ${storage} is not arena or object`);
 const [warmupBatches, batches, batchesPerEngine] = [warmupArg, batchesArg, perEngineArg].map(Number);
 const here = path.dirname(new URL(import.meta.url).pathname);
 const sources = JSON.parse(readFileSync(path.join(here, '..', `corpus-${grammar}.json`), 'utf8')).map((entry) => entry.source);
@@ -134,7 +136,7 @@ const phaseMs = [];
 async function batch(index, sampled) {
   if (index % batchesPerEngine === 0) {
     engine?.dispose();
-    engine = await language.createEngine({ nodeStorage: 'arena' });
+    engine = await language.createEngine({ nodeStorage: storage });
     mapped ??= mappedImages();
   }
   const roots = parsePhase(engine, sources);
@@ -161,7 +163,7 @@ try {
   const sampling = sampler?.finish();
   const sorted = [...phaseMs].sort((a, b) => a - b);
   writeFileSync(receipt, JSON.stringify({
-    root, grammar, phase, nodeStorage: 'arena', entries: sources.length, warmupBatches, batches, batchesPerEngine,
+    root, grammar, phase, nodeStorage: storage, entries: sources.length, warmupBatches, batches, batchesPerEngine,
     buildProfile: engine.diagnostics.buildProfile, node: process.version, cpu: cpuModel(), sampled: sampler !== undefined, sampling,
     texts, phaseMsMedian: sorted[sorted.length >> 1], phaseMsTotal: phaseMs.reduce((sum, ms) => sum + ms, 0), mapped, phaseMs
   }, null, 1) + '\n');
