@@ -23,7 +23,7 @@
 
 ### Task 1: The stamp and its census
 
-**Status:** the stamp matches the oracle slot for slot at 71/103/102. The tool and the count test are written; the commit waits on the regen leg and the gates.
+**Status:** done. The stamp matches the oracle slot for slot at 71/103/102; the tool, the count test and the tool listing test pass, and no generated file moved.
 
 **Files:**
 - Create: `packages/codegen/src/compiler/model/wrapper-chain.ts`
@@ -38,7 +38,7 @@
 
 ### Task 2: The rule tests
 
-**Status:** written and passing (10 synthetic cases), uncommitted.
+**Status:** done: 10 synthetic cases, committed with Task 1.
 
 **Files:**
 - Test: `packages/codegen/src/compiler/model/__tests__/wrapper-chain.test.ts`
