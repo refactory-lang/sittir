@@ -38,6 +38,14 @@
 # With ALLOC_COUNTER=interposer, a tree's counts are kept folded with its
 # commit (<grammar>-<name>.kept.json); REUSE=1 reads a tree's kept counts
 # instead of counting it again, so one checkout can hold each tree in turn.
+# The interposer sees libc only, so a second run of the same batches samples
+# the JavaScript engine's heap (V8_HEAP_INTERVAL bytes between samples,
+# default 256): V8 scales each sample to the bytes it stands for, so the
+# samples under the phase's own function estimate the phase's heap bytes, with
+# a standard error from their count, and attribute them by function and
+# package. V8's total_allocated_bytes cannot stand in for them: on node 26 two
+# back-to-back reads differ by a median of 112 KB, more than a render batch
+# allocates in the heap.
 # Writes, per grammar and tree:
 #   <grammar>-<name>.json               the driver's receipt
 #   <grammar>-<name>.collapsed.gz       folded stacks (render: the thread's name at the root, inlined frames expanded)
@@ -52,8 +60,8 @@
 # all the phase's samples, every tree's samples per batch against the first's.
 # Fails once everything is written if a tree's process did not map its
 # unstripped copy or no stack reaches a callback (render), or no stack reaches
-# editPhase (edit).
-import atexit, gzip, json, os, platform, re, shutil, subprocess, sys, tempfile
+# editPhase (edit), or no heap sample's stack reaches the phase's function.
+import atexit, gzip, json, math, os, platform, re, shutil, subprocess, sys, tempfile
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -216,12 +224,16 @@ def packageOf(url):
 
 
 def heapAnalysis(heap, tree):
-    result = {'bytes': 0, 'samples': 0, 'packages': defaultdict(lambda: [0, 0]), 'functions': defaultdict(lambda: [0, 0])}
+    result = {'phase': heap['phase'], 'bytes': 0, 'samples': 0, 'outside': [0, 0], 'packages': defaultdict(lambda: [0, 0]), 'functions': defaultdict(lambda: [0, 0])}
     for entry in heap['functions']:
+        if not entry['inPhase']:
+            result['outside'][0] += entry['bytes']
+            result['outside'][1] += entry['samples']
+            continue
         url = entry['url']
         for root in (f'file://{tree}/', f'file://{checkout}/'):
             url = url.removeprefix(root)
-        name = f"{entry['functionName'] or '(anonymous)'} ({url}:{entry['line']})" if url else (entry['functionName'] or '(anonymous)')
+        name = f"{entry['functionName'] or '(anonymous)'} ({url})" if url else (entry['functionName'] or '(anonymous)')
         for table, key in ((result['packages'], packageOf(entry['url'])), (result['functions'], name)):
             table[key][0] += entry['bytes']
             table[key][1] += entry['samples']
@@ -563,23 +575,21 @@ def allocReport(grammar, names, results):
 
 def heapReport(grammar, names, results):
     first = names[0]
-    median = lambda values: sorted(values)[len(values) >> 1] if values else None
+    base = results[first][1]['heap']
+    phaseName = base['phase']
     lines = [f'#### {grammar}: the JavaScript engine\'s heap', '',
-             (f'Counter: V8\'s cumulative `total_allocated_bytes`, read around each timed phase in the counting run, less what reading it allocates. '
-              f'It is V8\'s own count, comparable between trees, not a sum of the objects\' sizes. '
-              f'Sampled: the inspector\'s sampling heap profiler in a second run of the same batches, a sample every {V8_INTERVAL} bytes on average, '
-              f'objects collected before the window ended kept, each sample\'s bytes attributed to the function that allocated it.'), '',
-             f'| tree | counter bytes per batch, median | mean | × {first} | sampled bytes per batch | sampled ÷ counter mean | samples per batch |', '|---|---|---|---|---|---|---|']
-    exact = {}
+             (f'The inspector\'s sampling heap profiler, in a second run of the same batches: a sample every {V8_INTERVAL} bytes on average, '
+              f'objects collected before the window ended kept. V8 scales each sample to the bytes it stands for, so the samples\' sum estimates the bytes allocated; '
+              f'± is one standard error of the ratio, from the sample counts (1/√samples per tree). '
+              f'Only samples whose stack passes through `{phaseName}` are the phase\'s; the rest are the driver\'s own (the inspector\'s replies, its frames) '
+              f'or a sample whose node the profile no longer holds, and are shown apart.'), '',
+             f'| tree | bytes per batch | × {first} | samples per batch | not under `{phaseName}`, bytes per batch |', '|---|---|---|---|---|']
     for name in names:
-        facts, analysis = results[name][0], results[name][1]
-        heap, measured = analysis['heap'], (facts.get('heapAllocated') or {}).get('perBatch')
-        exact[name] = median(measured) if measured else None
-        mean = sum(measured) / len(measured) if measured else None
-        sampled = heap['bytes'] / BATCHES
-        lines.append(f'| {name} | ' + (f'{exact[name]:.0f} | {mean:.0f} | ' if measured else 'not reported by this node | — | ')
-                     + (f'×{exact[name] / exact[first]:.3f}' if measured and exact.get(first) else '—')
-                     + f' | {sampled:.0f} | ' + (f'{sampled / mean:.3f}' if measured and mean else '—') + f' | {heap["samples"] / BATCHES:.1f} |')
+        heap = results[name][1]['heap']
+        ratio = heap['bytes'] / base['bytes'] if base['bytes'] else None
+        error = f' ±{ratio * math.sqrt(1 / heap["samples"] + 1 / base["samples"]):.3f}' if name != first and ratio and heap['samples'] else ''
+        lines.append(f'| {name} | {heap["bytes"] / BATCHES:.0f} | ' + (f'×{ratio:.3f}{error}' if ratio is not None else '—')
+                     + f' | {heap["samples"] / BATCHES:.1f} | {heap["outside"][0] / BATCHES:.0f} |')
     lines.append('')
 
     def table(heading, key, limit):
@@ -646,6 +656,9 @@ for grammar in grammars:
             facts, kinds, dropped, commit, heap = saved['facts'], Counter(saved['kinds']), saved['dropped'], saved['commit'], saved.get('heap')
             expanded, expandedWeights = readFolded(out / f'{label}.collapsed.gz'), readFolded(out / f'{label}.bytes.collapsed.gz')
             print(f'{label}: the counts kept from {commit}', flush=True)
+            if heap is not None and 'phase' not in heap:
+                heap = None
+                print(f'{label}: its kept heap samples do not say which are under the phase, so the heap section is left out', flush=True)
         else:
             commit = run(['git', '-C', str(tree), 'rev-parse', '--short=9', 'HEAD']).strip()
             copy = addonCopy(tree, grammar) if NATIVE else None
@@ -676,6 +689,8 @@ for grammar in grammars:
             allocs['dropped'] = dropped
             if INTERPOSER and heap is not None:
                 allocs['heap'] = heapAnalysis(heap, tree)
+                if not allocs['heap']['samples']:
+                    failures.append(f"{label}: no heap sample's stack passes through {heap['phase']}; read {label}.v8-heap.json")
             if dropped and dropped['count']:
                 allocs['events'] += int(dropped['count'])
                 allocs['bytes'] += int(dropped['bytes'])
