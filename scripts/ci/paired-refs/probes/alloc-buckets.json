@@ -4,6 +4,10 @@
     "match": "alloc::string::|alloc::str::|alloc::fmt::format|ToString::to_string|str::to_owned|std::ffi::os_str|utf8"
   },
   {
+    "bucket": "napi boundary: external buffers, references, borrow scopes",
+    "match": "napi_engine::|napi::bindgen_runtime|napi_create_|v8impl::|node::Buffer"
+  },
+  {
     "bucket": "node lists and boxes: decoding a value from JavaScript",
     "match": "FromNapiValue|from_napi_value"
   },

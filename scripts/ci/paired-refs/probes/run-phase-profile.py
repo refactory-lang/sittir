@@ -556,7 +556,7 @@ def allocReport(grammar, names, results):
     lines += comparison('allocations under a decode from JavaScript, by the type decoded (the nearest `FromNapiValue` implementor on the stack)', 'decoded', 40)
     lines += comparison('allocations by site (the nearest sittir function to the allocation)', 'sites', 60, 0.002)
     lines += comparison('allocations by function, inclusive (every function on the stack)', 'inclusive', 60, 0.01)
-    if INTERPOSER:
+    if INTERPOSER and all('heap' in results[name][1] for name in names):
         lines += heapReport(grammar, names, results)
     return lines
 
@@ -643,7 +643,7 @@ for grammar in grammars:
         reused = REUSE and kept.exists()
         if reused:
             saved = json.loads(kept.read_text())
-            facts, kinds, dropped, commit, heap = saved['facts'], Counter(saved['kinds']), saved['dropped'], saved['commit'], saved['heap']
+            facts, kinds, dropped, commit, heap = saved['facts'], Counter(saved['kinds']), saved['dropped'], saved['commit'], saved.get('heap')
             expanded, expandedWeights = readFolded(out / f'{label}.collapsed.gz'), readFolded(out / f'{label}.bytes.collapsed.gz')
             print(f'{label}: the counts kept from {commit}', flush=True)
         else:
@@ -674,7 +674,7 @@ for grammar in grammars:
         if ALLOCS:
             allocs = allocAnalysis(expanded, expandedWeights, kinds)
             allocs['dropped'] = dropped
-            if INTERPOSER:
+            if INTERPOSER and heap is not None:
                 allocs['heap'] = heapAnalysis(heap, tree)
             if dropped and dropped['count']:
                 allocs['events'] += int(dropped['count'])
