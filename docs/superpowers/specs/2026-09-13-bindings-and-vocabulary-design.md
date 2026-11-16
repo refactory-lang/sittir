@@ -27,6 +27,8 @@ The maintainer's rulings this spec carries, quoted. A proposal starts from them 
 - **A supertype claim's read routes only the members its path declares, with no exception** (2026-11-12). See the binding-generator spec §2.2.
 - **"Integer mantissa"** (2026-11-12). See the binding-generator spec §2.4.
 - **"Approve all 15"** (2026-11-12), the number-literal API rows. Among them, a leading-point build writes its digits after the point and its scale in the exponent (500 builds `.5e3`). See the binding-generator spec §2.4.
+- **No member is named `content`, and none repeats its kind** (2026-11-15). The rulings: "Rename as proposed" and "Yes, rename all seven"; "if there are multiple slots, calling one content or even value is probably not a good idea"; "the portable api and bindings.scm should flatten scenarios like expression.expression". The names chosen were `rename`, `specifiers`, `argument`, the path `declaration.parameter.defaulted`, and `operand` + `count` for shifts. See §6, Names, rule 6.
+- **One raw string shape everywhere** (2026-11-15): no grammar-specific feature, and "record the scanner argument in the spec". See §9.
 
 ## 1. Two APIs, and the map between them
 
@@ -455,18 +457,25 @@ Names converge before kinds. The rules govern the names the vocabulary uses and 
 3. Layout is not a member.
 4. Containers keep the shared name (`parameters`, `arguments`, `body`, `statements`, `typeParameters`, `typeArguments`).
 5. Otherwise the majority upstream name over the claiming grammars wins; a tie is a recorded choice.
-6. No member is named `content`. A slot the model leaves unnamed is one of three things:
-   - transparent (Kinds, rule 2);
-   - a member that a capture names for what it holds;
-   - where it holds text, the kind's `$value` (§9).
+6. A member's name says what it holds and never repeats the last segment of its kind's path. No member is named `content`. The vocabulary check fails on a kind's own member that breaks either rule. A slot the model leaves unnamed is one of these:
+   - **Transparent** (Kinds, rule 2). A wrapper whose one slot would take its kind's own name is flattened in the portable API, through a container pattern in its grammar's bindings, not renamed (the user, 2026-11-15: "the portable api and bindings.scm should flatten scenarios like expression.expression"):
+     - an expression statement is its expression, so a statement list holds the expression itself;
+     - rust's `for<'a>` is its lifetimes (`forLifetimes: ["'a"]`);
+     - a bounds clause is its bounds, read at its holder (`declaration.type_parameter`'s `bounds`), so `clause.bounds` has no member and is only the parent of the bound forms;
+     - python's comprehension clauses are the `for` and `if` clauses (`clauses: [for, if]`).
+   - **A member a capture names for what it holds.** A generic name (`value`, `elements`, `content`) fits only a kind's one slot (the user, 2026-11-15: "if there are multiple slots, calling one content or even value is probably not a good idea"). Beside other slots a member takes a real name, from the languages' own references where they agree. Where a real name would repeat the path, the path is renamed instead (the user, 2026-11-15):
+     - `names` for an import's imported names (python's `from` and `__future__` imports);
+     - `specifiers` for typescript's import clause, beside its `default`;
+     - `rename` for an import alias (`import a as b`, `use a as b`: `{ name: 'a', rename: 'b' }`);
+     - `name` for a struct field initializer's field, beside its `value`;
+     - `argument` for a rust type argument, beside its `bounds` (`Iterator<Item: Copy>`: `{ argument: 'Item', bounds: ['Copy'] }`);
+     - `operand` and `count` for a shift (`a << b`), while other binaries keep `left` and `right`;
+     - `expression` for a yield's operand and a parenthesized spread's spread, and `body` for an ambient declaration, as for `statement.labeled`;
+     - `value` for a typescript literal type, its one slot, which stays a kind of its own;
+     - python's `def f(x=1)` takes the path `declaration.parameter.defaulted`, so its member stays `default`, as `declaration.parameter.typed_default` and every typescript parameter read it.
+   - **Text:** where the slot holds text, the kind's `$value` (§9).
 
-   The captures name:
-   - `names` for an import's imported names: python's `from` and `__future__` imports, and typescript's `import a, { b }` group;
-   - `expression` for a yield's operand, a parenthesized spread's spread and an expression statement's expression;
-   - `body` for an ambient declaration, as for `statement.labeled`;
-   - `value` for a rust type argument (beside its `bounds`) and for a typescript literal type, which stays a kind of its own.
-
-   (The user, 2026-11-15: "Rename as proposed".)
+   `content` is allowed only where the value's arity is ambiguous and the preferred name would repeat the kind (the user, 2026-11-15). No member qualifies today. The numeric text values (`literal.character` and the radix integers) keep `content` until their numbers read as `$value`, and the check lists them by name until then.
 
 **Kinds.**
 
@@ -541,7 +550,7 @@ A portable engine's `parse` reads **portable nodes**: each node is read as its v
 - **A leaf is its kind or its text.** A leaf whose text varies exposes it as `$value`. So does a node whose one slot holds a text-built kind: the node is built from that text, and the build makes the child from it (the user, 2026-11-15):
   - a comment's `$value` is its text between its delimiters;
   - an escape's is its text after the backslash;
-  - a rust raw string's is its text between its quotes.
+  - a raw string's is its text between its quotes, in every grammar and for its bytes and C forms too, with any fragments joined. A raw delimiter (python's `r`/`R`, alone or with `b`) makes python's scanner take a backslash together with the character after it as string content, so it never stops at `\`. The escape tokens are reached only where it stops, and it stops at `{`/`}` only for a format delimiter (`f`/`t`). So a raw string that isn't a format string holds only text. A triple-quoted one can split that text into fragments at an embedded quote, and they are joined. The format raw paths (`literal.string.interpolated(.deferred).raw*`) hold interpolations and keep `elements` (the user, 2026-11-15: "record the scanner argument in the spec").
 
   Rust's `literal.character` and the radix integers take theirs through forms, because their text sits beside other arms or spells a number. A fixed literal is its kind id, which is its identity, so it compares directly and has no `$value`: on a grammar's surface the grammar's id (`x === kinds.Plus`), on the portable surface the vocabulary's const string for it (§3.3), so rust's `i32` in an expression slot reads as `'i32'`. A fixed literal's meaning lives on its parent's refinement (`is.expression.assignment.compound.add(x)`), never on the leaf, and no member restates it.
   - **A number's `$value` is its meaning in the language.** Python's and typescript's `0377` are legacy octal (Python 2, ECMAScript Annex B): each grammar splits the form off decimal, so `0377` reads 255 at `literal.number.integer.octal` and python's `0377L` reads 255n at `literal.number.integer.big.octal`, while `08`, `0389` and forms of only zeros stay decimal (user, 2026-11-12: "Read them as octal"). A rebuild writes the standard spelling, `0o377` and `0o377L`, keeping the marker's (`0377l` rebuilds `0o377l`), and no member or flag records the legacy spelling (user, 2026-11-12).
