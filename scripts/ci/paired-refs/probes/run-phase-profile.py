@@ -565,10 +565,10 @@ def heapReport(grammar, names, results):
     first = names[0]
     median = lambda values: sorted(values)[len(values) >> 1] if values else None
     lines = [f'#### {grammar}: the JavaScript engine\'s heap', '',
-             f'Counter: V8\'s cumulative `total_allocated_bytes`, read around each timed phase in the counting run, less what reading it allocates. '
-             f'It is V8\'s own count, comparable between trees, not a sum of the objects\' sizes. '
-             f'Sampled: the inspector\'s sampling heap profiler in a second run of the same batches, a sample every {V8_INTERVAL} bytes on average, '
-             f'objects collected before the window ended kept, each sample\'s bytes attributed to the function that allocated it.', '',
+             (f'Counter: V8\'s cumulative `total_allocated_bytes`, read around each timed phase in the counting run, less what reading it allocates. '
+              f'It is V8\'s own count, comparable between trees, not a sum of the objects\' sizes. '
+              f'Sampled: the inspector\'s sampling heap profiler in a second run of the same batches, a sample every {V8_INTERVAL} bytes on average, '
+              f'objects collected before the window ended kept, each sample\'s bytes attributed to the function that allocated it.'), '',
              f'| tree | counter bytes per batch, median | mean | × {first} | sampled bytes per batch | sampled ÷ counter mean | samples per batch |', '|---|---|---|---|---|---|---|']
     exact = {}
     for name in names:
@@ -616,23 +616,23 @@ perBatch = lambda n: f'{n / BATCHES:.2f}'
 lines = [(out.parent / 'build-path.md').read_text().strip() if (out.parent / 'build-path.md').exists() else '', '']
 if INTERPOSER:
     COUNTER = buildCounter()
-    lines += [f'{STORAGE.capitalize()} {PHASE} allocations ({platform.system()} {platform.machine()}, node {run(["node", "--version"]).strip()}): '
-              f'alloc-count.c stands in for libc\'s {", ".join(ALLOC_FUNCTIONS)} and free in the benchmark\'s node process alone, '
-              f'counting only on the JavaScript thread between a timed batch\'s start and stop, each allocation placed by its frame-pointer call chain in a fixed table; '
-              f'{BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}.', '',
-              'It sees every libc allocation on that thread, with or without an addon frame, including the native memory JavaScript objects hold: '
-              'array buffer backing stores and the addon\'s external chunks are allocated by malloc, so they are in this table, not in the JavaScript engine\'s heap. '
-              'It misses the JavaScript engine\'s own heap (objects V8 allocates in its pages) and any private malloc zone. '
-              'Bytes are the sizes requested. A free is counted, not placed. Names come from the addon\'s unstripped copy when its build kept one, '
-              'with inlined functions expanded where the image carries line tables, else from its symbol table.', '']
+    lines += [(f'{STORAGE.capitalize()} {PHASE} allocations ({platform.system()} {platform.machine()}, node {run(["node", "--version"]).strip()}): '
+               f'alloc-count.c stands in for libc\'s {", ".join(ALLOC_FUNCTIONS)} and free in the benchmark\'s node process alone, '
+               f'counting only on the JavaScript thread between a timed batch\'s start and stop, each allocation placed by its frame-pointer call chain in a fixed table; '
+               f'{BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}.'), '',
+              ('It sees every libc allocation on that thread, with or without an addon frame, including the native memory JavaScript objects hold: '
+               'array buffer backing stores and the addon\'s external chunks are allocated by malloc, so they are in this table, not in the JavaScript engine\'s heap. '
+               'It misses the JavaScript engine\'s own heap (objects V8 allocates in its pages) and any private malloc zone. '
+               'Bytes are the sizes requested. A free is counted, not placed. Names come from the addon\'s unstripped copy when its build kept one, '
+               'with inlined functions expanded where the image carries line tables, else from its symbol table.'), '']
 elif ALLOCS:
     installProbes()
-    lines += [f'{STORAGE.capitalize()} {PHASE} allocations: uprobes on libc\'s {", ".join(ALLOC_FUNCTIONS)} ({run([PERF, "--version"]).strip()}), enabled only while a timed batch runs the phase, with frame-pointer call chains '
-              f'(the frame that called libc is not in a call chain taken at a function\'s entry); {BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}. '
-              f'Inlined functions are expanded from the line tables; generic arguments are dropped. Bytes are the size asked for, not malloc\'s usable size.', '']
+    lines += [(f'{STORAGE.capitalize()} {PHASE} allocations: uprobes on libc\'s {", ".join(ALLOC_FUNCTIONS)} ({run([PERF, "--version"]).strip()}), enabled only while a timed batch runs the phase, with frame-pointer call chains '
+               f'(the frame that called libc is not in a call chain taken at a function\'s entry); {BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}. '
+               f'Inlined functions are expanded from the line tables; generic arguments are dropped. Bytes are the size asked for, not malloc\'s usable size.'), '']
 elif NATIVE:
-    lines += [f'Arena render profile ({run([PERF, "--version"]).strip()}): cpu-clock every {PERIOD_NS / 1000:g} µs with frame-pointer call chains, enabled only while a timed batch renders; '
-              f'{BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}. Inlined functions are expanded from the line tables; generic arguments are dropped.', '']
+    lines += [(f'Arena render profile ({run([PERF, "--version"]).strip()}): cpu-clock every {PERIOD_NS / 1000:g} µs with frame-pointer call chains, enabled only while a timed batch renders; '
+               f'{BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}. Inlined functions are expanded from the line tables; generic arguments are dropped.'), '']
 for grammar in grammars:
     results = {}
     for name in names:
@@ -700,9 +700,9 @@ for grammar in grammars:
         continue
     if not NATIVE:
         dropped = ', '.join(f'{n} {results[n][0]["sampling"]["controlSamples"]}' for n in names)
-        lines += [f'Arena {PHASE} profile (node {firstFacts["node"]}, the inspector\'s Profiler): a sample every {JS_INTERVAL_US} µs, the profiler running only while a timed batch runs the phase; '
-                  f'{BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}; samples inside the profiler\'s own start and stop are dropped '
-                  f'({dropped}). A frame names its function and script; the comparison between trees drops the line.', '']
+        lines += [(f'Arena {PHASE} profile (node {firstFacts["node"]}, the inspector\'s Profiler): a sample every {JS_INTERVAL_US} µs, the profiler running only while a timed batch runs the phase; '
+                   f'{BATCHES} timed batches after {WARMUP} untimed, a fresh engine every {PER_ENGINE}; samples inside the profiler\'s own start and stop are dropped '
+                   f'({dropped}). A frame names its function and script; the comparison between trees drops the line.'), '']
     native = ' addon frames expanded from line tables | mapped from the tree |' if NATIVE else ''
     lines += [f'### {grammar} ({firstFacts["cpu"]}, {firstFacts["entries"]} roots per batch)', '',
               f'| tree | commit | {PHASE} ms per batch, median | × {first} | {PHASE} samples | per batch | {PHASE} text |{native}',
